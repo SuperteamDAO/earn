@@ -13,6 +13,7 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -79,19 +80,19 @@ const UpdateSponsor = () => {
     sponsorName,
   } = useSponsorNameValidation();
 
-  useEffect(() => {
-    const fetchSponsorData = async () => {
-      try {
-        const response = await axios.get('/api/sponsors/');
-        return response.data;
-      } catch (e) {}
-    };
+  const { data: sponsorData } = useQuery({
+    queryKey: ['sponsorData', user?.currentSponsorId],
+    queryFn: async () => {
+      const response = await axios.get('/api/sponsors/');
+      return response.data;
+    },
+    enabled: !!user?.currentSponsorId,
+  });
 
-    const init = async () => {
-      setIsLoading(true);
-      const response = await fetchSponsorData();
+  useEffect(() => {
+    if (sponsorData) {
       const { bio, industry, name, slug, logo, twitter, url, entityName } =
-        response;
+        sponsorData;
       setSponsorName(name);
       setSlug(slug);
       reset({
@@ -107,11 +108,8 @@ const UpdateSponsor = () => {
       }
       setIsPhotoLoading(false);
       setIndustries(industry);
-      setIsLoading(false);
-    };
-
-    init();
-  }, [user?.currentSponsorId, router, reset, setSlug, setSponsorName]);
+    }
+  }, [sponsorData, reset, setSlug, setSponsorName]);
 
   const updateSponsor = async (sponsor: SponsorType) => {
     if (getValues('bio').length > 180) {

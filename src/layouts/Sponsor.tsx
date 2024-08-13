@@ -34,7 +34,7 @@ interface LinkItemProps {
   posthog?: string;
 }
 
-export function Sidebar({ children }: { children: ReactNode }) {
+export function SponsorLayout({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const updateUser = useUpdateUser();
   const { data: session, status } = useSession();

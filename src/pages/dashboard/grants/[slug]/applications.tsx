@@ -24,7 +24,7 @@ import {
   type GrantApplicationWithUser,
   PaymentsHistoryTab,
 } from '@/features/sponsor-dashboard';
-import { Sidebar } from '@/layouts/Sponsor';
+import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
 interface Props {
@@ -116,7 +116,7 @@ function GrantApplications({ slug }: Props) {
   }, [user?.currentSponsorId]);
 
   return (
-    <Sidebar>
+    <SponsorLayout>
       {isGrantLoading ? (
         <LoadingSection />
       ) : (
@@ -265,7 +265,7 @@ function GrantApplications({ slug }: Props) {
           </Tabs>
         </>
       )}
-    </Sidebar>
+    </SponsorLayout>
   );
 }
 

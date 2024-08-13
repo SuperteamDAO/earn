@@ -1,11 +1,11 @@
 import { CreateListing } from '@/features/listing-builder';
-import { Sidebar } from '@/layouts/Sponsor';
+import { SponsorLayout } from '@/layouts/Sponsor';
 
 function CreateHackathon() {
   return (
-    <Sidebar>
+    <SponsorLayout>
       <CreateListing type="hackathon" />
-    </Sidebar>
+    </SponsorLayout>
   );
 }
 

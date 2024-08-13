@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { CreateListing } from '@/features/listing-builder';
 import type { Listing } from '@/features/listings';
-import { Sidebar } from '@/layouts/Sponsor';
+import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
 interface Props {
@@ -43,7 +43,7 @@ export default function DuplicateBounty({ slug }: Props) {
   }, [user?.currentSponsorId]);
 
   return (
-    <Sidebar>
+    <SponsorLayout>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
@@ -54,7 +54,7 @@ export default function DuplicateBounty({ slug }: Props) {
           type={bounty?.type as 'bounty' | 'project' | 'hackathon'}
         />
       )}
-    </Sidebar>
+    </SponsorLayout>
   );
 }
 
