@@ -16,6 +16,7 @@ import { Toaster } from 'react-hot-toast';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { TermsOfServices } from '@/components/modals/TermsOfServices';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
+import { useLatestActiveSlug } from '@/features/sponsor-dashboard';
 import { useUpdateUser, useUser } from '@/store/user';
 import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
@@ -50,8 +51,11 @@ function MyApp({ Component, pageProps }: any) {
   const posthog = usePostHog();
 
   const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
-  const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
-    undefined,
+
+  const { data: latestActiveSlug } = useLatestActiveSlug(
+    !!user?.currentSponsorId &&
+      user.featureModalShown === false &&
+      !router.pathname.includes('dashboard'),
   );
 
   useEffect(() => {
@@ -76,34 +80,22 @@ function MyApp({ Component, pageProps }: any) {
     }
   }, [router.query.loginState, user, posthog]);
 
-  const getSponsorLatestActiveSlug = async () => {
-    try {
-      const response = await fetch('/api/listings/latest-active-slug');
-      const data = await response.json();
-      if (data.slug) {
-        setLatestActiveSlug(data.slug);
-      }
-    } catch (e) {
-      console.error('Failed to fetch latest active slug:', e);
-    }
-  };
-
   useEffect(() => {
     const updateFeatureModalShown = async () => {
       if (
         user &&
         user.featureModalShown === false &&
         user.currentSponsorId &&
-        !router.pathname.includes('dashboard')
+        !router.pathname.includes('dashboard') &&
+        latestActiveSlug
       ) {
         setIsFeatureModalOpen(true);
-        await getSponsorLatestActiveSlug();
         await updateUser.mutateAsync({ featureModalShown: true });
       }
     };
 
     updateFeatureModalShown();
-  }, [user, router.pathname, updateUser]);
+  }, [user, router.pathname, updateUser, latestActiveSlug]);
 
   const handleFeatureClose = () => {
     setIsFeatureModalOpen(false);

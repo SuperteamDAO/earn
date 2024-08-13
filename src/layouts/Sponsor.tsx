@@ -1,15 +1,5 @@
 import { AddIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  type FlexProps,
-  Icon,
-  Link,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
-import axios from 'axios';
+import { Box, Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -28,7 +18,9 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
 import {
   CreateListingModal,
+  NavItem,
   SponsorInfoModal,
+  useLatestActiveSlug,
 } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -42,13 +34,7 @@ interface LinkItemProps {
   posthog?: string;
 }
 
-interface NavItemProps extends FlexProps {
-  icon: IconType;
-  link?: string;
-  children: ReactNode;
-}
-
-export function Sidebar({ children }: { children: ReactNode }) {
+export function SponsorLayout({ children }: { children: ReactNode }) {
   const { user } = useUser();
   const updateUser = useUpdateUser();
   const { data: session, status } = useSession();
@@ -56,10 +42,6 @@ export function Sidebar({ children }: { children: ReactNode }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const posthog = usePostHog();
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
-  const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
-    undefined,
-  );
-
   const { query } = router;
 
   const open = !!query.open; // Replace 'paramName' with the actual parameter name
@@ -81,6 +63,10 @@ export function Sidebar({ children }: { children: ReactNode }) {
     onClose: onScoutAnnounceModalClose,
   } = useDisclosure();
 
+  const { data: latestActiveSlug } = useLatestActiveSlug(
+    !!user?.currentSponsorId,
+  );
+
   function sponsorInfoCloseAltered() {
     onSponsorInfoModalClose();
     if (user?.featureModalShown === false && user?.currentSponsorId)
@@ -89,17 +75,6 @@ export function Sidebar({ children }: { children: ReactNode }) {
 
   const handleEntityClose = () => {
     setIsEntityModalOpen(false);
-  };
-
-  const getSponsorLatestActiveSlug = async () => {
-    try {
-      const slug = await axios.get('/api/listings/latest-active-slug');
-      if (slug.data) {
-        setLatestActiveSlug(slug.data.slug);
-      }
-    } catch (e) {
-      console.log(e);
-    }
   };
 
   // ENTITY NAME TO SPONSORS
@@ -112,7 +87,6 @@ export function Sidebar({ children }: { children: ReactNode }) {
         ) {
           onSponsorInfoModalOpen();
         } else if (user.featureModalShown === false && user.currentSponsorId) {
-          await getSponsorLatestActiveSlug();
           onScoutAnnounceModalOpen();
           await updateUser.mutateAsync({ featureModalShown: true });
         }
@@ -130,7 +104,6 @@ export function Sidebar({ children }: { children: ReactNode }) {
       ) {
         onSponsorInfoModalOpen();
       } else if (user?.featureModalShown === false && user?.currentSponsorId) {
-        await getSponsorLatestActiveSlug();
         onScoutAnnounceModalOpen();
         await updateUser.mutateAsync({ featureModalShown: true });
       }
@@ -169,59 +142,6 @@ export function Sidebar({ children }: { children: ReactNode }) {
           posthog: 'get help_sponsor',
         },
       ];
-
-  const NavItem = ({ icon, link, children, ...rest }: NavItemProps) => {
-    const router = useRouter();
-    const currentPath = router.asPath.split('?')[0];
-    const isExternalLink = link?.startsWith('https://');
-    const resolvedLink = isExternalLink ? link : `/dashboard${link}`;
-    const isActiveLink = resolvedLink
-      ? currentPath?.startsWith(resolvedLink)
-      : false;
-
-    return (
-      <Link
-        as={NextLink}
-        _focus={{ boxShadow: 'none' }}
-        href={resolvedLink}
-        isExternal={isExternalLink}
-        style={{ textDecoration: 'none' }}
-      >
-        <NavItemContent icon={icon} isActiveLink={isActiveLink} {...rest}>
-          {children}
-        </NavItemContent>
-      </Link>
-    );
-  };
-
-  const NavItemContent = ({ icon, isActiveLink, children, ...rest }: any) => (
-    <Flex
-      align="center"
-      px={6}
-      py={3}
-      color={isActiveLink ? 'brand.purple' : 'brand.slate.500'}
-      bg={isActiveLink ? '#EEF2FF' : 'transparent'}
-      _hover={{
-        bg: '#F5F8FF',
-        color: 'brand.purple',
-      }}
-      cursor="pointer"
-      role="group"
-      {...rest}
-    >
-      {icon && (
-        <Icon
-          as={icon}
-          mr="4"
-          fontSize="16"
-          _groupHover={{
-            color: 'brand.purple',
-          }}
-        />
-      )}
-      {children}
-    </Flex>
-  );
 
   const showLoading = !isHackathonRoute
     ? !user?.currentSponsor?.id

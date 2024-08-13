@@ -21,6 +21,7 @@ import {
   useSteps,
   VStack,
 } from '@chakra-ui/react';
+import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -40,7 +41,6 @@ import { type Grant } from '../types';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  setHasApplied: (arg0: boolean) => void;
   grant: Grant;
 }
 
@@ -50,12 +50,7 @@ const steps = [
   { title: 'Milestones' },
 ];
 
-export const GrantApplicationModal = ({
-  isOpen,
-  onClose,
-  setHasApplied,
-  grant,
-}: Props) => {
+export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
   const { id, token, minReward, maxReward, questions } = grant;
 
   const { user, refetchUser } = useUser();
@@ -78,6 +73,8 @@ export const GrantApplicationModal = ({
     reset,
     watch,
   } = useForm();
+
+  const queryClient = useQueryClient();
 
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -120,7 +117,9 @@ export const GrantApplicationModal = ({
       });
 
       reset();
-      setHasApplied(true);
+      await queryClient.invalidateQueries({
+        queryKey: ['userApplication', id],
+      });
 
       await refetchUser();
 

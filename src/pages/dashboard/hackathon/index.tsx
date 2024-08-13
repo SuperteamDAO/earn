@@ -64,7 +64,7 @@ import {
   CreateListingModal,
   type SponsorStats,
 } from '@/features/sponsor-dashboard';
-import { Sidebar } from '@/layouts/Sponsor';
+import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
@@ -200,7 +200,7 @@ export default function Hackathon() {
   } = useDisclosure();
 
   return (
-    <Sidebar>
+    <SponsorLayout>
       <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
         <ModalOverlay />
         <ModalContent>
@@ -717,6 +717,6 @@ export default function Hackathon() {
           </Flex>
         </>
       )}
-    </Sidebar>
+    </SponsorLayout>
   );
 }

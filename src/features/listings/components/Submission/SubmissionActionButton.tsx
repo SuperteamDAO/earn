@@ -1,9 +1,10 @@
 import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { SurveyModal } from '@/components/Survey';
 import { AuthWrapper } from '@/features/auth';
@@ -25,6 +26,13 @@ interface Props {
   hasHackathonStarted: boolean;
 }
 
+const checkUserSubmission = async (listingId: string) => {
+  const { data } = await axios.get('/api/submission/check/', {
+    params: { listingId },
+  });
+  return data;
+};
+
 export const SubmissionActionButton = ({
   listing,
   hasHackathonStarted,
@@ -39,13 +47,20 @@ export const SubmissionActionButton = ({
     isWinnersAnnounced,
   } = listing;
 
-  const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
-
   const { user } = useUser();
 
   const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
+
+  const { data: submissionStatus, isLoading: isUserSubmissionLoading } =
+    useQuery({
+      queryKey: ['userSubmission', id],
+      queryFn: () => checkUserSubmission(id!),
+      enabled: !!user?.id,
+    });
+
+  const isSubmitted = submissionStatus?.isSubmitted ?? false;
+
   const posthog = usePostHog();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -77,24 +92,6 @@ export const SubmissionActionButton = ({
       }
     }
   };
-
-  const checkUserSubmission = async () => {
-    setIsUserSubmissionLoading(true);
-    try {
-      const response = await axios.get('/api/submission/check/', {
-        params: { listingId: id },
-      });
-      setIsSubmitted(response.data.isSubmitted);
-      setIsUserSubmissionLoading(false);
-    } catch (e) {
-      setIsUserSubmissionLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!user?.id) return;
-    checkUserSubmission();
-  }, [user?.id]);
 
   const isProject = type === 'project';
 
@@ -159,7 +156,6 @@ export const SubmissionActionButton = ({
           id={id}
           onClose={onClose}
           isOpen={isOpen}
-          setIsSubmitted={setIsSubmitted}
           editMode={buttonState === 'edit'}
           listing={listing}
           showEasterEgg={() => setEasterEggOpen(true)}

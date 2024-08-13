@@ -45,10 +45,10 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import {
   Banner,
   InviteMembers,
-  type SponsorStats,
+  useSponsorsStats,
 } from '@/features/sponsor-dashboard';
 import type { UserSponsor } from '@/interface/userSponsor';
-import { Sidebar } from '@/layouts/Sponsor';
+import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
 const debounce = require('lodash.debounce');
@@ -63,8 +63,7 @@ const Index = () => {
   const [skip, setSkip] = useState(0);
   const length = 15;
 
-  const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
-  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
+  const { data: sponsorStats, isLoading: isStatsLoading } = useSponsorsStats();
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -121,23 +120,8 @@ const Index = () => {
     await getMembers();
   };
 
-  useEffect(() => {
-    const getSponsorStats = async () => {
-      try {
-        const sponsorData = await axios.get('/api/sponsors/stats');
-        setSponsorStats(sponsorData.data);
-      } catch (err) {
-        console.log('Failed to fetch sponsor stats');
-      } finally {
-        setIsStatsLoading(false);
-      }
-    };
-
-    getSponsorStats();
-  }, [user?.currentSponsorId]);
-
   return (
-    <Sidebar>
+    <SponsorLayout>
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <Flex justify="space-between" mb={4}>
@@ -350,7 +334,7 @@ const Index = () => {
           Next
         </Button>
       </Flex>
-    </Sidebar>
+    </SponsorLayout>
   );
 };
 

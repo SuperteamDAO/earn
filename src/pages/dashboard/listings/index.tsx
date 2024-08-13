@@ -47,9 +47,9 @@ import {
   Banner,
   CreateListingModal,
   ListingTable,
-  type SponsorStats,
+  useSponsorsStats,
 } from '@/features/sponsor-dashboard';
-import { Sidebar } from '@/layouts/Sponsor';
+import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
 const MemoizedListingTable = React.memo(ListingTable);
@@ -64,8 +64,7 @@ export default function SponsorListings() {
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const listingsPerPage = 15;
 
-  const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
-  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
+  const { data: sponsorStats, isLoading: isStatsLoading } = useSponsorsStats();
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -98,21 +97,6 @@ export default function SponsorListings() {
       getListings();
     }
   }, [user?.currentSponsorId, getListings]);
-
-  useEffect(() => {
-    const getSponsorStats = async () => {
-      try {
-        const sponsorData = await axios.get('/api/sponsors/stats');
-        setSponsorStats(sponsorData.data);
-      } catch (err) {
-        console.error('Failed to fetch sponsor stats:', err);
-      } finally {
-        setIsStatsLoading(false);
-      }
-    };
-
-    getSponsorStats();
-  }, [user?.currentSponsorId]);
 
   const {
     isOpen: isOpenCreateListing,
@@ -196,7 +180,7 @@ export default function SponsorListings() {
   );
 
   return (
-    <Sidebar>
+    <SponsorLayout>
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <Flex justify="space-between" w="100%" mb={4}>
         <Flex align="center" gap={3}>
@@ -513,6 +497,6 @@ export default function SponsorListings() {
             </Text>
           </>
         )}
-    </Sidebar>
+    </SponsorLayout>
   );
 }

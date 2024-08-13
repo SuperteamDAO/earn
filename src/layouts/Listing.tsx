@@ -1,5 +1,4 @@
 import { Box, Flex, HStack, VStack } from '@chakra-ui/react';
-import axios from 'axios';
 import { useAtom } from 'jotai';
 import Head from 'next/head';
 import { usePostHog } from 'posthog-js/react';
@@ -13,6 +12,7 @@ import {
   type Listing,
   ListingHeader,
   RightSideBar,
+  useGetSubmissionCount,
 } from '@/features/listings';
 import { bountySnackbarAtom } from '@/features/navbar';
 import { type User } from '@/interface/user';
@@ -31,44 +31,30 @@ export function ListingPageLayout({
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
   const posthog = usePostHog();
 
-  const [bounty] = useState<typeof initialBounty>(initialBounty);
-  const [submissionNumber, setSubmissionNumber] = useState<number>(0);
+  const { data: submissionNumber = 0 } = useGetSubmissionCount(
+    initialBounty?.id ?? '',
+  );
   const [commentCount, setCommentCount] = useState(0);
 
-  const getSubmissionsCount = async () => {
-    try {
-      const submissionCountDetails = await axios.get(
-        `/api/listings/${bounty?.id}/submission-count/`,
-      );
-      setSubmissionNumber(submissionCountDetails?.data || 0);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   useEffect(() => {
-    if (bounty?.type === 'bounty') {
+    if (initialBounty?.type === 'bounty') {
       posthog.capture('open_bounty');
-    } else if (bounty?.type === 'project') {
+    } else if (initialBounty?.type === 'project') {
       posthog.capture('open_project');
     }
   }, []);
 
   useEffect(() => {
-    const fetchSubmissions = async () => {
-      await getSubmissionsCount();
-      if (bounty) {
-        setBountySnackbar({
-          submissionCount: submissionNumber,
-          deadline: bounty?.deadline,
-          rewardAmount: bounty?.rewardAmount,
-          type: bounty?.type,
-          isPublished: bounty?.isPublished,
-        });
-      }
-    };
-    fetchSubmissions();
-  }, [bounty, submissionNumber]);
+    if (initialBounty) {
+      setBountySnackbar({
+        submissionCount: submissionNumber,
+        deadline: initialBounty.deadline,
+        rewardAmount: initialBounty.rewardAmount,
+        type: initialBounty.type,
+        isPublished: initialBounty.isPublished,
+      });
+    }
+  }, [initialBounty, submissionNumber]);
 
   const encodedTitle = encodeURIComponent(initialBounty?.title || '');
   const ogImage = new URL(`${getURL()}api/dynamic-og/listing/`);
@@ -118,7 +104,7 @@ export function ListingPageLayout({
           />
           <link
             rel="canonical"
-            href={`${getURL()}listings/${bounty?.type}/${bounty?.slug}/`}
+            href={`${getURL()}listings/${initialBounty?.type}/${initialBounty?.slug}/`}
           />
           <meta
             property="og:title"
@@ -145,14 +131,16 @@ export function ListingPageLayout({
     >
       <Box bg="white">
         <>
-          {bounty === null && <ErrorSection />}
-          {bounty !== null && !bounty?.id && (
+          {initialBounty === null && <ErrorSection />}
+          {initialBounty !== null && !initialBounty?.id && (
             <ErrorSection message="Sorry! The bounty you are looking for is not available." />
           )}
-          {bounty !== null && !!bounty?.id && (
+          {initialBounty !== null && !!initialBounty?.id && (
             <Box w="full" maxW={'8xl'} mx="auto" bg="white">
-              <ListingHeader commentCount={commentCount} listing={bounty} />
-              {/* {bounty?.isWinnersAnnounced && <ListingWinners bounty={bounty} />} */}
+              <ListingHeader
+                commentCount={commentCount}
+                listing={initialBounty}
+              />
               <HStack
                 align={['center', 'center', 'start', 'start']}
                 justify={['center', 'center', 'space-between', 'space-between']}
@@ -165,8 +153,8 @@ export function ListingPageLayout({
               >
                 <Flex flexGrow={1} w={{ base: 'full', md: '22rem' }} h="full">
                   <RightSideBar
-                    listing={bounty}
-                    skills={bounty?.skills?.map((e) => e.skills) ?? []}
+                    listing={initialBounty}
+                    skills={initialBounty?.skills?.map((e) => e.skills) ?? []}
                   />
                 </Flex>
                 <VStack
@@ -183,21 +171,21 @@ export function ListingPageLayout({
 
                   <Box display={{ base: 'block', md: 'none' }} w="full">
                     <ExtraInfoSection
-                      skills={bounty?.skills?.map((e) => e.skills) ?? []}
-                      region={bounty.region}
-                      requirements={bounty.requirements}
-                      pocSocials={bounty.pocSocials}
-                      Hackathon={bounty.Hackathon}
+                      skills={initialBounty?.skills?.map((e) => e.skills) ?? []}
+                      region={initialBounty.region}
+                      requirements={initialBounty.requirements}
+                      pocSocials={initialBounty.pocSocials}
+                      Hackathon={initialBounty.Hackathon}
                     />
                   </Box>
                   <Comments
-                    isAnnounced={bounty?.isWinnersAnnounced ?? false}
-                    listingSlug={bounty?.slug ?? ''}
-                    listingType={bounty?.type ?? ''}
-                    poc={bounty?.poc as User}
-                    sponsorId={bounty?.sponsorId}
-                    isVerified={bounty?.sponsor?.isVerified}
-                    refId={bounty?.id ?? ''}
+                    isAnnounced={initialBounty?.isWinnersAnnounced ?? false}
+                    listingSlug={initialBounty?.slug ?? ''}
+                    listingType={initialBounty?.type ?? ''}
+                    poc={initialBounty?.poc as User}
+                    sponsorId={initialBounty?.sponsorId}
+                    isVerified={initialBounty?.sponsor?.isVerified}
+                    refId={initialBounty?.id ?? ''}
                     refType="BOUNTY"
                     count={commentCount}
                     setCount={setCommentCount}

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { CreateListing } from '@/features/listing-builder';
 import type { Listing } from '@/features/listings';
-import { Sidebar } from '@/layouts/Sponsor';
+import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
 interface Props {
@@ -44,13 +44,13 @@ function EditBounty({ listing }: Props) {
   }, [user?.currentSponsorId]);
 
   return (
-    <Sidebar>
+    <SponsorLayout>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
         <CreateListing listing={bounty} editable type={'hackathon'} />
       )}
-    </Sidebar>
+    </SponsorLayout>
   );
 }
 

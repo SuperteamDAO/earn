@@ -1,8 +1,9 @@
 import { WarningIcon } from '@chakra-ui/icons';
 import { Button, Flex, Text, Tooltip, useDisclosure } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { AuthWrapper } from '@/features/auth';
 import {
@@ -19,20 +20,32 @@ interface GrantApplicationButtonProps {
   grant: Grant;
 }
 
+export const getUserApplicationStatus = async (grantId: string) => {
+  const response = await axios.get('/api/grant-application/is-user-eligible', {
+    params: { grantId },
+  });
+  return response.data;
+};
+
 export const GrantApplicationButton = ({
   grant,
 }: GrantApplicationButtonProps) => {
   const { user } = useUser();
-  const [hasApplied, setHasApplied] = useState(false);
-  const [isUserApplicationLoading, setIsUserApplicationLoading] =
-    useState(false);
-
   const { region, id, link, isNative } = grant;
 
   const { status: authStatus } = useSession();
   const isAuthenticated = authStatus === 'authenticated';
 
   const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
+
+  const { data: applicationStatus, isLoading: isUserApplicationLoading } =
+    useQuery({
+      queryKey: ['userApplication', id],
+      queryFn: () => getUserApplicationStatus(id),
+      enabled: !!user?.id,
+    });
+
+  const hasApplied = applicationStatus?.hasPendingApplication;
 
   let buttonText;
   let buttonBG;
@@ -78,34 +91,12 @@ export const GrantApplicationButton = ({
     }
   };
 
-  const getUserApplication = async () => {
-    setIsUserApplicationLoading(true);
-    try {
-      const response = await axios.get(
-        `/api/grant-application/is-user-eligible`,
-        {
-          params: { grantId: id },
-        },
-      );
-      setHasApplied(response.data.hasPendingApplication);
-      setIsUserApplicationLoading(false);
-    } catch (e) {
-      setIsUserApplicationLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!user?.id) return;
-    getUserApplication();
-  }, [user?.id]);
-
   return (
     <>
       {isOpen && (
         <GrantApplicationModal
           onClose={onClose}
           isOpen={isOpen}
-          setHasApplied={setHasApplied}
           grant={grant}
         />
       )}

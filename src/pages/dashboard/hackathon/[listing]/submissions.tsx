@@ -13,7 +13,7 @@ import {
   SubmissionList,
 } from '@/features/sponsor-dashboard';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { Sidebar } from '@/layouts/Sponsor';
+import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 import { cleanRewards, sortRank } from '@/utils/rank';
 
@@ -106,7 +106,7 @@ function BountySubmissions({ listing }: Props) {
   }, [user?.currentSponsorId]);
 
   return (
-    <Sidebar>
+    <SponsorLayout>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
@@ -223,7 +223,7 @@ function BountySubmissions({ listing }: Props) {
           )}
         </>
       )}
-    </Sidebar>
+    </SponsorLayout>
   );
 }
 

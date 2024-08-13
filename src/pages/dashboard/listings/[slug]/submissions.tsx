@@ -31,7 +31,7 @@ import {
 } from '@/features/sponsor-dashboard';
 import { type Scouts } from '@/interface/scouts';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { Sidebar } from '@/layouts/Sponsor';
+import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards, sortRank } from '@/utils/rank';
@@ -187,7 +187,7 @@ function BountySubmissions({ slug }: Props) {
   const isSponsorVerified = bounty?.sponsor?.isVerified;
 
   return (
-    <Sidebar>
+    <SponsorLayout>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
@@ -396,7 +396,7 @@ function BountySubmissions({ slug }: Props) {
           </Tabs>
         </>
       )}
-    </Sidebar>
+    </SponsorLayout>
   );
 }
 

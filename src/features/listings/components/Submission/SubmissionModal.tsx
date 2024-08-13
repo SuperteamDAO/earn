@@ -16,6 +16,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
@@ -40,7 +41,6 @@ interface Props {
   id: string | undefined;
   isOpen: boolean;
   onClose: () => void;
-  setIsSubmitted: (arg0: boolean) => void;
   editMode: boolean;
   listing: Listing;
   showEasterEgg: () => void;
@@ -57,7 +57,6 @@ type FormFields = Record<string, string>;
 export const SubmissionModal = ({
   isOpen,
   onClose,
-  setIsSubmitted,
   editMode,
   listing,
   showEasterEgg,
@@ -74,6 +73,8 @@ export const SubmissionModal = ({
   } = listing;
 
   const { refetch } = useGetSubmissionCount(id!);
+
+  const queryClient = useQueryClient();
 
   const [eligibilityQs, setEligibilityQs] = useState(
     eligibility?.map((q) => ({
@@ -207,7 +208,9 @@ export const SubmissionModal = ({
       if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
 
       reset();
-      setIsSubmitted(true);
+      await queryClient.invalidateQueries({
+        queryKey: ['userApplication', id],
+      });
 
       await refetchUser();
 

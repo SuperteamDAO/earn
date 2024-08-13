@@ -1,21 +1,20 @@
 import { Box, Flex } from '@chakra-ui/react';
-import axios from 'axios';
 import type { NextPageContext } from 'next';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { Superteams } from '@/constants/Superteam';
-import { GrantsCard, type GrantWithApplicationCount } from '@/features/grants';
-import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
+import { GrantsCard } from '@/features/grants';
+import {
+  ListingSection,
+  ListingTabs,
+  useGetRegionListings,
+} from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { getURL } from '@/utils/validUrl';
 
-interface Listings {
-  bounties?: Listing[];
-  grants?: GrantWithApplicationCount[];
-}
 const RegionsPage = ({
   slug,
   displayName,
@@ -25,31 +24,9 @@ const RegionsPage = ({
   displayName: string;
   st: (typeof Superteams)[0];
 }) => {
-  const [isListingsLoading, setIsListingsLoading] = useState(true);
-  const [listings, setListings] = useState<Listings>({
-    bounties: [],
-    grants: [],
-  });
-
-  const getListings = async () => {
-    setIsListingsLoading(true);
-    try {
-      const listingsData = await axios.get(
-        `/api/listings/regions/?region=${slug}`,
-      );
-      setListings(listingsData.data);
-      setIsListingsLoading(false);
-    } catch (e) {
-      console.log(e);
-
-      setIsListingsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isListingsLoading) return;
-    getListings();
-  }, []);
+  const { data: listings, isLoading: isListingsLoading } = useGetRegionListings(
+    { region: slug, take: 10 },
+  );
 
   const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
   ogImage.searchParams.set('region', st.displayValue);
@@ -66,7 +43,7 @@ const RegionsPage = ({
         />
         <Box w={'100%'}>
           <ListingTabs
-            bounties={listings.bounties}
+            bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}
             emoji="/assets/home/emojis/moneyman.png"
             title="Freelance Gigs"
