@@ -29,7 +29,6 @@
     "@solana/wallet-adapter-react-ui": "^0.9.35",
     "@solana/web3.js": "^1.93.0",
     "@tanstack/react-query": "^5.51.23",
-    "@tanstack/react-query-devtools": "^5.51.23",
     "@tiptap/extension-color": "^2.4.0",
     "@tiptap/extension-image": "^2.4.0",
     "@tiptap/extension-link": "^2.4.0",
@@ -92,6 +91,7 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.51.15",
+    "@tanstack/react-query-devtools": "^5.51.23",
     "@types/eslint": "~8.56.2",
     "@types/eslint-config-prettier": "~6.11.3",
     "@types/jsonwebtoken": "^9.0.6",

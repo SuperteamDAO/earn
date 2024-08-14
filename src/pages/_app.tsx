@@ -4,6 +4,7 @@ import '../styles/globals.scss';
 import { ChakraProvider } from '@chakra-ui/react';
 import { setUser } from '@sentry/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { SessionProvider } from 'next-auth/react';
@@ -135,6 +136,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           </SessionProvider>
         </PostHogProvider>
       </SolanaWalletProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

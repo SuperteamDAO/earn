@@ -32,6 +32,7 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { type Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
@@ -56,14 +57,12 @@ const debounce = require('lodash.debounce');
 const Index = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useUser();
-  const [isMembersLoading, setIsMembersLoading] = useState(true);
-  const [totalMembers, setTotalMembers] = useState(0);
-  const [members, setMembers] = useState<UserSponsor[]>([]);
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
   const length = 15;
 
   const { data: sponsorStats, isLoading: isStatsLoading } = useSponsorsStats();
+  const queryClient = useQueryClient();
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -74,23 +73,25 @@ const Index = () => {
     posthog.capture('members tab_sponsor');
   }, []);
 
-  const getMembers = async () => {
-    setIsMembersLoading(true);
-    try {
-      const membersList = await axios.get('/api/sponsor-dashboard/members/', {
-        params: {
-          searchText,
-          skip,
-          take: length,
-        },
-      });
-      setTotalMembers(membersList.data.total);
-      setMembers(membersList.data.data);
-      setIsMembersLoading(false);
-    } catch (error) {
-      setIsMembersLoading(false);
-    }
+  const getMembersQueryFn = async () => {
+    const response = await axios.get('/api/sponsor-dashboard/members/', {
+      params: {
+        searchText,
+        skip,
+        take: length,
+      },
+    });
+    return response.data;
   };
+
+  const { data: membersData, isLoading: isMembersLoading } = useQuery({
+    queryKey: ['members', user?.currentSponsorId, searchText, skip, length],
+    queryFn: getMembersQueryFn,
+    enabled: !!user?.currentSponsorId,
+  });
+
+  const totalMembers = membersData?.total || 0;
+  const members = membersData?.data || [];
 
   const isAdminLoggedIn = () => {
     if (
@@ -106,18 +107,14 @@ const Index = () => {
     );
   };
 
-  useEffect(() => {
-    if (user?.currentSponsorId) {
-      getMembers();
-    }
-  }, [user?.currentSponsorId, skip, searchText]);
-
   const onRemoveMember = async (userId: string | undefined) => {
     await axios.post('/api/sponsor-dashboard/members/remove', {
       id: userId,
     });
 
-    await getMembers();
+    await queryClient.invalidateQueries({
+      queryKey: ['members', user?.currentSponsorId],
+    });
   };
 
   return (
@@ -229,7 +226,7 @@ const Index = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {members.map((member) => {
+              {members.map((member: UserSponsor) => {
                 return (
                   <Tr key={member?.userId}>
                     <Td>

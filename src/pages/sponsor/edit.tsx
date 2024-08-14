@@ -83,8 +83,8 @@ const UpdateSponsor = () => {
   const { data: sponsorData } = useQuery({
     queryKey: ['sponsorData', user?.currentSponsorId],
     queryFn: async () => {
-      const response = await axios.get('/api/sponsors/');
-      return response.data;
+      const { data } = await axios.get('/api/sponsors/');
+      return data;
     },
     enabled: !!user?.currentSponsorId,
   });
