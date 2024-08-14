@@ -164,9 +164,8 @@ export const ApplicationDetails = ({
       await axios.post(
         '/api/sponsor-dashboard/grants/update-application-status',
         {
-          id: applicationId,
+          data: [{ id: applicationId, approvedAmount }],
           applicationStatus: 'Approved',
-          approvedAmount,
         },
       );
     } catch (e) {
@@ -201,7 +200,7 @@ export const ApplicationDetails = ({
       await axios.post(
         `/api/sponsor-dashboard/grants/update-application-status`,
         {
-          id: applicationId,
+          data: [{ id: applicationId }],
           applicationStatus: 'Rejected',
         },
       );

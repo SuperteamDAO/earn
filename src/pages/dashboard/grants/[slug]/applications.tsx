@@ -1,19 +1,26 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
   Flex,
+  HStack,
   Image,
+  Popover,
+  PopoverBody,
+  PopoverContent,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
+import { GrantApplicationStatus } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { type Grant } from '@/features/grants';
@@ -23,6 +30,7 @@ import {
   ApplicationList,
   type GrantApplicationWithUser,
   PaymentsHistoryTab,
+  RejectAllModal,
 } from '@/features/sponsor-dashboard';
 import { Sidebar } from '@/layouts/Sponsor';
 import { userStore } from '@/store/user';
@@ -51,6 +59,80 @@ function GrantApplications({ slug }: Props) {
   const [skip, setSkip] = useState(0);
   let length = 20;
   const [searchText, setSearchText] = useState('');
+  const [selectedApplicationIds, setSelectedApplicationIds] = useState<
+    Set<string>
+  >(new Set());
+
+  const [isToggledAll, setIsToggledAll] = useState(false);
+  const {
+    isOpen: isTogglerOpen,
+    onOpen: onTogglerOpen,
+    onClose: onTogglerClose,
+  } = useDisclosure();
+  const {
+    isOpen: rejectedIsOpen,
+    onOpen: rejectedOnOpen,
+    onClose: rejectedOnClose,
+  } = useDisclosure();
+
+  useEffect(() => {
+    selectedApplicationIds.size > 0 ? onTogglerOpen() : onTogglerClose();
+  }, [selectedApplicationIds]);
+
+  useEffect(() => {
+    setIsToggledAll(isAllCurrentToggled());
+  }, [selectedApplicationIds, applications]);
+
+  useEffect(() => {
+    const onlyPendingApplications = applications
+      .filter(
+        (application) =>
+          application.applicationStatus === GrantApplicationStatus.Pending &&
+          selectedApplicationIds.has(application.id),
+      )
+      .map((application) => application.id);
+    setSelectedApplicationIds(new Set(onlyPendingApplications));
+  }, [applications]);
+
+  const isAllCurrentToggled = () =>
+    applications.every((application) =>
+      selectedApplicationIds.has(application.id),
+    );
+
+  const toggleApplication = (id: string) => {
+    setSelectedApplicationIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+        return newSet;
+      } else {
+        return newSet.add(id);
+      }
+    });
+  };
+
+  const isToggled = useCallback(
+    (id: string) => {
+      return selectedApplicationIds.has(id);
+    },
+    [selectedApplicationIds, applications],
+  );
+
+  const toggleAllApplications = () => {
+    if (!isAllCurrentToggled()) {
+      setSelectedApplicationIds((prev) => {
+        const newSet = new Set(prev);
+        applications.map((application) => newSet.add(application.id));
+        return newSet;
+      });
+    } else {
+      setSelectedApplicationIds((prev) => {
+        const newSet = new Set(prev);
+        applications.map((application) => newSet.delete(application.id));
+        return newSet;
+      });
+    }
+  };
 
   useEffect(() => {
     if (searchText) {
@@ -115,6 +197,40 @@ function GrantApplications({ slug }: Props) {
     }
   }, [userInfo?.currentSponsorId]);
 
+  const handleRejectGrant = async (applicationIds: string[]) => {
+    const updatedApplications = applications.map((application) =>
+      applicationIds.includes(application.id)
+        ? {
+            ...application,
+            applicationStatus: GrantApplicationStatus.Rejected,
+          }
+        : application,
+    );
+
+    setApplications(updatedApplications);
+    const updatedApplication = updatedApplications.find((application) =>
+      applicationIds.includes(application.id),
+    );
+    setSelectedApplication(updatedApplication);
+    rejectedOnClose();
+
+    const batchSize = 10;
+    for (let i = 0; i < applicationIds.length; i += batchSize) {
+      const batch = applicationIds.slice(i, i + batchSize);
+      try {
+        await axios.post(
+          `/api/sponsor-dashboard/grants/update-application-status`,
+          {
+            data: batch.map((a) => ({ id: a })),
+            applicationStatus: 'Rejected',
+          },
+        );
+      } catch (error) {
+        console.error(`Error processing batch ${i / batchSize + 1}:`, error);
+      }
+    }
+    setSelectedApplicationIds(new Set());
+  };
   return (
     <Sidebar>
       {isGrantLoading ? (
@@ -190,6 +306,10 @@ function GrantApplications({ slug }: Props) {
                           setSearchText={setSearchText}
                           selectedApplication={selectedApplication}
                           setSelectedApplication={setSelectedApplication}
+                          isToggled={isToggled}
+                          toggleApplication={toggleApplication}
+                          isAllToggled={isToggledAll}
+                          toggleAllApplications={toggleAllApplications}
                         />
                         <ApplicationDetails
                           grant={grant}
@@ -263,6 +383,81 @@ function GrantApplications({ slug }: Props) {
               </TabPanel>
             </TabPanels>
           </Tabs>
+          <Popover
+            closeOnBlur={false}
+            closeOnEsc={false}
+            isOpen={isTogglerOpen}
+            onClose={onTogglerClose}
+          >
+            <PopoverContent
+              pos="fixed"
+              bottom={10}
+              w="full"
+              mx="auto"
+              p={0}
+              bg="transparent"
+              border="none"
+              shadow="none"
+            >
+              <PopoverBody
+                w="fit-content"
+                mx="auto"
+                px={4}
+                bg="white"
+                borderWidth={2}
+                borderColor="brand.slate.200"
+                shadow="lg"
+                rounded={'lg'}
+              >
+                <HStack gap={4}>
+                  <HStack fontWeight={500}>
+                    <Text>{selectedApplicationIds.size}</Text>
+                    <Text color="brand.slate.500">Selected</Text>
+                  </HStack>
+                  <Box w="1px" h={4} bg="brand.slate.300" />
+                  <Button
+                    fontSize="sm"
+                    fontWeight={500}
+                    bg="transparent"
+                    onClick={() => {
+                      setSelectedApplicationIds(new Set());
+                    }}
+                    variant="link"
+                  >
+                    UNSELECT ALL
+                  </Button>
+                  <Button
+                    gap={2}
+                    color="#E11D48"
+                    fontSize="sm"
+                    fontWeight={500}
+                    bg="#FEF2F2"
+                    onClick={rejectedOnOpen}
+                  >
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 13 13"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M6.11111 0.777832C9.49056 0.777832 12.2222 3.5095 12.2222 6.88894C12.2222 10.2684 9.49056 13.0001 6.11111 13.0001C2.73167 13.0001 0 10.2684 0 6.88894C0 3.5095 2.73167 0.777832 6.11111 0.777832ZM8.305 3.83339L6.11111 6.02728L3.91722 3.83339L3.05556 4.69505L5.24944 6.88894L3.05556 9.08283L3.91722 9.9445L6.11111 7.75061L8.305 9.9445L9.16667 9.08283L6.97278 6.88894L9.16667 4.69505L8.305 3.83339Z"
+                        fill="#E11D48"
+                      />
+                    </svg>
+                    Reject All
+                  </Button>
+                </HStack>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+          <RejectAllModal
+            applicationIds={Array.from(selectedApplicationIds)}
+            rejectIsOpen={rejectedIsOpen}
+            rejectOnClose={rejectedOnClose}
+            onRejectGrant={handleRejectGrant}
+          />
         </>
       )}
     </Sidebar>

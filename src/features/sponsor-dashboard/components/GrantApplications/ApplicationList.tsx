@@ -1,6 +1,7 @@
 import { SearchIcon } from '@chakra-ui/icons';
 import {
   Box,
+  Checkbox,
   Flex,
   Input,
   InputGroup,
@@ -30,6 +31,10 @@ interface Props {
   setSelectedApplication: Dispatch<
     SetStateAction<GrantApplicationWithUser | undefined>
   >;
+  toggleApplication: (id: string) => void;
+  isToggled: (id: string) => boolean;
+  toggleAllApplications: () => void;
+  isAllToggled: boolean;
 }
 
 export const ApplicationList = ({
@@ -37,6 +42,10 @@ export const ApplicationList = ({
   setSearchText,
   selectedApplication,
   setSelectedApplication,
+  toggleApplication,
+  isToggled,
+  toggleAllApplications,
+  isAllToggled,
 }: Props) => {
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -65,6 +74,11 @@ export const ApplicationList = ({
           borderBottomColor="brand.slate.200"
           cursor="pointer"
         >
+          <Checkbox
+            mr={-2}
+            isChecked={isAllToggled}
+            onChange={() => toggleAllApplications()}
+          />
           <InputGroup w={'full'} size="lg">
             <Input
               bg={'white'}
@@ -97,7 +111,7 @@ export const ApplicationList = ({
               py={2}
               bg={
                 selectedApplication?.id === application?.id
-                  ? 'brand.slate.100'
+                  ? '#F5F3FF80'
                   : 'transparent'
               }
               borderBottom={'1px solid'}
@@ -111,6 +125,12 @@ export const ApplicationList = ({
               }}
             >
               <Flex align="center">
+                <Checkbox
+                  mr={2}
+                  disabled={application?.applicationStatus !== 'Pending'}
+                  isChecked={isToggled(application.id)}
+                  onChange={() => toggleApplication(application.id)}
+                />
                 <EarnAvatar
                   id={application?.user?.id}
                   avatar={application?.user?.photo || undefined}
