@@ -209,7 +209,7 @@ export const SubmissionModal = ({
 
       reset();
       await queryClient.invalidateQueries({
-        queryKey: ['userApplication', id],
+        queryKey: ['userSubmission', id],
       });
 
       await refetchUser();
