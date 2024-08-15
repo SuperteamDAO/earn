@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
@@ -6,7 +7,6 @@ import {
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
-import { discordListingUpdate } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -144,15 +144,20 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         usdValue,
         language,
       },
-      include: { sponsor: true },
     });
 
     try {
       if (listing.isPublished === true && result.isPublished === false) {
-        await discordListingUpdate(result, 'Unpublished');
+        await axios.post(process.env.DISCORD_LISTING_WEBHOOK!, {
+          listingId: result.id,
+          status: 'Unpublished',
+        });
       }
       if (listing.isPublished === false && result.isPublished === true) {
-        await discordListingUpdate(result, 'Published');
+        await axios.post(process.env.DISCORD_LISTING_WEBHOOK!, {
+          listingId: result.id,
+          status: 'Published',
+        });
       }
     } catch (err) {
       logger.error('Discord Listing Update Message Error', err);
