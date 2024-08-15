@@ -57,10 +57,12 @@ export const EmailSignIn = () => {
         );
       }
     } else if (hasGmailAndIsProd) {
+      setIsLoading(false);
       setEmailError(
         'Please use the Google Auth login option for Gmail addresses.',
       );
     } else {
+      setIsLoading(false);
       setEmailError('Please enter a valid email address.');
     }
   };
