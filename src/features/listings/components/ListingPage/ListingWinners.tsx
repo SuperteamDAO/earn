@@ -1,4 +1,12 @@
-import { Box, Button, Center, Flex, HStack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  HStack,
+  Text,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import NextLink from 'next/link';
@@ -31,6 +39,7 @@ export function ListingWinners({ bounty }: Props) {
   const isProject = bounty?.type === 'project';
 
   const posthog = usePostHog();
+  const isMD = useBreakpointValue({ base: false, md: true });
 
   const { data: submissions = [], isLoading } = useQuery<SubmissionWithUser[]>({
     queryKey: ['winners', bounty?.id],
@@ -74,11 +83,16 @@ export function ListingWinners({ bounty }: Props) {
         <Box
           w="full"
           px={{ base: 3, md: 10 }}
-          py={6}
+          py={{ base: 4, md: 6 }}
           color="white"
           rounded="md"
         >
-          <Flex align="center" justify="center" wrap="wrap" gap={10}>
+          <Flex
+            align="center"
+            justify="center"
+            wrap="wrap"
+            gap={{ base: 5, md: 10 }}
+          >
             {submissions.slice(0, 3).map((submission) => (
               <NextLink
                 key={submission.id}
@@ -118,7 +132,7 @@ export function ListingWinners({ bounty }: Props) {
                         : nthLabelGenerator(submission?.winnerPosition ?? 0)}
                     </Center>
                     <EarnAvatar
-                      size="64px"
+                      size={isMD ? '64px' : '52px'}
                       id={submission?.user?.id}
                       avatar={submission?.user?.photo as string}
                     />
@@ -132,7 +146,7 @@ export function ListingWinners({ bounty }: Props) {
                   >{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</Text>
                   <Text
                     color="brand.slate.500"
-                    fontSize={{ base: 'xx-small', md: 'xs' }}
+                    fontSize={'xs'}
                     fontWeight={400}
                     textAlign="center"
                     opacity={0.6}
@@ -207,7 +221,7 @@ export function ListingWinners({ bounty }: Props) {
                 passHref
               >
                 <EarnAvatar
-                  size="44px"
+                  size={isMD ? '44px' : '36px'}
                   id={submission?.user?.id}
                   avatar={submission?.user?.photo as string}
                 />

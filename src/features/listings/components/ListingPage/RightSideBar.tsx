@@ -92,7 +92,8 @@ export function RightSideBar({
           rounded={'xl'}
         >
           {!router.asPath.split('/')[4]?.includes('submission') &&
-            !router.asPath.split('/')[4]?.includes('references') && (
+            !router.asPath.split('/')[4]?.includes('references') &&
+            listing.isWinnersAnnounced && (
               <Box display={{ base: 'block', md: 'none' }} pb={6}>
                 <ListingWinners bounty={listing} />
               </Box>
@@ -292,7 +293,7 @@ export function RightSideBar({
               </Flex>
             )}
           </Box>
-          <Box display={{ base: 'none', md: 'block' }}>
+          <Box w="full">
             <ExtraInfoSection
               skills={skills}
               region={listing.region}

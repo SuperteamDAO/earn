@@ -114,7 +114,6 @@ export function GrantPageLayout({
                         <Image
                           w={9}
                           h={9}
-                          mt={1}
                           alt={'green doller'}
                           rounded={'full'}
                           src={
@@ -255,7 +254,7 @@ export function GrantPageLayout({
                       </Flex>
                     </Flex>
                     <GrantApplicationButton grant={grant} />
-                    <Box display={{ base: 'none', md: 'block' }}>
+                    <Box>
                       <ExtraInfoSection
                         skills={grant?.skills?.map((e) => e.skills) ?? []}
                         region={grant.region}

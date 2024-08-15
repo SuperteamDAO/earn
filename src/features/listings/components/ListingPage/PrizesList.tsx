@@ -46,6 +46,8 @@ export function PrizesList({
   const [visibleRewards, setVisibleRewards] =
     useState<[string, number][]>(iterableRewards);
   const [seeAll, setSeeAll] = useState(true);
+  const [boxHeight, setBoxHeight] = useState('20px');
+
   useEffect(() => {
     if (seeAll) {
       setVisibleRewards(iterableRewards);
@@ -57,18 +59,23 @@ export function PrizesList({
       ]);
     }
   }, [seeAll]);
+
   useEffect(() => {
     setSeeAll(iterableRewards.length <= 6);
   }, []);
+
+  useEffect(() => {
+    const l = visibleRewards.length;
+    if (l === 1) setBoxHeight('20px');
+    else if (l === 2) setBoxHeight(`${visibleRewards.length * 31}px`);
+    else if (l === 3) setBoxHeight(`${visibleRewards.length * 35}px`);
+    else if (l === 4) setBoxHeight(`${visibleRewards.length * 37}px`);
+    else setBoxHeight(`${visibleRewards.length * 40}px`);
+  }, [visibleRewards]);
+
   return (
     <>
-      <Stepper
-        gap="0"
-        w="full"
-        h={`${visibleRewards.length * 40}px`}
-        index={-1}
-        orientation="vertical"
-      >
+      <Stepper gap="0" w="full" h={boxHeight} index={-1} orientation="vertical">
         {visibleRewards.map((step, index) => (
           <Step key={index} style={{ overflowY: 'visible' }}>
             <StepIndicator
@@ -124,7 +131,11 @@ export function PrizesList({
                 background: 'none',
                 borderColor: 'var(--chakra-colors-brand-slate-300)',
                 borderStyle:
-                  visibleRewards.length - 2 === index ? 'dashed' : 'solid',
+                  visibleRewards[index + 1]?.[0] ===
+                    BONUS_REWARD_POSITION + '' &&
+                  visibleRewards.length - 2 === index
+                    ? 'dashed'
+                    : 'solid',
               }}
             />
           </Step>

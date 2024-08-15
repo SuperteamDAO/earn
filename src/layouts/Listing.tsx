@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { Comments } from '@/features/comments';
 import {
-  ExtraInfoSection,
   getListingTypeLabel,
   type Listing,
   ListingHeader,
@@ -168,16 +167,6 @@ export function ListingPageLayout({
                   borderLeftWidth={{ base: 0, md: '1px' }}
                 >
                   <Box>{children}</Box>
-
-                  <Box display={{ base: 'block', md: 'none' }} w="full">
-                    <ExtraInfoSection
-                      skills={initialBounty?.skills?.map((e) => e.skills) ?? []}
-                      region={initialBounty.region}
-                      requirements={initialBounty.requirements}
-                      pocSocials={initialBounty.pocSocials}
-                      Hackathon={initialBounty.Hackathon}
-                    />
-                  </Box>
                   <Comments
                     isAnnounced={initialBounty?.isWinnersAnnounced ?? false}
                     listingSlug={initialBounty?.slug ?? ''}

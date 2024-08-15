@@ -52,20 +52,16 @@ export function ExtraInfoSection({
           ))}
         </HStack>
       </VStack>
-      {region && (
+      {region && region !== 'GLOBAL' && (
         <VStack align={'start'} w="full" fontSize={'sm'}>
           <Text color={'brand.slate.600'} fontWeight={600}>
-            REGIONAL
+            REGIONAL LISTING
           </Text>
           <Text h="100%" color={'brand.slate.500'}>
-            {region === 'GLOBAL' ? (
-              'This listing is open for all people in all regions of the world'
-            ) : (
-              <>
-                This listing is only open for people in{' '}
-                <Text fontWeight={600}>{region}</Text>
-              </>
-            )}
+            <>
+              This listing is only open for people in{' '}
+              <Text fontWeight={600}>{region}</Text>
+            </>
           </Text>
         </VStack>
       )}

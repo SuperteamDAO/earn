@@ -1,5 +1,11 @@
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import { Box, Button, Collapse, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Collapse,
+  useBreakpointValue,
+  VStack,
+} from '@chakra-ui/react';
 import parse, { type HTMLReactParserOptions } from 'html-react-parser';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -22,6 +28,7 @@ export function DescriptionUI({ description }: Props) {
   const [showMore, setShowMore] = useState(true);
   const [showCollapser, setShowCollapser] = useState(false);
   const descriptionRef = useRef<HTMLDivElement>(null);
+  const isMD = useBreakpointValue({ base: false, md: true });
 
   useEffect(() => {
     setIsMounted(true);
@@ -30,7 +37,7 @@ export function DescriptionUI({ description }: Props) {
   useEffect(() => {
     if (descriptionRef.current) {
       const fiftyVH = window.innerHeight / 2;
-      if (descriptionRef.current.clientHeight > fiftyVH) {
+      if (descriptionRef.current.clientHeight > fiftyVH && !isMD) {
         setShowCollapser(true);
         setShowMore(false);
       }
