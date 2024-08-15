@@ -136,7 +136,7 @@ export function ListingPageLayout({
             <ErrorSection message="Sorry! The bounty you are looking for is not available." />
           )}
           {initialBounty !== null && !!initialBounty?.id && (
-            <Box w="full" maxW={'8xl'} mx="auto" bg="white">
+            <Box w="full" maxW={'6xl'} mx="auto" bg="white">
               <ListingHeader
                 commentCount={commentCount}
                 listing={initialBounty}

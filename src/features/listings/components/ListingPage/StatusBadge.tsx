@@ -13,7 +13,6 @@ export const StatusBadge = ({ textColor, text, Icon }: StatusBadgeProps) => {
       alignItems="center"
       gap={2}
       display="flex"
-      px={3}
       py={1}
       color={textColor}
       fontSize={{ base: 'xs', sm: 'sm' }}

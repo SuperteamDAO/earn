@@ -76,7 +76,7 @@ export function GrantPageLayout({
         {grant === null && <LoadingSection />}
         {grant !== null && !grant?.id && <EmptySection />}
         {grant !== null && !!grant?.id && (
-          <Box w="full" maxW={'8xl'} mx="auto" bg="white">
+          <Box w="full" maxW={'6xl'} mx="auto" bg="white">
             <GrantsHeader
               title={grant?.title ?? ''}
               sponsor={grant?.sponsor}

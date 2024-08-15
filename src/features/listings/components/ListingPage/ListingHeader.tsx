@@ -4,10 +4,13 @@ import {
   HStack,
   Icon,
   Image,
+  Link,
   Text,
   Tooltip,
+  useBreakpointValue,
   VStack,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
@@ -20,7 +23,7 @@ import {
 } from 'react-icons/lu';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { type Listing } from '@/features/listings';
+import { type Listing, useGetSubmissionCount } from '@/features/listings';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { dayjs } from '@/utils/dayjs';
 
@@ -55,11 +58,14 @@ export function ListingHeader({
   } = listing;
   const router = useRouter();
   const posthog = usePostHog();
+  const isMD = useBreakpointValue({ base: false, md: true });
   const hasDeadlineEnded = dayjs().isAfter(deadline);
   const hasHackathonStarted = dayjs().isAfter(Hackathon?.startDate);
-
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
+
+  const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
+    useGetSubmissionCount(listing.id!);
 
   const statusIconStyles = { w: 5, h: 5 };
   let statusText = '';
@@ -82,7 +88,7 @@ export function ListingHeader({
     statusTextColor = 'brand.slate.500';
   } else if (!isPublished && publishedAt) {
     statusIcon = <Icon as={LuPause} {...statusIconStyles} color="#ffecb3" />;
-    statusText = 'Submissions Paused';
+    statusText = isMD ? 'Submissions Paused' : 'Paused';
     statusBgColor = '#ffecb3';
     statusTextColor = '#F59E0B';
   } else if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
@@ -108,7 +114,7 @@ export function ListingHeader({
     statusIcon = (
       <PulseIcon {...statusIconStyles} bg={'green.100'} text="green.600" />
     );
-    statusText = 'Submissions Open';
+    statusText = isMD ? 'Submissions Open' : 'Open';
     statusBgColor = 'green.100';
     statusTextColor = 'green.600';
   }
@@ -120,6 +126,7 @@ export function ListingHeader({
         fontFamily={'var(--font-sans)'}
         fontSize={'xl'}
         fontWeight={700}
+        letterSpacing={'-0.5px'}
       >
         {title}
       </Heading>
@@ -139,14 +146,20 @@ export function ListingHeader({
   const CommentCount = () => {
     return (
       !!commentCount && (
-        <HStack ml={4}>
-          <Icon
-            as={LuMessageSquare}
-            color="brand.slate.500"
-            fill="brand.slate.600"
-          />
-          <Text fontSize={'sm'}>{commentCount}</Text>
-        </HStack>
+        <Link
+          as={NextLink}
+          display={{ base: 'none', md: 'block' }}
+          href="#comments"
+        >
+          <HStack ml={4}>
+            <Icon
+              as={LuMessageSquare}
+              color="brand.slate.500"
+              fill="brand.slate.600"
+            />
+            <Text fontSize={'sm'}>{commentCount}</Text>
+          </HStack>
+        </Link>
       )
     );
   };
@@ -310,6 +323,9 @@ export function ListingHeader({
                 href={`/listings/${type}/${slug}/submission`}
                 text="Submissions"
                 isActive={!!router.asPath.split('/')[4]?.includes('submission')}
+                subText={
+                  isSubmissionNumberLoading ? '...' : submissionNumber + ''
+                }
               />
             )}
 

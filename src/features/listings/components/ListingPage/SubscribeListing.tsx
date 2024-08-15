@@ -107,19 +107,14 @@ export const SubscribeListing = ({ id }: Props) => {
           <AuthWrapper>
             <Button
               className="ph-no-capture"
+              gap={2}
+              w={{ base: 2, md: 'auto' }}
+              p={0}
+              px={{ md: 4 }}
               color={'brand.slate.500'}
               fontWeight={500}
               borderColor="brand.slate.300"
               aria-label="Notify"
-              leftIcon={
-                isSubscribeLoading ? (
-                  <Spinner color="white" size="sm" />
-                ) : sub.find((e) => e.userId === user?.id) ? (
-                  <TbBellRinging />
-                ) : (
-                  <TbBell />
-                )
-              }
               onClick={() => {
                 posthog.capture(
                   sub.find((e) => e.userId === user?.id)
@@ -130,11 +125,20 @@ export const SubscribeListing = ({ id }: Props) => {
               }}
               variant="outline"
             >
-              {isSubscribeLoading
-                ? 'Subscribing'
-                : sub.find((e) => e.userId === user?.id)
-                  ? 'Subscribed'
-                  : 'Subscribe'}
+              {isSubscribeLoading ? (
+                <Spinner color="white" size="sm" />
+              ) : sub.find((e) => e.userId === user?.id) ? (
+                <TbBellRinging />
+              ) : (
+                <TbBell />
+              )}
+              <Text display={{ base: 'none', md: 'inline' }}>
+                {isSubscribeLoading
+                  ? 'Subscribing'
+                  : sub.find((e) => e.userId === user?.id)
+                    ? 'Subscribed'
+                    : 'Subscribe'}
+              </Text>
             </Button>
           </AuthWrapper>
         </HStack>

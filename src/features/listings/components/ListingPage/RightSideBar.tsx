@@ -160,7 +160,7 @@ export function RightSideBar({
             </TableContainer>
           </VStack>
           <Box
-            w="90%"
+            w="100%"
             borderColor={'brand.slate.100'}
             borderBottomWidth={'1px'}
           />
@@ -283,7 +283,7 @@ export function RightSideBar({
               hasHackathonStarted={hasHackathonStarted}
             />
             {isProject && (
-              <Flex gap="2" w="20rem" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
+              <Flex gap="2" w="full" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />
                 <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
                   Don&apos;t start working just yet! Apply first, and then begin
