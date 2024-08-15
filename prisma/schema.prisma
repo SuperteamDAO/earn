@@ -363,6 +363,7 @@ model TalentRankings {
   user             User                   @relation(fields: [userId], references: [id])
 
   @@unique([userId, skill, timeframe])
+  @@index([skill, timeframe])
 }
 
 model PoW {
