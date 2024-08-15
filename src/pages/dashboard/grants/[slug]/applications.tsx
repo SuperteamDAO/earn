@@ -84,14 +84,19 @@ function GrantApplications({ slug }: Props) {
   }, [selectedApplicationIds, applications]);
 
   useEffect(() => {
-    const onlyPendingApplications = applications
-      .filter(
-        (application) =>
-          application.applicationStatus === GrantApplicationStatus.Pending &&
-          selectedApplicationIds.has(application.id),
-      )
-      .map((application) => application.id);
-    setSelectedApplicationIds(new Set(onlyPendingApplications));
+    const newSet = new Set(selectedApplicationIds);
+    Array.from(selectedApplicationIds).forEach((a) => {
+      const applicationWithId = applications.find(
+        (application) => application.id === a,
+      );
+      if (
+        applicationWithId &&
+        applicationWithId.applicationStatus !== 'Pending'
+      ) {
+        newSet.delete(a);
+      }
+    });
+    setSelectedApplicationIds(newSet);
   }, [applications]);
 
   const isAllCurrentToggled = () =>
@@ -312,6 +317,7 @@ function GrantApplications({ slug }: Props) {
                           toggleAllApplications={toggleAllApplications}
                         />
                         <ApplicationDetails
+                          isMultiSelectOn={selectedApplicationIds.size > 0}
                           grant={grant}
                           applications={applications}
                           setApplications={setApplications}
@@ -409,14 +415,18 @@ function GrantApplications({ slug }: Props) {
                 shadow="lg"
                 rounded={'lg'}
               >
-                <HStack gap={4}>
+                {selectedApplicationIds.size > 100 && (
+                  <Text pb={2} color="red" textAlign="center">
+                    Cannot select more than 100 applications
+                  </Text>
+                )}
+                <HStack gap={4} fontSize={'lg'}>
                   <HStack fontWeight={500}>
                     <Text>{selectedApplicationIds.size}</Text>
                     <Text color="brand.slate.500">Selected</Text>
                   </HStack>
                   <Box w="1px" h={4} bg="brand.slate.300" />
                   <Button
-                    fontSize="sm"
                     fontWeight={500}
                     bg="transparent"
                     onClick={() => {
@@ -429,9 +439,12 @@ function GrantApplications({ slug }: Props) {
                   <Button
                     gap={2}
                     color="#E11D48"
-                    fontSize="sm"
                     fontWeight={500}
                     bg="#FEF2F2"
+                    isDisabled={
+                      selectedApplicationIds.size === 0 ||
+                      selectedApplicationIds.size > 100
+                    }
                     onClick={rejectedOnOpen}
                   >
                     <svg

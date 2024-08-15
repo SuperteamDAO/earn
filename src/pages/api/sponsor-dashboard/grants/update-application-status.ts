@@ -51,10 +51,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   // const parsedAmount = approvedAmount ? parseInt(approvedAmount, 10) : 0;
 
   try {
-    console.log(
-      'appl ids - ',
-      data.map((d) => d.id),
-    );
     const currentApplications = await prisma.grantApplication.findMany({
       where: {
         id: {
@@ -102,6 +98,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       decidedAt: new Date().toISOString(),
     };
 
+    const isApproved = applicationStatus === 'Approved';
     const updatedData: {
       applicationStatus: string;
       decidedAt: string;
@@ -109,36 +106,34 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       approvedAmountInUSD?: number;
     }[] = [];
 
-    const isApproved = applicationStatus === 'Approved';
-
-    currentApplications.forEach(async (currentApplicant, k) => {
-      let approvedData = {
-        approvedAmount: 0,
-        approvedAmountInUSD: 0,
-      };
-      if (isApproved) {
-        const parsedAmount = data[k]?.approvedAmount
-          ? parseInt(data[k]?.approvedAmount + '', 10)
-          : 0;
-        const tokenUSDValue = await fetchTokenUSDValue(
-          currentApplicant.grant.token!,
-        );
-        const usdValue = tokenUSDValue * parsedAmount;
-        approvedData = {
-          approvedAmount: parsedAmount,
-          approvedAmountInUSD: usdValue,
+    await Promise.all(
+      currentApplications.map(async (currentApplicant, k) => {
+        let approvedData = {
+          approvedAmount: 0,
+          approvedAmountInUSD: 0,
         };
-      }
-      updatedData.push({
-        ...commonUpdateField,
-        ...approvedData,
-      });
-    });
+        if (isApproved) {
+          const parsedAmount = data[k]?.approvedAmount
+            ? parseInt(data[k]?.approvedAmount + '', 10)
+            : 0;
+          const tokenUSDValue = await fetchTokenUSDValue(
+            currentApplicant.grant.token!,
+          );
+          const usdValue = tokenUSDValue * parsedAmount;
+          approvedData = {
+            approvedAmount: parsedAmount,
+            approvedAmountInUSD: usdValue,
+          };
+        }
+        updatedData.push({
+          ...commonUpdateField,
+          ...approvedData,
+        });
+      }),
+    );
 
-    console.log('update data - ', updatedData);
     const result = await prisma.$transaction(
       currentApplications.map((application, k) => {
-        console.log('to be updated - ', updatedData[k]);
         return prisma.grantApplication.update({
           where: { id: application.id },
           data: updatedData[k] as any,

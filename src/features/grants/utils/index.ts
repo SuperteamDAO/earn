@@ -65,6 +65,8 @@ export function convertGrantApplicationToAirtable(
     default:
       status = grantApplication.applicationStatus;
   }
+  console.log('grant status - ', grantApplication.applicationStatus);
+  console.log('status - ', status);
   return {
     earnApplicationId: grantApplication.id,
     Title: grantApplication.projectTitle,

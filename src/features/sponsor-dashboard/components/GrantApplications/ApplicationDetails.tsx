@@ -48,6 +48,7 @@ interface Props {
   setSelectedApplication: Dispatch<
     SetStateAction<GrantApplicationWithUser | undefined>
   >;
+  isMultiSelectOn: boolean;
 }
 
 const InfoBox = ({
@@ -77,6 +78,7 @@ export const ApplicationDetails = ({
   setApplications,
   selectedApplication,
   setSelectedApplication,
+  isMultiSelectOn,
 }: Props) => {
   const isPending = selectedApplication?.applicationStatus === 'Pending';
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
@@ -350,6 +352,7 @@ export const ApplicationDetails = ({
                       color="#079669"
                       bg="#ECFEF6"
                       _hover={{ bg: '#D1FAE5' }}
+                      isDisabled={isMultiSelectOn}
                       leftIcon={
                         <Circle p={'5px'} bg="#079669">
                           <CheckIcon color="white" boxSize="2.5" />
@@ -363,6 +366,7 @@ export const ApplicationDetails = ({
                       color="#E11D48"
                       bg="#FEF2F2"
                       _hover={{ bg: '#FED7D7' }}
+                      isDisabled={isMultiSelectOn}
                       leftIcon={
                         <Circle p={'5px'} bg="#E11D48">
                           <CloseIcon color="white" boxSize="2" />
