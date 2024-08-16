@@ -49,14 +49,17 @@ export function DescriptionUI({ description }: Props) {
   }
 
   return (
-    <Box overflow="visible" w="full">
+    <Box
+      overflow="visible"
+      w="full"
+      borderBottomWidth={{ base: '1px', md: '0px' }}
+    >
       <VStack
         ref={descriptionRef}
         pos="relative"
         overflow={'visible'}
         w="full"
         px={{ base: 0 }}
-        py={5}
         bg={'white'}
         rounded={'xl'}
       >
@@ -65,7 +68,7 @@ export function DescriptionUI({ description }: Props) {
           startingHeight={'50vh'}
           style={{ width: '100%' }}
         >
-          <Box overflow={'visible'} w={'full'} h={'full'} pb={8} id="reset-des">
+          <Box overflow={'visible'} w={'full'} h={'full'} pb={7} id="reset-des">
             {parse(
               description?.startsWith('"')
                 ? JSON.parse(description || '')
@@ -78,7 +81,7 @@ export function DescriptionUI({ description }: Props) {
           <Button
             pos="absolute"
             zIndex={2}
-            bottom={1}
+            bottom={-4}
             left={'50%'}
             color="brand.slate.500"
             bg="white"

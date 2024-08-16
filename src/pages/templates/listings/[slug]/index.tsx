@@ -1,4 +1,4 @@
-import { HStack, VStack } from '@chakra-ui/react';
+import { Box, HStack, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
@@ -49,7 +49,12 @@ function BountyDetails({ slug }: BountyDetailsProps) {
       {!isLoading && !error && !!bounty?.id && (
         <>
           <ListingHeader isTemplate={true} listing={bounty} />
-          {bounty?.isWinnersAnnounced && <ListingWinners bounty={bounty} />}
+          {bounty?.isWinnersAnnounced && (
+            <Box w="full">
+              {' '}
+              <ListingWinners bounty={bounty} />
+            </Box>
+          )}
           <HStack
             align={['center', 'center', 'start', 'start']}
             justify={['center', 'center', 'space-between', 'space-between']}

@@ -72,7 +72,6 @@ export function ListingWinners({ bounty }: Props) {
     >
       <Text
         mx={3}
-        mb={4}
         color="brand.slate.500"
         fontSize={{ base: 'lg', md: 'xl' }}
         fontWeight={600}

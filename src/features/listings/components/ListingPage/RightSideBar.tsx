@@ -20,9 +20,12 @@ import { tokenList } from '@/constants/index';
 import { LiveListings } from '@/features/home';
 import { type ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { cleanRewardPrizes } from '@/utils/rank';
 
 import { useGetSubmissionCount } from '../../queries';
 import type { Listing } from '../../types';
+import { digitsInLargestString } from '../../utils';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 import { ExtraInfoSection } from './ExtraInfoSection';
@@ -81,6 +84,31 @@ export function RightSideBar({
 
   const router = useRouter();
 
+  const largestDigits = digitsInLargestString(
+    cleanRewardPrizes(rewards).map((c) => formatNumberWithSuffix(c) + ''),
+  );
+  let widthOfPrize = '8.5rem';
+  switch (largestDigits) {
+    case 1:
+      widthOfPrize = '5rem';
+      break;
+    case 2:
+      widthOfPrize = '6rem';
+      break;
+    case 3:
+      widthOfPrize = '7rem';
+      break;
+    case 4:
+      widthOfPrize = '8.5rem';
+      break;
+    default:
+      widthOfPrize = '8.5rem';
+      break;
+  }
+  if (cleanRewardPrizes(rewards).length > 6) {
+    widthOfPrize = '8.5rem';
+  }
+
   return (
     <Box w={{ base: 'full', md: 'auto' }} h="full">
       <VStack gap={2} w="full" pt={4}>
@@ -94,7 +122,7 @@ export function RightSideBar({
           {!router.asPath.split('/')[4]?.includes('submission') &&
             !router.asPath.split('/')[4]?.includes('references') &&
             listing.isWinnersAnnounced && (
-              <Box display={{ base: 'block', md: 'none' }} pb={6}>
+              <Box display={{ base: 'block', md: 'none' }} w="full" pb={6}>
                 <ListingWinners bounty={listing} />
               </Box>
             )}
@@ -125,7 +153,7 @@ export function RightSideBar({
                             fontWeight: 600,
                             fontSize: { base: 'lg', md: 'xl' },
                             color: 'brand.slate.700',
-                            w: '8.5rem',
+                            w: widthOfPrize,
                           }}
                         />
                         {!isProject && (
@@ -146,6 +174,7 @@ export function RightSideBar({
                         <Tr>
                           <Td px={0} colSpan={3}>
                             <PrizesList
+                              widthPrize={widthOfPrize}
                               totalReward={rewardAmount ?? 0}
                               maxBonusSpots={maxBonusSpots ?? 0}
                               token={token ?? ''}

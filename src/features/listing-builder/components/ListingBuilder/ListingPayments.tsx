@@ -114,6 +114,7 @@ export const ListingPayments = ({
   const [searchResults, setSearchResults] = useState<Token[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [warningMessage, setWarningMessage] = useState('');
   const [selectedToken, setSelectedToken] = useState<Token | undefined>(
     tokenList.find((t) => t.tokenSymbol === form?.token),
   );
@@ -138,6 +139,14 @@ export const ListingPayments = ({
   const token = watch('token');
   const rewards = watch('rewards');
   const maxBonusSpots = watch('maxBonusSpots');
+
+  useEffect(() => {
+    if (maxBonusSpots) {
+      if (maxBonusSpots < 1) setWarningMessage("# of bonus prizes can't be 0");
+      if (maxBonusSpots > MAX_BONUS_SPOTS)
+        setWarningMessage('Maximum number of bonus prizes allow is 50');
+    }
+  }, [maxBonusSpots]);
 
   const [searchTerm, setSearchTerm] = useState<string | undefined>(
     tokenList.find((t) => t.tokenSymbol === token)?.tokenName,
@@ -244,13 +253,8 @@ export const ListingPayments = ({
   const validateRewardsData = () => {
     let errorMessage = '';
 
-    if (searchTerm) {
-      const tokenSym = tokenList.find(
-        (t) => t.tokenName.toLowerCase() === searchTerm!.toLowerCase(),
-      );
-      if (!tokenSym) {
-        errorMessage = 'Please select a valid token';
-      }
+    if (!selectedToken) {
+      errorMessage = 'Please select a valid token';
     }
 
     if (isProject) {
@@ -273,7 +277,10 @@ export const ListingPayments = ({
         }
       }
     } else {
-      if (
+      if (rewards && rewards[BONUS_REWARD_POSITION]) {
+        if (rewards[BONUS_REWARD_POSITION] === 0)
+          errorMessage = "Bonus per prize can't be 0";
+      } else if (
         maxBonusSpots &&
         maxBonusSpots > 0 &&
         !rewards?.[BONUS_REWARD_POSITION]
@@ -793,10 +800,10 @@ export const ListingPayments = ({
                         borderColor="brand.slate.300"
                         borderRightWidth={'1px'}
                         borderRightStyle={'solid'}
-                        defaultValue={maxBonusSpots ?? 0}
+                        defaultValue={maxBonusSpots ?? 1}
                         focusBorderColor="rgba(0,0,0,0)"
                         max={MAX_BONUS_SPOTS}
-                        min={0}
+                        min={1}
                         onChange={(valueString) =>
                           handleBonusChange(parseInt(valueString))
                         }
@@ -828,7 +835,7 @@ export const ListingPayments = ({
                       border={'none'}
                       defaultValue={el.defaultValue}
                       focusBorderColor="rgba(0,0,0,0)"
-                      min={0}
+                      min={1}
                       onChange={(valueString) =>
                         handlePrizeValueChange(
                           el.value,
@@ -876,30 +883,41 @@ export const ListingPayments = ({
                       </Button>
                     )}
                   </Flex>
-                  {el.value === BONUS_REWARD_POSITION && (
-                    <FormHelperText
-                      display={'flex'}
-                      w="full"
-                      pt={2}
-                      color="brand.slate.500"
-                    >
-                      {maxBonusSpots} individuals will be paid
-                      <Text px={1} fontWeight={700}>
-                        {' '}
-                        {rewards?.[BONUS_REWARD_POSITION]}{' '}
-                        {selectedToken?.tokenSymbol}{' '}
-                      </Text>
-                      each (total bonus of{' '}
-                      <Text pl={1} fontWeight={700}>
-                        {caculateBonus(
-                          maxBonusSpots,
-                          rewards?.[BONUS_REWARD_POSITION],
-                        )}{' '}
-                        {selectedToken?.tokenSymbol}
-                      </Text>
-                      )
-                    </FormHelperText>
-                  )}
+                  {el.value === BONUS_REWARD_POSITION &&
+                    !!rewards?.[BONUS_REWARD_POSITION] &&
+                    rewards?.[BONUS_REWARD_POSITION] > 0 &&
+                    maxBonusSpots &&
+                    maxBonusSpots > 0 && (
+                      <FormHelperText
+                        display={'flex'}
+                        w="full"
+                        pt={2}
+                        color="brand.slate.500"
+                      >
+                        <Text pr={1} fontWeight={700}>
+                          {maxBonusSpots} individuals
+                        </Text>{' '}
+                        will be paid
+                        <Text px={1} fontWeight={700}>
+                          {' '}
+                          {formatTotalPrice(
+                            rewards?.[BONUS_REWARD_POSITION]!,
+                          )}{' '}
+                          {selectedToken?.tokenSymbol}{' '}
+                        </Text>
+                        each (total bonus of{' '}
+                        <Text pl={1} fontWeight={700}>
+                          {formatTotalPrice(
+                            caculateBonus(
+                              maxBonusSpots,
+                              rewards?.[BONUS_REWARD_POSITION],
+                            ),
+                          )}{' '}
+                          {selectedToken?.tokenSymbol}
+                        </Text>
+                        )
+                      </FormHelperText>
+                    )}
                 </FormControl>
               ))}
             </VStack>
@@ -1034,7 +1052,8 @@ export const ListingPayments = ({
                 Update Listing
               </Button>
             )}
-            <Text color="red.500">{errorMessage}</Text>
+            {warningMessage && <Text color="yellow.500">{warningMessage}</Text>}
+            {errorMessage && <Text color="red.500">{errorMessage}</Text>}
           </VStack>
         </form>
       </VStack>
