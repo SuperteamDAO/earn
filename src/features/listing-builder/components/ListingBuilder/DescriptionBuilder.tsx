@@ -136,6 +136,7 @@ export const DescriptionBuilder = ({
   editable,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
+  const isDraft = isNewOrDraft || isDuplicating;
 
   const {
     register,
@@ -629,19 +630,48 @@ export const DescriptionBuilder = ({
               Listing Details is a required field
             </Text>
           )}
-          <Button w="100%" onClick={handleSubmit(onSubmit)} variant="solid">
-            Continue
-          </Button>
           <Button
             className="ph-no-capture"
             w="100%"
-            isDisabled={!description}
-            isLoading={isDraftLoading}
-            onClick={onDraftClick}
-            variant="outline"
+            py={6}
+            fontWeight={500}
+            borderRadius="sm"
+            onClick={handleSubmit(onSubmit)}
+            type="submit"
+            variant={'solid'}
           >
-            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
+            Continue
           </Button>
+          {isDraft && (
+            <Button
+              className="ph-no-capture"
+              w="100%"
+              py={6}
+              color="brand.purple"
+              fontWeight={500}
+              bg="#EEF2FF"
+              borderRadius="sm"
+              isLoading={isDraftLoading}
+              onClick={onDraftClick}
+              variant={'ghost'}
+            >
+              Save Draft
+            </Button>
+          )}
+          {!isDraft && (
+            <Button
+              className="ph-no-capture"
+              w="100%"
+              py={6}
+              fontWeight={500}
+              borderRadius="sm"
+              isLoading={isDraftLoading}
+              onClick={onDraftClick}
+              variant={'solid'}
+            >
+              Update Listing
+            </Button>
+          )}
         </VStack>
       </Box>
     </>

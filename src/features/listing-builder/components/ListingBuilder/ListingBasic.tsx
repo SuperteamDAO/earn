@@ -72,6 +72,7 @@ export const ListingBasic = ({
   subSkills,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
+  const isDraft = isNewOrDraft || isDuplicating;
   const slugUniqueCheck = async (slug: string) => {
     try {
       const listingId = editable && !isDuplicating ? form?.id : null;
@@ -627,21 +628,45 @@ export const ListingBasic = ({
             <Button
               className="ph-no-capture"
               w="100%"
+              py={6}
+              fontWeight={500}
+              borderRadius="sm"
+              onClick={handleSubmit(onSubmit)}
               type="submit"
-              variant="solid"
+              variant={'solid'}
             >
               Continue
             </Button>
-            <Button
-              className="ph-no-capture"
-              w="100%"
-              isDisabled={!form?.title}
-              isLoading={isDraftLoading}
-              onClick={onDraftClick}
-              variant="outline"
-            >
-              {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
-            </Button>
+            {isDraft && (
+              <Button
+                className="ph-no-capture"
+                w="100%"
+                py={6}
+                color="brand.purple"
+                fontWeight={500}
+                bg="#EEF2FF"
+                borderRadius="sm"
+                isLoading={isDraftLoading}
+                onClick={onDraftClick}
+                variant={'ghost'}
+              >
+                Save Draft
+              </Button>
+            )}
+            {!isDraft && (
+              <Button
+                className="ph-no-capture"
+                w="100%"
+                py={6}
+                fontWeight={500}
+                borderRadius="sm"
+                isLoading={isDraftLoading}
+                onClick={onDraftClick}
+                variant={'solid'}
+              >
+                Update Listing
+              </Button>
+            )}
           </VStack>
         </form>
       </VStack>
