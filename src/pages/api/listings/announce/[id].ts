@@ -1,3 +1,4 @@
+import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { BONUS_REWARD_POSITION } from '@/constants';
@@ -6,7 +7,6 @@ import {
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
-import { discordWinnersAnnouncement } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { type Rewards } from '@/features/listings';
 import logger from '@/lib/logger';
@@ -74,7 +74,9 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
     try {
-      await discordWinnersAnnouncement(result);
+      await axios.post(process.env.DISCORD_WINNERS_WEBHOOK!, {
+        listingId: result.id,
+      });
     } catch (err) {
       logger.error('Discord Listing Update Message Error', err);
     }
