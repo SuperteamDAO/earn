@@ -100,9 +100,9 @@ function GrantApplications({ slug }: Props) {
   }, [applications]);
 
   const isAllCurrentToggled = () =>
-    applications.every((application) =>
-      selectedApplicationIds.has(application.id),
-    );
+    applications
+      .filter((application) => application.applicationStatus === 'Pending')
+      .every((application) => selectedApplicationIds.has(application.id));
 
   const toggleApplication = (id: string) => {
     setSelectedApplicationIds((prev) => {
@@ -127,7 +127,9 @@ function GrantApplications({ slug }: Props) {
     if (!isAllCurrentToggled()) {
       setSelectedApplicationIds((prev) => {
         const newSet = new Set(prev);
-        applications.map((application) => newSet.add(application.id));
+        applications
+          .filter((application) => application.applicationStatus === 'Pending')
+          .map((application) => newSet.add(application.id));
         return newSet;
       });
     } else {
