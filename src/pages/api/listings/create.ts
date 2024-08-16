@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
@@ -5,7 +6,6 @@ import {
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
-import { discordListingUpdate } from '@/features/discord';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
@@ -114,14 +114,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.debug(`Creating bounty with data: ${safeStringify(finalData)}`);
     const result = await prisma.bounties.create({
       data: finalData,
-      include: { sponsor: true },
     });
 
     try {
-      await discordListingUpdate(
-        result,
-        result.isPublished ? 'Published' : 'Draft Added',
-      );
+      await axios.post(process.env.DISCORD_LISTING_WEBHOOK!, {
+        listingId: result?.id,
+        status: result.isPublished ? 'Published' : 'Draft Added',
+      });
     } catch (err) {
       logger.error('Discord Listing Update Message Error', err);
     }
