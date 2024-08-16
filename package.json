@@ -38,7 +38,6 @@
     "@tiptap/pm": "^2.4.0",
     "@tiptap/react": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",
-    "@upstash/qstash": "^0.3.6",
     "@vercel/og": "^0.6.2",
     "axios": "^1.7.3",
     "boring-avatars": "^1.10.1",

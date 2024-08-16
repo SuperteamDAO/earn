@@ -1,7 +1,5 @@
 import { type SKILL } from '../types';
 
-export * from './dates';
-
 export function getSubskills(
   skillsArray: { skills: string; subskills: string[] }[] | null,
   skillType?: string[],
