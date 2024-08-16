@@ -78,8 +78,8 @@ importers:
         specifier: ^2.4.0
         version: 2.4.0(@tiptap/pm@2.4.0)
       '@upstash/qstash':
-        specifier: ^2.5.4
-        version: 2.5.4
+        specifier: ^0.3.6
+        version: 0.3.6
       '@vercel/og':
         specifier: ^0.6.2
         version: 0.6.2
@@ -1988,6 +1988,9 @@ packages:
       '@chakra-ui/system': '>=2.0.0'
       react: '>=18'
 
+  '@deno/shim-crypto@0.3.1':
+    resolution: {integrity: sha512-ed4pNnfur6UbASEgF34gVxR9p7Mc3qF+Ygbmjiil8ws5IhNFhPDFy5vE5hQAUA9JmVsSxXPcVLM5Rf8LOZqQ5Q==}
+
   '@emotion/babel-plugin@11.11.0':
     resolution: {integrity: sha512-m4HEDZleaaCH+XgDDsPF15Ht6wTLsgDTeR3WYj9Q/k76JtWhrJjcP4+/XlG8LGT/Rol9qUfOIztXeA84ATpqPQ==}
 
@@ -3422,8 +3425,8 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
-  '@upstash/qstash@2.5.4':
-    resolution: {integrity: sha512-3/JTwW8Kyt5Pqz7h8fuU1vd+ZKdYSkR/suZ5IrFLALeqeenVYQVauz8tTH+jLB1fKZtqITcTjxrS0S9F/4ZbhQ==}
+  '@upstash/qstash@0.3.6':
+    resolution: {integrity: sha512-NKN4jbPhB5lfHoSIaU7AuQ3F+yGS20e/FBRiUuPetcKoi354wHhKj9AJFfkFT5SSeLq0XEsXRNynm8gqCS4HjQ==}
 
   '@vanilla-extract/css-utils@0.1.3':
     resolution: {integrity: sha512-PZAcHROlgtCUGI2y0JntdNwvPwCNyeVnkQu6KTYKdmxBbK3w72XJUmLFYapfaFfgami4I9CTLnrJTPdtmS3gpw==}
@@ -4144,9 +4147,6 @@ packages:
   cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
     engines: {node: '>= 8'}
-
-  crypto-js@4.2.0:
-    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
 
   crypto-random-string@2.0.0:
     resolution: {integrity: sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==}
@@ -5432,9 +5432,6 @@ packages:
 
   jose@4.15.5:
     resolution: {integrity: sha512-jc7BFxgKPKi94uOvEmzlSWFFe2+vASyXaKUpdQKatWAESU2MWjDfFf0fdfc83CDKcA5QecabZeNLyfhe3yKNkg==}
-
-  jose@5.6.3:
-    resolution: {integrity: sha512-1Jh//hEEwMhNYPDDLwXHa2ePWgWiFNNUadVmguAAw2IJ6sj9mNxV5tGXJNqlMkJAybF6Lgw1mISDxTePP/187g==}
 
   jotai@2.9.2:
     resolution: {integrity: sha512-jIBXEadOHCziOuMY6HAy2KQcHipGhnsbF+twqh8Lcmcz/Yei0gdBtW5mOYdKmbQxGqkvfvXM3w/oHtJ2WNGSFg==}
@@ -10167,6 +10164,8 @@ snapshots:
       '@chakra-ui/system': 2.6.2(@emotion/react@11.11.4(@types/react@18.3.3)(react@18.3.1))(@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(react@18.3.1)
       react: 18.3.1
 
+  '@deno/shim-crypto@0.3.1': {}
+
   '@emotion/babel-plugin@11.11.0':
     dependencies:
       '@babel/helper-module-imports': 7.24.3
@@ -12211,10 +12210,9 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@upstash/qstash@2.5.4':
+  '@upstash/qstash@0.3.6':
     dependencies:
-      crypto-js: 4.2.0
-      jose: 5.6.3
+      '@deno/shim-crypto': 0.3.1
 
   '@vanilla-extract/css-utils@0.1.3': {}
 
@@ -13031,8 +13029,6 @@ snapshots:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
-
-  crypto-js@4.2.0: {}
 
   crypto-random-string@2.0.0: {}
 
@@ -14490,8 +14486,6 @@ snapshots:
       '@sideway/pinpoint': 2.0.0
 
   jose@4.15.5: {}
-
-  jose@5.6.3: {}
 
   jotai@2.9.2(@types/react@18.3.3)(react@18.3.1):
     optionalDependencies:
