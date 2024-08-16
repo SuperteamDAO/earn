@@ -1,4 +1,5 @@
 import { Box, Button, Circle, Flex, SimpleGrid, Text } from '@chakra-ui/react';
+import { motion } from 'framer-motion';
 import React from 'react';
 import Countdown from 'react-countdown';
 
@@ -9,11 +10,16 @@ import { Meta } from '@/layouts/Meta';
 import { useStatsData, useTrackData } from '@/queries/hackathon';
 import { RadarLogo } from '@/svg/radar-logo';
 
-export default function Radar() {
-  const slug = 'renaissance';
+const MotionBox = motion(Box);
+const MotionFlex = motion(Flex);
+const MotionText = motion(Text);
+const MotionButton = motion(Button);
 
-  const { data: trackData } = useTrackData(slug);
-  const { data: stats } = useStatsData(slug);
+export default function Radar() {
+  const slug = 'radar';
+
+  const { data: trackData, isLoading: isTracksLoading } = useTrackData(slug);
+  const { data: stats, isLoading: isStatsLoading } = useStatsData(slug);
 
   return (
     <Default
@@ -26,7 +32,11 @@ export default function Radar() {
         />
       }
     >
-      <Box>
+      <MotionBox
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <Flex
           align="center"
           direction={'column'}
@@ -38,19 +48,28 @@ export default function Radar() {
           borderColor={'brand.slate.200'}
           borderBottomWidth={'1px'}
         >
-          <RadarLogo styles={{ height: '5.5rem', width: 'auto' }} />
-          <Text
-            mt={4}
+          <MotionFlex
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <RadarLogo styles={{ height: '5.5rem', width: 'auto' }} />
+          </MotionFlex>
+          <MotionText
+            mt={1}
             px={6}
-            color="orange.100"
+            color="#AAA199"
             fontSize={'lg'}
             textAlign={'center'}
-            opacity={0.9}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 0.9 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            maxW="28rem"
           >
             Submit to side tracks of the latest Solana Global Hackathon
-          </Text>
+          </MotionText>
           <Flex align="center" gap={6}>
-            <Button
+            <MotionButton
               my={6}
               px={6}
               py={4}
@@ -65,22 +84,35 @@ export default function Radar() {
                 )
               }
               rounded="full"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Sponsor a Track
-            </Button>
-            <Flex align="center" gap={1}>
+            </MotionButton>
+            <MotionFlex
+              align="center"
+              gap={1}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
               <Circle bg="green.500" size={2.5} />
               <Text color={'gray.100'} fontSize={'sm'} fontWeight={500}>
                 Submissions Open
               </Text>
-            </Flex>
+            </MotionFlex>
           </Flex>
-          <Flex
+          <MotionFlex
             justify="center"
             gap={{ base: 4, md: 12 }}
             px={6}
-            pb={6}
+            pt={4}
+            pb={12}
             color="gray.100"
+            visibility={isStatsLoading ? 'hidden' : 'visible'}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
           >
             <Flex direction={'column'}>
               <Text color="orange.100" fontSize={'sm'} fontWeight={500}>
@@ -110,18 +142,22 @@ export default function Radar() {
                 />
               </Text>
             </Flex>
-          </Flex>
+          </MotionFlex>
         </Flex>
         <Box mx={6}>
           <Box maxW="7xl" mx="auto" py={6}>
-            <Text
+            <MotionText
               mb={4}
               color={'brand.slate.900'}
               fontSize={'xl'}
               fontWeight={600}
+              visibility={isTracksLoading ? 'hidden' : 'visible'}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 1 }}
             >
               Submission Tracks
-            </Text>
+            </MotionText>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
               {trackData &&
                 trackData.map((track, index) => (
@@ -137,7 +173,7 @@ export default function Radar() {
             </SimpleGrid>
           </Box>
         </Box>
-      </Box>
+      </MotionBox>
     </Default>
   );
 }
