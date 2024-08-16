@@ -184,13 +184,13 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               alignItems="center"
               display="flex"
               pt={2}
-              href="/talent-olympics"
+              href="/hackathon/radar"
             >
               <Image
-                h={14}
+                h={6}
                 objectFit={'contain'}
-                alt="Talent Olympics Nav Icon"
-                src="/assets/hackathon/talent-olympics/nav.svg"
+                alt="Radar Nav Icon"
+                src="/assets/hackathon/radar/nav.svg"
               />
             </Link>
           </DrawerBody>

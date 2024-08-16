@@ -1,124 +1,19 @@
-import { Box, Button, Flex, Image, SimpleGrid, Text } from '@chakra-ui/react';
-import axios from 'axios';
-import NextLink from 'next/link';
-import React, { useEffect, useState } from 'react';
+import { Box, Button, Flex, SimpleGrid, Text } from '@chakra-ui/react';
+import React from 'react';
 import Countdown from 'react-countdown';
 
+import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import { tokenList } from '@/constants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { useStatsData, useTrackData } from '@/queries/hackathon';
 import { ScribesLogo } from '@/svg/scribes-logo';
 
-interface TrackProps {
-  title: string;
-  slug: string;
-  sponsor: {
-    name: string;
-    logo: string;
-  };
-  token: string;
-  rewardAmount: number;
-}
-
-interface Stats {
-  totalRewardAmount: number;
-  totalListings: number;
-}
-
 export default function Scribes() {
-  const [trackData, setTrackData] = useState<TrackProps[]>();
-  const [stats, setStats] = useState<Stats>();
-  useEffect(() => {
-    const getTracks = async () => {
-      const trackData = await axios.get('/api/hackathon/', {
-        params: {
-          slug: 'scribes',
-        },
-      });
-      setTrackData(trackData.data);
-    };
+  const slug = 'scribes';
 
-    const getStats = async () => {
-      const statsData = await axios.get('/api/hackathon/public-stats/', {
-        params: {
-          slug: 'scribes',
-        },
-      });
-      setStats(statsData.data);
-    };
-
-    getTracks();
-    getStats();
-  }, []);
-  const TrackBox = ({
-    title,
-    sponsor,
-    token,
-    rewardAmount,
-    slug,
-  }: TrackProps) => {
-    return (
-      <Box
-        as={NextLink}
-        p={{ base: 3, md: 4 }}
-        borderWidth={'1px'}
-        borderColor="brand.slate.200"
-        borderRadius={8}
-        href={`/listings/hackathon/${slug}`}
-      >
-        <Flex align="center" gap={3}>
-          <Image
-            w={{ base: 12, md: 14 }}
-            h={{ base: 12, md: 14 }}
-            borderRadius={3}
-            objectFit={'cover'}
-            alt={sponsor.name}
-            src={sponsor.logo}
-          />
-          <Flex direction={'column'}>
-            <Text
-              color={'brand.slate.900'}
-              fontSize={{ base: 'md', md: 'lg' }}
-              fontWeight={600}
-            >
-              {title}
-            </Text>
-            <Text
-              color={'brand.slate.500'}
-              fontSize={{ base: 'sm', md: 'md' }}
-              fontWeight={500}
-            >
-              {sponsor.name}
-            </Text>
-          </Flex>
-        </Flex>
-        <Flex align="center" justify={'end'} gap={1}>
-          <Image
-            w={{ base: 4, md: 6 }}
-            h={{ base: 4, md: 6 }}
-            alt={token}
-            rounded={'full'}
-            src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
-          />
-          <Text
-            color={'brand.slate.700'}
-            fontSize={{ base: 'sm', md: 'md' }}
-            fontWeight={600}
-          >
-            {rewardAmount?.toLocaleString()}
-          </Text>
-          <Text
-            color={'brand.slate.400'}
-            fontSize={{ base: 'sm', md: 'md' }}
-            fontWeight={600}
-          >
-            {token}
-          </Text>
-        </Flex>
-      </Box>
-    );
-  };
+  const { data: trackData } = useTrackData(slug);
+  const { data: stats } = useStatsData(slug);
 
   return (
     <Default
