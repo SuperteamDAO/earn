@@ -79,7 +79,7 @@ export const SubscribeListing = ({ id }: Props) => {
   ];
 
   const handleToggleSubscribe = () => {
-    if (!isAuthenticated || !user?.isTalentFilled) {
+    if (isAuthenticated || !user?.isTalentFilled) {
       if (!user?.isTalentFilled) {
         warningOnOpen();
       }
