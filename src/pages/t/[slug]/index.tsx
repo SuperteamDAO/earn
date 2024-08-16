@@ -54,6 +54,9 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const [showSubskills, setShowSubskills] = useState<Record<number, boolean>>(
     {},
   );
+  const [talentFeed, setTalentFeed] = useState<FeedDataProps[]>(
+    talent?.feed || [],
+  );
 
   const handleToggleSubskills = (index: number) => {
     setShowSubskills({
@@ -113,16 +116,14 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const filteredFeed = useMemo(() => {
     if (activeTab === 'activity') {
-      return talent?.feed;
+      return talentFeed;
     }
 
-    return talent?.feed?.filter((item) => item.type === 'PoW');
-  }, [activeTab, talent?.feed]);
+    return talentFeed.filter((item) => item.type === 'PoW');
+  }, [activeTab, talentFeed]);
 
   const addNewPow = (newPow: any) => {
-    if (talent) {
-      talent.feed = [newPow, ...talent.feed];
-    }
+    setTalentFeed([newPow, ...talentFeed]);
   };
 
   const isMD = useBreakpointValue({ base: false, md: true });
