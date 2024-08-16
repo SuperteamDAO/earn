@@ -21,7 +21,7 @@ export const EmailSignIn = () => {
     const emailInput = e.target.value;
     setEmail(emailInput);
     setIsEmailValid(validateEmailRegex(emailInput));
-    setHasGmail(emailInput.includes('@gmail.com'));
+    setHasGmail(emailInput.toLowerCase().includes('@gmail.com'));
     setEmailError('');
   };
 
