@@ -15,7 +15,6 @@ import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import { FeatureModal } from '@/components/modals/FeatureModal';
-import { TermsOfServices } from '@/components/modals/TermsOfServices';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { useLatestActiveSlug } from '@/features/sponsor-dashboard';
 import { useUpdateUser, useUser } from '@/store/user';
@@ -131,7 +130,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           <SessionProvider session={session}>
             <ChakraProvider theme={extendThemeWithNextFonts}>
               <MyApp Component={Component} pageProps={pageProps} />
-              <TermsOfServices />
             </ChakraProvider>
           </SessionProvider>
         </PostHogProvider>
