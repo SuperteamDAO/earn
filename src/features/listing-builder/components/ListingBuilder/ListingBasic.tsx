@@ -350,13 +350,14 @@ export const ListingBasic = ({
                 fontWeight={500}
                 fontStyle="italic"
               >
-                <Text w="max-content">Similar Listings:</Text>
+                <Text w="max-content">Reference Listings:</Text>
                 <Flex align="center" wrap="wrap" columnGap={1.5}>
                   {suggestions.map((suggestion, index) => (
                     <Flex key={suggestion.link} align="center" gap={2}>
                       <Link
                         className="ph-no-capture"
                         key={suggestion.link}
+                        textDecoration="underline"
                         href={suggestion.link}
                         isExternal
                         onClick={() => {

@@ -1,9 +1,10 @@
 import { Box, Center, Flex, Text, VStack } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { LuCheck } from 'react-icons/lu';
 
 import { AuthWrapper } from '@/features/auth';
-import { useGetUserStats } from '@/features/home';
+import { userStatsQuery } from '@/features/home';
 import { useUser } from '@/store/user';
 
 const StepIcon = ({ step }: { step: number }) => {
@@ -120,7 +121,7 @@ const Step = ({
 export const HowItWorks = () => {
   const router = useRouter();
   const { user } = useUser();
-  const { data: stats, isLoading } = useGetUserStats();
+  const { data: stats, isLoading } = useQuery(userStatsQuery);
 
   const hasSubmissions = (stats?.participations ?? 0) > 0;
   const hasWins = (stats?.wins ?? 0) > 0;

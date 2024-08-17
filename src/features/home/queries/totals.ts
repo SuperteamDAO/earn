@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
 interface TotalType {
@@ -12,9 +12,7 @@ const fetchTotals = async (): Promise<TotalType> => {
   return data;
 };
 
-export const useGetTotals = () => {
-  return useQuery({
-    queryKey: ['totals'],
-    queryFn: fetchTotals,
-  });
-};
+export const totalsQuery = queryOptions({
+  queryKey: ['totals'],
+  queryFn: fetchTotals,
+});

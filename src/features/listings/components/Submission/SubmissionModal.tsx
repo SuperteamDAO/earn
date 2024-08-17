@@ -31,7 +31,8 @@ import { randomSubmissionCommentGenerator } from '@/features/comments';
 import { useUpdateUser, useUser } from '@/store/user';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
-import { useGetSubmissionCount } from '../../queries';
+import { submissionCountQuery } from '../../queries';
+import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
 import { isValidUrl, isYoutubeOrLoomLink } from '../../utils';
 import { QuestionHandler } from './QuestionHandler';
@@ -71,8 +72,6 @@ export const SubmissionModal = ({
     minRewardAsk,
     maxRewardAsk,
   } = listing;
-
-  const { refetch } = useGetSubmissionCount(id!);
 
   const queryClient = useQueryClient();
 
@@ -209,13 +208,15 @@ export const SubmissionModal = ({
 
       reset();
       await queryClient.invalidateQueries({
-        queryKey: ['userSubmission', id],
+        queryKey: userSubmissionQuery(id!, user!.id).queryKey,
       });
 
       await refetchUser();
 
       if (!editMode) {
-        await refetch();
+        await queryClient.invalidateQueries({
+          queryKey: submissionCountQuery(id!).queryKey,
+        });
       }
 
       onClose();

@@ -1,8 +1,9 @@
 import { Box } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 
 import { Superteams } from '@/constants/Superteam';
-import { ListingTabs, useGetRegionListings } from '@/features/listings';
+import { ListingTabs, regionalListingsQuery } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { getURL } from '@/utils/validUrl';
@@ -16,8 +17,8 @@ export default function AllRegionListingsPage({
   displayName: string;
   st: (typeof Superteams)[0];
 }) {
-  const { data: listings, isLoading: isListingsLoading } = useGetRegionListings(
-    { region: slug },
+  const { data: listings, isLoading: isListingsLoading } = useQuery(
+    regionalListingsQuery({ region: slug }),
   );
 
   const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);

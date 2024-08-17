@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
 interface UserStats {
@@ -12,9 +12,7 @@ const fetchUserStats = async (): Promise<UserStats> => {
   return data;
 };
 
-export const useGetUserStats = () => {
-  return useQuery({
-    queryKey: ['userStats'],
-    queryFn: fetchUserStats,
-  });
-};
+export const userStatsQuery = queryOptions({
+  queryKey: ['userStats'],
+  queryFn: fetchUserStats,
+});

@@ -26,6 +26,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import React, {
@@ -47,7 +48,7 @@ import {
   Banner,
   CreateListingModal,
   ListingTable,
-  useSponsorsStats,
+  sponsorStatsQuery,
 } from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
@@ -64,7 +65,8 @@ export default function SponsorListings() {
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const listingsPerPage = 15;
 
-  const { data: sponsorStats, isLoading: isStatsLoading } = useSponsorsStats();
+  const { data: sponsorStats, isLoading: isStatsLoading } =
+    useQuery(sponsorStatsQuery);
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
