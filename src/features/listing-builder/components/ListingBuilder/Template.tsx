@@ -1,7 +1,6 @@
 import { AddIcon, ViewIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
 
@@ -10,6 +9,8 @@ import { getListingTypeLabel } from '@/features/listings';
 import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
+import { isCreateListingAllowedQuery } from '../../queries/is-create-allowed';
+import { listingTemplatesQuery } from '../../queries/listing-templates';
 import { useListingFormStore } from '../../store';
 import { splitSkills } from '../../utils';
 
@@ -19,20 +20,6 @@ interface Props {
   setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
 }
-
-const fetchListingTemplates = async (type: string) => {
-  const response = await axios.get('/api/listings/templates/', {
-    params: { type },
-  });
-  return response.data;
-};
-
-const isCreateListingAllowedFn = async (): Promise<boolean> => {
-  const { data } = await axios.get<{ allowed: boolean }>(
-    `/api/sponsor-dashboard/listings/is-create-allowed`,
-  );
-  return data.allowed === true;
-};
 
 export const Template = ({
   type,
@@ -44,18 +31,12 @@ export const Template = ({
   const posthog = usePostHog();
   const { user } = useUser();
 
-  const { data: templates = [] } = useQuery({
-    queryKey: ['listingTemplates', type],
-    queryFn: () => fetchListingTemplates(type),
-  });
+  const { data: templates = [] } = useQuery(listingTemplatesQuery(type));
 
   const {
     data: isCreateListingAllowed,
     refetch: isCreateListingAllowedRefetch,
-  } = useQuery({
-    queryKey: ['isCreateListingAllowed'],
-    queryFn: isCreateListingAllowedFn,
-  });
+  } = useQuery(isCreateListingAllowedQuery);
 
   useEffect(() => {
     isCreateListingAllowedRefetch();

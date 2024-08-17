@@ -1,6 +1,5 @@
 import { Box, Button, Divider, Flex, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import { type TConductorInstance } from 'react-canvas-confetti/dist/types';
@@ -9,16 +8,7 @@ import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
 
-const fetchPfps = async (userIds: string[]) => {
-  const maxPfps = 6;
-  const latestUserIds = userIds.slice(-maxPfps);
-  const responses = await Promise.all(
-    latestUserIds.map((id) =>
-      axios.post('/api/user/pfps', { id }).then((res) => res.data),
-    ),
-  );
-  return responses;
-};
+import { pfpsQuery } from '../queries/vibe-pfps';
 
 const dummyUsers = [
   { id: '1', photo: '/assets/pfps/t1.png' },
@@ -46,11 +36,7 @@ export const VibeCard = () => {
 
   const { user } = useUser();
 
-  const { data: fetchedUsers = [] } = useQuery({
-    queryKey: ['vibers-pfps', userIds],
-    queryFn: () => fetchPfps(userIds),
-    enabled: userIds.length > 0,
-  });
+  const { data: fetchedUsers = [] } = useQuery(pfpsQuery(userIds));
 
   useEffect(() => {
     audioRef.current = new Audio('/assets/memes/chipichapa.mp3');

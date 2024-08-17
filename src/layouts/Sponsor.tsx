@@ -1,7 +1,6 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -19,23 +18,20 @@ import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
-import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
+import {
+  isCreateListingAllowedQuery,
+  SelectHackathon,
+  SelectSponsor,
+} from '@/features/listing-builder';
 import {
   CreateListingModal,
+  latestActiveSlugQuery,
   NavItem,
   SponsorInfoModal,
-  useLatestActiveSlug,
 } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUpdateUser, useUser } from '@/store/user';
-
-const isCreateListingAllowedFn = async (): Promise<boolean> => {
-  const { data } = await axios.get<{ allowed: boolean }>(
-    `/api/sponsor-dashboard/listings/is-create-allowed`,
-  );
-  return data.allowed === true;
-};
 
 interface LinkItemProps {
   name: string;
@@ -65,10 +61,7 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
   const {
     data: isCreateListingAllowed,
     refetch: isCreateListingAllowedRefetch,
-  } = useQuery({
-    queryKey: ['isCreateListingAllowed'],
-    queryFn: isCreateListingAllowedFn,
-  });
+  } = useQuery(isCreateListingAllowedQuery);
 
   const {
     isOpen: isSponsorInfoModalOpen,
@@ -82,8 +75,8 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
     onClose: onScoutAnnounceModalClose,
   } = useDisclosure();
 
-  const { data: latestActiveSlug } = useLatestActiveSlug(
-    !!user?.currentSponsorId,
+  const { data: latestActiveSlug } = useQuery(
+    latestActiveSlugQuery(!!user?.currentSponsorId),
   );
 
   function sponsorInfoCloseAltered() {

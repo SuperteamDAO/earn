@@ -1,7 +1,6 @@
 import { WarningIcon } from '@chakra-ui/icons';
 import { Button, Flex, Text, Tooltip, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import React from 'react';
 
@@ -13,19 +12,13 @@ import {
 } from '@/features/listings';
 import { useUser } from '@/store/user';
 
+import { userApplicationStatusQuery } from '../queries/user-application-status';
 import { type Grant } from '../types';
 import { GrantApplicationModal } from './GrantApplicationModal';
 
 interface GrantApplicationButtonProps {
   grant: Grant;
 }
-
-export const getUserApplicationStatus = async (grantId: string) => {
-  const response = await axios.get('/api/grant-application/is-user-eligible', {
-    params: { grantId },
-  });
-  return response.data;
-};
 
 export const GrantApplicationButton = ({
   grant,
@@ -39,11 +32,7 @@ export const GrantApplicationButton = ({
   const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
 
   const { data: applicationStatus, isLoading: isUserApplicationLoading } =
-    useQuery({
-      queryKey: ['userApplication', id],
-      queryFn: () => getUserApplicationStatus(id),
-      enabled: !!user?.id,
-    });
+    useQuery(userApplicationStatusQuery(id, !!user?.id));
 
   const hasApplied = applicationStatus?.hasPendingApplication;
 

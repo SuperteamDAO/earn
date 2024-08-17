@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
 const fetchSubmissionCount = async (listingId: string): Promise<number> => {
@@ -8,10 +8,9 @@ const fetchSubmissionCount = async (listingId: string): Promise<number> => {
   return data;
 };
 
-export const useGetSubmissionCount = (listingId: string) => {
-  return useQuery({
+export const submissionCountQuery = (listingId: string) =>
+  queryOptions({
     queryKey: ['submissionCount', listingId],
     queryFn: () => fetchSubmissionCount(listingId),
     enabled: !!listingId,
   });
-};

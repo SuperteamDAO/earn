@@ -1,7 +1,8 @@
 import { Box } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { ListingTabs, useGetListings } from '@/features/listings';
+import { listingsQuery, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { dayjs } from '@/utils/dayjs';
@@ -12,11 +13,13 @@ export default function ProjectsPage() {
     [],
   );
 
-  const { data: listings, isLoading } = useGetListings({
-    take: 100,
-    type: 'project',
-    deadline,
-  });
+  const { data: listings, isLoading } = useQuery(
+    listingsQuery({
+      take: 100,
+      type: 'project',
+      deadline,
+    }),
+  );
 
   return (
     <Home type="home">

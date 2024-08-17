@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
 const fetchOgImage = async (url: string): Promise<string | null> => {
@@ -6,10 +6,9 @@ const fetchOgImage = async (url: string): Promise<string | null> => {
   return data;
 };
 
-export const useOgImage = (url: string | undefined) => {
-  return useQuery({
+export const ogImageQuery = (url: string) =>
+  queryOptions({
     queryKey: ['ogImage', url],
     queryFn: () => fetchOgImage(url!),
     enabled: !!url,
   });
-};

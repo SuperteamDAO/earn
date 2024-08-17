@@ -11,6 +11,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
@@ -21,7 +22,7 @@ import { LiveListings } from '@/features/home';
 import { type ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
 
-import { useGetSubmissionCount } from '../../queries';
+import { submissionCountQuery } from '../../queries';
 import type { Listing } from '../../types';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
@@ -53,7 +54,7 @@ export function RightSideBar({
   } = listing;
 
   const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
-    useGetSubmissionCount(id!);
+    useQuery(submissionCountQuery(id!));
 
   const [submissionRange, setSubmissionRange] = useState('');
 

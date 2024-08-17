@@ -1,4 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 import React from 'react';
 
@@ -9,7 +10,7 @@ import { GrantsCard } from '@/features/grants';
 import {
   ListingSection,
   ListingTabs,
-  useGetRegionListings,
+  regionalListingsQuery,
 } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
@@ -24,8 +25,8 @@ const RegionsPage = ({
   displayName: string;
   st: (typeof Superteams)[0];
 }) => {
-  const { data: listings, isLoading: isListingsLoading } = useGetRegionListings(
-    { region: slug, take: 10 },
+  const { data: listings, isLoading: isListingsLoading } = useQuery(
+    regionalListingsQuery({ region: slug, take: 10 }),
   );
 
   const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);

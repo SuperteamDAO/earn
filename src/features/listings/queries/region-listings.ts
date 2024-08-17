@@ -1,11 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { type GrantWithApplicationCount } from '@/features/grants';
 
 import { type Listing } from '../types';
 
-interface FetchRegionListingsParams {
+interface RegionListingsParams {
   region: string;
   take?: number;
 }
@@ -16,15 +16,14 @@ interface Listings {
 }
 
 const fetchRegionListings = async (
-  params: FetchRegionListingsParams,
+  params: RegionListingsParams,
 ): Promise<Listings> => {
   const { data } = await axios.get('/api/listings/regions/', { params });
   return data;
 };
 
-export const useGetRegionListings = (params: FetchRegionListingsParams) => {
-  return useQuery({
+export const regionalListingsQuery = (params: RegionListingsParams) =>
+  queryOptions({
     queryKey: ['regionListings', params],
     queryFn: () => fetchRegionListings(params),
   });
-};
