@@ -78,7 +78,7 @@ export function ExtraInfoSection({
           <Link
             color={'brand.slate.500'}
             fontWeight={500}
-            href={`/${Hackathon.name.toLowerCase()}`}
+            href={`hackathon/${Hackathon.name.toLowerCase()}`}
             isExternal
           >
             View All Challenges

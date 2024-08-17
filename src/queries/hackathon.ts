@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { type TrackProps } from '@/interface/hackathon';
@@ -8,30 +8,28 @@ interface Stats {
   totalListings: number;
 }
 
-const fetchTracks = async (slug: string) => {
+const fetchTracks = async (slug: string): Promise<TrackProps[]> => {
   const response = await axios.get('/api/hackathon/', {
     params: { slug },
   });
   return response.data;
 };
 
-const fetchStats = async (slug: string) => {
+const fetchStats = async (slug: string): Promise<Stats> => {
   const response = await axios.get('/api/hackathon/public-stats/', {
     params: { slug },
   });
   return response.data;
 };
 
-export const useTrackData = (slug: string) => {
-  return useQuery<TrackProps[]>({
+export const trackDataQuery = (slug: string) =>
+  queryOptions({
     queryKey: ['tracks', slug],
     queryFn: () => fetchTracks(slug),
   });
-};
 
-export const useStatsData = (slug: string) => {
-  return useQuery<Stats>({
+export const statsDataQuery = (slug: string) =>
+  queryOptions({
     queryKey: ['stats', slug],
     queryFn: () => fetchStats(slug),
   });
-};

@@ -1,4 +1,5 @@
 import { Box, Button, Circle, Flex, SimpleGrid, Text } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import React from 'react';
 import Countdown from 'react-countdown';
@@ -7,7 +8,7 @@ import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { useStatsData, useTrackData } from '@/queries/hackathon';
+import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RadarLogo } from '@/svg/radar-logo';
 
 const MotionBox = motion(Box);
@@ -18,8 +19,49 @@ const MotionButton = motion(Button);
 export default function Radar() {
   const slug = 'radar';
 
-  const { data: trackData, isLoading: isTracksLoading } = useTrackData(slug);
-  const { data: stats, isLoading: isStatsLoading } = useStatsData(slug);
+  const startDate = '2024-09-02 00:00:00.000';
+  const deadline = '2024-10-08 00:00:00.000';
+
+  const now = new Date();
+  const startTime = new Date(startDate);
+  const endTime = new Date(deadline);
+
+  const getSubmissionStatus = () => {
+    if (now < startTime) {
+      return { text: 'Submissions Open Soon', color: 'gray.500' };
+    } else if (now >= startTime && now < endTime) {
+      return { text: 'Submissions Open', color: 'green.500' };
+    } else {
+      return { text: 'Submissions Closed', color: 'gray.500' };
+    }
+  };
+
+  const getCountdownText = () => {
+    if (now < startTime) {
+      return 'Submissions Start In';
+    } else {
+      return 'Submissions Close In';
+    }
+  };
+
+  const getCountdownDate = () => {
+    if (now < startTime) {
+      return startTime;
+    } else {
+      return endTime;
+    }
+  };
+
+  const submissionStatus = getSubmissionStatus();
+  const countdownText = getCountdownText();
+  const countdownDate = getCountdownDate();
+
+  const { data: trackData, isLoading: isTracksLoading } = useQuery(
+    trackDataQuery(slug),
+  );
+  const { data: stats, isLoading: isStatsLoading } = useQuery(
+    statsDataQuery(slug),
+  );
 
   return (
     <Default
@@ -79,7 +121,7 @@ export default function Radar() {
               _hover={{ bg: 'yellow.600', color: '#fff' }}
               onClick={() =>
                 window.open(
-                  'https://airtable.com/appTNIj7RXgv7Txbt/shrh4eZOkeDDFBCOH',
+                  'https://airtable.com/appTNIj7RXgv7Txbt/shraqx54yjvNsvR7e',
                   '_blank',
                 )
               }
@@ -96,9 +138,9 @@ export default function Radar() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.4 }}
             >
-              <Circle bg="green.500" size={2.5} />
+              <Circle bg={submissionStatus.color} size={2.5} />
               <Text color={'gray.100'} fontSize={'sm'} fontWeight={500}>
-                Submissions Open
+                {submissionStatus.text}
               </Text>
             </MotionFlex>
           </Flex>
@@ -132,11 +174,11 @@ export default function Radar() {
             </Flex>
             <Flex direction={'column'}>
               <Text color="orange.100" fontSize={'sm'} fontWeight={500}>
-                Submissions Start In
+                {countdownText}
               </Text>
               <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight={600}>
                 <Countdown
-                  date={new Date('2024-09-02T00:00:00Z')}
+                  date={countdownDate}
                   renderer={CountDownRenderer}
                   zeroPadDays={1}
                 />

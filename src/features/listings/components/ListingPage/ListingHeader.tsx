@@ -168,7 +168,7 @@ export function ListingHeader({
         <ListingHeaderSeparator />
         {isHackathon ? (
           <Flex align={'center'}>
-            <Image h="2.5rem" alt={type} src={Hackathon?.altLogo} />
+            <Image h="1rem" alt={type} src={Hackathon?.altLogo} />
           </Flex>
         ) : (
           <Flex>

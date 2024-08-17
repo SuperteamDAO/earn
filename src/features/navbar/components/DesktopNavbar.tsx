@@ -138,7 +138,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   h={'1.1rem'}
                   objectFit={'contain'}
                   alt="Radar Nav Icon"
-                  src="/assets/hackathon/radar/nav.svg"
+                  src="/assets/hackathon/radar/nav.png"
                 />
               </Link>
               {/* {HACKATHON_NAV_ITEMS?.map((navItem) => {

@@ -1,4 +1,5 @@
 import { Box, Button, Circle, Flex, SimpleGrid, Text } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import Countdown from 'react-countdown';
 
@@ -6,14 +7,15 @@ import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { useStatsData, useTrackData } from '@/queries/hackathon';
+import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RenaissanceLogo } from '@/svg/renaissance-logo';
 
 export default function Renaissance() {
   const slug = 'renaissance';
 
-  const { data: trackData } = useTrackData(slug);
-  const { data: stats } = useStatsData(slug);
+  const { data: trackData } = useQuery(trackDataQuery(slug));
+  const { data: stats } = useQuery(statsDataQuery(slug));
+
   return (
     <Default
       className="bg-white"

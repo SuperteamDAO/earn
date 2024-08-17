@@ -190,7 +190,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 h={6}
                 objectFit={'contain'}
                 alt="Radar Nav Icon"
-                src="/assets/hackathon/radar/nav.svg"
+                src="/assets/hackathon/radar/nav.png"
               />
             </Link>
           </DrawerBody>
