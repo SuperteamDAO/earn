@@ -3,10 +3,11 @@ import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
-import React, { type Dispatch, type SetStateAction } from 'react';
+import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
 
 import { type MultiSelectOptions } from '@/constants';
 import { getListingTypeLabel } from '@/features/listings';
+import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
 import { useListingFormStore } from '../../store';
@@ -26,6 +27,13 @@ const fetchListingTemplates = async (type: string) => {
   return response.data;
 };
 
+const isCreateListingAllowedFn = async (): Promise<boolean> => {
+  const { data } = await axios.get<{ allowed: boolean }>(
+    `/api/sponsor-dashboard/listings/is-create-allowed`,
+  );
+  return data.allowed === true;
+};
+
 export const Template = ({
   type,
   setSteps,
@@ -34,11 +42,24 @@ export const Template = ({
 }: Props) => {
   const { updateState } = useListingFormStore();
   const posthog = usePostHog();
+  const { user } = useUser();
 
   const { data: templates = [] } = useQuery({
     queryKey: ['listingTemplates', type],
     queryFn: () => fetchListingTemplates(type),
   });
+
+  const {
+    data: isCreateListingAllowed,
+    refetch: isCreateListingAllowedRefetch,
+  } = useQuery({
+    queryKey: ['isCreateListingAllowed'],
+    queryFn: isCreateListingAllowedFn,
+  });
+
+  useEffect(() => {
+    isCreateListingAllowedRefetch();
+  }, [user]);
 
   const createTemplate = (templateId: string) => {
     const template: any = templates.find((t: any) => t?.id === templateId);
@@ -70,7 +91,7 @@ export const Template = ({
           />
         </Flex>
         <Flex wrap={'wrap'} gap={6}>
-          <Box
+          <Button
             className="ph-no-capture"
             alignItems={'center'}
             justifyContent={'center'}
@@ -78,21 +99,27 @@ export const Template = ({
             display={'flex'}
             w={'15rem'}
             h={'16rem'}
+            color="gray.500"
             bg={'white'}
             borderWidth={'1px'}
             borderColor={'brand.slate.200'}
             borderRadius={5}
+            _hover={{ color: 'white' }}
             cursor={'pointer'}
+            isDisabled={
+              isCreateListingAllowed !== undefined &&
+              isCreateListingAllowed === false
+            }
             onClick={() => {
               posthog.capture('start from scratch_sponsor');
               setSteps(2);
             }}
           >
-            <AddIcon color="gray.500" mb="1rem" />
-            <Text color="gray.500" fontSize="1rem" fontWeight={500}>
+            <AddIcon mb="1rem" />
+            <Text fontSize="1rem" fontWeight={500}>
               Start from Scratch
             </Text>
-          </Box>
+          </Button>
           {templates.map((template: any) => {
             const sponsors: any = [
               ...new Set(template?.Bounties?.map((b: any) => b.sponsor)),
@@ -200,6 +227,10 @@ export const Template = ({
                     <Button
                       className="ph-no-capture"
                       w="full"
+                      isDisabled={
+                        isCreateListingAllowed !== undefined &&
+                        isCreateListingAllowed === false
+                      }
                       onClick={() => {
                         posthog.capture('template_sponsor');
                         createTemplate(template?.id);

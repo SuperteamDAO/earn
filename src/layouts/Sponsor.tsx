@@ -1,11 +1,14 @@
 import { AddIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { type ReactNode, useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
+import { LuLock } from 'react-icons/lu';
 import {
   MdList,
   MdOutlineChatBubbleOutline,
@@ -15,6 +18,7 @@ import {
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
 import {
   CreateListingModal,
@@ -25,6 +29,13 @@ import {
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUpdateUser, useUser } from '@/store/user';
+
+const isCreateListingAllowedFn = async (): Promise<boolean> => {
+  const { data } = await axios.get<{ allowed: boolean }>(
+    `/api/sponsor-dashboard/listings/is-create-allowed`,
+  );
+  return data.allowed === true;
+};
 
 interface LinkItemProps {
   name: string;
@@ -50,6 +61,14 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
       onOpen();
     }
   }, [open]);
+
+  const {
+    data: isCreateListingAllowed,
+    refetch: isCreateListingAllowedRefetch,
+  } = useQuery({
+    queryKey: ['isCreateListingAllowed'],
+    queryFn: isCreateListingAllowedFn,
+  });
 
   const {
     isOpen: isSponsorInfoModalOpen,
@@ -79,6 +98,7 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
 
   // ENTITY NAME TO SPONSORS
   useEffect(() => {
+    isCreateListingAllowedRefetch();
     const timer = setTimeout(async () => {
       if (user) {
         if (
@@ -207,6 +227,10 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
                 w="full"
                 py={'22px'}
                 fontSize="md"
+                isDisabled={
+                  isCreateListingAllowed !== undefined &&
+                  isCreateListingAllowed === false
+                }
                 leftIcon={<AddIcon w={3} h={3} />}
                 onClick={() => {
                   posthog.capture('create new listing_sponsor');
@@ -215,6 +239,12 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
                 variant="solid"
               >
                 Create New Listing
+                {isCreateListingAllowed !== undefined &&
+                  isCreateListingAllowed === false && (
+                    <Tooltip label="Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.">
+                      <Icon as={LuLock} ml={2} />
+                    </Tooltip>
+                  )}
               </Button>
             ) : (
               <Button
