@@ -12,7 +12,12 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import React, {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
 import { TERMS_OF_USE } from '@/constants';
@@ -65,6 +70,15 @@ export const SignIn = ({
   };
 
   const isError = hasAttemptedSubmit && !isEmailValid;
+
+  useEffect(() => {
+    const emailInput = localStorage.getItem('emailForSignIn');
+    if (emailInput) {
+      setEmail(emailInput);
+      setIsEmailValid(validateEmail(emailInput));
+      setHasGmail(emailInput.includes('@gmail.com'));
+    }
+  }, []);
 
   return (
     <>
