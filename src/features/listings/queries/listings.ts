@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { type Listing } from '../types';
 
-interface FetchListingsParams {
+interface ListingsParams {
   take?: number;
   filter?: string;
   deadline?: string;
@@ -12,16 +12,13 @@ interface FetchListingsParams {
   order?: 'asc' | 'desc';
 }
 
-const fetchListings = async (
-  params: FetchListingsParams,
-): Promise<Listing[]> => {
+const fetchListings = async (params: ListingsParams): Promise<Listing[]> => {
   const { data } = await axios.get('/api/listings/', { params });
   return data;
 };
 
-export const useGetListings = (params: FetchListingsParams) => {
-  return useQuery({
+export const listingsQuery = (params: ListingsParams) =>
+  queryOptions({
     queryKey: ['listings', params],
     queryFn: () => fetchListings(params),
   });
-};

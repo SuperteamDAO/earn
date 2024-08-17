@@ -3,12 +3,13 @@ import {
   type TalentRankingSkills,
   type TalentRankingTimeframe,
 } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getServerSession } from 'next-auth/next';
 import { useEffect, useState, useTransition } from 'react';
 
-import { TotalStats, useGetTotals } from '@/features/home';
+import { totalsQuery, TotalStats } from '@/features/home';
 import {
   Banner,
   ComingSoon,
@@ -45,7 +46,7 @@ function TalentLeaderboard({
   count,
   userRank,
 }: Props) {
-  const { data: totals, isLoading: isTotalsLoading } = useGetTotals();
+  const { data: totals, isLoading: isTotalsLoading } = useQuery(totalsQuery);
 
   const [timeframe, setTimeframe] = useState<TIMEFRAME>(curTimeframe);
   const [skill, setSkill] = useState<SKILL>(curSkill);

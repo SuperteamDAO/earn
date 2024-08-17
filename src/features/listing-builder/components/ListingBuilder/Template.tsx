@@ -1,7 +1,6 @@
 import { AddIcon, ViewIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
 
@@ -9,6 +8,7 @@ import { type MultiSelectOptions } from '@/constants';
 import { getListingTypeLabel } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
+import { listingTemplatesQuery } from '../../queries/listing-templates';
 import { useListingFormStore } from '../../store';
 import { splitSkills } from '../../utils';
 
@@ -19,13 +19,6 @@ interface Props {
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
 }
 
-const fetchListingTemplates = async (type: string) => {
-  const response = await axios.get('/api/listings/templates/', {
-    params: { type },
-  });
-  return response.data;
-};
-
 export const Template = ({
   type,
   setSteps,
@@ -35,10 +28,7 @@ export const Template = ({
   const { updateState } = useListingFormStore();
   const posthog = usePostHog();
 
-  const { data: templates = [] } = useQuery({
-    queryKey: ['listingTemplates', type],
-    queryFn: () => fetchListingTemplates(type),
-  });
+  const { data: templates = [] } = useQuery(listingTemplatesQuery(type));
 
   const createTemplate = (templateId: string) => {
     const template: any = templates.find((t: any) => t?.id === templateId);

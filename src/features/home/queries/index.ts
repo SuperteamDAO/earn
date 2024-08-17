@@ -1,2 +1,2 @@
-export * from './get-totals';
-export * from './get-user-stats';
+export * from './totals';
+export * from './user-stats';

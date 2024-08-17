@@ -1,5 +1,6 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -18,9 +19,9 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
 import {
   CreateListingModal,
+  latestActiveSlugQuery,
   NavItem,
   SponsorInfoModal,
-  useLatestActiveSlug,
 } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -63,8 +64,8 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
     onClose: onScoutAnnounceModalClose,
   } = useDisclosure();
 
-  const { data: latestActiveSlug } = useLatestActiveSlug(
-    !!user?.currentSponsorId,
+  const { data: latestActiveSlug } = useQuery(
+    latestActiveSlugQuery(!!user?.currentSponsorId),
   );
 
   function sponsorInfoCloseAltered() {

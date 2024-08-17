@@ -7,10 +7,11 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
-import { useGetUserStats } from '@/features/home';
+import { userStatsQuery } from '@/features/home';
 import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
@@ -37,7 +38,7 @@ const Stat = ({ value, label }: StatProps) => {
 export const UserStatsBanner = () => {
   const { user } = useUser();
   const { data: session, status } = useSession();
-  const { data: stats, isLoading } = useGetUserStats();
+  const { data: stats, isLoading } = useQuery(userStatsQuery);
   const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
 
   if (!user) return <></>;
