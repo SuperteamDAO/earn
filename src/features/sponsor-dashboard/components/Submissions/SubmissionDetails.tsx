@@ -28,12 +28,12 @@ import {
   SystemProgram,
   Transaction,
 } from '@solana/web3.js';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
-import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
-import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import React, { type Dispatch, type SetStateAction } from 'react';
 import { BsTwitterX } from 'react-icons/bs';
 import {
   MdArrowDropDown,
@@ -62,12 +62,8 @@ interface Props {
   setSelectedSubmission: Dispatch<
     SetStateAction<SubmissionWithUser | undefined>
   >;
-  setTotalWinners: Dispatch<SetStateAction<number>>;
-  rewards: number[];
-  usedPositions: number[];
-  setUsedPositions: Dispatch<SetStateAction<number[]>>;
-  setTotalPaymentsMade: Dispatch<SetStateAction<number>>;
   isHackathonPage?: boolean;
+  updateBountyData: (updater: (old: any) => any) => void;
 }
 
 export const SubmissionDetails = ({
@@ -76,16 +72,9 @@ export const SubmissionDetails = ({
   setSubmissions,
   selectedSubmission,
   setSelectedSubmission,
-  setTotalWinners,
-  rewards,
-  usedPositions,
-  setUsedPositions,
-  setTotalPaymentsMade,
   isHackathonPage,
+  updateBountyData,
 }: Props) => {
-  const [isSelectingWinner, setIsSelectingWinner] = useState(false);
-  const [isPaying, setIsPaying] = useState(false);
-
   const { connected, publicKey, sendTransaction } = useWallet();
   const posthog = usePostHog();
 
@@ -98,84 +87,85 @@ export const SubmissionDetails = ({
     { ssr: false },
   );
 
-  const selectWinner = async (
-    position: number,
-    id: string | undefined,
-    ask: number | undefined,
-  ) => {
-    if (!id) return;
-    setIsSelectingWinner(true);
-    try {
-      await axios.post(`/api/sponsor-dashboard/submission/toggle-winner/`, {
+  const selectWinnerMutation = useMutation({
+    mutationFn: ({
+      id,
+      position,
+      ask,
+    }: {
+      id: string;
+      position: number;
+      ask: number;
+    }) =>
+      axios.post(`/api/sponsor-dashboard/submission/toggle-winner/`, {
         id,
         isWinner: !!position,
         winnerPosition: position || null,
-        ask: ask,
+        ask,
+      }),
+    onSuccess: (_, variables) => {
+      setSubmissions((prevSubmissions) => {
+        const newSubmissions = prevSubmissions.map((submission) =>
+          submission.id === variables.id
+            ? {
+                ...submission,
+                isWinner: !!variables.position,
+                winnerPosition: variables.position || undefined,
+              }
+            : submission,
+        );
+
+        const oldPosition = prevSubmissions.find(
+          (s) => s.id === variables.id,
+        )?.winnerPosition;
+        let newUsedPositions = [...bounty!.usedPositions];
+
+        if (oldPosition) {
+          newUsedPositions = newUsedPositions.filter(
+            (pos) => pos !== oldPosition,
+          );
+        }
+
+        if (
+          variables.position &&
+          !newUsedPositions.includes(variables.position)
+        ) {
+          newUsedPositions.push(variables.position);
+        }
+
+        updateBountyData((old) => ({
+          ...old,
+          usedPositions: newUsedPositions,
+          totalWinners: newUsedPositions.length,
+        }));
+
+        return newSubmissions;
       });
 
-      const submissionIndex = submissions.findIndex((s) => s.id === id);
-      if (submissionIndex >= 0) {
-        const oldPosition: number =
-          Number(submissions[submissionIndex]?.winnerPosition) || 0;
+      setSelectedSubmission((prev) =>
+        prev?.id === variables.id
+          ? {
+              ...prev,
+              isWinner: !!variables.position,
+              winnerPosition: variables.position || undefined,
+            }
+          : prev,
+      );
+    },
+  });
 
-        console.log('new position - ', position);
-        console.log('old position - ', oldPosition);
-        let newUsedPositions = [...usedPositions];
-        if (oldPosition && oldPosition !== position) {
-          const index = newUsedPositions.indexOf(oldPosition);
-          if (index !== -1) {
-            newUsedPositions = [
-              ...newUsedPositions.slice(0, index),
-              ...newUsedPositions.slice(index + 1),
-            ];
-          }
-        }
-
-        if (position) {
-          if (
-            position === BONUS_REWARD_POSITION &&
-            newUsedPositions.filter((n) => n === BONUS_REWARD_POSITION).length <
-              (bounty?.maxBonusSpots ?? 0)
-          ) {
-            newUsedPositions.push(position);
-          } else if (!newUsedPositions.includes(position)) {
-            newUsedPositions.push(position);
-          }
-        }
-        setUsedPositions(newUsedPositions);
-
-        const updatedSubmission: SubmissionWithUser = {
-          ...(submissions[submissionIndex] as SubmissionWithUser),
-          isWinner: !!position,
-          winnerPosition: (position as keyof Rewards) || undefined,
-        };
-        const newSubmissions = [...submissions];
-        newSubmissions[submissionIndex] = updatedSubmission;
-        setSubmissions(newSubmissions);
-        setSelectedSubmission(updatedSubmission);
-        setTotalWinners(newUsedPositions.length);
-      }
-      setIsSelectingWinner(false);
-    } catch (e) {
-      setIsSelectingWinner(false);
-    }
-  };
-
-  const { connection } = useConnection();
-
-  const handlePayout = async ({
-    id,
-    token,
-    amount,
-    receiver,
-  }: {
-    id: string;
-    token: string;
-    amount: number;
-    receiver: PublicKey;
-  }) => {
-    setIsPaying(true);
-    try {
+  const payoutMutation = useMutation({
+    mutationFn: async ({
+      id,
+      token,
+      amount,
+      receiver,
+    }: {
+      id: string;
+      token: string;
+      amount: number;
+      receiver: PublicKey;
+    }) => {
       const transaction = new Transaction();
       const tokenDetails = tokenList.find((e) => e.tokenSymbol === token);
       const tokenAddress = tokenDetails?.mintAddress as string;
@@ -239,80 +229,81 @@ export const SubmissionDetails = ({
             if (res.err) {
               reject(new Error('Transaction failed'));
             } else {
-              try {
-                await axios.post(
-                  `/api/sponsor-dashboard/submission/add-payment/`,
-                  {
-                    id,
-                    isPaid: true,
-                    paymentDetails: {
-                      txId: signature,
-                    },
-                  },
-                );
-
-                const submissionIndex = submissions.findIndex(
-                  (s) => s.id === id,
-                );
-                if (submissionIndex >= 0) {
-                  const updatedSubmission: SubmissionWithUser = {
-                    ...(submissions[submissionIndex] as SubmissionWithUser),
-                    isPaid: true,
-                    paymentDetails: {
-                      txId: signature,
-                    },
-                  };
-                  const newSubmissions = [...submissions];
-                  newSubmissions[submissionIndex] = updatedSubmission;
-                  setSubmissions(newSubmissions);
-                  setSelectedSubmission(updatedSubmission);
-                  setTotalPaymentsMade(
-                    (prevTotalPaymentsMade: number) =>
-                      prevTotalPaymentsMade + 1,
-                  );
-                }
-                resolve(res);
-              } catch (error) {
-                reject(new Error('Payment record update failed'));
-              }
+              resolve(res);
             }
           },
           'confirmed',
         );
       });
 
-      setIsPaying(false);
-    } catch (error) {
-      console.log(error);
-      log.error('Sponsor unable to pay');
-      setIsPaying(false);
-    }
-  };
+      return signature;
+    },
+    onSuccess: async (signature, variables) => {
+      await axios.post(`/api/sponsor-dashboard/submission/add-payment/`, {
+        id: variables.id,
+        isPaid: true,
+        paymentDetails: {
+          txId: signature,
+        },
+      });
 
-  const selectLabel = async (
-    label: SubmissionLabels,
-    id: string | undefined,
-  ) => {
-    try {
-      await axios.post(`/api/sponsor-dashboard/submission/update-label/`, {
+      updateBountyData((old) => ({
+        ...old,
+        totalPaymentsMade: old.totalPaymentsMade + 1,
+      }));
+
+      setSubmissions((prevSubmissions) =>
+        prevSubmissions.map((submission) =>
+          submission.id === variables.id
+            ? {
+                ...submission,
+                isPaid: true,
+                paymentDetails: {
+                  txId: signature,
+                },
+              }
+            : submission,
+        ),
+      );
+
+      setSelectedSubmission((prevSelected) =>
+        prevSelected && prevSelected.id === variables.id
+          ? {
+              ...prevSelected,
+              isPaid: true,
+              paymentDetails: {
+                txId: signature,
+              },
+            }
+          : prevSelected,
+      );
+    },
+  });
+
+  const updateLabelMutation = useMutation({
+    mutationFn: ({ label, id }: { label: SubmissionLabels; id: string }) =>
+      axios.post(`/api/sponsor-dashboard/submission/update-label/`, {
         label,
         id,
-      });
-      const submissionIndex = submissions.findIndex((s) => s.id === id);
+      }),
+    onSuccess: (_, variables) => {
+      const submissionIndex = submissions.findIndex(
+        (s) => s.id === variables.id,
+      );
       if (submissionIndex >= 0) {
         const updatedSubmission: SubmissionWithUser = {
-          ...(submissions[submissionIndex] as SubmissionWithUser),
-          label,
+          ...submissions[submissionIndex],
+          label: variables.label,
         };
         const newSubmissions = [...submissions];
         newSubmissions[submissionIndex] = updatedSubmission;
         setSubmissions(newSubmissions);
         setSelectedSubmission(updatedSubmission);
       }
-    } catch (e) {
-      console.log(e);
-    }
-  };
+    },
+  });
+
+  const { connection } = useConnection();
 
   let bg, color;
 
@@ -420,7 +411,7 @@ export const SubmissionDetails = ({
                             minW={'120px'}
                             mr={4}
                             isDisabled={!bounty?.isWinnersAnnounced}
-                            isLoading={isPaying}
+                            isLoading={payoutMutation.isPending}
                             loadingText={'Paying...'}
                             onClick={async () => {
                               if (!selectedSubmission?.user.publicKey) {
@@ -430,7 +421,7 @@ export const SubmissionDetails = ({
                                 return;
                               }
                               posthog.capture('pay winner_sponsor');
-                              handlePayout({
+                              payoutMutation.mutate({
                                 id: selectedSubmission?.id as string,
                                 token: bounty?.token as string,
                                 amount: bounty?.rewards![
@@ -494,7 +485,7 @@ export const SubmissionDetails = ({
                         View Payment Txn
                       </Button>
                     )}
-                  {isSelectingWinner && (
+                  {selectWinnerMutation.isPending && (
                     <Spinner color="brand.slate.400" size="sm" />
                   )}
                   {!bounty?.isWinnersAnnounced && (
@@ -538,10 +529,10 @@ export const SubmissionDetails = ({
                             key={option.value}
                             _focus={{ bg: 'brand.slate.100' }}
                             onClick={() =>
-                              selectLabel(
-                                option.value as SubmissionLabels,
-                                selectedSubmission?.id,
-                              )
+                              updateLabelMutation.mutate({
+                                label: option.value as SubmissionLabels,
+                                id: selectedSubmission?.id!,
+                              })
                             }
                           >
                             <Tag px={3} py={1} bg={option.bg} rounded="full">
@@ -583,11 +574,11 @@ export const SubmissionDetails = ({
                           !!bounty?.isWinnersAnnounced || isHackathonPage
                         }
                         onChange={(e) =>
-                          selectWinner(
-                            Number(e.target.value),
-                            selectedSubmission?.id,
-                            selectedSubmission?.ask,
-                          )
+                          selectWinnerMutation.mutate({
+                            id: selectedSubmission?.id!,
+                            position: Number(e.target.value),
+                            ask: selectedSubmission?.ask!,
+                          })
                         }
                         value={
                           selectedSubmission?.isWinner
@@ -596,18 +587,12 @@ export const SubmissionDetails = ({
                         }
                       >
                         <option>Select Winner</option>
-                        {rewards.map((reward) => {
-                          console.log(
-                            'used',
-                            usedPositions.filter(
-                              (u) => u === BONUS_REWARD_POSITION,
-                            ).length,
-                          );
-                          console.log('max bonus spots', bounty?.maxBonusSpots);
-                          let isRewardUsed = usedPositions.includes(reward);
+                        {bounty?.prizes.map((reward) => {
+                          let isRewardUsed =
+                            bounty.usedPositions.includes(reward);
                           if (reward === BONUS_REWARD_POSITION) {
                             if (
-                              usedPositions.filter(
+                              bounty.usedPositions.filter(
                                 (u) => u === BONUS_REWARD_POSITION,
                               ).length < (bounty?.maxBonusSpots ?? 0)
                             ) {

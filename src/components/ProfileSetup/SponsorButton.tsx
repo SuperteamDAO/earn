@@ -1,42 +1,41 @@
 import { Alert, AlertIcon, Button } from '@chakra-ui/react';
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BsBriefcaseFill } from 'react-icons/bs';
 
-import { SponsorStore } from '@/store/sponsor';
+import { userSponsorQuery } from '@/queries/user-sponsor';
 import { useUser } from '@/store/user';
 
 export function SponsorButton() {
   const router = useRouter();
-  const { setCurrentSponsor } = SponsorStore();
   const { user } = useUser();
-  const [isLoading, setIsLoading] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
 
-  const checkSponsor = async () => {
+  const { data: sponsors, refetch, isFetching } = useQuery(userSponsorQuery);
+
+  useEffect(() => {
+    if (sponsors) {
+      if (sponsors.length) {
+        router.push('/new/listing');
+      } else {
+        router.push('/new/sponsor');
+      }
+    }
+  }, [sponsors, router]);
+
+  const handleClick = () => {
     if (!user || !user?.id) {
       setShowMessage(true);
     } else {
       setShowMessage(false);
-      setIsLoading(true);
-      try {
-        const sponsors = await axios.get('/api/user-sponsors');
-        if (sponsors?.data?.length) {
-          setCurrentSponsor(sponsors?.data[0]?.sponsor);
-          router.push('/new/listing');
-        } else {
-          router.push('/new/sponsor');
-        }
-      } catch (error) {
-        setIsLoading(false);
-      }
+      refetch();
     }
   };
 
   return (
     <>
-      {!!showMessage && (
+      {showMessage && (
         <Alert mb={4} status="warning">
           <AlertIcon />
           Please log in to continue!
@@ -49,10 +48,10 @@ export function SponsorButton() {
         fontSize={'0.9rem'}
         bg={'#6562FF'}
         _hover={{ bg: '#6562FF' }}
-        isLoading={!!isLoading}
+        isLoading={isFetching}
         leftIcon={<BsBriefcaseFill />}
         loadingText="Redirecting..."
-        onClick={() => checkSponsor()}
+        onClick={handleClick}
       >
         Make Your Sponsor Profile
       </Button>

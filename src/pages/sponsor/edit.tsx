@@ -32,7 +32,6 @@ import { sponsorQuery } from '@/features/sponsor-dashboard';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { SponsorStore } from '@/store/sponsor';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 
@@ -66,7 +65,6 @@ const UpdateSponsor = () => {
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const { user, refetchUser } = useUser();
-  const { setCurrentSponsor } = SponsorStore();
 
   const {
     setSlug,
@@ -116,7 +114,6 @@ const UpdateSponsor = () => {
       await axios.post('/api/sponsors/edit', {
         ...sponsor,
       });
-      setCurrentSponsor(sponsor);
       await refetchUser();
 
       router.push('/dashboard/listings');

@@ -41,14 +41,12 @@ import { SponsorPrize } from '../SponsorPrize';
 interface Props {
   bounty: Listing | null;
   onOpen: () => void;
-  totalSubmissions: number;
   isHackathonPage?: boolean;
 }
 
 export const SubmissionHeader = ({
   bounty,
   onOpen,
-  totalSubmissions,
   isHackathonPage,
 }: Props) => {
   const [isExporting, setIsExporting] = useState(false);
@@ -179,7 +177,7 @@ export const SubmissionHeader = ({
         <Box>
           <Text color="brand.slate.500">Submissions</Text>
           <Text mt={3} color="brand.slate.600" fontWeight={600}>
-            {totalSubmissions}
+            {bounty?.totalSubmissions}
           </Text>
         </Box>
         <Box>

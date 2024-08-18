@@ -20,7 +20,7 @@ interface Props {
 }
 
 export function InviteView({ invite }: Props) {
-  const { user } = useUser();
+  const { user, refetchUser } = useUser();
   const updateUser = useUpdateUser();
   const router = useRouter();
   const [triggerLogin, setTriggerLogin] = useState(false);
@@ -65,9 +65,9 @@ export function InviteView({ invite }: Props) {
 
   useEffect(() => {
     const makeUser = async () => {
-      const userDetails = await axios.get('/api/user/');
-      if (invite?.email && acceptUser) {
-        acceptUser(userDetails.data);
+      await refetchUser();
+      if (invite?.email && acceptUser && user) {
+        acceptUser(user);
       }
     };
     inviteInfo && makeUser();

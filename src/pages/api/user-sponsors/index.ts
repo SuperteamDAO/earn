@@ -11,9 +11,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   try {
     const result = await prisma.userSponsors.findMany({
       where: { userId },
-      orderBy: {
-        updatedAt: 'asc',
-      },
+      orderBy: { updatedAt: 'asc' },
       include: { sponsor: true },
     });
 
