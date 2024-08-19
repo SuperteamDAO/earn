@@ -25,7 +25,6 @@ function EditBounty({ listing }: Props) {
       const bountyDetails = await axios.get(
         `/api/sponsor-dashboard/${listing}/listing?type=hackathon`,
       );
-      console.log('bountyDetails', bountyDetails.data);
       if (bountyDetails.data.hackathonId !== userInfo?.hackathonId) {
         router.push(`/dashboard/hackathon/`);
       } else {
