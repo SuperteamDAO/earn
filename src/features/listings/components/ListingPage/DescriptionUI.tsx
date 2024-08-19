@@ -7,7 +7,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import parse, { type HTMLReactParserOptions } from 'html-react-parser';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 interface Props {
   description?: string;
@@ -28,21 +28,30 @@ export function DescriptionUI({ description }: Props) {
   const [showMore, setShowMore] = useState(true);
   const [showCollapser, setShowCollapser] = useState(false);
   const descriptionRef = useRef<HTMLDivElement>(null);
-  const isMD = useBreakpointValue({ base: false, md: true });
+  const isNotMD = useBreakpointValue({ base: true, md: false });
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (descriptionRef.current) {
+  const decideCollapser = useCallback(() => {
+    if (descriptionRef) {
       const fiftyVH = window.innerHeight / 2;
-      if (descriptionRef.current.clientHeight > fiftyVH && !isMD) {
+      if (isNotMD && (descriptionRef.current?.clientHeight ?? 0) > fiftyVH) {
         setShowCollapser(true);
         setShowMore(false);
       }
     }
-  }, [descriptionRef.current]);
+  }, [descriptionRef.current, isNotMD]);
+
+  useEffect(() => {
+    // Use a timeout to ensure the DOM has been updated
+    const timer = setTimeout(() => {
+      decideCollapser();
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [decideCollapser, isMounted]);
 
   if (!isMounted) {
     return null;

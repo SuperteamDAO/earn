@@ -2,7 +2,7 @@ export * from './skills';
 export * from './suggestions';
 
 export const calculateTotalOfArray = (values: number[]) =>
-  values.reduce((a, b) => a + b, 0);
+  values.reduce((a, b) => (a ?? 0) + (b ?? 0), 0);
 
 export const caculateBonus = (
   bonusSpots: number | undefined,
@@ -12,5 +12,5 @@ export const caculateBonus = (
 export const formatTotalPrice = (total: number) =>
   new Intl.NumberFormat('en-US', {
     currency: 'USD',
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(total as number);

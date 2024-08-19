@@ -100,8 +100,7 @@ export const SubmissionCard = ({
     <LinkBox
       pos={'relative'}
       overflow={'hidden'}
-      w={{ base: 'full', md: 72 }}
-      p={4}
+      w={{ base: 'full', md: 60 }}
       bg={'white'}
       cursor={'pointer'}
       rounded={'md'}
@@ -135,7 +134,7 @@ export const SubmissionCard = ({
           </Box>
         )}
       </HStack>
-      <LinkOverlay href={`${router.asPath}/${id}`}>
+      <LinkOverlay w="full" href={`${router.asPath}/${id}`}>
         <Image
           w={'full'}
           h={48}

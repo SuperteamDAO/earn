@@ -136,6 +136,7 @@ export const GrantApplicationButton = ({
           <AuthWrapper style={{ w: 'full', direction: 'column' }}>
             <Button
               w={'full'}
+              mt={grant?.link && !grant?.isNative ? 4 : 0}
               mb={{ base: 12, md: 5 }}
               bg={buttonBG}
               _hover={{ bg: buttonBG }}

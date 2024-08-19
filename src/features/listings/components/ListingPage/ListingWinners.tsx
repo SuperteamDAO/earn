@@ -78,7 +78,7 @@ export function ListingWinners({ bounty }: Props) {
       >
         🎉 Winners
       </Text>
-      <Box mx={3}>
+      <Box mx={3} mt={3}>
         <Box
           w="full"
           px={{ base: 3, md: 10 }}
@@ -86,12 +86,7 @@ export function ListingWinners({ bounty }: Props) {
           color="white"
           rounded="md"
         >
-          <Flex
-            align="center"
-            justify="center"
-            wrap="wrap"
-            gap={{ base: 5, md: 10 }}
-          >
+          <Flex align="center" justify="center" wrap="wrap" gap={10}>
             {submissions.slice(0, 3).map((submission) => (
               <NextLink
                 key={submission.id}
@@ -110,26 +105,26 @@ export function ListingWinners({ bounty }: Props) {
                   cursor="pointer"
                 >
                   <Box pos="relative">
-                    <Center
-                      pos="absolute"
-                      bottom={-3}
-                      left="50%"
-                      w={6}
-                      h={6}
-                      px={1}
-                      color="brand.slate.500"
-                      fontSize={'xx-small'}
-                      fontWeight={600}
-                      textAlign="center"
-                      textTransform="capitalize"
-                      bg="#fff"
-                      transform="translateX(-50%)"
-                      rounded={'full'}
-                    >
-                      {isProject
-                        ? 'Winner'
-                        : nthLabelGenerator(submission?.winnerPosition ?? 0)}
-                    </Center>
+                    {!isProject && (
+                      <Center
+                        pos="absolute"
+                        bottom={-3}
+                        left="50%"
+                        w={6}
+                        h={6}
+                        px={1}
+                        color="brand.slate.500"
+                        fontSize={'xx-small'}
+                        fontWeight={600}
+                        textAlign="center"
+                        textTransform="capitalize"
+                        bg="#fff"
+                        transform="translateX(-50%)"
+                        rounded={'full'}
+                      >
+                        {nthLabelGenerator(submission?.winnerPosition ?? 0)}
+                      </Center>
+                    )}
                     <EarnAvatar
                       size={isMD ? '64px' : '52px'}
                       id={submission?.user?.id}
@@ -137,11 +132,13 @@ export function ListingWinners({ bounty }: Props) {
                     />
                   </Box>
                   <Text
+                    w={{ base: 'min-content', md: 'auto' }}
                     pt={4}
                     color="brand.slate.700"
                     fontSize={{ base: 'xs', md: 'sm' }}
                     fontWeight={600}
                     textAlign={'center'}
+                    noOfLines={2}
                   >{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</Text>
                   <Text
                     color="brand.slate.500"

@@ -376,6 +376,9 @@ export const ListingBasic = ({
                 </Flex>
               </Flex>
             )}
+            <FormErrorMessage>
+              {errors.title ? <>{errors.title.message}</> : <></>}
+            </FormErrorMessage>
           </FormControl>
           <FormControl w="full" mb={5} isInvalid={!!errors.slug} isRequired>
             <Flex>
@@ -430,7 +433,7 @@ export const ListingBasic = ({
             skills={skills}
             subSkills={subSkills}
           />
-          <FormControl w="full" mb={5}>
+          <FormControl w="full" mb={5} isInvalid={!!errors.region}>
             <Flex>
               <ListingFormLabel htmlFor="region">
                 Listing Geography
@@ -445,6 +448,10 @@ export const ListingBasic = ({
                 </option>
               ))}
             </Select>
+
+            <FormErrorMessage>
+              {errors.region ? <>{errors.region.message}</> : <></>}
+            </FormErrorMessage>
           </FormControl>
           <FormControl
             w="full"
@@ -474,9 +481,17 @@ export const ListingBasic = ({
                 URL needs to contain &quot;https://&quot; prefix
               </Text>
             )}
+            <FormErrorMessage>
+              {errors.pocSocials ? <>{errors.pocSocials.message}</> : <></>}
+            </FormErrorMessage>
           </FormControl>
           {isProject && (
-            <FormControl w="full" mb={5} isRequired={isProject}>
+            <FormControl
+              w="full"
+              mb={5}
+              isInvalid={!!errors.applicationType}
+              isRequired={isProject}
+            >
               <Flex>
                 <ListingFormLabel htmlFor="applicationType">
                   Application Type
@@ -498,6 +513,14 @@ export const ListingBasic = ({
                 <option value="fixed">Fixed Deadline</option>
                 <option value="rolling">Rolling Deadline</option>
               </Select>
+
+              <FormErrorMessage>
+                {errors.applicationType ? (
+                  <>{errors.applicationType.message}</>
+                ) : (
+                  <></>
+                )}
+              </FormErrorMessage>
             </FormControl>
           )}
           {type !== 'hackathon' && applicationType !== 'rolling' && (
@@ -564,6 +587,9 @@ export const ListingBasic = ({
                   </Tag>
                 ))}
               </Flex>
+              <FormErrorMessage>
+                {errors.deadline ? <>{errors.deadline.message}</> : <></>}
+              </FormErrorMessage>
             </FormControl>
           )}
           {isProject && (
@@ -592,9 +618,16 @@ export const ListingBasic = ({
                   </option>
                 ))}
               </Select>
+              <FormErrorMessage>
+                {errors.timeToComplete ? (
+                  <>{errors.timeToComplete.message}</>
+                ) : (
+                  <></>
+                )}
+              </FormErrorMessage>
             </FormControl>
           )}
-          <FormControl w="full" mb={5}>
+          <FormControl w="full" mb={5} isInvalid={!!errors.referredBy}>
             <Flex>
               <ListingFormLabel htmlFor="referredBy">
                 Referred By
@@ -609,6 +642,9 @@ export const ListingBasic = ({
                 </option>
               ))}
             </Select>
+            <FormErrorMessage>
+              {errors.referredBy ? <>{errors.referredBy.message}</> : <></>}
+            </FormErrorMessage>
           </FormControl>
           <FormControl alignItems="center" gap={3} display="flex">
             <Flex>
@@ -623,6 +659,9 @@ export const ListingBasic = ({
               {...register('isPrivate')}
               isChecked={isPrivate}
             />
+            <FormErrorMessage>
+              {errors.isPrivate ? <>{errors.isPrivate.message}</> : <></>}
+            </FormErrorMessage>
           </FormControl>
           <VStack gap={4} w={'full'} mt={6}>
             <Button
@@ -631,7 +670,6 @@ export const ListingBasic = ({
               py={6}
               fontWeight={500}
               borderRadius="sm"
-              onClick={handleSubmit(onSubmit)}
               type="submit"
               variant={'solid'}
             >

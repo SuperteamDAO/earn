@@ -141,12 +141,25 @@ export const ListingPayments = ({
   const maxBonusSpots = watch('maxBonusSpots');
 
   useEffect(() => {
-    if (maxBonusSpots) {
-      if (maxBonusSpots < 1) setWarningMessage("# of bonus prizes can't be 0");
+    console.log('max bonus', maxBonusSpots);
+    if (maxBonusSpots !== undefined) {
       if (maxBonusSpots > MAX_BONUS_SPOTS)
         setWarningMessage('Maximum number of bonus prizes allow is 50');
+      if (maxBonusSpots === 0) {
+        setWarningMessage("# of bonus prizes can't be 0");
+      }
     }
   }, [maxBonusSpots]);
+
+  useEffect(() => {
+    if (rewards && rewards[BONUS_REWARD_POSITION] !== undefined) {
+      if (rewards[BONUS_REWARD_POSITION] === 0) {
+        setWarningMessage(`Bonus per prize can't be 0`);
+      } else if (rewards[BONUS_REWARD_POSITION] < 0.01) {
+        setWarningMessage(`Bonus per prize can't be less than 0.01`);
+      }
+    }
+  }, [rewards]);
 
   const [searchTerm, setSearchTerm] = useState<string | undefined>(
     tokenList.find((t) => t.tokenSymbol === token)?.tokenName,
@@ -283,9 +296,11 @@ export const ListingPayments = ({
       } else if (
         maxBonusSpots &&
         maxBonusSpots > 0 &&
-        !rewards?.[BONUS_REWARD_POSITION]
+        rewards?.[BONUS_REWARD_POSITION] === undefined
       ) {
         errorMessage = 'Bonus Reward is not mentioned';
+      } else if (rewards?.[BONUS_REWARD_POSITION] === 0) {
+        errorMessage = `Bonus per prize can't be 0`;
       } else if (cleanRewards(rewards).length !== prizes.length) {
         errorMessage = 'Please fill all podium ranks or remove unused';
       }
@@ -407,8 +422,10 @@ export const ListingPayments = ({
     cleanRewards(rewards, true).length + (maxBonusSpots ?? 0);
 
   const calculateTotalReward = () =>
-    calculateTotalOfArray(cleanRewardPrizes(rewards, true)) +
-    caculateBonus(maxBonusSpots ?? 0, rewards?.[BONUS_REWARD_POSITION] ?? 0);
+    calculateTotalOfArray([
+      ...cleanRewardPrizes(rewards, true),
+      caculateBonus(maxBonusSpots || 0, rewards?.[BONUS_REWARD_POSITION] || 0),
+    ]);
 
   useEffect(() => {
     if (compensationType === 'fixed')
@@ -835,7 +852,7 @@ export const ListingPayments = ({
                       border={'none'}
                       defaultValue={el.defaultValue}
                       focusBorderColor="rgba(0,0,0,0)"
-                      min={1}
+                      min={el.value === BONUS_REWARD_POSITION ? 0.01 : 0}
                       onChange={(valueString) =>
                         handlePrizeValueChange(
                           el.value,
@@ -883,10 +900,15 @@ export const ListingPayments = ({
                       </Button>
                     )}
                   </Flex>
+                  {!!warningMessage && el.value === BONUS_REWARD_POSITION && (
+                    <Text pt={2} color="yellow.500" fontSize="sm">
+                      {warningMessage}
+                    </Text>
+                  )}
                   {el.value === BONUS_REWARD_POSITION &&
                     !!rewards?.[BONUS_REWARD_POSITION] &&
                     rewards?.[BONUS_REWARD_POSITION] > 0 &&
-                    maxBonusSpots &&
+                    !!maxBonusSpots &&
                     maxBonusSpots > 0 && (
                       <FormHelperText
                         display={'flex'}
@@ -994,6 +1016,7 @@ export const ListingPayments = ({
                         },
                       ];
                       setPrizes(newPrize);
+                      handleBonusChange(1);
                     }}
                   >
                     Add Bonus Prize
@@ -1052,7 +1075,6 @@ export const ListingPayments = ({
                 Update Listing
               </Button>
             )}
-            {warningMessage && <Text color="yellow.500">{warningMessage}</Text>}
             {errorMessage && <Text color="red.500">{errorMessage}</Text>}
           </VStack>
         </form>

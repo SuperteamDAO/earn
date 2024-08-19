@@ -92,7 +92,12 @@ export function GrantPageLayout({
               mx={'auto'}
               mb={10}
             >
-              <Box w={{ base: 'full', md: 'auto' }} px={3}>
+              <Box
+                pos={{ base: 'static', md: 'sticky' }}
+                top={14}
+                w={{ base: 'full', md: 'auto' }}
+                px={3}
+              >
                 <VStack gap={2}>
                   <VStack
                     justify={'center'}
