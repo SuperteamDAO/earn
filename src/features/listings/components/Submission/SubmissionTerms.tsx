@@ -12,7 +12,6 @@ import {
   UnorderedList,
   VStack,
 } from '@chakra-ui/react';
-import { useEffect } from 'react';
 
 import { TERMS_OF_USE } from '@/constants';
 
@@ -27,9 +26,6 @@ export const SubmissionTerms = ({
   sponsorName: string;
   entityName?: string;
 }) => {
-  useEffect(() => {
-    console.log('entityName', entityName);
-  }, []);
   return (
     <Modal
       autoFocus={false}
