@@ -54,9 +54,6 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const [showSubskills, setShowSubskills] = useState<Record<number, boolean>>(
     {},
   );
-  const [talentFeed, setTalentFeed] = useState<FeedDataProps[]>(
-    talent?.feed || [],
-  );
 
   const handleToggleSubskills = (index: number) => {
     setShowSubskills({
@@ -116,14 +113,14 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const filteredFeed = useMemo(() => {
     if (activeTab === 'activity') {
-      return talentFeed;
+      return talent?.feed;
     }
 
-    return talentFeed.filter((item) => item.type === 'PoW');
-  }, [activeTab, talentFeed]);
+    return talent?.feed?.filter((item) => item.type === 'PoW');
+  }, [activeTab, talent?.feed]);
 
-  const addNewPow = (newPow: any) => {
-    setTalentFeed([newPow, ...talentFeed]);
+  const addNewPow = () => {
+    router.replace(router.asPath);
   };
 
   const isMD = useBreakpointValue({ base: false, md: true });
@@ -633,12 +630,10 @@ function TalentProfile({ talent, stats }: TalentProps) {
           </Box>
         )}
         <AddProject
-          {...{
-            isOpen: isOpenPow,
-            onClose: onClosePow,
-            upload: true,
-            onNewPow: addNewPow,
-          }}
+          isOpen={isOpenPow}
+          onClose={onClosePow}
+          upload
+          onNewPow={addNewPow}
         />
       </Default>
     </>
