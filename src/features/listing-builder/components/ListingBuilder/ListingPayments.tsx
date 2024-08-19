@@ -181,8 +181,6 @@ export const ListingPayments = ({
   }
 
   const handlePrizeDelete = (prizeToDelete: keyof Rewards) => {
-    console.log('prizeToDelete', prizeToDelete, typeof prizeToDelete);
-    console.log('prizes', prizes);
     const updatedPrizes = prizes.filter(
       (prize) => prize.value !== prizeToDelete,
     );
@@ -671,7 +669,6 @@ export const ListingPayments = ({
                       placeHolder: (5 - prizes.length) * 500,
                     },
                   ];
-                  console.log('newPrize', newPrize);
                   setPrizes(newPrize);
                 }}
                 variant="ghost"
