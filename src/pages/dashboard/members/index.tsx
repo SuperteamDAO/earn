@@ -46,7 +46,8 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import {
   Banner,
   InviteMembers,
-  useSponsorsStats,
+  membersQuery,
+  sponsorStatsQuery,
 } from '@/features/sponsor-dashboard';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { SponsorLayout } from '@/layouts/Sponsor';
@@ -61,7 +62,9 @@ const Index = () => {
   const [skip, setSkip] = useState(0);
   const length = 15;
 
-  const { data: sponsorStats, isLoading: isStatsLoading } = useSponsorsStats();
+  const { data: sponsorStats, isLoading: isStatsLoading } =
+    useQuery(sponsorStatsQuery);
+
   const queryClient = useQueryClient();
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
@@ -73,22 +76,14 @@ const Index = () => {
     posthog.capture('members tab_sponsor');
   }, []);
 
-  const getMembersQueryFn = async () => {
-    const response = await axios.get('/api/sponsor-dashboard/members/', {
-      params: {
-        searchText,
-        skip,
-        take: length,
-      },
-    });
-    return response.data;
-  };
-
-  const { data: membersData, isLoading: isMembersLoading } = useQuery({
-    queryKey: ['members', user?.currentSponsorId, searchText, skip, length],
-    queryFn: getMembersQueryFn,
-    enabled: !!user?.currentSponsorId,
-  });
+  const { data: membersData, isLoading: isMembersLoading } = useQuery(
+    membersQuery({
+      searchText,
+      skip,
+      length,
+      currentSponsorId: user?.currentSponsorId,
+    }),
+  );
 
   const totalMembers = membersData?.total || 0;
   const members = membersData?.data || [];

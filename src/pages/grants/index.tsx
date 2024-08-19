@@ -1,16 +1,22 @@
 import { Container, Flex, Image, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
-import { GrantEntry, useGetGrants } from '@/features/grants';
+import { GrantEntry, grantsQuery } from '@/features/grants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
 function Grants() {
   const router = useRouter();
-  const { data: grants, isLoading, isError } = useGetGrants();
+
+  const {
+    data: grants,
+    isLoading,
+    isError,
+  } = useQuery(grantsQuery({ order: 'desc' }));
 
   return (
     <Default

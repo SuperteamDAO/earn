@@ -1,12 +1,15 @@
 import { Box } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 
-import { ListingTabs, useGetListings } from '@/features/listings';
+import { listingsQuery, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
 function AllListingsPage() {
-  const { data: listings, isLoading } = useGetListings({
-    take: 500,
-  });
+  const { data: listings, isLoading } = useQuery(
+    listingsQuery({
+      take: 500,
+    }),
+  );
 
   return (
     <Home type="home">

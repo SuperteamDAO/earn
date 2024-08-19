@@ -11,6 +11,7 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -19,7 +20,7 @@ import { LuHeart, LuMessageCircle } from 'react-icons/lu';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { type User } from '@/interface/user';
-import { useOgImage } from '@/queries/get-og';
+import { ogImageQuery } from '@/queries/og-image';
 import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
@@ -51,7 +52,7 @@ export const SubmissionCard = ({
   const router = useRouter();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { data: image } = useOgImage(link);
+  const { data: image } = useQuery(ogImageQuery(link));
   const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsLoading(true);

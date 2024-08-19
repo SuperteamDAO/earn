@@ -1,6 +1,5 @@
 import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -17,6 +16,7 @@ import {
 } from '@/features/listings';
 import { useUser } from '@/store/user';
 
+import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { WarningModal } from '../WarningModal';
 import { EasterEgg } from './EasterEgg';
 import { SubmissionModal } from './SubmissionModal';
@@ -25,13 +25,6 @@ interface Props {
   listing: Listing;
   hasHackathonStarted: boolean;
 }
-
-const checkUserSubmission = async (listingId: string) => {
-  const { data } = await axios.get('/api/submission/check/', {
-    params: { listingId },
-  });
-  return data;
-};
 
 export const SubmissionActionButton = ({
   listing,
@@ -53,11 +46,7 @@ export const SubmissionActionButton = ({
   const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
 
   const { data: submissionStatus, isLoading: isUserSubmissionLoading } =
-    useQuery({
-      queryKey: ['userSubmission', id],
-      queryFn: () => checkUserSubmission(id!),
-      enabled: !!user?.id,
-    });
+    useQuery(userSubmissionQuery(id!, user?.id));
 
   const isSubmitted = submissionStatus?.isSubmitted ?? false;
 

@@ -1,6 +1,5 @@
 import { Flex, type FlexProps, Link } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -10,6 +9,8 @@ import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar';
 import { useUser } from '@/store/user';
+
+import { regionLiveCountQuery } from '../queries/region-live-count';
 
 interface PillTabProps {
   href: string;
@@ -52,14 +53,6 @@ function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
   );
 }
 
-const fetchRegionLiveCount = async (region: string) => {
-  const { data } = await axios.get<{ count: number }>(
-    '/api/listings/region-live-count',
-    { params: { region: region.toLowerCase() } },
-  );
-  return data;
-};
-
 export function NavTabs({ ...flexProps }: FlexProps) {
   const { user } = useUser();
 
@@ -69,19 +62,19 @@ export function NavTabs({ ...flexProps }: FlexProps) {
     );
   }, [user?.location]);
 
-  const { data: regionLiveCount, refetch } = useQuery({
-    queryKey: ['regionLiveCount', superteam],
-    queryFn: () => fetchRegionLiveCount(superteam!.region),
-    enabled: false,
-  });
+  const region = superteam?.region;
+
+  const { data: regionLiveCount, refetch } = useQuery(
+    regionLiveCountQuery(region!),
+  );
 
   useEffect(() => {
-    if (superteam) {
+    if (region) {
       refetch();
     }
-  }, [superteam, refetch]);
+  }, [region, refetch]);
 
-  const showRegionTab = superteam && (regionLiveCount?.count ?? 0) > 0;
+  const showRegionTab = region && (regionLiveCount?.count ?? 0) > 0;
 
   return (
     <Flex
@@ -97,8 +90,8 @@ export function NavTabs({ ...flexProps }: FlexProps) {
       </PillTab>
       {showRegionTab && (
         <PillTab
-          href={`/regions/${superteam.region.toLowerCase()}/`}
-          phEvent={`${superteam.region.toLowerCase()}_navpill`}
+          href={`/regions/${region.toLowerCase()}/`}
+          phEvent={`${region.toLowerCase()}_navpill`}
         >
           {superteam.code && <UserFlag location={superteam.code} isCode />}
           {superteam.displayValue}

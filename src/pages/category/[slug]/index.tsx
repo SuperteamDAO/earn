@@ -1,15 +1,16 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
-import { GrantsCard, useGetGrants } from '@/features/grants';
+import { GrantsCard, grantsQuery } from '@/features/grants';
 import {
   ListingSection,
+  listingsQuery,
   ListingTabs,
-  useGetListings,
 } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
@@ -24,15 +25,17 @@ function ListingCategoryPage({ slug }: { slug: string }) {
     [],
   );
 
-  const { data: listingsData, isLoading: isListingsLoading } = useGetListings({
-    take: 100,
-    filter: slug,
-    deadline,
-  });
+  const { data: listingsData, isLoading: isListingsLoading } = useQuery(
+    listingsQuery({
+      take: 100,
+      filter: slug,
+      deadline,
+    }),
+  );
 
-  const { data: grants, isLoading: isGrantsLoading } = useGetGrants({
-    order: 'asc',
-  });
+  const { data: grants, isLoading: isGrantsLoading } = useQuery(
+    grantsQuery({ order: 'asc' }),
+  );
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
     design: 'Design Bounties and Grants | Superteam Earn',

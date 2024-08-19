@@ -1,11 +1,13 @@
 import { AddIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { type ReactNode, useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
+import { LuLock } from 'react-icons/lu';
 import {
   MdList,
   MdOutlineChatBubbleOutline,
@@ -15,12 +17,17 @@ import {
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
+import { Tooltip } from '@/components/shared/responsive-tooltip';
+import {
+  isCreateListingAllowedQuery,
+  SelectHackathon,
+  SelectSponsor,
+} from '@/features/listing-builder';
 import {
   CreateListingModal,
+  latestActiveSlugQuery,
   NavItem,
   SponsorInfoModal,
-  useLatestActiveSlug,
 } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -52,6 +59,11 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
   }, [open]);
 
   const {
+    data: isCreateListingAllowed,
+    refetch: isCreateListingAllowedRefetch,
+  } = useQuery(isCreateListingAllowedQuery);
+
+  const {
     isOpen: isSponsorInfoModalOpen,
     onOpen: onSponsorInfoModalOpen,
     onClose: onSponsorInfoModalClose,
@@ -63,8 +75,8 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
     onClose: onScoutAnnounceModalClose,
   } = useDisclosure();
 
-  const { data: latestActiveSlug } = useLatestActiveSlug(
-    !!user?.currentSponsorId,
+  const { data: latestActiveSlug } = useQuery(
+    latestActiveSlugQuery(!!user?.currentSponsorId),
   );
 
   function sponsorInfoCloseAltered() {
@@ -79,6 +91,7 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
 
   // ENTITY NAME TO SPONSORS
   useEffect(() => {
+    isCreateListingAllowedRefetch();
     const timer = setTimeout(async () => {
       if (user) {
         if (
@@ -207,6 +220,10 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
                 w="full"
                 py={'22px'}
                 fontSize="md"
+                isDisabled={
+                  isCreateListingAllowed !== undefined &&
+                  isCreateListingAllowed === false
+                }
                 leftIcon={<AddIcon w={3} h={3} />}
                 onClick={() => {
                   posthog.capture('create new listing_sponsor');
@@ -215,6 +232,12 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
                 variant="solid"
               >
                 Create New Listing
+                {isCreateListingAllowed !== undefined &&
+                  isCreateListingAllowed === false && (
+                    <Tooltip label="Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.">
+                      <Icon as={LuLock} ml={2} />
+                    </Tooltip>
+                  )}
               </Button>
             ) : (
               <Button

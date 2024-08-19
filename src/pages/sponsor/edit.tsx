@@ -28,6 +28,7 @@ import {
   useSlugValidation,
   useSponsorNameValidation,
 } from '@/features/sponsor';
+import { sponsorQuery } from '@/features/sponsor-dashboard';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -80,14 +81,7 @@ const UpdateSponsor = () => {
     sponsorName,
   } = useSponsorNameValidation();
 
-  const { data: sponsorData } = useQuery({
-    queryKey: ['sponsorData', user?.currentSponsorId],
-    queryFn: async () => {
-      const { data } = await axios.get('/api/sponsors/');
-      return data;
-    },
-    enabled: !!user?.currentSponsorId,
-  });
+  const { data: sponsorData } = useQuery(sponsorQuery(user?.currentSponsorId));
 
   useEffect(() => {
     if (sponsorData) {

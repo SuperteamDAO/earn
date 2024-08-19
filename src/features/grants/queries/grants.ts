@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { type GrantWithApplicationCount } from '@/features/grants';
@@ -14,9 +14,8 @@ const fetchGrants = async (
   return data;
 };
 
-export const useGetGrants = (params: GetGrantsParams = {}) => {
-  return useQuery({
+export const grantsQuery = (params: GetGrantsParams) =>
+  queryOptions({
     queryKey: ['grants', params],
     queryFn: () => fetchGrants(params),
   });
-};

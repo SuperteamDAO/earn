@@ -1,6 +1,5 @@
 import { Box, Container, Flex, HStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
@@ -11,17 +10,12 @@ import {
   HomeSideBar,
   NavTabs,
   RegionBanner,
-  useGetTotals,
+  totalsQuery,
   UserStatsBanner,
 } from '@/features/home';
-import type { User } from '@/interface/user';
+import { recentEarnersQuery } from '@/features/listings';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-
-const fetchRecentEarners = async (): Promise<User[]> => {
-  const response = await axios.get('/api/sidebar/recent-earners');
-  return response.data;
-};
 
 interface HomeProps {
   children: ReactNode;
@@ -37,12 +31,10 @@ export function Home({ children, type, st }: HomeProps) {
     null,
   );
 
-  const { data: totals, isLoading: isTotalsLoading } = useGetTotals();
+  const { data: totals, isLoading: isTotalsLoading } = useQuery(totalsQuery);
 
-  const { data: recentEarners, isLoading: isEarnersLoading } = useQuery({
-    queryKey: ['recentEarners'],
-    queryFn: fetchRecentEarners,
-  });
+  const { data: recentEarners, isLoading: isEarnersLoading } =
+    useQuery(recentEarnersQuery);
 
   useEffect(() => {
     if (router.asPath.includes('/category/development/')) {

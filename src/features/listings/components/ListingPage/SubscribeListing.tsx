@@ -7,7 +7,6 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import type { SubscribeBounty } from '@prisma/client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
@@ -16,21 +15,14 @@ import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 
 import { AuthWrapper } from '@/features/auth';
-import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';
 
+import { listingSubscriptionsQuery } from '../../queries/listing-notification-status';
 import { WarningModal } from '../WarningModal';
 
 interface Props {
   id: string;
 }
-
-const fetchSubscriptions = async (id: string) => {
-  const { data } = await axios.get('/api/listings/notifications/status', {
-    params: { listingId: id },
-  });
-  return data;
-};
 
 const toggleSubscription = async (id: string) => {
   await axios.post('/api/listings/notifications/toggle', { bountyId: id });
@@ -49,18 +41,15 @@ export const SubscribeListing = ({ id }: Props) => {
   const { status: authStatus } = useSession();
   const isAuthenticated = authStatus === 'authenticated';
 
-  const { data: sub = [] } = useQuery<
-    (SubscribeBounty & { User: User | null })[]
-  >({
-    queryKey: ['subscriptions', id],
-    queryFn: () => fetchSubscriptions(id),
-  });
+  const { data: sub = [] } = useQuery(listingSubscriptionsQuery(id));
 
   const { mutate: toggleSubscribe, isPending: isSubscribeLoading } =
     useMutation({
       mutationFn: () => toggleSubscription(id),
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['subscriptions', id] });
+        queryClient.invalidateQueries({
+          queryKey: listingSubscriptionsQuery(id).queryKey,
+        });
         toast.success(
           sub.find((e) => e.userId === user?.id)
             ? 'Unsubscribed'

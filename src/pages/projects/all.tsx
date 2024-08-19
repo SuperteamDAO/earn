@@ -1,19 +1,22 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import {
   ListingCard,
   ListingCardSkeleton,
   ListingSection,
-  useGetListings,
+  listingsQuery,
 } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
 export default function AllProjectsPage() {
-  const { data: listings, isLoading } = useGetListings({
-    type: 'project',
-    take: 100,
-  });
+  const { data: listings, isLoading } = useQuery(
+    listingsQuery({
+      type: 'project',
+      take: 100,
+    }),
+  );
 
   return (
     <Home type="home">
