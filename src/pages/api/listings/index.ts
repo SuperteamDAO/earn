@@ -124,14 +124,12 @@ export default async function listings(
       isPublished: true,
       isActive: true,
       isPrivate: false,
-      hackathonprize: false,
       isArchived: false,
       status: 'OPEN',
-      Hackathon: null,
       deadline: {
         gte: deadline,
       },
-      type,
+      type: type || { in: ['bounty', 'project'] },
       ...skillsFilter,
     },
     select: {
@@ -219,50 +217,3 @@ export default async function listings(
     });
   }
 }
-
-// const grantQueryOptions: Prisma.GrantsFindManyArgs = {
-//   where: {
-//     isPublished: true,
-//     isActive: true,
-//     isArchived: false,
-//     ...skillsFilter,
-//   },
-//   take,
-//   orderBy: {
-//     createdAt: order,
-//   },
-//   include: {
-//     sponsor: {
-//       select: {
-//         id: true,
-//         name: true,
-//         slug: true,
-//         logo: true,
-//         isVerified: true,
-//       },
-//     },
-//     _count: {
-//       select: {
-//         GrantApplication: {
-//           where: {
-//             applicationStatus: 'Approved',
-//           },
-//         },
-//       },
-//     },
-//   },
-// };
-
-// if (userRegion) {
-// grantQueryOptions.where = {
-//   ...grantQueryOptions.where,
-//   region: {
-//     in: [userRegion, Regions.GLOBAL],
-//   },
-// };
-// }
-
-// if (!category || category === 'all' || category === 'grants') {
-//   const grants = await prisma.grants.findMany(grantQueryOptions);
-//   result.grants = grants;
-// }

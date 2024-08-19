@@ -302,19 +302,19 @@ export function RightSideBar({
               Hackathon={listing.Hackathon}
             />
           </Box>
-          <Box display={{ base: 'none', md: 'block' }} pt={8}>
-            <LiveListings>
-              <Text
-                h="100%"
-                color={'brand.slate.600'}
-                fontSize={'sm'}
-                fontWeight={600}
-                textAlign="start"
-              >
-                LIVE LISTINGS
-              </Text>
+          <VStack align={'start'} w={'full'} py={8} fontSize="sm">
+            <LiveListings isHackathon={!!Hackathon}>
+              <Flex align="center" justify={'space-between'} w="full">
+                <Text
+                  color={'brand.slate.600'}
+                  fontSize={'sm'}
+                  fontWeight={600}
+                >
+                  {Hackathon ? 'LIVE TRACKS' : 'LIVE LISTINGS'}
+                </Text>
+              </Flex>
             </LiveListings>
-          </Box>
+          </VStack>
         </VStack>
       </VStack>
     </Box>
