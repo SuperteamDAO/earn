@@ -27,6 +27,12 @@ export default async function handler(
             },
           },
         },
+        GrantApplication: {
+          select: {
+            approvedAmountInUSD: true,
+            applicationStatus: true,
+          },
+        },
       },
     });
 
@@ -40,9 +46,18 @@ export default async function handler(
       (s) => s.isWinner && s.listing.isWinnersAnnounced,
     ).length;
 
-    const totalWinnings = result.Submission.filter(
+    const listingWinnings = result.Submission.filter(
       (s) => s.isWinner && s.listing.isWinnersAnnounced,
     ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
+
+    const grantWinnings = result.GrantApplication.filter(
+      (g) => g.applicationStatus === 'Approved',
+    ).reduce(
+      (sum, application) => sum + (application.approvedAmountInUSD || 0),
+      0,
+    );
+
+    const totalWinnings = listingWinnings + grantWinnings;
 
     logger.info('wins - ', wins);
 
