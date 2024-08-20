@@ -12,7 +12,7 @@ function AllListingsPage() {
   );
 
   return (
-    <Home type="home">
+    <Home type="listing">
       <Box w={'100%'}>
         <ListingTabs
           bounties={listings}

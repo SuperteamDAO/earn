@@ -19,7 +19,7 @@ export default function AllBountiesPage() {
   );
 
   return (
-    <Home type="home">
+    <Home type="listing">
       <Box w={'100%'} pr={{ base: 0, lg: 6 }}>
         <ListingSection
           type="bounties"

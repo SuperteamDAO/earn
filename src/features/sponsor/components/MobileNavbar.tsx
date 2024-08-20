@@ -56,9 +56,10 @@ export const MobileNavbar = () => {
           <DrawerBody>
             {status === 'unauthenticated' && !session && (
               <Flex align="center" gap={3}>
-                <NextLink
-                  href="/new/sponsor/"
+                <Link
                   className="ph-no-capture"
+                  as={NextLink}
+                  href="/new/sponsor/"
                   onClick={() => posthog.capture('login_navbar')}
                 >
                   <Button
@@ -69,16 +70,17 @@ export const MobileNavbar = () => {
                   >
                     Login
                   </Button>
-                </NextLink>
+                </Link>
                 <Divider
                   h={5}
                   borderWidth={'0.5px'}
                   borderColor={'brand.slate.300'}
                   orientation="vertical"
                 />
-                <NextLink
-                  href="/new/sponsor/"
+                <Link
                   className="ph-no-capture"
+                  as={NextLink}
+                  href="/new/sponsor/"
                   onClick={() => posthog.capture('get started_sponsor navbar')}
                 >
                   <Button
@@ -90,14 +92,15 @@ export const MobileNavbar = () => {
                   >
                     Get Started
                   </Button>
-                </NextLink>
+                </Link>
               </Flex>
             )}
 
             {user && !user.currentSponsorId && (
-              <NextLink
-                href="/new/sponsor/"
+              <Link
                 className="ph-no-capture"
+                as={NextLink}
+                href="/new/sponsor/"
                 onClick={() => posthog.capture('get started_sponsor navbar')}
               >
                 <Button
@@ -108,13 +111,14 @@ export const MobileNavbar = () => {
                 >
                   Get Started
                 </Button>
-              </NextLink>
+              </Link>
             )}
 
             {user && !!user.currentSponsorId && (
-              <NextLink
-                href="/dashboard/listings/?open=1"
+              <Link
                 className="ph-no-capture"
+                as={NextLink}
+                href="/dashboard/listings/?open=1"
                 onClick={() =>
                   posthog.capture('create a listing_sponsor navbar')
                 }
@@ -127,7 +131,7 @@ export const MobileNavbar = () => {
                 >
                   Create a Listing
                 </Button>
-              </NextLink>
+              </Link>
             )}
 
             <Flex direction={'column'}>
@@ -219,9 +223,10 @@ export const MobileNavbar = () => {
       </AbsoluteCenter>
       {status === 'authenticated' && session && <UserMenu />}
       {status === 'unauthenticated' && !session && (
-        <NextLink
-          href="/new/sponsor/"
+        <Link
           className="ph-no-capture"
+          as={NextLink}
+          href="/new/sponsor/"
           onClick={() => posthog.capture('login_navbar')}
         >
           <Button
@@ -233,7 +238,7 @@ export const MobileNavbar = () => {
           >
             Login
           </Button>
-        </NextLink>
+        </Link>
       )}
     </Flex>
   );
