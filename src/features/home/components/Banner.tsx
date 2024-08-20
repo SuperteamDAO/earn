@@ -23,15 +23,15 @@ interface BannerProps {
 const avatars = [
   {
     name: 'Abhishkek',
-    src: '/assets/pfps/t1.png',
+    src: '/assets/pfps/t1.webp',
   },
   {
     name: 'Pratik',
-    src: '/assets/pfps/md2.png',
+    src: '/assets/pfps/md2.webp',
   },
   {
     name: 'Yash',
-    src: '/assets/pfps/fff1.png',
+    src: '/assets/pfps/fff1.webp',
   },
 ];
 
