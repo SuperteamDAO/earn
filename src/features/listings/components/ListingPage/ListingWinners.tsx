@@ -70,19 +70,53 @@ export function ListingWinners({ bounty }: Props) {
       bg="#F5F3FF"
       rounded="lg"
     >
-      <Text
-        mx={3}
-        color="brand.slate.500"
-        fontSize={{ base: 'lg', md: 'xl' }}
-        fontWeight={600}
-      >
-        🎉 Winners
-      </Text>
-      <Box mx={3} mt={3}>
+      <HStack justify="space-between">
+        <Text
+          mx={3}
+          color="brand.slate.500"
+          fontSize={{ base: 'lg', md: 'xl' }}
+          fontWeight={600}
+        >
+          🎉 Winners
+        </Text>
+        <NextLink href={openWinnerLink() ?? '#'} target="_blank">
+          <Button
+            className="ph-no-capture"
+            gap={2}
+            display="flex"
+            w={'auto'}
+            color="rgba(0, 0, 0, 0.65)"
+            fontWeight={500}
+            bg="white"
+            border="1px solid"
+            borderColor="brand.slate.300"
+            _hover={{ background: 'rgba(255, 255, 255, 0.8)' }}
+            _active={{ background: 'rgba(255, 255, 255, 0.5)' }}
+            onClick={() => posthog.capture('click to tweet_listing')}
+          >
+            <Center w="1.2rem">
+              <svg
+                width="33px"
+                height="33px"
+                viewBox="0 0 33 33"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M25.0851 3.09375H29.6355L19.6968 14.4504L31.3886 29.9062H22.2363L15.0626 20.5348L6.86421 29.9062H2.30737L12.9357 17.7568L1.72729 3.09375H11.1117L17.5892 11.6596L25.0851 3.09375ZM23.4867 27.1863H26.0068L9.73882 5.67188H7.03179L23.4867 27.1863Z"
+                  fill="black"
+                />
+              </svg>
+            </Center>
+            Share
+          </Button>
+        </NextLink>
+      </HStack>
+      <Box mx={3} mt={{ base: 2, md: 0 }}>
         <Box
           w="full"
-          px={{ base: 3, md: 10 }}
-          py={{ base: 4, md: 6 }}
+          px={{ base: 3, md: 4 }}
+          py={{ base: 4, md: 4 }}
           color="white"
           rounded="md"
         >
@@ -159,41 +193,6 @@ export function ListingWinners({ bounty }: Props) {
               </NextLink>
             ))}
           </Flex>
-          <NextLink href={openWinnerLink() ?? '#'} target="_blank">
-            <Button
-              className="ph-no-capture"
-              pos={'absolute'}
-              top={4}
-              right={5}
-              gap={2}
-              display="flex"
-              w={'auto'}
-              color="rgba(0, 0, 0, 0.65)"
-              fontWeight={500}
-              bg="white"
-              border="1px solid"
-              borderColor="brand.slate.300"
-              _hover={{ background: 'rgba(255, 255, 255, 0.8)' }}
-              _active={{ background: 'rgba(255, 255, 255, 0.5)' }}
-              onClick={() => posthog.capture('click to tweet_listing')}
-            >
-              <Center w="1.2rem">
-                <svg
-                  width="33px"
-                  height="33px"
-                  viewBox="0 0 33 33"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M25.0851 3.09375H29.6355L19.6968 14.4504L31.3886 29.9062H22.2363L15.0626 20.5348L6.86421 29.9062H2.30737L12.9357 17.7568L1.72729 3.09375H11.1117L17.5892 11.6596L25.0851 3.09375ZM23.4867 27.1863H26.0068L9.73882 5.67188H7.03179L23.4867 27.1863Z"
-                    fill="black"
-                  />
-                </svg>
-              </Center>
-              Share
-            </Button>
-          </NextLink>
         </Box>
       </Box>
       {submissions.length > 3 && (
