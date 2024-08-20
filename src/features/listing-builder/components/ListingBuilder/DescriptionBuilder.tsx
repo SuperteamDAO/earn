@@ -638,7 +638,7 @@ export const DescriptionBuilder = ({
             borderRadius="sm"
             onClick={handleSubmit(onSubmit)}
             type="submit"
-            variant={'solid'}
+            variant={!isDraft ? 'outline' : 'solid'}
           >
             Continue
           </Button>

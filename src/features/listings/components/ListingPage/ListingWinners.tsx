@@ -14,6 +14,7 @@ import { usePostHog } from 'posthog-js/react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
+import { BONUS_REWARD_POSITION } from '@/constants';
 import { formatTotalPrice } from '@/features/listing-builder';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { nthLabelGenerator } from '@/utils/rank';
@@ -33,6 +34,20 @@ const fetchWinners = async (id: string): Promise<SubmissionWithUser[]> => {
     if (!b.winnerPosition) return -1;
     return Number(a.winnerPosition) - Number(b.winnerPosition);
   });
+};
+
+const getOrRemoveBonuses = (
+  submissions: SubmissionWithUser[],
+  removeBonus: boolean,
+) => {
+  if (removeBonus)
+    return submissions.filter(
+      (s) => s.winnerPosition !== BONUS_REWARD_POSITION,
+    );
+  else
+    return submissions.filter(
+      (s) => s.winnerPosition === BONUS_REWARD_POSITION,
+    );
 };
 
 export function ListingWinners({ bounty }: Props) {
@@ -74,7 +89,7 @@ export function ListingWinners({ bounty }: Props) {
         <Text
           mx={3}
           color="brand.slate.500"
-          fontSize={{ base: 'lg', md: 'xl' }}
+          fontSize={{ md: 'xl' }}
           fontWeight={600}
         >
           🎉 Winners
@@ -85,7 +100,11 @@ export function ListingWinners({ bounty }: Props) {
             gap={2}
             display="flex"
             w={'auto'}
+            h="min-content"
+            px={{ base: 2, md: 3 }}
+            py={{ base: 1.5, md: 2 }}
             color="rgba(0, 0, 0, 0.65)"
+            fontSize={{ base: 'sm', md: 'medium' }}
             fontWeight={500}
             bg="white"
             border="1px solid"
@@ -94,10 +113,9 @@ export function ListingWinners({ bounty }: Props) {
             _active={{ background: 'rgba(255, 255, 255, 0.5)' }}
             onClick={() => posthog.capture('click to tweet_listing')}
           >
-            <Center w="1.2rem">
+            <Center w={{ base: '0.9rem', md: '1.1rem' }} h="min-content">
               <svg
                 width="33px"
-                height="33px"
                 viewBox="0 0 33 33"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -121,81 +139,84 @@ export function ListingWinners({ bounty }: Props) {
           rounded="md"
         >
           <Flex align="center" justify="center" wrap="wrap" gap={10}>
-            {submissions.slice(0, 3).map((submission) => (
-              <NextLink
-                key={submission.id}
-                href={
-                  !isProject
-                    ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/`
-                    : `/t/${submission?.user?.username}`
-                }
-                passHref
-              >
-                <Flex
-                  as="a"
-                  align="center"
-                  justify="center"
-                  direction={'column'}
-                  cursor="pointer"
+            {getOrRemoveBonuses(submissions, true)
+              .slice(0, 3)
+              .map((submission) => (
+                <NextLink
+                  key={submission.id}
+                  href={
+                    !isProject
+                      ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/#details`
+                      : `/t/${submission?.user?.username}`
+                  }
+                  passHref
                 >
-                  <Box pos="relative">
-                    {!isProject && (
-                      <Center
-                        pos="absolute"
-                        bottom={-3}
-                        left="50%"
-                        w={6}
-                        h={6}
-                        px={1}
-                        color="brand.slate.500"
-                        fontSize={'xx-small'}
-                        fontWeight={600}
-                        textAlign="center"
-                        textTransform="capitalize"
-                        bg="#fff"
-                        transform="translateX(-50%)"
-                        rounded={'full'}
-                      >
-                        {nthLabelGenerator(submission?.winnerPosition ?? 0)}
-                      </Center>
-                    )}
-                    <EarnAvatar
-                      size={isMD ? '64px' : '52px'}
-                      id={submission?.user?.id}
-                      avatar={submission?.user?.photo as string}
-                    />
-                  </Box>
-                  <Text
-                    w={{ base: 'min-content', md: 'auto' }}
-                    pt={4}
-                    color="brand.slate.700"
-                    fontSize={{ base: 'xs', md: 'sm' }}
-                    fontWeight={600}
-                    textAlign={'center'}
-                    noOfLines={2}
-                  >{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</Text>
-                  <Text
-                    color="brand.slate.500"
-                    fontSize={'xs'}
-                    fontWeight={400}
-                    textAlign="center"
-                    opacity={0.6}
+                  <Flex
+                    as="a"
+                    align="center"
+                    justify="center"
+                    direction={'column'}
+                    cursor="pointer"
                   >
-                    {bounty?.rewards &&
-                      formatTotalPrice(
-                        bounty?.rewards[
-                          Number(submission?.winnerPosition) as keyof Rewards
-                        ] ?? 0,
-                      )}{' '}
-                    {bounty?.token}
-                  </Text>
-                </Flex>
-              </NextLink>
-            ))}
+                    <Box pos="relative">
+                      {!isProject && (
+                        <Center
+                          pos="absolute"
+                          bottom={-3}
+                          left="50%"
+                          w={6}
+                          h={6}
+                          px={1}
+                          color="brand.slate.500"
+                          fontSize={'xx-small'}
+                          fontWeight={600}
+                          textAlign="center"
+                          textTransform="capitalize"
+                          bg="#fff"
+                          transform="translateX(-50%)"
+                          rounded={'full'}
+                        >
+                          {nthLabelGenerator(submission?.winnerPosition ?? 0)}
+                        </Center>
+                      )}
+                      <EarnAvatar
+                        size={isMD ? '64px' : '52px'}
+                        id={submission?.user?.id}
+                        avatar={submission?.user?.photo as string}
+                      />
+                    </Box>
+                    <Text
+                      w={{ base: 'min-content', md: 'auto' }}
+                      pt={4}
+                      color="brand.slate.700"
+                      fontSize={{ base: 'xs', md: 'sm' }}
+                      fontWeight={600}
+                      textAlign={'center'}
+                      noOfLines={2}
+                    >{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</Text>
+                    <Text
+                      color="brand.slate.500"
+                      fontSize={'xs'}
+                      fontWeight={400}
+                      textAlign="center"
+                      opacity={0.6}
+                    >
+                      {bounty?.rewards &&
+                        formatTotalPrice(
+                          bounty?.rewards[
+                            Number(submission?.winnerPosition) as keyof Rewards
+                          ] ?? 0,
+                        )}{' '}
+                      {bounty?.token}
+                    </Text>
+                  </Flex>
+                </NextLink>
+              ))}
           </Flex>
         </Box>
       </Box>
-      {submissions.length > 3 && (
+      {(getOrRemoveBonuses(submissions, true).length > 3 ||
+        getOrRemoveBonuses(submissions, false).length > 0) && (
         <HStack
           justify="center"
           flexWrap="wrap"
@@ -204,13 +225,16 @@ export function ListingWinners({ bounty }: Props) {
           borderColor="#DDD6FE"
           borderTopWidth="1px"
         >
-          {submissions.slice(3).map((submission) => (
+          {[
+            ...getOrRemoveBonuses(submissions, true).slice(3),
+            ...getOrRemoveBonuses(submissions, false),
+          ].map((submission) => (
             <Tooltip key={submission.id} label={submission?.user?.firstName}>
               <NextLink
                 key={submission.id}
                 href={
                   !isProject
-                    ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/`
+                    ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/#details`
                     : `/t/${submission?.user?.username}`
                 }
                 passHref

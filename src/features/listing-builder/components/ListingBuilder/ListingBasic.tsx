@@ -671,7 +671,7 @@ export const ListingBasic = ({
               fontWeight={500}
               borderRadius="sm"
               type="submit"
-              variant={'solid'}
+              variant={!isDraft ? 'outline' : 'solid'}
             >
               Continue
             </Button>

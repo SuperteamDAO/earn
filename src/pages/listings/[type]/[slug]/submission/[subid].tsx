@@ -14,32 +14,6 @@ interface BountyDetailsProps {
   submission: SubmissionWithUser;
 }
 const Sumbissions = ({ bounty, submission }: BountyDetailsProps) => {
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [error, setError] = useState(false);
-
-  // const [bounty, setBounty] = useState<Listing | null>(null);
-  // const [submission, setSubmission] = useState<SubmissionWithUser | null>(null);
-
-  // const getBounty = async () => {
-  //   setIsLoading(true);
-  //   try {
-  //     const bountyDetails = await axios.post(`/api/submission/details`, {
-  //       slug,
-  //       submissionId: subid,
-  //     });
-  //
-  //     setBounty(bountyDetails.data.bounty);
-  //     setSubmission(bountyDetails.data.submission);
-  //   } catch (e) {
-  //     setError(true);
-  //   }
-  //   setIsLoading(false);
-  // };
-  //
-  // useEffect(() => {
-  //   if (!isLoading) return;
-  //   getBounty();
-  // }, []);
   return (
     <>
       <ListingPageLayout bounty={bounty}>
@@ -49,7 +23,6 @@ const Sumbissions = ({ bounty, submission }: BountyDetailsProps) => {
             justify={['center', 'center', 'space-between', 'space-between']}
             flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
             gap={4}
-            mx={'auto'}
             mb={10}
           >
             <SubmissionPage

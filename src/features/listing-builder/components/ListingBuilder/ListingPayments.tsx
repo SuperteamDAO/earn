@@ -161,6 +161,18 @@ export const ListingPayments = ({
     }
   }, [rewards]);
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+    if (warningMessage) {
+      timer = setTimeout(() => {
+        setWarningMessage('');
+      }, 5000);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [warningMessage]);
+
   const [searchTerm, setSearchTerm] = useState<string | undefined>(
     tokenList.find((t) => t.tokenSymbol === token)?.tokenName,
   );

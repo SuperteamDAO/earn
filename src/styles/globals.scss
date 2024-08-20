@@ -111,8 +111,6 @@ body {
   h4,
   h5,
   h6,
-  strong,
-  em,
   li::marker {
     color: #475569 !important;
   }
@@ -124,7 +122,13 @@ body {
 }
 
 #reset-des * {
-  color: #64748B !important;
+  color: #475569 !important;
+}
+
+#reset-des {
+  >*:first-child {
+    margin-top: 1rem !important; // Adjusts top padding for the first paragraph
+  }
 }
 
 code {
