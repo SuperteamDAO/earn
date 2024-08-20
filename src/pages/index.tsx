@@ -23,11 +23,12 @@ import { prisma } from '@/prisma';
 interface Props {
   bounties: Listing[];
   grants: GrantWithApplicationCount[];
+  isAuth: boolean;
 }
 
-export default function HomePage({ bounties, grants }: Props) {
+export default function HomePage({ bounties, grants, isAuth }: Props) {
   return (
-    <Home type="home">
+    <Home type="landing" isAuth={isAuth}>
       <InstallPWAModal />
       <Box w={'100%'}>
         <ListingTabs
@@ -69,12 +70,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 ) => {
   const session = await getSession(context);
   let userRegion;
+  let isAuth = false;
 
   if (session?.user?.id) {
     const user = await prisma.user.findFirst({
       where: { id: session.user.id },
       select: { location: true },
     });
+
+    isAuth = true;
 
     const matchedRegion = CombinedRegions.find((region) =>
       region.country.includes(user?.location!),
@@ -108,6 +112,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     props: {
       bounties: JSON.parse(JSON.stringify(bounties)),
       grants: JSON.parse(JSON.stringify(grants)),
+      isAuth,
     },
   };
 };

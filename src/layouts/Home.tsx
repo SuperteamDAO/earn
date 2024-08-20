@@ -19,13 +19,14 @@ import { Meta } from '@/layouts/Meta';
 
 interface HomeProps {
   children: ReactNode;
-  type: 'home' | 'category' | 'region' | 'niche' | 'feed';
+  type: 'landing' | 'listing' | 'category' | 'region' | 'niche' | 'feed';
   st?: (typeof Superteams)[0];
+  isAuth?: boolean;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other';
 
-export function Home({ children, type, st }: HomeProps) {
+export function Home({ children, type, st, isAuth }: HomeProps) {
   const router = useRouter();
   const [currentCategory, setCurrentCategory] = useState<CategoryTypes | null>(
     null,
@@ -80,7 +81,17 @@ export function Home({ children, type, st }: HomeProps) {
             }}
           >
             <Box w="full" pt={1} pr={{ base: 0, lg: 6 }}>
-              {type === 'home' && (
+              {type === 'landing' && (
+                <>
+                  <NavTabs />
+                  {isAuth ? (
+                    <UserStatsBanner />
+                  ) : (
+                    <HomeBanner userCount={totals?.totalUsers} />
+                  )}
+                </>
+              )}
+              {type === 'listing' && (
                 <>
                   <NavTabs />
                   <HomeBanner userCount={totals?.totalUsers} />

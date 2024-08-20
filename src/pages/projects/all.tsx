@@ -19,7 +19,7 @@ export default function AllProjectsPage() {
   );
 
   return (
-    <Home type="home">
+    <Home type="listing">
       <Box w={'100%'}>
         <ListingSection
           type="bounties"

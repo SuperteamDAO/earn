@@ -8,7 +8,6 @@ import {
   useClipboard,
   useToast,
 } from '@chakra-ui/react';
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
@@ -56,7 +55,7 @@ export const LogoContextMenu = ({
           cursor={'pointer'}
           onClick={() => router.push('/')}
         >
-          <NextLink href="/">{children}</NextLink>
+          {children}
         </MenuButton>
         <MenuList>
           <MenuItem icon={<CopyIcon />} onClick={handleCopyLogo}>

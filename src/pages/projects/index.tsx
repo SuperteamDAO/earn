@@ -22,7 +22,7 @@ export default function ProjectsPage() {
   );
 
   return (
-    <Home type="home">
+    <Home type="listing">
       <Meta
         title="Apply to Projects in the Crypto Space | Superteam Earn"
         description="Discover unique crypto projects seeking talent. Apply on Superteam Earn and take your chance to work and earn in the crypto space."
