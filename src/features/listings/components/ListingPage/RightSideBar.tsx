@@ -312,7 +312,7 @@ export function RightSideBar({
               listing={listing}
               hasHackathonStarted={hasHackathonStarted}
             />
-            {isProject && (
+            {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
               <Flex gap="2" w="full" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />
                 <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
