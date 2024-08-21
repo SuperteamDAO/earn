@@ -10,7 +10,6 @@ export const EmailSignIn = () => {
   const [email, setEmail] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
-  const [hasGmail, setHasGmail] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState('');
 
@@ -21,19 +20,15 @@ export const EmailSignIn = () => {
     const emailInput = e.target.value;
     setEmail(emailInput);
     setIsEmailValid(validateEmailRegex(emailInput));
-    setHasGmail(emailInput.toLowerCase().includes('@gmail.com'));
     setEmailError('');
   };
-
-  const hasGmailAndIsProd =
-    hasGmail && process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
   const handleEmailSignIn = async () => {
     setIsLoading(true);
     setHasAttemptedSubmit(true);
     setEmailError('');
 
-    if (isEmailValid && !hasGmailAndIsProd) {
+    if (isEmailValid) {
       try {
         const isValidEmail = await checkEmailValidity(email);
         if (isValidEmail) {
@@ -56,11 +51,6 @@ export const EmailSignIn = () => {
           'An error occurred while validating your email. Please try again later.',
         );
       }
-    } else if (hasGmailAndIsProd) {
-      setIsLoading(false);
-      setEmailError(
-        'Please use the Google Auth login option for Gmail addresses.',
-      );
     } else {
       setIsLoading(false);
       setEmailError('Please enter a valid email address.');
@@ -97,8 +87,7 @@ export const EmailSignIn = () => {
         mt={3}
         fontSize="17px"
         fontWeight={500}
-        cursor={hasGmailAndIsProd ? 'not-allowed' : 'pointer'}
-        isDisabled={hasGmailAndIsProd || isLoading}
+        isDisabled={isLoading}
         isLoading={isLoading}
         onClick={handleEmailSignIn}
         size="lg"
