@@ -151,11 +151,12 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                     fontWeight={500}
                     whiteSpace="nowrap"
                   >
-                    {`$` +
-                      formatNumberWithSuffix(
-                        totalApproved / _count.GrantApplication,
-                      )}
-
+                    $
+                    {formatNumberWithSuffix(
+                      Number(
+                        (totalApproved / _count.GrantApplication).toFixed(2),
+                      ),
+                    )}
                     <Text
                       as="span"
                       sx={{
