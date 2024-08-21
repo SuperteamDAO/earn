@@ -1,16 +1,29 @@
-import { Container, Flex, Image, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import {
+  Container,
+  Image,
+  Text,
+  VStack,
+  Wrap,
+  WrapItem,
+} from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
-import { GrantEntry, useGetGrants } from '@/features/grants';
+import { GrantEntry, grantsQuery } from '@/features/grants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
 function Grants() {
   const router = useRouter();
-  const { data: grants, isLoading, isError } = useGetGrants();
+
+  const {
+    data: grants,
+    isLoading,
+    isError,
+  } = useQuery(grantsQuery({ order: 'desc' }));
 
   return (
     <Default
@@ -23,7 +36,7 @@ function Grants() {
         />
       }
     >
-      <Flex
+      <VStack
         pos={'relative'}
         justify={'center'}
         direction={'column'}
@@ -40,23 +53,22 @@ function Grants() {
           alt=""
           src="/assets/home/bg_grad.svg"
         />
-        <Flex align={'center'} direction={'column'} my={12} px={3}>
+        <VStack my={16} textAlign="center" spacing={4}>
           <Text
-            align={'center'}
-            fontFamily={'var(--font-serif)'}
-            fontSize={{ base: '2xl', md: '4xl' }}
+            fontSize={{ base: '4xl', md: '5xl' }}
             fontWeight={700}
+            lineHeight="1.2"
           >
             Need funds to build out your idea?
           </Text>
           <Text
-            color="brand.slate.500"
-            fontSize={{ base: '16', md: '20' }}
-            fontWeight={'400'}
-            textAlign={'center'}
+            maxW="2xl"
+            mx={2}
+            color="gray.600"
+            fontSize={{ base: 'lg', md: 'xl' }}
           >
             Discover the complete list of crypto grants available to support
-            your project.
+            your project. Fast, equity-free funding without the hassle.
           </Text>
           <Text
             mt={3}
@@ -65,7 +77,7 @@ function Grants() {
           >
             Equity-Free • No Bullshit • Fast AF
           </Text>
-        </Flex>
+        </VStack>
         <Container maxW={'8xl'} mb={12}>
           {isLoading && <Loading />}
           {isError && <ErrorInfo />}
@@ -86,7 +98,7 @@ function Grants() {
             </Wrap>
           )}
         </Container>
-      </Flex>
+      </VStack>
     </Default>
   );
 }

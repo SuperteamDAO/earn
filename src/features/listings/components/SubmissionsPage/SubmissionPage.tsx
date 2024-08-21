@@ -9,13 +9,14 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 
 import { TalentBio } from '@/components/TalentBio';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { type User as IUser } from '@/interface/user';
-import { useOgImage } from '@/queries/get-og';
+import { ogImageQuery } from '@/queries/og-image';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { nthLabelGenerator } from '@/utils/rank';
 
@@ -28,8 +29,7 @@ interface Props {
   link: string;
 }
 export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
-  const { data: image } = useOgImage(link);
-
+  const { data: image } = useQuery(ogImageQuery(link));
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
 

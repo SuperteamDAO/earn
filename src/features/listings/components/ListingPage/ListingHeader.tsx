@@ -10,6 +10,7 @@ import {
   useBreakpointValue,
   VStack,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -23,7 +24,7 @@ import {
 } from 'react-icons/lu';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { type Listing, useGetSubmissionCount } from '@/features/listings';
+import { type Listing, submissionCountQuery } from '@/features/listings';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { dayjs } from '@/utils/dayjs';
 
@@ -65,7 +66,7 @@ export function ListingHeader({
   const isHackathon = type === 'hackathon';
 
   const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
-    useGetSubmissionCount(listing.id!);
+    useQuery(submissionCountQuery(listing.id!));
 
   const statusIconStyles = { w: 5, h: 5 };
   let statusText = '';

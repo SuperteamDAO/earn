@@ -4,10 +4,11 @@ import {
   type ResponsiveValue,
   Skeleton,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useOgImage } from '@/queries/get-og';
+import { ogImageQuery } from '@/queries/og-image';
 
 interface Props {
   externalUrl?: string;
@@ -53,7 +54,7 @@ export const OgImageViewer = ({
     imageUrl || null,
   );
 
-  const { data: ogImageUrl, isLoading } = useOgImage(externalUrl);
+  const { data: ogImageUrl, isLoading } = useQuery(ogImageQuery(externalUrl!));
 
   useEffect(() => {
     if (ogImageUrl) {

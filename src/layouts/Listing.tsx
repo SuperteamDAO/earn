@@ -1,5 +1,6 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Box, Flex, HStack, Link, Text, VStack } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import Head from 'next/head';
 import { usePostHog } from 'posthog-js/react';
@@ -12,7 +13,7 @@ import {
   type Listing,
   ListingHeader,
   RightSideBar,
-  useGetSubmissionCount,
+  submissionCountQuery,
 } from '@/features/listings';
 import { bountySnackbarAtom } from '@/features/navbar';
 import { type User } from '@/interface/user';
@@ -31,8 +32,9 @@ export function ListingPageLayout({
 }: ListingPageProps) {
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
   const posthog = usePostHog();
-  const { data: submissionNumber = 0 } = useGetSubmissionCount(
-    initialBounty?.id ?? '',
+
+  const { data: submissionNumber = 0 } = useQuery(
+    submissionCountQuery(initialBounty?.id ?? ''),
   );
   const [commentCount, setCommentCount] = useState(0);
   const iterableSkills = initialBounty?.skills?.map((e) => e.skills) ?? [];

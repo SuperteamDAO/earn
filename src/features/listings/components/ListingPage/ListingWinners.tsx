@@ -4,11 +4,11 @@ import {
   Center,
   Flex,
   HStack,
+  Link,
   Text,
   useBreakpointValue,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
@@ -16,25 +16,17 @@ import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { formatTotalPrice } from '@/features/listing-builder';
-import type { SubmissionWithUser } from '@/interface/submission';
+import { type SubmissionWithUser } from '@/interface/submission';
 import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
+import { listingWinnersQuery } from '../../queries/listing-winners';
 import type { Listing, Rewards } from '../../types';
 import { tweetTemplate } from '../../utils';
 
 interface Props {
   bounty: Listing;
 }
-
-const fetchWinners = async (id: string): Promise<SubmissionWithUser[]> => {
-  const { data } = await axios.get(`/api/listings/${id}/winners/`);
-  return data.sort((a: SubmissionWithUser, b: SubmissionWithUser) => {
-    if (!a.winnerPosition) return 1;
-    if (!b.winnerPosition) return -1;
-    return Number(a.winnerPosition) - Number(b.winnerPosition);
-  });
-};
 
 const getOrRemoveBonuses = (
   submissions: SubmissionWithUser[],
@@ -56,11 +48,9 @@ export function ListingWinners({ bounty }: Props) {
   const posthog = usePostHog();
   const isMD = useBreakpointValue({ base: false, md: true });
 
-  const { data: submissions = [], isLoading } = useQuery<SubmissionWithUser[]>({
-    queryKey: ['winners', bounty?.id],
-    queryFn: () => fetchWinners(bounty?.id!),
-    enabled: !!bounty?.id,
-  });
+  const { data: submissions = [], isLoading } = useQuery(
+    listingWinnersQuery(bounty?.id),
+  );
 
   const openWinnerLink = () => {
     let path = window.location.href.split('?')[0];
@@ -230,8 +220,9 @@ export function ListingWinners({ bounty }: Props) {
             ...getOrRemoveBonuses(submissions, false),
           ].map((submission) => (
             <Tooltip key={submission.id} label={submission?.user?.firstName}>
-              <NextLink
+              <Link
                 key={submission.id}
+                as={NextLink}
                 href={
                   !isProject
                     ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/#details`
@@ -244,7 +235,7 @@ export function ListingWinners({ bounty }: Props) {
                   id={submission?.user?.id}
                   avatar={submission?.user?.photo as string}
                 />
-              </NextLink>
+              </Link>
             </Tooltip>
           ))}
         </HStack>

@@ -59,9 +59,7 @@ export const CompensationAmount = ({
 
   return (
     <>
-      <Text display="flex" {...textStyle}>
-        {renderCompensation()}
-      </Text>
+      <Flex {...textStyle}>{renderCompensation()}</Flex>
       {compensationType === 'variable' && !token && (
         <Flex align={'center'} gap={1}>
           <Text {...textStyle}>Send Quote</Text>

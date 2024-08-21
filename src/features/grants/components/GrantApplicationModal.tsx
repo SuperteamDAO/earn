@@ -36,6 +36,7 @@ import { useUpdateUser, useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
+import { userApplicationStatusQuery } from '../queries';
 import { type Grant } from '../types';
 
 interface Props {
@@ -118,7 +119,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
 
       reset();
       await queryClient.invalidateQueries({
-        queryKey: ['userApplication', id],
+        queryKey: userApplicationStatusQuery(id).queryKey,
       });
 
       await refetchUser();

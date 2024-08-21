@@ -1,22 +1,25 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import {
   ListingCard,
   ListingCardSkeleton,
   ListingSection,
-  useGetListings,
+  listingsQuery,
 } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
 export default function AllBountiesPage() {
-  const { data: listings, isLoading } = useGetListings({
-    type: 'bounty',
-    take: 100,
-  });
+  const { data: listings, isLoading } = useQuery(
+    listingsQuery({
+      type: 'bounty',
+      take: 100,
+    }),
+  );
 
   return (
-    <Home type="home">
+    <Home type="listing">
       <Box w={'100%'} pr={{ base: 0, lg: 6 }}>
         <ListingSection
           type="bounties"

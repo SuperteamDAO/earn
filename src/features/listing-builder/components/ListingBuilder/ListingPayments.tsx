@@ -333,9 +333,9 @@ export const ListingPayments = ({
     let formData = { ...form, ...data };
     if (isProject) {
       if (compensationType === 'fixed') {
-        formData = { ...data, rewards: { 1: rewardAmount ?? 0 } };
+        formData = { ...formData, rewards: { 1: rewardAmount ?? 0 } };
       } else {
-        formData = { ...data, rewards: { 1: 0 } };
+        formData = { ...formData, rewards: { 1: 0 } };
       }
     }
     if (errorMessage) {

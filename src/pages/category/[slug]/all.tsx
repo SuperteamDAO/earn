@@ -1,8 +1,9 @@
 import { Box } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
 
-import { ListingTabs, useGetListings } from '@/features/listings';
+import { listingsQuery, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
@@ -10,10 +11,12 @@ type SlugKeys = 'design' | 'content' | 'development' | 'other';
 
 function AllCategoryListingsPage({ slug }: { slug: string }) {
   const router = useRouter();
-  const { data: listings, isLoading } = useGetListings({
-    filter: slug,
-    take: 100,
-  });
+  const { data: listings, isLoading } = useQuery(
+    listingsQuery({
+      filter: slug,
+      take: 100,
+    }),
+  );
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
     design: 'Design Bounties and Grants | Superteam Earn',

@@ -1,5 +1,5 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { Box, Center, Flex, Image, Text, VStack } from '@chakra-ui/react';
+import { Box, Center, Flex, Image, Link, Text, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -33,7 +33,7 @@ const Earner = ({
     ? tokenObj.icon
     : '/assets/landingsponsor/icons/usdc.svg';
   return (
-    <NextLink href={`${getURL()}t/${username}`}>
+    <Link as={NextLink} href={`${getURL()}t/${username}`}>
       <Flex align={'center'} w={'100%'} my={4}>
         <Center mr={'0.75rem'}>
           <EarnAvatar id={id} avatar={avatar} />
@@ -77,7 +77,7 @@ const Earner = ({
           </Text>
         </Flex>
       </Flex>
-    </NextLink>
+    </Link>
   );
 };
 

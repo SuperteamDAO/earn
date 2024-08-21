@@ -1,6 +1,5 @@
 import { Box, HStack, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
@@ -8,6 +7,7 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import {
   DescriptionUI,
   ListingHeader,
+  listingTemplateQuery,
   ListingWinners,
 } from '@/features/listings';
 import { Default } from '@/layouts/Default';
@@ -17,20 +17,12 @@ interface BountyDetailsProps {
   slug: string;
 }
 
-const fetchBountyTemplate = async (slug: string) => {
-  const { data } = await axios.get(`/api/listings/templates/${slug}/`);
-  return data;
-};
-
 function BountyDetails({ slug }: BountyDetailsProps) {
   const {
     data: bounty,
     isLoading,
     error,
-  } = useQuery({
-    queryKey: ['bounty', slug],
-    queryFn: () => fetchBountyTemplate(slug),
-  });
+  } = useQuery(listingTemplateQuery(slug));
 
   return (
     <Default
@@ -65,7 +57,7 @@ function BountyDetails({ slug }: BountyDetailsProps) {
             mb={10}
           >
             <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
-              <DescriptionUI description={bounty?.description} />
+              <DescriptionUI description={bounty.description} />
             </VStack>
           </HStack>
         </>

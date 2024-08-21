@@ -17,6 +17,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Link,
   Tag,
   Text,
   useClipboard,
@@ -71,14 +72,14 @@ export const ApplicationHeader = ({ grant, totalApplications }: Props) => {
       <Box mb={2}>
         <Breadcrumb color="brand.slate.400">
           <BreadcrumbItem>
-            <NextLink href={'/dashboard/listings'} passHref>
+            <Link as={NextLink} href={'/dashboard/listings'} passHref>
               <BreadcrumbLink color="brand.slate.400">
                 <Flex align="center">
                   <ChevronLeftIcon mr={1} w={6} h={6} />
                   All Listings
                 </Flex>
               </BreadcrumbLink>
-            </NextLink>
+            </Link>
           </BreadcrumbItem>
 
           <BreadcrumbItem>

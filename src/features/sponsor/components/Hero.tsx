@@ -1,5 +1,13 @@
-import { Box, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
-import Link from 'next/link';
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Link,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 
@@ -79,8 +87,9 @@ export function Hero() {
 
           <Flex justify="center" gap="2rem" w="100%">
             <Link
-              href={getStartedWhere(!!session, !!user?.currentSponsorId)}
               className="ph-no-capture"
+              as={NextLink}
+              href={getStartedWhere(!!session, !!user?.currentSponsorId)}
               onClick={() => {
                 posthog?.capture('clicked_hero_get_started');
               }}

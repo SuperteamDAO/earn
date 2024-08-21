@@ -1,4 +1,4 @@
-import { Button, Text, VStack } from '@chakra-ui/react';
+import { Button, Link, Text, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -41,9 +41,10 @@ export function Footer() {
       >
         Where Solana teams come to get sh*t done
       </Text>
-      <NextLink
-        href={getStartedWhere(!!session, !!user?.currentSponsorId)}
+      <Link
         className="ph-no-capture"
+        as={NextLink}
+        href={getStartedWhere(!!session, !!user?.currentSponsorId)}
         onClick={() => posthog.capture('clicked_footer_get_started')}
       >
         <Button
@@ -59,7 +60,7 @@ export function Footer() {
         >
           Get Started
         </Button>
-      </NextLink>
+      </Link>
     </VStack>
   );
 }

@@ -3,7 +3,11 @@ import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
 import { setUser } from '@sentry/nextjs';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
@@ -15,9 +19,8 @@ import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import { FeatureModal } from '@/components/modals/FeatureModal';
-import { TermsOfServices } from '@/components/modals/TermsOfServices';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
-import { useLatestActiveSlug } from '@/features/sponsor-dashboard';
+import { latestActiveSlugQuery } from '@/features/sponsor-dashboard';
 import { useUpdateUser, useUser } from '@/store/user';
 import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
@@ -53,10 +56,12 @@ function MyApp({ Component, pageProps }: any) {
 
   const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
 
-  const { data: latestActiveSlug } = useLatestActiveSlug(
-    !!user?.currentSponsorId &&
-      user.featureModalShown === false &&
-      !router.pathname.includes('dashboard'),
+  const { data: latestActiveSlug } = useQuery(
+    latestActiveSlugQuery(
+      !!user?.currentSponsorId &&
+        user.featureModalShown === false &&
+        !router.pathname.includes('dashboard'),
+    ),
   );
 
   useEffect(() => {
@@ -131,7 +136,6 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           <SessionProvider session={session}>
             <ChakraProvider theme={extendThemeWithNextFonts}>
               <MyApp Component={Component} pageProps={pageProps} />
-              <TermsOfServices />
             </ChakraProvider>
           </SessionProvider>
         </PostHogProvider>

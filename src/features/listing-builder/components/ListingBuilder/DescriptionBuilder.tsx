@@ -426,30 +426,6 @@ export const DescriptionBuilder = ({
               H3
             </ToolbarButton>
             <ToolbarButton
-              isActive={editor?.isActive('heading', { level: 4 })}
-              onClick={() => {
-                editor?.chain().focus().toggleHeading({ level: 4 }).run();
-              }}
-            >
-              H4
-            </ToolbarButton>
-            <ToolbarButton
-              isActive={editor?.isActive('heading', { level: 5 })}
-              onClick={() => {
-                editor?.chain().focus().toggleHeading({ level: 5 }).run();
-              }}
-            >
-              H5
-            </ToolbarButton>
-            <ToolbarButton
-              isActive={editor?.isActive('heading', { level: 6 })}
-              onClick={() => {
-                editor?.chain().focus().toggleHeading({ level: 6 }).run();
-              }}
-            >
-              H6
-            </ToolbarButton>
-            <ToolbarButton
               isActive={editor?.isActive('bold')}
               onClick={() => {
                 editor?.chain().focus().toggleBold().run();

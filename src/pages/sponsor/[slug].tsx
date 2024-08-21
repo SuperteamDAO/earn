@@ -1,34 +1,16 @@
 import { Box, Center, Flex, Image, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { type GetServerSideProps } from 'next';
 
-import { type Listing, ListingTabs } from '@/features/listings';
+import { ListingTabs } from '@/features/listings';
+import { sponsorListingsQuery } from '@/features/sponsor-dashboard';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 
-interface Listings {
-  bounties: Listing[];
-  sponsorInfo: {
-    title: string;
-    description: string;
-    bgImage: string;
-  };
-}
-
-const fetchListings = async (slug: string): Promise<Listings> => {
-  const { data } = await axios.post(`/api/listings/sponsor`, {
-    sponsor: slug,
-  });
-  return data;
-};
-
 const SponsorListingsPage = ({ slug }: { slug: string }) => {
-  const { data: listings, isLoading: isListingsLoading } = useQuery({
-    queryKey: ['sponsorListings', slug],
-    queryFn: () => fetchListings(slug),
-    enabled: !!slug,
-  });
+  const { data: listings, isLoading: isListingsLoading } = useQuery(
+    sponsorListingsQuery(slug),
+  );
 
   const {
     title = '',

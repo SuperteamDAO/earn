@@ -1,7 +1,8 @@
 import { Box } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { ListingTabs, useGetListings } from '@/features/listings';
+import { listingsQuery, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { dayjs } from '@/utils/dayjs';
@@ -11,14 +12,16 @@ export default function BountiesPage() {
     () => dayjs().subtract(2, 'months').toISOString(),
     [],
   );
-  const { data: listings, isLoading } = useGetListings({
-    type: 'bounty',
-    deadline,
-    take: 100,
-  });
+  const { data: listings, isLoading } = useQuery(
+    listingsQuery({
+      type: 'bounty',
+      deadline,
+      take: 100,
+    }),
+  );
 
   return (
-    <Home type="home">
+    <Home type="listing">
       <Meta
         title="Superteam Earn | Discover Bounties and Grants in Crypto for Design, Development, and Content"
         description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
