@@ -85,29 +85,18 @@ export function RightSideBar({
 
   const router = useRouter();
 
-  const largestDigits = digitsInLargestString(
-    cleanRewardPrizes(rewards).map((c) => formatNumberWithSuffix(c) + ''),
+  const consideringDigitsArray = cleanRewardPrizes(rewards).map(
+    (c) => formatNumberWithSuffix(c, 2, true) + (token || '') + '',
   );
-  let widthOfPrize = '8.5rem';
-  switch (largestDigits) {
-    case 1:
-      widthOfPrize = '5rem';
-      break;
-    case 2:
-      widthOfPrize = '6rem';
-      break;
-    case 3:
-      widthOfPrize = '7rem';
-      break;
-    case 4:
-      widthOfPrize = '8.5rem';
-      break;
-    default:
-      widthOfPrize = '8.5rem';
-      break;
-  }
+
+  consideringDigitsArray.push(
+    formatNumberWithSuffix(rewardAmount || 0, 2, true) + (token || '') + '',
+  );
+  const largestDigits = digitsInLargestString(consideringDigitsArray);
+  console.log('largestDigits', largestDigits);
+  let widthOfPrize = largestDigits - 0.75 + 'rem';
   if (cleanRewardPrizes(rewards).length > 6) {
-    widthOfPrize = '8.5rem';
+    widthOfPrize = largestDigits + 0.5 + 'rem';
   }
 
   return (

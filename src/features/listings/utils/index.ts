@@ -149,11 +149,16 @@ export function isValidUrl(url: string): boolean {
 }
 export function digitsInLargestString(numbers: string[]): number {
   const largest = numbers.reduce((max, current) => {
-    return current.length > max.length
+    const cleanedCurrent = current.replace(/[,\.]/g, '');
+    const cleanedMax = max.replace(/[,\.]/g, '');
+
+    return cleanedCurrent.length > cleanedMax.length
       ? current
-      : current.length === max.length && current > max
+      : cleanedCurrent.length === cleanedMax.length &&
+          cleanedCurrent > cleanedMax
         ? current
         : max;
   }, '');
-  return largest.length;
+
+  return largest.replace(/[,\.]/g, '').length;
 }

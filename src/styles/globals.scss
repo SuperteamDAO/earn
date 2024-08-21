@@ -117,6 +117,36 @@ body {
 }
 
 #reset-des {
+  * {
+    font-size: 0.875rem !important;
+  }
+
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  h3 {
+    font-size: 1.125rem !important;
+  }
+
+  h4 {
+    font-size: 1rem !important;
+  }
+
+  h5 {
+    font-size: 0.875rem !important;
+  }
+
+  h6 {
+    font-size: 0.75rem !important;
+  }
+}
+
+#reset-des {
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
