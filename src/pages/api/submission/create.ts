@@ -70,7 +70,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error: any) {
-    logger.error(`User ${userId} unable to submit: ${error.message}`);
+    logger.error(`User ${userId} unable to submit: ${safeStringify(error)}`);
     return res.status(400).json({
       error: error.message,
       message: `User ${userId} unable to submit, ${error.message}`,
