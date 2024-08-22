@@ -303,7 +303,7 @@ export function RightSideBar({
             />
           </Box>
           <VStack align={'start'} w={'full'} py={8} fontSize="sm">
-            <LiveListings isHackathon={!!Hackathon}>
+            <LiveListings isHackathon={!!Hackathon} id={listing.id}>
               <Flex align="center" justify={'space-between'} w="full">
                 <Text
                   color={'brand.slate.600'}

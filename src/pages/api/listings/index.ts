@@ -75,6 +75,8 @@ export default async function listings(
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const deadline = params.deadline as string;
 
+  const id = params.id as string;
+
   const filterToSkillsMap: Record<string, string[]> = {
     development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
     design: ['Design'],
@@ -131,6 +133,7 @@ export default async function listings(
       },
       type: type || { in: ['bounty', 'project'] },
       ...skillsFilter,
+      NOT: { id },
     },
     select: {
       rewardAmount: true,
