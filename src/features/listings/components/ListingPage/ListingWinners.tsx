@@ -68,7 +68,7 @@ export function ListingWinners({ bounty }: Props) {
     <Box
       pos="relative"
       w="full"
-      maxW={'8xl'}
+      maxW={'7xl'}
       mx={'auto'}
       px={4}
       pt={4}

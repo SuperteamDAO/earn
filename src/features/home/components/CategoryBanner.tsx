@@ -85,7 +85,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
           top="50%"
           align="start"
           w="full"
-          maxW={'8xl'}
+          maxW={'7xl'}
           px={{ base: 3, md: 4 }}
           transform="translateY(-50%)"
         >

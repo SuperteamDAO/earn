@@ -66,61 +66,63 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
       {type === 'category' && currentCategory && (
         <CategoryBanner category={currentCategory} />
       )}
-      <Container maxW={'8xl'} mx="auto" px={{ base: 3, md: 4 }}>
-        <HStack align="start" justify="space-between">
-          <Flex
-            w="full"
-            py={4}
-            borderRight={{
-              base: 'none',
-              lg: type === 'niche' ? 'none' : '1px solid',
-            }}
-            borderRightColor={{
-              base: 'none',
-              lg: 'blackAlpha.200',
-            }}
-          >
-            <Box w="full" pt={1} pr={{ base: 0, lg: 6 }}>
-              {type === 'landing' && (
-                <>
-                  <NavTabs />
-                  {isAuth ? (
-                    <UserStatsBanner />
-                  ) : (
-                    <HomeBanner userCount={totals?.totalUsers} />
-                  )}
-                </>
-              )}
-              {type === 'listing' && (
-                <>
-                  <NavTabs />
-                  <HomeBanner userCount={totals?.totalUsers} />
-                  <UserStatsBanner />
-                </>
-              )}
-              {type === 'category' && <NavTabs />}
-              {type === 'region' && <NavTabs mt={1} />}
-              {children}
-            </Box>
-          </Flex>
-          {type !== 'niche' && (
+      <Box w="100%" mx="auto" px={{ base: '2', lg: 6 }}>
+        <Container w="100%" maxW={'7xl'} mx="auto" p={0}>
+          <HStack align="start" justify="space-between">
             <Flex
-              display={{
+              w="full"
+              py={4}
+              borderRight={{
                 base: 'none',
-                lg: 'flex',
+                lg: type === 'niche' ? 'none' : '1px solid',
+              }}
+              borderRightColor={{
+                base: 'none',
+                lg: 'blackAlpha.200',
               }}
             >
-              <HomeSideBar
-                type={type}
-                isTotalLoading={isTotalLoading}
-                total={totals?.totalInUSD ?? 0}
-                listings={totals?.count ?? 0}
-                earners={recentEarners ?? []}
-              />
+              <Box w="full" pt={1} pr={{ base: 0, lg: 6 }}>
+                {type === 'landing' && (
+                  <>
+                    <NavTabs />
+                    {isAuth ? (
+                      <UserStatsBanner />
+                    ) : (
+                      <HomeBanner userCount={totals?.totalUsers} />
+                    )}
+                  </>
+                )}
+                {type === 'listing' && (
+                  <>
+                    <NavTabs />
+                    <HomeBanner userCount={totals?.totalUsers} />
+                    <UserStatsBanner />
+                  </>
+                )}
+                {type === 'category' && <NavTabs />}
+                {type === 'region' && <NavTabs mt={1} />}
+                {children}
+              </Box>
             </Flex>
-          )}
-        </HStack>
-      </Container>
+            {type !== 'niche' && (
+              <Flex
+                display={{
+                  base: 'none',
+                  lg: 'flex',
+                }}
+              >
+                <HomeSideBar
+                  type={type}
+                  isTotalLoading={isTotalLoading}
+                  total={totals?.totalInUSD ?? 0}
+                  listings={totals?.count ?? 0}
+                  earners={recentEarners ?? []}
+                />
+              </Flex>
+            )}
+          </HStack>
+        </Container>
+      </Box>
     </Default>
   );
 }

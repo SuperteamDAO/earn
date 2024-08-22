@@ -211,11 +211,11 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
     >
       <Box>
         <Hero START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
-        <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
+        <Box overflowX="hidden" maxW="7xl" mx="auto" px={PADX}>
           <GetHiredBy />
         </Box>
         <Divider borderColor="brand.slate.300" />
-        <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
+        <Box overflowX="hidden" maxW="7xl" mx="auto" px={PADX}>
           <About />
         </Box>
         <Box pos="relative" w="full" px={PADX} py={8} bg="#F8FAFC">
@@ -238,7 +238,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
             direction={{ base: 'column', md: 'row' }}
             gap={8}
             overflowX="hidden"
-            maxW="8xl"
+            maxW="7xl"
             mx="auto"
           >
             <Track
@@ -253,7 +253,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
             />
           </Flex>
         </Box>
-        <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
+        <Box overflowX="hidden" maxW="7xl" mx="auto" px={PADX}>
           {hackathonIsOn && <Leaderboard leaders={countryLeaders} />}
           <Rankings rankings={rankings} />
           <FAQs />

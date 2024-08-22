@@ -133,13 +133,13 @@ export function ListingPageLayout({
       }
     >
       <Box bg="white">
-        <>
-          {initialBounty === null && <ErrorSection />}
-          {initialBounty !== null && !initialBounty?.id && (
-            <ErrorSection message="Sorry! The bounty you are looking for is not available." />
-          )}
-          {initialBounty !== null && !!initialBounty?.id && (
-            <Box w="full" maxW={'6xl'} mx="auto" bg="white">
+        {initialBounty === null && <ErrorSection />}
+        {initialBounty !== null && !initialBounty?.id && (
+          <ErrorSection message="Sorry! The bounty you are looking for is not available." />
+        )}
+        {initialBounty !== null && !!initialBounty?.id && (
+          <Box w="100%" mx="auto" px={{ base: '2', lg: 6 }}>
+            <Box w="100%" maxW={'7xl'} mx="auto">
               <ListingHeader
                 commentCount={commentCount}
                 listing={initialBounty}
@@ -149,8 +149,8 @@ export function ListingPageLayout({
                 justify={['center', 'center', 'space-between', 'space-between']}
                 flexDir={{ base: 'column', md: 'row' }}
                 gap={{ base: 0, md: 4 }}
+                maxW="6xl"
                 minH="100vh"
-                mx={'auto'}
                 px={3}
                 bg="white"
               >
@@ -263,8 +263,8 @@ export function ListingPageLayout({
                 </VStack>
               </HStack>
             </Box>
-          )}
-        </>
+          </Box>
+        )}
       </Box>
     </Default>
   );

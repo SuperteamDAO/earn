@@ -45,7 +45,7 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
           justify={['center', 'center', 'space-between', 'space-between']}
           flexDir={['column', 'column', 'row', 'row']}
           gap={4}
-          maxW={'8xl'}
+          maxW={'7xl'}
           mx={'auto'}
           mt={6}
           mb={10}

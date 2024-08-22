@@ -248,13 +248,13 @@ export function ListingHeader({
   };
 
   return (
-    <VStack px={{ base: 3, md: 3 }} bg={'white'}>
+    <VStack bg={'white'}>
       <VStack
         justify={'space-between'}
         flexDir={'row'}
         gap={5}
         w={'full'}
-        maxW={'8xl'}
+        maxW={'7xl'}
         mx={'auto'}
         py={{ base: 4, md: 10 }}
       >
@@ -286,13 +286,13 @@ export function ListingHeader({
         <HeaderSub />
       </Flex>
       {!isTemplate && (
-        <Flex align={'center'} w={'full'} maxW="8xl" h={10}>
+        <Flex align={'center'} w={'full'} maxW="7xl" h={10}>
           <HStack
             align="center"
             justifyContent="start"
             gap={10}
             w={'full'}
-            maxW={'8xl'}
+            maxW={'7xl'}
             h={'full'}
             mx={'auto'}
             my={'auto'}

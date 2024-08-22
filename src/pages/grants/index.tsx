@@ -55,6 +55,7 @@ function Grants() {
         />
         <VStack my={16} textAlign="center" spacing={4}>
           <Text
+            px={2}
             fontSize={{ base: '4xl', md: '5xl' }}
             fontWeight={700}
             lineHeight="1.2"
@@ -78,7 +79,7 @@ function Grants() {
             Equity-Free • No Bullshit • Fast AF
           </Text>
         </VStack>
-        <Container maxW={'8xl'} mb={12}>
+        <Container maxW={'7xl'} mb={12}>
           {isLoading && <Loading />}
           {isError && <ErrorInfo />}
           {!isLoading && !isError && (

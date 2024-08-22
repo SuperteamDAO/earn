@@ -74,119 +74,117 @@ export const GrantsHeader = ({
   const router = useRouter();
 
   return (
-    <>
-      <Box w="full" px={3} bg={'white'}>
-        <VStack
-          align="start"
-          justify={['start', 'start', 'space-between', 'space-between']}
-          flexDir={['column', 'column', 'row', 'row']}
-          gap={5}
-          w={'full'}
-          maxW={'8xl'}
-          mx={'auto'}
-          py={10}
-        >
-          <HStack align="start" flexDir={{ base: 'column', md: 'row' }}>
-            <Image
-              w={'4rem'}
-              h={'4rem'}
-              objectFit={'cover'}
-              alt={'phantom'}
-              rounded={'md'}
-              src={sponsor?.logo}
-            />
-            <VStack align={'start'} gap={2}>
-              <Flex align={'center'} wrap={'wrap'} gap={2}>
-                <Heading
-                  color={'brand.slate.700'}
-                  fontFamily={'var(--font-sans)'}
-                  fontSize={'xl'}
-                  fontWeight={700}
+    <Box w="full" bg={'white'}>
+      <VStack
+        align="start"
+        justify={['start', 'start', 'space-between', 'space-between']}
+        flexDir={['column', 'column', 'row', 'row']}
+        gap={5}
+        w={'full'}
+        maxW={'7xl'}
+        mx={'auto'}
+        py={10}
+      >
+        <HStack align="start" flexDir={{ base: 'column', md: 'row' }}>
+          <Image
+            w={'4rem'}
+            h={'4rem'}
+            objectFit={'cover'}
+            alt={'phantom'}
+            rounded={'md'}
+            src={sponsor?.logo}
+          />
+          <VStack align={'start'} gap={2}>
+            <Flex align={'center'} wrap={'wrap'} gap={2}>
+              <Heading
+                color={'brand.slate.700'}
+                fontFamily={'var(--font-sans)'}
+                fontSize={'xl'}
+                fontWeight={700}
+              >
+                {title}
+              </Heading>
+            </Flex>
+
+            <Flex align={'center'} wrap={'wrap'} gap={{ base: 1, md: 3 }}>
+              <Flex align={'center'} gap={1}>
+                <Text
+                  color={'#94A3B8'}
+                  fontSize={{ base: 'xs', sm: 'md' }}
+                  fontWeight={500}
+                  whiteSpace={'nowrap'}
                 >
-                  {title}
-                </Heading>
+                  by {sponsor?.name}
+                </Text>
+                {!!sponsor?.isVerified && <VerifiedBadge />}
               </Flex>
-
-              <Flex align={'center'} wrap={'wrap'} gap={{ base: 1, md: 3 }}>
-                <Flex align={'center'} gap={1}>
-                  <Text
-                    color={'#94A3B8'}
-                    fontSize={{ base: 'xs', sm: 'md' }}
-                    fontWeight={500}
-                    whiteSpace={'nowrap'}
-                  >
-                    by {sponsor?.name}
-                  </Text>
-                  {!!sponsor?.isVerified && <VerifiedBadge />}
-                </Flex>
-                <ListingHeaderSeparator />
-                <Flex>
-                  <Image
-                    h="4"
-                    mt={{ base: '1px', sm: 1 }}
-                    mr={{ base: '1px', sm: 1 }}
-                    alt={'grant'}
-                    src={'/assets/icons/bank.svg'}
-                  />
-                  <Text
-                    color={'brand.slate.400'}
-                    fontSize={{ base: 'xs', sm: 'md' }}
-                    fontWeight={500}
-                  >
-                    Grant
-                  </Text>
-                </Flex>
-                <ListingHeaderSeparator />
-                <StatusBadge
-                  Icon={statusIcon}
-                  textColor={statusTextColor}
-                  text={statusText}
+              <ListingHeaderSeparator />
+              <Flex>
+                <Image
+                  h="4"
+                  mt={{ base: '1px', sm: 1 }}
+                  mr={{ base: '1px', sm: 1 }}
+                  alt={'grant'}
+                  src={'/assets/icons/bank.svg'}
                 />
-                <ListingHeaderSeparator />
-                <RegionLabel region={region} />
+                <Text
+                  color={'brand.slate.400'}
+                  fontSize={{ base: 'xs', sm: 'md' }}
+                  fontWeight={500}
+                >
+                  Grant
+                </Text>
               </Flex>
-            </VStack>
-          </HStack>
-        </VStack>
-        <Flex align={'center'} w={'full'} h={10}>
-          <HStack
-            align="center"
-            justifyContent="start"
-            gap={10}
-            w={'full'}
-            maxW={'8xl'}
-            h={'full'}
-            mx={'auto'}
-            my={'auto'}
-            borderColor="brand.slate.200"
-            borderBottomWidth={'1px'}
-          >
-            <ListingTabLink
-              w={{ md: '22rem' }}
-              href={`/grants/${slug}/`}
-              text="Prizes"
-              isActive={false}
-              styles={{
-                pointerEvents: 'none',
-                display: { base: 'none', md: 'flex' },
-              }}
-            />
-            <ListingTabLink
-              href={`/grants/${slug}/`}
-              text="Details"
-              isActive={!router.asPath.split('/')[3]?.includes('references')}
-            />
-
-            {references && references?.length > 0 && (
-              <ListingTabLink
-                href={`/grants/${slug}/references`}
-                text="References"
-                isActive={!!router.asPath.split('/')[3]?.includes('references')}
+              <ListingHeaderSeparator />
+              <StatusBadge
+                Icon={statusIcon}
+                textColor={statusTextColor}
+                text={statusText}
               />
-            )}
-          </HStack>
-        </Flex>
-      </Box>
-    </>
+              <ListingHeaderSeparator />
+              <RegionLabel region={region} />
+            </Flex>
+          </VStack>
+        </HStack>
+      </VStack>
+      <Flex align={'center'} w={'full'} h={10}>
+        <HStack
+          align="center"
+          justifyContent="start"
+          gap={10}
+          w={'full'}
+          maxW={'7xl'}
+          h={'full'}
+          mx={'auto'}
+          my={'auto'}
+          borderColor="brand.slate.200"
+          borderBottomWidth={'1px'}
+        >
+          <ListingTabLink
+            w={{ md: '22rem' }}
+            href={`/grants/${slug}/`}
+            text="Prizes"
+            isActive={false}
+            styles={{
+              pointerEvents: 'none',
+              display: { base: 'none', md: 'flex' },
+            }}
+          />
+          <ListingTabLink
+            href={`/grants/${slug}/`}
+            text="Details"
+            isActive={!router.asPath.split('/')[3]?.includes('references')}
+          />
+
+          {references && references?.length > 0 && (
+            <ListingTabLink
+              href={`/grants/${slug}/references`}
+              text="References"
+              isActive={!!router.asPath.split('/')[3]?.includes('references')}
+            />
+          )}
+        </HStack>
+      </Flex>
+    </Box>
   );
 };
