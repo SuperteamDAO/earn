@@ -1,5 +1,13 @@
-import { Box, Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
-import Link from 'next/link';
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Link,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 
@@ -12,7 +20,7 @@ import MonkeDao from '@/public/assets/landingsponsor/sponsors/monkedao.png';
 import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.png';
 import Squads from '@/public/assets/landingsponsor/sponsors/squads.png';
 import Tensor from '@/public/assets/landingsponsor/sponsors/tensor.png';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 import { fontSize, maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
@@ -23,7 +31,7 @@ import { StepTwo } from './steps/Two';
 export function Hero() {
   const { data: session } = useSession();
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   const posthog = usePostHog();
 
@@ -79,8 +87,9 @@ export function Hero() {
 
           <Flex justify="center" gap="2rem" w="100%">
             <Link
-              href={getStartedWhere(!!session, !!userInfo?.currentSponsorId)}
               className="ph-no-capture"
+              as={NextLink}
+              href={getStartedWhere(!!session, !!user?.currentSponsorId)}
               onClick={() => {
                 posthog?.capture('clicked_hero_get_started');
               }}

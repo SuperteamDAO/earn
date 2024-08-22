@@ -16,6 +16,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
@@ -27,9 +28,11 @@ import {
 } from '@/components/Form/TextAreaHelpers';
 import { tokenList } from '@/constants';
 import { randomSubmissionCommentGenerator } from '@/features/comments';
-import { userStore } from '@/store/user';
+import { useUpdateUser, useUser } from '@/store/user';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
+import { submissionCountQuery } from '../../queries';
+import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
 import { isValidUrl, isYoutubeOrLoomLink } from '../../utils';
 import { QuestionHandler } from './QuestionHandler';
@@ -39,9 +42,6 @@ interface Props {
   id: string | undefined;
   isOpen: boolean;
   onClose: () => void;
-  setIsSubmitted: (arg0: boolean) => void;
-  setSubmissionNumber: (arg0: number) => void;
-  submissionNumber: number;
   editMode: boolean;
   listing: Listing;
   showEasterEgg: () => void;
@@ -58,9 +58,6 @@ type FormFields = Record<string, string>;
 export const SubmissionModal = ({
   isOpen,
   onClose,
-  setIsSubmitted,
-  setSubmissionNumber,
-  submissionNumber,
   editMode,
   listing,
   showEasterEgg,
@@ -75,6 +72,8 @@ export const SubmissionModal = ({
     minRewardAsk,
     maxRewardAsk,
   } = listing;
+
+  const queryClient = useQueryClient();
 
   const [eligibilityQs, setEligibilityQs] = useState(
     eligibility?.map((q) => ({
@@ -98,7 +97,8 @@ export const SubmissionModal = ({
     watch,
   } = useForm();
 
-  const { userInfo, setUserInfo } = userStore();
+  const { user, refetchUser } = useUser();
+  const updateUser = useUpdateUser();
   const posthog = usePostHog();
 
   useEffect(() => {
@@ -169,10 +169,9 @@ export const SubmissionModal = ({
           question: q.question,
           answer: answers[`eligibility-${q.order}`],
         })) ?? [];
-      if (userInfo?.publicKey !== publicKey)
-        await axios.post('/api/user/update/', {
-          publicKey,
-        });
+      if (user?.publicKey !== publicKey) {
+        await updateUser.mutateAsync({ publicKey });
+      }
 
       const submissionEndpoint = editMode
         ? '/api/submission/update/'
@@ -203,18 +202,21 @@ export const SubmissionModal = ({
         }
       }
 
-      const latestSubmissionNumber = (userInfo?.Submission?.length ?? 0) + 1;
+      const latestSubmissionNumber = (user?.Submission?.length ?? 0) + 1;
       if (!editMode && latestSubmissionNumber === 1) showEasterEgg();
       if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
 
       reset();
-      setIsSubmitted(true);
+      await queryClient.invalidateQueries({
+        queryKey: userSubmissionQuery(id!, user!.id).queryKey,
+      });
 
-      const updatedUser = await axios.post('/api/user/');
-      setUserInfo(updatedUser?.data);
+      await refetchUser();
 
       if (!editMode) {
-        setSubmissionNumber(submissionNumber + 1);
+        await queryClient.invalidateQueries({
+          queryKey: submissionCountQuery(id!).queryKey,
+        });
       }
 
       onClose();
@@ -479,7 +481,7 @@ export const SubmissionModal = ({
                 validate={(address: string) =>
                   validateSolAddress(address, setPublicKeyError)
                 }
-                defaultValue={userInfo?.publicKey}
+                defaultValue={user?.publicKey}
               />
               <Text mt={1} ml={1} color="red" fontSize="14px">
                 {publicKeyError}

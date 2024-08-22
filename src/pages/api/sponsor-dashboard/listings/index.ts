@@ -27,16 +27,15 @@ type BountyGrant = {
   minRewardAsk: number | null;
   compensationType: string | null;
   createdAt: Date;
+  submissionCount: number;
 };
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userSponsorId = req.userSponsorId;
-
   try {
     const params = req.query;
     const searchText = params.searchText as string;
     const whereSearch = searchText ? `AND title LIKE '%${searchText}%'` : '';
-
     const data: BountyGrant[] = await prisma.$queryRawUnsafe(
       `
       SELECT 
@@ -58,7 +57,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         b.minRewardAsk,
         b.compensationType,
         b.createdAt,
-        NULL as airtableId
+        NULL as airtableId,
+        CAST((SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id) AS SIGNED) as submissionCount
       FROM Bounties b
       WHERE b.isActive = true
       AND b.isArchived = false
@@ -87,7 +87,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         g.minReward as minRewardAsk,
         NULL as compensationType,
         g.createdAt,
-        g.airtableId
+        g.airtableId,
+        CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
       FROM Grants g
       WHERE g.isActive = true
       AND g.isArchived = false
@@ -104,10 +105,15 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       GrantStatus.OPEN,
     );
 
+    const serializedData = data.map((item) => ({
+      ...item,
+      submissionCount: Number(item.submissionCount),
+    }));
+
     logger.info(
       `Successfully fetched bounties and grants for sponsor ${userSponsorId}`,
     );
-    res.status(200).json(data);
+    res.status(200).json(serializedData);
   } catch (err: any) {
     logger.error(
       `Error fetching bounties and grants for sponsor ${userSponsorId}: ${err.message}`,

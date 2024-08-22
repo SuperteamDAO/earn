@@ -1,8 +1,8 @@
 import { WarningIcon } from '@chakra-ui/icons';
 import { Button, Flex, Text, Tooltip, useDisclosure } from '@chakra-ui/react';
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { AuthWrapper } from '@/features/auth';
 import {
@@ -10,8 +10,9 @@ import {
   userRegionEligibilty,
   WarningModal,
 } from '@/features/listings';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
+import { userApplicationStatusQuery } from '../queries/user-application-status';
 import { type Grant } from '../types';
 import { GrantApplicationModal } from './GrantApplicationModal';
 
@@ -22,20 +23,18 @@ interface GrantApplicationButtonProps {
 export const GrantApplicationButton = ({
   grant,
 }: GrantApplicationButtonProps) => {
-  const { userInfo } = userStore();
-  const [hasApplied, setHasApplied] = useState(false);
-  const [isUserApplicationLoading, setIsUserApplicationLoading] =
-    useState(false);
-
+  const { user } = useUser();
   const { region, id, link, isNative } = grant;
 
   const { status: authStatus } = useSession();
   const isAuthenticated = authStatus === 'authenticated';
 
-  const isUserEligibleByRegion = userRegionEligibilty(
-    region,
-    userInfo?.location,
-  );
+  const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
+
+  const { data: applicationStatus, isLoading: isUserApplicationLoading } =
+    useQuery(userApplicationStatusQuery(id, !!user?.id));
+
+  const hasApplied = applicationStatus?.hasPendingApplication;
 
   let buttonText;
   let buttonBG;
@@ -54,7 +53,7 @@ export const GrantApplicationButton = ({
       buttonText = 'Apply Now';
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
-        userInfo?.id && userInfo?.isTalentFilled && !isUserEligibleByRegion,
+        user?.id && user?.isTalentFilled && !isUserEligibleByRegion,
       );
       btnLoadingText = 'Checking Application..';
   }
@@ -71,7 +70,7 @@ export const GrantApplicationButton = ({
 
   const handleSubmit = () => {
     if (isAuthenticated) {
-      if (!userInfo?.isTalentFilled) {
+      if (!user?.isTalentFilled) {
         warningOnOpen();
       } else if (link && !isNative) {
         window.open(link, '_blank', 'noopener,noreferrer');
@@ -81,34 +80,12 @@ export const GrantApplicationButton = ({
     }
   };
 
-  const getUserApplication = async () => {
-    setIsUserApplicationLoading(true);
-    try {
-      const response = await axios.get(
-        `/api/grant-application/is-user-eligible`,
-        {
-          params: { grantId: id },
-        },
-      );
-      setHasApplied(response.data.hasPendingApplication);
-      setIsUserApplicationLoading(false);
-    } catch (e) {
-      setIsUserApplicationLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!userInfo?.id) return;
-    getUserApplication();
-  }, [userInfo?.id]);
-
   return (
     <>
       {isOpen && (
         <GrantApplicationModal
           onClose={onClose}
           isOpen={isOpen}
-          setHasApplied={setHasApplied}
           grant={grant}
         />
       )}
@@ -128,7 +105,7 @@ export const GrantApplicationButton = ({
         bg="brand.slate.500"
         hasArrow
         isDisabled={
-          !userInfo?.id || !userInfo?.isTalentFilled || isUserEligibleByRegion
+          !user?.id || !user?.isTalentFilled || isUserEligibleByRegion
         }
         label={!isUserEligibleByRegion ? regionTooltipLabel : ''}
         rounded="md"
@@ -148,6 +125,7 @@ export const GrantApplicationButton = ({
           <AuthWrapper style={{ w: 'full', direction: 'column' }}>
             <Button
               w={'full'}
+              mt={grant?.link && !grant?.isNative ? 4 : 0}
               mb={{ base: 12, md: 5 }}
               bg={buttonBG}
               _hover={{ bg: buttonBG }}

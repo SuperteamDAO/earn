@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   HStack,
+  Icon,
   Image,
   Link,
   LinkBox,
@@ -10,26 +11,21 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import React, {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
-import { BiSolidComment } from 'react-icons/bi';
-import { IoMdHeart } from 'react-icons/io';
-import type { Metadata } from 'unfurl.js/dist/types';
+import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import { LuHeart, LuMessageCircle } from 'react-icons/lu';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { type User } from '@/interface/user';
-import { userStore } from '@/store/user';
-import { Badge } from '@/svg/badge';
+import { ogImageQuery } from '@/queries/og-image';
+import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { type Rewards } from '../../types';
+import { Badge } from './Badge';
 
 interface Props {
   winner: boolean;
@@ -52,11 +48,11 @@ export const SubmissionCard = ({
   setUpdate,
   link,
 }: Props) => {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const router = useRouter();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [image, setImage] = useState<string>('/assets/bg/og.svg');
+  const { data: image } = useQuery(ogImageQuery(link));
   const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsLoading(true);
@@ -76,10 +72,10 @@ export const SubmissionCard = ({
         variant: 'subtle',
       },
       success: () => {
-        const likeAdded = likes?.some((e) => e.id === userInfo?.id)
+        const likeAdded = likes?.some((e) => e.id === user?.id)
           ? 'Like removed'
           : 'Liked submission';
-        const likeAddedDesc = likes?.some((e) => e.id === userInfo?.id)
+        const likeAddedDesc = likes?.some((e) => e.id === user?.id)
           ? "You've removed your like from the submission."
           : "You've liked the submission.";
         return {
@@ -100,62 +96,53 @@ export const SubmissionCard = ({
       },
     });
   };
-  useEffect(() => {
-    const fetchImage = async () => {
-      if (link) {
-        try {
-          const { data } = (await axios.post('/api/og/get', {
-            url: link,
-          })) as { data: Metadata };
-          setImage(data.open_graph.images![0]?.url ?? '/assets/bg/og.svg');
-        } catch (error) {
-          console.log(error);
-          setImage('/assets/bg/og.svg');
-        }
-      }
-    };
-    fetchImage();
-  }, []);
 
   return (
     <LinkBox
       pos={'relative'}
       overflow={'hidden'}
-      w={{ base: 'full', md: 72 }}
-      p={4}
+      w={{ base: 'full', md: 60 }}
       bg={'white'}
       cursor={'pointer'}
       rounded={'md'}
     >
-      {winner && (
-        <Box pos="absolute" top="0" right="0">
-          <Badge position={winnerPosition} />
-        </Box>
-      )}
-      <Link as={NextLink} href={`/t/${talent?.username}`}>
-        <HStack mb={2}>
-          <EarnAvatar id={talent?.id} avatar={talent?.photo || undefined} />
-          <Text
-            overflow={'hidden'}
-            w="80%"
-            color={'gray.900'}
-            fontSize={'lg'}
-            fontWeight={500}
-            whiteSpace={'nowrap'}
-            textOverflow={'ellipsis'}
-          >
-            {talent?.firstName} {talent?.lastName}
-          </Text>
-        </HStack>
-      </Link>
-      <LinkOverlay href={`${router.asPath}/${id}`}>
+      <HStack justify={'space-between'} w="full" mb={2}>
+        <Link as={NextLink} href={`/t/${talent?.username}`}>
+          <HStack>
+            <EarnAvatar
+              size="24px"
+              id={talent?.id}
+              avatar={talent?.photo || undefined}
+            />
+            <Text
+              overflow={'hidden'}
+              maxW="8rem"
+              color={'gray.900'}
+              fontSize={'md'}
+              fontWeight={500}
+              whiteSpace={'nowrap'}
+              textOverflow={'ellipsis'}
+            >
+              {talent?.firstName} {talent?.lastName} eqfaaef
+            </Text>
+          </HStack>
+        </Link>
+        {winner && (
+          <Box flexGrow={1} pr={1}>
+            <Box w="fit-content" ml="auto">
+              <Badge position={winnerPosition} />
+            </Box>
+          </Box>
+        )}
+      </HStack>
+      <LinkOverlay w="full" href={`${router.asPath}/${id}`}>
         <Image
           w={'full'}
           h={48}
           objectFit={'cover'}
           alt={'card'}
           rounded={'sm'}
-          src={image}
+          src={image || '/assets/bg/og.svg'}
         />
       </LinkOverlay>
       <HStack align={'center'} gap={4} w={'full'}>
@@ -171,19 +158,26 @@ export const SubmissionCard = ({
           type="button"
           variant={'unstyled'}
         >
-          <IoMdHeart
-            size={'1.3rem'}
+          <Icon
+            as={LuHeart}
             color={
-              !likes?.find((e) => e.id === (userInfo?.id as string))
+              !likes?.find((e) => e.id === (user?.id as string))
                 ? '#64748b'
                 : '#E11D48'
             }
+            fill={
+              !likes?.find((e) => e.id === (user?.id as string))
+                ? '#fff'
+                : '#E11D48'
+            }
+            size={'1.3rem'}
           />
           {likes?.length}
         </Button>
         <LinkOverlay href={`${router.asPath}/${id}`}>
-          <BiSolidComment
+          <LuMessageCircle
             size={'1.23rem'}
+            fill={'#CBD5E1'}
             color={'#CBD5E1'}
             style={{
               transform: 'scaleX(-1)',

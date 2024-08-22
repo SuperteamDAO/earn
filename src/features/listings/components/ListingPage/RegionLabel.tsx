@@ -1,5 +1,7 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
+  HStack,
+  Icon,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -10,7 +12,9 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import React from 'react';
+import { LuGlobe } from 'react-icons/lu';
 
+import { UserFlag } from '@/components/shared/UserFlag';
 import { CombinedRegions } from '@/constants/Superteam';
 
 import { getRegionTooltipLabel } from '../../utils';
@@ -33,18 +37,22 @@ export const RegionLabel = ({ region }: { region: string | undefined }) => {
         borderRadius={'lg'}
         label={regionTooltipLabel}
       >
-        <Text
-          px={3}
-          py={1}
-          color={'#0800A5'}
-          fontSize={{ base: 'xx-small', sm: 'xs' }}
-          fontWeight={500}
-          bg="#EBEAFF"
-          whiteSpace={'nowrap'}
-          rounded={'full'}
-        >
-          {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
-        </Text>
+        <HStack>
+          {region === 'GLOBAL' ? (
+            <Icon as={LuGlobe} strokeWidth={1} />
+          ) : (
+            <UserFlag location={region ?? ''} />
+          )}
+          <Text
+            color={'brand.slate.500'}
+            fontSize={{ base: 'xs', sm: 'sm' }}
+            fontWeight={500}
+            whiteSpace={'nowrap'}
+            rounded={'full'}
+          >
+            {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
+          </Text>
+        </HStack>
       </Tooltip>
       <Popover>
         <PopoverTrigger>

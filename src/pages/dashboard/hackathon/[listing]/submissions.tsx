@@ -13,8 +13,8 @@ import {
   SubmissionList,
 } from '@/features/sponsor-dashboard';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
+import { SponsorLayout } from '@/layouts/Sponsor';
+import { useUser } from '@/store/user';
 import { cleanRewards, sortRank } from '@/utils/rank';
 
 interface Props {
@@ -24,7 +24,7 @@ interface Props {
 function BountySubmissions({ listing }: Props) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [bounty, setBounty] = useState<Listing | null>(null);
   const [totalSubmissions, setTotalSubmissions] = useState(0);
   const [totalWinners, setTotalWinners] = useState(0);
@@ -49,7 +49,7 @@ function BountySubmissions({ listing }: Props) {
         `/api/sponsor-dashboard/${listing}/listing?type=hackathon`,
       );
       setBounty(bountyDetails.data);
-      if (bountyDetails.data.hackathonId !== userInfo?.hackathonId) {
+      if (bountyDetails.data.hackathonId !== user?.hackathonId) {
         router.push(`/dashboard/hackathon/`);
       }
       setTotalPaymentsMade(bountyDetails.data.paymentsMade || 0);
@@ -94,19 +94,19 @@ function BountySubmissions({ listing }: Props) {
   };
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       getSubmissions();
     }
-  }, [userInfo?.currentSponsorId, skip, searchText]);
+  }, [user?.currentSponsorId, skip, searchText]);
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       getBounty();
     }
-  }, [userInfo?.currentSponsorId]);
+  }, [user?.currentSponsorId]);
 
   return (
-    <Sidebar>
+    <SponsorLayout>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
@@ -223,7 +223,7 @@ function BountySubmissions({ listing }: Props) {
           )}
         </>
       )}
-    </Sidebar>
+    </SponsorLayout>
   );
 }
 

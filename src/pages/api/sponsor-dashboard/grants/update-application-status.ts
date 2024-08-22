@@ -72,19 +72,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       include: {
         user: {
           select: {
+            id: true,
             firstName: true,
             lastName: true,
             email: true,
-            twitter: true,
+            photo: true,
+            publicKey: true,
             discord: true,
+            username: true,
+            twitter: true,
+            telegram: true,
           },
         },
-        grant: {
-          select: {
-            airtableId: true,
-            isNative: true,
-          },
-        },
+        grant: true,
       },
     });
 
@@ -125,7 +125,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       await axios.patch(url, JSON.stringify(airtablePayload), config);
     }
 
-    return res.status(200).json({ message: 'Success' });
+    return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
       `Error occurred while updating grant application ID: ${id} by user ID: ${userId}: ${error.message}`,

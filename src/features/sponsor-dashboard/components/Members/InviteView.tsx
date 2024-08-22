@@ -13,19 +13,19 @@ import { useEffect, useState } from 'react';
 
 import { Login } from '@/features/auth';
 import type { User } from '@/interface/user';
-import { userStore } from '@/store/user';
+import { useUpdateUser, useUser } from '@/store/user';
 
 interface Props {
   invite: any;
 }
 
 export function InviteView({ invite }: Props) {
+  const { user } = useUser();
+  const updateUser = useUpdateUser();
   const router = useRouter();
   const [triggerLogin, setTriggerLogin] = useState(false);
   const [isWalletError, setIsWalletError] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
-
-  const { setUserInfo, userInfo } = userStore();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -39,8 +39,7 @@ export function InviteView({ invite }: Props) {
         await axios.post('/api/member-invites/accept/', {
           inviteId: invite?.id,
         });
-        setUserInfo({
-          ...userInfo,
+        await updateUser.mutateAsync({
           currentSponsorId: invite?.currentSponsorId,
         });
         router.push('/dashboard/listings');
@@ -51,9 +50,9 @@ export function InviteView({ invite }: Props) {
     }
   };
 
-  const handleSubmit = () => {
-    if (!userInfo?.id) {
-      setUserInfo({ email: invite?.email });
+  const handleSubmit = async () => {
+    if (!user?.id) {
+      await updateUser.mutateAsync({ email: invite?.email });
       setTriggerLogin(true);
     }
   };
@@ -66,7 +65,7 @@ export function InviteView({ invite }: Props) {
 
   useEffect(() => {
     const makeUser = async () => {
-      const userDetails = await axios.post('/api/user/');
+      const userDetails = await axios.get('/api/user/');
       if (invite?.email && acceptUser) {
         acceptUser(userDetails.data);
       }

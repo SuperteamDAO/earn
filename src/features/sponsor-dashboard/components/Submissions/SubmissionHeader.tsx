@@ -17,6 +17,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Link,
   Tag,
   Text,
   useClipboard,
@@ -107,7 +108,8 @@ export const SubmissionHeader = ({
       <Box mb={2}>
         <Breadcrumb color="brand.slate.400">
           <BreadcrumbItem>
-            <NextLink
+            <Link
+              as={NextLink}
               href={
                 bounty?.type === 'hackathon'
                   ? `/dashboard/hackathon/`
@@ -121,7 +123,7 @@ export const SubmissionHeader = ({
                   All Listings
                 </Flex>
               </BreadcrumbLink>
-            </NextLink>
+            </Link>
           </BreadcrumbItem>
 
           <BreadcrumbItem>

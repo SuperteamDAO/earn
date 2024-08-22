@@ -18,7 +18,9 @@ import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
+import { BONUS_REWARD_POSITION } from '@/constants';
 import { dayjs } from '@/utils/dayjs';
+import { cleanRewards } from '@/utils/rank';
 
 import { type Listing } from '../../types';
 
@@ -44,7 +46,11 @@ export function PublishResults({
   const posthog = usePostHog();
   const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
 
-  const rewards = Object.keys(bounty?.rewards || {});
+  const rewards = [
+    ...cleanRewards(bounty?.rewards, true),
+    ...Array(bounty?.maxBonusSpots ?? 0).map(() => BONUS_REWARD_POSITION),
+  ];
+  console.log('reward length - ', rewards.length);
 
   let alertType:
     | 'loading'

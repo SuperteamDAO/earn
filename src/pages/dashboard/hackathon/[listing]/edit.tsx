@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { CreateListing } from '@/features/listing-builder';
 import type { Listing } from '@/features/listings';
-import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
+import { SponsorLayout } from '@/layouts/Sponsor';
+import { useUser } from '@/store/user';
 
 interface Props {
   listing: string;
@@ -15,7 +15,7 @@ interface Props {
 
 function EditBounty({ listing }: Props) {
   const router = useRouter();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [isBountyLoading, setIsBountyLoading] = useState(true);
   const [bounty, setBounty] = useState<Listing | undefined>();
 
@@ -25,7 +25,7 @@ function EditBounty({ listing }: Props) {
       const bountyDetails = await axios.get(
         `/api/sponsor-dashboard/${listing}/listing?type=hackathon`,
       );
-      if (bountyDetails.data.hackathonId !== userInfo?.hackathonId) {
+      if (bountyDetails.data.hackathonId !== user?.hackathonId) {
         router.push(`/dashboard/hackathon/`);
       } else {
         setBounty(bountyDetails.data);
@@ -37,19 +37,19 @@ function EditBounty({ listing }: Props) {
   };
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       getBounty();
     }
-  }, [userInfo?.currentSponsorId]);
+  }, [user?.currentSponsorId]);
 
   return (
-    <Sidebar>
+    <SponsorLayout>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
         <CreateListing listing={bounty} editable type={'hackathon'} />
       )}
-    </Sidebar>
+    </SponsorLayout>
   );
 }
 

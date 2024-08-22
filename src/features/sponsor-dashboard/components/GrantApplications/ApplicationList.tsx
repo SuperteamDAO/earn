@@ -25,7 +25,7 @@ import { colorMap } from '../../utils';
 
 interface Props {
   applications: GrantApplicationWithUser[];
-  setSearchText: Dispatch<SetStateAction<string>>;
+  setSearchText: (value: string) => void;
   selectedApplication: GrantApplicationWithUser | undefined;
   setSelectedApplication: Dispatch<
     SetStateAction<GrantApplicationWithUser | undefined>

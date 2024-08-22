@@ -4,9 +4,11 @@ import {
   type ResponsiveValue,
   Skeleton,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
-import type { Metadata } from 'unfurl.js/dist/types';
+
+import { ogImageQuery } from '@/queries/og-image';
 
 interface Props {
   externalUrl?: string;
@@ -40,62 +42,52 @@ const getRandomFallbackImage = (): string => {
   return fallbackImages[randomIndex]!;
 };
 
-export const OgImageViewer: React.FC<Props> = ({
+export const OgImageViewer = ({
   externalUrl,
   imageUrl,
   type,
   id,
   ...props
-}) => {
-  const [ogImageUrl, setOgImageUrl] = useState<string | null>(imageUrl || null);
+}: Props) => {
   const fallbackImage = getRandomFallbackImage();
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
+    imageUrl || null,
+  );
+
+  const { data: ogImageUrl, isLoading } = useQuery(ogImageQuery(externalUrl!));
 
   useEffect(() => {
-    const fetchImage = async () => {
-      if (!imageUrl && externalUrl) {
-        try {
-          const { data } = (await axios.post('/api/og/get', {
-            url: externalUrl,
-          })) as { data: Metadata };
-
-          const ogImageURL = data.open_graph?.images?.[0]?.url;
-          setOgImageUrl(ogImageURL || fallbackImage);
-
-          if (type && id && ogImageURL) {
-            await axios.post('/api/og/update', {
-              type,
-              url: ogImageURL,
-              id,
-            });
-          }
-        } catch (error) {
-          setOgImageUrl(fallbackImage);
-        }
-      } else if (!imageUrl && !externalUrl) {
-        setOgImageUrl(fallbackImage);
+    if (ogImageUrl) {
+      setCurrentImageUrl(ogImageUrl);
+      if (type && id) {
+        axios.post('/api/og/update', {
+          type,
+          url: ogImageUrl,
+          id,
+        });
       }
-    };
-
-    fetchImage();
-  }, [externalUrl, imageUrl]);
+    } else if (!imageUrl && !externalUrl) {
+      setCurrentImageUrl(fallbackImage);
+    }
+  }, [ogImageUrl, imageUrl, externalUrl, type, id]);
 
   const handleImageError = useCallback(() => {
-    setOgImageUrl(fallbackImage);
+    setCurrentImageUrl(fallbackImage);
   }, [fallbackImage]);
+
+  if (isLoading) {
+    return <Skeleton {...props} />;
+  }
 
   return (
     <div>
-      {ogImageUrl ? (
-        <Image
-          bgPosition={'center'}
-          alt="OG Image"
-          onError={handleImageError}
-          src={ogImageUrl}
-          {...props}
-        />
-      ) : (
-        <Skeleton {...props} />
-      )}
+      <Image
+        bgPosition={'center'}
+        alt="OG Image"
+        onError={handleImageError}
+        src={currentImageUrl || fallbackImage}
+        {...props}
+      />
     </div>
   );
 };

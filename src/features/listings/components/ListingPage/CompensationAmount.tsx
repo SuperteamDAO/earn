@@ -23,7 +23,7 @@ export const CompensationAmount = ({
 }: CompensationAmountType) => {
   const Token = () => {
     return (
-      <Text as="span" ml={1} color="brand.slate.400" fontWeight={400}>
+      <Text as="span" ml={1} color="brand.slate.400">
         {token}
       </Text>
     );
@@ -34,7 +34,9 @@ export const CompensationAmount = ({
       case 'fixed':
         return (
           <>
-            {formatNumberWithSuffix(rewardAmount!, 2, true)}
+            <Text ml="auto">
+              {formatNumberWithSuffix(rewardAmount!, 2, true)}
+            </Text>
             <Token />
           </>
         );
@@ -57,7 +59,7 @@ export const CompensationAmount = ({
 
   return (
     <>
-      <Text {...textStyle}>{renderCompensation()}</Text>
+      <Flex {...textStyle}>{renderCompensation()}</Flex>
       {compensationType === 'variable' && !token && (
         <Flex align={'center'} gap={1}>
           <Text {...textStyle}>Send Quote</Text>

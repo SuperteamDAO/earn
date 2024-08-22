@@ -3,22 +3,22 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { FaUser } from 'react-icons/fa';
 
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 export function TalentButton() {
   const router = useRouter();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
 
   const checkTalent = async () => {
-    if (!userInfo || !userInfo?.id) {
+    if (!user || !user?.id) {
       setShowMessage(true);
     } else {
       setShowMessage(false);
       setIsLoading(true);
       try {
-        if (!userInfo?.isTalentFilled) {
+        if (!user?.isTalentFilled) {
           router.push('/new/talent');
         } else {
           router.push('/');

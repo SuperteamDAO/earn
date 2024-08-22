@@ -30,11 +30,11 @@ export const SubmissionList = ({
       >
         {dayjs(endTime).valueOf() < Date.now() ? (
           <>
-            <VStack align={'start'} w={'full'} maxW={'8xl'} mx="auto">
+            <VStack align={'start'} w={'full'} maxW={'7xl'} mx="auto">
               <SimpleGrid
                 w="full"
                 px={{ base: 3, md: 6 }}
-                columns={{ base: 1, md: 2, lg: 3, xl: 4 }}
+                columns={{ base: 1, md: 2, lg: 2, xl: 3 }}
                 spacing={{ base: 5, md: 20 }}
               >
                 {submissions?.map((submission) => {

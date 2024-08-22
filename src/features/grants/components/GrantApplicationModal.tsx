@@ -21,6 +21,7 @@ import {
   useSteps,
   VStack,
 } from '@chakra-ui/react';
+import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -31,16 +32,16 @@ import {
 } from '@/components/Form/TextAreaHelpers';
 import { tokenList } from '@/constants';
 import { QuestionHandler } from '@/features/listings';
-import { userStore } from '@/store/user';
+import { useUpdateUser, useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
+import { userApplicationStatusQuery } from '../queries';
 import { type Grant } from '../types';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  setHasApplied: (arg0: boolean) => void;
   grant: Grant;
 }
 
@@ -50,13 +51,13 @@ const steps = [
   { title: 'Milestones' },
 ];
 
-export const GrantApplicationModal = ({
-  isOpen,
-  onClose,
-  setHasApplied,
-  grant,
-}: Props) => {
+export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
   const { id, token, minReward, maxReward, questions } = grant;
+
+  const { user, refetchUser } = useUser();
+
+  const updateUser = useUpdateUser();
+
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
@@ -74,7 +75,8 @@ export const GrantApplicationModal = ({
     watch,
   } = useForm();
 
-  const { userInfo, setUserInfo } = userStore();
+  const queryClient = useQueryClient();
+
   const modalRef = useRef<HTMLDivElement>(null);
 
   const submitApplication = async (data: any) => {
@@ -93,9 +95,7 @@ export const GrantApplicationModal = ({
         ...answers
       } = data;
 
-      await axios.post('/api/user/update/', {
-        publicKey: walletAddress,
-      });
+      await updateUser.mutateAsync({ publicKey: walletAddress });
 
       const grantAnswers =
         questions?.map((q: any) => ({
@@ -118,10 +118,11 @@ export const GrantApplicationModal = ({
       });
 
       reset();
-      setHasApplied(true);
+      await queryClient.invalidateQueries({
+        queryKey: userApplicationStatusQuery(id).queryKey,
+      });
 
-      const updatedUser = await axios.post('/api/user/');
-      setUserInfo(updatedUser?.data);
+      await refetchUser();
 
       onClose();
     } catch (e) {
@@ -330,7 +331,7 @@ export const GrantApplicationModal = ({
                   validate={(address: string) =>
                     validateSolAddress(address, setPublicKeyError)
                   }
-                  defaultValue={userInfo?.publicKey}
+                  defaultValue={user?.publicKey}
                   isRequired
                 />
                 {publicKeyError && (

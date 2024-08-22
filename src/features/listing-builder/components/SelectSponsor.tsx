@@ -8,7 +8,7 @@ import AsyncSelect from 'react-select/async';
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import type { SponsorType } from '@/interface/sponsor';
-import { userStore } from '@/store/user';
+import { useUpdateUser, useUser } from '@/store/user';
 
 interface SponsorOptionType extends SponsorType {
   role?: string;
@@ -23,21 +23,23 @@ interface SponsorOption {
 export const hackathonSponsorAtom = atom<string | null>(null);
 
 export function SelectSponsor({ type }: { type?: string }) {
-  const { setUserInfo, userInfo } = userStore();
+  const { user } = useUser();
+  const updateUser = useUpdateUser();
+
   const [selectedSponsor, setSelectedSponsor] = useState<SponsorOption | null>(
     null,
   );
   const setHackathonSponsor = useSetAtom(hackathonSponsorAtom);
 
   useEffect(() => {
-    if (type !== 'hackathon' && userInfo?.currentSponsor?.id) {
+    if (type !== 'hackathon' && user?.currentSponsor?.id) {
       setSelectedSponsor({
-        value: userInfo?.currentSponsor?.id,
-        label: userInfo?.currentSponsor?.name,
-        sponsor: userInfo?.currentSponsor,
+        value: user?.currentSponsor?.id,
+        label: user?.currentSponsor?.name,
+        sponsor: user?.currentSponsor,
       });
     }
-  }, [userInfo]);
+  }, [user]);
 
   const loadSponsors = (
     inputValue: string,
@@ -55,14 +57,11 @@ export function SelectSponsor({ type }: { type?: string }) {
       });
   };
 
-  const updateUser = async (sponsorId: string) => {
+  const updateSponsor = async (sponsorId: string) => {
     try {
-      const userUpdatedDetails = await axios.post('/api/user/update/', {
-        currentSponsorId: sponsorId,
-      });
-      return userUpdatedDetails.data;
+      await updateUser.mutateAsync({ currentSponsorId: sponsorId });
     } catch (error) {
-      return userInfo;
+      console.log(error);
     }
   };
 
@@ -71,8 +70,7 @@ export function SelectSponsor({ type }: { type?: string }) {
       setHackathonSponsor(option.value);
       setSelectedSponsor(option);
     } else {
-      const newUser = await updateUser(option.value);
-      setUserInfo(newUser);
+      await updateSponsor(option.value);
     }
   };
 

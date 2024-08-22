@@ -6,6 +6,7 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  Link,
   Modal,
   ModalContent,
   ModalOverlay,
@@ -13,7 +14,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
@@ -113,6 +114,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
               ))}
             </VStack>
             <Link
+              as={NextLink}
               href={`/search?q=${encodeURIComponent(query)}`}
               style={{ width: '100%' }}
             >

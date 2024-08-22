@@ -1,21 +1,13 @@
 import { AddIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  type FlexProps,
-  Icon,
-  Link,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
-import axios from 'axios';
+import { Box, Button, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { type ReactNode, useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
+import { LuLock } from 'react-icons/lu';
 import {
   MdList,
   MdOutlineChatBubbleOutline,
@@ -25,14 +17,21 @@ import {
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { SelectHackathon, SelectSponsor } from '@/features/listing-builder';
+import { Tooltip } from '@/components/shared/responsive-tooltip';
+import {
+  isCreateListingAllowedQuery,
+  SelectHackathon,
+  SelectSponsor,
+} from '@/features/listing-builder';
 import {
   CreateListingModal,
+  latestActiveSlugQuery,
+  NavItem,
   SponsorInfoModal,
 } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { userStore } from '@/store/user';
+import { useUpdateUser, useUser } from '@/store/user';
 
 interface LinkItemProps {
   name: string;
@@ -42,23 +41,14 @@ interface LinkItemProps {
   posthog?: string;
 }
 
-interface NavItemProps extends FlexProps {
-  icon: IconType;
-  link?: string;
-  children: ReactNode;
-}
-
-export function Sidebar({ children }: { children: ReactNode }) {
-  const { userInfo, setUserInfo } = userStore();
+export function SponsorLayout({ children }: { children: ReactNode }) {
+  const { user } = useUser();
+  const updateUser = useUpdateUser();
   const { data: session, status } = useSession();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const posthog = usePostHog();
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
-  const [latestActiveSlug, setLatestActiveSlug] = useState<string | undefined>(
-    undefined,
-  );
-
   const { query } = router;
 
   const open = !!query.open; // Replace 'paramName' with the actual parameter name
@@ -67,6 +57,11 @@ export function Sidebar({ children }: { children: ReactNode }) {
       onOpen();
     }
   }, [open]);
+
+  const {
+    data: isCreateListingAllowed,
+    refetch: isCreateListingAllowedRefetch,
+  } = useQuery(isCreateListingAllowedQuery);
 
   const {
     isOpen: isSponsorInfoModalOpen,
@@ -80,9 +75,13 @@ export function Sidebar({ children }: { children: ReactNode }) {
     onClose: onScoutAnnounceModalClose,
   } = useDisclosure();
 
+  const { data: latestActiveSlug } = useQuery(
+    latestActiveSlugQuery(!!user?.currentSponsorId),
+  );
+
   function sponsorInfoCloseAltered() {
     onSponsorInfoModalClose();
-    if (userInfo?.featureModalShown === false && userInfo?.currentSponsorId)
+    if (user?.featureModalShown === false && user?.currentSponsorId)
       onScoutAnnounceModalOpen();
   }
 
@@ -90,64 +89,40 @@ export function Sidebar({ children }: { children: ReactNode }) {
     setIsEntityModalOpen(false);
   };
 
-  const getSponsorLatestActiveSlug = async () => {
-    try {
-      const slug = await axios.get('/api/listings/latest-active-slug');
-      if (slug.data) {
-        setLatestActiveSlug(slug.data.slug);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   // ENTITY NAME TO SPONSORS
   useEffect(() => {
+    isCreateListingAllowedRefetch();
     const timer = setTimeout(async () => {
-      if (userInfo) {
+      if (user) {
         if (
-          userInfo.currentSponsorId &&
-          (!userInfo.firstName || !userInfo.lastName || !userInfo.username)
+          user.currentSponsorId &&
+          (!user.firstName || !user.lastName || !user.username)
         ) {
           onSponsorInfoModalOpen();
-        } else if (
-          userInfo.featureModalShown === false &&
-          userInfo.currentSponsorId
-        ) {
-          await getSponsorLatestActiveSlug();
+        } else if (user.featureModalShown === false && user.currentSponsorId) {
           onScoutAnnounceModalOpen();
-          await axios.post('/api/user/update/', {
-            featureModalShown: true,
-          });
-          setUserInfo({ ...userInfo, featureModalShown: true });
+          await updateUser.mutateAsync({ featureModalShown: true });
         }
       }
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [userInfo]);
+  }, [user]);
 
   useEffect(() => {
     const modalsToShow = async () => {
       if (
-        userInfo?.currentSponsorId &&
-        (!userInfo?.firstName || !userInfo?.lastName || !userInfo?.username)
+        user?.currentSponsorId &&
+        (!user?.firstName || !user?.lastName || !user?.username)
       ) {
         onSponsorInfoModalOpen();
-      } else if (
-        userInfo?.featureModalShown === false &&
-        userInfo?.currentSponsorId
-      ) {
-        await getSponsorLatestActiveSlug();
+      } else if (user?.featureModalShown === false && user?.currentSponsorId) {
         onScoutAnnounceModalOpen();
-        await axios.post('/api/user/update/', {
-          featureModalShown: true,
-        });
-        setUserInfo({ ...userInfo, featureModalShown: true });
+        await updateUser.mutateAsync({ featureModalShown: true });
       }
     };
     modalsToShow();
-  }, [userInfo]);
+  }, [user]);
 
   if (!session && status === 'loading') {
     return <LoadingSection />;
@@ -181,66 +156,13 @@ export function Sidebar({ children }: { children: ReactNode }) {
         },
       ];
 
-  const NavItem = ({ icon, link, children, ...rest }: NavItemProps) => {
-    const router = useRouter();
-    const currentPath = router.asPath.split('?')[0];
-    const isExternalLink = link?.startsWith('https://');
-    const resolvedLink = isExternalLink ? link : `/dashboard${link}`;
-    const isActiveLink = resolvedLink
-      ? currentPath?.startsWith(resolvedLink)
-      : false;
-
-    return (
-      <Link
-        as={NextLink}
-        _focus={{ boxShadow: 'none' }}
-        href={resolvedLink}
-        isExternal={isExternalLink}
-        style={{ textDecoration: 'none' }}
-      >
-        <NavItemContent icon={icon} isActiveLink={isActiveLink} {...rest}>
-          {children}
-        </NavItemContent>
-      </Link>
-    );
-  };
-
-  const NavItemContent = ({ icon, isActiveLink, children, ...rest }: any) => (
-    <Flex
-      align="center"
-      px={6}
-      py={3}
-      color={isActiveLink ? 'brand.purple' : 'brand.slate.500'}
-      bg={isActiveLink ? '#EEF2FF' : 'transparent'}
-      _hover={{
-        bg: '#F5F8FF',
-        color: 'brand.purple',
-      }}
-      cursor="pointer"
-      role="group"
-      {...rest}
-    >
-      {icon && (
-        <Icon
-          as={icon}
-          mr="4"
-          fontSize="16"
-          _groupHover={{
-            color: 'brand.purple',
-          }}
-        />
-      )}
-      {children}
-    </Flex>
-  );
-
   const showLoading = !isHackathonRoute
-    ? !userInfo?.currentSponsor?.id
-    : !userInfo?.hackathonId && session?.user?.role !== 'GOD';
+    ? !user?.currentSponsor?.id
+    : !user?.hackathonId && session?.user?.role !== 'GOD';
 
   const showContent = isHackathonRoute
-    ? userInfo?.hackathonId || session?.user?.role === 'GOD'
-    : userInfo?.currentSponsor?.id;
+    ? user?.hackathonId || session?.user?.role === 'GOD'
+    : user?.currentSponsor?.id;
 
   return (
     <Default
@@ -298,6 +220,11 @@ export function Sidebar({ children }: { children: ReactNode }) {
                 w="full"
                 py={'22px'}
                 fontSize="md"
+                isDisabled={
+                  isCreateListingAllowed !== undefined &&
+                  isCreateListingAllowed === false &&
+                  session?.user.role !== 'GOD'
+                }
                 leftIcon={<AddIcon w={3} h={3} />}
                 onClick={() => {
                   posthog.capture('create new listing_sponsor');
@@ -306,6 +233,13 @@ export function Sidebar({ children }: { children: ReactNode }) {
                 variant="solid"
               >
                 Create New Listing
+                {isCreateListingAllowed !== undefined &&
+                  isCreateListingAllowed === false &&
+                  session?.user.role !== 'GOD' && (
+                    <Tooltip label="Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.">
+                      <Icon as={LuLock} ml={2} />
+                    </Tooltip>
+                  )}
               </Button>
             ) : (
               <Button

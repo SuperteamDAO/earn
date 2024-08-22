@@ -178,7 +178,7 @@ export const Footer: React.FC = () => {
 
   return (
     <Box as="footer" bg="white" borderTop="1px" borderTopColor="blackAlpha.200">
-      <Container maxW="8xl" py={8}>
+      <Container maxW="7xl" py={8}>
         <Flex
           align="flex-start"
           justify="space-between"
@@ -263,7 +263,7 @@ export const Footer: React.FC = () => {
         </Flex>
       </Container>
       <Box py={4} pb={{ base: 20, md: 4 }} bg="gray.100">
-        <Container maxW="8xl">
+        <Container maxW="7xl">
           <Flex
             align={{ base: 'flex-start', md: 'center' }}
             justify="space-between"

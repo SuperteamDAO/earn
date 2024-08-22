@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
 interface Props {
@@ -34,10 +34,10 @@ interface SocialPlatform {
 export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
   const { hasCopied, onCopy } = useClipboard(`${getURL()}t/${username}`);
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   const shareMessage =
-    id === userInfo?.id
+    id === user?.id
       ? 'Check out my profile on Superteam Earn!'
       : 'Check out this profile on Superteam Earn!';
 

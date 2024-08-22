@@ -36,7 +36,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const posthog = usePostHog();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const maxWValue = isDashboardRoute ? '' : '8xl';
+  const maxWValue = isDashboardRoute ? '' : '7xl';
 
   return (
     <Flex
@@ -46,7 +46,6 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
       bg="white"
       borderBottom="1px solid"
       borderBottomColor="blackAlpha.200"
-      id="desktop-navbar"
     >
       <Flex justify={'space-between'} w="100%" maxW={maxWValue} mx="auto">
         <Flex align="center" gap={{ base: 3, lg: 6 }}>

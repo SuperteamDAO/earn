@@ -1,46 +1,113 @@
+import { type Prisma, Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getToken } from 'next-auth/jwt';
 
+import { CombinedRegions } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 export default async function grants(
-  _req: NextApiRequest,
+  req: NextApiRequest,
   res: NextApiResponse,
 ) {
   try {
     logger.debug('Fetching grants from database');
-    const result = await prisma.grants.findMany({
+
+    const params = req.query;
+    const order = (params.order as 'asc' | 'desc') ?? 'desc';
+    const filter = params.filter as string;
+    const take = params.take ? parseInt(params.take as string, 10) : 10;
+
+    const filterToSkillsMap: Record<string, string[]> = {
+      development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
+      design: ['Design'],
+      content: ['Content'],
+      other: ['Other', 'Growth', 'Community'],
+    };
+
+    const skillsToFilter = filterToSkillsMap[filter] || [];
+    let skillsFilter = {};
+    if (skillsToFilter.length > 0) {
+      if (filter === 'development' || filter === 'other') {
+        skillsFilter = {
+          OR: skillsToFilter.map((skill) => ({
+            skills: {
+              path: '$[*].skills',
+              array_contains: [skill],
+            },
+          })),
+        };
+      } else {
+        skillsFilter = {
+          skills: {
+            path: '$[*].skills',
+            array_contains: skillsToFilter,
+          },
+        };
+      }
+    }
+
+    const token = await getToken({ req });
+    const userId = token?.sub;
+    let userRegion: Regions = Regions.GLOBAL;
+    if (userId) {
+      const user = await prisma.user.findFirst({
+        where: { id: userId },
+        select: { location: true },
+      });
+      const matchedRegion = CombinedRegions.find(
+        (region) => user?.location && region.country.includes(user?.location),
+      );
+      userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+    }
+
+    const grantQueryOptions: Prisma.GrantsFindManyArgs = {
       where: {
-        isActive: true,
         isPublished: true,
+        isActive: true,
         isArchived: false,
+        ...skillsFilter,
       },
+      take,
       orderBy: {
-        createdAt: 'desc',
+        createdAt: order,
       },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        token: true,
-        minReward: true,
-        maxReward: true,
-        link: true,
-        logo: true,
+      include: {
         sponsor: {
           select: {
+            id: true,
             name: true,
             slug: true,
             logo: true,
             isVerified: true,
           },
         },
+        _count: {
+          select: {
+            GrantApplication: {
+              where: {
+                applicationStatus: 'Approved',
+              },
+            },
+          },
+        },
       },
-    });
+    };
 
-    logger.info(`Fetched ${result.length} grants successfully`);
-    return res.status(200).json(result);
+    if (userRegion) {
+      grantQueryOptions.where = {
+        ...grantQueryOptions.where,
+        region: {
+          in: [userRegion, Regions.GLOBAL],
+        },
+      };
+    }
+
+    const grants = await prisma.grants.findMany(grantQueryOptions);
+
+    logger.info(`Fetched ${grants.length} grants successfully`);
+    return res.status(200).json(grants);
   } catch (error: any) {
     logger.error(
       `Error occurred while fetching grants: ${safeStringify(error)}`,

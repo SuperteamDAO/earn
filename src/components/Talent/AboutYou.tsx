@@ -15,7 +15,7 @@ import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { CountryList } from '@/constants';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
@@ -31,19 +31,19 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [uploading, setUploading] = useState<boolean>(false);
   const { updateState, form } = useFormStore();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const posthog = usePostHog();
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
-    userInfo?.photo?.includes('googleusercontent.com') || false,
+    user?.photo?.includes('googleusercontent.com') || false,
   );
 
   const { register, handleSubmit, watch } = useForm({
     defaultValues: {
-      firstName: userInfo?.firstName,
-      lastName: userInfo?.lastName,
-      username: userInfo?.username ?? '',
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      username: user?.username ?? '',
       location: form.location,
-      photo: userInfo?.photo,
+      photo: user?.photo,
       bio: form.bio,
     },
   });
@@ -56,7 +56,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
       return;
     }
     posthog.capture('about you_talent');
-    updateState({ ...data, photo: isGooglePhoto ? userInfo?.photo : imageUrl });
+    updateState({ ...data, photo: isGooglePhoto ? user?.photo : imageUrl });
     setStep((i) => i + 1);
   };
 
@@ -144,7 +144,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
             </Select>
           </Box>
           <VStack align={'start'} gap={2} rowGap={'0'} my={3} mb={'25px'}>
-            {userInfo?.photo ? (
+            {user?.photo ? (
               <>
                 <FormLabel
                   mb={'0'}
@@ -155,7 +155,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                   Profile Picture
                 </FormLabel>
                 <ImagePicker
-                  defaultValue={{ url: userInfo.photo, type: 'image' }}
+                  defaultValue={{ url: user.photo, type: 'image' }}
                   onChange={async (e) => {
                     setUploading(true);
                     const a = await uploadToCloudinary(e, 'earn-pfp');
