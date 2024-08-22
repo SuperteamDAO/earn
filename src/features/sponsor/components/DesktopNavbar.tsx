@@ -32,7 +32,7 @@ export const DesktopNavbar = () => {
   const router = useRouter();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const maxWValue = isDashboardRoute ? '' : '8xl';
+  const maxWValue = isDashboardRoute ? '' : '7xl';
 
   return (
     <Flex

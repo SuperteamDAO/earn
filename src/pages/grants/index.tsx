@@ -78,7 +78,7 @@ function Grants() {
             Equity-Free • No Bullshit • Fast AF
           </Text>
         </VStack>
-        <Container maxW={'8xl'} mb={12}>
+        <Container maxW={'7xl'} mb={12}>
           {isLoading && <Loading />}
           {isError && <ErrorInfo />}
           {!isLoading && !isError && (

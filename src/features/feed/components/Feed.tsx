@@ -117,7 +117,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
               base: 'none',
               lg: 'flex',
             }}
-            w={60}
+            w={48}
             h={'100vh'}
             pt={5}
             pr={5}

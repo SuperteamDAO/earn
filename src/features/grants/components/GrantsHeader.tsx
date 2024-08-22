@@ -82,7 +82,7 @@ export const GrantsHeader = ({
           flexDir={['column', 'column', 'row', 'row']}
           gap={5}
           w={'full'}
-          maxW={'8xl'}
+          maxW={'7xl'}
           mx={'auto'}
           py={10}
         >
@@ -154,7 +154,7 @@ export const GrantsHeader = ({
             justifyContent="start"
             gap={10}
             w={'full'}
-            maxW={'8xl'}
+            maxW={'7xl'}
             h={'full'}
             mx={'auto'}
             my={'auto'}

@@ -118,7 +118,7 @@ const Search = ({
         <Flex
           gap={8}
           w="full"
-          maxW={'8xl'}
+          maxW={'7xl'}
           mx="auto"
           px={{ base: 3, md: 4 }}
           py={{ base: 4 }}
