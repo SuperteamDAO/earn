@@ -26,19 +26,7 @@ export const GrantEntry = ({
 
   const GrantAmount = () => {
     return (
-      <Flex
-        pos="absolute"
-        top={2}
-        right={2}
-        align="center"
-        justify="center"
-        px={2}
-        py={1}
-        bg="rgba(255, 255, 255, 0.9)"
-        borderRadius="md"
-        shadow="md"
-        backdropFilter="blur(4px)"
-      >
+      <Flex align={'center'} mt={-2}>
         <Image w={4} h={4} mr={1} alt={token} rounded="full" src={tokenIcon} />
         <Flex align="baseline" gap={1}>
           <Text
@@ -80,9 +68,8 @@ export const GrantEntry = ({
           alt={title}
           src={logo || '/api/placeholder/400/240'}
         />
-        <GrantAmount />
       </Box>
-      <VStack align="stretch" px={4} py={3} spacing={3}>
+      <VStack align="stretch" px={4} pt={1.5} pb={4} spacing={2}>
         <Text
           overflow="hidden"
           maxW="full"
@@ -95,6 +82,7 @@ export const GrantEntry = ({
         >
           {title}
         </Text>
+        <GrantAmount />
         <Link as={NextLink} href={`/grants/${slug}`}>
           <Button
             w={'full'}
