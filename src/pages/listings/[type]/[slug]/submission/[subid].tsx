@@ -15,26 +15,24 @@ interface BountyDetailsProps {
 }
 const Sumbissions = ({ bounty, submission }: BountyDetailsProps) => {
   return (
-    <>
-      <ListingPageLayout bounty={bounty}>
-        {bounty && submission && (
-          <HStack
-            align={['center', 'center', 'start', 'start']}
-            justify={['center', 'center', 'space-between', 'space-between']}
-            flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
-            gap={4}
-            mb={10}
-          >
-            <SubmissionPage
-              bounty={bounty}
-              submission={submission || undefined}
-              user={submission?.user as User}
-              link={submission?.link as string}
-            />
-          </HStack>
-        )}
-      </ListingPageLayout>
-    </>
+    <ListingPageLayout bounty={bounty}>
+      {bounty && submission && (
+        <HStack
+          align={['center', 'center', 'start', 'start']}
+          justify={['center', 'center', 'space-between', 'space-between']}
+          flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
+          gap={4}
+          mb={10}
+        >
+          <SubmissionPage
+            bounty={bounty}
+            submission={submission || undefined}
+            user={submission?.user as User}
+            link={submission?.link as string}
+          />
+        </HStack>
+      )}
+    </ListingPageLayout>
   );
 };
 export const getServerSideProps: GetServerSideProps = async (context) => {

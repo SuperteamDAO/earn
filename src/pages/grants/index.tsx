@@ -55,6 +55,7 @@ function Grants() {
         />
         <VStack my={16} textAlign="center" spacing={4}>
           <Text
+            px={2}
             fontSize={{ base: '4xl', md: '5xl' }}
             fontWeight={700}
             lineHeight="1.2"

@@ -23,10 +23,7 @@ function Grants({ grant: initialGrant }: InitialGrant) {
 
   return (
     <GrantPageLayout grant={grant}>
-      <DescriptionUI
-        // skills={grant?.skills?.map((e) => e.skills)}
-        description={(grant?.description as string) ?? ''}
-      />
+      <DescriptionUI description={(grant?.description as string) ?? ''} />
     </GrantPageLayout>
   );
 }

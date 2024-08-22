@@ -32,18 +32,16 @@ const SubmissionPage = ({
   };
 
   return (
-    <>
-      <ListingPageLayout bounty={bounty}>
-        {bounty && submission && (
-          <SubmissionList
-            bounty={bounty}
-            setUpdate={resetSubmissions}
-            submissions={submission}
-            endTime={bounty.deadline as string}
-          />
-        )}
-      </ListingPageLayout>
-    </>
+    <ListingPageLayout bounty={bounty}>
+      {bounty && submission && (
+        <SubmissionList
+          bounty={bounty}
+          setUpdate={resetSubmissions}
+          submissions={submission}
+          endTime={bounty.deadline as string}
+        />
+      )}
+    </ListingPageLayout>
   );
 };
 export const getServerSideProps: GetServerSideProps = async (context) => {
