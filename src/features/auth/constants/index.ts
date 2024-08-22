@@ -28,6 +28,7 @@ export const userSelectOptions = {
   twitter: true,
   website: true,
   workPrefernce: true,
+  stLead: true,
 
   currentSponsor: {
     select: {
