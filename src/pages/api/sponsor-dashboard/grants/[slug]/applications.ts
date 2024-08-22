@@ -21,40 +21,23 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const whereSearch = searchText
     ? {
         OR: [
+          { user: { firstName: { contains: searchText } } },
+          { user: { email: { contains: searchText } } },
+          { user: { username: { contains: searchText } } },
+          { user: { twitter: { contains: searchText } } },
+          { user: { discord: { contains: searchText } } },
+          { projectTitle: { contains: searchText } },
           {
-            user: {
-              firstName: {
-                contains: searchText,
+            AND: [
+              {
+                user: { firstName: { contains: searchText.split(' ')[0] } },
               },
-            },
-          },
-          {
-            user: {
-              email: {
-                contains: searchText,
+              {
+                user: {
+                  lastName: { contains: searchText.split(' ')[1] || '' },
+                },
               },
-            },
-          },
-          {
-            user: {
-              username: {
-                contains: searchText,
-              },
-            },
-          },
-          {
-            user: {
-              twitter: {
-                contains: searchText,
-              },
-            },
-          },
-          {
-            user: {
-              discord: {
-                contains: searchText,
-              },
-            },
+            ],
           },
         ],
       }
@@ -107,7 +90,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
         grant: true,
       },
-      orderBy: [{ applicationStatus: 'asc' }, { createdAt: 'asc' }],
+      orderBy: [{ applicationStatus: 'asc' }, { createdAt: 'desc' }],
       skip,
       take,
     });

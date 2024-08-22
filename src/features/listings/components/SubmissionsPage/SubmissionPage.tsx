@@ -10,7 +10,8 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
 
 import { TalentBio } from '@/components/TalentBio';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -29,7 +30,23 @@ interface Props {
 }
 export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
   const { data: image } = useQuery(ogImageQuery(link));
+  const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
+
+  useEffect(() => {
+    if (router.asPath.endsWith('#details') && isMobile) {
+      const element = document.getElementById('submission-details');
+      if (element) {
+        const offset = 50;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
+    }
+  }, [router.asPath, isMobile]);
 
   return (
     <VStack
@@ -38,10 +55,9 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
       flexDir={['column', 'column', 'row', 'row']}
       gap={4}
       w="full"
-      maxW={'8xl'}
-      mx={'auto'}
+      id="submission-details"
     >
-      <VStack gap={3} w={'full'} mt={3} px={8}>
+      <VStack gap={3} w={'full'} mt={3}>
         {bounty?.isWinnersAnnounced && submission?.isWinner && (
           <Box
             w="full"

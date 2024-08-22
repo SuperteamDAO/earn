@@ -42,7 +42,6 @@ function BountyDetails({ bounty }: BountyDetailsProps) {
           justify={['center', 'center', 'space-between', 'space-between']}
           flexDir={['column', 'column', 'row', 'row']}
           gap={4}
-          maxW={'8xl'}
           mx={'auto'}
           mt={6}
           mb={10}

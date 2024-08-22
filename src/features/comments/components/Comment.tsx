@@ -14,6 +14,7 @@ import {
   Fade,
   Flex,
   HStack,
+  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -25,7 +26,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Image from 'next/image';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
@@ -216,13 +217,14 @@ export const Comment = ({
         }}
       >
         <Link
+          as={NextLink}
           href={`${getURL()}t/${comment?.author?.username}`}
-          tabIndex={-1}
-          target="_blank"
           style={{
             minWidth: isReply ? '28px' : '36px',
             maxWidth: isReply ? '28px' : '36px',
           }}
+          tabIndex={-1}
+          target="_blank"
         >
           <EarnAvatar
             size={isReply ? '28px' : '36px'}
@@ -234,6 +236,7 @@ export const Comment = ({
         <VStack align={'start'} gap={0} w="100%">
           <HStack align="end" gap={2}>
             <Link
+              as={NextLink}
               href={`${getURL()}t/${comment?.author?.username}`}
               tabIndex={-1}
               target="_blank"

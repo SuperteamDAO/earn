@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Flex,
-  Skeleton,
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
@@ -14,8 +13,8 @@ import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { AuthWrapper } from '@/features/auth';
-import DesktopBanner from '@/public/assets/home/display/banner.png';
-import MobileBanner from '@/public/assets/home/display/banner-mobile.png';
+import DesktopBanner from '@/public/assets/home/display/banner.webp';
+import MobileBanner from '@/public/assets/home/display/banner-mobile.webp';
 
 interface BannerProps {
   userCount?: number;
@@ -42,19 +41,6 @@ export function HomeBanner({ userCount }: BannerProps) {
   const { data: session, status } = useSession();
   const posthog = usePostHog();
 
-  if (!session && status === 'loading') {
-    return (
-      <Skeleton
-        h={isLessThan768px ? '400' : '280'}
-        maxH="500px"
-        mx={'auto'}
-        mb={8}
-        p={{ base: '6', md: '10' }}
-        rounded={'md'}
-      />
-    );
-  }
-
   if (!session && status === 'unauthenticated') {
     return (
       <Box
@@ -72,8 +58,8 @@ export function HomeBanner({ userCount }: BannerProps) {
           alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
           layout="fill"
           objectFit="cover"
-          quality={90}
-          priority={true}
+          quality={95}
+          priority
           loading="eager"
           sizes={isLessThan768px ? '100vw' : '70vw'}
           style={{

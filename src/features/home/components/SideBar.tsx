@@ -20,7 +20,7 @@ interface SideBarProps {
   listings: number;
   earners?: User[];
   isTotalLoading: boolean;
-  type: 'home' | 'category' | 'region' | 'niche' | 'feed';
+  type: 'landing' | 'listing' | 'category' | 'region' | 'niche' | 'feed';
 }
 
 export const HomeSideBar = ({

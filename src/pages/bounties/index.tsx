@@ -21,7 +21,7 @@ export default function BountiesPage() {
   );
 
   return (
-    <Home type="home">
+    <Home type="listing">
       <Meta
         title="Superteam Earn | Discover Bounties and Grants in Crypto for Design, Development, and Content"
         description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
