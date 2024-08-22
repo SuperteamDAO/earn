@@ -19,7 +19,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { UserMenu } from '@/components/shared/UserMenu';
 import { useUser } from '@/store/user';
@@ -49,6 +49,13 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
   const router = useRouter();
 
   const { user } = useUser();
+
+  const [hideListingTypes, setHideListingTypes] = useState(false);
+  useEffect(() => {
+    const listingPage = router.asPath.split('/')[1] === 'listings';
+    // can add more when needed, create more, add those variables below with OR (a || b) format
+    setHideListingTypes(listingPage);
+  }, []);
 
   const MobileDrawer = () => {
     return (
@@ -275,6 +282,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
           className="ph-no-capture"
           justify="space-evenly"
           gap={{ base: 8, sm: 8, md: 12 }}
+          display={hideListingTypes ? 'none' : 'flex'}
           w="full"
           mx="auto"
           pl={1}

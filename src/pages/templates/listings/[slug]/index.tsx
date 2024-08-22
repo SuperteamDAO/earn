@@ -1,4 +1,4 @@
-import { HStack, VStack } from '@chakra-ui/react';
+import { Box, HStack, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
 
@@ -8,6 +8,7 @@ import {
   DescriptionUI,
   ListingHeader,
   listingTemplateQuery,
+  ListingWinners,
 } from '@/features/listings';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -40,12 +41,18 @@ function BountyDetails({ slug }: BountyDetailsProps) {
       {!isLoading && !error && !!bounty?.id && (
         <>
           <ListingHeader isTemplate={true} listing={bounty} />
+          {bounty?.isWinnersAnnounced && (
+            <Box w="full">
+              {' '}
+              <ListingWinners bounty={bounty} />
+            </Box>
+          )}
           <HStack
             align={['center', 'center', 'start', 'start']}
             justify={['center', 'center', 'space-between', 'space-between']}
             flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
             gap={4}
-            maxW={'8xl'}
+            maxW={'6xl'}
             mx={'auto'}
             mb={10}
           >

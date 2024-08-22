@@ -1,7 +1,13 @@
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import { Box, Button, Collapse, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Collapse,
+  useBreakpointValue,
+  VStack,
+} from '@chakra-ui/react';
 import parse, { type HTMLReactParserOptions } from 'html-react-parser';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 interface Props {
   description?: string;
@@ -22,34 +28,47 @@ export function DescriptionUI({ description }: Props) {
   const [showMore, setShowMore] = useState(true);
   const [showCollapser, setShowCollapser] = useState(false);
   const descriptionRef = useRef<HTMLDivElement>(null);
+  const isNotMD = useBreakpointValue({ base: true, md: false });
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (descriptionRef.current) {
+  const decideCollapser = useCallback(() => {
+    if (descriptionRef) {
       const fiftyVH = window.innerHeight / 2;
-      if (descriptionRef.current.clientHeight > fiftyVH) {
+      if (isNotMD && (descriptionRef.current?.clientHeight ?? 0) > fiftyVH) {
         setShowCollapser(true);
         setShowMore(false);
       }
     }
-  }, [descriptionRef.current]);
+  }, [descriptionRef.current, isNotMD]);
+
+  useEffect(() => {
+    // Use a timeout to ensure the DOM has been updated
+    const timer = setTimeout(() => {
+      decideCollapser();
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [decideCollapser, isMounted]);
 
   if (!isMounted) {
     return null;
   }
 
   return (
-    <Box overflow="visible" w="full">
+    <Box
+      overflow="visible"
+      w="full"
+      borderBottomWidth={{ base: '1px', md: '0px' }}
+    >
       <VStack
         ref={descriptionRef}
         pos="relative"
         overflow={'visible'}
         w="full"
         px={{ base: 0 }}
-        py={5}
         bg={'white'}
         rounded={'xl'}
       >
@@ -58,7 +77,7 @@ export function DescriptionUI({ description }: Props) {
           startingHeight={'50vh'}
           style={{ width: '100%' }}
         >
-          <Box overflow={'visible'} w={'full'} h={'full'} pb={8} id="reset-des">
+          <Box overflow={'visible'} w={'full'} h={'full'} pb={7} id="reset-des">
             {parse(
               description?.startsWith('"')
                 ? JSON.parse(description || '')
@@ -71,7 +90,7 @@ export function DescriptionUI({ description }: Props) {
           <Button
             pos="absolute"
             zIndex={2}
-            bottom={1}
+            bottom={-4}
             left={'50%'}
             color="brand.slate.500"
             bg="white"

@@ -107,7 +107,7 @@ export function TalentBio({
       bg={'white'}
       borderRadius={10}
     >
-      <Flex align={'center'} justify="space-between">
+      <Flex align={'center'} justify="space-between" w="full">
         <Flex align={'center'} h={'fit-content'}>
           <EarnAvatar
             size="64px"

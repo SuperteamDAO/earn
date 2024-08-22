@@ -182,7 +182,10 @@ export function CreateListing({
       setType(result?.data?.type ?? ('' as string));
       setIsListingPublishing(false);
       onOpen();
-      if (!user?.surveysShown || !(surveyId in user.surveysShown)) {
+      if (
+        (!user?.surveysShown || !(surveyId in user.surveysShown)) &&
+        process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
+      ) {
         onSurveyOpen();
       }
     } catch (e) {
