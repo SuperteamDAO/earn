@@ -21,9 +21,12 @@ import { tokenList } from '@/constants/index';
 import { LiveListings } from '@/features/home';
 import { type ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { cleanRewardPrizes } from '@/utils/rank';
 
 import { submissionCountQuery } from '../../queries';
 import type { Listing } from '../../types';
+import { digitsInLargestString } from '../../utils';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 import { ExtraInfoSection } from './ExtraInfoSection';
@@ -82,6 +85,20 @@ export function RightSideBar({
 
   const router = useRouter();
 
+  const consideringDigitsArray = cleanRewardPrizes(rewards).map(
+    (c) => formatNumberWithSuffix(c, 2, true) + (token || '') + '',
+  );
+
+  consideringDigitsArray.push(
+    formatNumberWithSuffix(rewardAmount || 0, 2, true) + (token || '') + '',
+  );
+  const largestDigits = digitsInLargestString(consideringDigitsArray);
+  console.log('largestDigits', largestDigits);
+  let widthOfPrize = largestDigits - 0.75 + 'rem';
+  if (cleanRewardPrizes(rewards).length > 6) {
+    widthOfPrize = largestDigits + 0.5 + 'rem';
+  }
+
   return (
     <Box w={{ base: 'full', md: 'auto' }} h="full">
       <VStack gap={2} w="full" pt={4}>
@@ -93,8 +110,9 @@ export function RightSideBar({
           rounded={'xl'}
         >
           {!router.asPath.split('/')[4]?.includes('submission') &&
-            !router.asPath.split('/')[4]?.includes('references') && (
-              <Box display={{ base: 'block', md: 'none' }} pb={6}>
+            !router.asPath.split('/')[4]?.includes('references') &&
+            listing.isWinnersAnnounced && (
+              <Box display={{ base: 'block', md: 'none' }} w="full" pb={6}>
                 <ListingWinners bounty={listing} />
               </Box>
             )}
@@ -125,7 +143,7 @@ export function RightSideBar({
                             fontWeight: 600,
                             fontSize: { base: 'lg', md: 'xl' },
                             color: 'brand.slate.700',
-                            w: '8.5rem',
+                            w: widthOfPrize,
                           }}
                         />
                         {!isProject && (
@@ -146,6 +164,7 @@ export function RightSideBar({
                         <Tr>
                           <Td px={0} colSpan={3}>
                             <PrizesList
+                              widthPrize={widthOfPrize}
                               totalReward={rewardAmount ?? 0}
                               maxBonusSpots={maxBonusSpots ?? 0}
                               token={token ?? ''}
@@ -161,7 +180,7 @@ export function RightSideBar({
             </TableContainer>
           </VStack>
           <Box
-            w="90%"
+            w="100%"
             borderColor={'brand.slate.100'}
             borderBottomWidth={'1px'}
           />
@@ -283,8 +302,8 @@ export function RightSideBar({
               listing={listing}
               hasHackathonStarted={hasHackathonStarted}
             />
-            {isProject && (
-              <Flex gap="2" w="20rem" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
+            {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
+              <Flex gap="2" w="full" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />
                 <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
                   Don&apos;t start working just yet! Apply first, and then begin
@@ -293,7 +312,7 @@ export function RightSideBar({
               </Flex>
             )}
           </Box>
-          <Box display={{ base: 'none', md: 'block' }}>
+          <Box w="full">
             <ExtraInfoSection
               skills={skills}
               region={listing.region}

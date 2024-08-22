@@ -180,7 +180,14 @@ export const Comments = ({
           primaryCtaLink={'/new/talent'}
         />
       )}
-      <VStack align={'start'} gap={4} w={'full'} bg={'#FFFFFF'} rounded={'xl'}>
+      <VStack
+        align={'start'}
+        gap={4}
+        w={'full'}
+        bg={'#FFFFFF'}
+        id="comments"
+        rounded={'xl'}
+      >
         <HStack w={'full'} pt={4}>
           <Image
             width={21}

@@ -33,12 +33,6 @@ body {
   background-color: #fff;
 }
 
-#reset-des {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  color: #64748B;
-}
-
 #reset-des blockquote {
   all: revert !important;
 }
@@ -77,7 +71,6 @@ body {
 
 #reset-des h2 {
   all: revert !important;
-  color: #475569;
 }
 
 #reset-des h3 {
@@ -108,6 +101,64 @@ body {
 
 #reset-des p {
   white-space: pre-wrap;
+}
+
+#reset-des {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  li::marker {
+    color: #475569 !important;
+  }
+}
+
+#reset-des {
+  * {
+    font-size: 0.875rem !important;
+  }
+
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  h3 {
+    font-size: 1.125rem !important;
+  }
+
+  h4 {
+    font-size: 1rem !important;
+  }
+
+  h5 {
+    font-size: 0.875rem !important;
+  }
+
+  h6 {
+    font-size: 0.75rem !important;
+  }
+}
+
+#reset-des {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+#reset-des * {
+  color: #475569 !important;
+}
+
+#reset-des {
+  >*:first-child {
+    margin-top: 1rem !important; // Adjusts top padding for the first paragraph
+  }
 }
 
 code {

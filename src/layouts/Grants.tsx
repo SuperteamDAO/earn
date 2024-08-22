@@ -1,13 +1,7 @@
-import {
-  Box,
-  Divider,
-  Flex,
-  HStack,
-  Image,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Box, Flex, HStack, Image, Link, Text, VStack } from '@chakra-ui/react';
 import Head from 'next/head';
+import { usePostHog } from 'posthog-js/react';
 import { useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -23,6 +17,7 @@ import {
   TimeToPayIcon,
 } from '@/features/grants';
 import { ExtraInfoSection } from '@/features/listings';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
 import { Default } from './Default';
@@ -37,6 +32,9 @@ export function GrantPageLayout({
 }: GrantPageProps) {
   const [grant] = useState<typeof initialGrant>(initialGrant);
   const encodedTitle = encodeURIComponent(initialGrant?.title || '');
+  const posthog = usePostHog();
+
+  const iterableSkills = initialGrant?.skills?.map((e) => e.skills) ?? [];
 
   return (
     <Default
@@ -76,7 +74,7 @@ export function GrantPageLayout({
         {grant === null && <LoadingSection />}
         {grant !== null && !grant?.id && <EmptySection />}
         {grant !== null && !!grant?.id && (
-          <Box w="full" maxW={'8xl'} mx="auto" bg="white">
+          <Box w="full" maxW={'6xl'} mx="auto" bg="white">
             <GrantsHeader
               title={grant?.title ?? ''}
               sponsor={grant?.sponsor}
@@ -90,17 +88,22 @@ export function GrantPageLayout({
               align={['center', 'center', 'start', 'start']}
               justify={['center', 'center', 'space-between', 'space-between']}
               flexDir={{ base: 'column', md: 'row' }}
-              gap={4}
+              gap={{ base: 0, md: 4 }}
               mx={'auto'}
               mb={10}
             >
-              <Box w={{ base: 'full', md: 'auto' }} px={3}>
+              <Box
+                pos={{ base: 'static', md: 'sticky' }}
+                top={14}
+                w={{ base: 'full', md: 'auto' }}
+                px={3}
+              >
                 <VStack gap={2}>
                   <VStack
                     justify={'center'}
                     gap={0}
                     w={{ base: 'full', md: '22rem' }}
-                    py={3}
+                    py={4}
                     bg={'#FFFFFF'}
                     rounded={'xl'}
                   >
@@ -114,7 +117,6 @@ export function GrantPageLayout({
                         <Image
                           w={9}
                           h={9}
-                          mt={1}
                           alt={'green doller'}
                           rounded={'full'}
                           src={
@@ -146,22 +148,18 @@ export function GrantPageLayout({
                         Cheque Size
                       </Text>
                     </Flex>
-                    <Divider
-                      my={5}
-                      mr={-8}
-                      ml={-8}
-                      borderColor={'brand.slate.300'}
-                    />
                     <Flex
-                      direction={'column'}
+                      justify={'space-between'}
                       display={
-                        grant?.link && !grant?.isNative ? 'none' : 'block'
+                        grant?.link && !grant?.isNative ? 'none' : 'flex'
                       }
                       w="full"
+                      mb={{ base: 0, md: 2 }}
+                      py={4}
                     >
-                      <Flex w="full" mt={2}>
-                        <Flex direction={'column'} w="50%">
-                          <Flex>
+                      <Flex direction="column" gap={4} w="fit-content">
+                        <Flex direction={'column'} w="fit-content">
+                          <Flex w="fit-content">
                             <TimeToPayIcon />
                             <Text
                               color="brand.slate.700"
@@ -172,6 +170,7 @@ export function GrantPageLayout({
                             </Text>
                           </Flex>
                           <Text
+                            w="max-content"
                             pl={2}
                             color={'brand.slate.500'}
                             fontSize={'sm'}
@@ -181,30 +180,7 @@ export function GrantPageLayout({
                             Avg. Response Time
                           </Text>
                         </Flex>
-                        <Flex direction={'column'}>
-                          <Flex>
-                            <DollarIcon />
-                            <Text
-                              color="brand.slate.700"
-                              fontSize={{ base: 'lg', md: 'xl' }}
-                              fontWeight={500}
-                            >
-                              ${grant?.totalApproved || 0}
-                            </Text>
-                          </Flex>
-                          <Text
-                            pl={2}
-                            color={'brand.slate.500'}
-                            fontSize={'sm'}
-                            fontWeight={500}
-                            textTransform={'uppercase'}
-                          >
-                            Approved So Far
-                          </Text>
-                        </Flex>
-                      </Flex>
-                      <Flex w="full" mt={4} mb={6}>
-                        <Flex direction={'column'} w="50%">
+                        <Flex direction={'column'} w="fit-content">
                           <Flex>
                             <PayoutIcon />
                             <Text
@@ -222,6 +198,7 @@ export function GrantPageLayout({
                             </Text>
                           </Flex>
                           <Text
+                            w="max-content"
                             pl={2}
                             color={'brand.slate.500'}
                             fontSize={'sm'}
@@ -229,6 +206,30 @@ export function GrantPageLayout({
                             textTransform={'uppercase'}
                           >
                             Avg. Grant Size
+                          </Text>
+                        </Flex>
+                      </Flex>
+                      <Flex direction="column" gap={4} w="fit-content">
+                        <Flex direction={'column'}>
+                          <Flex>
+                            <DollarIcon />
+                            <Text
+                              color="brand.slate.700"
+                              fontSize={{ base: 'lg', md: 'xl' }}
+                              fontWeight={500}
+                            >
+                              ${grant?.totalApproved || 0}
+                            </Text>
+                          </Flex>
+                          <Text
+                            w="max-content"
+                            pl={2}
+                            color={'brand.slate.500'}
+                            fontSize={'sm'}
+                            fontWeight={500}
+                            textTransform={'uppercase'}
+                          >
+                            Approved So Far
                           </Text>
                         </Flex>
                         <Flex direction={'column'}>
@@ -243,6 +244,7 @@ export function GrantPageLayout({
                             </Text>
                           </Flex>
                           <Text
+                            w="max-content"
                             pl={2}
                             color={'brand.slate.500'}
                             fontSize={'sm'}
@@ -255,9 +257,9 @@ export function GrantPageLayout({
                       </Flex>
                     </Flex>
                     <GrantApplicationButton grant={grant} />
-                    <Box display={{ base: 'none', md: 'block' }}>
+                    <Box>
                       <ExtraInfoSection
-                        skills={grant?.skills?.map((e) => e.skills) ?? []}
+                        skills={iterableSkills}
                         region={grant.region}
                         requirements={grant.requirements}
                         pocSocials={grant.pocSocials}
@@ -269,11 +271,81 @@ export function GrantPageLayout({
               <VStack
                 gap={8}
                 w={'full'}
-                px={5}
+                px={{ base: 2, md: 5 }}
                 borderColor="brand.slate.100"
                 borderLeftWidth={'1px'}
               >
                 {children}
+                <VStack
+                  align={'start'}
+                  display={{ base: 'flex', md: 'none' }}
+                  w="full"
+                >
+                  <Text
+                    h="100%"
+                    color={'brand.slate.600'}
+                    fontSize={'sm'}
+                    fontWeight={600}
+                    textAlign="center"
+                  >
+                    SKILLS NEEDED
+                  </Text>
+                  <HStack flexWrap={'wrap'} gap={3}>
+                    {iterableSkills?.map((skill) => (
+                      <Box
+                        key={skill}
+                        m={'0px !important'}
+                        px={4}
+                        py={1}
+                        color="#475569"
+                        fontSize="sm"
+                        fontWeight={500}
+                        bg={'#F1F5F9'}
+                        rounded={'sm'}
+                      >
+                        <Text fontSize={'xs'}>{skill}</Text>
+                      </Box>
+                    ))}
+                  </HStack>
+                </VStack>
+                {initialGrant?.pocSocials && (
+                  <VStack
+                    align={'start'}
+                    display={{ base: 'flex', md: 'none' }}
+                    w={'full'}
+                    fontSize="sm"
+                  >
+                    <Text
+                      h="100%"
+                      color={'brand.slate.600'}
+                      fontWeight={600}
+                      textAlign="center"
+                    >
+                      CONTACT
+                    </Text>
+                    <Text>
+                      <Link
+                        className="ph-no-capture"
+                        color={'#64768b'}
+                        fontWeight={500}
+                        href={getURLSanitized(initialGrant?.pocSocials)}
+                        isExternal
+                        onClick={() => posthog.capture('reach out_listing')}
+                      >
+                        Reach out
+                        <ExternalLinkIcon
+                          color={'#64768b'}
+                          mb={1}
+                          as="span"
+                          mx={1}
+                        />
+                      </Link>
+                      <Text as="span" color={'brand.slate.500'}>
+                        if you have any questions about this listing
+                      </Text>
+                    </Text>
+                  </VStack>
+                )}
               </VStack>
             </HStack>
           </Box>

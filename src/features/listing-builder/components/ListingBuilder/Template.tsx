@@ -1,6 +1,7 @@
 import { AddIcon, ViewIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, Image, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
 
@@ -30,6 +31,7 @@ export const Template = ({
   const { updateState } = useListingFormStore();
   const posthog = usePostHog();
   const { user } = useUser();
+  const { data: session } = useSession();
 
   const { data: templates = [] } = useQuery(listingTemplatesQuery(type));
 
@@ -85,11 +87,12 @@ export const Template = ({
             borderWidth={'1px'}
             borderColor={'brand.slate.200'}
             borderRadius={5}
-            _hover={{ color: 'white' }}
+            _hover={{ color: 'brand.slate.700' }}
             cursor={'pointer'}
             isDisabled={
               isCreateListingAllowed !== undefined &&
-              isCreateListingAllowed === false
+              isCreateListingAllowed === false &&
+              session?.user.role !== 'GOD'
             }
             onClick={() => {
               posthog.capture('start from scratch_sponsor');
@@ -210,7 +213,8 @@ export const Template = ({
                       w="full"
                       isDisabled={
                         isCreateListingAllowed !== undefined &&
-                        isCreateListingAllowed === false
+                        isCreateListingAllowed === false &&
+                        session?.user.role !== 'GOD'
                       }
                       onClick={() => {
                         posthog.capture('template_sponsor');

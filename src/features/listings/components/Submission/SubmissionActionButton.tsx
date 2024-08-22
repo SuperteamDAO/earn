@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
+import { LuPencil } from 'react-icons/lu';
 
 import { SurveyModal } from '@/components/Survey';
 import { AuthWrapper } from '@/features/auth';
@@ -98,7 +99,6 @@ export const SubmissionActionButton = ({
   switch (buttonState) {
     case 'edit':
       buttonText = isProject ? 'Edit Application' : 'Edit Submission';
-      buttonBG = 'brand.purple';
       isBtnDisabled = false;
       btnLoadingText = null;
       break;
@@ -124,6 +124,13 @@ export const SubmissionActionButton = ({
               !isUserEligibleByRegion)),
       );
       btnLoadingText = 'Checking Submission..';
+  }
+  if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
+    buttonText = 'Submissions in Review';
+    buttonBG = 'gray.500';
+  } else if (isWinnersAnnounced) {
+    buttonText = 'Winners Announced';
+    buttonBG = 'gray.500';
   }
 
   const {
@@ -225,6 +232,7 @@ export const SubmissionActionButton = ({
         >
           <AuthWrapper style={{ w: 'full' }}>
             <Button
+              gap={4}
               w={'full'}
               mb={{ base: 12, md: 5 }}
               bg={buttonBG}
@@ -237,8 +245,9 @@ export const SubmissionActionButton = ({
               loadingText={btnLoadingText}
               onClick={handleSubmit}
               size="lg"
-              variant="solid"
+              variant={buttonState === 'edit' ? 'outline' : 'solid'}
             >
+              {buttonState === 'edit' && <LuPencil />}
               {buttonText}
             </Button>
           </AuthWrapper>
