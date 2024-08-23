@@ -710,6 +710,12 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   mb={8}
                   color="brand.slate.500"
                   fontWeight={500}
+                  _checked={{
+                    '& .chakra-checkbox__control': {
+                      background: 'brand.purple',
+                      borderColor: 'brand.purple',
+                    },
+                  }}
                   colorScheme="purple"
                   isChecked={privateValue}
                   onChange={(e) => {

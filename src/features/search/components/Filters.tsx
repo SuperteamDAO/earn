@@ -94,6 +94,12 @@ export function Filters({
           {statusFilters?.map((f) => (
             <Stack key={f.value}>
               <Checkbox
+                _checked={{
+                  '& .chakra-checkbox__control': {
+                    background: 'brand.purple',
+                    borderColor: 'brand.purple',
+                  },
+                }}
                 checked={f.checked}
                 defaultChecked={f.checked}
                 disabled={loading}
@@ -122,6 +128,12 @@ export function Filters({
           {skillsFilters?.map((f) => (
             <Stack key={f.value}>
               <Checkbox
+                _checked={{
+                  '& .chakra-checkbox__control': {
+                    background: 'brand.purple',
+                    borderColor: 'brand.purple',
+                  },
+                }}
                 checked={f.checked}
                 defaultChecked={f.checked}
                 disabled={loading}

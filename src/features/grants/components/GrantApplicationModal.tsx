@@ -175,8 +175,8 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
           Grant Application
           <Text mt={1} color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
             If you&apos;re working on a project that will help the
-            sponsor&apos;s ecosystem grow, apply for any of our grants and
-            we&apos;ll respond in 48 hours!
+            sponsor&apos;s ecosystem grow, apply with your proposal here and
+            we&apos;ll respond soon!
           </Text>
           <Progress
             h={'1.5px'}
