@@ -7,17 +7,15 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { type ReactNode, useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
-import { LuLock } from 'react-icons/lu';
-import {
-  MdList,
-  MdOutlineChatBubbleOutline,
-  MdOutlineGroup,
-} from 'react-icons/md';
+import { LuLayoutList, LuLock, LuMessageSquare, LuUsers } from 'react-icons/lu';
+import { MdList, MdOutlineChatBubbleOutline } from 'react-icons/md';
+import { RiUserSettingsLine } from 'react-icons/ri';
 
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
+import { Superteams } from '@/constants/Superteam';
 import {
   isCreateListingAllowedQuery,
   SelectHackathon,
@@ -134,6 +132,11 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
   }
 
   const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
+  const isLocalMemberVisible = Superteams.some(
+    (team) =>
+      team.name === user?.currentSponsor?.name &&
+      (user?.stLead === team.region || user?.stLead === 'MAHADEV'),
+  );
 
   const LinkItems: Array<LinkItemProps> = isHackathonRoute
     ? [
@@ -146,12 +149,25 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
         },
       ]
     : [
-        { name: 'My Listings', link: '/listings', icon: MdList },
-        { name: 'Members', link: '/members', icon: MdOutlineGroup },
+        { name: 'My Listings', link: '/listings', icon: LuLayoutList },
+        {
+          name: 'Team Settings',
+          link: '/team-settings',
+          icon: RiUserSettingsLine,
+        },
+        ...(isLocalMemberVisible
+          ? [
+              {
+                name: 'Local Members',
+                link: '/local-members',
+                icon: LuUsers,
+              },
+            ]
+          : []),
         {
           name: 'Get Help',
           link: 'https://t.me/pratikdholani',
-          icon: MdOutlineChatBubbleOutline,
+          icon: LuMessageSquare,
           posthog: 'get help_sponsor',
         },
       ];

@@ -62,5 +62,6 @@ interface User {
   stRecommended?: boolean;
   acceptedTOS?: boolean;
   emailSettings?: EmailSettings[];
+  stLead?: string;
 }
 export type { User };

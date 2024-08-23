@@ -36,7 +36,7 @@ export const skillMap: SkillMap[] = [
   },
   {
     mainskill: 'Community',
-    color: '#F5C723',
+    color: '#EA580C',
   },
   {
     mainskill: 'Mobile',
