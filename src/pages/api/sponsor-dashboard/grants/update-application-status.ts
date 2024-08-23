@@ -14,102 +14,180 @@ import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
+const MAX_RECORDS = 10;
+
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
-  const { id, applicationStatus, approvedAmount } = req.body;
+  const { data, applicationStatus } = req.body as {
+    data: {
+      id: string;
+      approvedAmount?: number;
+    }[];
+    applicationStatus: string;
+  };
 
-  if (!id || !applicationStatus) {
-    logger.warn('Missing required fields: id or applicationStatus');
+  if (!data || !applicationStatus) {
+    logger.warn('Missing required fields: data or applicationStatus');
     return res.status(400).json({ error: 'Missing required fields' });
   }
+  if (data.length === 0) {
+    logger.warn('Data asked to update is empty');
+    return res.status(400).json({ error: 'Data asked to update is empty' });
+  }
+  if (data.length > MAX_RECORDS) {
+    logger.warn('Only max 10 records allowed in data');
+    return res
+      .status(400)
+      .json({ error: 'Only max 10 records allowed in data' });
+  }
 
-  const parsedAmount = approvedAmount ? parseInt(approvedAmount, 10) : 0;
+  // if (typeof id === 'string') {
+  //   id = [id]
+  // }
+
+  // const parsedAmount = approvedAmount ? parseInt(approvedAmount, 10) : 0;
 
   try {
-    const currentApplication = await prisma.grantApplication.findUnique({
-      where: { id },
+    const currentApplications = await prisma.grantApplication.findMany({
+      where: {
+        id: {
+          in: data.map((d) => d.id),
+        },
+      },
       include: {
         grant: true,
       },
     });
 
-    if (!currentApplication) {
-      logger.warn(`Grant application not found for ID: ${id}`);
-      return res.status(404).json({ error: 'Grant application not found' });
+    if (currentApplications.length !== data.length) {
+      logger.warn(
+        `Some records were not found in the data - only found these - ${currentApplications.map((c) => c.id)}`,
+      );
+      return res.status(404).json({
+        error: `Some records were not found in the data - only found these - ${currentApplications.map((c) => c.id)}`,
+      });
+    }
+    const grantId = currentApplications[0]?.grant.id;
+    if (
+      grantId &&
+      !currentApplications.every(
+        (application) => application.grant.id === grantId,
+      )
+    ) {
+      logger.warn('All records should have same and valid grant ID');
+      return res
+        .status(404)
+        .json({ error: 'All records should have same and valid grant ID' });
     }
 
-    const { error } = await checkGrantSponsorAuth(
-      req.userSponsorId,
-      currentApplication.grantId,
-    );
-    if (error) {
-      return res.status(error.status).json({ error: error.message });
-    }
+    currentApplications.forEach(async (currentApplicant) => {
+      const { error } = await checkGrantSponsorAuth(
+        req.userSponsorId,
+        currentApplicant.grantId,
+      );
+      if (error) {
+        return res.status(error.status).json({ error: error.message });
+      }
+    });
 
-    const updatedData: any = {
+    const commonUpdateField = {
       applicationStatus,
       decidedAt: new Date().toISOString(),
     };
 
     const isApproved = applicationStatus === 'Approved';
+    const updatedData: {
+      applicationStatus: string;
+      decidedAt: string;
+      approvedAmount?: number;
+      approvedAmountInUSD?: number;
+    }[] = [];
 
-    if (isApproved) {
-      const tokenUSDValue = await fetchTokenUSDValue(
-        currentApplication.grant.token!,
-      );
-      const usdValue = tokenUSDValue * parsedAmount;
+    await Promise.all(
+      currentApplications.map(async (currentApplicant, k) => {
+        let approvedData = {
+          approvedAmount: 0,
+          approvedAmountInUSD: 0,
+        };
+        if (isApproved) {
+          const parsedAmount = data[k]?.approvedAmount
+            ? parseInt(data[k]?.approvedAmount + '', 10)
+            : 0;
+          const tokenUSDValue = await fetchTokenUSDValue(
+            currentApplicant.grant.token!,
+          );
+          const usdValue = tokenUSDValue * parsedAmount;
+          approvedData = {
+            approvedAmount: parsedAmount,
+            approvedAmountInUSD: usdValue,
+          };
+        }
+        updatedData.push({
+          ...commonUpdateField,
+          ...approvedData,
+        });
+      }),
+    );
 
-      updatedData.approvedAmount = parsedAmount;
-      updatedData.approvedAmountInUSD = usdValue;
-    }
-
-    const result = await prisma.grantApplication.update({
-      where: { id },
-      data: updatedData,
-      include: {
-        user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-            photo: true,
-            publicKey: true,
-            discord: true,
-            username: true,
-            twitter: true,
-            telegram: true,
+    const result = await prisma.$transaction(
+      currentApplications.map((application, k) => {
+        return prisma.grantApplication.update({
+          where: { id: application.id },
+          data: updatedData[k] as any,
+          include: {
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+                twitter: true,
+                discord: true,
+              },
+            },
+            grant: {
+              select: {
+                airtableId: true,
+                isNative: true,
+              },
+            },
           },
-        },
-        grant: true,
-      },
-    });
+        });
+      }),
+    );
 
     if (isApproved) {
+      const totalIncrementAmount = data.reduce((acc, currentApplicant) => {
+        if (currentApplicant.approvedAmount !== undefined) {
+          return acc + currentApplicant.approvedAmount;
+        }
+        return acc;
+      }, 0);
       await prisma.grants.update({
-        where: { id: result.grantId },
+        where: { id: grantId },
         data: {
           totalApproved: {
-            increment: parsedAmount,
+            increment: totalIncrementAmount,
           },
         },
       });
     }
 
-    if (result.grant.isNative === true && !result.grant.airtableId) {
-      try {
-        await sendEmailNotification({
-          type: isApproved ? 'grantApproved' : 'grantRejected',
-          id,
-          userId: result.userId,
-          triggeredBy: userId,
-        });
-      } catch (err) {
-        logger.error('Error sending email to Sponsor:', err);
-      }
+    if (result[0]?.grant.isNative === true && !result[0]?.grant.airtableId) {
+      result.map(async (r) => {
+        try {
+          await sendEmailNotification({
+            type: isApproved ? 'grantApproved' : 'grantRejected',
+            id: r.id,
+            userId: r.userId,
+            triggeredBy: userId,
+          });
+        } catch (err) {
+          logger.error('Error sending email to Sponsor:', err);
+        }
+      });
     } else {
       const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
       const url = airtableUrl(
@@ -117,10 +195,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         process.env.AIRTABLE_GRANTS_TABLE_NAME!,
       );
 
-      const airtableData = convertGrantApplicationToAirtable(result);
-      const airtablePayload = airtableUpsert('earnApplicationId', [
-        { fields: airtableData },
-      ]);
+      const airtableData = result.map((r) =>
+        convertGrantApplicationToAirtable(r),
+      );
+      const airtablePayload = airtableUpsert(
+        'earnApplicationId',
+        airtableData.map((a) => ({ fields: a })),
+      );
 
       await axios.patch(url, JSON.stringify(airtablePayload), config);
     }
@@ -128,7 +209,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
-      `Error occurred while updating grant application ID: ${id} by user ID: ${userId}: ${error.message}`,
+      `Error occurred while updating grant application ID: ${data.map((c) => c.id)}:  ${error.message}`,
     );
     return res.status(500).json({
       error: error.message,
