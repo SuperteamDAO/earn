@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 import { fetchAsset, formatNumber, formatString } from '@/utils/ogHelpers';
 
 export const config = {
-  runtime: 'experimental-edge',
+  runtime: 'edge',
 };
 
 const mediumFontP = fetchAsset(
