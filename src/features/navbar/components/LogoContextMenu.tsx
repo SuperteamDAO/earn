@@ -6,10 +6,10 @@ import {
   MenuItem,
   MenuList,
   useClipboard,
-  useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 // Correctly formatted SVG string for the logo
 const logoSvg =
@@ -21,17 +21,11 @@ export const LogoContextMenu = ({
   children: React.ReactNode;
 }) => {
   const { onCopy: onCopyLogo } = useClipboard(logoSvg);
-  const toast = useToast();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleCopyLogo = () => {
     onCopyLogo();
-    toast({
-      title: 'Logo copied',
-      status: 'success',
-      duration: 2000,
-      isClosable: true,
-    });
+    toast.success('Logo copied');
   };
 
   const handleDownload = () => {

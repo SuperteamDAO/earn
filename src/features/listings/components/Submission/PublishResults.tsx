@@ -50,7 +50,6 @@ export function PublishResults({
     ...cleanRewards(bounty?.rewards, true),
     ...Array(bounty?.maxBonusSpots ?? 0).map(() => BONUS_REWARD_POSITION),
   ];
-  console.log('reward length - ', rewards.length);
 
   let alertType:
     | 'loading'

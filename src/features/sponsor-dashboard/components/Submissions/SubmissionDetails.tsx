@@ -118,8 +118,6 @@ export const SubmissionDetails = ({
         const oldPosition: number =
           Number(submissions[submissionIndex]?.winnerPosition) || 0;
 
-        console.log('new position - ', position);
-        console.log('old position - ', oldPosition);
         let newUsedPositions = [...usedPositions];
         if (oldPosition && oldPosition !== position) {
           const index = newUsedPositions.indexOf(oldPosition);
@@ -597,13 +595,6 @@ export const SubmissionDetails = ({
                       >
                         <option>Select Winner</option>
                         {rewards.map((reward) => {
-                          console.log(
-                            'used',
-                            usedPositions.filter(
-                              (u) => u === BONUS_REWARD_POSITION,
-                            ).length,
-                          );
-                          console.log('max bonus spots', bounty?.maxBonusSpots);
                           let isRewardUsed = usedPositions.includes(reward);
                           if (reward === BONUS_REWARD_POSITION) {
                             if (

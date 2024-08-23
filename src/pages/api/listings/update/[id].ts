@@ -75,8 +75,6 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       description,
     } = updatedData;
 
-    console.log('max bonus spots', maxBonusSpots);
-
     let publishedAt = listing.publishedAt;
     if (isPublished && !listing.publishedAt) {
       publishedAt = new Date();

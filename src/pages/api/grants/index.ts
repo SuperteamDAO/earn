@@ -61,7 +61,6 @@ export default async function grants(
       );
       userRegion = matchedRegion?.region;
     }
-    console.log('user region - ', userRegion);
 
     const grantQueryOptions: Prisma.GrantsFindManyArgs = {
       where: {

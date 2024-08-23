@@ -141,7 +141,6 @@ export const ListingPayments = ({
   const maxBonusSpots = watch('maxBonusSpots');
 
   useEffect(() => {
-    console.log('max bonus', maxBonusSpots);
     if (maxBonusSpots !== undefined) {
       if (maxBonusSpots > MAX_BONUS_SPOTS)
         setWarningMessage('Maximum number of bonus prizes allow is 50');

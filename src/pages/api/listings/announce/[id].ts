@@ -47,7 +47,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ...cleanRewards(listing?.rewards as Rewards, true),
       ...Array(listing?.maxBonusSpots ?? 0).map(() => BONUS_REWARD_POSITION),
     ].length;
-    console.log('total rewards', totalRewards);
+
     if (!!totalRewards && listing?.totalWinnersSelected !== totalRewards) {
       logger.warn(
         'All winners have not been selected before publishing the results',

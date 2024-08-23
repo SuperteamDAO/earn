@@ -7,7 +7,7 @@ import { fetchAsset, formatString } from '@/utils/ogHelpers';
 import { nthLabelGenerator } from '@/utils/rank';
 
 export const config = {
-  runtime: 'experimental-edge',
+  runtime: 'edge',
 };
 
 const fontDataP = fetchAsset(

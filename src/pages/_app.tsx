@@ -16,7 +16,7 @@ import NextTopLoader from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from 'sonner';
 
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
@@ -111,7 +111,7 @@ function MyApp({ Component, pageProps }: any) {
     <>
       <NextTopLoader color="#6366F1" showSpinner={false} />
       <Component {...pageProps} key={router.asPath} />
-      <Toaster position="bottom-center" />
+      <Toaster position="bottom-center" richColors />
       <FeatureModal
         latestActiveBountySlug={latestActiveSlug}
         isOpen={isFeatureModalOpen}

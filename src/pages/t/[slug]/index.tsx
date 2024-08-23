@@ -119,10 +119,8 @@ function TalentProfile({ talent, stats }: TalentProps) {
     return talent?.feed?.filter((item) => item.type === 'PoW');
   }, [activeTab, talent?.feed]);
 
-  const addNewPow = (newPow: any) => {
-    if (talent) {
-      talent.feed = [newPow, ...talent.feed];
-    }
+  const addNewPow = () => {
+    router.replace(router.asPath);
   };
 
   const isMD = useBreakpointValue({ base: false, md: true });
@@ -632,12 +630,10 @@ function TalentProfile({ talent, stats }: TalentProps) {
           </Box>
         )}
         <AddProject
-          {...{
-            isOpen: isOpenPow,
-            onClose: onClosePow,
-            upload: true,
-            onNewPow: addNewPow,
-          }}
+          isOpen={isOpenPow}
+          onClose={onClosePow}
+          upload
+          onNewPow={addNewPow}
         />
       </Default>
     </>

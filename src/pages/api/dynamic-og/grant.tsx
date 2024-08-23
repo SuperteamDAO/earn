@@ -5,7 +5,7 @@ import { tokenList } from '@/constants';
 import { fetchAsset, formatNumber, formatString } from '@/utils/ogHelpers';
 
 export const config = {
-  runtime: 'experimental-edge',
+  runtime: 'edge',
 };
 
 const sponsorImageP = fetchAsset(
