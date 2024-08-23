@@ -22,6 +22,7 @@ import NextLink from 'next/link';
 import React from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { skillMap } from '@/constants';
 import {
   extractTelegramUsername,
   extractTwitterUsername,
@@ -207,18 +208,18 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
       </Td>
       <Td>
         <Flex gap={2} h="full" textAlign={'center'}>
-          {skills.slice(0, 2).map((s: string) => (
+          {skills.slice(0, 2).map((skill: string) => (
             <Badge
-              key={s}
+              key={skill}
               px={2}
-              color="#64739C"
+              color={`${skillMap.find((e) => e.mainskill === skill)?.color}`}
               fontSize={'x-small'}
               fontWeight={500}
               textTransform={'none'}
-              bg="#EFF1F5"
+              bg={`${skillMap.find((e) => e.mainskill === skill)?.color}1A`}
               rounded="sm"
             >
-              {s}
+              {skill}
             </Badge>
           ))}
           {skills.length > 2 && (
@@ -250,18 +251,18 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
                   h="full"
                   textAlign={'center'}
                 >
-                  {skills.slice(2).map((s: string) => (
+                  {skills.slice(2).map((skill: string) => (
                     <Badge
-                      key={s}
+                      key={skill}
                       px={2}
-                      color="#64739C"
+                      color={`${skillMap.find((e) => e.mainskill === skill)?.color}`}
                       fontSize={'x-small'}
                       fontWeight={500}
                       textTransform={'none'}
-                      bg="#EFF1F5"
+                      bg={`${skillMap.find((e) => e.mainskill === skill)?.color}1A`}
                       rounded="sm"
                     >
-                      {s}
+                      {skill}
                     </Badge>
                   ))}
                 </Flex>

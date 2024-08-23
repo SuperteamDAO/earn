@@ -16,6 +16,7 @@ import NextLink from 'next/link';
 import { type ReactNode } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { skillMap } from '@/constants';
 import {
   extractTelegramUsername,
   extractTwitterUsername,
@@ -231,7 +232,18 @@ export const UserDrawer = ({
               <Flex wrap="wrap" gap={2}>
                 {parentSkills.length > 0 ? (
                   parentSkills.map((skill: string) => (
-                    <DBadge key={skill}>{skill}</DBadge>
+                    <Badge
+                      key={skill}
+                      px={'12px'}
+                      py={'4px'}
+                      color={`${skillMap.find((e) => e.mainskill === skill)?.color}`}
+                      fontSize={'xs'}
+                      fontWeight={500}
+                      bg={`${skillMap.find((e) => e.mainskill === skill)?.color}1A`}
+                      borderRadius={'4px'}
+                    >
+                      {skill}
+                    </Badge>
                   ))
                 ) : (
                   <Text color="brand.slate.500">-</Text>
