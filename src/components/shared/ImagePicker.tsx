@@ -1,5 +1,5 @@
 import { MediaPicker } from 'degen';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface ImagePickerProps {
   defaultValue?:

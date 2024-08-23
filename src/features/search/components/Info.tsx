@@ -1,5 +1,4 @@
-import { Box, HStack, Text } from '@chakra-ui/react';
-import { LoaderIcon } from 'react-hot-toast';
+import { Box, HStack, Spinner, Text } from '@chakra-ui/react';
 
 interface Props {
   count: number;
@@ -16,7 +15,7 @@ export function Info({ count, query, loading }: Props) {
             ? 'Enter a keyword to find what you need.'
             : `Found ${count} search results`}
         </Text>
-        {loading && <LoaderIcon />}
+        {loading && <Spinner size={'sm'} />}
       </HStack>
       {query.length > 0 && (
         <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>

@@ -2,8 +2,8 @@ import { Button } from '@chakra-ui/react';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
 import { LuCheck, LuPlus } from 'react-icons/lu';
+import { toast } from 'sonner';
 
 interface Props {
   bountyId: string;

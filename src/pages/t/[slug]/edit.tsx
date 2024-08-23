@@ -11,7 +11,6 @@ import {
   Text,
   Textarea,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
@@ -22,6 +21,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { toast } from 'sonner';
 
 import { AddProject } from '@/components/Form/AddProject';
 import { InputField } from '@/components/Form/InputField';
@@ -126,7 +126,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
-  const toast = useToast();
 
   const privateValue = watch('private', user?.private);
 
@@ -233,14 +232,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     try {
       if (!data.discord) {
         setDiscordError(true);
-        toast({
-          title: 'Discord Error.',
-          description: 'Discord field is required.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-          variant: 'subtle',
-        });
+        toast.error('Discord field is required.');
         return;
       }
       setDiscordError(false);
@@ -252,26 +244,12 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       setSocialError(filledSocialLinksCount < 1);
 
       if (filledSocialLinksCount < 1) {
-        toast({
-          title: 'Social Links Error.',
-          description: 'At least one social link is required.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-          variant: 'subtle',
-        });
+        toast.error('At least one social link is required.');
         return;
       }
 
       if (isAnySocialUrlInvalid) {
-        toast({
-          title: 'Social URLs Error.',
-          description: 'One or more social URLs are invalid.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-          variant: 'subtle',
-        });
+        toast.error('One or more social URLs are invalid.');
         return;
       }
 
@@ -327,27 +305,12 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
       setIsLoading(false);
 
-      toast({
-        title: 'Profile updated.',
-        description: 'Your profile has been updated successfully!',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-        variant: 'subtle',
-      });
+      toast.success('Your profile has been updated successfully!');
       setTimeout(() => {
         router.push(`/t/${data.username}`);
       }, 500);
     } catch (error: any) {
-      toast({
-        title: 'Failed to update profile.',
-        description:
-          'There might be a field with invalid input. Please rectify and then click on "Update"',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        variant: 'subtle',
-      });
+      toast.error('Failed to update profile.');
     }
   };
 
