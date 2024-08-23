@@ -179,7 +179,7 @@ const NonSTRegions = [
   },
   {
     region: Regions.USA,
-    displayValue: 'United States',
+    displayValue: 'USA',
     country: ['United States'],
     code: 'US',
   },

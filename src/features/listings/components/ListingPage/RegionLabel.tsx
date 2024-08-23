@@ -20,9 +20,9 @@ import { CombinedRegions } from '@/constants/Superteam';
 import { getRegionTooltipLabel } from '../../utils';
 
 export const RegionLabel = ({ region }: { region: string | undefined }) => {
-  const displayValue = CombinedRegions.find(
-    (st) => st.region === region,
-  )?.displayValue;
+  const regionObject = CombinedRegions.find((st) => st.region === region);
+  const displayValue = regionObject?.displayValue;
+  const code = regionObject?.code;
 
   const regionTooltipLabel = getRegionTooltipLabel(region);
   return (
@@ -41,7 +41,7 @@ export const RegionLabel = ({ region }: { region: string | undefined }) => {
           {region === 'GLOBAL' ? (
             <Icon as={LuGlobe} strokeWidth={1} />
           ) : (
-            <UserFlag location={region ?? ''} />
+            <UserFlag location={code || ''} isCode />
           )}
           <Text
             color={'brand.slate.500'}
