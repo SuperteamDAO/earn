@@ -9,7 +9,7 @@ import { type ReactNode, useEffect, useState } from 'react';
 import type { IconType } from 'react-icons';
 import { LuLayoutList, LuLock, LuMessageSquare, LuUsers } from 'react-icons/lu';
 import { MdList, MdOutlineChatBubbleOutline } from 'react-icons/md';
-import { RiCommunityLine } from 'react-icons/ri';
+import { RiUserSettingsLine } from 'react-icons/ri';
 
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
@@ -150,13 +150,17 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
       ]
     : [
         { name: 'My Listings', link: '/listings', icon: LuLayoutList },
-        { name: 'Members', link: '/members', icon: LuUsers },
+        {
+          name: 'Team Settings',
+          link: '/team-settings',
+          icon: RiUserSettingsLine,
+        },
         ...(isLocalMemberVisible
           ? [
               {
                 name: 'Local Members',
                 link: '/local-members',
-                icon: RiCommunityLine,
+                icon: LuUsers,
               },
             ]
           : []),

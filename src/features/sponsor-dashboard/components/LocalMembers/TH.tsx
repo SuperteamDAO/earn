@@ -1,10 +1,14 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import { Flex, Th } from '@chakra-ui/react';
+import { Flex, type TableColumnHeaderProps, Th } from '@chakra-ui/react';
 import React, { type ReactNode } from 'react';
 
 type SortDirection = 'asc' | 'desc' | null;
 
-export const TH = ({ children }: { children: ReactNode }) => {
+interface THProps extends TableColumnHeaderProps {
+  children: ReactNode;
+}
+
+export const TH = ({ children, ...props }: THProps) => {
   return (
     <Th
       color="brand.slate.500"
@@ -12,27 +16,46 @@ export const TH = ({ children }: { children: ReactNode }) => {
       fontWeight={500}
       letterSpacing={0.5}
       textTransform={'none'}
+      {...props}
     >
       {children}
     </Th>
   );
 };
 
+interface SortableTHProps extends THProps {
+  column: string;
+  currentSort: { column: string; direction: SortDirection };
+  setSort: (column: string, direction: SortDirection) => void;
+  justify?: 'left' | 'right' | 'center';
+}
+
 export const SortableTH = ({
   children,
   column,
   currentSort,
   setSort,
-}: {
-  children: ReactNode;
-  column: string;
-  currentSort: { column: string; direction: SortDirection };
-  setSort: (column: string, direction: SortDirection) => void;
-}) => {
+  justify = 'left',
+  ...props
+}: SortableTHProps) => {
+  const handleSort = () => {
+    if (currentSort.column !== column) {
+      setSort(column, 'asc');
+    } else {
+      setSort(column, currentSort.direction === 'asc' ? 'desc' : 'asc');
+    }
+  };
+
   return (
-    <TH>
-      <Flex align={'center'} gap={0.5}>
-        {children}
+    <TH {...props}>
+      <Flex
+        align={'center'}
+        justify={justify}
+        gap={0.5}
+        cursor="pointer"
+        onClick={handleSort}
+      >
+        <span>{children}</span>
         <Flex direction={'column'}>
           <ChevronUpIcon
             color={
@@ -41,9 +64,7 @@ export const SortableTH = ({
                 : 'brand.slate.400'
             }
             _hover={{ color: 'brand.slate.500' }}
-            cursor={'pointer'}
             mb={-1}
-            onClick={() => setSort(column, 'asc')}
           />
           <ChevronDownIcon
             color={
@@ -51,9 +72,7 @@ export const SortableTH = ({
                 ? 'brand.slate.700'
                 : 'brand.slate.400'
             }
-            cursor={'pointer'}
             _hover={{ color: 'brand.slate.500' }}
-            onClick={() => setSort(column, 'desc')}
           />
         </Flex>
       </Flex>

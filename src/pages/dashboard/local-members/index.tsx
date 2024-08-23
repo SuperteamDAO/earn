@@ -68,6 +68,12 @@ export default function LocalMembers() {
     const factor = currentSort.direction === 'asc' ? 1 : -1;
 
     switch (currentSort.column) {
+      case 'user':
+        return (
+          `${a.firstName} ${a.lastName}`.localeCompare(
+            `${b.firstName} ${b.lastName}`,
+          ) * factor
+        );
       case 'earned':
         return (a.totalEarnings - b.totalEarnings) * factor;
       case 'rank':

@@ -60,16 +60,17 @@ export const FilterSection = ({
       <Menu closeOnSelect={false}>
         <MenuButton
           as={Button}
-          w={'11.5rem'}
+          w={'10rem'}
           color={'brand.slate.400'}
           fontWeight={500}
           borderColor={'brand.slate.300'}
           _hover={{ color: 'brand.slate.50' }}
           rightIcon={<ChevronDownIcon />}
+          size={'sm'}
           variant={'outline'}
         >
           Filter By Skills
-          {selectedSkillsCount > 0 && ` (${selectedSkillsCount})`}
+          {selectedSkillsCount > 0 ? ` (${selectedSkillsCount})` : ''}
         </MenuButton>
         <MenuList>
           {mainSkills.map((skill) => (
@@ -99,10 +100,11 @@ export const FilterSection = ({
           ))}
         </MenuList>
       </Menu>
-      <InputGroup w={72}>
+      <InputGroup w={64} size={'sm'}>
         <Input
           bg={'white'}
           borderColor="brand.slate.300"
+          borderRadius={'md'}
           _placeholder={{
             color: 'brand.slate.400',
             fontWeight: 500,
@@ -130,6 +132,7 @@ export const FilterSection = ({
         leftIcon={<DownloadIcon />}
         loadingText={'Exporting...'}
         onClick={() => exportUserCsv()}
+        size={'sm'}
         variant={'ghost'}
       >
         Export CSV

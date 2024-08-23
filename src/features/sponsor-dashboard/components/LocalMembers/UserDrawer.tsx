@@ -11,6 +11,7 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { type ReactNode } from 'react';
 
@@ -34,6 +35,8 @@ export const UserDrawer = ({
     { icon: '/assets/talent/twitter.png', link: user?.twitter },
     { icon: '/assets/talent/site.png', link: user?.website },
   ];
+
+  const formattedCreatedAt = dayjs(user.createdAt).format('DD MMM YYYY');
 
   const DBadge = ({ children }: { children: ReactNode }) => {
     return (
@@ -261,6 +264,12 @@ export const UserDrawer = ({
                   return communities.length > 0 ? communities.join(', ') : '-';
                 })()}
               </Text>
+            </Box>
+            <Box>
+              <Text mb={2} color="brand.slate.400" fontWeight={500}>
+                Profile Creation Date
+              </Text>
+              <Text color="brand.slate.500">{formattedCreatedAt}</Text>
             </Box>
           </Flex>
         </DrawerBody>

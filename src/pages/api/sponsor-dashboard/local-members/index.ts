@@ -59,6 +59,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         bio: true,
         community: true,
         interests: true,
+        createdAt: true,
         Submission: {
           select: {
             isWinner: true,

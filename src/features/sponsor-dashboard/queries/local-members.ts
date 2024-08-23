@@ -20,6 +20,7 @@ export interface LocalMember {
   website: string;
   community: string;
   interests: string;
+  createdAt: string;
 }
 
 const fetchLocalMembers = async (): Promise<LocalMember[]> => {

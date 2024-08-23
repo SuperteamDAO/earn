@@ -5,6 +5,9 @@ import {
   Flex,
   Image,
   Link,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Table,
   TableContainer,
   Tbody,
@@ -50,11 +53,18 @@ export const UserTable = ({
       <Table variant="simple">
         <Thead>
           <Tr bg="brand.slate.100">
-            <TH>User</TH>
+            <SortableTH
+              column="user"
+              currentSort={currentSort}
+              setSort={setSort}
+            >
+              User
+            </SortableTH>
             <SortableTH
               column="earned"
               currentSort={currentSort}
               setSort={setSort}
+              px={1}
             >
               $ Earned
             </SortableTH>
@@ -62,6 +72,8 @@ export const UserTable = ({
               column="rank"
               currentSort={currentSort}
               setSort={setSort}
+              px={1}
+              justify="center"
             >
               # Rank
             </SortableTH>
@@ -69,6 +81,8 @@ export const UserTable = ({
               column="submissions"
               currentSort={currentSort}
               setSort={setSort}
+              px={0}
+              justify="center"
             >
               Submissions
             </SortableTH>
@@ -76,6 +90,8 @@ export const UserTable = ({
               column="wins"
               currentSort={currentSort}
               setSort={setSort}
+              px={1}
+              justify="center"
             >
               Wins
             </SortableTH>
@@ -99,15 +115,26 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
 
   const skills = user.skills.flatMap((skills: any) => skills.skills);
   const socialLinks = [
-    { icon: '/assets/talent/telegram.png', link: user?.telegram },
-    { icon: '/assets/talent/twitter.png', link: user?.twitter },
+    {
+      icon: '/assets/talent/telegram.png',
+      link: user.telegram || '',
+    },
+    {
+      icon: '/assets/talent/twitter.png',
+      link: user.twitter || '',
+    },
     { icon: '/assets/talent/site.png', link: user?.website },
   ];
 
   return (
-    <Tr>
+    <Tr
+      _hover={{ backgroundColor: 'brand.slate.50' }}
+      cursor="pointer"
+      onClick={onOpen}
+      role="group"
+    >
       <Td>
-        <Flex align="center" cursor="pointer" onClick={onOpen}>
+        <Flex align="center">
           <EarnAvatar size="36px" id={user?.id} avatar={user?.photo} />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
             <Text
@@ -129,9 +156,6 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
               color="brand.slate.500"
               fontSize="sm"
               fontWeight={500}
-              _groupHover={{
-                textDecoration: 'underline',
-              }}
               textOverflow={'ellipsis'}
             >
               @{user?.username}
@@ -140,32 +164,36 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
         </Flex>
         <UserDrawer isOpen={isOpen} onClose={onClose} user={user} />
       </Td>
-      <Td>
+      <Td px={1}>
         <Text
-          w={'8rem'}
+          w={'5rem'}
           color="brand.slate.700"
           fontSize={'0.9rem'}
           fontWeight={500}
         >
           $
           {user.totalEarnings.toLocaleString(undefined, {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 2,
+            maximumFractionDigits: 0,
           })}
         </Text>
       </Td>
-      <Td>
-        <Text color="brand.slate.700" fontSize={'0.9rem'}>
+      <Td p={1}>
+        <Text
+          maxW={'3rem'}
+          color="brand.slate.700"
+          fontSize={'0.9rem'}
+          textAlign={'center'}
+        >
           #{user?.rank}
         </Text>
       </Td>
-      <Td>
-        <Text color="brand.slate.700" fontSize={'0.9rem'}>
+      <Td p={0}>
+        <Text color="brand.slate.700" fontSize={'0.9rem'} textAlign={'center'}>
           {user?.totalSubmissions}
         </Text>
       </Td>
-      <Td>
-        <Text color="brand.slate.700" fontSize={'0.9rem'}>
+      <Td p={1}>
+        <Text color="brand.slate.700" fontSize={'0.9rem'} textAlign={'center'}>
           {user?.wins}
         </Text>
       </Td>
@@ -186,17 +214,51 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
             </Badge>
           ))}
           {skills.length > 2 && (
-            <Badge
-              px={2}
-              color="#64739C"
-              fontSize={'x-small'}
-              fontWeight={500}
-              textTransform={'none'}
-              bg="#EFF1F5"
-              rounded="sm"
-            >
-              +{skills.length - 2}
-            </Badge>
+            <Popover trigger="hover">
+              <PopoverTrigger>
+                <Badge
+                  px={2}
+                  color="#64739C"
+                  fontSize={'x-small'}
+                  fontWeight={500}
+                  textTransform={'none'}
+                  bg="#EFF1F5"
+                  rounded="sm"
+                >
+                  +{skills.length - 2}
+                </Badge>
+              </PopoverTrigger>
+              <PopoverContent
+                w="fit-content"
+                maxW="10rem"
+                px={4}
+                py={2}
+                shadow="lg"
+              >
+                <Flex
+                  wrap={'wrap'}
+                  gap={2}
+                  w="fit-content"
+                  h="full"
+                  textAlign={'center'}
+                >
+                  {skills.slice(2).map((s: string) => (
+                    <Badge
+                      key={s}
+                      px={2}
+                      color="#64739C"
+                      fontSize={'x-small'}
+                      fontWeight={500}
+                      textTransform={'none'}
+                      bg="#EFF1F5"
+                      rounded="sm"
+                    >
+                      {s}
+                    </Badge>
+                  ))}
+                </Flex>
+              </PopoverContent>
+            </Popover>
           )}
         </Flex>
       </Td>
@@ -206,7 +268,8 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
             <Box
               key={eleIndex}
               flexShrink={0}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 if (ele.link) {
                   const formattedLink =
                     ele.link.startsWith('http://') ||
@@ -218,7 +281,7 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
               }}
             >
               <Image
-                boxSize={4}
+                boxSize={'1.2rem'}
                 opacity={!ele.link ? '0.3' : '1'}
                 cursor={ele.link ? 'pointer' : 'default'}
                 objectFit="contain"
@@ -237,6 +300,7 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
           fontSize={'0.9rem'}
           fontWeight={500}
           href={`/t/${user.username}`}
+          onClick={(e) => e.stopPropagation()}
           rel="noopener noreferrer"
           target="_blank"
         >
