@@ -59,6 +59,15 @@ export const UserTable = ({
         <Thead>
           <Tr bg="brand.slate.100">
             <SortableTH
+              column="rank"
+              currentSort={currentSort}
+              setSort={setSort}
+              px={1}
+              justify="center"
+            >
+              # Rank
+            </SortableTH>
+            <SortableTH
               column="user"
               currentSort={currentSort}
               setSort={setSort}
@@ -72,15 +81,6 @@ export const UserTable = ({
               px={1}
             >
               $ Earned
-            </SortableTH>
-            <SortableTH
-              column="rank"
-              currentSort={currentSort}
-              setSort={setSort}
-              px={1}
-              justify="center"
-            >
-              # Rank
             </SortableTH>
             <SortableTH
               column="submissions"
@@ -142,6 +142,16 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
       onClick={onOpen}
       role="group"
     >
+      <Td p={1}>
+        <Text
+          maxW={'3rem'}
+          color="brand.slate.700"
+          fontSize={'0.9rem'}
+          textAlign={'center'}
+        >
+          #{user?.rank}
+        </Text>
+      </Td>
       <Td>
         <Flex align="center">
           <EarnAvatar size="36px" id={user?.id} avatar={user?.photo} />
@@ -184,16 +194,6 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
           {user.totalEarnings.toLocaleString(undefined, {
             maximumFractionDigits: 0,
           })}
-        </Text>
-      </Td>
-      <Td p={1}>
-        <Text
-          maxW={'3rem'}
-          color="brand.slate.700"
-          fontSize={'0.9rem'}
-          textAlign={'center'}
-        >
-          #{user?.rank}
         </Text>
       </Td>
       <Td p={0}>
