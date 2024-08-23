@@ -48,7 +48,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     );
     bountyData = bountyDetails.data;
-    console.log(bountyData.submission);
   } catch (e) {
     console.log(e);
     bountyData = null;

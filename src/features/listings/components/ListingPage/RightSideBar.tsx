@@ -93,7 +93,7 @@ export function RightSideBar({
     formatNumberWithSuffix(rewardAmount || 0, 2, true) + (token || '') + '',
   );
   const largestDigits = digitsInLargestString(consideringDigitsArray);
-  console.log('largestDigits', largestDigits);
+
   let widthOfPrize = largestDigits - 0.75 + 'rem';
   if (cleanRewardPrizes(rewards).length > 6) {
     widthOfPrize = largestDigits + 0.5 + 'rem';

@@ -168,8 +168,6 @@ export function CreateListing({
         isPrivate: form?.isPrivate,
       };
 
-      console.log('maxBonusSpots after submission', form?.maxBonusSpots);
-
       let api = `/api/${basePath}/create`;
       if (editable && !isDuplicating) {
         api = `/api/${basePath}/update/${listing?.id}/`;
