@@ -76,6 +76,12 @@ export const ApplicationList = ({
         >
           <Checkbox
             mr={-2}
+            _checked={{
+              '& .chakra-checkbox__control': {
+                background: 'brand.purple',
+                borderColor: 'brand.purple',
+              },
+            }}
             isChecked={isAllToggled}
             onChange={() => toggleAllApplications()}
           />
@@ -127,6 +133,12 @@ export const ApplicationList = ({
               <Flex align="center">
                 <Checkbox
                   mr={2}
+                  _checked={{
+                    '& .chakra-checkbox__control': {
+                      background: 'brand.purple',
+                      borderColor: 'brand.purple',
+                    },
+                  }}
                   disabled={application?.applicationStatus !== 'Pending'}
                   isChecked={isToggled(application.id)}
                   onChange={() => toggleApplication(application.id)}
