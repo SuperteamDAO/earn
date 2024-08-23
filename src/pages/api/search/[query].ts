@@ -30,7 +30,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const limit = (req.query.limit as string) || '5';
   const offset = (req.query.offset as string) || null;
 
-  let userRegion = (params.userRegion as Regions) || Regions.GLOBAL;
+  let userRegion = params.userRegion as Regions | undefined;
 
   const status = req.query.status as string;
   let statusList: string[] = [];
@@ -61,7 +61,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     const matchedRegion = CombinedRegions.find(
       (region) => user?.location && region.country.includes(user?.location),
     );
-    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+    userRegion = matchedRegion?.region;
   }
 
   const skills = req.query.skills as string;
@@ -89,7 +89,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     )
     .join(' OR ');
 
-  const regionFilter = `(b.region = ? OR b.region = '${Regions.GLOBAL}')`;
+  let regionFilter = '';
+  if (userRegion) {
+    regionFilter = `AND (b.region = ? OR b.region = '${Regions.GLOBAL}')`;
+  }
 
   const words = query
     .split(/\s+/)
@@ -119,7 +122,7 @@ s.name LIKE CONCAT('%', ?, '%')
     b.isPrivate = 0 AND
     ${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
     ) ${skills ? ` AND (${skillsQuery})` : ''}
-    AND ${regionFilter}
+    ${regionFilter}
     ) as subquery;
     `;
 
@@ -161,7 +164,7 @@ s.name LIKE CONCAT('%', ?, '%')
     b.isPrivate = 0 AND
     ${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
     ) ${skills ? ` AND (${skillsQuery})` : ''}
-    AND ${regionFilter}
+    ${regionFilter}
     ORDER BY 
     b.isFeatured DESC,
       CASE 
@@ -182,7 +185,7 @@ s.name LIKE CONCAT('%', ?, '%')
 
   let values: (string | number)[] = duplicateElements(words, 2);
   if (skills) values = values.concat(skillsFlattened);
-  values.push(userRegion);
+  if (userRegion) values.push(userRegion);
 
   try {
     logger.debug(`Executing countQuery with values: ${values}`);

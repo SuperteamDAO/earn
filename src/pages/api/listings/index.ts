@@ -107,7 +107,7 @@ export default async function listings(
 
   const token = await getToken({ req });
   const userId = token?.sub;
-  let userRegion: Regions = Regions.GLOBAL;
+  let userRegion;
   if (userId) {
     const user = await prisma.user.findFirst({
       where: { id: userId },
@@ -116,7 +116,7 @@ export default async function listings(
     const matchedRegion = CombinedRegions.find(
       (region) => user?.location && region.country.includes(user?.location),
     );
-    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+    userRegion = matchedRegion?.region;
   }
 
   const listingQueryOptions: Prisma.BountiesFindManyArgs = {
@@ -133,6 +133,7 @@ export default async function listings(
       },
       type,
       ...skillsFilter,
+      ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
     },
     select: {
       rewardAmount: true,
@@ -183,15 +184,6 @@ export default async function listings(
     ],
   };
 
-  if (userRegion) {
-    listingQueryOptions.where = {
-      ...listingQueryOptions.where,
-      region: {
-        in: [userRegion, Regions.GLOBAL],
-      },
-    };
-  }
-
   try {
     let result;
     const listings = await prisma.bounties.findMany(listingQueryOptions);
@@ -219,50 +211,3 @@ export default async function listings(
     });
   }
 }
-
-// const grantQueryOptions: Prisma.GrantsFindManyArgs = {
-//   where: {
-//     isPublished: true,
-//     isActive: true,
-//     isArchived: false,
-//     ...skillsFilter,
-//   },
-//   take,
-//   orderBy: {
-//     createdAt: order,
-//   },
-//   include: {
-//     sponsor: {
-//       select: {
-//         id: true,
-//         name: true,
-//         slug: true,
-//         logo: true,
-//         isVerified: true,
-//       },
-//     },
-//     _count: {
-//       select: {
-//         GrantApplication: {
-//           where: {
-//             applicationStatus: 'Approved',
-//           },
-//         },
-//       },
-//     },
-//   },
-// };
-
-// if (userRegion) {
-// grantQueryOptions.where = {
-//   ...grantQueryOptions.where,
-//   region: {
-//     in: [userRegion, Regions.GLOBAL],
-//   },
-// };
-// }
-
-// if (!category || category === 'all' || category === 'grants') {
-//   const grants = await prisma.grants.findMany(grantQueryOptions);
-//   result.grants = grants;
-// }

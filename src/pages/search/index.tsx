@@ -1,5 +1,4 @@
 import { Box, Divider, Flex, VStack } from '@chakra-ui/react';
-import { Regions } from '@prisma/client';
 import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -169,7 +168,7 @@ const Search = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  let userRegion: Regions | null = null;
+  let userRegion = null;
 
   if (session?.user?.id) {
     const user = await prisma.user.findFirst({
@@ -181,7 +180,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       region.country.includes(user?.location!),
     );
 
-    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+    userRegion = matchedRegion?.region;
   }
 
   const fullUrl = getURL();
@@ -196,7 +195,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   try {
     const response = await fetch(
-      `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}?${queryString}&limit=10&userRegion=${userRegion || ''}`,
+      `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}?${queryString}&limit=10${userRegion ? `&userRegion=${userRegion}` : ''}`,
     );
     const results = await response.json();
 
