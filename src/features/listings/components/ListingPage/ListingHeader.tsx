@@ -24,7 +24,11 @@ import {
 } from 'react-icons/lu';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { type Listing, submissionCountQuery } from '@/features/listings';
+import {
+  getListingIcon,
+  type Listing,
+  submissionCountQuery,
+} from '@/features/listings';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { dayjs } from '@/utils/dayjs';
 
@@ -206,11 +210,7 @@ export function ListingHeader({
                   mt={{ base: '1px', sm: 1 }}
                   mr={{ base: '1px', sm: 1 }}
                   alt={type}
-                  src={
-                    isProject
-                      ? '/assets/icons/briefcase.svg'
-                      : '/assets/icons/bolt.svg'
-                  }
+                  src={getListingIcon(type!)}
                 />
                 <Text
                   color={'gray.400'}

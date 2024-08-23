@@ -321,7 +321,12 @@ export function RightSideBar({
               Hackathon={listing.Hackathon}
             />
           </Box>
-          <VStack align={'start'} w={'full'} py={8} fontSize="sm">
+          <Box
+            display={{ base: 'none', md: 'block' }}
+            w={'full'}
+            py={8}
+            fontSize="sm"
+          >
             <LiveListings isHackathon={!!Hackathon} id={listing.id}>
               <Flex align="center" justify={'space-between'} w="full">
                 <Text
@@ -333,7 +338,7 @@ export function RightSideBar({
                 </Text>
               </Flex>
             </LiveListings>
-          </VStack>
+          </Box>
         </VStack>
       </VStack>
     </Box>
