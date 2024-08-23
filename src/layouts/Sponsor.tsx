@@ -215,32 +215,38 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
           <CreateListingModal isOpen={isOpen} onClose={onClose} />
           <Flex align="center" justify="space-between" px={6} pb={6}>
             {!isHackathonRoute ? (
-              <Button
-                className="ph-no-capture"
-                w="full"
-                py={'22px'}
-                fontSize="md"
-                isDisabled={
+              <Tooltip
+                label={
                   isCreateListingAllowed !== undefined &&
                   isCreateListingAllowed === false &&
                   session?.user.role !== 'GOD'
+                    ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
+                    : ''
                 }
-                leftIcon={<AddIcon w={3} h={3} />}
-                onClick={() => {
-                  posthog.capture('create new listing_sponsor');
-                  onOpen();
-                }}
-                variant="solid"
               >
-                Create New Listing
-                {isCreateListingAllowed !== undefined &&
-                  isCreateListingAllowed === false &&
-                  session?.user.role !== 'GOD' && (
-                    <Tooltip label="Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.">
-                      <Icon as={LuLock} ml={2} />
-                    </Tooltip>
-                  )}
-              </Button>
+                <Button
+                  className="ph-no-capture"
+                  w="full"
+                  py={'22px'}
+                  fontSize="md"
+                  isDisabled={
+                    isCreateListingAllowed !== undefined &&
+                    isCreateListingAllowed === false &&
+                    session?.user.role !== 'GOD'
+                  }
+                  leftIcon={<AddIcon w={3} h={3} />}
+                  onClick={() => {
+                    posthog.capture('create new listing_sponsor');
+                    onOpen();
+                  }}
+                  variant="solid"
+                >
+                  Create New Listing
+                  {isCreateListingAllowed !== undefined &&
+                    isCreateListingAllowed === false &&
+                    session?.user.role !== 'GOD' && <Icon as={LuLock} ml={2} />}
+                </Button>
+              </Tooltip>
             ) : (
               <Button
                 as={NextLink}
