@@ -42,6 +42,7 @@ const initialFormState: ListingFormType = {
   compensationType: 'fixed',
   minRewardAsk: undefined,
   maxRewardAsk: undefined,
+  maxBonusSpots: undefined,
 };
 
 const mergeListingWithInitialFormState = (
@@ -76,6 +77,7 @@ const mergeListingWithInitialFormState = (
   token: listing.token || 'USDC',
   minRewardAsk: listing.minRewardAsk,
   maxRewardAsk: listing.maxRewardAsk,
+  maxBonusSpots: listing.maxBonusSpots,
 });
 
 export const useListingFormStore = create<ListingStoreType>()((set) => ({

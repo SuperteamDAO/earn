@@ -1,50 +1,25 @@
 import { Box, Flex } from '@chakra-ui/react';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import {
-  type Listing,
   ListingCard,
   ListingCardSkeleton,
   ListingSection,
+  listingsQuery,
 } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
-interface Listings {
-  bounties?: Listing[];
-}
-
 export default function AllBountiesPage() {
-  const [isListingsLoading, setIsListingsLoading] = useState(true);
-  const [listings, setListings] = useState<Listings>({
-    bounties: [],
-  });
-
-  const getListings = async () => {
-    setIsListingsLoading(true);
-    try {
-      const listingsData = await axios.get('/api/listings/', {
-        params: {
-          category: 'bounties',
-          type: 'bounty',
-          take: 100,
-        },
-      });
-      setListings(listingsData.data);
-      setIsListingsLoading(false);
-    } catch (e) {
-      setIsListingsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isListingsLoading) return;
-    getListings();
-  }, []);
+  const { data: listings, isLoading } = useQuery(
+    listingsQuery({
+      type: 'bounty',
+      take: 100,
+    }),
+  );
 
   return (
-    <Home type="home">
+    <Home type="listing">
       <Box w={'100%'} pr={{ base: 0, lg: 6 }}>
         <ListingSection
           type="bounties"
@@ -52,11 +27,11 @@ export default function AllBountiesPage() {
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.png"
         >
-          {isListingsLoading &&
+          {isLoading &&
             Array.from({ length: 8 }, (_, index) => (
               <ListingCardSkeleton key={index} />
             ))}
-          {!isListingsLoading && !listings?.bounties?.length && (
+          {!isLoading && !listings?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
                 title="No listings available!"
@@ -64,10 +39,10 @@ export default function AllBountiesPage() {
               />
             </Flex>
           )}
-          {!isListingsLoading &&
-            listings?.bounties?.map((bounty) => {
-              return <ListingCard key={bounty.id} bounty={bounty} />;
-            })}
+          {!isLoading &&
+            listings?.map((bounty) => (
+              <ListingCard key={bounty.id} bounty={bounty} />
+            ))}
         </ListingSection>
       </Box>
     </Home>

@@ -1,48 +1,22 @@
 import { Box } from '@chakra-ui/react';
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 
-import { type Listing, ListingTabs } from '@/features/listings';
+import { listingsQuery, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
-
-interface Listings {
-  bounties?: Listing[];
-}
 
 type SlugKeys = 'design' | 'content' | 'development' | 'other';
 
 function AllCategoryListingsPage({ slug }: { slug: string }) {
-  const [isListingsLoading, setIsListingsLoading] = useState(true);
-  const [listings, setListings] = useState<Listings>({
-    bounties: [],
-  });
-
   const router = useRouter();
-
-  const getListings = async () => {
-    setIsListingsLoading(true);
-    try {
-      const listingsData = await axios.get('/api/listings/', {
-        params: {
-          category: 'bounties',
-          filter: slug,
-          take: 100,
-        },
-      });
-      setListings(listingsData.data);
-      setIsListingsLoading(false);
-    } catch (e) {
-      setIsListingsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isListingsLoading) return;
-    getListings();
-  }, []);
+  const { data: listings, isLoading } = useQuery(
+    listingsQuery({
+      filter: slug,
+      take: 100,
+    }),
+  );
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
     design: 'Design Bounties and Grants | Superteam Earn',
@@ -50,10 +24,8 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
     development: 'Development Bounties and Grants | Superteam Earn',
     other: 'Other Bounties and Grants | Superteam Earn',
   };
-
   const titleKey = slug as SlugKeys;
-  const title = titlesForSlugs[titleKey] || 'Superteam Earn'; // Default title if slug not found
-
+  const title = titlesForSlugs[titleKey] || 'Superteam Earn';
   const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on Superteam Earn.`;
   const canonicalURL = `https://earn.superteam.fun/category/${slug}/all`;
 
@@ -67,8 +39,8 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
       />
       <Box w={'100%'}>
         <ListingTabs
-          bounties={listings.bounties}
-          isListingsLoading={isListingsLoading}
+          bounties={listings}
+          isListingsLoading={isLoading}
           emoji="/assets/home/emojis/moneyman.png"
           title="Freelance Gigs"
           viewAllLink="/all"

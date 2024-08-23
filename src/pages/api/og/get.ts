@@ -8,18 +8,27 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { url } = req.body;
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-  logger.debug(`Request body: ${safeStringify(req.body)}`);
+  const { url } = req.query;
 
-  if (!url) {
-    logger.warn('URL is required');
-    return res.status(400).json({ error: 'URL is required.' });
+  logger.debug(`Request query: ${safeStringify(req.query)}`);
+
+  if (!url || typeof url !== 'string') {
+    logger.warn('URL is required and must be a string');
+    return res
+      .status(400)
+      .json({ error: 'URL is required and must be a string.' });
   }
 
   try {
     logger.debug(`Unfurling URL: ${url}`);
-    const result = await unfurl(url);
+    const metadata = await unfurl(url);
+
+    const result = metadata.open_graph.images?.[0]?.url;
+
     logger.info(`Successfully unfurled URL: ${url}`);
     return res.status(200).json(result);
   } catch (error: any) {

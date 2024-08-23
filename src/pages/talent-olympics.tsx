@@ -58,7 +58,7 @@ import CashBag from '@/public/assets/hackathon/talent-olympics/cashbag.png';
 import Coder from '@/public/assets/hackathon/talent-olympics/coder.png';
 import Trophy from '@/public/assets/hackathon/talent-olympics/trophy.png';
 import WinFlag from '@/public/assets/hackathon/talent-olympics/winflag.png';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
 import { dayjs } from '@/utils/dayjs';
 
@@ -211,11 +211,11 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
     >
       <Box>
         <Hero START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
-        <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
+        <Box overflowX="hidden" maxW="7xl" mx="auto" px={PADX}>
           <GetHiredBy />
         </Box>
         <Divider borderColor="brand.slate.300" />
-        <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
+        <Box overflowX="hidden" maxW="7xl" mx="auto" px={PADX}>
           <About />
         </Box>
         <Box pos="relative" w="full" px={PADX} py={8} bg="#F8FAFC">
@@ -238,7 +238,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
             direction={{ base: 'column', md: 'row' }}
             gap={8}
             overflowX="hidden"
-            maxW="8xl"
+            maxW="7xl"
             mx="auto"
           >
             <Track
@@ -253,7 +253,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
             />
           </Flex>
         </Box>
-        <Box overflowX="hidden" maxW="8xl" mx="auto" px={PADX}>
+        <Box overflowX="hidden" maxW="7xl" mx="auto" px={PADX}>
           {hackathonIsOn && <Leaderboard leaders={countryLeaders} />}
           <Rankings rankings={rankings} />
           <FAQs />
@@ -1087,7 +1087,7 @@ const SubscribeHackathon = () => {
     (SubscribeHackathon & { User: User | null })[]
   >([]);
 
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const posthog = usePostHog();
   const {
     isOpen: warningIsOpen,
@@ -1100,7 +1100,7 @@ const SubscribeHackathon = () => {
   const isAuthenticated = authStatus === 'authenticated';
 
   const handleToggleSubscribe = async () => {
-    if (!isAuthenticated || !userInfo?.isTalentFilled) {
+    if (!isAuthenticated || !user?.isTalentFilled) {
       warningOnOpen();
       return;
     }
@@ -1112,9 +1112,7 @@ const SubscribeHackathon = () => {
       });
       setUpdate((prev) => !prev);
       toast.success(
-        sub.find((e) => e.userId === userInfo?.id)
-          ? 'Unsubscribed'
-          : 'Subscribed',
+        sub.find((e) => e.userId === user?.id) ? 'Unsubscribed' : 'Subscribed',
       );
     } catch (error) {
       console.log(error);
@@ -1158,12 +1156,12 @@ const SubscribeHackathon = () => {
           <IconButton
             className="ph-no-capture"
             color={
-              sub.find((e) => e.userId === userInfo?.id)
+              sub.find((e) => e.userId === user?.id)
                 ? 'white'
                 : 'brand.slate.500'
             }
             bg={
-              sub.find((e) => e.userId === userInfo?.id)
+              sub.find((e) => e.userId === user?.id)
                 ? 'brand.purple'
                 : 'brand.slate.100'
             }
@@ -1171,7 +1169,7 @@ const SubscribeHackathon = () => {
             icon={
               isSubscribeLoading ? (
                 <Spinner color="white" size="sm" />
-              ) : sub.find((e) => e.userId === userInfo?.id) ? (
+              ) : sub.find((e) => e.userId === user?.id) ? (
                 <TbBellRinging />
               ) : (
                 <TbBell />
@@ -1179,7 +1177,7 @@ const SubscribeHackathon = () => {
             }
             onClick={() => {
               posthog.capture(
-                sub.find((e) => e.userId === userInfo?.id)
+                sub.find((e) => e.userId === user?.id)
                   ? 'unnotify me_hackathon'
                   : 'notify me_hackathon',
               );

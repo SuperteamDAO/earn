@@ -4,14 +4,14 @@ import { useRouter } from 'next/router';
 import { LuHome, LuNewspaper, LuSearch, LuUser } from 'react-icons/lu';
 
 import { AuthWrapper } from '@/features/auth';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 interface Props {
   onSearchOpen: () => void;
 }
 
 export function BottomBar({ onSearchOpen }: Props) {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const router = useRouter();
 
   function setColor(href: string, routerPath: string) {
@@ -83,14 +83,14 @@ export function BottomBar({ onSearchOpen }: Props) {
       <AuthWrapper>
         <Link
           as={NextLink}
-          pointerEvents={userInfo ? 'auto' : 'none'}
-          href={`/t/${userInfo?.username}`}
+          pointerEvents={user ? 'auto' : 'none'}
+          href={`/t/${user?.username}`}
         >
           <Button
             sx={{
               WebkitTapHighlightColor: 'transparent',
             }}
-            color={setColor(`/t/${userInfo?.username}/`, router.asPath)}
+            color={setColor(`/t/${user?.username}/`, router.asPath)}
             _hover={{ bg: 'none' }}
             _active={{ bg: 'none' }}
             variant="ghost"

@@ -22,7 +22,7 @@ export interface FeedDataProps {
   sponsorId: number;
   listingTitle: string;
   rewards: Rewards | undefined;
-  listingType: string;
+  listingType: 'bounty' | 'hackathon' | 'project';
   listingSlug: string;
   isWinnersAnnounced: boolean;
   token: string;

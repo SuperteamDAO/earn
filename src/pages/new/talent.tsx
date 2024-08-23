@@ -25,7 +25,7 @@ import { TalentBio } from '@/components/TalentBio';
 import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
 const useFormStore = create<UserStoreType>()((set) => ({
@@ -216,7 +216,7 @@ const SuccessScreen = () => {
       >
         <Box w={{ sm: 'full', lg: '25rem' }} h={'full'}>
           <TalentBio
-            user={form as unknown as User}
+            talentUser={form as unknown as User}
             successPage={true}
             w={{ sm: '100%' }}
           />
@@ -263,13 +263,13 @@ const SuccessScreen = () => {
 
 export default function Talent() {
   const [currentPage, setcurrentPage] = useState<'steps' | 'success'>('steps');
-  const { userInfo } = userStore();
+  const { user } = useUser();
 
   useEffect(() => {
-    if (userInfo && userInfo?.isTalentFilled) {
+    if (user && user?.isTalentFilled) {
       router.push('/');
     }
-  }, [userInfo, router]);
+  }, [user, router]);
 
   return (
     <Default

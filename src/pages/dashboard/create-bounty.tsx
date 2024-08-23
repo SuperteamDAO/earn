@@ -1,11 +1,11 @@
 import { CreateListing } from '@/features/listing-builder';
-import { Sidebar } from '@/layouts/Sponsor';
+import { SponsorLayout } from '@/layouts/Sponsor';
 
 function CreateBounty() {
   return (
-    <Sidebar>
+    <SponsorLayout>
       <CreateListing type="bounty" />
-    </Sidebar>
+    </SponsorLayout>
   );
 }
 

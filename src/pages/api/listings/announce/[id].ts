@@ -1,16 +1,18 @@
+import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
+import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   checkListingSponsorAuth,
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
-import { discordWinnersAnnouncement } from '@/features/discord';
 import { sendEmailNotification } from '@/features/emails';
 import { type Rewards } from '@/features/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
+import { cleanRewards } from '@/utils/rank';
 import { safeStringify } from '@/utils/safeStringify';
 
 async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
@@ -41,7 +43,11 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         .json({ message: `Bounty with id=${id} is not active.` });
     }
 
-    const totalRewards = Object.keys(listing?.rewards || {})?.length || 0;
+    const totalRewards = [
+      ...cleanRewards(listing?.rewards as Rewards, true),
+      ...Array(listing?.maxBonusSpots ?? 0).map(() => BONUS_REWARD_POSITION),
+    ].length;
+    console.log('total rewards', totalRewards);
     if (!!totalRewards && listing?.totalWinnersSelected !== totalRewards) {
       logger.warn(
         'All winners have not been selected before publishing the results',
@@ -68,7 +74,9 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
     try {
-      await discordWinnersAnnouncement(result);
+      await axios.post(process.env.DISCORD_WINNERS_WEBHOOK!, {
+        listingId: result.id,
+      });
     } catch (err) {
       logger.error('Discord Listing Update Message Error', err);
     }

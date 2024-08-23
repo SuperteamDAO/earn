@@ -26,6 +26,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import React, {
@@ -47,15 +48,15 @@ import {
   Banner,
   CreateListingModal,
   ListingTable,
-  type SponsorStats,
+  sponsorStatsQuery,
 } from '@/features/sponsor-dashboard';
-import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
+import { SponsorLayout } from '@/layouts/Sponsor';
+import { useUser } from '@/store/user';
 
 const MemoizedListingTable = React.memo(ListingTable);
 
 export default function SponsorListings() {
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [allListings, setAllListings] = useState<ListingWithSubmissions[]>([]);
   const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
@@ -64,8 +65,8 @@ export default function SponsorListings() {
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const listingsPerPage = 15;
 
-  const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
-  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
+  const { data: sponsorStats, isLoading: isStatsLoading } =
+    useQuery(sponsorStatsQuery);
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -90,29 +91,14 @@ export default function SponsorListings() {
   }, []);
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       setSearchText('');
       setCurrentPage(0);
       setSelectedTab('all');
       setSelectedStatus(null);
       getListings();
     }
-  }, [userInfo?.currentSponsorId, getListings]);
-
-  useEffect(() => {
-    const getSponsorStats = async () => {
-      try {
-        const sponsorData = await axios.get('/api/sponsors/stats');
-        setSponsorStats(sponsorData.data);
-      } catch (err) {
-        console.error('Failed to fetch sponsor stats:', err);
-      } finally {
-        setIsStatsLoading(false);
-      }
-    };
-
-    getSponsorStats();
-  }, [userInfo?.currentSponsorId]);
+  }, [user?.currentSponsorId, getListings]);
 
   const {
     isOpen: isOpenCreateListing,
@@ -196,7 +182,7 @@ export default function SponsorListings() {
   );
 
   return (
-    <Sidebar>
+    <SponsorLayout>
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <Flex justify="space-between" w="100%" mb={4}>
         <Flex align="center" gap={3}>
@@ -513,6 +499,6 @@ export default function SponsorListings() {
             </Text>
           </>
         )}
-    </Sidebar>
+    </SponsorLayout>
   );
 }

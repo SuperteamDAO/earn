@@ -1,6 +1,7 @@
 import { Link } from '@chakra-ui/react';
 
 import { type CommentType } from '@/interface/comments';
+import { isLink } from '@/utils/isLink';
 import { truncateString } from '@/utils/truncateString';
 
 interface Props {
@@ -11,12 +12,6 @@ interface Props {
   isAnnounced: boolean;
   submissionId?: string;
 }
-
-export const isLink = (text: string) => {
-  const linkRegex =
-    /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/i;
-  return linkRegex.test(text);
-};
 
 function parseComment(comment: string) {
   const parts = comment.split(/(\s+|@[\w]+)/g).filter(Boolean);

@@ -1,13 +1,13 @@
-import { HStack, VStack } from '@chakra-ui/react';
-import axios from 'axios';
+import { Box, HStack, VStack } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
-import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import {
   DescriptionUI,
   ListingHeader,
+  listingTemplateQuery,
   ListingWinners,
 } from '@/features/listings';
 import { Default } from '@/layouts/Default';
@@ -18,25 +18,11 @@ interface BountyDetailsProps {
 }
 
 function BountyDetails({ slug }: BountyDetailsProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  const [bounty, setBounty] = useState<any | null>(null);
-  const getBounty = async () => {
-    setIsLoading(true);
-    try {
-      const bountyDetails = await axios.get(`/api/listings/templates/${slug}/`);
-      setBounty(bountyDetails.data);
-    } catch (e) {
-      setError(true);
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    if (!isLoading) return;
-    getBounty();
-  }, []);
+  const {
+    data: bounty,
+    isLoading,
+    error,
+  } = useQuery(listingTemplateQuery(slug));
 
   return (
     <Default
@@ -55,21 +41,23 @@ function BountyDetails({ slug }: BountyDetailsProps) {
       {!isLoading && !error && !!bounty?.id && (
         <>
           <ListingHeader isTemplate={true} listing={bounty} />
-          {bounty?.isWinnersAnnounced && <ListingWinners bounty={bounty} />}
+          {bounty?.isWinnersAnnounced && (
+            <Box w="full">
+              {' '}
+              <ListingWinners bounty={bounty} />
+            </Box>
+          )}
           <HStack
             align={['center', 'center', 'start', 'start']}
             justify={['center', 'center', 'space-between', 'space-between']}
             flexDir={['column-reverse', 'column-reverse', 'row', 'row']}
             gap={4}
-            maxW={'8xl'}
+            maxW={'6xl'}
             mx={'auto'}
             mb={10}
           >
             <VStack gap={8} w={['22rem', '22rem', 'full', 'full']} mt={10}>
-              <DescriptionUI
-                skills={bounty?.skills?.map((e: any) => e.skills) ?? []}
-                description={bounty?.description}
-              />
+              <DescriptionUI description={bounty.description} />
             </VStack>
           </HStack>
         </>

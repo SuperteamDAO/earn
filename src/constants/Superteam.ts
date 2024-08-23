@@ -164,7 +164,7 @@ export const Superteams = [
   },
 ];
 
-export const NonSTRegions = [
+const NonSTRegions = [
   {
     region: Regions.UKRAINE,
     displayValue: 'Ukraine',

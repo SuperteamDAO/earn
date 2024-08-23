@@ -1,17 +1,12 @@
 import { Box } from '@chakra-ui/react';
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
-import { useEffect, useState } from 'react';
 
 import { Superteams } from '@/constants/Superteam';
-import { type Listing, ListingTabs } from '@/features/listings';
+import { ListingTabs, regionalListingsQuery } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { getURL } from '@/utils/validUrl';
-
-interface Listings {
-  bounties?: Listing[];
-}
 
 export default function AllRegionListingsPage({
   slug,
@@ -22,28 +17,9 @@ export default function AllRegionListingsPage({
   displayName: string;
   st: (typeof Superteams)[0];
 }) {
-  const [isListingsLoading, setIsListingsLoading] = useState(true);
-  const [listings, setListings] = useState<Listings>({
-    bounties: [],
-  });
-
-  const getListings = async () => {
-    setIsListingsLoading(true);
-    try {
-      const listingsData = await axios.get(
-        `/api/listings/regions/?region=${slug}`,
-      );
-      setListings(listingsData.data);
-      setIsListingsLoading(false);
-    } catch (e) {
-      setIsListingsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isListingsLoading) return;
-    getListings();
-  }, []);
+  const { data: listings, isLoading: isListingsLoading } = useQuery(
+    regionalListingsQuery({ region: slug }),
+  );
 
   const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
   ogImage.searchParams.set('region', st.region);
@@ -59,7 +35,7 @@ export default function AllRegionListingsPage({
       />
       <Box w={'100%'}>
         <ListingTabs
-          bounties={listings.bounties}
+          bounties={listings?.bounties}
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.png"
           title="Freelance Gigs"

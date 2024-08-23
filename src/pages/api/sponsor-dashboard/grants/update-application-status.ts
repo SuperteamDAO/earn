@@ -206,7 +206,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       await axios.patch(url, JSON.stringify(airtablePayload), config);
     }
 
-    return res.status(200).json({ message: 'Success' });
+    return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
       `Error occurred while updating grant application ID: ${data.map((c) => c.id)}:  ${error.message}`,

@@ -13,6 +13,7 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -27,11 +28,12 @@ import {
   useSlugValidation,
   useSponsorNameValidation,
 } from '@/features/sponsor';
+import { sponsorQuery } from '@/features/sponsor-dashboard';
 import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { SponsorStore } from '@/store/sponsor';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 
 const UpdateSponsor = () => {
@@ -63,7 +65,7 @@ const UpdateSponsor = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const { userInfo, setUserInfo } = userStore();
+  const { user, refetchUser } = useUser();
   const { setCurrentSponsor } = SponsorStore();
 
   const {
@@ -79,19 +81,12 @@ const UpdateSponsor = () => {
     sponsorName,
   } = useSponsorNameValidation();
 
-  useEffect(() => {
-    const fetchSponsorData = async () => {
-      try {
-        const response = await axios.get('/api/sponsors/');
-        return response.data;
-      } catch (e) {}
-    };
+  const { data: sponsorData } = useQuery(sponsorQuery(user?.currentSponsorId));
 
-    const init = async () => {
-      setIsLoading(true);
-      const response = await fetchSponsorData();
+  useEffect(() => {
+    if (sponsorData) {
       const { bio, industry, name, slug, logo, twitter, url, entityName } =
-        response;
+        sponsorData;
       setSponsorName(name);
       setSlug(slug);
       reset({
@@ -107,11 +102,8 @@ const UpdateSponsor = () => {
       }
       setIsPhotoLoading(false);
       setIndustries(industry);
-      setIsLoading(false);
-    };
-
-    init();
-  }, [userInfo?.currentSponsorId, router, reset, setSlug, setSponsorName]);
+    }
+  }, [sponsorData, reset, setSlug, setSponsorName]);
 
   const updateSponsor = async (sponsor: SponsorType) => {
     if (getValues('bio').length > 180) {
@@ -125,8 +117,8 @@ const UpdateSponsor = () => {
         ...sponsor,
       });
       setCurrentSponsor(sponsor);
-      const updatedUser = await axios.get('/api/user/');
-      setUserInfo(updatedUser?.data);
+      await refetchUser();
+
       router.push('/dashboard/listings');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {

@@ -19,6 +19,7 @@ model Bounties {
   token                String?
   rewardAmount         Float?
   rewards              Json?
+  maxBonusSpots        Int                @default(0)
   usdValue             Float?
   sponsorId            String
   pocId                String
@@ -363,6 +364,7 @@ model TalentRankings {
   user             User                   @relation(fields: [userId], references: [id])
 
   @@unique([userId, skill, timeframe])
+  @@index([skill, timeframe])
 }
 
 model PoW {

@@ -38,7 +38,7 @@ const formatter = new Intl.NumberFormat('en-US', {
 }).format;
 
 const MAX_SHOW_SKILLS = 5;
-const MAX_INVITES = 5;
+const MAX_INVITES = 10;
 
 interface Props {
   bountyId: string;

@@ -3,7 +3,6 @@ import {
   Circle,
   Flex,
   Image,
-  Link,
   Skeleton,
   SkeletonCircle,
   SkeletonText,
@@ -118,7 +117,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
 
   return (
-    <Link
+    <Box
       as={NextLink}
       w="full"
       px={{ base: 2, sm: 4 }}
@@ -337,7 +336,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
           </Flex>
         </Flex>
       </Flex>
-    </Link>
+    </Box>
   );
 };
 
@@ -361,7 +360,7 @@ export const ListingCardMobile = ({ bounty }: { bounty: Listing }) => {
 
   return (
     <>
-      <Link
+      <Box
         className="ph-no-capture"
         as={NextLink}
         w="full"
@@ -510,7 +509,7 @@ export const ListingCardMobile = ({ bounty }: { bounty: Listing }) => {
             </Flex>
           </Flex>
         </Flex>
-      </Link>
+      </Box>
     </>
   );
 };

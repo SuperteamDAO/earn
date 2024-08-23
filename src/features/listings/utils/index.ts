@@ -147,3 +147,18 @@ export function isValidUrl(url: string): boolean {
     /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+([/?].*)?$/;
   return urlPattern.test(url);
 }
+export function digitsInLargestString(numbers: string[]): number {
+  const largest = numbers.reduce((max, current) => {
+    const cleanedCurrent = current.replace(/[,\.]/g, '');
+    const cleanedMax = max.replace(/[,\.]/g, '');
+
+    return cleanedCurrent.length > cleanedMax.length
+      ? current
+      : cleanedCurrent.length === cleanedMax.length &&
+          cleanedCurrent > cleanedMax
+        ? current
+        : max;
+  }, '');
+
+  return largest.replace(/[,\.]/g, '').length;
+}

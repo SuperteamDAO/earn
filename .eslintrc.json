@@ -4,9 +4,11 @@
     "plugin:prettier/recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@tanstack/eslint-plugin-query/recommended"
   ],
   "parser": "@typescript-eslint/parser",
+  "plugins": ["@tanstack/query"],
   "rules": {
     "@typescript-eslint/consistent-type-imports": [
       "error",
@@ -14,7 +16,10 @@
         "prefer": "type-imports",
         "fixStyle": "inline-type-imports"
       }
-    ]
+    ],
+    "@tanstack/query/exhaustive-deps": "error",
+    "@tanstack/query/no-rest-destructuring": "error",
+    "@tanstack/query/stable-query-client": "error"
   },
   "overrides": [
     // Configuration for TypeScript files
@@ -27,12 +32,14 @@
         "simple-import-sort",
         "chakra-ui",
         "react",
-        "react-hooks"
+        "react-hooks",
+        "@tanstack/query"
       ],
       "extends": [
         "plugin:@typescript-eslint/recommended",
         "next/core-web-vitals",
-        "plugin:prettier/recommended"
+        "plugin:prettier/recommended",
+        "plugin:@tanstack/eslint-plugin-query/recommended"
       ],
       "parserOptions": {
         "project": "./tsconfig.json"
@@ -66,7 +73,10 @@
         ],
         "chakra-ui/props-order": "error",
         "chakra-ui/props-shorthand": "error",
-        "chakra-ui/require-specific-component": "error"
+        "chakra-ui/require-specific-component": "error",
+        "@tanstack/query/exhaustive-deps": "error",
+        "@tanstack/query/no-rest-destructuring": "error",
+        "@tanstack/query/stable-query-client": "error"
       }
     }
   ]

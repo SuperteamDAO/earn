@@ -72,6 +72,7 @@ export const ListingBasic = ({
   subSkills,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
+  const isDraft = isNewOrDraft || isDuplicating;
   const slugUniqueCheck = async (slug: string) => {
     try {
       const listingId = editable && !isDuplicating ? form?.id : null;
@@ -350,13 +351,14 @@ export const ListingBasic = ({
                 fontWeight={500}
                 fontStyle="italic"
               >
-                <Text w="max-content">Similar Listings:</Text>
+                <Text w="max-content">Reference Listings:</Text>
                 <Flex align="center" wrap="wrap" columnGap={1.5}>
                   {suggestions.map((suggestion, index) => (
                     <Flex key={suggestion.link} align="center" gap={2}>
                       <Link
                         className="ph-no-capture"
                         key={suggestion.link}
+                        textDecoration="underline"
                         href={suggestion.link}
                         isExternal
                         onClick={() => {
@@ -375,6 +377,9 @@ export const ListingBasic = ({
                 </Flex>
               </Flex>
             )}
+            <FormErrorMessage>
+              {errors.title ? <>{errors.title.message}</> : <></>}
+            </FormErrorMessage>
           </FormControl>
           <FormControl w="full" mb={5} isInvalid={!!errors.slug} isRequired>
             <Flex>
@@ -429,7 +434,7 @@ export const ListingBasic = ({
             skills={skills}
             subSkills={subSkills}
           />
-          <FormControl w="full" mb={5}>
+          <FormControl w="full" mb={5} isInvalid={!!errors.region}>
             <Flex>
               <ListingFormLabel htmlFor="region">
                 Listing Geography
@@ -444,6 +449,10 @@ export const ListingBasic = ({
                 </option>
               ))}
             </Select>
+
+            <FormErrorMessage>
+              {errors.region ? <>{errors.region.message}</> : <></>}
+            </FormErrorMessage>
           </FormControl>
           <FormControl
             w="full"
@@ -473,9 +482,17 @@ export const ListingBasic = ({
                 URL needs to contain &quot;https://&quot; prefix
               </Text>
             )}
+            <FormErrorMessage>
+              {errors.pocSocials ? <>{errors.pocSocials.message}</> : <></>}
+            </FormErrorMessage>
           </FormControl>
           {isProject && (
-            <FormControl w="full" mb={5} isRequired={isProject}>
+            <FormControl
+              w="full"
+              mb={5}
+              isInvalid={!!errors.applicationType}
+              isRequired={isProject}
+            >
               <Flex>
                 <ListingFormLabel htmlFor="applicationType">
                   Application Type
@@ -497,6 +514,14 @@ export const ListingBasic = ({
                 <option value="fixed">Fixed Deadline</option>
                 <option value="rolling">Rolling Deadline</option>
               </Select>
+
+              <FormErrorMessage>
+                {errors.applicationType ? (
+                  <>{errors.applicationType.message}</>
+                ) : (
+                  <></>
+                )}
+              </FormErrorMessage>
             </FormControl>
           )}
           {type !== 'hackathon' && applicationType !== 'rolling' && (
@@ -563,6 +588,9 @@ export const ListingBasic = ({
                   </Tag>
                 ))}
               </Flex>
+              <FormErrorMessage>
+                {errors.deadline ? <>{errors.deadline.message}</> : <></>}
+              </FormErrorMessage>
             </FormControl>
           )}
           {isProject && (
@@ -591,9 +619,16 @@ export const ListingBasic = ({
                   </option>
                 ))}
               </Select>
+              <FormErrorMessage>
+                {errors.timeToComplete ? (
+                  <>{errors.timeToComplete.message}</>
+                ) : (
+                  <></>
+                )}
+              </FormErrorMessage>
             </FormControl>
           )}
-          <FormControl w="full" mb={5}>
+          <FormControl w="full" mb={5} isInvalid={!!errors.referredBy}>
             <Flex>
               <ListingFormLabel htmlFor="referredBy">
                 Referred By
@@ -608,6 +643,9 @@ export const ListingBasic = ({
                 </option>
               ))}
             </Select>
+            <FormErrorMessage>
+              {errors.referredBy ? <>{errors.referredBy.message}</> : <></>}
+            </FormErrorMessage>
           </FormControl>
           <FormControl alignItems="center" gap={3} display="flex">
             <Flex>
@@ -622,26 +660,52 @@ export const ListingBasic = ({
               {...register('isPrivate')}
               isChecked={isPrivate}
             />
+            <FormErrorMessage>
+              {errors.isPrivate ? <>{errors.isPrivate.message}</> : <></>}
+            </FormErrorMessage>
           </FormControl>
           <VStack gap={4} w={'full'} mt={6}>
             <Button
               className="ph-no-capture"
               w="100%"
+              py={6}
+              fontWeight={500}
+              borderRadius="sm"
               type="submit"
-              variant="solid"
+              variant={!isDraft ? 'outline' : 'solid'}
             >
               Continue
             </Button>
-            <Button
-              className="ph-no-capture"
-              w="100%"
-              isDisabled={!form?.title}
-              isLoading={isDraftLoading}
-              onClick={onDraftClick}
-              variant="outline"
-            >
-              {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
-            </Button>
+            {isDraft && (
+              <Button
+                className="ph-no-capture"
+                w="100%"
+                py={6}
+                color="brand.purple"
+                fontWeight={500}
+                bg="#EEF2FF"
+                borderRadius="sm"
+                isLoading={isDraftLoading}
+                onClick={onDraftClick}
+                variant={'ghost'}
+              >
+                Save Draft
+              </Button>
+            )}
+            {!isDraft && (
+              <Button
+                className="ph-no-capture"
+                w="100%"
+                py={6}
+                fontWeight={500}
+                borderRadius="sm"
+                isLoading={isDraftLoading}
+                onClick={onDraftClick}
+                variant={'solid'}
+              >
+                Update Listing
+              </Button>
+            )}
           </VStack>
         </form>
       </VStack>

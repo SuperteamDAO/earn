@@ -32,6 +32,7 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { type Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
@@ -45,26 +46,26 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import {
   Banner,
   InviteMembers,
-  type SponsorStats,
+  membersQuery,
+  sponsorStatsQuery,
 } from '@/features/sponsor-dashboard';
 import type { UserSponsor } from '@/interface/userSponsor';
-import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
+import { SponsorLayout } from '@/layouts/Sponsor';
+import { useUser } from '@/store/user';
 
 const debounce = require('lodash.debounce');
 
 const Index = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { userInfo } = userStore();
-  const [isMembersLoading, setIsMembersLoading] = useState(true);
-  const [totalMembers, setTotalMembers] = useState(0);
-  const [members, setMembers] = useState<UserSponsor[]>([]);
+  const { user } = useUser();
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
   const length = 15;
 
-  const [sponsorStats, setSponsorStats] = useState<SponsorStats>({});
-  const [isStatsLoading, setIsStatsLoading] = useState<boolean>(true);
+  const { data: sponsorStats, isLoading: isStatsLoading } =
+    useQuery(sponsorStatsQuery);
+
+  const queryClient = useQueryClient();
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -75,70 +76,44 @@ const Index = () => {
     posthog.capture('members tab_sponsor');
   }, []);
 
-  const getMembers = async () => {
-    setIsMembersLoading(true);
-    try {
-      const membersList = await axios.get('/api/sponsor-dashboard/members/', {
-        params: {
-          searchText,
-          skip,
-          take: length,
-        },
-      });
-      setTotalMembers(membersList.data.total);
-      setMembers(membersList.data.data);
-      setIsMembersLoading(false);
-    } catch (error) {
-      setIsMembersLoading(false);
-    }
-  };
+  const { data: membersData, isLoading: isMembersLoading } = useQuery(
+    membersQuery({
+      searchText,
+      skip,
+      length,
+      currentSponsorId: user?.currentSponsorId,
+    }),
+  );
+
+  const totalMembers = membersData?.total || 0;
+  const members = membersData?.data || [];
 
   const isAdminLoggedIn = () => {
     if (
-      userInfo === undefined ||
-      userInfo?.UserSponsors === undefined ||
-      userInfo?.UserSponsors[0] === undefined
+      user === undefined ||
+      user?.UserSponsors === undefined ||
+      user?.UserSponsors[0] === undefined
     ) {
       return false;
     }
 
     return (
-      session?.user?.role === 'GOD' ||
-      userInfo?.UserSponsors[0]?.role === 'ADMIN'
+      session?.user?.role === 'GOD' || user?.UserSponsors[0]?.role === 'ADMIN'
     );
   };
-
-  useEffect(() => {
-    if (userInfo?.currentSponsorId) {
-      getMembers();
-    }
-  }, [userInfo?.currentSponsorId, skip, searchText]);
 
   const onRemoveMember = async (userId: string | undefined) => {
     await axios.post('/api/sponsor-dashboard/members/remove', {
       id: userId,
     });
 
-    await getMembers();
+    await queryClient.invalidateQueries({
+      queryKey: ['members', user?.currentSponsorId],
+    });
   };
 
-  useEffect(() => {
-    const getSponsorStats = async () => {
-      try {
-        const sponsorData = await axios.get('/api/sponsors/stats');
-        setSponsorStats(sponsorData.data);
-      } catch (err) {
-        console.log('Failed to fetch sponsor stats');
-      } finally {
-        setIsStatsLoading(false);
-      }
-    };
-
-    getSponsorStats();
-  }, [userInfo?.currentSponsorId]);
-
   return (
-    <Sidebar>
+    <SponsorLayout>
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <Flex justify="space-between" mb={4}>
@@ -157,8 +132,8 @@ const Index = () => {
         </Flex>
         <Flex align="center" gap={3}>
           {(session?.user?.role === 'GOD' ||
-            (userInfo?.UserSponsors?.length &&
-              userInfo?.UserSponsors[0]?.role === 'ADMIN')) && (
+            (user?.UserSponsors?.length &&
+              user?.UserSponsors[0]?.role === 'ADMIN')) && (
             <Button
               className="ph-no-capture"
               color="#6366F1"
@@ -246,7 +221,7 @@ const Index = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {members.map((member) => {
+              {members.map((member: UserSponsor) => {
                 return (
                   <Tr key={member?.userId}>
                     <Td>
@@ -351,7 +326,7 @@ const Index = () => {
           Next
         </Button>
       </Flex>
-    </Sidebar>
+    </SponsorLayout>
   );
 };
 

@@ -136,6 +136,7 @@ export const DescriptionBuilder = ({
   editable,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
+  const isDraft = isNewOrDraft || isDuplicating;
 
   const {
     register,
@@ -425,30 +426,6 @@ export const DescriptionBuilder = ({
               H3
             </ToolbarButton>
             <ToolbarButton
-              isActive={editor?.isActive('heading', { level: 4 })}
-              onClick={() => {
-                editor?.chain().focus().toggleHeading({ level: 4 }).run();
-              }}
-            >
-              H4
-            </ToolbarButton>
-            <ToolbarButton
-              isActive={editor?.isActive('heading', { level: 5 })}
-              onClick={() => {
-                editor?.chain().focus().toggleHeading({ level: 5 }).run();
-              }}
-            >
-              H5
-            </ToolbarButton>
-            <ToolbarButton
-              isActive={editor?.isActive('heading', { level: 6 })}
-              onClick={() => {
-                editor?.chain().focus().toggleHeading({ level: 6 }).run();
-              }}
-            >
-              H6
-            </ToolbarButton>
-            <ToolbarButton
               isActive={editor?.isActive('bold')}
               onClick={() => {
                 editor?.chain().focus().toggleBold().run();
@@ -629,19 +606,48 @@ export const DescriptionBuilder = ({
               Listing Details is a required field
             </Text>
           )}
-          <Button w="100%" onClick={handleSubmit(onSubmit)} variant="solid">
-            Continue
-          </Button>
           <Button
             className="ph-no-capture"
             w="100%"
-            isDisabled={!description}
-            isLoading={isDraftLoading}
-            onClick={onDraftClick}
-            variant="outline"
+            py={6}
+            fontWeight={500}
+            borderRadius="sm"
+            onClick={handleSubmit(onSubmit)}
+            type="submit"
+            variant={!isDraft ? 'outline' : 'solid'}
           >
-            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
+            Continue
           </Button>
+          {isDraft && (
+            <Button
+              className="ph-no-capture"
+              w="100%"
+              py={6}
+              color="brand.purple"
+              fontWeight={500}
+              bg="#EEF2FF"
+              borderRadius="sm"
+              isLoading={isDraftLoading}
+              onClick={onDraftClick}
+              variant={'ghost'}
+            >
+              Save Draft
+            </Button>
+          )}
+          {!isDraft && (
+            <Button
+              className="ph-no-capture"
+              w="100%"
+              py={6}
+              fontWeight={500}
+              borderRadius="sm"
+              isLoading={isDraftLoading}
+              onClick={onDraftClick}
+              variant={'solid'}
+            >
+              Update Listing
+            </Button>
+          )}
         </VStack>
       </Box>
     </>

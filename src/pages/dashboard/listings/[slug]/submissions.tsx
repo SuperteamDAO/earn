@@ -31,8 +31,8 @@ import {
 } from '@/features/sponsor-dashboard';
 import { type Scouts } from '@/interface/scouts';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { Sidebar } from '@/layouts/Sponsor';
-import { userStore } from '@/store/user';
+import { SponsorLayout } from '@/layouts/Sponsor';
+import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards, sortRank } from '@/utils/rank';
 
@@ -48,7 +48,7 @@ const selectedStyles = {
 function BountySubmissions({ slug }: Props) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [bounty, setBounty] = useState<Listing | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -93,7 +93,7 @@ function BountySubmissions({ slug }: Props) {
         dayjs(bountyDetails.data?.deadline).isBefore(dayjs());
       setIsExpired(isExpired);
       setBounty(bountyDetails.data);
-      if (bountyDetails.data.sponsorId !== userInfo?.currentSponsorId) {
+      if (bountyDetails.data.sponsorId !== user?.currentSponsorId) {
         router.push('/dashboard/listings');
       }
       if (
@@ -169,16 +169,16 @@ function BountySubmissions({ slug }: Props) {
   };
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       getSubmissions();
     }
-  }, [userInfo?.currentSponsorId, skip, searchText]);
+  }, [user?.currentSponsorId, skip, searchText]);
 
   useEffect(() => {
-    if (userInfo?.currentSponsorId) {
+    if (user?.currentSponsorId) {
       getBounty();
     }
-  }, [userInfo?.currentSponsorId]);
+  }, [user?.currentSponsorId]);
 
   useEffect(() => {
     if (searchParams.has('scout')) posthog.capture('scout tab_scout');
@@ -187,7 +187,7 @@ function BountySubmissions({ slug }: Props) {
   const isSponsorVerified = bounty?.sponsor?.isVerified;
 
   return (
-    <Sidebar>
+    <SponsorLayout>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
@@ -396,7 +396,7 @@ function BountySubmissions({ slug }: Props) {
           </Tabs>
         </>
       )}
-    </Sidebar>
+    </SponsorLayout>
   );
 }
 

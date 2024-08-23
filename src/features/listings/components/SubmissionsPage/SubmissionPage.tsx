@@ -9,16 +9,16 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import type { Metadata } from 'unfurl.js/dist/types';
+import React, { useEffect } from 'react';
 
 import { TalentBio } from '@/components/TalentBio';
-import { Comments } from '@/features/comments';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { type User as IUser } from '@/interface/user';
+import { ogImageQuery } from '@/queries/og-image';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+import { nthLabelGenerator } from '@/utils/rank';
 
 import { type Listing } from '../../types';
 
@@ -29,26 +29,25 @@ interface Props {
   link: string;
 }
 export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
+  const { data: image } = useQuery(ogImageQuery(link));
   const router = useRouter();
-  const [image, setImage] = useState<string>('/assets/bg/og.svg');
   const [isMobile] = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
-    const fetchImage = async () => {
-      if (link) {
-        try {
-          const { data } = (await axios.post('/api/og/get', {
-            url: link,
-          })) as { data: Metadata };
-          setImage(data.open_graph.images![0]?.url ?? '/assets/bg/og.svg');
-        } catch (error) {
-          console.log(error);
-          setImage('/assets/bg/og.svg');
-        }
+    if (router.asPath.endsWith('#details') && isMobile) {
+      const element = document.getElementById('submission-details');
+      if (element) {
+        const offset = 50;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
       }
-    };
-    fetchImage();
-  }, []);
+    }
+  }, [router.asPath, isMobile]);
+
   return (
     <VStack
       align={['center', 'center', 'start', 'start']}
@@ -56,15 +55,13 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
       flexDir={['column', 'column', 'row', 'row']}
       gap={4}
       w="full"
-      maxW={'8xl'}
-      mx={'auto'}
+      id="submission-details"
     >
       <VStack gap={3} w={'full'} mt={3}>
         {bounty?.isWinnersAnnounced && submission?.isWinner && (
           <Box
             w="full"
             mt={4}
-            px={4}
             py={2}
             color={'#D26F12'}
             textAlign={'center'}
@@ -72,7 +69,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
             rounded="md"
           >
             <Text fontWeight={700} textTransform={'uppercase'}>
-              🏆 WINNER: {submission?.winnerPosition} 🏆
+              🏆 WINNER: {nthLabelGenerator(submission?.winnerPosition ?? 0)} 🏆
             </Text>
           </Box>
         )}
@@ -82,7 +79,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
           bg={'white'}
           rounded={'md'}
         >
-          <Flex justify={'space-between'} w={'full'} mt={5} px={8}>
+          <Flex justify={'space-between'} w={'full'} mt={5}>
             <Text color={'black'} fontSize={'22px'} fontWeight={600}>
               {user?.firstName}&apos;s Submission
             </Text>
@@ -90,13 +87,13 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
           <Image
             w={'full'}
             h={'30rem'}
-            p={7}
+            py={7}
             objectFit={'cover'}
             alt={'submission'}
             rounded={'2rem'}
-            src={image}
+            src={image || '/assets/bg/og.svg'}
           />
-          <HStack w="full" px={7}>
+          <HStack w="full">
             <Button
               as={Link}
               w="full"
@@ -113,24 +110,14 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
           </HStack>
           {isMobile && (
             <VStack mt={12}>
-              <TalentBio w={'100%'} successPage={false} user={user} />
+              <TalentBio w={'100%'} successPage={false} talentUser={user} />
             </VStack>
           )}
         </VStack>
-
-        <Comments
-          isAnnounced={bounty?.isWinnersAnnounced ?? false}
-          listingSlug={bounty?.slug ?? ''}
-          listingType={bounty?.type ?? ''}
-          poc={bounty?.poc as IUser}
-          sponsorId={bounty?.sponsorId}
-          refId={(router.query.subid as string) ?? ''}
-          refType="SUBMISSION"
-        />
       </VStack>
       {!isMobile && (
         <VStack w={['100%', '100%', '36rem', '36rem']}>
-          <TalentBio w={'100%'} successPage={false} user={user} />
+          <TalentBio w={'100%'} successPage={false} talentUser={user} />
         </VStack>
       )}
     </VStack>

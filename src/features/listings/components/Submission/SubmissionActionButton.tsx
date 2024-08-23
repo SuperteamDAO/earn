@@ -1,14 +1,10 @@
 import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useState } from 'react';
+import { LuPencil } from 'react-icons/lu';
 
 import { SurveyModal } from '@/components/Survey';
 import { AuthWrapper } from '@/features/auth';
@@ -19,8 +15,9 @@ import {
   type Listing,
   userRegionEligibilty,
 } from '@/features/listings';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
+import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { WarningModal } from '../WarningModal';
 import { EasterEgg } from './EasterEgg';
 import { SubmissionModal } from './SubmissionModal';
@@ -28,15 +25,11 @@ import { SubmissionModal } from './SubmissionModal';
 interface Props {
   listing: Listing;
   hasHackathonStarted: boolean;
-  submissionNumber: number;
-  setSubmissionNumber: Dispatch<SetStateAction<number>>;
 }
 
 export const SubmissionActionButton = ({
   listing,
   hasHackathonStarted,
-  submissionNumber,
-  setSubmissionNumber,
 }: Props) => {
   const {
     id,
@@ -48,16 +41,16 @@ export const SubmissionActionButton = ({
     isWinnersAnnounced,
   } = listing;
 
-  const [isUserSubmissionLoading, setIsUserSubmissionLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
+  const { user } = useUser();
 
-  const { userInfo } = userStore();
+  const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
 
-  const isUserEligibleByRegion = userRegionEligibilty(
-    region,
-    userInfo?.location,
-  );
+  const { data: submissionStatus, isLoading: isUserSubmissionLoading } =
+    useQuery(userSubmissionQuery(id!, user?.id));
+
+  const isSubmitted = submissionStatus?.isSubmitted ?? false;
+
   const posthog = usePostHog();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -77,7 +70,7 @@ export const SubmissionActionButton = ({
 
   const handleSubmit = () => {
     if (isAuthenticated) {
-      if (!userInfo?.isTalentFilled) {
+      if (!user?.isTalentFilled) {
         warningOnOpen();
       } else {
         if (buttonState === 'submit') {
@@ -89,24 +82,6 @@ export const SubmissionActionButton = ({
       }
     }
   };
-
-  const checkUserSubmission = async () => {
-    setIsUserSubmissionLoading(true);
-    try {
-      const response = await axios.get('/api/submission/check/', {
-        params: { listingId: id },
-      });
-      setIsSubmitted(response.data.isSubmitted);
-      setIsUserSubmissionLoading(false);
-    } catch (e) {
-      setIsUserSubmissionLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!userInfo?.id) return;
-    checkUserSubmission();
-  }, [userInfo?.id]);
 
   const isProject = type === 'project';
 
@@ -124,7 +99,6 @@ export const SubmissionActionButton = ({
   switch (buttonState) {
     case 'edit':
       buttonText = isProject ? 'Edit Application' : 'Edit Submission';
-      buttonBG = 'brand.purple';
       isBtnDisabled = false;
       btnLoadingText = null;
       break;
@@ -143,13 +117,20 @@ export const SubmissionActionButton = ({
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
         pastDeadline ||
-          (userInfo?.id &&
-            userInfo?.isTalentFilled &&
+          (user?.id &&
+            user?.isTalentFilled &&
             (bountyDraftStatus === 'DRAFT' ||
               !hasHackathonStarted ||
               !isUserEligibleByRegion)),
       );
       btnLoadingText = 'Checking Submission..';
+  }
+  if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
+    buttonText = 'Submissions in Review';
+    buttonBG = 'gray.500';
+  } else if (isWinnersAnnounced) {
+    buttonText = 'Winners Announced';
+    buttonBG = 'gray.500';
   }
 
   const {
@@ -171,9 +152,6 @@ export const SubmissionActionButton = ({
           id={id}
           onClose={onClose}
           isOpen={isOpen}
-          submissionNumber={submissionNumber}
-          setSubmissionNumber={setSubmissionNumber}
-          setIsSubmitted={setIsSubmitted}
           editMode={buttonState === 'edit'}
           listing={listing}
           showEasterEgg={() => setEasterEggOpen(true)}
@@ -181,7 +159,7 @@ export const SubmissionActionButton = ({
         />
       )}
       {isSurveyOpen &&
-        (!userInfo?.surveysShown || !(surveyId in userInfo.surveysShown)) && (
+        (!user?.surveysShown || !(surveyId in user.surveysShown)) && (
           <SurveyModal
             isOpen={isSurveyOpen}
             onClose={onSurveyClose}
@@ -232,8 +210,8 @@ export const SubmissionActionButton = ({
         bg="brand.slate.500"
         hasArrow
         isDisabled={
-          !userInfo?.id ||
-          !userInfo?.isTalentFilled ||
+          !user?.id ||
+          !user?.isTalentFilled ||
           isUserEligibleByRegion ||
           pastDeadline
         }
@@ -254,6 +232,7 @@ export const SubmissionActionButton = ({
         >
           <AuthWrapper style={{ w: 'full' }}>
             <Button
+              gap={4}
               w={'full'}
               mb={{ base: 12, md: 5 }}
               bg={buttonBG}
@@ -266,8 +245,9 @@ export const SubmissionActionButton = ({
               loadingText={btnLoadingText}
               onClick={handleSubmit}
               size="lg"
-              variant="solid"
+              variant={buttonState === 'edit' ? 'outline' : 'solid'}
             >
+              {buttonState === 'edit' && <LuPencil />}
               {buttonText}
             </Button>
           </AuthWrapper>

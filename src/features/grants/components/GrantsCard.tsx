@@ -1,4 +1,4 @@
-import { Flex, Image, Link, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -31,7 +31,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
   const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
 
   return (
-    <Link
+    <Box
       as={NextLink}
       w="full"
       px={{ base: 2, sm: 4 }}
@@ -151,11 +151,12 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                     fontWeight={500}
                     whiteSpace="nowrap"
                   >
-                    {`$` +
-                      formatNumberWithSuffix(
-                        totalApproved / _count.GrantApplication,
-                      )}
-
+                    $
+                    {formatNumberWithSuffix(
+                      Number(
+                        (totalApproved / _count.GrantApplication).toFixed(2),
+                      ),
+                    )}
                     <Text
                       as="span"
                       sx={{
@@ -210,6 +211,6 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
           </Flex>
         </Flex>
       </Flex>
-    </Link>
+    </Box>
   );
 };

@@ -1,41 +1,22 @@
-import { produce } from 'immer';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import { signOut } from 'next-auth/react';
-import { mountStoreDevtool } from 'simple-zustand-devtools';
+import { useEffect, useState } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import type { User } from '@/interface/user';
+import { type User } from '@/interface/user';
 
 interface UserState {
-  userInfo: User | null;
-  setUserInfo: (user: User) => void;
-  setIsLoggedIn: (isLoggedIn: boolean) => void;
-  isLoggedIn: boolean;
-  logOut: () => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
 }
 
-export const userStore = create(
-  persist<UserState>(
+const useUserStore = create<UserState>()(
+  persist(
     (set) => ({
-      userInfo: null,
-      isLoggedIn: false,
-      setIsLoggedIn: (isLoggedIn: boolean): void =>
-        set(
-          produce((state: UserState) => {
-            state.isLoggedIn = isLoggedIn;
-          }),
-        ),
-      setUserInfo: (user: User): void =>
-        set(
-          produce((state: UserState) => {
-            state.userInfo = user;
-          }),
-        ),
-      logOut: () => {
-        set({ userInfo: null });
-        localStorage.removeItem('user-storage');
-        signOut();
-      },
+      user: null,
+      setUser: (user) => set({ user }),
     }),
     {
       name: 'user-storage',
@@ -44,6 +25,57 @@ export const userStore = create(
   ),
 );
 
-if (process.env.NODE_ENV === 'development') {
-  mountStoreDevtool('profileStore', userStore);
-}
+export const useUser = () => {
+  const { user, setUser } = useUserStore();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { data, error, refetch } = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const { data } = await axios.get<User>('/api/user/');
+      return data;
+    },
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (data) {
+      setUser(data);
+      setIsLoading(false);
+    }
+  }, [data, setUser]);
+
+  const refetchUser = async () => {
+    setIsLoading(true);
+    await refetch();
+    setIsLoading(false);
+  };
+
+  return { user, isLoading, error, refetchUser };
+};
+
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+  const setUser = useUserStore((state) => state.setUser);
+
+  return useMutation({
+    mutationFn: (userData: Partial<User>) =>
+      axios.post<User>('/api/user/update/', userData),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['user'], data.data);
+      setUser(data.data);
+    },
+  });
+};
+
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  const setUser = useUserStore((state) => state.setUser);
+
+  return () => {
+    queryClient.setQueryData(['user'], null);
+    setUser(null);
+    localStorage.removeItem('user-storage');
+    signOut();
+  };
+};

@@ -5,23 +5,23 @@ import { useState } from 'react';
 import { BsBriefcaseFill } from 'react-icons/bs';
 
 import { SponsorStore } from '@/store/sponsor';
-import { userStore } from '@/store/user';
+import { useUser } from '@/store/user';
 
 export function SponsorButton() {
   const router = useRouter();
   const { setCurrentSponsor } = SponsorStore();
-  const { userInfo } = userStore();
+  const { user } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
 
   const checkSponsor = async () => {
-    if (!userInfo || !userInfo?.id) {
+    if (!user || !user?.id) {
       setShowMessage(true);
     } else {
       setShowMessage(false);
       setIsLoading(true);
       try {
-        const sponsors = await axios.post('/api/user-sponsors');
+        const sponsors = await axios.get('/api/user-sponsors');
         if (sponsors?.data?.length) {
           setCurrentSponsor(sponsors?.data[0]?.sponsor);
           router.push('/new/listing');
