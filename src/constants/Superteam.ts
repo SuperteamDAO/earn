@@ -177,6 +177,12 @@ const NonSTRegions = [
     country: ['Argentina'],
     code: 'AR',
   },
+  {
+    region: Regions.USA,
+    displayValue: 'United States',
+    country: ['United States'],
+    code: 'US',
+  },
 ];
 
 export const CombinedRegions = [...Superteams, ...NonSTRegions];

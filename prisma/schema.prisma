@@ -585,9 +585,11 @@ enum Regions {
   PHILIPPINES
   JAPAN
   FRANCE
+  CANADA
+
   UKRAINE
   ARGENTINA
-  CANADA
+  USA
 }
 
 enum CompensationType {
