@@ -10,6 +10,7 @@ import {
   Modal,
   ModalContent,
   ModalOverlay,
+  Spinner,
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
@@ -18,7 +19,6 @@ import NextLink from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import { LoaderIcon } from 'react-hot-toast';
 
 import { type Listing, ListingCard } from '@/features/listings';
 
@@ -89,7 +89,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
             />
             <InputRightElement color="brand.slate.400">
               {loading ? (
-                <LoaderIcon />
+                <Spinner size={'sm'} />
               ) : (
                 <button type="submit">
                   <ArrowForwardIcon />

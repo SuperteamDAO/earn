@@ -26,7 +26,6 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
 import { FiMoreVertical } from 'react-icons/fi';
 import {
   IoCopyOutline,
@@ -38,6 +37,7 @@ import {
 } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
 import { RiEditFill } from 'react-icons/ri';
+import { toast } from 'sonner';
 
 import { tokenList } from '@/constants';
 import { grantAmount } from '@/features/grants';

@@ -11,8 +11,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import { toast } from 'react-hot-toast';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
+import { toast } from 'sonner';
 
 import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
