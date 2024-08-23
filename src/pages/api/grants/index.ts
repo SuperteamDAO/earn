@@ -17,7 +17,7 @@ export default async function grants(
     const params = req.query;
     const order = (params.order as 'asc' | 'desc') ?? 'desc';
     const filter = params.filter as string;
-    const take = params.take ? parseInt(params.take as string, 10) : 10;
+    const take = params.take ? parseInt(params.take as string, 10) : 100;
 
     const filterToSkillsMap: Record<string, string[]> = {
       development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
