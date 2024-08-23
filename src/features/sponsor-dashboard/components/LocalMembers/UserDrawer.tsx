@@ -16,6 +16,10 @@ import NextLink from 'next/link';
 import { type ReactNode } from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import {
+  extractTelegramUsername,
+  extractTwitterUsername,
+} from '@/utils/extractUsername';
 
 import { type LocalMember } from '../../queries';
 
@@ -31,8 +35,18 @@ export const UserDrawer = ({
   const parentSkills = user.skills.map((skill: any) => skill.skills);
   const subSkills = user.skills.flatMap((skill: any) => skill.subskills);
   const socialLinks = [
-    { icon: '/assets/talent/telegram.png', link: user?.telegram },
-    { icon: '/assets/talent/twitter.png', link: user?.twitter },
+    {
+      icon: '/assets/talent/telegram.png',
+      link: user.telegram
+        ? `https://t.me/${extractTelegramUsername(user.telegram)}`
+        : '',
+    },
+    {
+      icon: '/assets/talent/twitter.png',
+      link: user.twitter
+        ? `https://x.com/${extractTwitterUsername(user.twitter)}`
+        : '',
+    },
     { icon: '/assets/talent/site.png', link: user?.website },
   ];
 

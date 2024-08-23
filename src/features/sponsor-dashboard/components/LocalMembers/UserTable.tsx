@@ -22,6 +22,10 @@ import NextLink from 'next/link';
 import React from 'react';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import {
+  extractTelegramUsername,
+  extractTwitterUsername,
+} from '@/utils/extractUsername';
 
 import { type LocalMember } from '../../queries';
 import { SortableTH, TH } from './TH';
@@ -117,11 +121,15 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
   const socialLinks = [
     {
       icon: '/assets/talent/telegram.png',
-      link: user.telegram || '',
+      link: user.telegram
+        ? `https://t.me/${extractTelegramUsername(user.telegram)}`
+        : '',
     },
     {
       icon: '/assets/talent/twitter.png',
-      link: user.twitter || '',
+      link: user.twitter
+        ? `https://x.com/${extractTwitterUsername(user.twitter)}`
+        : '',
     },
     { icon: '/assets/talent/site.png', link: user?.website },
   ];
