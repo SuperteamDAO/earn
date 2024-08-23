@@ -312,6 +312,7 @@ model User {
   surveysShown       Json?
   stRecommended      Boolean              @default(false)
   acceptedTOS        Boolean              @default(false)
+  stLead             String?
   currentSponsor     Sponsors?            @relation(fields: [currentSponsorId], references: [id])
   UserSponsors       UserSponsors[]
   poc                Bounties[]           @relation("poc")

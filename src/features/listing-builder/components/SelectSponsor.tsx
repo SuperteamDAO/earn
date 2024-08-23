@@ -149,7 +149,7 @@ export function SelectSponsor({ type }: { type?: string }) {
           ...baseStyles,
           cursor: 'pointer',
           fontSize: '14px',
-          borderColor: '#94a3b8',
+          borderColor: '#cbd5e1',
           '&:hover': {
             borderColor: '#6366F1',
           },
@@ -157,7 +157,7 @@ export function SelectSponsor({ type }: { type?: string }) {
         }),
         dropdownIndicator: (base) => ({
           ...base,
-          color: '#94a3b8',
+          color: '#cbd5e1',
           '&:hover': {
             color: '#94a3b8',
           },
