@@ -2,8 +2,9 @@ import axios from 'axios';
 import type { NextRouter } from 'next/router';
 import type { TransitionStartFunction } from 'react';
 
-import { type Listing } from '@/features/listings';
 import logger from '@/lib/logger';
+
+import { type SearchResult } from '../types';
 
 export function serverSearch(
   startTransition: TransitionStartFunction,
@@ -34,21 +35,27 @@ export function serverSearch(
 }
 
 interface SearchQuery {
-  offsetId?: string;
   status?: string;
   skills?: string;
-  offset?: number;
+  bountiesOffset?: number;
+  grantsOffset?: number;
 }
 export async function search(query: string, params?: SearchQuery) {
   try {
     if (query.length > 0) {
       const resp = await axios.get(`/api/search/${encodeURIComponent(query)}`, {
         params: {
-          limit: 10,
+          bountiesLimit: 10,
+          grantsLimit: 3,
           ...params,
         },
       });
-      return resp.data as { bounties: Listing[]; count: number };
+      return resp.data as {
+        results: SearchResult[];
+        count: number;
+        bountiesCount: number;
+        grantsCount: number;
+      };
     } else return undefined;
   } catch (err) {
     logger.error('search failed - ', err);
