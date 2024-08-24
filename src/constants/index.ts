@@ -254,6 +254,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'saber',
   },
   {
+    tokenName: 'Utgard (UTG)',
+    tokenSymbol: 'UTG',
+    mintAddress: 'FPZsqAgtwf58GmJMctZGSu9RaXiGAmQLL6ZtKUUewm7k',
+    icon: '/assets/coins/utg.png',
+    decimals: 9,
+    coingeckoSymbol: '',
+  },
+  {
     tokenName: 'KIWI',
     tokenSymbol: 'KIWI',
     mintAddress: '66Qq2qS67K4L5xQ3xUTinCyxzdPeZQG1R1ipK8jrY7gc',
