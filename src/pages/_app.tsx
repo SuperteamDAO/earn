@@ -2,6 +2,7 @@ import 'degen/styles';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
+import { GoogleTagManager } from '@next/third-parties/google';
 import { setUser } from '@sentry/nextjs';
 import {
   QueryClient,
@@ -141,6 +142,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         </PostHogProvider>
       </SolanaWalletProvider>
       <ReactQueryDevtools initialIsOpen={false} />
+      <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
     </QueryClientProvider>
   );
 }
