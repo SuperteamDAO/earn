@@ -4,11 +4,11 @@ import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
+import { getServerSession } from 'next-auth';
 import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 
 import { CombinedRegions } from '@/constants/Superteam';
-import { getServerSession } from '@/features/auth';
 import { type Listing } from '@/features/listings';
 import {
   Filters,
@@ -24,6 +24,8 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
 import { getURL } from '@/utils/validUrl';
+
+import { authOptions } from '../api/auth/[...nextauth]';
 
 interface CheckboxFilter {
   label: string;
@@ -168,7 +170,7 @@ const Search = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res);
+  const session = await getServerSession(context.req, context.res, authOptions);
   let userRegion: Regions[] | null | undefined = null;
 
   if (session?.user?.id) {

@@ -6,9 +6,9 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
+import { getServerSession } from 'next-auth';
 import { useEffect, useState, useTransition } from 'react';
 
-import { getServerSession } from '@/features/auth';
 import { totalsQuery, TotalStats } from '@/features/home';
 import {
   Banner,
@@ -26,6 +26,8 @@ import {
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
+
+import { authOptions } from '../api/auth/[...nextauth]';
 
 interface Props {
   results: RowType[];
@@ -184,7 +186,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   let page = Number(query.page) || 1;
   if (page < 1) page = 1;
 
-  const session = await getServerSession(req, res);
+  const session = await getServerSession(req, res, authOptions);
 
   const PAGE_SIZE = 10;
 

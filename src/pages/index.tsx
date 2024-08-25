@@ -2,17 +2,18 @@ import { Box, Flex } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
+import { getServerSession } from 'next-auth';
 import { useEffect, useState } from 'react';
 
 import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { CombinedRegions } from '@/constants/Superteam';
-import { getServerSession } from '@/features/auth';
 import { GrantsCard } from '@/features/grants';
 import { homepageGrantsQuery, homepageListingsQuery } from '@/features/home';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
+import { authOptions } from './api/auth/[...nextauth]';
 import { getListings } from './api/homepage/listings';
 
 interface Props {
@@ -93,7 +94,7 @@ export default function HomePage({ listings, isAuth, userRegion }: Props) {
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context,
 ) => {
-  const session = await getServerSession(context.req, context.res);
+  const session = await getServerSession(context.req, context.res, authOptions);
   let userRegion: Regions[] | null | undefined = null;
   let isAuth = false;
 
