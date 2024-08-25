@@ -14,8 +14,7 @@ import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { SessionProvider } from 'next-auth/react';
 import NextTopLoader from 'nextjs-toploader';
-import posthog from 'posthog-js';
-import { PostHogProvider, usePostHog } from 'posthog-js/react';
+import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 
@@ -24,7 +23,6 @@ import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { latestActiveSlugQuery } from '@/features/sponsor-dashboard';
 import { useUpdateUser, useUser } from '@/store/user';
 import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
-import { getURL } from '@/utils/validUrl';
 
 import theme from '../config/chakra.config';
 
@@ -36,16 +34,6 @@ const extendThemeWithNextFonts = {
     body: fontSans.style.fontFamily,
   },
 };
-
-if (typeof window !== 'undefined') {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: `${getURL()}ingest`,
-    ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-    loaded: (posthog) => {
-      if (process.env.NODE_ENV === 'development') posthog.debug();
-    },
-  });
-}
 
 const queryClient = new QueryClient();
 
@@ -133,13 +121,11 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         }
       `}</style>
       <SolanaWalletProvider>
-        <PostHogProvider client={posthog}>
-          <SessionProvider session={session}>
-            <ChakraProvider theme={extendThemeWithNextFonts}>
-              <MyApp Component={Component} pageProps={pageProps} />
-            </ChakraProvider>
-          </SessionProvider>
-        </PostHogProvider>
+        <SessionProvider session={session}>
+          <ChakraProvider theme={extendThemeWithNextFonts}>
+            <MyApp Component={Component} pageProps={pageProps} />
+          </ChakraProvider>
+        </SessionProvider>
       </SolanaWalletProvider>
       <ReactQueryDevtools initialIsOpen={false} />
       <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
