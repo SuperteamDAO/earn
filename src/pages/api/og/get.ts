@@ -32,7 +32,7 @@ export default async function handler(
     logger.info(`Successfully unfurled URL: ${url}`);
     return res.status(200).json(result);
   } catch (error: any) {
-    logger.error(`Error unfurling URL: ${url}`, safeStringify(error));
+    logger.warn(`Error unfurling URL: ${url}`, safeStringify(error));
     return res
       .status(500)
       .json({ error: 'Error occurred while unfurling the URL.' });
