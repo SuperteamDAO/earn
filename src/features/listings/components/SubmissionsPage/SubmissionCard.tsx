@@ -9,7 +9,6 @@ import {
   LinkBox,
   LinkOverlay,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -17,6 +16,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { LuHeart, LuMessageCircle } from 'react-icons/lu';
+import { toast } from 'sonner';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { type User } from '@/interface/user';
@@ -50,7 +50,6 @@ export const SubmissionCard = ({
 }: Props) => {
   const { user } = useUser();
   const router = useRouter();
-  const toast = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { data: image } = useQuery(ogImageQuery(link));
   const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -66,34 +65,14 @@ export const SubmissionCard = ({
       });
 
     toast.promise(likePromise, {
-      loading: {
-        title: 'Liking the submission...',
-        description: 'Please wait',
-        variant: 'subtle',
-      },
+      loading: 'Liking the submission...',
       success: () => {
         const likeAdded = likes?.some((e) => e.id === user?.id)
           ? 'Like removed'
           : 'Liked submission';
-        const likeAddedDesc = likes?.some((e) => e.id === user?.id)
-          ? "You've removed your like from the submission."
-          : "You've liked the submission.";
-        return {
-          title: likeAdded,
-          description: likeAddedDesc,
-          status: 'success',
-          duration: 2000,
-          isClosable: true,
-          variant: 'subtle',
-        };
+        return `${likeAdded}`;
       },
-      error: {
-        title: 'Error while liking submission',
-        description: 'Failed to like the submission. Please try again.',
-        duration: 2000,
-        isClosable: true,
-        variant: 'subtle',
-      },
+      error: 'Error while liking submission',
     });
   };
 

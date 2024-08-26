@@ -12,7 +12,7 @@ import {
 import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 import { useListingFormStore } from '../../store';
 import { type ListingFormType } from '../../types';

@@ -17,7 +17,7 @@ export default async function grants(
     const params = req.query;
     const order = (params.order as 'asc' | 'desc') ?? 'desc';
     const filter = params.filter as string;
-    const take = params.take ? parseInt(params.take as string, 10) : 10;
+    const take = params.take ? parseInt(params.take as string, 10) : 100;
 
     const filterToSkillsMap: Record<string, string[]> = {
       development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
@@ -50,7 +50,7 @@ export default async function grants(
 
     const token = await getToken({ req });
     const userId = token?.sub;
-    let userRegion: Regions = Regions.GLOBAL;
+    let userRegion: Regions[] | null | undefined = null;
     if (userId) {
       const user = await prisma.user.findFirst({
         where: { id: userId },
@@ -59,7 +59,11 @@ export default async function grants(
       const matchedRegion = CombinedRegions.find(
         (region) => user?.location && region.country.includes(user?.location),
       );
-      userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+      if (matchedRegion?.region) {
+        userRegion = [matchedRegion.region, Regions.GLOBAL];
+      } else {
+        userRegion = [Regions.GLOBAL];
+      }
     }
 
     const grantQueryOptions: Prisma.GrantsFindManyArgs = {
@@ -68,6 +72,7 @@ export default async function grants(
         isActive: true,
         isArchived: false,
         ...skillsFilter,
+        ...(userRegion ? { region: { in: userRegion } } : {}),
       },
       take,
       orderBy: {
@@ -94,15 +99,6 @@ export default async function grants(
         },
       },
     };
-
-    if (userRegion) {
-      grantQueryOptions.where = {
-        ...grantQueryOptions.where,
-        region: {
-          in: [userRegion, Regions.GLOBAL],
-        },
-      };
-    }
 
     const grants = await prisma.grants.findMany(grantQueryOptions);
 

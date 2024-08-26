@@ -14,7 +14,7 @@ import {
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 import { useUser } from '@/store/user';
 

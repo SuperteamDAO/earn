@@ -58,7 +58,9 @@ const mergeListingWithInitialFormState = (
   deadline:
     !isDuplicating && listing.deadline
       ? dayjs(listing.deadline).format('YYYY-MM-DDTHH:mm')
-      : undefined,
+      : isDuplicating && listing.applicationType === 'rolling'
+        ? dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm')
+        : undefined,
   type: type,
   eligibility: (listing.eligibility || []).map((e) => ({
     order: e.order,

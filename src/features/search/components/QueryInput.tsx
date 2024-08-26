@@ -5,8 +5,8 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
+  Spinner,
 } from '@chakra-ui/react';
-import { LoaderIcon } from 'react-hot-toast';
 
 interface Props {
   loading: boolean;
@@ -33,7 +33,9 @@ export function QueryInput({ loading, query, setQuery }: Props) {
           value={query}
           variant="outline"
         />
-        <InputRightElement>{loading && <LoaderIcon />}</InputRightElement>
+        <InputRightElement>
+          {loading && <Spinner size={'sm'} />}
+        </InputRightElement>
       </InputGroup>
     </Box>
   );

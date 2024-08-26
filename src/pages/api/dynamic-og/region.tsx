@@ -6,7 +6,7 @@ import type { NextRequest } from 'next/server';
 import { fetchAsset } from '@/utils/ogHelpers';
 
 export const config = {
-  runtime: 'experimental-edge',
+  runtime: 'edge',
 };
 
 const boldFontP = fetchAsset(

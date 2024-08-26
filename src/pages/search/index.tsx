@@ -1,5 +1,4 @@
 import { Box, Divider, Flex, VStack } from '@chakra-ui/react';
-import { Regions } from '@prisma/client';
 import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -9,7 +8,6 @@ import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 
 import { CombinedRegions } from '@/constants/Superteam';
-import { type Listing } from '@/features/listings';
 import {
   Filters,
   Info,
@@ -17,6 +15,7 @@ import {
   preStatusFilters,
   QueryInput,
   Results,
+  type SearchResult,
   serverSearch,
   updateCheckboxes,
 } from '@/features/search';
@@ -34,22 +33,26 @@ interface CheckboxFilter {
 interface SearchProps {
   statusFilters: CheckboxFilter[];
   skillsFilters: CheckboxFilter[];
-  bounties?: Listing[];
+  results?: SearchResult[];
   count?: number;
+  bountiesCount?: number;
+  grantsCount?: number;
 }
 
 const Search = ({
   statusFilters,
   skillsFilters,
-  bounties,
+  results: resultsP,
   count = 0,
+  bountiesCount = 0,
+  grantsCount = 0,
 }: SearchProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [, startTransition] = useTransition();
   const posthog = usePostHog();
 
-  const [results, setResults] = useState<Listing[]>(bounties ?? []);
+  const [results, setResults] = useState<SearchResult[]>(resultsP ?? []);
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
   const [loading, setLoading] = useState(false);
 
@@ -140,6 +143,8 @@ const Search = ({
               results={results}
               setResults={setResults}
               count={count}
+              grantsCount={grantsCount}
+              bountiesCount={bountiesCount}
               status={statusFilters
                 .filter((s) => s.checked)
                 .map((s) => s.value)
@@ -169,7 +174,7 @@ const Search = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
-  let userRegion: Regions | null = null;
+  let userRegion = null;
 
   if (session?.user?.id) {
     const user = await prisma.user.findFirst({
@@ -181,7 +186,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       region.country.includes(user?.location!),
     );
 
-    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+    userRegion = matchedRegion?.region;
   }
 
   const fullUrl = getURL();
@@ -196,7 +201,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   try {
     const response = await fetch(
-      `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}?${queryString}&limit=10&userRegion=${userRegion || ''}`,
+      `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}?${queryString}&bountiesLimit=10&grantsLimit=3${userRegion ? `&userRegion=${userRegion}` : ''}`,
     );
     const results = await response.json();
 
@@ -204,8 +209,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       props: {
         statusFilters,
         skillsFilters,
-        bounties: results.bounties,
+        results: results.results,
         count: results.count,
+        bountiesCount: results.bountiesCount,
+        grantsCount: results.grantsCount,
         userRegion,
       },
     };

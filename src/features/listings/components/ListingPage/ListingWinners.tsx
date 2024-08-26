@@ -219,24 +219,26 @@ export function ListingWinners({ bounty }: Props) {
             ...getOrRemoveBonuses(submissions, true).slice(3),
             ...getOrRemoveBonuses(submissions, false),
           ].map((submission) => (
-            <Tooltip key={submission.id} label={submission?.user?.firstName}>
-              <Link
-                key={submission.id}
-                as={NextLink}
-                href={
-                  !isProject
-                    ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/#details`
-                    : `/t/${submission?.user?.username}`
-                }
-                passHref
-              >
-                <EarnAvatar
-                  size={isMD ? '44px' : '36px'}
-                  id={submission?.user?.id}
-                  avatar={submission?.user?.photo as string}
-                />
-              </Link>
-            </Tooltip>
+            <Box key={submission.id}>
+              <Tooltip label={submission?.user?.firstName}>
+                <Link
+                  key={submission.id}
+                  as={NextLink}
+                  href={
+                    !isProject
+                      ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/#details`
+                      : `/t/${submission?.user?.username}`
+                  }
+                  passHref
+                >
+                  <EarnAvatar
+                    size={isMD ? '44px' : '36px'}
+                    id={submission?.user?.id}
+                    avatar={submission?.user?.photo as string}
+                  />
+                </Link>
+              </Tooltip>
+            </Box>
           ))}
         </HStack>
       )}

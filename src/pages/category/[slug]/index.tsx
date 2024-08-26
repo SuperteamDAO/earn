@@ -34,7 +34,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
   );
 
   const { data: grants, isLoading: isGrantsLoading } = useQuery(
-    grantsQuery({ order: 'asc' }),
+    grantsQuery({ order: 'asc', take: 10 }),
   );
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {

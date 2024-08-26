@@ -1,5 +1,4 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { Regions } from '@prisma/client';
 import type { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
 
@@ -84,7 +83,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       region.country.includes(user?.location!),
     );
 
-    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+    userRegion = matchedRegion?.region;
   }
 
   const openListings = await getListings({

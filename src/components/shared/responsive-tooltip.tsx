@@ -34,6 +34,7 @@ export const Tooltip = (props: Props) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          width: '100%',
         }}
         onClick={() => setIsOpen(true)}
       >

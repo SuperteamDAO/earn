@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
 import { CombinedRegions } from '@/constants/Superteam';
-import { type Listing } from '@/features/listings';
+import { type GrantsSearch, type ListingSearch } from '@/features/search';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
@@ -27,10 +27,12 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const query = (params.query as string).replace(/[^a-zA-Z0-9 _-]/g, '');
 
-  const limit = (req.query.limit as string) || '5';
-  const offset = (req.query.offset as string) || null;
+  const bountiesLimit = (req.query.bountiesLimit as string) || 5;
+  const grantsLimit = (req.query.grantsLimit as string) || 2;
+  const bountiesOffset = (req.query.bountiesOffset as string) || null;
+  const grantsOffset = (req.query.grantsOffset as string) || null;
 
-  let userRegion = (params.userRegion as Regions) || Regions.GLOBAL;
+  let userRegion = params.userRegion as Regions | undefined;
 
   const status = req.query.status as string;
   let statusList: string[] = [];
@@ -61,7 +63,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     const matchedRegion = CombinedRegions.find(
       (region) => user?.location && region.country.includes(user?.location),
     );
-    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+    userRegion = matchedRegion?.region;
   }
 
   const skills = req.query.skills as string;
@@ -89,7 +91,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     )
     .join(' OR ');
 
-  const regionFilter = `(b.region = ? OR b.region = '${Regions.GLOBAL}')`;
+  let regionFilter = '';
+  if (userRegion) {
+    regionFilter = `AND (b.region = ? OR b.region = '${Regions.GLOBAL}')`;
+  }
 
   const words = query
     .split(/\s+/)
@@ -108,7 +113,7 @@ s.name LIKE CONCAT('%', ?, '%')
   const combinedWhereClause =
     whereClauses.length > 0 ? whereClauses.join(' AND ') : '1=1';
 
-  const countQuery = `
+  const bountiesCountQuery = `
     SELECT COUNT(*) as totalCount
     FROM (
     SELECT DISTINCT b.id
@@ -119,11 +124,27 @@ s.name LIKE CONCAT('%', ?, '%')
     b.isPrivate = 0 AND
     ${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
     ) ${skills ? ` AND (${skillsQuery})` : ''}
-    AND ${regionFilter}
+    ${regionFilter}
     ) as subquery;
     `;
 
-  const sqlQuery = `
+  const grantsCountQuery = `
+    SELECT COUNT(*) as totalCount
+    FROM (
+    SELECT DISTINCT b.id
+    FROM Grants b
+    JOIN Sponsors s ON b.sponsorId = s.id
+    WHERE (1=1) AND (
+    b.isPublished = 1 AND
+    b.isActive = 1 AND
+    b.isArchived = 0 AND
+    ${combinedWhereClause}
+    ) ${skills ? ` AND (${skillsQuery})` : ''}
+    ${regionFilter}
+    ) as subquery;
+  `;
+
+  const bountiesQuery = `
     SELECT DISTINCT b.id, 
     b.status,
     b.rewardAmount, 
@@ -161,7 +182,7 @@ s.name LIKE CONCAT('%', ?, '%')
     b.isPrivate = 0 AND
     ${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
     ) ${skills ? ` AND (${skillsQuery})` : ''}
-    AND ${regionFilter}
+    ${regionFilter}
     ORDER BY 
     b.isFeatured DESC,
       CASE 
@@ -177,33 +198,113 @@ s.name LIKE CONCAT('%', ?, '%')
         ELSE NULL
       END DESC,
       b.updatedAt DESC, b.id
-    LIMIT ? ${offset ? `OFFSET ?` : ''}
+    LIMIT ? ${bountiesOffset ? `OFFSET ?` : ''}
     `;
 
-  let values: (string | number)[] = duplicateElements(words, 2);
-  if (skills) values = values.concat(skillsFlattened);
-  values.push(userRegion);
+  const grantsQuery = `
+    SELECT DISTINCT b.id, 
+    b.title, 
+    b.slug, 
+    b.description,
+    b.minReward,
+    b.maxReward,
+    b.token,
+    b.link,
+    b.region,
+    b.createdAt,
+    b.updatedAt,
+    JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified) as sponsor,
+    (
+      SELECT COUNT(*)
+      FROM GrantApplication ga
+      WHERE ga.grantId = b.id AND ga.applicationStatus = 'Approved'
+    ) as approvedApplications
+    FROM Grants b
+    JOIN Sponsors s ON b.sponsorId = s.id
+    WHERE b.isPublished = 1 AND b.isActive = 1 AND b.isArchived = 0
+    AND (${combinedWhereClause})
+    ${skills ? ` AND (${skillsQuery})` : ''}
+    ${regionFilter}
+    ORDER BY b.createdAt DESC
+    LIMIT ? ${grantsOffset ? `OFFSET ?` : ''}
+  `;
+
+  let bountiesValues: (string | number)[] = duplicateElements(words, 2);
+  if (skills) bountiesValues = bountiesValues.concat(skillsFlattened);
+  if (userRegion) bountiesValues.push(userRegion);
+
+  let grantsValues: (string | number)[] = duplicateElements(words, 2);
+  if (skills) grantsValues = grantsValues.concat(skillsFlattened);
+  if (userRegion) grantsValues.push(userRegion);
 
   try {
-    logger.debug(`Executing countQuery with values: ${values}`);
+    let grantsCount: [{ totalCount: bigint }] = [{ totalCount: BigInt(0) }];
+    let grants: GrantsSearch[] = [];
+    if (statusList.length === 0 || statusList.includes(Status.OPEN)) {
+      logger.debug(
+        `Executing grants table countQuery with values: ${grantsValues}`,
+      );
+      grantsCount = await prisma.$queryRawUnsafe<[{ totalCount: bigint }]>(
+        grantsCountQuery,
+        ...grantsValues,
+      );
+
+      grantsValues.push(Number(grantsLimit));
+      if (grantsOffset) grantsValues.push(Number(grantsOffset));
+
+      logger.debug(
+        `Executing grants table sqlQuery with values: ${grantsValues}`,
+      );
+      grants = await prisma.$queryRawUnsafe<GrantsSearch[]>(
+        grantsQuery,
+        ...grantsValues,
+      );
+
+      grants = grants.map((g) => ({
+        ...g,
+        approvedApplications: Number(g.approvedApplications),
+        _count: {
+          GrantApplication: Number(g.approvedApplications),
+        },
+        searchType: 'grants',
+      }));
+    }
+
+    logger.debug(
+      `Executing bounties table countQuery with values: ${bountiesValues}`,
+    );
     const bountiesCount = await prisma.$queryRawUnsafe<
       [{ totalCount: bigint }]
-    >(countQuery, ...values);
+    >(bountiesCountQuery, ...bountiesValues);
 
-    values.push(Number(limit));
-    if (offset) values.push(Number(offset));
+    bountiesValues.push(Number(bountiesLimit) - grants.length);
+    if (bountiesOffset) bountiesValues.push(Number(bountiesOffset));
 
-    logger.debug(`Executing sqlQuery with values: ${values}`);
-    const bounties = await prisma.$queryRawUnsafe<Listing[]>(
-      sqlQuery,
-      ...values,
+    logger.debug(
+      `Executing bounties table sqlQuery with values: ${bountiesValues}`,
+    );
+    let bounties = await prisma.$queryRawUnsafe<ListingSearch[]>(
+      bountiesQuery,
+      ...bountiesValues,
     );
 
-    res
-      .status(200)
-      .json({ bounties, count: bountiesCount[0].totalCount.toString() });
+    bounties = bounties.map((b) => ({
+      ...b,
+      searchType: 'listing',
+    }));
+
+    const results = [...bounties, ...grants];
+
+    res.status(200).json({
+      results,
+      count: (
+        bountiesCount[0].totalCount + grantsCount[0].totalCount
+      ).toString(),
+      bountiesCount: bounties.length,
+      grantsCount: grants.length,
+    });
   } catch (err: any) {
-    logger.error('Error fetching bounties:', err);
+    logger.error('Error fetching bounties or grants:', err);
     res
       .status(500)
       .json({ error: 'Internal server error', details: err.message });

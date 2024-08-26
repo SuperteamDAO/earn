@@ -6,6 +6,12 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+type CommentType =
+  | 'NORMAL'
+  | 'SUBMISSION'
+  | 'DEADLINE_EXTENSION'
+  | 'WINNER_ANNOUNCEMENT';
+
 async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
   logger.debug(`Request body: ${safeStringify(req.body)}`);
@@ -20,7 +26,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       submissionId,
       replyToUserId,
     } = req.body;
-    let { type } = req.body;
+    let { type } = req.body as { type: CommentType | undefined };
     if (!type) type = 'NORMAL';
 
     logger.debug('Creating a new comment in the database');
@@ -30,11 +36,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         message: message as string,
         replyToId: replyToId as string | undefined,
         listingId: listingId as string,
-        type: type as
-          | 'NORMAL'
-          | 'SUBMISSION'
-          | 'DEADLINE_EXTENSION'
-          | 'WINNER_ANNOUNCEMENT',
+        type,
         submissionId: submissionId as string | undefined,
       },
       include: {
@@ -119,7 +121,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         !taggedUsers.find((t) => t.id.includes(pocId)) &&
         !replyToId
       ) {
-        if (listingType === 'BOUNTY') {
+        if (listingType === 'BOUNTY' && type === 'NORMAL') {
           logger.info(`Sending email notification to POC ID: ${pocId}`);
           await sendEmailNotification({
             type: 'commentSponsor',

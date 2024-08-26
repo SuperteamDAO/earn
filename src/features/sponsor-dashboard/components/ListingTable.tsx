@@ -26,7 +26,6 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
 import { FiMoreVertical } from 'react-icons/fi';
 import {
   IoCopyOutline,
@@ -38,6 +37,7 @@ import {
 } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
 import { RiEditFill } from 'react-icons/ri';
+import { toast } from 'sonner';
 
 import { tokenList } from '@/constants';
 import { grantAmount } from '@/features/grants';
@@ -328,20 +328,22 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                     {!listing.isPublished &&
                       !pastDeadline &&
                       listing.type !== 'grant' && (
-                        <Button
-                          color={'brand.slate.500'}
-                          fontSize={'13px'}
-                          fontWeight={500}
-                          _hover={{ bg: 'brand.slate.200' }}
-                          leftIcon={<Icon as={RiEditFill} />}
-                          onClick={() => {
-                            window.location.href = `/dashboard/listings/${listing.slug}/edit/`;
-                          }}
-                          size="sm"
-                          variant="ghost"
+                        <Link
+                          as={NextLink}
+                          href={`/dashboard/listings/${listing.slug}/edit/`}
                         >
-                          Edit
-                        </Button>
+                          <Button
+                            color={'brand.slate.500'}
+                            fontSize={'13px'}
+                            fontWeight={500}
+                            _hover={{ bg: 'brand.slate.200' }}
+                            leftIcon={<Icon as={RiEditFill} />}
+                            size="sm"
+                            variant="ghost"
+                          >
+                            Edit
+                          </Button>
+                        </Link>
                       )}
                   </Td>
                   <Td px={0} py={2}>

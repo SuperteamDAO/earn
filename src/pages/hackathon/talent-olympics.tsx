@@ -37,10 +37,10 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 import Countdown from 'react-countdown';
-import { toast } from 'react-hot-toast';
 import { FaPlay } from 'react-icons/fa';
 import { FaDiscord } from 'react-icons/fa6';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
+import { toast } from 'sonner';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { tokenList } from '@/constants';

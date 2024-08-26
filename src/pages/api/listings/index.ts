@@ -109,7 +109,7 @@ export default async function listings(
 
   const token = await getToken({ req });
   const userId = token?.sub;
-  let userRegion: Regions = Regions.GLOBAL;
+  let userRegion;
   if (userId) {
     const user = await prisma.user.findFirst({
       where: { id: userId },
@@ -118,7 +118,7 @@ export default async function listings(
     const matchedRegion = CombinedRegions.find(
       (region) => user?.location && region.country.includes(user?.location),
     );
-    userRegion = matchedRegion ? matchedRegion.region : Regions.GLOBAL;
+    userRegion = matchedRegion?.region;
   }
 
   const listingQueryOptions: Prisma.BountiesFindManyArgs = {
@@ -134,6 +134,7 @@ export default async function listings(
       type: type || { in: ['bounty', 'project'] },
       ...skillsFilter,
       NOT: { id },
+      ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
     },
     select: {
       rewardAmount: true,
@@ -183,15 +184,6 @@ export default async function listings(
       },
     ],
   };
-
-  if (userRegion) {
-    listingQueryOptions.where = {
-      ...listingQueryOptions.where,
-      region: {
-        in: [userRegion, Regions.GLOBAL],
-      },
-    };
-  }
 
   try {
     let result;

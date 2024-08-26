@@ -141,18 +141,17 @@ export const ListingPayments = ({
   const maxBonusSpots = watch('maxBonusSpots');
 
   useEffect(() => {
-    console.log('max bonus', maxBonusSpots);
-    if (maxBonusSpots !== undefined) {
+    if (form && maxBonusSpots !== undefined) {
       if (maxBonusSpots > MAX_BONUS_SPOTS)
         setWarningMessage('Maximum number of bonus prizes allow is 50');
       if (maxBonusSpots === 0) {
         setWarningMessage("# of bonus prizes can't be 0");
       }
     }
-  }, [maxBonusSpots]);
+  }, [maxBonusSpots, form]);
 
   useEffect(() => {
-    if (rewards && rewards[BONUS_REWARD_POSITION] !== undefined) {
+    if (form && rewards && rewards[BONUS_REWARD_POSITION] !== undefined) {
       if (rewards[BONUS_REWARD_POSITION] === 0) {
         setWarningMessage(`Bonus per prize can't be 0`);
       } else if (rewards[BONUS_REWARD_POSITION] < 0.01) {
@@ -183,26 +182,49 @@ export const ListingPayments = ({
   const [debouncedRewardAmount, setDebouncedRewardAmount] =
     useState(rewardAmount);
 
-  const prizesList = sortRank(cleanRewards(rewards))?.map((r) => ({
-    value: r,
-    label:
-      r === BONUS_REWARD_POSITION
-        ? BONUS_REWARD_LABEL
-        : `${getRankLabels(r)} prize`,
-    placeHolder: rewards![r as keyof Rewards] ?? 0,
-    defaultValue: rewards![r as keyof Rewards],
-  }));
-  const [prizes, setPrizes] = useState<PrizeListInterface[]>(
-    prizesList?.length
-      ? prizesList
-      : [
-          {
-            value: 1,
-            label: `${getRankLabels(1)} prize`,
-            placeHolder: MAX_PODIUMS * 500,
-          },
-        ],
+  const generatePrizeList = (
+    rewards: Rewards | undefined,
+  ): PrizeListInterface[] => {
+    if (!rewards) {
+      return [
+        {
+          value: 1,
+          label: `${getRankLabels(1)} prize`,
+          placeHolder: MAX_PODIUMS * 500,
+        },
+      ];
+    }
+
+    const sortedRanks = sortRank(cleanRewards(rewards));
+
+    return sortedRanks.map((r, index) => {
+      let placeHolder: number;
+
+      if (r === BONUS_REWARD_POSITION) {
+        placeHolder = 100;
+      } else {
+        placeHolder = Math.max((MAX_PODIUMS - index) * 500, 500);
+      }
+
+      return {
+        value: r,
+        label:
+          r === BONUS_REWARD_POSITION
+            ? BONUS_REWARD_LABEL
+            : `${getRankLabels(r)} prize`,
+        placeHolder,
+        defaultValue: rewards[r as keyof Rewards],
+      };
+    });
+  };
+
+  const [prizes, setPrizes] = useState<PrizeListInterface[]>(() =>
+    generatePrizeList(form?.rewards),
   );
+
+  useEffect(() => {
+    setPrizes(generatePrizeList(rewards));
+  }, [rewards]);
 
   useEffect(() => {
     if (editable) {
@@ -302,21 +324,31 @@ export const ListingPayments = ({
         }
       }
     } else {
-      if (rewards && rewards[BONUS_REWARD_POSITION]) {
-        if (rewards[BONUS_REWARD_POSITION] === 0)
-          errorMessage = "Bonus per prize can't be 0";
+      if (
+        rewards &&
+        rewards[BONUS_REWARD_POSITION] &&
+        rewards[BONUS_REWARD_POSITION] === 0
+      ) {
+        errorMessage = "Bonus per prize can't be 0";
       } else if (
         maxBonusSpots &&
         maxBonusSpots > 0 &&
-        rewards?.[BONUS_REWARD_POSITION] === undefined
+        (!rewards?.[BONUS_REWARD_POSITION] ||
+          isNaN(rewards?.[BONUS_REWARD_POSITION] || NaN))
       ) {
         errorMessage = 'Bonus Reward is not mentioned';
       } else if (rewards?.[BONUS_REWARD_POSITION] === 0) {
         errorMessage = `Bonus per prize can't be 0`;
-      } else if (cleanRewards(rewards).length !== prizes.length) {
+      } else if (cleanRewardPrizes(rewards).length !== prizes.length) {
         errorMessage = 'Please fill all podium ranks or remove unused';
       }
     }
+    console.log('clean rewards', cleanRewardPrizes(rewards));
+    console.log('prizes', prizes);
+    console.log(
+      'errorMessage',
+      cleanRewardPrizes(rewards).length !== prizes.length,
+    );
 
     return errorMessage;
   };
@@ -440,9 +472,9 @@ export const ListingPayments = ({
     ]);
 
   useEffect(() => {
-    if (compensationType === 'fixed')
+    if (compensationType === 'fixed' && type !== 'project')
       setValue('rewardAmount', calculateTotalReward());
-  }, [rewards, maxBonusSpots, compensationType]);
+  }, [rewards, maxBonusSpots, compensationType, type]);
 
   useEffect(() => {
     const debouncedUpdate = debounce((amount) => {
@@ -588,12 +620,7 @@ export const ListingPayments = ({
                 focusBorderColor="brand.purple"
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={() => {
-                  if (!editable) {
-                    handleSearch('');
-                  } else {
-                    setIsOpen(true);
-                    handleSearch(searchTerm || '');
-                  }
+                  handleSearch('');
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder="Search token"
@@ -862,7 +889,6 @@ export const ListingPayments = ({
                       w={el.value === BONUS_REWARD_POSITION ? '70%' : '100%'}
                       color="brand.slate.500"
                       border={'none'}
-                      defaultValue={el.defaultValue}
                       focusBorderColor="rgba(0,0,0,0)"
                       min={el.value === BONUS_REWARD_POSITION ? 0.01 : 0}
                       onChange={(valueString) =>
@@ -870,6 +896,13 @@ export const ListingPayments = ({
                           el.value,
                           parseFloat(valueString),
                         )
+                      }
+                      value={
+                        el.defaultValue !== null &&
+                        el.defaultValue !== undefined &&
+                        !isNaN(el.defaultValue)
+                          ? el.defaultValue
+                          : undefined
                       }
                     >
                       <NumberInputField
@@ -994,11 +1027,13 @@ export const ListingPayments = ({
                         value: filteredPrize.length + 1 || 1,
                         label: `${getRankLabels(filteredPrize.length + 1)} prize`,
                         placeHolder: (MAX_PODIUMS - filteredPrize.length) * 500,
+                        defaultValue: NaN,
                       },
                       ...prizes.filter(
                         (p) => p.value === BONUS_REWARD_POSITION,
                       ),
                     ];
+                    handlePrizeValueChange(filteredPrize.length + 1 || 1, NaN);
                     setPrizes(newPrize);
                   }}
                   variant="outline"

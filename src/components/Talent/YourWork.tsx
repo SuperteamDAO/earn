@@ -288,6 +288,12 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
                 mr={3}
                 color="brand.slate.500"
                 fontWeight={500}
+                _checked={{
+                  '& .chakra-checkbox__control': {
+                    background: 'brand.purple',
+                    borderColor: 'brand.purple',
+                  },
+                }}
                 colorScheme="purple"
                 size="md"
                 {...register('isPrivate')}

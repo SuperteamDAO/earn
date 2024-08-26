@@ -33,7 +33,6 @@ import React, {
   useState,
 } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
 import {
@@ -50,6 +49,7 @@ import {
   MdOutlineFormatUnderlined,
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
+import { toast } from 'sonner';
 import ImageResize from 'tiptap-extension-resize-image';
 import { z } from 'zod';
 
