@@ -4,8 +4,8 @@ import {
   Box,
   Button,
   Flex,
+  Show,
   Text,
-  useMediaQuery,
 } from '@chakra-ui/react';
 import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
@@ -35,41 +35,58 @@ const avatars = [
 ];
 
 export function HomeBanner({ userCount }: BannerProps) {
-  const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
-
   const posthog = usePostHog();
 
   return (
     <Box
       pos="relative"
       w={'100%'}
-      h={isLessThan768px ? '260' : '280'}
+      h={{ base: '260', md: '280' }}
       maxH={'500px'}
       mx={'auto'}
       my={3}
       p={{ base: '5', md: '10' }}
       rounded={'md'}
     >
-      <Image
-        src={isLessThan768px ? MobileBanner : DesktopBanner}
-        alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
-        layout="fill"
-        objectFit="cover"
-        quality={95}
-        priority
-        loading="eager"
-        sizes={isLessThan768px ? '100vw' : '70vw'}
-        style={{
-          width: '100%',
-          maxWidth: '100%',
-          borderRadius: 'var(--chakra-radii-md)',
-        }}
-      />
+      <Show above="md">
+        <Image
+          src={DesktopBanner}
+          alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
+          layout="fill"
+          objectFit="cover"
+          quality={95}
+          priority
+          loading="eager"
+          sizes="70vw"
+          style={{
+            width: '100%',
+            maxWidth: '100%',
+            borderRadius: 'var(--chakra-radii-md)',
+          }}
+        />
+      </Show>
+      <Show below="md">
+        <Image
+          src={MobileBanner}
+          alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
+          layout="fill"
+          objectFit="cover"
+          quality={95}
+          priority
+          loading="eager"
+          sizes="100vw"
+          style={{
+            width: '100%',
+            maxWidth: '100%',
+            borderRadius: 'var(--chakra-radii-md)',
+          }}
+        />
+      </Show>
       <Text
         pos="relative"
         zIndex={1}
         color="white"
-        fontSize={isLessThan768px ? '2xl' : '28px'}
+        fontSize={{ base: '2xl', md: '28px' }}
         fontWeight={'700'}
         lineHeight={'120%'}
       >
@@ -80,7 +97,7 @@ export function HomeBanner({ userCount }: BannerProps) {
         pos="relative"
         zIndex={1}
         maxW={{ base: '100%', md: '30rem' }}
-        mt={isLessThan768px ? '2.5' : '4'}
+        mt={{ base: '2.5', md: '4' }}
         color={'white'}
         fontSize={{ base: '13px', md: 'lg' }}
         lineHeight={'130%'}
@@ -91,14 +108,14 @@ export function HomeBanner({ userCount }: BannerProps) {
       <Flex
         zIndex={1}
         align={'center'}
-        direction={isLessThan768px ? 'column' : 'row'}
-        gap={isLessThan768px ? '3' : '4'}
+        direction={{ base: 'column', md: 'row' }}
+        gap={{ base: '3', md: '4' }}
         mt={'4'}
       >
-        <AuthWrapper style={{ w: isLessThan768px ? '100%' : 'auto' }}>
+        <AuthWrapper style={{ w: { base: '100%', md: 'auto' } }}>
           <Button
             className="ph-no-capture"
-            w={isLessThan768px ? '100%' : 'auto'}
+            w={{ base: '100%', md: 'auto' }}
             px={'2.25rem'}
             py={'0.75rem'}
             color={'#3223A0'}
