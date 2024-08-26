@@ -1,15 +1,14 @@
 import { Box, Container, Flex, HStack, Show } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
 import { type Superteams } from '@/constants/Superteam';
 import {
-  CategoryBanner,
   HomeBanner,
   HomeSideBar,
   NavTabs,
-  RegionBanner,
   UserStatsBanner,
 } from '@/features/home';
 import { Default } from '@/layouts/Default';
@@ -23,6 +22,14 @@ interface HomeProps {
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other';
+
+const RegionBanner = dynamic(() =>
+  import('@/features/home').then((mod) => mod.RegionBanner),
+);
+
+const CategoryBanner = dynamic(() =>
+  import('@/features/home').then((mod) => mod.CategoryBanner),
+);
 
 export function Home({ children, type, st, isAuth }: HomeProps) {
   const router = useRouter();
