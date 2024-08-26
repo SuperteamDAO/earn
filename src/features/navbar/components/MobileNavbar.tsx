@@ -15,6 +15,7 @@ import {
   Link,
   useDisclosure,
 } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -34,6 +35,10 @@ import { NavLink } from './NavLink';
 interface Props {
   onLoginOpen: () => void;
 }
+
+const AnnouncementBar = dynamic(() =>
+  import('@/features/navbar').then((mod) => mod.AnnouncementBar),
+);
 
 export const MobileNavbar = ({ onLoginOpen }: Props) => {
   const {
@@ -208,6 +213,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
 
   return (
     <>
+      <AnnouncementBar />
       <Box pos="sticky" zIndex="sticky" top={0}>
         <Flex
           align="center"
