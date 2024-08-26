@@ -322,7 +322,7 @@ export function RightSideBar({
             />
           </Box>
           <Box display={{ base: 'none', md: 'block' }} w="full" pt={8}>
-            <LiveListings>
+            <LiveListings excludeIds={listing.id ? [listing.id] : undefined}>
               <Text
                 h="100%"
                 color={'brand.slate.600'}

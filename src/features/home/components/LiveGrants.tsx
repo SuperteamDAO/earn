@@ -4,11 +4,18 @@ import { type ReactNode } from 'react';
 
 import { GrantCardMobile, grantsQuery } from '@/features/grants';
 
-export const LiveGrants = ({ children }: { children: ReactNode }) => {
+export const LiveGrants = ({
+  children,
+  excludeIds: ids,
+}: {
+  children: ReactNode;
+  excludeIds?: string[];
+}) => {
   const { data: grants } = useQuery(
     grantsQuery({
       take: 5,
       order: 'asc',
+      excludeIds: ids ? ids : undefined,
     }),
   );
   return (

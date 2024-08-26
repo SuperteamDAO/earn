@@ -273,7 +273,9 @@ export function GrantPageLayout({
                         w="full"
                         pt={8}
                       >
-                        <LiveGrants>
+                        <LiveGrants
+                          excludeIds={grant.id ? [grant.id] : undefined}
+                        >
                           <Text
                             h="100%"
                             color={'brand.slate.600'}
