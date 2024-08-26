@@ -364,7 +364,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     <></>
                   ) : photoUrl ? (
                     <ImagePicker
-                      defaultValue={{ url: photoUrl, type: 'image' }}
+                      defaultValue={{ url: photoUrl }}
                       onChange={async (e) => {
                         setUploading(true);
                         const a = await uploadToCloudinary(e, 'earn-pfp');

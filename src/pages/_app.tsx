@@ -1,27 +1,21 @@
-import 'degen/styles';
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
 import { GoogleTagManager } from '@next/third-parties/google';
 import { setUser } from '@sentry/nextjs';
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { SessionProvider } from 'next-auth/react';
 import NextTopLoader from 'nextjs-toploader';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Toaster } from 'sonner';
 
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
-import { latestActiveSlugQuery } from '@/features/sponsor-dashboard';
-import { useUpdateUser, useUser } from '@/store/user';
+import { useUser } from '@/store/user';
 import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
 
 import theme from '../config/chakra.config';
@@ -40,18 +34,7 @@ const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
   const { user, refetchUser } = useUser();
-  const updateUser = useUpdateUser();
   const posthog = usePostHog();
-
-  const [isFeatureModalOpen, setIsFeatureModalOpen] = useState(false);
-
-  const { data: latestActiveSlug } = useQuery(
-    latestActiveSlugQuery(
-      !!user?.currentSponsorId &&
-        user.featureModalShown === false &&
-        !router.pathname.includes('dashboard'),
-    ),
-  );
 
   useEffect(() => {
     const handleRouteChange = () => posthog?.capture('$pageview');
@@ -75,37 +58,12 @@ function MyApp({ Component, pageProps }: any) {
     }
   }, [router.query.loginState, user, posthog]);
 
-  useEffect(() => {
-    const updateFeatureModalShown = async () => {
-      if (
-        user &&
-        user.featureModalShown === false &&
-        user.currentSponsorId &&
-        !router.pathname.includes('dashboard') &&
-        latestActiveSlug
-      ) {
-        setIsFeatureModalOpen(true);
-        await updateUser.mutateAsync({ featureModalShown: true });
-      }
-    };
-
-    updateFeatureModalShown();
-  }, [user, router.pathname, updateUser, latestActiveSlug]);
-
-  const handleFeatureClose = () => {
-    setIsFeatureModalOpen(false);
-  };
-
   return (
     <>
       <NextTopLoader color="#6366F1" showSpinner={false} />
       <Component {...pageProps} key={router.asPath} />
       <Toaster position="bottom-center" richColors />
-      <FeatureModal
-        latestActiveBountySlug={latestActiveSlug}
-        isOpen={isFeatureModalOpen}
-        onClose={handleFeatureClose}
-      />
+      <FeatureModal />
     </>
   );
 }

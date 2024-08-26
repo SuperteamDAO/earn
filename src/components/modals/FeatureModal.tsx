@@ -9,24 +9,71 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import NextImage from 'next/image';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+
+import { latestActiveSlugQuery } from '@/features/sponsor-dashboard';
+import { useUpdateUser, useUser } from '@/store/user';
 
 export const FeatureModal = ({
-  isOpen,
-  onClose,
-  latestActiveBountySlug,
+  isSponsorsRoute = false,
+  forceOpen = false,
 }: {
-  isOpen: boolean;
-  onClose: () => void;
-  latestActiveBountySlug?: string;
+  isSponsorsRoute?: boolean;
+  forceOpen?: boolean;
 }) => {
+  const router = useRouter();
+  const { user } = useUser();
+  const updateUser = useUpdateUser();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const { data: latestActiveSlug } = useQuery(
+    latestActiveSlugQuery(
+      !!user?.currentSponsorId &&
+        user.featureModalShown === false &&
+        (isSponsorsRoute || !router.pathname.includes('dashboard')),
+    ),
+  );
+
+  useEffect(() => {
+    const shouldShowModal = async () => {
+      if (
+        (user?.currentSponsorId &&
+          user.featureModalShown === false &&
+          (isSponsorsRoute || !router.pathname.includes('dashboard')) &&
+          latestActiveSlug) ||
+        forceOpen
+      ) {
+        setIsOpen(true);
+        if (!forceOpen) {
+          await updateUser.mutateAsync({ featureModalShown: true });
+        }
+      }
+    };
+
+    shouldShowModal();
+  }, [
+    user,
+    router.pathname,
+    updateUser,
+    latestActiveSlug,
+    isSponsorsRoute,
+    forceOpen,
+  ]);
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
   const onSubmit = () => {
-    onClose();
+    handleClose();
   };
 
   return (
-    <Modal autoFocus={false} isOpen={isOpen} onClose={onClose} size="sm">
+    <Modal autoFocus={false} isOpen={isOpen} onClose={handleClose} size="sm">
       <ModalOverlay />
       <ModalContent overflow="hidden" rounded="lg">
         <Box w="full" p={8} bg="#FAF5FF">
@@ -49,17 +96,17 @@ export const FeatureModal = ({
             live listings to try Scout.
           </Text>
           <Link
-            as={latestActiveBountySlug ? NextLink : 'div'}
+            as={latestActiveSlug ? NextLink : 'div'}
             href={
-              latestActiveBountySlug
-                ? `/dashboard/listings/${latestActiveBountySlug}/submissions?scout`
+              latestActiveSlug
+                ? `/dashboard/listings/${latestActiveSlug}/submissions?scout`
                 : ``
             }
             onClick={onSubmit}
             style={{ width: '100%' }}
           >
             <Button gap={2} w="full" fontSize="sm" fontWeight={500}>
-              {latestActiveBountySlug ? (
+              {latestActiveSlug ? (
                 <>
                   Check it out <ArrowForwardIcon />
                 </>
