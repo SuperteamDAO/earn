@@ -22,7 +22,13 @@ interface SponsorOption {
 
 export const hackathonSponsorAtom = atom<string | null>(null);
 
-export function SelectSponsor({ type }: { type?: string }) {
+export function SelectSponsor({
+  type,
+  isExpanded = false,
+}: {
+  type?: string;
+  isExpanded?: boolean;
+}) {
   const { user } = useUser();
   const updateUser = useUpdateUser();
 
@@ -161,6 +167,7 @@ export function SelectSponsor({ type }: { type?: string }) {
           '&:hover': {
             color: '#94a3b8',
           },
+          display: isExpanded ? 'block' : 'none',
         }),
         indicatorSeparator: (base) => ({
           ...base,
