@@ -16,7 +16,7 @@ interface BountyDetailsProps {
 
 function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
   return (
-    <ListingPageLayout bounty={bounty} maxW="6xl">
+    <ListingPageLayout bounty={bounty}>
       {bounty?.isWinnersAnnounced && (
         <Box display={{ base: 'none', md: 'block' }} w="full" mt={6}>
           <ListingWinners bounty={bounty} />

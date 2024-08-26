@@ -161,7 +161,6 @@ export function ListingPageLayout({
                 gap={{ base: 0, md: 4 }}
                 maxW={maxW}
                 minH="100vh"
-                px={3}
                 bg="white"
               >
                 <Flex
@@ -181,8 +180,8 @@ export function ListingPageLayout({
                   gap={8}
                   w={'full'}
                   h="full"
-                  px={{ base: 0, md: 5 }}
                   pb={10}
+                  pl={{ base: 0, md: 5 }}
                   borderColor="brand.slate.100"
                   borderLeftWidth={{ base: 0, md: '1px' }}
                 >
