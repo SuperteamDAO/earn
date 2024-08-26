@@ -113,7 +113,12 @@ export function ListingHeader({
     statusTextColor = 'orange.600';
   } else if (!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN') {
     statusIcon = (
-      <PulseIcon {...statusIconStyles} bg={'green.100'} text="green.600" />
+      <PulseIcon
+        isPulsing
+        {...statusIconStyles}
+        bg={'#9AE6B4'}
+        text="#16A34A"
+      />
     );
     statusText = isMD ? 'Submissions Open' : 'Open';
     statusBgColor = 'green.100';

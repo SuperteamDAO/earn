@@ -114,7 +114,7 @@ export const SubmissionCard = ({
           </Box>
         )}
       </HStack>
-      <LinkOverlay w="full" href={`${router.asPath}/${id}`}>
+      <LinkOverlay as={NextLink} w="full" href={`${router.asPath}/${id}`}>
         <Image
           w={'full'}
           h={48}
@@ -153,7 +153,7 @@ export const SubmissionCard = ({
           />
           {likes?.length}
         </Button>
-        <LinkOverlay href={`${router.asPath}/${id}`}>
+        <LinkOverlay as={NextLink} href={`${router.asPath}/${id}`}>
           <LuMessageCircle
             size={'1.23rem'}
             fill={'#CBD5E1'}

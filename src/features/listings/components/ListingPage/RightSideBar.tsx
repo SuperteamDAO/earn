@@ -321,7 +321,7 @@ export function RightSideBar({
               Hackathon={listing.Hackathon}
             />
           </Box>
-          <Box display={{ base: 'none', md: 'block' }} pt={8}>
+          <Box display={{ base: 'none', md: 'block' }} w="full" pt={8}>
             <LiveListings>
               <Text
                 h="100%"
