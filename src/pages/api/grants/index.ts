@@ -50,7 +50,7 @@ export default async function grants(
 
     const token = await getToken({ req });
     const userId = token?.sub;
-    let userRegion = null;
+    let userRegion: Regions[] | null | undefined = null;
     if (userId) {
       const user = await prisma.user.findFirst({
         where: { id: userId },
@@ -59,7 +59,11 @@ export default async function grants(
       const matchedRegion = CombinedRegions.find(
         (region) => user?.location && region.country.includes(user?.location),
       );
-      userRegion = matchedRegion?.region;
+      if (matchedRegion?.region) {
+        userRegion = [matchedRegion.region, Regions.GLOBAL];
+      } else {
+        userRegion = [Regions.GLOBAL];
+      }
     }
 
     const grantQueryOptions: Prisma.GrantsFindManyArgs = {
@@ -68,7 +72,7 @@ export default async function grants(
         isActive: true,
         isArchived: false,
         ...skillsFilter,
-        ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
+        ...(userRegion ? { region: { in: userRegion } } : {}),
       },
       take,
       orderBy: {
