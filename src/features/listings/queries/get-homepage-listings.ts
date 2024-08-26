@@ -39,17 +39,13 @@ interface BountyProps {
   userRegion?: Regions | null;
 }
 
-export async function getListings({
-  order = 'desc',
-  statusFilter,
-  userRegion,
-}: BountyProps) {
+export async function getListings({ statusFilter, userRegion }: BountyProps) {
   const statusFilterQuery = getStatusFilterQuery(statusFilter);
   let orderBy:
     | { deadline: 'asc' | 'desc' }
     | { winnersAnnouncedAt: 'asc' | 'desc' }
     | [{ isFeatured: 'desc' }, { deadline: 'asc' | 'desc' }] = {
-    deadline: order,
+    deadline: 'desc',
   };
   if (statusFilter === 'open') {
     orderBy = [
@@ -57,12 +53,12 @@ export async function getListings({
         isFeatured: 'desc',
       },
       {
-        deadline: order,
+        deadline: 'asc',
       },
     ];
   } else if (statusFilter === 'completed') {
     orderBy = {
-      winnersAnnouncedAt: order,
+      winnersAnnouncedAt: 'desc',
     };
   }
 

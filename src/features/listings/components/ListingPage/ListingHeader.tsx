@@ -239,8 +239,9 @@ export function ListingHeader({
       <Image
         w={{ base: 12, md: 16 }}
         h={{ base: 12, md: 16 }}
+        mr={2}
         objectFit={'cover'}
-        alt={'phantom'}
+        alt={sponsor?.name}
         rounded={'md'}
         src={sponsor?.logo || `${router.basePath}/assets/logo/sponsor-logo.png`}
       />
