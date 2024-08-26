@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -27,6 +27,7 @@ const useUserStore = create<UserState>()(
 
 export const useUser = () => {
   const { user, setUser } = useUserStore();
+  const { status } = useSession();
 
   const { data, error, refetch, isLoading } = useQuery({
     queryKey: ['user'],
@@ -34,7 +35,7 @@ export const useUser = () => {
       const { data } = await axios.get<User>('/api/user/');
       return data;
     },
-    enabled: false,
+    enabled: status === 'authenticated',
   });
 
   useEffect(() => {

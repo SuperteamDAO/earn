@@ -49,7 +49,7 @@ export function HomeBanner() {
       p={{ base: '5', md: '10' }}
       rounded={'md'}
     >
-      <Show above="md">
+      <Show above="sm">
         <Image
           src={DesktopBanner}
           alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
@@ -66,7 +66,7 @@ export function HomeBanner() {
           }}
         />
       </Show>
-      <Show below="md">
+      <Show below="sm">
         <Image
           src={MobileBanner}
           alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"

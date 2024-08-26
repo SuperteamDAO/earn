@@ -4,17 +4,14 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { GoogleTagManager } from '@next/third-parties/google';
 import { setUser } from '@sentry/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { SessionProvider } from 'next-auth/react';
 import NextTopLoader from 'nextjs-toploader';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
-import { Toaster } from 'sonner';
 
-import { FeatureModal } from '@/components/modals/FeatureModal';
-import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { useUser } from '@/store/user';
 import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
 
@@ -29,11 +26,29 @@ const extendThemeWithNextFonts = {
   },
 };
 
+const SolanaWalletProvider = dynamic(
+  () =>
+    import('@/context/SolanaWallet').then((mod) => mod.SolanaWalletProvider),
+  { ssr: false },
+);
+
+const Toaster = dynamic(() => import('sonner').then((mod) => mod.Toaster), {
+  ssr: false,
+});
+
+const ReactQueryDevtools = dynamic(
+  () =>
+    import('@tanstack/react-query-devtools').then(
+      (mod) => mod.ReactQueryDevtools,
+    ),
+  { ssr: false },
+);
+
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
-  const { user, refetchUser } = useUser();
+  const { user } = useUser();
   const posthog = usePostHog();
 
   useEffect(() => {
@@ -45,10 +60,6 @@ function MyApp({ Component, pageProps }: any) {
   }, [router.events, posthog]);
 
   useEffect(() => {
-    refetchUser();
-  }, [refetchUser]);
-
-  useEffect(() => {
     if (router.query.loginState === 'signedIn' && user) {
       posthog.identify(user.email);
       setUser({ id: user.id, email: user.email });
@@ -58,12 +69,19 @@ function MyApp({ Component, pageProps }: any) {
     }
   }, [router.query.loginState, user, posthog]);
 
+  const isDashboardRoute = router.pathname.startsWith('/dashboard');
+
   return (
     <>
       <NextTopLoader color="#6366F1" showSpinner={false} />
-      <Component {...pageProps} key={router.asPath} />
-      <Toaster position="bottom-center" richColors />
-      <FeatureModal />
+      {isDashboardRoute ? (
+        <SolanaWalletProvider>
+          <Component {...pageProps} key={router.asPath} />
+        </SolanaWalletProvider>
+      ) : (
+        <Component {...pageProps} key={router.asPath} />
+      )}
+      <Toaster position="bottom-right" richColors />
     </>
   );
 }
@@ -78,13 +96,11 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           --font-mono: ${fontMono.style.fontFamily};
         }
       `}</style>
-      <SolanaWalletProvider>
-        <SessionProvider session={session}>
-          <ChakraProvider theme={extendThemeWithNextFonts}>
-            <MyApp Component={Component} pageProps={pageProps} />
-          </ChakraProvider>
-        </SessionProvider>
-      </SolanaWalletProvider>
+      <SessionProvider session={session}>
+        <ChakraProvider theme={extendThemeWithNextFonts}>
+          <MyApp Component={Component} pageProps={pageProps} />
+        </ChakraProvider>
+      </SessionProvider>
       <ReactQueryDevtools initialIsOpen={false} />
       <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
     </QueryClientProvider>

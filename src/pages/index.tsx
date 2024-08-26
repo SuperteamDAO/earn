@@ -2,13 +2,11 @@ import { Box, Flex } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import { getServerSession } from 'next-auth';
 import { useEffect, useState } from 'react';
 
-import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
-import { EmptySection } from '@/components/shared/EmptySection';
 import { CombinedRegions } from '@/constants/Superteam';
-import { GrantsCard } from '@/features/grants';
 import { homepageGrantsQuery, homepageListingsQuery } from '@/features/home';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
@@ -21,6 +19,25 @@ interface Props {
   isAuth: boolean;
   userRegion: Regions[] | null;
 }
+
+const InstallPWAModal = dynamic(
+  () =>
+    import('@/components/modals/InstallPWAModal').then(
+      (mod) => mod.InstallPWAModal,
+    ),
+  { ssr: false },
+);
+
+const GrantsCard = dynamic(
+  () => import('@/features/grants').then((mod) => mod.GrantsCard),
+  { ssr: false },
+);
+
+const EmptySection = dynamic(
+  () =>
+    import('@/components/shared/EmptySection').then((mod) => mod.EmptySection),
+  { ssr: false },
+);
 
 export default function HomePage({ listings, isAuth, userRegion }: Props) {
   const [combinedListings, setCombinedListings] = useState(listings);
