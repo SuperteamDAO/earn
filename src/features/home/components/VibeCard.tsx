@@ -11,12 +11,12 @@ import { useUser } from '@/store/user';
 import { pfpsQuery } from '../queries/vibe-pfps';
 
 const dummyUsers = [
-  { id: '1', photo: '/assets/pfps/t1.png' },
-  { id: '2', photo: '/assets/pfps/md2.png' },
-  { id: '3', photo: '/assets/pfps/fff1.png' },
+  { id: '1', photo: '/assets/pfps/t1.webp' },
+  { id: '2', photo: '/assets/pfps/md2.webp' },
+  { id: '3', photo: '/assets/pfps/fff1.webp' },
   { id: '55', photo: '' },
-  { id: '5', photo: '/assets/pfps/md1.png' },
-  { id: '6', photo: '/assets/pfps/t2.png' },
+  { id: '5', photo: '/assets/pfps/md1.webp' },
+  { id: '6', photo: '/assets/pfps/t2.webp' },
   { id: '7', photo: '' },
   { id: '8', photo: '' },
   { id: '9', photo: '' },
