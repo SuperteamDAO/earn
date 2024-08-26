@@ -240,8 +240,6 @@ export function ListingHeader({
         w={{ base: 12, md: 16 }}
         h={{ base: 12, md: 16 }}
         mr={2}
-        border="1px solid"
-        borderColor={'brand.slate.100'}
         objectFit={'cover'}
         alt={sponsor?.name}
         rounded={'md'}
