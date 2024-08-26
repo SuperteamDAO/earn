@@ -1,6 +1,7 @@
 import { Box, Container, Flex, HStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
 import { type Superteams } from '@/constants/Superteam';
@@ -51,6 +52,8 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
 
   const isTotalLoading = isTotalsLoading || isEarnersLoading;
 
+  const { data: session, status } = useSession();
+
   return (
     <Default
       className="bg-white"
@@ -95,8 +98,11 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                 {type === 'listing' && (
                   <>
                     <NavTabs />
-                    <HomeBanner userCount={totals?.totalUsers} />
-                    <UserStatsBanner />
+                    {!session && status === 'unauthenticated' ? (
+                      <HomeBanner userCount={totals?.totalUsers} />
+                    ) : (
+                      <UserStatsBanner />
+                    )}
                   </>
                 )}
                 {type === 'category' && <NavTabs />}
