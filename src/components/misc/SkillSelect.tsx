@@ -13,6 +13,19 @@ import makeAnimated from 'react-select/animated';
 import { type MultiSelectOptions } from '@/constants';
 import { MainSkills, skillSubSkillMap } from '@/interface/skills';
 
+function removeDuplicates(arr: MultiSelectOptions[]): MultiSelectOptions[] {
+  return Array.from(
+    arr
+      .reduce((map, item) => {
+        if (!map.has(item.value)) {
+          map.set(item.value, item);
+        }
+        return map;
+      }, new Map<string, MultiSelectOptions>())
+      .values(),
+  );
+}
+
 interface Props {
   skills: MultiSelectOptions[];
   subSkills: MultiSelectOptions[];
@@ -160,7 +173,7 @@ export const SkillSelect = ({
           components={animatedComponents}
           isMulti
           value={subSkills}
-          options={subSkillOptions}
+          options={removeDuplicates(subSkillOptions)}
           onChange={(e) => {
             setSubSkills(e as any);
           }}
