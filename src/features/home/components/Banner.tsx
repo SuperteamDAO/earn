@@ -7,6 +7,7 @@ import {
   Show,
   Text,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
@@ -15,9 +16,7 @@ import { AuthWrapper } from '@/features/auth';
 import DesktopBanner from '@/public/assets/home/display/banner.webp';
 import MobileBanner from '@/public/assets/home/display/banner-mobile.webp';
 
-interface BannerProps {
-  userCount?: number;
-}
+import { userCountQuery } from '../queries/user-count';
 
 const avatars = [
   {
@@ -34,8 +33,10 @@ const avatars = [
   },
 ];
 
-export function HomeBanner({ userCount }: BannerProps) {
+export function HomeBanner() {
   const posthog = usePostHog();
+
+  const { data } = useQuery(userCountQuery);
 
   return (
     <Box
@@ -141,14 +142,14 @@ export function HomeBanner({ userCount }: BannerProps) {
               />
             ))}
           </AvatarGroup>
-          {userCount !== null && (
+          {data?.totalUsers !== null && (
             <Text
               pos="relative"
               ml={'0.6875rem'}
               color="brand.slate.200"
               fontSize={{ base: '0.8rem', md: '0.875rem' }}
             >
-              Join {userCount?.toLocaleString()}+ others
+              Join {data?.totalUsers?.toLocaleString()}+ others
             </Text>
           )}
         </Flex>

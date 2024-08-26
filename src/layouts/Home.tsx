@@ -1,5 +1,4 @@
-import { Box, Container, Flex, HStack } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
+import { Box, Container, Flex, HStack, Show } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
@@ -11,10 +10,8 @@ import {
   HomeSideBar,
   NavTabs,
   RegionBanner,
-  totalsQuery,
   UserStatsBanner,
 } from '@/features/home';
-import { recentEarnersQuery } from '@/features/listings';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
@@ -33,11 +30,6 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
     null,
   );
 
-  const { data: totals, isLoading: isTotalsLoading } = useQuery(totalsQuery);
-
-  const { data: recentEarners, isLoading: isEarnersLoading } =
-    useQuery(recentEarnersQuery);
-
   useEffect(() => {
     if (router.asPath.includes('/category/development/')) {
       setCurrentCategory('development');
@@ -49,8 +41,6 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
       setCurrentCategory('other');
     }
   }, [router.asPath]);
-
-  const isTotalLoading = isTotalsLoading || isEarnersLoading;
 
   const { data: session, status } = useSession();
 
@@ -88,18 +78,14 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                 {type === 'landing' && (
                   <>
                     <NavTabs />
-                    {isAuth ? (
-                      <UserStatsBanner />
-                    ) : (
-                      <HomeBanner userCount={totals?.totalUsers} />
-                    )}
+                    {isAuth ? <UserStatsBanner /> : <HomeBanner />}
                   </>
                 )}
                 {type === 'listing' && (
                   <>
                     <NavTabs />
                     {!session && status === 'unauthenticated' ? (
-                      <HomeBanner userCount={totals?.totalUsers} />
+                      <HomeBanner />
                     ) : (
                       <UserStatsBanner />
                     )}
@@ -110,22 +96,18 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                 {children}
               </Box>
             </Flex>
-            {type !== 'niche' && (
-              <Flex
-                display={{
-                  base: 'none',
-                  lg: 'flex',
-                }}
-              >
-                <HomeSideBar
-                  type={type}
-                  isTotalLoading={isTotalLoading}
-                  total={totals?.totalInUSD ?? 0}
-                  listings={totals?.count ?? 0}
-                  earners={recentEarners ?? []}
-                />
-              </Flex>
-            )}
+            <Show above="md">
+              {type !== 'niche' && (
+                <Flex
+                  display={{
+                    base: 'none',
+                    lg: 'flex',
+                  }}
+                >
+                  <HomeSideBar type={type} />
+                </Flex>
+              )}
+            </Show>
           </HStack>
         </Container>
       </Box>
