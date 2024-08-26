@@ -614,12 +614,7 @@ export const ListingPayments = ({
                 focusBorderColor="brand.purple"
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={() => {
-                  if (!editable) {
-                    handleSearch('');
-                  } else {
-                    setIsOpen(true);
-                    handleSearch(searchTerm || '');
-                  }
+                  handleSearch('');
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder="Search token"
