@@ -343,6 +343,12 @@ export const ListingPayments = ({
         errorMessage = 'Please fill all podium ranks or remove unused';
       }
     }
+    console.log('clean rewards', cleanRewardPrizes(rewards));
+    console.log('prizes', prizes);
+    console.log(
+      'errorMessage',
+      cleanRewardPrizes(rewards).length !== prizes.length,
+    );
 
     return errorMessage;
   };
@@ -892,7 +898,9 @@ export const ListingPayments = ({
                         )
                       }
                       value={
-                        el.defaultValue !== undefined
+                        el.defaultValue !== null &&
+                        el.defaultValue !== undefined &&
+                        !isNaN(el.defaultValue)
                           ? el.defaultValue
                           : undefined
                       }
