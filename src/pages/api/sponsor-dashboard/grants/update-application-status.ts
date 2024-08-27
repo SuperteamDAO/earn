@@ -44,12 +44,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       .json({ error: 'Only max 10 records allowed in data' });
   }
 
-  // if (typeof id === 'string') {
-  //   id = [id]
-  // }
-
-  // const parsedAmount = approvedAmount ? parseInt(approvedAmount, 10) : 0;
-
   try {
     const currentApplications = await prisma.grantApplication.findMany({
       where: {
@@ -159,17 +153,20 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     );
 
     if (isApproved) {
-      const totalIncrementAmount = data.reduce((acc, currentApplicant) => {
-        if (currentApplicant.approvedAmount !== undefined) {
-          return acc + currentApplicant.approvedAmount;
-        }
-        return acc;
-      }, 0);
+      const totalIncrementAmountInUSD = updatedData.reduce(
+        (acc, currentApplicant) => {
+          if (currentApplicant.approvedAmountInUSD !== undefined) {
+            return acc + currentApplicant.approvedAmountInUSD;
+          }
+          return acc;
+        },
+        0,
+      );
       await prisma.grants.update({
         where: { id: grantId },
         data: {
           totalApproved: {
-            increment: totalIncrementAmount,
+            increment: totalIncrementAmountInUSD,
           },
         },
       });
