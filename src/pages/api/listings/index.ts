@@ -74,6 +74,10 @@ export default async function listings(
     | undefined;
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const deadline = params.deadline as string;
+  let excludeIds = params['excludeIds[]'];
+  if (typeof excludeIds === 'string') {
+    excludeIds = [excludeIds];
+  }
 
   const id = params.id as string;
 
@@ -123,6 +127,9 @@ export default async function listings(
 
   const listingQueryOptions: Prisma.BountiesFindManyArgs = {
     where: {
+      id: {
+        notIn: excludeIds,
+      },
       isPublished: true,
       isActive: true,
       isPrivate: false,

@@ -72,6 +72,10 @@ model Bounties {
   @@index([deadline, updatedAt])
   @@index([isWinnersAnnounced])
   @@index([title])
+  @@index([deadline(sort: Asc)], map: "Bounties_deadline_asc_idx")
+  @@index([deadline(sort: Desc)], map: "Bounties_deadline_desc_idx")
+  @@index([winnersAnnouncedAt(sort: Desc)])
+  @@index([isFeatured(sort: Desc)])
 }
 
 model BountiesTemplates {

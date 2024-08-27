@@ -117,7 +117,12 @@ export function ListingHeader({
     statusTextColor = 'orange.600';
   } else if (!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN') {
     statusIcon = (
-      <PulseIcon {...statusIconStyles} bg={'green.100'} text="green.600" />
+      <PulseIcon
+        isPulsing
+        {...statusIconStyles}
+        bg={'#9AE6B4'}
+        text="#16A34A"
+      />
     );
     statusText = isMD ? 'Submissions Open' : 'Open';
     statusBgColor = 'green.100';
@@ -239,8 +244,9 @@ export function ListingHeader({
       <Image
         w={{ base: 12, md: 16 }}
         h={{ base: 12, md: 16 }}
+        mr={2}
         objectFit={'cover'}
-        alt={'phantom'}
+        alt={sponsor?.name}
         rounded={'md'}
         src={sponsor?.logo || `${router.basePath}/assets/logo/sponsor-logo.png`}
       />

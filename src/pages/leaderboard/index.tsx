@@ -6,7 +6,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { getServerSession } from 'next-auth/next';
+import { getServerSession } from 'next-auth';
 import { useEffect, useState, useTransition } from 'react';
 
 import { totalsQuery, TotalStats } from '@/features/home';
@@ -27,7 +27,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
 
-import { authOptions } from '../../pages/api/auth/[...nextauth]';
+import { authOptions } from '../api/auth/[...nextauth]';
 
 interface Props {
   results: RowType[];

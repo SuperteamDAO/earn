@@ -11,4 +11,5 @@ export const ogImageQuery = (url: string) =>
     queryKey: ['ogImage', url],
     queryFn: () => fetchOgImage(url!),
     enabled: !!url,
+    retry: false,
   });

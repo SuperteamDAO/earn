@@ -1,5 +1,13 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Flex, HStack, Link, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  type ChakraProps,
+  Flex,
+  HStack,
+  Link,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import Head from 'next/head';
@@ -24,11 +32,13 @@ import { getURL } from '@/utils/validUrl';
 interface ListingPageProps {
   bounty: Listing | null;
   children: React.ReactNode;
+  maxW?: ChakraProps['maxW'];
 }
 
 export function ListingPageLayout({
   bounty: initialBounty,
   children,
+  maxW = '7xl',
 }: ListingPageProps) {
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
   const posthog = usePostHog();
@@ -149,9 +159,8 @@ export function ListingPageLayout({
                 justify={['center', 'center', 'space-between', 'space-between']}
                 flexDir={{ base: 'column', md: 'row' }}
                 gap={{ base: 0, md: 4 }}
-                maxW="6xl"
+                maxW={maxW}
                 minH="100vh"
-                px={3}
                 bg="white"
               >
                 <Flex
@@ -171,8 +180,8 @@ export function ListingPageLayout({
                   gap={8}
                   w={'full'}
                   h="full"
-                  px={{ base: 0, md: 5 }}
                   pb={10}
+                  pl={{ base: 0, md: 5 }}
                   borderColor="brand.slate.100"
                   borderLeftWidth={{ base: 0, md: '1px' }}
                 >

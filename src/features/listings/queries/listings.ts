@@ -10,7 +10,7 @@ interface ListingsParams {
   type?: 'bounty' | 'project' | 'hackathon';
   isHomePage?: boolean;
   order?: 'asc' | 'desc';
-  id?: string;
+  excludeIds?: string[];
 }
 
 const fetchListings = async (params: ListingsParams): Promise<Listing[]> => {

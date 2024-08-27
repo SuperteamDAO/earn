@@ -5,8 +5,8 @@ export const TotalStats = ({
   TVE,
   isTotalLoading,
 }: {
-  bountyCount: number;
-  TVE: number;
+  bountyCount: number | undefined;
+  TVE: number | undefined;
   isTotalLoading: boolean;
 }) => {
   return (
@@ -34,7 +34,7 @@ export const TotalStats = ({
             <Skeleton w="54px" h="14px" />
           ) : (
             <Text color={'black'} fontSize={'sm'} fontWeight={'600'}>
-              ${TVE.toLocaleString()}
+              ${TVE?.toLocaleString()}
             </Text>
           )}
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>

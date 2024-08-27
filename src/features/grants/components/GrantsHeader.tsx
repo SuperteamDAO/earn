@@ -55,7 +55,12 @@ export const GrantsHeader = ({
   switch (status) {
     case 'OPEN':
       statusIcon = (
-        <PulseIcon {...statusIconStyles} bg={'green.100'} text="green.600" />
+        <PulseIcon
+          isPulsing
+          {...statusIconStyles}
+          bg={'#9AE6B4'}
+          text="#16A34A"
+        />
       );
       statusBgColor = 'green.100';
       statusTextColor = 'green.600';
@@ -142,7 +147,7 @@ export const GrantsHeader = ({
                 text={statusText}
               />
               <ListingHeaderSeparator />
-              <RegionLabel region={region} />
+              <RegionLabel region={region} isGrant />
             </Flex>
           </VStack>
         </HStack>

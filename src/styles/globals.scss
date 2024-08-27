@@ -41,10 +41,6 @@ body {
   all: revert !important;
 }
 
-#reset-des li {
-  all: revert !important;
-}
-
 #reset-des a {
   word-break: break-word;
   overflow-wrap: break-word;
@@ -118,7 +114,7 @@ body {
 
 #reset-des {
   * {
-    font-size: 0.875rem !important;
+    font-size: 1rem !important;
   }
 
   h1 {

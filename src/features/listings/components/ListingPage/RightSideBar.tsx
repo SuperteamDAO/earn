@@ -327,7 +327,10 @@ export function RightSideBar({
             py={8}
             fontSize="sm"
           >
-            <LiveListings isHackathon={!!Hackathon} id={listing.id}>
+            <LiveListings
+              isHackathon={!!Hackathon}
+              excludeIds={listing.id ? [listing.id] : undefined}
+            >
               <Flex align="center" justify={'space-between'} w="full">
                 <Text
                   color={'brand.slate.600'}

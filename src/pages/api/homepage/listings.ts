@@ -1,4 +1,5 @@
-import { Regions } from '@prisma/client';
+import { type Regions } from '@prisma/client';
+import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
 
@@ -36,20 +37,16 @@ function getStatusFilterQuery(statusFilter: Status | undefined) {
 interface BountyProps {
   order?: 'asc' | 'desc';
   statusFilter?: Status;
-  userRegion?: Regions | null;
+  userRegion?: Regions[] | null;
 }
 
-export async function getListings({
-  order = 'desc',
-  statusFilter,
-  userRegion,
-}: BountyProps) {
+export async function getListings({ statusFilter, userRegion }: BountyProps) {
   const statusFilterQuery = getStatusFilterQuery(statusFilter);
   let orderBy:
     | { deadline: 'asc' | 'desc' }
     | { winnersAnnouncedAt: 'asc' | 'desc' }
     | [{ isFeatured: 'desc' }, { deadline: 'asc' | 'desc' }] = {
-    deadline: order,
+    deadline: 'desc',
   };
   if (statusFilter === 'open') {
     orderBy = [
@@ -57,12 +54,12 @@ export async function getListings({
         isFeatured: 'desc',
       },
       {
-        deadline: order,
+        deadline: 'asc',
       },
     ];
   } else if (statusFilter === 'completed') {
     orderBy = {
-      winnersAnnouncedAt: order,
+      winnersAnnouncedAt: 'desc',
     };
   }
 
@@ -80,7 +77,7 @@ export async function getListings({
       ],
       language: { in: ['eng', 'sco'] }, //cuz both eng and sco refer to listings in english
       ...statusFilterQuery,
-      ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
+      ...(userRegion ? { region: { in: userRegion } } : {}),
       Hackathon: null,
     },
     select: {
@@ -137,4 +134,18 @@ export async function getListings({
     });
   }
   return bounties;
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  const params = req.query;
+  const order = (params.order as 'asc' | 'desc') ?? 'desc';
+  const statusFilter = params.statusFilter as Status;
+  const userRegion = params.userRegion as Regions[];
+
+  const listings = await getListings({ order, statusFilter, userRegion });
+
+  res.status(200).json(listings);
 }

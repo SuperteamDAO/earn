@@ -8,13 +8,13 @@ import { dayjs } from '@/utils/dayjs';
 interface LiveListingProps {
   children: ReactNode;
   isHackathon?: boolean;
-  id?: string;
+  excludeIds?: string[];
 }
 
 export const LiveListings = ({
   children,
   isHackathon = false,
-  id,
+  excludeIds: ids,
 }: LiveListingProps) => {
   const deadline = useMemo(() => dayjs().add(1, 'day').toISOString(), []);
 
@@ -25,7 +25,7 @@ export const LiveListings = ({
       deadline,
       order: 'asc',
       type: isHackathon ? 'hackathon' : undefined,
-      id,
+      excludeIds: ids ? ids : undefined,
     }),
   );
   return (
