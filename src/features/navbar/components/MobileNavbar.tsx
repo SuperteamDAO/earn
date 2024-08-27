@@ -213,7 +213,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
 
   return (
     <>
-      <AnnouncementBar />
+      {router.pathname === '/' && <AnnouncementBar />}
       <Box pos="sticky" zIndex="sticky" top={0}>
         <Flex
           align="center"

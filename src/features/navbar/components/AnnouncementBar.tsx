@@ -12,8 +12,8 @@ export const AnnouncementBar = () => {
         as={NextLink}
         display={'block'}
         w="full"
-        color="black"
-        bgColor={'#fbbf24'}
+        color="white"
+        bgColor={'brand.purple'}
         href={href}
       >
         <Text
@@ -30,5 +30,5 @@ export const AnnouncementBar = () => {
         </Text>
       </Box>
     );
-  } else return;
+  } else return null;
 };
