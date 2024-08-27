@@ -1,7 +1,8 @@
 import { Flex } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import type { ReactNode } from 'react';
 
-import { Footer, Header } from '@/features/navbar';
+import { Header } from '@/features/navbar';
 
 type IDefaultProps = {
   meta: ReactNode;
@@ -9,7 +10,11 @@ type IDefaultProps = {
   className?: string;
 };
 
-const Default = (props: IDefaultProps) => {
+const Footer = dynamic(() =>
+  import('@/features/navbar').then((mod) => mod.Footer),
+);
+
+export const Default = (props: IDefaultProps) => {
   return (
     <Flex
       className={`min-h-full ${props.className}`}
@@ -27,5 +32,3 @@ const Default = (props: IDefaultProps) => {
     </Flex>
   );
 };
-
-export { Default };

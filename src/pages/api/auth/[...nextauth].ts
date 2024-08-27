@@ -75,6 +75,7 @@ export const authOptions: NextAuthOptions = {
       session.user.lastName = token.lastName;
       session.token = token.access_token;
       session.user.role = token.role;
+      session.user.location = token.location;
       return session;
     },
   },
@@ -82,6 +83,7 @@ export const authOptions: NextAuthOptions = {
     verifyRequest: '/verify-request',
     newUser: '/api/auth/new-user',
   },
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 export default NextAuth(authOptions);

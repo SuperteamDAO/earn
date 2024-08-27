@@ -1,4 +1,3 @@
-export * from './get-homepage-listings';
 export * from './listings';
 export * from './recent-earners';
 export * from './region-listings';
