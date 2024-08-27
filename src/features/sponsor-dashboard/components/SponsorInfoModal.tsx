@@ -148,7 +148,7 @@ export const SponsorInfoModal = ({
                   </FormLabel>
                   <Box w="full" mt={1}>
                     <ImagePicker
-                      defaultValue={{ url: user.photo, type: 'image' }}
+                      defaultValue={{ url: user.photo }}
                       onChange={async (e) => {
                         setUploading(true);
                         const a = await uploadToCloudinary(e, 'earn-pfp');

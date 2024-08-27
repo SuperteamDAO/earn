@@ -155,7 +155,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                   Profile Picture
                 </FormLabel>
                 <ImagePicker
-                  defaultValue={{ url: user.photo, type: 'image' }}
+                  defaultValue={{ url: user.photo }}
                   onChange={async (e) => {
                     setUploading(true);
                     const a = await uploadToCloudinary(e, 'earn-pfp');

@@ -73,8 +73,8 @@ const Meta = (props: IMetaProps) => {
           ],
         }}
         twitter={{
-          handle: '@SuperteamDAO',
-          site: '@SuperteamDAO',
+          handle: '@SuperteamEarn',
+          site: '@SuperteamEarn',
           cardType: 'summary_large_image',
         }}
       />

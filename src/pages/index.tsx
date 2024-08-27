@@ -1,37 +1,81 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { Regions } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
-import { getSession } from 'next-auth/react';
+import dynamic from 'next/dynamic';
+import { getServerSession } from 'next-auth';
+import { useEffect, useState } from 'react';
 
-import { InstallPWAModal } from '@/components/modals/InstallPWAModal';
-import { EmptySection } from '@/components/shared/EmptySection';
 import { CombinedRegions } from '@/constants/Superteam';
-import {
-  getGrants,
-  GrantsCard,
-  type GrantWithApplicationCount,
-} from '@/features/grants';
-import {
-  getListings,
-  type Listing,
-  ListingSection,
-  ListingTabs,
-} from '@/features/listings';
+import { homepageGrantsQuery, homepageListingsQuery } from '@/features/home';
+import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
-import { prisma } from '@/prisma';
+
+import { authOptions } from './api/auth/[...nextauth]';
+import { getListings } from './api/homepage/listings';
 
 interface Props {
-  bounties: Listing[];
-  grants: GrantWithApplicationCount[];
+  listings: Listing[];
   isAuth: boolean;
+  userRegion: Regions[] | null;
 }
 
-export default function HomePage({ bounties, grants, isAuth }: Props) {
+const InstallPWAModal = dynamic(
+  () =>
+    import('@/components/modals/InstallPWAModal').then(
+      (mod) => mod.InstallPWAModal,
+    ),
+  { ssr: false },
+);
+
+const GrantsCard = dynamic(
+  () => import('@/features/grants').then((mod) => mod.GrantsCard),
+  { ssr: false },
+);
+
+const EmptySection = dynamic(
+  () =>
+    import('@/components/shared/EmptySection').then((mod) => mod.EmptySection),
+  { ssr: false },
+);
+
+export default function HomePage({ listings, isAuth, userRegion }: Props) {
+  const [combinedListings, setCombinedListings] = useState(listings);
+
+  const { data: reviewListings } = useQuery(
+    homepageListingsQuery({
+      order: 'desc',
+      statusFilter: 'review',
+      userRegion,
+    }),
+  );
+
+  const { data: completeListings } = useQuery(
+    homepageListingsQuery({
+      order: 'desc',
+      statusFilter: 'completed',
+      userRegion,
+    }),
+  );
+
+  const { data: grants } = useQuery(homepageGrantsQuery(userRegion));
+
+  useEffect(() => {
+    if (reviewListings && completeListings) {
+      setCombinedListings([
+        ...listings,
+        ...reviewListings,
+        ...completeListings,
+      ]);
+    }
+  }, [reviewListings, listings]);
+
   return (
     <Home type="landing" isAuth={isAuth}>
       <InstallPWAModal />
       <Box w={'100%'}>
         <ListingTabs
-          bounties={bounties}
+          bounties={combinedListings}
           isListingsLoading={false}
           emoji="/assets/home/emojis/moneyman.png"
           title="Freelance Gigs"
@@ -67,23 +111,20 @@ export default function HomePage({ bounties, grants, isAuth }: Props) {
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context,
 ) => {
-  const session = await getSession(context);
-  let userRegion;
+  const session = await getServerSession(context.req, context.res, authOptions);
+  let userRegion: Regions[] | null | undefined = null;
   let isAuth = false;
 
-  if (session?.user?.id) {
-    const user = await prisma.user.findFirst({
-      where: { id: session.user.id },
-      select: { location: true },
-    });
-
+  if (session && session.user.id) {
     isAuth = true;
-
     const matchedRegion = CombinedRegions.find((region) =>
-      region.country.includes(user?.location!),
+      region.country.includes(session.user.location!),
     );
-
-    userRegion = matchedRegion?.region;
+    if (matchedRegion?.region) {
+      userRegion = [matchedRegion.region, Regions.GLOBAL];
+    } else {
+      userRegion = [Regions.GLOBAL];
+    }
   }
 
   const openListings = await getListings({
@@ -91,24 +132,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     userRegion,
   });
 
-  const reviewListings = await getListings({
-    statusFilter: 'review',
-    userRegion,
-  });
-
-  const completeListings = await getListings({
-    statusFilter: 'completed',
-    userRegion,
-  });
-
-  const bounties = [...openListings, ...reviewListings, ...completeListings];
-  const grants = await getGrants({ userRegion });
-
   return {
     props: {
-      bounties: JSON.parse(JSON.stringify(bounties)),
-      grants: JSON.parse(JSON.stringify(grants)),
+      listings: JSON.parse(JSON.stringify(openListings)),
       isAuth,
+      userRegion,
     },
   };
 };

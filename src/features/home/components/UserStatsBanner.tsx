@@ -1,12 +1,4 @@
-import {
-  Box,
-  Divider,
-  Flex,
-  Skeleton,
-  Text,
-  useMediaQuery,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Divider, Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
@@ -39,14 +31,13 @@ export const UserStatsBanner = () => {
   const { user } = useUser();
   const { data: session, status } = useSession();
   const { data: stats, isLoading } = useQuery(userStatsQuery);
-  const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
 
   if (!user) return <></>;
 
   if ((!session && status === 'loading') || isLoading) {
     return (
       <Skeleton
-        h={isLessThan768px ? '200' : '120'}
+        h={{ base: 170, md: 100 }}
         maxH="300px"
         mx={'auto'}
         mb={8}

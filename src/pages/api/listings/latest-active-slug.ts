@@ -57,7 +57,7 @@ async function latestActiveSlug(
     logger.info(
       `Successfully fetched latest active slug for user ID: ${userId}`,
     );
-    return res.status(200).json({ slug: result.slug });
+    return res.status(200).json(result.slug);
   } catch (error: any) {
     logger.error(
       `Error fetching latest active slug for user ${userId}: ${safeStringify(error)}`,
