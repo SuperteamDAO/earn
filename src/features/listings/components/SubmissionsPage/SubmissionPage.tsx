@@ -53,7 +53,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
       align={['center', 'center', 'start', 'start']}
       justify={['center', 'center', 'space-between', 'space-between']}
       flexDir={['column', 'column', 'row', 'row']}
-      gap={4}
+      gap={{ base: 4, md: 10 }}
       w="full"
       id="submission-details"
     >
@@ -117,7 +117,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
       </VStack>
       {!isMobile && (
         <VStack w={['100%', '100%', '36rem', '36rem']}>
-          <TalentBio w={'100%'} successPage={false} talentUser={user} />
+          <TalentBio p={0} w={'100%'} successPage={false} talentUser={user} />
         </VStack>
       )}
     </VStack>

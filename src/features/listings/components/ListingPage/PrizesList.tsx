@@ -112,13 +112,7 @@ export function PrizesList({
             </StepIndicator>
 
             <Flex flexShrink="0" gap={2} fontSize={{ base: 'lg', md: 'xl' }}>
-              <Text
-                gap={1}
-                display="flex"
-                w={widthPrize}
-                ml="auto"
-                fontWeight={600}
-              >
+              <Flex gap={1} w={widthPrize} ml="auto" fontWeight={600}>
                 <Text ml="auto">
                   {!seeAll && visibleRewards.length - 1 === index && '+'}{' '}
                   {formatNumberWithSuffix(step[1], 1, true)}
@@ -126,7 +120,7 @@ export function PrizesList({
                 <Text color="brand.slate.400" fontWeight={600}>
                   {token}
                 </Text>
-              </Text>
+              </Flex>
               <LabelOrAction
                 setSeeAll={setSeeAll}
                 step={step}

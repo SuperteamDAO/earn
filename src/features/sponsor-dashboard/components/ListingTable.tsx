@@ -342,20 +342,22 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                     {!listing.isPublished &&
                       !pastDeadline &&
                       listing.type !== 'grant' && (
-                        <Button
-                          color={'brand.slate.500'}
-                          fontSize={'13px'}
-                          fontWeight={500}
-                          _hover={{ bg: 'brand.slate.200' }}
-                          leftIcon={<Icon as={RiEditFill} />}
-                          onClick={() => {
-                            window.location.href = `/dashboard/listings/${listing.slug}/edit/`;
-                          }}
-                          size="sm"
-                          variant="ghost"
+                        <Link
+                          as={NextLink}
+                          href={`/dashboard/listings/${listing.slug}/edit/`}
                         >
-                          Edit
-                        </Button>
+                          <Button
+                            color={'brand.slate.500'}
+                            fontSize={'13px'}
+                            fontWeight={500}
+                            _hover={{ bg: 'brand.slate.200' }}
+                            leftIcon={<Icon as={RiEditFill} />}
+                            size="sm"
+                            variant="ghost"
+                          >
+                            Edit
+                          </Button>
+                        </Link>
                       )}
                   </Td>
                   <Td px={0} py={2}>

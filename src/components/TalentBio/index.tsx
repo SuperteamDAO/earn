@@ -1,4 +1,11 @@
-import { Box, Button, Flex, Image, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  type ChakraProps,
+  Flex,
+  Image,
+  Text,
+} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
 import { type User } from '@/interface/user';
@@ -56,10 +63,12 @@ export function TalentBio({
   talentUser,
   successPage,
   w,
+  p = '1.5625rem',
 }: {
   talentUser: User;
   successPage: boolean;
-  w?: any;
+  w?: ChakraProps['w'];
+  p?: ChakraProps['p'];
 }) {
   const { user } = useUser();
   const router = useRouter();
@@ -103,7 +112,7 @@ export function TalentBio({
       w={w ?? '80%'}
       h="full"
       mt={8}
-      p={'1.5625rem'}
+      p={p}
       bg={'white'}
       borderRadius={10}
     >

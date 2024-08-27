@@ -33,8 +33,8 @@ interface Grant {
   status: string;
   region: string;
   references: References[];
-  requirements: string;
-  applicationStatus: 'Pending' | 'Approved' | 'Rejected';
+  requirements?: string;
+  applicationStatus?: 'Pending' | 'Approved' | 'Rejected';
   totalPaid: number;
   totalApproved: number;
   avgResponseTime?: string;
