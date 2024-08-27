@@ -1,15 +1,14 @@
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
+import { GoogleTagManager } from '@next/third-parties/google';
 import { setUser } from '@sentry/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
-import { getURL } from 'next/dist/shared/lib/utils';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { SessionProvider } from 'next-auth/react';
 import NextTopLoader from 'nextjs-toploader';
-import posthog from 'posthog-js';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
 
@@ -46,16 +45,6 @@ const ReactQueryDevtools = dynamic(
 );
 
 const queryClient = new QueryClient();
-
-if (typeof window !== 'undefined') {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: `${getURL()}ingest`,
-    ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-    loaded: (posthog) => {
-      if (process.env.NODE_ENV === 'development') posthog.debug();
-    },
-  });
-}
 
 function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
@@ -113,6 +102,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         </ChakraProvider>
       </SessionProvider>
       <ReactQueryDevtools initialIsOpen={false} />
+      <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
     </QueryClientProvider>
   );
 }
