@@ -18,6 +18,10 @@ export default async function grants(
     const order = (params.order as 'asc' | 'desc') ?? 'desc';
     const filter = params.filter as string;
     const take = params.take ? parseInt(params.take as string, 10) : 100;
+    let excludeIds = params['excludeIds[]'];
+    if (typeof excludeIds === 'string') {
+      excludeIds = [excludeIds];
+    }
 
     const filterToSkillsMap: Record<string, string[]> = {
       development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
@@ -68,6 +72,9 @@ export default async function grants(
 
     const grantQueryOptions: Prisma.GrantsFindManyArgs = {
       where: {
+        id: {
+          notIn: excludeIds,
+        },
         isPublished: true,
         isActive: true,
         isArchived: false,

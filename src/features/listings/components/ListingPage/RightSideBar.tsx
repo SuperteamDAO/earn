@@ -321,8 +321,8 @@ export function RightSideBar({
               Hackathon={listing.Hackathon}
             />
           </Box>
-          <Box display={{ base: 'none', md: 'block' }} pt={8}>
-            <LiveListings>
+          <Box display={{ base: 'none', md: 'block' }} w="full" pt={8}>
+            <LiveListings excludeIds={listing.id ? [listing.id] : undefined}>
               <Text
                 h="100%"
                 color={'brand.slate.600'}

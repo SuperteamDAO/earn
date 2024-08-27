@@ -331,7 +331,7 @@ export function CreateListing({
           {type === 'project' && steps === 4 && (
             <QuestionBuilder
               createDraft={createDraft}
-              draftLoading={isDraftLoading}
+              isDraftLoading={isDraftLoading}
               editable={editable}
               setSteps={setSteps}
               isDuplicating={isDuplicating}

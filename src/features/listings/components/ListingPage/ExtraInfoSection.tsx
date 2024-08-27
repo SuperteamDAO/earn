@@ -13,6 +13,7 @@ interface ExtraInfoSectionProps {
   pocSocials?: string | undefined;
   region?: string | undefined;
   Hackathon?: ListingHackathon;
+  isGrant?: boolean;
 }
 export function ExtraInfoSection({
   skills,
@@ -20,6 +21,7 @@ export function ExtraInfoSection({
   requirements,
   pocSocials,
   region,
+  isGrant = false,
 }: ExtraInfoSectionProps) {
   const posthog = usePostHog();
   return (
@@ -27,11 +29,11 @@ export function ExtraInfoSection({
       {region && region !== 'GLOBAL' && (
         <VStack align={'start'} w="full" fontSize={'sm'}>
           <Text color={'brand.slate.600'} fontWeight={600}>
-            REGIONAL LISTING
+            REGIONAL {isGrant ? 'GRANT' : 'LISTING'}
           </Text>
           <Text h="100%" color={'brand.slate.500'}>
             <>
-              This listing is only open for people in{' '}
+              This {isGrant ? 'grant' : 'listing'} is only open for people in{' '}
               <Text fontWeight={600}>{region}</Text>
             </>
           </Text>
