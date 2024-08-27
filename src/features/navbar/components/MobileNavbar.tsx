@@ -15,13 +15,13 @@ import {
   Link,
   useDisclosure,
 } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { UserMenu } from '@/components/shared/UserMenu';
 import { useUser } from '@/store/user';
 
 import {
@@ -34,6 +34,10 @@ import { NavLink } from './NavLink';
 interface Props {
   onLoginOpen: () => void;
 }
+
+const UserMenu = dynamic(() =>
+  import('@/components/shared/UserMenu').then((mod) => mod.UserMenu),
+);
 
 export const MobileNavbar = ({ onLoginOpen }: Props) => {
   const {
@@ -124,24 +128,6 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 Complete your Profile
               </Button>
             )}
-
-            {/* <Flex className="ph-no-capture" direction={'column'} mt={5}>
-              {HACKATHON_NAV_ITEMS?.map((navItem) => {
-                const isCurrent = `${navItem.href}` === router.asPath;
-                return (
-                  <NavLink
-                    className="ph-no-capture"
-                    onClick={() => {
-                      posthog.capture(navItem.posthog);
-                    }}
-                    key={navItem.label}
-                    href={navItem.href ?? '#'}
-                    label={renderLabel(navItem)}
-                    isActive={isCurrent}
-                  />
-                );
-              })}
-            </Flex> */}
             <Divider my={2} borderColor={'brand.slate.300'} />
             <Flex className="ph-no-capture" direction={'column'}>
               {LISTING_NAV_ITEMS?.map((navItem) => {

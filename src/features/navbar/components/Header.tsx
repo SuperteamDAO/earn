@@ -1,15 +1,25 @@
 import { Box, useDisclosure } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
 
-import { Login } from '@/features/auth';
-import { SearchModal } from '@/features/search';
-
-import { BottomBar } from './BottomBar';
-import { BountySnackbar } from './BountySnackbar';
-import { DesktopNavbar } from './DesktopNavbar';
-import { MobileNavbar } from './MobileNavbar';
+const Login = dynamic(() => import('@/features/auth').then((mod) => mod.Login));
+const SearchModal = dynamic(() =>
+  import('@/features/search').then((mod) => mod.SearchModal),
+);
+const BottomBar = dynamic(() =>
+  import('./BottomBar').then((mod) => mod.BottomBar),
+);
+const BountySnackbar = dynamic(() =>
+  import('./BountySnackbar').then((mod) => mod.BountySnackbar),
+);
+const DesktopNavbar = dynamic(() =>
+  import('./DesktopNavbar').then((mod) => mod.DesktopNavbar),
+);
+const MobileNavbar = dynamic(() =>
+  import('./MobileNavbar').then((mod) => mod.MobileNavbar),
+);
 
 export const Header = () => {
   const { data: session, status } = useSession();
@@ -46,14 +56,6 @@ export const Header = () => {
   return (
     <>
       {!!isLoginOpen && <Login isOpen={isLoginOpen} onClose={onLoginClose} />}
-
-      {/* <Snackbar href="/talent-olympics"> */}
-      {/*   Looking to get hired?{' '} */}
-      {/*   <Text display="inline" textDecor="underline"> */}
-      {/*     Click here */}
-      {/*   </Text>{' '} */}
-      {/*   to compete in the Talent Olympics — 30+ companies hiring! */}
-      {/* </Snackbar> */}
       <BountySnackbar />
       <Box pos="sticky" zIndex="sticky" top={0}>
         <DesktopNavbar
