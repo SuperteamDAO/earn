@@ -22,7 +22,10 @@ export const formatDeadline = (
 export const isDeadlineOver = (deadline: string | undefined) =>
   deadline ? dayjs().isAfter(dayjs(deadline)) : false;
 
-export const getRegionTooltipLabel = (region: string | undefined) => {
+export const getRegionTooltipLabel = (
+  region: string | undefined,
+  isGrant: boolean = false,
+) => {
   const country = CombinedRegions.find(
     (st) => st.region === region,
   )?.displayValue;
@@ -31,9 +34,9 @@ export const getRegionTooltipLabel = (region: string | undefined) => {
     case 'GLOBAL':
       return 'This listing is open to everyone in the world!';
     case 'BALKAN':
-      return 'You need to be a resident of one of the Balkan countries to be able to participate in this listing';
+      return `You need to be a resident of one of the Balkan countries to be able to participate in this ${isGrant ? 'grant' : 'listing'}`;
     default:
-      return `You need to be a resident of ${country} to participate in this listing`;
+      return `You need to be a resident of ${country} to participate in this ${isGrant ? 'grant' : 'listing'} `;
   }
 };
 

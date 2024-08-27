@@ -1,16 +1,20 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Button, Circle, Flex, Text, VStack } from '@chakra-ui/react';
-import { type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 
-import { type Listing, ListingCard } from '@/features/listings';
+import { GrantsCard } from '@/features/grants';
+import { ListingCard } from '@/features/listings';
 
+import { type SearchResult } from '../types';
 import { search } from '../utils';
 
 interface Props {
-  results: Listing[];
-  setResults: Dispatch<SetStateAction<Listing[]>>;
+  results: SearchResult[];
+  setResults: Dispatch<SetStateAction<SearchResult[]>>;
   count: number;
   query: string;
+  bountiesCount: number;
+  grantsCount: number;
   skills?: string;
   status?: string;
 }
@@ -19,10 +23,14 @@ export function Results({
   results,
   setResults,
   count,
+  bountiesCount,
+  grantsCount,
   query,
   skills,
   status,
 }: Props) {
+  const [bountiesOffset, setBountiesOffset] = useState(bountiesCount);
+  const [grantsOffset, setGrantsOffset] = useState(grantsCount);
   return (
     <VStack w="full">
       {results.length === 0 && (
@@ -65,7 +73,8 @@ export function Results({
           <VStack w="full" py={0}>
             {results.map((r) => (
               <Flex key={r.id} justify="space-between" w="full" p={0}>
-                <ListingCard bounty={r} />
+                {r.searchType === 'listing' && <ListingCard bounty={r} />}
+                {r.searchType === 'grants' && <GrantsCard grant={r} />}
               </Flex>
             ))}
           </VStack>
@@ -81,12 +90,19 @@ export function Results({
                   const lastId = results[results.length - 1]?.id;
                   if (lastId) {
                     const nextResults = await search(query, {
-                      offset: results.length,
+                      bountiesOffset,
+                      grantsOffset,
                       status,
                       skills,
                     });
-                    if (nextResults?.bounties) {
-                      setResults((s) => s.concat(nextResults.bounties));
+                    if (nextResults?.results) {
+                      setResults((s) => s.concat(nextResults.results));
+                    }
+                    if (nextResults?.bountiesCount) {
+                      setBountiesOffset((s) => s + nextResults?.bountiesCount);
+                    }
+                    if (nextResults?.grantsCount) {
+                      setGrantsOffset((s) => s + nextResults?.grantsCount);
                     }
                   }
                 }

@@ -20,11 +20,11 @@ import { ListingFormLabel } from './Form';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
-  draftLoading: boolean;
   createDraft: (data: ListingFormType) => Promise<void>;
   editable: boolean;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
+  isDraftLoading?: boolean;
 }
 
 export interface Ques {
@@ -66,10 +66,10 @@ const QuestionCard = ({ register, index, remove }: QuestionCardProps) => {
 export const QuestionBuilder = ({
   setSteps,
   createDraft,
-  draftLoading,
   isNewOrDraft,
   isDuplicating,
   editable,
+  isDraftLoading,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
   const { control, handleSubmit, register, reset } = useForm({
@@ -80,6 +80,7 @@ export const QuestionBuilder = ({
     },
   });
 
+  const isDraft = isNewOrDraft || isDuplicating;
   useEffect(() => {
     if (editable) {
       reset({
@@ -157,6 +158,7 @@ export const QuestionBuilder = ({
           mt={4}
           color={'#64758B'}
           bg={'#F1F5F9'}
+          borderRadius="sm"
           onClick={() =>
             append({
               order: fields.length + 1,
@@ -173,20 +175,44 @@ export const QuestionBuilder = ({
           <Button
             className="ph-no-capture"
             w="100%"
+            py={6}
+            fontWeight={500}
+            borderRadius="sm"
             type="submit"
-            variant="solid"
+            variant={!isDraft ? 'outline' : 'solid'}
           >
             Continue
           </Button>
-          <Button
-            className="ph-no-capture"
-            w="100%"
-            isLoading={draftLoading}
-            onClick={handleSubmit(onDraftClick)}
-            variant="outline"
-          >
-            {isNewOrDraft || isDuplicating ? 'Save Draft' : 'Update Listing'}
-          </Button>
+          {isDraft && (
+            <Button
+              className="ph-no-capture"
+              w="100%"
+              py={6}
+              color="brand.purple"
+              fontWeight={500}
+              bg="#EEF2FF"
+              borderRadius="sm"
+              isLoading={isDraftLoading}
+              onClick={handleSubmit(onDraftClick)}
+              variant={'ghost'}
+            >
+              Save Draft
+            </Button>
+          )}
+          {!isDraft && (
+            <Button
+              className="ph-no-capture"
+              w="100%"
+              py={6}
+              fontWeight={500}
+              borderRadius="sm"
+              isLoading={isDraftLoading}
+              onClick={onDraftClick}
+              variant={'solid'}
+            >
+              Update Listing
+            </Button>
+          )}
         </VStack>
       </VStack>
     </form>

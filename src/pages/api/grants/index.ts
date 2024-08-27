@@ -18,6 +18,10 @@ export default async function grants(
     const order = (params.order as 'asc' | 'desc') ?? 'desc';
     const filter = params.filter as string;
     const take = params.take ? parseInt(params.take as string, 10) : 100;
+    let excludeIds = params['excludeIds[]'];
+    if (typeof excludeIds === 'string') {
+      excludeIds = [excludeIds];
+    }
 
     const filterToSkillsMap: Record<string, string[]> = {
       development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
@@ -50,7 +54,7 @@ export default async function grants(
 
     const token = await getToken({ req });
     const userId = token?.sub;
-    let userRegion = null;
+    let userRegion: Regions[] | null | undefined = null;
     if (userId) {
       const user = await prisma.user.findFirst({
         where: { id: userId },
@@ -59,16 +63,23 @@ export default async function grants(
       const matchedRegion = CombinedRegions.find(
         (region) => user?.location && region.country.includes(user?.location),
       );
-      userRegion = matchedRegion?.region;
+      if (matchedRegion?.region) {
+        userRegion = [matchedRegion.region, Regions.GLOBAL];
+      } else {
+        userRegion = [Regions.GLOBAL];
+      }
     }
 
     const grantQueryOptions: Prisma.GrantsFindManyArgs = {
       where: {
+        id: {
+          notIn: excludeIds,
+        },
         isPublished: true,
         isActive: true,
         isArchived: false,
         ...skillsFilter,
-        ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
+        ...(userRegion ? { region: { in: userRegion } } : {}),
       },
       take,
       orderBy: {

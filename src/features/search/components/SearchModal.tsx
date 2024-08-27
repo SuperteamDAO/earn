@@ -20,7 +20,10 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
-import { type Listing, ListingCard } from '@/features/listings';
+import { GrantsCard } from '@/features/grants';
+import { ListingCard } from '@/features/listings';
+
+import { type SearchResult } from '../types';
 
 interface Props {
   isOpen: boolean;
@@ -36,7 +39,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
   const searchParams = useSearchParams();
 
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
-  const [results, setResults] = useState<Listing[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
 
   const debouncedSearch = useCallback(debounce(search, 500), []);
@@ -48,7 +51,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
         const resp = await axios.get(
           `/api/search/${encodeURIComponent(query)}`,
         );
-        setResults(resp.data.bounties as Listing[]);
+        setResults(resp.data.results as SearchResult[]);
         router.prefetch(`/search?q=${query}`);
       }
       setLoading(false);
@@ -109,7 +112,12 @@ export function SearchModal({ isOpen, onClose }: Props) {
                   w="full"
                   p={0}
                 >
-                  <ListingCard bounty={listing} />
+                  {listing.searchType === 'listing' && (
+                    <ListingCard bounty={listing} />
+                  )}
+                  {listing.searchType === 'grants' && (
+                    <GrantsCard grant={listing} />
+                  )}
                 </Container>
               ))}
             </VStack>

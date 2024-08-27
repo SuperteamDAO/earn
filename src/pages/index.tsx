@@ -128,7 +128,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   }
 
   const openListings = await getListings({
-    order: 'asc',
     statusFilter: 'open',
     userRegion,
   });

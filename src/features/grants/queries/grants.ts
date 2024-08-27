@@ -5,7 +5,9 @@ import { type GrantWithApplicationCount } from '@/features/grants';
 
 interface GetGrantsParams {
   order?: 'asc' | 'desc';
+  filter?: string;
   take?: number;
+  excludeIds?: string[];
 }
 
 const fetchGrants = async (

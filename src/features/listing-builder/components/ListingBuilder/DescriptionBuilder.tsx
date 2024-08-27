@@ -587,6 +587,7 @@ export const DescriptionBuilder = ({
                   mt={2}
                   color={'#64758B'}
                   bg={'#F1F5F9'}
+                  borderRadius="sm"
                   onClick={() =>
                     append({
                       order: fields.length + 1,
