@@ -1,19 +1,11 @@
 import { Box, Container, Flex, HStack } from '@chakra-ui/react';
-import { useQuery } from '@tanstack/react-query';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
 import { type Superteams } from '@/constants/Superteam';
-import {
-  CategoryBanner,
-  HomeBanner,
-  HomeSideBar,
-  NavTabs,
-  RegionBanner,
-  totalsQuery,
-  UserStatsBanner,
-} from '@/features/home';
-import { recentEarnersQuery } from '@/features/listings';
+import { HomeBanner, NavTabs, UserStatsBanner } from '@/features/home';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
@@ -26,16 +18,23 @@ interface HomeProps {
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other';
 
+const RegionBanner = dynamic(() =>
+  import('@/features/home').then((mod) => mod.RegionBanner),
+);
+
+const CategoryBanner = dynamic(() =>
+  import('@/features/home').then((mod) => mod.CategoryBanner),
+);
+
+const HomeSideBar = dynamic(() =>
+  import('@/features/home').then((mod) => mod.HomeSideBar),
+);
+
 export function Home({ children, type, st, isAuth }: HomeProps) {
   const router = useRouter();
   const [currentCategory, setCurrentCategory] = useState<CategoryTypes | null>(
     null,
   );
-
-  const { data: totals, isLoading: isTotalsLoading } = useQuery(totalsQuery);
-
-  const { data: recentEarners, isLoading: isEarnersLoading } =
-    useQuery(recentEarnersQuery);
 
   useEffect(() => {
     if (router.asPath.includes('/category/development/')) {
@@ -49,7 +48,7 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
     }
   }, [router.asPath]);
 
-  const isTotalLoading = isTotalsLoading || isEarnersLoading;
+  const { data: session, status } = useSession();
 
   return (
     <Default
@@ -85,18 +84,17 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                 {type === 'landing' && (
                   <>
                     <NavTabs />
-                    {isAuth ? (
-                      <UserStatsBanner />
-                    ) : (
-                      <HomeBanner userCount={totals?.totalUsers} />
-                    )}
+                    {isAuth ? <UserStatsBanner /> : <HomeBanner />}
                   </>
                 )}
                 {type === 'listing' && (
                   <>
                     <NavTabs />
-                    <HomeBanner userCount={totals?.totalUsers} />
-                    <UserStatsBanner />
+                    {!session && status === 'unauthenticated' ? (
+                      <HomeBanner />
+                    ) : (
+                      <UserStatsBanner />
+                    )}
                   </>
                 )}
                 {type === 'category' && <NavTabs />}
@@ -104,6 +102,7 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                 {children}
               </Box>
             </Flex>
+
             {type !== 'niche' && (
               <Flex
                 display={{
@@ -111,13 +110,7 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                   lg: 'flex',
                 }}
               >
-                <HomeSideBar
-                  type={type}
-                  isTotalLoading={isTotalLoading}
-                  total={totals?.totalInUSD ?? 0}
-                  listings={totals?.count ?? 0}
-                  earners={recentEarners ?? []}
-                />
+                <HomeSideBar type={type} />
               </Flex>
             )}
           </HStack>

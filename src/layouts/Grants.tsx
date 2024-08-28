@@ -16,6 +16,7 @@ import {
   PayoutIcon,
   TimeToPayIcon,
 } from '@/features/grants';
+import { LiveGrants } from '@/features/home';
 import { ExtraInfoSection } from '@/features/listings';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
@@ -219,7 +220,7 @@ export function GrantPageLayout({
                                 fontSize={{ base: 'lg', md: 'xl' }}
                                 fontWeight={500}
                               >
-                                ${grant?.totalApproved || 0}
+                                ${Math.round(grant?.totalApproved || 0)}
                               </Text>
                             </Flex>
                             <Text
@@ -264,7 +265,27 @@ export function GrantPageLayout({
                           region={grant.region}
                           requirements={grant.requirements}
                           pocSocials={grant.pocSocials}
+                          isGrant
                         />
+                      </Box>
+                      <Box
+                        display={{ base: 'none', md: 'block' }}
+                        w="full"
+                        pt={8}
+                      >
+                        <LiveGrants
+                          excludeIds={grant.id ? [grant.id] : undefined}
+                        >
+                          <Text
+                            h="100%"
+                            color={'brand.slate.600'}
+                            fontSize={'sm'}
+                            fontWeight={600}
+                            textAlign="start"
+                          >
+                            LIVE GRANTS
+                          </Text>
+                        </LiveGrants>
                       </Box>
                     </VStack>
                   </VStack>

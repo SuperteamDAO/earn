@@ -33,6 +33,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const region = superteam.region;
+    const countries = superteam.country;
 
     const isLocalMemberVisible =
       user?.stLead === region || user?.stLead === 'MAHADEV';
@@ -43,7 +44,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug('Fetching user details');
     const users = await prisma.user.findMany({
-      where: { location: region },
+      where: { location: { in: countries } },
       select: {
         id: true,
         firstName: true,

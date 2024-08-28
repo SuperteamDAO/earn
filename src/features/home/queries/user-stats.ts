@@ -15,4 +15,5 @@ const fetchUserStats = async (): Promise<UserStats> => {
 export const userStatsQuery = queryOptions({
   queryKey: ['userStats'],
   queryFn: fetchUserStats,
+  retry: false,
 });

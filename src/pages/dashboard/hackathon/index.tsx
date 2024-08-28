@@ -549,20 +549,22 @@ export default function Hackathon() {
                           )}
                         {currentBounty.status === 'OPEN' &&
                           !currentBounty.isPublished && (
-                            <Button
-                              color={'brand.slate.500'}
-                              fontSize={'13px'}
-                              fontWeight={500}
-                              _hover={{ bg: 'brand.slate.200' }}
-                              leftIcon={<EditIcon />}
-                              onClick={() => {
-                                window.location.href = `/dashboard/hackathon/${currentBounty.slug}/edit/`;
-                              }}
-                              size="sm"
-                              variant="ghost"
+                            <Link
+                              as={NextLink}
+                              href={`/dashboard/hackathon/${currentBounty.slug}/edit/`}
                             >
-                              Edit
-                            </Button>
+                              <Button
+                                color={'brand.slate.500'}
+                                fontSize={'13px'}
+                                fontWeight={500}
+                                _hover={{ bg: 'brand.slate.200' }}
+                                leftIcon={<EditIcon />}
+                                size="sm"
+                                variant="ghost"
+                              >
+                                Edit
+                              </Button>
+                            </Link>
                           )}
                       </Td>
                       <Td px={0} py={2}>

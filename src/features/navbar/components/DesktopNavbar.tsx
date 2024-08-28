@@ -13,22 +13,28 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
-import { UserMenu } from '@/components/shared/UserMenu';
-
 import { LISTING_NAV_ITEMS } from '../constants';
-import { LogoContextMenu } from './LogoContextMenu';
 import { NavLink } from './NavLink';
 
 interface Props {
   onLoginOpen: () => void;
   onSearchOpen: () => void;
 }
+
+const UserMenu = dynamic(() =>
+  import('@/components/shared/UserMenu').then((mod) => mod.UserMenu),
+);
+
+const LogoContextMenu = dynamic(() =>
+  import('./LogoContextMenu').then((mod) => mod.LogoContextMenu),
+);
 
 export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const { data: session, status } = useSession();

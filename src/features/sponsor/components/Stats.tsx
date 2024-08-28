@@ -1,7 +1,7 @@
 import { Box, Divider, Flex, Grid, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 
-import { totalsQuery } from '@/features/home';
+import { userCountQuery } from '@/features/home';
 import GlobalEarn from '@/public/assets/landingsponsor/displays/global-earn.png';
 import EarnIcon from '@/public/assets/landingsponsor/icons/earn.svg';
 
@@ -44,7 +44,7 @@ const initialStats = [
 ];
 
 export function Stats() {
-  const { data: totals } = useQuery(totalsQuery);
+  const { data: totals } = useQuery(userCountQuery);
 
   const stats = initialStats.map((stat) => {
     if (stat.label === 'Verified Earn Users' && totals?.totalUsers) {
