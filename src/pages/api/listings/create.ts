@@ -119,7 +119,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     try {
-      await axios.post(process.env.DISCORD_LISTING_WEBHOOK!, {
+      await axios.post(process.env.DISCORD_LISTINGS_WEBHOOK!, {
         listingId: result?.id,
         status: result.isPublished ? 'Published' : 'Draft Added',
       });

@@ -173,13 +173,13 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     try {
       if (listing.isPublished === true && result.isPublished === false) {
-        await axios.post(process.env.DISCORD_LISTING_WEBHOOK!, {
+        await axios.post(process.env.DISCORD_LISTINGS_WEBHOOK!, {
           listingId: result.id,
           status: 'Unpublished',
         });
       }
       if (listing.isPublished === false && result.isPublished === true) {
-        await axios.post(process.env.DISCORD_LISTING_WEBHOOK!, {
+        await axios.post(process.env.DISCORD_LISTINGS_WEBHOOK!, {
           listingId: result.id,
           status: 'Published',
         });
