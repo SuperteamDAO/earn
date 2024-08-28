@@ -46,7 +46,13 @@ interface LinkItemProps {
   posthog?: string;
 }
 
-export function SponsorLayout({ children }: { children: ReactNode }) {
+export function SponsorLayout({
+  children,
+  isCollapsible = false,
+}: {
+  children: ReactNode;
+  isCollapsible?: boolean;
+}) {
   const { user } = useUser();
   const updateUser = useUpdateUser();
   const { data: session, status } = useSession();
@@ -55,19 +61,21 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
   const posthog = usePostHog();
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
   const { query } = router;
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(!isCollapsible ? true : false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = useCallback(() => {
+    if (!isCollapsible) return;
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     timeoutRef.current = setTimeout(() => {
       setIsExpanded(true);
-    }, 1000);
+    }, 250);
   }, []);
 
   const handleMouseLeave = useCallback(() => {
+    if (!isCollapsible) return;
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -241,25 +249,31 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
       <Flex justify="start" display={{ base: 'none', md: 'flex' }} minH="100vh">
         <Box
           className={`sponsor-dashboard-sidebar ${isExpanded ? 'expanded' : ''}`}
-          pos="fixed"
+          pos={isCollapsible ? 'fixed' : 'static'}
           zIndex={10}
           top={8}
           bottom={0}
           left={0}
           overflowX="hidden"
-          w={isExpanded ? '320px' : '80px'}
+          w={isExpanded ? '18rem' : '5rem'}
+          minW={isExpanded ? '18rem' : '5rem'}
+          maxW={isExpanded ? '18rem' : '5rem'}
           pt={10}
           bg="white"
           borderRight={'1px solid'}
           borderRightColor={'blackAlpha.200'}
           whiteSpace="nowrap"
-          transition="width 0.3s ease-in-out"
+          transition="all 0.3s ease-in-out"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
           {session?.user?.role === 'GOD' && (
             <Box px={4} pb={6}>
-              {isHackathonRoute ? <SelectHackathon /> : <SelectSponsor />}
+              {isHackathonRoute ? (
+                <SelectHackathon isExpanded={isExpanded} />
+              ) : (
+                <SelectSponsor isExpanded={isExpanded} />
+              )}
             </Box>
           )}
           <CreateListingModal isOpen={isOpen} onClose={onClose} />
@@ -291,18 +305,13 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
                   }}
                   variant="solid"
                 >
-                  {!(
-                    isCreateListingAllowed !== undefined &&
-                    isCreateListingAllowed === false &&
-                    session?.user.role !== 'GOD'
-                  ) &&
-                    !isExpanded && <AddIcon w={3} h={3} />}
+                  <AddIcon w={3} h={3} />
                   <Text
                     className="nav-item-text"
                     pos={isExpanded ? 'static' : 'absolute'}
                     ml={isExpanded ? 0 : '-9999px'}
                     opacity={isExpanded ? 1 : 0}
-                    transition="opacity 0.2s ease-in-out"
+                    transition="all 0.2s ease-in-out"
                   >
                     Create New Listing
                   </Text>
@@ -354,7 +363,7 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
           <Box
             flex={1}
             w="full"
-            ml="80px"
+            ml={isCollapsible ? '80px' : '0px'}
             px={6}
             py={10}
             bg="white"

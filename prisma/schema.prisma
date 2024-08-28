@@ -210,6 +210,7 @@ model Submission {
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
   ogImage            String?          @db.Text
+  notes              String?          @db.VarChar(500)
 
   @@index([id, listingId])
   @@index([userId])

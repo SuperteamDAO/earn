@@ -1,14 +1,20 @@
 import { SearchIcon } from '@chakra-ui/icons';
 import {
   Box,
+  Button,
   Flex,
   Input,
   InputGroup,
   InputLeftElement,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Tag,
   TagLabel,
   Text,
 } from '@chakra-ui/react';
+import { type SubmissionLabels } from '@prisma/client';
 import debounce from 'lodash.debounce';
 import React, {
   type Dispatch,
@@ -16,11 +22,13 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
+import { MdArrowDropDown } from 'react-icons/md';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { getRankLabels } from '@/utils/rank';
 
+import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils';
 
 interface Props {
@@ -31,6 +39,8 @@ interface Props {
     SetStateAction<SubmissionWithUser | undefined>
   >;
   type?: string;
+  filterLabel: SubmissionLabels | undefined;
+  setFilterLabel: Dispatch<SetStateAction<SubmissionLabels | undefined>>;
 }
 
 export const SubmissionList = ({
@@ -39,6 +49,8 @@ export const SubmissionList = ({
   selectedSubmission,
   setSelectedSubmission,
   type,
+  filterLabel,
+  setFilterLabel,
 }: Props) => {
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -48,10 +60,17 @@ export const SubmissionList = ({
     };
   }, [debouncedSetSearchText]);
 
+  let bg, color;
+
+  if (filterLabel) {
+    ({ bg, color } = colorMap[filterLabel]);
+  }
+
   return (
     <>
       <Box
-        w="70%"
+        w="100%"
+        h="full"
         bg="white"
         borderWidth={'1px'}
         borderColor={'brand.slate.200'}
@@ -60,6 +79,7 @@ export const SubmissionList = ({
         <Flex
           align={'center'}
           justify={'space-between'}
+          direction={'column'}
           gap={4}
           px={4}
           py={3}
@@ -85,6 +105,91 @@ export const SubmissionList = ({
               <SearchIcon color="brand.slate.400" />
             </InputLeftElement>
           </InputGroup>
+          <Flex align="center" justify={'space-between'} w="full">
+            <Text color="brand.slate.500" fontSize="xs">
+              Filter By
+            </Text>
+            <Menu>
+              <MenuButton
+                as={Button}
+                h="auto"
+                px={2}
+                py={1}
+                color="brand.slate.500"
+                fontWeight={500}
+                textTransform="capitalize"
+                bg="transparent"
+                borderWidth={'1px'}
+                borderColor="brand.slate.300"
+                _hover={{ backgroundColor: 'transparent' }}
+                _active={{
+                  backgroundColor: 'transparent',
+                  borderWidth: '1px',
+                }}
+                _expanded={{ borderColor: 'brand.purple' }}
+                rightIcon={<MdArrowDropDown />}
+              >
+                <Tag minH="none" px={3} py={1} bg={bg} rounded="full">
+                  <TagLabel
+                    w="full"
+                    color={color}
+                    fontSize={'8px'}
+                    textAlign={'center'}
+                    textTransform={'capitalize'}
+                    whiteSpace={'nowrap'}
+                  >
+                    {filterLabel || 'Select Option'}
+                  </TagLabel>
+                </Tag>
+              </MenuButton>
+              <MenuList minW="130px" borderColor="brand.slate.300">
+                <MenuItem
+                  _focus={{ bg: 'brand.slate.100' }}
+                  onClick={() => setFilterLabel(undefined)}
+                >
+                  <Tag minH="none" px={3} py={1} rounded="full">
+                    <TagLabel
+                      w="full"
+                      fontSize={'10px'}
+                      textAlign={'center'}
+                      textTransform={'capitalize'}
+                      whiteSpace={'nowrap'}
+                    >
+                      Select Option
+                    </TagLabel>
+                  </Tag>
+                </MenuItem>
+                {labelMenuOptions.map((option) => (
+                  <MenuItem
+                    key={option.value}
+                    _focus={{ bg: 'brand.slate.100' }}
+                    onClick={() =>
+                      setFilterLabel(option.value as SubmissionLabels)
+                    }
+                  >
+                    <Tag
+                      minH="none"
+                      px={3}
+                      py={1}
+                      bg={option.bg}
+                      rounded="full"
+                    >
+                      <TagLabel
+                        w="full"
+                        color={option.color}
+                        fontSize={'10px'}
+                        textAlign={'center'}
+                        textTransform={'capitalize'}
+                        whiteSpace={'nowrap'}
+                      >
+                        {option.label}
+                      </TagLabel>
+                    </Tag>
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+          </Flex>
         </Flex>
         {submissions.map((submission) => {
           const { bg, color } = submission?.isWinner
@@ -144,18 +249,17 @@ export const SubmissionList = ({
                   </Text>
                 </Box>
               </Flex>
-              <Tag px={3} py={1} bg={bg} rounded="full">
+              <Tag minH="none" px={3} py={1} bg={bg} rounded="full">
                 <TagLabel
                   w="full"
                   color={color}
-                  fontSize={'11px'}
+                  fontSize={'8px'}
                   textAlign={'center'}
                   textTransform={'capitalize'}
                   whiteSpace={'nowrap'}
                 >
                   {submission?.isWinner && submission?.winnerPosition ? (
                     <>
-                      🏆{' '}
                       {type === 'project'
                         ? 'Winner'
                         : getRankLabels(submission.winnerPosition)}

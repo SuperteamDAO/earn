@@ -45,6 +45,7 @@ import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { BONUS_REWARD_POSITION, tokenList } from '@/constants';
 import type { Listing, Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { isLink } from '@/utils/isLink';
 import { getRankLabels } from '@/utils/rank';
@@ -53,6 +54,7 @@ import { truncateString } from '@/utils/truncateString';
 
 import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils';
+import { Notes } from './Notes';
 
 interface Props {
   bounty: Listing | null;
@@ -68,6 +70,11 @@ interface Props {
   setUsedPositions: Dispatch<SetStateAction<number[]>>;
   setTotalPaymentsMade: Dispatch<SetStateAction<number>>;
   isHackathonPage?: boolean;
+  onWinnersAnnounceOpen: () => void;
+  remainings: { podiums: number; bonus: number } | null;
+  setRemainings: Dispatch<
+    SetStateAction<{ podiums: number; bonus: number } | null>
+  >;
 }
 
 export const SubmissionDetails = ({
@@ -82,6 +89,9 @@ export const SubmissionDetails = ({
   setUsedPositions,
   setTotalPaymentsMade,
   isHackathonPage,
+  onWinnersAnnounceOpen,
+  remainings,
+  setRemainings,
 }: Props) => {
   const [isSelectingWinner, setIsSelectingWinner] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
@@ -91,6 +101,11 @@ export const SubmissionDetails = ({
 
   const isProject = bounty?.type === 'project';
   const isHackathon = bounty?.type === 'hackathon';
+
+  const afterAnnounceDate =
+    bounty?.type === 'hackathon'
+      ? dayjs().isAfter(bounty?.Hackathon?.announceDate)
+      : true;
 
   const DynamicWalletMultiButton = dynamic(
     async () =>
@@ -117,6 +132,8 @@ export const SubmissionDetails = ({
       if (submissionIndex >= 0) {
         const oldPosition: number =
           Number(submissions[submissionIndex]?.winnerPosition) || 0;
+        console.log('old position - ', oldPosition);
+        console.log('new position - ', position);
 
         let newUsedPositions = [...usedPositions];
         if (oldPosition && oldPosition !== position) {
@@ -152,6 +169,33 @@ export const SubmissionDetails = ({
         setSubmissions(newSubmissions);
         setSelectedSubmission(updatedSubmission);
         setTotalWinners(newUsedPositions.length);
+        if (remainings) {
+          setRemainings((prevRemainings) => {
+            if (!prevRemainings) return prevRemainings;
+
+            const newRemainings = { ...prevRemainings };
+            const isNewPositionValid = !isNaN(position) && position !== 0;
+            const isOldPositionValid = !isNaN(oldPosition) && oldPosition !== 0;
+
+            if (isNewPositionValid) {
+              if (position === BONUS_REWARD_POSITION) {
+                newRemainings.bonus--;
+              } else {
+                newRemainings.podiums--;
+              }
+            }
+
+            if (isOldPositionValid) {
+              if (oldPosition === BONUS_REWARD_POSITION) {
+                newRemainings.bonus++;
+              } else {
+                newRemainings.podiums++;
+              }
+            }
+
+            return newRemainings;
+          });
+        }
       }
       setIsSelectingWinner(false);
     } catch (e) {
@@ -320,15 +364,7 @@ export const SubmissionDetails = ({
 
   return (
     <>
-      <Box
-        w="150%"
-        bg="white"
-        borderColor="brand.slate.200"
-        borderTopWidth="1px"
-        borderRightWidth={'1px'}
-        borderBottomWidth="1px"
-        roundedRight={'xl'}
-      >
+      <Box w="100%">
         {submissions.length ? (
           <>
             <Box
@@ -342,7 +378,7 @@ export const SubmissionDetails = ({
                 justify={'space-between'}
                 w="full"
                 px={4}
-                py={3}
+                pt={3}
               >
                 <Flex align="center" gap={2} w="full">
                   <EarnAvatar
@@ -495,70 +531,71 @@ export const SubmissionDetails = ({
                   {isSelectingWinner && (
                     <Spinner color="brand.slate.400" size="sm" />
                   )}
-                  {!bounty?.isWinnersAnnounced && (
-                    <Menu>
-                      <MenuButton
-                        as={Button}
-                        color="brand.slate.500"
-                        fontWeight={500}
-                        textTransform="capitalize"
-                        bg="transparent"
-                        borderWidth={'1px'}
-                        borderColor="brand.slate.300"
-                        _hover={{ backgroundColor: 'transparent' }}
-                        _active={{
-                          backgroundColor: 'transparent',
-                          borderWidth: '1px',
-                        }}
-                        _expanded={{ borderColor: 'brand.purple' }}
-                        pointerEvents={
-                          selectedSubmission?.isWinner ? 'none' : 'all'
-                        }
-                        isDisabled={selectedSubmission?.isWinner}
-                        rightIcon={<MdArrowDropDown />}
-                      >
-                        <Tag px={3} py={1} bg={bg} rounded="full">
-                          <TagLabel
-                            w="full"
-                            color={color}
-                            fontSize={'13px'}
-                            textAlign={'center'}
-                            textTransform={'capitalize'}
-                            whiteSpace={'nowrap'}
-                          >
-                            {selectedSubmission?.label || 'Select Option'}
-                          </TagLabel>
-                        </Tag>
-                      </MenuButton>
-                      <MenuList borderColor="brand.slate.300">
-                        {labelMenuOptions.map((option) => (
-                          <MenuItem
-                            key={option.value}
-                            _focus={{ bg: 'brand.slate.100' }}
-                            onClick={() =>
-                              selectLabel(
-                                option.value as SubmissionLabels,
-                                selectedSubmission?.id,
-                              )
-                            }
-                          >
-                            <Tag px={3} py={1} bg={option.bg} rounded="full">
-                              <TagLabel
-                                w="full"
-                                color={option.color}
-                                fontSize={'11px'}
-                                textAlign={'center'}
-                                textTransform={'capitalize'}
-                                whiteSpace={'nowrap'}
-                              >
-                                {option.label}
-                              </TagLabel>
-                            </Tag>
-                          </MenuItem>
-                        ))}
-                      </MenuList>
-                    </Menu>
-                  )}
+                  {!bounty?.isWinnersAnnounced &&
+                    !selectedSubmission?.isWinner && (
+                      <Menu>
+                        <MenuButton
+                          as={Button}
+                          color="brand.slate.500"
+                          fontWeight={500}
+                          textTransform="capitalize"
+                          bg="transparent"
+                          borderWidth={'1px'}
+                          borderColor="brand.slate.300"
+                          _hover={{ backgroundColor: 'transparent' }}
+                          _active={{
+                            backgroundColor: 'transparent',
+                            borderWidth: '1px',
+                          }}
+                          _expanded={{ borderColor: 'brand.purple' }}
+                          pointerEvents={
+                            selectedSubmission?.isWinner ? 'none' : 'all'
+                          }
+                          isDisabled={selectedSubmission?.isWinner}
+                          rightIcon={<MdArrowDropDown />}
+                        >
+                          <Tag px={3} py={1} bg={bg} rounded="full">
+                            <TagLabel
+                              w="full"
+                              color={color}
+                              fontSize={'13px'}
+                              textAlign={'center'}
+                              textTransform={'capitalize'}
+                              whiteSpace={'nowrap'}
+                            >
+                              {selectedSubmission?.label || 'Select Option'}
+                            </TagLabel>
+                          </Tag>
+                        </MenuButton>
+                        <MenuList borderColor="brand.slate.300">
+                          {labelMenuOptions.map((option) => (
+                            <MenuItem
+                              key={option.value}
+                              _focus={{ bg: 'brand.slate.100' }}
+                              onClick={() =>
+                                selectLabel(
+                                  option.value as SubmissionLabels,
+                                  selectedSubmission?.id,
+                                )
+                              }
+                            >
+                              <Tag px={3} py={1} bg={option.bg} rounded="full">
+                                <TagLabel
+                                  w="full"
+                                  color={option.color}
+                                  fontSize={'11px'}
+                                  textAlign={'center'}
+                                  textTransform={'capitalize'}
+                                  whiteSpace={'nowrap'}
+                                >
+                                  {option.label}
+                                </TagLabel>
+                              </Tag>
+                            </MenuItem>
+                          ))}
+                        </MenuList>
+                      </Menu>
+                    )}
                   {!bounty?.isWinnersAnnounced && (
                     <Tooltip
                       bg={'brand.purple'}
@@ -619,8 +656,68 @@ export const SubmissionDetails = ({
                       </Select>
                     </Tooltip>
                   )}
+                  {!bounty?.isWinnersAnnounced && (
+                    <Tooltip
+                      bg={'brand.purple'}
+                      hasArrow={true}
+                      isDisabled={!bounty?.isWinnersAnnounced}
+                      label="You cannot change the winners once the results are published!"
+                      placement="top"
+                    >
+                      <Button
+                        ml={4}
+                        _disabled={{
+                          bg: '#A1A1A1',
+                          cursor: 'not-allowed',
+                          _hover: {
+                            bg: '#A1A1A1',
+                          },
+                        }}
+                        isDisabled={
+                          !afterAnnounceDate ||
+                          isHackathonPage ||
+                          remainings?.podiums !== 0 ||
+                          remainings?.bonus !== 0
+                        }
+                        onClick={onWinnersAnnounceOpen}
+                        variant={'solid'}
+                      >
+                        Announce Winners
+                      </Button>
+                    </Tooltip>
+                  )}
                 </Flex>
               </Flex>
+              {!!remainings && (
+                <Flex
+                  w="fit-content"
+                  ml="auto"
+                  px={4}
+                  py={1}
+                  fontSize={'xs'}
+                  fontStyle="italic"
+                >
+                  {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
+                    <Text color="#F55151">
+                      {remainings.podiums > 0 && (
+                        <>
+                          {remainings.podiums}{' '}
+                          {remainings.podiums === 1 ? 'Winner' : 'Winners'}{' '}
+                        </>
+                      )}
+                      {remainings.bonus > 0 && (
+                        <>
+                          {remainings.bonus}{' '}
+                          {remainings.bonus === 1 ? 'Bonus' : 'Bonus'}{' '}
+                        </>
+                      )}
+                      Remaining
+                    </Text>
+                  ) : (
+                    <Text color="#48CB6D">All winners selected</Text>
+                  )}
+                </Flex>
+              )}
 
               <Flex align="center" gap={5} px={5} py={2}>
                 {selectedSubmission?.user?.email && (
@@ -691,10 +788,10 @@ export const SubmissionDetails = ({
               </Flex>
             </Box>
 
-            <Box
+            <Flex
               overflowY={'scroll'}
+              w="full"
               h={'32.6rem'}
-              p={4}
               css={{
                 '&::-webkit-scrollbar': {
                   width: '4px',
@@ -708,8 +805,61 @@ export const SubmissionDetails = ({
                 },
               }}
             >
-              {!isProject && (
-                <>
+              <Flex
+                direction={'column'}
+                flex="1"
+                w="full"
+                p={4}
+                borderColor="brand.slate.200"
+                borderRightWidth="1px"
+              >
+                {!isProject && (
+                  <>
+                    <Box mb={4}>
+                      <Text
+                        mb={1}
+                        color="brand.slate.400"
+                        fontSize="xs"
+                        fontWeight={600}
+                        textTransform={'uppercase'}
+                      >
+                        Main Submission
+                      </Text>
+                      <Link
+                        as={NextLink}
+                        color="brand.purple"
+                        href={getURLSanitized(selectedSubmission?.link || '#')}
+                        isExternal
+                      >
+                        {selectedSubmission?.link
+                          ? getURLSanitized(selectedSubmission?.link)
+                          : '-'}
+                      </Link>
+                    </Box>
+                    <Box mb={4}>
+                      <Text
+                        mb={1}
+                        color="brand.slate.400"
+                        fontSize="xs"
+                        fontWeight={600}
+                        textTransform={'uppercase'}
+                      >
+                        Tweet Link
+                      </Text>
+                      <Link
+                        as={NextLink}
+                        color="brand.purple"
+                        href={selectedSubmission?.tweet || '#'}
+                        isExternal
+                      >
+                        {selectedSubmission?.tweet
+                          ? selectedSubmission?.tweet
+                          : '-'}
+                      </Link>
+                    </Box>
+                  </>
+                )}
+                {bounty?.compensationType !== 'fixed' && (
                   <Box mb={4}>
                     <Text
                       mb={1}
@@ -718,43 +868,47 @@ export const SubmissionDetails = ({
                       fontWeight={600}
                       textTransform={'uppercase'}
                     >
-                      Main Submission
+                      Ask
                     </Text>
-                    <Link
-                      as={NextLink}
-                      color="brand.purple"
-                      href={getURLSanitized(selectedSubmission?.link || '#')}
-                      isExternal
-                    >
-                      {selectedSubmission?.link
-                        ? getURLSanitized(selectedSubmission?.link)
-                        : '-'}
-                    </Link>
-                  </Box>
-                  <Box mb={4}>
-                    <Text
-                      mb={1}
-                      color="brand.slate.400"
-                      fontSize="xs"
-                      fontWeight={600}
-                      textTransform={'uppercase'}
-                    >
-                      Tweet Link
+                    <Text color="brand.slate.700">
+                      {selectedSubmission?.ask?.toLocaleString()}{' '}
+                      {bounty?.token}
                     </Text>
-                    <Link
-                      as={NextLink}
-                      color="brand.purple"
-                      href={selectedSubmission?.tweet || '#'}
-                      isExternal
-                    >
-                      {selectedSubmission?.tweet
-                        ? selectedSubmission?.tweet
-                        : '-'}
-                    </Link>
                   </Box>
-                </>
-              )}
-              {bounty?.compensationType !== 'fixed' && (
+                )}
+
+                {(isProject || isHackathon) &&
+                  selectedSubmission?.eligibilityAnswers?.map(
+                    (answer: any, answerIndex: number) => (
+                      <Box key={answerIndex} mb={4}>
+                        <Text
+                          mb={1}
+                          color="brand.slate.400"
+                          fontSize="xs"
+                          fontWeight={600}
+                          textTransform={'uppercase'}
+                        >
+                          {answer.question}
+                        </Text>
+                        {isLink(answer.answer) ? (
+                          <Link
+                            as={NextLink}
+                            color="brand.purple"
+                            href={getURLSanitized(answer.answer || '#')}
+                            isExternal
+                          >
+                            {answer.answer
+                              ? getURLSanitized(answer.answer)
+                              : '-'}
+                          </Link>
+                        ) : (
+                          <Text color="brand.slate.700">
+                            {answer.answer || '-'}
+                          </Text>
+                        )}
+                      </Box>
+                    ),
+                  )}
                 <Box mb={4}>
                   <Text
                     mb={1}
@@ -763,59 +917,22 @@ export const SubmissionDetails = ({
                     fontWeight={600}
                     textTransform={'uppercase'}
                   >
-                    Ask
+                    Anything Else
                   </Text>
                   <Text color="brand.slate.700">
-                    {selectedSubmission?.ask?.toLocaleString()} {bounty?.token}
+                    {selectedSubmission?.otherInfo || '-'}
                   </Text>
                 </Box>
-              )}
-
-              {(isProject || isHackathon) &&
-                selectedSubmission?.eligibilityAnswers?.map(
-                  (answer: any, answerIndex: number) => (
-                    <Box key={answerIndex} mb={4}>
-                      <Text
-                        mb={1}
-                        color="brand.slate.400"
-                        fontSize="xs"
-                        fontWeight={600}
-                        textTransform={'uppercase'}
-                      >
-                        {answer.question}
-                      </Text>
-                      {isLink(answer.answer) ? (
-                        <Link
-                          as={NextLink}
-                          color="brand.purple"
-                          href={getURLSanitized(answer.answer || '#')}
-                          isExternal
-                        >
-                          {answer.answer ? getURLSanitized(answer.answer) : '-'}
-                        </Link>
-                      ) : (
-                        <Text color="brand.slate.700">
-                          {answer.answer || '-'}
-                        </Text>
-                      )}
-                    </Box>
-                  ),
+              </Flex>
+              <Flex w="25%" p={4}>
+                {selectedSubmission && (
+                  <Notes
+                    submissionId={selectedSubmission.id}
+                    initialNotes={selectedSubmission.notes}
+                  />
                 )}
-              <Box mb={4}>
-                <Text
-                  mb={1}
-                  color="brand.slate.400"
-                  fontSize="xs"
-                  fontWeight={600}
-                  textTransform={'uppercase'}
-                >
-                  Anything Else
-                </Text>
-                <Text color="brand.slate.700">
-                  {selectedSubmission?.otherInfo || '-'}
-                </Text>
-              </Box>
-            </Box>
+              </Flex>
+            </Flex>
           </>
         ) : (
           <Box p={3}>

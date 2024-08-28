@@ -13,9 +13,11 @@ import {
   Button,
   Divider,
   Flex,
+  Icon,
   Image,
   Input,
   InputGroup,
+  InputLeftElement,
   InputRightElement,
   Link,
   Tag,
@@ -24,35 +26,44 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
-import router from 'next/router';
+import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
+import { FaXTwitter } from 'react-icons/fa6';
+import { LuPencil } from 'react-icons/lu';
+import { MdInsertLink } from 'react-icons/md';
 
 import { tokenList } from '@/constants';
+import { useListingFormStore } from '@/features/listing-builder';
 import {
   formatDeadline,
   getColorStyles,
   getListingStatus,
+  isDeadlineOver,
   type Listing,
 } from '@/features/listings';
-import { dayjs } from '@/utils/dayjs';
+import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
 
 import { SponsorPrize } from '../SponsorPrize';
 
 interface Props {
   bounty: Listing | null;
-  onOpen: () => void;
   totalSubmissions: number;
   isHackathonPage?: boolean;
 }
 
 export const SubmissionHeader = ({
   bounty,
-  onOpen,
   totalSubmissions,
-  isHackathonPage,
+  isHackathonPage = false,
 }: Props) => {
+  console.log('isHackathonPage', isHackathonPage);
   const [isExporting, setIsExporting] = useState(false);
+
+  const { data: session } = useSession();
+  const { resetForm } = useListingFormStore();
+  const router = useRouter();
 
   const deadline = formatDeadline(
     bounty?.deadline,
@@ -61,10 +72,23 @@ export const SubmissionHeader = ({
   );
 
   const listingPath = `listings/${bounty?.type}/${bounty?.slug}`;
-
   const { hasCopied, onCopy } = useClipboard(`${getURL()}${listingPath}`);
 
   const bountyStatus = getListingStatus(bounty);
+
+  const listingLink =
+    bounty?.type === 'grant'
+      ? `${getURL()}grants/${bounty.slug}`
+      : `${getURL()}listings/${bounty?.type}/${bounty?.slug}`;
+
+  const socialListingLink = (medium?: 'twitter' | 'telegram') =>
+    `${listingLink}${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`;
+
+  const tweetShareContent = `Check out my newly added @SuperteamEarn opportunity!
+
+${socialListingLink('twitter')}
+`;
+  const twitterShareLink = tweetEmbedLink(tweetShareContent);
 
   const exportSubmissionsCsv = async () => {
     setIsExporting(true);
@@ -98,10 +122,7 @@ export const SubmissionHeader = ({
     }
   })();
 
-  const afterAnnounceDate =
-    bounty?.type === 'hackathon'
-      ? dayjs().isAfter(bounty?.Hackathon?.announceDate)
-      : true;
+  const pastDeadline = isDeadlineOver(bounty?.deadline);
 
   return (
     <>
@@ -161,18 +182,29 @@ export const SubmissionHeader = ({
           >
             View Listing
           </Button>
-          {!bounty?.isWinnersAnnounced && (
-            <Button
-              ml={4}
-              color="#6366F1"
-              bg="#E0E7FF"
-              isDisabled={!afterAnnounceDate || isHackathonPage}
-              leftIcon={<CheckIcon />}
-              onClick={onOpen}
-              variant={'solid'}
+          {!!(
+            (session?.user?.role === 'GOD' && bounty?.type !== 'grant') ||
+            (bounty?.isPublished && !pastDeadline && bounty.type !== 'grant')
+          ) && (
+            <Link
+              as={NextLink}
+              _hover={{ textDecoration: 'none' }}
+              href={
+                bounty
+                  ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
+                  : ''
+              }
+              onClick={resetForm}
             >
-              Announce Winners
-            </Button>
+              <Button
+                color={'brand.slate.400'}
+                _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
+                leftIcon={<LuPencil />}
+                variant={'ghost'}
+              >
+                Edit
+              </Button>
+            </Link>
           )}
         </Flex>
       </Flex>
@@ -239,34 +271,58 @@ export const SubmissionHeader = ({
             </Text>
           </Flex>
         </Box>
-        <Box>
+        <Box ml="auto">
           <Text color="brand.slate.500">Share</Text>
-          <InputGroup mt={1} mb={-2}>
-            <Input
-              overflow="hidden"
-              w={80}
-              color="brand.slate.500"
-              borderColor="brand.slate.100"
-              whiteSpace="nowrap"
-              textOverflow="ellipsis"
-              focusBorderColor="#CFD2D7"
-              isReadOnly
-              value={`${getURL()}${listingPath}`}
-            />
-            <InputRightElement h="100%" mr="1rem">
-              {hasCopied ? (
-                <CheckIcon h="1rem" w="1rem" color="brand.slate.400" />
-              ) : (
-                <CopyIcon
-                  onClick={onCopy}
-                  cursor="pointer"
-                  h="1.3rem"
-                  w="1.3rem"
-                  color="brand.slate.400"
-                />
-              )}
-            </InputRightElement>
-          </InputGroup>
+          <Flex align="center" gap={4} mt={2}>
+            <InputGroup bg="#F8FAFC" borderColor={'brand.slate.100'}>
+              <InputLeftElement>
+                <Icon as={MdInsertLink} color="brand.slate.400" />
+              </InputLeftElement>
+              <Input
+                overflow="hidden"
+                w={80}
+                color="brand.slate.500"
+                borderColor="brand.slate.100"
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
+                focusBorderColor="#CFD2D7"
+                isReadOnly
+                value={`${getURL()}${listingPath}`}
+              />
+              <InputRightElement h="100%">
+                {hasCopied ? (
+                  <CheckIcon h="1rem" w="1rem" color="brand.slate.400" />
+                ) : (
+                  <CopyIcon
+                    onClick={onCopy}
+                    cursor="pointer"
+                    h="1.3rem"
+                    w="1.3rem"
+                    color="brand.slate.400"
+                  />
+                )}
+              </InputRightElement>
+            </InputGroup>
+            <Link
+              as={NextLink}
+              alignItems="center"
+              gap={1}
+              display="flex"
+              w="fit-content"
+              h="fit-content"
+              p={1.5}
+              color="white"
+              bg="brand.slate.500"
+              _hover={{
+                bg: 'brand.slate.400',
+              }}
+              href={twitterShareLink}
+              rounded="full"
+              target="_blank"
+            >
+              <FaXTwitter style={{ width: '0.9rem', height: '0.8rem' }} />
+            </Link>
+          </Flex>
         </Box>
       </Flex>
     </>

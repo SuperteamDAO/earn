@@ -95,6 +95,7 @@ export function SelectSponsor({
             id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
             borderRadius="4"
+            size={'24px'}
           />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
             <Flex>
@@ -160,6 +161,7 @@ export function SelectSponsor({
             borderColor: '#6366F1',
           },
           minHeight: '46px',
+          flexWrap: 'nowrap',
         }),
         dropdownIndicator: (base) => ({
           ...base,
