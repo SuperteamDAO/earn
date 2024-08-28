@@ -1003,7 +1003,7 @@ export const ListingPayments = ({
                 (token === 'USDT' || token === 'USDC') &&
                 "Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability."}
             </Text>
-            {type === 'bounty' && (
+            {type !== 'project' && (
               <HStack w="full">
                 <Button
                   w="full"
