@@ -152,6 +152,7 @@ model Grants {
   avgResponseTime  String?            @default("24h")
   isNative         Boolean            @default(false)
   references       Json?
+  isPrivate        Boolean            @default(false)
 
   @@index([id, slug])
   @@index([pocId])

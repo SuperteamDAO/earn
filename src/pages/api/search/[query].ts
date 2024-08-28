@@ -221,7 +221,7 @@ s.name LIKE CONCAT('%', ?, '%')
     ) as approvedApplications
     FROM Grants b
     JOIN Sponsors s ON b.sponsorId = s.id
-    WHERE b.isPublished = 1 AND b.isActive = 1 AND b.isArchived = 0
+    WHERE b.isPublished = 1 AND b.isActive = 1 AND b.isArchived = 0 AND b.isPrivate = 0
     AND (${combinedWhereClause})
     ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}

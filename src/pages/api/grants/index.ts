@@ -78,6 +78,7 @@ export default async function grants(
         isPublished: true,
         isActive: true,
         isArchived: false,
+        isPrivate: false,
         ...skillsFilter,
         ...(userRegion ? { region: { in: userRegion } } : {}),
       },

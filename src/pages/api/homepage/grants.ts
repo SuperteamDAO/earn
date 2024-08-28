@@ -15,6 +15,7 @@ async function getGrants({ userRegion }: GrantProps) {
       isPublished: true,
       isActive: true,
       isArchived: false,
+      isPrivate: false,
       ...(userRegion ? { region: { in: userRegion } } : {}),
     },
     take: TAKE,
