@@ -1,16 +1,11 @@
-import { Box, Container, Flex, HStack, Show } from '@chakra-ui/react';
+import { Box, Container, Flex, HStack } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
 import { type Superteams } from '@/constants/Superteam';
-import {
-  HomeBanner,
-  HomeSideBar,
-  NavTabs,
-  UserStatsBanner,
-} from '@/features/home';
+import { HomeBanner, NavTabs, UserStatsBanner } from '@/features/home';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
@@ -29,6 +24,10 @@ const RegionBanner = dynamic(() =>
 
 const CategoryBanner = dynamic(() =>
   import('@/features/home').then((mod) => mod.CategoryBanner),
+);
+
+const HomeSideBar = dynamic(() =>
+  import('@/features/home').then((mod) => mod.HomeSideBar),
 );
 
 export function Home({ children, type, st, isAuth }: HomeProps) {
@@ -103,18 +102,17 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                 {children}
               </Box>
             </Flex>
-            <Show above="md">
-              {type !== 'niche' && (
-                <Flex
-                  display={{
-                    base: 'none',
-                    lg: 'flex',
-                  }}
-                >
-                  <HomeSideBar type={type} />
-                </Flex>
-              )}
-            </Show>
+
+            {type !== 'niche' && (
+              <Flex
+                display={{
+                  base: 'none',
+                  lg: 'flex',
+                }}
+              >
+                <HomeSideBar type={type} />
+              </Flex>
+            )}
           </HStack>
         </Container>
       </Box>

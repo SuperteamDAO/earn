@@ -128,8 +128,7 @@ export const SubmissionActionButton = ({
   }
   if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
     buttonText = 'Submissions in Review';
-    buttonBG = 'orange.700';
-    buttonTextColor = 'orange.200';
+    buttonBG = 'gray.500';
   } else if (isWinnersAnnounced) {
     buttonText = 'Winners Announced';
     buttonBG = 'gray.500';

@@ -220,7 +220,7 @@ export function GrantPageLayout({
                                 fontSize={{ base: 'lg', md: 'xl' }}
                                 fontWeight={500}
                               >
-                                ${grant?.totalApproved || 0}
+                                ${Math.round(grant?.totalApproved || 0)}
                               </Text>
                             </Flex>
                             <Text
