@@ -30,7 +30,6 @@ import {
 } from '@/features/listing-builder';
 import {
   CreateListingModal,
-  latestActiveSlugQuery,
   NavItem,
   SponsorInfoModal,
 } from '@/features/sponsor-dashboard';
@@ -100,15 +99,7 @@ export function SponsorLayout({
     onClose: onSponsorInfoModalClose,
   } = useDisclosure();
 
-  const {
-    isOpen: isScoutAnnounceModalOpen,
-    onOpen: onScoutAnnounceModalOpen,
-    onClose: onScoutAnnounceModalClose,
-  } = useDisclosure();
-
-  const { data: latestActiveSlug } = useQuery(
-    latestActiveSlugQuery(!!user?.currentSponsorId),
-  );
+  const { onOpen: onScoutAnnounceModalOpen } = useDisclosure();
 
   function sponsorInfoCloseAltered() {
     onSponsorInfoModalClose();
@@ -225,10 +216,10 @@ export function SponsorLayout({
       }
     >
       <FeatureModal
-        latestActiveBountySlug={latestActiveSlug}
-        onClose={onScoutAnnounceModalClose}
-        isOpen={isScoutAnnounceModalOpen}
+        isSponsorsRoute
+        forceOpen={user?.featureModalShown === false}
       />
+
       <SponsorInfoModal
         onClose={sponsorInfoCloseAltered}
         isOpen={isSponsorInfoModalOpen}

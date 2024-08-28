@@ -14,8 +14,8 @@ export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent w={'22rem'} h={'max'} pt={2}>
-        <Box py={4}>
+      <ModalContent w={'23rem'} h={'max'} pt={2}>
+        <Box py={6}>
           {loginStep === 1 && (
             <ArrowBackIcon
               ml={5}

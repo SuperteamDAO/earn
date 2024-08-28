@@ -87,6 +87,7 @@ export const SubmissionActionButton = ({
 
   let buttonText;
   let buttonBG;
+  let buttonTextColor;
   let isBtnDisabled;
   let btnLoadingText;
 
@@ -127,7 +128,8 @@ export const SubmissionActionButton = ({
   }
   if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
     buttonText = 'Submissions in Review';
-    buttonBG = 'gray.500';
+    buttonBG = 'orange.700';
+    buttonTextColor = 'orange.200';
   } else if (isWinnersAnnounced) {
     buttonText = 'Winners Announced';
     buttonBG = 'gray.500';
@@ -235,6 +237,7 @@ export const SubmissionActionButton = ({
               gap={4}
               w={'full'}
               mb={{ base: 12, md: 5 }}
+              textColor={buttonTextColor}
               bg={buttonBG}
               _hover={{ bg: buttonBG }}
               _disabled={{

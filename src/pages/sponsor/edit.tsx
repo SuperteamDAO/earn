@@ -345,10 +345,7 @@ const UpdateSponsor = () => {
                       setImageUrl(a);
                       setIsImageUploading(false);
                     }}
-                    defaultValue={{
-                      url: imageUrl,
-                      type: 'image',
-                    }}
+                    defaultValue={{ url: imageUrl }}
                     onReset={() => {
                       setImageUrl('');
                     }}

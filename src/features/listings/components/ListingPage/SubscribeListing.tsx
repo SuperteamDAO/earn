@@ -62,9 +62,9 @@ export const SubscribeListing = ({ id }: Props) => {
     });
 
   const avatars = [
-    { name: 'Abhishkek', src: '/assets/pfps/t1.png' },
-    { name: 'Pratik', src: '/assets/pfps/md2.png' },
-    { name: 'Yash', src: '/assets/pfps/fff1.png' },
+    { name: 'Abhishkek', src: '/assets/pfps/t1.webp' },
+    { name: 'Pratik', src: '/assets/pfps/md2.webp' },
+    { name: 'Yash', src: '/assets/pfps/fff1.webp' },
   ];
 
   const handleToggleSubscribe = () => {

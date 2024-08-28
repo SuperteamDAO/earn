@@ -8,7 +8,6 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    const userCount = await prisma.user.count();
     const bountiesCount = await prisma.bounties.count({
       where: {
         isPublished: true,
@@ -36,13 +35,6 @@ export default async function handler(
         },
       });
 
-    let errorCount = 0;
-
-    if (process.env.NODE_ENV === 'production') {
-      errorCount = 289;
-    }
-
-    const roundedUserCount = Math.ceil((userCount - errorCount) / 10) * 10;
     const totalListingRewardAmount = totalRewardAmountResult._sum.usdValue || 0;
     const totalApprovedGrantAmount =
       totalApprovedGrantAmountResult._sum.approvedAmountInUSD || 0;
@@ -54,13 +46,11 @@ export default async function handler(
     logger.info('Successfully fetched counts and totals', {
       totalInUSD: roundedTotalRewardAmount,
       count: bountiesCount,
-      totalUsers: roundedUserCount,
     });
 
     return res.status(200).json({
       totalInUSD: roundedTotalRewardAmount,
       count: bountiesCount,
-      totalUsers: roundedUserCount,
     });
   } catch (error: any) {
     logger.error('Error occurred while fetching totals and counts', {

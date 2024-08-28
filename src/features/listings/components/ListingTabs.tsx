@@ -1,10 +1,10 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
-import { EmptySection } from '@/components/shared/EmptySection';
 import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '../types';
@@ -35,6 +35,12 @@ interface ContentProps {
   emptyTitle: string;
   emptyMessage: string;
 }
+
+const EmptySection = dynamic(
+  () =>
+    import('@/components/shared/EmptySection').then((mod) => mod.EmptySection),
+  { ssr: false },
+);
 
 const generateTabContent = ({
   bounties,

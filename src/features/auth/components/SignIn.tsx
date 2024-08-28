@@ -124,19 +124,19 @@ export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
         </Box>
         <Box
           flexDir={'column'}
-          py={'6px'}
+          py={'7px'}
           bg={'brand.slate.100'}
           borderBottomRadius="6px"
         >
-          <Text color="brand.slate.500" fontSize="xs" textAlign="center">
-            Trouble Logging in?{' '}
+          <Text color="brand.slate.400" fontSize="11px" textAlign="center">
+            Need help? Reach out to us at{' '}
             <Text as="u">
               <Link
                 as={NextLink}
                 href={'mailto:support@superteamearn.com'}
                 isExternal
               >
-                Click here
+                support@superteamearn.com
               </Link>
             </Text>
           </Text>

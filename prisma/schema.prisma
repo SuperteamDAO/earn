@@ -72,6 +72,10 @@ model Bounties {
   @@index([deadline, updatedAt])
   @@index([isWinnersAnnounced])
   @@index([title])
+  @@index([deadline(sort: Asc)], map: "Bounties_deadline_asc_idx")
+  @@index([deadline(sort: Desc)], map: "Bounties_deadline_desc_idx")
+  @@index([winnersAnnouncedAt(sort: Desc)])
+  @@index([isFeatured(sort: Desc)])
 }
 
 model BountiesTemplates {
@@ -122,10 +126,10 @@ model Grants {
   description      String?            @db.Text
   shortDescription String?            @db.VarChar(1000)
   token            String?
-  minReward        Int?
-  maxReward        Int?
-  totalPaid        Int                @default(0)
-  totalApproved    Int                @default(0)
+  minReward        Float?
+  maxReward        Float?
+  totalPaid        Float              @default(0)
+  totalApproved    Float              @default(0)
   link             String?
   sponsorId        String
   pocId            String
@@ -173,11 +177,11 @@ model GrantApplication {
   user                User                   @relation(fields: [userId], references: [id])
   grant               Grants                 @relation(fields: [grantId], references: [id])
   label               SubmissionLabels       @default(Unreviewed)
-  ask                 Int                    @default(0)
+  ask                 Float                  @default(0)
   approvedAmount      Float                  @default(0)
   approvedAmountInUSD Float                  @default(0)
   decidedAt           DateTime?
-  totalPaid           Int                    @default(0)
+  totalPaid           Float                  @default(0)
   isShipped           Boolean                @default(false)
   paymentDetails      Json?
   totalTranches       Int                    @default(0)

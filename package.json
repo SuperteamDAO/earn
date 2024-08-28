@@ -45,7 +45,6 @@
     "cloudinary": "^2.4.0",
     "datauri": "^4.1.0",
     "dayjs": "^1.11.12",
-    "degen": "^0.0.161",
     "eslint-plugin-prettier": "^5.2.1",
     "flag-icons": "^7.2.3",
     "framer-motion": "^11.2.10",

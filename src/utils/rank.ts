@@ -62,6 +62,7 @@ export const getRankLabels = (rank: number) => {
 
 export const cleanRewards = (rewards?: Rewards, skipBonus = false) =>
   Object.keys(rewards || [])
+    .filter((key) => key !== null && key !== undefined)
     .map(Number)
     .filter((key) => !isNaN(key))
     .filter((key) => (skipBonus ? key !== BONUS_REWARD_POSITION : true));
@@ -72,6 +73,7 @@ export const cleanRewardPrizes = (rewards?: Rewards, skipBonus = false) => {
     delete nRewards[99];
   }
   return Object.values(nRewards || [])
+    .filter((key) => key !== null && key !== undefined)
     .map(Number)
     .filter((key) => !isNaN(key));
 };

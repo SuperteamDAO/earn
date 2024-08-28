@@ -1,20 +1,21 @@
-import { Regions } from '@prisma/client';
+import { type Regions } from '@prisma/client';
+import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
 
 const TAKE = 20;
 
 interface GrantProps {
-  userRegion?: Regions | null;
+  userRegion?: Regions[] | null;
 }
 
-export async function getGrants({ userRegion }: GrantProps) {
+async function getGrants({ userRegion }: GrantProps) {
   return await prisma.grants.findMany({
     where: {
       isPublished: true,
       isActive: true,
       isArchived: false,
-      ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
+      ...(userRegion ? { region: { in: userRegion } } : {}),
     },
     take: TAKE,
     orderBy: {
@@ -47,4 +48,16 @@ export async function getGrants({ userRegion }: GrantProps) {
       },
     },
   });
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  const params = req.query;
+  const userRegion = params.userRegion as Regions[];
+
+  const grants = await getGrants({ userRegion });
+
+  res.status(200).json(grants);
 }

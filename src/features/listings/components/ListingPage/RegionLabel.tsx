@@ -19,12 +19,18 @@ import { CombinedRegions } from '@/constants/Superteam';
 
 import { getRegionTooltipLabel } from '../../utils';
 
-export const RegionLabel = ({ region }: { region: string | undefined }) => {
+export const RegionLabel = ({
+  region,
+  isGrant = false,
+}: {
+  region: string | undefined;
+  isGrant?: boolean;
+}) => {
   const regionObject = CombinedRegions.find((st) => st.region === region);
   const displayValue = regionObject?.displayValue;
   const code = regionObject?.code;
 
-  const regionTooltipLabel = getRegionTooltipLabel(region);
+  const regionTooltipLabel = getRegionTooltipLabel(region, isGrant);
   return (
     <>
       <Tooltip
