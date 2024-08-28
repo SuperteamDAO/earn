@@ -14,7 +14,7 @@ import axios from 'axios';
 import { type GetServerSideProps } from 'next';
 import NextImage from 'next/image';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdCheck } from 'react-icons/md';
 
 import { SponsorButton } from '@/components/ProfileSetup/SponsorButton';
@@ -59,13 +59,17 @@ export default function NewProfilePage({
   const { setCurrentSponsor } = SponsorStore();
   const [isSponsorLoading, setIsSponsorLoading] = useState(false);
 
+  const ONBOARDING_KEY = 'onboarding_chosed';
+
   const checkTalent = async () => {
+    localStorage.setItem(ONBOARDING_KEY, 'talent');
     if (!user) return;
     try {
+      localStorage.removeItem(ONBOARDING_KEY);
       if (!user?.isTalentFilled) {
         router.push('/new/talent');
       } else {
-        router.push('/');
+        router.push(`/t/${user.username}`);
       }
     } catch (error) {
       setIsTalentLoading(false);
@@ -73,8 +77,10 @@ export default function NewProfilePage({
   };
 
   const checkSponsor = async () => {
+    localStorage.setItem(ONBOARDING_KEY, 'sponsor');
     if (!user) return;
     try {
+      localStorage.removeItem(ONBOARDING_KEY);
       const sponsors = await axios.get('/api/user-sponsors');
       if (sponsors?.data?.length) {
         setCurrentSponsor(sponsors?.data[0]?.sponsor);
@@ -86,6 +92,22 @@ export default function NewProfilePage({
       setIsSponsorLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (router.query['loginState'] === 'signedIn') {
+      const onboardingStep = localStorage.getItem(ONBOARDING_KEY);
+      if (onboardingStep) {
+        if (onboardingStep === 'talent') {
+          setIsTalentLoading(true);
+          checkTalent();
+        } else if (onboardingStep === 'sponsor') {
+          setIsSponsorLoading(true);
+          checkSponsor();
+        }
+      }
+    }
+  }, [router, user]);
+
   return (
     <Default
       meta={
