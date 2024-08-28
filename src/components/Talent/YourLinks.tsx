@@ -5,138 +5,21 @@ import {
   Center,
   Flex,
   FormControl,
-  Image,
-  Input,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useState } from 'react';
-import {
-  type FieldValues,
-  useForm,
-  type UseFormRegister,
-} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';
 
 import { AddProject } from '../Form/AddProject';
+import { SocialInput } from '../Form/Socials';
 import type { UserStoreType } from './types';
-
-export const socials = [
-  {
-    label: 'Discord',
-    placeHolder: 'TonyStark#7589',
-    icon: '/assets/talent/discord.png',
-  },
-  {
-    label: 'Twitter',
-    placeHolder: 'https://twitter.com/TonyStark',
-    icon: '/assets/talent/twitter.png',
-  },
-  {
-    label: 'GitHub',
-    placeHolder: 'https://github.com/tonystark',
-    icon: '/assets/talent/github.png',
-  },
-  {
-    label: 'LinkedIn',
-    placeHolder: 'https://linkedin.com/in/tony-stark',
-    icon: '/assets/talent/linkedin.png',
-  },
-  {
-    label: 'Telegram',
-    placeHolder: 'https://t.me/tonystark',
-    icon: '/assets/talent/telegram.png',
-  },
-  {
-    label: 'Website',
-    placeHolder: 'https://starkindustries.com',
-    icon: '/assets/talent/site.png',
-  },
-];
-
-type TypeSocialInput = {
-  label: string;
-  placeHolder: string;
-  icon: string;
-  register: UseFormRegister<FieldValues>;
-};
-
-const SocialInput = ({
-  label,
-  placeHolder,
-  icon,
-  register,
-}: TypeSocialInput) => {
-  return (
-    <Flex align="center" justify="center" direction="row" mb={'1.25rem'}>
-      <Box
-        w="30%"
-        h="2.6875rem"
-        pl={{
-          sm: '5px',
-          md: '20px',
-        }}
-        border="1px solid"
-        borderColor={'brand.slate.300'}
-        borderRight="none"
-        borderLeftRadius={'md'}
-      >
-        <Flex
-          align="center"
-          justify={{ base: 'center', md: 'start' }}
-          w={'100%'}
-          h={'100%'}
-        >
-          <Box w={'1rem'}>
-            <Image
-              w={'100%'}
-              h={'100%'}
-              objectFit="contain"
-              alt={label}
-              src={icon}
-            />
-          </Box>
-          <Text
-            h="4.3rem"
-            pl="10px"
-            fontSize={{ base: '0.7rem', md: '0.875rem' }}
-            fontWeight={500}
-            lineHeight="4.3rem"
-            textAlign="left"
-          >
-            {label}
-            {label === 'Discord' && (
-              <Text as="sup" ml={1} color="red">
-                *
-              </Text>
-            )}
-          </Text>
-        </Flex>
-      </Box>
-      <Input
-        w="70%"
-        h="2.6875rem"
-        color={'gray.800'}
-        fontSize="0.875rem"
-        fontWeight={500}
-        borderColor={'brand.slate.300'}
-        borderLeftRadius="0"
-        _placeholder={{
-          color: 'brand.slate.300',
-        }}
-        focusBorderColor="brand.purple"
-        placeholder={placeHolder}
-        title={label}
-        {...register(label)}
-        maxLength={180}
-      />
-    </Flex>
-  );
-};
 
 interface Props {
   setStep?: Dispatch<SetStateAction<number>>;
@@ -149,7 +32,6 @@ export function YourLinks({ success, useFormStore }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
   const [pow, setPow] = useState<PoW[]>([]);
-  const [socialsError, setsocialsError] = useState<number>(0);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
@@ -168,23 +50,6 @@ export function YourLinks({ success, useFormStore }: Props) {
     },
     pow: PoW[],
   ) => {
-    if (socials.discord.length === 0) {
-      setsocialsError(2);
-      return;
-    }
-    // atleast one URL
-    if (
-      socials.twitter.length === 0 &&
-      socials.github.length === 0 &&
-      socials.linkedin.length === 0 &&
-      socials.telegram.length === 0 &&
-      socials.website.length === 0
-    ) {
-      setsocialsError(1);
-      return;
-    }
-    setsocialsError(0);
-
     updateState({ ...socials });
     setisLoading(true);
     try {
@@ -211,6 +76,22 @@ export function YourLinks({ success, useFormStore }: Props) {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data: any) => {
+    const socialFields = [
+      'twitter',
+      'github',
+      'linkedin',
+      'website',
+      'telegram',
+    ];
+    const filledSocials = socialFields.filter((field) => data[field]);
+
+    if (filledSocials.length === 0) {
+      toast.error(
+        'At least one additional social link (apart from Discord) is required',
+      );
+      return;
+    }
+
     posthog.capture('finish profile_talent');
     uploadProfile(
       {
@@ -229,11 +110,7 @@ export function YourLinks({ success, useFormStore }: Props) {
       <Box w={'full'}>
         <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
           <FormControl w="full" mb={5}>
-            {socials.map((sc, idx: number) => {
-              return (
-                <SocialInput register={register} {...sc} key={`sc${idx}`} />
-              );
-            })}
+            <SocialInput register={register} />
             <Text color={'brand.slate.500'} fontWeight={'500'}>
               Other Proof of Work
             </Text>
@@ -290,17 +167,7 @@ export function YourLinks({ success, useFormStore }: Props) {
             >
               Add Project
             </Button>
-            {socialsError === 1 && (
-              <Text align="center" mb={'0.5rem'} color={'red'}>
-                Please fill at least one social (apart from Discord) to
-                continue!
-              </Text>
-            )}
-            {socialsError === 2 && (
-              <Text align="center" mb={'0.5rem'} color={'red'}>
-                Please fill the discord field!
-              </Text>
-            )}
+
             <Button
               className="ph-no-capture"
               w={'full'}
