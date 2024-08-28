@@ -492,7 +492,7 @@ export const SubmissionDetails = ({
                           bg={'brand.purple'}
                           hasArrow={true}
                           isDisabled={!!bounty?.isWinnersAnnounced}
-                          label="You have to publish the results before you can pay out rewards!"
+                          label="Please announce the winners before you paying out the winners"
                           placement="top"
                         >
                           <Button

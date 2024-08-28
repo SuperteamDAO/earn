@@ -39,8 +39,10 @@ interface Props {
     SetStateAction<SubmissionWithUser | undefined>
   >;
   type?: string;
-  filterLabel: SubmissionLabels | undefined;
-  setFilterLabel: Dispatch<SetStateAction<SubmissionLabels | undefined>>;
+  filterLabel: SubmissionLabels | 'Winner' | undefined;
+  setFilterLabel: Dispatch<
+    SetStateAction<SubmissionLabels | 'Winner' | undefined>
+  >;
 }
 
 export const SubmissionList = ({
@@ -105,7 +107,12 @@ export const SubmissionList = ({
               <SearchIcon color="brand.slate.400" />
             </InputLeftElement>
           </InputGroup>
-          <Flex align="center" justify={'space-between'} w="full">
+          <Flex
+            align="center"
+            justify={'space-between'}
+            w="full"
+            cursor="default"
+          >
             <Text color="brand.slate.500" fontSize="xs">
               Filter By
             </Text>
@@ -133,7 +140,7 @@ export const SubmissionList = ({
                   <TagLabel
                     w="full"
                     color={color}
-                    fontSize={'8px'}
+                    fontSize={'10px'}
                     textAlign={'center'}
                     textTransform={'capitalize'}
                     whiteSpace={'nowrap'}
@@ -156,6 +163,29 @@ export const SubmissionList = ({
                       whiteSpace={'nowrap'}
                     >
                       Select Option
+                    </TagLabel>
+                  </Tag>
+                </MenuItem>
+                <MenuItem
+                  _focus={{ bg: 'brand.slate.100' }}
+                  onClick={() => setFilterLabel('Winner')}
+                >
+                  <Tag
+                    minH="none"
+                    px={3}
+                    py={1}
+                    bg={colorMap['Winner'].bg}
+                    rounded="full"
+                  >
+                    <TagLabel
+                      w="full"
+                      color={colorMap['Winner'].color}
+                      fontSize={'10px'}
+                      textAlign={'center'}
+                      textTransform={'capitalize'}
+                      whiteSpace={'nowrap'}
+                    >
+                      Winner
                     </TagLabel>
                   </Tag>
                 </MenuItem>
@@ -253,7 +283,7 @@ export const SubmissionList = ({
                 <TagLabel
                   w="full"
                   color={color}
-                  fontSize={'8px'}
+                  fontSize={'10px'}
                   textAlign={'center'}
                   textTransform={'capitalize'}
                   whiteSpace={'nowrap'}

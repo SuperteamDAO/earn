@@ -52,9 +52,9 @@ function BountySubmissions({ listing }: Props) {
     podiums: number;
     bonus: number;
   } | null>(null);
-  const [filterLabel, setFilterLabel] = useState<SubmissionLabels | undefined>(
-    undefined,
-  );
+  const [filterLabel, setFilterLabel] = useState<
+    SubmissionLabels | 'Winner' | undefined
+  >(undefined);
 
   useEffect(() => {}, [bounty]);
 

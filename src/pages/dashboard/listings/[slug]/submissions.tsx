@@ -74,9 +74,9 @@ function BountySubmissions({ slug }: Props) {
     podiums: number;
     bonus: number;
   } | null>(null);
-  const [filterLabel, setFilterLabel] = useState<SubmissionLabels | undefined>(
-    undefined,
-  );
+  const [filterLabel, setFilterLabel] = useState<
+    SubmissionLabels | 'Winner' | undefined
+  >(undefined);
 
   const searchParams = useSearchParams();
   const posthog = usePostHog();
