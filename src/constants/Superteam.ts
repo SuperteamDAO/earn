@@ -162,6 +162,16 @@ export const Superteams = [
     code: 'CA',
     hello: 'Hello',
   },
+  {
+    name: 'Superteam Singapore',
+    icons: '/assets/superteams/singapore.png',
+    banner: '/assets/superteam-banners/Singapore.png',
+    region: Regions.SINGAPORE,
+    displayValue: 'Singapore',
+    country: ['Singapore'],
+    code: 'SG',
+    hello: 'Hello',
+  },
 ];
 
 const NonSTRegions = [
