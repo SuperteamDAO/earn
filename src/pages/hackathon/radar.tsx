@@ -19,8 +19,8 @@ const MotionButton = motion(Button);
 export default function Radar() {
   const slug = 'radar';
 
-  const startDate = '2024-09-02 00:00:00.000';
-  const deadline = '2024-10-08 00:00:00.000';
+  const startDate = '2024-09-02 11:30:00.000';
+  const deadline = '2024-10-09 04:59:59.000';
 
   const now = new Date();
   const startTime = new Date(startDate);
