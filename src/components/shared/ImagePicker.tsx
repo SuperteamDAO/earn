@@ -2,6 +2,7 @@ import { CloseIcon } from '@chakra-ui/icons';
 import {
   Box,
   Flex,
+  Hide,
   Icon,
   IconButton,
   Image,
@@ -138,15 +139,16 @@ export const ImagePicker = ({
         </Flex>
       </Flex>
 
-      <Input
-        ref={fileInputRef}
-        accept="image/jpeg, image/png, image/webp"
-        hidden
-        onChange={(e) =>
-          handleFileChange(e.target.files ? e.target.files[0] : null)
-        }
-        type="file"
-      />
+      <Hide>
+        <Input
+          ref={fileInputRef}
+          accept="image/jpeg, image/png, image/webp"
+          onChange={(e) =>
+            handleFileChange(e.target.files ? e.target.files[0] : null)
+          }
+          type="file"
+        />
+      </Hide>
       <Box
         pos="absolute"
         top={0}
