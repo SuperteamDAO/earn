@@ -381,6 +381,14 @@ export const tokenList: Token[] = [
     decimals: 9,
     coingeckoSymbol: 'meta-2',
   },
+  {
+    tokenName: 'ZETA (ZEX)',
+    tokenSymbol: 'ZEX',
+    mintAddress: 'ZEXy1pqteRu3n13kdyh4LwPQknkFk3GzmMYMuNadWPo',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32002.png',
+    decimals: 6,
+    coingeckoSymbol: 'zeta',
+  },
 ];
 
 export const CountryList: string[] = [
