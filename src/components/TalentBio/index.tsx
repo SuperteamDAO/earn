@@ -3,10 +3,12 @@ import {
   Button,
   type ChakraProps,
   Flex,
+  Icon,
   Image,
   Text,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { FaGithub, FaGlobe, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';
@@ -78,22 +80,22 @@ export function TalentBio({
   };
   const socialLinks = [
     {
-      icon: '/assets/talent/twitter.png',
+      icon: FaXTwitter,
       link: talentUser?.twitter,
     },
 
     {
-      icon: '/assets/talent/linkedin.png',
+      icon: FaLinkedin,
       link: talentUser?.linkedin,
     },
 
     {
-      icon: '/assets/talent/github.png',
+      icon: FaGithub,
       link: talentUser?.github,
     },
 
     {
-      icon: '/assets/talent/site.png',
+      icon: FaGlobe,
       link: talentUser?.website,
     },
   ];
@@ -175,15 +177,13 @@ export function TalentBio({
                 }
               }}
             >
-              <Image
+              <Icon
+                as={ele.icon}
                 w={6}
                 h={6}
                 opacity={!ele.link ? '0.3' : ''}
                 cursor={ele.link! && 'pointer'}
-                objectFit="contain"
-                alt=""
                 filter={!ele.link ? 'grayscale(80%)' : ''}
-                src={ele.icon}
               />
             </Box>
           );

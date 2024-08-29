@@ -3,7 +3,7 @@ import {
   Box,
   Divider,
   Flex,
-  Image,
+  Icon,
   Input,
   InputGroup,
   InputRightElement,
@@ -14,6 +14,8 @@ import {
   useClipboard,
 } from '@chakra-ui/react';
 import React from 'react';
+import { type IconType } from 'react-icons';
+import { FaTelegram, FaWhatsapp, FaXTwitter } from 'react-icons/fa6';
 
 import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
@@ -27,7 +29,7 @@ interface Props {
 
 interface SocialPlatform {
   name: string;
-  icon: string;
+  icon: IconType;
   share: (url: string, message: string) => void;
 }
 
@@ -44,7 +46,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
   const socialPlatforms: SocialPlatform[] = [
     {
       name: 'Twitter',
-      icon: '/assets/icons/socials/Twitter.png',
+      icon: FaXTwitter,
       share: (url, message) => {
         const encodedMessage = encodeURIComponent(message);
         const encodedUrl = encodeURIComponent(url);
@@ -56,7 +58,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
     },
     {
       name: 'Telegram',
-      icon: '/assets/icons/socials/Telegram.png',
+      icon: FaTelegram,
       share: (url, message) => {
         const encodedMessage = encodeURIComponent(message);
         const encodedUrl = encodeURIComponent(url);
@@ -68,7 +70,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
     },
     {
       name: 'WhatsApp',
-      icon: '/assets/icons/socials/WhatsApp.png',
+      icon: FaWhatsapp,
       share: (url, message) => {
         const encodedMessage = encodeURIComponent(`${message} ${url}`);
         window.open(
@@ -128,16 +130,15 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
           >
             SHARE TO
           </Text>
-          <Flex gap={3} mt={3} mb={4}>
+          <Flex gap={4} mt={3} mb={4}>
             {socialPlatforms.map(({ name, icon, share }) => (
-              <Image
+              <Icon
                 key={name}
-                w="42px"
-                h="42px"
+                as={icon}
+                boxSize={6}
+                color={'brand.slate.600'}
                 cursor="pointer"
-                alt={name}
                 onClick={() => share(`${getURL()}t/${username}`, shareMessage)}
-                src={icon}
               />
             ))}
           </Flex>

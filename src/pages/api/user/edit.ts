@@ -8,6 +8,13 @@ import {
 } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import {
+  extractDiscordUsername,
+  extractGitHubUsername,
+  extractLinkedInUsername,
+  extractTelegramUsername,
+  extractTwitterUsername,
+} from '@/utils/extractUsername';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -89,6 +96,22 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { skills, ...data } = req.body;
 
   const updatedData = filterAllowedFields(data, allowedFields);
+
+  if (updatedData.twitter) {
+    updatedData.twitter = extractTwitterUsername(updatedData.twitter);
+  }
+  if (updatedData.github) {
+    updatedData.github = extractGitHubUsername(updatedData.github);
+  }
+  if (updatedData.linkedin) {
+    updatedData.linkedin = extractLinkedInUsername(updatedData.linkedin);
+  }
+  if (updatedData.discord) {
+    updatedData.discord = extractDiscordUsername(updatedData.discord);
+  }
+  if (updatedData.telegram) {
+    updatedData.website = extractTelegramUsername(updatedData.website);
+  }
 
   const correctedSkills = correctSkills(skills);
   logger.info(`Corrected skills: ${safeStringify(correctedSkills)}`);

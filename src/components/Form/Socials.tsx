@@ -12,13 +12,13 @@ import {
 import { toast } from 'sonner';
 
 import {
-  extractDiscordUsername,
-  extractGitHubUsername,
-  extractLinkedInUsername,
-  extractTelegramUsername,
-  extractTwitterUsername,
-  validateUrl,
-} from '@/utils/extractUsername';
+  isValidDiscordInput,
+  isValidGitHubInput,
+  isValidLinkedInInput,
+  isValidTelegramInput,
+  isValidTwitterInput,
+  isValidWebsiteUrl,
+} from '@/utils/validateSocialLinks';
 
 type SocialInputProps = {
   register: UseFormRegister<any>;
@@ -30,41 +30,35 @@ const socials = [
     placeholder: 'johncena#7589',
     icon: FaDiscord,
     required: true,
-    extractFunction: extractDiscordUsername,
   },
   {
     name: 'twitter',
     label: 'x.com/',
     placeholder: 'johncena',
     icon: FaXTwitter,
-    extractFunction: extractTwitterUsername,
   },
   {
     name: 'github',
     label: 'github.com/',
     placeholder: 'johncena',
     icon: FaGithub,
-    extractFunction: extractGitHubUsername,
   },
   {
     name: 'linkedin',
     label: 'linkedin.com/in/',
     placeholder: 'johncena',
     icon: FaLinkedin,
-    extractFunction: extractLinkedInUsername,
   },
   {
     name: 'telegram',
     label: 't.me/',
     placeholder: 'tonystark',
     icon: FaTelegram,
-    extractFunction: extractTelegramUsername,
   },
   {
     name: 'website',
     placeholder: 'https://starkindustries.com',
     icon: FaGlobe,
-    extractFunction: validateUrl,
   },
 ];
 
@@ -74,9 +68,49 @@ export const SocialInput = ({ register }: SocialInputProps) => {
       toast.error('Discord is required');
       return false;
     }
+    if (value) {
+      switch (name) {
+        case 'discord':
+          if (!isValidDiscordInput(value)) {
+            toast.error('Invalid Discord username');
+            return false;
+          }
+          break;
+        case 'twitter':
+          if (!isValidTwitterInput(value)) {
+            toast.error('Invalid Twitter username or URL');
+            return false;
+          }
+          break;
+        case 'github':
+          if (!isValidGitHubInput(value)) {
+            toast.error('Invalid GitHub username or URL');
+            return false;
+          }
+          break;
+        case 'linkedin':
+          if (!isValidLinkedInInput(value)) {
+            toast.error('Invalid LinkedIn username or URL');
+            return false;
+          }
+          break;
+        case 'telegram':
+          if (!isValidTelegramInput(value)) {
+            toast.error('Invalid Telegram username or URL');
+            return false;
+          }
+          break;
+        case 'website':
+          if (!isValidWebsiteUrl(value)) {
+            toast.error('Invalid website URL');
+            return false;
+          }
+          break;
+      }
+    }
+
     return true;
   };
-
   return (
     <>
       {socials.map(({ name, label, placeholder, icon, required }) => (

@@ -7,13 +7,14 @@ import {
   DrawerContent,
   DrawerOverlay,
   Flex,
-  Image,
+  Icon,
   Link,
   Text,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { type ReactNode } from 'react';
+import { FaGlobe, FaTelegram, FaXTwitter } from 'react-icons/fa6';
 
 import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { skillMap } from '@/constants';
@@ -37,18 +38,18 @@ export const UserDrawer = ({
   const subSkills = user.skills.flatMap((skill: any) => skill.subskills);
   const socialLinks = [
     {
-      icon: '/assets/talent/telegram.png',
+      icon: FaTelegram,
       link: user.telegram
         ? `https://t.me/${extractTelegramUsername(user.telegram)}`
         : '',
     },
     {
-      icon: '/assets/talent/twitter.png',
+      icon: FaXTwitter,
       link: user.twitter
         ? `https://x.com/${extractTwitterUsername(user.twitter)}`
         : '',
     },
-    { icon: '/assets/talent/site.png', link: user?.website },
+    { icon: FaGlobe, link: user?.website },
   ];
 
   const formattedCreatedAt = dayjs(user.createdAt).format('DD MMM YYYY');
@@ -104,14 +105,14 @@ export const UserDrawer = ({
                             }
                           }}
                         >
-                          <Image
+                          <Icon
+                            as={ele.icon}
                             boxSize={4}
+                            color="brand.purple"
                             opacity={!ele.link ? '0.3' : '1'}
                             cursor={ele.link ? 'pointer' : 'default'}
                             objectFit="contain"
-                            alt=""
                             filter={!ele.link ? 'grayscale(100%)' : 'none'}
-                            src={ele.icon}
                           />
                         </Box>
                       ))}

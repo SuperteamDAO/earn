@@ -12,6 +12,13 @@ import {
 } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import {
+  extractDiscordUsername,
+  extractGitHubUsername,
+  extractLinkedInUsername,
+  extractTelegramUsername,
+  extractTwitterUsername,
+} from '@/utils/extractUsername';
 import { safeStringify } from '@/utils/safeStringify';
 
 const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
@@ -122,6 +129,22 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       superteamLevel: 'Lurker',
       isTalentFilled: true,
     };
+
+    if (data.twitter) {
+      data.twitter = extractTwitterUsername(data.twitter);
+    }
+    if (data.github) {
+      data.github = extractGitHubUsername(data.github);
+    }
+    if (data.linkedin) {
+      data.linkedin = extractLinkedInUsername(data.linkedin);
+    }
+    if (data.discord) {
+      data.discord = extractDiscordUsername(data.discord);
+    }
+    if (data.telegram) {
+      data.website = extractTelegramUsername(data.website);
+    }
 
     const categories = new Set([
       'createListing',

@@ -10,6 +10,7 @@ import {
   Collapse,
   Divider,
   Flex,
+  Icon,
   IconButton,
   Image,
   Text,
@@ -22,6 +23,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
+import { FaGithub, FaGlobe, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 
 import { AddProject } from '@/components/Form/AddProject';
 import { ShareIcon } from '@/components/misc/shareIcon';
@@ -85,22 +87,22 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const socialLinks = [
     {
-      icon: '/assets/talent/twitter.png',
+      icon: FaXTwitter,
       link: talent?.twitter,
     },
 
     {
-      icon: '/assets/talent/linkedin.png',
+      icon: FaLinkedin,
       link: talent?.linkedin,
     },
 
     {
-      icon: '/assets/talent/github.png',
+      icon: FaGithub,
       link: talent?.github,
     },
 
     {
-      icon: '/assets/talent/site.png',
+      icon: FaGlobe,
       link: talent?.website,
     },
   ];
@@ -454,15 +456,13 @@ function TalentProfile({ talent, stats }: TalentProps) {
                           }
                         }}
                       >
-                        <Image
-                          w={6}
-                          h={6}
+                        <Icon
+                          as={ele.icon}
+                          boxSize={6}
                           opacity={!ele.link ? '0.3' : ''}
                           cursor={ele.link! && 'pointer'}
                           objectFit="contain"
-                          alt=""
                           filter={!ele.link ? 'grayscale(100%)' : ''}
-                          src={ele.icon}
                         />
                       </Box>
                     );
