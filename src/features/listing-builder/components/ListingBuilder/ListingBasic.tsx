@@ -37,6 +37,7 @@ import { z } from 'zod';
 import { SkillSelect } from '@/components/shared/SkillSelect';
 import { type MultiSelectOptions } from '@/constants';
 import { CombinedRegions, Superteams } from '@/constants/Superteam';
+import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
 import { dayjs } from '@/utils/dayjs';
 
 import { useListingFormStore } from '../../store';
@@ -107,7 +108,21 @@ export const ListingBasic = ({
         .refine(slugUniqueCheck, {
           message: 'Slug already exists. Please try another.',
         }),
-      pocSocials: z.string(),
+      pocSocials: z
+        .string()
+        .min(1, 'Point of Contact is required')
+        .refine(
+          (value) => {
+            return (
+              twitterRegex.test(value) ||
+              telegramRegex.test(value) ||
+              emailRegex.test(value)
+            );
+          },
+          {
+            message: 'Please enter a valid X / Telegram link, or email address',
+          },
+        ),
       region: z.string().optional(),
       applicationType: z.string().optional(),
       deadline: z.string().optional(),
@@ -148,9 +163,10 @@ export const ListingBasic = ({
     setValue,
     getValues,
     reset,
+    trigger,
     formState: { errors },
   } = useForm({
-    mode: 'onChange',
+    mode: 'onTouched',
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: form?.title,
@@ -202,7 +218,6 @@ export const ListingBasic = ({
   };
 
   const [isSlugGenerating, setIsSlugGenerating] = useState(false);
-  const [isUrlValid, setIsUrlValid] = useState(true);
 
   const [shouldSlugGenerate, setShouldSlugGenerate] = useState(false);
 
@@ -241,6 +256,13 @@ export const ListingBasic = ({
       setValue('slug', newSlug);
     }, 300),
     [title],
+  );
+
+  const debouncedPocSocialsValidation = useCallback(
+    debounce(() => {
+      trigger('pocSocials');
+    }, 500),
+    [],
   );
 
   useEffect(() => {
@@ -423,8 +445,6 @@ export const ListingBasic = ({
                       .replace(/\s+/g, '-')
                       .toLowerCase();
                     setValue('slug', newValue);
-
-                    setIsUrlValid(true);
                   },
                 })}
                 placeholder="develop-a-new-landing-page"
@@ -468,12 +488,12 @@ export const ListingBasic = ({
           <FormControl
             w="full"
             mb={5}
-            isInvalid={!!errors.pocSocials || !isUrlValid}
+            isInvalid={!!errors.pocSocials}
             isRequired
           >
             <Flex>
               <ListingFormLabel htmlFor={'pocSocials'}>
-                Point of Contact
+                Point of Contact (TG / X / Email)
               </ListingFormLabel>
               <ListingTooltip label="Please add a social link of the person people reach out to in case they have questions about this listing." />
             </Flex>
@@ -485,14 +505,11 @@ export const ListingBasic = ({
               }}
               focusBorderColor="brand.purple"
               id="pocSocials"
-              {...register('pocSocials')}
-              placeholder="https://twitter.com/elonmusk"
+              {...register('pocSocials', {
+                onChange: () => debouncedPocSocialsValidation(),
+              })}
+              placeholder="https://x.com/elonmusk"
             />
-            {!isUrlValid && (
-              <Text color={'red'}>
-                URL needs to contain &quot;https://&quot; prefix
-              </Text>
-            )}
             <FormErrorMessage>
               {errors.pocSocials ? <>{errors.pocSocials.message}</> : <></>}
             </FormErrorMessage>
