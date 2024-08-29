@@ -88,3 +88,5 @@ export interface References {
 export interface Rewards {
   [rank: number]: number;
 }
+
+export type StatusFilter = 'open' | 'review' | 'completed';
