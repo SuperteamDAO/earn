@@ -183,7 +183,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     await Promise.all(promises);
 
     logger.debug('Sending winner announcement email notifications');
-    await sendEmailNotification({
+    sendEmailNotification({
       type: 'announceWinners',
       id,
       triggeredBy: userId,
@@ -193,7 +193,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       listing?.sponsor?.name.includes('Superteam') &&
       listing.type !== 'project'
     ) {
-      await sendEmailNotification({
+      sendEmailNotification({
         type: 'superteamWinners',
         id,
         triggeredBy: userId,

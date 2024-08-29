@@ -207,7 +207,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       });
       logger.debug(`Sending email notification for deadline extension`);
-      await sendEmailNotification({
+      sendEmailNotification({
         type: 'deadlineExtended',
         id: id as string,
         triggeredBy: req.userId,

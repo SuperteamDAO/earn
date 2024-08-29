@@ -93,7 +93,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
     try {
       logger.debug('Sending email notifications to tagged users');
       taggedUsers.forEach(async (taggedUser) => {
-        await sendEmailNotification({
+        sendEmailNotification({
           type: 'commentTag',
           id: listingId,
           userId: taggedUser.id,
@@ -108,7 +108,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         logger.debug(
           `Sending email notification to user ID: ${replyToUserId} for comment reply`,
         );
-        await sendEmailNotification({
+        sendEmailNotification({
           type: 'commentReply',
           id: listingId,
           userId: replyToUserId as string,
@@ -123,7 +123,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       ) {
         if (listingType === 'BOUNTY' && type === 'NORMAL') {
           logger.info(`Sending email notification to POC ID: ${pocId}`);
-          await sendEmailNotification({
+          sendEmailNotification({
             type: 'commentSponsor',
             id: listingId,
             userId: pocId as string,
@@ -133,7 +133,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
 
         if (listingType === 'SUBMISSION') {
           logger.info(`Sending email notification for submission comment`);
-          await sendEmailNotification({
+          sendEmailNotification({
             type: 'commentSubmission',
             id: listingId,
             otherInfo: {

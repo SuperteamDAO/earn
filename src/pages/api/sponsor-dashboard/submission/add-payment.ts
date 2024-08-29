@@ -59,7 +59,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       logger.info(
         `Sending payment notification email for submission ID: ${id}`,
       );
-      await sendEmailNotification({
+      sendEmailNotification({
         type: 'addPayment',
         id,
         triggeredBy: userId,

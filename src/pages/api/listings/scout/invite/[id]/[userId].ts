@@ -78,7 +78,7 @@ async function scoutInvite(
     logger.debug(
       `Sending scout invite email for listing ID: ${id} and user ID: ${userId}`,
     );
-    await sendEmailNotification({
+    sendEmailNotification({
       type: 'scoutInvite',
       id: id,
       userId,

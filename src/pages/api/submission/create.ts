@@ -46,27 +46,19 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
     });
 
-    try {
-      await sendEmailNotification({
-        type: 'submissionTalent',
-        id: listingId,
-        userId: userId as string,
-        triggeredBy: userId,
-      });
-    } catch (err) {
-      logger.error('Error sending email to User:', err);
-    }
+    sendEmailNotification({
+      type: 'submissionTalent',
+      id: listingId,
+      userId: userId as string,
+      triggeredBy: userId,
+    });
 
-    try {
-      await sendEmailNotification({
-        type: 'submissionSponsor',
-        id: listingId,
-        userId: result?.listing?.pocId,
-        triggeredBy: userId,
-      });
-    } catch (err) {
-      logger.error('Error sending email to Sponsor:', err);
-    }
+    sendEmailNotification({
+      type: 'submissionSponsor',
+      id: listingId,
+      userId: result?.listing?.pocId,
+      triggeredBy: userId,
+    });
 
     return res.status(200).json(result);
   } catch (error: any) {
