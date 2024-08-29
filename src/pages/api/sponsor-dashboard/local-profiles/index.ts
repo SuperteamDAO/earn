@@ -35,10 +35,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const region = superteam.region;
     const countries = superteam.country;
 
-    const isLocalMemberVisible =
+    const isLocalProfileVisible =
       user?.stLead === region || user?.stLead === 'MAHADEV';
 
-    if (!isLocalMemberVisible) {
+    if (!isLocalProfileVisible) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 

@@ -35,7 +35,7 @@ export default function AllBountiesPage() {
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
                 title="No listings available!"
-                message="Subscribe to notifications to get notified about new listings."
+                message="Update your email preferences (from the user menu) to be notified about new work opportunities."
               />
             </Flex>
           )}

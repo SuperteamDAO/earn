@@ -37,10 +37,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const region = superteam.region;
     const countries = superteam.country;
 
-    const isLocalMemberVisible =
+    const isLocalProfileVisible =
       user?.stLead === region || user?.stLead === 'MAHADEV';
 
-    if (!isLocalMemberVisible) {
+    if (!isLocalProfileVisible) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
@@ -139,7 +139,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug('Converting JSON to CSV');
     const csv = Papa.unparse(finalJson);
-    const fileName = `${region}-local-members-${Date.now()}`;
+    const fileName = `${region}-local-profiles-${Date.now()}`;
     const file = str2ab(csv, fileName);
 
     logger.debug('Uploading CSV to Cloudinary');

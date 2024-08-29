@@ -23,7 +23,7 @@ import {
   extractTwitterUsername,
 } from '@/utils/extractUsername';
 
-import { type LocalMember } from '../../queries';
+import { type LocalProfile } from '../../queries';
 
 export const UserDrawer = ({
   isOpen,
@@ -32,7 +32,7 @@ export const UserDrawer = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  user: LocalMember;
+  user: LocalProfile;
 }) => {
   const parentSkills = user.skills.map((skill: any) => skill.skills);
   const subSkills = user.skills.flatMap((skill: any) => skill.subskills);
@@ -90,33 +90,6 @@ export const UserDrawer = ({
                     <Text
                       fontWeight={500}
                     >{`${user?.firstName} ${user?.lastName}`}</Text>
-                    <Flex align="center" gap={2}>
-                      {socialLinks.map((ele, eleIndex) => (
-                        <Box
-                          key={eleIndex}
-                          onClick={() => {
-                            if (ele.link) {
-                              const formattedLink =
-                                ele.link.startsWith('http://') ||
-                                ele.link.startsWith('https://')
-                                  ? ele.link
-                                  : `https://${ele.link}`;
-                              window.open(formattedLink, '_blank');
-                            }
-                          }}
-                        >
-                          <Icon
-                            as={ele.icon}
-                            boxSize={4}
-                            color="brand.purple"
-                            opacity={!ele.link ? '0.3' : '1'}
-                            cursor={ele.link ? 'pointer' : 'default'}
-                            objectFit="contain"
-                            filter={!ele.link ? 'grayscale(100%)' : 'none'}
-                          />
-                        </Box>
-                      ))}
-                    </Flex>
                   </Flex>
                   <Text mt={-0.5} color="brand.slate.500" fontSize={'0.92rem'}>
                     {user?.email}
@@ -211,6 +184,39 @@ export const UserDrawer = ({
                 </Link>
               </Flex>
             </Flex>
+
+            <Box>
+              <Text mb={2} color="brand.slate.400" fontWeight={500}>
+                Socials
+              </Text>
+              <Flex gap={2}>
+                {socialLinks.map((ele, eleIndex) => (
+                  <Box
+                    key={eleIndex}
+                    onClick={() => {
+                      if (ele.link) {
+                        const formattedLink =
+                          ele.link.startsWith('http://') ||
+                          ele.link.startsWith('https://')
+                            ? ele.link
+                            : `https://${ele.link}`;
+                        window.open(formattedLink, '_blank');
+                      }
+                    }}
+                  >
+                    <Icon
+                      as={ele.icon}
+                      boxSize={5}
+                      color="brand.slate.600"
+                      opacity={!ele.link ? '0.3' : '1'}
+                      cursor={ele.link ? 'pointer' : 'default'}
+                      objectFit="contain"
+                      filter={!ele.link ? 'grayscale(100%)' : 'none'}
+                    />
+                  </Box>
+                ))}
+              </Flex>
+            </Box>
 
             <Box>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>

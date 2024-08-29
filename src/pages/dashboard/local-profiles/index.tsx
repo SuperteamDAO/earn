@@ -9,7 +9,7 @@ import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
 import {
   FilterSection,
-  localMembersQuery,
+  localProfilesQuery,
   UserTable,
 } from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
@@ -20,7 +20,7 @@ type SortDirection = 'asc' | 'desc' | null;
 const debounce = require('lodash.debounce');
 const usersPerPage = 15;
 
-export default function LocalMembers() {
+export default function LocalProfiles() {
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [currentSort, setCurrentSort] = useState<{
@@ -30,7 +30,7 @@ export default function LocalMembers() {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
   const { user } = useUser();
-  const { data: allUsers, isLoading } = useQuery(localMembersQuery);
+  const { data: allUsers, isLoading } = useQuery(localProfilesQuery);
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 

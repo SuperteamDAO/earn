@@ -123,7 +123,7 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
   }
 
   const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
-  const isLocalMemberVisible = Superteams.some(
+  const isLocalProfileVisible = Superteams.some(
     (team) =>
       team.name === user?.currentSponsor?.name &&
       (user?.stLead === team.region || user?.stLead === 'MAHADEV'),
@@ -146,11 +146,11 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
           link: '/team-settings',
           icon: RiUserSettingsLine,
         },
-        ...(isLocalMemberVisible
+        ...(isLocalProfileVisible
           ? [
               {
-                name: 'Local Members',
-                link: '/local-members',
+                name: 'Local Profiles',
+                link: '/local-profiles',
                 icon: LuUsers,
               },
             ]

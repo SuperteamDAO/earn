@@ -45,7 +45,7 @@ export const FilterSection = ({
     setIsExporting(true);
     try {
       const exportURL = await axios.get(
-        `/api/sponsor-dashboard/local-members/export/`,
+        `/api/sponsor-dashboard/local-profiles/export/`,
       );
       const url = exportURL?.data?.url || '';
       window.open(url, '_blank');

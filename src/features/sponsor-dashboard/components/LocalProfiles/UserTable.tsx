@@ -29,7 +29,7 @@ import {
   extractTwitterUsername,
 } from '@/utils/extractUsername';
 
-import { type LocalMember } from '../../queries';
+import { type LocalProfile } from '../../queries';
 import { SortableTH, TH } from './TH';
 import { UserDrawer } from './UserDrawer';
 
@@ -39,7 +39,7 @@ interface SortState {
 }
 
 interface MembersTableProps {
-  currentUsers: LocalMember[];
+  currentUsers: LocalProfile[];
   currentSort: SortState;
   setSort: (column: string, direction: 'asc' | 'desc' | null) => void;
 }
@@ -63,7 +63,7 @@ export const UserTable = ({
               column="rank"
               currentSort={currentSort}
               setSort={setSort}
-              px={1}
+              pr={2}
               justify="center"
             >
               # Rank
@@ -116,7 +116,7 @@ export const UserTable = ({
   );
 };
 
-const MemberRow = ({ user }: { user: LocalMember }) => {
+const MemberRow = ({ user }: { user: LocalProfile }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const skills = user.skills.flatMap((skills: any) => skills.skills);
@@ -143,9 +143,9 @@ const MemberRow = ({ user }: { user: LocalMember }) => {
       onClick={onOpen}
       role="group"
     >
-      <Td p={1}>
+      <Td w={'3rem'} p={1}>
         <Text
-          maxW={'3rem'}
+          maxW={'full'}
           color="brand.slate.700"
           fontSize={'0.9rem'}
           textAlign={'center'}
