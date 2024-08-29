@@ -169,11 +169,11 @@ export const Footer: React.FC = () => {
       href: 'https://drive.google.com/file/d/1ybbO_UOTaIiyKb4Mbm3sNMbjTf5qj5mT/view',
     },
     { text: 'Privacy Policy', href: '/privacy-policy.pdf' },
-    { text: 'Get Help', href: 'mailto:support@superteamearn.com' },
     {
       text: 'Changelog',
       href: 'https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827',
     },
+    { text: 'Contact Us', href: 'mailto:support@superteamearn.com' },
   ];
 
   return (
