@@ -19,10 +19,8 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
+import { EarnAvatar, EmailSettingsModal } from '@/features/talent';
 import { useLogout, useUser } from '@/store/user';
-
-import { EmailSettingsModal } from '../modals/EmailSettingsModal';
-import { EarnAvatar } from './EarnAvatar';
 
 export function UserMenu({}) {
   const router = useRouter();

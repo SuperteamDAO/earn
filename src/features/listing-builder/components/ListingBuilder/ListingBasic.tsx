@@ -34,7 +34,7 @@ import { useForm } from 'react-hook-form';
 import slugify from 'slugify';
 import { z } from 'zod';
 
-import { SkillSelect } from '@/components/misc/SkillSelect';
+import { SkillSelect } from '@/components/shared/SkillSelect';
 import { type MultiSelectOptions } from '@/constants';
 import { CombinedRegions, Superteams } from '@/constants/Superteam';
 import { dayjs } from '@/utils/dayjs';

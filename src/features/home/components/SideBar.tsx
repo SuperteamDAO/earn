@@ -5,7 +5,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 
-import { OgImageViewer } from '@/components/misc/ogImageViewer';
+import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { useGetFeed } from '@/features/feed';
 import { recentEarnersQuery } from '@/features/listings';
 import { useUser } from '@/store/user';

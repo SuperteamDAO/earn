@@ -14,12 +14,12 @@ import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { ImagePicker } from '@/components/shared/ImagePicker';
 import { CountryList } from '@/constants';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
-import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
-import { ImagePicker } from '../shared/ImagePicker';
+import { useUsernameValidation } from '../../utils';
 import type { UserStoreType } from './types';
 
 interface Step1Props {

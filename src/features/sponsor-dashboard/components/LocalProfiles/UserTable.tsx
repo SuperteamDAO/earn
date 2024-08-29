@@ -3,7 +3,6 @@ import {
   Badge,
   Box,
   Flex,
-  Icon,
   Link,
   Popover,
   PopoverContent,
@@ -20,14 +19,9 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
-import { FaGlobe, FaTelegram, FaXTwitter } from 'react-icons/fa6';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { skillMap } from '@/constants';
-import {
-  extractTelegramUsername,
-  extractTwitterUsername,
-} from '@/utils/extractUsername';
+import { EarnAvatar, Telegram, Twitter, Website } from '@/features/talent';
 
 import { type LocalProfile } from '../../queries';
 import { SortableTH, TH } from './TH';
@@ -120,22 +114,6 @@ const MemberRow = ({ user }: { user: LocalProfile }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const skills = user.skills.flatMap((skills: any) => skills.skills);
-  const socialLinks = [
-    {
-      icon: FaTelegram,
-      link: user.telegram
-        ? `https://t.me/${extractTelegramUsername(user.telegram)}`
-        : '',
-    },
-    {
-      icon: FaXTwitter,
-      link: user.twitter
-        ? `https://x.com/${extractTwitterUsername(user.twitter)}`
-        : '',
-    },
-    { icon: FaGlobe, link: user?.website },
-  ];
-
   return (
     <Tr
       _hover={{ backgroundColor: 'brand.slate.50' }}
@@ -274,31 +252,9 @@ const MemberRow = ({ user }: { user: LocalProfile }) => {
       </Td>
       <Td>
         <Flex justify="flex-start" gap={4} minW={16}>
-          {socialLinks.map((ele, eleIndex) => (
-            <Box
-              key={eleIndex}
-              flexShrink={0}
-              onClick={(e) => {
-                e.stopPropagation();
-                if (ele.link) {
-                  const formattedLink =
-                    ele.link.startsWith('http://') ||
-                    ele.link.startsWith('https://')
-                      ? ele.link
-                      : `https://${ele.link}`;
-                  window.open(formattedLink, '_blank');
-                }
-              }}
-            >
-              <Icon
-                as={ele.icon}
-                boxSize={'1.2rem'}
-                opacity={!ele.link ? '0.3' : '1'}
-                cursor={ele.link ? 'pointer' : 'default'}
-                filter={!ele.link ? 'grayscale(100%)' : 'none'}
-              />
-            </Box>
-          ))}
+          <Telegram boxSize={'1.2rem'} link={user.telegram} />
+          <Twitter boxSize={'1.2rem'} link={user.twitter} />
+          <Website boxSize={'1.2rem'} link={user.website} />
         </Flex>
       </Td>
       <Td>

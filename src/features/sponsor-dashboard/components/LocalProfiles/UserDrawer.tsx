@@ -7,21 +7,15 @@ import {
   DrawerContent,
   DrawerOverlay,
   Flex,
-  Icon,
   Link,
   Text,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { type ReactNode } from 'react';
-import { FaGlobe, FaTelegram, FaXTwitter } from 'react-icons/fa6';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { skillMap } from '@/constants';
-import {
-  extractTelegramUsername,
-  extractTwitterUsername,
-} from '@/utils/extractUsername';
+import { EarnAvatar, Telegram, Twitter, Website } from '@/features/talent';
 
 import { type LocalProfile } from '../../queries';
 
@@ -37,19 +31,9 @@ export const UserDrawer = ({
   const parentSkills = user.skills.map((skill: any) => skill.skills);
   const subSkills = user.skills.flatMap((skill: any) => skill.subskills);
   const socialLinks = [
-    {
-      icon: FaTelegram,
-      link: user.telegram
-        ? `https://t.me/${extractTelegramUsername(user.telegram)}`
-        : '',
-    },
-    {
-      icon: FaXTwitter,
-      link: user.twitter
-        ? `https://x.com/${extractTwitterUsername(user.twitter)}`
-        : '',
-    },
-    { icon: FaGlobe, link: user?.website },
+    { Component: Telegram, link: user.telegram },
+    { Component: Twitter, link: user.twitter },
+    { Component: Website, link: user?.website },
   ];
 
   const formattedCreatedAt = dayjs(user.createdAt).format('DD MMM YYYY');
@@ -190,28 +174,12 @@ export const UserDrawer = ({
                 Socials
               </Text>
               <Flex gap={2}>
-                {socialLinks.map((ele, eleIndex) => (
-                  <Box
-                    key={eleIndex}
-                    onClick={() => {
-                      if (ele.link) {
-                        const formattedLink =
-                          ele.link.startsWith('http://') ||
-                          ele.link.startsWith('https://')
-                            ? ele.link
-                            : `https://${ele.link}`;
-                        window.open(formattedLink, '_blank');
-                      }
-                    }}
-                  >
-                    <Icon
-                      as={ele.icon}
+                {socialLinks.map(({ Component, link }, index) => (
+                  <Box key={index}>
+                    <Component
+                      link={link}
                       boxSize={5}
                       color="brand.slate.600"
-                      opacity={!ele.link ? '0.3' : '1'}
-                      cursor={ele.link ? 'pointer' : 'default'}
-                      objectFit="contain"
-                      filter={!ele.link ? 'grayscale(100%)' : 'none'}
                     />
                   </Box>
                 ))}

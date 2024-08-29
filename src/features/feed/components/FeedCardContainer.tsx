@@ -15,8 +15,8 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { AuthWrapper } from '@/features/auth';
+import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 

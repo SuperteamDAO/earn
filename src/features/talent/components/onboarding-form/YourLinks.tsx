@@ -17,8 +17,8 @@ import { toast } from 'sonner';
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';
 
-import { AddProject } from '../Form/AddProject';
-import { SocialInput } from '../Form/Socials';
+import { AddProject } from '../AddProject';
+import { SocialInput } from '../SocialInput';
 import type { UserStoreType } from './types';
 
 interface Props {
@@ -73,7 +73,7 @@ export function YourLinks({ success, useFormStore }: Props) {
     }
   };
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, watch } = useForm();
 
   const onSubmit = (data: any) => {
     const socialFields = [
@@ -110,7 +110,7 @@ export function YourLinks({ success, useFormStore }: Props) {
       <Box w={'full'}>
         <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
           <FormControl w="full" mb={5}>
-            <SocialInput register={register} />
+            <SocialInput watch={watch} register={register} />
             <Text color={'brand.slate.500'} fontWeight={'500'}>
               Other Proof of Work
             </Text>

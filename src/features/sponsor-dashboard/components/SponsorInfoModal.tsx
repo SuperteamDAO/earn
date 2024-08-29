@@ -16,9 +16,9 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
+import { useUsernameValidation } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
-import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
 export const SponsorInfoModal = ({
   isOpen,

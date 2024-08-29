@@ -1,7 +1,7 @@
 import { Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
 
-import { Steps } from '@/components/misc/steps';
+import { Steps } from '@/components/shared/steps';
 
 interface StepsList {
   label: string;

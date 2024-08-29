@@ -15,6 +15,7 @@ import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
+import { PDTG } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import {
   isCreateListingAllowedQuery,
@@ -134,7 +135,7 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
         { name: 'All Tracks', link: `/hackathon`, icon: MdList },
         {
           name: 'Get Help',
-          link: 'https://t.me/pratikdholani',
+          link: PDTG,
           icon: MdOutlineChatBubbleOutline,
           posthog: 'get help_sponsor',
         },
@@ -157,7 +158,7 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
           : []),
         {
           name: 'Get Help',
-          link: 'https://t.me/pratikdholani',
+          link: PDTG,
           icon: LuMessageSquare,
           posthog: 'get help_sponsor',
         },

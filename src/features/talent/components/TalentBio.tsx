@@ -3,18 +3,17 @@ import {
   Button,
   type ChakraProps,
   Flex,
-  Icon,
   Image,
   Text,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { FaGithub, FaGlobe, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
-import { EarnAvatar } from '../shared/EarnAvatar';
+import { EarnAvatar } from './EarnAvatar';
+import { GitHub, Linkedin, Twitter, Website } from './Socials';
 
 type ChipType = {
   icon: string;
@@ -79,25 +78,10 @@ export function TalentBio({
     router.push(`/t/${talentUser?.username}/edit`);
   };
   const socialLinks = [
-    {
-      icon: FaXTwitter,
-      link: talentUser?.twitter,
-    },
-
-    {
-      icon: FaLinkedin,
-      link: talentUser?.linkedin,
-    },
-
-    {
-      icon: FaGithub,
-      link: talentUser?.github,
-    },
-
-    {
-      icon: FaGlobe,
-      link: talentUser?.website,
-    },
+    { Component: Twitter, link: talentUser?.twitter },
+    { Component: Linkedin, link: talentUser?.linkedin },
+    { Component: GitHub, link: talentUser?.github },
+    { Component: Website, link: talentUser?.website },
   ];
 
   const createMailtoLink = () => {
@@ -167,26 +151,8 @@ export function TalentBio({
         )}
       </Flex>
       <Flex justify={'space-between'} mx={'10px'} mt={'20px'}>
-        {socialLinks.map((ele, eleIndex) => {
-          return (
-            <Box
-              key={eleIndex}
-              onClick={() => {
-                if (ele.link) {
-                  window.location.href = ele.link;
-                }
-              }}
-            >
-              <Icon
-                as={ele.icon}
-                w={6}
-                h={6}
-                opacity={!ele.link ? '0.3' : ''}
-                cursor={ele.link! && 'pointer'}
-                filter={!ele.link ? 'grayscale(80%)' : ''}
-              />
-            </Box>
-          );
+        {socialLinks.map(({ Component, link }, i) => {
+          return <Component link={link} boxSize={6} key={i} />;
         })}
       </Flex>
       <Text mt={4} color={'gray.400'} fontSize={'sm'} fontWeight={'400'}>

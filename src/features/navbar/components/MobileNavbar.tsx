@@ -36,7 +36,7 @@ interface Props {
 }
 
 const UserMenu = dynamic(() =>
-  import('@/components/shared/UserMenu').then((mod) => mod.UserMenu),
+  import('./UserMenu').then((mod) => mod.UserMenu),
 );
 
 export const MobileNavbar = ({ onLoginOpen }: Props) => {

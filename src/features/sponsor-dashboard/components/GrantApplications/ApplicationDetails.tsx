@@ -21,17 +21,11 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
-import { FaDiscord } from 'react-icons/fa';
-import { FaTelegram, FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
-import {
-  extractTelegramUsername,
-  extractTwitterUsername,
-} from '@/utils/extractUsername';
+import { Discord, EarnAvatar, Telegram, Twitter } from '@/features/talent';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
@@ -213,47 +207,42 @@ export const ApplicationDetails = ({
 
   const SocialMediaLink = () => {
     if (selectedApplication?.user?.telegram) {
-      const username = extractTelegramUsername(
-        selectedApplication.user.telegram,
+      return (
+        <Flex align="center" justify="start" gap={2} fontSize="sm">
+          <Telegram
+            link={selectedApplication?.user?.telegram}
+            color="#94A3B8"
+          />
+          <Link
+            color="brand.slate.400"
+            href={selectedApplication?.user?.telegram}
+            isExternal
+          >
+            @{selectedApplication?.user?.twitter}
+          </Link>
+        </Flex>
       );
-      if (username) {
-        return (
-          <Flex align="center" justify="start" gap={2} fontSize="sm">
-            <FaTelegram color="#94A3B8" />
-            <Link
-              color="brand.slate.400"
-              href={`https://t.me/${username}`}
-              isExternal
-            >
-              @{username}
-            </Link>
-          </Flex>
-        );
-      }
     }
 
     if (selectedApplication?.user?.twitter) {
-      const username = extractTwitterUsername(selectedApplication.user.twitter);
-      if (username) {
-        return (
-          <Flex align="center" justify="start" gap={2} fontSize="sm">
-            <FaXTwitter color="#94A3B8" />
-            <Link
-              color="brand.slate.400"
-              href={`https://x.com/${username}`}
-              isExternal
-            >
-              @{username}
-            </Link>
-          </Flex>
-        );
-      }
+      return (
+        <Flex align="center" justify="start" gap={2} fontSize="sm">
+          <Twitter link={selectedApplication?.user?.twitter} color="#94A3B8" />
+          <Link
+            color="brand.slate.400"
+            href={selectedApplication?.user?.twitter}
+            isExternal
+          >
+            @{selectedApplication?.user?.twitter}
+          </Link>
+        </Flex>
+      );
     }
 
     if (selectedApplication?.user?.discord) {
       return (
         <Flex align="center" justify="start" gap={2} fontSize="sm">
-          <FaDiscord color="#94A3B8" />
+          <Discord link={selectedApplication.user.discord} color="#94A3B8" />
           <Text color="brand.slate.400">
             {selectedApplication.user.discord}
           </Text>

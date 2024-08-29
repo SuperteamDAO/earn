@@ -16,7 +16,6 @@ import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 
-import { SkillSelect } from '@/components/misc/SkillSelectTalent';
 import {
   CommunityList,
   IndustryList,
@@ -25,6 +24,7 @@ import {
   workExp,
   workType,
 } from '@/constants';
+import { SkillSelect } from '@/features/talent';
 import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 
 import type { UserStoreType } from './types';

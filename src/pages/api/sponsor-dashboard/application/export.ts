@@ -11,21 +11,11 @@ import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
-import {
-  extractTelegramUsername,
-  extractTwitterUsername,
-} from '@/utils/extractUsername';
 import { safeStringify } from '@/utils/safeStringify';
 
 function getSocialMediaLink(user: any): string {
-  if (user.telegram) {
-    const username = extractTelegramUsername(user.telegram);
-    if (username) return `https://t.me/${username}`;
-  }
-  if (user.twitter) {
-    const username = extractTwitterUsername(user.twitter);
-    if (username) return `https://x.com/${username}`;
-  }
+  if (user.telegram) return user.telegram;
+  if (user.twitter) return user.twitter;
   if (user.discord) return user.discord;
   return '';
 }

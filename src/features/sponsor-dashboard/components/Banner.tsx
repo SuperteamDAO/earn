@@ -13,8 +13,9 @@ import { usePostHog } from 'posthog-js/react';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
+import { PDTG } from '@/constants';
+import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
 
 export function Banner({
@@ -210,7 +211,7 @@ export function Banner({
         <Link
           className="ph-no-capture"
           _hover={{ textDecoration: 'none' }}
-          href="https://t.me/pratikdholani"
+          href={PDTG}
           isExternal
           onClick={() => posthog.capture('message pratik_sponsor')}
         >

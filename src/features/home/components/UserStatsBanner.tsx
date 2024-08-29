@@ -2,8 +2,8 @@ import { Box, Divider, Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { userStatsQuery } from '@/features/home';
+import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 

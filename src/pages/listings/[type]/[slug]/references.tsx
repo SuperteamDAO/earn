@@ -2,7 +2,7 @@ import { Box, Grid, HStack, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 
-import { OgImageViewer } from '@/components/misc/ogImageViewer';
+import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { type Listing } from '@/features/listings';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { getURL } from '@/utils/validUrl';

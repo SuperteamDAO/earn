@@ -18,7 +18,7 @@ import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { LuHeart, LuMessageCircle } from 'react-icons/lu';
 import { toast } from 'sonner';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
 import { ogImageQuery } from '@/queries/og-image';
 import { useUser } from '@/store/user';

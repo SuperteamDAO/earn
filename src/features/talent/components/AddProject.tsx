@@ -18,12 +18,11 @@ import axios from 'axios';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { SkillSelect } from '@/components/shared/SkillSelect';
 import type { MultiSelectOptions } from '@/constants';
 import { type FeedDataProps } from '@/features/feed';
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';
-
-import { SkillSelect } from '../misc/SkillSelect';
 
 type AddProjectProps = {
   isOpen: boolean;

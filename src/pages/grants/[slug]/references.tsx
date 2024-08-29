@@ -3,7 +3,7 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useState } from 'react';
 
-import { OgImageViewer } from '@/components/misc/ogImageViewer';
+import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { type GrantWithApplicationCount } from '@/features/grants';
 import { GrantPageLayout } from '@/layouts/Grants';
 import { getURL } from '@/utils/validUrl';
