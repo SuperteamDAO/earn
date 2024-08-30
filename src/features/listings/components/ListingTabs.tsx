@@ -96,7 +96,7 @@ const generateTabContent = ({
             <Text flex={1}>For You</Text>
             <Box color="gray.500">
               <Tooltip
-                label={`The skill filters showcase users based on the skills requested in the listings they've successfully won, not the skills listed in their talent profiles.`}
+                label={`List of top opportunities curated for you, based on your skills, listing subscriptions and location.`}
               >
                 <InfoOutlineIcon w={3} h={3} />
               </Tooltip>

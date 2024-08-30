@@ -100,7 +100,6 @@ export default function HomePage({
   }, [reviewListings, completeListings, listings]);
 
   useEffect(() => {
-    console.log('complete for you listings - ', completeForYouListings);
     if (reviewForYouListings && completeForYouListings) {
       setCombinedForYouListings([
         ...openForYouListings,
@@ -109,14 +108,6 @@ export default function HomePage({
       ]);
     }
   }, [reviewForYouListings, completeForYouListings, openForYouListings]);
-
-  useEffect(() => {
-    console.log('open listings - ', listings);
-  }, [listings]);
-
-  useEffect(() => {
-    console.log('open for you listings - ', openForYouListings);
-  }, [openForYouListings]);
 
   return (
     <Home type="landing" isAuth={isAuth}>
@@ -189,9 +180,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     userRegion,
     excludeIds: openForYouListings.map((listing) => listing.id),
   });
-
-  // console.log('open for you listings - ', openForYouListings?.length)
-  // console.log('all listings - ', openListings?.length)
 
   return {
     props: {
