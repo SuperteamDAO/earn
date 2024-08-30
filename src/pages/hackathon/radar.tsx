@@ -108,7 +108,8 @@ export default function Radar() {
             transition={{ duration: 0.4, delay: 0.15 }}
             maxW="28rem"
           >
-            Submit to side tracks of the latest Solana Global Hackathon
+            Submit to exclusive tracks of the latest Solana Global Hackathon on
+            Earn
           </MotionText>
           <Flex align="center" gap={6}>
             <MotionButton
@@ -121,7 +122,7 @@ export default function Radar() {
               _hover={{ bg: 'yellow.600', color: '#fff' }}
               onClick={() =>
                 window.open(
-                  'https://airtable.com/appTNIj7RXgv7Txbt/shraqx54yjvNsvR7e',
+                  'https://build.superteam.fun/ideas?utm_source=superteamearn&utm_campaign=radar',
                   '_blank',
                 )
               }
@@ -129,7 +130,7 @@ export default function Radar() {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
             >
-              Sponsor a Track
+              Find Ideas to Build
             </MotionButton>
             <MotionFlex
               align="center"
