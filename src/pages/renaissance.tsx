@@ -3,12 +3,12 @@ import type { GetServerSideProps } from 'next';
 export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
-      destination: '/dashboard/hackathon',
+      destination: '/hackathon/renaissance',
       permanent: false,
     },
   };
 };
 
-export default function Jobs() {
+export default function Hackathon() {
   return null;
 }
