@@ -247,7 +247,7 @@ export const SubmissionModal = ({
       subheadingText = "We can't wait to see what you've created!";
       break;
     case 'hackathon':
-      headerText = 'Talent Olympics Submission';
+      headerText = 'Solana Radar Track Submission';
       subheadingText = (
         <>
           Note:

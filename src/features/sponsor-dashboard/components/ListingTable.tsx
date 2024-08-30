@@ -45,6 +45,7 @@ import { useListingFormStore } from '@/features/listing-builder';
 import {
   formatDeadline,
   getColorStyles,
+  getListingIcon,
   getListingStatus,
   getListingTypeLabel,
   isDeadlineOver,
@@ -177,21 +178,6 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                   ? `${getURL()}grants/${listing.slug}`
                   : `${getURL()}listings/${listing?.type}/${listing.slug}`;
 
-              const listingIcon = (() => {
-                switch (listing.type) {
-                  case 'bounty':
-                    return 'bolt.svg';
-                  case 'project':
-                    return 'briefcase.svg';
-                  case 'hackathon':
-                    return 'laptop.svg';
-                  case 'grant':
-                    return 'bank.svg';
-                  default:
-                    return 'bolt.svg';
-                }
-              })();
-
               const listingSubmissionLink =
                 listing.type === 'grant'
                   ? `/dashboard/grants/${listing.slug}/applications/`
@@ -222,7 +208,7 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                             h={5}
                             mr={2}
                             alt={`New ${listingType}`}
-                            src={`/assets/icons/${listingIcon}`}
+                            src={getListingIcon(listing.type!)}
                           />
                         </Tooltip>
 

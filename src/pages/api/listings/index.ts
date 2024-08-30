@@ -79,6 +79,8 @@ export default async function listings(
     excludeIds = [excludeIds];
   }
 
+  const id = params.id as string;
+
   const filterToSkillsMap: Record<string, string[]> = {
     development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
     design: ['Design'],
@@ -131,15 +133,14 @@ export default async function listings(
       isPublished: true,
       isActive: true,
       isPrivate: false,
-      hackathonprize: false,
       isArchived: false,
       status: 'OPEN',
-      Hackathon: null,
       deadline: {
         gte: deadline,
       },
-      type,
+      type: type || { in: ['bounty', 'project'] },
       ...skillsFilter,
+      NOT: { id },
       ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
     },
     select: {

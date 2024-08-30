@@ -5,13 +5,17 @@ import { type ReactNode, useMemo } from 'react';
 import { ListingCardMobile, listingsQuery } from '@/features/listings';
 import { dayjs } from '@/utils/dayjs';
 
+interface LiveListingProps {
+  children: ReactNode;
+  isHackathon?: boolean;
+  excludeIds?: string[];
+}
+
 export const LiveListings = ({
   children,
+  isHackathon = false,
   excludeIds: ids,
-}: {
-  children: ReactNode;
-  excludeIds?: string[];
-}) => {
+}: LiveListingProps) => {
   const deadline = useMemo(() => dayjs().add(1, 'day').toISOString(), []);
 
   const { data: listings } = useQuery(
@@ -20,6 +24,7 @@ export const LiveListings = ({
       isHomePage: true,
       deadline,
       order: 'asc',
+      type: isHackathon ? 'hackathon' : undefined,
       excludeIds: ids ? ids : undefined,
     }),
   );
@@ -27,7 +32,7 @@ export const LiveListings = ({
     <Box>
       {children}
       <Flex direction={'column'} w={'full'} mt={1}>
-        {listings?.slice(0, 5).map((listing) => {
+        {listings?.map((listing) => {
           return <ListingCardMobile bounty={listing} key={listing?.id} />;
         })}
       </Flex>

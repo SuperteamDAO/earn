@@ -31,6 +31,7 @@ import { tokenList } from '@/constants';
 import {
   formatDeadline,
   getColorStyles,
+  getListingIcon,
   getListingStatus,
   type Listing,
 } from '@/features/listings';
@@ -85,19 +86,6 @@ export const SubmissionHeader = ({
     }
   };
 
-  const listingIcon = (() => {
-    switch (bounty?.type) {
-      case 'bounty':
-        return 'bolt.svg';
-      case 'project':
-        return 'briefcase.svg';
-      case 'hackathon':
-        return 'laptop.svg';
-      default:
-        return 'bolt.svg';
-    }
-  })();
-
   const afterAnnounceDate =
     bounty?.type === 'hackathon'
       ? dayjs().isAfter(bounty?.Hackathon?.announceDate)
@@ -133,7 +121,7 @@ export const SubmissionHeader = ({
       </Box>
       <Flex align="center" justify={'space-between'} mb={4}>
         <Flex align="center" gap={2}>
-          <Image h={6} alt="" src={`/assets/icons/${listingIcon}`} />
+          <Image h={6} alt="" src={getListingIcon(bounty?.type!)} />
           <Text color="brand.slate.800" fontSize="xl" fontWeight="700">
             {bounty?.title}
           </Text>
