@@ -138,6 +138,7 @@ s.name LIKE CONCAT('%', ?, '%')
     b.isPublished = 1 AND
     b.isActive = 1 AND
     b.isArchived = 0 AND
+    b.isPrivate = 0 AND
     ${combinedWhereClause}
     ) ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}
