@@ -7,7 +7,7 @@ interface ListingsParams {
   take?: number;
   filter?: string;
   deadline?: string;
-  type?: 'bounty' | 'project';
+  type?: 'bounty' | 'project' | 'hackathon';
   isHomePage?: boolean;
   order?: 'asc' | 'desc';
   excludeIds?: string[];
