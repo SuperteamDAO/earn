@@ -13,7 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 
-import { TalentBio } from '@/components/TalentBio';
+import { TalentBio } from '@/features/talent';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { type User as IUser } from '@/interface/user';
 import { ogImageQuery } from '@/queries/og-image';

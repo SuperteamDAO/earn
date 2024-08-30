@@ -2,6 +2,13 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import {
+  extractDiscordUsername,
+  extractGitHubUsername,
+  extractLinkedInUsername,
+  extractTelegramUsername,
+  extractTwitterUsername,
+} from '@/features/talent';
+import {
   type ParentSkills,
   skillSubSkillMap,
   type SubSkillsType,
@@ -89,6 +96,31 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { skills, ...data } = req.body;
 
   const updatedData = filterAllowedFields(data, allowedFields);
+
+  if (updatedData.twitter) {
+    const username = extractTwitterUsername(updatedData.twitter);
+    updatedData.twitter = `https://x.com/${username}` || null;
+  }
+
+  if (updatedData.github) {
+    const username = extractGitHubUsername(updatedData.github);
+    updatedData.github = `https://github.com/${username}` || null;
+  }
+
+  if (updatedData.linkedin) {
+    const username = extractLinkedInUsername(updatedData.linkedin);
+    updatedData.linkedin = `https://linkedin.com/in/${username}` || null;
+  }
+
+  if (updatedData.discord) {
+    const username = extractDiscordUsername(updatedData.discord);
+    updatedData.discord = username || null;
+  }
+
+  if (updatedData.telegram) {
+    const username = extractTelegramUsername(updatedData.telegram);
+    updatedData.telegram = `https://t.me/${username}` || null;
+  }
 
   const correctedSkills = correctSkills(skills);
   logger.info(`Corrected skills: ${safeStringify(correctedSkills)}`);

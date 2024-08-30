@@ -28,6 +28,7 @@ interface SubmissionWithUser {
   listing?: Listing;
   ask?: number;
   label: SubmissionLabels;
+  notes?: string;
 }
 
 export type { SubmissionWithUser };

@@ -380,11 +380,13 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                           </MenuItem>
                         )}
 
-                        {((session?.user?.role === 'GOD' &&
-                          listing.type !== 'grant') ||
+                        {!!(
+                          (session?.user?.role === 'GOD' &&
+                            listing.type !== 'grant') ||
                           (listing.isPublished &&
                             !pastDeadline &&
-                            listing.type !== 'grant')) && (
+                            listing.type !== 'grant')
+                        ) && (
                           <Link
                             as={NextLink}
                             _hover={{ textDecoration: 'none' }}

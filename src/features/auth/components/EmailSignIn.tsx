@@ -17,7 +17,7 @@ export const EmailSignIn = () => {
   const posthog = usePostHog();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const emailInput = e.target.value;
+    const emailInput = e.target.value.trim();
     setEmail(emailInput);
     setIsEmailValid(validateEmailRegex(emailInput));
     setEmailError('');

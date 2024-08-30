@@ -4,8 +4,8 @@ import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { tokenList } from '@/constants';
+import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';

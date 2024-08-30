@@ -12,10 +12,10 @@ import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { formatTotalPrice } from '@/features/listing-builder';
+import { EarnAvatar } from '@/features/talent';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';

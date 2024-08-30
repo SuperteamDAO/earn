@@ -3,8 +3,8 @@ import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { MAX_COMMENT_SUGGESTIONS } from '@/constants';
+import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
 
 interface Props {

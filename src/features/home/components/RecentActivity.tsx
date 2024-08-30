@@ -3,7 +3,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
-import { OgImageViewer } from '@/components/misc/ogImageViewer';
+import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { useGetFeed } from '@/features/feed';
 import { timeAgoShort } from '@/utils/timeAgo';
 

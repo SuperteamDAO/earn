@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import { type TConductorInstance } from 'react-canvas-confetti/dist/types';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { AuthWrapper } from '@/features/auth';
+import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
 
 import { pfpsQuery } from '../queries/vibe-pfps';

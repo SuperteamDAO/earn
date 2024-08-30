@@ -23,12 +23,18 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { AddProject } from '@/components/Form/AddProject';
-import { ShareIcon } from '@/components/misc/shareIcon';
-import { ShareProfile } from '@/components/modals/shareProfile';
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { EmptySection } from '@/components/shared/EmptySection';
+import { ShareIcon } from '@/components/shared/shareIcon';
 import { type FeedDataProps, PowCard, SubmissionCard } from '@/features/feed';
+import {
+  AddProject,
+  EarnAvatar,
+  GitHub,
+  Linkedin,
+  ShareProfile,
+  Twitter,
+  Website,
+} from '@/features/talent';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { useUser } from '@/store/user';
@@ -84,25 +90,10 @@ function TalentProfile({ talent, stats }: TalentProps) {
   }, []);
 
   const socialLinks = [
-    {
-      icon: '/assets/talent/twitter.png',
-      link: talent?.twitter,
-    },
-
-    {
-      icon: '/assets/talent/linkedin.png',
-      link: talent?.linkedin,
-    },
-
-    {
-      icon: '/assets/talent/github.png',
-      link: talent?.github,
-    },
-
-    {
-      icon: '/assets/talent/site.png',
-      link: talent?.website,
-    },
+    { Icon: Twitter, link: talent?.twitter },
+    { Icon: Linkedin, link: talent?.linkedin },
+    { Icon: GitHub, link: talent?.github },
+    { Icon: Website, link: talent?.website },
   ];
 
   const router = useRouter();
@@ -439,33 +430,8 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 gap={{ base: '12', md: '100' }}
               >
                 <Flex gap={6} w={{ base: '100%', md: '50%' }}>
-                  {socialLinks.map((ele, eleIndex) => {
-                    return (
-                      <Box
-                        key={eleIndex}
-                        onClick={() => {
-                          if (ele.link) {
-                            const formattedLink =
-                              ele.link.startsWith('http://') ||
-                              ele.link.startsWith('https://')
-                                ? ele.link
-                                : `https://${ele.link}`;
-                            window.open(formattedLink, '_blank');
-                          }
-                        }}
-                      >
-                        <Image
-                          w={6}
-                          h={6}
-                          opacity={!ele.link ? '0.3' : ''}
-                          cursor={ele.link! && 'pointer'}
-                          objectFit="contain"
-                          alt=""
-                          filter={!ele.link ? 'grayscale(100%)' : ''}
-                          src={ele.icon}
-                        />
-                      </Box>
-                    );
+                  {socialLinks.map(({ Icon, link }, i) => {
+                    return <Icon link={link} boxSize={5} key={i} />;
                   })}
                 </Flex>
                 <Flex

@@ -6,7 +6,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
 
-import { SurveyModal } from '@/components/Survey';
+import { SurveyModal } from '@/components/shared/Survey';
 import { AuthWrapper } from '@/features/auth';
 import {
   getListingDraftStatus,

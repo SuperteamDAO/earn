@@ -6,6 +6,13 @@ import {
   withAuth,
 } from '@/features/auth';
 import {
+  extractDiscordUsername,
+  extractGitHubUsername,
+  extractLinkedInUsername,
+  extractTelegramUsername,
+  extractTwitterUsername,
+} from '@/features/talent';
+import {
   type ParentSkills,
   skillSubSkillMap,
   type SubSkillsType,
@@ -122,6 +129,31 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       superteamLevel: 'Lurker',
       isTalentFilled: true,
     };
+
+    if (data.twitter) {
+      const username = extractTwitterUsername(data.twitter);
+      data.twitter = `https://x.com/${username}` || null;
+    }
+
+    if (data.github) {
+      const username = extractGitHubUsername(data.github);
+      data.github = `https://github.com/${username}` || null;
+    }
+
+    if (data.linkedin) {
+      const username = extractLinkedInUsername(data.linkedin);
+      data.linkedin = `https://linkedin.com/in/${username}` || null;
+    }
+
+    if (data.discord) {
+      const username = extractDiscordUsername(data.discord);
+      data.discord = username || null;
+    }
+
+    if (data.telegram) {
+      const username = extractTelegramUsername(data.telegram);
+      data.telegram = `https://t.me/${username}` || null;
+    }
 
     const categories = new Set([
       'createListing',

@@ -40,7 +40,6 @@ import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import {
@@ -49,6 +48,7 @@ import {
   membersQuery,
   sponsorStatsQuery,
 } from '@/features/sponsor-dashboard';
+import { EarnAvatar } from '@/features/talent';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';

@@ -94,7 +94,7 @@ export const ListingTabs = ({
           !bounty.isWinnersAnnounced,
         emptyTitle: 'No listings available!',
         emptyMessage:
-          'Subscribe to notifications to get notified about new listings.',
+          'Update your email preferences (from the user menu) to be notified about new work opportunities.',
       }),
     },
     {
