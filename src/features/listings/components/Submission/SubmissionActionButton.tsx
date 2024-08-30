@@ -6,7 +6,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
 
-import { SurveyModal } from '@/components/Survey';
+import { SurveyModal } from '@/components/shared/Survey';
 import { AuthWrapper } from '@/features/auth';
 import {
   getListingDraftStatus,
@@ -128,8 +128,7 @@ export const SubmissionActionButton = ({
   }
   if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
     buttonText = 'Submissions in Review';
-    buttonBG = 'orange.700';
-    buttonTextColor = 'orange.200';
+    buttonBG = 'gray.500';
   } else if (isWinnersAnnounced) {
     buttonText = 'Winners Announced';
     buttonBG = 'gray.500';

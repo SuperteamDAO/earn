@@ -34,16 +34,16 @@ import NextLink from 'next/link';
 import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
-import { BsTwitterX } from 'react-icons/bs';
+import { FaXTwitter } from 'react-icons/fa6';
 import {
   MdArrowDropDown,
   MdOutlineAccountBalanceWallet,
   MdOutlineMail,
 } from 'react-icons/md';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { BONUS_REWARD_POSITION, tokenList } from '@/constants';
 import type { Listing, Rewards } from '@/features/listings';
+import { EarnAvatar } from '@/features/talent';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
@@ -763,25 +763,14 @@ export const SubmissionDetails = ({
                 )}
                 {selectedSubmission?.user?.twitter && (
                   <Flex align="center" justify="start" gap={2} fontSize="sm">
-                    <BsTwitterX color="#94A3B8" />
+                    <FaXTwitter color="#94A3B8" />
 
                     <Link
                       color="brand.slate.400"
-                      href={getURLSanitized(
-                        selectedSubmission?.user?.twitter?.replace(
-                          'twitter.com',
-                          'x.com',
-                        ) || '#',
-                      )}
+                      href={selectedSubmission?.user?.twitter}
                       isExternal
                     >
-                      {truncateString(
-                        selectedSubmission?.user?.twitter?.replace(
-                          'twitter.com',
-                          'x.com',
-                        ) || '-',
-                        36,
-                      )}
+                      {truncateString(selectedSubmission?.user?.twitter, 36)}
                     </Link>
                   </Flex>
                 )}

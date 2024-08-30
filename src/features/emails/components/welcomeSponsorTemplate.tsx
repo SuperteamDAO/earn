@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { PDTG } from '@/constants';
+
 import { styles } from '../utils';
 
 export const WelcomeSponsorTemplate = () => {
@@ -14,7 +16,7 @@ export const WelcomeSponsorTemplate = () => {
       <p style={styles.textWithMargin}>
         If you need any help related to setting up your listing on Earn,
         don&apos;t hesitate to get in touch with&nbsp;
-        <a href="https://t.me/pratikdholani" style={styles.link}>
+        <a href={PDTG} style={styles.link}>
           Pratik
         </a>{' '}
         on Telegram.&nbsp;

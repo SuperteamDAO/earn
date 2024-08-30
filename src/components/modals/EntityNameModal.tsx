@@ -13,7 +13,7 @@ import axios from 'axios';
 import NextLink from 'next/link';
 import { useState } from 'react';
 
-import { TERMS_OF_USE } from '@/constants';
+import { PDTG, TERMS_OF_USE } from '@/constants';
 import { useUser } from '@/store/user';
 
 export const EntityNameModal = ({
@@ -87,7 +87,7 @@ export const EntityNameModal = ({
           <Link
             as={NextLink}
             w="full"
-            href="https://t.me/pratikdholani"
+            href={PDTG}
             rel="noopener noreferrer"
             target="_blank"
           >

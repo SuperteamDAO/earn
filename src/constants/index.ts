@@ -381,6 +381,14 @@ export const tokenList: Token[] = [
     decimals: 9,
     coingeckoSymbol: 'meta-2',
   },
+  {
+    tokenName: 'ZETA (ZEX)',
+    tokenSymbol: 'ZEX',
+    mintAddress: 'ZEXy1pqteRu3n13kdyh4LwPQknkFk3GzmMYMuNadWPo',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32002.png',
+    decimals: 6,
+    coingeckoSymbol: 'zeta',
+  },
 ];
 
 export const CountryList: string[] = [
@@ -692,3 +700,5 @@ export const URL_REGEX = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
 export const MAX_PODIUMS = 10;
 export const MAX_BONUS_SPOTS = 50;
 export const BONUS_REWARD_POSITION = 99;
+
+export const PDTG = 'https://t.me/pratikdholani/';

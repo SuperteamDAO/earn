@@ -29,7 +29,7 @@ interface Props {
 }
 
 const UserMenu = dynamic(() =>
-  import('@/components/shared/UserMenu').then((mod) => mod.UserMenu),
+  import('./UserMenu').then((mod) => mod.UserMenu),
 );
 
 const LogoContextMenu = dynamic(() =>
@@ -133,20 +133,19 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   />
                 );
               })}
-              <Link
+              {/* <Link
                 as={NextLink}
                 alignItems="center"
                 display="flex"
-                href="/talent-olympics"
+                href="/hackathon/radar"
               >
                 <Image
-                  h={12}
-                  pt={0.5}
+                  h={'1.1rem'}
                   objectFit={'contain'}
-                  alt="Talent Olympics Nav Icon"
-                  src="/assets/hackathon/talent-olympics/nav.svg"
+                  alt="Radar Nav Icon"
+                  src="/assets/hackathon/radar/nav.png"
                 />
-              </Link>
+              </Link> */}
               {/* {HACKATHON_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (

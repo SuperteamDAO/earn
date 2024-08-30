@@ -22,6 +22,7 @@ import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
+import { PDTG } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import {
   isCreateListingAllowedQuery,
@@ -156,7 +157,7 @@ export function SponsorLayout({
   }
 
   const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
-  const isLocalMemberVisible = Superteams.some(
+  const isLocalProfileVisible = Superteams.some(
     (team) =>
       team.name === user?.currentSponsor?.name &&
       (user?.stLead === team.region || user?.stLead === 'MAHADEV'),
@@ -167,7 +168,7 @@ export function SponsorLayout({
         { name: 'All Tracks', link: `/hackathon`, icon: MdList },
         {
           name: 'Get Help',
-          link: 'https://t.me/pratikdholani',
+          link: PDTG,
           icon: MdOutlineChatBubbleOutline,
           posthog: 'get help_sponsor',
         },
@@ -179,18 +180,18 @@ export function SponsorLayout({
           link: '/team-settings',
           icon: RiUserSettingsLine,
         },
-        ...(isLocalMemberVisible
+        ...(isLocalProfileVisible
           ? [
               {
-                name: 'Local Members',
-                link: '/local-members',
+                name: 'Local Profiles',
+                link: '/local-profiles',
                 icon: LuUsers,
               },
             ]
           : []),
         {
           name: 'Get Help',
-          link: 'https://t.me/pratikdholani',
+          link: PDTG,
           icon: LuMessageSquare,
           posthog: 'get help_sponsor',
         },

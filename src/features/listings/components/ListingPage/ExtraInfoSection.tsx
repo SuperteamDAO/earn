@@ -42,16 +42,17 @@ export function ExtraInfoSection({
       {Hackathon && (
         <VStack align={'start'} w="full" fontSize="sm">
           <Text color={'brand.slate.600'} fontWeight={600}>
-            {Hackathon.name.toUpperCase()} TRACK
+            {Hackathon.name?.toUpperCase()} TRACK
           </Text>
           <Text color={'brand.slate.500'}>{Hackathon.description}</Text>
           <Link
             color={'brand.slate.500'}
             fontWeight={500}
-            href={`/${Hackathon.name.toLowerCase()}`}
+            href={`/hackathon/${Hackathon.name?.toLowerCase()}`}
             isExternal
           >
             View All Challenges
+            <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
           </Link>
         </VStack>
       )}

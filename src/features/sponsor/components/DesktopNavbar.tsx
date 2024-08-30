@@ -17,7 +17,7 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
-import { UserMenu } from '@/components/shared/UserMenu';
+import { UserMenu } from '@/features/navbar';
 import { useUser } from '@/store/user';
 
 import { NAV_LINKS } from '../utils';

@@ -2,7 +2,7 @@ import { Avatar, Flex, Text, Tooltip } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 
-import { OgImageViewer } from '@/components/misc/ogImageViewer';
+import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { getURL } from '@/utils/validUrl';
 
 import { type FeedDataProps } from '../types';

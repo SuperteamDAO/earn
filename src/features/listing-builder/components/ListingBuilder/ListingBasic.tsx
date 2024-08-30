@@ -15,6 +15,7 @@ import {
   Switch,
   Tag,
   Text,
+  Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -33,9 +34,10 @@ import { useForm } from 'react-hook-form';
 import slugify from 'slugify';
 import { z } from 'zod';
 
-import { SkillSelect } from '@/components/misc/SkillSelect';
+import { SkillSelect } from '@/components/shared/SkillSelect';
 import { type MultiSelectOptions } from '@/constants';
 import { CombinedRegions, Superteams } from '@/constants/Superteam';
+import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
 import { dayjs } from '@/utils/dayjs';
 
 import { useListingFormStore } from '../../store';
@@ -106,7 +108,21 @@ export const ListingBasic = ({
         .refine(slugUniqueCheck, {
           message: 'Slug already exists. Please try another.',
         }),
-      pocSocials: z.string(),
+      pocSocials: z
+        .string()
+        .min(1, 'Point of Contact is required')
+        .refine(
+          (value) => {
+            return (
+              twitterRegex.test(value) ||
+              telegramRegex.test(value) ||
+              emailRegex.test(value)
+            );
+          },
+          {
+            message: 'Please enter a valid X / Telegram link, or email address',
+          },
+        ),
       region: z.string().optional(),
       applicationType: z.string().optional(),
       deadline: z.string().optional(),
@@ -147,9 +163,10 @@ export const ListingBasic = ({
     setValue,
     getValues,
     reset,
+    trigger,
     formState: { errors },
   } = useForm({
-    mode: 'onChange',
+    mode: 'onTouched',
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: form?.title,
@@ -201,7 +218,6 @@ export const ListingBasic = ({
   };
 
   const [isSlugGenerating, setIsSlugGenerating] = useState(false);
-  const [isUrlValid, setIsUrlValid] = useState(true);
 
   const [shouldSlugGenerate, setShouldSlugGenerate] = useState(false);
 
@@ -242,6 +258,13 @@ export const ListingBasic = ({
     [title],
   );
 
+  const debouncedPocSocialsValidation = useCallback(
+    debounce(() => {
+      trigger('pocSocials');
+    }, 500),
+    [],
+  );
+
   useEffect(() => {
     if (
       (title && shouldSlugGenerate && !editable) ||
@@ -255,6 +278,16 @@ export const ListingBasic = ({
       debouncedGetUniqueSlug.cancel();
     };
   }, [title]);
+
+  const [maxDeadline, setMaxDeadline] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (editable && form?.deadline) {
+      const originalDeadline = dayjs(form.deadline);
+      const twoWeeksLater = originalDeadline.add(2, 'weeks');
+      setMaxDeadline(twoWeeksLater.format('YYYY-MM-DDTHH:mm'));
+    }
+  }, [editable, form?.deadline]);
 
   const isProject = type === 'project';
 
@@ -412,8 +445,6 @@ export const ListingBasic = ({
                       .replace(/\s+/g, '-')
                       .toLowerCase();
                     setValue('slug', newValue);
-
-                    setIsUrlValid(true);
                   },
                 })}
                 placeholder="develop-a-new-landing-page"
@@ -457,12 +488,12 @@ export const ListingBasic = ({
           <FormControl
             w="full"
             mb={5}
-            isInvalid={!!errors.pocSocials || !isUrlValid}
+            isInvalid={!!errors.pocSocials}
             isRequired
           >
             <Flex>
               <ListingFormLabel htmlFor={'pocSocials'}>
-                Point of Contact
+                Point of Contact (TG / X / Email)
               </ListingFormLabel>
               <ListingTooltip label="Please add a social link of the person people reach out to in case they have questions about this listing." />
             </Flex>
@@ -474,14 +505,11 @@ export const ListingBasic = ({
               }}
               focusBorderColor="brand.purple"
               id="pocSocials"
-              {...register('pocSocials')}
-              placeholder="https://twitter.com/elonmusk"
+              {...register('pocSocials', {
+                onChange: () => debouncedPocSocialsValidation(),
+              })}
+              placeholder="https://x.com/elonmusk"
             />
-            {!isUrlValid && (
-              <Text color={'red'}>
-                URL needs to contain &quot;https://&quot; prefix
-              </Text>
-            )}
             <FormErrorMessage>
               {errors.pocSocials ? <>{errors.pocSocials.message}</> : <></>}
             </FormErrorMessage>
@@ -537,38 +565,49 @@ export const ListingBasic = ({
                 </ListingFormLabel>
                 <ListingTooltip label="Select the deadline date for accepting submissions" />
               </Flex>
-              <Input
-                w={'full'}
-                color={'brand.slate.500'}
-                borderColor="brand.slate.300"
-                _placeholder={{
-                  color: 'brand.slate.300',
-                }}
-                css={{
-                  boxSizing: 'border-box',
-                  padding: '.75rem',
-                  position: 'relative',
-                  width: '100%',
-                  '&::-webkit-calendar-picker-indicator': {
-                    background: 'transparent',
-                    bottom: 0,
-                    color: 'transparent',
-                    cursor: 'pointer',
-                    height: 'auto',
-                    left: 0,
-                    position: 'absolute',
-                    right: 0,
-                    top: 0,
-                    width: 'auto',
-                  },
-                }}
-                focusBorderColor="brand.purple"
-                id="deadline"
-                min={`${date}T00:00`}
-                placeholder="deadline"
-                type={'datetime-local'}
-                {...register('deadline', { required: true })}
-              />
+              <Tooltip
+                isDisabled={!editable || !maxDeadline}
+                label={
+                  editable && maxDeadline
+                    ? 'Max two weeks extension allowed from the original deadline'
+                    : ''
+                }
+                placement="top"
+              >
+                <Input
+                  w={'full'}
+                  color={'brand.slate.500'}
+                  borderColor="brand.slate.300"
+                  _placeholder={{
+                    color: 'brand.slate.300',
+                  }}
+                  css={{
+                    boxSizing: 'border-box',
+                    padding: '.75rem',
+                    position: 'relative',
+                    width: '100%',
+                    '&::-webkit-calendar-picker-indicator': {
+                      background: 'transparent',
+                      bottom: 0,
+                      color: 'transparent',
+                      cursor: 'pointer',
+                      height: 'auto',
+                      left: 0,
+                      position: 'absolute',
+                      right: 0,
+                      top: 0,
+                      width: 'auto',
+                    },
+                  }}
+                  focusBorderColor="brand.purple"
+                  id="deadline"
+                  max={editable ? maxDeadline : undefined}
+                  min={`${date}T00:00`}
+                  placeholder="deadline"
+                  type={'datetime-local'}
+                  {...register('deadline', { required: true })}
+                />
+              </Tooltip>
               <Flex align="flex-start" gap={1} mt={2}>
                 {deadlineOptions.map((option) => (
                   <Tag

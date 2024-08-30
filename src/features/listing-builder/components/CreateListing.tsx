@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import { SurveyModal } from '@/components/Survey';
+import { SurveyModal } from '@/components/shared/Survey';
 import { type MultiSelectOptions } from '@/constants';
 import { getListingDraftStatus, type Listing } from '@/features/listings';
 import { useUser } from '@/store/user';

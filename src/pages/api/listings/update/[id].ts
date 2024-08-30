@@ -173,13 +173,13 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     try {
       if (listing.isPublished === true && result.isPublished === false) {
-        await axios.post(process.env.DISCORD_LISTING_WEBHOOK!, {
+        await axios.post(process.env.DISCORD_LISTINGS_WEBHOOK!, {
           listingId: result.id,
           status: 'Unpublished',
         });
       }
       if (listing.isPublished === false && result.isPublished === true) {
-        await axios.post(process.env.DISCORD_LISTING_WEBHOOK!, {
+        await axios.post(process.env.DISCORD_LISTINGS_WEBHOOK!, {
           listingId: result.id,
           status: 'Published',
         });
@@ -207,7 +207,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       });
       logger.debug(`Sending email notification for deadline extension`);
-      await sendEmailNotification({
+      sendEmailNotification({
         type: 'deadlineExtended',
         id: id as string,
         triggeredBy: req.userId,

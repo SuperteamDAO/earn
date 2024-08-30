@@ -31,9 +31,9 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { AuthWrapper } from '@/features/auth';
 import { WarningModal } from '@/features/listings';
+import { EarnAvatar } from '@/features/talent';
 import { type Comment as IComment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';

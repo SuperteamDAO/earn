@@ -24,7 +24,7 @@ import React, {
 } from 'react';
 import { MdArrowDropDown } from 'react-icons/md';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { EarnAvatar } from '@/features/talent';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { getRankLabels } from '@/utils/rank';
 

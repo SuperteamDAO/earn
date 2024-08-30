@@ -173,17 +173,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     if (result[0]?.grant.isNative === true && !result[0]?.grant.airtableId) {
-      result.map(async (r) => {
-        try {
-          await sendEmailNotification({
-            type: isApproved ? 'grantApproved' : 'grantRejected',
-            id: r.id,
-            userId: r.userId,
-            triggeredBy: userId,
-          });
-        } catch (err) {
-          logger.error('Error sending email to Sponsor:', err);
-        }
+      result.forEach((r) => {
+        sendEmailNotification({
+          type: isApproved ? 'grantApproved' : 'grantRejected',
+          id: r.id,
+          userId: r.userId,
+          triggeredBy: userId,
+        });
       });
     } else {
       const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);

@@ -18,9 +18,9 @@ import {
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
+import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 

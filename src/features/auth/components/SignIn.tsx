@@ -128,7 +128,7 @@ export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
           bg={'brand.slate.100'}
           borderBottomRadius="6px"
         >
-          <Text color="brand.slate.400" fontSize="11px" textAlign="center">
+          <Text color="brand.slate.400" fontSize="xs" textAlign="center">
             Need help? Reach out to us at{' '}
             <Text as="u">
               <Link

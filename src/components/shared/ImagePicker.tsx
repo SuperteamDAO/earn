@@ -137,11 +137,11 @@ export const ImagePicker = ({
           </Text>
         </Flex>
       </Flex>
-
       <Input
         ref={fileInputRef}
         accept="image/jpeg, image/png, image/webp"
         hidden
+        isRequired={false}
         onChange={(e) =>
           handleFileChange(e.target.files ? e.target.files[0] : null)
         }

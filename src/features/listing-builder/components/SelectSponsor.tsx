@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { EarnAvatar } from '@/features/talent';
 import type { SponsorType } from '@/interface/sponsor';
 import { useUpdateUser, useUser } from '@/store/user';
 

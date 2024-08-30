@@ -1,7 +1,7 @@
 import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 
-import { OgImageViewer } from '@/components/misc/ogImageViewer';
+import { OgImageViewer } from '@/components/shared/ogImageViewer';
 
 import { FeedCardContainer } from './FeedCardContainer';
 import { FeedCardLink } from './FeedCardLink';

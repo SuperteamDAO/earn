@@ -17,19 +17,16 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { toast } from 'sonner';
 
-import { AddProject } from '@/components/Form/AddProject';
 import { InputField } from '@/components/Form/InputField';
 import { SelectBox } from '@/components/Form/SelectBox';
-import { SocialInput } from '@/components/Form/SocialInput';
-import { SkillSelect } from '@/components/misc/SkillSelect';
 import { ImagePicker } from '@/components/shared/ImagePicker';
-import { socials } from '@/components/Talent/YourLinks';
+import { SkillSelect } from '@/components/shared/SkillSelect';
 import {
   CommunityList,
   CountryList,
@@ -39,13 +36,17 @@ import {
   workExp,
   workType,
 } from '@/constants';
+import {
+  AddProject,
+  SocialInput,
+  useUsernameValidation,
+} from '@/features/talent';
 import type { PoW } from '@/interface/pow';
 import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
-import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
 type FormData = {
   username: string;
@@ -70,14 +71,6 @@ type FormData = {
   private: boolean;
 };
 
-const socialLinkFields = [
-  'twitter',
-  'github',
-  'linkedin',
-  'website',
-  'telegram',
-];
-
 const parseSkillsAndSubskills = (skillsObject: any) => {
   const skills: MultiSelectOptions[] = [];
   const subSkills: MultiSelectOptions[] = [];
@@ -97,9 +90,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   const { data: session, status } = useSession();
   const { register, handleSubmit, setValue, watch } = useForm<FormData>();
 
-  const [discordError, setDiscordError] = useState(false);
-  const [socialError, setSocialError] = useState(false);
-  const [isAnySocialUrlInvalid, setAnySocialUrlInvalid] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -128,18 +118,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
 
   const privateValue = watch('private', user?.private);
-
-  const socialLinksValidityRef = useRef<{ [key: string]: boolean }>({});
-
-  const handleUrlValidation = (isValid: boolean, field: keyof FormData) => {
-    socialLinksValidityRef.current[field] = isValid;
-
-    const allUrlsValid = socialLinkFields.every(
-      (f) => socialLinksValidityRef.current[f as keyof FormData],
-    );
-
-    setAnySocialUrlInvalid(!allUrlsValid);
-  };
 
   const { setUsername, isInvalid, validationErrorMessage } =
     useUsernameValidation();
@@ -224,35 +202,30 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   }, [user?.id]);
 
   const onSubmit = async (data: FormData) => {
-    posthog.capture('confirm_edit profile');
     if (isInvalid) {
       return;
     }
+    const socialFields = [
+      'twitter',
+      'github',
+      'linkedin',
+      'website',
+      'telegram',
+    ];
+    const filledSocials = socialFields.filter(
+      (field) => data[field as keyof FormData],
+    );
+
+    if (filledSocials.length === 0) {
+      toast.error(
+        'At least one additional social link (apart from Discord) is required',
+      );
+      return;
+    }
+
     setIsLoading(true);
+    posthog.capture('confirm_edit profile');
     try {
-      if (!data.discord) {
-        setDiscordError(true);
-        toast.error('Discord field is required.');
-        return;
-      }
-      setDiscordError(false);
-
-      const filledSocialLinksCount = socialLinkFields.filter(
-        (field) => data[field as keyof FormData],
-      ).length;
-
-      setSocialError(filledSocialLinksCount < 1);
-
-      if (filledSocialLinksCount < 1) {
-        toast.error('At least one social link is required.');
-        return;
-      }
-
-      if (isAnySocialUrlInvalid) {
-        toast.error('One or more social URLs are invalid.');
-        return;
-      }
-
       const interestsJSON = JSON.stringify(
         (data.interests || []).map((interest) => interest.value),
       );
@@ -457,31 +430,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   SOCIALS
                 </Text>
 
-                {socials.map((sc, idx: number) => {
-                  return (
-                    <SocialInput
-                      name={sc.label.toLowerCase()}
-                      register={register}
-                      {...sc}
-                      key={`sc${idx}`}
-                      discordError={
-                        sc.label.toLowerCase() === 'discord'
-                          ? discordError
-                          : false
-                      }
-                      watch={watch}
-                      onUrlValidation={(isValid) => {
-                        handleUrlValidation(
-                          isValid,
-                          sc.label.toLowerCase() as keyof FormData,
-                        );
-                      }}
-                    />
-                  );
-                })}
-                {socialError && (
-                  <Text color="red">At least one social link is required!</Text>
-                )}
+                <SocialInput register={register} watch={watch} />
 
                 <Text
                   mt={12}

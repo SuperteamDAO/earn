@@ -2,7 +2,7 @@ export * from './Banner';
 export * from './CreateListingModal';
 export * from './GrantApplications';
 export * from './ListingTable';
-export * from './LocalMembers';
+export * from './LocalProfiles';
 export * from './Members';
 export * from './NavItems';
 export * from './Scouts';

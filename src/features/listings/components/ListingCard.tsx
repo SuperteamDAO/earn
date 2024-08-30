@@ -20,6 +20,7 @@ import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { type Listing } from '../types';
+import { getListingIcon } from '../utils';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardSkeleton = () => {
@@ -212,11 +213,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                   h={{ base: 3, sm: 4 }}
                   ml={isBounty ? -0.5 : 0}
                   alt={type}
-                  src={
-                    isBounty
-                      ? '/assets/icons/bolt.svg'
-                      : '/assets/icons/briefcase.svg'
-                  }
+                  src={getListingIcon(type!)}
                 />
                 <Text
                   display={{ base: 'none', sm: 'flex' }}
@@ -477,11 +474,7 @@ export const ListingCardMobile = ({ bounty }: { bounty: Listing }) => {
                     h={3}
                     ml={isBounty ? -0.5 : 0}
                     alt={type}
-                    src={
-                      isBounty
-                        ? '/assets/icons/bolt.svg'
-                        : '/assets/icons/briefcase.svg'
-                    }
+                    src={getListingIcon(type!)}
                   />
                 </>
                 <Text
