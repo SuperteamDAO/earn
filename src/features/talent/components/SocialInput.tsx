@@ -14,9 +14,13 @@ import { toast } from 'sonner';
 import {
   isValidDiscordInput,
   isValidGitHubInput,
+  isValidGitHubUsername,
   isValidLinkedInInput,
+  isValidLinkedInUsername,
   isValidTelegramInput,
+  isValidTelegramUsername,
   isValidTwitterInput,
+  isValidTwitterUsername,
   isValidWebsiteUrl,
 } from '@/features/talent';
 
@@ -82,25 +86,25 @@ export const SocialInput = ({ register, watch }: SocialInputProps) => {
           }
           break;
         case 'twitter':
-          if (!isValidTwitterInput(value)) {
+          if (!isValidTwitterInput(value) && !isValidTwitterUsername(value)) {
             toast.error('Invalid Twitter username or URL');
             return false;
           }
           break;
         case 'github':
-          if (!isValidGitHubInput(value)) {
+          if (!isValidGitHubInput(value) && !isValidGitHubUsername(value)) {
             toast.error('Invalid GitHub username or URL');
             return false;
           }
           break;
         case 'linkedin':
-          if (!isValidLinkedInInput(value)) {
+          if (!isValidLinkedInInput(value) && !isValidLinkedInUsername(value)) {
             toast.error('Invalid LinkedIn username or URL');
             return false;
           }
           break;
         case 'telegram':
-          if (!isValidTelegramInput(value)) {
+          if (!isValidTelegramInput(value) && !isValidTelegramUsername(value)) {
             toast.error('Invalid Telegram username or URL');
             return false;
           }
