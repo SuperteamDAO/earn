@@ -927,8 +927,12 @@ export const SubmissionDetails = ({
               <Flex w="25%" p={4}>
                 {selectedSubmission && (
                   <Notes
+                    key={selectedSubmission.id}
                     submissionId={selectedSubmission.id}
                     initialNotes={selectedSubmission.notes}
+                    selectedSubmission={selectedSubmission}
+                    setSelectedSubmission={setSelectedSubmission}
+                    setSubmissions={setSubmissions}
                   />
                 )}
               </Flex>

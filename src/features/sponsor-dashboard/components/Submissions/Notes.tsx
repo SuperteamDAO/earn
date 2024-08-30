@@ -1,30 +1,45 @@
 import { Flex, HStack, Spinner, Text, Textarea } from '@chakra-ui/react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+
+import { type SubmissionWithUser } from '@/interface/submission';
 
 const MAX_CHARACTERS = 500;
 
 type Props = {
   submissionId: string;
   initialNotes?: string;
+  selectedSubmission: SubmissionWithUser;
+  setSelectedSubmission: Dispatch<
+    SetStateAction<SubmissionWithUser | undefined>
+  >;
+  setSubmissions: Dispatch<SetStateAction<SubmissionWithUser[]>>;
 };
 
-export const Notes = ({ submissionId, initialNotes = '' }: Props) => {
+export const Notes = ({
+  submissionId,
+  selectedSubmission,
+  setSelectedSubmission,
+  setSubmissions,
+  initialNotes = '',
+}: Props) => {
   const [notes, setNotes] = useState(initialNotes || '');
   const [isSaving, setIsSaving] = useState(false);
 
   const autosave = async (content: string) => {
     setIsSaving(true);
     try {
-      const response = await axios.post(
-        '/api/sponsor-dashboard/submission/update-notes',
-        {
-          id: submissionId,
-          notes: content,
-        },
-      );
-      console.log('Autosaved:', response.data);
+      await axios.post('/api/sponsor-dashboard/submission/update-notes', {
+        id: submissionId,
+        notes: content,
+      });
     } catch (error) {
       console.error('Error autosaving:', error);
     } finally {
@@ -34,11 +49,14 @@ export const Notes = ({ submissionId, initialNotes = '' }: Props) => {
 
   const debouncedAutosave = useCallback(
     debounce((content: string) => autosave(content), 1000),
-    [submissionId], // Add submissionId as a dependency
+    [submissionId, initialNotes],
   );
 
   useEffect(() => {
     debouncedAutosave(notes);
+    return () => {
+      debouncedAutosave.cancel();
+    };
   }, [notes, debouncedAutosave]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -49,6 +67,17 @@ export const Notes = ({ submissionId, initialNotes = '' }: Props) => {
     }
 
     if (value.length <= MAX_CHARACTERS) {
+      setSelectedSubmission({
+        ...selectedSubmission,
+        notes: value,
+      });
+      setSubmissions((prevSubmissions) =>
+        prevSubmissions.map((submission) =>
+          submission.id === submissionId
+            ? { ...submission, notes: value }
+            : submission,
+        ),
+      );
       setNotes(value);
     }
   };
@@ -72,7 +101,7 @@ export const Notes = ({ submissionId, initialNotes = '' }: Props) => {
   return (
     <Flex align="start" direction="column" w="full">
       <HStack justify="space-between" w="full" mb={2} color="brand.slate.400">
-        <Text fontWeight={800}>Notes</Text>
+        <Text fontWeight={800}>Review Notes</Text>
         {isSaving ? (
           <Spinner size="xs" />
         ) : (
@@ -80,6 +109,7 @@ export const Notes = ({ submissionId, initialNotes = '' }: Props) => {
         )}
       </HStack>
       <Textarea
+        key={submissionId}
         sx={{
           lineHeight: '2',
           '& ::placeholder': {
