@@ -1,5 +1,14 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Button, Flex, Image, Text, useDisclosure } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  Image,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { type SubmissionLabels } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -39,6 +48,13 @@ function BountySubmissions({ listing }: Props) {
   const [searchText, setSearchText] = useState('');
 
   const [usedPositions, setUsedPositions] = useState<number[]>([]);
+  const [remainings, setRemainings] = useState<{
+    podiums: number;
+    bonus: number;
+  } | null>(null);
+  const [filterLabel, setFilterLabel] = useState<
+    SubmissionLabels | 'Winner' | undefined
+  >(undefined);
 
   useEffect(() => {}, [bounty]);
 
@@ -65,6 +81,18 @@ function BountySubmissions({ listing }: Props) {
       setTotalWinners(bountyDetails.data.winnersSelected);
       setTotalPaymentsMade(bountyDetails.data.paymentsMade);
 
+      const rewardsLength = cleanRewards(
+        bountyDetails.data?.rewards,
+        true,
+      ).length;
+      setRemainings({
+        podiums:
+          rewardsLength - (bountyDetails.data.podiumWinnersSelected || 0),
+        bonus:
+          (bountyDetails.data?.maxBonusSpots || 0) -
+          (bountyDetails.data.bonusWinnerSelected || 0),
+      });
+
       const ranks = sortRank(cleanRewards(bountyDetails.data.rewards));
       setRewards(ranks);
       setIsBountyLoading(false);
@@ -83,6 +111,7 @@ function BountySubmissions({ listing }: Props) {
             take: length,
             skip,
             isHackathon: true,
+            label: filterLabel,
           },
         },
       );
@@ -97,7 +126,7 @@ function BountySubmissions({ listing }: Props) {
     if (user?.currentSponsorId) {
       getSubmissions();
     }
-  }, [user?.currentSponsorId, skip, searchText]);
+  }, [user?.currentSponsorId, skip, searchText, filterLabel]);
 
   useEffect(() => {
     if (user?.currentSponsorId) {
@@ -106,13 +135,14 @@ function BountySubmissions({ listing }: Props) {
   }, [user?.currentSponsorId]);
 
   return (
-    <SponsorLayout>
+    <SponsorLayout isCollapsible>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (
         <>
           {isOpen && (
             <PublishResults
+              remaining={remainings}
               isOpen={isOpen}
               onClose={onClose}
               totalWinners={totalWinners}
@@ -122,50 +152,67 @@ function BountySubmissions({ listing }: Props) {
           )}
           <SubmissionHeader
             bounty={bounty}
-            onOpen={onOpen}
             totalSubmissions={totalSubmissions}
             isHackathonPage
           />
-          {!submissions?.length && !searchText ? (
-            <>
-              <Image
-                w={32}
-                mx="auto"
-                mt={32}
-                alt={'talent empty'}
-                src="/assets/bg/talent-empty.svg"
-              />
-              <Text
-                mx="auto"
-                mt={5}
-                color={'brand.slate.600'}
-                fontSize={'lg'}
-                fontWeight={600}
-                textAlign={'center'}
+          <Flex align={'start'} w="full" bg="white">
+            <Grid templateColumns="23rem 1fr" w="full" minH="600px" bg="white">
+              <GridItem w="full" h="full">
+                <SubmissionList
+                  filterLabel={filterLabel}
+                  setFilterLabel={setFilterLabel}
+                  submissions={submissions}
+                  setSearchText={setSearchText}
+                  selectedSubmission={selectedSubmission}
+                  setSelectedSubmission={setSelectedSubmission}
+                  type={bounty?.type}
+                />
+              </GridItem>
+              <GridItem
+                w="full"
+                h="full"
+                bg="white"
+                borderColor="brand.slate.200"
+                borderTopWidth="1px"
+                borderRightWidth={'1px'}
+                borderBottomWidth="1px"
+                roundedRight={'xl'}
               >
-                People are working!
-              </Text>
-              <Text
-                mx="auto"
-                mb={200}
-                color={'brand.slate.400'}
-                fontWeight={500}
-                textAlign={'center'}
-              >
-                Submissions will start appearing here
-              </Text>
-            </>
-          ) : (
-            <>
-              <Flex align={'start'} bg="white">
-                <Flex flex="4 1 auto" minH="600px">
-                  <SubmissionList
-                    submissions={submissions}
-                    setSearchText={setSearchText}
-                    selectedSubmission={selectedSubmission}
-                    setSelectedSubmission={setSelectedSubmission}
-                  />
+                {!submissions?.length && !searchText && !isBountyLoading ? (
+                  <>
+                    <Image
+                      w={32}
+                      mx="auto"
+                      mt={32}
+                      alt={'talent empty'}
+                      src="/assets/bg/talent-empty.svg"
+                    />
+                    <Text
+                      mx="auto"
+                      mt={5}
+                      color={'brand.slate.600'}
+                      fontSize={'lg'}
+                      fontWeight={600}
+                      textAlign={'center'}
+                    >
+                      {filterLabel ? `Zero Results` : 'People are working!'}
+                    </Text>
+                    <Text
+                      mx="auto"
+                      mb={200}
+                      color={'brand.slate.400'}
+                      fontWeight={500}
+                      textAlign={'center'}
+                    >
+                      {filterLabel
+                        ? `For the filters you have selected`
+                        : 'Submissions will start appearing here'}
+                    </Text>
+                  </>
+                ) : (
                   <SubmissionDetails
+                    remainings={remainings}
+                    setRemainings={setRemainings}
                     bounty={bounty}
                     submissions={submissions}
                     setSubmissions={setSubmissions}
@@ -176,11 +223,23 @@ function BountySubmissions({ listing }: Props) {
                     setUsedPositions={setUsedPositions}
                     setTotalPaymentsMade={setTotalPaymentsMade}
                     setTotalWinners={setTotalWinners}
-                    isHackathonPage
+                    onWinnersAnnounceOpen={onOpen}
                   />
-                </Flex>
-              </Flex>
-              <Flex align="center" justify="start" gap={4} mt={4}>
+                )}
+              </GridItem>
+            </Grid>
+          </Flex>
+          <Flex align="center" justify="start" gap={4} mt={4}>
+            {!!searchText ? (
+              <Text color="brand.slate.400" fontSize="sm">
+                Found{' '}
+                <Text as="span" fontWeight={700}>
+                  {submissions.length}
+                </Text>{' '}
+                {submissions.length === 1 ? 'result' : 'results'}
+              </Text>
+            ) : (
+              <>
                 <Button
                   isDisabled={skip <= 0}
                   leftIcon={<ChevronLeftIcon w={5} h={5} />}
@@ -218,9 +277,9 @@ function BountySubmissions({ listing }: Props) {
                 >
                   Next
                 </Button>
-              </Flex>
-            </>
-          )}
+              </>
+            )}
+          </Flex>
         </>
       )}
     </SponsorLayout>

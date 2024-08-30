@@ -22,7 +22,13 @@ interface SponsorOption {
 
 export const hackathonSponsorAtom = atom<string | null>(null);
 
-export function SelectSponsor({ type }: { type?: string }) {
+export function SelectSponsor({
+  type,
+  isExpanded = false,
+}: {
+  type?: string;
+  isExpanded?: boolean;
+}) {
   const { user } = useUser();
   const updateUser = useUpdateUser();
 
@@ -89,6 +95,7 @@ export function SelectSponsor({ type }: { type?: string }) {
             id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
             borderRadius="4"
+            size={'24px'}
           />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
             <Flex>
@@ -154,6 +161,7 @@ export function SelectSponsor({ type }: { type?: string }) {
             borderColor: '#6366F1',
           },
           minHeight: '46px',
+          flexWrap: 'nowrap',
         }),
         dropdownIndicator: (base) => ({
           ...base,
@@ -161,6 +169,7 @@ export function SelectSponsor({ type }: { type?: string }) {
           '&:hover': {
             color: '#94a3b8',
           },
+          display: isExpanded ? 'block' : 'none',
         }),
         indicatorSeparator: (base) => ({
           ...base,

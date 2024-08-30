@@ -19,8 +19,8 @@ interface UnpublishModalProps {
   unpublishIsOpen: boolean;
   unpublishOnClose: () => void;
   listingId: string | undefined;
-  listings: ListingWithSubmissions[];
-  setListings: (bounties: ListingWithSubmissions[]) => void;
+  listings?: ListingWithSubmissions[];
+  setListings?: (bounties: ListingWithSubmissions[]) => void;
   listingType: string | undefined;
 }
 
@@ -48,15 +48,17 @@ export const UnpublishModal = ({
         });
       }
 
-      const changedBountyIndex = listings.findIndex(
-        (b) => b.id === result.data.id,
-      );
-      const newBounties = listings.map((listing, index) =>
-        changedBountyIndex === index
-          ? { ...listing, isPublished: result.data.isPublished }
-          : listing,
-      );
-      setListings(newBounties);
+      if (listings && setListings) {
+        const changedBountyIndex = listings.findIndex(
+          (b) => b.id === result.data.id,
+        );
+        const newBounties = listings.map((listing, index) =>
+          changedBountyIndex === index
+            ? { ...listing, isPublished: result.data.isPublished }
+            : listing,
+        );
+        setListings(newBounties);
+      }
       unpublishOnClose();
       setIsChangingStatus(false);
     } catch (e) {
