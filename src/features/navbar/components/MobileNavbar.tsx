@@ -35,9 +35,9 @@ interface Props {
   onLoginOpen: () => void;
 }
 
-const AnnouncementBar = dynamic(() =>
-  import('@/features/navbar').then((mod) => mod.AnnouncementBar),
-);
+// const AnnouncementBar = dynamic(() =>
+//   import('@/features/navbar').then((mod) => mod.AnnouncementBar),
+// );
 
 const UserMenu = dynamic(() =>
   import('@/components/shared/UserMenu').then((mod) => mod.UserMenu),
@@ -175,7 +175,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               label={'Leaderboard'}
               isActive={false}
             />
-            <Divider my={2} borderColor={'brand.slate.300'} />
+            {/* <Divider my={2} borderColor={'brand.slate.300'} />
             <Link
               as={NextLink}
               alignItems="center"
@@ -189,7 +189,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 alt="Radar Nav Icon"
                 src="/assets/hackathon/radar/nav.png"
               />
-            </Link>
+            </Link> */}
           </DrawerBody>
         </DrawerContent>
       </Drawer>
@@ -198,7 +198,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
 
   return (
     <>
-      {router.pathname === '/' && <AnnouncementBar />}
+      {/* {router.pathname === '/' && <AnnouncementBar />} */}
       <Box pos="sticky" zIndex="sticky" top={0}>
         <Flex
           align="center"
