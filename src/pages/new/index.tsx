@@ -27,7 +27,6 @@ import Tensor from '@/public/assets/company-logos/tensor.svg';
 import Jupiter from '@/public/assets/landingsponsor/sponsors/jupiter.png';
 import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.png';
 import Squads from '@/public/assets/landingsponsor/sponsors/squads.png';
-import { SponsorStore } from '@/store/sponsor';
 import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
@@ -56,7 +55,6 @@ export default function NewProfilePage({
   const router = useRouter();
   const { user } = useUser();
   const [isTalentLoading, setIsTalentLoading] = useState(false);
-  const { setCurrentSponsor } = SponsorStore();
   const [isSponsorLoading, setIsSponsorLoading] = useState(false);
 
   const ONBOARDING_KEY = 'onboarding_chosed';
@@ -83,7 +81,6 @@ export default function NewProfilePage({
       localStorage.removeItem(ONBOARDING_KEY);
       const sponsors = await axios.get('/api/user-sponsors');
       if (sponsors?.data?.length) {
-        setCurrentSponsor(sponsors?.data[0]?.sponsor);
         router.push('/dashboard/listings?open=1');
       } else {
         router.push('/new/sponsor');
