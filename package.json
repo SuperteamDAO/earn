@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development next dev",
-    "docker-dev": "pnpm prisma push db && pnpm run dev",
+    "docker-dev": "pnpm prisma db push && pnpm run dev",
     "build": "prisma generate && next build",
     "start": "cross-env NODE_ENV=production next start",
     "lint": "next lint",
