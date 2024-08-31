@@ -492,8 +492,9 @@ model Hackathon {
 }
 
 model UnsubscribedEmail {
-  id    String @id @default(uuid())
-  email String @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
 }
 
 enum TalentRankingSkills {
