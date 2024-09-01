@@ -17,7 +17,6 @@ import {
 } from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useSetAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -27,9 +26,10 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { BONUS_REWARD_POSITION } from '@/constants';
-import { type Listing, PublishResults } from '@/features/listings';
+import { PublishResults } from '@/features/listings';
 import {
   selectedSubmissionAtom,
+  sponsorDashboardListingQuery,
   SubmissionHeader,
   SubmissionList,
   SubmissionPanel,
@@ -77,15 +77,9 @@ export default function BountySubmissions({ listing }: Props) {
     submissionsQuery(listing, true),
   );
 
-  const { data: bounty, isLoading: isBountyLoading } = useQuery({
-    queryKey: ['hackathon-dashboard-listing', listing],
-    queryFn: async () => {
-      const response = await axios.get(
-        `/api/sponsor-dashboard/${listing}/listing?type=hackathon`,
-      );
-      return response.data as Listing;
-    },
-  });
+  const { data: bounty, isLoading: isBountyLoading } = useQuery(
+    sponsorDashboardListingQuery(listing, true),
+  );
 
   const filteredSubmissions = useMemo(() => {
     if (!submissionsData) return [];
@@ -130,9 +124,9 @@ export default function BountySubmissions({ listing }: Props) {
 
   useEffect(() => {
     if (bounty && user?.currentSponsorId) {
-      if (bounty?.hackathonId !== user.hackathonId) {
-        router.push('/dashboard/hackathon');
-      }
+      // if (bounty?.hackathonId !== user.hackathonId) {
+      //   router.push('/dashboard/hackathon');
+      // }
 
       const podiumWinnersSelected = submissionsData?.filter(
         (submission) =>
@@ -197,7 +191,6 @@ export default function BountySubmissions({ listing }: Props) {
           <SubmissionHeader
             bounty={bounty}
             totalSubmissions={submissionsData?.length || 0}
-            isHackathonPage
           />
           <Tabs defaultIndex={searchParams.has('scout') ? 1 : 0}>
             <TabList

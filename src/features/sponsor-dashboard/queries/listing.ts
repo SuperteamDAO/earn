@@ -1,23 +1,24 @@
-import { type Submission } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { type Listing } from '@/features/listings';
 
-interface SDListing extends Listing {
-  Submission: Submission[];
-  winnersSelected: number;
-  paymentsMade: number;
-}
-
-const fetchListing = async (slug: string): Promise<SDListing> => {
-  const { data } = await axios.get(`/api/sponsor-dashboard/${slug}/listing/`);
-  return data;
+const fetchListing = async (
+  slug: string,
+  isHackathon?: boolean,
+): Promise<Listing> => {
+  const response = await axios.get(`/api/sponsor-dashboard/${slug}/listing/`, {
+    params: { isHackathon },
+  });
+  return response.data;
 };
 
-export const listingQuery = (slug: string, userId: string | undefined) =>
+export const sponsorDashboardListingQuery = (
+  slug: string,
+  isHackathon?: boolean,
+) =>
   queryOptions({
-    queryKey: ['bounty', slug],
-    queryFn: () => fetchListing(slug),
-    enabled: !!userId,
+    queryKey: ['sponsor-dashboard-listing', slug, isHackathon],
+    queryFn: () => fetchListing(slug, isHackathon),
+    enabled: !!slug,
   });

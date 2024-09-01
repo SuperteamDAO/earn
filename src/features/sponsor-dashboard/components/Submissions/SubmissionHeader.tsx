@@ -59,7 +59,6 @@ export const SubmissionHeader = ({
   totalSubmissions,
   isHackathonPage = false,
 }: Props) => {
-  console.log('isHackathonPage', isHackathonPage);
   const [isExporting, setIsExporting] = useState(false);
 
   const { data: session } = useSession();

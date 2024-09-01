@@ -28,7 +28,6 @@ import { selectedSubmissionAtom } from '../..';
 
 interface Props {
   bounty: Listing | null;
-  // setTotalPaymentsMade: Dispatch<SetStateAction<number>>;
 }
 
 export const PayoutButton = ({ bounty }: Props) => {
@@ -88,10 +87,6 @@ export const PayoutButton = ({ bounty }: Props) => {
             }
           : prev,
       );
-
-      // setTotalPaymentsMade(
-      //   (prevTotalPaymentsMade) => prevTotalPaymentsMade + 1,
-      // );
     },
     onError: (error) => {
       console.error('Payment record update failed', error);

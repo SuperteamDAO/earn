@@ -14,18 +14,30 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
   const slug = params.slug as string;
   const type = params.type as 'bounty' | 'project' | 'hackathon';
+  const isHackathon = params.isHackathon === 'true';
 
   logger.debug(`Request query: ${safeStringify(params)}`);
 
   try {
-    const userSponsorId = req.userSponsorId;
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId as string,
+      },
+    });
+
+    if (!user) {
+      logger.warn(`Unauthorized access attempt by user ${userId}`);
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
 
     const result = await prisma.bounties.findFirst({
       where: {
         slug,
         type,
         isActive: true,
-        sponsorId: userSponsorId,
+        ...(isHackathon
+          ? { hackathonId: user.hackathonId }
+          : { sponsor: { id: req.userSponsorId } }),
       },
       include: {
         sponsor: { select: { name: true, logo: true, isVerified: true } },
@@ -37,7 +49,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             email: true,
           },
         },
-        Submission: true,
         Hackathon: {
           select: {
             altLogo: true,
@@ -59,9 +70,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     logger.info(`Successfully fetched bounty details for slug=${slug}`);
-    return res.status(200).json({
-      result,
-    });
+    return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
       `Error fetching bounty with slug=${slug}:`,

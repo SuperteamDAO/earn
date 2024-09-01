@@ -47,9 +47,6 @@ export function PublishResults({
   const posthog = usePostHog();
   const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
 
-  const rewardsPodiumsLength = cleanRewards(bounty?.rewards, true).length;
-  console.log('rewardsPodiumsLength', rewardsPodiumsLength);
-
   const rewards =
     cleanRewards(bounty?.rewards, true).length + (bounty?.maxBonusSpots || 0);
 

@@ -17,7 +17,6 @@ import {
 } from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useSetAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -27,12 +26,13 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { BONUS_REWARD_POSITION } from '@/constants';
-import { type Listing, PublishResults } from '@/features/listings';
+import { PublishResults } from '@/features/listings';
 import {
   type ScoutRowType,
   scoutsQuery,
   ScoutTable,
   selectedSubmissionAtom,
+  sponsorDashboardListingQuery,
   SubmissionHeader,
   SubmissionList,
   SubmissionPanel,
@@ -81,15 +81,9 @@ export default function BountySubmissions({ slug }: Props) {
     submissionsQuery(slug),
   );
 
-  const { data: bounty, isLoading: isBountyLoading } = useQuery({
-    queryKey: ['sponsor-dashboard-listing', slug],
-    queryFn: async () => {
-      const response = await axios.get(
-        `/api/sponsor-dashboard/${slug}/listing/`,
-      );
-      return response.data as Listing;
-    },
-  });
+  const { data: bounty, isLoading: isBountyLoading } = useQuery(
+    sponsorDashboardListingQuery(slug),
+  );
 
   const { data: scouts } = useQuery(
     scoutsQuery({
