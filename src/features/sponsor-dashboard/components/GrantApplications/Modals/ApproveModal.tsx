@@ -32,10 +32,7 @@ interface ApproveModalProps {
   ask: number | undefined;
   granteeName: string | null | undefined;
   token: string;
-  onApproveGrant: (
-    applicationId: string,
-    approvedAmount: number,
-  ) => Promise<void>;
+  onApproveGrant: (applicationId: string, approvedAmount: number) => void;
 }
 
 export const ApproveModal = ({
@@ -73,6 +70,7 @@ export const ApproveModal = ({
     setLoading(true);
     try {
       await onApproveGrant(applicationId, approvedAmount);
+      approveOnClose();
     } catch (e) {
       console.error(e);
     } finally {

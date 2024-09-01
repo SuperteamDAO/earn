@@ -15,8 +15,8 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
 
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
@@ -24,6 +24,7 @@ import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
+import { approvedGranteesQuery } from '../../queries';
 import { type GrantApplicationWithUser } from '../../types';
 import { RecordPaymentButton } from './RecordPaymentButton';
 
@@ -114,35 +115,17 @@ export const PaymentsHistoryTab = ({
   grant,
 }: {
   grantId: string | undefined;
-  grant: Grant | null;
+  grant: Grant | undefined;
 }) => {
   const { user } = useUser();
-  const [grantees, setGrantees] = useState<GrantApplicationWithUser[]>();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const queryClient = useQueryClient();
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
 
-  const getGrantees = async () => {
-    try {
-      const allGrantees = await axios.get(
-        '/api/sponsor-dashboard/grants/approved-grantees',
-        {
-          params: {
-            grantId,
-          },
-        },
-      );
-      setGrantees(allGrantees.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    if (user?.currentSponsorId) {
-      getGrantees();
-    }
-  }, [user?.currentSponsorId]);
+  const { data: grantees } = useQuery(
+    approvedGranteesQuery(grantId, user?.currentSponsorId),
+  );
 
   const toggleExpandRow = (id: string) => {
     setExpandedRows((prev) => {
@@ -173,10 +156,12 @@ export const PaymentsHistoryTab = ({
   const handlePaymentRecorded = (
     updatedApplication: GrantApplicationWithUser,
   ) => {
-    setGrantees((prevGrantees) =>
-      prevGrantees?.map((grantee) =>
-        grantee.id === updatedApplication.id ? updatedApplication : grantee,
-      ),
+    queryClient.setQueryData<GrantApplicationWithUser[]>(
+      ['grantees', grantId],
+      (oldData) =>
+        oldData?.map((grantee) =>
+          grantee.id === updatedApplication.id ? updatedApplication : grantee,
+        ),
     );
   };
 

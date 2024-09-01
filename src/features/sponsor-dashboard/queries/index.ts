@@ -1,5 +1,7 @@
 export * from './accept-invite';
 export * from './applications';
+export * from './approved-grantees';
+export * from './grant';
 export * from './latest-active-slug';
 export * from './listing';
 export * from './local-profiles';

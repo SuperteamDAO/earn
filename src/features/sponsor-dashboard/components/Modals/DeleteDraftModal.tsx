@@ -9,9 +9,11 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
+import { toast } from 'sonner';
 
 import { type ListingWithSubmissions } from '@/features/listings';
 
@@ -32,24 +34,28 @@ export const DeleteDraftModal = ({
   deleteDraftOnClose,
   listingType,
 }: DeleteDraftModalProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const deleteSelectedDraft = async () => {
-    setIsLoading(true);
-    try {
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
       if (listingType === 'grant') {
         await axios.post(`/api/grants/delete/${listingId}`);
       } else {
         await axios.post(`/api/listings/delete/${listingId}`);
       }
+    },
+    onSuccess: () => {
       const update = listings.filter((x) => x.id !== listingId);
       setListings(update);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
+      toast.success('Draft deleted successfully');
       deleteDraftOnClose();
-    }
+    },
+    onError: (error) => {
+      console.error('Delete error:', error);
+      toast.error('Failed to delete draft. Please try again.');
+    },
+  });
+
+  const deleteSelectedDraft = () => {
+    deleteMutation.mutate();
   };
 
   return (
@@ -74,7 +80,7 @@ export const DeleteDraftModal = ({
             Close
           </Button>
           <Button
-            isLoading={isLoading}
+            isLoading={deleteMutation.isPending}
             leftIcon={<AiOutlineDelete />}
             loadingText="Deleting..."
             onClick={deleteSelectedDraft}

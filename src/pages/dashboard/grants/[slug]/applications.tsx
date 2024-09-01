@@ -17,20 +17,23 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { GrantApplicationStatus } from '@prisma/client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { type Grant } from '@/features/grants';
 import {
   ApplicationDetails,
   ApplicationHeader,
   ApplicationList,
+  applicationsQuery,
   type GrantApplicationWithUser,
   PaymentsHistoryTab,
   RejectAllModal,
+  sponsorGrantQuery,
 } from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
@@ -45,23 +48,18 @@ const selectedStyles = {
 };
 
 function GrantApplications({ slug }: Props) {
-  const router = useRouter();
   const { user } = useUser();
-  const [grant, setGrant] = useState<Grant | null>(null);
-  const [totalApplications, setTotalApplications] = useState(0);
-  const [applications, setApplications] = useState<GrantApplicationWithUser[]>(
-    [],
-  );
+  const router = useRouter();
   const [selectedApplication, setSelectedApplication] =
     useState<GrantApplicationWithUser>();
-  const [isGrantLoading, setIsGrantLoading] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
   const [skip, setSkip] = useState(0);
   let length = 20;
   const [searchText, setSearchText] = useState('');
   const [selectedApplicationIds, setSelectedApplicationIds] = useState<
     Set<string>
   >(new Set());
+
+  const queryClient = useQueryClient();
 
   const [isToggledAll, setIsToggledAll] = useState(false);
   const {
@@ -75,6 +73,10 @@ function GrantApplications({ slug }: Props) {
     onClose: rejectedOnClose,
   } = useDisclosure();
 
+  const { data: applications, isLoading: isApplicationsLoading } = useQuery(
+    applicationsQuery({ searchText, length, skip }, slug),
+  );
+
   useEffect(() => {
     selectedApplicationIds.size > 0 ? onTogglerOpen() : onTogglerClose();
   }, [selectedApplicationIds]);
@@ -86,7 +88,7 @@ function GrantApplications({ slug }: Props) {
   useEffect(() => {
     const newSet = new Set(selectedApplicationIds);
     Array.from(selectedApplicationIds).forEach((a) => {
-      const applicationWithId = applications.find(
+      const applicationWithId = applications?.find(
         (application) => application.id === a,
       );
       if (
@@ -101,8 +103,9 @@ function GrantApplications({ slug }: Props) {
 
   const isAllCurrentToggled = () =>
     applications
-      .filter((application) => application.applicationStatus === 'Pending')
-      .every((application) => selectedApplicationIds.has(application.id));
+      ?.filter((application) => application.applicationStatus === 'Pending')
+      .every((application) => selectedApplicationIds.has(application.id)) ||
+    false;
 
   const toggleApplication = (id: string) => {
     setSelectedApplicationIds((prev) => {
@@ -128,14 +131,14 @@ function GrantApplications({ slug }: Props) {
       setSelectedApplicationIds((prev) => {
         const newSet = new Set(prev);
         applications
-          .filter((application) => application.applicationStatus === 'Pending')
+          ?.filter((application) => application.applicationStatus === 'Pending')
           .map((application) => newSet.add(application.id));
         return newSet;
       });
     } else {
       setSelectedApplicationIds((prev) => {
         const newSet = new Set(prev);
-        applications.map((application) => newSet.delete(application.id));
+        applications?.map((application) => newSet.delete(application.id));
         return newSet;
       });
     }
@@ -152,79 +155,15 @@ function GrantApplications({ slug }: Props) {
     }
   }, [searchText]);
 
-  const getGrant = async () => {
-    setIsGrantLoading(true);
-    try {
-      const grantDetails = await axios.get(
-        `/api/sponsor-dashboard/grants/${slug}/`,
-      );
-      setGrant(grantDetails.data);
-      if (grantDetails.data.sponsorId !== user?.currentSponsorId) {
-        router.push('/dashboard/listings');
-      }
+  const { data: grant, isLoading: isGrantLoading } = useQuery(
+    sponsorGrantQuery(slug, user?.currentSponsorId),
+  );
 
-      setTotalApplications(grantDetails.data.totalApplications);
-      setIsGrantLoading(false);
-    } catch (e) {
-      setIsGrantLoading(false);
-    }
-  };
-
-  const getApplications = async () => {
-    try {
-      setIsLoading(true);
-      const applicationDetails = await axios.get(
-        `/api/sponsor-dashboard/grants/${slug}/applications/`,
-        {
-          params: {
-            searchText,
-            take: length,
-            skip,
-          },
-        },
-      );
-      setApplications(applicationDetails.data);
-      setSelectedApplication(applicationDetails.data[0]);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (user?.currentSponsorId) {
-      getApplications();
-    }
-  }, [user?.currentSponsorId, skip, searchText]);
-
-  useEffect(() => {
-    if (user?.currentSponsorId) {
-      getGrant();
-    }
-  }, [user?.currentSponsorId]);
-
-  const handleRejectGrant = async (applicationIds: string[]) => {
-    const updatedApplications = applications.map((application) =>
-      applicationIds.includes(application.id)
-        ? {
-            ...application,
-            applicationStatus: GrantApplicationStatus.Rejected,
-          }
-        : application,
-    );
-
-    setApplications(updatedApplications);
-    const updatedApplication = updatedApplications.find((application) =>
-      applicationIds.includes(application.id),
-    );
-    setSelectedApplication(updatedApplication);
-    rejectedOnClose();
-
-    const batchSize = 10;
-    for (let i = 0; i < applicationIds.length; i += batchSize) {
-      const batch = applicationIds.slice(i, i + batchSize);
-      try {
+  const rejectGrantMutation = useMutation({
+    mutationFn: async (applicationIds: string[]) => {
+      const batchSize = 10;
+      for (let i = 0; i < applicationIds.length; i += batchSize) {
+        const batch = applicationIds.slice(i, i + batchSize);
         await axios.post(
           `/api/sponsor-dashboard/grants/update-application-status`,
           {
@@ -232,22 +171,69 @@ function GrantApplications({ slug }: Props) {
             applicationStatus: 'Rejected',
           },
         );
-      } catch (error) {
-        console.error(`Error processing batch ${i / batchSize + 1}:`, error);
       }
-    }
-    setSelectedApplicationIds(new Set());
+    },
+    onMutate: async (applicationIds) => {
+      queryClient.setQueryData(['sponsor-applications', slug], (old: any) => {
+        if (!old) return old;
+        return old.map((application: GrantApplicationWithUser) =>
+          applicationIds.includes(application.id)
+            ? {
+                ...application,
+                applicationStatus: GrantApplicationStatus.Rejected,
+              }
+            : application,
+        );
+      });
+    },
+    onError: () => {
+      toast.error(
+        'An error occurred while rejecting applications. Please try again.',
+      );
+    },
+    onSuccess: (_, applicationIds) => {
+      queryClient.setQueryData(['sponsor-applications', slug], (old: any) => {
+        if (!old) return old;
+        return old.map((application: GrantApplicationWithUser) =>
+          applicationIds.includes(application.id)
+            ? {
+                ...application,
+                applicationStatus: GrantApplicationStatus.Rejected,
+              }
+            : application,
+        );
+      });
+
+      const updatedApplication = queryClient
+        .getQueryData<
+          GrantApplicationWithUser[]
+        >(['sponsor-applications', slug])
+        ?.find((application) => applicationIds.includes(application.id));
+
+      setSelectedApplication(updatedApplication);
+      setSelectedApplicationIds(new Set());
+      toast.success('Applications rejected successfully');
+    },
+  });
+
+  const handleRejectGrant = (applicationIds: string[]) => {
+    rejectGrantMutation.mutate(applicationIds);
+    rejectedOnClose();
   };
+
+  useEffect(() => {
+    if (grant && grant.sponsorId !== user?.currentSponsorId) {
+      router.push('/dashboard/listings');
+    }
+  }, [grant, user?.currentSponsorId, router]);
+
   return (
     <SponsorLayout>
       {isGrantLoading ? (
         <LoadingSection />
       ) : (
         <>
-          <ApplicationHeader
-            grant={grant}
-            totalApplications={totalApplications}
-          />
+          <ApplicationHeader grant={grant} />
           <Tabs defaultIndex={0}>
             <TabList
               gap={4}
@@ -274,7 +260,9 @@ function GrantApplications({ slug }: Props) {
             </TabList>
             <TabPanels>
               <TabPanel px={0}>
-                {!applications?.length && !searchText && !isLoading ? (
+                {!applications?.length &&
+                !searchText &&
+                !isApplicationsLoading ? (
                   <>
                     <Image
                       w={32}
@@ -322,7 +310,6 @@ function GrantApplications({ slug }: Props) {
                           isMultiSelectOn={selectedApplicationIds.size > 0}
                           grant={grant}
                           applications={applications}
-                          setApplications={setApplications}
                           selectedApplication={selectedApplication}
                           setSelectedApplication={setSelectedApplication}
                         />
@@ -333,9 +320,9 @@ function GrantApplications({ slug }: Props) {
                         <Text color="brand.slate.400" fontSize="sm">
                           Found{' '}
                           <Text as="span" fontWeight={700}>
-                            {applications.length}
+                            {applications?.length}
                           </Text>{' '}
-                          {applications.length === 1 ? 'result' : 'results'}
+                          {applications?.length === 1 ? 'result' : 'results'}
                         </Text>
                       ) : (
                         <>
@@ -358,17 +345,20 @@ function GrantApplications({ slug }: Props) {
                             </Text>{' '}
                             -{' '}
                             <Text as="span" fontWeight={700}>
-                              {Math.min(skip + length, totalApplications)}
+                              {Math.min(
+                                skip + length,
+                                grant?.totalApplications!,
+                              )}
                             </Text>{' '}
                             of{' '}
                             <Text as="span" fontWeight={700}>
-                              {totalApplications}
+                              {grant?.totalApplications}
                             </Text>{' '}
                             Applications
                           </Text>
                           <Button
                             isDisabled={
-                              totalApplications <= skip + length ||
+                              grant?.totalApplications! <= skip + length ||
                               (skip > 0 && skip % length !== 0)
                             }
                             onClick={() =>

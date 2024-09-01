@@ -22,6 +22,7 @@ const fetchApplications = async (
 
 export const applicationsQuery = (params: ApplicationsParams, slug: string) =>
   queryOptions({
-    queryKey: ['applications', params, slug],
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: ['sponsor-applications', slug],
     queryFn: () => fetchApplications(params, slug),
   });

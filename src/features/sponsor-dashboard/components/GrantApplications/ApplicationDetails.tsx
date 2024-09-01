@@ -17,11 +17,13 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { GrantApplicationStatus } from '@prisma/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
+import { toast } from 'sonner';
 
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
@@ -35,9 +37,8 @@ import { RejectModal } from './Modals/RejectModal';
 import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface Props {
-  grant: Grant | null;
-  applications: GrantApplicationWithUser[];
-  setApplications: Dispatch<SetStateAction<GrantApplicationWithUser[]>>;
+  grant: Grant | undefined;
+  applications: GrantApplicationWithUser[] | undefined;
   selectedApplication: GrantApplicationWithUser | undefined;
   setSelectedApplication: Dispatch<
     SetStateAction<GrantApplicationWithUser | undefined>
@@ -69,7 +70,6 @@ const InfoBox = ({
 export const ApplicationDetails = ({
   grant,
   applications,
-  setApplications,
   selectedApplication,
   setSelectedApplication,
   isMultiSelectOn,
@@ -78,6 +78,8 @@ export const ApplicationDetails = ({
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
+
+  const queryClient = useQueryClient();
 
   const {
     isOpen: approveIsOpen,
@@ -102,13 +104,12 @@ export const ApplicationDetails = ({
   const moveToNextPendingApplication = () => {
     if (!selectedApplication) return;
 
-    const currentIndex = applications.findIndex(
-      (app) => app.id === selectedApplication.id,
-    );
+    const currentIndex =
+      applications?.findIndex((app) => app.id === selectedApplication.id) || 0;
     if (currentIndex === -1) return;
 
     const nextPendingApplication = applications
-      .slice(currentIndex + 1)
+      ?.slice(currentIndex + 1)
       .find((app) => app.applicationStatus === GrantApplicationStatus.Pending);
 
     if (nextPendingApplication) {
@@ -116,93 +117,134 @@ export const ApplicationDetails = ({
     }
   };
 
-  const handlePaymentRecorded = (updatedApplication: any) => {
+  const handlePaymentRecorded = (
+    updatedApplication: GrantApplicationWithUser,
+  ) => {
     setSelectedApplication(updatedApplication);
 
-    const updatedApplications = applications.map((application) =>
-      application.id === updatedApplication.id
-        ? updatedApplication
-        : application,
+    queryClient.setQueryData<GrantApplicationWithUser[]>(
+      ['sponsor-applications', grant?.slug],
+      (oldData) =>
+        oldData?.map((application) =>
+          application.id === updatedApplication.id
+            ? updatedApplication
+            : application,
+        ),
     );
-
-    setApplications(updatedApplications);
   };
 
-  const handleApproveGrant = async (
-    applicationId: string,
-    approvedAmount: number,
-  ) => {
-    const updatedApplications = applications.map((application) =>
-      application.id === applicationId
-        ? {
-            ...application,
-            applicationStatus: GrantApplicationStatus.Approved,
-            approvedAmount: approvedAmount,
-          }
-        : application,
-    );
-
-    setApplications(updatedApplications);
-    const updatedApplication = updatedApplications.find(
-      (application) => application.id === applicationId,
-    );
-    setSelectedApplication(updatedApplication);
-    approveOnClose();
-
-    const currentIndex = updatedApplications.findIndex(
-      (app) => app.id === applicationId,
-    );
-    if (currentIndex < updatedApplications.length - 1) {
-      moveToNextPendingApplication();
-    }
-
-    try {
-      await axios.post(
+  const approveGrantMutation = useMutation({
+    mutationFn: async ({
+      applicationId,
+      approvedAmount,
+    }: {
+      applicationId: string;
+      approvedAmount: number;
+    }) => {
+      const response = await axios.post(
         '/api/sponsor-dashboard/grants/update-application-status',
         {
           data: [{ id: applicationId, approvedAmount }],
           applicationStatus: 'Approved',
         },
       );
-    } catch (e) {
-      console.error(e);
-    }
-  };
+      return response.data;
+    },
+    onMutate: async ({ applicationId, approvedAmount }) => {
+      const previousApplications = queryClient.getQueryData<
+        GrantApplicationWithUser[]
+      >(['sponsor-applications', grant?.slug]);
 
-  const handleRejectGrant = async (applicationId: string) => {
-    const updatedApplications = applications.map((application) =>
-      application.id === applicationId
-        ? {
-            ...application,
-            applicationStatus: GrantApplicationStatus.Rejected,
-          }
-        : application,
-    );
+      queryClient.setQueryData<GrantApplicationWithUser[]>(
+        ['sponsor-applications', grant?.slug],
+        (oldData) => {
+          if (!oldData) return oldData;
+          const updatedApplications = oldData.map((application) =>
+            application.id === applicationId
+              ? {
+                  ...application,
+                  applicationStatus: GrantApplicationStatus.Approved,
+                  approvedAmount: approvedAmount,
+                }
+              : application,
+          );
+          const updatedApplication = updatedApplications.find(
+            (application) => application.id === applicationId,
+          );
+          setSelectedApplication(updatedApplication);
+          moveToNextPendingApplication();
+          return updatedApplications;
+        },
+      );
 
-    setApplications(updatedApplications);
-    const updatedApplication = updatedApplications.find(
-      (application) => application.id === applicationId,
-    );
-    setSelectedApplication(updatedApplication);
-    rejectedOnClose();
+      return { previousApplications };
+    },
+    onError: (_, __, context) => {
+      queryClient.setQueryData(
+        ['sponsor-applications', grant?.slug],
+        context?.previousApplications,
+      );
+      toast.error('Failed to approve grant. Please try again.');
+    },
+  });
 
-    const currentIndex = updatedApplications.findIndex(
-      (app) => app.id === applicationId,
-    );
-    if (currentIndex < updatedApplications.length - 1) {
-      moveToNextPendingApplication();
-    }
-    try {
-      await axios.post(
-        `/api/sponsor-dashboard/grants/update-application-status`,
+  const rejectGrantMutation = useMutation({
+    mutationFn: async (applicationId: string) => {
+      const response = await axios.post(
+        '/api/sponsor-dashboard/grants/update-application-status',
         {
           data: [{ id: applicationId }],
           applicationStatus: 'Rejected',
         },
       );
-    } catch (e) {
-      console.error(e);
-    }
+      return response.data;
+    },
+    onMutate: async (applicationId) => {
+      const previousApplications = queryClient.getQueryData<
+        GrantApplicationWithUser[]
+      >(['sponsor-applications', grant?.slug]);
+
+      queryClient.setQueryData<GrantApplicationWithUser[]>(
+        ['sponsor-applications', grant?.slug],
+        (oldData) => {
+          if (!oldData) return oldData;
+          const updatedApplications = oldData.map((application) =>
+            application.id === applicationId
+              ? {
+                  ...application,
+                  applicationStatus: GrantApplicationStatus.Rejected,
+                }
+              : application,
+          );
+          const updatedApplication = updatedApplications.find(
+            (application) => application.id === applicationId,
+          );
+          setSelectedApplication(updatedApplication);
+          moveToNextPendingApplication();
+          return updatedApplications;
+        },
+      );
+
+      return { previousApplications };
+    },
+    onError: (_, __, context) => {
+      queryClient.setQueryData(
+        ['sponsor-applications', grant?.slug],
+        context?.previousApplications,
+      );
+      toast.error('Failed to reject grant. Please try again.');
+    },
+  });
+
+  const handleApproveGrant = (
+    applicationId: string,
+    approvedAmount: number,
+  ) => {
+    approveGrantMutation.mutate({ applicationId, approvedAmount });
+  };
+
+  const handleRejectGrant = (applicationId: string) => {
+    rejectGrantMutation.mutate(applicationId);
   };
 
   const SocialMediaLink = () => {
@@ -283,7 +325,7 @@ export const ApplicationDetails = ({
         onApproveGrant={handleApproveGrant}
       />
 
-      {applications.length ? (
+      {applications?.length ? (
         <>
           <Box
             py={1}
