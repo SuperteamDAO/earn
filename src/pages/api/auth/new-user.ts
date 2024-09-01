@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { createSponsorEmailSettings } from '@/features/sponsor-dashboard';
+import { handleInviteAcceptance } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -50,29 +50,9 @@ export default async function newUser(
         .status(307)
         .redirect('/new?onboarding=true&loginState=signedIn');
     } else {
-      logger.debug(`Creating user sponsor entry for user ID: ${userId}`);
-      await prisma.userSponsors.create({
-        data: {
-          userId: userId as string,
-          sponsorId: invite?.sponsorId || '',
-          role: invite?.memberType,
-        },
-      });
-
-      await createSponsorEmailSettings(userId as string);
-
-      logger.debug(`Updating current sponsor ID for user ID: ${userId}`);
-      await prisma.user.update({
-        where: { id: userId as string },
-        data: {
-          currentSponsorId: invite?.sponsorId,
-        },
-      });
-
+      const result = await handleInviteAcceptance(userId as string);
       logger.info('User has an invite, redirecting to dashboard');
-      return res
-        .status(307)
-        .redirect('/dashboard/listings/?loginState=signedIn');
+      return res.status(307).redirect(result.redirectUrl!);
     }
   } catch (error: any) {
     logger.error(

@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import type { NextApiResponse } from 'next';
 
 import {
@@ -58,13 +59,18 @@ async function sendInvites(
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const token = crypto.randomBytes(32).toString('hex');
+
     logger.debug(`Creating user invite for email: ${email}`);
-    const result = await prisma.userInvites.create({
+    await prisma.userInvites.create({
       data: {
         email,
         senderId: userId as string,
         sponsorId: req.userSponsorId!,
         memberType,
+        token,
+        expires,
       },
     });
 
@@ -76,7 +82,7 @@ async function sendInvites(
       react: InviteMemberTemplate({
         sponsorName: user.currentSponsor.name,
         senderName: `${user.firstName} ${user.lastName}`,
-        link: `${getURL()}signup?invite=${result.id}`,
+        link: `${getURL()}signup?token=${token}`,
       }),
       reply_to: replyToEmail,
     });
