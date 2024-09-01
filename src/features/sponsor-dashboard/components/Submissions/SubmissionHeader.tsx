@@ -49,7 +49,7 @@ import { getURL } from '@/utils/validUrl';
 import { SponsorPrize } from '../SponsorPrize';
 
 interface Props {
-  bounty: Listing | null;
+  bounty: Listing | undefined;
   totalSubmissions: number;
   isHackathonPage?: boolean;
 }

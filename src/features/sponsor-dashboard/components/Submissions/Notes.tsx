@@ -1,83 +1,75 @@
 import { Flex, HStack, Spinner, Text, Textarea } from '@chakra-ui/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
-import React, {
-  type Dispatch,
-  type SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { type SubmissionWithUser } from '@/interface/submission';
+
+import { selectedSubmissionAtom } from '../..';
 
 const MAX_CHARACTERS = 500;
 
 type Props = {
   submissionId: string;
   initialNotes?: string;
-  selectedSubmission: SubmissionWithUser;
-  setSelectedSubmission: Dispatch<
-    SetStateAction<SubmissionWithUser | undefined>
-  >;
-  setSubmissions: Dispatch<SetStateAction<SubmissionWithUser[]>>;
+  slug: string | undefined;
 };
 
-export const Notes = ({
-  submissionId,
-  selectedSubmission,
-  setSelectedSubmission,
-  setSubmissions,
-  initialNotes = '',
-}: Props) => {
+export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
+  const [selectedSubmission, setSelectedSubmission] = useAtom(
+    selectedSubmissionAtom,
+  );
   const [notes, setNotes] = useState(initialNotes || '');
-  const [isSaving, setIsSaving] = useState(false);
+  const queryClient = useQueryClient();
 
-  const autosave = async (content: string) => {
-    setIsSaving(true);
-    try {
-      await axios.post('/api/sponsor-dashboard/submission/update-notes', {
+  const { mutate: updateNotes, isPending: isSaving } = useMutation({
+    mutationFn: (content: string) =>
+      axios.post('/api/sponsor-dashboard/submission/update-notes', {
         id: submissionId,
         notes: content,
-      });
-    } catch (error) {
-      console.error('Error autosaving:', error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
+      }),
+    onSuccess: (_, variables) => {
+      queryClient.setQueryData<SubmissionWithUser[]>(
+        ['submissions', slug],
+        (old) =>
+          old?.map((submission) =>
+            submission.id === submissionId
+              ? { ...submission, notes: variables }
+              : submission,
+          ),
+      );
+    },
+    onError: (error) => {
+      console.error('Error saving notes:', error);
+    },
+  });
 
-  const debouncedAutosave = useCallback(
-    debounce((content: string) => autosave(content), 1000),
-    [submissionId, initialNotes],
+  const debouncedUpdateNotes = useCallback(
+    debounce((content: string) => updateNotes(content), 1000),
+    [submissionId, updateNotes],
   );
 
   useEffect(() => {
-    debouncedAutosave(notes);
+    debouncedUpdateNotes(notes);
     return () => {
-      debouncedAutosave.cancel();
+      debouncedUpdateNotes.cancel();
     };
-  }, [notes, debouncedAutosave]);
+  }, [notes, debouncedUpdateNotes]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     let value = e.target.value;
-
     if (value !== '' && notes === '') {
       value = '• ' + value;
     }
-
     if (value.length <= MAX_CHARACTERS) {
-      setSelectedSubmission({
-        ...selectedSubmission,
-        notes: value,
-      });
-      setSubmissions((prevSubmissions) =>
-        prevSubmissions.map((submission) =>
-          submission.id === submissionId
-            ? { ...submission, notes: value }
-            : submission,
-        ),
-      );
+      if (selectedSubmission) {
+        setSelectedSubmission({
+          ...selectedSubmission,
+          notes: value,
+        });
+      }
       setNotes(value);
     }
   };

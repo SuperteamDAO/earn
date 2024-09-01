@@ -16,28 +16,33 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { useSetAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { BONUS_REWARD_POSITION } from '@/constants';
 import { type Listing, PublishResults } from '@/features/listings';
 import {
   type ScoutRowType,
+  scoutsQuery,
   ScoutTable,
-  SubmissionDetails,
+  selectedSubmissionAtom,
   SubmissionHeader,
   SubmissionList,
+  SubmissionPanel,
+  submissionsQuery,
 } from '@/features/sponsor-dashboard';
-import { type Scouts } from '@/interface/scouts';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
-import { cleanRewards, sortRank } from '@/utils/rank';
+import { cleanRewards } from '@/utils/rank';
 
 interface Props {
   slug: string;
@@ -48,28 +53,18 @@ const selectedStyles = {
   color: 'brand.slate.600',
 };
 
-function BountySubmissions({ slug }: Props) {
+const submissionsPerPage = 10;
+
+export default function BountySubmissions({ slug }: Props) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useUser();
-  const [bounty, setBounty] = useState<Listing | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [isExpired, setIsExpired] = useState(false);
-  const [totalSubmissions, setTotalSubmissions] = useState(0);
-  const [totalWinners, setTotalWinners] = useState(0);
-  const [totalPaymentsMade, setTotalPaymentsMade] = useState(0);
-  const [submissions, setSubmissions] = useState<SubmissionWithUser[]>([]);
-  const [scouts, setScouts] = useState<ScoutRowType[]>([]);
-  const [selectedSubmission, setSelectedSubmission] =
-    useState<SubmissionWithUser>();
-  const [rewards, setRewards] = useState<number[]>([]);
-  const [isBountyLoading, setIsBountyLoading] = useState(true);
-  const [skip, setSkip] = useState(0);
-  let length = 10;
+  const setSelectedSubmission = useSetAtom(selectedSubmissionAtom);
+
   const [searchText, setSearchText] = useState('');
 
-  const [usedPositions, setUsedPositions] = useState<number[]>([]);
   const [remainings, setRemainings] = useState<{
     podiums: number;
     bonus: number;
@@ -80,132 +75,121 @@ function BountySubmissions({ slug }: Props) {
 
   const searchParams = useSearchParams();
   const posthog = usePostHog();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (searchText) {
-      length = 999;
-      if (skip !== 0) {
-        setSkip(0);
-      }
-    } else {
-      length = 10;
-    }
-  }, [searchText]);
+  const { data: submissionsData, isLoading: isSubmissionsLoading } = useQuery(
+    submissionsQuery(slug),
+  );
 
-  const getBounty = async () => {
-    setIsBountyLoading(true);
-    try {
-      const bountyDetails = await axios.get(
+  const { data: bounty, isLoading: isBountyLoading } = useQuery({
+    queryKey: ['sponsor-dashboard-listing', slug],
+    queryFn: async () => {
+      const response = await axios.get(
         `/api/sponsor-dashboard/${slug}/listing/`,
       );
-      const isExpired =
-        bountyDetails.data?.deadline &&
-        dayjs(bountyDetails.data?.deadline).isBefore(dayjs());
-      setIsExpired(isExpired);
-      setBounty(bountyDetails.data);
-      if (bountyDetails.data.sponsorId !== user?.currentSponsorId) {
+      return response.data as Listing;
+    },
+  });
+
+  const { data: scouts } = useQuery(
+    scoutsQuery({
+      bountyId: bounty?.id!,
+      isEnabled: !!(
+        !!bounty?.id &&
+        bounty.isPublished &&
+        !bounty.isWinnersAnnounced
+      ),
+    }),
+  );
+
+  const filteredSubmissions = useMemo(() => {
+    if (!submissionsData) return [];
+    return submissionsData.filter((submission: SubmissionWithUser) => {
+      const firstName = submission.user.firstName?.toLowerCase() || '';
+      const lastName = submission.user.lastName?.toLowerCase() || '';
+      const fullName = `${firstName} ${lastName}`.trim();
+      const email = submission.user.email?.toLowerCase() || '';
+      const username = submission.user.username?.toLowerCase() || '';
+      const twitter = submission.user.twitter?.toLowerCase() || '';
+      const discord = submission.user.discord?.toLowerCase() || '';
+      const link = submission.link?.toLowerCase() || '';
+
+      const searchLower = searchText.toLowerCase();
+
+      const matchesSearch =
+        searchText === '' ||
+        firstName.includes(searchLower) ||
+        lastName.includes(searchLower) ||
+        fullName.includes(searchLower) ||
+        email.includes(searchLower) ||
+        username.includes(searchLower) ||
+        twitter.includes(searchLower) ||
+        discord.includes(searchLower) ||
+        link.includes(searchLower);
+
+      const matchesLabel =
+        !filterLabel ||
+        (filterLabel === 'Winner'
+          ? submission.isWinner
+          : submission.label === filterLabel);
+
+      return matchesSearch && matchesLabel;
+    });
+  }, [submissionsData, searchText, filterLabel]);
+
+  useEffect(() => {
+    if (filteredSubmissions && filteredSubmissions.length > 0) {
+      setSelectedSubmission(filteredSubmissions[0]);
+    }
+  }, [filteredSubmissions]);
+
+  useEffect(() => {
+    if (bounty && user?.currentSponsorId) {
+      if (bounty.sponsorId !== user.currentSponsorId) {
         router.push('/dashboard/listings');
       }
-      if (
-        bountyDetails.data.isPublished &&
-        !bountyDetails.data.isWinnersAnnounced
-      ) {
-        await getScouts(bountyDetails.data.id as string);
-      }
-      setTotalPaymentsMade(bountyDetails.data.paymentsMade || 0);
 
-      const usedPos: number[] = bountyDetails.data.Submission.filter(
-        (s: any) => s.isWinner,
-      )
-        .map((s: any) => Number(s.winnerPosition))
-        .filter((key: number) => !isNaN(key));
-      setUsedPositions(usedPos);
-
-      setTotalSubmissions(bountyDetails.data.totalSubmissions);
-      setTotalWinners(bountyDetails.data.winnersSelected);
-      setTotalPaymentsMade(bountyDetails.data.paymentsMade);
-
-      const rewardsLength = cleanRewards(
-        bountyDetails.data?.rewards,
-        true,
+      const podiumWinnersSelected = submissionsData?.filter(
+        (submission) =>
+          submission.isWinner &&
+          submission.winnerPosition !== BONUS_REWARD_POSITION,
       ).length;
+
+      const bonusWinnerSelected = submissionsData?.filter(
+        (sub) => sub.isWinner && sub.winnerPosition === BONUS_REWARD_POSITION,
+      ).length;
+
+      const rewardsLength = cleanRewards(bounty.rewards, true).length;
       setRemainings({
-        podiums:
-          rewardsLength - (bountyDetails.data.podiumWinnersSelected || 0),
-        bonus:
-          (bountyDetails.data?.maxBonusSpots || 0) -
-          (bountyDetails.data.bonusWinnerSelected || 0),
+        podiums: rewardsLength - (podiumWinnersSelected || 0),
+        bonus: (bounty.maxBonusSpots || 0) - (bonusWinnerSelected || 0),
       });
-
-      const ranks = sortRank(cleanRewards(bountyDetails.data.rewards));
-      setRewards(ranks);
-      setIsBountyLoading(false);
-    } catch (e) {
-      setIsBountyLoading(false);
     }
-  };
-
-  const getSubmissions = async () => {
-    try {
-      setIsLoading(true);
-      const submissionDetails = await axios.get(
-        `/api/sponsor-dashboard/${slug}/submissions`,
-        {
-          params: {
-            searchText,
-            take: length,
-            skip,
-            label: filterLabel,
-          },
-        },
-      );
-      setSubmissions(submissionDetails.data);
-      setSelectedSubmission(submissionDetails.data[0]);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getScouts = async (id: string) => {
-    try {
-      const scoutsData = await axios.post<Scouts[]>(
-        `/api/listings/scout/${id}`,
-      );
-      const scouts: ScoutRowType[] = scoutsData.data.map((scout) => ({
-        id: scout.id,
-        userId: scout.userId,
-        skills: [...new Set(scout.skills)],
-        dollarsEarned: scout.dollarsEarned,
-        score: scout.score,
-        recommended: scout.user.stRecommended ?? false,
-        invited: scout.invited,
-        pfp: scout.user.photo ?? null,
-        name: (scout.user.firstName ?? '') + ' ' + (scout.user.lastName ?? ''),
-        username: scout.user.username ?? null,
-      }));
-      setScouts(scouts);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    if (user?.currentSponsorId) {
-      getSubmissions();
-    }
-  }, [user?.currentSponsorId, skip, searchText, filterLabel]);
-
-  useEffect(() => {
-    if (user?.currentSponsorId) {
-      getBounty();
-    }
-  }, [user?.currentSponsorId]);
+  }, [bounty, submissionsData, user?.currentSponsorId, router]);
 
   useEffect(() => {
     if (searchParams.has('scout')) posthog.capture('scout tab_scout');
   }, []);
+
+  const paginatedSubmissions = useMemo(() => {
+    const startIndex = (currentPage - 1) * submissionsPerPage;
+    return filteredSubmissions.slice(
+      startIndex,
+      startIndex + submissionsPerPage,
+    );
+  }, [filteredSubmissions, currentPage]);
+
+  const totalPages = Math.ceil(filteredSubmissions.length / submissionsPerPage);
+
+  const usedPositions = submissionsData
+    ?.filter((s: any) => s.isWinner)
+    .map((s: any) => Number(s.winnerPosition))
+    .filter((key: number) => !isNaN(key));
+
+  const totalWinners = submissionsData?.filter((sub) => sub.isWinner).length;
+  const totalPaymentsMade = submissionsData?.filter((sub) => sub.isPaid).length;
+
+  const isExpired = dayjs(bounty?.deadline).isBefore(dayjs());
 
   const isSponsorVerified = bounty?.sponsor?.isVerified;
 
@@ -217,17 +201,17 @@ function BountySubmissions({ slug }: Props) {
         <>
           {isOpen && (
             <PublishResults
-              remaining={remainings}
+              remainings={remainings}
               isOpen={isOpen}
               onClose={onClose}
-              totalWinners={totalWinners}
-              totalPaymentsMade={totalPaymentsMade}
+              totalWinners={totalWinners || 0}
+              totalPaymentsMade={totalPaymentsMade || 0}
               bounty={bounty}
             />
           )}
           <SubmissionHeader
             bounty={bounty}
-            totalSubmissions={totalSubmissions}
+            totalSubmissions={submissionsData?.length || 0}
           />
           <Tabs defaultIndex={searchParams.has('scout') ? 1 : 0}>
             <TabList
@@ -284,10 +268,8 @@ function BountySubmissions({ slug }: Props) {
                         <SubmissionList
                           filterLabel={filterLabel}
                           setFilterLabel={setFilterLabel}
-                          submissions={submissions}
+                          submissions={paginatedSubmissions}
                           setSearchText={setSearchText}
-                          selectedSubmission={selectedSubmission}
-                          setSelectedSubmission={setSelectedSubmission}
                           type={bounty?.type}
                         />
                       </GridItem>
@@ -301,7 +283,9 @@ function BountySubmissions({ slug }: Props) {
                         borderBottomWidth="1px"
                         roundedRight={'xl'}
                       >
-                        {!submissions?.length && !searchText && !isLoading ? (
+                        {!paginatedSubmissions?.length &&
+                        !searchText &&
+                        !isSubmissionsLoading ? (
                           <>
                             <Image
                               w={32}
@@ -335,19 +319,12 @@ function BountySubmissions({ slug }: Props) {
                             </Text>
                           </>
                         ) : (
-                          <SubmissionDetails
+                          <SubmissionPanel
                             remainings={remainings}
                             setRemainings={setRemainings}
                             bounty={bounty}
-                            submissions={submissions}
-                            setSubmissions={setSubmissions}
-                            selectedSubmission={selectedSubmission}
-                            setSelectedSubmission={setSelectedSubmission}
-                            rewards={rewards}
-                            usedPositions={usedPositions}
-                            setUsedPositions={setUsedPositions}
-                            setTotalPaymentsMade={setTotalPaymentsMade}
-                            setTotalWinners={setTotalWinners}
+                            submissions={paginatedSubmissions}
+                            usedPositions={usedPositions || []}
                             onWinnersAnnounceOpen={onOpen}
                           />
                         )}
@@ -355,21 +332,23 @@ function BountySubmissions({ slug }: Props) {
                     </Grid>
                   </Flex>
                   <Flex align="center" justify="start" gap={4} mt={4}>
-                    {!!searchText ? (
+                    {!!searchText || !!filterLabel ? (
                       <Text color="brand.slate.400" fontSize="sm">
                         Found{' '}
                         <Text as="span" fontWeight={700}>
-                          {submissions.length}
+                          {filteredSubmissions.length}
                         </Text>{' '}
-                        {submissions.length === 1 ? 'result' : 'results'}
+                        {filteredSubmissions.length === 1
+                          ? 'result'
+                          : 'results'}
                       </Text>
                     ) : (
                       <>
                         <Button
-                          isDisabled={skip <= 0}
+                          isDisabled={currentPage <= 1}
                           leftIcon={<ChevronLeftIcon w={5} h={5} />}
                           onClick={() =>
-                            skip >= length ? setSkip(skip - length) : setSkip(0)
+                            setCurrentPage((prev) => Math.max(prev - 1, 1))
                           }
                           size="sm"
                           variant="outline"
@@ -378,25 +357,27 @@ function BountySubmissions({ slug }: Props) {
                         </Button>
                         <Text color="brand.slate.400" fontSize="sm">
                           <Text as="span" fontWeight={700}>
-                            {skip + 1}
+                            {(currentPage - 1) * submissionsPerPage + 1}
                           </Text>{' '}
                           -{' '}
                           <Text as="span" fontWeight={700}>
-                            {Math.min(skip + length, totalSubmissions)}
+                            {Math.min(
+                              currentPage * submissionsPerPage,
+                              filteredSubmissions.length,
+                            )}
                           </Text>{' '}
                           of{' '}
                           <Text as="span" fontWeight={700}>
-                            {totalSubmissions}
+                            {filteredSubmissions.length}
                           </Text>{' '}
                           Submissions
                         </Text>
                         <Button
-                          isDisabled={
-                            totalSubmissions <= skip + length ||
-                            (skip > 0 && skip % length !== 0)
-                          }
+                          isDisabled={currentPage >= totalPages}
                           onClick={() =>
-                            skip % length === 0 && setSkip(skip + length)
+                            setCurrentPage((prev) =>
+                              Math.min(prev + 1, totalPages),
+                            )
                           }
                           rightIcon={<ChevronRightIcon w={5} h={5} />}
                           size="sm"
@@ -417,25 +398,19 @@ function BountySubmissions({ slug }: Props) {
                   <TabPanel px={0}>
                     <ScoutTable
                       bountyId={bounty.id}
-                      scouts={scouts}
+                      scouts={scouts || []}
                       setInvited={(userId: string) => {
-                        const scout = scouts.find(
-                          (scout) => scout.userId === userId,
+                        queryClient.setQueryData(
+                          ['scouts', bounty.id],
+                          (oldData: ScoutRowType[] | undefined) => {
+                            if (!oldData) return oldData;
+                            return oldData.map((scout) =>
+                              scout.userId === userId
+                                ? { ...scout, invited: true }
+                                : scout,
+                            );
+                          },
                         );
-                        if (!scout) return;
-                        if (scout) {
-                          scout.invited = true;
-                        }
-                        const scoutIndex = scouts.findIndex(
-                          (scout) => scout.userId === userId,
-                        );
-                        if (scoutIndex > -1 && scoutIndex < scouts.length) {
-                          const scoutsNew = [...scouts];
-                          if (scoutsNew[scoutIndex]) {
-                            scoutsNew[scoutIndex] = scout;
-                          }
-                          setScouts(scoutsNew);
-                        }
                       }}
                     />
                   </TabPanel>
@@ -454,5 +429,3 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: { slug },
   };
 };
-
-export default BountySubmissions;

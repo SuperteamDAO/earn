@@ -1,5 +1,6 @@
 import type { NextApiResponse } from 'next';
 
+import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   type NextApiRequestWithSponsor,
   withSponsorAuth,
@@ -10,7 +11,6 @@ import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
-
   const params = req.query;
   const slug = params.slug as string;
   const type = params.type as 'bounty' | 'project' | 'hackathon';
@@ -20,56 +20,57 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   try {
     const userSponsorId = req.userSponsorId;
 
-    const result = await prisma.bounties.findFirst({
+    const bounty = await prisma.bounties.findFirst({
       where: {
         slug,
         type,
         isActive: true,
         sponsorId: userSponsorId,
       },
-      include: {
-        sponsor: { select: { name: true, logo: true, isVerified: true } },
-        poc: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
-        Submission: true,
-        Hackathon: {
-          select: {
-            altLogo: true,
-            startDate: true,
-            name: true,
-            description: true,
-            slug: true,
-            announceDate: true,
-          },
-        },
-      },
+      select: { id: true },
     });
 
-    if (!result) {
+    if (!bounty) {
       logger.warn(`Bounty with slug=${slug} not found for user ${userId}`);
       return res.status(404).json({
         message: `Bounty with slug=${slug} not found.`,
       });
     }
 
-    logger.info(`Successfully fetched bounty details for slug=${slug}`);
+    const submissions = await prisma.submission.findMany({
+      where: {
+        listingId: bounty.id,
+      },
+    });
+
+    const totalSubmissions = submissions.length;
+    const winnersSelected = submissions.filter((sub) => sub.isWinner).length;
+    const paymentsMade = submissions.filter((sub) => sub.isPaid).length;
+    const podiumWinnersSelected = submissions.filter(
+      (submission) =>
+        submission.isWinner &&
+        submission.winnerPosition !== BONUS_REWARD_POSITION,
+    ).length;
+    const bonusWinnerSelected = submissions.filter(
+      (sub) => sub.isWinner && sub.winnerPosition === BONUS_REWARD_POSITION,
+    ).length;
+
+    logger.info(`Successfully fetched submission stats for slug=${slug}`);
     return res.status(200).json({
-      result,
+      totalSubmissions,
+      winnersSelected,
+      paymentsMade,
+      podiumWinnersSelected,
+      bonusWinnerSelected,
     });
   } catch (error: any) {
     logger.error(
-      `Error fetching bounty with slug=${slug}:`,
+      `Error fetching submission stats with slug=${slug}:`,
       safeStringify(error),
     );
     return res.status(400).json({
       error: error.message,
-      message: `Error occurred while fetching bounty with slug=${slug}.`,
+      message: `Error occurred while fetching submission stats with slug=${slug}.`,
     });
   }
 }
