@@ -22,9 +22,9 @@ export default function SignupPage() {
   const { data: session } = useSession();
   const [isNavigating, setIsNavigating] = useState(false);
 
-  const { token } = router.query;
+  const { invite } = router.query;
   const cleanToken =
-    (Array.isArray(token) ? token[0] : token)?.split('?')[0] || '';
+    (Array.isArray(invite) ? invite[0] : invite)?.split('?')[0] || '';
 
   const { data: inviteDetails, error } = useQuery(
     verifyInviteQuery(cleanToken),
