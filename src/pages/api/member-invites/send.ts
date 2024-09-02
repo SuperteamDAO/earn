@@ -48,6 +48,7 @@ async function sendInvites(
         currentSponsor: {
           select: {
             name: true,
+            id: true,
           },
         },
         UserSponsors: true,
@@ -67,7 +68,7 @@ async function sendInvites(
       data: {
         email,
         senderId: userId as string,
-        sponsorId: req.userSponsorId!,
+        sponsorId: user.currentSponsor.id,
         memberType,
         token,
         expires,
