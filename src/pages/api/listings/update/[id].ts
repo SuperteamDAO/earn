@@ -69,15 +69,20 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       token,
       maxRewardAsk,
       minRewardAsk,
-      maxBonusSpots,
       compensationType,
       isPublished,
       description,
     } = updatedData;
 
+    let { maxBonusSpots } = updatedData;
+
     let publishedAt = listing.publishedAt;
     if (isPublished && !listing.publishedAt) {
       publishedAt = new Date();
+    }
+
+    if (listing.maxBonusSpots > 0 && typeof maxBonusSpots === 'undefined') {
+      maxBonusSpots = 0;
     }
 
     let language = '';
@@ -115,24 +120,31 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         });
       }
     }
+
     if (maxBonusSpots < listing.maxBonusSpots) {
-      for (
-        let bonusSpot = maxBonusSpots + 1;
-        bonusSpot <= listing.maxBonusSpots;
-        bonusSpot++
-      ) {
-        await prisma.submission.updateMany({
-          where: {
-            listingId: id as string,
-            isWinner: true,
-            winnerPosition: BONUS_REWARD_POSITION,
+      const bonusSubmissionsToUpdate = await prisma.submission.findMany({
+        where: {
+          listingId: id as string,
+          isWinner: true,
+          winnerPosition: BONUS_REWARD_POSITION,
+        },
+        select: { id: true },
+        take: listing.maxBonusSpots - maxBonusSpots,
+      });
+      await prisma.submission.updateMany({
+        where: {
+          id: {
+            in: bonusSubmissionsToUpdate.map(({ id }) => id),
           },
-          data: {
-            isWinner: false,
-            winnerPosition: null,
-          },
-        });
-      }
+          listingId: id as string,
+          isWinner: true,
+          winnerPosition: BONUS_REWARD_POSITION,
+        },
+        data: {
+          isWinner: false,
+          winnerPosition: null,
+        },
+      });
     }
 
     let usdValue = 0;
