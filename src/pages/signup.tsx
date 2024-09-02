@@ -17,6 +17,7 @@ import { SignIn } from '@/features/auth';
 import { acceptInvite, verifyInviteQuery } from '@/features/sponsor-dashboard';
 
 export default function SignupPage() {
+  const [loginStep, setLoginStep] = useState(0);
   const router = useRouter();
   const { data: session } = useSession();
   const [isNavigating, setIsNavigating] = useState(false);
@@ -124,7 +125,7 @@ export default function SignupPage() {
               >
                 Please sign in to accept the invitation:
               </Text>
-              <SignIn loginStep={0} setLoginStep={() => {}} />
+              <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
             </Box>
           ) : (
             <Button
