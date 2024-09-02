@@ -65,7 +65,7 @@ export const PayoutButton = ({ bounty }: Props) => {
       }),
     onSuccess: (_, variables) => {
       queryClient.setQueryData<SubmissionWithUser[]>(
-        ['submissions', bounty?.slug],
+        ['sponsor-submissions', bounty?.slug],
         (old) =>
           old?.map((submission) =>
             submission.id === variables.id

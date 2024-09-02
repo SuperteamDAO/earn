@@ -52,7 +52,7 @@ export const SelectLabel = ({ listingSlug }: Props) => {
       }),
     onSuccess: (_, variables) => {
       queryClient.setQueryData<SubmissionWithUser[]>(
-        ['submissions', listingSlug],
+        ['sponsor-submissions', listingSlug],
         (old) =>
           old?.map((submission) =>
             submission.id === variables.id

@@ -32,7 +32,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
       }),
     onSuccess: (_, variables) => {
       queryClient.setQueryData<SubmissionWithUser[]>(
-        ['submissions', slug],
+        ['sponsor-submissions', slug],
         (old) =>
           old?.map((submission) =>
             submission.id === submissionId
