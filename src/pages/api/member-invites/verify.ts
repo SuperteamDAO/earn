@@ -26,7 +26,7 @@ export default async function handler(
       },
     });
 
-    if (!invite || invite.expires < new Date()) {
+    if (!invite || invite.expires! < new Date()) {
       return res.status(404).json({ error: 'Invalid or expired invitation' });
     }
 

@@ -2,7 +2,7 @@ import { Box, Button, Circle, Flex, SimpleGrid, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useMemo } from 'react';
 import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
@@ -21,8 +21,8 @@ export default function Radar() {
   const router = useRouter();
   const slug = 'radar';
 
-  const startDate = '2024-09-02 11:30:00.000';
-  const deadline = '2024-10-09 04:59:59.000';
+  const startDate = '2024-10-02 00:00:00.000';
+  const deadline = '2024-10-09 07:00:00.000';
 
   const now = new Date();
   const startTime = new Date(startDate);
@@ -40,7 +40,7 @@ export default function Radar() {
 
   const getCountdownText = () => {
     if (now < startTime) {
-      return 'Submissions Start In';
+      return 'Submissions Open In';
     } else {
       return 'Submissions Close In';
     }
@@ -65,13 +65,26 @@ export default function Radar() {
     statsDataQuery(slug),
   );
 
+  const sortedTrackData = useMemo(() => {
+    if (!trackData) return [];
+
+    const superteamTracks = trackData.filter((track) =>
+      track.sponsor.name.includes('Superteam'),
+    );
+    const otherTracks = trackData.filter(
+      (track) => !track.sponsor.name.includes('Superteam'),
+    );
+
+    return [...otherTracks, ...superteamTracks];
+  }, [trackData]);
+
   return (
     <Default
       className="bg-white"
       meta={
         <Meta
           title="Radar | Superteam Earn"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          description="Build a project for the latest Solana global hackathon!"
           canonical="https://earn.superteam.fun"
           og={`${router.basePath}/assets/og/hackathon/${slug}.png`}
         />
@@ -202,8 +215,8 @@ export default function Radar() {
               Submission Tracks
             </Text>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-              {trackData &&
-                trackData.map((track, index) => (
+              {sortedTrackData &&
+                sortedTrackData.map((track, index) => (
                   <TrackBox
                     key={index}
                     title={track.title}

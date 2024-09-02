@@ -83,7 +83,7 @@ async function sendInvites(
       react: InviteMemberTemplate({
         sponsorName: user.currentSponsor.name,
         senderName: `${user.firstName} ${user.lastName}`,
-        link: `${getURL()}signup?token=${token}`,
+        link: `${getURL()}signup?invite=${token}`,
       }),
       reply_to: replyToEmail,
     });
