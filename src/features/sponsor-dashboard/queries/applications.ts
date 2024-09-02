@@ -20,9 +20,8 @@ const fetchApplications = async (
   return data;
 };
 
-export const applicationsQuery = (params: ApplicationsParams, slug: string) =>
+export const applicationsQuery = (slug: string, params: ApplicationsParams) =>
   queryOptions({
-    // eslint-disable-next-line @tanstack/query/exhaustive-deps
-    queryKey: ['sponsor-applications', slug],
+    queryKey: ['sponsor-applications', slug, params],
     queryFn: () => fetchApplications(params, slug),
   });

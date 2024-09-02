@@ -73,8 +73,10 @@ function GrantApplications({ slug }: Props) {
     onClose: rejectedOnClose,
   } = useDisclosure();
 
+  const params = { searchText, length, skip };
+
   const { data: applications, isLoading: isApplicationsLoading } = useQuery(
-    applicationsQuery({ searchText, length, skip }, slug),
+    applicationsQuery(slug, params),
   );
 
   useEffect(() => {
@@ -174,17 +176,20 @@ function GrantApplications({ slug }: Props) {
       }
     },
     onMutate: async (applicationIds) => {
-      queryClient.setQueryData(['sponsor-applications', slug], (old: any) => {
-        if (!old) return old;
-        return old.map((application: GrantApplicationWithUser) =>
-          applicationIds.includes(application.id)
-            ? {
-                ...application,
-                applicationStatus: GrantApplicationStatus.Rejected,
-              }
-            : application,
-        );
-      });
+      queryClient.setQueryData(
+        ['sponsor-applications', slug, params],
+        (old: any) => {
+          if (!old) return old;
+          return old.map((application: GrantApplicationWithUser) =>
+            applicationIds.includes(application.id)
+              ? {
+                  ...application,
+                  applicationStatus: GrantApplicationStatus.Rejected,
+                }
+              : application,
+          );
+        },
+      );
     },
     onError: () => {
       toast.error(
@@ -192,22 +197,25 @@ function GrantApplications({ slug }: Props) {
       );
     },
     onSuccess: (_, applicationIds) => {
-      queryClient.setQueryData(['sponsor-applications', slug], (old: any) => {
-        if (!old) return old;
-        return old.map((application: GrantApplicationWithUser) =>
-          applicationIds.includes(application.id)
-            ? {
-                ...application,
-                applicationStatus: GrantApplicationStatus.Rejected,
-              }
-            : application,
-        );
-      });
+      queryClient.setQueryData(
+        ['sponsor-applications', slug, params],
+        (old: any) => {
+          if (!old) return old;
+          return old.map((application: GrantApplicationWithUser) =>
+            applicationIds.includes(application.id)
+              ? {
+                  ...application,
+                  applicationStatus: GrantApplicationStatus.Rejected,
+                }
+              : application,
+          );
+        },
+      );
 
       const updatedApplication = queryClient
         .getQueryData<
           GrantApplicationWithUser[]
-        >(['sponsor-applications', slug])
+        >(['sponsor-applications', slug, params])
         ?.find((application) => applicationIds.includes(application.id));
 
       setSelectedApplication(updatedApplication);
@@ -227,8 +235,14 @@ function GrantApplications({ slug }: Props) {
     }
   }, [grant, user?.currentSponsorId, router]);
 
+  useEffect(() => {
+    if (applications && applications.length > 0) {
+      setSelectedApplication(applications[0]);
+    }
+  }, [applications]);
+
   return (
-    <SponsorLayout>
+    <SponsorLayout isCollapsible>
       {isGrantLoading ? (
         <LoadingSection />
       ) : (
@@ -312,6 +326,7 @@ function GrantApplications({ slug }: Props) {
                           applications={applications}
                           selectedApplication={selectedApplication}
                           setSelectedApplication={setSelectedApplication}
+                          params={params}
                         />
                       </Flex>
                     </Flex>

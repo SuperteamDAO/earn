@@ -44,6 +44,11 @@ interface Props {
     SetStateAction<GrantApplicationWithUser | undefined>
   >;
   isMultiSelectOn: boolean;
+  params: {
+    searchText: string;
+    length: number;
+    skip: number;
+  };
 }
 
 const InfoBox = ({
@@ -73,6 +78,7 @@ export const ApplicationDetails = ({
   selectedApplication,
   setSelectedApplication,
   isMultiSelectOn,
+  params,
 }: Props) => {
   const isPending = selectedApplication?.applicationStatus === 'Pending';
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
@@ -123,7 +129,7 @@ export const ApplicationDetails = ({
     setSelectedApplication(updatedApplication);
 
     queryClient.setQueryData<GrantApplicationWithUser[]>(
-      ['sponsor-applications', grant?.slug],
+      ['sponsor-applications', grant?.slug, params],
       (oldData) =>
         oldData?.map((application) =>
           application.id === updatedApplication.id
@@ -153,10 +159,10 @@ export const ApplicationDetails = ({
     onMutate: async ({ applicationId, approvedAmount }) => {
       const previousApplications = queryClient.getQueryData<
         GrantApplicationWithUser[]
-      >(['sponsor-applications', grant?.slug]);
+      >(['sponsor-applications', grant?.slug, params]);
 
       queryClient.setQueryData<GrantApplicationWithUser[]>(
-        ['sponsor-applications', grant?.slug],
+        ['sponsor-applications', grant?.slug, params],
         (oldData) => {
           if (!oldData) return oldData;
           const updatedApplications = oldData.map((application) =>
@@ -181,7 +187,7 @@ export const ApplicationDetails = ({
     },
     onError: (_, __, context) => {
       queryClient.setQueryData(
-        ['sponsor-applications', grant?.slug],
+        ['sponsor-applications', grant?.slug, params],
         context?.previousApplications,
       );
       toast.error('Failed to approve grant. Please try again.');
@@ -202,10 +208,10 @@ export const ApplicationDetails = ({
     onMutate: async (applicationId) => {
       const previousApplications = queryClient.getQueryData<
         GrantApplicationWithUser[]
-      >(['sponsor-applications', grant?.slug]);
+      >(['sponsor-applications', grant?.slug, params]);
 
       queryClient.setQueryData<GrantApplicationWithUser[]>(
-        ['sponsor-applications', grant?.slug],
+        ['sponsor-applications', grant?.slug, params],
         (oldData) => {
           if (!oldData) return oldData;
           const updatedApplications = oldData.map((application) =>
@@ -229,7 +235,7 @@ export const ApplicationDetails = ({
     },
     onError: (_, __, context) => {
       queryClient.setQueryData(
-        ['sponsor-applications', grant?.slug],
+        ['sponsor-applications', grant?.slug, params],
         context?.previousApplications,
       );
       toast.error('Failed to reject grant. Please try again.');
