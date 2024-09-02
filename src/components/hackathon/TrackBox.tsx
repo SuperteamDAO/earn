@@ -32,15 +32,15 @@ export const TrackBox = ({
         <Flex direction={'column'}>
           <Text
             color={'brand.slate.900'}
-            fontSize={{ base: 'md', md: 'lg' }}
-            fontWeight={600}
+            fontSize={{ base: 'sm', md: 'md' }}
+            fontWeight={500}
           >
             {title}
           </Text>
           <Text
             color={'brand.slate.500'}
             fontSize={{ base: 'sm', md: 'md' }}
-            fontWeight={500}
+            fontWeight={400}
           >
             {sponsor.name}
           </Text>

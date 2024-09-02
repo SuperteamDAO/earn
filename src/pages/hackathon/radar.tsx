@@ -21,8 +21,8 @@ export default function Radar() {
   const router = useRouter();
   const slug = 'radar';
 
-  const startDate = '2024-09-02 11:30:00.000';
-  const deadline = '2024-10-09 04:59:59.000';
+  const startDate = '2024-10-02 00:00:00.000';
+  const deadline = '2024-10-09 07:00:00.000';
 
   const now = new Date();
   const startTime = new Date(startDate);
@@ -40,7 +40,7 @@ export default function Radar() {
 
   const getCountdownText = () => {
     if (now < startTime) {
-      return 'Submissions Start In';
+      return 'Submissions Open In';
     } else {
       return 'Submissions Close In';
     }
@@ -71,7 +71,7 @@ export default function Radar() {
       meta={
         <Meta
           title="Radar | Superteam Earn"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          description="Build a project for the latest Solana global hackathon!"
           canonical="https://earn.superteam.fun"
           og={`${router.basePath}/assets/og/hackathon/${slug}.png`}
         />

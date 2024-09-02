@@ -12,6 +12,7 @@ import { HowItWorks } from './HowItWorks';
 import { LiveListings } from './LiveListings';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
+import { SidebarBanner } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
 import { VibeCard } from './VibeCard';
@@ -63,7 +64,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             TVE={totals?.totalInUSD}
           />
           <HowItWorks />
-          {/* <SidebarBanner /> */}
+          <SidebarBanner />
           <RecentEarners earners={recentEarners} />
           <RecentActivity />
         </>

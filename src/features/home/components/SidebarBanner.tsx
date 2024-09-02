@@ -37,8 +37,8 @@ export const SidebarBanner = () => {
         fontSize={'1rem'}
         lineHeight={'1.1875rem'}
       >
-        Submit to any of the Radar side tracks on Earn and stand to win some $$.
-        Deadline for submissions is October 2, 2024.
+        Submit to any of the Radar Side Tracks on Earn, and stand to win from a
+        pool of $150k+. Deadline for submissions is October 9, 2024 (UTC).
       </Text>
       <Button
         as={NextLink}
