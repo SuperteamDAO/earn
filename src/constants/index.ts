@@ -158,6 +158,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'kamino',
   },
   {
+    tokenName: 'Metaplex (MPLX)',
+    tokenSymbol: 'MPLX',
+    mintAddress: 'METAewgxyPbgwsseH8T16a39CQ5VyVxZi9zXiDPY18m',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/21870.png',
+    decimals: 6,
+    coingeckoSymbol: 'metaplex',
+  },
+  {
     tokenName: 'PayPal USD (PYUSD)',
     tokenSymbol: 'PYUSD',
     mintAddress: '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo',

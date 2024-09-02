@@ -1,6 +1,7 @@
 import { Box, Button, Circle, Flex, SimpleGrid, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
 import React from 'react';
 import Countdown from 'react-countdown';
 
@@ -17,6 +18,7 @@ const MotionText = motion(Text);
 const MotionButton = motion(Button);
 
 export default function Radar() {
+  const router = useRouter();
   const slug = 'radar';
 
   const startDate = '2024-09-02 11:30:00.000';
@@ -71,6 +73,7 @@ export default function Radar() {
           title="Radar | Superteam Earn"
           description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
           canonical="https://earn.superteam.fun"
+          og={`${router.basePath}/assets/og/hackathon/${slug}.png`}
         />
       }
     >

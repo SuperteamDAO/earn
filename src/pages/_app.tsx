@@ -4,17 +4,17 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { setUser } from '@sentry/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
-import { getURL } from 'next/dist/shared/lib/utils';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { SessionProvider } from 'next-auth/react';
 import NextTopLoader from 'nextjs-toploader';
 import posthog from 'posthog-js';
-import { usePostHog } from 'posthog-js/react';
+import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
 
 import { useUser } from '@/store/user';
 import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
+import { getURL } from '@/utils/validUrl';
 
 import theme from '../config/chakra.config';
 
@@ -107,11 +107,13 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           --font-mono: ${fontMono.style.fontFamily};
         }
       `}</style>
-      <SessionProvider session={session}>
-        <ChakraProvider theme={extendThemeWithNextFonts}>
-          <MyApp Component={Component} pageProps={pageProps} />
-        </ChakraProvider>
-      </SessionProvider>
+      <PostHogProvider client={posthog}>
+        <SessionProvider session={session}>
+          <ChakraProvider theme={extendThemeWithNextFonts}>
+            <MyApp Component={Component} pageProps={pageProps} />
+          </ChakraProvider>
+        </SessionProvider>
+      </PostHogProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
