@@ -2,7 +2,7 @@ import { Box, Button, Circle, Flex, SimpleGrid, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useMemo } from 'react';
 import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
@@ -64,6 +64,19 @@ export default function Radar() {
   const { data: stats, isLoading: isStatsLoading } = useQuery(
     statsDataQuery(slug),
   );
+
+  const sortedTrackData = useMemo(() => {
+    if (!trackData) return [];
+
+    const superteamTracks = trackData.filter((track) =>
+      track.sponsor.name.includes('Superteam'),
+    );
+    const otherTracks = trackData.filter(
+      (track) => !track.sponsor.name.includes('Superteam'),
+    );
+
+    return [...otherTracks, ...superteamTracks];
+  }, [trackData]);
 
   return (
     <Default
@@ -202,8 +215,8 @@ export default function Radar() {
               Submission Tracks
             </Text>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-              {trackData &&
-                trackData.map((track, index) => (
+              {sortedTrackData &&
+                sortedTrackData.map((track, index) => (
                   <TrackBox
                     key={index}
                     title={track.title}
