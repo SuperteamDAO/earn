@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Checkbox,
+  Flex,
   FormControl,
   FormLabel,
   Image,
@@ -486,6 +488,33 @@ export const SubmissionModal = ({
               <Text mt={1} ml={1} color="red" fontSize="14px">
                 {publicKeyError}
               </Text>
+              {isHackathon && !editMode && (
+                <FormControl isRequired>
+                  <Flex align="flex-start">
+                    <Checkbox
+                      mt={1}
+                      mr={2}
+                      _checked={{
+                        '& .chakra-checkbox__control': {
+                          background: 'brand.purple',
+                          borderColor: 'brand.purple',
+                        },
+                      }}
+                    />
+                    <Text
+                      alignSelf="center"
+                      color={'brand.slate.600'}
+                      fontSize={'sm'}
+                    >
+                      I confirm that I have reviewed the scope of this track and
+                      that my submission adheres to the specified requirements.
+                      Submitting a project that does not meet the submission
+                      requirements, including potential spam, may result in
+                      restrictions on future submissions.
+                    </Text>
+                  </Flex>
+                </FormControl>
+              )}
             </VStack>
             {!!error && (
               <Text align="center" mb={2} color="red">
