@@ -245,6 +245,7 @@ model Sponsors {
   Bounties     Bounties[]
   Grants       Grants[]
   User         User[]
+  UserInvites  UserInvites[]
 
   @@index([id, slug])
 }
@@ -416,16 +417,20 @@ model UserSponsors {
 }
 
 model UserInvites {
-  id         String   @id @default(uuid())
+  id         String    @id @default(uuid())
   email      String
   senderId   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   sponsorId  String
-  memberType Role     @default(MEMBER)
-  sender     User     @relation(fields: [senderId], references: [id])
+  memberType Role      @default(MEMBER)
+  token      String?   @unique
+  expires    DateTime?
+  sender     User      @relation(fields: [senderId], references: [id])
+  sponsor    Sponsors  @relation(fields: [sponsorId], references: [id])
 
   @@index([senderId])
+  @@index([sponsorId])
 }
 
 model emailLogs {

@@ -2,7 +2,6 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
-  Circle,
   Flex,
   Menu,
   MenuButton,
@@ -17,7 +16,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { EarnAvatar, EmailSettingsModal } from '@/features/talent';
 import { useLogout, useUser } from '@/store/user';
@@ -55,16 +54,6 @@ export function UserMenu({}) {
   const handleClose = () => {
     onClose();
     router.push(router.asPath, undefined, { shallow: true });
-  };
-
-  const [showBlueCircle, setShowBlueCircle] = useState(() => {
-    return !localStorage.getItem('emailPreferencesClicked');
-  });
-
-  const handleEmailPreferencesClick = () => {
-    onOpen();
-    setShowBlueCircle(false);
-    localStorage.setItem('emailPreferencesClicked', 'true');
   };
 
   return (
@@ -112,14 +101,6 @@ export function UserMenu({}) {
         >
           <Flex align="center">
             <EarnAvatar id={user?.id} avatar={user?.photo} />
-            {showBlueCircle && (
-              <Circle
-                display={{ base: 'flex', md: 'none' }}
-                ml={2}
-                bg="blue.400"
-                size="8px"
-              />
-            )}
 
             <Flex
               align={'center'}
@@ -129,7 +110,6 @@ export function UserMenu({}) {
               <Text color="brand.slate.600" fontSize="sm" fontWeight={500}>
                 {user?.firstName ?? 'New User'}
               </Text>
-              {showBlueCircle && <Circle ml={2} bg="blue.400" size="8px" />}
             </Flex>
           </Flex>
         </MenuButton>
@@ -213,12 +193,11 @@ export function UserMenu({}) {
               fontSize="sm"
               fontWeight={600}
               onClick={() => {
-                handleEmailPreferencesClick();
+                onOpen();
                 posthog.capture('email preferences_user menu');
               }}
             >
               Email Preferences
-              {showBlueCircle && <Circle ml={2} bg="blue.400" size="8px" />}
             </MenuItem>
           )}
           <MenuItem
