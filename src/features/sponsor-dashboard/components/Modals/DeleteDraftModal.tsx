@@ -9,31 +9,31 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import React from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { toast } from 'sonner';
 
 import { type ListingWithSubmissions } from '@/features/listings';
+import { useUser } from '@/store/user';
 
 interface DeleteDraftModalProps {
   deleteDraftIsOpen: boolean;
   deleteDraftOnClose: () => void;
   listingId: string | undefined;
-  listings: ListingWithSubmissions[];
-  setListings: (listings: ListingWithSubmissions[]) => void;
   listingType: string | undefined;
 }
 
 export const DeleteDraftModal = ({
   listingId,
-  listings,
-  setListings,
   deleteDraftIsOpen,
   deleteDraftOnClose,
   listingType,
 }: DeleteDraftModalProps) => {
+  const queryClient = useQueryClient();
+  const { user } = useUser();
+
   const deleteMutation = useMutation({
     mutationFn: async () => {
       if (listingType === 'grant') {
@@ -43,8 +43,10 @@ export const DeleteDraftModal = ({
       }
     },
     onSuccess: () => {
-      const update = listings.filter((x) => x.id !== listingId);
-      setListings(update);
+      queryClient.setQueryData<ListingWithSubmissions[]>(
+        ['dashboard', user?.currentSponsorId],
+        (oldData) => (oldData ? oldData.filter((x) => x.id !== listingId) : []),
+      );
       toast.success('Draft deleted successfully');
       deleteDraftOnClose();
     },

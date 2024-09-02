@@ -189,7 +189,7 @@ export default function BountySubmissions({ slug }: Props) {
 
   return (
     <SponsorLayout isCollapsible={true}>
-      {isBountyLoading ? (
+      {isBountyLoading || isSubmissionsLoading ? (
         <LoadingSection />
       ) : (
         <>

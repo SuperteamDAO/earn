@@ -10,19 +10,18 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import React from 'react';
 import { toast } from 'sonner';
 
 import { type ListingWithSubmissions } from '@/features/listings';
+import { useUser } from '@/store/user';
 
 interface UnpublishModalProps {
   unpublishIsOpen: boolean;
   unpublishOnClose: () => void;
   listingId: string | undefined;
-  listings?: ListingWithSubmissions[];
-  setListings?: (bounties: ListingWithSubmissions[]) => void;
   listingType: string | undefined;
 }
 
@@ -30,10 +29,11 @@ export const UnpublishModal = ({
   unpublishIsOpen,
   unpublishOnClose,
   listingId,
-  listings,
-  setListings,
   listingType,
 }: UnpublishModalProps) => {
+  const queryClient = useQueryClient();
+  const { user } = useUser();
+
   const updateMutation = useMutation({
     mutationFn: async (status: boolean) => {
       let result;
@@ -49,14 +49,17 @@ export const UnpublishModal = ({
       return result.data;
     },
     onSuccess: (data) => {
-      if (listings && setListings) {
-        const newListings = listings.map((listing) =>
-          listing.id === data.id
-            ? { ...listing, isPublished: data.isPublished }
-            : listing,
-        );
-        setListings(newListings);
-      }
+      queryClient.setQueryData<ListingWithSubmissions[]>(
+        ['dashboard', user?.currentSponsorId],
+        (oldData) =>
+          oldData
+            ? oldData.map((listing) =>
+                listing.id === data.id
+                  ? { ...listing, isPublished: data.isPublished }
+                  : listing,
+              )
+            : [],
+      );
       toast.success('Listing unpublished successfully');
       unpublishOnClose();
     },

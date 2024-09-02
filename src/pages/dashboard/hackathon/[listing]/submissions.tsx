@@ -174,7 +174,7 @@ export default function BountySubmissions({ listing }: Props) {
 
   return (
     <SponsorLayout isCollapsible={true}>
-      {isBountyLoading ? (
+      {isBountyLoading || isSubmissionsLoading ? (
         <LoadingSection />
       ) : (
         <>

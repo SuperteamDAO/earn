@@ -62,8 +62,9 @@ const Index = () => {
   const [skip, setSkip] = useState(0);
   const length = 15;
 
-  const { data: sponsorStats, isLoading: isStatsLoading } =
-    useQuery(sponsorStatsQuery);
+  const { data: sponsorStats, isLoading: isStatsLoading } = useQuery(
+    sponsorStatsQuery(user?.currentSponsorId),
+  );
 
   const queryClient = useQueryClient();
 
