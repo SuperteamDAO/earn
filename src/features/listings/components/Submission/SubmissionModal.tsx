@@ -36,7 +36,7 @@ import { validateSolAddress } from '@/utils/validateSolAddress';
 import { submissionCountQuery } from '../../queries';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
-import { isValidUrl, isYoutubeOrLoomLink } from '../../utils';
+import { isValidUrl } from '../../utils';
 import { QuestionHandler } from './QuestionHandler';
 import { SubmissionTerms } from './SubmissionTerms';
 
@@ -89,7 +89,6 @@ export const SubmissionModal = ({
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [error, setError] = useState<any>('');
   const [publicKeyError, setPublicKeyError] = useState('');
-  const [submissionLinkError, setSubmissionLinkError] = useState('');
   const [askError, setAskError] = useState('');
   const {
     register,
@@ -336,22 +335,10 @@ export const SubmissionModal = ({
                           isRequired={e.optional !== true}
                         >
                           <QuestionHandler
-                            error={
-                              isHackathon && e.order === 1
-                                ? submissionLinkError
-                                : e.error
-                            }
+                            error={isHackathon && e.error}
                             validate={(value: string) => {
                               if (!isHackathon) return true;
-                              if (e.order === 1) {
-                                const valid = isYoutubeOrLoomLink(value);
-                                if (!valid) {
-                                  setSubmissionLinkError(
-                                    'Please enter a valid YouTube or Loom link',
-                                  );
-                                }
-                                return valid;
-                              } else if (value && e.isLink) {
+                              if (value && e.isLink) {
                                 if (!isValidUrl(value) && eligibilityQs[i]) {
                                   const cloneEligibilityQs = [...eligibilityQs];
                                   const currElgibile = cloneEligibilityQs[i];
