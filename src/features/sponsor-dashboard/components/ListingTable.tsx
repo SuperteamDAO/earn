@@ -37,6 +37,7 @@ import {
 } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
 import { RiEditFill } from 'react-icons/ri';
+import { TbFileDollar } from 'react-icons/tb';
 import { toast } from 'sonner';
 
 import { tokenList } from '@/constants';
@@ -52,7 +53,7 @@ import {
 } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
 
-import { DeleteDraftModal, UnpublishModal } from './Modals';
+import { DeleteDraftModal, UnpublishModal, VerifyPaymentModal } from './Modals';
 import { SponsorPrize } from './SponsorPrize';
 
 interface ListingTableProps {
@@ -79,6 +80,11 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
     onOpen: deleteDraftOnOpen,
     onClose: deleteDraftOnClose,
   } = useDisclosure();
+  const {
+    isOpen: verifyPaymentIsOpen,
+    onOpen: verifyPaymentOnOpen,
+    onClose: verifyPaymentOnClose,
+  } = useDisclosure();
 
   const handleUnpublish = async (
     unpublishedListing: ListingWithSubmissions,
@@ -90,6 +96,11 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
   const handleDeleteDraft = async (deleteListing: ListingWithSubmissions) => {
     setSelectedListing(deleteListing);
     deleteDraftOnOpen();
+  };
+
+  const handleVerifyPayment = async (listing: ListingWithSubmissions) => {
+    setSelectedListing(listing);
+    verifyPaymentOnOpen();
   };
 
   const ListingTh = ({ children }: { children: string }) => {
@@ -134,6 +145,15 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
         setListings={setListings}
         deleteDraftIsOpen={deleteDraftIsOpen}
         deleteDraftOnClose={deleteDraftOnClose}
+        listingId={selectedListing.id}
+        listingType={selectedListing.type}
+      />
+      <VerifyPaymentModal
+        listing={selectedListing}
+        listings={listings}
+        setListings={setListings}
+        isOpen={verifyPaymentIsOpen}
+        onClose={verifyPaymentOnClose}
         listingId={selectedListing.id}
         listingType={selectedListing.type}
       />
@@ -445,6 +465,27 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
                                 onClick={() => handleDeleteDraft(listing)}
                               >
                                 Delete Draft
+                              </MenuItem>
+                            </>
+                          )}
+                        {listingStatus === 'Payment Pending' &&
+                          listing?.type !== 'grant' && (
+                            <>
+                              <MenuItem
+                                color={'brand.slate.500'}
+                                fontSize={'sm'}
+                                fontWeight={500}
+                                icon={
+                                  <Icon
+                                    as={TbFileDollar}
+                                    w={4}
+                                    h={4}
+                                    strokeWidth={1.5}
+                                  />
+                                }
+                                onClick={() => handleVerifyPayment(listing)}
+                              >
+                                Update Payment Status
                               </MenuItem>
                             </>
                           )}

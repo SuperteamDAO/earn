@@ -8,6 +8,7 @@ import { safeStringify } from '@/utils/safeStringify';
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const slug = params.slug as string;
+  const isWinner = params.isWinner === 'true';
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
@@ -60,6 +61,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     const submission = await prisma.submission.findMany({
       where: {
         listingId: result.id,
+        ...(isWinner ? { isWinner } : {}),
       },
       include: {
         user: {
