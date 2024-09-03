@@ -210,7 +210,7 @@ function BountySubmissions({ slug }: Props) {
   const isSponsorVerified = bounty?.sponsor?.isVerified;
 
   return (
-    <SponsorLayout isCollapsible={true}>
+    <SponsorLayout isCollapsible>
       {isBountyLoading ? (
         <LoadingSection />
       ) : (

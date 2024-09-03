@@ -239,7 +239,7 @@ function GrantApplications({ slug }: Props) {
     setSelectedApplicationIds(new Set());
   };
   return (
-    <SponsorLayout>
+    <SponsorLayout isCollapsible>
       {isGrantLoading ? (
         <LoadingSection />
       ) : (

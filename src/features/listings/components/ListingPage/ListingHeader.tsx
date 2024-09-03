@@ -308,7 +308,7 @@ export function ListingHeader({
             <ListingTabLink
               w={{ md: '22rem' }}
               href={`/listings/${type}/${slug}/`}
-              text="Prizes"
+              text={type === 'project' ? 'Inviting Proposals' : 'Prizes'}
               isActive={false}
               styles={{
                 pointerEvents: 'none',

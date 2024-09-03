@@ -29,7 +29,7 @@ interface Props {
   link: string;
 }
 export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
-  const { data: image } = useQuery(ogImageQuery(link));
+  const { data: ogData } = useQuery(ogImageQuery(link));
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
 
@@ -91,7 +91,7 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
             objectFit={'cover'}
             alt={'submission'}
             rounded={'2rem'}
-            src={image || '/assets/bg/og.svg'}
+            src={ogData?.images?.[0]?.url || '/assets/bg/og.svg'}
           />
           <HStack w="full">
             <Button

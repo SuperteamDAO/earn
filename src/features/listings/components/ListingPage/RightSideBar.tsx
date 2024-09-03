@@ -146,15 +146,13 @@ export function RightSideBar({
                             w: widthOfPrize,
                           }}
                         />
-                        {!isProject && (
-                          <Text
-                            color={'brand.slate.500'}
-                            fontSize={'lg'}
-                            fontWeight={400}
-                          >
-                            Total Prizes
-                          </Text>
-                        )}
+                        <Text
+                          color={'brand.slate.500'}
+                          fontSize={'lg'}
+                          fontWeight={400}
+                        >
+                          {isProject ? 'Payment' : 'Total Prizes'}
+                        </Text>
                       </Flex>
                     </Td>
                   </Tr>

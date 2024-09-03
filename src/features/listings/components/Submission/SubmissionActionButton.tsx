@@ -115,6 +115,7 @@ export const SubmissionActionButton = ({
 
     default:
       buttonText = isProject ? 'Apply Now' : 'Submit Now';
+      if (listing.compensationType === 'variable') buttonText = 'Send Quote';
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
         pastDeadline ||
