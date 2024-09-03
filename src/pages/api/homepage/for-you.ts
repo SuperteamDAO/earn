@@ -16,8 +16,10 @@ interface ForYouProps {
 export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { skills: true, location: true },
+    select: { skills: true, location: true, isTalentFilled: true },
   });
+
+  if (!user?.isTalentFilled) return [];
 
   const subscribedListings = prisma.subscribeBounty.findMany({
     where: { userId },

@@ -61,14 +61,14 @@ const generateTabContent = ({
   emptyMessage,
   user,
 }: ContentProps) => {
-  if (!user || !forYou || forYou.length === 0)
+  if (!!(!user || !forYou || forYou.length === 0))
     return (
       <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
         {isListingsLoading ? (
           Array.from({ length: 8 }, (_, index) => (
             <ListingCardSkeleton key={index} />
           ))
-        ) : bounties?.filter(filterFunction).length ? (
+        ) : !!bounties?.filter(filterFunction).length ? (
           bounties
             .filter(filterFunction)
             .sort(sortCompareFunction ? sortCompareFunction : () => 0)
@@ -83,7 +83,7 @@ const generateTabContent = ({
     );
   return (
     <Box>
-      {forYou?.filter(filterFunction).length && (
+      {!!forYou?.filter(filterFunction).length && (
         <Box>
           <Flex
             align="center"
@@ -126,7 +126,7 @@ const generateTabContent = ({
             Array.from({ length: 8 }, (_, index) => (
               <ListingCardSkeleton key={index} />
             ))
-          ) : bounties?.filter(filterFunction).length ? (
+          ) : !!bounties?.filter(filterFunction).length ? (
             bounties
               .filter(filterFunction)
               .sort(sortCompareFunction ? sortCompareFunction : () => 0)
