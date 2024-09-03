@@ -214,6 +214,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'dean-s-list',
   },
   {
+    tokenName: 'Ore',
+    tokenSymbol: 'ORE',
+    mintAddress: 'oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32782.png',
+    decimals: 9,
+    coingeckoSymbol: 'ore',
+  },
+  {
     tokenName: 'DevWifHat (DWH)',
     tokenSymbol: 'DWH',
     mintAddress: 'DEVwHJ57QMPPArD2CyjboMbdWvjEMjXRigYpaUNDTD7o',
