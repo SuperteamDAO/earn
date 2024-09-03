@@ -202,6 +202,14 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       logger.info('Sponsor is not Superteam. Skipping sending winner emails.');
     }
 
+    try {
+      await axios.post(process.env.LISTING_ANNOUNCE_AIRTABLE_SYNC_WEBHOOK!, {
+        listingId: result.id,
+      });
+    } catch (err) {
+      logger.error('Airatable Listing Sync Message Error', err);
+    }
+
     logger.info(`Winners announced successfully for bounty ID: ${id}`);
     return res.status(200).json({ message: 'Success' });
   } catch (error: any) {
