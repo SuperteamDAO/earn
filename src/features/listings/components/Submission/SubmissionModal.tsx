@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Checkbox,
+  Flex,
   FormControl,
   FormLabel,
   Image,
@@ -34,7 +36,7 @@ import { validateSolAddress } from '@/utils/validateSolAddress';
 import { submissionCountQuery } from '../../queries';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
-import { isValidUrl, isYoutubeOrLoomLink } from '../../utils';
+import { isValidUrl } from '../../utils';
 import { QuestionHandler } from './QuestionHandler';
 import { SubmissionTerms } from './SubmissionTerms';
 
@@ -87,7 +89,6 @@ export const SubmissionModal = ({
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [error, setError] = useState<any>('');
   const [publicKeyError, setPublicKeyError] = useState('');
-  const [submissionLinkError, setSubmissionLinkError] = useState('');
   const [askError, setAskError] = useState('');
   const {
     register,
@@ -247,7 +248,7 @@ export const SubmissionModal = ({
       subheadingText = "We can't wait to see what you've created!";
       break;
     case 'hackathon':
-      headerText = 'Talent Olympics Submission';
+      headerText = 'Solana Radar Track Submission';
       subheadingText = (
         <>
           Note:
@@ -334,22 +335,10 @@ export const SubmissionModal = ({
                           isRequired={e.optional !== true}
                         >
                           <QuestionHandler
-                            error={
-                              isHackathon && e.order === 1
-                                ? submissionLinkError
-                                : e.error
-                            }
+                            error={isHackathon && e.error}
                             validate={(value: string) => {
                               if (!isHackathon) return true;
-                              if (e.order === 1) {
-                                const valid = isYoutubeOrLoomLink(value);
-                                if (!valid) {
-                                  setSubmissionLinkError(
-                                    'Please enter a valid YouTube or Loom link',
-                                  );
-                                }
-                                return valid;
-                              } else if (value && e.isLink) {
+                              if (value && e.isLink) {
                                 if (!isValidUrl(value) && eligibilityQs[i]) {
                                   const cloneEligibilityQs = [...eligibilityQs];
                                   const currElgibile = cloneEligibilityQs[i];
@@ -486,6 +475,33 @@ export const SubmissionModal = ({
               <Text mt={1} ml={1} color="red" fontSize="14px">
                 {publicKeyError}
               </Text>
+              {isHackathon && !editMode && (
+                <FormControl isRequired>
+                  <Flex align="flex-start">
+                    <Checkbox
+                      mt={1}
+                      mr={2}
+                      _checked={{
+                        '& .chakra-checkbox__control': {
+                          background: 'brand.purple',
+                          borderColor: 'brand.purple',
+                        },
+                      }}
+                    />
+                    <Text
+                      alignSelf="center"
+                      color={'brand.slate.600'}
+                      fontSize={'sm'}
+                    >
+                      I confirm that I have reviewed the scope of this track and
+                      that my submission adheres to the specified requirements.
+                      Submitting a project that does not meet the submission
+                      requirements, including potential spam, may result in
+                      restrictions on future submissions.
+                    </Text>
+                  </Flex>
+                </FormControl>
+              )}
             </VStack>
             {!!error && (
               <Text align="center" mb={2} color="red">

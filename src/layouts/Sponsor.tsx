@@ -5,9 +5,16 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import { type ReactNode, useEffect, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import type { IconType } from 'react-icons';
-import { LuLayoutList, LuLock, LuMessageSquare, LuUsers } from 'react-icons/lu';
+import { BiListUl } from 'react-icons/bi';
+import { LuLock, LuMessageSquare, LuUsers } from 'react-icons/lu';
 import { MdList, MdOutlineChatBubbleOutline } from 'react-icons/md';
 import { RiUserSettingsLine } from 'react-icons/ri';
 
@@ -15,6 +22,7 @@ import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
+import { PDTG } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import {
   isCreateListingAllowedQuery,
@@ -38,7 +46,13 @@ interface LinkItemProps {
   posthog?: string;
 }
 
-export function SponsorLayout({ children }: { children: ReactNode }) {
+export function SponsorLayout({
+  children,
+  isCollapsible = false,
+}: {
+  children: ReactNode;
+  isCollapsible?: boolean;
+}) {
   const { user } = useUser();
   const updateUser = useUpdateUser();
   const { data: session, status } = useSession();
@@ -47,6 +61,26 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
   const posthog = usePostHog();
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
   const { query } = router;
+  const [isExpanded, setIsExpanded] = useState(!isCollapsible ? true : false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = useCallback(() => {
+    if (!isCollapsible) return;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setIsExpanded(true);
+    }, 250);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (!isCollapsible) return;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsExpanded(false);
+  }, []);
 
   const open = !!query.open; // Replace 'paramName' with the actual parameter name
   useEffect(() => {
@@ -123,7 +157,7 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
   }
 
   const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
-  const isLocalMemberVisible = Superteams.some(
+  const isLocalProfileVisible = Superteams.some(
     (team) =>
       team.name === user?.currentSponsor?.name &&
       (user?.stLead === team.region || user?.stLead === 'MAHADEV'),
@@ -134,30 +168,30 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
         { name: 'All Tracks', link: `/hackathon`, icon: MdList },
         {
           name: 'Get Help',
-          link: 'https://t.me/pratikdholani',
+          link: PDTG,
           icon: MdOutlineChatBubbleOutline,
           posthog: 'get help_sponsor',
         },
       ]
     : [
-        { name: 'My Listings', link: '/listings', icon: LuLayoutList },
+        { name: 'My Listings', link: '/listings', icon: BiListUl },
         {
           name: 'Team Settings',
           link: '/team-settings',
           icon: RiUserSettingsLine,
         },
-        ...(isLocalMemberVisible
+        ...(isLocalProfileVisible
           ? [
               {
-                name: 'Local Members',
-                link: '/local-members',
+                name: 'Local Profiles',
+                link: '/local-profiles',
                 icon: LuUsers,
               },
             ]
           : []),
         {
           name: 'Get Help',
-          link: 'https://t.me/pratikdholani',
+          link: PDTG,
           icon: LuMessageSquare,
           posthog: 'get help_sponsor',
         },
@@ -206,21 +240,36 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
       </Flex>
       <Flex justify="start" display={{ base: 'none', md: 'flex' }} minH="100vh">
         <Box
-          display={{ base: 'none', md: 'block' }}
-          w={{ base: 0, md: 80 }}
-          minH="100vh"
+          className={`sponsor-dashboard-sidebar ${isExpanded ? 'expanded' : ''}`}
+          pos={isCollapsible ? 'fixed' : 'static'}
+          zIndex={10}
+          top={8}
+          bottom={0}
+          left={0}
+          overflowX="hidden"
+          w={isExpanded ? '18rem' : '5rem'}
+          minW={isExpanded ? '18rem' : '5rem'}
+          maxW={isExpanded ? '18rem' : '5rem'}
           pt={10}
           bg="white"
           borderRight={'1px solid'}
           borderRightColor={'blackAlpha.200'}
+          whiteSpace="nowrap"
+          transition="all 0.3s ease-in-out"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           {session?.user?.role === 'GOD' && (
-            <Box px={6} pb={6}>
-              {isHackathonRoute ? <SelectHackathon /> : <SelectSponsor />}
+            <Box px={4} pb={6}>
+              {isHackathonRoute ? (
+                <SelectHackathon isExpanded={isExpanded} />
+              ) : (
+                <SelectSponsor isExpanded={isExpanded} />
+              )}
             </Box>
           )}
           <CreateListingModal isOpen={isOpen} onClose={onClose} />
-          <Flex align="center" justify="space-between" px={6} pb={6}>
+          <Flex align="center" justify="space-between" px={4} pb={6}>
             {!isHackathonRoute ? (
               <Tooltip
                 label={
@@ -233,6 +282,7 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
               >
                 <Button
                   className="ph-no-capture"
+                  gap={2}
                   w="full"
                   py={'22px'}
                   fontSize="md"
@@ -241,30 +291,47 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
                     isCreateListingAllowed === false &&
                     session?.user.role !== 'GOD'
                   }
-                  leftIcon={<AddIcon w={3} h={3} />}
                   onClick={() => {
                     posthog.capture('create new listing_sponsor');
                     onOpen();
                   }}
                   variant="solid"
                 >
-                  Create New Listing
+                  <AddIcon w={3} h={3} />
+                  <Text
+                    className="nav-item-text"
+                    pos={isExpanded ? 'static' : 'absolute'}
+                    ml={isExpanded ? 0 : '-9999px'}
+                    opacity={isExpanded ? 1 : 0}
+                    transition="all 0.2s ease-in-out"
+                  >
+                    Create New Listing
+                  </Text>
                   {isCreateListingAllowed !== undefined &&
                     isCreateListingAllowed === false &&
-                    session?.user.role !== 'GOD' && <Icon as={LuLock} ml={2} />}
+                    session?.user.role !== 'GOD' && <Icon as={LuLock} />}
                 </Button>
               </Tooltip>
             ) : (
               <Button
                 as={NextLink}
+                gap={2}
                 w="full"
                 py={'22px'}
                 fontSize="md"
                 href={`/dashboard/hackathon/create-hackathon`}
-                leftIcon={<AddIcon w={3} h={3} />}
                 variant="solid"
               >
-                Create New Track
+                <AddIcon w={3} h={3} />
+                <Text
+                  className="nav-item-text"
+                  pos={isExpanded ? 'static' : 'absolute'}
+                  ml={isExpanded ? 0 : '-9999px'}
+                  opacity={isExpanded ? 1 : 0}
+                  transition="opacity 0.2s ease-in-out"
+                >
+                  Create New Track
+                </Text>
               </Button>
             )}
           </Flex>
@@ -277,6 +344,7 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
               key={link.name}
               link={link.link}
               icon={link.icon}
+              isExpanded={isExpanded}
             >
               {link.name}
             </NavItem>
@@ -284,7 +352,15 @@ export function SponsorLayout({ children }: { children: ReactNode }) {
         </Box>
         {showLoading && <LoadingSection />}
         {showContent && (
-          <Box w="full" px={6} py={10} bg="white">
+          <Box
+            flex={1}
+            w="full"
+            ml={isCollapsible ? '80px' : '0px'}
+            px={6}
+            py={10}
+            bg="white"
+            transition="margin-left 0.3s ease-in-out"
+          >
             {children}
           </Box>
         )}

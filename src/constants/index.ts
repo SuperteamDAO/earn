@@ -158,6 +158,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'kamino',
   },
   {
+    tokenName: 'Metaplex (MPLX)',
+    tokenSymbol: 'MPLX',
+    mintAddress: 'METAewgxyPbgwsseH8T16a39CQ5VyVxZi9zXiDPY18m',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/21870.png',
+    decimals: 6,
+    coingeckoSymbol: 'metaplex',
+  },
+  {
     tokenName: 'PayPal USD (PYUSD)',
     tokenSymbol: 'PYUSD',
     mintAddress: '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo',
@@ -700,3 +708,5 @@ export const URL_REGEX = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
 export const MAX_PODIUMS = 10;
 export const MAX_BONUS_SPOTS = 50;
 export const BONUS_REWARD_POSITION = 99;
+
+export const PDTG = 'https://t.me/pratikdholani/';

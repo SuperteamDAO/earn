@@ -214,6 +214,7 @@ model Submission {
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
   ogImage            String?          @db.Text
+  notes              String?          @db.VarChar(500)
 
   @@index([id, listingId])
   @@index([userId])
@@ -244,6 +245,7 @@ model Sponsors {
   Bounties     Bounties[]
   Grants       Grants[]
   User         User[]
+  UserInvites  UserInvites[]
 
   @@index([id, slug])
 }
@@ -422,9 +424,13 @@ model UserInvites {
   updatedAt  DateTime @updatedAt
   sponsorId  String
   memberType Role     @default(MEMBER)
+  token      String   @unique
+  expires    DateTime
   sender     User     @relation(fields: [senderId], references: [id])
+  sponsor    Sponsors @relation(fields: [sponsorId], references: [id])
 
   @@index([senderId])
+  @@index([sponsorId])
 }
 
 model emailLogs {
@@ -491,8 +497,9 @@ model Hackathon {
 }
 
 model UnsubscribedEmail {
-  id    String @id @default(uuid())
-  email String @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
 }
 
 enum TalentRankingSkills {

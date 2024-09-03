@@ -16,12 +16,14 @@ import router from 'next/router';
 import React, { Fragment, useEffect, useState } from 'react';
 import { create } from 'zustand';
 
-import { Steps } from '@/components/misc/steps';
-import { AboutYou } from '@/components/Talent/AboutYou';
-import type { UserStoreType } from '@/components/Talent/types';
-import { YourLinks } from '@/components/Talent/YourLinks';
-import { YourWork } from '@/components/Talent/YourWork';
-import { TalentBio } from '@/components/TalentBio';
+import { Steps } from '@/components/shared/steps';
+import {
+  AboutYou,
+  TalentBio,
+  type UserStoreType,
+  YourLinks,
+  YourWork,
+} from '@/features/talent';
 import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';

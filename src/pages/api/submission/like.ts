@@ -24,7 +24,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       Array.isArray(updatedSubmission?.like) &&
       updatedSubmission.like.length > 0
     ) {
-      await sendEmailNotification({
+      sendEmailNotification({
         type: 'submissionLike',
         id,
         userId: updatedSubmission?.userId,

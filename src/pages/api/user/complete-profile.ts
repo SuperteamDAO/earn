@@ -6,19 +6,19 @@ import {
   withAuth,
 } from '@/features/auth';
 import {
+  extractDiscordUsername,
+  extractGitHubUsername,
+  extractLinkedInUsername,
+  extractTelegramUsername,
+  extractTwitterUsername,
+} from '@/features/talent';
+import {
   type ParentSkills,
   skillSubSkillMap,
   type SubSkillsType,
 } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import {
-  extractDiscordUsername,
-  extractGitHubUsername,
-  extractLinkedInUsername,
-  extractTelegramUsername,
-  extractTwitterUsername,
-} from '@/utils/extractUsername';
 import { safeStringify } from '@/utils/safeStringify';
 
 const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
@@ -131,19 +131,28 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     };
 
     if (data.twitter) {
-      data.twitter = extractTwitterUsername(data.twitter);
+      const username = extractTwitterUsername(data.twitter);
+      data.twitter = `https://x.com/${username}` || null;
     }
+
     if (data.github) {
-      data.github = extractGitHubUsername(data.github);
+      const username = extractGitHubUsername(data.github);
+      data.github = `https://github.com/${username}` || null;
     }
+
     if (data.linkedin) {
-      data.linkedin = extractLinkedInUsername(data.linkedin);
+      const username = extractLinkedInUsername(data.linkedin);
+      data.linkedin = `https://linkedin.com/in/${username}` || null;
     }
+
     if (data.discord) {
-      data.discord = extractDiscordUsername(data.discord);
+      const username = extractDiscordUsername(data.discord);
+      data.discord = username || null;
     }
+
     if (data.telegram) {
-      data.website = extractTelegramUsername(data.website);
+      const username = extractTelegramUsername(data.telegram);
+      data.telegram = `https://t.me/${username}` || null;
     }
 
     const categories = new Set([

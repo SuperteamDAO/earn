@@ -18,7 +18,6 @@ import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 
@@ -30,6 +29,7 @@ interface Props {
   totalWinners: number;
   totalPaymentsMade: number;
   bounty: Listing | null;
+  remaining: { podiums: number; bonus: number } | null;
 }
 
 export function PublishResults({
@@ -38,6 +38,7 @@ export function PublishResults({
   totalWinners,
   totalPaymentsMade,
   bounty,
+  remaining,
 }: Props) {
   const [isPublishingResults, setIsPublishingResults] = useState(false);
   const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
@@ -46,11 +47,15 @@ export function PublishResults({
   const posthog = usePostHog();
   const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
 
-  const rewards = [
-    ...cleanRewards(bounty?.rewards, true),
-    ...Array(bounty?.maxBonusSpots ?? 0).map(() => BONUS_REWARD_POSITION),
-  ];
+  const rewardsPodiumsLength = cleanRewards(bounty?.rewards, true).length;
+  console.log('rewardsPodiumsLength', rewardsPodiumsLength);
 
+  const rewards =
+    cleanRewards(bounty?.rewards, true).length + (bounty?.maxBonusSpots || 0);
+
+  const isWinnersAllSelected = !(
+    remaining && remaining.podiums + remaining.bonus !== 0
+  );
   let alertType:
     | 'loading'
     | 'info'
@@ -60,15 +65,15 @@ export function PublishResults({
     | undefined = 'warning';
   let alertTitle = '';
   let alertDescription = '';
-  if (rewards?.length && totalWinners !== rewards?.length) {
-    const remainingWinners = (rewards?.length || 0) - totalWinners;
+  if (!isWinnersAllSelected) {
+    const remainingWinners = (rewards || 0) - totalWinners;
     alertType = 'error';
     alertTitle = 'Select All Winners!';
     alertDescription = `You still have to select ${remainingWinners} more ${
       remainingWinners === 1 ? 'winner' : 'winners'
     } before you can publish the results publicly.`;
-  } else if (rewards?.length && totalPaymentsMade !== rewards?.length) {
-    const remainingPayments = (rewards?.length || 0) - totalPaymentsMade;
+  } else if (rewards && totalPaymentsMade !== rewards) {
+    const remainingPayments = (rewards || 0) - totalPaymentsMade;
     alertType = 'warning';
     alertTitle = 'Pay All Winners!';
     alertDescription = `Don't forget to pay your winners after publishing results. You have to pay to ${remainingPayments} ${
@@ -131,8 +136,8 @@ export function PublishResults({
             </Alert>
           )}
           {!isWinnersAnnounced &&
-            rewards?.length &&
-            totalWinners === rewards?.length &&
+            rewards &&
+            totalWinners === rewards &&
             alertType !== 'error' && (
               <Text mb={4}>
                 Publishing the results of this listing will make the results
@@ -152,8 +157,8 @@ export function PublishResults({
           )}
           {bounty?.applicationType !== 'rolling' &&
             !isWinnersAnnounced &&
-            rewards?.length &&
-            totalWinners === rewards?.length &&
+            rewards &&
+            totalWinners === rewards &&
             !isDeadlinePassed && (
               <Alert mt={4} status="error">
                 <AlertIcon boxSize={8} />
@@ -176,10 +181,7 @@ export function PublishResults({
               <Button
                 className="ph-no-capture"
                 ml={4}
-                isDisabled={
-                  (rewards?.length && totalWinners !== rewards?.length) ||
-                  alertType === 'error'
-                }
+                isDisabled={!isWinnersAllSelected || alertType === 'error'}
                 isLoading={isPublishingResults}
                 loadingText={'Publishing...'}
                 onClick={() => {

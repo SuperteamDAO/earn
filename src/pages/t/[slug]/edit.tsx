@@ -23,12 +23,10 @@ import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { toast } from 'sonner';
 
-import { AddProject } from '@/components/Form/AddProject';
 import { InputField } from '@/components/Form/InputField';
 import { SelectBox } from '@/components/Form/SelectBox';
-import { SocialInput } from '@/components/Form/Socials';
-import { SkillSelect } from '@/components/misc/SkillSelect';
 import { ImagePicker } from '@/components/shared/ImagePicker';
+import { SkillSelect } from '@/components/shared/SkillSelect';
 import {
   CommunityList,
   CountryList,
@@ -38,13 +36,17 @@ import {
   workExp,
   workType,
 } from '@/constants';
+import {
+  AddProject,
+  SocialInput,
+  useUsernameValidation,
+} from '@/features/talent';
 import type { PoW } from '@/interface/pow';
 import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
-import { useUsernameValidation } from '@/utils/useUsernameValidation';
 
 type FormData = {
   username: string;
@@ -428,7 +430,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   SOCIALS
                 </Text>
 
-                <SocialInput register={register} />
+                <SocialInput register={register} watch={watch} />
 
                 <Text
                   mt={12}

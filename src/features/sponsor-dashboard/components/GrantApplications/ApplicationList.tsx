@@ -19,7 +19,7 @@ import React, {
   useRef,
 } from 'react';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { EarnAvatar } from '@/features/talent';
 
 import { type GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils';

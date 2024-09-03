@@ -14,11 +14,11 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { AuthWrapper } from '@/features/auth';
 import { WarningModal } from '@/features/listings';
+import { EarnAvatar } from '@/features/talent/';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';

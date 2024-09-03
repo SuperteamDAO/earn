@@ -56,6 +56,7 @@ export async function sendEmailNotification({
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        timeout: 5000,
       },
     );
   } catch (error) {

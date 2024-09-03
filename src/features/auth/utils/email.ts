@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { emailRegex } from '@/features/talent';
+
 export const checkEmailValidity = async (email: string) => {
   try {
     const { data } = await axios.post('/api/email/validate', { email });
@@ -12,8 +14,6 @@ export const checkEmailValidity = async (email: string) => {
 
 export const validateEmailRegex = (emailAddress: string) => {
   const emailLower = emailAddress.toLowerCase();
-
-  const basicEmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const providers = [
     'gmail.com',
@@ -198,7 +198,7 @@ export const validateEmailRegex = (emailAddress: string) => {
 
   const [, domain] = emailLower.split('@');
 
-  if (!basicEmailRegex.test(emailLower) || !domain) {
+  if (!emailRegex.test(emailLower) || !domain) {
     return false;
   }
 

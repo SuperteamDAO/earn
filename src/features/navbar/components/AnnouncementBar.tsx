@@ -5,15 +5,16 @@ import React from 'react';
 export const AnnouncementBar = () => {
   const [isSmallerThan800] = useMediaQuery('(max-width: 800px)');
 
+  const href = '/hackathon/radar';
   if (isSmallerThan800) {
     return (
       <Box
         as={NextLink}
         display={'block'}
         w="full"
-        color="black"
-        bgColor={'#f1e7e6'}
-        href={'/renaissance'}
+        color="white"
+        bgColor={'brand.purple'}
+        href={href}
       >
         <Text
           p={3}
@@ -21,13 +22,13 @@ export const AnnouncementBar = () => {
           fontWeight={500}
           textAlign="center"
         >
-          <Link as={NextLink} textDecoration={'underline'} href="/renaissance">
+          <Link as={NextLink} textDecoration={'underline'} href={href}>
             Click here
           </Link>{' '}
-          to check out sidetracks for Renaissance — Solana&apos;s latest global
-          hackathon
+          to unlock $150k+ in prizes at Solana’s global hackathon, exclusively
+          on Earn
         </Text>
       </Box>
     );
-  } else return;
+  } else return null;
 };

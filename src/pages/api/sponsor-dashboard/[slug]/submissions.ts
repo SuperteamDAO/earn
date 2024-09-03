@@ -1,3 +1,4 @@
+import { type SubmissionLabels } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import {
@@ -16,6 +17,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const take = params.take ? parseInt(params.take as string, 10) : 15;
   const isHackathon = params.isHackathon === 'true';
   const searchText = params.searchText as string;
+  const label = params.label as SubmissionLabels | 'Winner' | undefined;
 
   try {
     const user = await prisma.user.findUnique({
@@ -63,6 +65,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             ? { hackathonId: user.hackathonId }
             : { sponsor: { id: req.userSponsorId } }),
         },
+        ...(label
+          ? label === 'Winner'
+            ? { isWinner: true }
+            : { label, isWinner: false }
+          : {}),
         isActive: true,
         isArchived: false,
         ...whereSearch,

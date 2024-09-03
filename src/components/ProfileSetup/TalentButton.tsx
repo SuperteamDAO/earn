@@ -1,34 +1,14 @@
-import { Alert, AlertIcon, Button } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { FaUser } from 'react-icons/fa';
+import { Alert, AlertIcon, Button, Link } from '@chakra-ui/react';
 
-import { useUser } from '@/store/user';
-
-export function TalentButton() {
-  const router = useRouter();
-  const { user } = useUser();
-  const [isLoading, setIsLoading] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
-
-  const checkTalent = async () => {
-    if (!user || !user?.id) {
-      setShowMessage(true);
-    } else {
-      setShowMessage(false);
-      setIsLoading(true);
-      try {
-        if (!user?.isTalentFilled) {
-          router.push('/new/talent');
-        } else {
-          router.push('/');
-        }
-      } catch (error) {
-        setIsLoading(false);
-      }
-    }
-  };
-
+export function TalentButton({
+  showMessage,
+  isLoading,
+  checkTalent,
+}: {
+  showMessage?: boolean;
+  isLoading?: boolean;
+  checkTalent: () => void;
+}) {
   return (
     <>
       {!!showMessage && (
@@ -37,20 +17,21 @@ export function TalentButton() {
           Please log in to continue!
         </Alert>
       )}
-      <Button
-        w={'full'}
-        h={12}
-        color={'white'}
-        fontSize={'0.9rem'}
-        bg={'#6562FF'}
-        _hover={{ bg: '#6562FF' }}
-        isLoading={!!isLoading}
-        leftIcon={<FaUser />}
-        loadingText="Redirecting..."
-        onClick={() => checkTalent()}
-      >
-        Make Your Talent Profile
-      </Button>
+      <Link>
+        <Button
+          w={'full'}
+          h={12}
+          color={'white'}
+          bg={'brand.purple.dark'}
+          _hover={{ bg: 'brand.purple' }}
+          isLoading={!!isLoading}
+          loadingText="Redirecting..."
+          onClick={() => checkTalent()}
+          rounded="4px"
+        >
+          Continue as talent {'->'}
+        </Button>
+      </Link>
     </>
   );
 }

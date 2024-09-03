@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 
-import { EarnAvatar } from '@/components/shared/EarnAvatar';
+import { EarnAvatar } from '@/features/talent';
 import type { SponsorType } from '@/interface/sponsor';
 import { useUpdateUser, useUser } from '@/store/user';
 
@@ -21,7 +21,13 @@ interface HackathonOption {
   hackathon?: HackathonOptionType;
 }
 
-export function SelectHackathon({ type }: { type?: string }) {
+export function SelectHackathon({
+  type,
+  isExpanded = false,
+}: {
+  type?: string;
+  isExpanded?: boolean;
+}) {
   const [selectedHackathon, setSelectedHackathon] =
     useState<HackathonOption | null>(null);
   const setHackathonSponsor = useSetAtom(hackathonSponsorAtom);
@@ -87,6 +93,7 @@ export function SelectHackathon({ type }: { type?: string }) {
             borderRadius="4"
             id={data?.hackathon?.name}
             avatar={data?.hackathon?.logo}
+            size={'24px'}
           />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
             <Text color="brand.slate.800" fontSize="sm">
@@ -145,6 +152,7 @@ export function SelectHackathon({ type }: { type?: string }) {
             borderColor: '#6366F1',
           },
           minHeight: '46px',
+          flexWrap: 'nowrap',
         }),
         dropdownIndicator: (base) => ({
           ...base,
@@ -152,6 +160,7 @@ export function SelectHackathon({ type }: { type?: string }) {
           '&:hover': {
             color: '#94a3b8',
           },
+          display: isExpanded ? 'block' : 'none',
         }),
         indicatorSeparator: (base) => ({
           ...base,
