@@ -48,39 +48,15 @@ export const skillMap: SkillMap[] = [
   },
 ];
 
-export const IndustryList: MultiSelectOptions[] = [
-  {
-    label: 'DAOs',
-    value: 'DAOs',
-  },
-  {
-    label: 'DeFi',
-    value: 'DeFi',
-  },
-  {
-    label: 'Infrastructure',
-    value: 'Infrastructure',
-  },
-  {
-    label: 'DePIN',
-    value: 'DePIN',
-  },
-  {
-    value: 'Consumer dApps',
-    label: 'Consumer dApps',
-  },
-  {
-    label: 'Wallets and Payments',
-    value: 'Wallets and Payments',
-  },
-  {
-    label: 'NFTs',
-    value: 'NFTs',
-  },
-  {
-    label: 'Gaming',
-    value: 'Gaming',
-  },
+export const IndustryList = [
+  'DAOs',
+  'DeFi',
+  'Infrastructure',
+  'DePIN',
+  'Consumer dApps',
+  'Wallets and Payments',
+  'NFTs',
+  'Gaming',
 ];
 
 interface Token {

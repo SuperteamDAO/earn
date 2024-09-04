@@ -281,6 +281,7 @@ export const ApplicationDetails = ({
         granteeName={selectedApplication?.user?.firstName}
         token={grant?.token || 'USDC'}
         onApproveGrant={handleApproveGrant}
+        max={grant?.maxReward}
       />
 
       {applications.length ? (

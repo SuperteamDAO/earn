@@ -42,10 +42,17 @@ export const SubmissionActionButton = ({ listing }: Props) => {
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
   const { user } = useUser();
 
+  const { status: authStatus } = useSession();
+
+  const isAuthenticated = authStatus === 'authenticated';
+
   const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
 
   const { data: submissionStatus, isLoading: isUserSubmissionLoading } =
-    useQuery(userSubmissionQuery(id!, user?.id));
+    useQuery({
+      ...userSubmissionQuery(id!, user?.id),
+      enabled: isAuthenticated,
+    });
 
   const isSubmitted = submissionStatus?.isSubmitted ?? false;
 
@@ -147,10 +154,6 @@ export const SubmissionActionButton = ({ listing }: Props) => {
   } = useDisclosure();
 
   const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
-
-  const { status: authStatus } = useSession();
-
-  const isAuthenticated = authStatus === 'authenticated';
 
   return (
     <>
