@@ -5,6 +5,8 @@ import {
   HStack,
   Image,
   Link,
+  Skeleton,
+  SkeletonText,
   Text,
   useMediaQuery,
   VStack,
@@ -27,8 +29,15 @@ interface Props {
   submission?: SubmissionWithUser;
   user: IUser;
   link: string;
+  isLoading: boolean;
 }
-export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
+export const SubmissionPage = ({
+  bounty,
+  submission,
+  user,
+  link,
+  isLoading,
+}: Props) => {
   const { data: ogData } = useQuery(ogImageQuery(link));
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
@@ -47,6 +56,27 @@ export const SubmissionPage = ({ bounty, submission, user, link }: Props) => {
       }
     }
   }, [router.asPath, isMobile]);
+
+  if (isLoading || !submission)
+    return (
+      <VStack
+        align={['center', 'center', 'start', 'start']}
+        justify={['center', 'center', 'space-between', 'space-between']}
+        flexDir={['column', 'column', 'row', 'row']}
+        gap={{ base: 4, md: 10 }}
+        w="full"
+        py={8}
+        id="submission-details"
+      >
+        <VStack gap={10} w={{ base: 'full', md: '60%' }}>
+          <Skeleton w="full" h="4rem" />
+          <SkeletonText w="full" h="2rem" />
+          <Skeleton w="full" h="30rem" />
+          <Skeleton w="full" h="3rem" />
+        </VStack>
+        <Skeleton w={{ base: 'full', md: '40%' }} h="20rem" />
+      </VStack>
+    );
 
   return (
     <VStack
