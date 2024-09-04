@@ -1,5 +1,8 @@
-import { getMint } from '@solana/spl-token';
-import { clusterApiUrl, Connection, PublicKey } from '@solana/web3.js';
+import {
+  clusterApiUrl,
+  Connection,
+  type VersionedTransactionResponse,
+} from '@solana/web3.js';
 import { type NextApiResponse } from 'next';
 
 import { tokenList } from '@/constants';
@@ -16,15 +19,6 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-interface TransactionDetail {
-  submissionId: string;
-  txId: string;
-  sender: string;
-  receiver: string;
-  token: string;
-  amount: number;
-}
-
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userSponsorId = req.userSponsorId;
 
@@ -35,7 +29,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const { paymentLinks, listingId } = req.body as VerifyPaymentsFormData & {
       listingId: string;
     };
-    const details: TransactionDetail[] = [];
 
     if (!listingId) {
       return res.status(400).json({ error: 'Listing ID is missing' });
@@ -46,77 +39,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(error.status).json({ error: error.message });
     }
 
-    const validationResults: ValidatePaymentResult[] = [];
-
-    for (const paymentLink of paymentLinks) {
-      try {
-        logger.debug(
-          `Beginning External Payment Verification for submission ID: ${paymentLink.submissionId} with TxId: ${paymentLink.txId}`,
-        );
-        if (!paymentLink.txId) {
-          throw new Error('Transaction ID is missing');
-        }
-
-        logger.debug(
-          `Getting Parsed Transaction for txId: ${paymentLink.txId}`,
-        );
-        const tx = await connection.getParsedTransaction(paymentLink.txId, {
-          commitment: 'confirmed',
-        });
-
-        if (!tx) {
-          throw new Error('Transaction not found');
-        }
-
-        const { transaction } = tx;
-        const { message } = transaction;
-
-        const sender = message?.accountKeys[0]?.pubkey.toBase58();
-        let receiver = '';
-        let tokenMintAddr = '';
-        let amount = 0;
-
-        for (const instruction of tx.transaction.message.instructions) {
-          if ('parsed' in instruction) {
-            const parsed = instruction.parsed;
-            if (parsed.type.includes('transferChecked')) {
-              receiver = parsed.info.destination;
-              amount = parsed.info.tokenAmount.uiAmount;
-
-              const mint = new PublicKey(parsed.info.mint);
-
-              const mintAccount = await getMint(connection, mint);
-
-              tokenMintAddr = mintAccount.address.toBase58();
-            }
-          }
-        }
-
-        details.push({
-          submissionId: paymentLink.submissionId,
-          txId: paymentLink.txId,
-          sender: sender || '',
-          receiver,
-          token: tokenMintAddr,
-          amount: amount,
-        });
-        logger.info(
-          `Transaction Information Fetch Successfully for TxID: ${paymentLink.txId}`,
-        );
-      } catch (error: any) {
-        validationResults.push({
-          submissionId: paymentLink.submissionId,
-          txId: paymentLink.txId || '',
-          status: 'FAIL',
-          message: error.message,
-        });
-
-        logger.warn(
-          `External Payment Verification Failed for Submission ID: ${paymentLink.submissionId} with TxId: ${paymentLink.txId} with message: ${error.message}`,
-        );
-      }
-    }
-
     const listing = await prisma.bounties.findUnique({
       where: {
         id: listingId,
@@ -125,7 +47,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const submissions = await prisma.submission.findMany({
       where: {
         id: {
-          in: details.map((d) => d.submissionId),
+          in: paymentLinks.map((d) => d.submissionId),
         },
         isPaid: false,
       },
@@ -136,16 +58,39 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (!listing) return res.status(400).json({ error: 'Listing not found' });
 
-    for (const detail of details) {
-      const submission = submissions.find((s) => s.id === detail.submissionId);
-      if (!submission) throw new Error('Submission not found');
-      const { user, winnerPosition } = submission;
-      const { amount, token, txId, submissionId, receiver } = detail;
+    const validationResults: ValidatePaymentResult[] = [];
+
+    for (const paymentLink of paymentLinks) {
       try {
         logger.debug(
-          `Beginning External Payment Validation for submission ID: ${submissionId} with TxId: ${txId}`,
+          `Beginning External Payment Verification for submission ID: ${paymentLink.submissionId} with TxId: ${paymentLink.txId}`,
         );
+
+        if (paymentLink.isVerified) {
+          validationResults.push({
+            submissionId: paymentLink.submissionId,
+            txId: paymentLink.txId,
+            status: 'SUCCESS',
+            message: 'Already Verified',
+          });
+          continue;
+        }
+
+        if (!paymentLink.txId) {
+          throw new Error('Invalid URL');
+        }
+
+        const submission = submissions.find(
+          (s) => s.id === paymentLink.submissionId,
+        );
+        if (!submission) throw new Error('Submission not found');
+        const {
+          user: { publicKey },
+          winnerPosition,
+        } = submission;
+
         if (!winnerPosition) {
+          logger.error('Submission has no winner position');
           throw new Error('Submission has no winner position');
         }
 
@@ -153,44 +98,99 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           winnerPosition + ''
         ] as number | null | undefined;
         if (!winnerReward) {
+          logger.error('Winner Position has no reward');
           throw new Error('Winner Position has no reward');
         }
 
-        const parsedToken = tokenList.find((t) => t.mintAddress === token);
         const dbToken = tokenList.find((t) => t.tokenSymbol === listing.token);
-        if (parsedToken?.mintAddress !== dbToken?.mintAddress) {
-          throw new Error('Listing Token and Transaction Token do not match');
+        if (!dbToken) {
+          logger.error(`Token doesn't exist for this listing`);
+          throw new Error(`Token doesn't exist for this listing`);
         }
 
-        if (amount !== winnerReward) {
+        logger.debug(
+          `Getting Transaction Information from RPC for txId: ${paymentLink.txId}`,
+        );
+        let tx: VersionedTransactionResponse | null = null;
+        const maxRetries = 3;
+        const delayMs = 500; // 0.5 seconds
+
+        try {
+          for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+              tx = await connection.getTransaction(paymentLink.txId, {
+                commitment: 'confirmed',
+                maxSupportedTransactionVersion: 10,
+              });
+              break;
+            } catch (err) {
+              if (attempt === maxRetries) {
+                throw err;
+              }
+              await new Promise((resolve) => setTimeout(resolve, delayMs));
+            }
+          }
+        } catch (err) {
+          throw new Error(`Failed to fetch transaction details`);
+        }
+
+        if (!tx) {
+          throw new Error('Invalid URL');
+        }
+
+        const { meta } = tx;
+
+        if (!meta) {
+          throw new Error(`Invalid URL`);
+        }
+
+        const preBalance = meta?.preTokenBalances?.find(
+          (balance) => balance.owner === publicKey,
+        );
+        const postBalance = meta?.postTokenBalances?.find(
+          (balance) => balance.owner === publicKey,
+        );
+        if (!postBalance) {
           throw new Error(
-            `Amount in transaction does not match reward in listing`,
+            `Receiver’s public key doesn’t match with the winner's public key on Earn.`,
           );
         }
 
-        if (receiver !== user.publicKey) {
-          throw new Error('Receiver address does not match');
+        if (postBalance.mint !== dbToken?.mintAddress) {
+          throw new Error(`Transferred token does not match the reward token.`);
         }
 
+        const preAmount = preBalance?.uiTokenAmount.uiAmount || 0;
+        const postAmount = postBalance.uiTokenAmount.uiAmount;
+        if (!postAmount) {
+          throw new Error(`Transferred amount doesn’t match the reward amount`);
+        }
+        const actualTransferAmount = postAmount - preAmount;
+        if (Math.abs(actualTransferAmount - winnerReward) > 0.000001) {
+          // Using small epsilon for float comparison
+          throw new Error(`Transferred amount doesn’t match the reward amount`);
+        }
         validationResults.push({
-          submissionId,
-          txId,
+          submissionId: paymentLink.submissionId,
+          txId: paymentLink.txId,
           status: 'SUCCESS',
         });
 
-        logger.debug(
-          `External Payment Validation Successful for submission ID: ${submissionId} with TxId: ${txId}`,
+        logger.info(
+          `External Payment Validation Successful for Submission ID: ${paymentLink.submissionId} with TxId: ${paymentLink.txId}`,
         );
+        await new Promise((resolve) => setTimeout(resolve, 1500));
       } catch (error: any) {
-        logger.warn(
-          `External Payment Validation Failed for Submission ID: ${submissionId} with TxId: ${txId} with message: ${error.message}`,
-        );
         validationResults.push({
-          submissionId,
-          txId,
+          submissionId: paymentLink.submissionId,
+          txId: paymentLink.txId || '',
           status: 'FAIL',
           message: error.message,
         });
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        logger.warn(
+          `External Payment Verification Failed for Submission ID: ${paymentLink.submissionId} with TxId: ${paymentLink.txId} with message: ${error.message}`,
+        );
       }
     }
 

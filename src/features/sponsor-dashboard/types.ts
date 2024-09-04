@@ -38,20 +38,24 @@ export const verifyPaymentsSchema = z.object({
     z
       .object({
         submissionId: z.string(),
-        link: z
-          .string()
-          .min(1, { message: 'Payment link is required' })
-          .refine(
-            (url) =>
-              ALLOWED_URL_PREFIXES.some((prefix) => url.startsWith(prefix)),
-            {
-              message: `Please add a valid transaction link (${ALLOWED_URL_PREFIXES.join(' or ')})`,
-            },
-          ),
+        link: z.string().optional(),
+        isVerified: z.boolean(),
       })
+      .refine(
+        (data) => {
+          if (data.isVerified) return true;
+          return (
+            data.link &&
+            ALLOWED_URL_PREFIXES.some((prefix) => data.link?.startsWith(prefix))
+          );
+        },
+        {
+          message: `Please add a valid transaction link (${ALLOWED_URL_PREFIXES.join(' or ')})`,
+        },
+      )
       .transform((data) => ({
         ...data,
-        txId: data.link.split('/tx/')[1],
+        txId: data.isVerified ? '' : data.link?.split('/tx/')[1] || '',
       })),
   ),
 });

@@ -5,6 +5,7 @@ import {
   FormControl,
   FormErrorMessage,
   HStack,
+  Icon,
   Image,
   Input,
   Link,
@@ -81,23 +82,9 @@ export const VerifyPaymentModal = ({
     reset,
     setError,
     clearErrors,
-    watch,
   } = useForm<VerifyPaymentsFormData>({
     resolver: zodResolver(verifyPaymentsSchema),
   });
-
-  const paymentLinks = watch('paymentLinks');
-
-  useEffect(() => {
-    console.log('errors', errors);
-  }, [errors]);
-
-  useEffect(() => {
-    console.log('paymentLinks', paymentLinks);
-  }, [paymentLinks]);
-
-  // const resetForm = useCallback(() => {
-  // }, [data, reset]);
 
   useEffect(() => {
     if (data?.submission && data?.bounty) {
@@ -108,7 +95,8 @@ export const VerifyPaymentModal = ({
             .sort((a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0))
             .map((submission) => ({
               submissionId: submission.id,
-              link: submission.isPaid ? 'Payment verified' : '',
+              link: '',
+              isVerified: submission.isPaid,
             })),
         },
         {
@@ -132,14 +120,10 @@ export const VerifyPaymentModal = ({
   }, [listing?.slug]);
 
   const verifyPaymentMutation = async (body: VerifyPaymentsFormData) => {
-    const unpaidPaymentLinks = body.paymentLinks.filter(
-      (link) =>
-        !data?.submission.find((sub) => sub.id === link.submissionId)?.isPaid,
-    );
     return await axios.post<{ validationResults: ValidatePaymentResult[] }>(
       '/api/sponsor-dashboard/listings/verify-external-payment',
       {
-        paymentLinks: unpaidPaymentLinks,
+        paymentLinks: body.paymentLinks,
         listingId,
       },
     );
@@ -157,18 +141,15 @@ export const VerifyPaymentModal = ({
         });
 
         const { validationResults } = data.data;
-        console.log('validationResult', validationResults);
         const failedResults = validationResults.filter(
           (v) => v.status === 'FAIL',
         );
-        console.log('failedResults', failedResults);
         if (failedResults.length > 0) {
           clearErrors();
           failedResults.forEach((result) => {
             const fieldIndex = variables.paymentLinks.findIndex(
               (link) => link.submissionId === result.submissionId,
             );
-            console.log('failed index', fieldIndex);
 
             if (fieldIndex !== -1) {
               setError(`paymentLinks.${fieldIndex}.link`, {
@@ -190,7 +171,8 @@ export const VerifyPaymentModal = ({
             (link) => link.submissionId === result.submissionId,
           );
           if (fieldIndex !== -1) {
-            setValue(`paymentLinks.${fieldIndex}.link`, 'Payment verified');
+            setValue(`paymentLinks.${fieldIndex}.isVerified`, true);
+            // setValue(`paymentLinks.${fieldIndex}.link`, '');
           }
         });
 
@@ -212,11 +194,6 @@ export const VerifyPaymentModal = ({
         setStatus('error');
         toast.error('Error occurred while verifying payment');
       },
-      onSettled: (data, error) => {
-        console.log('done');
-        console.log('done afeter data - ', data);
-        console.log('done errro - ', error);
-      },
     });
 
   useEffect(() => {
@@ -226,8 +203,7 @@ export const VerifyPaymentModal = ({
   }, [verifyPaymentPending]);
 
   const onSubmit = async (data: VerifyPaymentsFormData) => {
-    console.log('data on submit - ', data);
-    verifyPayment(data as VerifyPaymentsFormData);
+    verifyPayment({ paymentLinks: data.paymentLinks });
   };
 
   const tryAgain = () => {
@@ -435,6 +411,7 @@ export const VerifyPaymentModal = ({
                             <HStack>
                               <Image
                                 w={'1.2rem'}
+                                alt={selectedToken?.tokenName}
                                 rounded={'full'}
                                 src={selectedToken?.icon}
                               />
@@ -451,24 +428,38 @@ export const VerifyPaymentModal = ({
                             </HStack>
                           </VStack>
                           <VStack align="start" gap={0} w="full">
-                            <Input
-                              {...field}
-                              fontSize="sm"
-                              _placeholder={{
-                                color: 'brand.slate.400',
-                              }}
-                              isDisabled={submission.isPaid}
-                              placeholder={
-                                submission.isPaid
-                                  ? 'Payment verified'
-                                  : 'Paste your link here'
-                              }
-                              value={
-                                submission.isPaid
-                                  ? 'Payment verified'
-                                  : field.value
-                              }
-                            />
+                            {submission.isPaid ? (
+                              <HStack w="full">
+                                <Input
+                                  color="green"
+                                  fontSize="sm"
+                                  fontWeight={500}
+                                  borderWidth={2}
+                                  borderColor="green"
+                                  isDisabled
+                                  value="Payment Verified"
+                                />
+                                <Icon
+                                  as={LuCheck}
+                                  w={6}
+                                  h={6}
+                                  p={1}
+                                  color="white"
+                                  bg="green"
+                                  rounded="full"
+                                  strokeWidth={3}
+                                />
+                              </HStack>
+                            ) : (
+                              <Input
+                                {...field}
+                                fontSize="sm"
+                                _placeholder={{
+                                  color: 'brand.slate.400',
+                                }}
+                                placeholder="Paste your link here"
+                              />
+                            )}
                             <FormErrorMessage>
                               {errors.paymentLinks?.[index]?.link?.message}
                             </FormErrorMessage>
