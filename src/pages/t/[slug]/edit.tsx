@@ -107,10 +107,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const animatedComponents = makeAnimated();
   const [DropDownValues, setDropDownValues] = useState<{
-    interests: string;
+    interests: { label: string; value: string }[];
     community: { label: string; value: string }[];
   }>({
-    interests: JSON.stringify(user?.interests || []),
+    interests: user?.interests ? JSON.parse(user?.interests) : [],
     community: user?.community ? JSON.parse(user.community) : [],
   });
 
@@ -129,14 +129,15 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       });
 
       if (user.interests) {
-        const interestsArray = JSON.parse(user.interests);
-        const defaultInterests = interestsArray.map((value: string) =>
-          IndustryList.find((option) => option.value === value),
-        );
-        setValue('interests', defaultInterests);
+        const interestsArray: string[] = JSON.parse(user.interests);
+        const interestSelectValues = interestsArray.map((item) => ({
+          label: item,
+          value: item,
+        }));
+        setValue('interests', interestSelectValues);
         setDropDownValues((prev) => ({
           ...prev,
-          interests: defaultInterests,
+          interests: interestSelectValues,
         }));
       }
 
@@ -226,9 +227,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     setIsLoading(true);
     posthog.capture('confirm_edit profile');
     try {
-      const interestsJSON = JSON.stringify(
-        (data.interests || []).map((interest) => interest.value),
-      );
+      const interestsArray = (data.interests || []).map((item) => item.value);
+      const interestsJSON = JSON.stringify(interestsArray);
 
       const communityArray = (data.community || []).map((item) => item.value);
       const communityJSON = JSON.stringify(communityArray);
@@ -268,20 +268,28 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         return acc;
       }, {} as Partial<FormData>);
 
-      await axios.post('/api/pow/edit', {
-        pows: pow,
-      });
+      toast.promise(
+        async () => {
+          await axios.post('/api/pow/edit', {
+            pows: pow,
+          });
 
-      await axios.post('/api/user/edit', { ...finalUpdatedData });
+          await axios.post('/api/user/edit', { ...finalUpdatedData });
 
-      await refetchUser();
+          await refetchUser();
 
-      setIsLoading(false);
+          setIsLoading(false);
 
-      toast.success('Your profile has been updated successfully!');
-      setTimeout(() => {
-        router.push(`/t/${data.username}`);
-      }, 500);
+          setTimeout(() => {
+            router.push(`/t/${data.username}`);
+          }, 500);
+        },
+        {
+          loading: 'Updating your profile...',
+          success: 'Your profile has been updated successfully!',
+          error: 'Failed to update profile.',
+        },
+      );
     } catch (error: any) {
       toast.error('Failed to update profile.');
     }
@@ -451,7 +459,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     closeMenuOnSelect={false}
                     components={animatedComponents}
                     isMulti
-                    options={IndustryList as any}
+                    options={IndustryList.map((elm: string) => {
+                      return { label: elm, value: elm };
+                    })}
                     value={DropDownValues.interests}
                     required
                     onChange={(selectedOptions: any) => {

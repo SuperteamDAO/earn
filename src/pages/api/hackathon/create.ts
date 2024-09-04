@@ -1,8 +1,10 @@
+import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -28,6 +30,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     compensationType,
     minRewardAsk,
     maxRewardAsk,
+    maxBonusSpots,
     isPublished,
     isPrivate,
   } = req.body;
@@ -67,6 +70,36 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       ? hackathon.eligibility
       : null;
 
+    let language = '';
+    if (description) {
+      language = franc(description);
+      // both 'eng' and 'sco' are english listings
+    }
+
+    let publishedAt;
+    if (isPublished) {
+      publishedAt = new Date();
+    }
+
+    let usdValue = 0;
+    if (isPublished && publishedAt) {
+      try {
+        let amount;
+        if (compensationType === 'fixed') {
+          amount = rewardAmount;
+        } else if (compensationType === 'range') {
+          amount = (minRewardAsk + maxRewardAsk) / 2;
+        }
+
+        if (amount && token) {
+          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
+          usdValue = tokenUsdValue * amount;
+        }
+      } catch (error) {
+        logger.error('Error calculating USD value:', error);
+      }
+    }
+
     const result = await prisma.bounties.create({
       data: {
         sponsorId: hackathonSponsor,
@@ -89,12 +122,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         requirements,
         rewardAmount,
         rewards,
+        maxBonusSpots,
         token,
         compensationType,
         minRewardAsk,
         maxRewardAsk,
         isPublished,
         isPrivate,
+        language,
+        usdValue,
       },
       include: {
         sponsor: true,

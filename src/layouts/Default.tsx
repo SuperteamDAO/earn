@@ -21,7 +21,6 @@ export const Default = (props: IDefaultProps) => {
       justify={'space-between'}
       direction={'column'}
       minH={'100vh'}
-      id="main-container"
     >
       {props.meta}
       <Header />

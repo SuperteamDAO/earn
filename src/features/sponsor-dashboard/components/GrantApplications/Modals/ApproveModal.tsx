@@ -36,6 +36,7 @@ interface ApproveModalProps {
     applicationId: string,
     approvedAmount: number,
   ) => Promise<void>;
+  max: number | undefined;
 }
 
 export const ApproveModal = ({
@@ -46,6 +47,7 @@ export const ApproveModal = ({
   granteeName,
   token,
   onApproveGrant,
+  max,
 }: ApproveModalProps) => {
   const [approvedAmount, setApprovedAmount] = useState<number | undefined>(ask);
   const [loading, setLoading] = useState<boolean>(false);
@@ -54,7 +56,9 @@ export const ApproveModal = ({
   const handleAmountChange = (valueString: string) => {
     const value = parseFloat(valueString);
     if (value > (ask as number)) {
-      setErrorMessage('Approved amount cannot exceed the requested amount.');
+      setErrorMessage(
+        'Approved amount is greater than the requested amount. Are you sure you want to approve?',
+      );
     } else {
       setErrorMessage(null);
     }
@@ -127,7 +131,7 @@ export const ApproveModal = ({
               <NumberInput
                 w="100px"
                 defaultValue={ask}
-                max={ask}
+                max={max}
                 min={1}
                 onChange={handleAmountChange}
                 step={100}
@@ -165,7 +169,7 @@ export const ApproveModal = ({
             </InputGroup>
           </Flex>
           {errorMessage && (
-            <Text align={'center'} color="red.500" fontSize={'sm'}>
+            <Text align={'center'} color="yellow.500" fontSize={'sm'}>
               {errorMessage}
             </Text>
           )}
@@ -177,7 +181,7 @@ export const ApproveModal = ({
             color="white"
             bg="#079669"
             _hover={{ bg: '#079669' }}
-            isDisabled={!!errorMessage || loading || approvedAmount === 0}
+            isDisabled={loading || approvedAmount === 0}
             isLoading={loading}
             leftIcon={
               loading ? (

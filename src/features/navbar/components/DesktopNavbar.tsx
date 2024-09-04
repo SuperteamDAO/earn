@@ -137,14 +137,13 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 as={NextLink}
                 alignItems="center"
                 display="flex"
-                href="/talent-olympics"
+                href="/hackathon/radar"
               >
                 <Image
-                  h={12}
-                  pt={0.5}
+                  h={'1.1rem'}
                   objectFit={'contain'}
-                  alt="Talent Olympics Nav Icon"
-                  src="/assets/hackathon/talent-olympics/nav.svg"
+                  alt="Radar Nav Icon"
+                  src="/assets/hackathon/radar/nav.png"
                 />
               </Link>
               {/* {HACKATHON_NAV_ITEMS?.map((navItem) => {

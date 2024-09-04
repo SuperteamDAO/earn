@@ -48,10 +48,11 @@ export function ExtraInfoSection({
           <Link
             color={'brand.slate.500'}
             fontWeight={500}
-            href={`/${Hackathon.name?.toLowerCase()}`}
+            href={`/hackathon/${Hackathon.name?.toLowerCase()}`}
             isExternal
           >
             View All Challenges
+            <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
           </Link>
         </VStack>
       )}

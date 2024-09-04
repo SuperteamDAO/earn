@@ -35,6 +35,10 @@ interface Props {
   onLoginOpen: () => void;
 }
 
+const AnnouncementBar = dynamic(() =>
+  import('@/features/navbar').then((mod) => mod.AnnouncementBar),
+);
+
 const UserMenu = dynamic(() =>
   import('./UserMenu').then((mod) => mod.UserMenu),
 );
@@ -177,13 +181,13 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               alignItems="center"
               display="flex"
               pt={2}
-              href="/talent-olympics"
+              href="/hackathon/radar"
             >
               <Image
-                h={14}
+                h={6}
                 objectFit={'contain'}
-                alt="Talent Olympics Nav Icon"
-                src="/assets/hackathon/talent-olympics/nav.svg"
+                alt="Radar Nav Icon"
+                src="/assets/hackathon/radar/nav.png"
               />
             </Link>
           </DrawerBody>
@@ -194,6 +198,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
 
   return (
     <>
+      {router.pathname === '/' && <AnnouncementBar />}
       <Box pos="sticky" zIndex="sticky" top={0}>
         <Flex
           align="center"

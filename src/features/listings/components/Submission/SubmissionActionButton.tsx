@@ -1,5 +1,6 @@
 import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -24,13 +25,9 @@ import { SubmissionModal } from './SubmissionModal';
 
 interface Props {
   listing: Listing;
-  hasHackathonStarted: boolean;
 }
 
-export const SubmissionActionButton = ({
-  listing,
-  hasHackathonStarted,
-}: Props) => {
+export const SubmissionActionButton = ({ listing }: Props) => {
   const {
     id,
     status,
@@ -39,15 +36,23 @@ export const SubmissionActionButton = ({
     region,
     type,
     isWinnersAnnounced,
+    Hackathon,
   } = listing;
 
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
   const { user } = useUser();
 
+  const { status: authStatus } = useSession();
+
+  const isAuthenticated = authStatus === 'authenticated';
+
   const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
 
   const { data: submissionStatus, isLoading: isUserSubmissionLoading } =
-    useQuery(userSubmissionQuery(id!, user?.id));
+    useQuery({
+      ...userSubmissionQuery(id!, user?.id),
+      enabled: isAuthenticated,
+    });
 
   const isSubmitted = submissionStatus?.isSubmitted ?? false;
 
@@ -82,6 +87,14 @@ export const SubmissionActionButton = ({
       }
     }
   };
+
+  const hackathonStartDate = Hackathon?.startDate
+    ? dayjs(Hackathon?.startDate)
+    : null;
+
+  const hasHackathonStarted = hackathonStartDate
+    ? dayjs().isAfter(hackathonStartDate)
+    : true;
 
   const isProject = type === 'project';
 
@@ -141,10 +154,6 @@ export const SubmissionActionButton = ({
   } = useDisclosure();
 
   const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
-
-  const { status: authStatus } = useSession();
-
-  const isAuthenticated = authStatus === 'authenticated';
 
   return (
     <>
@@ -211,12 +220,19 @@ export const SubmissionActionButton = ({
         bg="brand.slate.500"
         hasArrow
         isDisabled={
-          !user?.id ||
-          !user?.isTalentFilled ||
-          isUserEligibleByRegion ||
-          pastDeadline
+          hasHackathonStarted &&
+          (!user?.id ||
+            !user?.isTalentFilled ||
+            isUserEligibleByRegion ||
+            pastDeadline)
         }
-        label={!isUserEligibleByRegion ? regionTooltipLabel : ''}
+        label={
+          !isUserEligibleByRegion
+            ? regionTooltipLabel
+            : !hasHackathonStarted
+              ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMM YY')}`
+              : ''
+        }
         rounded="md"
       >
         <Flex

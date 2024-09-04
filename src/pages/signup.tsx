@@ -1,83 +1,146 @@
-import axios from 'axios';
-import type { GetServerSideProps } from 'next';
+import {
+  Box,
+  Button,
+  Container,
+  Heading,
+  Image,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-import { ErrorSection } from '@/components/shared/ErrorSection';
-import { LoadingSection } from '@/components/shared/LoadingSection';
-import { InviteView } from '@/features/sponsor-dashboard';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
+import { SignIn } from '@/features/auth';
+import { acceptInvite, verifyInviteQuery } from '@/features/sponsor-dashboard';
 
-interface Props {
-  invite?: string;
-}
+export default function SignupPage() {
+  const [loginStep, setLoginStep] = useState(0);
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [isNavigating, setIsNavigating] = useState(false);
 
-function SignUp({ invite }: Props) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
-  const [inviteInfo, setInviteInfo] = useState<any>();
+  const { invite } = router.query;
+  const cleanToken =
+    (Array.isArray(invite) ? invite[0] : invite)?.split('?')[0] || '';
 
-  const getInvite = async () => {
-    setIsLoading(true);
-    try {
-      const result = await axios.get('/api/member-invites/', {
-        params: {
-          invite,
-        },
-      });
-      if (!result.data) {
-        setIsError(true);
-      } else {
-        setInviteInfo(result.data);
-      }
-    } catch (e) {
-      setIsError(true);
-    } finally {
-      setIsLoading(false);
-    }
+  const { data: inviteDetails, error } = useQuery(
+    verifyInviteQuery(cleanToken),
+  );
+
+  const acceptInviteMutation = useMutation({
+    mutationFn: acceptInvite,
+    onSuccess: () => {
+      toast.success("You've successfully joined the sponsor's dashboard.");
+      setIsNavigating(true);
+      router.push('/dashboard/listings');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleAcceptInvite = () => {
+    acceptInviteMutation.mutate(cleanToken);
   };
 
   useEffect(() => {
-    if (invite) {
-      getInvite();
-    } else {
-      setIsError(true);
-      setIsLoading(false);
+    if (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while verifying the invitation',
+      );
     }
-  }, [invite]);
+  }, [error]);
+
+  if (error) {
+    return (
+      <Container centerContent>
+        <VStack mt={10} spacing={4}>
+          <Heading>Invitation Error</Heading>
+          <Text>
+            {error instanceof Error ? error.message : 'An error occurred'}
+          </Text>
+          <Button onClick={() => router.push('/')}>Go to Homepage</Button>
+        </VStack>
+      </Container>
+    );
+  }
 
   return (
-    <Default
-      meta={
-        <Meta
-          title="Accept Invite | Superteam Earn"
-          description="Every Solana opportunity in one place!"
-          canonical="https://earn.superteam.fun"
-        />
-      }
-    >
-      {isLoading && <LoadingSection />}
-      {!isLoading && isError && (
-        <ErrorSection
-          title="Invalid Invite!"
-          message="Your invite is either invalid or expired. Please try again."
-        />
-      )}
-      {!isLoading && !isError && <InviteView invite={inviteInfo} />}
-    </Default>
+    <Container maxW="xl" centerContent>
+      <Box
+        w="full"
+        mt={10}
+        px={20}
+        pt={20}
+        pb={40}
+        bg="white"
+        borderWidth={1}
+        borderColor="gray.200"
+        borderRadius="lg"
+        shadow="lg"
+      >
+        <VStack align="center" spacing={0}>
+          <Text
+            color="brand.slate.600"
+            fontSize="2xl"
+            fontWeight={500}
+            textAlign="center"
+          >
+            Welcome to Superteam Earn
+          </Text>
+          <Text color="brand.slate.600" fontSize="lg" textAlign="center">
+            Start your journey to access top global talent!
+          </Text>
+          <Image
+            w={20}
+            h={20}
+            mt={12}
+            mr={{ base: 3, sm: 5 }}
+            alt={inviteDetails?.sponsorName}
+            rounded={5}
+            src={inviteDetails?.sponsorLogo}
+          />
+          <Text
+            mt={5}
+            color="brand.slate.500"
+            fontWeight={500}
+            lineHeight="24px"
+            textAlign="center"
+          >
+            {inviteDetails?.senderName} has invited you to join <br />
+            {inviteDetails?.sponsorName}
+          </Text>
+          {!session ? (
+            <Box w="full" mt={12}>
+              <Text
+                mb={4}
+                color="brand.slate.500"
+                fontWeight={500}
+                textAlign="center"
+              >
+                Please sign in to accept the invitation:
+              </Text>
+              <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
+            </Box>
+          ) : (
+            <Button
+              mt={4}
+              colorScheme="blue"
+              isLoading={acceptInviteMutation.isPending || isNavigating}
+              onClick={handleAcceptInvite}
+              size="lg"
+              variant={'outline'}
+            >
+              Accept Invite
+            </Button>
+          )}
+        </VStack>
+      </Box>
+    </Container>
   );
 }
-
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context,
-) => {
-  const { query } = context;
-  const invite = Array.isArray(query.invite) ? query.invite[0] : query.invite;
-  const cleanInvite = invite ? invite.split('?')[0] : undefined;
-
-  return {
-    props: { invite: cleanInvite },
-  };
-};
-
-export default SignUp;

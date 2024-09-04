@@ -1,5 +1,6 @@
 import type { NextApiResponse } from 'next';
 
+import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   type NextApiRequestWithSponsor,
   withSponsorAuth,
@@ -64,10 +65,25 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     ).length;
     const paymentsMade = result.Submission.filter((sub) => sub.isPaid).length;
 
+    const podiumWinnersSelected = result.Submission.filter(
+      (submission) =>
+        submission.isWinner &&
+        submission.winnerPosition !== BONUS_REWARD_POSITION,
+    ).length;
+
+    const bonusWinnerSelected = result.Submission.filter(
+      (sub) => sub.isWinner && sub.winnerPosition === BONUS_REWARD_POSITION,
+    ).length;
+
     logger.info(`Successfully fetched bounty details for slug=${slug}`);
-    return res
-      .status(200)
-      .json({ ...result, totalSubmissions, winnersSelected, paymentsMade });
+    return res.status(200).json({
+      ...result,
+      totalSubmissions,
+      winnersSelected,
+      paymentsMade,
+      podiumWinnersSelected,
+      bonusWinnerSelected,
+    });
   } catch (error: any) {
     logger.error(
       `Error fetching bounty with slug=${slug}:`,

@@ -1,76 +1,49 @@
 import type { NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth/next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import { createSponsorEmailSettings } from '@/features/sponsor-dashboard';
+import {
+  handleInviteAcceptance,
+  type NextApiRequestWithUser,
+  withAuth,
+} from '@/features/auth';
 import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  const { inviteId } = req.body;
-  const userId = req.userId;
-
   logger.debug(`Request body: ${safeStringify(req.body)}`);
-  logger.debug(`User ID: ${userId}`);
 
-  if (!inviteId) {
-    logger.warn('inviteId is required');
-    return res.status(400).json({
-      message: 'inviteId is required',
-    });
+  if (req.method !== 'POST') {
+    logger.warn(`Method not allowed: ${req.method}`);
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    logger.debug(`Checking user invite with ID: ${inviteId}`);
-    const userInvite = await prisma.userInvites.findUnique({
-      where: {
-        id: inviteId,
-      },
-    });
-
-    if (!userInvite) {
-      logger.warn(`Invite not found for ID: ${inviteId}`);
-      return res.status(404).json({
-        message: 'Invite not found',
-      });
+    const session = await getServerSession(req, res, authOptions);
+    if (!session) {
+      logger.warn('Unauthorized access attempt');
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const sponsorId = userInvite.sponsorId || '';
-    const memberType = userInvite.memberType;
+    const { token } = req.body;
+    if (!token) {
+      logger.warn('Token is missing in the request body');
+      return res.status(400).json({ error: 'Token is required' });
+    }
 
-    logger.debug(
-      `Creating user sponsor record for user ${userId} and sponsor ${sponsorId}`,
-    );
-    await prisma.userSponsors.create({
-      data: {
-        userId: userId as string,
-        sponsorId,
-        role: memberType,
-      },
-    });
+    logger.info(`Processing invite acceptance for user: ${session.user.id}`);
+    const result = await handleInviteAcceptance(session.user.id, token);
 
-    await createSponsorEmailSettings(userId as string);
-
-    logger.debug(`Updating current sponsor ID for user ${userId}`);
-    await prisma.user.update({
-      where: {
-        id: userId as string,
-      },
-      data: {
-        currentSponsorId: sponsorId,
-      },
-    });
-
-    logger.info(`User ${userId} successfully accepted invite ${inviteId}`);
-    return res.status(200).json({ accepted: true });
+    if (result.success) {
+      logger.info(`Invite acceptance successful: ${result.message}`);
+      res.status(200).json({ message: result.message });
+    } else {
+      logger.warn(`Invite acceptance failed: ${result.message}`);
+      res.status(400).json({ error: result.message });
+    }
   } catch (error: any) {
-    logger.error(
-      `User ${userId} unable to accept invite: ${safeStringify(error)}`,
-    );
-    return res.status(500).json({
-      error: error.message,
-      message: 'Error occurred while adding user to a sponsor',
-    });
+    logger.error(`Error in invite acceptance: ${safeStringify(error)}`);
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
 
