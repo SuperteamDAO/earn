@@ -102,7 +102,7 @@ export const SubmissionCard = ({
               whiteSpace={'nowrap'}
               textOverflow={'ellipsis'}
             >
-              {talent?.firstName} {talent?.lastName} eqfaaef
+              {talent?.firstName} {talent?.lastName}
             </Text>
           </HStack>
         </Link>
@@ -118,7 +118,7 @@ export const SubmissionCard = ({
         <Image
           w={'full'}
           h={48}
-          objectFit={'cover'}
+          objectFit={'contain'}
           alt={'card'}
           rounded={'sm'}
           src={image || '/assets/bg/og.svg'}
