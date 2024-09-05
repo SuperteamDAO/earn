@@ -32,7 +32,7 @@ export const GrantApplicationButton = ({
   const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
 
   const { data: applicationStatus, isLoading: isUserApplicationLoading } =
-    useQuery(userApplicationStatusQuery(id, !!user?.id));
+    useQuery({ ...userApplicationStatusQuery(id), enabled: !!user?.id });
 
   const hasApplied = applicationStatus?.hasPendingApplication;
 

@@ -48,6 +48,7 @@ export interface Listing {
   minRewardAsk?: number;
   maxRewardAsk?: number;
   winnersAnnouncedAt?: string;
+  hackathonId?: string;
   _count?: {
     Comments?: number;
   };

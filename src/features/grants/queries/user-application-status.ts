@@ -8,12 +8,8 @@ export const fetchUserApplicationStatus = async (grantId: string) => {
   return response.data;
 };
 
-export const userApplicationStatusQuery = (
-  id: string,
-  enabled: boolean = true,
-) =>
+export const userApplicationStatusQuery = (id: string) =>
   queryOptions({
     queryKey: ['userApplication', id],
     queryFn: () => fetchUserApplicationStatus(id),
-    enabled,
   });

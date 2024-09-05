@@ -1,4 +1,3 @@
-import { type SubmissionLabels } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import {
@@ -13,11 +12,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
 
   const slug = params.slug as string;
-  const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
-  const take = params.take ? parseInt(params.take as string, 10) : 15;
   const isHackathon = params.isHackathon === 'true';
-  const searchText = params.searchText as string;
-  const label = params.label as SubmissionLabels | 'Winner' | undefined;
 
   try {
     const user = await prisma.user.findUnique({
@@ -31,31 +26,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const whereSearch = searchText
-      ? {
-          OR: [
-            { user: { firstName: { contains: searchText } } },
-            { user: { email: { contains: searchText } } },
-            { user: { username: { contains: searchText } } },
-            { user: { twitter: { contains: searchText } } },
-            { user: { discord: { contains: searchText } } },
-            { link: { contains: searchText } },
-            {
-              AND: [
-                {
-                  user: { firstName: { contains: searchText.split(' ')[0] } },
-                },
-                {
-                  user: {
-                    lastName: { contains: searchText.split(' ')[1] || '' },
-                  },
-                },
-              ],
-            },
-          ],
-        }
-      : {};
-
     const submissions = await prisma.submission.findMany({
       where: {
         listing: {
@@ -65,14 +35,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             ? { hackathonId: user.hackathonId }
             : { sponsor: { id: req.userSponsorId } }),
         },
-        ...(label
-          ? label === 'Winner'
-            ? { isWinner: true }
-            : { label, isWinner: false }
-          : {}),
         isActive: true,
         isArchived: false,
-        ...whereSearch,
       },
       include: {
         user: {
@@ -123,12 +87,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       (item) => item.submission,
     );
 
-    const paginatedSubmissions = sortedSubmissions.slice(skip, skip + take);
-
     logger.info(
-      `Fetched ${paginatedSubmissions.length} submissions for slug ${slug}`,
+      `Fetched ${sortedSubmissions.length} submissions for slug ${slug}`,
     );
-    return res.status(200).json(paginatedSubmissions);
+    return res.status(200).json(sortedSubmissions);
   } catch (error: any) {
     logger.error(
       `Error occurred while fetching submissions for slug=${slug}: ${error.message}`,

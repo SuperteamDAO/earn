@@ -28,8 +28,8 @@ interface Props {
   isOpen: boolean;
   totalWinners: number;
   totalPaymentsMade: number;
-  bounty: Listing | null;
-  remaining: { podiums: number; bonus: number } | null;
+  bounty: Listing | undefined;
+  remainings: { podiums: number; bonus: number } | null;
 }
 
 export function PublishResults({
@@ -38,7 +38,7 @@ export function PublishResults({
   totalWinners,
   totalPaymentsMade,
   bounty,
-  remaining,
+  remainings,
 }: Props) {
   const [isPublishingResults, setIsPublishingResults] = useState(false);
   const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
@@ -47,14 +47,11 @@ export function PublishResults({
   const posthog = usePostHog();
   const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
 
-  const rewardsPodiumsLength = cleanRewards(bounty?.rewards, true).length;
-  console.log('rewardsPodiumsLength', rewardsPodiumsLength);
-
   const rewards =
     cleanRewards(bounty?.rewards, true).length + (bounty?.maxBonusSpots || 0);
 
   const isWinnersAllSelected = !(
-    remaining && remaining.podiums + remaining.bonus !== 0
+    remainings && remainings.podiums + remainings.bonus !== 0
   );
   let alertType:
     | 'loading'

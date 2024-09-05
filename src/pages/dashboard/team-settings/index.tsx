@@ -32,7 +32,7 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { type Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
@@ -62,8 +62,9 @@ const Index = () => {
   const [skip, setSkip] = useState(0);
   const length = 15;
 
-  const { data: sponsorStats, isLoading: isStatsLoading } =
-    useQuery(sponsorStatsQuery);
+  const { data: sponsorStats, isLoading: isStatsLoading } = useQuery(
+    sponsorStatsQuery(user?.currentSponsorId),
+  );
 
   const queryClient = useQueryClient();
 
@@ -102,16 +103,29 @@ const Index = () => {
     );
   };
 
-  const onRemoveMember = async (userId: string | undefined) => {
-    await axios.post('/api/sponsor-dashboard/members/remove', {
-      id: userId,
-    });
+  const removeMemberMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      await axios.post('/api/sponsor-dashboard/members/remove', {
+        id: userId,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['members', user?.currentSponsorId],
+      });
+      toast.success('Member removed successfully');
+    },
+    onError: (error) => {
+      console.error('Error removing member:', error);
+      toast.error('Failed to remove member. Please try again.');
+    },
+  });
 
-    await queryClient.invalidateQueries({
-      queryKey: ['members', user?.currentSponsorId],
-    });
+  const onRemoveMember = (userId: string | undefined) => {
+    if (userId) {
+      removeMemberMutation.mutate(userId);
+    }
   };
-
   return (
     <SponsorLayout>
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
@@ -339,7 +353,7 @@ const RemoveMemberModal = ({
   member: UserSponsor;
   isAdminLoggedIn: () => boolean;
   session: Session | null;
-  onRemoveMember: (userId: string | undefined) => Promise<void>;
+  onRemoveMember: (userId: string | undefined) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 

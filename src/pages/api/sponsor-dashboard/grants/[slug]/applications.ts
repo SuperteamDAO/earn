@@ -15,7 +15,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
   const slug = params.slug as string;
   const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
-  const take = params.take ? parseInt(params.take as string, 10) : 15;
+  const take = params.take ? parseInt(params.take as string, 10) : 20;
   const searchText = params.searchText as string;
 
   const whereSearch = searchText

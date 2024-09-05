@@ -59,10 +59,9 @@ import { SponsorPrize } from './SponsorPrize';
 
 interface ListingTableProps {
   listings: ListingWithSubmissions[];
-  setListings: (listings: ListingWithSubmissions[]) => void;
 }
 
-export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
+export const ListingTable = ({ listings }: ListingTableProps) => {
   const [selectedListing, setSelectedListing] =
     useState<ListingWithSubmissions>({});
 
@@ -134,16 +133,12 @@ export const ListingTable = ({ listings, setListings }: ListingTableProps) => {
   return (
     <>
       <UnpublishModal
-        listings={listings}
-        setListings={setListings}
         listingId={selectedListing.id}
         unpublishIsOpen={unpublishIsOpen}
         unpublishOnClose={unpublishOnClose}
         listingType={selectedListing.type}
       />
       <DeleteDraftModal
-        listings={listings}
-        setListings={setListings}
         deleteDraftIsOpen={deleteDraftIsOpen}
         deleteDraftOnClose={deleteDraftOnClose}
         listingId={selectedListing.id}
