@@ -246,7 +246,9 @@ export function YourWork({ setStep, useFormStore }: Step1Props) {
               closeMenuOnSelect={false}
               components={animatedComponents}
               isMulti
-              options={IndustryList}
+              options={IndustryList.map((elm: string) => {
+                return { label: elm, value: elm };
+              })}
               required
               onChange={(e: any) => {
                 setDropDownValues((st) => {

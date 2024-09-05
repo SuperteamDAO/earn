@@ -48,39 +48,15 @@ export const skillMap: SkillMap[] = [
   },
 ];
 
-export const IndustryList: MultiSelectOptions[] = [
-  {
-    label: 'DAOs',
-    value: 'DAOs',
-  },
-  {
-    label: 'DeFi',
-    value: 'DeFi',
-  },
-  {
-    label: 'Infrastructure',
-    value: 'Infrastructure',
-  },
-  {
-    label: 'DePIN',
-    value: 'DePIN',
-  },
-  {
-    value: 'Consumer dApps',
-    label: 'Consumer dApps',
-  },
-  {
-    label: 'Wallets and Payments',
-    value: 'Wallets and Payments',
-  },
-  {
-    label: 'NFTs',
-    value: 'NFTs',
-  },
-  {
-    label: 'Gaming',
-    value: 'Gaming',
-  },
+export const IndustryList = [
+  'DAOs',
+  'DeFi',
+  'Infrastructure',
+  'DePIN',
+  'Consumer dApps',
+  'Wallets and Payments',
+  'NFTs',
+  'Gaming',
 ];
 
 interface Token {
@@ -212,6 +188,14 @@ export const tokenList: Token[] = [
     icon: 'https://assets.coingecko.com/coins/images/36197/standard/logo_dl.png?1710811437',
     decimals: 6,
     coingeckoSymbol: 'dean-s-list',
+  },
+  {
+    tokenName: 'Ore',
+    tokenSymbol: 'ORE',
+    mintAddress: 'oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32782.png',
+    decimals: 9,
+    coingeckoSymbol: 'ore',
   },
   {
     tokenName: 'DevWifHat (DWH)',

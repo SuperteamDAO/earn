@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import { RxUpload } from 'react-icons/rx';
+import { toast } from 'sonner';
 
 interface ImagePickerProps {
   onChange?: (file: File) => void;
@@ -32,6 +33,19 @@ export const ImagePicker = ({
 
   const handleFileChange = (file: File | null | undefined) => {
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('The image size must be smaller than 5MB');
+        return;
+      }
+
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error(
+          'Unsupported file format. Please use JPEG, PNG, or WebP Images.',
+        );
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string);
