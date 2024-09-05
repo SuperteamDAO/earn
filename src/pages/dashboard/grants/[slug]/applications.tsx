@@ -239,7 +239,7 @@ function GrantApplications({ slug }: Props) {
     if (applications && applications.length > 0) {
       setSelectedApplication(applications[0]);
     }
-  }, [applications]);
+  }, []);
 
   return (
     <SponsorLayout isCollapsible>

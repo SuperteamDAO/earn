@@ -85,16 +85,16 @@ export default function BountySubmissions({ slug }: Props) {
     sponsorDashboardListingQuery(slug),
   );
 
-  const { data: scouts } = useQuery(
-    scoutsQuery({
+  const { data: scouts } = useQuery({
+    ...scoutsQuery({
       bountyId: bounty?.id!,
-      isEnabled: !!(
-        !!bounty?.id &&
-        bounty.isPublished &&
-        !bounty.isWinnersAnnounced
-      ),
     }),
-  );
+    enabled: !!(
+      !!bounty?.id &&
+      bounty.isPublished &&
+      !bounty.isWinnersAnnounced
+    ),
+  });
 
   const filteredSubmissions = useMemo(() => {
     if (!submissionsData) return [];

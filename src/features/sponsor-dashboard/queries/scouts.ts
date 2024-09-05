@@ -8,17 +8,10 @@ const fetchScouts = async (bountyId: string) => {
   return response.data;
 };
 
-export const scoutsQuery = ({
-  bountyId,
-  isEnabled,
-}: {
-  bountyId: string;
-  isEnabled: boolean;
-}) =>
+export const scoutsQuery = ({ bountyId }: { bountyId: string }) =>
   queryOptions({
     queryKey: ['scouts', bountyId],
     queryFn: () => fetchScouts(bountyId as string),
-    enabled: !!bountyId && isEnabled,
     select: (data) =>
       data.map((scout) => ({
         id: scout.id,
