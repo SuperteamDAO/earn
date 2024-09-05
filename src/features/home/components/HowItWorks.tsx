@@ -1,6 +1,7 @@
 import { Box, Center, Flex, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
 import { LuCheck } from 'react-icons/lu';
 
 import { AuthWrapper } from '@/features/auth';
@@ -121,13 +122,24 @@ const Step = ({
 export const HowItWorks = () => {
   const router = useRouter();
   const { user } = useUser();
-  const { data: stats, isLoading } = useQuery(userStatsQuery);
+  const { data: stats, isLoading } = useQuery({
+    ...userStatsQuery,
+    enabled: !!user,
+  });
 
   const hasSubmissions = (stats?.participations ?? 0) > 0;
   const hasWins = (stats?.wins ?? 0) > 0;
+  const posthog = usePostHog();
+
+  if (hasWins) return null;
 
   return (
-    <AuthWrapper style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>
+    <AuthWrapper
+      style={{ pointerEvents: isLoading ? 'none' : 'auto' }}
+      onClick={() => {
+        posthog.capture('create account_getting started');
+      }}
+    >
       <Box opacity={isLoading ? '0.2' : '1'}>
         <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
           HOW IT WORKS
@@ -163,6 +175,7 @@ export const HowItWorks = () => {
                 onClick={() => {
                   if (!isLoading && !!user?.isTalentFilled) return;
                   else if (user?.id) {
+                    posthog.capture('create account_getting started');
                     router.push(`/new/talent`);
                   }
                 }}
@@ -189,6 +202,7 @@ export const HowItWorks = () => {
                 onClick={() => {
                   if (!isLoading && hasSubmissions) return;
                   else if (user?.id) {
+                    posthog.capture('complete profile_getting started');
                     router.push(`/all`);
                   }
                 }}
@@ -213,6 +227,7 @@ export const HowItWorks = () => {
                 onClick={() => {
                   if (!isLoading && hasWins) return;
                   else if (user?.id) {
+                    posthog.capture('win_getting started');
                     router.push('/feed');
                   }
                 }}
