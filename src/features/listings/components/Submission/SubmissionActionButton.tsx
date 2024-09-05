@@ -1,4 +1,4 @@
-import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
+import { Button, Flex, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import Image from 'next/image';
@@ -7,6 +7,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
 
+import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { SurveyModal } from '@/components/shared/Survey';
 import { AuthWrapper } from '@/features/auth';
 import {
@@ -218,7 +219,6 @@ export const SubmissionActionButton = ({ listing }: Props) => {
       />
       <Tooltip
         bg="brand.slate.500"
-        hasArrow
         isDisabled={
           hasHackathonStarted &&
           (!user?.id ||
