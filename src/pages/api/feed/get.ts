@@ -1,3 +1,4 @@
+// activity feed
 import { type PoW } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
@@ -126,8 +127,52 @@ export default async function handler(
       });
     }
 
+    logger.debug(`Fetching grants from ${startDate} to ${endDate}`);
+    const grantApplications = await prisma.grantApplication.findMany({
+      where: {
+        applicationStatus: 'Approved',
+        decidedAt: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      skip: parseInt(skip as string, 10),
+      take: parseInt(take as string, 10),
+      orderBy:
+        filter === 'popular'
+          ? [
+              // { approvedAmount: 'desc' },
+              { decidedAt: 'desc' },
+            ]
+          : { decidedAt: 'desc' },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            photo: true,
+            username: true,
+          },
+        },
+        grant: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            token: true,
+            sponsor: {
+              select: {
+                name: true,
+                logo: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
     logger.info(
-      `Fetched ${submissions.length} submissions and ${pow.length} PoWs`,
+      `Fetched ${submissions.length} submissions, ${pow.length} PoWs and ${grantApplications} grant applications`,
     );
 
     const results = [
@@ -178,6 +223,24 @@ export default async function handler(
         like: pow.like,
         likeCount: pow.likeCount,
         ogImage: pow.ogImage,
+      })),
+      ...grantApplications.map((ga) => ({
+        id: ga.id,
+        createdAt: ga.decidedAt || ga.createdAt,
+        firstName: ga.user.firstName,
+        lastName: ga.user.lastName,
+        photo: ga.user.photo,
+        username: ga.user.username,
+        listingId: ga.grant.id,
+        listingTitle: ga.grant.title,
+        listingSlug: ga.grant.slug,
+        token: ga.grant.token,
+        sponsorName: ga.grant.sponsor.name,
+        sponsorLogo: ga.grant.sponsor.logo,
+        type: 'Grant',
+        grantApplicationAmount: ga.approvedAmount,
+        like: ga.like,
+        likeCount: ga.likeCount,
       })),
     ];
 

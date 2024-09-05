@@ -1,7 +1,7 @@
 import { prisma } from '@/prisma';
 
 export async function updateLike(
-  model: 'submission' | 'poW',
+  model: 'submission' | 'poW' | 'grantApplication',
   itemId: string,
   userId: string,
 ) {
@@ -15,6 +15,12 @@ export async function updateLike(
     });
   } else if (model === 'poW') {
     result = await prisma.poW.findFirst({
+      where: {
+        id: itemId,
+      },
+    });
+  } else if (model === 'grantApplication') {
+    result = await prisma.grantApplication.findFirst({
       where: {
         id: itemId,
       },
@@ -67,6 +73,16 @@ export async function updateLike(
     });
   } else if (model === 'poW') {
     updateLike = await prisma.poW.update({
+      where: {
+        id: itemId,
+      },
+      data: {
+        like: newLikes,
+        likeCount,
+      },
+    });
+  } else if (model === 'grantApplication') {
+    updateLike = await prisma.grantApplication.update({
       where: {
         id: itemId,
       },

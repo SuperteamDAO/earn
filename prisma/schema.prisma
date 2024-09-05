@@ -185,9 +185,12 @@ model GrantApplication {
   isShipped           Boolean                @default(false)
   paymentDetails      Json?
   totalTranches       Int                    @default(0)
+  like                Json?
+  likeCount           Int                    @default(0)
 
   @@index([userId])
   @@index([grantId])
+  @@index([likeCount])
 }
 
 model Submission {

@@ -1,3 +1,4 @@
+// user profile
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
@@ -43,14 +44,14 @@ export default async function getAllUsers(
     const userId = user.id;
     logger.info(`User found: ${userId}`);
 
-    let powAndSubmissionsAndGrants = await prisma.$queryRaw<any[]>`
+    const powAndSubmissionsAndGrants = await prisma.$queryRaw<any[]>`
       (SELECT
         CASE 
           WHEN l.isWinnersAnnounced AND sub.isWinner THEN COALESCE(l.winnersAnnouncedAt, sub.createdAt)
           ELSE sub.createdAt 
         END as createdAt,
         CASE WHEN l.isWinnersAnnounced THEN sub.id ELSE NULL END as id, 
-        sub.like as likeData, 
+        sub.like, 
         CASE WHEN l.isWinnersAnnounced THEN sub.link ELSE NULL END as link,
         CASE WHEN l.isWinnersAnnounced THEN sub.tweet ELSE NULL END as tweet,
         CASE WHEN l.isWinnersAnnounced THEN sub.eligibilityAnswers ELSE NULL END as eligibilityAnswers,
@@ -88,7 +89,7 @@ export default async function getAllUsers(
       (SELECT
         pow.createdAt, 
         pow.id, 
-        pow.like as likeData, 
+        pow.like, 
         pow.link, 
         NULL as tweet, 
         NULL as eligibilityAnswers, 
@@ -122,7 +123,7 @@ export default async function getAllUsers(
       (SELECT
         ga.decidedAt as createdAt,
         ga.id,
-        NULL as likeData,
+        ga.like,
         NULL as title,
         NULL as link,
         NULL as tweet,
@@ -159,11 +160,6 @@ export default async function getAllUsers(
       ORDER BY
         createdAt DESC
     `;
-
-    powAndSubmissionsAndGrants = powAndSubmissionsAndGrants.map((item) => {
-      const { likeData, ...rest } = item;
-      return { ...rest, like: likeData };
-    });
 
     logger.info(`User feed data retrieved successfully for user ID: ${userId}`);
     return res.status(200).json({ ...user, feed: powAndSubmissionsAndGrants });

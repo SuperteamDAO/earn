@@ -63,7 +63,7 @@ export function GrantCard({ grant, type }: GrantCardProps) {
       id={grant?.id}
       like={grant?.like}
       commentLink={listingLink}
-      cardType="submission"
+      cardType="grant-application"
       link={listingLink}
       userId={grant?.userId}
     >
