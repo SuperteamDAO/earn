@@ -130,6 +130,7 @@ export const SubmissionPanel = ({
                         </Tooltip>
                       </>
                     ))}
+                  {<SelectLabel listingSlug={bounty?.slug!} />}
                   {selectedSubmission?.isWinner &&
                     selectedSubmission?.winnerPosition &&
                     selectedSubmission?.isPaid && (
@@ -147,10 +148,6 @@ export const SubmissionPanel = ({
                       >
                         View Payment Txn
                       </Button>
-                    )}
-                  {!bounty?.isWinnersAnnounced &&
-                    !selectedSubmission?.isWinner && (
-                      <SelectLabel listingSlug={bounty?.slug!} />
                     )}
                   {!bounty?.isWinnersAnnounced && (
                     <SelectWinner

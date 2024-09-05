@@ -88,8 +88,6 @@ export const SelectLabel = ({ listingSlug }: Props) => {
           borderWidth: '1px',
         }}
         _expanded={{ borderColor: 'brand.purple' }}
-        pointerEvents={selectedSubmission?.isWinner ? 'none' : 'all'}
-        isDisabled={selectedSubmission?.isWinner}
         rightIcon={<MdArrowDropDown />}
       >
         <Tag px={3} py={1} bg={bg} rounded="full">
