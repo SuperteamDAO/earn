@@ -162,11 +162,11 @@ export const VerifyPaymentModal = ({
         } else {
           setStatus('success');
         }
-        const successfulResults = validationResults.filter(
-          (v) => v.status === 'SUCCESS',
+        const nonFailResults = validationResults.filter(
+          (v) => v.status !== 'FAIL',
         );
 
-        successfulResults.forEach((result) => {
+        nonFailResults.forEach((result) => {
           const fieldIndex = variables.paymentLinks.findIndex(
             (link) => link.submissionId === result.submissionId,
           );
@@ -175,6 +175,10 @@ export const VerifyPaymentModal = ({
             // setValue(`paymentLinks.${fieldIndex}.link`, '');
           }
         });
+
+        const successfulResults = validationResults.filter(
+          (v) => v.status === 'SUCCESS',
+        );
 
         setListings(
           listings.map((l) => {

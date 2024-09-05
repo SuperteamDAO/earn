@@ -19,6 +19,14 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+async function wait(ms: number) {
+  return await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export const config = {
+  maxDuration: 300,
+};
+
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userSponsorId = req.userSponsorId;
 
@@ -70,7 +78,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           validationResults.push({
             submissionId: paymentLink.submissionId,
             txId: paymentLink.txId,
-            status: 'SUCCESS',
+            status: 'ALREADY_VERIFIED',
             message: 'Already Verified',
           });
           continue;
@@ -113,7 +121,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         );
         let tx: VersionedTransactionResponse | null = null;
         const maxRetries = 3;
-        const delayMs = 500; // 0.5 seconds
+        const delayMs = 5000;
 
         try {
           for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -127,7 +135,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               if (attempt === maxRetries) {
                 throw err;
               }
-              await new Promise((resolve) => setTimeout(resolve, delayMs));
+              await wait(delayMs);
             }
           }
         } catch (err) {
@@ -179,7 +187,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         logger.info(
           `External Payment Validation Successful for Submission ID: ${paymentLink.submissionId} with TxId: ${paymentLink.txId}`,
         );
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        await wait(5000);
       } catch (error: any) {
         validationResults.push({
           submissionId: paymentLink.submissionId,
@@ -187,7 +195,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           status: 'FAIL',
           message: error.message,
         });
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        await wait(5000);
         logger.warn(
           `External Payment Verification Failed for Submission ID: ${paymentLink.submissionId} with TxId: ${paymentLink.txId} with message: ${error.message}`,
         );
@@ -195,7 +203,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     for (const validationResult of validationResults) {
-      if (validationResult.status === 'FAIL') continue;
+      if (validationResult.status !== 'SUCCESS') continue;
 
       logger.debug(
         `Updating submission with ID: ${validationResult.submissionId} with new external payment details`,

@@ -82,7 +82,7 @@ export const getListingStatus = (
       if (!listing?.isWinnersAnnounced) return 'In Review';
       if (
         listing?.isWinnersAnnounced &&
-        listing?.totalPaymentsMade !== rewardsLength
+        listing?.totalPaymentsMade !== listing?.totalWinnersSelected
       )
         return 'Payment Pending';
       if (

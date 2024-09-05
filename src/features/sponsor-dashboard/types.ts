@@ -65,6 +65,6 @@ export type VerifyPaymentsFormData = z.infer<typeof verifyPaymentsSchema>;
 export type ValidatePaymentResult = {
   submissionId: string;
   txId: string;
-  status: 'SUCCESS' | 'FAIL';
+  status: 'SUCCESS' | 'FAIL' | 'ALREADY_VERIFIED';
   message?: string;
 };
