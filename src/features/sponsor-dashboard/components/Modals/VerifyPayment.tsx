@@ -247,9 +247,9 @@ export const VerifyPaymentModal = ({
                 <Text color="brand.slate.900" fontWeight={500}>
                   Verifying Payment
                 </Text>
-                <Text color="brand.slate.500" fontSize="sm">
-                  {`We're`} verifying all your links, hang tight and {`don't`}{' '}
-                  fret. This should take less than a minute
+                <Text align="center" color="brand.slate.500" fontSize="sm">
+                  {`We're`} verifying all your links, hang tight! <br /> This
+                  should take less than a minute
                 </Text>
               </VStack>
             </VStack>
@@ -317,8 +317,8 @@ export const VerifyPaymentModal = ({
                 Oh-Uh Verification Failed
               </Text>
               <Text align="center" color="brand.slate.500" fontSize="sm">
-                We {`couldn’t`} verify your payment status, please check your
-                links again and make sure {`it’s`} the exact amount
+                We {`couldn’t`} verify your payment status. <br /> Please check
+                your links again and make sure {`it’s`} the exact amount
               </Text>
             </VStack>
             <VStack>
@@ -474,13 +474,32 @@ export const VerifyPaymentModal = ({
                   />
                 ))}
             </VStack>
-            <Button
-              w="full"
-              isDisabled={data?.submission.every((sub) => sub.isPaid)}
-              type="submit"
-            >
-              Add External Payment
-            </Button>
+            <VStack>
+              <Button
+                w="full"
+                isDisabled={data?.submission.every((sub) => sub.isPaid)}
+                type="submit"
+              >
+                Add External Payment
+              </Button>
+              {(errors?.paymentLinks?.length || 0) > 0 && (
+                <Link
+                  href="https://t.me/pratikdholani/"
+                  isExternal
+                  rel="noopener noreferrer"
+                >
+                  <Button
+                    fontSize="sm"
+                    fontWeight={400}
+                    textDecoration={'underline'}
+                    bg="none"
+                    variant="link"
+                  >
+                    Think We Made A Mistake? Text Us
+                  </Button>
+                </Link>
+              )}
+            </VStack>
           </form>
         );
     }

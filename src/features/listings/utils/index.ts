@@ -63,7 +63,6 @@ export const getListingStatus = (
 ) => {
   if (!listing) return 'DRAFT';
 
-  const rewardsLength = Object.keys(listing?.rewards || {}).length;
   const listingStatus = getListingDraftStatus(
     listing?.status,
     listing?.isPublished,
@@ -87,7 +86,7 @@ export const getListingStatus = (
         return 'Payment Pending';
       if (
         listing?.isWinnersAnnounced &&
-        listing?.totalPaymentsMade === rewardsLength
+        listing?.totalPaymentsMade === listing?.totalWinnersSelected
       )
         return 'Completed';
       return 'In Review';
