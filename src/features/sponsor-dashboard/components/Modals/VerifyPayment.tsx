@@ -58,7 +58,7 @@ export const VerifyPaymentModal = ({
   onClose,
 }: VerifyPaymentModalProps) => {
   const [status, setStatus] = useState<
-    'idle' | 'loading' | 'success' | 'error'
+    'idle' | 'retry' | 'loading' | 'success' | 'error'
   >('idle');
   const [selectedToken, setSelectedToken] = useState<(typeof tokenList)[0]>();
   const queryClient = useQueryClient();
@@ -158,7 +158,7 @@ export const VerifyPaymentModal = ({
               });
             }
           });
-          setStatus('idle');
+          setStatus('retry');
         } else {
           setStatus('success');
         }
@@ -193,6 +193,18 @@ export const VerifyPaymentModal = ({
             return l;
           }),
         );
+
+        nonFailResults.forEach((result) => {
+          const fieldIndex = variables.paymentLinks.findIndex(
+            (link) => link.submissionId === result.submissionId,
+          );
+          if (fieldIndex !== -1) {
+            setValue(`paymentLinks.${fieldIndex}.isVerified`, true, {
+              shouldValidate: true,
+              shouldDirty: true,
+            });
+          }
+        });
       },
       onError: () => {
         setStatus('error');
@@ -482,7 +494,7 @@ export const VerifyPaymentModal = ({
               >
                 Add External Payment
               </Button>
-              {(errors?.paymentLinks?.length || 0) > 0 && (
+              {status === 'retry' && (
                 <Link
                   href="https://t.me/pratikdholani/"
                   isExternal

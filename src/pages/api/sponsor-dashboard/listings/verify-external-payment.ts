@@ -166,7 +166,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
         if (postBalance.mint !== dbToken?.mintAddress) {
           throw new Error(
-            `Failed (Transferred token doesn't match the token.)`,
+            `Failed (Transferred token doesn't match the listing reward token)`,
           );
         }
 
