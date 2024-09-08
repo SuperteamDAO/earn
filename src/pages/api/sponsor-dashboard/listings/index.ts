@@ -33,9 +33,6 @@ type BountyGrant = {
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userSponsorId = req.userSponsorId;
   try {
-    const params = req.query;
-    const searchText = params.searchText as string;
-    const whereSearch = searchText ? `AND title LIKE '%${searchText}%'` : '';
     const data: BountyGrant[] = await prisma.$queryRawUnsafe(
       `
       SELECT 
@@ -64,7 +61,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       AND b.isArchived = false
       AND b.sponsorId = ?
       AND b.status = ?
-      ${whereSearch}
       
       UNION ALL
       
@@ -95,7 +91,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       AND g.sponsorId = ?
       AND g.status = ?
       AND (g.airtableId IS NOT NULL OR g.isNative = true)
-      ${whereSearch}
       
       ORDER BY createdAt DESC
     `,

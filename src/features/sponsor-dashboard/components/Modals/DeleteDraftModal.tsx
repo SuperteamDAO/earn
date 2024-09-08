@@ -9,47 +9,55 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
+import { toast } from 'sonner';
 
 import { type ListingWithSubmissions } from '@/features/listings';
+import { useUser } from '@/store/user';
 
 interface DeleteDraftModalProps {
   deleteDraftIsOpen: boolean;
   deleteDraftOnClose: () => void;
   listingId: string | undefined;
-  listings: ListingWithSubmissions[];
-  setListings: (listings: ListingWithSubmissions[]) => void;
   listingType: string | undefined;
 }
 
 export const DeleteDraftModal = ({
   listingId,
-  listings,
-  setListings,
   deleteDraftIsOpen,
   deleteDraftOnClose,
   listingType,
 }: DeleteDraftModalProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
+  const { user } = useUser();
 
-  const deleteSelectedDraft = async () => {
-    setIsLoading(true);
-    try {
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
       if (listingType === 'grant') {
         await axios.post(`/api/grants/delete/${listingId}`);
       } else {
         await axios.post(`/api/listings/delete/${listingId}`);
       }
-      const update = listings.filter((x) => x.id !== listingId);
-      setListings(update);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
+    },
+    onSuccess: () => {
+      queryClient.setQueryData<ListingWithSubmissions[]>(
+        ['dashboard', user?.currentSponsorId],
+        (oldData) => (oldData ? oldData.filter((x) => x.id !== listingId) : []),
+      );
+      toast.success('Draft deleted successfully');
       deleteDraftOnClose();
-    }
+    },
+    onError: (error) => {
+      console.error('Delete error:', error);
+      toast.error('Failed to delete draft. Please try again.');
+    },
+  });
+
+  const deleteSelectedDraft = () => {
+    deleteMutation.mutate();
   };
 
   return (
@@ -74,7 +82,7 @@ export const DeleteDraftModal = ({
             Close
           </Button>
           <Button
-            isLoading={isLoading}
+            isLoading={deleteMutation.isPending}
             leftIcon={<AiOutlineDelete />}
             loadingText="Deleting..."
             onClick={deleteSelectedDraft}

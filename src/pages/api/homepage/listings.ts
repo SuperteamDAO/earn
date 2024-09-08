@@ -1,46 +1,23 @@
 import { type Regions } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
+import { getStatusFilterQuery, type StatusFilter } from '@/features/listings';
 import { prisma } from '@/prisma';
-
-type Status = 'open' | 'review' | 'completed';
 
 const TAKE = 20;
 
-function getStatusFilterQuery(statusFilter: Status | undefined) {
-  let statusFilterQuery = {};
-
-  if (statusFilter) {
-    if (statusFilter === 'open') {
-      statusFilterQuery = {
-        deadline: {
-          gte: new Date(),
-        },
-      };
-    } else if (statusFilter === 'review') {
-      statusFilterQuery = {
-        deadline: {
-          lte: new Date(),
-        },
-        isWinnersAnnounced: false,
-      };
-    } else if (statusFilter === 'completed') {
-      statusFilterQuery = {
-        isWinnersAnnounced: true,
-      };
-    }
-  }
-
-  return statusFilterQuery;
-}
-
 interface BountyProps {
   order?: 'asc' | 'desc';
-  statusFilter?: Status;
+  statusFilter?: StatusFilter;
   userRegion?: Regions[] | null;
+  excludeIds?: string[];
 }
 
-export async function getListings({ statusFilter, userRegion }: BountyProps) {
+export async function getListings({
+  statusFilter,
+  userRegion,
+  excludeIds,
+}: BountyProps) {
   const statusFilterQuery = getStatusFilterQuery(statusFilter);
   let orderBy:
     | { deadline: 'asc' | 'desc' }
@@ -65,6 +42,9 @@ export async function getListings({ statusFilter, userRegion }: BountyProps) {
 
   let bounties = await prisma.bounties.findMany({
     where: {
+      id: {
+        notIn: excludeIds,
+      },
       isPublished: true,
       isActive: true,
       isPrivate: false,
@@ -81,6 +61,7 @@ export async function getListings({ statusFilter, userRegion }: BountyProps) {
       Hackathon: null,
     },
     select: {
+      id: true,
       rewardAmount: true,
       deadline: true,
       type: true,
@@ -142,10 +123,19 @@ export default async function handler(
 ) {
   const params = req.query;
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
-  const statusFilter = params.statusFilter as Status;
+  const statusFilter = params.statusFilter as StatusFilter;
   const userRegion = params.userRegion as Regions[];
+  let excludeIds = params['excludeIds[]'];
+  if (typeof excludeIds === 'string') {
+    excludeIds = [excludeIds];
+  }
 
-  const listings = await getListings({ order, statusFilter, userRegion });
+  const listings = await getListings({
+    order,
+    statusFilter,
+    userRegion,
+    excludeIds,
+  });
 
   res.status(200).json(listings);
 }

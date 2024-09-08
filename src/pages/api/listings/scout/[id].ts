@@ -53,11 +53,6 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
-  if (req.method !== 'POST') {
-    logger.warn('Method not allowed');
-    return res.status(405).send('Method Not Allowed');
-  }
-
   try {
     logger.debug(`Fetching bounty with ID: ${id}`);
     const scoutBounty = await prisma.bounties.findFirst({

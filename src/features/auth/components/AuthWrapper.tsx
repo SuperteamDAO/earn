@@ -7,9 +7,10 @@ import { Login } from '@/features/auth';
 interface LoginProps {
   children: ReactNode;
   style?: FlexProps;
+  onClick?: () => void;
 }
 
-export function AuthWrapper({ children, style }: LoginProps) {
+export function AuthWrapper({ children, style, onClick }: LoginProps) {
   const [triggerLogin, setTriggerLogin] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -19,6 +20,7 @@ export function AuthWrapper({ children, style }: LoginProps) {
 
   const handleLoginTrigger = () => {
     if (!isAuthenticated) {
+      onClick && onClick();
       onOpen();
     }
   };

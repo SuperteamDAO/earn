@@ -30,6 +30,7 @@ import {
   listingSubmissionsQuery,
   type ListingWithSubmissions,
 } from '@/features/listings';
+import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getRankLabels } from '@/utils/rank';
 
@@ -44,8 +45,6 @@ interface VerifyPaymentModalProps {
   onClose: () => void;
   listingId: string | undefined;
   listing: ListingWithSubmissions | undefined;
-  listings: ListingWithSubmissions[];
-  setListings: (listings: ListingWithSubmissions[]) => void;
   setListing: (listing: ListingWithSubmissions) => void;
   listingType: string | undefined;
 }
@@ -53,12 +52,11 @@ interface VerifyPaymentModalProps {
 export const VerifyPaymentModal = ({
   listingId,
   listing,
-  listings,
-  setListings,
   setListing,
   isOpen,
   onClose,
 }: VerifyPaymentModalProps) => {
+  const { user } = useUser();
   const [status, setStatus] = useState<
     'idle' | 'retry' | 'loading' | 'success' | 'error'
   >('idle');
@@ -90,10 +88,6 @@ export const VerifyPaymentModal = ({
   });
 
   const paymentLinks = watch('paymentLinks');
-
-  useEffect(() => {
-    console.log('error - ', errors);
-  }, [errors]);
 
   useEffect(() => {
     if (data?.submission && data?.bounty) {
@@ -196,13 +190,12 @@ export const VerifyPaymentModal = ({
             ...listing,
             totalPaymentsMade: existingPayments + newPayments,
           };
-          setListings(
-            listings.map((l) => {
-              if (l.id === newListing.id) {
-                return newListing;
-              }
-              return l;
-            }),
+          queryClient.setQueryData<ListingWithSubmissions[]>(
+            ['dashboard', user?.currentSponsorId],
+            (oldData) =>
+              oldData
+                ? oldData.map((l) => (l.id === newListing.id ? newListing : l))
+                : [],
           );
           setListing(newListing);
         }

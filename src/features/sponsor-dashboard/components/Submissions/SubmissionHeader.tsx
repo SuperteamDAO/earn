@@ -24,14 +24,16 @@ import {
   Text,
   useClipboard,
 } from '@chakra-ui/react';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import React, { useState } from 'react';
+import React from 'react';
 import { FaXTwitter } from 'react-icons/fa6';
 import { LuPencil } from 'react-icons/lu';
 import { MdInsertLink } from 'react-icons/md';
+import { toast } from 'sonner';
 
 import { tokenList } from '@/constants';
 import { useListingFormStore } from '@/features/listing-builder';
@@ -49,7 +51,7 @@ import { getURL } from '@/utils/validUrl';
 import { SponsorPrize } from '../SponsorPrize';
 
 interface Props {
-  bounty: Listing | null;
+  bounty: Listing | undefined;
   totalSubmissions: number;
   isHackathonPage?: boolean;
 }
@@ -59,9 +61,6 @@ export const SubmissionHeader = ({
   totalSubmissions,
   isHackathonPage = false,
 }: Props) => {
-  console.log('isHackathonPage', isHackathonPage);
-  const [isExporting, setIsExporting] = useState(false);
-
   const { data: session } = useSession();
   const { resetForm } = useListingFormStore();
   const router = useRouter();
@@ -91,10 +90,9 @@ ${socialListingLink('twitter')}
 `;
   const twitterShareLink = tweetEmbedLink(tweetShareContent);
 
-  const exportSubmissionsCsv = async () => {
-    setIsExporting(true);
-    try {
-      const exportURL = await axios.get(
+  const exportMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axios.get(
         `/api/sponsor-dashboard/submission/export/`,
         {
           params: {
@@ -102,12 +100,25 @@ ${socialListingLink('twitter')}
           },
         },
       );
-      const url = exportURL?.data?.url || '';
-      window.open(url, '_blank');
-      setIsExporting(false);
-    } catch (e) {
-      setIsExporting(false);
-    }
+      return response.data;
+    },
+    onSuccess: (data) => {
+      const url = data?.url || '';
+      if (url) {
+        window.open(url, '_blank');
+        toast.success('CSV exported successfully');
+      } else {
+        toast.error('Export URL is empty');
+      }
+    },
+    onError: (error) => {
+      console.error('Export error:', error);
+      toast.error('Failed to export CSV. Please try again.');
+    },
+  });
+
+  const exportSubmissionsCsv = () => {
+    exportMutation.mutate();
   };
 
   const pastDeadline = isDeadlineOver(bounty?.deadline);
@@ -151,7 +162,7 @@ ${socialListingLink('twitter')}
           <Button
             color="brand.slate.400"
             _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
-            isLoading={isExporting}
+            isLoading={exportMutation.isPending}
             leftIcon={<DownloadIcon />}
             loadingText={'Exporting...'}
             onClick={() => exportSubmissionsCsv()}

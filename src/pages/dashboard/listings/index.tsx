@@ -27,7 +27,6 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import debounce from 'lodash.debounce';
 import React, {
   useCallback,
@@ -47,6 +46,7 @@ import {
 import {
   Banner,
   CreateListingModal,
+  dashboardQuery,
   ListingTable,
   sponsorStatsQuery,
 } from '@/features/sponsor-dashboard';
@@ -57,16 +57,19 @@ const MemoizedListingTable = React.memo(ListingTable);
 
 export default function SponsorListings() {
   const { user } = useUser();
-  const [allListings, setAllListings] = useState<ListingWithSubmissions[]>([]);
-  const [isListingsLoading, setIsListingsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedTab, setSelectedTab] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const listingsPerPage = 15;
 
-  const { data: sponsorStats, isLoading: isStatsLoading } =
-    useQuery(sponsorStatsQuery);
+  const { data: sponsorStats, isLoading: isStatsLoading } = useQuery(
+    sponsorStatsQuery(user?.currentSponsorId),
+  );
+
+  const { data: allListings, isLoading: isListingsLoading } = useQuery(
+    dashboardQuery(user?.currentSponsorId),
+  );
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -76,29 +79,14 @@ export default function SponsorListings() {
     };
   }, [debouncedSetSearchText]);
 
-  const getListings = useCallback(async () => {
-    setIsListingsLoading(true);
-    try {
-      const response = await axios.get('/api/sponsor-dashboard/listings', {
-        params: { searchText },
-      });
-      setAllListings(response.data);
-      setIsListingsLoading(false);
-    } catch (error) {
-      console.error('Failed to fetch listings:', error);
-      setIsListingsLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
     if (user?.currentSponsorId) {
       setSearchText('');
       setCurrentPage(0);
       setSelectedTab('all');
       setSelectedStatus(null);
-      getListings();
     }
-  }, [user?.currentSponsorId, getListings]);
+  }, [user?.currentSponsorId]);
 
   const {
     isOpen: isOpenCreateListing,
@@ -108,6 +96,7 @@ export default function SponsorListings() {
 
   const filteredListings = useMemo(() => {
     const filterListingsByType = () => {
+      if (!allListings) return [];
       if (selectedTab === 'all') {
         return allListings;
       }
@@ -137,14 +126,14 @@ export default function SponsorListings() {
   }, [allListings, selectedTab, selectedStatus, searchText]);
 
   const paginatedListings = useMemo(() => {
-    return filteredListings.slice(
+    return filteredListings?.slice(
       currentPage * listingsPerPage,
       (currentPage + 1) * listingsPerPage,
     );
   }, [filteredListings, currentPage, listingsPerPage]);
 
   const hasGrants = useMemo(() => {
-    return allListings.some((listing) => listing.type === 'grant');
+    return allListings?.some((listing) => listing.type === 'grant');
   }, [allListings]);
 
   const ALL_FILTERS = useMemo(() => {
@@ -351,29 +340,17 @@ export default function SponsorListings() {
             </TabList>
             <TabPanels>
               <TabPanel px={0}>
-                <MemoizedListingTable
-                  listings={paginatedListings}
-                  setListings={setAllListings}
-                />
+                <MemoizedListingTable listings={paginatedListings} />
               </TabPanel>
               <TabPanel px={0}>
-                <MemoizedListingTable
-                  listings={paginatedListings}
-                  setListings={setAllListings}
-                />
+                <MemoizedListingTable listings={paginatedListings} />
               </TabPanel>
               <TabPanel px={0}>
-                <MemoizedListingTable
-                  listings={paginatedListings}
-                  setListings={setAllListings}
-                />
+                <MemoizedListingTable listings={paginatedListings} />
               </TabPanel>
               {hasGrants && (
                 <TabPanel px={0}>
-                  <MemoizedListingTable
-                    listings={paginatedListings}
-                    setListings={setAllListings}
-                  />
+                  <MemoizedListingTable listings={paginatedListings} />
                 </TabPanel>
               )}
             </TabPanels>
@@ -426,7 +403,7 @@ export default function SponsorListings() {
           )}
         </>
       )}
-      {!isListingsLoading && !allListings.length && (
+      {!isListingsLoading && !allListings?.length && (
         <>
           <Image
             w={32}
@@ -469,7 +446,7 @@ export default function SponsorListings() {
         </>
       )}
       {!isListingsLoading &&
-        allListings.length &&
+        allListings?.length &&
         !paginatedListings.length && (
           <>
             <Image

@@ -22,10 +22,12 @@ import {
   Text,
   useClipboard,
 } from '@chakra-ui/react';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import NextLink from 'next/link';
 import router from 'next/router';
-import React, { useState } from 'react';
+import React from 'react';
+import { toast } from 'sonner';
 
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
@@ -34,37 +36,42 @@ import { getURL } from '@/utils/validUrl';
 
 import { SponsorPrize } from '../SponsorPrize';
 
-interface Props {
-  grant: Grant | null;
+interface GrantWithApplicationCount extends Grant {
   totalApplications: number;
 }
 
-export const ApplicationHeader = ({ grant, totalApplications }: Props) => {
-  const [isExporting, setIsExporting] = useState(false);
+interface Props {
+  grant: GrantWithApplicationCount | undefined;
+}
 
+export const ApplicationHeader = ({ grant }: Props) => {
   const listingPath = `grants/${grant?.slug}`;
-
   const { hasCopied, onCopy } = useClipboard(`${getURL()}${listingPath}`);
-
   const grantStatus = getListingStatus(grant, true);
 
-  const exportSubmissionsCsv = async () => {
-    setIsExporting(true);
-    try {
-      const exportURL = await axios.get(
+  const exportMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axios.get(
         `/api/sponsor-dashboard/application/export/`,
         {
-          params: {
-            grantId: grant?.id,
-          },
+          params: { grantId: grant?.id },
         },
       );
-      const url = exportURL?.data?.url || '';
+      return response.data;
+    },
+    onSuccess: (data) => {
+      const url = data?.url || '';
       window.open(url, '_blank');
-      setIsExporting(false);
-    } catch (e) {
-      setIsExporting(false);
-    }
+      toast.success('CSV exported successfully');
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Failed to export CSV. Please try again.');
+    },
+  });
+
+  const handleExport = () => {
+    exportMutation.mutate();
   };
 
   return (
@@ -81,7 +88,6 @@ export const ApplicationHeader = ({ grant, totalApplications }: Props) => {
               </BreadcrumbLink>
             </Link>
           </BreadcrumbItem>
-
           <BreadcrumbItem>
             <Text color="brand.slate.400"> {grant?.title}</Text>
           </BreadcrumbItem>
@@ -98,10 +104,10 @@ export const ApplicationHeader = ({ grant, totalApplications }: Props) => {
           <Button
             color="brand.slate.400"
             _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
-            isLoading={isExporting}
+            isLoading={exportMutation.isPending}
             leftIcon={<DownloadIcon />}
             loadingText={'Exporting...'}
-            onClick={() => exportSubmissionsCsv()}
+            onClick={handleExport}
             variant={'ghost'}
           >
             Export CSV
@@ -124,7 +130,7 @@ export const ApplicationHeader = ({ grant, totalApplications }: Props) => {
         <Box>
           <Text color="brand.slate.500">Applications</Text>
           <Text mt={3} color="brand.slate.600" fontWeight={600}>
-            {totalApplications}
+            {grant?.totalApplications}
           </Text>
         </Box>
         <Box>

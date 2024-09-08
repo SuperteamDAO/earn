@@ -1,11 +1,10 @@
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { LoadingSection } from '@/components/shared/LoadingSection';
 import { CreateListing } from '@/features/listing-builder';
-import type { Listing } from '@/features/listings';
+import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
@@ -14,41 +13,22 @@ interface Props {
 }
 
 function EditBounty({ listing }: Props) {
-  const router = useRouter();
   const { user } = useUser();
-  const [isBountyLoading, setIsBountyLoading] = useState(true);
-  const [bounty, setBounty] = useState<Listing | undefined>();
+  const router = useRouter();
 
-  const getBounty = async () => {
-    setIsBountyLoading(true);
-    try {
-      const bountyDetails = await axios.get(
-        `/api/sponsor-dashboard/${listing}/listing?type=hackathon`,
-      );
-      if (bountyDetails.data.hackathonId !== user?.hackathonId) {
-        router.push(`/dashboard/hackathon/`);
-      } else {
-        setBounty(bountyDetails.data);
-        setIsBountyLoading(false);
-      }
-    } catch (e) {
-      setIsBountyLoading(false);
-    }
-  };
+  const { data: bounty } = useQuery(
+    sponsorDashboardListingQuery(listing, true),
+  );
 
   useEffect(() => {
-    if (user?.currentSponsorId) {
-      getBounty();
+    if (bounty && bounty.hackathonId !== user?.hackathonId) {
+      router.push(`/dashboard/hackathon/`);
     }
-  }, [user?.currentSponsorId]);
+  }, [bounty, user?.hackathonId, router]);
 
   return (
     <SponsorLayout>
-      {isBountyLoading ? (
-        <LoadingSection />
-      ) : (
-        <CreateListing listing={bounty} editable type={'hackathon'} />
-      )}
+      <CreateListing listing={bounty} editable type={'hackathon'} />
     </SponsorLayout>
   );
 }

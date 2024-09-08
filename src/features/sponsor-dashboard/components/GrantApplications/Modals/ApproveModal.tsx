@@ -32,10 +32,7 @@ interface ApproveModalProps {
   ask: number | undefined;
   granteeName: string | null | undefined;
   token: string;
-  onApproveGrant: (
-    applicationId: string,
-    approvedAmount: number,
-  ) => Promise<void>;
+  onApproveGrant: (applicationId: string, approvedAmount: number) => void;
   max: number | undefined;
 }
 
@@ -51,32 +48,28 @@ export const ApproveModal = ({
 }: ApproveModalProps) => {
   const [approvedAmount, setApprovedAmount] = useState<number | undefined>(ask);
   const [loading, setLoading] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
   const handleAmountChange = (valueString: string) => {
     const value = parseFloat(valueString);
     if (value > (ask as number)) {
-      setErrorMessage(
+      setWarningMessage(
         'Approved amount is greater than the requested amount. Are you sure you want to approve?',
       );
     } else {
-      setErrorMessage(null);
+      setWarningMessage(null);
     }
     setApprovedAmount(value);
   };
 
   const approveGrant = async () => {
-    if (
-      errorMessage ||
-      approvedAmount === undefined ||
-      approvedAmount === 0 ||
-      !applicationId
-    )
+    if (approvedAmount === undefined || approvedAmount === 0 || !applicationId)
       return;
 
     setLoading(true);
     try {
       await onApproveGrant(applicationId, approvedAmount);
+      approveOnClose();
     } catch (e) {
       console.error(e);
     } finally {
@@ -86,7 +79,7 @@ export const ApproveModal = ({
 
   useEffect(() => {
     setApprovedAmount(ask);
-    setErrorMessage(null);
+    setWarningMessage(null);
     setLoading(false);
   }, [applicationId, ask]);
 
@@ -168,9 +161,9 @@ export const ApproveModal = ({
               </InputRightAddon>
             </InputGroup>
           </Flex>
-          {errorMessage && (
+          {warningMessage && (
             <Text align={'center'} color="yellow.500" fontSize={'sm'}>
-              {errorMessage}
+              {warningMessage}
             </Text>
           )}
 
