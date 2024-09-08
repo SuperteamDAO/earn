@@ -34,9 +34,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const connection = new Connection(clusterApiUrl('mainnet-beta'));
 
     logger.debug(`Request body: ${safeStringify(req.body)}`);
-    const { paymentLinks, listingId } = req.body as VerifyPaymentsFormData & {
+    let { paymentLinks } = req.body as VerifyPaymentsFormData;
+    const { listingId } = req.body as VerifyPaymentsFormData & {
       listingId: string;
     };
+
+    paymentLinks = paymentLinks.filter((p) => !!p.link);
 
     if (!listingId) {
       return res.status(400).json({ error: 'Listing ID is missing' });
@@ -139,17 +142,17 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             }
           }
         } catch (err) {
-          throw new Error(`Failed to fetch transaction details`);
+          throw new Error(`Failed (Couldn't fetch transaction details)`);
         }
 
         if (!tx) {
-          throw new Error('Invalid URL');
+          throw new Error('Failed (Invalid URL)');
         }
 
         const { meta } = tx;
 
         if (!meta) {
-          throw new Error(`Invalid URL`);
+          throw new Error(`Failed (Invalid URL)`);
         }
 
         const preBalance = meta?.preTokenBalances?.find(
@@ -160,23 +163,29 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         );
         if (!postBalance) {
           throw new Error(
-            `Receiver’s public key doesn’t match with the winner's public key on Earn.`,
+            `Failed (Receiver’s public key doesn’t match our records.)`,
           );
         }
 
         if (postBalance.mint !== dbToken?.mintAddress) {
-          throw new Error(`Transferred token does not match the reward token.`);
+          throw new Error(
+            `Failed (Transferred token doesn't match the listing reward token)`,
+          );
         }
 
         const preAmount = preBalance?.uiTokenAmount.uiAmount || 0;
         const postAmount = postBalance.uiTokenAmount.uiAmount;
         if (!postAmount) {
-          throw new Error(`Transferred amount doesn’t match the reward amount`);
+          throw new Error(
+            `Failed (Transferred amount doesn’t match the amount)`,
+          );
         }
         const actualTransferAmount = postAmount - preAmount;
         if (Math.abs(actualTransferAmount - winnerReward) > 0.000001) {
           // Using small epsilon for float comparison
-          throw new Error(`Transferred amount doesn’t match the reward amount`);
+          throw new Error(
+            `Failed (Transferred amount doesn’t match the amount)`,
+          );
         }
         validationResults.push({
           submissionId: paymentLink.submissionId,

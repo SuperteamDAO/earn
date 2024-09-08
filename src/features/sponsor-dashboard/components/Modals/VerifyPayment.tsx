@@ -30,6 +30,7 @@ import {
   listingSubmissionsQuery,
   type ListingWithSubmissions,
 } from '@/features/listings';
+import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getRankLabels } from '@/utils/rank';
 
@@ -44,21 +45,20 @@ interface VerifyPaymentModalProps {
   onClose: () => void;
   listingId: string | undefined;
   listing: ListingWithSubmissions | undefined;
-  listings: ListingWithSubmissions[];
-  setListings: (listings: ListingWithSubmissions[]) => void;
+  setListing: (listing: ListingWithSubmissions) => void;
   listingType: string | undefined;
 }
 
 export const VerifyPaymentModal = ({
   listingId,
   listing,
-  listings,
-  setListings,
+  setListing,
   isOpen,
   onClose,
 }: VerifyPaymentModalProps) => {
+  const { user } = useUser();
   const [status, setStatus] = useState<
-    'idle' | 'loading' | 'success' | 'error'
+    'idle' | 'retry' | 'loading' | 'success' | 'error'
   >('idle');
   const [selectedToken, setSelectedToken] = useState<(typeof tokenList)[0]>();
   const queryClient = useQueryClient();
@@ -82,9 +82,12 @@ export const VerifyPaymentModal = ({
     reset,
     setError,
     clearErrors,
+    watch,
   } = useForm<VerifyPaymentsFormData>({
     resolver: zodResolver(verifyPaymentsSchema),
   });
+
+  const paymentLinks = watch('paymentLinks');
 
   useEffect(() => {
     if (data?.submission && data?.bounty) {
@@ -158,7 +161,7 @@ export const VerifyPaymentModal = ({
               });
             }
           });
-          setStatus('idle');
+          setStatus('retry');
         } else {
           setStatus('success');
         }
@@ -180,19 +183,34 @@ export const VerifyPaymentModal = ({
           (v) => v.status === 'SUCCESS',
         );
 
-        setListings(
-          listings.map((l) => {
-            if (l.id === listingId) {
-              const existingPayments = l.totalPaymentsMade || 0;
-              const newPayments = successfulResults.length;
-              return {
-                ...l,
-                totalPaymentsMade: existingPayments + newPayments,
-              };
-            }
-            return l;
-          }),
-        );
+        if (listing) {
+          const existingPayments = listing.totalPaymentsMade || 0;
+          const newPayments = successfulResults.length;
+          const newListing = {
+            ...listing,
+            totalPaymentsMade: existingPayments + newPayments,
+          };
+          queryClient.setQueryData<ListingWithSubmissions[]>(
+            ['dashboard', user?.currentSponsorId],
+            (oldData) =>
+              oldData
+                ? oldData.map((l) => (l.id === newListing.id ? newListing : l))
+                : [],
+          );
+          setListing(newListing);
+        }
+
+        nonFailResults.forEach((result) => {
+          const fieldIndex = variables.paymentLinks.findIndex(
+            (link) => link.submissionId === result.submissionId,
+          );
+          if (fieldIndex !== -1) {
+            setValue(`paymentLinks.${fieldIndex}.isVerified`, true, {
+              shouldValidate: true,
+              shouldDirty: true,
+            });
+          }
+        });
       },
       onError: () => {
         setStatus('error');
@@ -247,9 +265,9 @@ export const VerifyPaymentModal = ({
                 <Text color="brand.slate.900" fontWeight={500}>
                   Verifying Payment
                 </Text>
-                <Text color="brand.slate.500" fontSize="sm">
-                  {`We're`} verifying all your links, hang tight and {`don't`}{' '}
-                  fret. This should take less than a minute
+                <Text align="center" color="brand.slate.500" fontSize="sm">
+                  {`We're`} verifying all your links, hang tight! <br /> This
+                  should take less than a minute
                 </Text>
               </VStack>
             </VStack>
@@ -292,6 +310,18 @@ export const VerifyPaymentModal = ({
                 We have successfully added an external payment to your listing.
               </Text>
             </VStack>
+            {listing?.totalPaymentsMade !== listing?.totalWinnersSelected && (
+              <Button
+                fontSize="sm"
+                fontWeight={400}
+                textDecoration={'underline'}
+                bg="none"
+                onClick={tryAgain}
+                variant="link"
+              >
+                Verify More
+              </Button>
+            )}
           </VStack>
         );
       case 'error':
@@ -317,8 +347,8 @@ export const VerifyPaymentModal = ({
                 Oh-Uh Verification Failed
               </Text>
               <Text align="center" color="brand.slate.500" fontSize="sm">
-                We {`couldn’t`} verify your payment status, please check your
-                links again and make sure {`it’s`} the exact amount
+                We {`couldn’t`} verify your payment status. <br /> Please check
+                your links again and make sure {`it’s`} the exact amount
               </Text>
             </VStack>
             <VStack>
@@ -380,7 +410,10 @@ export const VerifyPaymentModal = ({
                     control={control}
                     render={({ field }) => (
                       <FormControl
-                        isInvalid={!!errors.paymentLinks?.[index]?.link}
+                        isInvalid={
+                          !!errors.paymentLinks?.[index]?.root ||
+                          !!errors.paymentLinks?.[index]?.link
+                        }
                       >
                         <HStack justify="space-between">
                           <VStack align="start" gap={2} w="40%">
@@ -432,7 +465,7 @@ export const VerifyPaymentModal = ({
                             </HStack>
                           </VStack>
                           <VStack align="start" gap={0} w="full">
-                            {submission.isPaid ? (
+                            {paymentLinks?.[index]?.isVerified ? (
                               <HStack w="full">
                                 <Input
                                   color="green"
@@ -465,6 +498,7 @@ export const VerifyPaymentModal = ({
                               />
                             )}
                             <FormErrorMessage>
+                              {errors.paymentLinks?.[index]?.root?.message}
                               {errors.paymentLinks?.[index]?.link?.message}
                             </FormErrorMessage>
                           </VStack>
@@ -474,20 +508,45 @@ export const VerifyPaymentModal = ({
                   />
                 ))}
             </VStack>
-            <Button
-              w="full"
-              isDisabled={data?.submission.every((sub) => sub.isPaid)}
-              type="submit"
-            >
-              Add External Payment
-            </Button>
+            <VStack>
+              <Button
+                w="full"
+                isDisabled={data?.submission.every((sub) => sub.isPaid)}
+                type="submit"
+              >
+                Add External Payment
+              </Button>
+              {status === 'retry' && (
+                <Link
+                  href="https://t.me/pratikdholani/"
+                  isExternal
+                  rel="noopener noreferrer"
+                >
+                  <Button
+                    fontSize="sm"
+                    fontWeight={400}
+                    textDecoration={'underline'}
+                    bg="none"
+                    variant="link"
+                  >
+                    Think We Made A Mistake? Text Us
+                  </Button>
+                </Link>
+              )}
+            </VStack>
           </form>
         );
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="3xl">
+    <Modal
+      closeOnEsc={false}
+      closeOnOverlayClick={false}
+      isOpen={isOpen}
+      onClose={onClose}
+      size="3xl"
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalCloseButton />
