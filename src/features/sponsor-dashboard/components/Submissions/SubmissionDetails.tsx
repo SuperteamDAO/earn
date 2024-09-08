@@ -525,7 +525,7 @@ export const SubmissionDetails = ({
                         size="md"
                         variant="ghost"
                       >
-                        View Payment Txn
+                        Payment Verified. View Tx
                       </Button>
                     )}
                   {isSelectingWinner && (

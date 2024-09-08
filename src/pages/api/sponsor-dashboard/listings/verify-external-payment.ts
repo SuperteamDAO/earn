@@ -34,9 +34,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const connection = new Connection(clusterApiUrl('mainnet-beta'));
 
     logger.debug(`Request body: ${safeStringify(req.body)}`);
-    const { paymentLinks, listingId } = req.body as VerifyPaymentsFormData & {
+    let { paymentLinks } = req.body as VerifyPaymentsFormData;
+    const { listingId } = req.body as VerifyPaymentsFormData & {
       listingId: string;
     };
+
+    paymentLinks = paymentLinks.filter((p) => !!p.link);
 
     if (!listingId) {
       return res.status(400).json({ error: 'Listing ID is missing' });

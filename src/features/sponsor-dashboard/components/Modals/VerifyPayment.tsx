@@ -46,6 +46,7 @@ interface VerifyPaymentModalProps {
   listing: ListingWithSubmissions | undefined;
   listings: ListingWithSubmissions[];
   setListings: (listings: ListingWithSubmissions[]) => void;
+  setListing: (listing: ListingWithSubmissions) => void;
   listingType: string | undefined;
 }
 
@@ -54,6 +55,7 @@ export const VerifyPaymentModal = ({
   listing,
   listings,
   setListings,
+  setListing,
   isOpen,
   onClose,
 }: VerifyPaymentModalProps) => {
@@ -82,9 +84,16 @@ export const VerifyPaymentModal = ({
     reset,
     setError,
     clearErrors,
+    watch,
   } = useForm<VerifyPaymentsFormData>({
     resolver: zodResolver(verifyPaymentsSchema),
   });
+
+  const paymentLinks = watch('paymentLinks');
+
+  useEffect(() => {
+    console.log('error - ', errors);
+  }, [errors]);
 
   useEffect(() => {
     if (data?.submission && data?.bounty) {
@@ -180,19 +189,23 @@ export const VerifyPaymentModal = ({
           (v) => v.status === 'SUCCESS',
         );
 
-        setListings(
-          listings.map((l) => {
-            if (l.id === listingId) {
-              const existingPayments = l.totalPaymentsMade || 0;
-              const newPayments = successfulResults.length;
-              return {
-                ...l,
-                totalPaymentsMade: existingPayments + newPayments,
-              };
-            }
-            return l;
-          }),
-        );
+        if (listing) {
+          const existingPayments = listing.totalPaymentsMade || 0;
+          const newPayments = successfulResults.length;
+          const newListing = {
+            ...listing,
+            totalPaymentsMade: existingPayments + newPayments,
+          };
+          setListings(
+            listings.map((l) => {
+              if (l.id === newListing.id) {
+                return newListing;
+              }
+              return l;
+            }),
+          );
+          setListing(newListing);
+        }
 
         nonFailResults.forEach((result) => {
           const fieldIndex = variables.paymentLinks.findIndex(
@@ -304,6 +317,18 @@ export const VerifyPaymentModal = ({
                 We have successfully added an external payment to your listing.
               </Text>
             </VStack>
+            {listing?.totalPaymentsMade !== listing?.totalWinnersSelected && (
+              <Button
+                fontSize="sm"
+                fontWeight={400}
+                textDecoration={'underline'}
+                bg="none"
+                onClick={tryAgain}
+                variant="link"
+              >
+                Verify More
+              </Button>
+            )}
           </VStack>
         );
       case 'error':
@@ -392,7 +417,10 @@ export const VerifyPaymentModal = ({
                     control={control}
                     render={({ field }) => (
                       <FormControl
-                        isInvalid={!!errors.paymentLinks?.[index]?.link}
+                        isInvalid={
+                          !!errors.paymentLinks?.[index]?.root ||
+                          !!errors.paymentLinks?.[index]?.link
+                        }
                       >
                         <HStack justify="space-between">
                           <VStack align="start" gap={2} w="40%">
@@ -444,7 +472,7 @@ export const VerifyPaymentModal = ({
                             </HStack>
                           </VStack>
                           <VStack align="start" gap={0} w="full">
-                            {submission.isPaid ? (
+                            {paymentLinks?.[index]?.isVerified ? (
                               <HStack w="full">
                                 <Input
                                   color="green"
@@ -477,6 +505,7 @@ export const VerifyPaymentModal = ({
                               />
                             )}
                             <FormErrorMessage>
+                              {errors.paymentLinks?.[index]?.root?.message}
                               {errors.paymentLinks?.[index]?.link?.message}
                             </FormErrorMessage>
                           </VStack>
@@ -518,7 +547,13 @@ export const VerifyPaymentModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="3xl">
+    <Modal
+      closeOnEsc={false}
+      closeOnOverlayClick={false}
+      isOpen={isOpen}
+      onClose={onClose}
+      size="3xl"
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalCloseButton />
