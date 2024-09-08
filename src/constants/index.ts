@@ -254,6 +254,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: '',
   },
   {
+    tokenName: 'Vin (VIN)',
+    tokenSymbol: 'VIN',
+    mintAddress: '6B2X4NmSsmkiT8ytFEVt15igRSgsKNGZ3j3WWeidupE8',
+    icon: '/assets/coins/vin.png',
+    decimals: 9,
+    coingeckoSymbol: '',
+  },
+  {
     tokenName: 'KIWI',
     tokenSymbol: 'KIWI',
     mintAddress: '66Qq2qS67K4L5xQ3xUTinCyxzdPeZQG1R1ipK8jrY7gc',
