@@ -79,6 +79,7 @@ export function PrizeActionButtons({
               },
             ];
             setPrizes(newPrize);
+            handlePrizeValueChange(BONUS_REWARD_POSITION, NaN);
             handleBonusChange(1);
           }}
         >

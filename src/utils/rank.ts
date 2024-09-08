@@ -60,11 +60,15 @@ export const getRankLabels = (rank: number) => {
   else return rankLabels[rank];
 };
 
-export const cleanRewards = (rewards?: Rewards, skipBonus = false) =>
+export const cleanRewards = (
+  rewards?: Rewards,
+  skipBonus = false,
+  keepNaN = true,
+) =>
   Object.keys(rewards || [])
     .filter((key) => key !== null && key !== undefined)
     .map(Number)
-    .filter((key) => !isNaN(key))
+    .filter((key) => (keepNaN ? true : !isNaN(key)))
     .filter((key) => (skipBonus ? key !== BONUS_REWARD_POSITION : true));
 
 export const cleanRewardPrizes = (rewards?: Rewards, skipBonus = false) => {

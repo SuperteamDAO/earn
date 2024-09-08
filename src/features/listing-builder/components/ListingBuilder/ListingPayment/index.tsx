@@ -78,7 +78,7 @@ export const ListingPayments = ({
         minRewardAsk: form?.minRewardAsk,
         maxRewardAsk: form?.maxRewardAsk,
         token: form?.token,
-        rewards: form?.rewards,
+        rewards: form?.rewards || { 1: NaN },
         maxBonusSpots: form?.maxBonusSpots,
       },
     });
@@ -219,8 +219,10 @@ export const ListingPayments = ({
         (p) => p.value !== BONUS_REWARD_POSITION,
       );
       setPrizes(filteredPrize);
-      const updatedRewards = { ...rewards };
-      delete updatedRewards[BONUS_REWARD_POSITION];
+      const updatedRewards: Rewards = {};
+      filteredPrize.forEach((prize) => {
+        updatedRewards[prize.value] = prize.defaultValue || NaN;
+      });
       setValue('rewards', updatedRewards, { shouldValidate: true });
     }
   };
@@ -232,17 +234,23 @@ export const ListingPayments = ({
         prize.value === BONUS_REWARD_POSITION
           ? prize.label
           : `${getRankLabels(index + 1)} prize`,
+      value:
+        prize.value === BONUS_REWARD_POSITION
+          ? BONUS_REWARD_POSITION
+          : index + 1,
     }));
   }
 
   const handlePrizeDelete = (prizeToDelete: keyof Rewards) => {
     if (prizeToDelete === BONUS_REWARD_POSITION) return;
-    const updatedPrizes = prizes.filter(
-      (prize) => prize.value !== prizeToDelete,
+    const updatedPrizes = getPrizeLabels(
+      prizes.filter((prize) => prize.value !== prizeToDelete),
     );
     setPrizes(getPrizeLabels(updatedPrizes));
-    const updatedRewards = { ...rewards };
-    delete updatedRewards[prizeToDelete];
+    const updatedRewards: Rewards = {};
+    updatedPrizes.forEach((prize) => {
+      updatedRewards[prize.value] = prize.defaultValue || NaN;
+    });
     setValue('rewards', updatedRewards, { shouldValidate: true });
   };
 
@@ -294,12 +302,6 @@ export const ListingPayments = ({
         errorMessage = 'Please fill all podium ranks or remove unused';
       }
     }
-    console.log('clean rewards', cleanRewardPrizes(rewards));
-    console.log('prizes', prizes);
-    console.log(
-      'errorMessage',
-      cleanRewardPrizes(rewards).length !== prizes.length,
-    );
 
     return errorMessage;
   };
