@@ -17,7 +17,12 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { GrantApplicationStatus } from '@prisma/client';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -75,9 +80,11 @@ function GrantApplications({ slug }: Props) {
 
   const params = { searchText, length, skip };
 
-  const { data: applications, isLoading: isApplicationsLoading } = useQuery(
-    applicationsQuery(slug, params),
-  );
+  const { data: applications, isLoading: isApplicationsLoading } = useQuery({
+    ...applicationsQuery(slug, params),
+    retry: false,
+    placeholderData: keepPreviousData,
+  });
 
   useEffect(() => {
     selectedApplicationIds.size > 0 ? onTogglerOpen() : onTogglerClose();
@@ -237,9 +244,11 @@ function GrantApplications({ slug }: Props) {
 
   useEffect(() => {
     if (applications && applications.length > 0) {
-      setSelectedApplication(applications[0]);
+      if (!selectedApplication || searchText) {
+        setSelectedApplication(applications[0]);
+      }
     }
-  }, []);
+  }, [applications, searchText, selectedApplication]);
 
   return (
     <SponsorLayout isCollapsible>
@@ -335,7 +344,7 @@ function GrantApplications({ slug }: Props) {
                         <Text color="brand.slate.400" fontSize="sm">
                           Found{' '}
                           <Text as="span" fontWeight={700}>
-                            {applications?.length}
+                            {applications?.length || 0}
                           </Text>{' '}
                           {applications?.length === 1 ? 'result' : 'results'}
                         </Text>

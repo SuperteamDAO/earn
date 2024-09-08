@@ -278,7 +278,6 @@ export const SubmissionPanel = ({
                 )}
               </Flex>
             </Box>
-
             <Details bounty={bounty} />
           </>
         ) : (

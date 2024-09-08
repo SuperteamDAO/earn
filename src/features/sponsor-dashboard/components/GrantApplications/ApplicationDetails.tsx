@@ -642,7 +642,6 @@ export const ApplicationDetails = ({
                 label="Primary Key Performance Indicator"
                 content={selectedApplication?.kpi}
               />
-
               {Array.isArray(selectedApplication?.answers) &&
                 selectedApplication.answers.map(
                   (answer: any, answerIndex: number) => (
@@ -657,7 +656,14 @@ export const ApplicationDetails = ({
           </Box>
         </>
       ) : (
-        <></>
+        <Box p={3}>
+          <Text color={'brand.slate.500'} fontSize={'xl'} fontWeight={500}>
+            No applications found
+          </Text>
+          <Text color={'brand.slate.400'} fontSize={'sm'}>
+            Try a different search query
+          </Text>
+        </Box>
       )}
     </Box>
   );

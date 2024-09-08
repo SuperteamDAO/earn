@@ -97,9 +97,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (!applications || applications.length === 0) {
       logger.info(`No submissions found for slug: ${slug}`);
-      return res.status(404).json({
-        message: `Submissions with slug=${slug} not found.`,
-      });
+      // return res.status(404).json({
+      //   message: `Submissions with slug=${slug} not found.`,
+      // });
     }
 
     logger.info(
