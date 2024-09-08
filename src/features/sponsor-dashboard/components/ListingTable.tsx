@@ -146,8 +146,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
       />
       <VerifyPaymentModal
         listing={selectedListing}
-        listings={listings}
-        setListings={setListings}
+        setListing={setSelectedListing}
         isOpen={verifyPaymentIsOpen}
         onClose={verifyPaymentOnClose}
         listingId={selectedListing.id}
