@@ -93,5 +93,8 @@ export async function updateLike(
     });
   }
 
-  return updateLike;
+  return {
+    likesIncremented: likeCount > (result?.likeCount || 0),
+    updatedData: updateLike,
+  };
 }

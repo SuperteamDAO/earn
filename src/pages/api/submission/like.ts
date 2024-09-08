@@ -18,12 +18,10 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const updatedSubmission = await updateLike('submission', id, userId!);
+    const { updatedData: updatedSubmission, likesIncremented } =
+      await updateLike('submission', id, userId!);
 
-    if (
-      Array.isArray(updatedSubmission?.like) &&
-      updatedSubmission.like.length > 0
-    ) {
+    if (likesIncremented) {
       sendEmailNotification({
         type: 'submissionLike',
         id,

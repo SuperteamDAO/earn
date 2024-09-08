@@ -12,6 +12,7 @@ type EmailType =
   | 'createListing'
   | 'deadlineExtended'
   | 'submissionLike'
+  | 'applicationLike'
   | 'submissionSponsor'
   | 'submissionTalent'
   | 'applicationTalent'
