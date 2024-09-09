@@ -1,13 +1,17 @@
 import {
+  Button,
   Center,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Text,
   VStack,
 } from '@chakra-ui/react';
+import NextLink from 'next/link';
 
 interface Props {
   onClose: () => void;
@@ -19,8 +23,8 @@ export function UnderVerificationModal({ onClose, isOpen }: Props) {
       <ModalOverlay />
       <ModalContent overflow="hidden" w="100%" h={'max'} rounded="lg">
         <ModalHeader>
-          <VStack>
-            <Center p={6} bg="#EFF6FF">
+          <VStack mt={4}>
+            <Center p={8} bg="#EFF6FF" rounded="full">
               <svg
                 width="73"
                 height="73"
@@ -37,13 +41,25 @@ export function UnderVerificationModal({ onClose, isOpen }: Props) {
           </VStack>
         </ModalHeader>
         <ModalBody>
-          <Text fontSize="lg" fontWeight={600}>
-            We need to verify your listing before it gets published
-          </Text>
-          <Text fontSize="lg" fontWeight={400}>
-            We need to verify your listing before it gets published
-          </Text>
+          <VStack gap={3}>
+            <Text fontSize="lg" fontWeight={600}>
+              We need to verify your listing before it gets published
+            </Text>
+            <Text color="brand.slate.500">
+              {`It’s important for us to verify work opportunities added by new sponsors to maintain trust, and keep the platform free of any bad actors. We will try our best to verify your listing within 24 hours. `}
+            </Text>
+            <Text color="brand.slate.500">
+              {`Once verified, your listing will be published automatically. If we need any information, we will get in touch with you. `}
+            </Text>
+          </VStack>
         </ModalBody>
+        <ModalFooter>
+          <Link as={NextLink} w="full" href="/dashboard/listings">
+            <Button w="full" py={5}>
+              Understood
+            </Button>
+          </Link>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );
