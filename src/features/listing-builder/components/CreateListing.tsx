@@ -81,6 +81,7 @@ export function CreateListing({
   const listingDraftStatus = getListingDraftStatus(
     listing?.status,
     listing?.isPublished,
+    listing?.isVerifying,
   );
 
   const newListing = listing?.id === undefined;

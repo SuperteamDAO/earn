@@ -47,9 +47,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       compensationType,
       minRewardAsk,
       maxRewardAsk,
-      isPublished,
       isPrivate,
     } = req.body;
+    let { isPublished } = req.body;
 
     let publishedAt;
     if (isPublished) {
@@ -81,9 +81,30 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
+    // sponsor never had one live listing
+    let isVerifying = false;
+    if (isPublished) {
+      isVerifying =
+        (await prisma.bounties.count({
+          where: {
+            sponsorId: userSponsorId,
+            isArchived: false,
+            isPublished: true,
+            isActive: true,
+          },
+        })) === 0;
+    }
+
+    if (isVerifying) {
+      isPublished = false;
+      publishedAt = null;
+    }
+
+    console.log('verifying status - ', isVerifying);
     const finalData = {
       sponsorId: userSponsorId,
       title,
+      isVerifying,
       usdValue,
       publishedAt,
       pocId,
