@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Button,
   Center,
@@ -100,6 +101,7 @@ export const VerifyPaymentModal = ({
               submissionId: submission.id,
               link: '',
               isVerified: submission.isPaid,
+              txId: submission.paymentDetails?.txId || '',
             })),
         },
         {
@@ -175,7 +177,7 @@ export const VerifyPaymentModal = ({
           );
           if (fieldIndex !== -1) {
             setValue(`paymentLinks.${fieldIndex}.isVerified`, true);
-            // setValue(`paymentLinks.${fieldIndex}.link`, '');
+            setValue(`paymentLinks.${fieldIndex}.txId`, result.txId);
           }
         });
 
@@ -467,15 +469,31 @@ export const VerifyPaymentModal = ({
                           <VStack align="start" gap={0} w="full">
                             {paymentLinks?.[index]?.isVerified ? (
                               <HStack w="full">
-                                <Input
-                                  color="green"
-                                  fontSize="sm"
-                                  fontWeight={500}
-                                  borderWidth={2}
-                                  borderColor="green"
-                                  isDisabled
-                                  value="Payment Verified"
-                                />
+                                <Link
+                                  w="full"
+                                  href={`https://solscan.io/tx/${paymentLinks?.[index]?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`}
+                                  isExternal
+                                >
+                                  <Button
+                                    justifyContent="start"
+                                    w="full"
+                                    color="brand.slate.500"
+                                    fontSize="sm"
+                                    fontWeight={500}
+                                    borderWidth={1.5}
+                                    borderColor="green"
+                                    _hover={{
+                                      bg: 'green.100',
+                                    }}
+                                    variant="outline"
+                                  >
+                                    <Text mr={2}>
+                                      Payment Verified. View Tx
+                                    </Text>
+                                    <Icon as={ExternalLinkIcon} />
+                                  </Button>
+                                </Link>
+
                                 <Icon
                                   as={LuCheck}
                                   w={6}
