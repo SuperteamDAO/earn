@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 
 import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
-import { ogImageQuery } from '@/queries/og-image';
+import { ogImageQuery } from '@/queries/og';
 import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 

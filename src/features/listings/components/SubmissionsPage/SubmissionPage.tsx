@@ -18,7 +18,7 @@ import React, { useEffect } from 'react';
 import { TalentBio } from '@/features/talent';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { type User as IUser } from '@/interface/user';
-import { ogImageQuery } from '@/queries/og-image';
+import { ogImageQuery } from '@/queries/og';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { nthLabelGenerator } from '@/utils/rank';
 

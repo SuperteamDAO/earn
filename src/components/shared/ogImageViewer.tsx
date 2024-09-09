@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { ogImageQuery } from '@/queries/og-image';
+import { ogImageQuery } from '@/queries/og';
 
 interface Props {
   showTitle?: boolean;
