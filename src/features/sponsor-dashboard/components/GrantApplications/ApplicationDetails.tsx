@@ -28,6 +28,8 @@ import { toast } from 'sonner';
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
 import { Discord, EarnAvatar, Telegram, Twitter } from '@/features/talent';
+import { getURLSanitized } from '@/utils/getURLSanitized';
+import { isLink } from '@/utils/isLink';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
@@ -68,7 +70,18 @@ const InfoBox = ({
     >
       {label}
     </Text>
-    <Text color="brand.slate.700">{content ? content : '-'}</Text>
+    {isLink(content || '') ? (
+      <Link
+        as={NextLink}
+        color="brand.purple"
+        href={getURLSanitized(content || '#')}
+        isExternal
+      >
+        {content ? getURLSanitized(content) : '-'}
+      </Link>
+    ) : (
+      <Text color="brand.slate.700">{content ? content : '-'}</Text>
+    )}
   </Box>
 );
 

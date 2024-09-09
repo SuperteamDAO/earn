@@ -117,27 +117,33 @@ body {
     font-size: 1rem !important;
   }
 
-  h1 {
+  h1,
+  h1 * {
     font-size: 1.5rem !important;
   }
 
-  h2 {
+  h2,
+  h2 * {
     font-size: 1.25rem !important;
   }
 
-  h3 {
+  h3,
+  h3 * {
     font-size: 1.125rem !important;
   }
 
-  h4 {
+  h4,
+  h4 * {
     font-size: 1rem !important;
   }
 
-  h5 {
+  h5,
+  h5 * {
     font-size: 0.875rem !important;
   }
 
-  h6 {
+  h6,
+  h6 * {
     font-size: 0.75rem !important;
   }
 }
@@ -154,6 +160,14 @@ body {
 #reset-des {
   >*:first-child {
     margin-top: 1rem !important; // Adjusts top padding for the first paragraph
+  }
+}
+
+#reset-des {
+
+  a,
+  a * {
+    color: #6366F1 !important;
   }
 }
 

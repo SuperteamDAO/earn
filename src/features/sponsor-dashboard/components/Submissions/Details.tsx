@@ -144,9 +144,22 @@ export const Details = ({ bounty }: Props) => {
           >
             Anything Else
           </Text>
-          <Text color="brand.slate.700">
-            {selectedSubmission?.otherInfo || '-'}
-          </Text>
+          {isLink(selectedSubmission?.otherInfo || '') ? (
+            <Link
+              as={NextLink}
+              color="brand.purple"
+              href={getURLSanitized(selectedSubmission?.otherInfo || '#')}
+              isExternal
+            >
+              {selectedSubmission?.otherInfo
+                ? getURLSanitized(selectedSubmission?.otherInfo)
+                : '-'}
+            </Link>
+          ) : (
+            <Text color="brand.slate.700">
+              {selectedSubmission?.otherInfo || '-'}
+            </Text>
+          )}
         </Box>
       </Flex>
       <Flex w="25%" p={4}>

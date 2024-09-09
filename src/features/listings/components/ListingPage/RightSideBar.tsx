@@ -75,8 +75,12 @@ export function RightSideBar({
         setSubmissionRange('25-50');
       } else if (submissionNumber > 50 && submissionNumber <= 100) {
         setSubmissionRange('50-100');
-      } else if (submissionNumber > 100) {
-        setSubmissionRange('100+');
+      } else if (submissionNumber > 100 && submissionNumber <= 200) {
+        setSubmissionRange('100-200');
+      } else if (submissionNumber > 200 && submissionNumber <= 300) {
+        setSubmissionRange('200-300');
+      } else if (submissionNumber > 300) {
+        setSubmissionRange('300+');
       }
     }
   }, [submissionNumber]);
