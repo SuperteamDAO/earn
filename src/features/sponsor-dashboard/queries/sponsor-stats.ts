@@ -8,7 +8,9 @@ const fetchSponsorStats = async (): Promise<SponsorStats> => {
   return data;
 };
 
-export const sponsorStatsQuery = queryOptions({
-  queryKey: ['sponsorStats'],
-  queryFn: fetchSponsorStats,
-});
+export const sponsorStatsQuery = (sponsorId: string | undefined) =>
+  queryOptions({
+    queryKey: ['sponsorStats', sponsorId],
+    queryFn: fetchSponsorStats,
+    enabled: !!sponsorId,
+  });

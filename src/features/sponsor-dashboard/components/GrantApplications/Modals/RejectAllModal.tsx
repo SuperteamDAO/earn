@@ -18,7 +18,7 @@ interface RejectModalProps {
   rejectIsOpen: boolean;
   rejectOnClose: () => void;
   applicationIds: string[];
-  onRejectGrant: (applicationId: string[]) => Promise<void>;
+  onRejectGrant: (applicationId: string[]) => void;
 }
 
 export const RejectAllModal = ({

@@ -48,6 +48,7 @@ export interface Listing {
   minRewardAsk?: number;
   maxRewardAsk?: number;
   winnersAnnouncedAt?: string;
+  hackathonId?: string;
   _count?: {
     Comments?: number;
   };
@@ -88,3 +89,5 @@ export interface References {
 export interface Rewards {
   [rank: number]: number;
 }
+
+export type StatusFilter = 'open' | 'review' | 'completed';

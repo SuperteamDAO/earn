@@ -25,7 +25,7 @@ import { type GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils';
 
 interface Props {
-  applications: GrantApplicationWithUser[];
+  applications: GrantApplicationWithUser[] | undefined;
   setSearchText: (value: string) => void;
   selectedApplication: GrantApplicationWithUser | undefined;
   setSelectedApplication: Dispatch<
@@ -104,7 +104,7 @@ export const ApplicationList = ({
             </InputLeftElement>
           </InputGroup>
         </Flex>
-        {applications.map((application) => {
+        {applications?.map((application) => {
           const { bg, color } =
             colorMap[application?.applicationStatus as GrantApplicationStatus];
           return (

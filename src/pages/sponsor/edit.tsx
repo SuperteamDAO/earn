@@ -378,7 +378,10 @@ const UpdateSponsor = () => {
                   closeMenuOnSelect={false}
                   components={animatedComponents}
                   isMulti
-                  options={IndustryList}
+                  options={IndustryList.map((industry) => ({
+                    value: industry,
+                    label: industry,
+                  }))}
                   styles={{
                     control: (baseStyles) => ({
                       ...baseStyles,
@@ -389,12 +392,12 @@ const UpdateSponsor = () => {
                   onChange={(e) =>
                     setIndustries(e.map((i: any) => i.value).join(', '))
                   }
-                  defaultValue={IndustryList.filter((i) => {
-                    return industries?.split(', ').includes(i.value);
-                  })}
-                  value={IndustryList.filter((i) => {
-                    return industries?.split(', ').includes(i.value);
-                  })}
+                  defaultValue={industries
+                    ?.split(', ')
+                    .map((industry) => ({ value: industry, label: industry }))}
+                  value={industries
+                    ?.split(', ')
+                    .map((industry) => ({ value: industry, label: industry }))}
                 />
                 <FormErrorMessage>
                   {errors.industry ? <>{errors.industry.message}</> : <></>}

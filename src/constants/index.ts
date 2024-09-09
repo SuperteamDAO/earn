@@ -48,39 +48,15 @@ export const skillMap: SkillMap[] = [
   },
 ];
 
-export const IndustryList: MultiSelectOptions[] = [
-  {
-    label: 'DAOs',
-    value: 'DAOs',
-  },
-  {
-    label: 'DeFi',
-    value: 'DeFi',
-  },
-  {
-    label: 'Infrastructure',
-    value: 'Infrastructure',
-  },
-  {
-    label: 'DePIN',
-    value: 'DePIN',
-  },
-  {
-    value: 'Consumer dApps',
-    label: 'Consumer dApps',
-  },
-  {
-    label: 'Wallets and Payments',
-    value: 'Wallets and Payments',
-  },
-  {
-    label: 'NFTs',
-    value: 'NFTs',
-  },
-  {
-    label: 'Gaming',
-    value: 'Gaming',
-  },
+export const IndustryList = [
+  'DAOs',
+  'DeFi',
+  'Infrastructure',
+  'DePIN',
+  'Consumer dApps',
+  'Wallets and Payments',
+  'NFTs',
+  'Gaming',
 ];
 
 interface Token {
@@ -214,6 +190,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'dean-s-list',
   },
   {
+    tokenName: 'Ore',
+    tokenSymbol: 'ORE',
+    mintAddress: 'oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32782.png',
+    decimals: 9,
+    coingeckoSymbol: 'ore',
+  },
+  {
     tokenName: 'DevWifHat (DWH)',
     tokenSymbol: 'DWH',
     mintAddress: 'DEVwHJ57QMPPArD2CyjboMbdWvjEMjXRigYpaUNDTD7o',
@@ -266,6 +250,14 @@ export const tokenList: Token[] = [
     tokenSymbol: 'UTG',
     mintAddress: 'FPZsqAgtwf58GmJMctZGSu9RaXiGAmQLL6ZtKUUewm7k',
     icon: '/assets/coins/utg.png',
+    decimals: 9,
+    coingeckoSymbol: '',
+  },
+  {
+    tokenName: 'Vin (VIN)',
+    tokenSymbol: 'VIN',
+    mintAddress: '6B2X4NmSsmkiT8ytFEVt15igRSgsKNGZ3j3WWeidupE8',
+    icon: '/assets/coins/vin.png',
     decimals: 9,
     coingeckoSymbol: '',
   },

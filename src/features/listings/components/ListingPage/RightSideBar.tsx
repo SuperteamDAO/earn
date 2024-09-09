@@ -296,10 +296,7 @@ export function RightSideBar({
                 <Text color={'#94A3B8'}>Time to Complete</Text>
               </Flex>
             )}
-            <SubmissionActionButton
-              listing={listing}
-              hasHackathonStarted={hasHackathonStarted}
-            />
+            <SubmissionActionButton listing={listing} />
             {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
               <Flex gap="2" w="full" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />

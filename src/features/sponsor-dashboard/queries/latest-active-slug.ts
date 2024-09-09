@@ -6,9 +6,7 @@ const fetchLatestActiveSlug = async (): Promise<string> => {
   return data;
 };
 
-export const latestActiveSlugQuery = (enabled: boolean) =>
-  queryOptions({
-    queryKey: ['latestActiveSlug'],
-    queryFn: fetchLatestActiveSlug,
-    enabled,
-  });
+export const latestActiveSlugQuery = queryOptions({
+  queryKey: ['latestActiveSlug'],
+  queryFn: fetchLatestActiveSlug,
+});

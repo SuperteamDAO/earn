@@ -51,8 +51,8 @@ export function Banner({
         borderColor={'brand.slate.200'}
         borderRadius="md"
       >
-        <Flex align="center" gap={12}>
-          <Flex align="center" gap={3}>
+        <Flex align="center" gap={8}>
+          <Flex align="center" flexShrink={0} gap={3}>
             <EarnAvatar
               size="52px"
               id={sponsor?.name}

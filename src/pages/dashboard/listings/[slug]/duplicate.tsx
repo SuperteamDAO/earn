@@ -1,11 +1,11 @@
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { CreateListing } from '@/features/listing-builder';
-import type { Listing } from '@/features/listings';
+import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard'; // Adjust the import path as needed
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
@@ -16,43 +16,31 @@ interface Props {
 export default function DuplicateBounty({ slug }: Props) {
   const router = useRouter();
   const { user } = useUser();
-  const [isBountyLoading, setIsBountyLoading] = useState(true);
-  const [bounty, setBounty] = useState<Listing | undefined>();
 
-  const getBounty = async () => {
-    setIsBountyLoading(true);
-    try {
-      const bountyDetails = await axios.get(
-        `/api/sponsor-dashboard/${slug}/listing`,
-      );
-      if (bountyDetails.data.sponsorId !== user?.currentSponsorId) {
-        router.push('/dashboard/listings');
-      } else {
-        setBounty(bountyDetails.data);
-        setIsBountyLoading(false);
-      }
-    } catch (e) {
-      setIsBountyLoading(false);
-    }
-  };
+  const { data: bounty, isLoading } = useQuery({
+    ...sponsorDashboardListingQuery(slug),
+    enabled: !!user?.currentSponsorId,
+  });
 
   useEffect(() => {
-    if (user?.currentSponsorId) {
-      getBounty();
+    if (bounty && bounty.sponsorId !== user?.currentSponsorId) {
+      router.push('/dashboard/listings');
     }
-  }, [user?.currentSponsorId]);
+  }, [bounty, user?.currentSponsorId, router]);
 
   return (
     <SponsorLayout>
-      {isBountyLoading ? (
+      {isLoading ? (
         <LoadingSection />
-      ) : (
+      ) : bounty ? (
         <CreateListing
           listing={bounty}
           editable
           isDuplicating
-          type={bounty?.type as 'bounty' | 'project' | 'hackathon'}
+          type={bounty.type as 'bounty' | 'project' | 'hackathon'}
         />
+      ) : (
+        <div>Error loading bounty details.</div>
       )}
     </SponsorLayout>
   );

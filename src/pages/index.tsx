@@ -7,15 +7,21 @@ import { getServerSession } from 'next-auth';
 import { useEffect, useState } from 'react';
 
 import { CombinedRegions } from '@/constants/Superteam';
-import { homepageGrantsQuery, homepageListingsQuery } from '@/features/home';
+import {
+  homepageForYouListingsQuery,
+  homepageGrantsQuery,
+  homepageListingsQuery,
+} from '@/features/home';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
 import { authOptions } from './api/auth/[...nextauth]';
+import { getForYouListings } from './api/homepage/for-you';
 import { getListings } from './api/homepage/listings';
 
 interface Props {
   listings: Listing[];
+  openForYouListings: Listing[];
   isAuth: boolean;
   userRegion: Regions[] | null;
 }
@@ -39,14 +45,36 @@ const EmptySection = dynamic(
   { ssr: false },
 );
 
-export default function HomePage({ listings, isAuth, userRegion }: Props) {
+export default function HomePage({
+  listings,
+  isAuth,
+  userRegion,
+  openForYouListings,
+}: Props) {
   const [combinedListings, setCombinedListings] = useState(listings);
+  const [combinedForYouListings, setCombinedForYouListings] =
+    useState(listings);
+
+  const { data: reviewForYouListings } = useQuery({
+    ...homepageForYouListingsQuery({
+      statusFilter: 'review',
+    }),
+    enabled: isAuth,
+  });
+
+  const { data: completeForYouListings } = useQuery({
+    ...homepageForYouListingsQuery({
+      statusFilter: 'completed',
+    }),
+    enabled: isAuth,
+  });
 
   const { data: reviewListings } = useQuery(
     homepageListingsQuery({
       order: 'desc',
       statusFilter: 'review',
       userRegion,
+      excludeIds: reviewForYouListings?.map((l) => l.id!),
     }),
   );
 
@@ -55,6 +83,7 @@ export default function HomePage({ listings, isAuth, userRegion }: Props) {
       order: 'desc',
       statusFilter: 'completed',
       userRegion,
+      excludeIds: completeForYouListings?.map((l) => l.id!),
     }),
   );
 
@@ -68,7 +97,17 @@ export default function HomePage({ listings, isAuth, userRegion }: Props) {
         ...completeListings,
       ]);
     }
-  }, [reviewListings, listings]);
+  }, [reviewListings, completeListings, listings]);
+
+  useEffect(() => {
+    if (reviewForYouListings && completeForYouListings) {
+      setCombinedForYouListings([
+        ...openForYouListings,
+        ...reviewForYouListings,
+        ...completeForYouListings,
+      ]);
+    }
+  }, [reviewForYouListings, completeForYouListings, openForYouListings]);
 
   return (
     <Home type="landing" isAuth={isAuth}>
@@ -76,6 +115,7 @@ export default function HomePage({ listings, isAuth, userRegion }: Props) {
       <Box w={'100%'}>
         <ListingTabs
           bounties={combinedListings}
+          forYou={combinedForYouListings}
           isListingsLoading={false}
           emoji="/assets/home/emojis/moneyman.png"
           title="Freelance Gigs"
@@ -127,14 +167,24 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     }
   }
 
+  let openForYouListings: Awaited<ReturnType<typeof getForYouListings>> = [];
+  if (session && session.user.id) {
+    openForYouListings = await getForYouListings({
+      statusFilter: 'open',
+      userId: session.user.id,
+    });
+  }
+
   const openListings = await getListings({
     statusFilter: 'open',
     userRegion,
+    excludeIds: openForYouListings.map((listing) => listing.id),
   });
 
   return {
     props: {
       listings: JSON.parse(JSON.stringify(openListings)),
+      openForYouListings: JSON.parse(JSON.stringify(openForYouListings)),
       isAuth,
       userRegion,
     },

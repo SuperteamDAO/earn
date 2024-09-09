@@ -1,6 +1,5 @@
 import type { NextApiResponse } from 'next';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   type NextApiRequestWithSponsor,
   withSponsorAuth,
@@ -15,18 +14,30 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
   const slug = params.slug as string;
   const type = params.type as 'bounty' | 'project' | 'hackathon';
+  const isHackathon = params.isHackathon === 'true';
 
   logger.debug(`Request query: ${safeStringify(params)}`);
 
   try {
-    const userSponsorId = req.userSponsorId;
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId as string,
+      },
+    });
+
+    if (!user) {
+      logger.warn(`Unauthorized access attempt by user ${userId}`);
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
 
     const result = await prisma.bounties.findFirst({
       where: {
         slug,
         type,
         isActive: true,
-        sponsorId: userSponsorId,
+        ...(isHackathon
+          ? { hackathonId: user.hackathonId }
+          : { sponsor: { id: req.userSponsorId } }),
       },
       include: {
         sponsor: { select: { name: true, logo: true, isVerified: true } },
@@ -38,7 +49,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             email: true,
           },
         },
-        Submission: true,
         Hackathon: {
           select: {
             altLogo: true,
@@ -59,31 +69,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    const totalSubmissions = result.Submission.length;
-    const winnersSelected = result.Submission.filter(
-      (sub) => sub.isWinner,
-    ).length;
-    const paymentsMade = result.Submission.filter((sub) => sub.isPaid).length;
-
-    const podiumWinnersSelected = result.Submission.filter(
-      (submission) =>
-        submission.isWinner &&
-        submission.winnerPosition !== BONUS_REWARD_POSITION,
-    ).length;
-
-    const bonusWinnerSelected = result.Submission.filter(
-      (sub) => sub.isWinner && sub.winnerPosition === BONUS_REWARD_POSITION,
-    ).length;
-
     logger.info(`Successfully fetched bounty details for slug=${slug}`);
-    return res.status(200).json({
-      ...result,
-      totalSubmissions,
-      winnersSelected,
-      paymentsMade,
-      podiumWinnersSelected,
-      bonusWinnerSelected,
-    });
+    return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
       `Error fetching bounty with slug=${slug}:`,

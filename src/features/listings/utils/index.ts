@@ -1,5 +1,9 @@
 import { CombinedRegions } from '@/constants/Superteam';
-import type { Listing, ListingWithSubmissions } from '@/features/listings';
+import type {
+  Listing,
+  ListingWithSubmissions,
+  StatusFilter,
+} from '@/features/listings';
 import { dayjs } from '@/utils/dayjs';
 
 export const formatDeadline = (
@@ -63,7 +67,6 @@ export const getListingStatus = (
 ) => {
   if (!listing) return 'DRAFT';
 
-  const rewardsLength = Object.keys(listing?.rewards || {}).length;
   const listingStatus = getListingDraftStatus(
     listing?.status,
     listing?.isPublished,
@@ -82,12 +85,12 @@ export const getListingStatus = (
       if (!listing?.isWinnersAnnounced) return 'In Review';
       if (
         listing?.isWinnersAnnounced &&
-        listing?.totalPaymentsMade !== rewardsLength
+        listing?.totalPaymentsMade !== listing?.totalWinnersSelected
       )
         return 'Payment Pending';
       if (
         listing?.isWinnersAnnounced &&
-        listing?.totalPaymentsMade === rewardsLength
+        listing?.totalPaymentsMade === listing?.totalWinnersSelected
       )
         return 'Completed';
       return 'In Review';
@@ -164,6 +167,33 @@ export function digitsInLargestString(numbers: string[]): number {
   }, '');
 
   return largest.replace(/[,\.]/g, '').length;
+}
+
+export function getStatusFilterQuery(statusFilter: StatusFilter | undefined) {
+  let statusFilterQuery = {};
+
+  if (statusFilter) {
+    if (statusFilter === 'open') {
+      statusFilterQuery = {
+        deadline: {
+          gte: new Date(),
+        },
+      };
+    } else if (statusFilter === 'review') {
+      statusFilterQuery = {
+        deadline: {
+          lte: new Date(),
+        },
+        isWinnersAnnounced: false,
+      };
+    } else if (statusFilter === 'completed') {
+      statusFilterQuery = {
+        isWinnersAnnounced: true,
+      };
+    }
+  }
+
+  return statusFilterQuery;
 }
 
 export const getListingIcon = (type: string) => {

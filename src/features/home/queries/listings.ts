@@ -8,6 +8,7 @@ interface ListingsParams {
   order?: 'asc' | 'desc';
   statusFilter: 'open' | 'review' | 'completed';
   userRegion: Regions[] | null;
+  excludeIds?: string[];
 }
 
 const fetchHomePageListings = async (

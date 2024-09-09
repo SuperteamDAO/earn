@@ -25,7 +25,7 @@ interface RejectModalProps {
   ask: number | undefined;
   granteeName: string | null | undefined;
   token: string;
-  onRejectGrant: (applicationId: string) => Promise<void>;
+  onRejectGrant: (applicationId: string) => void;
 }
 
 export const RejectModal = ({
