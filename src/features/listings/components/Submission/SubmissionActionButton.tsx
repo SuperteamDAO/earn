@@ -255,9 +255,7 @@ export const SubmissionActionButton = ({ listing }: Props) => {
               textColor={buttonTextColor}
               bg={buttonBG}
               _hover={{ bg: buttonBG }}
-              _disabled={{
-                opacity: { base: '96%', md: '70%' },
-              }}
+              _disabled={{ opacity: '70%' }}
               isDisabled={isBtnDisabled}
               isLoading={isUserSubmissionLoading}
               loadingText={btnLoadingText}

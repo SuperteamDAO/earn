@@ -12,60 +12,10 @@ import {
   extractTelegramUsername,
   extractTwitterUsername,
 } from '@/features/talent';
-import {
-  type ParentSkills,
-  skillSubSkillMap,
-  type SubSkillsType,
-} from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { cleanSkills } from '@/utils/cleanSkills';
 import { safeStringify } from '@/utils/safeStringify';
-
-const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
-  return Array.from(new Set(arr));
-};
-
-const correctSkills = (
-  skillObjArray: { skills: ParentSkills; subskills: SubSkillsType[] }[],
-): { skills: ParentSkills; subskills: SubSkillsType[] }[] => {
-  const correctedSkills: {
-    skills: ParentSkills;
-    subskills: SubSkillsType[];
-  }[] = [];
-  const skillMap: Record<ParentSkills, SubSkillsType[]> = {} as Record<
-    ParentSkills,
-    SubSkillsType[]
-  >;
-
-  skillObjArray.forEach((skillObj) => {
-    if (!skillMap[skillObj.skills]) {
-      skillMap[skillObj.skills] = [];
-    }
-    skillObj.subskills.forEach((subskill) => {
-      const correctMainSkill = Object.keys(skillSubSkillMap).find((mainSkill) =>
-        skillSubSkillMap[mainSkill as ParentSkills].some(
-          (subSkillObj) => subSkillObj.value === subskill,
-        ),
-      );
-
-      if (correctMainSkill) {
-        if (!skillMap[correctMainSkill as ParentSkills]) {
-          skillMap[correctMainSkill as ParentSkills] = [];
-        }
-        skillMap[correctMainSkill as ParentSkills].push(subskill);
-      }
-    });
-  });
-
-  Object.keys(skillMap).forEach((key) => {
-    correctedSkills.push({
-      skills: key as ParentSkills,
-      subskills: uniqueArray(skillMap[key as ParentSkills]),
-    });
-  });
-
-  return correctedSkills;
-};
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
@@ -104,7 +54,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const correctedSkills = correctSkills(skills);
+    const correctedSkills = cleanSkills(skills);
 
     const data = {
       firstName,
