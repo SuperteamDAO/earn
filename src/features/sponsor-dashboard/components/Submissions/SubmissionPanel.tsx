@@ -146,7 +146,7 @@ export const SubmissionPanel = ({
                         size="md"
                         variant="ghost"
                       >
-                        Payment Verified. View Tx
+                        View Payment Tx
                       </Button>
                     )}
                   {!bounty?.isWinnersAnnounced && (
