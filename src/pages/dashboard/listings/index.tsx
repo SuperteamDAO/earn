@@ -446,7 +446,7 @@ export default function SponsorListings() {
         </>
       )}
       {!isListingsLoading &&
-        allListings?.length &&
+        !!allListings?.length &&
         !paginatedListings.length && (
           <>
             <Image

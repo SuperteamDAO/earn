@@ -146,8 +146,10 @@ const Index = () => {
         </Flex>
         <Flex align="center" gap={3}>
           {(session?.user?.role === 'GOD' ||
-            (user?.UserSponsors?.length &&
-              user?.UserSponsors[0]?.role === 'ADMIN')) && (
+            !!(
+              user?.UserSponsors?.length &&
+              user?.UserSponsors[0]?.role === 'ADMIN'
+            )) && (
             <Button
               className="ph-no-capture"
               color="#6366F1"
@@ -189,7 +191,7 @@ const Index = () => {
           message="Invite members to join your organization!"
         />
       )}
-      {!isMembersLoading && members?.length && (
+      {!isMembersLoading && !!members?.length && (
         <TableContainer
           mb={8}
           borderWidth={'1px'}

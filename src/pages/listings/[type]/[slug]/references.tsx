@@ -16,13 +16,12 @@ const ReferenceCard = ({ link }: { link?: string }) => {
   return (
     <Box
       w="100%"
-      borderWidth="2px"
-      borderColor={'gray.200'}
       borderRadius={8}
       cursor="pointer"
       onClick={() => window.open(link, '_blank')}
     >
       <OgImageViewer
+        showTitle
         externalUrl={link}
         w={'100%'}
         aspectRatio={1.91 / 1}
@@ -36,25 +35,23 @@ const ReferenceCard = ({ link }: { link?: string }) => {
 function BountyDetails({ bounty }: BountyDetailsProps) {
   return (
     <ListingPageLayout bounty={bounty}>
-      <Box mx={4}>
+      <Box>
         <HStack
           align={['center', 'center', 'start', 'start']}
           justify={['center', 'center', 'space-between', 'space-between']}
           flexDir={['column', 'column', 'row', 'row']}
           gap={4}
-          mx={'auto'}
           mt={6}
           mb={10}
-          p={{ base: '2', md: '6' }}
           bg="white"
           rounded="lg"
         >
-          <Box w="full" mx={4}>
+          <Box w="full">
             <Text mt={2} mb={6} color="gray.500" fontSize="xl" fontWeight={600}>
               References
             </Text>
             <Grid
-              gap={4}
+              gap={6}
               templateColumns={{
                 base: 'repeat(1, 1fr)',
                 md: 'repeat(2, 1fr)',

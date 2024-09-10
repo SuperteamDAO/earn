@@ -5,50 +5,19 @@ import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
-  const { submissionId, slug } = req.body;
+  const { submissionId } = req.query as {
+    submissionId: string;
+    listingId: string;
+  };
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
-  if (!submissionId || !slug) {
+  if (!submissionId) {
     return res.status(400).json({
-      message: 'submissionId and slug are required in the request body.',
+      message: 'submissionId are required in the request body.',
     });
   }
 
   try {
-    const bounty = await prisma.bounties.findFirst({
-      where: {
-        slug,
-        isActive: true,
-      },
-      include: {
-        sponsor: {
-          select: {
-            name: true,
-            isVerified: true,
-            logo: true,
-          },
-        },
-        poc: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-        Hackathon: {
-          select: {
-            altLogo: true,
-          },
-        },
-      },
-    });
-
-    if (!bounty) {
-      return res.status(404).json({
-        message: `Bounty with slug=${slug} not found.`,
-      });
-    }
-
     const submission = await prisma.submission.findUnique({
       where: {
         id: submissionId,
@@ -58,17 +27,14 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    res.status(200).json({
-      bounty,
-      submission,
-    });
+    res.status(200).json(submission);
   } catch (error: any) {
     logger.error(
-      `Error fetching bounty with slug=${slug} and submission with id=${submissionId}: ${error.message}`,
+      `Error fetching submission with id=${submissionId}: ${error.message}`,
     );
     res.status(500).json({
       error: error.message,
-      message: `Error occurred while fetching bounty with slug=${slug} and submission with id=${submissionId}.`,
+      message: `Error occurred while fetching submission with id=${submissionId}.`,
     });
   }
 }
