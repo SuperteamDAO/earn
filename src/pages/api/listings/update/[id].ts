@@ -95,7 +95,8 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       language = 'eng';
     }
 
-    const correctedSkills = cleanSkills(skills);
+    const skillsToUpdate =
+      'skills' in updatedData ? (skills ? cleanSkills(skills) : []) : undefined;
 
     const newRewardsCount = Object.keys(rewards || {}).length;
     const currentTotalWinners = listing.totalWinnersSelected
@@ -186,7 +187,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         publishedAt,
         usdValue,
         language,
-        skills: correctedSkills,
+        ...(skillsToUpdate !== undefined && { skills: skillsToUpdate }),
       },
     });
 
