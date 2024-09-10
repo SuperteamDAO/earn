@@ -1,45 +1,34 @@
-import { Link } from '@chakra-ui/react';
+import { Box, Link } from '@chakra-ui/react';
+import { Fragment } from 'react';
 
-import { isLink } from '@/utils/isLink';
-import { truncateString } from '@/utils/truncateString';
+const URL_REGEX =
+  /(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 
 interface Props {
   text: string;
 }
-function parseLinks(answer: string) {
-  const parts = answer.split(/(\s+|@[\w]+)/g).filter(Boolean);
-  return parts.map((part) => {
-    if (isLink(part)) {
-      return { type: 'link', value: part };
-    }
-    return { type: 'text', value: part };
-  });
-}
+
 export function LinkTextParser({ text }: Props) {
-  const parsedTextLinks = parseLinks(text);
+  const parts = text.split(URL_REGEX);
+
   return (
-    <>
-      {parsedTextLinks.map((part, index) => {
-        if (part.type === 'link') {
-          let href = part.value;
-          if (!href.startsWith('http://') && !href.startsWith('https://')) {
-            href = 'https://' + href;
-          }
+    <Box>
+      {parts.map((part, index) => {
+        if (part.match(URL_REGEX)) {
           return (
             <Link
               key={index}
               color="brand.purple"
-              href={href}
+              _hover={{ textDecoration: 'underline' }}
+              href={part}
               isExternal
-              rel="nofollow noreferrer"
             >
-              {truncateString(part.value, 30)}
+              {part}
             </Link>
           );
-        } else {
-          return <span key={index}>{part.value}</span>;
         }
+        return <Fragment key={index}>{part}</Fragment>;
       })}
-    </>
+    </Box>
   );
 }
