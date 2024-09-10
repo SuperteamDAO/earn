@@ -20,8 +20,8 @@ const fetchApplications = async (
   return data;
 };
 
-export const applicationsQuery = (params: ApplicationsParams, slug: string) =>
+export const applicationsQuery = (slug: string, params: ApplicationsParams) =>
   queryOptions({
-    queryKey: ['applications', params, slug],
+    queryKey: ['sponsor-applications', slug, params],
     queryFn: () => fetchApplications(params, slug),
   });

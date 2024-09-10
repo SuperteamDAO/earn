@@ -1,4 +1,4 @@
-import { Image } from '@chakra-ui/react';
+import { Box, Image } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
 import React, { useState } from 'react';
 
@@ -22,19 +22,16 @@ export const EarnAvatar = ({
   };
 
   return (
-    <div onClick={onClick}>
+    <Box onClick={onClick}>
       {!hasError && avatar ? (
         <Image
+          flexGrow={1}
           boxSize={size}
-          maxW={'max-content'}
           borderRadius={borderRadius}
           objectFit={'cover'}
           alt={id}
           onError={handleImageError}
-          src={avatar.replace(
-            '/upload/',
-            '/upload/c_scale,w_256,h_256,f_auto/',
-          )}
+          src={avatar.replace('/upload/', '/upload/c_scale,f_auto/')}
         />
       ) : (
         <Avatar
@@ -53,6 +50,6 @@ export const EarnAvatar = ({
           ]}
         />
       )}
-    </div>
+    </Box>
   );
 };

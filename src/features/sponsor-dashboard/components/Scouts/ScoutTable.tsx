@@ -233,7 +233,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                     >
                       <Flex gap={1}>
                         <Text
-                          overflowX="hidden"
+                          overflow="hidden"
                           maxW={'14rem'}
                           color="brand.slate.800"
                           fontSize={'14px'}

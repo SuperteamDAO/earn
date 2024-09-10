@@ -11,9 +11,11 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { useUsernameValidation } from '@/features/talent';
@@ -41,13 +43,30 @@ export const SponsorInfoModal = ({
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
   );
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { setUsername, isInvalid, validationErrorMessage, username } =
     useUsernameValidation();
 
-  const onSubmit = async (data: any) => {
-    setIsSubmitting(true);
+  const updateUserMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await axios.post(
+        '/api/sponsors/usersponsor-details/',
+        data,
+      );
+      return response.data;
+    },
+    onSuccess: async () => {
+      await refetchUser();
+      toast.success('Profile updated successfully');
+      onClose();
+    },
+    onError: (error) => {
+      console.error('Error updating user details:', error);
+      toast.error('Failed to update profile. Please try again.');
+    },
+  });
+
+  const onSubmit = (data: any) => {
     if (isInvalid) {
       return;
     }
@@ -55,15 +74,7 @@ export const SponsorInfoModal = ({
       ...data,
       photo: isGooglePhoto ? user?.photo : imageUrl,
     };
-    try {
-      await axios.post('/api/sponsors/usersponsor-details/', finalData);
-      await refetchUser();
-      setIsSubmitting(false);
-      onClose();
-    } catch (error) {
-      console.error('Error updating user details:', error);
-      setIsSubmitting(false);
-    }
+    updateUserMutation.mutate(finalData);
   };
 
   return (
@@ -191,7 +202,7 @@ export const SponsorInfoModal = ({
 
             <Button
               w={'full'}
-              isLoading={uploading || isSubmitting}
+              isLoading={uploading || updateUserMutation.isPending}
               loadingText="Submitting"
               spinnerPlacement="start"
               type="submit"

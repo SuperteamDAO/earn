@@ -3,14 +3,16 @@ import {
   type ImageProps,
   type ResponsiveValue,
   Skeleton,
+  Text,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { ogImageQuery } from '@/queries/og-image';
+import { ogImageQuery } from '@/queries/og';
 
 interface Props {
+  showTitle?: boolean;
   externalUrl?: string;
   imageUrl?: string;
   w?: ResponsiveValue<string | number>;
@@ -43,6 +45,7 @@ const getRandomFallbackImage = (): string => {
 };
 
 export const OgImageViewer = ({
+  showTitle,
   externalUrl,
   imageUrl,
   type,
@@ -54,22 +57,22 @@ export const OgImageViewer = ({
     imageUrl || null,
   );
 
-  const { data: ogImageUrl, isLoading } = useQuery(ogImageQuery(externalUrl!));
+  const { data: ogData, isLoading } = useQuery(ogImageQuery(externalUrl!));
 
   useEffect(() => {
-    if (ogImageUrl) {
-      setCurrentImageUrl(ogImageUrl);
+    if (ogData?.images?.[0]?.url) {
+      setCurrentImageUrl(ogData.images?.[0]?.url);
       if (type && id) {
         axios.post('/api/og/update', {
           type,
-          url: ogImageUrl,
+          url: ogData.images?.[0]?.url,
           id,
         });
       }
     } else if (!imageUrl && !externalUrl) {
       setCurrentImageUrl(fallbackImage);
     }
-  }, [ogImageUrl, imageUrl, externalUrl, type, id]);
+  }, [ogData, imageUrl, externalUrl, type, id]);
 
   const handleImageError = useCallback(() => {
     setCurrentImageUrl(fallbackImage);
@@ -88,6 +91,17 @@ export const OgImageViewer = ({
         src={currentImageUrl || fallbackImage}
         {...props}
       />
+      {showTitle && !!ogData && (
+        <Text
+          pt={2}
+          color="brand.slate.500"
+          fontSize="sm"
+          textOverflow="ellipsis"
+          noOfLines={1}
+        >
+          {ogData?.title}
+        </Text>
+      )}
     </div>
   );
 };

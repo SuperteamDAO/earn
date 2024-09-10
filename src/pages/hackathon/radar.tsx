@@ -178,7 +178,10 @@ export default function Radar() {
                 Total Prizes
               </Text>
               <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight={600}>
-                ${stats?.totalRewardAmount.toLocaleString()}
+                $
+                {new Intl.NumberFormat('en-US', {
+                  maximumFractionDigits: 2,
+                }).format(stats?.totalRewardAmount || 0)}
               </Text>
             </Flex>
             <Flex direction={'column'}>

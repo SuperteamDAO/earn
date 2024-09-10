@@ -11,6 +11,7 @@ import {
 import { sendEmailNotification } from '@/features/emails';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { cleanSkills } from '@/utils/cleanSkills';
 import { dayjs } from '@/utils/dayjs';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
@@ -72,6 +73,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       compensationType,
       isPublished,
       description,
+      skills,
     } = updatedData;
 
     let { maxBonusSpots } = updatedData;
@@ -89,7 +91,11 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (description) {
       language = franc(description);
       // both 'eng' and 'sco' are english listings
+    } else {
+      language = 'eng';
     }
+
+    const correctedSkills = cleanSkills(skills);
 
     const newRewardsCount = Object.keys(rewards || {}).length;
     const currentTotalWinners = listing.totalWinnersSelected
@@ -180,6 +186,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         publishedAt,
         usdValue,
         language,
+        skills: correctedSkills,
       },
     });
 

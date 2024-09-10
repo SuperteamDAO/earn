@@ -51,7 +51,7 @@ async function scoutInvite(
       },
     });
 
-    if (invitedCount >= 5) {
+    if (invitedCount >= 10) {
       logger.warn(
         `Maximum number of invited scouts reached for listing ID: ${id}`,
       );

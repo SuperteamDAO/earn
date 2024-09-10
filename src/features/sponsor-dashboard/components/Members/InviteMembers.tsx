@@ -21,9 +21,11 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { AiOutlineSend } from 'react-icons/ai';
+import { toast } from 'sonner';
 
 interface Props {
   isOpen: boolean;
@@ -39,34 +41,37 @@ const validateEmail = (email: string) => {
 };
 
 export function InviteMembers({ isOpen, onClose }: Props) {
-  const [email, setEmail] = useState<string>();
+  const [email, setEmail] = useState<string>('');
   const [memberType, setMemberType] = useState<string>('MEMBER');
-  const [isInviting, setIsInviting] = useState(false);
-  const [isInviteSuccess, setIsInviteSuccess] = useState(false);
-  const [isInviteError, setIsInviteError] = useState(false);
 
-  const handleInput = (emailString: string) => {
-    setIsInviteError(false);
-    const isEmail = validateEmail(emailString);
-    if (isEmail) {
-      setEmail(emailString);
-    }
-  };
-
-  const sendInvites = async () => {
-    setIsInviting(true);
-    setIsInviteError(false);
-    try {
-      await axios.post('/api/member-invites/send/', {
+  const inviteMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axios.post('/api/member-invites/send/', {
         email,
         memberType,
       });
-      setIsInviteSuccess(true);
-      setIsInviting(false);
-    } catch (e) {
-      setIsInviteError(true);
-      setIsInviting(false);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success('Invite sent successfully');
+    },
+    onError: (error) => {
+      console.error('Invite error:', error);
+      toast.error('Failed to send invite. Please try again.');
+    },
+  });
+
+  const handleInput = (emailString: string) => {
+    const isEmail = validateEmail(emailString);
+    if (isEmail) {
+      setEmail(emailString);
+    } else {
+      setEmail('');
     }
+  };
+
+  const sendInvites = () => {
+    inviteMutation.mutate();
   };
 
   return (
@@ -75,7 +80,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
       <ModalContent>
         <ModalHeader>Invite Member</ModalHeader>
         <ModalCloseButton />
-        {isInviteSuccess ? (
+        {inviteMutation.isSuccess ? (
           <>
             <ModalBody>
               <Alert
@@ -107,7 +112,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
         ) : (
           <>
             <ModalBody>
-              <FormControl isInvalid={isInviteError}>
+              <FormControl isInvalid={inviteMutation.isError}>
                 <FormLabel mb={0}>Add Email Address</FormLabel>
                 <Input
                   color="brand.slate.500"
@@ -174,10 +179,10 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               <Button
                 colorScheme="blue"
                 isDisabled={!email}
-                isLoading={isInviting}
+                isLoading={inviteMutation.isPending}
                 leftIcon={<AiOutlineSend />}
                 loadingText="Inviting..."
-                onClick={() => sendInvites()}
+                onClick={sendInvites}
               >
                 Send Invite
               </Button>

@@ -11,8 +11,10 @@ import {
   MenuItem,
   MenuList,
 } from '@chakra-ui/react';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react';
+import { toast } from 'sonner';
 
 import { skillSubSkillMap } from '@/interface/skills';
 
@@ -40,19 +42,30 @@ export const FilterSection = ({
     setCurrentPage(1);
   };
 
-  const [isExporting, setIsExporting] = useState(false);
-  const exportUserCsv = async () => {
-    setIsExporting(true);
-    try {
-      const exportURL = await axios.get(
+  const exportMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axios.get(
         `/api/sponsor-dashboard/local-profiles/export/`,
       );
-      const url = exportURL?.data?.url || '';
-      window.open(url, '_blank');
-      setIsExporting(false);
-    } catch (e) {
-      setIsExporting(false);
-    }
+      return response.data;
+    },
+    onSuccess: (data) => {
+      const url = data?.url || '';
+      if (url) {
+        window.open(url, '_blank');
+        toast.success('CSV exported successfully');
+      } else {
+        toast.error('Export URL is empty');
+      }
+    },
+    onError: (error) => {
+      console.error('Export error:', error);
+      toast.error('Failed to export CSV. Please try again.');
+    },
+  });
+
+  const exportUserCsv = () => {
+    exportMutation.mutate();
   };
 
   return (
@@ -128,7 +141,7 @@ export const FilterSection = ({
         fontWeight={500}
         borderWidth={'1px'}
         borderColor={'brand.slate.300'}
-        isLoading={isExporting}
+        isLoading={exportMutation.isPending}
         leftIcon={<DownloadIcon />}
         loadingText={'Exporting...'}
         onClick={() => exportUserCsv()}

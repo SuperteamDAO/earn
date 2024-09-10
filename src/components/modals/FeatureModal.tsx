@@ -30,13 +30,13 @@ export const FeatureModal = ({
   const updateUser = useUpdateUser();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: latestActiveSlug } = useQuery(
-    latestActiveSlugQuery(
+  const { data: latestActiveSlug } = useQuery({
+    ...latestActiveSlugQuery,
+    enabled:
       !!user?.currentSponsorId &&
-        user.featureModalShown === false &&
-        (isSponsorsRoute || !router.pathname.includes('dashboard')),
-    ),
-  );
+      user.featureModalShown === false &&
+      (isSponsorsRoute || !router.pathname.includes('dashboard')),
+  });
 
   useEffect(() => {
     const shouldShowModal = async () => {

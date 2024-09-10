@@ -15,6 +15,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
+import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import React, {
   type Dispatch,
@@ -28,16 +29,13 @@ import { EarnAvatar } from '@/features/talent';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { getRankLabels } from '@/utils/rank';
 
+import { selectedSubmissionAtom } from '../..';
 import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils';
 
 interface Props {
   submissions: SubmissionWithUser[];
   setSearchText: Dispatch<SetStateAction<string>>;
-  selectedSubmission: SubmissionWithUser | undefined;
-  setSelectedSubmission: Dispatch<
-    SetStateAction<SubmissionWithUser | undefined>
-  >;
   type?: string;
   filterLabel: SubmissionLabels | 'Winner' | undefined;
   setFilterLabel: Dispatch<
@@ -48,12 +46,14 @@ interface Props {
 export const SubmissionList = ({
   submissions,
   setSearchText,
-  selectedSubmission,
-  setSelectedSubmission,
   type,
   filterLabel,
   setFilterLabel,
 }: Props) => {
+  const [selectedSubmission, setSelectedSubmission] = useAtom(
+    selectedSubmissionAtom,
+  );
+
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
   useEffect(() => {

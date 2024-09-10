@@ -16,10 +16,12 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { BiPlus } from 'react-icons/bi';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 interface RecordPaymentModalProps {
@@ -65,20 +67,19 @@ export const RecordPaymentModal = ({
   token,
   onPaymentRecorded,
 }: RecordPaymentModalProps) => {
-  const [loading, setLoading] = useState<boolean>(false);
   const maxAmount = approvedAmount - totalPaid;
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<PaymentFormInputs>({
     resolver: zodResolver(paymentSchema(maxAmount, token)),
   });
 
-  const addPayment = async (data: PaymentFormInputs) => {
-    setLoading(true);
-    try {
+  const addPaymentMutation = useMutation({
+    mutationFn: async (data: PaymentFormInputs) => {
       const response = await axios.post(
         `/api/sponsor-dashboard/grants/add-tranche`,
         {
@@ -87,15 +88,22 @@ export const RecordPaymentModal = ({
           txId: data.transactionLink,
         },
       );
-
-      const updatedApplication = response.data;
+      return response.data;
+    },
+    onSuccess: (updatedApplication) => {
       onPaymentRecorded(updatedApplication);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
+      toast.success('Payment recorded successfully');
+      reset();
       recordPaymentOnClose();
-    }
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error('Error recording payment. Please try again.');
+    },
+  });
+
+  const onSubmit = (data: PaymentFormInputs) => {
+    addPaymentMutation.mutate(data);
   };
 
   return (
@@ -108,7 +116,7 @@ export const RecordPaymentModal = ({
         <ModalCloseButton />
         <Divider />
         <ModalBody fontWeight={500}>
-          <form onSubmit={handleSubmit(addPayment)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl isInvalid={!!errors.amount}>
               <FormLabel color="brand.slate.500" fontSize={'0.95rem'}>
                 Amount
@@ -146,9 +154,9 @@ export const RecordPaymentModal = ({
             <Button
               w="full"
               my={6}
-              isLoading={loading}
+              isLoading={addPaymentMutation.isPending}
               leftIcon={
-                loading ? (
+                addPaymentMutation.isPending ? (
                   <Spinner color="white" size="sm" />
                 ) : (
                   <BiPlus color="white" size="18px" />

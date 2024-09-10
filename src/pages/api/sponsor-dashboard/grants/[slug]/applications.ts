@@ -15,7 +15,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
   const slug = params.slug as string;
   const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
-  const take = params.take ? parseInt(params.take as string, 10) : 15;
+  const take = params.take ? parseInt(params.take as string, 10) : 20;
   const searchText = params.searchText as string;
 
   const whereSearch = searchText
@@ -97,9 +97,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (!applications || applications.length === 0) {
       logger.info(`No submissions found for slug: ${slug}`);
-      return res.status(404).json({
-        message: `Submissions with slug=${slug} not found.`,
-      });
+      // return res.status(404).json({
+      //   message: `Submissions with slug=${slug} not found.`,
+      // });
     }
 
     logger.info(

@@ -200,7 +200,7 @@ function LabelOrAction({
         <Text color="brand.slate.500" fontSize={'medium'}>
           {nthLabelGenerator(index + 1)}
           {index + 1 !== index + maxBonusSpots && (
-            <>- {nthLabelGenerator(index + maxBonusSpots)}</>
+            <> - {nthLabelGenerator(index + maxBonusSpots)}</>
           )}
           {needsCollapse && (
             <Button

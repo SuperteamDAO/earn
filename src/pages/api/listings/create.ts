@@ -8,6 +8,7 @@ import {
 } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { cleanSkills } from '@/utils/cleanSkills';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -60,7 +61,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (description) {
       language = franc(description);
       // both 'eng' and 'sco' are english listings
+    } else {
+      language = 'eng';
     }
+
+    const correctedSkills = cleanSkills(skills);
 
     let usdValue = 0;
     if (isPublished && publishedAt) {
@@ -87,7 +92,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       usdValue,
       publishedAt,
       pocId,
-      skills,
+      skills: correctedSkills,
       slug,
       deadline,
       templateId,

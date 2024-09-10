@@ -38,7 +38,7 @@ export const SidebarBanner = () => {
         lineHeight={'1.1875rem'}
       >
         Submit to any of the Radar Side Tracks on Earn, and stand to win from a
-        pool of $150k+. Deadline for submissions is October 9, 2024 (UTC).
+        pool of $250k+. Deadline for submissions is October 9, 2024 (UTC).
       </Text>
       <Button
         as={NextLink}

@@ -1,10 +1,13 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
+import { ArrowForwardIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
+import { Tooltip } from '@/components/shared/responsive-tooltip';
+import { type User } from '@/interface/user';
+import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '../types';
@@ -19,6 +22,7 @@ interface TabProps {
 interface ListingTabsProps {
   isListingsLoading: boolean;
   bounties: Listing[] | undefined;
+  forYou?: Listing[] | undefined;
   take?: number;
   emoji: string;
   title: string;
@@ -27,13 +31,16 @@ interface ListingTabsProps {
 }
 
 interface ContentProps {
+  title: string;
   bounties?: Listing[];
+  forYou?: Listing[];
   take?: number;
   isListingsLoading: boolean;
   filterFunction: (bounty: Listing) => boolean;
   sortCompareFunction?: ((a: Listing, b: Listing) => number) | undefined;
   emptyTitle: string;
   emptyMessage: string;
+  user: User | null;
 }
 
 const EmptySection = dynamic(
@@ -43,49 +50,120 @@ const EmptySection = dynamic(
 );
 
 const generateTabContent = ({
+  title,
   bounties,
+  forYou,
   take,
   isListingsLoading,
   filterFunction,
   sortCompareFunction,
   emptyTitle,
   emptyMessage,
-}: ContentProps) => (
-  <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
-    {isListingsLoading ? (
-      Array.from({ length: 8 }, (_, index) => (
-        <ListingCardSkeleton key={index} />
-      ))
-    ) : bounties?.filter(filterFunction).length ? (
-      bounties
-        .filter(filterFunction)
-        .sort(sortCompareFunction ? sortCompareFunction : () => 0)
-        .slice(0, take ? take + 1 : undefined)
-        .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
-    ) : (
-      <Flex align="center" justify="center" mt={8}>
-        <EmptySection title={emptyTitle} message={emptyMessage} />
+  user,
+}: ContentProps) => {
+  if (!!(!user || !forYou || forYou.length === 0))
+    return (
+      <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
+        {isListingsLoading ? (
+          Array.from({ length: 8 }, (_, index) => (
+            <ListingCardSkeleton key={index} />
+          ))
+        ) : !!bounties?.filter(filterFunction).length ? (
+          bounties
+            .filter(filterFunction)
+            .sort(sortCompareFunction ? sortCompareFunction : () => 0)
+            .slice(0, take ? take + 1 : undefined)
+            .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
+        ) : (
+          <Flex align="center" justify="center" mt={8}>
+            <EmptySection title={emptyTitle} message={emptyMessage} />
+          </Flex>
+        )}
       </Flex>
-    )}
-  </Flex>
-);
+    );
+  return (
+    <Box>
+      {!!forYou?.filter(filterFunction).length && (
+        <Box>
+          <Flex
+            align="center"
+            gap={3}
+            w="fit-content"
+            mb={2}
+            color="gray.900"
+            fontWeight={600}
+          >
+            <Text flex={1}>For You</Text>
+            <Box color="gray.500">
+              <Tooltip
+                label={`List of top opportunities curated for you, based on your skills, listing subscriptions and location.`}
+              >
+                <InfoOutlineIcon w={3} h={3} />
+              </Tooltip>
+            </Box>
+          </Flex>
+          <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
+            {isListingsLoading
+              ? Array.from({ length: 8 }, (_, index) => (
+                  <ListingCardSkeleton key={index} />
+                ))
+              : forYou
+                  .filter(filterFunction)
+                  .sort(sortCompareFunction ? sortCompareFunction : () => 0)
+                  .slice(0, take ? take + 1 : undefined)
+                  .map((bounty) => (
+                    <ListingCard key={bounty.id} bounty={bounty} />
+                  ))}
+          </Flex>
+        </Box>
+      )}
+      <Box mt={3} pt={4} borderColor="brand.slate.200" borderTopWidth={'1px'}>
+        <Text mb={2} color="gray.900" fontWeight={600}>
+          All {title}
+        </Text>
+        <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
+          {isListingsLoading ? (
+            Array.from({ length: 8 }, (_, index) => (
+              <ListingCardSkeleton key={index} />
+            ))
+          ) : !!bounties?.filter(filterFunction).length ? (
+            bounties
+              .filter(filterFunction)
+              .sort(sortCompareFunction ? sortCompareFunction : () => 0)
+              .slice(0, take ? take + 1 : undefined)
+              .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
+          ) : (
+            <Flex align="center" justify="center" mt={8}>
+              <EmptySection title={emptyTitle} message={emptyMessage} />
+            </Flex>
+          )}
+        </Flex>
+      </Box>
+    </Box>
+  );
+};
 
 export const ListingTabs = ({
   isListingsLoading,
   bounties,
+  forYou,
   take,
   emoji,
   title,
   viewAllLink,
   showViewAll = false,
 }: ListingTabsProps) => {
+  const { user } = useUser();
   const tabs: TabProps[] = [
     {
       id: 'tab1',
       title: 'Open',
       posthog: 'open_listings',
       content: generateTabContent({
+        user,
+        title: 'Open',
         bounties: bounties,
+        forYou: forYou,
         take,
         isListingsLoading,
         filterFunction: (bounty) =>
@@ -102,7 +180,10 @@ export const ListingTabs = ({
       title: 'In Review',
       posthog: 'in review_listing',
       content: generateTabContent({
+        user,
+        title: 'In Review',
         bounties: bounties,
+        forYou: forYou,
         take,
         isListingsLoading,
         filterFunction: (bounty) =>
@@ -119,7 +200,10 @@ export const ListingTabs = ({
       title: 'Completed',
       posthog: 'completed_listing',
       content: generateTabContent({
+        user,
+        title: 'Completed',
         bounties: bounties,
+        forYou: forYou,
         take,
         isListingsLoading,
         filterFunction: (bounty) => bounty.isWinnersAnnounced || false,

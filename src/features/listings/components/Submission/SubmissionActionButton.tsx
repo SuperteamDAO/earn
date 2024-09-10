@@ -1,4 +1,4 @@
-import { Button, Flex, Tooltip, useDisclosure } from '@chakra-ui/react';
+import { Button, Flex, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import Image from 'next/image';
@@ -7,6 +7,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
 
+import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { SurveyModal } from '@/components/shared/Survey';
 import { AuthWrapper } from '@/features/auth';
 import {
@@ -42,10 +43,17 @@ export const SubmissionActionButton = ({ listing }: Props) => {
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
   const { user } = useUser();
 
+  const { status: authStatus } = useSession();
+
+  const isAuthenticated = authStatus === 'authenticated';
+
   const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
 
   const { data: submissionStatus, isLoading: isUserSubmissionLoading } =
-    useQuery(userSubmissionQuery(id!, user?.id));
+    useQuery({
+      ...userSubmissionQuery(id!, user?.id),
+      enabled: isAuthenticated,
+    });
 
   const isSubmitted = submissionStatus?.isSubmitted ?? false;
 
@@ -121,6 +129,7 @@ export const SubmissionActionButton = ({ listing }: Props) => {
 
     default:
       buttonText = isProject ? 'Apply Now' : 'Submit Now';
+      if (listing.compensationType === 'variable') buttonText = 'Send Quote';
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
         pastDeadline ||
@@ -147,10 +156,6 @@ export const SubmissionActionButton = ({ listing }: Props) => {
   } = useDisclosure();
 
   const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
-
-  const { status: authStatus } = useSession();
-
-  const isAuthenticated = authStatus === 'authenticated';
 
   return (
     <>
@@ -215,7 +220,6 @@ export const SubmissionActionButton = ({ listing }: Props) => {
       />
       <Tooltip
         bg="brand.slate.500"
-        hasArrow
         isDisabled={
           hasHackathonStarted &&
           (!user?.id ||
@@ -252,9 +256,7 @@ export const SubmissionActionButton = ({ listing }: Props) => {
               textColor={buttonTextColor}
               bg={buttonBG}
               _hover={{ bg: buttonBG }}
-              _disabled={{
-                opacity: { base: '96%', md: '70%' },
-              }}
+              _disabled={{ opacity: '70%' }}
               isDisabled={isBtnDisabled}
               isLoading={isUserSubmissionLoading}
               loadingText={btnLoadingText}

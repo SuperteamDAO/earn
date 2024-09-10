@@ -1,7 +1,7 @@
 import { Logger } from 'tslog';
 
 const logger = new Logger({
-  minLevel: process.env.VERCEL_ENV === 'production' ? 2 : 4,
+  minLevel: process.env.VERCEL_ENV === 'production' ? 2 : 9999999,
   prettyLogTimeZone: 'UTC',
   prettyErrorStackTemplate:
     '  • {{fileName}}\t{{method}}\n\t{{filePathWithLine}}',

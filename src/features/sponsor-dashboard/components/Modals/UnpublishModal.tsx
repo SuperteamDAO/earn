@@ -10,17 +10,18 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React from 'react';
+import { toast } from 'sonner';
 
 import { type ListingWithSubmissions } from '@/features/listings';
+import { useUser } from '@/store/user';
 
 interface UnpublishModalProps {
   unpublishIsOpen: boolean;
   unpublishOnClose: () => void;
   listingId: string | undefined;
-  listings?: ListingWithSubmissions[];
-  setListings?: (bounties: ListingWithSubmissions[]) => void;
   listingType: string | undefined;
 }
 
@@ -28,16 +29,14 @@ export const UnpublishModal = ({
   unpublishIsOpen,
   unpublishOnClose,
   listingId,
-  listings,
-  setListings,
   listingType,
 }: UnpublishModalProps) => {
-  const [isChangingStatus, setIsChangingStatus] = useState(false);
+  const queryClient = useQueryClient();
+  const { user } = useUser();
 
-  const changeBountyStatus = async (status: boolean) => {
-    setIsChangingStatus(true);
-    try {
-      let result: any;
+  const updateMutation = useMutation({
+    mutationFn: async (status: boolean) => {
+      let result;
       if (listingType === 'grant') {
         result = await axios.post(`/api/grants/update/${listingId}/`, {
           isPublished: status,
@@ -47,24 +46,33 @@ export const UnpublishModal = ({
           isPublished: status,
         });
       }
-
-      if (listings && setListings) {
-        const changedBountyIndex = listings.findIndex(
-          (b) => b.id === result.data.id,
-        );
-        const newBounties = listings.map((listing, index) =>
-          changedBountyIndex === index
-            ? { ...listing, isPublished: result.data.isPublished }
-            : listing,
-        );
-        setListings(newBounties);
-      }
+      return result.data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData<ListingWithSubmissions[]>(
+        ['dashboard', user?.currentSponsorId],
+        (oldData) =>
+          oldData
+            ? oldData.map((listing) =>
+                listing.id === data.id
+                  ? { ...listing, isPublished: data.isPublished }
+                  : listing,
+              )
+            : [],
+      );
+      toast.success('Listing unpublished successfully');
       unpublishOnClose();
-      setIsChangingStatus(false);
-    } catch (e) {
-      setIsChangingStatus(false);
-    }
+    },
+    onError: (error) => {
+      console.error('Unpublish error:', error);
+      toast.error('Failed to unpublish listing. Please try again.');
+    },
+  });
+
+  const changeBountyStatus = (status: boolean) => {
+    updateMutation.mutate(status);
   };
+
   return (
     <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
       <ModalOverlay />
@@ -77,13 +85,12 @@ export const UnpublishModal = ({
             you sure you want to unpublish this listing?
           </Text>
         </ModalBody>
-
         <ModalFooter>
           <Button mr={4} onClick={unpublishOnClose} variant="ghost">
             Close
           </Button>
           <Button
-            isLoading={isChangingStatus}
+            isLoading={updateMutation.isPending}
             leftIcon={<ViewOffIcon />}
             loadingText="Unpublishing..."
             onClick={() => changeBountyStatus(false)}
