@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 
 import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
-import { ogImageQuery } from '@/queries/og-image';
+import { ogImageQuery } from '@/queries/og';
 import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
@@ -51,7 +51,7 @@ export const SubmissionCard = ({
   const { user } = useUser();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { data: image } = useQuery(ogImageQuery(link));
+  const { data: ogData } = useQuery(ogImageQuery(link));
   const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsLoading(true);
@@ -121,7 +121,7 @@ export const SubmissionCard = ({
           objectFit={'contain'}
           alt={'card'}
           rounded={'sm'}
-          src={image || '/assets/bg/og.svg'}
+          src={ogData?.images?.[0]?.url || '/assets/bg/og.svg'}
         />
       </LinkOverlay>
       <HStack align={'center'} gap={4} w={'full'}>

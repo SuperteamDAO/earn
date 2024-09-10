@@ -27,10 +27,10 @@ export default async function handler(
     logger.debug(`Unfurling URL: ${url}`);
     const metadata = await unfurl(url);
 
-    const result = metadata.open_graph.images?.[0]?.url;
+    // const result = metadata.open_graph.images?.[0]?.url;
 
     logger.info(`Successfully unfurled URL: ${url}`);
-    return res.status(200).json(result);
+    return res.status(200).json({ result: metadata.open_graph });
   } catch (error: any) {
     logger.warn(`Error unfurling URL: ${url}`, safeStringify(error));
     return res

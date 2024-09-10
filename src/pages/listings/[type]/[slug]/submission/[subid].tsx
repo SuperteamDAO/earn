@@ -1,22 +1,30 @@
 import { HStack } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React from 'react';
 
-import { type Listing, SubmissionPage } from '@/features/listings';
-import type { SubmissionWithUser } from '@/interface/submission';
+import {
+  type Listing,
+  submissionDetailsQuery,
+  SubmissionPage,
+} from '@/features/listings';
 import { type User } from '@/interface/user';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { getURL } from '@/utils/validUrl';
 
 interface BountyDetailsProps {
+  slug: string;
+  subid: string;
   bounty: Listing;
-  submission: SubmissionWithUser;
 }
-const Sumbissions = ({ bounty, submission }: BountyDetailsProps) => {
+const Sumbissions = ({ subid, bounty }: BountyDetailsProps) => {
+  const { data: submission, isLoading: submissionIsLoading } = useQuery(
+    submissionDetailsQuery({ submissionId: subid }),
+  );
   return (
     <ListingPageLayout bounty={bounty}>
-      {bounty && submission && (
+      {bounty && (
         <HStack
           align={['center', 'center', 'start', 'start']}
           justify={['center', 'center', 'space-between', 'space-between']}
@@ -25,6 +33,7 @@ const Sumbissions = ({ bounty, submission }: BountyDetailsProps) => {
           mb={10}
         >
           <SubmissionPage
+            isLoading={submissionIsLoading}
             bounty={bounty}
             submission={submission || undefined}
             user={submission?.user as User}
@@ -36,28 +45,27 @@ const Sumbissions = ({ bounty, submission }: BountyDetailsProps) => {
   );
 };
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug, subid } = context.query;
+  const { slug, subid, type } = context.query;
 
   let bountyData;
   try {
-    const bountyDetails = await axios.post(
-      `${getURL()}api/submission/details`,
+    const bountyDetails = await axios.get(
+      `${getURL()}api/listings/details/${slug}`,
       {
-        slug,
-        submissionId: subid,
+        params: { type },
       },
     );
     bountyData = bountyDetails.data;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     bountyData = null;
   }
 
   return {
     props: {
       slug,
-      bounty: bountyData.bounty,
-      submission: bountyData.submission,
+      subid,
+      bounty: bountyData,
     },
   };
 };
