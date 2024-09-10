@@ -667,6 +667,8 @@ export const CommunityList: string[] = [
   'Rise In',
   'Turbin3',
   'Christex Foundation',
+  'Forma',
+  'DevForce99',
   'Other',
 ];
 
