@@ -291,7 +291,6 @@ model User {
   updatedAt          DateTime             @updatedAt
   isVerified         Boolean              @default(false)
   role               String               @default("USER")
-  totalEarnedInUSD   Int                  @default(0)
   isTalentFilled     Boolean              @default(false)
   interests          String?              @db.Text
   bio                String?              @db.Text
