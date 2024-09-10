@@ -489,7 +489,7 @@ export const DescriptionBuilder = ({
               <MdOutlineFormatUnderlined />
             </ToolbarButton>
             <ToolbarButton
-              isActive={editor?.isActive('underline')}
+              isActive={editor?.isActive('image')}
               onClick={addImage}
             >
               <MdOutlineAddPhotoAlternate />
