@@ -38,7 +38,7 @@ interface FeedCardContainerProps {
   id: string;
   like: any;
   commentLink?: string;
-  cardType: 'submission' | 'pow';
+  cardType: 'submission' | 'pow' | 'grant-application';
   link: string;
   userId: string;
 }

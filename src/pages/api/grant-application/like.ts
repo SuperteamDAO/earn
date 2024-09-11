@@ -6,7 +6,10 @@ import logger from '@/lib/logger';
 import { updateLike } from '@/services/likeService';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function grantApplication(
+  req: NextApiRequestWithUser,
+  res: NextApiResponse,
+) {
   try {
     const userId = req.userId;
     const { id }: { id: string } = req.body;
@@ -14,23 +17,26 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     if (!id) {
       return res.status(400).json({
-        message: 'Submission ID is required.',
+        message: 'Grant ID is required.',
       });
     }
 
-    const { updatedData: updatedSubmission, likesIncremented } =
-      await updateLike('submission', id, userId!);
+    const { updatedData: updatedGrant, likesIncremented } = await updateLike(
+      'grantApplication',
+      id,
+      userId!,
+    );
 
     if (likesIncremented) {
       sendEmailNotification({
-        type: 'submissionLike',
+        type: 'applicationLike',
         id,
-        userId: updatedSubmission?.userId,
+        userId: updatedGrant?.userId,
         triggeredBy: userId,
       });
     }
 
-    return res.status(200).json(updatedSubmission);
+    return res.status(200).json(updatedGrant);
   } catch (error: any) {
     logger.error(
       `Error updating submission like for user=${req.userId}: ${error.message}`,
@@ -42,4 +48,4 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(submission);
+export default withAuth(grantApplication);
