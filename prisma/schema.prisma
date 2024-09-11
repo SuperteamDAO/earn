@@ -241,6 +241,7 @@ model Sponsors {
   isActive     Boolean        @default(true)
   entityName   String?
   isVerified   Boolean        @default(false)
+  isCaution    Boolean        @default(false)
   Hackathon    Hackathon?
   UserSponsors UserSponsors[]
   Bounties     Bounties[]
@@ -523,6 +524,7 @@ enum EmailType {
   ROLLING_15_DAYS
   ROLLING_30_DAYS
   NEW_LISTING
+  ROLLING_UNPUBLISH
 }
 
 enum Role {
