@@ -156,9 +156,11 @@ export const ImagePicker = ({
         accept="image/jpeg, image/png, image/webp"
         hidden
         isRequired={false}
-        onChange={(e) =>
-          handleFileChange(e.target.files ? e.target.files[0] : null)
-        }
+        onChange={(e) => {
+          const file = e.target.files ? e.target.files[0] : null;
+          handleFileChange(file);
+          e.target.value = '';
+        }}
         type="file"
       />
       <Box
