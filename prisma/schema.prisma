@@ -606,6 +606,7 @@ enum Regions {
   UKRAINE
   ARGENTINA
   USA
+  SPAIN
 }
 
 enum CompensationType {
