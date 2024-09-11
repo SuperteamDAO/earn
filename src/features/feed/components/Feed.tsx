@@ -12,6 +12,7 @@ import {
 } from '@/features/feed';
 import { Home } from '@/layouts/Home';
 
+import { GrantCard } from './grantCard';
 import { HomeIcon, LeaderboardIcon, WinnersIcon } from './icons';
 
 export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
@@ -189,22 +190,35 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                 ))
               ) : feedItems.length > 0 ? (
                 <>
-                  {feedItems.map((item, i) => {
-                    if (item.type === 'Submission') {
-                      return (
-                        <SubmissionCard
-                          key={i}
-                          sub={item as any}
-                          type="activity"
-                        />
-                      );
+                  {feedItems.map((item, index) => {
+                    switch (item.type) {
+                      case 'Submission':
+                        return (
+                          <SubmissionCard
+                            key={index}
+                            sub={item as any}
+                            type="activity"
+                          />
+                        );
+                      case 'PoW':
+                        return (
+                          <PowCard
+                            key={index}
+                            pow={item as any}
+                            type="activity"
+                          />
+                        );
+                      case 'Grant':
+                        return (
+                          <GrantCard
+                            type="activity"
+                            grant={item as any}
+                            key={index}
+                          />
+                        );
+                      default:
+                        return null;
                     }
-                    if (item.type === 'PoW') {
-                      return (
-                        <PowCard key={i} pow={item as any} type="activity" />
-                      );
-                    }
-                    return null;
                   })}
                   {isFetchingNextPage && <FeedCardContainerSkeleton />}
                   <div ref={ref} style={{ height: '10px' }} />

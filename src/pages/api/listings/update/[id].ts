@@ -55,6 +55,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   try {
     const userSponsorId = req.userSponsorId;
+    const userId = req.userId;
 
     const { error, listing } = await checkListingSponsorAuth(
       userSponsorId,
@@ -213,7 +214,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const deadlineChanged =
       listing.deadline?.toString() !== result.deadline?.toString();
-    if (deadlineChanged && result.isPublished) {
+    if (deadlineChanged && result.isPublished && userId) {
       const dayjsDeadline = dayjs(result.deadline);
       logger.debug(
         `Creating comment for deadline extension for listing ID: ${result.id}`,
@@ -222,7 +223,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         data: {
           message: `The deadline for this listing has been updated to ${dayjsDeadline.format('h:mm A, MMMM D, YYYY (UTC)')}`,
           listingId: result.id,
-          authorId: result.pocId,
+          authorId: userId,
           type: 'DEADLINE_EXTENSION',
         },
       });
