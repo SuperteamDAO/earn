@@ -393,7 +393,9 @@ const CreateSponsor = () => {
                     closeMenuOnSelect={false}
                     components={animatedComponents}
                     isMulti
-                    options={IndustryList}
+                    options={IndustryList.map((elm: string) => {
+                      return { label: elm, value: elm };
+                    })}
                     styles={{
                       control: (baseStyles) => ({
                         ...baseStyles,

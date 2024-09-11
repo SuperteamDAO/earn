@@ -231,7 +231,7 @@ export const SubmissionActionButton = ({ listing }: Props) => {
           !isUserEligibleByRegion
             ? regionTooltipLabel
             : !hasHackathonStarted
-              ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMM YY')}`
+              ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
               : ''
         }
         rounded="md"
