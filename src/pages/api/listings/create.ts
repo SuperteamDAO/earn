@@ -85,14 +85,27 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     let isVerifying = false;
     if (isPublished) {
       isVerifying =
-        (await prisma.bounties.count({
-          where: {
-            sponsorId: userSponsorId,
-            isArchived: false,
-            isPublished: true,
-            isActive: true,
-          },
-        })) === 0;
+        (
+          await prisma.sponsors.findUnique({
+            where: {
+              id: userSponsorId,
+            },
+            select: {
+              isCaution: true,
+            },
+          })
+        )?.isCaution || false;
+      if (!isVerifying) {
+        isVerifying =
+          (await prisma.bounties.count({
+            where: {
+              sponsorId: userSponsorId,
+              isArchived: false,
+              isPublished: true,
+              isActive: true,
+            },
+          })) === 0;
+      }
     }
 
     if (isVerifying) {
