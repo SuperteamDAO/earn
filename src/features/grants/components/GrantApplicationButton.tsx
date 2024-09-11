@@ -1,14 +1,12 @@
 import { WarningIcon } from '@chakra-ui/icons';
 import { Button, Flex, Text, Tooltip, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import React from 'react';
 
 import { AuthWrapper } from '@/features/auth';
 import {
   getRegionTooltipLabel,
   userRegionEligibilty,
-  WarningModal,
 } from '@/features/listings';
 import { useUser } from '@/store/user';
 
@@ -25,9 +23,6 @@ export const GrantApplicationButton = ({
 }: GrantApplicationButtonProps) => {
   const { user } = useUser();
   const { region, id, link, isNative } = grant;
-
-  const { status: authStatus } = useSession();
-  const isAuthenticated = authStatus === 'authenticated';
 
   const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
 
@@ -58,25 +53,15 @@ export const GrantApplicationButton = ({
       btnLoadingText = 'Checking Application..';
   }
 
-  const {
-    isOpen: warningIsOpen,
-    onOpen: warningOnOpen,
-    onClose: warningOnClose,
-  } = useDisclosure();
-
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
   const handleSubmit = () => {
-    if (isAuthenticated) {
-      if (!user?.isTalentFilled) {
-        warningOnOpen();
-      } else if (link && !isNative) {
-        window.open(link, '_blank', 'noopener,noreferrer');
-      } else {
-        onOpen();
-      }
+    if (link && !isNative) {
+      window.open(link, '_blank', 'noopener,noreferrer');
+    } else {
+      onOpen();
     }
   };
 
@@ -87,18 +72,6 @@ export const GrantApplicationButton = ({
           onClose={onClose}
           isOpen={isOpen}
           grant={grant}
-        />
-      )}
-      {warningIsOpen && (
-        <WarningModal
-          isOpen={warningIsOpen}
-          onClose={warningOnClose}
-          title={'Complete your profile'}
-          bodyText={
-            'Please complete your profile before submitting to a bounty.'
-          }
-          primaryCtaText={'Complete Profile'}
-          primaryCtaLink={'/new/talent'}
         />
       )}
       <Tooltip
@@ -122,7 +95,13 @@ export const GrantApplicationButton = ({
           bg="white"
           transform={{ base: 'translateX(-50%)', md: 'none' }}
         >
-          <AuthWrapper style={{ w: 'full', direction: 'column' }}>
+          <AuthWrapper
+            showCompleteProfileModal
+            completeProfileModalBodyText={
+              'Please complete your profile before applying for a grant.'
+            }
+            style={{ w: 'full', direction: 'column' }}
+          >
             <Button
               w={'full'}
               mt={grant?.link && !grant?.isNative ? 4 : 0}
