@@ -3,9 +3,9 @@ import { useAtomValue } from 'jotai';
 import NextLink from 'next/link';
 import React from 'react';
 
+import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { type Listing } from '@/features/listings';
 import { getURLSanitized } from '@/utils/getURLSanitized';
-import { isLink } from '@/utils/isLink';
 
 import { selectedSubmissionAtom } from '../..';
 import { Notes } from './Notes';
@@ -119,18 +119,7 @@ export const Details = ({ bounty }: Props) => {
                 >
                   {answer.question}
                 </Text>
-                {isLink(answer.answer) ? (
-                  <Link
-                    as={NextLink}
-                    color="brand.purple"
-                    href={getURLSanitized(answer.answer || '#')}
-                    isExternal
-                  >
-                    {answer.answer ? getURLSanitized(answer.answer) : '-'}
-                  </Link>
-                ) : (
-                  <Text color="brand.slate.700">{answer.answer || '-'}</Text>
-                )}
+                <LinkTextParser text={answer.answer} />
               </Box>
             ),
           )}
@@ -144,9 +133,7 @@ export const Details = ({ bounty }: Props) => {
           >
             Anything Else
           </Text>
-          <Text color="brand.slate.700">
-            {selectedSubmission?.otherInfo || '-'}
-          </Text>
+          <LinkTextParser text={selectedSubmission?.otherInfo || ''} />
         </Box>
       </Flex>
       <Flex w="25%" p={4}>

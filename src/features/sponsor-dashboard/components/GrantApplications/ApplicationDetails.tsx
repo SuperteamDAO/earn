@@ -25,6 +25,7 @@ import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
+import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
 import { Discord, EarnAvatar, Telegram, Twitter } from '@/features/talent';
@@ -68,7 +69,7 @@ const InfoBox = ({
     >
       {label}
     </Text>
-    <Text color="brand.slate.700">{content ? content : '-'}</Text>
+    <LinkTextParser text={content || ''} />
   </Box>
 );
 
