@@ -139,6 +139,23 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       data: finalData,
     });
 
+    if (isVerifying) {
+      try {
+        if (!process.env.EARNCOGNITO_URL) {
+          throw new Error('ENV EARNCOGNITO_URL not provided');
+        }
+        await axios.post(
+          `${process.env.EARNCOGNITO_URL}/discord/verify-listing/initiate`,
+          {
+            listingId: result.id,
+          },
+        );
+      } catch (err) {
+        console.log('Failed to send Verification Message to discord', err);
+        logger.error('Failed to send Verification Message to discord', err);
+      }
+    }
+
     try {
       await axios.post(process.env.DISCORD_LISTINGS_WEBHOOK!, {
         listingId: result?.id,
