@@ -30,6 +30,21 @@ function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug, type } = context.query;
 
+  const redirectToEarnSlugs = [
+    'write-a-twitter-thread-about-airspaces',
+    'twitter-thread-neon-points-program',
+    'video-neon-points-program',
+  ];
+
+  if (redirectToEarnSlugs.includes(slug as string)) {
+    return {
+      redirect: {
+        destination: `https://earn.superteam.fun/listings/${type}/${slug}`,
+        permanent: false,
+      },
+    };
+  }
+
   let bountyData;
   try {
     const bountyDetails = await axios.get(
