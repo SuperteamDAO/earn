@@ -125,7 +125,13 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    result.grants = grants;
+    const grantsWithTotalApplications = grants.map((grant) => ({
+      ...grant,
+      totalApplications:
+        grant._count.GrantApplication + grant.historicalApplications,
+    }));
+
+    result.grants = grantsWithTotalApplications;
 
     logger.info(`Successfully fetched listings for region=${region}`);
     return res.status(200).json(result);

@@ -1,4 +1,4 @@
-import { type Prisma, Regions } from '@prisma/client';
+import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
@@ -70,7 +70,7 @@ export default async function grants(
       }
     }
 
-    const grantQueryOptions: Prisma.GrantsFindManyArgs = {
+    const grants = await prisma.grants.findMany({
       where: {
         id: {
           notIn: excludeIds,
@@ -105,12 +105,16 @@ export default async function grants(
           },
         },
       },
-    };
+    });
 
-    const grants = await prisma.grants.findMany(grantQueryOptions);
+    const grantsWithTotalApplications = grants.map((grant) => ({
+      ...grant,
+      totalApplications:
+        grant._count.GrantApplication + grant.historicalApplications,
+    }));
 
     logger.info(`Fetched ${grants.length} grants successfully`);
-    return res.status(200).json(grants);
+    return res.status(200).json(grantsWithTotalApplications);
   } catch (error: any) {
     logger.error(
       `Error occurred while fetching grants: ${safeStringify(error)}`,

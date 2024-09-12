@@ -194,7 +194,7 @@ export function GrantPageLayout({
                                   ? `$` +
                                     Math.round(
                                       grant?.totalApproved /
-                                        grant?._count.GrantApplication,
+                                        grant?.totalApplications,
                                     )
                                   : '—'}
                               </Text>
@@ -242,7 +242,7 @@ export function GrantPageLayout({
                                 fontSize={{ base: 'lg', md: 'xl' }}
                                 fontWeight={500}
                               >
-                                {grant._count.GrantApplication}
+                                {grant?.totalApplications}
                               </Text>
                             </Flex>
                             <Text

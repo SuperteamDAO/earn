@@ -21,7 +21,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
     maxReward,
     token,
     totalApproved,
-    _count,
+    totalApplications,
   } = grant;
 
   const sponsorLogo = sponsor?.logo
@@ -153,9 +153,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                   >
                     $
                     {formatNumberWithSuffix(
-                      Number(
-                        (totalApproved / _count.GrantApplication).toFixed(2),
-                      ),
+                      Number((totalApproved / totalApplications).toFixed(2)),
                     )}
                     <Text
                       as="span"
@@ -228,7 +226,7 @@ export const GrantCardMobile = ({
     maxReward,
     token,
     totalApproved,
-    _count,
+    totalApplications,
   } = grant;
   const router = useRouter();
 
@@ -341,9 +339,7 @@ export const GrantCardMobile = ({
                     >
                       $
                       {formatNumberWithSuffix(
-                        Number(
-                          (totalApproved / _count.GrantApplication).toFixed(2),
-                        ),
+                        Number((totalApproved / totalApplications).toFixed(2)),
                       )}
                       <Text
                         as="span"
