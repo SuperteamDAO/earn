@@ -43,7 +43,7 @@ interface Grant {
 }
 
 interface GrantWithApplicationCount extends Grant {
-  _count: { GrantApplication: number };
+  totalApplications: number;
 }
 
 export type { Grant, GrantWithApplicationCount };

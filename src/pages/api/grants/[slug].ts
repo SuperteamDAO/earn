@@ -7,7 +7,6 @@ import { safeStringify } from '@/utils/safeStringify';
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
   const slug = params.slug as string;
-
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
   if (!slug) {
@@ -50,8 +49,14 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       });
     }
 
+    const totalApplications =
+      grant._count.GrantApplication + grant.historicalApplications;
+
     logger.info(`Grant details fetched successfully for slug: ${slug}`);
-    return res.status(200).json(grant);
+    return res.status(200).json({
+      ...grant,
+      totalApplications,
+    });
   } catch (error: any) {
     logger.error(
       `Error occurred while fetching grant with slug=${slug}: ${safeStringify(error)}`,

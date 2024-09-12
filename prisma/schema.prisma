@@ -120,38 +120,39 @@ model Comment {
 }
 
 model Grants {
-  id               String             @id @default(uuid())
-  title            String
-  slug             String             @unique
-  description      String?            @db.Text
-  shortDescription String?            @db.VarChar(1000)
-  token            String?
-  minReward        Float?
-  maxReward        Float?
-  totalPaid        Float              @default(0)
-  totalApproved    Float              @default(0)
-  link             String?
-  sponsorId        String
-  pocId            String
-  isPublished      Boolean            @default(false)
-  isFeatured       Boolean            @default(false)
-  isActive         Boolean            @default(true)
-  isArchived       Boolean            @default(false)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  skills           Json?
-  logo             String?
-  region           Regions            @default(GLOBAL)
-  sponsor          Sponsors           @relation(fields: [sponsorId], references: [id])
-  poc              User               @relation(fields: [pocId], references: [id])
-  questions        Json?
-  pocSocials       String?
-  status           GrantStatus        @default(OPEN)
-  GrantApplication GrantApplication[]
-  airtableId       String?
-  avgResponseTime  String?            @default("24h")
-  isNative         Boolean            @default(false)
-  references       Json?
+  id                     String             @id @default(uuid())
+  title                  String
+  slug                   String             @unique
+  description            String?            @db.Text
+  shortDescription       String?            @db.VarChar(1000)
+  token                  String?
+  minReward              Float?
+  maxReward              Float?
+  totalPaid              Float              @default(0)
+  totalApproved          Float              @default(0)
+  historicalApplications Int                @default(0)
+  link                   String?
+  sponsorId              String
+  pocId                  String
+  isPublished            Boolean            @default(false)
+  isFeatured             Boolean            @default(false)
+  isActive               Boolean            @default(true)
+  isArchived             Boolean            @default(false)
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  skills                 Json?
+  logo                   String?
+  region                 Regions            @default(GLOBAL)
+  sponsor                Sponsors           @relation(fields: [sponsorId], references: [id])
+  poc                    User               @relation(fields: [pocId], references: [id])
+  questions              Json?
+  pocSocials             String?
+  status                 GrantStatus        @default(OPEN)
+  GrantApplication       GrantApplication[]
+  airtableId             String?
+  avgResponseTime        String?            @default("24h")
+  isNative               Boolean            @default(false)
+  references             Json?
 
   @@index([id, slug])
   @@index([pocId])
