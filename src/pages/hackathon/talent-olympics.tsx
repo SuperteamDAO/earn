@@ -33,7 +33,6 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import NextImage, { type StaticImageData } from 'next/image';
 import NextLink from 'next/link';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 import Countdown from 'react-countdown';
@@ -46,7 +45,6 @@ import { UserFlag } from '@/components/shared/UserFlag';
 import { tokenList } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import { AuthWrapper } from '@/features/auth';
-import { WarningModal } from '@/features/listings';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -1089,22 +1087,9 @@ const SubscribeHackathon = () => {
 
   const { user } = useUser();
   const posthog = usePostHog();
-  const {
-    isOpen: warningIsOpen,
-    onOpen: warningOnOpen,
-    onClose: warningOnClose,
-  } = useDisclosure();
   const [update, setUpdate] = useState<boolean>(false);
 
-  const { status: authStatus } = useSession();
-  const isAuthenticated = authStatus === 'authenticated';
-
   const handleToggleSubscribe = async () => {
-    if (!isAuthenticated || !user?.isTalentFilled) {
-      warningOnOpen();
-      return;
-    }
-
     setIsSubscribeLoading(true);
     try {
       await axios.post('/api/hackathon/subscribe/toggle', {
@@ -1138,21 +1123,13 @@ const SubscribeHackathon = () => {
 
   return (
     <HStack>
-      {warningIsOpen && (
-        <WarningModal
-          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
-          isOpen={warningIsOpen}
-          onClose={warningOnClose}
-          title={'Complete your profile'}
-          bodyText={
+      <HStack align="start">
+        <AuthWrapper
+          showCompleteProfileModal
+          completeProfileModalBodyText={
             'Please complete your profile before subscribing to a hackathon.'
           }
-          primaryCtaText={'Complete Profile'}
-          primaryCtaLink={'/new/talent'}
-        />
-      )}
-      <HStack align="start">
-        <AuthWrapper>
+        >
           <IconButton
             className="ph-no-capture"
             color={

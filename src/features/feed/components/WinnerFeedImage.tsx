@@ -8,10 +8,12 @@ export const WinnerFeedImage = ({
   token,
   winnerPosition,
   rewards,
+  grantApplicationAmount,
 }: {
   token: string | undefined;
   winnerPosition: keyof Rewards | undefined;
   rewards: Rewards | undefined;
+  grantApplicationAmount?: number;
 }) => {
   return (
     <Flex
@@ -47,7 +49,13 @@ export const WinnerFeedImage = ({
           fontSize={{ base: '2xl', md: '5xl' }}
           fontWeight={600}
         >
-          {winnerPosition ? `${rewards?.[Number(winnerPosition)]}` : 'N/A'}{' '}
+          {!!grantApplicationAmount ? (
+            grantApplicationAmount
+          ) : (
+            <>
+              {winnerPosition ? `${rewards?.[Number(winnerPosition)]}` : 'N/A'}
+            </>
+          )}{' '}
           {token}
         </Text>
       </Flex>
@@ -63,7 +71,11 @@ export const WinnerFeedImage = ({
         bg={'rgba(85, 54, 171, 0.54)'}
         borderRadius={'full'}
       >
-        {getRankLabels(Number(winnerPosition))?.toUpperCase()} PRIZE
+        {!!grantApplicationAmount ? (
+          'GRANT'
+        ) : (
+          <>{getRankLabels(Number(winnerPosition))?.toUpperCase()} PRIZE</>
+        )}
       </Text>
     </Flex>
   );

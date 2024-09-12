@@ -1,3 +1,4 @@
+// user profile
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
@@ -43,7 +44,7 @@ export default async function getAllUsers(
     const userId = user.id;
     logger.info(`User found: ${userId}`);
 
-    const powAndSubmissions = await prisma.$queryRaw<any[]>`
+    const powAndSubmissionsAndGrants = await prisma.$queryRaw<any[]>`
       (SELECT
         CASE 
           WHEN l.isWinnersAnnounced AND sub.isWinner THEN COALESCE(l.winnersAnnouncedAt, sub.createdAt)
@@ -72,6 +73,7 @@ export default async function getAllUsers(
         l.token,
         s.name as sponsorName, 
         s.logo as sponsorLogo,
+        NULL as grantApplicationAmount,
         'Submission' as type
       FROM
         Submission as sub
@@ -109,6 +111,7 @@ export default async function getAllUsers(
         NULL as token,
         NULL as sponsorName, 
         NULL as sponsorLogo,
+        NULL as grantApplicationAmount,
         'PoW' as type
       FROM
         PoW as pow
@@ -116,12 +119,50 @@ export default async function getAllUsers(
         User as u ON pow.userId = u.id
       WHERE
         pow.userId = ${userId})
+      UNION ALL
+      (SELECT
+        ga.decidedAt as createdAt,
+        ga.id,
+        ga.like,
+        NULL as title,
+        NULL as link,
+        NULL as tweet,
+        NULL as eligibilityAnswers,
+        NULL as otherInfo,
+        NULL as isWinner,
+        NULL as winnerPosition,
+        NULL as description,
+        u.firstName,
+        u.lastName,
+        u.photo,
+        g.id as listingId,
+        g.sponsorId,
+        g.title as listingTitle,
+        NULL as rewards,
+        NULL as listingType,
+        g.slug as listingSlug,
+        NULL as isWinnersAnnounced,
+        g.token as token,
+        s.name as sponsorName,
+        s.logo as sponsorLogo,
+        ga.approvedAmount as grantApplicationAmount,
+        'Grant' as type
+      FROM
+        GrantApplication as ga
+      JOIN
+        User as u ON ga.userId = u.id
+      JOIN
+        Grants as g ON ga.grantId = g.id
+      JOIN
+        Sponsors as s ON g.sponsorId = s.id
+      WHERE
+        ga.userId = ${userId} AND ga.applicationStatus = 'Approved')
       ORDER BY
         createdAt DESC
     `;
 
     logger.info(`User feed data retrieved successfully for user ID: ${userId}`);
-    return res.status(200).json({ ...user, feed: powAndSubmissions });
+    return res.status(200).json({ ...user, feed: powAndSubmissionsAndGrants });
   } catch (error: any) {
     logger.error(`Error fetching user details: ${safeStringify(error)}`);
     return res

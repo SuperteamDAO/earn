@@ -65,12 +65,19 @@ const LinkModal = ({
   isOpen,
   onClose,
   setLink,
+  selectedLink,
 }: {
   isOpen: boolean;
   onClose: () => void;
   setLink: (link: string) => void;
+  selectedLink: string;
 }) => {
-  const [linkUrl, setLinkUrl] = useState<string>('');
+  const [linkUrl, setLinkUrl] = useState<string>(selectedLink);
+
+  useEffect(() => {
+    setLinkUrl(selectedLink);
+  }, [selectedLink]);
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -80,6 +87,7 @@ const LinkModal = ({
             <Input
               onChange={(e) => setLinkUrl(e.target.value)}
               placeholder="add a link"
+              value={linkUrl}
             />
             <HStack justify={'end'} w={'full'} mt={5}>
               <Button mr={4} onClick={onClose} variant="ghost">
@@ -137,6 +145,7 @@ export const DescriptionBuilder = ({
 }: Props) => {
   const { form, updateState } = useListingFormStore();
   const isDraft = isNewOrDraft || isDuplicating;
+  const [selectedLink, setSelectedLink] = useState<string>('');
 
   const {
     register,
@@ -229,6 +238,31 @@ export const DescriptionBuilder = ({
     content: description,
   });
 
+  useEffect(() => {
+    if (editor) {
+      editor.on('selectionUpdate', ({ editor }) => {
+        const { from, to } = editor.state.selection;
+        editor.state.doc.nodesBetween(from, to, (node) => {
+          if (
+            node.type.name === 'text' &&
+            node.marks.find((mark) => mark.type.name === 'link')
+          ) {
+            const linkMark = node.marks.find(
+              (mark) => mark.type.name === 'link',
+            );
+            if (linkMark) {
+              setSelectedLink(linkMark.attrs.href || '');
+            }
+          }
+        });
+      });
+    }
+
+    return () => {
+      editor?.off('selectionUpdate');
+    };
+  }, [editor]);
+
   const setLink = useCallback(
     (url: string) => {
       // cancelled
@@ -313,7 +347,12 @@ export const DescriptionBuilder = ({
   return (
     <>
       {isOpen && (
-        <LinkModal setLink={setLink} isOpen={isOpen} onClose={onClose} />
+        <LinkModal
+          setLink={setLink}
+          isOpen={isOpen}
+          onClose={onClose}
+          selectedLink={selectedLink}
+        />
       )}
       <Box>
         <Box mb={8} pt={5}>
@@ -450,7 +489,7 @@ export const DescriptionBuilder = ({
               <MdOutlineFormatUnderlined />
             </ToolbarButton>
             <ToolbarButton
-              isActive={editor?.isActive('underline')}
+              isActive={editor?.isActive('image')}
               onClick={addImage}
             >
               <MdOutlineAddPhotoAlternate />
@@ -458,6 +497,11 @@ export const DescriptionBuilder = ({
             <ToolbarButton
               isActive={editor?.isActive('link')}
               onClick={() => {
+                if (editor?.isActive('link')) {
+                  setSelectedLink(editor.getAttributes('link').href || '');
+                } else {
+                  setSelectedLink('');
+                }
                 onOpen();
               }}
             >

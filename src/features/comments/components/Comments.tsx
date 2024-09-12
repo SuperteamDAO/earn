@@ -5,19 +5,16 @@ import {
   Flex,
   HStack,
   Text,
-  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { AuthWrapper } from '@/features/auth';
-import { WarningModal } from '@/features/listings';
 import { EarnAvatar } from '@/features/talent/';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
@@ -53,7 +50,6 @@ export const Comments = ({
   const { user } = useUser();
   const posthog = usePostHog();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -63,10 +59,6 @@ export const Comments = ({
   const [defaultSuggestions, setDefaultSuggestions] = useState<
     Map<string, User>
   >(new Map());
-
-  const { status } = useSession();
-
-  const isAuthenticated = status === 'authenticated';
 
   const deleteComment = async (commentId: string) => {
     posthog.capture('delete_comment');
@@ -131,13 +123,7 @@ export const Comments = ({
   };
 
   const handleSubmit = () => {
-    if (isAuthenticated) {
-      if (!user?.isTalentFilled && !user?.currentSponsorId) {
-        onOpen();
-      } else {
-        addNewComment();
-      }
-    }
+    addNewComment();
   };
 
   useEffect(() => {
@@ -166,78 +152,85 @@ export const Comments = ({
   if (error) return <ErrorInfo />;
 
   return (
-    <>
-      {isOpen && (
-        <WarningModal
-          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
-          isOpen={isOpen}
-          onClose={onClose}
-          title={'Complete your profile'}
-          bodyText={
-            'Please complete your profile before commenting on the bounty.'
-          }
-          primaryCtaText={'Complete Profile'}
-          primaryCtaLink={'/new/talent'}
+    <VStack
+      align={'start'}
+      gap={4}
+      w={'full'}
+      bg={'#FFFFFF'}
+      id="comments"
+      rounded={'xl'}
+    >
+      <HStack w={'full'} pt={4}>
+        <Image
+          width={21}
+          height={18}
+          alt="Comments Icon"
+          src="/assets/icons/comments.svg"
         />
-      )}
-      <VStack
-        align={'start'}
-        gap={4}
-        w={'full'}
-        bg={'#FFFFFF'}
-        id="comments"
-        rounded={'xl'}
-      >
-        <HStack w={'full'} pt={4}>
-          <Image
-            width={21}
-            height={18}
-            alt="Comments Icon"
-            src="/assets/icons/comments.svg"
-          />
-          <HStack>
-            <Text color="brand.slate.900" fontSize={'1.1rem'} fontWeight={600}>
-              {count}
-            </Text>
-            <Text color="brand.slate.900" fontSize={'1.1rem'} fontWeight={400}>
-              {comments?.length === 1 ? 'Comment' : 'Comments'}
-            </Text>
-          </HStack>
+        <HStack>
+          <Text color="brand.slate.900" fontSize={'1.1rem'} fontWeight={600}>
+            {count}
+          </Text>
+          <Text color="brand.slate.900" fontSize={'1.1rem'} fontWeight={400}>
+            {comments?.length === 1 ? 'Comment' : 'Comments'}
+          </Text>
         </HStack>
-        <VStack gap={4} w={'full'} mb={4}>
-          <Flex gap={3} w="full">
-            <EarnAvatar size={'36px'} id={user?.id} avatar={user?.photo} />
-            <Box pos={'relative'} w="full" mt={0.5}>
-              <UserSuggestionTextarea
-                defaultSuggestions={defaultSuggestions}
-                pt={0}
-                fontSize={{
-                  base: 'sm',
-                  md: 'md',
-                }}
-                borderColor="brand.slate.200"
-                _placeholder={{
-                  color: 'brand.slate.400',
-                }}
-                focusBorderColor="brand.purple"
-                placeholder="Write a comment"
-                value={newComment}
-                setValue={setNewComment}
-                variant="flushed"
-              />
-            </Box>
-          </Flex>
-          {!!newCommentError && (
-            <Text mt={4} color="red">
-              Error in adding your comment! Please try again!
-            </Text>
-          )}
-          <Collapse
-            in={!!newComment}
-            style={{ width: '100%' }}
-            unmountOnExit={true}
-          >
-            <Flex justify={'end'} gap={4} w="full">
+      </HStack>
+      <VStack gap={4} w={'full'} mb={4}>
+        <Flex gap={3} w="full">
+          <EarnAvatar size={'36px'} id={user?.id} avatar={user?.photo} />
+          <Box pos={'relative'} w="full" mt={0.5}>
+            <UserSuggestionTextarea
+              defaultSuggestions={defaultSuggestions}
+              pt={0}
+              fontSize={{
+                base: 'sm',
+                md: 'md',
+              }}
+              borderColor="brand.slate.200"
+              _placeholder={{
+                color: 'brand.slate.400',
+              }}
+              focusBorderColor="brand.purple"
+              placeholder="Write a comment"
+              value={newComment}
+              setValue={setNewComment}
+              variant="flushed"
+            />
+          </Box>
+        </Flex>
+        {!!newCommentError && (
+          <Text mt={4} color="red">
+            Error in adding your comment! Please try again!
+          </Text>
+        )}
+        <Collapse
+          in={!!newComment}
+          style={{ width: '100%' }}
+          unmountOnExit={true}
+        >
+          <Flex justify={'end'} gap={4} w="full">
+            <Button
+              h="auto"
+              px={5}
+              py={2}
+              fontSize={{
+                base: 'xx-small',
+                md: 'sm',
+              }}
+              fontWeight={500}
+              isDisabled={!!newCommentLoading || !newComment}
+              onClick={() => setNewComment('')}
+              variant="ghost"
+            >
+              Cancel
+            </Button>
+            <AuthWrapper
+              showCompleteProfileModal
+              completeProfileModalBodyText={
+                'Please complete your profile before commenting on the listing.'
+              }
+            >
               <Button
                 h="auto"
                 px={5}
@@ -248,81 +241,64 @@ export const Comments = ({
                 }}
                 fontWeight={500}
                 isDisabled={!!newCommentLoading || !newComment}
-                onClick={() => setNewComment('')}
-                variant="ghost"
+                isLoading={!!newCommentLoading}
+                loadingText="Adding..."
+                onClick={() => handleSubmit()}
+                variant="solid"
               >
-                Cancel
+                Comment
               </Button>
-              <AuthWrapper>
-                <Button
-                  h="auto"
-                  px={5}
-                  py={2}
-                  fontSize={{
-                    base: 'xx-small',
-                    md: 'sm',
-                  }}
-                  fontWeight={500}
-                  isDisabled={!!newCommentLoading || !newComment}
-                  isLoading={!!newCommentLoading}
-                  loadingText="Adding..."
-                  onClick={() => handleSubmit()}
-                  variant="solid"
-                >
-                  Comment
-                </Button>
-              </AuthWrapper>
-            </Flex>
-          </Collapse>
-        </VStack>
-        <VStack align="start" gap={5} w={'full'} pb={8}>
-          {comments?.map((comment) => {
-            return (
-              <CommentUI
-                isAnnounced={isAnnounced}
-                listingSlug={listingSlug}
-                listingType={listingType}
-                defaultSuggestions={defaultSuggestions}
-                key={comment.id}
-                comment={comment}
-                poc={poc}
-                sponsorId={sponsorId}
-                refType={refType}
-                refId={refId}
-                deleteComment={deleteComment}
-                isVerified={isVerified}
-              />
-            );
-          })}
-        </VStack>
-        {!!comments.length && comments.length !== count && (
-          <Flex
-            justify="center"
-            w="full"
-            py={3}
-            rounded="md"
-            style={{
-              boxShadow: '0px -1px 7px 0px rgba(193, 193, 193, 0.25)',
-            }}
-          >
-            <Button
-              fontSize={{
-                base: 'md',
-                md: 'large',
-              }}
-              fontWeight={400}
-              isDisabled={!!isLoading}
-              isLoading={!!isLoading}
-              loadingText="Fetching Comments..."
-              onClick={() => getComments(comments.length)}
-              rounded="md"
-              variant="ghost"
-            >
-              Show More Comments
-            </Button>
+            </AuthWrapper>
           </Flex>
-        )}
+        </Collapse>
       </VStack>
-    </>
+      <VStack align="start" gap={5} w={'full'} pb={8}>
+        {comments?.map((comment) => {
+          return (
+            <CommentUI
+              isAnnounced={isAnnounced}
+              listingSlug={listingSlug}
+              listingType={listingType}
+              defaultSuggestions={defaultSuggestions}
+              key={comment.id}
+              comment={comment}
+              poc={poc}
+              sponsorId={sponsorId}
+              refType={refType}
+              refId={refId}
+              deleteComment={deleteComment}
+              isVerified={isVerified}
+            />
+          );
+        })}
+      </VStack>
+      {!!comments.length && comments.length !== count && (
+        <Flex
+          justify="center"
+          w="full"
+          py={3}
+          rounded="md"
+          style={{
+            boxShadow: '0px -1px 7px 0px rgba(193, 193, 193, 0.25)',
+          }}
+        >
+          <Button
+            fontSize={{
+              base: 'md',
+              md: 'large',
+            }}
+            fontWeight={400}
+            isDisabled={!!isLoading}
+            isLoading={!!isLoading}
+            loadingText="Fetching Comments..."
+            onClick={() => getComments(comments.length)}
+            rounded="md"
+            variant="ghost"
+          >
+            Show More Comments
+          </Button>
+        </Flex>
+      )}
+    </VStack>
   );
 };

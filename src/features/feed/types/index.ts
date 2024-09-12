@@ -32,4 +32,5 @@ export interface FeedDataProps {
   userId: string;
   likeCount: number;
   ogImage: string;
+  grantApplicationAmount: number;
 }

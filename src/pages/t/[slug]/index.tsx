@@ -25,7 +25,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ShareIcon } from '@/components/shared/shareIcon';
-import { type FeedDataProps, PowCard, SubmissionCard } from '@/features/feed';
+import {
+  type FeedDataProps,
+  GrantCard,
+  PowCard,
+  SubmissionCard,
+} from '@/features/feed';
 import {
   AddProject,
   EarnAvatar,
@@ -574,21 +579,34 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   </>
                 ) : (
                   filteredFeed?.map((item, index) => {
-                    if (item.type === 'Submission') {
-                      return (
-                        <SubmissionCard
-                          key={index}
-                          sub={item as any}
-                          type="profile"
-                        />
-                      );
+                    switch (item.type) {
+                      case 'Submission':
+                        return (
+                          <SubmissionCard
+                            key={index}
+                            sub={item as any}
+                            type="profile"
+                          />
+                        );
+                      case 'PoW':
+                        return (
+                          <PowCard
+                            key={index}
+                            pow={item as any}
+                            type="profile"
+                          />
+                        );
+                      case 'Grant':
+                        return (
+                          <GrantCard
+                            type="profile"
+                            grant={item as any}
+                            key={index}
+                          />
+                        );
+                      default:
+                        return null;
                     }
-                    if (item.type === 'PoW') {
-                      return (
-                        <PowCard key={index} pow={item as any} type="profile" />
-                      );
-                    }
-                    return null;
                   })
                 )}
               </Box>

@@ -27,12 +27,10 @@ import {
 import axios from 'axios';
 import Image from 'next/image';
 import NextLink from 'next/link';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { AuthWrapper } from '@/features/auth';
-import { WarningModal } from '@/features/listings';
 import { EarnAvatar } from '@/features/talent';
 import { type Comment as IComment } from '@/interface/comments';
 import { type User } from '@/interface/user';
@@ -78,7 +76,6 @@ export const Comment = ({
   const { user } = useUser();
   const posthog = usePostHog();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: deleteIsOpen,
     onOpen: deleteOnOpen,
@@ -94,10 +91,6 @@ export const Comment = ({
   const [deleteError, setDeleteError] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const cancelRef = useRef<any>(null);
-
-  const { status } = useSession();
-
-  const isAuthenticated = status === 'authenticated';
 
   useEffect(() => {
     const reply = localStorage.getItem(`comment-${refId}-${comment.id}`);
@@ -156,29 +149,23 @@ export const Comment = ({
   const date = formatFromNow(dayjs(comment?.updatedAt).fromNow());
 
   const handleSubmit = async () => {
-    if (isAuthenticated) {
-      if (!user?.isTalentFilled && !user?.currentSponsorId) {
-        onOpen();
+    try {
+      setNewReplyLoading(true);
+      setNewReplyError(false);
+
+      if (addNewReply) {
+        await addNewReply(newReply);
       } else {
-        try {
-          setNewReplyLoading(true);
-          setNewReplyError(false);
-
-          if (addNewReply) {
-            await addNewReply(newReply);
-          } else {
-            await addNewReplyLvl1(newReply);
-          }
-
-          setNewReply('');
-          setNewReplyLoading(false);
-          setShowReplyInput(false);
-        } catch (e) {
-          console.log('error - ', e);
-          setNewReplyError(true);
-          setNewReplyLoading(false);
-        }
+        await addNewReplyLvl1(newReply);
       }
+
+      setNewReply('');
+      setNewReplyLoading(false);
+      setShowReplyInput(false);
+    } catch (e) {
+      console.log('error - ', e);
+      setNewReplyError(true);
+      setNewReplyLoading(false);
     }
   };
 
@@ -190,19 +177,6 @@ export const Comment = ({
 
   return (
     <>
-      {isOpen && (
-        <WarningModal
-          isOpen={isOpen}
-          onClose={onClose}
-          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
-          title={'Complete your profile'}
-          bodyText={
-            'Please complete your profile before commenting on the bounty.'
-          }
-          primaryCtaText={'Complete Profile'}
-          primaryCtaLink={'/new/talent'}
-        />
-      )}
       <HStack
         key={comment.id}
         align="start"
@@ -397,7 +371,12 @@ export const Comment = ({
                 unmountOnExit={true}
               >
                 <Flex justify={'end'} gap={4} w="full">
-                  <AuthWrapper>
+                  <AuthWrapper
+                    showCompleteProfileModal
+                    completeProfileModalBodyText={
+                      'Please complete your profile before commenting on the listing.'
+                    }
+                  >
                     <Button
                       h="auto"
                       px={5}

@@ -20,7 +20,6 @@ import {
 import { useUser } from '@/store/user';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
-import { WarningModal } from '../WarningModal';
 import { EasterEgg } from './EasterEgg';
 import { SubmissionModal } from './SubmissionModal';
 
@@ -61,12 +60,6 @@ export const SubmissionActionButton = ({ listing }: Props) => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const {
-    isOpen: warningIsOpen,
-    onOpen: warningOnOpen,
-    onClose: warningOnClose,
-  } = useDisclosure();
-
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
   const bountyDraftStatus = getListingDraftStatus(status, isPublished);
@@ -75,18 +68,12 @@ export const SubmissionActionButton = ({ listing }: Props) => {
   const buttonState = getButtonState();
 
   const handleSubmit = () => {
-    if (isAuthenticated) {
-      if (!user?.isTalentFilled) {
-        warningOnOpen();
-      } else {
-        if (buttonState === 'submit') {
-          posthog.capture('start_submission');
-        } else if (buttonState === 'edit') {
-          posthog.capture('edit_submission');
-        }
-        onOpen();
-      }
+    if (buttonState === 'submit') {
+      posthog.capture('start_submission');
+    } else if (buttonState === 'edit') {
+      posthog.capture('edit_submission');
     }
+    onOpen();
   };
 
   const hackathonStartDate = Hackathon?.startDate
@@ -178,19 +165,6 @@ export const SubmissionActionButton = ({ listing }: Props) => {
             surveyId={surveyId}
           />
         )}
-      {warningIsOpen && (
-        <WarningModal
-          onCTAClick={() => posthog.capture('complete profile_CTA pop up')}
-          isOpen={warningIsOpen}
-          onClose={warningOnClose}
-          title={'Complete your profile'}
-          bodyText={
-            'Please complete your profile before submitting to a bounty.'
-          }
-          primaryCtaText={'Complete Profile'}
-          primaryCtaLink={'/new/talent'}
-        />
-      )}
       {isEasterEggOpen && (
         <EasterEgg
           isOpen={isEasterEggOpen}
@@ -248,7 +222,13 @@ export const SubmissionActionButton = ({ listing }: Props) => {
           bg="white"
           transform={{ base: 'translateX(-50%)', md: 'none' }}
         >
-          <AuthWrapper style={{ w: 'full' }}>
+          <AuthWrapper
+            showCompleteProfileModal
+            completeProfileModalBodyText={
+              'Please complete your profile before submitting to a listing.'
+            }
+            style={{ w: 'full' }}
+          >
             <Button
               gap={4}
               w={'full'}
