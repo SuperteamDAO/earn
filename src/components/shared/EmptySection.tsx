@@ -4,9 +4,11 @@ import { AiOutlineInfoCircle } from 'react-icons/ai';
 export function EmptySection({
   title,
   message,
+  showNotifSub = true,
 }: {
   title?: string;
   message?: string;
+  showNotifSub?: boolean;
 }) {
   return (
     <Flex align={'center'} justify="center" w="full">
@@ -15,9 +17,11 @@ export function EmptySection({
         <Text mt={2} color="brand.slate.400" fontSize="lg" fontWeight={700}>
           {title || 'Sorry! Nothing found'}
         </Text>
-        <Text mt={2} color="brand.slate.300">
-          {message || 'Something went wrong! Please try again!'}
-        </Text>
+        {showNotifSub && (
+          <Text mt={2} color="brand.slate.300">
+            {message || 'Something went wrong! Please try again!'}
+          </Text>
+        )}
       </Flex>
     </Flex>
   );

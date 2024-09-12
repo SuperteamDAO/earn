@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
-import { useEffect } from 'react';
 import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineInsertLink } from 'react-icons/md';
 
@@ -22,6 +21,7 @@ import { ListingTabs } from '@/features/listings';
 import { sponsorListingsQuery } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { getTwitterUrl, getURLSanitized } from '@/utils/getURLSanitized';
 
 const SponsorListingsPage = ({ slug }: { slug: string }) => {
   const { data: listings, isLoading: isListingsLoading } = useQuery(
@@ -29,12 +29,6 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
   );
 
   const { title = '', description = '' } = listings?.sponsorInfo || {};
-
-  // const [] = useState()
-  //
-  useEffect(() => {
-    console.log('listings', listings);
-  }, [listings]);
 
   const logo = listings?.bounties[0]?.sponsor?.logo;
   const url = listings?.bounties[0]?.sponsor?.url;
@@ -70,7 +64,7 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
               borderRadius={'full'}
               rounded="full"
             >
-              <Image h={'full'} alt="Category icon" src={logo} />
+              <Image h={'full'} alt="Category icon" rounded="full" src={logo} />
             </Center>
           </SkeletonCircle>
           <Box w={{ md: '80%', base: '100%' }}>
@@ -121,7 +115,12 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
             </SkeletonText>
             <HStack gap={3} mt={3} color="#64748B">
               {url && (
-                <Link alignItems="center" display="flex" href={url} isExternal>
+                <Link
+                  alignItems="center"
+                  display="flex"
+                  href={getURLSanitized(url)}
+                  isExternal
+                >
                   <Icon as={MdOutlineInsertLink} w={5} h={5} />
                 </Link>
               )}
@@ -129,7 +128,7 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
                 <Link
                   alignItems="center"
                   display="flex"
-                  href={twitter}
+                  href={getTwitterUrl(twitter)}
                   isExternal
                 >
                   <Icon as={FaXTwitter} w={4} h={4} />
@@ -145,8 +144,9 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
           <ListingTabs
             bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}
-            title="Bounties"
+            title="Earning Opportunities"
             take={20}
+            showNotifSub={false}
           />
         </Box>
       </Box>
@@ -157,20 +157,23 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
 
+  let sponsorSlug = params?.sponsor;
+
+  const allowedSponsorSlugs = ['solana-gaming', 'pyth', 'dreader', 'ns'];
   if (
-    !params ||
-    !params.sponsor ||
-    !['solana-gaming', 'pyth', 'dreader', 'networkschool'].includes(
-      (params.sponsor as string).toLowerCase(),
-    )
+    !sponsorSlug ||
+    !allowedSponsorSlugs.includes((sponsorSlug as string).toLowerCase())
   ) {
     return {
       notFound: true,
     };
   }
+  if (sponsorSlug === 'ns') {
+    sponsorSlug = 'networkschool';
+  }
 
   return {
-    props: { slug: (params.sponsor as string).toLowerCase() },
+    props: { slug: (sponsorSlug as string).toLowerCase() },
   };
 };
 
