@@ -29,6 +29,27 @@ function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug, type } = context.query;
+  const { req } = context;
+  const host = req.headers.host || '';
+  console.log(host);
+
+  const redirectToEarnSlugs = [
+    'write-a-twitter-thread-about-airspaces',
+    'twitter-thread-neon-points-program',
+    'video-neon-points-program',
+  ];
+
+  if (
+    redirectToEarnSlugs.includes(slug as string) &&
+    !host.includes('earn.superteam.fun')
+  ) {
+    return {
+      redirect: {
+        destination: `https://earn.superteam.fun/listings/${type}/${slug}`,
+        permanent: false,
+      },
+    };
+  }
 
   let bountyData;
   try {
@@ -50,5 +71,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
-
 export default BountyDetails;

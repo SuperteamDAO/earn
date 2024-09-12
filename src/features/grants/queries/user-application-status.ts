@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
-export const fetchUserApplicationStatus = async (grantId: string) => {
+const fetchUserApplicationStatus = async (grantId: string) => {
   const response = await axios.get('/api/grant-application/is-user-eligible', {
     params: { grantId },
   });
