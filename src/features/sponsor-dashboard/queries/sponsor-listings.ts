@@ -9,6 +9,10 @@ interface Listings {
     title: string;
     description: string;
     bgImage: string;
+    isVerified: boolean;
+    slug: string;
+    url?: string;
+    twitter?: string;
   };
 }
 

@@ -32,6 +32,12 @@ const sponsorData: Record<
       'Explore latest artist and developer bounties for dReader on Superteam Earn. Get started now!',
     bgImage: '/assets/category_assets/bg/content.png',
   },
+  networkschool: {
+    title: 'Network School',
+    description:
+      'Learn, burn and earn with techno-optimists over a 90-day programme on a private island near Singapore. More at: https://ns.com/.',
+    bgImage: '/assets/category_assets/bg/content.png',
+  },
 };
 
 export default async function handler(
@@ -104,6 +110,8 @@ export default async function handler(
             slug: true,
             logo: true,
             isVerified: true,
+            url: true,
+            twitter: true,
           },
         },
       },

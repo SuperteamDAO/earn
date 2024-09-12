@@ -24,7 +24,7 @@ interface ListingTabsProps {
   bounties: Listing[] | undefined;
   forYou?: Listing[] | undefined;
   take?: number;
-  emoji: string;
+  emoji?: string;
   title: string;
   viewAllLink?: string;
   showViewAll?: boolean;
@@ -261,14 +261,16 @@ export const ListingTabs = ({
           w="100%"
         >
           <Flex align={'center'}>
-            <Image
-              display={{ base: 'none', xs: 'flex' }}
-              w={5}
-              h={5}
-              mr={2}
-              alt="emoji"
-              src={emoji}
-            />
+            {emoji && (
+              <Image
+                display={{ base: 'none', xs: 'flex' }}
+                w={5}
+                h={5}
+                mr={2}
+                alt="emoji"
+                src={emoji}
+              />
+            )}
             <Text
               pr={2}
               color={'#334155'}
