@@ -31,10 +31,13 @@ const countries: Country[] = Superteams.map((superteam) => ({
   code: superteam.code ?? 'GLOBAL',
 }));
 
-const FooterColumn: React.FC<{
+const FooterColumn = ({
+  title,
+  links,
+}: {
   title: string;
   links: { href: string; text: string }[];
-}> = ({ title, links }) => (
+}) => (
   <Stack align="flex-start">
     <Text
       color="brand.slate.400"
@@ -134,7 +137,7 @@ const CountrySelector: React.FC = () => {
   );
 };
 
-export const Footer: React.FC = () => {
+export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const opportunities = [
@@ -238,5 +241,3 @@ export const Footer: React.FC = () => {
     </Box>
   );
 };
-
-export default Footer;
