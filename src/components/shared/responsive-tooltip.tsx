@@ -5,8 +5,6 @@ import {
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 
-// click to open toolips on mobiles
-
 interface Props extends TooltipProps {
   children: React.ReactNode;
 }
@@ -20,13 +18,16 @@ export const Tooltip = (props: Props) => {
     handler: () => setIsOpen(false),
   });
 
+  const handleToggle = () => {
+    setIsOpen((prev) => !prev);
+  };
+
   return (
     <ChakraTooltip
       ref={ref}
       isOpen={isOpen}
       label={props.label}
       onClose={() => setIsOpen(false)}
-      onOpen={() => setIsOpen(true)}
       {...props}
     >
       <button
@@ -36,7 +37,7 @@ export const Tooltip = (props: Props) => {
           justifyContent: 'center',
           width: '100%',
         }}
-        onClick={() => setIsOpen(true)}
+        onClick={handleToggle}
       >
         {props.children}
       </button>
