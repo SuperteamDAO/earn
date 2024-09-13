@@ -267,7 +267,7 @@ export const ApplicationDetails = ({
             href={selectedApplication?.user?.telegram}
             isExternal
           >
-            @{selectedApplication?.user?.twitter}
+            @{selectedApplication?.user?.telegram}
           </Link>
         </Flex>
       );
