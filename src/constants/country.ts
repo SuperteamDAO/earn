@@ -1,6 +1,16 @@
 //https://github.com/lipis/flag-icons/blob/main/country.json
 
 export const countries = [
+  //just add the url when updated on officail repo and it will work.
+  {
+    capital: 'Global',
+    code: 'glb',
+    continent: 'Global',
+    flag_1x1: '', //unavalibility of flag at flag-icons github.
+    flag_4x3: '',
+    iso: true,
+    name: 'Global',
+  },
   {
     capital: 'Kabul',
     code: 'af',
