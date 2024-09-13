@@ -21,22 +21,28 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { exclusiveSponsorData } from '@/constants';
 import { ListingTabs } from '@/features/listings';
 import { sponsorListingsQuery } from '@/features/sponsor-dashboard';
+import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
+import { prisma } from '@/prisma';
 import { getTwitterUrl, getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
-const SponsorListingsPage = ({ slug }: { slug: string }) => {
+interface Props {
+  slug: string;
+  title: string;
+  description: string;
+  sponsor: SponsorType;
+}
+const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
   const { data: listings, isLoading: isListingsLoading } = useQuery(
     sponsorListingsQuery(slug),
   );
 
-  const { title = '', description = '' } = listings?.sponsorInfo || {};
-
-  const logo = listings?.bounties[0]?.sponsor?.logo;
-  const url = listings?.bounties[0]?.sponsor?.url;
-  const twitter = listings?.bounties[0]?.sponsor?.twitter;
-  const isVerified = listings?.bounties[0]?.sponsor?.isVerified;
-  const sSlug = listings?.bounties[0]?.sponsor?.slug;
+  const logo = sponsor.logo;
+  const url = sponsor.url;
+  const twitter = sponsor.twitter;
+  const isVerified = sponsor.isVerified;
+  const sSlug = sponsor.slug;
 
   const ogImage = new URL(`${getURL()}api/dynamic-og/sponsor/`);
   ogImage.searchParams.set('logo', logo || '');
@@ -50,14 +56,23 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
       meta={
         <Head>
           <title>{`${title} Opportunities | Superteam Earn`}</title>
-          <meta property="og:title" content={title} />
+          <meta
+            name="description"
+            content={`
+Check out all of ${title}’s latest earning opportunities on a single page.
+`}
+          />
+          <meta property="og:title" content={`${title} on Superteam Earn`} />
           <meta property="og:image" content={ogImage.toString()} />
-          <meta name="twitter:title" content={title} />
+          <meta name="twitter:title" content={`${title} on Superteam Earn`} />
           <meta name="twitter:image" content={ogImage.toString()} />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="Talent on Superteam" />
+          <meta
+            property="og:image:alt"
+            content={`${title} on Superteam Earn`}
+          />
           <meta charSet="UTF-8" key="charset" />
           <meta
             name="viewport"
@@ -175,19 +190,31 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const sponsorSlug = params?.sponsor;
 
-  if (
-    !sponsorSlug ||
-    !Object.keys(exclusiveSponsorData).includes(
-      (sponsorSlug as string).toLowerCase(),
-    )
-  ) {
+  if (typeof sponsorSlug !== 'string') {
+    return {
+      notFound: true,
+    };
+  }
+  const sponsorExlusiveInfo = exclusiveSponsorData[sponsorSlug as string];
+  if (!sponsorExlusiveInfo) {
     return {
       notFound: true,
     };
   }
 
+  const sponsorInfo = await prisma.sponsors.findUnique({
+    where: {
+      name: sponsorExlusiveInfo.title,
+    },
+  });
+
   return {
-    props: { slug: (sponsorSlug as string).toLowerCase() },
+    props: {
+      slug: (sponsorSlug as string).toLowerCase(),
+      sponsor: JSON.parse(JSON.stringify(sponsorInfo)),
+      title: sponsorExlusiveInfo.title,
+      description: sponsorExlusiveInfo.description,
+    },
   };
 };
 

@@ -87,7 +87,6 @@ export default async function handler(
 
     const result = {
       bounties,
-      sponsorInfo,
     };
 
     logger.info(

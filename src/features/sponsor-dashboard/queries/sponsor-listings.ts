@@ -5,15 +5,6 @@ import { type Listing } from '@/features/listings';
 
 interface Listings {
   bounties: Listing[];
-  sponsorInfo: {
-    title: string;
-    description: string;
-    bgImage: string;
-    isVerified: boolean;
-    slug: string;
-    url?: string;
-    twitter?: string;
-  };
 }
 
 const fetchListings = async (slug: string): Promise<Listings> => {
