@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
+import Head from 'next/head';
 import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineInsertLink } from 'react-icons/md';
 
@@ -21,8 +22,8 @@ import { exclusiveSponsorData } from '@/constants';
 import { ListingTabs } from '@/features/listings';
 import { sponsorListingsQuery } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
 import { getTwitterUrl, getURLSanitized } from '@/utils/getURLSanitized';
+import { getURL } from '@/utils/validUrl';
 
 const SponsorListingsPage = ({ slug }: { slug: string }) => {
   const { data: listings, isLoading: isListingsLoading } = useQuery(
@@ -37,15 +38,33 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
   const isVerified = listings?.bounties[0]?.sponsor?.isVerified;
   const sSlug = listings?.bounties[0]?.sponsor?.slug;
 
+  const ogImage = new URL(`${getURL()}api/dynamic-og/sponsor/`);
+  ogImage.searchParams.set('logo', logo || '');
+  ogImage.searchParams.set('title', title || '');
+  ogImage.searchParams.set('slug', sSlug || '');
+
   return (
     <Default
       bg="white"
       hideFooter
       meta={
-        <Meta
-          title={`${title} Opportunities | Superteam Earn`}
-          description={description}
-        />
+        <Head>
+          <title>{`${title} Opportunities | Superteam Earn`}</title>
+          <meta property="og:title" content={title} />
+          <meta property="og:image" content={ogImage.toString()} />
+          <meta name="twitter:title" content={title} />
+          <meta name="twitter:image" content={ogImage.toString()} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content="Talent on Superteam" />
+          <meta charSet="UTF-8" key="charset" />
+          <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1"
+            key="viewport"
+          />
+        </Head>
       }
     >
       <Flex px={4} bg="#F8FAFC">
