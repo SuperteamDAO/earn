@@ -15,7 +15,7 @@ const boldFontP = fetchAsset(
 );
 
 const logoP = fetchAsset(
-  new URL('../../../../public/assets/logo/github-logo.png', import.meta.url),
+  new URL('../../../../public/assets/logo/logo-grayed.png', import.meta.url),
 );
 
 export default async function handler(request: NextRequest) {
@@ -35,10 +35,6 @@ export default async function handler(request: NextRequest) {
     const slug = getParam('slug', (x) => formatString(x, 28));
     const sponsorLogo = getParam('logo', (x) => formatString(x, 100));
 
-    console.log('title - ', title);
-    console.log('slug - ', slug);
-    console.log('sponsorLogo - ', sponsorLogo);
-
     return new ImageResponse(
       (
         <div
@@ -47,17 +43,18 @@ export default async function handler(request: NextRequest) {
             width: '100%',
             display: 'flex',
             flexDirection: 'column',
-            padding: '50px 50px',
+            padding: '50px 100px',
             background: 'white',
             position: 'relative',
           }}
         >
           <div
             style={{
+              display: 'flex',
               background: '#F8FAFC',
               position: 'absolute',
-              height: '45%',
-              width: '100%',
+              height: '50%',
+              width: '200%',
             }}
           ></div>
           <img
@@ -74,8 +71,8 @@ export default async function handler(request: NextRequest) {
           <div
             style={{
               display: 'flex',
-              gap: '24px',
-              marginTop: '24px',
+              gap: '54px',
+              marginTop: '84px',
               alignItems: 'center',
             }}
           >
@@ -92,18 +89,21 @@ export default async function handler(request: NextRequest) {
             >
               <img
                 style={{
-                  width: 'auto',
+                  width: '120px',
                   height: '120px',
                   objectFit: 'contain',
+                  background: 'black',
                 }}
-                alt="pfp"
+                alt="logo"
                 src={sponsorLogo as string}
               />
             </div>
             <div
               style={{
-                alignSelf: 'end',
+                alignSelf: 'flex-end',
                 paddingBottom: '16px',
+                display: 'flex',
+                flexDirection: 'column',
               }}
             >
               <div
@@ -133,20 +133,37 @@ export default async function handler(request: NextRequest) {
                 @{slug}
               </div>
             </div>
-            <div
-              style={{
-                display: 'flex',
-                fontSize: 34,
-                fontStyle: 'normal',
-                color: '#64748B',
-                lineHeight: 1.4,
-                whiteSpace: 'pre-wrap',
-                fontFamily: '"Medium"',
-                marginLeft: 'auto',
-              }}
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              fontSize: 34,
+              fontStyle: 'normal',
+              alignItems: 'center',
+              gap: '8px',
+              color: '#64748B',
+              lineHeight: 1.4,
+              whiteSpace: 'pre-wrap',
+              fontFamily: '"Medium"',
+              marginLeft: 'auto',
+              marginTop: '74px',
+            }}
+          >
+            View Bounties
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="34"
+              height="34"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             >
-              {'View Bounties ->'}
-            </div>
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
           </div>
         </div>
       ),
