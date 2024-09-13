@@ -131,7 +131,7 @@ export function CreateListing({
     }
   }, [editable, type, listing?.sponsorId, setHackathonSponsor]);
 
-  const createAndPublishListing = async () => {
+  const createAndPublishListing = async (closeConfirm: () => void) => {
     setIsListingPublishing(true);
     try {
       const newListing: Listing = {
@@ -182,6 +182,7 @@ export function CreateListing({
       setSlug(result?.data?.slug ?? ('' as string));
       setType(result?.data?.type ?? ('' as string));
       setIsListingPublishing(false);
+      closeConfirm();
       if (result?.data?.isVerifying) {
         onVerifyingOpen();
       } else {
