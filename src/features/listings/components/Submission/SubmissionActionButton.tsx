@@ -192,42 +192,40 @@ export const SubmissionActionButton = ({ listing }: Props) => {
         loading="eager"
         quality={80}
       />
-      <Tooltip
-        bg="brand.slate.500"
-        isDisabled={
-          hasHackathonStarted &&
-          (!user?.id ||
-            !user?.isTalentFilled ||
-            isUserEligibleByRegion ||
-            pastDeadline)
-        }
-        label={
-          !isUserEligibleByRegion
-            ? regionTooltipLabel
-            : !hasHackathonStarted
-              ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
-              : ''
-        }
-        rounded="md"
+
+      <Flex
+        className="ph-no-capture"
+        pos={{ base: 'fixed', md: 'static' }}
+        zIndex={999}
+        bottom={0}
+        left="50%"
+        w="full"
+        px={{ base: 3, md: 0 }}
+        py={{ base: 4, md: 0 }}
+        bg="white"
+        transform={{ base: 'translateX(-50%)', md: 'none' }}
       >
-        <Flex
-          className="ph-no-capture"
-          pos={{ base: 'fixed', md: 'static' }}
-          zIndex={999}
-          bottom={0}
-          left="50%"
-          w="full"
-          px={{ base: 3, md: 0 }}
-          py={{ base: 4, md: 0 }}
-          bg="white"
-          transform={{ base: 'translateX(-50%)', md: 'none' }}
+        <AuthWrapper
+          showCompleteProfileModal
+          completeProfileModalBodyText={
+            'Please complete your profile before submitting to a listing.'
+          }
+          style={{ w: 'full', cursor: 'pointer' }}
         >
-          <AuthWrapper
-            showCompleteProfileModal
-            completeProfileModalBodyText={
-              'Please complete your profile before submitting to a listing.'
+          <Tooltip
+            bg="brand.slate.500"
+            hasArrow
+            isDisabled={
+              hasHackathonStarted && (isUserEligibleByRegion || pastDeadline)
             }
-            style={{ w: 'full' }}
+            label={
+              !isUserEligibleByRegion
+                ? regionTooltipLabel
+                : !hasHackathonStarted
+                  ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
+                  : ''
+            }
+            rounded="md"
           >
             <Button
               gap={4}
@@ -247,9 +245,9 @@ export const SubmissionActionButton = ({ listing }: Props) => {
               {buttonState === 'edit' && <LuPencil />}
               {buttonText}
             </Button>
-          </AuthWrapper>
-        </Flex>
-      </Tooltip>
+          </Tooltip>
+        </AuthWrapper>
+      </Flex>
     </>
   );
 };
