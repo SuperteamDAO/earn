@@ -17,6 +17,7 @@ import { MdOutlineInsertLink } from 'react-icons/md';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { exclusiveSponsorData } from '@/constants';
 import { ListingTabs } from '@/features/listings';
 import { sponsorListingsQuery } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
@@ -34,6 +35,7 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
   const url = listings?.bounties[0]?.sponsor?.url;
   const twitter = listings?.bounties[0]?.sponsor?.twitter;
   const isVerified = listings?.bounties[0]?.sponsor?.isVerified;
+  const sSlug = listings?.bounties[0]?.sponsor?.slug;
 
   return (
     <Default
@@ -58,12 +60,7 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
           rounded={10}
         >
           <SkeletonCircle w={28} h={28} isLoaded={!isListingsLoading}>
-            <Center
-              borderWidth={5}
-              borderColor={'black'}
-              borderRadius={'full'}
-              rounded="full"
-            >
+            <Center rounded="full">
               <Image h={'full'} alt="Category icon" rounded="full" src={logo} />
             </Center>
           </SkeletonCircle>
@@ -97,7 +94,7 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
               skeletonHeight="0.75rem"
             >
               <Text maxW="600px" color={'brand.slate.500'}>
-                @{slug}
+                @{sSlug}
               </Text>
             </SkeletonText>
             <SkeletonText
@@ -157,19 +154,17 @@ const SponsorListingsPage = ({ slug }: { slug: string }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { params } = context;
 
-  let sponsorSlug = params?.sponsor;
+  const sponsorSlug = params?.sponsor;
 
-  const allowedSponsorSlugs = ['solana-gaming', 'pyth', 'dreader', 'ns'];
   if (
     !sponsorSlug ||
-    !allowedSponsorSlugs.includes((sponsorSlug as string).toLowerCase())
+    !Object.keys(exclusiveSponsorData).includes(
+      (sponsorSlug as string).toLowerCase(),
+    )
   ) {
     return {
       notFound: true,
     };
-  }
-  if (sponsorSlug === 'ns') {
-    sponsorSlug = 'networkschool';
   }
 
   return {

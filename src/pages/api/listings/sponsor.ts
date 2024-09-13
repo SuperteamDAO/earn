@@ -1,44 +1,9 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
+import { exclusiveSponsorData } from '@/constants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
-
-const sponsorData: Record<
-  string,
-  {
-    title: string;
-    description: string;
-    bgImage: string;
-    private?: boolean;
-  }
-> = {
-  'solana-gaming': {
-    title: 'Solana Gaming',
-    description:
-      "Welcome to a special earnings page managed by Solana Gaming — use these opportunities to contribute to Solana's gaming ecosystem, and earn in global standards!",
-    bgImage: '/assets/category_assets/bg/community.png',
-    private: true,
-  },
-  pyth: {
-    title: 'Pyth Network',
-    description:
-      'Explore the latest Research and Developer bounties for the Pyth Network ecosystem on Superteam Earn. Get started now!',
-    bgImage: '/assets/category_assets/bg/content.png',
-  },
-  dreader: {
-    title: 'dReader',
-    description:
-      'Explore latest artist and developer bounties for dReader on Superteam Earn. Get started now!',
-    bgImage: '/assets/category_assets/bg/content.png',
-  },
-  networkschool: {
-    title: 'Network School',
-    description:
-      'Learn, burn and earn with techno-optimists over a 90-day programme on a private island near Singapore. More at: https://ns.com/.',
-    bgImage: '/assets/category_assets/bg/content.png',
-  },
-};
 
 export default async function handler(
   req: NextApiRequest,
@@ -55,12 +20,12 @@ export default async function handler(
 
   const sponsorKey = sponsor.toLowerCase();
 
-  if (!sponsorData[sponsorKey]) {
+  if (!exclusiveSponsorData[sponsorKey]) {
     logger.warn(`Sponsor not found: ${sponsorKey}`);
     return res.status(404).json({ message: 'Sponsor not found' });
   }
 
-  const sponsorInfo = sponsorData[sponsorKey];
+  const sponsorInfo = exclusiveSponsorData[sponsorKey];
 
   try {
     logger.debug(`Fetching bounties for sponsor: ${sponsorInfo?.title}`);
