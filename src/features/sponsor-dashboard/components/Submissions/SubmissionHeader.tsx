@@ -78,11 +78,11 @@ export const SubmissionHeader = ({
 
   const listingLink =
     bounty?.type === 'grant'
-      ? `${getURL()}grants/${bounty.slug}`
-      : `${getURL()}listings/${bounty?.type}/${bounty?.slug}`;
+      ? `${getURL()}grants/${bounty.slug}/`
+      : `${getURL()}listings/${bounty?.type}/${bounty?.slug}/`;
 
   const socialListingLink = (medium?: 'twitter' | 'telegram') =>
-    `${listingLink}${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`;
+    `${listingLink}${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;
 
   const tweetShareContent = `Check out my newly added @SuperteamEarn opportunity!
 
