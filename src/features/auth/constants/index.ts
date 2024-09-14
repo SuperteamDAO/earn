@@ -42,6 +42,7 @@ export const userSelectOptions = {
   },
   UserSponsors: {
     select: {
+      sponsorId: true,
       role: true,
     },
   },
