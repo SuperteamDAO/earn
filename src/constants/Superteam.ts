@@ -2,6 +2,16 @@ import { Regions } from '@prisma/client';
 
 export const Superteams = [
   {
+    name: 'Global',
+    icons: '',
+    banner: '',
+    region: Regions.GLOBAL,
+    displayValue: 'Global',
+    country: ['Global'],
+    code: 'GLB', //use this in country.ts to get global icon once added in their github.
+    hello: 'Hello',
+  },
+  {
     name: 'Superteam India',
     icons: '/assets/superteams/india.jpg',
     banner: '/assets/superteam-banners/India.png',
