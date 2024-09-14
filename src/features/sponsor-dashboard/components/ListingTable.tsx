@@ -351,6 +351,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                             fontSize={'13px'}
                             fontWeight={500}
                             _hover={{ bg: 'brand.slate.200' }}
+                            isDisabled={listing.isVerifying}
                             leftIcon={<Icon as={RiEditFill} />}
                             size="sm"
                             variant="ghost"
@@ -412,6 +413,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                               fontSize={'sm'}
                               fontWeight={500}
                               icon={<Icon as={PiNotePencil} w={4} h={4} />}
+                              isDisabled={listing.isVerifying}
                             >
                               Edit {listingLabel}
                             </MenuItem>

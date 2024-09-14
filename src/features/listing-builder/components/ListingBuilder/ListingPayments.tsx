@@ -83,7 +83,7 @@ interface PrizeListInterface {
 interface Props {
   isDraftLoading: boolean;
   createDraft: (data: ListingFormType) => Promise<void>;
-  createAndPublishListing: () => void;
+  createAndPublishListing: (closeConfirm: () => void) => void;
   isListingPublishing: boolean;
   editable: boolean;
   isNewOrDraft?: boolean;
@@ -521,7 +521,7 @@ export const ListingPayments = ({
               disabled={isListingPublishing}
               isLoading={isListingPublishing}
               loadingText="Publishing..."
-              onClick={() => createAndPublishListing()}
+              onClick={() => createAndPublishListing(confirmOnClose)}
             >
               Publish
             </Button>

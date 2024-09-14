@@ -48,9 +48,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       compensationType,
       minRewardAsk,
       maxRewardAsk,
-      isPublished,
       isPrivate,
     } = req.body;
+    let { isPublished } = req.body;
 
     let publishedAt;
     if (isPublished) {
@@ -86,9 +86,43 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
+    // sponsor never had one live listing
+    let isVerifying = false;
+    if (isPublished) {
+      isVerifying =
+        (
+          await prisma.sponsors.findUnique({
+            where: {
+              id: userSponsorId,
+            },
+            select: {
+              isCaution: true,
+            },
+          })
+        )?.isCaution || false;
+      if (!isVerifying) {
+        isVerifying =
+          (await prisma.bounties.count({
+            where: {
+              sponsorId: userSponsorId,
+              isArchived: false,
+              isPublished: true,
+              isActive: true,
+            },
+          })) === 0;
+      }
+    }
+
+    if (isVerifying) {
+      isPublished = false;
+      publishedAt = null;
+    }
+
+    console.log('verifying status - ', isVerifying);
     const finalData = {
       sponsorId: userSponsorId,
       title,
+      isVerifying,
       usdValue,
       publishedAt,
       pocId,
@@ -122,6 +156,23 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const result = await prisma.bounties.create({
       data: finalData,
     });
+
+    if (isVerifying) {
+      try {
+        if (!process.env.EARNCOGNITO_URL) {
+          throw new Error('ENV EARNCOGNITO_URL not provided');
+        }
+        await axios.post(
+          `${process.env.EARNCOGNITO_URL}/discord/verify-listing/initiate`,
+          {
+            listingId: result.id,
+          },
+        );
+      } catch (err) {
+        console.log('Failed to send Verification Message to discord', err);
+        logger.error('Failed to send Verification Message to discord', err);
+      }
+    }
 
     try {
       await axios.post(process.env.DISCORD_LISTINGS_WEBHOOK!, {

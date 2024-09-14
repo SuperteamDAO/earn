@@ -28,6 +28,7 @@ model Bounties {
   isFeatured           Boolean            @default(false)
   isActive             Boolean            @default(true)
   isArchived           Boolean            @default(false)
+  isVerifying          Boolean            @default(false)
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
   applicationLink      String?
@@ -244,6 +245,7 @@ model Sponsors {
   isActive     Boolean        @default(true)
   entityName   String?
   isVerified   Boolean        @default(false)
+  isCaution    Boolean        @default(false)
   Hackathon    Hackathon?
   UserSponsors UserSponsors[]
   Bounties     Bounties[]

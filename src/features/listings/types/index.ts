@@ -21,6 +21,7 @@ export interface Listing {
   isArchived?: boolean;
   isPublished?: boolean;
   isFeatured?: boolean;
+  isVerifying?: boolean;
   token?: string;
   rewardAmount?: number;
   rewards?: Rewards;
