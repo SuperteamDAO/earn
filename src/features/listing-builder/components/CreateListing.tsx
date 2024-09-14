@@ -23,6 +23,7 @@ import {
 } from './ListingBuilder';
 import { ListingSuccessModal } from './ListingSuccessModal';
 import { hackathonSponsorAtom } from './SelectSponsor';
+import { UnderVerificationModal } from './UnderVerficationModal';
 
 interface Props {
   listing?: Listing;
@@ -81,6 +82,7 @@ export function CreateListing({
   const listingDraftStatus = getListingDraftStatus(
     listing?.status,
     listing?.isPublished,
+    listing?.isVerifying,
   );
 
   const newListing = listing?.id === undefined;
@@ -104,7 +106,8 @@ export function CreateListing({
   const [isListingPublishing, setIsListingPublishing] =
     useState<boolean>(false);
 
-  const { isOpen, onOpen } = useDisclosure();
+  const { isOpen: isSuccessOpen, onOpen: onSuccessOpen } = useDisclosure();
+  const { isOpen: isVerifyingOpen, onOpen: onVerifyingOpen } = useDisclosure();
 
   const {
     isOpen: isSurveyOpen,
@@ -128,7 +131,7 @@ export function CreateListing({
     }
   }, [editable, type, listing?.sponsorId, setHackathonSponsor]);
 
-  const createAndPublishListing = async () => {
+  const createAndPublishListing = async (closeConfirm: () => void) => {
     setIsListingPublishing(true);
     try {
       const newListing: Listing = {
@@ -179,7 +182,12 @@ export function CreateListing({
       setSlug(result?.data?.slug ?? ('' as string));
       setType(result?.data?.type ?? ('' as string));
       setIsListingPublishing(false);
-      onOpen();
+      closeConfirm();
+      if (result?.data?.isVerifying) {
+        onVerifyingOpen();
+      } else {
+        onSuccessOpen();
+      }
       if (
         (!user?.surveysShown || !(surveyId in user.surveysShown)) &&
         process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
@@ -278,12 +286,18 @@ export function CreateListing({
         />
       ) : (
         <FormLayout setStep={setSteps} currentStep={steps} stepList={stepList}>
-          {isOpen && (
+          {isSuccessOpen && (
             <ListingSuccessModal
               type={isType}
               slug={slug}
-              isOpen={isOpen}
+              isOpen={isSuccessOpen}
               isVerified={user.currentSponsor?.isVerified || false}
+              onClose={() => {}}
+            />
+          )}
+          {isVerifyingOpen && (
+            <UnderVerificationModal
+              isOpen={isVerifyingOpen}
               onClose={() => {}}
             />
           )}

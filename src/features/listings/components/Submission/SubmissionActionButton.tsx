@@ -32,6 +32,7 @@ export const SubmissionActionButton = ({ listing }: Props) => {
     id,
     status,
     isPublished,
+    isVerifying,
     deadline,
     region,
     type,
@@ -62,7 +63,11 @@ export const SubmissionActionButton = ({ listing }: Props) => {
 
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
-  const bountyDraftStatus = getListingDraftStatus(status, isPublished);
+  const bountyDraftStatus = getListingDraftStatus(
+    status,
+    isPublished,
+    isVerifying,
+  );
 
   const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
   const buttonState = getButtonState();
@@ -122,7 +127,7 @@ export const SubmissionActionButton = ({ listing }: Props) => {
         pastDeadline ||
           (user?.id &&
             user?.isTalentFilled &&
-            (bountyDraftStatus === 'DRAFT' ||
+            (bountyDraftStatus !== 'PUBLISHED' ||
               !hasHackathonStarted ||
               !isUserEligibleByRegion)),
       );

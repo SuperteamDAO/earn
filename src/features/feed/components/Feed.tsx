@@ -10,6 +10,7 @@ import {
   SubmissionCard,
   useGetFeed,
 } from '@/features/feed';
+import { VibeCard } from '@/features/home';
 import { Home } from '@/layouts/Home';
 
 import { GrantCard } from './grantCard';
@@ -103,8 +104,8 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
     <Home type="feed">
       <Box
         mt={'-4'}
-        mr={{ base: '-3', lg: '-25px' }}
-        ml={{ base: '-25px', lg: '0' }}
+        mr={{ base: '-10px', lg: '-25px' }}
+        ml={{ base: '-20px', lg: '0' }}
         borderColor={'brand.slate.200'}
         borderRightWidth={'1px'}
       >
@@ -141,6 +142,14 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
               >
                 Activity Feed
               </Text>
+              <Box
+                display={{ base: 'none', md: 'flex', lg: 'none' }}
+                w="full"
+                pt={4}
+                pr={4}
+              >
+                <VibeCard />
+              </Box>
               <Flex
                 align={{ base: 'right', md: 'center' }}
                 justify={'space-between'}
@@ -153,6 +162,14 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                 >
                   Discover the best work on Earn
                 </Text>
+                <Box
+                  display={{ base: 'flex', md: 'none' }}
+                  w="full"
+                  pt={4}
+                  pr={4}
+                >
+                  <VibeCard />
+                </Box>
                 <Flex
                   align="center"
                   justify={'space-between'}
