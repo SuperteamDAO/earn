@@ -32,7 +32,7 @@ type SocialInputProps = {
 export const socials = [
   {
     name: 'discord',
-    placeholder: 'johncena#7589',
+    placeholder: 'johncena',
     icon: FaDiscord,
     required: true,
   },
