@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
@@ -25,6 +26,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         message: `No bounty template found with slug=${slug}.`,
       });
     }
+
+    // set deadline dynamically
+    result.deadline = dayjs(new Date()).add(6, 'days').toDate();
 
     logger.info(`Successfully fetched bounty template for slug: ${slug}`);
     return res.status(200).json(result);

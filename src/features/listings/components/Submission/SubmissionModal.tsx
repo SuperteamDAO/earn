@@ -46,6 +46,7 @@ interface Props {
   onClose: () => void;
   editMode: boolean;
   listing: Listing;
+  isTemplate?: boolean;
   showEasterEgg: () => void;
   onSurveyOpen: () => void;
 }
@@ -62,6 +63,7 @@ export const SubmissionModal = ({
   onClose,
   editMode,
   listing,
+  isTemplate = false,
   showEasterEgg,
   onSurveyOpen,
 }: Props) => {
@@ -512,6 +514,7 @@ export const SubmissionModal = ({
             <Button
               className="ph-no-capture"
               w={'full'}
+              isDisabled={isTemplate}
               isLoading={!!isLoading}
               loadingText="Submitting..."
               type="submit"

@@ -34,6 +34,7 @@ interface Props {
   isVerified?: boolean;
   count: number;
   setCount: Dispatch<SetStateAction<number>>;
+  isTemplate?: boolean;
 }
 export const Comments = ({
   refId,
@@ -44,6 +45,7 @@ export const Comments = ({
   listingSlug,
   isAnnounced,
   isVerified = false,
+  isTemplate = false,
   count,
   setCount,
 }: Props) => {
@@ -240,7 +242,7 @@ export const Comments = ({
                   md: 'sm',
                 }}
                 fontWeight={500}
-                isDisabled={!!newCommentLoading || !newComment}
+                isDisabled={!!newCommentLoading || !newComment || isTemplate}
                 isLoading={!!newCommentLoading}
                 loadingText="Adding..."
                 onClick={() => handleSubmit()}
@@ -268,6 +270,7 @@ export const Comments = ({
               refId={refId}
               deleteComment={deleteComment}
               isVerified={isVerified}
+              isTemplate={isTemplate}
             />
           );
         })}

@@ -36,9 +36,11 @@ import { PrizesList } from './PrizesList';
 export function RightSideBar({
   listing,
   skills,
+  isTemplate = false,
 }: {
   listing: Listing;
   skills?: ParentSkills[];
+  isTemplate?: boolean;
 }) {
   const {
     id,
@@ -300,7 +302,7 @@ export function RightSideBar({
                 <Text color={'#94A3B8'}>Time to Complete</Text>
               </Flex>
             )}
-            <SubmissionActionButton listing={listing} />
+            <SubmissionActionButton listing={listing} isTemplate={isTemplate} />
             {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
               <Flex gap="2" w="full" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />

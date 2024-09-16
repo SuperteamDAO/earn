@@ -56,6 +56,7 @@ interface Props {
   isReply?: boolean;
   addNewReply?: (msg: string) => Promise<void>;
   isVerified?: boolean;
+  isTemplate?: boolean;
 }
 
 export const Comment = ({
@@ -72,6 +73,7 @@ export const Comment = ({
   isReply = false,
   isAnnounced,
   isVerified = false,
+  isTemplate = false,
 }: Props) => {
   const { user } = useUser();
   const posthog = usePostHog();
@@ -393,7 +395,7 @@ export const Comment = ({
                       _active={{
                         bg: 'brand.slate.400',
                       }}
-                      isDisabled={!!newReplyLoading || !newReply}
+                      isDisabled={!!newReplyLoading || !newReply || isTemplate}
                       isLoading={!!newReplyLoading}
                       loadingText="Adding..."
                       onClick={() => handleSubmit()}
