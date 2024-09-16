@@ -29,10 +29,10 @@ type SocialInputProps = {
   watch: UseFormWatch<any>;
 };
 
-const socials = [
+export const socials = [
   {
     name: 'discord',
-    placeholder: 'johncena#7589',
+    placeholder: 'johncena',
     icon: FaDiscord,
     required: true,
   },
@@ -137,7 +137,21 @@ export const SocialInput = ({ register, watch }: SocialInputProps) => {
         return (
           <Box key={name} mb={'1.25rem'}>
             <Flex align="center" justify="center" direction="row">
-              <Icon as={icon} boxSize={5} mr={3} color={'brand.slate.600'} />
+              <Box pos="relative">
+                <Icon as={icon} boxSize={5} mr={3} color={'brand.slate.600'} />
+                {required && (
+                  <Text
+                    as="span"
+                    pos="absolute"
+                    top="-5px"
+                    right="4px"
+                    color="red"
+                    fontWeight={500}
+                  >
+                    *
+                  </Text>
+                )}
+              </Box>
               {label && (
                 <Box
                   h="2.6875rem"
@@ -162,11 +176,6 @@ export const SocialInput = ({ register, watch }: SocialInputProps) => {
                       textAlign="left"
                     >
                       {label}
-                      {required && (
-                        <Text as="sup" ml={1} color="red">
-                          *
-                        </Text>
-                      )}
                     </Text>
                   </Flex>
                 </Box>

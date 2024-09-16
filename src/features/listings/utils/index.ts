@@ -47,8 +47,10 @@ export const getRegionTooltipLabel = (
 export const getListingDraftStatus = (
   status: string | undefined,
   isPublished: boolean | undefined,
+  isVerifying: boolean | undefined,
 ) => {
   if (status !== 'OPEN') return 'CLOSED';
+  if (isVerifying) return 'VERIFYING';
   if (isPublished) return 'PUBLISHED';
   return 'DRAFT';
 };
@@ -67,12 +69,16 @@ export const getListingStatus = (
 ) => {
   if (!listing) return 'DRAFT';
 
+  console.log('listing verifying - ', listing);
   const listingStatus = getListingDraftStatus(
     listing?.status,
     listing?.isPublished,
+    listing?.isVerifying,
   );
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
 
+  console.log('listingStatus', listingStatus);
+  if (listingStatus === 'VERIFYING') return 'Under Verification';
   if (listingStatus === 'DRAFT') return 'Draft';
   if (listing?.type === 'grant' || isGrant) return 'Ongoing';
 
@@ -104,6 +110,7 @@ export const getColorStyles = (status: string) => {
     case 'Published':
     case 'Completed':
       return { bgColor: '#D1FAE5', color: '#0D9488' };
+    case 'Under Verification':
     case 'Payment Pending':
       return { bgColor: '#ffecb3', color: '#F59E0B' };
     case 'Draft':
@@ -141,12 +148,6 @@ export function userRegionEligibilty(
 
   return isEligible;
 }
-
-export const isYoutubeOrLoomLink = (url: string) => {
-  const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
-  const loomRegex = /^(https?:\/\/)?(www\.)?loom\.com\/.+$/;
-  return youtubeRegex.test(url) || loomRegex.test(url);
-};
 
 export function isValidUrl(url: string): boolean {
   const urlPattern =

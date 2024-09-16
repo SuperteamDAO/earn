@@ -148,7 +148,9 @@ const Index = () => {
           {(session?.user?.role === 'GOD' ||
             !!(
               user?.UserSponsors?.length &&
-              user?.UserSponsors[0]?.role === 'ADMIN'
+              user?.UserSponsors.find(
+                (s) => s.sponsorId === user.currentSponsorId,
+              )?.role === 'ADMIN'
             )) && (
             <Button
               className="ph-no-capture"

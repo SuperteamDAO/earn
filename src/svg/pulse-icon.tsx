@@ -51,5 +51,3 @@ export const PulseIcon = ({
     </Center>
   );
 };
-
-export default PulseIcon;

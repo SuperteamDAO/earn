@@ -72,10 +72,10 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       maxRewardAsk,
       minRewardAsk,
       compensationType,
-      isPublished,
       description,
       skills,
     } = updatedData;
+    let { isPublished } = updatedData;
 
     let { maxBonusSpots } = updatedData;
 
@@ -83,6 +83,11 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (isPublished && !listing.publishedAt) {
       publishedAt = new Date();
     }
+
+    if (listing.isVerifying)
+      return res.status(500).json({
+        message: `Listing is being verified and cannot be updated.`,
+      });
 
     if (listing.maxBonusSpots > 0 && typeof maxBonusSpots === 'undefined') {
       maxBonusSpots = 0;
@@ -113,7 +118,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         position++
       ) {
         logger.debug(
-          `Resetting winner position: ${position} for listing ID: ${id}`,
+          `Resetting winner position: ${position} for listing ID: ${id} `,
         );
         await prisma.submission.updateMany({
           where: {
@@ -173,10 +178,42 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
+    let isVerifying = false;
+    if (isPublished) {
+      isVerifying =
+        (
+          await prisma.sponsors.findUnique({
+            where: {
+              id: userSponsorId,
+            },
+            select: {
+              isCaution: true,
+            },
+          })
+        )?.isCaution || false;
+      if (!isVerifying) {
+        isVerifying =
+          (await prisma.bounties.count({
+            where: {
+              sponsorId: userSponsorId,
+              isArchived: false,
+              isPublished: true,
+              isActive: true,
+            },
+          })) === 0;
+      }
+    }
+
+    if (isVerifying) {
+      isPublished = false;
+      publishedAt = null;
+    }
+
     const result = await prisma.bounties.update({
       where: { id: id as string },
       data: {
         ...updatedData,
+        isVerifying,
         rewards,
         rewardAmount,
         token,
@@ -191,6 +228,23 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         ...(skillsToUpdate !== undefined && { skills: skillsToUpdate }),
       },
     });
+
+    if (isVerifying) {
+      try {
+        if (!process.env.EARNCOGNITO_URL) {
+          throw new Error('ENV EARNCOGNITO_URL not provided');
+        }
+        await axios.post(
+          `${process.env.EARNCOGNITO_URL}/discord/verify-listing/initiate`,
+          {
+            listingId: result.id,
+          },
+        );
+      } catch (err) {
+        console.log('Failed to send Verification Message to discord', err);
+        logger.error('Failed to send Verification Message to discord', err);
+      }
+    }
 
     try {
       if (listing.isPublished === true && result.isPublished === false) {
@@ -210,18 +264,18 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     logger.info(`Bounty with ID: ${id} updated successfully`);
-    logger.debug(`Updated bounty data: ${safeStringify(result)}`);
+    logger.debug(`Updated bounty data: ${safeStringify(result)} `);
 
     const deadlineChanged =
       listing.deadline?.toString() !== result.deadline?.toString();
     if (deadlineChanged && result.isPublished && userId) {
       const dayjsDeadline = dayjs(result.deadline);
       logger.debug(
-        `Creating comment for deadline extension for listing ID: ${result.id}`,
+        `Creating comment for deadline extension for listing ID: ${result.id} `,
       );
       await prisma.comment.create({
         data: {
-          message: `The deadline for this listing has been updated to ${dayjsDeadline.format('h:mm A, MMMM D, YYYY (UTC)')}`,
+          message: `The deadline for this listing has been updated to ${dayjsDeadline.format('h:mm A, MMMM D, YYYY (UTC)')} `,
           listingId: result.id,
           authorId: userId,
           type: 'DEADLINE_EXTENSION',
@@ -238,11 +292,11 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
-      `Error occurred while updating bounty with id=${id}: ${safeStringify(error)}`,
+      `Error occurred while updating bounty with id = ${id}: ${safeStringify(error)} `,
     );
     return res.status(400).json({
       error: error.message,
-      message: `Error occurred while updating bounty with id=${id}.`,
+      message: `Error occurred while updating bounty with id = ${id}.`,
     });
   }
 }

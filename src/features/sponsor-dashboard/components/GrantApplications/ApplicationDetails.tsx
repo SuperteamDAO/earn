@@ -28,7 +28,14 @@ import { toast } from 'sonner';
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
-import { Discord, EarnAvatar, Telegram, Twitter } from '@/features/talent';
+import {
+  Discord,
+  EarnAvatar,
+  extractTelegramUsername,
+  extractTwitterUsername,
+  Telegram,
+  Twitter,
+} from '@/features/talent';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
@@ -256,33 +263,28 @@ export const ApplicationDetails = ({
 
   const SocialMediaLink = () => {
     if (selectedApplication?.user?.telegram) {
+      const username =
+        extractTelegramUsername(selectedApplication.user.telegram) || null;
+      const link = selectedApplication.user.telegram;
       return (
         <Flex align="center" justify="start" gap={2} fontSize="sm">
-          <Telegram
-            link={selectedApplication?.user?.telegram}
-            color="#94A3B8"
-          />
-          <Link
-            color="brand.slate.400"
-            href={selectedApplication?.user?.telegram}
-            isExternal
-          >
-            @{selectedApplication?.user?.twitter}
+          <Telegram link={link} color="#94A3B8" />
+          <Link color="brand.slate.400" href={link} isExternal>
+            @{username}
           </Link>
         </Flex>
       );
     }
 
     if (selectedApplication?.user?.twitter) {
+      const username =
+        extractTwitterUsername(selectedApplication.user.twitter) || null;
+      const link = selectedApplication.user.twitter;
       return (
         <Flex align="center" justify="start" gap={2} fontSize="sm">
-          <Twitter link={selectedApplication?.user?.twitter} color="#94A3B8" />
-          <Link
-            color="brand.slate.400"
-            href={selectedApplication?.user?.twitter}
-            isExternal
-          >
-            @{selectedApplication?.user?.twitter}
+          <Twitter link={link} color="#94A3B8" />
+          <Link color="brand.slate.400" href={link} isExternal>
+            @{username}
           </Link>
         </Flex>
       );

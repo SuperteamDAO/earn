@@ -1,4 +1,11 @@
-import { Box, Button, Divider, Flex, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Text,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
@@ -34,6 +41,7 @@ export const VibeCard = () => {
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const isMD = useBreakpointValue({ base: false, md: true });
   const { user } = useUser();
 
   const { data: fetchedUsers = [] } = useQuery(pfpsQuery(userIds));
@@ -94,14 +102,15 @@ export const VibeCard = () => {
     <Flex
       align={'center'}
       justify={'space-between'}
+      w="full"
       p={4}
       bg="brand.slate.100"
       borderRadius={8}
     >
-      <Flex direction={'column'}>
+      <Flex direction={'column'} gap={{ base: 2, md: 1 }}>
         <Text
           color="brand.slate.500"
-          fontSize="sm"
+          fontSize={{ base: 'xs', md: 'sm' }}
           fontWeight={500}
           whiteSpace={'nowrap'}
         >
@@ -113,7 +122,11 @@ export const VibeCard = () => {
         <Flex align={'center'}>
           {displayUsers.map((user, i) => (
             <Box key={user.id} ml={i > 0 ? '-10px' : '0'}>
-              <EarnAvatar id={user.id} avatar={user.photo} size="28px" />
+              <EarnAvatar
+                id={user.id}
+                avatar={user.photo}
+                size={isMD ? '28px' : '24px'}
+              />
             </Box>
           ))}
           <Text ml={1} color="brand.slate.400" fontSize={'xs'}>

@@ -31,22 +31,6 @@ function calculateRewards(
   };
 }
 
-export const formatTotalPrice = (total: number): string => {
-  if (total >= 1000000) {
-    const millions = total / 1000000;
-    const roundedMillions = Math.floor(millions);
-    const decimal = millions - roundedMillions;
-    return decimal > 0 ? `${millions.toFixed(1)}M` : `${roundedMillions}M`;
-  } else if (total >= 100000) {
-    return `${Math.floor(total / 1000)}k`;
-  } else {
-    return new Intl.NumberFormat('en-US', {
-      currency: 'USD',
-      maximumFractionDigits: 0,
-    }).format(total);
-  }
-};
-
 export function PrizesList({
   rewards,
   token,
