@@ -18,6 +18,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         slug,
         isActive: true,
       },
+      include: {
+        poc: true,
+        sponsor: true,
+      },
     });
 
     if (!result) {

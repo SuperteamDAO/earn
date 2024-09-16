@@ -112,6 +112,7 @@ model BountiesTemplates {
   usdValue         Float?
   sponsorId        String
   pocId            String
+  pocSocials       String?
   source           Source           @default(NATIVE)
   isPublished      Boolean          @default(false)
   Bounties         Bounties[]
