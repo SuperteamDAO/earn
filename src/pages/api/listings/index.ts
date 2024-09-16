@@ -74,6 +74,7 @@ export default async function listings(
     | undefined;
   const take = params.take ? parseInt(params.take as string, 10) : 10;
   const deadline = params.deadline as string;
+  const exclusiveSponsorId = params.exclusiveSponsorId as string | undefined;
   let excludeIds = params['excludeIds[]'];
   if (typeof excludeIds === 'string') {
     excludeIds = [excludeIds];
@@ -142,6 +143,7 @@ export default async function listings(
       ...skillsFilter,
       NOT: { id },
       ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
+      ...(exclusiveSponsorId ? { sponsorId: exclusiveSponsorId } : {}),
     },
     select: {
       rewardAmount: true,
