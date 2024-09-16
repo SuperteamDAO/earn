@@ -24,10 +24,11 @@ interface ListingTabsProps {
   bounties: Listing[] | undefined;
   forYou?: Listing[] | undefined;
   take?: number;
-  emoji: string;
+  emoji?: string;
   title: string;
   viewAllLink?: string;
   showViewAll?: boolean;
+  showNotifSub?: boolean;
 }
 
 interface ContentProps {
@@ -41,6 +42,7 @@ interface ContentProps {
   emptyTitle: string;
   emptyMessage: string;
   user: User | null;
+  showNotifSub?: boolean;
 }
 
 const EmptySection = dynamic(
@@ -60,6 +62,7 @@ const generateTabContent = ({
   emptyTitle,
   emptyMessage,
   user,
+  showNotifSub,
 }: ContentProps) => {
   if (!!(!user || !forYou || forYou.length === 0))
     return (
@@ -76,7 +79,11 @@ const generateTabContent = ({
             .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
         ) : (
           <Flex align="center" justify="center" mt={8}>
-            <EmptySection title={emptyTitle} message={emptyMessage} />
+            <EmptySection
+              showNotifSub={showNotifSub}
+              title={emptyTitle}
+              message={emptyMessage}
+            />
           </Flex>
         )}
       </Flex>
@@ -134,7 +141,11 @@ const generateTabContent = ({
               .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
           ) : (
             <Flex align="center" justify="center" mt={8}>
-              <EmptySection title={emptyTitle} message={emptyMessage} />
+              <EmptySection
+                showNotifSub={showNotifSub}
+                title={emptyTitle}
+                message={emptyMessage}
+              />
             </Flex>
           )}
         </Flex>
@@ -152,6 +163,7 @@ export const ListingTabs = ({
   title,
   viewAllLink,
   showViewAll = false,
+  showNotifSub = true,
 }: ListingTabsProps) => {
   const { user } = useUser();
   const tabs: TabProps[] = [
@@ -173,6 +185,7 @@ export const ListingTabs = ({
         emptyTitle: 'No listings available!',
         emptyMessage:
           'Update your email preferences (from the user menu) to be notified about new work opportunities.',
+        showNotifSub,
       }),
     },
     {
@@ -193,6 +206,7 @@ export const ListingTabs = ({
         emptyTitle: 'No listings in review!',
         emptyMessage:
           'Subscribe to notifications to get notified about updates.',
+        showNotifSub,
       }),
     },
     {
@@ -234,6 +248,7 @@ export const ListingTabs = ({
         emptyTitle: 'No completed listings!',
         emptyMessage:
           'Subscribe to notifications to get notified about announcements.',
+        showNotifSub,
       }),
     },
   ];
@@ -261,14 +276,16 @@ export const ListingTabs = ({
           w="100%"
         >
           <Flex align={'center'}>
-            <Image
-              display={{ base: 'none', xs: 'flex' }}
-              w={5}
-              h={5}
-              mr={2}
-              alt="emoji"
-              src={emoji}
-            />
+            {emoji && (
+              <Image
+                display={{ base: 'none', xs: 'flex' }}
+                w={5}
+                h={5}
+                mr={2}
+                alt="emoji"
+                src={emoji}
+              />
+            )}
             <Text
               pr={2}
               color={'#334155'}

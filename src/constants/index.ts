@@ -3,6 +3,7 @@ import { type SkillMap } from '@/interface/skills';
 import { Superteams } from './Superteam';
 
 export { countries } from './country';
+export * from './exclusiveSponsors';
 
 export interface MultiSelectOptions {
   value: string;
