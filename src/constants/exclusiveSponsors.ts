@@ -4,7 +4,7 @@ export const exclusiveSponsorData: Record<
     title: string;
     description: string;
     bgImage: string;
-    private?: boolean;
+    showPrivates?: boolean;
   }
 > = {
   'solana-gaming': {
@@ -12,7 +12,6 @@ export const exclusiveSponsorData: Record<
     description:
       "Welcome to a special earnings page managed by Solana Gaming — use these opportunities to contribute to Solana's gaming ecosystem, and earn in global standards!",
     bgImage: '/assets/category_assets/bg/community.png',
-    private: true,
   },
   pyth: {
     title: 'Pyth Network',
@@ -31,5 +30,6 @@ export const exclusiveSponsorData: Record<
     description:
       'Learn, burn and earn with techno-optimists over a 90-day programme on a private island near Singapore. More at: https://ns.com/.',
     bgImage: '/assets/category_assets/bg/content.png',
+    showPrivates: true,
   },
 };

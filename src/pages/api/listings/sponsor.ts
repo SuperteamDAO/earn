@@ -35,7 +35,7 @@ export default async function handler(
         isActive: true,
         isArchived: false,
         status: 'OPEN',
-        isPrivate: !!sponsorInfo!.private,
+        ...(!!sponsorInfo?.showPrivates === true ? {} : { isPrivate: false }),
         sponsor: {
           name: sponsorInfo!.title,
         },
