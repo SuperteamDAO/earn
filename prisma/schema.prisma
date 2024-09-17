@@ -171,6 +171,7 @@ model GrantApplication {
   projectTimeline     String
   proofOfWork         String                 @db.VarChar(3000)
   walletAddress       String
+  twitter             String?
   milestones          String?                @db.VarChar(3000)
   kpi                 String?                @db.VarChar(3000)
   answers             Json?

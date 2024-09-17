@@ -4,6 +4,7 @@ import type { NextApiResponse } from 'next';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import { convertGrantApplicationToAirtable } from '@/features/grants';
+import { extractTwitterUsername } from '@/features/talent';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
@@ -31,9 +32,15 @@ async function grantApplication(
     ask,
     answers,
   } = req.body;
+  let { twitter } = req.body;
 
   const formattedProjectTimeline = dayjs(projectTimeline).format('D MMMM YYYY');
   const parsedAsk = parseInt(ask, 10);
+
+  if (twitter) {
+    const username = extractTwitterUsername(twitter);
+    twitter = `https://x.com/${username}` || null;
+  }
 
   try {
     logger.debug('Creating grant application in the database');
@@ -50,6 +57,7 @@ async function grantApplication(
         kpi,
         walletAddress,
         ask: parsedAsk,
+        twitter,
         answers,
       },
       include: {
@@ -58,7 +66,6 @@ async function grantApplication(
             firstName: true,
             lastName: true,
             email: true,
-            twitter: true,
             discord: true,
           },
         },
