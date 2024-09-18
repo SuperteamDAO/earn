@@ -5,18 +5,13 @@ import { useRouter } from 'next/router';
 import { dayjs } from '@/utils/dayjs';
 
 type BountySnackbarType = {
-  sponsorId: string | undefined;
+  isCaution: boolean | undefined;
   submissionCount: number;
   deadline: string | undefined;
   rewardAmount: number | undefined;
   type: string | undefined;
   isPublished: boolean | undefined;
 };
-
-const cautionSponsorIds = ['9616b6c3-cfbe-48b0-a562-ab41572f302b'];
-if (process.env.VERCEL_ENV !== 'production') {
-  cautionSponsorIds.push('f37e87a5-0d73-431c-b39b-c3d6367f4afc'); // on staging name - fexpo
-}
 
 export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
 
@@ -36,7 +31,7 @@ export const BountySnackbar = () => {
     rewardAmount,
     type,
     isPublished,
-    sponsorId,
+    isCaution,
   } = bountySnackbar;
 
   const isExpired = deadline && dayjs(deadline).isBefore(dayjs());
@@ -44,7 +39,7 @@ export const BountySnackbar = () => {
   const getBackgroundColor = () => {
     if (!isPublished) return '#DC4830';
     if (isExpired) return '#6A6A6A';
-    if (!!sponsorId && cautionSponsorIds.includes(sponsorId)) return '#DC4830';
+    if (isCaution) return '#DC4830';
     return '#B869D3';
   };
 
@@ -57,7 +52,7 @@ export const BountySnackbar = () => {
       return 'This Listing Is Inactive Right Now. Check Out Other Listings on Our Homepage!';
     if (isExpired)
       return 'The Deadline for This Listing Has Passed. Check Out Other Listings on the Homepage!';
-    if (!!sponsorId && cautionSponsorIds.includes(sponsorId))
+    if (isCaution)
       return 'Proceed with caution! Some users have flagged this listing as potentially misleading.';
     if (daysToDeadline && daysToDeadline < 3)
       return `🕛 Expiring Soon: ${

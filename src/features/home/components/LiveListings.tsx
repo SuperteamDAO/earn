@@ -9,11 +9,13 @@ interface LiveListingProps {
   children: ReactNode;
   isHackathon?: boolean;
   excludeIds?: string[];
+  exclusiveSponsorId?: string;
 }
 
 export const LiveListings = ({
   children,
   isHackathon = false,
+  exclusiveSponsorId,
   excludeIds: ids,
 }: LiveListingProps) => {
   const deadline = useMemo(() => dayjs().add(1, 'day').toISOString(), []);
@@ -26,6 +28,7 @@ export const LiveListings = ({
       order: 'asc',
       type: isHackathon ? 'hackathon' : undefined,
       excludeIds: ids ? ids : undefined,
+      exclusiveSponsorId,
     }),
   );
   return (

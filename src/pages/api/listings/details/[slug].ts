@@ -35,6 +35,7 @@ export default async function handler(
             logo: true,
             entityName: true,
             isVerified: true,
+            isCaution: true,
           },
         },
         poc: {

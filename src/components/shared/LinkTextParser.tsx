@@ -1,18 +1,18 @@
-import { Box, Link } from '@chakra-ui/react';
+import { Link, Text, type TextProps } from '@chakra-ui/react';
 import { Fragment } from 'react';
 
 const URL_REGEX =
   /(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 
-interface Props {
+type Props = TextProps & {
   text: string;
-}
+};
 
-export function LinkTextParser({ text }: Props) {
+export function LinkTextParser({ text, ...props }: Props) {
   const parts = text.split(URL_REGEX);
 
   return (
-    <Box>
+    <Text {...props}>
       {parts.map((part, index) => {
         if (part.match(URL_REGEX)) {
           return (
@@ -29,6 +29,6 @@ export function LinkTextParser({ text }: Props) {
         }
         return <Fragment key={index}>{part}</Fragment>;
       })}
-    </Box>
+    </Text>
   );
 }

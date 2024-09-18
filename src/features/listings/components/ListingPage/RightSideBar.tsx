@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import { tokenList } from '@/constants/index';
+import { exclusiveSponsorData, tokenList } from '@/constants/index';
 import { LiveListings } from '@/features/home';
 import { type ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
@@ -331,6 +331,13 @@ export function RightSideBar({
             <LiveListings
               isHackathon={!!Hackathon}
               excludeIds={listing.id ? [listing.id] : undefined}
+              exclusiveSponsorId={
+                Object.values(exclusiveSponsorData).some(
+                  (sponsor) => sponsor.title === listing?.sponsor?.name,
+                )
+                  ? listing?.sponsorId
+                  : undefined
+              }
             >
               <Flex align="center" justify={'space-between'} w="full">
                 <Text

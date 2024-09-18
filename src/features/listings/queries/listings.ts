@@ -11,6 +11,7 @@ interface ListingsParams {
   isHomePage?: boolean;
   order?: 'asc' | 'desc';
   excludeIds?: string[];
+  exclusiveSponsorId?: string;
 }
 
 const fetchListings = async (params: ListingsParams): Promise<Listing[]> => {

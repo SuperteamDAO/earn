@@ -62,7 +62,7 @@ export function ListingPageLayout({
   useEffect(() => {
     if (initialBounty) {
       setBountySnackbar({
-        sponsorId: initialBounty.sponsorId,
+        isCaution: initialBounty.sponsor?.isCaution,
         submissionCount: submissionNumber,
         deadline: initialBounty.deadline,
         rewardAmount: initialBounty.rewardAmount,
