@@ -40,7 +40,7 @@ import { SubscribeListing } from './SubscribeListing';
 
 export function ListingHeader({
   listing,
-  isTemplate,
+  isTemplate = false,
   commentCount,
 }: {
   listing: Listing;
@@ -272,14 +272,14 @@ export function ListingHeader({
                 <ListingTitle />
               </Flex>
             </HStack>
-            {!isTemplate && (
-              <Flex display={{ base: 'none', md: 'flex' }}>
-                <HeaderSub />
-              </Flex>
-            )}
+            <Flex display={{ base: 'none', md: 'flex' }}>
+              <HeaderSub />
+            </Flex>
           </VStack>
         </HStack>
-        {!isTemplate && listing.id && <SubscribeListing id={listing.id} />}
+        {listing.id && (
+          <SubscribeListing isTemplate={isTemplate} id={listing.id} />
+        )}
       </VStack>
       <Flex
         direction={'column'}
@@ -291,7 +291,7 @@ export function ListingHeader({
         <ListingTitle />
         <HeaderSub />
       </Flex>
-      {!isTemplate && (
+      {
         <Flex align={'center'} w={'full'} maxW="7xl" h={10}>
           <HStack
             align="center"
@@ -316,7 +316,11 @@ export function ListingHeader({
               }}
             />
             <ListingTabLink
-              href={`/listings/${type}/${slug}/`}
+              href={
+                !isTemplate
+                  ? `/listings/${type}/${slug}/`
+                  : `/templates/listings/${slug}/`
+              }
               text="Details"
               isActive={
                 !router.asPath.split('/')[4]?.includes('submission') &&
@@ -339,7 +343,11 @@ export function ListingHeader({
             {isProject && references && references?.length > 0 && (
               <>
                 <ListingTabLink
-                  href={`/listings/${type}/${slug}/references`}
+                  href={
+                    !isTemplate
+                      ? `/listings/${type}/${slug}/references`
+                      : `/templates/listings/${slug}/references`
+                  }
                   text="References"
                   isActive={
                     !!router.asPath.split('/')[4]?.includes('references')
@@ -349,7 +357,7 @@ export function ListingHeader({
             )}
           </HStack>
         </Flex>
-      )}
+      }
     </VStack>
   );
 }

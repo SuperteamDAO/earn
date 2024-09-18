@@ -19,13 +19,14 @@ import { listingSubscriptionsQuery } from '../../queries/listing-notification-st
 
 interface Props {
   id: string;
+  isTemplate?: boolean;
 }
 
 const toggleSubscription = async (id: string) => {
   await axios.post('/api/listings/notifications/toggle', { bountyId: id });
 };
 
-export const SubscribeListing = ({ id }: Props) => {
+export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
   const { user } = useUser();
   const posthog = usePostHog();
   const queryClient = useQueryClient();
@@ -91,6 +92,7 @@ export const SubscribeListing = ({ id }: Props) => {
             fontWeight={500}
             borderColor="brand.slate.300"
             aria-label="Notify"
+            isDisabled={isTemplate}
             onClick={() => {
               posthog.capture(
                 sub.find((e) => e.userId === user?.id)

@@ -25,9 +25,13 @@ import { SubmissionModal } from './SubmissionModal';
 
 interface Props {
   listing: Listing;
+  isTemplate?: boolean;
 }
 
-export const SubmissionActionButton = ({ listing }: Props) => {
+export const SubmissionActionButton = ({
+  listing,
+  isTemplate = false,
+}: Props) => {
   const {
     id,
     status,
@@ -158,6 +162,7 @@ export const SubmissionActionButton = ({ listing }: Props) => {
           isOpen={isOpen}
           editMode={buttonState === 'edit'}
           listing={listing}
+          isTemplate={isTemplate}
           showEasterEgg={() => setEasterEggOpen(true)}
           onSurveyOpen={onSurveyOpen}
         />
