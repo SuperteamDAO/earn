@@ -63,6 +63,7 @@ export function HomeBanner() {
             width: '100%',
             maxWidth: '100%',
             borderRadius: 'var(--chakra-radii-md)',
+            pointerEvents: 'none',
           }}
         />
       </Show>
@@ -113,7 +114,12 @@ export function HomeBanner() {
         gap={{ base: '3', md: '4' }}
         mt={'4'}
       >
-        <AuthWrapper style={{ w: { base: '100%', md: 'auto' } }}>
+        <AuthWrapper
+          style={{
+            w: { base: '100%', md: 'auto' },
+            cursor: 'pointer',
+          }}
+        >
           <Button
             className="ph-no-capture"
             w={{ base: '100%', md: 'auto' }}
