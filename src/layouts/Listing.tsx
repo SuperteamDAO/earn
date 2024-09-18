@@ -33,12 +33,14 @@ interface ListingPageProps {
   bounty: Listing | null;
   children: React.ReactNode;
   maxW?: ChakraProps['maxW'];
+  isTemplate?: boolean;
 }
 
 export function ListingPageLayout({
   bounty: initialBounty,
   children,
   maxW = '7xl',
+  isTemplate = false,
 }: ListingPageProps) {
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
   const posthog = usePostHog();
@@ -152,6 +154,7 @@ export function ListingPageLayout({
           <Box w="100%" mx="auto" px={{ base: '2', lg: 6 }}>
             <Box w="100%" maxW={'7xl'} mx="auto">
               <ListingHeader
+                isTemplate={isTemplate}
                 commentCount={commentCount}
                 listing={initialBounty}
               />
@@ -172,6 +175,7 @@ export function ListingPageLayout({
                   h="full"
                 >
                   <RightSideBar
+                    isTemplate={isTemplate}
                     listing={initialBounty}
                     skills={iterableSkills}
                   />
@@ -259,6 +263,7 @@ export function ListingPageLayout({
                   )}
 
                   <Comments
+                    isTemplate={isTemplate}
                     isAnnounced={initialBounty?.isWinnersAnnounced ?? false}
                     listingSlug={initialBounty?.slug ?? ''}
                     listingType={initialBounty?.type ?? ''}

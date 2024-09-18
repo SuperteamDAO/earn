@@ -80,20 +80,48 @@ model Bounties {
 }
 
 model BountiesTemplates {
-  id          String     @id @default(uuid())
-  title       String?
-  slug        String?
-  description String?    @db.Text
-  color       String?
-  emoji       String?
-  isFeatured  Boolean    @default(false)
-  isActive    Boolean    @default(true)
-  isArchived  Boolean    @default(false)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  skills      Json?
-  type        BountyType @default(bounty)
-  Bounties    Bounties[]
+  id               String           @id @default(uuid())
+  title            String?
+  deadline         DateTime?
+  slug             String?
+  description      String?          @db.Text
+  color            String?
+  emoji            String?
+  isFeatured       Boolean          @default(false)
+  isActive         Boolean          @default(true)
+  isArchived       Boolean          @default(false)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  skills           Json?
+  type             BountyType       @default(bounty)
+  requirements     String?          @db.Text
+  region           Regions          @default(GLOBAL)
+  applicationType  ApplicationType  @default(fixed)
+  status           status           @default(OPEN)
+  timeToComplete   String?
+  token            String?
+  references       Json?
+  referredBy       String?
+  publishedAt      DateTime?
+  compensationType CompensationType @default(fixed)
+  maxRewardAsk     Int?
+  minRewardAsk     Int?
+  language         String?
+  rewardAmount     Float?
+  rewards          Json?
+  maxBonusSpots    Int              @default(0)
+  usdValue         Float?
+  sponsorId        String
+  pocId            String
+  pocSocials       String?
+  source           Source           @default(NATIVE)
+  isPublished      Boolean          @default(false)
+  Bounties         Bounties[]
+  sponsor          Sponsors         @relation(fields: [sponsorId], references: [id])
+  poc              User             @relation("poc", fields: [pocId], references: [id])
+
+  @@index([isActive, isArchived, type])
+  @@index([type])
 }
 
 model Comment {
@@ -231,24 +259,25 @@ model Submission {
 }
 
 model Sponsors {
-  id           String         @id @default(uuid())
-  name         String         @unique
-  slug         String         @unique
+  id           String              @id @default(uuid())
+  name         String              @unique
+  slug         String              @unique
   logo         String?
   url          String?
   industry     String
   twitter      String?
   bio          String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  isArchived   Boolean        @default(false)
-  isActive     Boolean        @default(true)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  isArchived   Boolean             @default(false)
+  isActive     Boolean             @default(true)
   entityName   String?
-  isVerified   Boolean        @default(false)
-  isCaution    Boolean        @default(false)
+  isVerified   Boolean             @default(false)
+  isCaution    Boolean             @default(false)
   Hackathon    Hackathon?
   UserSponsors UserSponsors[]
   Bounties     Bounties[]
+  Templates    BountiesTemplates[]
   Grants       Grants[]
   User         User[]
   UserInvites  UserInvites[]
@@ -327,6 +356,7 @@ model User {
   currentSponsor     Sponsors?            @relation(fields: [currentSponsorId], references: [id])
   UserSponsors       UserSponsors[]
   poc                Bounties[]           @relation("poc")
+  templates          BountiesTemplates[]  @relation("poc")
   Comment            Comment[]
   Submission         Submission[]
   Grants             Grants[]
