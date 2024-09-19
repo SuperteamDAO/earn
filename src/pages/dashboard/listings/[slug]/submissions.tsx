@@ -133,7 +133,12 @@ export default function BountySubmissions({ slug }: Props) {
 
   useEffect(() => {
     if (filteredSubmissions && filteredSubmissions.length > 0) {
-      setSelectedSubmission(filteredSubmissions[0]);
+      setSelectedSubmission((selectedSubmission) => {
+        if (filteredSubmissions.find((f) => f.id === selectedSubmission?.id)) {
+          return selectedSubmission;
+        }
+        return filteredSubmissions[0];
+      });
     }
   }, [filteredSubmissions]);
 
