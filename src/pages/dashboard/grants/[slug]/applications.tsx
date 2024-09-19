@@ -244,11 +244,14 @@ function GrantApplications({ slug }: Props) {
 
   useEffect(() => {
     if (applications && applications.length > 0) {
-      if (!selectedApplication || searchText) {
-        setSelectedApplication(applications[0]);
-      }
+      setSelectedApplication((selectedApplication) => {
+        if (applications.find((appl) => appl.id === selectedApplication?.id)) {
+          return selectedApplication;
+        }
+        return applications[0];
+      });
     }
-  }, [applications, searchText, selectedApplication]);
+  }, [applications, searchText]);
 
   return (
     <SponsorLayout isCollapsible>
