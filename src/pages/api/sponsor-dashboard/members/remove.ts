@@ -78,6 +78,15 @@ async function removeMember(
         },
       },
     });
+    await prisma.user.update({
+      where: {
+        id,
+        currentSponsorId: userSponsorId,
+      },
+      data: {
+        currentSponsorId: null,
+      },
+    });
 
     logger.info(`Successfully removed member with ID: ${id}`);
     res.status(200).json({ message: 'Member removed successfully.' });
