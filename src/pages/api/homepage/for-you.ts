@@ -10,6 +10,7 @@ const TAKE = 20;
 
 interface ForYouProps {
   userId: string;
+  order?: 'asc' | 'desc';
   statusFilter?: StatusFilter;
 }
 
@@ -34,8 +35,28 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
   const userRegion = await getUserRegion(user?.location || null);
 
   const statusFilterQuery = getStatusFilterQuery(statusFilter);
+  let orderBy:
+    | { deadline: 'asc' | 'desc' }
+    | { winnersAnnouncedAt: 'asc' | 'desc' }
+    | [{ isFeatured: 'desc' }, { deadline: 'asc' | 'desc' }] = {
+    deadline: 'desc',
+  };
+  if (statusFilter === 'open') {
+    orderBy = [
+      {
+        isFeatured: 'desc',
+      },
+      {
+        deadline: 'asc',
+      },
+    ];
+  } else if (statusFilter === 'completed') {
+    orderBy = {
+      winnersAnnouncedAt: 'desc',
+    };
+  }
 
-  const listings = await prisma.bounties.findMany({
+  let listings = await prisma.bounties.findMany({
     where: {
       isPublished: true,
       isActive: true,
@@ -106,9 +127,21 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
         },
       },
     },
-    orderBy: [{ isFeatured: 'desc' }, { deadline: 'asc' }],
+    orderBy,
     take: TAKE,
   });
+
+  if (statusFilter === 'open') {
+    listings = listings.sort((a, b) => {
+      if (a.isFeatured && !b.isFeatured) {
+        return -1;
+      } else if (!a.isFeatured && b.isFeatured) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  }
 
   return listings;
 }

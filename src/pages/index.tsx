@@ -58,6 +58,7 @@ export default function HomePage({
   const { data: reviewForYouListings } = useQuery({
     ...homepageForYouListingsQuery({
       statusFilter: 'review',
+      order: 'desc',
     }),
     enabled: isAuth,
   });
@@ -65,6 +66,7 @@ export default function HomePage({
   const { data: completeForYouListings } = useQuery({
     ...homepageForYouListingsQuery({
       statusFilter: 'completed',
+      order: 'desc',
     }),
     enabled: isAuth,
   });
@@ -171,12 +173,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   if (session && session.user.id) {
     openForYouListings = await getForYouListings({
       statusFilter: 'open',
+      order: 'desc',
       userId: session.user.id,
     });
   }
 
   const openListings = await getListings({
     statusFilter: 'open',
+    order: 'desc',
     userRegion,
     excludeIds: openForYouListings.map((listing) => listing.id),
   });
