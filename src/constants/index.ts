@@ -705,3 +705,4 @@ export const MAX_BONUS_SPOTS = 50;
 export const BONUS_REWARD_POSITION = 99;
 
 export const PDTG = 'https://t.me/pratikdholani/';
+export const ABTG = 'https://t.me/abhwshek/';
