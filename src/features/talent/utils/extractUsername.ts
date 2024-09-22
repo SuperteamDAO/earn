@@ -11,7 +11,7 @@ export function extractTwitterUsername(input: string): string | null {
   if (match && match[2]) {
     return match[2].startsWith('@') ? match[2].slice(1) : match[2];
   }
-  const usernameRegex = /^@?([a-zA-Z0-9_]{1,15})$/;
+  const usernameRegex = /^@?([a-zA-Z0-9_]{1,90})$/;
   const usernameMatch = input.match(usernameRegex);
   if (usernameMatch && usernameMatch[0]) {
     return usernameMatch[0].startsWith('@')
