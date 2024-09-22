@@ -69,7 +69,6 @@ export const getListingStatus = (
 ) => {
   if (!listing) return 'DRAFT';
 
-  console.log('listing verifying - ', listing);
   const listingStatus = getListingDraftStatus(
     listing?.status,
     listing?.isPublished,
@@ -77,7 +76,6 @@ export const getListingStatus = (
   );
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
 
-  console.log('listingStatus', listingStatus);
   if (listingStatus === 'VERIFYING') return 'Under Verification';
   if (listingStatus === 'DRAFT') return 'Draft';
   if (listing?.type === 'grant' || isGrant) return 'Ongoing';

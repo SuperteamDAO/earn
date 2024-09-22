@@ -5,6 +5,7 @@ import { type Listing } from '@/features/listings';
 
 interface ListingsParams {
   statusFilter: 'open' | 'review' | 'completed';
+  order?: 'asc' | 'desc';
 }
 
 const fetchHomePageForYouListings = async (
