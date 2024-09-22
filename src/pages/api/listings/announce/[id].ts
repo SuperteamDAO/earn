@@ -1,4 +1,3 @@
-import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { BONUS_REWARD_POSITION } from '@/constants';
@@ -9,6 +8,7 @@ import {
 } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
 import { type Rewards } from '@/features/listings';
+import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -74,7 +74,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
     try {
-      await axios.post(process.env.DISCORD_WINNERS_WEBHOOK!, {
+      await earncognitoClient.post(`/discord/winners-announced`, {
         listingId: result.id,
       });
     } catch (err) {
@@ -203,7 +203,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     try {
-      await axios.post(process.env.LISTING_ANNOUNCE_AIRTABLE_SYNC_WEBHOOK!, {
+      await earncognitoClient.post(`/airtable/sync-announced-listings`, {
         listingId: result.id,
       });
     } catch (err) {

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
@@ -9,6 +8,7 @@ import {
   withSponsorAuth,
 } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
+import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
@@ -234,33 +234,30 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         if (!process.env.EARNCOGNITO_URL) {
           throw new Error('ENV EARNCOGNITO_URL not provided');
         }
-        await axios.post(
-          `${process.env.EARNCOGNITO_URL}/discord/verify-listing/initiate`,
-          {
-            listingId: result.id,
-          },
-        );
+        await earncognitoClient.post(`/discord/verify-listing/initiate`, {
+          listingId: result.id,
+        });
       } catch (err) {
         console.log('Failed to send Verification Message to discord', err);
         logger.error('Failed to send Verification Message to discord', err);
       }
-    }
-
-    try {
-      if (listing.isPublished === true && result.isPublished === false) {
-        await axios.post(process.env.DISCORD_LISTINGS_WEBHOOK!, {
-          listingId: result.id,
-          status: 'Unpublished',
-        });
+    } else {
+      try {
+        if (listing.isPublished === true && result.isPublished === false) {
+          await earncognitoClient.post(`/discord/listing-update`, {
+            listingId: result.id,
+            status: 'Unpublished',
+          });
+        }
+        if (listing.isPublished === false && result.isPublished === true) {
+          await earncognitoClient.post(`/discord/listing-update`, {
+            listingId: result.id,
+            status: 'Published',
+          });
+        }
+      } catch (err) {
+        logger.error('Discord Listing Update Message Error', err);
       }
-      if (listing.isPublished === false && result.isPublished === true) {
-        await axios.post(process.env.DISCORD_LISTINGS_WEBHOOK!, {
-          listingId: result.id,
-          status: 'Published',
-        });
-      }
-    } catch (err) {
-      logger.error('Discord Listing Update Message Error', err);
     }
 
     logger.info(`Bounty with ID: ${id} updated successfully`);

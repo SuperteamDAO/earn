@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
@@ -6,6 +5,7 @@ import {
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
+import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
@@ -162,25 +162,26 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         if (!process.env.EARNCOGNITO_URL) {
           throw new Error('ENV EARNCOGNITO_URL not provided');
         }
-        await axios.post(
-          `${process.env.EARNCOGNITO_URL}/discord/verify-listing/initiate`,
-          {
-            listingId: result.id,
-          },
-        );
+        await earncognitoClient.post(`/discord/verify-listing/initiate`, {
+          listingId: result.id,
+        });
       } catch (err) {
         console.log('Failed to send Verification Message to discord', err);
         logger.error('Failed to send Verification Message to discord', err);
       }
-    }
-
-    try {
-      await axios.post(process.env.DISCORD_LISTINGS_WEBHOOK!, {
-        listingId: result?.id,
-        status: result.isPublished ? 'Published' : 'Draft Added',
-      });
-    } catch (err) {
-      logger.error('Discord Listing Update Message Error', err);
+    } else {
+      try {
+        await earncognitoClient.post(`/discord/listing-update`, {
+          listingId: result?.id,
+          status: result.isPublished
+            ? 'Published'
+            : isVerifying
+              ? 'To be Verified'
+              : 'Draft Added',
+        });
+      } catch (err) {
+        logger.error('Discord Listing Update Message Error', err);
+      }
     }
     logger.info(`Bounty created successfully with ID: ${result.id}`);
     logger.debug(`Created bounty data: ${safeStringify(result)}`);
