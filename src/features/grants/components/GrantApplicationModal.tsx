@@ -6,6 +6,7 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
+  Icon,
   Image,
   Input,
   InputGroup,
@@ -25,6 +26,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { FaXTwitter } from 'react-icons/fa6';
 
 import {
   TextAreaWithCounter,
@@ -32,6 +34,11 @@ import {
 } from '@/components/Form/TextAreaHelpers';
 import { tokenList } from '@/constants';
 import { QuestionHandler } from '@/features/listings';
+import {
+  extractTwitterUsername,
+  isValidTwitterInput,
+  isValidTwitterUsername,
+} from '@/features/talent';
 import { useUpdateUser, useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { validateSolAddress } from '@/utils/validateSolAddress';
@@ -92,6 +99,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
         proofOfWork,
         milestones,
         kpi,
+        twitter,
         ...answers
       } = data;
 
@@ -114,6 +122,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
         kpi,
         walletAddress,
         ask: ask || null,
+        twitter,
         answers: grantAnswers.length ? grantAnswers : null,
       });
 
@@ -410,6 +419,88 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                   errors={errors}
                   isRequired
                 />
+
+                <FormControl isRequired>
+                  <FormLabel
+                    mb={0}
+                    color={'brand.slate.600'}
+                    fontWeight={600}
+                    htmlFor={id}
+                  >
+                    Personal Twitter Profile
+                  </FormLabel>
+                  <FormHelperText mt={0} mb={2} color="brand.slate.500">
+                    Add your personal Twitter username
+                  </FormHelperText>
+                  <Box mb={'1.25rem'}>
+                    <Flex align="center" justify="center" direction="row">
+                      <Box pos="relative">
+                        <Icon
+                          as={FaXTwitter}
+                          boxSize={5}
+                          mr={3}
+                          color={'brand.slate.600'}
+                        />
+                      </Box>
+                      <Box
+                        h="2.6875rem"
+                        px={3}
+                        border="1px solid"
+                        borderColor={'brand.slate.300'}
+                        borderRight="none"
+                        borderLeftRadius={'md'}
+                      >
+                        <Flex
+                          align="center"
+                          justify={{ base: 'center', md: 'start' }}
+                          w={'100%'}
+                          h={'100%'}
+                        >
+                          <Text
+                            h="4.3rem"
+                            color={'brand.slate.600'}
+                            fontSize={{ base: '0.7rem', md: '0.875rem' }}
+                            fontWeight={500}
+                            lineHeight="4.3rem"
+                            textAlign="left"
+                          >
+                            x.com/
+                          </Text>
+                        </Flex>
+                      </Box>
+                      <Input
+                        w="full"
+                        h="2.6875rem"
+                        color={'gray.800'}
+                        fontSize="0.875rem"
+                        fontWeight={500}
+                        borderColor={'brand.slate.300'}
+                        borderLeftRadius={0}
+                        _placeholder={{
+                          color: 'brand.slate.300',
+                        }}
+                        defaultValue={
+                          extractTwitterUsername(user?.twitter || '') ||
+                          undefined
+                        }
+                        focusBorderColor="brand.purple"
+                        id="twitter"
+                        placeholder={'johncena'}
+                        {...register('twitter', {
+                          validate: (value) => {
+                            if (
+                              !isValidTwitterInput(value) &&
+                              !isValidTwitterUsername(value)
+                            ) {
+                              return false;
+                            }
+                            return true;
+                          },
+                        })}
+                      />
+                    </Flex>
+                  </Box>
+                </FormControl>
 
                 {questions &&
                   questions.map((e: any) => (

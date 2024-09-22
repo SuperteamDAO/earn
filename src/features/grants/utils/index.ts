@@ -25,7 +25,6 @@ interface GrantApplicationWithUserAndGrant extends GrantApplication {
     lastName: string | null;
     email: string;
     discord: string | null;
-    twitter: string | null;
   };
 }
 
@@ -75,7 +74,7 @@ export function convertGrantApplicationToAirtable(
     'Proof of Work': grantApplication.proofOfWork,
     Name: `${grantApplication.user.firstName} ${grantApplication.user.lastName}`,
     'Contact Email': grantApplication.user.email,
-    'Twitter URL': grantApplication.user.twitter ?? undefined,
+    'Twitter URL': grantApplication.twitter ?? undefined,
     'SOL Wallet': grantApplication.walletAddress,
     Milestones: grantApplication.milestones ?? undefined,
     Grants: [grantApplication.grant.airtableId!],

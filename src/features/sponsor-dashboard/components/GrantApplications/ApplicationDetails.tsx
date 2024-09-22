@@ -629,6 +629,7 @@ export const ApplicationDetails = ({
                 label="Project Details"
                 content={selectedApplication?.projectDetails}
               />
+              <InfoBox label="Twitter" content={selectedApplication?.twitter} />
               <InfoBox
                 label="Deadline"
                 content={selectedApplication?.projectTimeline}
