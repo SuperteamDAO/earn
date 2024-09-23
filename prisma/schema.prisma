@@ -228,6 +228,7 @@ model Submission {
   id                 String           @id @default(uuid())
   link               String?          @db.VarChar(500)
   tweet              String?          @db.VarChar(500)
+  status             SubmissionStatus @default(Pending)
   eligibilityAnswers Json?
   userId             String
   listingId          String
@@ -661,4 +662,10 @@ enum TalentRankingTimeframe {
   LAST_30_DAYS
   LAST_7_DAYS
   ALL_TIME
+}
+
+enum SubmissionStatus {
+  Pending
+  Approved
+  Rejected
 }
