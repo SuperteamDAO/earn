@@ -23,11 +23,10 @@ import type { UserStoreType } from './types';
 
 interface Props {
   setStep?: Dispatch<SetStateAction<number>>;
-  success: () => void;
   useFormStore: () => UserStoreType;
 }
 
-export function YourLinks({ success, useFormStore }: Props) {
+export function YourLinks({ useFormStore }: Props) {
   const { refetchUser } = useUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
@@ -67,7 +66,6 @@ export function YourLinks({ success, useFormStore }: Props) {
       await axios.post('/api/user/complete-profile/', finalOptions);
       await axios.post('/api/email/manual/welcome-talent/');
       await refetchUser();
-      success();
     } catch (e) {
       setisLoading(false);
     }
