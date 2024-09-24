@@ -1,4 +1,5 @@
 import { Box, Text } from '@chakra-ui/react';
+import { type status } from '@prisma/client';
 import { atom, useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 
@@ -11,6 +12,7 @@ type BountySnackbarType = {
   rewardAmount: number | undefined;
   type: string | undefined;
   isPublished: boolean | undefined;
+  status?: status;
 };
 
 export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
@@ -32,11 +34,13 @@ export const BountySnackbar = () => {
     type,
     isPublished,
     isCaution,
+    status,
   } = bountySnackbar;
 
   const isExpired = deadline && dayjs(deadline).isBefore(dayjs());
 
   const getBackgroundColor = () => {
+    if (status === 'PREVIEW') return 'brand.slate.500';
     if (!isPublished) return '#DC4830';
     if (isExpired) return '#6A6A6A';
     if (isCaution) return '#DC4830';
@@ -47,7 +51,8 @@ export const BountySnackbar = () => {
     const daysToDeadline = deadline
       ? dayjs(deadline).diff(dayjs(), 'day')
       : null;
-
+    if (status === 'PREVIEW')
+      return 'This Listing Is In Preview Mode. Check Out Other Listings on Our Homepage!';
     if (!isPublished)
       return 'This Listing Is Inactive Right Now. Check Out Other Listings on Our Homepage!';
     if (isExpired)

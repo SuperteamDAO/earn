@@ -19,6 +19,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 const allowedFields = [
   'type',
+  'status',
   'title',
   'skills',
   'slug',

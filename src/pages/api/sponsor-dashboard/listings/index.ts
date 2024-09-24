@@ -61,7 +61,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       WHERE b.isActive = true
       AND b.isArchived = false
       AND b.sponsorId = ?
-      AND b.status = ?
+      AND b.status <> ?
       
       UNION ALL
       
@@ -97,7 +97,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ORDER BY createdAt DESC
     `,
       userSponsorId,
-      status.OPEN,
+      status.CLOSED,
       userSponsorId,
       GrantStatus.OPEN,
     );

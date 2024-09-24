@@ -16,7 +16,7 @@ export interface Listing {
   deadline?: string;
   eligibility?: Eligibility[];
   references?: References[];
-  status?: 'OPEN' | 'REVIEW' | 'CLOSED';
+  status?: 'OPEN' | 'REVIEW' | 'CLOSED' | 'PREVIEW';
   isActive?: boolean;
   isArchived?: boolean;
   isPublished?: boolean;

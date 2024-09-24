@@ -6,6 +6,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormHelperText,
+  HStack,
   Input,
   InputGroup,
   InputRightElement,
@@ -31,6 +32,7 @@ import {
   useState,
 } from 'react';
 import { useForm } from 'react-hook-form';
+import { LuEye } from 'react-icons/lu';
 import slugify from 'slugify';
 import { z } from 'zod';
 
@@ -53,7 +55,7 @@ interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   isNewOrDraft?: boolean;
   isDraftLoading: boolean;
-  createDraft: (data: ListingFormType) => Promise<void>;
+  createDraft: (data: ListingFormType, isPreview?: boolean) => Promise<void>;
   setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   subSkills: MultiSelectOptions[];
@@ -308,7 +310,7 @@ export const ListingBasic = ({
     }
   };
 
-  const onDraftClick = async () => {
+  const onDraftClick = async (isPreview: boolean = false) => {
     const data = getValues();
     const mergedSkills = mergeSkills({
       skills: skills,
@@ -320,7 +322,7 @@ export const ListingBasic = ({
     } else {
       posthog.capture('edit listing_sponsor');
     }
-    createDraft(formData);
+    createDraft(formData, isPreview);
   };
 
   return (
@@ -716,20 +718,36 @@ export const ListingBasic = ({
               Continue
             </Button>
             {isDraft && (
-              <Button
-                className="ph-no-capture"
-                w="100%"
-                py={6}
-                color="brand.purple"
-                fontWeight={500}
-                bg="#EEF2FF"
-                borderRadius="sm"
-                isLoading={isDraftLoading}
-                onClick={onDraftClick}
-                variant={'ghost'}
-              >
-                Save Draft
-              </Button>
+              <HStack w="full">
+                <Button
+                  className="ph-no-capture"
+                  w="100%"
+                  py={6}
+                  color="brand.purple"
+                  fontWeight={500}
+                  bg="#EEF2FF"
+                  borderRadius="sm"
+                  isLoading={isDraftLoading}
+                  onClick={() => onDraftClick()}
+                  variant={'ghost'}
+                >
+                  Save Draft
+                </Button>
+                <Button
+                  className="ph-no-capture"
+                  w="100%"
+                  py={6}
+                  color="brand.slate.500"
+                  fontWeight={500}
+                  borderRadius="sm"
+                  isLoading={isDraftLoading}
+                  leftIcon={<LuEye />}
+                  onClick={() => onDraftClick(true)}
+                  variant={'outline'}
+                >
+                  Preview
+                </Button>
+              </HStack>
             )}
             {!isDraft && (
               <Button
@@ -739,7 +757,7 @@ export const ListingBasic = ({
                 fontWeight={500}
                 borderRadius="sm"
                 isLoading={isDraftLoading}
-                onClick={onDraftClick}
+                onClick={() => onDraftClick()}
                 variant={'solid'}
               >
                 Update Listing

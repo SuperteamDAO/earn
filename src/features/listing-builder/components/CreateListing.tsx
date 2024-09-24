@@ -119,7 +119,10 @@ export function CreateListing({
 
   const basePath = type === 'hackathon' ? 'hackathon' : 'listings';
   const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
-  const isNewOrDraft = listingDraftStatus === 'DRAFT' || newListing === true;
+  const isNewOrDraft =
+    listingDraftStatus === 'DRAFT' ||
+    listingDraftStatus === 'PREVIEW' ||
+    newListing === true;
 
   useEffect(() => {
     initializeForm(listing!, isDuplicating, type);
@@ -199,7 +202,7 @@ export function CreateListing({
     }
   };
 
-  const createDraft = async (data: ListingFormType) => {
+  const createDraft = async (data: ListingFormType, isPreview?: boolean) => {
     setIsDraftLoading(true);
 
     let api = `/api/${basePath}/create`;
@@ -250,6 +253,7 @@ export function CreateListing({
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
         ...draft,
         isPublished: editable && !isDuplicating ? listing?.isPublished : false,
+        status: isPreview ? 'PREVIEW' : 'OPEN',
       });
       if (type === 'hackathon') {
         router.push(`/dashboard/hackathon/`);

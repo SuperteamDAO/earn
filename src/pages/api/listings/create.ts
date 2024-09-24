@@ -49,6 +49,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       minRewardAsk,
       maxRewardAsk,
       isPrivate,
+      status,
     } = req.body;
     let { isPublished } = req.body;
 
@@ -121,6 +122,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     console.log('verifying status - ', isVerifying);
     const finalData = {
       sponsorId: userSponsorId,
+      status,
       title,
       isVerifying,
       usdValue,

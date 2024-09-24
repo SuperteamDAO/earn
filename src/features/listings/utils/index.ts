@@ -49,7 +49,9 @@ export const getListingDraftStatus = (
   isPublished: boolean | undefined,
   isVerifying: boolean | undefined,
 ) => {
-  if (status !== 'OPEN') return 'CLOSED';
+  if (status === 'CLOSED') return 'CLOSED';
+  if (status === 'REVIEW') return 'REVIEW';
+  if (status === 'PREVIEW') return 'PREVIEW';
   if (isVerifying) return 'VERIFYING';
   if (isPublished) return 'PUBLISHED';
   return 'DRAFT';
@@ -76,6 +78,7 @@ export const getListingStatus = (
   );
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
 
+  if (listingStatus === 'PREVIEW') return 'Preview';
   if (listingStatus === 'VERIFYING') return 'Under Verification';
   if (listingStatus === 'DRAFT') return 'Draft';
   if (listing?.type === 'grant' || isGrant) return 'Ongoing';
@@ -83,6 +86,7 @@ export const getListingStatus = (
   switch (listingStatus) {
     case 'CLOSED':
       return 'Closed';
+    case 'REVIEW':
     case 'PUBLISHED':
       if (!hasDeadlinePassed && !listing?.isWinnersAnnounced)
         return 'In Progress';
@@ -111,6 +115,7 @@ export const getColorStyles = (status: string) => {
     case 'Under Verification':
     case 'Payment Pending':
       return { bgColor: '#ffecb3', color: '#F59E0B' };
+    case 'Preview':
     case 'Draft':
       return { bgColor: 'brand.slate.100', color: 'brand.slate.400' };
     case 'In Review':

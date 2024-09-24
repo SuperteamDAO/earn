@@ -580,6 +580,7 @@ enum status {
   OPEN
   REVIEW
   CLOSED
+  PREVIEW
 }
 
 enum GrantStatus {
