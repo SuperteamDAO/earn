@@ -306,7 +306,7 @@ export const ApplicationDetails = ({
 
   return (
     <Box
-      w="150%"
+      w="100%"
       bg="white"
       borderColor="brand.slate.200"
       borderTopWidth="1px"
