@@ -43,5 +43,5 @@
     }
   },
   "exclude": ["./out/**/*", "./node_modules/**/*", "./utils/functions.ts"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "prisma/seed.mts"]
 }

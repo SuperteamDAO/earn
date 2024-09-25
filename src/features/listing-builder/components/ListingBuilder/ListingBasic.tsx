@@ -326,7 +326,10 @@ export const ListingBasic = ({
   return (
     <>
       <VStack align={'start'} gap={3} w={'2xl'} pt={5} pb={12}>
-        <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          style={{ width: '100%', color: 'black' }}
+        >
           {type === 'hackathon' && !editable && (
             <Box w="100%" mb={5}>
               <SelectSponsor type="hackathon" />

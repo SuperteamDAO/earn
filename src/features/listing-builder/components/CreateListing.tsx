@@ -78,7 +78,7 @@ export function CreateListing({
   const router = useRouter();
   const { user } = useUser();
   const { form, initializeForm } = useListingFormStore();
-
+  const [blink, setBlink] = useState<string | null>(null);
   const listingDraftStatus = getListingDraftStatus(
     listing?.status,
     listing?.isPublished,
@@ -175,10 +175,42 @@ export function CreateListing({
       if (editable && !isDuplicating) {
         api = `/api/${basePath}/update/${listing?.id}/`;
       }
+
+      const blinkData = {
+        name: newListing.title,
+        type: 'bounty',
+        description: `requirements: ${newListing.requirements}, skills: ${newListing?.skills?.map((skill) => `${skill?.skills}${skill.subskills ? ` (${skill.subskills})` : ''}`).join(', ')}`,
+        amount: newListing.rewardAmount,
+        interval: newListing.deadline,
+        imageUrl:
+          'https://d70djocle7hv2.cloudfront.net//uploads/2/0.39071661421671156/image.jpg',
+        questions: ['Link to your submission', 'Tweet Link', 'Anything Else'],
+        types: ['text', 'text', 'text'],
+      };
+      console.log(newListing);
+      console.log(blinkData, '::::BLINKDATA');
+
+      const blinkRes = await axios.post(
+        'https://bountyspread.cc/api/getblink',
+        blinkData,
+        {
+          headers: {
+            AUTHORIZATION:
+              'e823629df52dfc7aa0d5f6b267026276a8633a0a86dcf7120a2ebe20fbd39c5e',
+          },
+        },
+      );
       const result = await axios.post(api, {
         ...newListing,
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
       });
+
+      if (!blinkRes.data.success) {
+        alert('Not good');
+        return;
+      }
+
+      setBlink(blinkRes.data.blinkInfo.url);
       setSlug(result?.data?.slug ?? ('' as string));
       setType(result?.data?.type ?? ('' as string));
       setIsListingPublishing(false);
@@ -245,12 +277,13 @@ export function CreateListing({
         minRewardAsk: data?.minRewardAsk,
         maxRewardAsk: data?.maxRewardAsk,
       };
-
+      console.log(draft);
       await axios.post(api, {
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
         ...draft,
         isPublished: editable && !isDuplicating ? listing?.isPublished : false,
       });
+
       if (type === 'hackathon') {
         router.push(`/dashboard/hackathon/`);
       } else {
@@ -293,6 +326,7 @@ export function CreateListing({
               isOpen={isSuccessOpen}
               isVerified={user.currentSponsor?.isVerified || false}
               onClose={() => {}}
+              blink={blink as string}
             />
           )}
           {isVerifyingOpen && (

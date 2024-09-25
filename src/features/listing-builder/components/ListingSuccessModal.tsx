@@ -1,3 +1,4 @@
+'use client';
 import {
   AddIcon,
   ArrowForwardIcon,
@@ -19,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 import { FaXTwitter } from 'react-icons/fa6';
 import { LuCheck } from 'react-icons/lu';
 
@@ -32,6 +33,7 @@ interface Props {
   slug: string;
   type: string;
   isVerified: boolean;
+  blink: string;
 }
 export const ListingSuccessModal = ({
   isOpen,
@@ -39,6 +41,7 @@ export const ListingSuccessModal = ({
   slug,
   type,
   isVerified,
+  blink,
 }: Props) => {
   const listingLink = (medium?: 'twitter' | 'telegram') =>
     `${getURL()}listings/${type}/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`;
@@ -52,6 +55,7 @@ ${listingLink('twitter')}
   const { hasCopied, onCopy } = useClipboard(listingLink());
   const router = useRouter();
 
+  const [blinkCopy, setBlinkCopy] = useState(false);
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} size="sm">
@@ -126,6 +130,63 @@ ${listingLink('twitter')}
                     ) : (
                       <CopyIcon
                         onClick={onCopy}
+                        cursor="pointer"
+                        h="1.3rem"
+                        w="1.3rem"
+                        color="brand.slate.400"
+                      />
+                    )}
+                  </Box>
+                </Button>
+                <Text
+                  w={'100%'}
+                  mt={-2}
+                  color={'brand.slate.500'}
+                  fontFamily={'var(--font-sans)'}
+                  fontWeight={400}
+                  textAlign={'left'}
+                >
+                  Copy Blink:
+                </Text>
+                <Button
+                  alignItems="center"
+                  justifyContent="space-between"
+                  gap={2}
+                  w="full"
+                  borderColor="brand.slate.200"
+                  _hover={{ bg: 'brand.slate.100' }}
+                  userSelect={'none'}
+                  variant="outline"
+                >
+                  <Text
+                    overflow="hidden"
+                    color="brand.slate.500"
+                    fontSize="1rem"
+                    fontWeight={400}
+                    whiteSpace="nowrap"
+                    userSelect={'none'}
+                    textOverflow="ellipsis"
+                    cursor="pointer"
+                    onClick={() => {
+                      setBlinkCopy(true);
+                      navigator.clipboard.writeText(blink);
+                    }}
+                  >
+                    {blink}
+                  </Text>
+                  <Box mr="0rem">
+                    {blinkCopy ? (
+                      <CheckIcon
+                        h="1.3rem"
+                        w="1.3rem"
+                        color="brand.slate.400"
+                      />
+                    ) : (
+                      <CopyIcon
+                        onClick={() => {
+                          setBlinkCopy(true);
+                          navigator.clipboard.writeText(blink);
+                        }}
                         cursor="pointer"
                         h="1.3rem"
                         w="1.3rem"

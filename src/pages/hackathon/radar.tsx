@@ -1,8 +1,23 @@
-import { Box, Button, Circle, Flex, SimpleGrid, Text } from '@chakra-ui/react';
+import {
+  type As,
+  Box,
+  Button,
+  type ChakraProps,
+  Circle,
+  Flex,
+  type MergeWithAs,
+  SimpleGrid,
+  Text,
+} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
-import React, { useMemo } from 'react';
+import React, {
+  type DetailedHTMLProps,
+  type ForwardRefExoticComponent,
+  type HTMLAttributes,
+  useMemo,
+} from 'react';
 import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
@@ -12,10 +27,46 @@ import { Meta } from '@/layouts/Meta';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RadarLogo } from '@/svg/radar-logo';
 
-const MotionBox = motion(Box);
-const MotionFlex = motion(Flex);
-const MotionText = motion(Text);
-const MotionButton = motion(Button);
+const MotionBox = motion(
+  Box as ForwardRefExoticComponent<
+    MergeWithAs<
+      DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+      any,
+      Omit<ChakraProps, never>,
+      As
+    >
+  >,
+);
+const MotionFlex = motion(
+  Flex as ForwardRefExoticComponent<
+    MergeWithAs<
+      DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+      any,
+      Omit<ChakraProps, never>,
+      As
+    >
+  >,
+);
+const MotionText = motion(
+  Text as ForwardRefExoticComponent<
+    MergeWithAs<
+      DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+      any,
+      Omit<ChakraProps, never>,
+      As
+    >
+  >,
+);
+const MotionButton = motion(
+  Button as ForwardRefExoticComponent<
+    MergeWithAs<
+      DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+      any,
+      Omit<ChakraProps, never>,
+      As
+    >
+  >,
+);
 
 export default function Radar() {
   const router = useRouter();
@@ -149,7 +200,6 @@ export default function Radar() {
               Find Ideas to Build
             </MotionButton>
             <MotionFlex
-              align="center"
               gap={1}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -162,7 +212,6 @@ export default function Radar() {
             </MotionFlex>
           </Flex>
           <MotionFlex
-            justify="center"
             gap={{ base: 4, md: 12 }}
             px={6}
             pt={4}

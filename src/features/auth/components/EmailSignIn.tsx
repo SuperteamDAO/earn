@@ -70,6 +70,7 @@ export const EmailSignIn = () => {
     <>
       <FormControl isInvalid={isError}>
         <Input
+          color="brand.slate.500"
           fontSize={'16px'}
           borderColor="#CBD5E1"
           _placeholder={{ fontSize: '16px' }}
