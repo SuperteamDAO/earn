@@ -32,7 +32,6 @@ import {
   useState,
 } from 'react';
 import { useForm } from 'react-hook-form';
-import { LuEye } from 'react-icons/lu';
 import slugify from 'slugify';
 import { z } from 'zod';
 
@@ -732,20 +731,6 @@ export const ListingBasic = ({
                   variant={'ghost'}
                 >
                   Save Draft
-                </Button>
-                <Button
-                  className="ph-no-capture"
-                  w="100%"
-                  py={6}
-                  color="brand.slate.500"
-                  fontWeight={500}
-                  borderRadius="sm"
-                  isLoading={isDraftLoading}
-                  leftIcon={<LuEye />}
-                  onClick={() => onDraftClick(true)}
-                  variant={'outline'}
-                >
-                  Preview
                 </Button>
               </HStack>
             )}

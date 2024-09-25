@@ -99,6 +99,9 @@ export function CreateListing({
   const [steps, setSteps] = useState<number>(
     !!prevStep ? prevStep : editable || type === 'hackathon' ? 2 : 1,
   );
+  useEffect(() => {
+    setSteps(!!prevStep ? prevStep : editable || type === 'hackathon' ? 2 : 1);
+  }, [prevStep]);
 
   const [slug, setSlug] = useState<string>('');
   const [isType, setType] = useState<string>('');
@@ -249,16 +252,24 @@ export function CreateListing({
         maxRewardAsk: data?.maxRewardAsk,
       };
 
-      await axios.post(api, {
+      const result = await axios.post<Listing>(api, {
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
         ...draft,
         isPublished: editable && !isDuplicating ? listing?.isPublished : false,
         status: isPreview ? 'PREVIEW' : 'OPEN',
       });
-      if (type === 'hackathon') {
-        router.push(`/dashboard/hackathon/`);
+      const resType = result.data.type;
+      const resSlug = result.data.slug;
+      if (isPreview) {
+        window.open(`/listings/${resType}/${resSlug}`, '_blank');
+        router.replace(`/dashboard/listings/${resSlug}/edit?preview=1`);
+        setIsDraftLoading(false);
       } else {
-        router.push('/dashboard/listings');
+        if (type === 'hackathon') {
+          router.push(`/dashboard/hackathon/`);
+        } else {
+          router.push('/dashboard/listings');
+        }
       }
     } catch (e) {
       setIsDraftLoading(false);

@@ -119,7 +119,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       publishedAt = null;
     }
 
-    console.log('verifying status - ', isVerifying);
     const finalData = {
       sponsorId: userSponsorId,
       status,

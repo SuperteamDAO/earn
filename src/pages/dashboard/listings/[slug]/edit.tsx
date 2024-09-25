@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { CreateListing } from '@/features/listing-builder';
-import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard'; // Adjust the import path as needed
+import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
@@ -30,6 +30,16 @@ function EditBounty({ slug }: Props) {
       }
 
       const isProject = bounty.type === 'project';
+
+      const preview = router.query['preview'];
+      console.log('preview step - ', preview, !!preview);
+      if (!!preview) {
+        if (isProject) setPrevStep(5);
+        else setPrevStep(4);
+
+        return;
+      }
+
       if (
         bounty.isPublished ||
         !bounty.title ||

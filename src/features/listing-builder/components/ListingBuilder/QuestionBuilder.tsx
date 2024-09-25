@@ -12,7 +12,6 @@ import {
 import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { LuEye } from 'react-icons/lu';
 import { toast } from 'sonner';
 
 import { useListingFormStore } from '../../store';
@@ -200,20 +199,6 @@ export const QuestionBuilder = ({
                 variant={'ghost'}
               >
                 Save Draft
-              </Button>
-              <Button
-                className="ph-no-capture"
-                w="100%"
-                py={6}
-                color="brand.slate.500"
-                fontWeight={500}
-                borderRadius="sm"
-                isLoading={isDraftLoading}
-                leftIcon={<LuEye />}
-                onClick={() => onDraftClick(true)}
-                variant={'outline'}
-              >
-                Preview
               </Button>
             </HStack>
           )}
