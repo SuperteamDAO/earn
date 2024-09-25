@@ -4,12 +4,14 @@ import {
   Button,
   Flex,
   HStack,
+  Icon,
   Input,
   Link as ChakraLink,
   Modal,
   ModalBody,
   ModalContent,
   ModalOverlay,
+  Spinner,
   Text,
   useDisclosure,
   VStack,
@@ -32,6 +34,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
@@ -45,11 +48,11 @@ import { CiRedo, CiUndo } from 'react-icons/ci';
 import { GoBold } from 'react-icons/go';
 import {
   MdOutlineAddPhotoAlternate,
+  MdOutlineFileUpload,
   MdOutlineFormatListBulleted,
   MdOutlineFormatUnderlined,
   MdOutlineHorizontalRule,
 } from 'react-icons/md';
-import { toast } from 'sonner';
 import ImageResize from 'tiptap-extension-resize-image';
 import { z } from 'zod';
 
@@ -146,6 +149,8 @@ export const DescriptionBuilder = ({
   const { form, updateState } = useListingFormStore();
   const isDraft = isNewOrDraft || isDuplicating;
   const [selectedLink, setSelectedLink] = useState<string>('');
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const {
     register,
@@ -265,19 +270,16 @@ export const DescriptionBuilder = ({
 
   const setLink = useCallback(
     (url: string) => {
-      // cancelled
       if (url === null) {
         return;
       }
 
-      // empty
       if (url === '') {
         editor?.chain().focus().extendMarkRange('link').unsetLink().run();
         onClose();
         return;
       }
 
-      // update link
       editor
         ?.chain()
         .focus()
@@ -289,35 +291,46 @@ export const DescriptionBuilder = ({
     [editor],
   );
 
+  const {
+    isOpen: isImageModalOpen,
+    onOpen: onImageModalOpen,
+    onClose: onImageModalClose,
+  } = useDisclosure({
+    onClose: () => {
+      setUploadError(null);
+      setIsUploading(false);
+    },
+  });
+
   const addImage = useCallback(() => {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/jpeg, image/png'; // Accept only JPEG & PNG files
-    fileInput.click();
+    setUploadError(null);
+    setIsUploading(false);
+    onImageModalOpen();
+  }, [onImageModalOpen]);
 
-    fileInput.addEventListener('change', async (event: any) => {
-      const file = event?.target?.files[0];
-      if (file) {
-        const toastId = toast.loading('Uploading image...');
+  const handleImageUpload = async (file: File) => {
+    setIsUploading(true);
+    setUploadError(null);
 
-        try {
-          const url = await uploadToCloudinary(
-            file,
-            'listing-description',
-            'description',
-          );
-          if (url) {
-            // Set the image in the editor
-            editor?.chain().focus().setImage({ src: url }).run();
-            toast.success('Image uploaded successfully!', { id: toastId });
-          }
-        } catch (error) {
-          console.error('Error uploading image:', error);
-          toast.error('Failed to upload image.', { id: toastId });
-        }
+    try {
+      const url = await uploadToCloudinary(
+        file,
+        'listing-description',
+        'description',
+      );
+      if (url) {
+        editor?.chain().focus().setImage({ src: url }).run();
+        onImageModalClose();
+      } else {
+        setUploadError('Failed to upload image.');
       }
-    });
-  }, [editor]);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setUploadError('Failed to upload image.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const isProject = type === 'project';
 
@@ -352,6 +365,15 @@ export const DescriptionBuilder = ({
           isOpen={isOpen}
           onClose={onClose}
           selectedLink={selectedLink}
+        />
+      )}
+      {isImageModalOpen && (
+        <ImageUploadModal
+          isOpen={isImageModalOpen}
+          onClose={onImageModalClose}
+          onUpload={handleImageUpload}
+          isUploading={isUploading}
+          uploadError={uploadError}
         />
       )}
       <Box>
@@ -696,5 +718,117 @@ export const DescriptionBuilder = ({
         </VStack>
       </Box>
     </>
+  );
+};
+
+interface ImageUploadModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onUpload: (file: File) => void;
+  isUploading: boolean;
+  uploadError: string | null;
+}
+
+const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
+  isOpen,
+  onClose,
+  onUpload,
+  isUploading,
+  uploadError,
+}) => {
+  const { getRootProps, getInputProps, fileRejections } = useDropzone({
+    accept: {
+      'image/jpeg': [],
+      'image/png': [],
+    },
+    maxSize: 5 * 1024 * 1024, // 5MB
+    onDrop: (acceptedFiles: File[]) => {
+      if (acceptedFiles && acceptedFiles[0]) {
+        onUpload(acceptedFiles[0]);
+      }
+    },
+    disabled: isUploading,
+  });
+
+  return (
+    <Modal isCentered isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent maxW="500px">
+        {/* <ModalCloseButton /> */}
+        <ModalBody my={3} px={4}>
+          <Box
+            {...getRootProps()}
+            p={10}
+            color="brand.slate.500"
+            textAlign="center"
+            bg="#F8FAFC"
+            borderWidth="2px"
+            borderStyle="dashed"
+            borderColor="brand.slate.200"
+            borderRadius="md"
+            _hover={{ cursor: 'pointer', borderColor: 'brand.slate.300' }}
+          >
+            <input {...getInputProps()} />
+            {isUploading ? (
+              <VStack>
+                <Spinner color="brand.slate.500" size="xl" />
+                <Text fontSize="lg" fontWeight="bold">
+                  Uploading image...
+                </Text>
+              </VStack>
+            ) : (
+              <>
+                <Flex
+                  align="center"
+                  justify="center"
+                  w="6rem"
+                  h="6rem"
+                  mx="auto"
+                  mb={4}
+                  bg="brand.slate.100"
+                  borderRadius="full"
+                >
+                  <Icon
+                    as={MdOutlineFileUpload}
+                    w={10}
+                    h={10}
+                    color="brand.slate.500"
+                  />
+                </Flex>
+                <Text color="black" fontSize="lg" fontWeight="500">
+                  Drag and drop your files here
+                </Text>
+                <Text color="brand.slate.500" fontSize="md">
+                  Max File Upload Size: 5MB
+                </Text>
+                <Button
+                  mt={8}
+                  px={8}
+                  color="black"
+                  fontSize="sm"
+                  fontWeight={500}
+                  bg="white"
+                  borderWidth={1}
+                  borderColor="brand.slate.200"
+                  shadow="sm"
+                >
+                  Upload File
+                </Button>
+              </>
+            )}
+          </Box>
+          {fileRejections.length > 0 && (
+            <Text mt={2} color="red.500">
+              File is too large or of invalid type.
+            </Text>
+          )}
+          {uploadError && (
+            <Text mt={2} color="red.500">
+              {uploadError}
+            </Text>
+          )}
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 };
