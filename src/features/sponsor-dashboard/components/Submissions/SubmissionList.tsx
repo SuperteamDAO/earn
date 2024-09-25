@@ -2,6 +2,7 @@ import { SearchIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
+  Checkbox,
   Flex,
   Input,
   InputGroup,
@@ -25,6 +26,7 @@ import React, {
 } from 'react';
 import { MdArrowDropDown } from 'react-icons/md';
 
+import { type Listing } from '@/features/listings';
 import { EarnAvatar } from '@/features/talent';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { getRankLabels } from '@/utils/rank';
@@ -34,21 +36,31 @@ import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils';
 
 interface Props {
+  listing?: Listing;
   submissions: SubmissionWithUser[];
   setSearchText: Dispatch<SetStateAction<string>>;
   type?: string;
-  filterLabel: SubmissionLabels | 'Winner' | undefined;
+  filterLabel: SubmissionLabels | 'Winner' | 'Rejected' | undefined;
   setFilterLabel: Dispatch<
-    SetStateAction<SubmissionLabels | 'Winner' | undefined>
+    SetStateAction<SubmissionLabels | 'Winner' | 'Rejected' | undefined>
   >;
+  toggleSubmission?: (id: string) => void;
+  isToggled?: (id: string) => boolean;
+  toggleAllSubmissions?: () => void;
+  isAllToggled?: boolean;
 }
 
 export const SubmissionList = ({
+  listing,
   submissions,
   setSearchText,
   type,
   filterLabel,
   setFilterLabel,
+  toggleSubmission,
+  isToggled,
+  toggleAllSubmissions,
+  isAllToggled,
 }: Props) => {
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
@@ -67,6 +79,37 @@ export const SubmissionList = ({
   if (filterLabel) {
     ({ bg, color } = colorMap[filterLabel]);
   }
+
+  const getSubmissionLabel = (submission: SubmissionWithUser) => {
+    if (submission?.isWinner && submission?.winnerPosition) {
+      if (type === 'project') {
+        return 'Winner';
+      } else {
+        return getRankLabels(submission.winnerPosition);
+      }
+    } else if (submission.status === 'Rejected') {
+      return 'Rejected';
+    } else if (submission?.label) {
+      return submission.label;
+    } else {
+      return '';
+    }
+  };
+
+  const getSubmissionColors = (submission: SubmissionWithUser) => {
+    if (submission?.isWinner) {
+      return colorMap.winner;
+    } else if (submission.status === 'Rejected') {
+      return colorMap.Rejected;
+    } else if (submission?.label && colorMap[submission.label]) {
+      return colorMap[submission.label];
+    } else {
+      return {
+        bg: 'gray.100',
+        color: 'gray.600',
+      };
+    }
+  };
 
   return (
     <>
@@ -89,24 +132,43 @@ export const SubmissionList = ({
           borderBottomColor="brand.slate.200"
           cursor="pointer"
         >
-          <InputGroup w={'full'} size="lg">
-            <Input
-              bg={'white'}
-              borderColor="brand.slate.200"
-              _placeholder={{
-                color: 'brand.slate.400',
-                fontWeight: 500,
-                fontSize: 'md',
+          <Flex
+            align={'center'}
+            justify={'space-between'}
+            gap={4}
+            w="full"
+            py={3}
+          >
+            <Checkbox
+              _checked={{
+                '& .chakra-checkbox__control': {
+                  background: 'brand.purple',
+                  borderColor: 'brand.purple',
+                },
               }}
-              focusBorderColor="brand.purple"
-              onChange={(e) => debouncedSetSearchText(e.target.value)}
-              placeholder="Search Submissions"
-              type="text"
+              isChecked={isAllToggled}
+              isDisabled={listing?.isWinnersAnnounced}
+              onChange={() => toggleAllSubmissions && toggleAllSubmissions()}
             />
-            <InputLeftElement pointerEvents="none">
-              <SearchIcon color="brand.slate.400" />
-            </InputLeftElement>
-          </InputGroup>
+            <InputGroup w={'full'} size="lg">
+              <Input
+                bg={'white'}
+                borderColor="brand.slate.200"
+                _placeholder={{
+                  color: 'brand.slate.400',
+                  fontWeight: 500,
+                  fontSize: 'md',
+                }}
+                focusBorderColor="brand.purple"
+                onChange={(e) => debouncedSetSearchText(e.target.value)}
+                placeholder="Search Submissions"
+                type="text"
+              />
+              <InputLeftElement pointerEvents="none">
+                <SearchIcon color="brand.slate.400" />
+              </InputLeftElement>
+            </InputGroup>
+          </Flex>
           <Flex
             align="center"
             justify={'space-between'}
@@ -189,6 +251,31 @@ export const SubmissionList = ({
                     </TagLabel>
                   </Tag>
                 </MenuItem>
+                {listing?.type === 'project' && (
+                  <MenuItem
+                    _focus={{ bg: 'brand.slate.100' }}
+                    onClick={() => setFilterLabel('Rejected')}
+                  >
+                    <Tag
+                      minH="none"
+                      px={3}
+                      py={1}
+                      bg={colorMap['Rejected'].bg}
+                      rounded="full"
+                    >
+                      <TagLabel
+                        w="full"
+                        color={colorMap['Rejected'].color}
+                        fontSize={'10px'}
+                        textAlign={'center'}
+                        textTransform={'capitalize'}
+                        whiteSpace={'nowrap'}
+                      >
+                        Rejected
+                      </TagLabel>
+                    </Tag>
+                  </MenuItem>
+                )}
                 {labelMenuOptions.map((option) => (
                   <MenuItem
                     key={option.value}
@@ -222,12 +309,7 @@ export const SubmissionList = ({
           </Flex>
         </Flex>
         {submissions.map((submission) => {
-          const { bg, color } = submission?.isWinner
-            ? colorMap.winner
-            : colorMap[submission?.label] || {
-                bg: 'gray.100',
-                color: 'gray.600',
-              };
+          const { bg, color } = getSubmissionColors(submission);
           return (
             <Flex
               key={submission?.id}
@@ -252,11 +334,28 @@ export const SubmissionList = ({
               }}
             >
               <Flex align="center">
+                <Checkbox
+                  mr={2}
+                  _checked={{
+                    '& .chakra-checkbox__control': {
+                      background: 'brand.purple',
+                      borderColor: 'brand.purple',
+                    },
+                  }}
+                  isChecked={isToggled && isToggled(submission.id)}
+                  isDisabled={
+                    listing?.isWinnersAnnounced ||
+                    submission?.status !== 'Pending'
+                  }
+                  onChange={() =>
+                    toggleSubmission && toggleSubmission(submission.id)
+                  }
+                />
                 <EarnAvatar
                   id={submission?.user?.id}
                   avatar={submission?.user?.photo || undefined}
                 />
-                <Box w={48} ml={2}>
+                <Box w={40} ml={2}>
                   <Text
                     overflow={'hidden'}
                     color="brand.slate.700"
@@ -288,15 +387,7 @@ export const SubmissionList = ({
                   textTransform={'capitalize'}
                   whiteSpace={'nowrap'}
                 >
-                  {submission?.isWinner && submission?.winnerPosition ? (
-                    <>
-                      {type === 'project'
-                        ? 'Winner'
-                        : getRankLabels(submission.winnerPosition)}
-                    </>
-                  ) : (
-                    submission?.label
-                  )}
+                  {getSubmissionLabel(submission)}
                 </TagLabel>
               </Tag>
             </Flex>

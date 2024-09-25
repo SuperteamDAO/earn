@@ -67,13 +67,13 @@ export default function BountySubmissions({ listing }: Props) {
     bonus: number;
   } | null>(null);
   const [filterLabel, setFilterLabel] = useState<
-    SubmissionLabels | 'Winner' | undefined
+    SubmissionLabels | 'Winner' | 'Rejected' | undefined
   >(undefined);
 
   const searchParams = useSearchParams();
   const posthog = usePostHog();
 
-  const { data: submissionsData, isLoading: isSubmissionsLoading } = useQuery(
+  const { data: submissions, isLoading: isSubmissionsLoading } = useQuery(
     submissionsQuery(listing, true),
   );
 
@@ -82,8 +82,8 @@ export default function BountySubmissions({ listing }: Props) {
   );
 
   const filteredSubmissions = useMemo(() => {
-    if (!submissionsData) return [];
-    return submissionsData.filter((submission: SubmissionWithUser) => {
+    if (!submissions) return [];
+    return submissions.filter((submission: SubmissionWithUser) => {
       const firstName = submission.user.firstName?.toLowerCase() || '';
       const lastName = submission.user.lastName?.toLowerCase() || '';
       const fullName = `${firstName} ${lastName}`.trim();
@@ -114,7 +114,7 @@ export default function BountySubmissions({ listing }: Props) {
 
       return matchesSearch && matchesLabel;
     });
-  }, [submissionsData, searchText, filterLabel]);
+  }, [submissions, searchText, filterLabel]);
 
   useEffect(() => {
     if (filteredSubmissions && filteredSubmissions.length > 0) {
@@ -128,13 +128,13 @@ export default function BountySubmissions({ listing }: Props) {
       //   router.push('/dashboard/hackathon');
       // }
 
-      const podiumWinnersSelected = submissionsData?.filter(
+      const podiumWinnersSelected = submissions?.filter(
         (submission) =>
           submission.isWinner &&
           submission.winnerPosition !== BONUS_REWARD_POSITION,
       ).length;
 
-      const bonusWinnerSelected = submissionsData?.filter(
+      const bonusWinnerSelected = submissions?.filter(
         (sub) => sub.isWinner && sub.winnerPosition === BONUS_REWARD_POSITION,
       ).length;
 
@@ -144,7 +144,7 @@ export default function BountySubmissions({ listing }: Props) {
         bonus: (bounty.maxBonusSpots || 0) - (bonusWinnerSelected || 0),
       });
     }
-  }, [bounty, submissionsData, user?.currentSponsorId, router]);
+  }, [bounty, submissions, user?.currentSponsorId, router]);
 
   useEffect(() => {
     if (searchParams.has('scout')) posthog.capture('scout tab_scout');
@@ -160,13 +160,13 @@ export default function BountySubmissions({ listing }: Props) {
 
   const totalPages = Math.ceil(filteredSubmissions.length / submissionsPerPage);
 
-  const usedPositions = submissionsData
+  const usedPositions = submissions
     ?.filter((s: any) => s.isWinner)
     .map((s: any) => Number(s.winnerPosition))
     .filter((key: number) => !isNaN(key));
 
-  const totalWinners = submissionsData?.filter((sub) => sub.isWinner).length;
-  const totalPaymentsMade = submissionsData?.filter((sub) => sub.isPaid).length;
+  const totalWinners = submissions?.filter((sub) => sub.isWinner).length;
+  const totalPaymentsMade = submissions?.filter((sub) => sub.isPaid).length;
 
   const isExpired = dayjs(bounty?.deadline).isBefore(dayjs());
 
@@ -186,11 +186,14 @@ export default function BountySubmissions({ listing }: Props) {
               totalWinners={totalWinners || 0}
               totalPaymentsMade={totalPaymentsMade || 0}
               bounty={bounty}
+              usedPositions={usedPositions || []}
+              setRemainings={setRemainings}
+              submissions={submissions || []}
             />
           )}
           <SubmissionHeader
             bounty={bounty}
-            totalSubmissions={submissionsData?.length || 0}
+            totalSubmissions={submissions?.length || 0}
           />
           <Tabs defaultIndex={searchParams.has('scout') ? 1 : 0}>
             <TabList
@@ -245,6 +248,7 @@ export default function BountySubmissions({ listing }: Props) {
                     >
                       <GridItem w="full" h="full">
                         <SubmissionList
+                          listing={bounty}
                           filterLabel={filterLabel}
                           setFilterLabel={setFilterLabel}
                           submissions={paginatedSubmissions}
