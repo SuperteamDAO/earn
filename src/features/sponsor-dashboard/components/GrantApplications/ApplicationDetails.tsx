@@ -41,7 +41,7 @@ import { truncateString } from '@/utils/truncateString';
 
 import { type GrantApplicationWithUser } from '../../types';
 import { ApproveModal } from './Modals/ApproveModal';
-import { RejectModal } from './Modals/RejectModal';
+import { RejectGrantApplicationModal } from './Modals/RejectModal';
 import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface Props {
@@ -314,7 +314,7 @@ export const ApplicationDetails = ({
       borderBottomWidth="1px"
       roundedRight={'xl'}
     >
-      <RejectModal
+      <RejectGrantApplicationModal
         applicationId={selectedApplication?.id}
         rejectIsOpen={rejectedIsOpen}
         rejectOnClose={rejectedOnClose}
