@@ -1,15 +1,4 @@
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  Heading,
-  HStack,
-  Image,
-  Spinner,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
 import router from 'next/router';
@@ -19,12 +8,10 @@ import { create } from 'zustand';
 import { Steps } from '@/components/shared/steps';
 import {
   AboutYou,
-  TalentBio,
   type UserStoreType,
   YourLinks,
   YourWork,
 } from '@/features/talent';
-import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
@@ -61,7 +48,7 @@ const useFormStore = create<UserStoreType>()((set) => ({
   },
 }));
 
-const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
+const StepsCon = () => {
   const [currentStep, setSteps] = useState<number>(1);
   const stepList = [
     {
@@ -148,123 +135,13 @@ const StepsCon = ({ setSuccess }: { setSuccess: () => void }) => {
         <YourWork setStep={setSteps} useFormStore={useFormStore} />
       )}
       {currentStep === 3 && (
-        <YourLinks
-          setStep={setSteps}
-          useFormStore={useFormStore}
-          success={() => {
-            setSuccess();
-          }}
-        />
+        <YourLinks setStep={setSteps} useFormStore={useFormStore} />
       )}
     </VStack>
   );
 };
 
-const SuccessScreen = () => {
-  const { form } = useFormStore();
-
-  if (!form) {
-    return (
-      <Center w={'100%'} h={'100vh'} pt={'3rem'}>
-        <Spinner
-          color="blue.500"
-          emptyColor="gray.200"
-          size="xl"
-          speed="0.65s"
-          thickness="4px"
-        />
-      </Center>
-    );
-  }
-
-  return (
-    <Box
-      w={'100%'}
-      h={'100%'}
-      minH={'100vh'}
-      pt={'6.25rem'}
-      bgImage="url('/assets/bg/success-bg.png')"
-      bgSize={'cover'}
-      bgRepeat={'no-repeat'}
-    >
-      <VStack>
-        <Image w={'40px'} h={'40px'} alt={''} src="/assets/icons/success.png" />
-        <Text
-          color={'white'}
-          fontSize={{ base: '1.25rem', md: '1.8125rem' }}
-          fontWeight={'700'}
-          textAlign={'center'}
-        >
-          Your Earn Profile is Ready!
-        </Text>
-        <Text
-          color={'rgba(255, 255, 255, 0.53)'}
-          fontSize={{ base: '18px', md: '28px' }}
-          fontWeight={'500'}
-          textAlign={'center'}
-        >
-          Have a look at your profile or start earning
-        </Text>
-      </VStack>
-      <HStack
-        align={'start'}
-        justifyContent={'center'}
-        flexDir={{ base: 'column', md: 'row' }}
-        gap={8}
-        h={{ md: '25rem' }}
-        minH={{ md: '25rem' }}
-        mx={3}
-        my={8}
-      >
-        <Box w={{ sm: 'full', lg: '25rem' }} h={'full'}>
-          <TalentBio
-            talentUser={form as unknown as User}
-            successPage={true}
-            w={{ sm: '100%' }}
-          />
-        </Box>
-
-        <Flex
-          justify={'space-between'}
-          direction={'column'}
-          gap={'12px'}
-          maxW={{ lg: '35rem' }}
-          h={'100%'}
-          p={'1.5625rem'}
-          bg="white"
-          rounded={'lg'}
-        >
-          <Flex
-            h={'full'}
-            bg={'rgb(224,242,255)'}
-            borderRadius={'8px'}
-            objectFit={'contain'}
-          >
-            <Image
-              objectFit={'contain'}
-              alt="final"
-              src="/assets/talent/fake-tasks.png"
-            />
-          </Flex>
-          <Button
-            w="full"
-            py={'1.5rem'}
-            color={'white'}
-            bg={'rgb(101, 98, 255)'}
-            onClick={() => {
-              window.location.href = window.location.origin;
-            }}
-          >
-            Start Earning
-          </Button>
-        </Flex>
-      </HStack>
-    </Box>
-  );
-};
-
 export default function Talent() {
-  const [currentPage, setcurrentPage] = useState<'steps' | 'success'>('steps');
   const { user } = useUser();
 
   useEffect(() => {
@@ -284,14 +161,7 @@ export default function Talent() {
       }
     >
       <VStack>
-        {currentPage === 'steps' && (
-          <StepsCon
-            setSuccess={() => {
-              setcurrentPage('success');
-            }}
-          />
-        )}
-        {currentPage === 'success' && <SuccessScreen />}
+        <StepsCon />
       </VStack>
     </Default>
   );
