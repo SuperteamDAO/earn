@@ -121,6 +121,8 @@ model BountiesTemplates {
   poc              User             @relation("poc", fields: [pocId], references: [id])
 
   @@index([isActive, isArchived, type])
+  @@index([pocId])
+  @@index([sponsorId])
   @@index([type])
 }
 
