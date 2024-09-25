@@ -104,6 +104,9 @@ export function RightSideBar({
   if (cleanRewardPrizes(rewards).length > 6) {
     widthOfPrize = largestDigits + 0.5 + 'rem';
   }
+  if (compensationType === 'range') {
+    widthOfPrize = '90%';
+  }
 
   return (
     <Box w={{ base: 'full', md: 'auto' }} h="full">
