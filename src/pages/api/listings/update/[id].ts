@@ -84,9 +84,9 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       publishedAt = new Date();
     }
 
-    if (listing.isVerifying)
+    if (listing.status !== 'OPEN' && req.role !== 'GOD')
       return res.status(500).json({
-        message: `Listing is being verified and cannot be updated.`,
+        message: `Listing is not open and hence cannot be edited`,
       });
 
     if (listing.maxBonusSpots > 0 && typeof maxBonusSpots === 'undefined') {
@@ -213,7 +213,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id: id as string },
       data: {
         ...updatedData,
-        isVerifying,
+        status: isVerifying ? 'VERIFYING' : 'OPEN',
         rewards,
         rewardAmount,
         token,
