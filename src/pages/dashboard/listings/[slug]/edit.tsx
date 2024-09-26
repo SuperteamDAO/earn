@@ -32,7 +32,6 @@ function EditBounty({ slug }: Props) {
       const isProject = bounty.type === 'project';
 
       const preview = router.query['preview'];
-      console.log('preview step - ', preview, !!preview);
       if (!!preview) {
         if (isProject) setPrevStep(5);
         else setPrevStep(4);

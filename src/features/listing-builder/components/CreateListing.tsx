@@ -22,6 +22,7 @@ import {
   Template,
 } from './ListingBuilder';
 import { ListingSuccessModal } from './ListingSuccessModal';
+import { PreviewListingModal } from './PreviewListingModal';
 import { hackathonSponsorAtom } from './SelectSponsor';
 import { UnderVerificationModal } from './UnderVerficationModal';
 
@@ -103,13 +104,20 @@ export function CreateListing({
     setSteps(!!prevStep ? prevStep : editable || type === 'hackathon' ? 2 : 1);
   }, [prevStep]);
 
-  const [slug, setSlug] = useState<string>('');
-  const [isType, setType] = useState<string>('');
+  const [slug, setSlug] = useState<string>(listing?.slug ?? '');
+  const [isType, setType] = useState<string>(type);
 
   const [isListingPublishing, setIsListingPublishing] =
     useState<boolean>(false);
 
   const { isOpen: isSuccessOpen, onOpen: onSuccessOpen } = useDisclosure();
+  const {
+    isOpen: isPreviewOpen,
+    onOpen: onPreviewOpen,
+    onClose: onPreviewClose,
+  } = useDisclosure({
+    defaultIsOpen: !!router.query['preview'],
+  });
   const { isOpen: isVerifyingOpen, onOpen: onVerifyingOpen } = useDisclosure();
 
   const {
@@ -260,9 +268,18 @@ export function CreateListing({
       });
       const resType = result.data.type;
       const resSlug = result.data.slug;
+      setType(resType || '');
+      setSlug(resSlug || '');
       if (isPreview) {
-        window.open(`/listings/${resType}/${resSlug}`, '_blank');
-        router.replace(`/dashboard/listings/${resSlug}/edit?preview=1`);
+        // window.open(`/listings/${resType}/${resSlug}`, '_blank');
+        if (!router.asPath.split('/')[2]?.includes('create')) {
+          onPreviewOpen();
+        }
+        router.replace(
+          `/dashboard/listings/${resSlug}/edit?preview=1`,
+          undefined,
+          { shallow: true },
+        );
         setIsDraftLoading(false);
       } else {
         if (type === 'hackathon') {
@@ -301,6 +318,11 @@ export function CreateListing({
         />
       ) : (
         <FormLayout setStep={setSteps} currentStep={steps} stepList={stepList}>
+          <PreviewListingModal
+            isOpen={isPreviewOpen}
+            onClose={onPreviewClose}
+            previewUrl={`/listings/${isType}/${slug}`}
+          />
           {isSuccessOpen && (
             <ListingSuccessModal
               type={isType}
