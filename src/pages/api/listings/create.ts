@@ -123,7 +123,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       sponsorId: userSponsorId,
       status,
       title,
-      isVerifying,
       usdValue,
       publishedAt,
       pocId,
@@ -155,7 +154,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug(`Creating bounty with data: ${safeStringify(finalData)}`);
     const result = await prisma.bounties.create({
-      data: finalData,
+      data: {
+        ...finalData,
+        status: isVerifying ? 'VERIFYING' : status || 'OPEN',
+      },
     });
 
     if (isVerifying) {

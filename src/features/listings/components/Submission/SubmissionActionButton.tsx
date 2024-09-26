@@ -36,7 +36,6 @@ export const SubmissionActionButton = ({
     id,
     status,
     isPublished,
-    isVerifying,
     deadline,
     region,
     type,
@@ -67,11 +66,7 @@ export const SubmissionActionButton = ({
 
   const regionTooltipLabel = getRegionTooltipLabel(region);
 
-  const bountyDraftStatus = getListingDraftStatus(
-    status,
-    isPublished,
-    isVerifying,
-  );
+  const bountyDraftStatus = getListingDraftStatus(status, isPublished);
 
   const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
   const buttonState = getButtonState();

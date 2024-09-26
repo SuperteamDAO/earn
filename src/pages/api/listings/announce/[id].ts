@@ -173,6 +173,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           },
           data: {
             rewardInUSD,
+            status: 'Approved',
           },
         }),
       );
@@ -213,6 +214,9 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.info(`Winners announced successfully for bounty ID: ${id}`);
     return res.status(200).json({ message: 'Success' });
   } catch (error: any) {
+    console.log(
+      `User ${userId} unable to announce winners for bounty ID: ${id}: ${safeStringify(error)}`,
+    );
     logger.error(
       `User ${userId} unable to announce winners for bounty ID: ${id}: ${safeStringify(error)}`,
     );

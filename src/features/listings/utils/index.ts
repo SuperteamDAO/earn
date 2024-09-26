@@ -47,12 +47,12 @@ export const getRegionTooltipLabel = (
 export const getListingDraftStatus = (
   status: string | undefined,
   isPublished: boolean | undefined,
-  isVerifying: boolean | undefined,
 ) => {
   if (status === 'CLOSED') return 'CLOSED';
   if (status === 'REVIEW') return 'REVIEW';
   if (status === 'PREVIEW') return 'PREVIEW';
-  if (isVerifying) return 'VERIFYING';
+  if (status === 'VERIFYING') return 'VERIFYING';
+  if (status === 'VERIFY_FAIL') return 'VERIFY_FAIL';
   if (isPublished) return 'PUBLISHED';
   return 'DRAFT';
 };
@@ -74,12 +74,12 @@ export const getListingStatus = (
   const listingStatus = getListingDraftStatus(
     listing?.status,
     listing?.isPublished,
-    listing?.isVerifying,
   );
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
 
   if (listingStatus === 'PREVIEW') return 'Preview';
   if (listingStatus === 'VERIFYING') return 'Under Verification';
+  if (listingStatus === 'VERIFY_FAIL') return 'Verification Failed';
   if (listingStatus === 'DRAFT') return 'Draft';
   if (listing?.type === 'grant' || isGrant) return 'Ongoing';
 
@@ -115,6 +115,8 @@ export const getColorStyles = (status: string) => {
     case 'Under Verification':
     case 'Payment Pending':
       return { bgColor: '#ffecb3', color: '#F59E0B' };
+    case 'Verification Failed':
+      return { bgColor: 'red.100', color: 'red.400' };
     case 'Preview':
     case 'Draft':
       return { bgColor: 'brand.slate.100', color: 'brand.slate.400' };

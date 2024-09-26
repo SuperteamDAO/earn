@@ -28,7 +28,6 @@ model Bounties {
   isFeatured           Boolean            @default(false)
   isActive             Boolean            @default(true)
   isArchived           Boolean            @default(false)
-  isVerifying          Boolean            @default(false)
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
   applicationLink      String?
@@ -121,6 +120,8 @@ model BountiesTemplates {
   poc              User             @relation("poc", fields: [pocId], references: [id])
 
   @@index([isActive, isArchived, type])
+  @@index([pocId])
+  @@index([sponsorId])
   @@index([type])
 }
 
@@ -228,6 +229,7 @@ model Submission {
   id                 String           @id @default(uuid())
   link               String?          @db.VarChar(500)
   tweet              String?          @db.VarChar(500)
+  status             SubmissionStatus @default(Pending)
   eligibilityAnswers Json?
   userId             String
   listingId          String
@@ -580,6 +582,8 @@ enum status {
   OPEN
   REVIEW
   CLOSED
+  VERIFYING
+  VERIFY_FAIL
   PREVIEW
 }
 
@@ -662,4 +666,10 @@ enum TalentRankingTimeframe {
   LAST_30_DAYS
   LAST_7_DAYS
   ALL_TIME
+}
+
+enum SubmissionStatus {
+  Pending
+  Approved
+  Rejected
 }

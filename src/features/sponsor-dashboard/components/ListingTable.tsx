@@ -10,6 +10,7 @@ import {
   MenuItem,
   MenuList,
   Table,
+  type TableColumnHeaderProps,
   TableContainer,
   Tag,
   Tbody,
@@ -103,7 +104,13 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
     verifyPaymentOnOpen();
   };
 
-  const ListingTh = ({ children }: { children: string }) => {
+  const ListingTh = ({
+    children,
+    style,
+  }: {
+    children: string;
+    style?: TableColumnHeaderProps;
+  }) => {
     return (
       <Th
         color="brand.slate.400"
@@ -111,6 +118,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
         fontWeight={500}
         letterSpacing={'-2%'}
         textTransform={'capitalize'}
+        {...style}
       >
         {children}
       </Th>
@@ -162,7 +170,13 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
           <Thead>
             <Tr bg="brand.slate.100">
               <ListingTh>Listing Name</ListingTh>
-              <ListingTh>Submissions</ListingTh>
+              <ListingTh
+                style={{
+                  textAlign: 'center',
+                }}
+              >
+                Submissions
+              </ListingTh>
               <ListingTh>Deadline</ListingTh>
               <ListingTh>Prize</ListingTh>
               <ListingTh>Status</ListingTh>
@@ -339,27 +353,32 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           : 'Submissions'}
                       </Button>
                     )}
-                    {!listing.isPublished &&
-                      !pastDeadline &&
-                      listing.type !== 'grant' && (
-                        <Link
-                          as={NextLink}
-                          href={`/dashboard/listings/${listing.slug}/edit/`}
+                    {!!(
+                      (session?.user?.role === 'GOD' &&
+                        listing.type !== 'grant' &&
+                        !listing.isPublished) ||
+                      (!listing.isPublished &&
+                        !pastDeadline &&
+                        listing.type !== 'grant' &&
+                        listing.status === 'OPEN')
+                    ) && (
+                      <Link
+                        as={NextLink}
+                        href={`/dashboard/listings/${listing.slug}/edit/`}
+                      >
+                        <Button
+                          color={'brand.slate.500'}
+                          fontSize={'13px'}
+                          fontWeight={500}
+                          _hover={{ bg: 'brand.slate.200' }}
+                          leftIcon={<Icon as={RiEditFill} />}
+                          size="sm"
+                          variant="ghost"
                         >
-                          <Button
-                            color={'brand.slate.500'}
-                            fontSize={'13px'}
-                            fontWeight={500}
-                            _hover={{ bg: 'brand.slate.200' }}
-                            isDisabled={listing.isVerifying}
-                            leftIcon={<Icon as={RiEditFill} />}
-                            size="sm"
-                            variant="ghost"
-                          >
-                            Edit
-                          </Button>
-                        </Link>
-                      )}
+                          Edit
+                        </Button>
+                      </Link>
+                    )}
                   </Td>
                   <Td px={0} py={2}>
                     <Menu>
@@ -400,7 +419,8 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                             listing.type !== 'grant') ||
                           (listing.isPublished &&
                             !pastDeadline &&
-                            listing.type !== 'grant')
+                            listing.type !== 'grant' &&
+                            listing.status === 'OPEN')
                         ) && (
                           <Link
                             as={NextLink}
@@ -413,7 +433,6 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                               fontSize={'sm'}
                               fontWeight={500}
                               icon={<Icon as={PiNotePencil} w={4} h={4} />}
-                              isDisabled={listing.isVerifying}
                             >
                               Edit {listingLabel}
                             </MenuItem>

@@ -16,7 +16,7 @@ interface Props {
 function parseComment(comment: string) {
   const parts = comment.split(/(\s+|@[\w]+)/g).filter(Boolean);
   return parts.map((part) => {
-    if (part.startsWith('@')) {
+    if (part.startsWith('@') && part.length > 1) {
       return { type: 'mention', value: part };
     } else if (isLink(part)) {
       return { type: 'link', value: part };

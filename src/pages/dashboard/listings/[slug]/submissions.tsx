@@ -5,7 +5,11 @@ import {
   Flex,
   Grid,
   GridItem,
+  HStack,
   Image,
+  Popover,
+  PopoverBody,
+  PopoverContent,
   Tab,
   TabList,
   TabPanel,
@@ -17,26 +21,29 @@ import {
 } from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { PublishResults } from '@/features/listings';
 import {
+  RejectAllSubmissionModal,
   type ScoutRowType,
   scoutsQuery,
   ScoutTable,
   selectedSubmissionAtom,
+  selectedSubmissionIdsAtom,
   sponsorDashboardListingQuery,
   SubmissionHeader,
   SubmissionList,
   SubmissionPanel,
   submissionsQuery,
+  useRejectSubmissions,
 } from '@/features/sponsor-dashboard';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
@@ -70,20 +77,106 @@ export default function BountySubmissions({ slug }: Props) {
     bonus: number;
   } | null>(null);
   const [filterLabel, setFilterLabel] = useState<
-    SubmissionLabels | 'Winner' | undefined
+    SubmissionLabels | 'Winner' | 'Rejected' | undefined
   >(undefined);
 
   const searchParams = useSearchParams();
   const posthog = usePostHog();
   const queryClient = useQueryClient();
 
-  const { data: submissionsData, isLoading: isSubmissionsLoading } = useQuery(
+  const [selectedSubmissionIds, setSelectedSubmissionIds] = useAtom(
+    selectedSubmissionIdsAtom,
+  );
+
+  const [isToggledAll, setIsToggledAll] = useState(false);
+  const {
+    isOpen: isTogglerOpen,
+    onOpen: onTogglerOpen,
+    onClose: onTogglerClose,
+  } = useDisclosure();
+  const {
+    isOpen: rejectedIsOpen,
+    onOpen: rejectedOnOpen,
+    onClose: rejectedOnClose,
+  } = useDisclosure();
+
+  const { data: submissions, isLoading: isSubmissionsLoading } = useQuery(
     submissionsQuery(slug),
   );
 
   const { data: bounty, isLoading: isBountyLoading } = useQuery(
     sponsorDashboardListingQuery(slug),
   );
+
+  useEffect(() => {
+    selectedSubmissionIds.size > 0 ? onTogglerOpen() : onTogglerClose();
+  }, [selectedSubmissionIds]);
+
+  useEffect(() => {
+    setIsToggledAll(isAllCurrentToggled());
+  }, [selectedSubmissionIds, submissions]);
+
+  useEffect(() => {
+    const newSet = new Set(selectedSubmissionIds);
+    Array.from(selectedSubmissionIds).forEach((a) => {
+      const submissionWithId = submissions?.find(
+        (submission) => submission.id === a,
+      );
+      if (submissionWithId && submissionWithId.status !== 'Pending') {
+        newSet.delete(a);
+      }
+    });
+    setSelectedSubmissionIds(newSet);
+  }, [submissions]);
+
+  const isAllCurrentToggled = () =>
+    submissions
+      ?.filter((submission) => submission.status === 'Pending')
+      .every((submission) => selectedSubmissionIds.has(submission.id)) || false;
+
+  const toggleSubmission = (id: string) => {
+    setSelectedSubmissionIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+        return newSet;
+      } else {
+        return newSet.add(id);
+      }
+    });
+  };
+
+  const isToggled = useCallback(
+    (id: string) => {
+      return selectedSubmissionIds.has(id);
+    },
+    [selectedSubmissionIds, submissions],
+  );
+
+  const toggleAllSubmissions = () => {
+    if (!isAllCurrentToggled()) {
+      setSelectedSubmissionIds((prev) => {
+        const newSet = new Set(prev);
+        submissions
+          ?.filter((submission) => submission.status === 'Pending')
+          .map((submission) => newSet.add(submission.id));
+        return newSet;
+      });
+    } else {
+      setSelectedSubmissionIds((prev) => {
+        const newSet = new Set(prev);
+        submissions?.map((submission) => newSet.delete(submission.id));
+        return newSet;
+      });
+    }
+  };
+
+  const rejectSubmissions = useRejectSubmissions(slug);
+
+  const handleRejectSubmission = (submissionIds: string[]) => {
+    rejectSubmissions.mutate(submissionIds);
+    rejectedOnClose();
+  };
 
   const { data: scouts } = useQuery({
     ...scoutsQuery({
@@ -97,8 +190,8 @@ export default function BountySubmissions({ slug }: Props) {
   });
 
   const filteredSubmissions = useMemo(() => {
-    if (!submissionsData) return [];
-    return submissionsData.filter((submission: SubmissionWithUser) => {
+    if (!submissions) return [];
+    return submissions.filter((submission: SubmissionWithUser) => {
       const firstName = submission.user.firstName?.toLowerCase() || '';
       const lastName = submission.user.lastName?.toLowerCase() || '';
       const fullName = `${firstName} ${lastName}`.trim();
@@ -121,15 +214,21 @@ export default function BountySubmissions({ slug }: Props) {
         discord.includes(searchLower) ||
         link.includes(searchLower);
 
-      const matchesLabel =
-        !filterLabel ||
-        (filterLabel === 'Winner'
-          ? submission.isWinner
-          : submission.label === filterLabel);
+      let matchesLabel = false;
+
+      if (!filterLabel) {
+        matchesLabel = true;
+      } else if (filterLabel === 'Winner') {
+        matchesLabel = submission.isWinner;
+      } else if (filterLabel === 'Rejected') {
+        matchesLabel = submission.status === 'Rejected';
+      } else {
+        matchesLabel = submission.label === filterLabel;
+      }
 
       return matchesSearch && matchesLabel;
     });
-  }, [submissionsData, searchText, filterLabel]);
+  }, [submissions, searchText, filterLabel]);
 
   useEffect(() => {
     if (filteredSubmissions && filteredSubmissions.length > 0) {
@@ -148,13 +247,13 @@ export default function BountySubmissions({ slug }: Props) {
         router.push('/dashboard/listings');
       }
 
-      const podiumWinnersSelected = submissionsData?.filter(
+      const podiumWinnersSelected = submissions?.filter(
         (submission) =>
           submission.isWinner &&
           submission.winnerPosition !== BONUS_REWARD_POSITION,
       ).length;
 
-      const bonusWinnerSelected = submissionsData?.filter(
+      const bonusWinnerSelected = submissions?.filter(
         (sub) => sub.isWinner && sub.winnerPosition === BONUS_REWARD_POSITION,
       ).length;
 
@@ -164,7 +263,7 @@ export default function BountySubmissions({ slug }: Props) {
         bonus: (bounty.maxBonusSpots || 0) - (bonusWinnerSelected || 0),
       });
     }
-  }, [bounty, submissionsData, user?.currentSponsorId, router]);
+  }, [bounty, submissions, user?.currentSponsorId, router]);
 
   useEffect(() => {
     if (searchParams.has('scout')) posthog.capture('scout tab_scout');
@@ -180,13 +279,13 @@ export default function BountySubmissions({ slug }: Props) {
 
   const totalPages = Math.ceil(filteredSubmissions.length / submissionsPerPage);
 
-  const usedPositions = submissionsData
+  const usedPositions = submissions
     ?.filter((s: any) => s.isWinner)
     .map((s: any) => Number(s.winnerPosition))
     .filter((key: number) => !isNaN(key));
 
-  const totalWinners = submissionsData?.filter((sub) => sub.isWinner).length;
-  const totalPaymentsMade = submissionsData?.filter((sub) => sub.isPaid).length;
+  const totalWinners = submissions?.filter((sub) => sub.isWinner).length;
+  const totalPaymentsMade = submissions?.filter((sub) => sub.isPaid).length;
 
   const isExpired = dayjs(bounty?.deadline).isBefore(dayjs());
 
@@ -206,11 +305,14 @@ export default function BountySubmissions({ slug }: Props) {
               totalWinners={totalWinners || 0}
               totalPaymentsMade={totalPaymentsMade || 0}
               bounty={bounty}
+              usedPositions={usedPositions || []}
+              setRemainings={setRemainings}
+              submissions={submissions || []}
             />
           )}
           <SubmissionHeader
             bounty={bounty}
-            totalSubmissions={submissionsData?.length || 0}
+            totalSubmissions={submissions?.length || 0}
           />
           <Tabs defaultIndex={searchParams.has('scout') ? 1 : 0}>
             <TabList
@@ -265,11 +367,16 @@ export default function BountySubmissions({ slug }: Props) {
                     >
                       <GridItem w="full" h="full">
                         <SubmissionList
+                          listing={bounty}
                           filterLabel={filterLabel}
                           setFilterLabel={setFilterLabel}
                           submissions={paginatedSubmissions}
                           setSearchText={setSearchText}
                           type={bounty?.type}
+                          isToggled={isToggled}
+                          toggleSubmission={toggleSubmission}
+                          isAllToggled={isToggledAll}
+                          toggleAllSubmissions={toggleAllSubmissions}
                         />
                       </GridItem>
                       <GridItem
@@ -319,6 +426,7 @@ export default function BountySubmissions({ slug }: Props) {
                           </>
                         ) : (
                           <SubmissionPanel
+                            isMultiSelectOn={selectedSubmissionIds.size > 0}
                             remainings={remainings}
                             setRemainings={setRemainings}
                             bounty={bounty}
@@ -416,6 +524,88 @@ export default function BountySubmissions({ slug }: Props) {
                 )}
             </TabPanels>
           </Tabs>
+          <Popover
+            closeOnBlur={false}
+            closeOnEsc={false}
+            isOpen={isTogglerOpen}
+            onClose={onTogglerClose}
+          >
+            <PopoverContent
+              pos="fixed"
+              bottom={10}
+              w="full"
+              mx="auto"
+              p={0}
+              bg="transparent"
+              border="none"
+              shadow="none"
+            >
+              <PopoverBody
+                w="fit-content"
+                mx="auto"
+                px={4}
+                bg="white"
+                borderWidth={2}
+                borderColor="brand.slate.200"
+                shadow="lg"
+                rounded={'lg'}
+              >
+                {selectedSubmissionIds.size > 100 && (
+                  <Text pb={2} color="red" textAlign="center">
+                    Cannot select more than 100 applications
+                  </Text>
+                )}
+                <HStack gap={4} fontSize={'lg'}>
+                  <HStack fontWeight={500}>
+                    <Text>{selectedSubmissionIds.size}</Text>
+                    <Text color="brand.slate.500">Selected</Text>
+                  </HStack>
+                  <Box w="1px" h={4} bg="brand.slate.300" />
+                  <Button
+                    fontWeight={500}
+                    bg="transparent"
+                    onClick={() => {
+                      setSelectedSubmissionIds(new Set());
+                    }}
+                    variant="link"
+                  >
+                    UNSELECT ALL
+                  </Button>
+                  <Button
+                    gap={2}
+                    color="#E11D48"
+                    fontWeight={500}
+                    bg="#FEF2F2"
+                    isDisabled={
+                      selectedSubmissionIds.size === 0 ||
+                      selectedSubmissionIds.size > 100
+                    }
+                    onClick={rejectedOnOpen}
+                  >
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 13 13"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M6.11111 0.777832C9.49056 0.777832 12.2222 3.5095 12.2222 6.88894C12.2222 10.2684 9.49056 13.0001 6.11111 13.0001C2.73167 13.0001 0 10.2684 0 6.88894C0 3.5095 2.73167 0.777832 6.11111 0.777832ZM8.305 3.83339L6.11111 6.02728L3.91722 3.83339L3.05556 4.69505L5.24944 6.88894L3.05556 9.08283L3.91722 9.9445L6.11111 7.75061L8.305 9.9445L9.16667 9.08283L6.97278 6.88894L9.16667 4.69505L8.305 3.83339Z"
+                        fill="#E11D48"
+                      />
+                    </svg>
+                    Reject All
+                  </Button>
+                </HStack>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+          <RejectAllSubmissionModal
+            submissionIds={Array.from(selectedSubmissionIds)}
+            rejectIsOpen={rejectedIsOpen}
+            rejectOnClose={rejectedOnClose}
+            onRejectSubmission={handleRejectSubmission}
+          />
         </>
       )}
     </SponsorLayout>

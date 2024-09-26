@@ -29,7 +29,6 @@ import {
   TextInputWithHelper,
 } from '@/components/Form/TextAreaHelpers';
 import { tokenList } from '@/constants';
-import { randomSubmissionCommentGenerator } from '@/features/comments';
 import { useUpdateUser, useUser } from '@/store/user';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
@@ -180,7 +179,7 @@ export const SubmissionModal = ({
         ? '/api/submission/update/'
         : '/api/submission/create/';
 
-      const response = await axios.post(submissionEndpoint, {
+      await axios.post(submissionEndpoint, {
         listingId: id,
         link: applicationLink || '',
         tweet: tweetLink || '',
@@ -190,20 +189,6 @@ export const SubmissionModal = ({
           ? eligibilityAnswers
           : null,
       });
-
-      if (!editMode) {
-        try {
-          await axios.post(`/api/comment/create`, {
-            message: randomSubmissionCommentGenerator(type),
-            listingId: id,
-            submissionId: response?.data?.id,
-            type: 'SUBMISSION',
-          });
-          window.dispatchEvent(new Event('update-comments'));
-        } catch (err) {
-          console.log(err);
-        }
-      }
 
       const hideEasterEggFromSponsorIds = [
         '53cbd2eb-14e5-4b8a-b6fe-e18e0c885145', // network schoool

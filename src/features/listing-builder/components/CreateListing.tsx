@@ -83,7 +83,6 @@ export function CreateListing({
   const listingDraftStatus = getListingDraftStatus(
     listing?.status,
     listing?.isPublished,
-    listing?.isVerifying,
   );
 
   const newListing = listing?.id === undefined;
@@ -183,6 +182,7 @@ export function CreateListing({
         maxRewardAsk: form?.maxRewardAsk,
         isPublished: true,
         isPrivate: form?.isPrivate,
+        status: 'OPEN',
       };
 
       let api = `/api/${basePath}/create`;
@@ -197,7 +197,7 @@ export function CreateListing({
       setType(result?.data?.type ?? ('' as string));
       setIsListingPublishing(false);
       closeConfirm();
-      if (result?.data?.isVerifying) {
+      if (result?.data.status === 'VERIFYING') {
         onVerifyingOpen();
       } else {
         onSuccessOpen();

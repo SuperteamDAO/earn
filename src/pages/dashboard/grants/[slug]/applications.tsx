@@ -37,7 +37,7 @@ import {
   applicationsQuery,
   type GrantApplicationWithUser,
   PaymentsHistoryTab,
-  RejectAllModal,
+  RejectAllGrantApplicationModal,
   sponsorGrantQuery,
 } from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
@@ -484,7 +484,7 @@ function GrantApplications({ slug }: Props) {
               </PopoverBody>
             </PopoverContent>
           </Popover>
-          <RejectAllModal
+          <RejectAllGrantApplicationModal
             applicationIds={Array.from(selectedApplicationIds)}
             rejectIsOpen={rejectedIsOpen}
             rejectOnClose={rejectedOnClose}
