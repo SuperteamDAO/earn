@@ -6,6 +6,7 @@ export interface NextApiRequestWithUser extends NextApiRequest {
 
 export interface NextApiRequestWithSponsor extends NextApiRequest {
   userId?: string;
+  role?: string;
   userSponsorId?: string;
   hackathonId?: string;
 }

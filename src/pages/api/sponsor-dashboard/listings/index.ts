@@ -44,7 +44,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         b.status,
         b.deadline,
         b.isPublished,
-        b.isVerifying,
         b.rewards,
         b.rewardAmount,
         b.totalWinnersSelected,
@@ -61,7 +60,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       WHERE b.isActive = true
       AND b.isArchived = false
       AND b.sponsorId = ?
-      AND b.status = ?
+      AND b.status <> ?
       
       UNION ALL
       
@@ -74,7 +73,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         g.status,
         NULL as deadline,
         g.isPublished,
-        NULL as isVerifying,
         NULL as rewards,
         NULL as rewardAmount,
         NULL as totalWinnersSelected,
@@ -97,7 +95,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ORDER BY createdAt DESC
     `,
       userSponsorId,
-      status.OPEN,
+      status.CLOSED,
       userSponsorId,
       GrantStatus.OPEN,
     );
