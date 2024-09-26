@@ -341,8 +341,9 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                     )}
                     {!!(
                       (session?.user?.role === 'GOD' &&
-                        listing.type !== 'grant') ||
-                      (listing.isPublished &&
+                        listing.type !== 'grant' &&
+                        !listing.isPublished) ||
+                      (!listing.isPublished &&
                         !pastDeadline &&
                         listing.type !== 'grant' &&
                         listing.status === 'OPEN')

@@ -19,6 +19,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 const allowedFields = [
   'type',
+  'status',
   'title',
   'skills',
   'slug',
@@ -74,6 +75,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       compensationType,
       description,
       skills,
+      status,
     } = updatedData;
     let { isPublished } = updatedData;
 
@@ -181,6 +183,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     let isVerifying = false;
     if (isPublished) {
       isVerifying =
+        listing.status === 'VERIFYING' ||
         (
           await prisma.sponsors.findUnique({
             where: {
@@ -190,7 +193,8 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               isCaution: true,
             },
           })
-        )?.isCaution || false;
+        )?.isCaution ||
+        false;
       if (!isVerifying) {
         isVerifying =
           (await prisma.bounties.count({
@@ -213,7 +217,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id: id as string },
       data: {
         ...updatedData,
-        status: isVerifying ? 'VERIFYING' : 'OPEN',
+        status: isVerifying ? 'VERIFYING' : status || listing?.status || 'OPEN',
         rewards,
         rewardAmount,
         token,

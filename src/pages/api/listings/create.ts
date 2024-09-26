@@ -49,6 +49,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       minRewardAsk,
       maxRewardAsk,
       isPrivate,
+      status,
     } = req.body;
     let { isPublished } = req.body;
 
@@ -154,7 +155,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const result = await prisma.bounties.create({
       data: {
         ...finalData,
-        status: isVerifying ? 'VERIFYING' : 'OPEN',
+        status: isVerifying ? 'VERIFYING' : status || 'OPEN',
       },
     });
 
