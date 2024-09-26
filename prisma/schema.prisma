@@ -583,6 +583,8 @@ enum status {
   OPEN
   REVIEW
   CLOSED
+  VERIFYING
+  VERIFY_FAIL
 }
 
 enum GrantStatus {
