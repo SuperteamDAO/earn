@@ -50,6 +50,7 @@ export const getListingDraftStatus = (
 ) => {
   if (status === 'CLOSED') return 'CLOSED';
   if (status === 'REVIEW') return 'REVIEW';
+  if (status === 'PREVIEW') return 'PREVIEW';
   if (status === 'VERIFYING') return 'VERIFYING';
   if (status === 'VERIFY_FAIL') return 'VERIFY_FAIL';
   if (isPublished) return 'PUBLISHED';
@@ -76,6 +77,7 @@ export const getListingStatus = (
   );
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
 
+  if (listingStatus === 'PREVIEW') return 'Preview';
   if (listingStatus === 'VERIFYING') return 'Under Verification';
   if (listingStatus === 'VERIFY_FAIL') return 'Verification Failed';
   if (listingStatus === 'DRAFT') return 'Draft';
@@ -115,6 +117,7 @@ export const getColorStyles = (status: string) => {
       return { bgColor: '#ffecb3', color: '#F59E0B' };
     case 'Verification Failed':
       return { bgColor: 'red.100', color: 'red.400' };
+    case 'Preview':
     case 'Draft':
       return { bgColor: 'brand.slate.100', color: 'brand.slate.400' };
     case 'In Review':

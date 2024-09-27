@@ -22,6 +22,7 @@ import {
   Template,
 } from './ListingBuilder';
 import { ListingSuccessModal } from './ListingSuccessModal';
+import { PreviewListingModal } from './PreviewListingModal';
 import { hackathonSponsorAtom } from './SelectSponsor';
 import { UnderVerificationModal } from './UnderVerficationModal';
 
@@ -98,14 +99,24 @@ export function CreateListing({
   const [steps, setSteps] = useState<number>(
     !!prevStep ? prevStep : editable || type === 'hackathon' ? 2 : 1,
   );
+  useEffect(() => {
+    setSteps(!!prevStep ? prevStep : editable || type === 'hackathon' ? 2 : 1);
+  }, [prevStep]);
 
-  const [slug, setSlug] = useState<string>('');
-  const [isType, setType] = useState<string>('');
+  const [slug, setSlug] = useState<string>(listing?.slug ?? '');
+  const [isType, setType] = useState<string>(type);
 
   const [isListingPublishing, setIsListingPublishing] =
     useState<boolean>(false);
 
   const { isOpen: isSuccessOpen, onOpen: onSuccessOpen } = useDisclosure();
+  const {
+    isOpen: isPreviewOpen,
+    onOpen: onPreviewOpen,
+    onClose: onPreviewClose,
+  } = useDisclosure({
+    defaultIsOpen: !!router.query['preview'],
+  });
   const { isOpen: isVerifyingOpen, onOpen: onVerifyingOpen } = useDisclosure();
 
   const {
@@ -118,7 +129,10 @@ export function CreateListing({
 
   const basePath = type === 'hackathon' ? 'hackathon' : 'listings';
   const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
-  const isNewOrDraft = listingDraftStatus === 'DRAFT' || newListing === true;
+  const isNewOrDraft =
+    listingDraftStatus === 'DRAFT' ||
+    listingDraftStatus === 'PREVIEW' ||
+    newListing === true;
 
   useEffect(() => {
     initializeForm(listing!, isDuplicating, type);
@@ -168,6 +182,7 @@ export function CreateListing({
         maxRewardAsk: form?.maxRewardAsk,
         isPublished: true,
         isPrivate: form?.isPrivate,
+        status: 'OPEN',
       };
 
       let api = `/api/${basePath}/create`;
@@ -198,7 +213,7 @@ export function CreateListing({
     }
   };
 
-  const createDraft = async (data: ListingFormType) => {
+  const createDraft = async (data: ListingFormType, isPreview?: boolean) => {
     setIsDraftLoading(true);
 
     let api = `/api/${basePath}/create`;
@@ -245,15 +260,33 @@ export function CreateListing({
         maxRewardAsk: data?.maxRewardAsk,
       };
 
-      await axios.post(api, {
+      const result = await axios.post<Listing>(api, {
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
         ...draft,
         isPublished: editable && !isDuplicating ? listing?.isPublished : false,
+        status: isPreview ? 'PREVIEW' : 'OPEN',
       });
-      if (type === 'hackathon') {
-        router.push(`/dashboard/hackathon/`);
+      const resType = result.data.type;
+      const resSlug = result.data.slug;
+      setType(resType || '');
+      setSlug(resSlug || '');
+      if (isPreview) {
+        // window.open(`/listings/${resType}/${resSlug}`, '_blank');
+        if (!router.asPath.split('/')[2]?.includes('create')) {
+          onPreviewOpen();
+        }
+        router.replace(
+          `/dashboard/listings/${resSlug}/edit?preview=1`,
+          undefined,
+          { shallow: true },
+        );
+        setIsDraftLoading(false);
       } else {
-        router.push('/dashboard/listings');
+        if (type === 'hackathon') {
+          router.push(`/dashboard/hackathon/`);
+        } else {
+          router.push('/dashboard/listings');
+        }
       }
     } catch (e) {
       setIsDraftLoading(false);
@@ -285,6 +318,11 @@ export function CreateListing({
         />
       ) : (
         <FormLayout setStep={setSteps} currentStep={steps} stepList={stepList}>
+          <PreviewListingModal
+            isOpen={isPreviewOpen}
+            onClose={onPreviewClose}
+            previewUrl={`/listings/${isType}/${slug}`}
+          />
           {isSuccessOpen && (
             <ListingSuccessModal
               type={isType}

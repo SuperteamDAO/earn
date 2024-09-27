@@ -1,8 +1,10 @@
-import { Box, Text } from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
+import { HStack, Text } from '@chakra-ui/react';
 import { type status } from '@prisma/client';
 import { atom, useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 
+import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 type BountySnackbarType = {
@@ -13,6 +15,8 @@ type BountySnackbarType = {
   type: string | undefined;
   isPublished: boolean | undefined;
   status?: status;
+  sponsorId: string | undefined;
+  slug: string | undefined;
 };
 
 export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
@@ -20,8 +24,11 @@ export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
 export const BountySnackbar = () => {
   const router = useRouter();
   const [bountySnackbar] = useAtom(bountySnackbarAtom);
+  const user = useUser();
 
-  const { asPath } = router;
+  const { asPath, query } = router;
+
+  if (!!query['preview']) return null;
 
   const showSnackbar = asPath.split('/')[1] === 'listings';
 
@@ -34,11 +41,18 @@ export const BountySnackbar = () => {
     type,
     isPublished,
     isCaution,
+    status,
+    sponsorId,
+    slug,
   } = bountySnackbar;
 
   const isExpired = deadline && dayjs(deadline).isBefore(dayjs());
 
+  const isPreviewSponsor =
+    status === 'PREVIEW' && user.user?.currentSponsorId === sponsorId;
+
   const getBackgroundColor = () => {
+    if (status === 'PREVIEW') return 'brand.slate.500';
     if (!isPublished) return '#DC4830';
     if (isExpired) return '#6A6A6A';
     if (isCaution) return '#DC4830';
@@ -49,7 +63,12 @@ export const BountySnackbar = () => {
     const daysToDeadline = deadline
       ? dayjs(deadline).diff(dayjs(), 'day')
       : null;
-
+    if (status === 'PREVIEW') {
+      if (user.user?.currentSponsorId === sponsorId) {
+        return 'Note: This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community';
+      } else
+        return 'This Listing Is In Preview Mode. Check Out Other Listings on Our Homepage!';
+    }
     if (!isPublished)
       return 'This Listing Is Inactive Right Now. Check Out Other Listings on Our Homepage!';
     if (isExpired)
@@ -88,7 +107,19 @@ export const BountySnackbar = () => {
 
   if (showSnackbar && bountySnackbar && message) {
     return (
-      <Box w="full" color="white" bgColor={bgColor}>
+      <HStack
+        justify="center"
+        gap={1}
+        w="full"
+        color="white"
+        cursor={isPreviewSponsor ? 'pointer' : 'default'}
+        bgColor={bgColor}
+        onClick={() => {
+          if (!isPreviewSponsor) return;
+          router.push(`/dashboard/listings/${slug}/edit`);
+        }}
+      >
+        {isPreviewSponsor && <EditIcon />}
         <Text
           p={3}
           fontSize={{ base: 'xs', md: 'sm' }}
@@ -97,7 +128,7 @@ export const BountySnackbar = () => {
         >
           {message}
         </Text>
-      </Box>
+      </HStack>
     );
   }
   return null;
