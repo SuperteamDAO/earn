@@ -18,6 +18,7 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
+import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 
 interface Props {
@@ -28,6 +29,7 @@ interface Props {
 export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
   const [tabIndex, setTabIndex] = useState(0); // 0 for Desktop, 1 for Mobile
   const [isLoading, setIsLoading] = useState(true);
+  const posthog = usePostHog();
 
   const handleTabsChange = (index: number) => {
     setTabIndex(index);
@@ -94,10 +96,14 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                 </Tooltip>
 
                 <Button
+                  className="ph-no-capture"
                   as={Link}
                   color="brand.slate.500"
                   href={previewUrl}
                   isExternal
+                  onClick={() => {
+                    posthog.capture('new tab_preview');
+                  }}
                   rightIcon={<ExternalLinkIcon />}
                   variant="outlineSecondary"
                 >
@@ -105,7 +111,14 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                 </Button>
               </Flex>
 
-              <Button onClick={onClose} variant="solid">
+              <Button
+                className="ph-no-capture"
+                onClick={() => {
+                  posthog.capture('continue editing_preview');
+                  onClose();
+                }}
+                variant="solid"
+              >
                 Continue Editing
               </Button>
             </Flex>

@@ -351,7 +351,9 @@ export const ListingPayments = ({
   const onDraftClick = async (isPreview: boolean = false) => {
     const data = getValues();
     const formData = { ...form, ...data };
-    if (isNewOrDraft || isDuplicating) {
+    if (isPreview) {
+      posthog.capture('preview listing_sponsor');
+    } else if (isNewOrDraft || isDuplicating) {
       posthog.capture('save draft_sponsor');
     } else {
       posthog.capture('edit listing_sponsor');
