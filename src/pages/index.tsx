@@ -14,7 +14,6 @@ import {
 } from '@/features/home';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
-import { prisma } from '@/prisma';
 
 import { authOptions } from './api/auth/[...nextauth]';
 import { getForYouListings } from './api/homepage/for-you';
@@ -163,17 +162,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   let isAuth = false;
 
   if (session && session.user.id) {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: session.user.id,
-      },
-      select: {
-        location: true,
-      },
-    });
     isAuth = true;
     const matchedRegion = CombinedRegions.find((region) =>
-      region.country.includes(user?.location!),
+      region.country.includes(session.user.location!),
     );
     if (matchedRegion?.region) {
       userRegion = [matchedRegion.region, Regions.GLOBAL];
