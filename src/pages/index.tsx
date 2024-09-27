@@ -14,6 +14,7 @@ import {
 } from '@/features/home';
 import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
+import { prisma } from '@/prisma';
 
 import { authOptions } from './api/auth/[...nextauth]';
 import { getForYouListings } from './api/homepage/for-you';
@@ -89,7 +90,11 @@ export default function HomePage({
     }),
   );
 
-  const { data: grants } = useQuery(homepageGrantsQuery(userRegion));
+  const { data: grants } = useQuery(
+    homepageGrantsQuery({
+      userRegion,
+    }),
+  );
 
   useEffect(() => {
     if (reviewListings && completeListings) {
@@ -158,9 +163,17 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   let isAuth = false;
 
   if (session && session.user.id) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        location: true,
+      },
+    });
     isAuth = true;
     const matchedRegion = CombinedRegions.find((region) =>
-      region.country.includes(session.user.location!),
+      region.country.includes(user?.location!),
     );
     if (matchedRegion?.region) {
       userRegion = [matchedRegion.region, Regions.GLOBAL];
