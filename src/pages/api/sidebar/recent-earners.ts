@@ -31,12 +31,15 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
             title: true,
             rewards: true,
             token: true,
+            winnersAnnouncedAt: true,
           },
         },
       },
       take: 15,
       orderBy: {
-        updatedAt: 'desc',
+        listing: {
+          winnersAnnouncedAt: 'desc',
+        },
       },
     });
 
