@@ -68,6 +68,7 @@ export function ListingPageLayout({
         rewardAmount: initialBounty.rewardAmount,
         type: initialBounty.type,
         isPublished: initialBounty.isPublished,
+        status: initialBounty.status,
       });
     }
   }, [initialBounty, submissionNumber]);

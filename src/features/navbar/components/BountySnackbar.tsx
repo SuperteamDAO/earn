@@ -1,4 +1,5 @@
 import { Box, Text } from '@chakra-ui/react';
+import { type status } from '@prisma/client';
 import { atom, useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 
@@ -11,6 +12,7 @@ type BountySnackbarType = {
   rewardAmount: number | undefined;
   type: string | undefined;
   isPublished: boolean | undefined;
+  status?: status;
 };
 
 export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);

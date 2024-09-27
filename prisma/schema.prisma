@@ -28,7 +28,6 @@ model Bounties {
   isFeatured           Boolean            @default(false)
   isActive             Boolean            @default(true)
   isArchived           Boolean            @default(false)
-  isVerifying          Boolean            @default(false)
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
   applicationLink      String?
@@ -583,6 +582,8 @@ enum status {
   OPEN
   REVIEW
   CLOSED
+  VERIFYING
+  VERIFY_FAIL
 }
 
 enum GrantStatus {
