@@ -126,7 +126,7 @@ export const SubmissionActionButton = ({
         pastDeadline ||
           (user?.id &&
             user?.isTalentFilled &&
-            (bountyDraftStatus !== 'PUBLISHED' ||
+            ((bountyDraftStatus !== 'PUBLISHED' && status !== 'PREVIEW') ||
               !hasHackathonStarted ||
               !isUserEligibleByRegion)),
       );

@@ -109,7 +109,7 @@ const LinkModal = ({
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
-  createDraft: (data: ListingFormType) => Promise<void>;
+  createDraft: (data: ListingFormType, isPreview?: boolean) => Promise<void>;
   isDraftLoading?: boolean;
   editable?: boolean;
   type?: 'bounty' | 'project' | 'hackathon';
@@ -344,7 +344,7 @@ export const DescriptionBuilder = ({
     setSteps(4);
   };
 
-  const onDraftClick = async () => {
+  const onDraftClick = async (isPreview: boolean = false) => {
     const data = getValues();
     const formData = { ...form, ...data };
     if (isNewOrDraft || isDuplicating) {
@@ -352,7 +352,7 @@ export const DescriptionBuilder = ({
     } else {
       posthog.capture('edit listing_sponsor');
     }
-    createDraft(formData);
+    createDraft(formData, isPreview);
   };
 
   const posthog = usePostHog();
@@ -686,20 +686,22 @@ export const DescriptionBuilder = ({
             Continue
           </Button>
           {isDraft && (
-            <Button
-              className="ph-no-capture"
-              w="100%"
-              py={6}
-              color="brand.purple"
-              fontWeight={500}
-              bg="#EEF2FF"
-              borderRadius="sm"
-              isLoading={isDraftLoading}
-              onClick={onDraftClick}
-              variant={'ghost'}
-            >
-              Save Draft
-            </Button>
+            <HStack w="full">
+              <Button
+                className="ph-no-capture"
+                w="100%"
+                py={6}
+                color="brand.purple"
+                fontWeight={500}
+                bg="#EEF2FF"
+                borderRadius="sm"
+                isLoading={isDraftLoading}
+                onClick={() => onDraftClick()}
+                variant={'ghost'}
+              >
+                Save Draft
+              </Button>
+            </HStack>
           )}
           {!isDraft && (
             <Button
@@ -709,7 +711,7 @@ export const DescriptionBuilder = ({
               fontWeight={500}
               borderRadius="sm"
               isLoading={isDraftLoading}
-              onClick={onDraftClick}
+              onClick={() => onDraftClick()}
               variant={'solid'}
             >
               Update Listing

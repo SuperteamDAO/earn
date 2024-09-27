@@ -584,6 +584,7 @@ enum status {
   CLOSED
   VERIFYING
   VERIFY_FAIL
+  PREVIEW
 }
 
 enum GrantStatus {

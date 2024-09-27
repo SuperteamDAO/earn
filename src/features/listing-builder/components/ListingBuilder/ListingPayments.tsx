@@ -41,6 +41,7 @@ import debounce from 'lodash.debounce';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { LuEye } from 'react-icons/lu';
 
 import {
   BONUS_REWARD_POSITION,
@@ -82,7 +83,7 @@ interface PrizeListInterface {
 }
 interface Props {
   isDraftLoading: boolean;
-  createDraft: (data: ListingFormType) => Promise<void>;
+  createDraft: (data: ListingFormType, isPreview?: boolean) => Promise<void>;
   createAndPublishListing: (closeConfirm: () => void) => void;
   isListingPublishing: boolean;
   editable: boolean;
@@ -347,10 +348,17 @@ export const ListingPayments = ({
     return errorMessage;
   };
 
-  const handleSaveDraft = async () => {
+  const onDraftClick = async (isPreview: boolean = false) => {
     const data = getValues();
     const formData = { ...form, ...data };
-    createDraft(formData);
+    if (isPreview) {
+      posthog.capture('preview listing_sponsor');
+    } else if (isNewOrDraft || isDuplicating) {
+      posthog.capture('save draft_sponsor');
+    } else {
+      posthog.capture('edit listing_sponsor');
+    }
+    createDraft(formData, isPreview);
   };
 
   const handleUpdateListing = async () => {
@@ -1081,23 +1089,36 @@ export const ListingPayments = ({
               </Button>
             )}
             {isDraft && (
-              <Button
-                className="ph-no-capture"
-                w="100%"
-                py={6}
-                color="brand.purple"
-                fontWeight={500}
-                bg="#EEF2FF"
-                borderRadius="sm"
-                isLoading={isDraftLoading}
-                onClick={() => {
-                  posthog.capture('save draft_sponsor');
-                  handleSaveDraft();
-                }}
-                variant={'ghost'}
-              >
-                Save Draft
-              </Button>
+              <HStack w="full">
+                <Button
+                  className="ph-no-capture"
+                  w="100%"
+                  py={6}
+                  color="brand.purple"
+                  fontWeight={500}
+                  bg="#EEF2FF"
+                  borderRadius="sm"
+                  isLoading={isDraftLoading}
+                  onClick={() => onDraftClick()}
+                  variant={'ghost'}
+                >
+                  Save Draft
+                </Button>
+                <Button
+                  className="ph-no-capture"
+                  w="100%"
+                  py={6}
+                  color="brand.slate.500"
+                  fontWeight={500}
+                  borderRadius="sm"
+                  isLoading={isDraftLoading}
+                  leftIcon={<LuEye />}
+                  onClick={() => onDraftClick(true)}
+                  variant={'outline'}
+                >
+                  Preview
+                </Button>
+              </HStack>
             )}
             {!isDraft && (
               <Button

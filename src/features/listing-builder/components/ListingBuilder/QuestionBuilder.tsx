@@ -20,7 +20,7 @@ import { ListingFormLabel } from './Form';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
-  createDraft: (data: ListingFormType) => Promise<void>;
+  createDraft: (data: ListingFormType, isPreview?: boolean) => Promise<void>;
   editable: boolean;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;
@@ -72,7 +72,7 @@ export const QuestionBuilder = ({
   isDraftLoading,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
-  const { control, handleSubmit, register, reset } = useForm({
+  const { control, handleSubmit, register, reset, getValues } = useForm({
     defaultValues: {
       eligibility: form?.eligibility?.length
         ? form.eligibility
@@ -116,14 +116,15 @@ export const QuestionBuilder = ({
     setSteps(5);
   };
 
-  const onDraftClick = async (data: any) => {
+  const onDraftClick = async (isPreview: boolean = false) => {
+    const data = getValues();
     const formData = { ...form, ...data };
     if (isNewOrDraft || isDuplicating) {
       posthog.capture('save draft_sponsor');
     } else {
       posthog.capture('edit listing_sponsor');
     }
-    createDraft(formData);
+    createDraft(formData as any, isPreview);
   };
 
   const posthog = usePostHog();
@@ -184,20 +185,22 @@ export const QuestionBuilder = ({
             Continue
           </Button>
           {isDraft && (
-            <Button
-              className="ph-no-capture"
-              w="100%"
-              py={6}
-              color="brand.purple"
-              fontWeight={500}
-              bg="#EEF2FF"
-              borderRadius="sm"
-              isLoading={isDraftLoading}
-              onClick={handleSubmit(onDraftClick)}
-              variant={'ghost'}
-            >
-              Save Draft
-            </Button>
+            <HStack w="full">
+              <Button
+                className="ph-no-capture"
+                w="100%"
+                py={6}
+                color="brand.purple"
+                fontWeight={500}
+                bg="#EEF2FF"
+                borderRadius="sm"
+                isLoading={isDraftLoading}
+                onClick={() => onDraftClick()}
+                variant={'ghost'}
+              >
+                Save Draft
+              </Button>
+            </HStack>
           )}
           {!isDraft && (
             <Button
@@ -207,7 +210,7 @@ export const QuestionBuilder = ({
               fontWeight={500}
               borderRadius="sm"
               isLoading={isDraftLoading}
-              onClick={onDraftClick}
+              onClick={() => onDraftClick()}
               variant={'solid'}
             >
               Update Listing

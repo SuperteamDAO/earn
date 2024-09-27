@@ -121,6 +121,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const finalData = {
       sponsorId: userSponsorId,
+      status,
       title,
       usdValue,
       publishedAt,

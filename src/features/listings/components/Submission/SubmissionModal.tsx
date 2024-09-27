@@ -508,7 +508,7 @@ export const SubmissionModal = ({
             <Button
               className="ph-no-capture"
               w={'full'}
-              isDisabled={isTemplate}
+              isDisabled={isTemplate || listing.status === 'PREVIEW'}
               isLoading={!!isLoading}
               loadingText="Submitting..."
               type="submit"
