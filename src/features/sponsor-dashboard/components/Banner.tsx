@@ -94,7 +94,7 @@ export function Banner({
                   whiteSpace={'nowrap'}
                 >
                   {!isHackathon
-                    ? `Sponsor since ${stats.yearOnPlatform}`
+                    ? `Sponsor since ${stats?.yearOnPlatform}`
                     : 'Hackathon'}
                 </Text>
               )}
@@ -132,7 +132,7 @@ export function Banner({
                   $
                   {new Intl.NumberFormat('en-US', {
                     maximumFractionDigits: 0,
-                  }).format(Math.round(stats.totalRewardAmount || 0))}
+                  }).format(Math.round(stats?.totalRewardAmount || 0))}
                 </Text>
               )}
             </Box>
