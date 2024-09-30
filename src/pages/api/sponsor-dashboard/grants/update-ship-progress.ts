@@ -5,7 +5,10 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+  if (req.method !== 'PUT') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+  const { id } = req.body;
 
   if (!id || typeof id !== 'string') {
     logger.warn('Invalid request: ID is required and must be a string');

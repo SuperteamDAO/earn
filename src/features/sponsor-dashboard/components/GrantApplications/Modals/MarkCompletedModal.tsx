@@ -30,12 +30,10 @@ export function MarkCompleteModal({
 
   const markCompletedMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.get<GrantApplicationWithUser>(
+      const response = await axios.put<GrantApplicationWithUser>(
         `/api/sponsor-dashboard/grants/update-ship-progress`,
         {
-          params: {
-            id: applicationId,
-          },
+          id: applicationId,
         },
       );
       return response.data;
