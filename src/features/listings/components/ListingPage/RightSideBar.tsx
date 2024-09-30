@@ -18,7 +18,7 @@ import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { exclusiveSponsorData, tokenList } from '@/constants/index';
-import { LiveListings } from '@/features/home';
+import { RelatedListings } from '@/features/home';
 import { type ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -331,27 +331,32 @@ export function RightSideBar({
             py={8}
             fontSize="sm"
           >
-            <LiveListings
-              isHackathon={!!Hackathon}
-              excludeIds={listing.id ? [listing.id] : undefined}
-              exclusiveSponsorId={
-                Object.values(exclusiveSponsorData).some(
-                  (sponsor) => sponsor.title === listing?.sponsor?.name,
-                )
-                  ? listing?.sponsorId
-                  : undefined
-              }
-            >
-              <Flex align="center" justify={'space-between'} w="full">
-                <Text
-                  color={'brand.slate.600'}
-                  fontSize={'sm'}
-                  fontWeight={600}
-                >
-                  {Hackathon ? 'LIVE TRACKS' : 'LIVE LISTINGS'}
-                </Text>
-              </Flex>
-            </LiveListings>
+            {listing.id && (
+              <RelatedListings
+                isHackathon={!!listing.hackathonId}
+                listingId={listing.id}
+                excludeIds={listing.id ? [listing.id] : undefined}
+                exclusiveSponsorId={
+                  Object.values(exclusiveSponsorData).some(
+                    (sponsor) => sponsor.title === listing?.sponsor?.name,
+                  )
+                    ? listing?.sponsorId
+                    : undefined
+                }
+              >
+                <Flex align="center" justify={'space-between'} w="full">
+                  <Text
+                    color={'brand.slate.600'}
+                    fontSize={'sm'}
+                    fontWeight={600}
+                  >
+                    {!Hackathon
+                      ? 'RELATED LIVE LISTINGS'
+                      : 'RELATED LIVE TRACKS'}
+                  </Text>
+                </Flex>
+              </RelatedListings>
+            )}
           </Box>
         </VStack>
       </VStack>
