@@ -1,7 +1,6 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import { sendEmailNotification } from '@/features/emails';
 import logger from '@/lib/logger';
 import { updateLike } from '@/services/likeService';
 import { safeStringify } from '@/utils/safeStringify';
@@ -18,17 +17,11 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const { updatedData: updatedSubmission, likesIncremented } =
-      await updateLike('submission', id, userId!);
-
-    if (likesIncremented) {
-      sendEmailNotification({
-        type: 'submissionLike',
-        id,
-        userId: updatedSubmission?.userId,
-        triggeredBy: userId,
-      });
-    }
+    const { updatedData: updatedSubmission } = await updateLike(
+      'submission',
+      id,
+      userId!,
+    );
 
     return res.status(200).json(updatedSubmission);
   } catch (error: any) {
