@@ -89,7 +89,11 @@ export default function HomePage({
     }),
   );
 
-  const { data: grants } = useQuery(homepageGrantsQuery(userRegion));
+  const { data: grants } = useQuery(
+    homepageGrantsQuery({
+      userRegion,
+    }),
+  );
 
   useEffect(() => {
     if (reviewListings && completeListings) {

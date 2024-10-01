@@ -46,6 +46,10 @@ export default async function handler(
       data: { email },
     });
 
+    await prisma.emailSettings.deleteMany({
+      where: { user: { email } },
+    });
+
     if (req.method === 'GET') {
       return res
         .status(200)

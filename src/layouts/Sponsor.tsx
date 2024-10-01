@@ -22,7 +22,7 @@ import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
-import { ABTG } from '@/constants';
+import { PDTG } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import {
   isCreateListingAllowedQuery,
@@ -168,7 +168,7 @@ export function SponsorLayout({
         { name: 'All Tracks', link: `/hackathon`, icon: MdList },
         {
           name: 'Get Help',
-          link: ABTG,
+          link: PDTG,
           icon: MdOutlineChatBubbleOutline,
           posthog: 'get help_sponsor',
         },
@@ -191,7 +191,7 @@ export function SponsorLayout({
           : []),
         {
           name: 'Get Help',
-          link: ABTG,
+          link: PDTG,
           icon: LuMessageSquare,
           posthog: 'get help_sponsor',
         },

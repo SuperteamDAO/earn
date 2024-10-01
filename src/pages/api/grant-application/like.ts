@@ -1,7 +1,6 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import { sendEmailNotification } from '@/features/emails';
 import logger from '@/lib/logger';
 import { updateLike } from '@/services/likeService';
 import { safeStringify } from '@/utils/safeStringify';
@@ -21,20 +20,11 @@ async function grantApplication(
       });
     }
 
-    const { updatedData: updatedGrant, likesIncremented } = await updateLike(
+    const { updatedData: updatedGrant } = await updateLike(
       'grantApplication',
       id,
       userId!,
     );
-
-    if (likesIncremented) {
-      sendEmailNotification({
-        type: 'applicationLike',
-        id,
-        userId: updatedGrant?.userId,
-        triggeredBy: userId,
-      });
-    }
 
     return res.status(200).json(updatedGrant);
   } catch (error: any) {

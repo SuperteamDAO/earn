@@ -15,7 +15,7 @@ export const timeAgoShort = (date: Date | string): string => {
   }
 
   const diffInDays = Math.abs(then.diff(now, 'day'));
-  if (diffInDays < 30) {
+  if (diffInDays <= 30) {
     return `${diffInDays}d`;
   }
 

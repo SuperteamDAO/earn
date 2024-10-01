@@ -55,7 +55,10 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const params = req.query;
-  const userRegion = params.userRegion as Regions[];
+  let userRegion = params['userRegion[]'] as Regions[];
+  if (typeof userRegion === 'string') {
+    userRegion = [userRegion];
+  }
 
   const grants = await getGrants({ userRegion });
 
