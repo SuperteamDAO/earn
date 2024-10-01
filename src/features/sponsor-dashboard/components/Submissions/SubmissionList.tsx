@@ -139,17 +139,19 @@ export const SubmissionList = ({
             w="full"
             py={3}
           >
-            <Checkbox
-              _checked={{
-                '& .chakra-checkbox__control': {
-                  background: 'brand.purple',
-                  borderColor: 'brand.purple',
-                },
-              }}
-              isChecked={isAllToggled}
-              isDisabled={listing?.isWinnersAnnounced}
-              onChange={() => toggleAllSubmissions && toggleAllSubmissions()}
-            />
+            {listing?.type === 'project' && (
+              <Checkbox
+                _checked={{
+                  '& .chakra-checkbox__control': {
+                    background: 'brand.purple',
+                    borderColor: 'brand.purple',
+                  },
+                }}
+                isChecked={isAllToggled}
+                isDisabled={listing?.isWinnersAnnounced}
+                onChange={() => toggleAllSubmissions && toggleAllSubmissions()}
+              />
+            )}
             <InputGroup w={'full'} size="lg">
               <Input
                 bg={'white'}
@@ -334,23 +336,25 @@ export const SubmissionList = ({
               }}
             >
               <Flex align="center">
-                <Checkbox
-                  mr={2}
-                  _checked={{
-                    '& .chakra-checkbox__control': {
-                      background: 'brand.purple',
-                      borderColor: 'brand.purple',
-                    },
-                  }}
-                  isChecked={isToggled && isToggled(submission.id)}
-                  isDisabled={
-                    listing?.isWinnersAnnounced ||
-                    submission?.status !== 'Pending'
-                  }
-                  onChange={() =>
-                    toggleSubmission && toggleSubmission(submission.id)
-                  }
-                />
+                {listing?.type === 'project' && (
+                  <Checkbox
+                    mr={2}
+                    _checked={{
+                      '& .chakra-checkbox__control': {
+                        background: 'brand.purple',
+                        borderColor: 'brand.purple',
+                      },
+                    }}
+                    isChecked={isToggled && isToggled(submission.id)}
+                    isDisabled={
+                      listing?.isWinnersAnnounced ||
+                      submission?.status !== 'Pending'
+                    }
+                    onChange={() =>
+                      toggleSubmission && toggleSubmission(submission.id)
+                    }
+                  />
+                )}
                 <EarnAvatar
                   id={submission?.user?.id}
                   avatar={submission?.user?.photo || undefined}
