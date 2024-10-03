@@ -246,6 +246,7 @@ export function CreateListing({
         references: (data?.references || []).map((r) => ({
           link: r.link,
           order: r.order,
+          title: r.title,
         })),
         region: data?.region,
         referredBy: data?.referredBy,

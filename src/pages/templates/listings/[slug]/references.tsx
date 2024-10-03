@@ -2,35 +2,13 @@ import { Box, Grid, HStack, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 
-import { OgImageViewer } from '@/components/shared/ogImageViewer';
-import { type Listing } from '@/features/listings';
+import { type Listing, ReferenceCard } from '@/features/listings';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { getURL } from '@/utils/validUrl';
 
 interface BountyDetailsProps {
   bounty: Listing | null;
 }
-
-const ReferenceCard = ({ link }: { link?: string }) => {
-  if (!link) return <></>;
-  return (
-    <Box
-      w="100%"
-      borderRadius={8}
-      cursor="pointer"
-      onClick={() => window.open(link, '_blank')}
-    >
-      <OgImageViewer
-        showTitle
-        externalUrl={link}
-        w={'100%'}
-        aspectRatio={1.91 / 1}
-        objectFit="cover"
-        borderRadius={6}
-      />
-    </Box>
-  );
-};
 
 function BountyDetails({ bounty }: BountyDetailsProps) {
   return (
@@ -59,7 +37,11 @@ function BountyDetails({ bounty }: BountyDetailsProps) {
               }}
             >
               {bounty?.references?.map((reference, i) => (
-                <ReferenceCard link={reference.link} key={i} />
+                <ReferenceCard
+                  title={reference.title}
+                  link={reference.link}
+                  key={i}
+                />
               ))}
             </Grid>
           </Box>

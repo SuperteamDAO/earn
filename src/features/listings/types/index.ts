@@ -84,6 +84,7 @@ interface Eligibility {
 export interface References {
   order: number;
   link?: string;
+  title?: string;
 }
 
 export interface Rewards {

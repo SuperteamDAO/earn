@@ -12,6 +12,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ogImageQuery } from '@/queries/og';
 
 interface Props {
+  title?: string;
   showTitle?: boolean;
   externalUrl?: string;
   imageUrl?: string;
@@ -45,6 +46,7 @@ const getRandomFallbackImage = (): string => {
 };
 
 export const OgImageViewer = ({
+  title,
   showTitle,
   externalUrl,
   imageUrl,
@@ -91,7 +93,7 @@ export const OgImageViewer = ({
         src={currentImageUrl || fallbackImage}
         {...props}
       />
-      {showTitle && !!ogData && (
+      {showTitle && (
         <Text
           pt={2}
           color="brand.slate.500"
@@ -99,7 +101,7 @@ export const OgImageViewer = ({
           textOverflow="ellipsis"
           noOfLines={1}
         >
-          {ogData?.title}
+          {title || ogData?.title}
         </Text>
       )}
     </div>
