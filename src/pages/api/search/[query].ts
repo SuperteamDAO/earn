@@ -25,7 +25,10 @@ const Skills = {
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
-  const query = (params.query as string).replace(/[^a-zA-Z0-9 _-]/g, '');
+  const query = (params.query as string).replace(
+    /[^a-zA-Z0-9 _\-@#$.&*():+=]/g,
+    ' ',
+  );
 
   const bountiesLimit = (req.query.bountiesLimit as string) || 5;
   const grantsLimit = (req.query.grantsLimit as string) || 2;
