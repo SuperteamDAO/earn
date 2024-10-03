@@ -174,6 +174,10 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           data: {
             rewardInUSD,
             status: 'Approved',
+            label:
+              winners[currentIndex]?.label === 'Unreviewed'
+                ? 'Reviewed'
+                : winners[currentIndex]?.label,
           },
         }),
       );
