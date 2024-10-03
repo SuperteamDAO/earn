@@ -113,10 +113,6 @@ export default function BountySubmissions({ slug }: Props) {
   }, [selectedSubmissionIds]);
 
   useEffect(() => {
-    setIsToggledAll(isAllCurrentToggled());
-  }, [selectedSubmissionIds, submissions]);
-
-  useEffect(() => {
     const newSet = new Set(selectedSubmissionIds);
     Array.from(selectedSubmissionIds).forEach((a) => {
       const submissionWithId = submissions?.find(
@@ -130,7 +126,7 @@ export default function BountySubmissions({ slug }: Props) {
   }, [submissions]);
 
   const isAllCurrentToggled = () =>
-    submissions
+    paginatedSubmissions
       ?.filter((submission) => submission.status === 'Pending')
       .every((submission) => selectedSubmissionIds.has(submission.id)) || false;
 
@@ -152,24 +148,6 @@ export default function BountySubmissions({ slug }: Props) {
     },
     [selectedSubmissionIds, submissions],
   );
-
-  const toggleAllSubmissions = () => {
-    if (!isAllCurrentToggled()) {
-      setSelectedSubmissionIds((prev) => {
-        const newSet = new Set(prev);
-        submissions
-          ?.filter((submission) => submission.status === 'Pending')
-          .map((submission) => newSet.add(submission.id));
-        return newSet;
-      });
-    } else {
-      setSelectedSubmissionIds((prev) => {
-        const newSet = new Set(prev);
-        submissions?.map((submission) => newSet.delete(submission.id));
-        return newSet;
-      });
-    }
-  };
 
   const rejectSubmissions = useRejectSubmissions(slug);
 
@@ -276,6 +254,38 @@ export default function BountySubmissions({ slug }: Props) {
       startIndex + submissionsPerPage,
     );
   }, [filteredSubmissions, currentPage]);
+
+  useEffect(() => {
+    setIsToggledAll(isAllCurrentToggled());
+  }, [selectedSubmissionIds, paginatedSubmissions]);
+
+  const toggleAllSubmissions = () => {
+    if (!isAllCurrentToggled()) {
+      setSelectedSubmissionIds((prev) => {
+        const newSet = new Set(prev);
+        paginatedSubmissions
+          ?.filter((submission) => submission.status === 'Pending')
+          .map((submission) => newSet.add(submission.id));
+        return newSet;
+      });
+    } else {
+      setSelectedSubmissionIds((prev) => {
+        const newSet = new Set(prev);
+        paginatedSubmissions?.map((submission) => newSet.delete(submission.id));
+        return newSet;
+      });
+    }
+  };
+
+  const selectAllPagesSubmissions = () => {
+    setSelectedSubmissionIds((prev) => {
+      const newSet = new Set(prev);
+      submissions
+        ?.filter((submission) => submission.status === 'Pending')
+        .map((submission) => newSet.add(submission.id));
+      return newSet;
+    });
+  };
 
   const totalPages = Math.ceil(filteredSubmissions.length / submissionsPerPage);
 
@@ -560,6 +570,21 @@ export default function BountySubmissions({ slug }: Props) {
                     <Text>{selectedSubmissionIds.size}</Text>
                     <Text color="brand.slate.500">Selected</Text>
                   </HStack>
+                  {selectedSubmissionIds.size !== submissions?.length && (
+                    <>
+                      <Box w="1px" h={4} bg="brand.slate.300" />
+                      <Button
+                        fontWeight={500}
+                        bg="transparent"
+                        onClick={() => {
+                          selectAllPagesSubmissions();
+                        }}
+                        variant="link"
+                      >
+                        SELECT ALL {submissions?.length}
+                      </Button>
+                    </>
+                  )}
                   <Box w="1px" h={4} bg="brand.slate.300" />
                   <Button
                     fontWeight={500}
@@ -569,7 +594,7 @@ export default function BountySubmissions({ slug }: Props) {
                     }}
                     variant="link"
                   >
-                    UNSELECT ALL
+                    UNSELECT {selectedSubmissionIds.size}
                   </Button>
                   <Button
                     gap={2}
