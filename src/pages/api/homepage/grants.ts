@@ -28,6 +28,7 @@ async function getGrants({ userRegion }: GrantProps) {
       maxReward: true,
       token: true,
       totalApproved: true,
+      historicalApplications: true,
       sponsor: {
         select: {
           id: true,
@@ -62,5 +63,11 @@ export default async function handler(
 
   const grants = await getGrants({ userRegion });
 
-  res.status(200).json(grants);
+  const grantsWithTotalApplications = grants.map((grant) => ({
+    ...grant,
+    totalApplications:
+      grant._count.GrantApplication + grant.historicalApplications,
+  }));
+
+  res.status(200).json(grantsWithTotalApplications);
 }

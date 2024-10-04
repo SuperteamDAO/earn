@@ -108,6 +108,7 @@ export const Superteams = [
       'Romania',
       'Serbia',
       'Slovenia',
+      'Greece',
     ],
     code: 'BALKAN',
     hello: 'Pozdrav',
