@@ -277,16 +277,6 @@ export default function BountySubmissions({ slug }: Props) {
     }
   };
 
-  const selectAllPagesSubmissions = () => {
-    setSelectedSubmissionIds((prev) => {
-      const newSet = new Set(prev);
-      submissions
-        ?.filter((submission) => submission.status === 'Pending')
-        .map((submission) => newSet.add(submission.id));
-      return newSet;
-    });
-  };
-
   const totalPages = Math.ceil(filteredSubmissions.length / submissionsPerPage);
 
   const usedPositions = submissions
@@ -570,21 +560,6 @@ export default function BountySubmissions({ slug }: Props) {
                     <Text>{selectedSubmissionIds.size}</Text>
                     <Text color="brand.slate.500">Selected</Text>
                   </HStack>
-                  {selectedSubmissionIds.size !== submissions?.length && (
-                    <>
-                      <Box w="1px" h={4} bg="brand.slate.300" />
-                      <Button
-                        fontWeight={500}
-                        bg="transparent"
-                        onClick={() => {
-                          selectAllPagesSubmissions();
-                        }}
-                        variant="link"
-                      >
-                        SELECT ALL {submissions?.length}
-                      </Button>
-                    </>
-                  )}
                   <Box w="1px" h={4} bg="brand.slate.300" />
                   <Button
                     fontWeight={500}
@@ -594,7 +569,7 @@ export default function BountySubmissions({ slug }: Props) {
                     }}
                     variant="link"
                   >
-                    UNSELECT {selectedSubmissionIds.size}
+                    UNSELECT ALL
                   </Button>
                   <Button
                     gap={2}
@@ -619,7 +594,7 @@ export default function BountySubmissions({ slug }: Props) {
                         fill="#E11D48"
                       />
                     </svg>
-                    Reject {selectedSubmissionIds.size}
+                    Reject {selectedSubmissionIds.size} Applications
                   </Button>
                 </HStack>
               </PopoverBody>
