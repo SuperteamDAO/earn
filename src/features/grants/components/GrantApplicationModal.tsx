@@ -32,6 +32,7 @@ import {
   TextAreaWithCounter,
   TextInputWithHelper,
 } from '@/components/Form/TextAreaHelpers';
+import RichEditor from '@/components/shared/RichEditor';
 import { tokenList } from '@/constants';
 import { QuestionHandler } from '@/features/listings';
 import {
@@ -274,6 +275,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                   isRequired
                   maxLength={100}
                 />
+                <RichEditor />
                 <TextAreaWithCounter
                   id="projectOneLiner"
                   label="One-Liner Description"
