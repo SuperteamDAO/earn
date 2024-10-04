@@ -41,7 +41,7 @@ export const EmailSignIn = () => {
         } else {
           setIsLoading(false);
           setEmailError(
-            'This email address appears to be invalid. Please check and try again.',
+            'This email address appears to be invalid or needs to be whitelisted. Please check and try again.',
           );
         }
       } catch (error) {
