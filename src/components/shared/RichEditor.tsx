@@ -1,11 +1,24 @@
-import { Box, ButtonGroup, IconButton } from '@chakra-ui/react';
+import { Box, HStack, IconButton, Input } from '@chakra-ui/react';
+import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import TaskItem from '@tiptap/extension-task-item';
 import TaskList from '@tiptap/extension-task-list';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import React, { useCallback, useEffect, useState } from 'react';
-import { BiBold, BiItalic } from 'react-icons/bi';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  BiBold,
+  BiItalic,
+  BiLink,
+  BiLinkExternal,
+  BiTrashAlt,
+} from 'react-icons/bi';
 import { FaListOl, FaListUl } from 'react-icons/fa6';
 
 const RichComponent: React.FC = () => {
@@ -16,6 +29,9 @@ const RichComponent: React.FC = () => {
       TaskItem,
       Placeholder.configure({
         placeholder: 'Write something...',
+      }),
+      Link.configure({
+        openOnClick: false,
       }),
     ],
     content: '',
@@ -55,11 +71,19 @@ interface FloatingToolbarProps {
 
 const FloatingToolbar: React.FC<FloatingToolbarProps> = ({ editor }) => {
   const [style, setStyle] = useState({ top: 0, left: 0, opacity: 0 });
+  const [toolbarState, setToolbarState] = useState<
+    'default' | 'link' | 'hidden'
+  >('hidden');
+  const [linkUrl, setLinkUrl] = useState('');
+  const toolbarRef = useRef<HTMLDivElement>(null);
 
   const updateToolbarPosition = useCallback(() => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
-      setStyle((style) => ({ ...style, opacity: 0 }));
+      if (toolbarState !== 'link') {
+        // Prevent hiding when in 'link' state
+        setStyle((style) => ({ ...style, opacity: 0 }));
+      }
       return;
     }
 
@@ -99,7 +123,9 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({ editor }) => {
       left: computedLeft,
       opacity: 1,
     });
-  }, []);
+    setToolbarState('default');
+  }, [toolbarState]);
+
   useEffect(() => {
     if (!editor) return;
 
@@ -109,7 +135,24 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({ editor }) => {
       setTimeout(updateToolbarPosition, 0);
     };
 
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        toolbarRef.current &&
+        !toolbarRef.current.contains(event.target as Node)
+      ) {
+        setToolbarState('hidden');
+      }
+    };
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setToolbarState('hidden');
+      }
+    };
+
     document.addEventListener('selectionchange', handleSelectionChange);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscapeKey);
     window.addEventListener('resize', updateToolbarPosition);
     editorElement?.addEventListener('scroll', updateToolbarPosition);
     editor.on('selectionUpdate', updateToolbarPosition);
@@ -117,6 +160,8 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({ editor }) => {
 
     return () => {
       document.removeEventListener('selectionchange', handleSelectionChange);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
       window.removeEventListener('resize', updateToolbarPosition);
       editorElement?.removeEventListener('scroll', updateToolbarPosition);
       editor.off('selectionUpdate', updateToolbarPosition);
@@ -124,7 +169,146 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({ editor }) => {
     };
   }, [updateToolbarPosition, editor]);
 
-  if (!editor) {
+  const toolbarButtons = useMemo(
+    () => [
+      {
+        ariaLabel: 'Bold',
+        icon: <BiBold />,
+        isActive: () => editor.isActive('bold'),
+        action: () => editor.chain().focus().toggleBold().run(),
+      },
+      {
+        ariaLabel: 'Italic',
+        icon: <BiItalic />,
+        isActive: () => editor.isActive('italic'),
+        action: () => editor.chain().focus().toggleItalic().run(),
+      },
+      {
+        ariaLabel: 'Ordered List',
+        icon: <FaListOl />,
+        isActive: () => editor.isActive('orderedList'),
+        action: () => editor.chain().focus().toggleOrderedList().run(),
+      },
+      {
+        ariaLabel: 'Unordered List',
+        icon: <FaListUl />,
+        isActive: () => editor.isActive('bulletList'),
+        action: () => editor.chain().focus().toggleBulletList().run(),
+      },
+      {
+        ariaLabel: 'Insert Link',
+        icon: <BiLink />,
+        isActive: () => editor.isActive('link'),
+        action: () => {
+          setToolbarState('link');
+          const { href } = editor.getAttributes('link');
+          setLinkUrl(href || '');
+        },
+      },
+    ],
+    [editor],
+  );
+
+  const DefaultToolbar = useCallback(
+    () => (
+      <>
+        {toolbarButtons.map((button, index) => (
+          <IconButton
+            key={index}
+            h="full"
+            color={button.isActive() ? 'brand.slate.900' : 'brand.slate.500'}
+            bg={button.isActive() ? 'brand.slate.200' : 'white'}
+            borderLeftWidth={index === 0 ? 0 : 1}
+            borderLeftColor="brand.slate.300"
+            borderRadius={0}
+            aria-label={button.ariaLabel}
+            icon={button.icon}
+            onClick={button.action}
+            size="sm"
+          />
+        ))}
+      </>
+    ),
+    [toolbarButtons],
+  );
+
+  const LinkToolbar = useCallback(() => {
+    return (
+      <>
+        <Input
+          w="full"
+          h="full"
+          fontSize={'sm'}
+          border={'none'}
+          _focusVisible={{ outline: 'none', border: 'none' }}
+          _placeholder={{
+            color: 'brand.slate.300',
+          }}
+          outline={'none'}
+          autoFocus
+          onChange={(e) => setLinkUrl(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              if (linkUrl) {
+                editor
+                  .chain()
+                  .focus()
+                  .extendMarkRange('link')
+                  .setLink({ href: linkUrl })
+                  .run();
+              }
+              setToolbarState('default');
+              setLinkUrl('');
+            } else if (e.key === 'Escape') {
+              e.preventDefault();
+              setToolbarState('default');
+              setLinkUrl('');
+            }
+          }}
+          placeholder="https://..."
+          size="sm"
+          value={linkUrl}
+        />
+        {!!linkUrl && (
+          <IconButton
+            h="full"
+            color={'brand.slate.500'}
+            bg={'white'}
+            borderLeftWidth={1}
+            borderLeftColor="brand.slate.300"
+            borderRadius={0}
+            aria-label="Open Link"
+            icon={<BiLinkExternal />}
+            onClick={() => {
+              const { href } = editor.getAttributes('link');
+              if (href) {
+                window.open(href, '_blank');
+              }
+            }}
+            size="sm"
+          />
+        )}
+        <IconButton
+          h="full"
+          color={'brand.slate.500'}
+          bg={'white'}
+          borderLeftWidth={1}
+          borderLeftColor="brand.slate.300"
+          borderRadius={0}
+          aria-label="Remove Link"
+          icon={<BiTrashAlt />}
+          onClick={() => {
+            editor.chain().focus().unsetLink().run();
+            setToolbarState('default');
+          }}
+          size="sm"
+        />
+      </>
+    );
+  }, [editor, linkUrl]);
+
+  if (!editor || toolbarState === 'hidden') {
     return null;
   }
 
@@ -138,51 +322,20 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({ editor }) => {
       transform="translateX(-50%)"
       transition="opacity 0.2s"
     >
-      <ButtonGroup
+      <HStack
+        gap={0}
+        overflow="hidden"
+        h={8}
         color="brand.slate.500"
         bg="white"
-        borderColor="brand.slate.500"
+        borderWidth={1}
+        borderColor="brand.slate.300"
         borderRadius="md"
         shadow="md"
-        isAttached
-        size="sm"
-        variant="outline"
       >
-        <IconButton
-          color={editor.isActive('bold') ? 'white' : 'brand.slate.500'}
-          bg={editor.isActive('bold') ? 'brand.slate.500' : 'white'}
-          borderColor="brand.slate.500"
-          aria-label="Bold"
-          icon={<BiBold />}
-          onClick={() => editor.chain().focus().toggleBold().run()}
-        />
-
-        <IconButton
-          color={editor.isActive('italic') ? 'white' : 'brand.slate.500'}
-          bg={editor.isActive('italic') ? 'brand.slate.500' : 'white'}
-          borderColor="brand.slate.500"
-          aria-label="Italic"
-          icon={<BiItalic />}
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-        />
-        <IconButton
-          color={editor.isActive('orderedList') ? 'white' : 'brand.slate.500'}
-          bg={editor.isActive('orderedList') ? 'brand.slate.500' : 'white'}
-          borderColor="brand.slate.500"
-          aria-label="Ordered List"
-          icon={<FaListOl />}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        />
-
-        <IconButton
-          color={editor.isActive('bulletList') ? 'white' : 'brand.slate.500'}
-          bg={editor.isActive('bulletList') ? 'brand.slate.500' : 'white'}
-          borderColor="brand.slate.500"
-          aria-label="Unordered List"
-          icon={<FaListUl />}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-        />
-      </ButtonGroup>
+        {toolbarState === 'default' && <DefaultToolbar />}
+        {toolbarState === 'link' && <LinkToolbar />}
+      </HStack>
     </Box>
   );
 };
