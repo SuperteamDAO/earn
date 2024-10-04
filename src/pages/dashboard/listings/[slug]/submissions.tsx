@@ -619,7 +619,7 @@ export default function BountySubmissions({ slug }: Props) {
                         fill="#E11D48"
                       />
                     </svg>
-                    Reject All
+                    Reject {selectedSubmissionIds.size}
                   </Button>
                 </HStack>
               </PopoverBody>
