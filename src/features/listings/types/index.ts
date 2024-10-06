@@ -52,7 +52,6 @@ export interface Listing {
   _count?: {
     Comments?: number;
   };
-  isFndnPaying?: boolean;
 }
 
 export interface ListingHackathon {

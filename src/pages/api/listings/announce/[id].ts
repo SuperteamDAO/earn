@@ -192,8 +192,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (
       listing?.sponsor?.name.includes('Superteam') &&
-      listing.type !== 'project' &&
-      listing.isFndnPaying
+      listing.type !== 'project'
     ) {
       sendEmailNotification({
         type: 'superteamWinners',
