@@ -43,6 +43,7 @@ const initialFormState: ListingFormType = {
   minRewardAsk: undefined,
   maxRewardAsk: undefined,
   maxBonusSpots: undefined,
+  isFndnPaying: false,
 };
 
 const mergeListingWithInitialFormState = (
