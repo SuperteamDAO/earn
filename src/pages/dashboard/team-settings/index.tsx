@@ -367,7 +367,7 @@ const RemoveMemberModal = ({
     toast.success('Member removed successfully');
   };
 
-  const isAdmin = member?.role === 'ADMIN' || session?.user?.role === 'GOD';
+  const isAdmin = member?.role !== 'ADMIN' || session?.user?.role === 'GOD';
 
   return (
     <Flex align="center" justify="end">
