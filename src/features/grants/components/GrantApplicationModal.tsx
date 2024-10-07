@@ -411,14 +411,12 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                   />
                 </FormControl>
 
-                <TextAreaWithCounter
+                <RichTextInputWithHelper
                   id="proofOfWork"
                   label="Proof of Work"
                   helperText="Include links to your best work that will make the community trust you to execute on this project."
                   placeholder="Provide links to your portfolio or previous work"
-                  register={register}
-                  watch={watch}
-                  errors={errors}
+                  control={control}
                   isRequired
                 />
 

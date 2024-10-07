@@ -214,7 +214,7 @@ pre {
 }
 
 .tiptap {
-  min-height: 100%;
+  min-height: 100% !important;
   border: 0px !important;
   overscroll-behavior: none;
   outline: none !important;

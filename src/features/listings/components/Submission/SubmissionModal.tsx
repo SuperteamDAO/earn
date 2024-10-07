@@ -24,6 +24,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import RichTextInputWithHelper from '@/components/Form/RichTextInput';
 import {
   TextAreaWithCounter,
   TextInputWithHelper,
@@ -93,6 +94,7 @@ export const SubmissionModal = ({
   const [askError, setAskError] = useState('');
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
     reset,
@@ -360,14 +362,14 @@ export const SubmissionModal = ({
               ) : (
                 eligibility?.map((e) => {
                   return (
-                    <FormControl key={e?.order} isRequired>
-                      <QuestionHandler
-                        register={register}
-                        question={e?.question}
-                        label={`eligibility-${e?.order}`}
-                        watch={watch}
+                    <Box key={e.order} w="full">
+                      <RichTextInputWithHelper
+                        control={control}
+                        label={e?.question}
+                        id={`eligibility-${e?.order}`}
+                        isRequired
                       />
-                    </FormControl>
+                    </Box>
                   );
                 })
               )}
@@ -428,15 +430,13 @@ export const SubmissionModal = ({
                   </Text>
                 </FormControl>
               )}
-              <TextAreaWithCounter
-                id="otherInfo"
+              <RichTextInputWithHelper
+                control={control}
                 label="Anything Else?"
+                id={`otherInfo`}
+                isRequired
                 helperText="If you have any other links or information you'd like to share with us, please add them here!"
                 placeholder="Add info or link"
-                register={register}
-                watch={watch}
-                maxLength={2000}
-                errors={errors}
               />
 
               <TextInputWithHelper

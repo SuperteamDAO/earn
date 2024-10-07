@@ -20,13 +20,11 @@ import { GrantApplicationStatus } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import parse, { type HTMLReactParserOptions } from 'html-react-parser';
 import NextLink from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
-import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
 import {
@@ -41,6 +39,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type GrantApplicationWithUser } from '../../types';
+import { InfoBox } from '../InfoBox';
 import { ApproveModal } from './Modals/ApproveModal';
 import { RejectGrantApplicationModal } from './Modals/RejectModal';
 import { RecordPaymentButton } from './RecordPaymentButton';
@@ -59,49 +58,6 @@ interface Props {
     skip: number;
   };
 }
-const options: HTMLReactParserOptions = {
-  replace: ({ name, children, attribs }: any) => {
-    if (name === 'p' && (!children || children.length === 0)) {
-      return <br />;
-    }
-    return { name, children, attribs };
-  },
-};
-
-const InfoBox = ({
-  label,
-  content,
-  isHtml = false,
-}: {
-  label: string;
-  content?: string | null;
-  isHtml?: boolean;
-}) => (
-  <Box mb={4}>
-    <Text
-      mb={1}
-      color="brand.slate.400"
-      fontSize="xs"
-      fontWeight={600}
-      textTransform={'uppercase'}
-    >
-      {label}
-    </Text>
-    {isHtml ? (
-      <Box overflow={'visible'} w={'full'} h={'full'} pb={7} id="reset-des">
-        {parse(
-          content?.startsWith('"')
-            ? JSON.parse(content || '')
-            : (content ?? ''),
-          options,
-        )}
-      </Box>
-    ) : (
-      <LinkTextParser text={content || ''} />
-    )}
-  </Box>
-);
-
 export const ApplicationDetails = ({
   grant,
   applications,
@@ -660,14 +616,17 @@ export const ApplicationDetails = ({
               <InfoBox
                 label="Proof of Work"
                 content={selectedApplication?.proofOfWork}
+                isHtml
               />
               <InfoBox
                 label="Goals and Milestones"
                 content={selectedApplication?.milestones}
+                isHtml
               />
               <InfoBox
                 label="Primary Key Performance Indicator"
                 content={selectedApplication?.kpi}
+                isHtml
               />
               {Array.isArray(selectedApplication?.answers) &&
                 selectedApplication.answers.map(
