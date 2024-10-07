@@ -18,6 +18,7 @@ import React from 'react';
 import {
   LuCheck,
   LuClock,
+  LuEye,
   LuFile,
   LuMessageSquare,
   LuPause,
@@ -84,7 +85,14 @@ export function ListingHeader({
     />
   );
 
-  if (!isPublished && !publishedAt) {
+  if (status === 'PREVIEW') {
+    statusIcon = (
+      <Icon as={LuEye} {...statusIconStyles} color="brand.slate.400" />
+    );
+    statusText = 'Preview';
+    statusBgColor = 'brand.slate.200';
+    statusTextColor = 'brand.slate.500';
+  } else if (!isPublished && !publishedAt) {
     statusIcon = (
       <Icon as={LuFile} {...statusIconStyles} color="brand.slate.400" />
     );

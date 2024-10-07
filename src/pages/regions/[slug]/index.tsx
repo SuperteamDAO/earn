@@ -46,7 +46,7 @@ const RegionsPage = ({
           <ListingTabs
             bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}
-            emoji="/assets/home/emojis/moneyman.png"
+            emoji="/assets/home/emojis/moneyman.webp"
             title="Freelance Gigs"
             showViewAll
             viewAllLink={`/regions/${slug}/all`}
@@ -57,7 +57,7 @@ const RegionsPage = ({
             type="grants"
             title="Grants"
             sub="Equity-free funding opportunities for builders"
-            emoji="/assets/home/emojis/grants.png"
+            emoji="/assets/home/emojis/grants.webp"
           >
             {isListingsLoading && (
               <Flex

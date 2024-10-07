@@ -50,6 +50,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       maxRewardAsk,
       isPrivate,
       status,
+      isFndnPaying,
     } = req.body;
     let { isPublished } = req.body;
 
@@ -121,6 +122,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const finalData = {
       sponsorId: userSponsorId,
+      status,
       title,
       usdValue,
       publishedAt,
@@ -149,6 +151,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isPublished,
       isPrivate,
       language,
+      isFndnPaying,
     };
 
     logger.debug(`Creating bounty with data: ${safeStringify(finalData)}`);

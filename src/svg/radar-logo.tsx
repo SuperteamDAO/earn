@@ -8,7 +8,7 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
       xmlns="http://www.w3.org/2000/svg"
       style={styles}
     >
-      <g clip-path="url(#clip0_2003_5966)">
+      <g clipPath="url(#clip0_2003_5966)">
         <mask
           id="mask0_2003_5966"
           style={{ maskType: 'luminance' }}
@@ -90,365 +90,365 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
         <path
           d="M57.8985 32.5975V34.0218C57.8985 43.3919 54.6002 49.4637 48.0037 52.0874L55.5747 62.9567C56.5492 64.5309 55.9495 65.6553 54.1505 65.6553H44.0307C42.7564 65.6553 41.8569 65.1306 41.3321 64.1561L34.7356 53.5866H20.3431V63.4065C20.3431 64.9057 19.5934 65.6553 18.0942 65.6553H9.24883C7.74961 65.6553 7 64.9057 7 63.4065V14.9817C7 13.4824 7.74961 12.7328 9.24883 12.7328H36.4597C50.7772 12.7328 57.8985 19.3294 57.8985 32.5975ZM35.3353 25.4762H20.3431V40.9931H35.3353C41.7069 40.9931 44.4805 39.7938 44.4805 33.8718V32.6725C44.4805 26.7505 41.8569 25.4762 35.3353 25.4762Z"
           fill="white"
-          fill-opacity="0.5"
+          fillOpacity="0.5"
         />
         <path
           d="M120.733 65.6553H110.688C109.414 65.6553 108.514 65.0556 108.064 63.9312L105.366 57.4096H79.6542L76.9556 63.9312C76.5058 65.0556 75.6063 65.6553 74.3319 65.6553H64.2872C62.5631 65.6553 61.8884 64.6058 62.5631 63.0317L84.6766 14.4569C85.2013 13.3325 86.0259 12.7328 87.3002 12.7328H97.7198C98.9941 12.7328 99.8187 13.3325 100.343 14.4569L122.457 63.0317C123.132 64.6058 122.457 65.6553 120.733 65.6553ZM92.5475 26.3757L84.1518 46.6152H100.943L92.5475 26.3757Z"
           fill="white"
-          fill-opacity="0.5"
+          fillOpacity="0.5"
         />
         <path
           d="M241.154 65.6553H231.109C229.834 65.6553 228.935 65.0556 228.485 63.9312L225.787 57.4096H200.075L197.376 63.9312C196.927 65.0556 196.027 65.6553 194.753 65.6553H184.708C182.984 65.6553 182.309 64.6058 182.984 63.0317L205.097 14.4569C205.622 13.3325 206.447 12.7328 207.721 12.7328H218.14C219.415 12.7328 220.239 13.3325 220.764 14.4569L242.878 63.0317C243.552 64.6058 242.878 65.6553 241.154 65.6553ZM212.968 26.3757L204.573 46.6152H221.364L212.968 26.3757Z"
           fill="white"
-          fill-opacity="0.5"
+          fillOpacity="0.5"
         />
         <path
           d="M299.252 32.5975V34.0218C299.252 43.3919 295.954 49.4637 289.358 52.0874L296.929 62.9567C297.903 64.5309 297.303 65.6553 295.504 65.6553H285.385C284.11 65.6553 283.211 65.1306 282.686 64.1561L276.089 53.5866H261.697V63.4065C261.697 64.9057 260.947 65.6553 259.448 65.6553H250.603C249.103 65.6553 248.354 64.9057 248.354 63.4065V14.9817C248.354 13.4824 249.103 12.7328 250.603 12.7328H277.814C292.131 12.7328 299.252 19.3294 299.252 32.5975ZM276.689 25.4762H261.697V40.9931H276.689C283.061 40.9931 285.834 39.7938 285.834 33.8718V32.6725C285.834 26.7505 283.211 25.4762 276.689 25.4762Z"
           fill="white"
-          fill-opacity="0.5"
+          fillOpacity="0.5"
         />
         <path
           d="M127.797 14.422C127.797 13.4006 128.625 12.5725 129.646 12.5725H156.56C169.327 12.5725 179.677 22.9227 179.677 35.6903V42.5377C179.677 55.3053 169.327 65.6555 156.56 65.6555H129.646C128.625 65.6555 127.797 64.8275 127.797 63.8061V14.422Z"
           fill="white"
-          fill-opacity="0.5"
+          fillOpacity="0.5"
         />
       </mask>
       <g mask="url(#mask1_2003_5966)">
         <path
           d="M-8.04016 17.5319H314.293"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M-8.04016 23.5676H314.293"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M-8.04016 29.6044H314.293"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M-8.04016 35.6402H314.293"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M-8.04016 41.6759H314.293"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M-8.04016 47.7137H314.293"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M-8.04016 53.749H314.293"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M-8.04016 59.7852H314.293"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M-8.04016 65.822H314.293"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M10.3703 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M16.7083 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M22.7446 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M29.0825 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M35.1188 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M41.4568 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M47.4921 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M53.8311 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M59.8663 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M66.2042 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M72.2415 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M78.5786 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M84.6158 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M90.9538 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M96.9889 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M103.328 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M109.363 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M115.701 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M122.039 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M128.075 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M134.413 5.45938V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M140.45 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M146.788 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M152.825 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M159.163 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M165.198 5.45938V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M171.537 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M177.573 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M183.91 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M189.948 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M196.285 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M202.322 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M208.659 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M214.695 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M221.033 5.45938V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M227.07 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M233.407 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M239.444 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M245.782 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M251.818 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M258.156 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M264.192 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M270.53 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M276.566 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M282.904 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M288.941 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
         <path
           d="M295.279 5.45932V77.8937"
           stroke="white"
-          stroke-opacity="0.1"
-          stroke-width="0.349237"
+          strokeOpacity="0.1"
+          strokeWidth="0.349237"
         />
       </g>
       <path
@@ -463,9 +463,9 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           width="306.222"
           height="66.892"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -498,9 +498,9 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           width="65.8504"
           height="67.0524"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -534,8 +534,8 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="8.38216"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="1" stop-color="#999999" />
+          <stop stopColor="white" />
+          <stop offset="1" stopColor="#999999" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_2003_5966"
@@ -545,8 +545,8 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="7.42254"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="1" stop-color="#999999" />
+          <stop stopColor="white" />
+          <stop offset="1" stopColor="#999999" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_2003_5966"
@@ -556,8 +556,8 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="7.42249"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="1" stop-color="#999999" />
+          <stop stopColor="white" />
+          <stop offset="1" stopColor="#999999" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_2003_5966"
@@ -567,8 +567,8 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="7.42251"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="1" stop-color="#999999" />
+          <stop stopColor="white" />
+          <stop offset="1" stopColor="#999999" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_2003_5966"
@@ -578,8 +578,8 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="7.42252"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="1" stop-color="#999999" />
+          <stop stopColor="white" />
+          <stop offset="1" stopColor="#999999" />
         </linearGradient>
         <linearGradient
           id="paint5_linear_2003_5966"
@@ -589,8 +589,8 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="7.42251"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="1" stop-color="#999999" />
+          <stop stopColor="white" />
+          <stop offset="1" stopColor="#999999" />
         </linearGradient>
         <linearGradient
           id="paint6_linear_2003_5966"
@@ -600,8 +600,8 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="7.42255"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="1" stop-color="#999999" />
+          <stop stopColor="white" />
+          <stop offset="1" stopColor="#999999" />
         </linearGradient>
         <linearGradient
           id="paint7_linear_2003_5966"
@@ -611,11 +611,11 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="39.1546"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#5E4608" />
-          <stop offset="0.33" stop-color="#F1B314" />
-          <stop offset="0.5" stop-color="#FFC633" />
-          <stop offset="0.66" stop-color="#F1B314" />
-          <stop offset="1" stop-color="#5E4608" />
+          <stop stopColor="#5E4608" />
+          <stop offset="0.33" stopColor="#F1B314" />
+          <stop offset="0.5" stopColor="#FFC633" />
+          <stop offset="0.66" stopColor="#F1B314" />
+          <stop offset="1" stopColor="#5E4608" />
         </linearGradient>
         <linearGradient
           id="paint8_linear_2003_5966"
@@ -625,11 +625,11 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="39.1546"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#5E4608" />
-          <stop offset="0.33" stop-color="#F1B314" />
-          <stop offset="0.5" stop-color="#FFC633" />
-          <stop offset="0.66" stop-color="#F1B314" />
-          <stop offset="1" stop-color="#5E4608" />
+          <stop stopColor="#5E4608" />
+          <stop offset="0.33" stopColor="#F1B314" />
+          <stop offset="0.5" stopColor="#FFC633" />
+          <stop offset="0.66" stopColor="#F1B314" />
+          <stop offset="1" stopColor="#5E4608" />
         </linearGradient>
         <linearGradient
           id="paint9_linear_2003_5966"
@@ -639,11 +639,11 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="39.1546"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#5E4608" />
-          <stop offset="0.33" stop-color="#F1B314" />
-          <stop offset="0.5" stop-color="#FFC633" />
-          <stop offset="0.66" stop-color="#F1B314" />
-          <stop offset="1" stop-color="#5E4608" />
+          <stop stopColor="#5E4608" />
+          <stop offset="0.33" stopColor="#F1B314" />
+          <stop offset="0.5" stopColor="#FFC633" />
+          <stop offset="0.66" stopColor="#F1B314" />
+          <stop offset="1" stopColor="#5E4608" />
         </linearGradient>
         <linearGradient
           id="paint10_linear_2003_5966"
@@ -653,11 +653,11 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="39.1546"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#5E4608" />
-          <stop offset="0.33" stop-color="#F1B314" />
-          <stop offset="0.5" stop-color="#FFC633" />
-          <stop offset="0.66" stop-color="#F1B314" />
-          <stop offset="1" stop-color="#5E4608" />
+          <stop stopColor="#5E4608" />
+          <stop offset="0.33" stopColor="#F1B314" />
+          <stop offset="0.5" stopColor="#FFC633" />
+          <stop offset="0.66" stopColor="#F1B314" />
+          <stop offset="1" stopColor="#5E4608" />
         </linearGradient>
         <radialGradient
           id="paint11_angular_2003_5966"
@@ -667,8 +667,8 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(153.649 39.1141) rotate(-45.1238) scale(37.4545 36.7645)"
         >
-          <stop stop-color="#FFC633" />
-          <stop offset="1" stop-color="#5E4608" />
+          <stop stopColor="#FFC633" />
+          <stop offset="1" stopColor="#5E4608" />
         </radialGradient>
         <linearGradient
           id="paint12_linear_2003_5966"
@@ -678,8 +678,8 @@ export const RadarLogo = ({ styles }: { styles?: any }) => {
           y2="88.8464"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="white" />
-          <stop offset="1" stop-color="#999999" />
+          <stop stopColor="white" />
+          <stop offset="1" stopColor="#999999" />
         </linearGradient>
         <clipPath id="clip0_2003_5966">
           <rect

@@ -9,7 +9,7 @@ import {
 import { type StaticImageData } from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 
-import SponsorDashboard from '@/public/assets/landingsponsor/displays/sponsor-dashboard.png';
+import SponsorDashboard from '@/public/assets/landingsponsor/displays/sponsor-dashboard.webp';
 import Doc from '@/public/assets/landingsponsor/icons/Doc.svg';
 import Dollar from '@/public/assets/landingsponsor/icons/Dollar.svg';
 import Enter from '@/public/assets/landingsponsor/icons/Enter.svg';

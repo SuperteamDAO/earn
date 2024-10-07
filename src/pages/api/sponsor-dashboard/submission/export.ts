@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
+import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   checkListingSponsorAuth,
   type NextApiRequestWithSponsor,
@@ -53,11 +54,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     logger.debug('Transforming submissions to JSON format for CSV export');
-    const finalJson = submissions.map((submission: any, i: number) => {
+    const finalJson = submissions.map((submission, i: number) => {
       const user = submission.user;
       const eligibility: any = {};
       eligibilityQuestions.forEach((question) => {
-        const answer = submission.eligibilityAnswers?.find(
+        const answer = (submission.eligibilityAnswers as Array<any>)?.find(
           (e: any) => e.question === question,
         );
         eligibility[question] = answer ? answer.answer : '';
@@ -74,7 +75,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         'User Twitter': user.twitter || '',
         'User Wallet': user.publicKey,
         Label: submission.label,
-        'Winner Position': submission.isWinner ? submission.winnerPosition : '',
+        'Winner Position': submission.isWinner
+          ? submission.winnerPosition === BONUS_REWARD_POSITION
+            ? 'Bonus'
+            : submission.winnerPosition
+          : '',
       };
     });
 

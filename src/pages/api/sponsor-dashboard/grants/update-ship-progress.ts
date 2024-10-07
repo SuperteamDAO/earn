@@ -1,8 +1,12 @@
+import axios from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { withSponsorAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
+import { convertGrantApplicationToAirtable } from '@/features/grants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'PUT') {
@@ -47,6 +51,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       );
     }
 
+    try {
+      const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
+      const url = airtableUrl(
+        process.env.AIRTABLE_GRANTS_BASE_ID!,
+        process.env.AIRTABLE_GRANTS_TABLE_NAME!,
+      );
+      const aritableApplication = convertGrantApplicationToAirtable(result);
+
+      const airtablePayload = airtableUpsert(
+        'earnApplicationId',
+        [aritableApplication].map((a) => ({ fields: a })),
+      );
+
+      await axios.patch(url, JSON.stringify(airtablePayload), config);
+    } catch (err) {
+      logger.error('Failed to update Airtable record: ', err);
+    }
+
     return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
@@ -59,4 +81,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default handler;
+export default withSponsorAuth(handler);

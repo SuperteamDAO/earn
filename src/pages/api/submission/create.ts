@@ -53,13 +53,6 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       triggeredBy: userId,
     });
 
-    sendEmailNotification({
-      type: 'submissionSponsor',
-      id: listingId,
-      userId: result?.listing?.pocId,
-      triggeredBy: userId,
-    });
-
     return res.status(200).json(result);
   } catch (error: any) {
     logger.error(`User ${userId} unable to submit: ${safeStringify(error)}`);

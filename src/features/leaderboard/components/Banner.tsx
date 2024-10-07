@@ -1,9 +1,9 @@
 import { Flex, Text, VStack } from '@chakra-ui/react';
 import Image from 'next/image';
 
-import BannerDesktop from '@/public/assets/leaderboard/banner-desktop.png';
-import BannerMobile from '@/public/assets/leaderboard/banner-mobile.png';
-import Ranks3d from '@/public/assets/leaderboard/ranks3d.png';
+import BannerDesktop from '@/public/assets/leaderboard/banner-desktop.webp';
+import BannerMobile from '@/public/assets/leaderboard/banner-mobile.webp';
+import Ranks3d from '@/public/assets/leaderboard/ranks3d.webp';
 
 export function Banner() {
   return (

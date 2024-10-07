@@ -4,17 +4,21 @@ import axios from 'axios';
 
 import { type GrantWithApplicationCount } from '@/features/grants';
 
+interface GrantsParams {
+  userRegion: Regions[] | null;
+}
+
 const fetchHomePageGrants = async (
-  userRegion: Regions[] | null,
+  params: GrantsParams,
 ): Promise<GrantWithApplicationCount[]> => {
   const { data } = await axios.get('/api/homepage/grants/', {
-    params: userRegion,
+    params,
   });
   return data;
 };
 
-export const homepageGrantsQuery = (userRegion: Regions[] | null) =>
+export const homepageGrantsQuery = (params: GrantsParams) =>
   queryOptions({
-    queryKey: ['homepage-grants', userRegion],
-    queryFn: () => fetchHomePageGrants(userRegion),
+    queryKey: ['homepage-grants', params],
+    queryFn: () => fetchHomePageGrants(params),
   });

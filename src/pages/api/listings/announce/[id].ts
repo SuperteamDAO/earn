@@ -174,6 +174,10 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           data: {
             rewardInUSD,
             status: 'Approved',
+            label:
+              winners[currentIndex]?.label === 'Unreviewed'
+                ? 'Reviewed'
+                : winners[currentIndex]?.label,
           },
         }),
       );
@@ -192,15 +196,20 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (
       listing?.sponsor?.name.includes('Superteam') &&
-      listing.type !== 'project'
+      listing.type !== 'project' &&
+      listing.isFndnPaying
     ) {
       sendEmailNotification({
-        type: 'superteamWinners',
+        type: 'STWinners',
         id,
         triggeredBy: userId,
       });
     } else {
-      logger.info('Sponsor is not Superteam. Skipping sending winner emails.');
+      sendEmailNotification({
+        type: 'nonSTWinners',
+        id,
+        triggeredBy: userId,
+      });
     }
 
     try {

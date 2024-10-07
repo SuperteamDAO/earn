@@ -38,7 +38,6 @@ const formatter = new Intl.NumberFormat('en-US', {
 }).format;
 
 const MAX_SHOW_SKILLS = 5;
-const MAX_INVITES = 10;
 
 interface Props {
   bountyId: string;
@@ -49,6 +48,7 @@ interface Props {
 export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
   const posthog = usePostHog();
   const invitedCount = scouts.filter((scout) => scout.invited).length;
+  const MAX_INVITES = scouts.length;
   const maxInvitesReached = invitedCount >= MAX_INVITES;
 
   const invitesLeft = MAX_INVITES - invitedCount;

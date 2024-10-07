@@ -40,6 +40,6 @@ export async function fetchTokenUSDValue(token: string, date?: Date) {
       : await getCurrentPrice(coingeckoSymbol);
   } catch (error) {
     logger.error('Error fetching token value from CoinGecko:', error);
-    return 1;
+    return 0;
   }
 }

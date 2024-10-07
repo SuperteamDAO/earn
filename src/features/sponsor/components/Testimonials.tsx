@@ -8,14 +8,14 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
-import ISC from '@/public/assets/landingsponsor/sponsors/ISC.png';
-import Parcl from '@/public/assets/landingsponsor/sponsors/parcl.png';
-import Solana from '@/public/assets/landingsponsor/sponsors/solana.png';
-import Tensor from '@/public/assets/landingsponsor/sponsors/tensor.png';
-import ChasedBarker from '@/public/assets/landingsponsor/users/chasedBarker.png';
-import Eno from '@/public/assets/landingsponsor/users/eno.png';
-import EvanSolomon from '@/public/assets/landingsponsor/users/evanSolomon.png';
-import TensorHQ from '@/public/assets/landingsponsor/users/tensor.png';
+import ISC from '@/public/assets/landingsponsor/sponsors/ISC.webp';
+import Parcl from '@/public/assets/landingsponsor/sponsors/parcl.webp';
+import Solana from '@/public/assets/landingsponsor/sponsors/solana.webp';
+import Tensor from '@/public/assets/landingsponsor/sponsors/tensor.webp';
+import ChasedBarker from '@/public/assets/landingsponsor/users/chasedBarker.webp';
+import Eno from '@/public/assets/landingsponsor/users/eno.webp';
+import EvanSolomon from '@/public/assets/landingsponsor/users/evanSolomon.webp';
+import TensorHQ from '@/public/assets/landingsponsor/users/tensor.webp';
 
 import { maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
