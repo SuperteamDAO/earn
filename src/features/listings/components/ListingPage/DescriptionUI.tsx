@@ -81,7 +81,7 @@ export function DescriptionUI({ description }: Props) {
             {parse(
               description?.startsWith('"')
                 ? JSON.parse(description || '')
-                : description ?? '',
+                : (description ?? ''),
               options,
             )}
           </Box>
