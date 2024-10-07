@@ -19,7 +19,8 @@ type EmailType =
   | 'grantApproved'
   | 'grantRejected'
   | 'grantPaymentReceived'
-  | 'superteamWinners'
+  | 'STWinners'
+  | 'nonSTWinners'
   | 'commentReply'
   | 'commentTag'
   | 'scoutInvite';

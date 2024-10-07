@@ -200,12 +200,16 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       listing.isFndnPaying
     ) {
       sendEmailNotification({
-        type: 'superteamWinners',
+        type: 'STWinners',
         id,
         triggeredBy: userId,
       });
     } else {
-      logger.info('Sponsor is not Superteam. Skipping sending winner emails.');
+      sendEmailNotification({
+        type: 'nonSTWinners',
+        id,
+        triggeredBy: userId,
+      });
     }
 
     try {
