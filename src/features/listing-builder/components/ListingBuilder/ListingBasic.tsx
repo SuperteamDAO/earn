@@ -694,7 +694,7 @@ export const ListingBasic = ({
               {errors.referredBy ? <>{errors.referredBy.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
-          {user?.currentSponsor?.name?.includes('Superteam') && isProject && (
+          {user?.currentSponsor?.name?.includes('Superteam') && !isProject && (
             <FormControl alignItems="center" gap={3} display="flex">
               <Flex>
                 <ListingFormLabel htmlFor="isFndnPaying">
