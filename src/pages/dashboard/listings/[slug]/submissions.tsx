@@ -601,6 +601,7 @@ export default function BountySubmissions({ slug }: Props) {
             </PopoverContent>
           </Popover>
           <RejectAllSubmissionModal
+            allSubmissionsLength={submissions?.length || 0}
             submissionIds={Array.from(selectedSubmissionIds)}
             rejectIsOpen={rejectedIsOpen}
             rejectOnClose={rejectedOnClose}
