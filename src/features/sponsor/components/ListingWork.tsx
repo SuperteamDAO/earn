@@ -1,11 +1,11 @@
 import { Box, HStack, Text, VStack } from '@chakra-ui/react';
 
-import DUST from '@/public/assets/landingsponsor/icons/DUST.png';
+import DUST from '@/public/assets/landingsponsor/icons/DUST.webp';
 import USDC from '@/public/assets/landingsponsor/icons/usdc.svg';
-import DE from '@/public/assets/landingsponsor/sponsors/de.png';
-import DReader from '@/public/assets/landingsponsor/sponsors/dreader.png';
-import OKX from '@/public/assets/landingsponsor/sponsors/okx.png';
-import Saros from '@/public/assets/landingsponsor/sponsors/saros.png';
+import DE from '@/public/assets/landingsponsor/sponsors/de.webp';
+import DReader from '@/public/assets/landingsponsor/sponsors/dreader.webp';
+import OKX from '@/public/assets/landingsponsor/sponsors/okx.webp';
+import Saros from '@/public/assets/landingsponsor/sponsors/saros.webp';
 
 import { fontSize, maxW, padding } from '../utils';
 import { ListingCard, type ListingCardProps } from './ListingCard';

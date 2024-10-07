@@ -222,7 +222,7 @@ export function Banner({
                 h={14}
                 mr={3}
                 alt="message pratik"
-                src="/assets/sponsor/pratik.png"
+                src="/assets/sponsor/pratik.webp"
               />
               <Box>
                 <Text
