@@ -1,6 +1,6 @@
 import { Box, HStack, Text, VStack } from '@chakra-ui/react';
 
-import DUST from '@/public/assets/landingsponsor/icons/DUST.webp';
+import DUST from '@/public/assets/landingsponsor/icons/DUST.png';
 import USDC from '@/public/assets/landingsponsor/icons/usdc.svg';
 import DE from '@/public/assets/landingsponsor/sponsors/de.webp';
 import DReader from '@/public/assets/landingsponsor/sponsors/dreader.webp';
