@@ -20,6 +20,7 @@ import { GrantApplicationStatus } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import parse, { type HTMLReactParserOptions } from 'html-react-parser';
 import NextLink from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
@@ -58,13 +59,23 @@ interface Props {
     skip: number;
   };
 }
+const options: HTMLReactParserOptions = {
+  replace: ({ name, children, attribs }: any) => {
+    if (name === 'p' && (!children || children.length === 0)) {
+      return <br />;
+    }
+    return { name, children, attribs };
+  },
+};
 
 const InfoBox = ({
   label,
   content,
+  isHtml = false,
 }: {
   label: string;
   content?: string | null;
+  isHtml?: boolean;
 }) => (
   <Box mb={4}>
     <Text
@@ -76,7 +87,18 @@ const InfoBox = ({
     >
       {label}
     </Text>
-    <LinkTextParser text={content || ''} />
+    {isHtml ? (
+      <Box overflow={'visible'} w={'full'} h={'full'} pb={7} id="reset-des">
+        {parse(
+          content?.startsWith('"')
+            ? JSON.parse(content || '')
+            : (content ?? ''),
+          options,
+        )}
+      </Box>
+    ) : (
+      <LinkTextParser text={content || ''} />
+    )}
   </Box>
 );
 
@@ -628,6 +650,7 @@ export const ApplicationDetails = ({
               <InfoBox
                 label="Project Details"
                 content={selectedApplication?.projectDetails}
+                isHtml
               />
               <InfoBox label="Twitter" content={selectedApplication?.twitter} />
               <InfoBox

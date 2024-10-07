@@ -28,11 +28,11 @@ import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaXTwitter } from 'react-icons/fa6';
 
+import RichTextInputWithHelper from '@/components/Form/RichTextInput';
 import {
   TextAreaWithCounter,
   TextInputWithHelper,
 } from '@/components/Form/TextAreaHelpers';
-import RichEditor from '@/components/shared/RichEditor';
 import { tokenList } from '@/constants';
 import { QuestionHandler } from '@/features/listings';
 import {
@@ -81,6 +81,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
     formState: { errors },
     reset,
     watch,
+    control,
   } = useForm();
 
   const queryClient = useQueryClient();
@@ -142,6 +143,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
   };
 
   const handleNext = () => {
+    console.log('handle Next');
     if (activeStep === 0) {
       const askValue = watch('ask');
       const min = minReward || 0;
@@ -255,6 +257,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
           <form
             style={{ width: '100%' }}
             onSubmit={handleSubmit((e) => {
+              console.log('handlingsubmit');
               if (activeStep === steps.length - 1) {
                 submitApplication(e);
               } else {
@@ -275,7 +278,6 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                   isRequired
                   maxLength={100}
                 />
-                <RichEditor />
                 <TextAreaWithCounter
                   id="projectOneLiner"
                   label="One-Liner Description"
@@ -354,14 +356,12 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
             )}
             {activeStep === 1 && (
               <VStack gap={4} mb={5}>
-                <TextAreaWithCounter
+                <RichTextInputWithHelper
                   id="projectDetails"
                   label="Project Details"
                   helperText="What is the problem you're trying to solve, and how you're going to solve it?"
                   placeholder="Explain the problem you're solving and your solution"
-                  register={register}
-                  watch={watch}
-                  errors={errors}
+                  control={control}
                   isRequired
                 />
                 <FormControl isRequired>
@@ -519,27 +519,21 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
             )}
             {activeStep === 2 && (
               <VStack gap={4} mb={5}>
-                <TextAreaWithCounter
+                <RichTextInputWithHelper
                   id="milestones"
                   label="Goals and Milestones"
                   helperText="List down the things you hope to achieve by the end of project duration."
                   placeholder="Outline your project goals and milestones"
-                  register={register}
-                  watch={watch}
-                  errors={errors}
+                  control={control}
                   isRequired
-                  minH="6rem"
                 />
-                <TextAreaWithCounter
+                <RichTextInputWithHelper
                   id="kpi"
                   label="Primary Key Performance Indicator"
                   helperText="What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc."
                   placeholder="What's the key metric for success?"
-                  register={register}
-                  watch={watch}
-                  errors={errors}
+                  control={control}
                   isRequired
-                  minH="6rem"
                 />
               </VStack>
             )}

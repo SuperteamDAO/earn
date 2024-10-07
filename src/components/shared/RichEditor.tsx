@@ -21,27 +21,54 @@ import {
 } from 'react-icons/bi';
 import { FaListOl, FaListUl } from 'react-icons/fa6';
 
-const RichComponent: React.FC = () => {
+interface RichEditorProps {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  height?: string;
+  placeholder?: string;
+  isError?: boolean;
+}
+
+export const RichEditor: React.FC<RichEditorProps> = ({
+  id,
+  value,
+  onChange,
+  height = '10rem',
+  placeholder = 'Write something...',
+  isError = false,
+}) => {
+  const editorRef = useRef<HTMLDivElement>(null);
   const editor = useEditor({
     extensions: [
       StarterKit,
       TaskList,
       TaskItem,
       Placeholder.configure({
-        placeholder: 'Write something...',
+        placeholder,
       }),
       Link.configure({
         openOnClick: false,
       }),
     ],
-    content: '',
+    content: value || undefined,
     editorProps: {
       attributes: {
         class:
           'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none',
       },
     },
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      onChange(html === '<p></p>' ? '' : html);
+    },
   });
+
+  useEffect(() => {
+    if (editor && value && editor.getHTML() !== value) {
+      editor.commands.setContent(value);
+    }
+  }, [value, editor]);
 
   if (!editor) {
     return null;
@@ -49,27 +76,52 @@ const RichComponent: React.FC = () => {
 
   return (
     <Box pos="relative" w="full">
-      <FloatingToolbar editor={editor} />
+      <FloatingToolbar editor={editor} editorClassname={`editor-${id}`} />
       <Box
-        className="editor"
+        className={`editor-${id}`}
+        ref={editorRef}
+        sx={{
+          '.ProseMirror p.is-editor-empty:first-child::before': {
+            color: 'gray.400',
+            content: 'attr(data-placeholder)',
+            float: 'left',
+            height: 0,
+            pointerEvents: 'none',
+          },
+        }}
         overflowY="auto"
         w="full"
-        h="500px"
+        h={height}
+        borderWidth={isError ? '2px' : '1px'}
+        borderColor={isError ? 'red.500' : 'brand.slate.300'}
+        _focusWithin={{
+          borderColor: 'brand.purple',
+          borderWidth: '2px',
+        }}
         id="reset-des"
+        rounded="lg"
       >
-        <EditorContent editor={editor} />
+        <EditorContent
+          editor={editor}
+          style={{
+            height: '100%',
+            marginTop: '0px !important',
+          }}
+        />
       </Box>
     </Box>
   );
 };
 
-export default RichComponent;
-
 interface FloatingToolbarProps {
   editor: Editor;
+  editorClassname: string;
 }
 
-const FloatingToolbar: React.FC<FloatingToolbarProps> = ({ editor }) => {
+const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
+  editor,
+  editorClassname: editorClassname,
+}) => {
   const [style, setStyle] = useState({ top: 0, left: 0, opacity: 0 });
   const [toolbarState, setToolbarState] = useState<
     'default' | 'link' | 'hidden'
@@ -78,6 +130,10 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({ editor }) => {
   const toolbarRef = useRef<HTMLDivElement>(null);
 
   const updateToolbarPosition = useCallback(() => {
+    const editorElement =
+      document.getElementsByClassName(editorClassname)[0] || undefined;
+    if (!editorElement) return;
+
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
       if (toolbarState !== 'link') {
@@ -87,13 +143,13 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({ editor }) => {
       return;
     }
 
-    const range = selection.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
-
-    const editorElement = document.getElementById('reset-des');
-    if (!editorElement) {
+    if (!editorElement.contains(selection.anchorNode)) {
+      setStyle((style) => ({ ...style, opacity: 0 }));
       return;
     }
+
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
 
     const editorRect = editorElement.getBoundingClientRect();
 
@@ -128,8 +184,9 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({ editor }) => {
 
   useEffect(() => {
     if (!editor) return;
-
-    const editorElement = document.getElementById('reset-des');
+    const editorElement =
+      document.getElementsByClassName(editorClassname)[0] || undefined;
+    if (!editorElement) return;
 
     const handleSelectionChange = () => {
       setTimeout(updateToolbarPosition, 0);

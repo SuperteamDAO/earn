@@ -213,6 +213,14 @@ pre {
   }
 }
 
+.tiptap {
+  min-height: 100%;
+  border: 0px !important;
+  overscroll-behavior: none;
+  outline: none !important;
+  padding: 0rem 1rem;
+}
+
 //earn-loader-css
 
 .earn-loader {
