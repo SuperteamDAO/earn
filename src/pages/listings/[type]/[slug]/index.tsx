@@ -51,7 +51,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  if (slug === 'synthernet-radar' && !host.includes('earn.superteam.fun')) {
+  if (slug === 'synthernet-radar') {
     return {
       redirect: {
         destination: `https://earn.superteam.fun/listings/hackathon/synternet-radar/`,
