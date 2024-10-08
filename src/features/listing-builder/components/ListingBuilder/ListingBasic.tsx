@@ -78,7 +78,12 @@ export const ListingBasic = ({
   const { form, updateState } = useListingFormStore();
   const { user } = useUser();
 
+  const isProject = type === 'project';
   const isDraft = isNewOrDraft || isDuplicating;
+
+  const fndnPayingCheck =
+    user?.currentSponsor?.name?.includes('Superteam') && !isProject;
+
   const slugUniqueCheck = async (slug: string) => {
     try {
       const listingId = editable && !isDuplicating ? form?.id : null;
@@ -184,7 +189,7 @@ export const ListingBasic = ({
       timeToComplete: form?.timeToComplete,
       referredBy: form?.referredBy,
       isPrivate: form?.isPrivate,
-      isFndnPaying: form?.isFndnPaying,
+      isFndnPaying: fndnPayingCheck ? true : form?.isFndnPaying,
     },
   });
 
@@ -209,10 +214,10 @@ export const ListingBasic = ({
         timeToComplete: form?.timeToComplete,
         referredBy: form?.referredBy,
         isPrivate: form?.isPrivate,
-        isFndnPaying: form?.isFndnPaying,
+        isFndnPaying: fndnPayingCheck ? true : form?.isFndnPaying,
       });
     }
-  }, [form]);
+  }, [form, user?.currentSponsor?.name, isProject]);
 
   const title = watch('title');
   const slug = watch('slug');
@@ -296,8 +301,6 @@ export const ListingBasic = ({
       setMaxDeadline(twoWeeksLater.format('YYYY-MM-DDTHH:mm'));
     }
   }, [editable, form?.deadline]);
-
-  const isProject = type === 'project';
 
   const posthog = usePostHog();
 
@@ -694,13 +697,13 @@ export const ListingBasic = ({
               {errors.referredBy ? <>{errors.referredBy.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
-          {user?.currentSponsor?.name?.includes('Superteam') && !isProject && (
+          {fndnPayingCheck && (
             <FormControl alignItems="center" gap={3} display="flex">
               <Flex>
                 <ListingFormLabel htmlFor="isFndnPaying">
                   Will the Solana Foundation pay for this listing?
                 </ListingFormLabel>
-                <ListingTooltip label='If this toggle is set to "True", Earn will automatically send the Foundation-KYC form to the winners of this listing. The Foundation will directly pay the winners' />
+                <ListingTooltip label='If this toggle is set to "True", Earn will automatically send the Foundation-KYC form to the winners of this listing. The Foundation will directly pay the winners.' />
               </Flex>
               <Switch
                 mb={2}
