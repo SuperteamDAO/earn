@@ -394,7 +394,7 @@ export const tokenList: Token[] = [
     tokenName: 'Degod (DEGOD)',
     tokenSymbol: 'DEGOD',
     mintAddress: 'degod39zqQWzpG6h4b7SJLLTCFE6FeZnZD8BwHBFxaN',
-    icon: 'https://assets.coingecko.com/coins/images/50219/standard/degods.png',
+    icon: '/assets/coins/degods.png',
     decimals: 6,
     coingeckoSymbol: 'degod',
   },
