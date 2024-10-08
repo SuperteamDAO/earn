@@ -51,7 +51,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  if (slug === '100xdevs-solana-mini-hackathon-1') {
+  if (slug === '100xdevs-solana-mini-hackathon-1' && type === 'project') {
     return {
       redirect: {
         destination: `https://earn.superteam.fun/listings/bounty/${slug}`,
