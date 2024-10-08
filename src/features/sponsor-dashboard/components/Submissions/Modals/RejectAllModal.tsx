@@ -60,7 +60,7 @@ export const RejectAllSubmissionModal = ({
           <Text mt={3} color="brand.slate.500">
             {rejectingAll
               ? `You are about to reject all ${submissionIds.length} of the remaining applications for this Project lsiting. This action cannot be undone. Are you sure you want to proceed?`
-              : `You are about to reject ${submissionIds.length} application request.
+              : `You are about to reject ${submissionIds.length} application.
             They will be notified via email.`}
           </Text>
           <br />
