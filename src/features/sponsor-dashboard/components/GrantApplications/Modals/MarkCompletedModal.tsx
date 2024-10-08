@@ -8,7 +8,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import React from 'react';
 import { toast } from 'sonner';
 
@@ -28,30 +28,42 @@ export function MarkCompleteModal({
 }: Props) {
   const cancelRef = React.useRef<HTMLButtonElement | null>(null);
 
-  const markCompletedMutation = useMutation({
-    mutationFn: async () => {
-      const response = await axios.put<GrantApplicationWithUser>(
-        `/api/sponsor-dashboard/grants/update-ship-progress`,
-        {
-          id: applicationId,
-        },
-      );
-      return response.data;
-    },
-    onSuccess: (updatedApplication) => {
-      onMarkCompleted(updatedApplication);
-      toast.success('Application Marked as Completed');
-      onClose();
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error('Error marking application as completed. Please try again.');
-    },
-  });
+  const { mutate: markCompletedMutation, isPending: markCompletePending } =
+    useMutation({
+      mutationFn: async () => {
+        const response = await axios.put<GrantApplicationWithUser>(
+          `/api/sponsor-dashboard/grants/update-ship-progress`,
+          {
+            id: applicationId,
+          },
+        );
+        return response.data;
+      },
+      onSuccess: (updatedApplication) => {
+        onMarkCompleted(updatedApplication);
+        toast.success('Application Marked as Completed');
+        onClose();
+      },
+      onError: (error) => {
+        console.error(error);
+        if (error instanceof AxiosError) {
+          if (
+            (error.response?.data.error as string)
+              .toLowerCase()
+              .includes('airtable recipient')
+          ) {
+            toast.error('User has not Confirmed Grant Acceptance');
+            return;
+          }
+        }
+        toast.error(
+          'Error marking application as completed. Please try again.',
+        );
+      },
+    });
 
   const handleMarkAsCompleted = () => {
-    markCompletedMutation.mutate();
-    onClose();
+    markCompletedMutation();
   };
 
   return (
@@ -86,6 +98,8 @@ export function MarkCompleteModal({
                 _hover={{
                   bg: 'red.400',
                 }}
+                isLoading={markCompletePending}
+                loadingText="Marking..."
                 onClick={handleMarkAsCompleted}
               >
                 Mark as Completed
