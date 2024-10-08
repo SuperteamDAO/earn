@@ -82,7 +82,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
         ref={editorRef}
         sx={{
           '.ProseMirror p.is-editor-empty:first-child::before': {
-            color: 'gray.400',
+            color: 'var(--chakra-colors-gray-300)',
             content: 'attr(data-placeholder)',
             float: 'left',
             height: 0,
@@ -104,7 +104,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
         <EditorContent
           editor={editor}
           style={{
-            height: '100%',
+            height: '87%',
             marginTop: '0px !important',
           }}
         />

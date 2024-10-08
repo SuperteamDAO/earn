@@ -36,7 +36,6 @@ export const InfoBox = ({
         overflow={'visible'}
         w={'full'}
         h={'full'}
-        pb={7}
         whiteSpace={'pre'}
         id="reset-des"
       >
