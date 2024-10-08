@@ -355,12 +355,12 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                     )}
                     {!!(
                       (session?.user?.role === 'GOD' &&
-                        listing.type !== 'grant' &&
-                        !listing.isPublished) ||
+                        listing.type !== 'grant') ||
                       (!listing.isPublished &&
                         !pastDeadline &&
                         listing.type !== 'grant' &&
-                        listing.status === 'OPEN')
+                        (listing.status === 'OPEN' ||
+                          listing.status === 'PREVIEW'))
                     ) && (
                       <Link
                         as={NextLink}
@@ -417,10 +417,10 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         {!!(
                           (session?.user?.role === 'GOD' &&
                             listing.type !== 'grant') ||
-                          (listing.isPublished &&
-                            !pastDeadline &&
+                          (!pastDeadline &&
                             listing.type !== 'grant' &&
-                            listing.status === 'OPEN')
+                            (listing.status === 'OPEN' ||
+                              listing.status === 'PREVIEW'))
                         ) && (
                           <Link
                             as={NextLink}

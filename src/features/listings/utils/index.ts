@@ -23,7 +23,7 @@ export const formatDeadline = (
   return '-';
 };
 
-export const isDeadlineOver = (deadline: string | undefined) =>
+export const isDeadlineOver = (deadline: string | Date | undefined) =>
   deadline ? dayjs().isAfter(dayjs(deadline)) : false;
 
 export const getRegionTooltipLabel = (
@@ -77,7 +77,7 @@ export const getListingStatus = (
   );
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
 
-  if (listingStatus === 'PREVIEW') return 'Preview';
+  if (listingStatus === 'PREVIEW') return 'Draft';
   if (listingStatus === 'VERIFYING') return 'Under Verification';
   if (listingStatus === 'VERIFY_FAIL') return 'Verification Failed';
   if (listingStatus === 'DRAFT') return 'Draft';
