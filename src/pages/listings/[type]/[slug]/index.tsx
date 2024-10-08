@@ -51,6 +51,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  if (slug === 'synthernet-radar' && !host.includes('earn.superteam.fun')) {
+    return {
+      redirect: {
+        destination: `https://earn.superteam.fun/listings/hackathon/synternet-radar/`,
+        permanent: false,
+      },
+    };
+  }
+
+  if (slug === '100xdevs-solana-mini-hackathon-1' && type === 'project') {
+    return {
+      redirect: {
+        destination: `https://earn.superteam.fun/listings/bounty/${slug}`,
+        permanent: false,
+      },
+    };
+  }
+
   let bountyData;
   try {
     const bountyDetails = await axios.get(
