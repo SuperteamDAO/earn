@@ -102,13 +102,18 @@ async function findRelatedListings(
   const skillField = isDevListing ? 'subskills' : 'skills';
   const matchingField = isDevListing ? 'matchingSubskills' : 'matchingSkills';
 
-  const skillQuery = Prisma.sql`(${Prisma.join(
-    skills.map(
-      (skill) =>
-        Prisma.sql`JSON_CONTAINS(JSON_EXTRACT(skills, '$[*].${Prisma.raw(skillField)}'), JSON_QUOTE(${skill}))`,
-    ),
-    ' OR ',
-  )})`;
+  let skillQuery;
+  if (skills.length > 0) {
+    skillQuery = Prisma.sql`(${Prisma.join(
+      skills.map(
+        (skill) =>
+          Prisma.sql`JSON_CONTAINS(JSON_EXTRACT(skills, '$[*].${Prisma.raw(skillField)}'), JSON_QUOTE(${skill}))`,
+      ),
+      ' OR ',
+    )})`;
+  } else {
+    skillQuery = Prisma.sql`TRUE`;
+  }
 
   const regionFilter = userRegion
     ? Prisma.sql`AND (region = ${userRegion} OR region = 'GLOBAL')`
