@@ -69,7 +69,7 @@ export const getListingStatus = (
   listing: Listing | ListingWithSubmissions | any,
   isGrant?: boolean,
 ) => {
-  if (!listing) return 'DRAFT';
+  if (!listing) return 'Draft';
 
   const listingStatus = getListingDraftStatus(
     listing?.status,

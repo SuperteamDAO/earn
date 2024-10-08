@@ -199,7 +199,10 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
               const pastDeadline = isDeadlineOver(listing?.deadline);
 
               const listingStatus = getListingStatus(listing);
-              const listingLabel = getListingTypeLabel(listing?.type!);
+              const listingLabel =
+                listingStatus === 'Draft'
+                  ? 'Draft'
+                  : getListingTypeLabel(listing?.type!);
 
               const listingLink =
                 listing?.type === 'grant'
@@ -333,7 +336,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                     </Tag>
                   </Td>
                   <Td px={3} py={2}>
-                    {listing.status === 'OPEN' && !!listing.isPublished && (
+                    {listing.status === 'OPEN' && !!listing.isPublished ? (
                       <Button
                         className="ph-no-capture"
                         color="#6366F1"
@@ -352,16 +355,13 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           ? 'Applications'
                           : 'Submissions'}
                       </Button>
-                    )}
-                    {!!(
-                      (session?.user?.role === 'GOD' &&
-                        listing.type !== 'grant') ||
-                      (!listing.isPublished &&
-                        !pastDeadline &&
+                    ) : (session?.user?.role === 'GOD' &&
+                        listing.type !== 'grant' &&
+                        !listing.isPublished) ||
+                      (!pastDeadline &&
                         listing.type !== 'grant' &&
                         (listing.status === 'OPEN' ||
-                          listing.status === 'PREVIEW'))
-                    ) && (
+                          listing.status === 'PREVIEW')) ? (
                       <Link
                         as={NextLink}
                         href={`/dashboard/listings/${listing.slug}/edit/`}
@@ -378,6 +378,10 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           Edit
                         </Button>
                       </Link>
+                    ) : (
+                      <Text px={3} color="brand.slate.400">
+                        —
+                      </Text>
                     )}
                   </Td>
                   <Td px={0} py={2}>
