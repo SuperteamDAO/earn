@@ -4,7 +4,7 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
-import Briefcase from '@/public/assets/home/display/briefcase.png';
+import Briefcase from '@/public/assets/home/display/briefcase.webp';
 
 export const SponsorBanner = () => {
   const posthog = usePostHog();

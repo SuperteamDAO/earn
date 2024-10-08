@@ -1,6 +1,6 @@
 import { HStack, Text, VStack } from '@chakra-ui/react';
 
-import PiedPiper from '@/public/assets/landingsponsor/sponsors/piedPiper.png';
+import PiedPiper from '@/public/assets/landingsponsor/sponsors/piedPiper.webp';
 
 import { HighQualityImage } from '../HighQualityImage';
 

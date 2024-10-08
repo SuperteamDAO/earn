@@ -27,17 +27,17 @@ interface Props {
 
 const getRandomFallbackImage = (): string => {
   const fallbackImages = [
-    '/assets/fallback/og/1.png',
-    '/assets/fallback/og/2.png',
-    '/assets/fallback/og/3.png',
-    '/assets/fallback/og/4.png',
-    '/assets/fallback/og/5.png',
-    '/assets/fallback/og/6.png',
-    '/assets/fallback/og/7.png',
-    '/assets/fallback/og/8.png',
-    '/assets/fallback/og/9.png',
-    '/assets/fallback/og/10.png',
-    '/assets/fallback/og/11.png',
+    '/assets/fallback/og/1.webp',
+    '/assets/fallback/og/2.webp',
+    '/assets/fallback/og/3.webp',
+    '/assets/fallback/og/4.webp',
+    '/assets/fallback/og/5.webp',
+    '/assets/fallback/og/6.webp',
+    '/assets/fallback/og/7.webp',
+    '/assets/fallback/og/8.webp',
+    '/assets/fallback/og/9.webp',
+    '/assets/fallback/og/10.webp',
+    '/assets/fallback/og/11.webp',
   ];
 
   const randomIndex = Math.floor(Math.random() * fallbackImages.length);

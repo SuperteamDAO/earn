@@ -56,6 +56,7 @@ model Bounties {
   poc                  User               @relation("poc", fields: [pocId], references: [id])
   language             String?
   shouldSendEmail      Boolean            @default(true)
+  isFndnPaying         Boolean            @default(false)
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])

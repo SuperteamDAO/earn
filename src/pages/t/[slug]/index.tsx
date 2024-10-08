@@ -88,7 +88,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const bgImages = ['1.png', '2.png', '3.png', '4.png', '5.png'];
+  const bgImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp'];
 
   useEffect(() => {
     setRandomIndex(Math.floor(Math.random() * bgImages.length));

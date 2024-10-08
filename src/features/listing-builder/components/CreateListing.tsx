@@ -182,6 +182,7 @@ export function CreateListing({
         maxRewardAsk: form?.maxRewardAsk,
         isPublished: true,
         isPrivate: form?.isPrivate,
+        isFndnPaying: form?.isFndnPaying,
         status: 'OPEN',
       };
 
@@ -250,6 +251,7 @@ export function CreateListing({
         region: data?.region,
         referredBy: data?.referredBy,
         isPrivate: data?.isPrivate,
+        isFndnPaying: data?.isFndnPaying,
         requirements: data?.requirements,
         rewardAmount: data?.rewardAmount,
         rewards: data?.rewards,

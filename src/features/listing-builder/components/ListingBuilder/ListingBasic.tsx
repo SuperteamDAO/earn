@@ -39,6 +39,7 @@ import { SkillSelect } from '@/components/shared/SkillSelect';
 import { type MultiSelectOptions } from '@/constants';
 import { CombinedRegions, Superteams } from '@/constants/Superteam';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
+import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 import { useListingFormStore } from '../../store';
@@ -75,7 +76,14 @@ export const ListingBasic = ({
   subSkills,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
+  const { user } = useUser();
+
+  const isProject = type === 'project';
   const isDraft = isNewOrDraft || isDuplicating;
+
+  const fndnPayingCheck =
+    user?.currentSponsor?.name?.includes('Superteam') && !isProject;
+
   const slugUniqueCheck = async (slug: string) => {
     try {
       const listingId = editable && !isDuplicating ? form?.id : null;
@@ -130,6 +138,7 @@ export const ListingBasic = ({
       timeToComplete: z.string().nullable().optional(),
       referredBy: z.string().nullable().optional(),
       isPrivate: z.boolean(),
+      isFndnPaying: z.boolean(),
     })
     .superRefine((data, ctx) => {
       if (
@@ -180,6 +189,7 @@ export const ListingBasic = ({
       timeToComplete: form?.timeToComplete,
       referredBy: form?.referredBy,
       isPrivate: form?.isPrivate,
+      isFndnPaying: fndnPayingCheck ? true : form?.isFndnPaying,
     },
   });
 
@@ -204,14 +214,16 @@ export const ListingBasic = ({
         timeToComplete: form?.timeToComplete,
         referredBy: form?.referredBy,
         isPrivate: form?.isPrivate,
+        isFndnPaying: fndnPayingCheck ? true : form?.isFndnPaying,
       });
     }
-  }, [form]);
+  }, [form, user?.currentSponsor?.name, isProject]);
 
   const title = watch('title');
   const slug = watch('slug');
   const applicationType = watch('applicationType');
   const isPrivate = watch('isPrivate');
+  const isFndnPaying = watch('isFndnPaying');
 
   const handleDeadlineSelection = (days: number) => {
     const deadlineDate = dayjs().add(days, 'day').format('YYYY-MM-DDTHH:mm');
@@ -289,8 +301,6 @@ export const ListingBasic = ({
       setMaxDeadline(twoWeeksLater.format('YYYY-MM-DDTHH:mm'));
     }
   }, [editable, form?.deadline]);
-
-  const isProject = type === 'project';
 
   const posthog = usePostHog();
 
@@ -687,6 +697,29 @@ export const ListingBasic = ({
               {errors.referredBy ? <>{errors.referredBy.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
+          {fndnPayingCheck && (
+            <FormControl alignItems="center" gap={3} display="flex">
+              <Flex>
+                <ListingFormLabel htmlFor="isFndnPaying">
+                  Will the Solana Foundation pay for this listing?
+                </ListingFormLabel>
+                <ListingTooltip label='If this toggle is set to "True", Earn will automatically send the Foundation-KYC form to the winners of this listing. The Foundation will directly pay the winners.' />
+              </Flex>
+              <Switch
+                mb={2}
+                id="email-alerts"
+                {...register('isFndnPaying')}
+                isChecked={isFndnPaying}
+              />
+              <FormErrorMessage>
+                {errors.isFndnPaying ? (
+                  <>{errors.isFndnPaying.message}</>
+                ) : (
+                  <></>
+                )}
+              </FormErrorMessage>
+            </FormControl>
+          )}
           <FormControl alignItems="center" gap={3} display="flex">
             <Flex>
               <ListingFormLabel htmlFor="isPrivate">
