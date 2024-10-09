@@ -18,6 +18,7 @@ import {
 } from '@/features/grants';
 import { LiveGrants } from '@/features/home';
 import { ExtraInfoSection } from '@/features/listings';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
@@ -191,10 +192,15 @@ export function GrantPageLayout({
                                 fontWeight={500}
                               >
                                 {grant.totalApproved
-                                  ? `$` +
-                                    Math.round(
-                                      grant?.totalApproved /
-                                        grant?.totalApplications,
+                                  ? new Intl.NumberFormat('en-US', {
+                                      maximumFractionDigits: 0,
+                                      currency: 'USD',
+                                      style: 'currency',
+                                    }).format(
+                                      Math.round(
+                                        grant?.totalApproved /
+                                          grant?.totalApplications,
+                                      ),
                                     )
                                   : '—'}
                               </Text>
@@ -220,7 +226,12 @@ export function GrantPageLayout({
                                 fontSize={{ base: 'lg', md: 'xl' }}
                                 fontWeight={500}
                               >
-                                ${Math.round(grant?.totalApproved || 0)}
+                                $
+                                {formatNumberWithSuffix(
+                                  Math.round(grant?.totalApproved || 0),
+                                  1,
+                                  true,
+                                )}
                               </Text>
                             </Flex>
                             <Text
