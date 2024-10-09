@@ -50,6 +50,14 @@ export const authOptions: NextAuthOptions = {
       },
       from: process.env.RESEND_EMAIL,
       sendVerificationRequest: async ({ identifier, token }) => {
+        const isBlocked = await prisma.blockedEmail.findUnique({
+          where: { email: identifier },
+        });
+
+        if (isBlocked) {
+          console.log('OTP Not Sent, Blocked Email');
+        }
+
         await resend.emails.send({
           from: kashEmail,
           to: [identifier],
