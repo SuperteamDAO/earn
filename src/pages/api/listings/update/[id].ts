@@ -8,6 +8,7 @@ import {
   withSponsorAuth,
 } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
+import { isDeadlineOver } from '@/features/listings';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -87,7 +88,19 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       publishedAt = new Date();
     }
 
-    if (listing.status !== 'OPEN' && req.role !== 'GOD')
+    const pastDeadline = isDeadlineOver(listing?.deadline || undefined);
+    const wasUnPublished =
+      listing.status === 'OPEN' &&
+      listing.isPublished === false &&
+      pastDeadline;
+
+    if (
+      wasUnPublished ||
+      ((listing.status === 'CLOSED' ||
+        listing.status === 'VERIFYING' ||
+        listing.status === 'VERIFY_FAIL') &&
+        req.role !== 'GOD')
+    )
       return res.status(500).json({
         message: `Listing is not open and hence cannot be edited`,
       });
