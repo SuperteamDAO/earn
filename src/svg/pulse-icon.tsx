@@ -1,4 +1,5 @@
-import { Center, keyframes } from '@chakra-ui/react';
+import { Center } from '@chakra-ui/react';
+import { keyframes } from '@emotion/react';
 import React from 'react';
 
 const createPulseKeyframes = (color: string) => keyframes`
