@@ -77,7 +77,14 @@ export function DescriptionUI({ description }: Props) {
           startingHeight={'50vh'}
           style={{ width: '100%' }}
         >
-          <Box overflow={'visible'} w={'full'} h={'full'} pb={7} id="reset-des">
+          <Box
+            className="listing-description"
+            overflow={'visible'}
+            w={'full'}
+            h={'full'}
+            pb={7}
+            id="reset-des"
+          >
             {parse(
               description?.startsWith('"')
                 ? JSON.parse(description || '')

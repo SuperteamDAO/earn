@@ -28,6 +28,7 @@ interface RichEditorProps {
   height?: string;
   placeholder?: string;
   isError?: boolean;
+  maxHeight?: string;
 }
 
 export const RichEditor: React.FC<RichEditorProps> = ({
@@ -35,6 +36,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   value,
   onChange,
   height = '10rem',
+  maxHeight = '10rem',
   placeholder = 'Write something...',
   isError = false,
 }) => {
@@ -92,6 +94,8 @@ export const RichEditor: React.FC<RichEditorProps> = ({
         overflowY="auto"
         w="full"
         h={height}
+        maxH={maxHeight}
+        py={2}
         borderWidth={isError ? '2px' : '1px'}
         borderColor={isError ? 'red.500' : 'brand.slate.300'}
         _focusWithin={{

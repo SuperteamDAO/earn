@@ -524,6 +524,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                   placeholder="Outline your project goals and milestones"
                   control={control}
                   isRequired
+                  h="8rem"
                 />
                 <RichTextInputWithHelper
                   id="kpi"
@@ -532,6 +533,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                   placeholder="What's the key metric for success?"
                   control={control}
                   isRequired
+                  h="8rem"
                 />
               </VStack>
             )}

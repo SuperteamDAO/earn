@@ -18,6 +18,7 @@ interface RichTextInputWithHelperProps {
   validate?: (value: string) => boolean | string;
   defaultValue?: string;
   isRequired?: boolean;
+  h?: string;
 }
 
 const RichTextInputWithHelper: React.FC<RichTextInputWithHelperProps> = ({
@@ -29,6 +30,7 @@ const RichTextInputWithHelper: React.FC<RichTextInputWithHelperProps> = ({
   validate,
   defaultValue,
   isRequired,
+  h = 'auto',
 }) => {
   const {
     field: { onChange, value },
@@ -64,6 +66,7 @@ const RichTextInputWithHelper: React.FC<RichTextInputWithHelperProps> = ({
         onChange={onChange}
         placeholder={placeholder}
         isError={!!error}
+        height={h}
       />
       <FormErrorMessage>{error?.message}</FormErrorMessage>
     </FormControl>
