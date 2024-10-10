@@ -54,6 +54,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         b.minRewardAsk,
         b.compensationType,
         b.createdAt,
+        b.isFndnPaying,
         NULL as airtableId,
         CAST((SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id) AS SIGNED) as submissionCount
       FROM Bounties b
@@ -83,6 +84,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         g.minReward as minRewardAsk,
         NULL as compensationType,
         g.createdAt,
+        NULL as isFndnPaying,
         g.airtableId,
         CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
       FROM Grants g
