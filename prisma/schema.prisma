@@ -279,6 +279,7 @@ model Sponsors {
   entityName   String?
   isVerified   Boolean             @default(false)
   isCaution    Boolean             @default(false)
+  st           Boolean             @default(false)
   Hackathon    Hackathon?
   UserSponsors UserSponsors[]
   Bounties     Bounties[]

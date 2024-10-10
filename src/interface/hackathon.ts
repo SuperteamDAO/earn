@@ -4,6 +4,7 @@ export interface TrackProps {
   sponsor: {
     name: string;
     logo: string;
+    st: boolean;
   };
   token: string;
   rewardAmount: number;

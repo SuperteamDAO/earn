@@ -83,8 +83,7 @@ export const ListingBasic = ({
   const isProject = type === 'project';
   const isDraft = isNewOrDraft || isDuplicating;
 
-  const fndnPayingCheck =
-    user?.currentSponsor?.name?.includes('Superteam') && !isProject;
+  const fndnPayingCheck = user?.currentSponsor?.st && !isProject;
 
   const slugUniqueCheck = async (slug: string) => {
     try {

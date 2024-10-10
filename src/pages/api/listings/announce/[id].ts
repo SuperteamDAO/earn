@@ -195,7 +195,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     if (
-      listing?.sponsor?.name.includes('Superteam') &&
+      listing?.sponsor?.st &&
       listing.type !== 'project' &&
       listing.isFndnPaying
     ) {

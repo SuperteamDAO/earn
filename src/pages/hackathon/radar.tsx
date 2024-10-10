@@ -68,12 +68,8 @@ export default function Radar() {
   const sortedTrackData = useMemo(() => {
     if (!trackData) return [];
 
-    const superteamTracks = trackData.filter((track) =>
-      track.sponsor.name.includes('Superteam'),
-    );
-    const otherTracks = trackData.filter(
-      (track) => !track.sponsor.name.includes('Superteam'),
-    );
+    const superteamTracks = trackData.filter((track) => track.sponsor.st);
+    const otherTracks = trackData.filter((track) => !track.sponsor.st);
 
     return [...otherTracks, ...superteamTracks];
   }, [trackData]);
