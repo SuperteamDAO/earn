@@ -23,6 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
+import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import {
   type Dispatch,
@@ -77,6 +78,7 @@ export const ListingBasic = ({
 }: Props) => {
   const { form, updateState } = useListingFormStore();
   const { user } = useUser();
+  const { data: session } = useSession();
 
   const isProject = type === 'project';
   const isDraft = isNewOrDraft || isDuplicating;
@@ -613,7 +615,9 @@ export const ListingBasic = ({
                   focusBorderColor="brand.purple"
                   id="deadline"
                   max={editable ? maxDeadline : undefined}
-                  min={`${date}T00:00`}
+                  min={
+                    session?.user.role === 'GOD' ? undefined : `${date}T00:00`
+                  }
                   placeholder="deadline"
                   type={'datetime-local'}
                   {...register('deadline', { required: true })}
