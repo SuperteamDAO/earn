@@ -51,7 +51,7 @@ export default async function handler(request: NextRequest) {
     const isSponsorVerified = getParam('isSponsorVerified', (x) => x) || false;
 
     const displayReward =
-      minReward === '0' ? `Upto ${maxReward}` : `${minReward} - ${maxReward}`;
+      minReward === '0' ? `Up to ${maxReward}` : `${minReward} - ${maxReward}`;
 
     const getTokenIcon = (symbol: any) =>
       tokenList.find((t) => t.tokenSymbol === symbol)?.icon;
