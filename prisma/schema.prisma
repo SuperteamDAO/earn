@@ -183,6 +183,7 @@ model Grants {
   airtableId             String?
   avgResponseTime        String?            @default("24h")
   isNative               Boolean            @default(false)
+  isPrivate              Boolean            @default(false)
   references             Json?
 
   @@index([id, slug])

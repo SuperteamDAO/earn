@@ -80,6 +80,7 @@ export default async function grants(
         isArchived: false,
         ...skillsFilter,
         ...(userRegion ? { region: { in: userRegion } } : {}),
+        isPrivate: false,
       },
       take,
       orderBy: {

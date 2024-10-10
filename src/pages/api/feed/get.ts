@@ -135,6 +135,9 @@ export default async function handler(
           gte: startDate,
           lte: endDate,
         },
+        grant: {
+          isPrivate: false,
+        },
       },
       skip: parseInt(skip as string, 10),
       take: parseInt(take as string, 10),
