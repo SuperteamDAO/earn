@@ -163,7 +163,9 @@ export const GrantApplicationModal = ({
           answer: answers[`answer-${q.order}`],
         })) ?? [];
 
-      await axios.post('/api/grant-application/create/', {
+      const apiAction = !!grantApplication ? 'update' : 'create';
+
+      await axios.post(`/api/grant-application/${apiAction}/`, {
         grantId: id,
         projectTitle,
         projectOneLiner,
