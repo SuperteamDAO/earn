@@ -779,7 +779,9 @@ export const ListingPayments = ({
                 </Flex>
               </FormControl>
               <FormControl w="full" mt={5} isRequired>
-                <ListingFormLabel htmlFor="minRewardAsk">Upto</ListingFormLabel>
+                <ListingFormLabel htmlFor="minRewardAsk">
+                  Up to
+                </ListingFormLabel>
                 <Flex
                   pos="relative"
                   pr={5}
