@@ -61,21 +61,23 @@ export const GrantApplicationButton = ({
       btnLoadingText = null;
       break;
 
-    case 'ALLOW NEW':
-      buttonText = 'Apply Now';
-      buttonBG = 'brand.purple';
-      isBtnDisabled = Boolean(
-        user?.id && user?.isTalentFilled && !isUserEligibleByRegion,
-      );
-      btnLoadingText = 'Checking Application..';
-      break;
-
     case 'ALLOW EDIT':
       buttonText = 'Edit Application';
       isBtnDisabled = Boolean(
         user?.id && user?.isTalentFilled && !isUserEligibleByRegion,
       );
       btnLoadingText = 'Checking Application..';
+      break;
+
+    default:
+      buttonText = 'Apply Now';
+      buttonBG = 'brand.purple';
+      isBtnDisabled = Boolean(
+        !grant.isPublished ||
+          (user?.id && user?.isTalentFilled && !isUserEligibleByRegion),
+      );
+      btnLoadingText = 'Checking Application..';
+      break;
   }
 
   const { isOpen, onOpen, onClose } = useDisclosure();

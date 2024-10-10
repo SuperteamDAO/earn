@@ -16,4 +16,5 @@ export const userApplicationQuery = (id: string) =>
   queryOptions({
     queryKey: ['userApplication', id],
     queryFn: () => fetchUserApplication(id),
+    retry: false,
   });
