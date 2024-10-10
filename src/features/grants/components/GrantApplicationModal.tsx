@@ -111,7 +111,7 @@ export const GrantApplicationModal = ({
       projectTitle: grantApplication?.projectTitle || '',
       projectOneLiner: grantApplication?.projectOneLiner || '',
       ask: grantApplication?.ask || undefined,
-      walletAddress: grantApplication?.walletAddress || '',
+      walletAddress: grantApplication?.walletAddress || user?.publicKey || '',
       projectDetails: grantApplication?.projectDetails || '',
       projectTimeline: grantApplication?.projectTimeline
         ? dayjs(grantApplication?.projectTimeline, 'D MMMM YYYY').format(
@@ -619,7 +619,11 @@ export const GrantApplicationModal = ({
                 type="submit"
                 variant="solid"
               >
-                {activeStep === steps.length - 1 ? 'Apply' : 'Continue'}
+                {activeStep === steps.length - 1
+                  ? !!grantApplication
+                    ? 'Update'
+                    : 'Apply'
+                  : 'Continue'}
               </Button>
             </Flex>
           </form>
