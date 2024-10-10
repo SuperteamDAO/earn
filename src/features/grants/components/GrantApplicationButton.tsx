@@ -99,7 +99,9 @@ export const GrantApplicationButton = ({
           onClose={onClose}
           isOpen={isOpen}
           grant={grant}
-          grantApplication={application}
+          grantApplication={
+            applicationState === 'ALLOW EDIT' ? application : undefined
+          }
         />
       )}
       <Tooltip
