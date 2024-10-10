@@ -22,6 +22,7 @@ import {
   useSteps,
   VStack,
 } from '@chakra-ui/react';
+import { type GrantApplication } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRef, useState } from 'react';
@@ -43,14 +44,8 @@ import { useUpdateUser, useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
-import { userApplicationStatusQuery } from '../queries';
+import { userApplicationQuery } from '../queries';
 import { type Grant } from '../types';
-
-interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  grant: Grant;
-}
 
 const steps = [
   { title: 'Basics' },
@@ -58,7 +53,38 @@ const steps = [
   { title: 'Milestones' },
 ];
 
-export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
+interface EligibilityAnswer {
+  question: string;
+  answer: string;
+}
+
+interface GrantApplicationForm {
+  projectTitle: string;
+  projectOneLiner: string;
+  ask: number;
+  walletAddress: string;
+  projectDetails: string;
+  projectTimeline: string;
+  proofOfWork: string;
+  milestones: string;
+  kpi: string;
+  twitter: string;
+  [key: string]: string | number;
+}
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  grant: Grant;
+  grantApplication?: GrantApplication;
+}
+
+export const GrantApplicationModal = ({
+  isOpen,
+  onClose,
+  grant,
+  grantApplication,
+}: Props) => {
   const { id, token, minReward, maxReward, questions } = grant;
 
   const { user, refetchUser } = useUser();
@@ -80,7 +106,33 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
     formState: { errors },
     reset,
     watch,
-  } = useForm();
+  } = useForm<GrantApplicationForm>({
+    defaultValues: {
+      projectTitle: grantApplication?.projectTitle || '',
+      projectOneLiner: grantApplication?.projectOneLiner || '',
+      ask: grantApplication?.ask || undefined,
+      walletAddress: grantApplication?.walletAddress || '',
+      projectDetails: grantApplication?.projectDetails || '',
+      projectTimeline: grantApplication?.projectTimeline
+        ? dayjs(grantApplication?.projectTimeline, 'D MMMM YYYY').format(
+            'YYYY-MM-DD',
+          )
+        : '',
+      proofOfWork: grantApplication?.proofOfWork || '',
+      milestones: grantApplication?.milestones || '',
+      kpi: grantApplication?.kpi || '',
+      twitter: grantApplication?.twitter
+        ? extractTwitterUsername(grantApplication?.twitter) || ''
+        : extractTwitterUsername(user?.twitter || '') || '',
+      ...(grantApplication?.answers
+        ? Object.fromEntries(
+            (grantApplication.answers as unknown as EligibilityAnswer[]).map(
+              (answer, index) => [`answer-${index + 1}`, answer.answer],
+            ),
+          )
+        : {}),
+    },
+  });
 
   const queryClient = useQueryClient();
 
@@ -128,7 +180,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
 
       reset();
       await queryClient.invalidateQueries({
-        queryKey: userApplicationStatusQuery(id).queryKey,
+        queryKey: userApplicationQuery(id).queryKey,
       });
 
       await refetchUser();
@@ -142,7 +194,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
 
   const handleNext = () => {
     if (activeStep === 0) {
-      const askValue = watch('ask');
+      const askValue = watch('ask') || 0;
       const min = minReward || 0;
       const max = maxReward || Infinity;
 
@@ -489,8 +541,8 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                         {...register('twitter', {
                           validate: (value) => {
                             if (
-                              !isValidTwitterInput(value) &&
-                              !isValidTwitterUsername(value)
+                              !isValidTwitterInput(value || '') &&
+                              !isValidTwitterUsername(value || '')
                             ) {
                               return false;
                             }
