@@ -157,7 +157,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
 
     const editorRect = editorElement.getBoundingClientRect();
 
-    const toolbarHeight = 40;
+    const toolbarHeight = 10;
     const offset = 120;
 
     let computedTop =
@@ -169,14 +169,13 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     let computedLeft =
       rect.left - editorRect.left + editorElement.scrollLeft + rect.width / 2;
 
-    const toolbarWidth = 200; // Approximate width of your toolbar
-    const maxLeft = editorElement.clientWidth - toolbarWidth / 2;
-    const minLeft = toolbarWidth / 2;
+    const toolbarWidth = 100;
 
-    if (computedLeft < minLeft) computedLeft = minLeft;
-    if (computedLeft > maxLeft) computedLeft = maxLeft;
+    if (computedLeft < 0) computedLeft = 0;
+    if (computedLeft > editorElement.clientWidth - toolbarWidth)
+      computedLeft = editorElement.clientWidth - toolbarWidth;
 
-    if (computedTop < 0) computedTop = 0;
+    if (computedTop < 0) computedTop = rect.bottom - editorRect.top + 10;
 
     setStyle({
       top: computedTop,
@@ -262,7 +261,11 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
         isActive: () => editor.isActive('link'),
         action: () => {
           setToolbarState('link');
-          const { href } = editor.getAttributes('link');
+          let { href } = editor.getAttributes('link');
+          if (!href) return setLinkUrl('');
+          if (!href?.startsWith('http://') && !href?.startsWith('https://')) {
+            href = 'https://' + href;
+          }
           setLinkUrl(href || '');
         },
       },
@@ -312,11 +315,19 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
             if (e.key === 'Enter') {
               e.preventDefault();
               if (linkUrl) {
+                let href = linkUrl;
+                if (!href) return setLinkUrl('');
+                if (
+                  !href?.startsWith('http://') &&
+                  !href?.startsWith('https://')
+                ) {
+                  href = 'https://' + href;
+                }
                 editor
                   .chain()
                   .focus()
                   .extendMarkRange('link')
-                  .setLink({ href: linkUrl })
+                  .setLink({ href })
                   .run();
               }
               setToolbarState('default');
@@ -343,9 +354,10 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
             icon={<BiLinkExternal />}
             onClick={() => {
               const { href } = editor.getAttributes('link');
-              if (href) {
-                window.open(href, '_blank');
-              }
+              console.log('href - ', href);
+              // if (href) {
+              //   window.open(href, '_blank');
+              // }
             }}
             size="sm"
           />
@@ -377,11 +389,13 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     <Box
       pos="absolute"
       zIndex={1000}
-      top={`${style.top}px`}
-      left={`${style.left}px`}
-      opacity={style.opacity}
-      transform="translateX(-50%)"
-      transition="opacity 0.2s"
+      pointerEvents={style.opacity === 0 ? 'none' : 'auto'}
+      style={{
+        top: `${style.top}px`,
+        left: `${style.left}px`,
+        opacity: style.opacity,
+        transition: 'opacity 0.2s',
+      }}
     >
       <HStack
         gap={0}

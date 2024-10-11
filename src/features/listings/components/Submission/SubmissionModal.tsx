@@ -434,7 +434,6 @@ export const SubmissionModal = ({
                 control={control}
                 label="Anything Else?"
                 id={`otherInfo`}
-                isRequired
                 helperText="If you have any other links or information you'd like to share with us, please add them here!"
                 placeholder="Add info or link"
               />

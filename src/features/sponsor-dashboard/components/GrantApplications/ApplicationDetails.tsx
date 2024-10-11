@@ -635,6 +635,7 @@ export const ApplicationDetails = ({
                       key={answerIndex}
                       label={answer.question}
                       content={answer.answer}
+                      isHtml
                     />
                   ),
                 )}

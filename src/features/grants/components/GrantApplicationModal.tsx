@@ -34,7 +34,6 @@ import {
   TextInputWithHelper,
 } from '@/components/Form/TextAreaHelpers';
 import { tokenList } from '@/constants';
-import { QuestionHandler } from '@/features/listings';
 import {
   extractTwitterUsername,
   isValidTwitterInput,
@@ -505,11 +504,11 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                 {questions &&
                   questions.map((e: any) => (
                     <FormControl key={e?.order} isRequired>
-                      <QuestionHandler
-                        register={register}
-                        question={e?.question}
-                        label={`answer-${e?.order}`}
-                        watch={watch}
+                      <RichTextInputWithHelper
+                        id={`answer-${e?.order}`}
+                        label={e?.question}
+                        control={control}
+                        isRequired
                       />
                     </FormControl>
                   ))}
