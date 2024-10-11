@@ -47,6 +47,7 @@ const RichTextInputWithHelper: React.FC<RichTextInputWithHelperProps> = ({
         ) {
           return 'This field is required';
         }
+        console.log('validate', validate);
         return validate ? validate(value) : true;
       },
     },

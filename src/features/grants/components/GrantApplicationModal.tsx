@@ -503,14 +503,13 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
 
                 {questions &&
                   questions.map((e: any) => (
-                    <FormControl key={e?.order} isRequired>
-                      <RichTextInputWithHelper
-                        id={`answer-${e?.order}`}
-                        label={e?.question}
-                        control={control}
-                        isRequired
-                      />
-                    </FormControl>
+                    <RichTextInputWithHelper
+                      key={e?.order}
+                      id={`answer-${e?.order}`}
+                      label={e?.question}
+                      control={control}
+                      isRequired
+                    />
                   ))}
               </VStack>
             )}

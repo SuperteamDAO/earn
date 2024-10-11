@@ -37,7 +37,6 @@ import { submissionCountQuery } from '../../queries';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
 import { isValidUrl } from '../../utils';
-import { QuestionHandler } from './QuestionHandler';
 import { SubmissionTerms } from './SubmissionTerms';
 
 interface Props {
@@ -328,34 +327,29 @@ export const SubmissionModal = ({
                   {isHackathon &&
                     eligibilityQs?.map((e, i) => {
                       return (
-                        <FormControl
-                          key={e?.order}
+                        <RichTextInputWithHelper
+                          id={`eligibility-${e?.order}`}
+                          label={e?.question}
+                          control={control}
                           isRequired={e.optional !== true}
-                        >
-                          <QuestionHandler
-                            error={isHackathon && e.error}
-                            validate={(value: string) => {
-                              if (!isHackathon) return true;
-                              if (value && e.isLink) {
-                                if (!isValidUrl(value) && eligibilityQs[i]) {
-                                  const cloneEligibilityQs = [...eligibilityQs];
-                                  const currElgibile = cloneEligibilityQs[i];
-                                  if (currElgibile) {
-                                    currElgibile.error =
-                                      'Please enter a valid link';
-                                    setEligibilityQs(cloneEligibilityQs);
-                                    return false;
-                                  }
+                          key={e?.order}
+                          validate={(value: string) => {
+                            if (!isHackathon) return true;
+                            if (value && e.isLink) {
+                              if (!isValidUrl(value) && eligibilityQs[i]) {
+                                const cloneEligibilityQs = [...eligibilityQs];
+                                const currElgibile = cloneEligibilityQs[i];
+                                if (currElgibile) {
+                                  currElgibile.error =
+                                    'Please enter a valid link';
+                                  setEligibilityQs(cloneEligibilityQs);
+                                  return false;
                                 }
                               }
-                              return true;
-                            }}
-                            register={register}
-                            question={e?.question}
-                            label={`eligibility-${e?.order}`}
-                            watch={watch}
-                          />
-                        </FormControl>
+                            }
+                            return true;
+                          }}
+                        />
                       );
                     })}
                 </>
