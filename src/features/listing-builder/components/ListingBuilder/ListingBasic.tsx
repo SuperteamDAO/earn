@@ -190,7 +190,7 @@ export const ListingBasic = ({
       timeToComplete: form?.timeToComplete,
       referredBy: form?.referredBy,
       isPrivate: form?.isPrivate,
-      isFndnPaying: fndnPayingCheck ? true : form?.isFndnPaying,
+      isFndnPaying: fndnPayingCheck && !editable ? true : form?.isFndnPaying,
     },
   });
 
