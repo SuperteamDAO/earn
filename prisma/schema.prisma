@@ -183,7 +183,6 @@ model Grants {
   airtableId             String?
   avgResponseTime        String?            @default("24h")
   isNative               Boolean            @default(false)
-  isPrivate              Boolean            @default(false)
   references             Json?
 
   @@index([id, slug])
@@ -627,28 +626,7 @@ enum JobType {
 
 enum Regions {
   GLOBAL
-  INDIA
-  VIETNAM
-  GERMANY
-  TURKEY
-  MEXICO
-  UK
-  UAE
-  NIGERIA
-  ISRAEL
-  BRAZIL
-  MALAYSIA
-  BALKAN
-  PHILIPPINES
-  JAPAN
-  FRANCE
-  CANADA
-  SINGAPORE
-
-  UKRAINE
-  ARGENTINA
-  USA
-  SPAIN
+  CHINA
 }
 
 enum CompensationType {
