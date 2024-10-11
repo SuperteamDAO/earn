@@ -215,7 +215,7 @@ export const ListingBasic = ({
         timeToComplete: form?.timeToComplete,
         referredBy: form?.referredBy,
         isPrivate: form?.isPrivate,
-        isFndnPaying: fndnPayingCheck ? true : form?.isFndnPaying,
+        isFndnPaying: form?.isFndnPaying,
       });
     }
   }, [form, user?.currentSponsor?.name, isProject]);
