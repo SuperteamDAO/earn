@@ -1,3 +1,4 @@
+import { ChevronRightIcon } from '@chakra-ui/icons';
 import { Box, HStack, IconButton, Input } from '@chakra-ui/react';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -296,6 +297,17 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     [toolbarButtons],
   );
 
+  function addLinkToEditor() {
+    if (linkUrl) {
+      let href = linkUrl;
+      if (!href) return setLinkUrl('');
+      if (!href?.startsWith('http://') && !href?.startsWith('https://')) {
+        href = 'https://' + href;
+      }
+      editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
+    }
+  }
+
   const LinkToolbar = useCallback(() => {
     return (
       <>
@@ -314,22 +326,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
-              if (linkUrl) {
-                let href = linkUrl;
-                if (!href) return setLinkUrl('');
-                if (
-                  !href?.startsWith('http://') &&
-                  !href?.startsWith('https://')
-                ) {
-                  href = 'https://' + href;
-                }
-                editor
-                  .chain()
-                  .focus()
-                  .extendMarkRange('link')
-                  .setLink({ href })
-                  .run();
-              }
+              addLinkToEditor();
               setToolbarState('default');
               setLinkUrl('');
             } else if (e.key === 'Escape') {
@@ -354,10 +351,9 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
             icon={<BiLinkExternal />}
             onClick={() => {
               const { href } = editor.getAttributes('link');
-              console.log('href - ', href);
-              // if (href) {
-              //   window.open(href, '_blank');
-              // }
+              if (href) {
+                window.open(href, '_blank');
+              }
             }}
             size="sm"
           />
@@ -374,6 +370,21 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
           onClick={() => {
             editor.chain().focus().unsetLink().run();
             setToolbarState('default');
+          }}
+          size="sm"
+        />
+        <IconButton
+          display={{ base: 'block', lg: 'none' }}
+          h="full"
+          color={'brand.slate.500'}
+          bg={'white'}
+          borderLeftWidth={1}
+          borderLeftColor="brand.slate.300"
+          borderRadius={0}
+          aria-label="Open Link"
+          icon={<ChevronRightIcon w={5} h={5} />}
+          onClick={() => {
+            addLinkToEditor();
           }}
           size="sm"
         />
