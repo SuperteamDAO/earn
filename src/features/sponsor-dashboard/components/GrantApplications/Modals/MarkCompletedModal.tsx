@@ -52,7 +52,7 @@ export function MarkCompleteModal({
               .toLowerCase()
               .includes('airtable recipient')
           ) {
-            toast.error('User has not Confirmed Grant Acceptance');
+            toast.error('User has not filled the Grant Onboarding form');
             return;
           }
         }
