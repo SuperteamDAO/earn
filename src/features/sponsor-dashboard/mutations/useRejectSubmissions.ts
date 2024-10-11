@@ -35,6 +35,13 @@ export const useRejectSubmissions = (slug: string) => {
             : submission,
         );
       });
+
+      const updatedSubmission = queryClient
+        .getQueryData<SubmissionWithUser[]>(['sponsor-submissions', slug])
+        ?.find((submission) => submissionIds.includes(submission.id));
+
+      setSelectedSubmission(updatedSubmission);
+      setSelectedSubmissionIds(new Set());
     },
     onError: () => {
       toast.error(

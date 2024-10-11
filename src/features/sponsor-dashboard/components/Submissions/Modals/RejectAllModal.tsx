@@ -19,6 +19,7 @@ interface RejectModalProps {
   rejectOnClose: () => void;
   submissionIds: string[];
   onRejectSubmission: (submissionId: string[]) => void;
+  allSubmissionsLength: number;
 }
 
 export const RejectAllSubmissionModal = ({
@@ -26,6 +27,7 @@ export const RejectAllSubmissionModal = ({
   rejectOnClose,
   onRejectSubmission,
   submissionIds,
+  allSubmissionsLength,
 }: RejectModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -41,19 +43,25 @@ export const RejectAllSubmissionModal = ({
     }
   };
 
+  const rejectingAll = submissionIds.length === allSubmissionsLength;
+
   return (
     <Modal isOpen={rejectIsOpen} onClose={rejectOnClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader color={'brand.slate.500'} fontSize={'md'} fontWeight={600}>
-          Reject Applications
+          {rejectingAll
+            ? 'Reject All Remaining Applications?'
+            : 'Reject Application'}
         </ModalHeader>
         <ModalCloseButton />
         <Divider />
         <ModalBody fontSize={'0.95rem'} fontWeight={500}>
           <Text mt={3} color="brand.slate.500">
-            You are about to reject {submissionIds.length} application request.
-            They will be notified via email.
+            {rejectingAll
+              ? `You are about to reject all ${submissionIds.length} of the remaining applications for this Project lsiting. This action cannot be undone. Are you sure you want to proceed?`
+              : `You are about to reject ${submissionIds.length} application.
+            They will be notified via email.`}
           </Text>
           <br />
           <Button

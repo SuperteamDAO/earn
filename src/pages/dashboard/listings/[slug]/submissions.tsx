@@ -113,10 +113,6 @@ export default function BountySubmissions({ slug }: Props) {
   }, [selectedSubmissionIds]);
 
   useEffect(() => {
-    setIsToggledAll(isAllCurrentToggled());
-  }, [selectedSubmissionIds, submissions]);
-
-  useEffect(() => {
     const newSet = new Set(selectedSubmissionIds);
     Array.from(selectedSubmissionIds).forEach((a) => {
       const submissionWithId = submissions?.find(
@@ -130,7 +126,7 @@ export default function BountySubmissions({ slug }: Props) {
   }, [submissions]);
 
   const isAllCurrentToggled = () =>
-    submissions
+    paginatedSubmissions
       ?.filter((submission) => submission.status === 'Pending')
       .every((submission) => selectedSubmissionIds.has(submission.id)) || false;
 
@@ -152,24 +148,6 @@ export default function BountySubmissions({ slug }: Props) {
     },
     [selectedSubmissionIds, submissions],
   );
-
-  const toggleAllSubmissions = () => {
-    if (!isAllCurrentToggled()) {
-      setSelectedSubmissionIds((prev) => {
-        const newSet = new Set(prev);
-        submissions
-          ?.filter((submission) => submission.status === 'Pending')
-          .map((submission) => newSet.add(submission.id));
-        return newSet;
-      });
-    } else {
-      setSelectedSubmissionIds((prev) => {
-        const newSet = new Set(prev);
-        submissions?.map((submission) => newSet.delete(submission.id));
-        return newSet;
-      });
-    }
-  };
 
   const rejectSubmissions = useRejectSubmissions(slug);
 
@@ -276,6 +254,28 @@ export default function BountySubmissions({ slug }: Props) {
       startIndex + submissionsPerPage,
     );
   }, [filteredSubmissions, currentPage]);
+
+  useEffect(() => {
+    setIsToggledAll(isAllCurrentToggled());
+  }, [selectedSubmissionIds, paginatedSubmissions]);
+
+  const toggleAllSubmissions = () => {
+    if (!isAllCurrentToggled()) {
+      setSelectedSubmissionIds((prev) => {
+        const newSet = new Set(prev);
+        paginatedSubmissions
+          ?.filter((submission) => submission.status === 'Pending')
+          .map((submission) => newSet.add(submission.id));
+        return newSet;
+      });
+    } else {
+      setSelectedSubmissionIds((prev) => {
+        const newSet = new Set(prev);
+        paginatedSubmissions?.map((submission) => newSet.delete(submission.id));
+        return newSet;
+      });
+    }
+  };
 
   const totalPages = Math.ceil(filteredSubmissions.length / submissionsPerPage);
 
@@ -594,13 +594,14 @@ export default function BountySubmissions({ slug }: Props) {
                         fill="#E11D48"
                       />
                     </svg>
-                    Reject All
+                    Reject {selectedSubmissionIds.size} Applications
                   </Button>
                 </HStack>
               </PopoverBody>
             </PopoverContent>
           </Popover>
           <RejectAllSubmissionModal
+            allSubmissionsLength={submissions?.length || 0}
             submissionIds={Array.from(selectedSubmissionIds)}
             rejectIsOpen={rejectedIsOpen}
             rejectOnClose={rejectedOnClose}

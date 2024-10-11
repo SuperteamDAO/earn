@@ -91,12 +91,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     for (const submission of currentSubmissions) {
-      await sendEmailNotification({
-        type: 'submissionRejected',
-        id: submission.id,
-        userId: submission.userId,
-        triggeredBy: req.userId,
-      });
+      try {
+        await sendEmailNotification({
+          type: 'submissionRejected',
+          id: submission.id,
+          userId: submission.userId,
+          triggeredBy: req.userId,
+        });
+      } catch (err) {
+        logger.warn(
+          'Failed to send email notification for submission rejection for submission: ',
+          submission.id,
+        );
+      }
     }
 
     return res.status(200).json(result);
