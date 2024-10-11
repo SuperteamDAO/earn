@@ -183,6 +183,7 @@ model Grants {
   airtableId             String?
   avgResponseTime        String?            @default("24h")
   isNative               Boolean            @default(false)
+  isPrivate              Boolean            @default(false)
   references             Json?
 
   @@index([id, slug])
@@ -278,6 +279,7 @@ model Sponsors {
   entityName   String?
   isVerified   Boolean             @default(false)
   isCaution    Boolean             @default(false)
+  st           Boolean             @default(false)
   Hackathon    Hackathon?
   UserSponsors UserSponsors[]
   Bounties     Bounties[]

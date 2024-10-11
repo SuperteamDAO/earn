@@ -96,6 +96,7 @@ export async function getListings({
           slug: true,
           logo: true,
           isVerified: true,
+          st: true,
         },
       },
     },

@@ -93,6 +93,12 @@ export const getListingStatus = (
       if (!listing?.isWinnersAnnounced) return 'In Review';
       if (
         listing?.isWinnersAnnounced &&
+        listing?.totalPaymentsMade !== listing?.totalWinnersSelected &&
+        listing?.isFndnPaying
+      )
+        return 'Fndn to Pay';
+      if (
+        listing?.isWinnersAnnounced &&
         listing?.totalPaymentsMade !== listing?.totalWinnersSelected
       )
         return 'Payment Pending';
@@ -113,6 +119,8 @@ export const getColorStyles = (status: string) => {
     case 'Completed':
       return { bgColor: '#D1FAE5', color: '#0D9488' };
     case 'Under Verification':
+    case 'Fndn to Pay':
+      return { bgColor: 'pink.100', color: 'pink.500' };
     case 'Payment Pending':
       return { bgColor: '#ffecb3', color: '#F59E0B' };
     case 'Verification Failed':

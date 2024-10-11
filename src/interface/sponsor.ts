@@ -10,5 +10,6 @@ interface SponsorType {
   entityName?: string;
   isVerified?: boolean;
   isCaution?: boolean;
+  st?: boolean;
 }
 export type { SponsorType };
