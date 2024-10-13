@@ -5,6 +5,7 @@ import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { getServerSession } from 'next-auth';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { CombinedRegions } from '@/constants/Superteam';
 import {
@@ -51,6 +52,7 @@ export default function HomePage({
   userRegion,
   openForYouListings,
 }: Props) {
+  const { t } = useTranslation();
   const [combinedListings, setCombinedListings] = useState(listings);
   const [combinedForYouListings, setCombinedForYouListings] =
     useState(listings);
@@ -124,23 +126,23 @@ export default function HomePage({
           forYou={combinedForYouListings}
           isListingsLoading={false}
           emoji="/assets/home/emojis/moneyman.webp"
-          title="Freelance Gigs"
+          title={t('freelanceGigs')}
           viewAllLink="/all"
           take={20}
           showViewAll
         />
         <ListingSection
           type="grants"
-          title="Grants"
-          sub="Equity-free funding opportunities for builders"
+          title={t('grants')}
+          sub={t('grantsDescription')}
           emoji="/assets/home/emojis/grants.webp"
           showViewAll
         >
           {!grants?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
-                title="No grants available!"
-                message="Subscribe to notifications to get notified about new grants."
+                title={t('noGrantsAvailable')}
+                message={t('subscribeToNotifications')}
               />
             </Flex>
           )}

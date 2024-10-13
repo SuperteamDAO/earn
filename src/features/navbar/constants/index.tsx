@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 interface NavItem {
   label: string;
   posthog: string;
@@ -75,6 +76,6 @@ export function renderLabel(navItem: NavItem) {
     //     <RenaissanceSecondaryLogo styles={{ width: '116px', height: 'auto' }} />
     //   );
     default:
-      return navItem.label;
+      return t(navItem.label);
   }
 }

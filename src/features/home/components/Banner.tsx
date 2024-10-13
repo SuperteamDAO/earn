@@ -12,6 +12,7 @@ import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
+// import { useTranslation } from 'react-i18next';
 import { AuthWrapper } from '@/features/auth';
 import DesktopBanner from '@/public/assets/home/display/banner.webp';
 import MobileBanner from '@/public/assets/home/display/banner-mobile.webp';
@@ -35,6 +36,7 @@ const avatars = [
 
 export function HomeBanner() {
   const posthog = usePostHog();
+  // const { t } = useTranslation();
 
   const { data } = useQuery(userCountQuery);
 
