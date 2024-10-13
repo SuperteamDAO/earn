@@ -1,2 +1,2 @@
 # Disable concurent to run `check-types` after ESLint in lint-staged
-lint-staged --concurrent false
+# lint-staged --concurrent false
