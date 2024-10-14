@@ -135,14 +135,12 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
   const toolbarRef = useRef<HTMLDivElement>(null);
 
   const updateToolbarPosition = useCallback(() => {
-    const editorElement =
-      document.getElementsByClassName(editorClassname)[0] || undefined;
+    const editorElement = document.getElementsByClassName(editorClassname)[0];
     if (!editorElement) return;
 
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
       if (toolbarState !== 'link') {
-        // Prevent hiding when in 'link' state
         setStyle((style) => ({ ...style, opacity: 0 }));
       }
       return;
@@ -155,36 +153,42 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
 
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
-
     const editorRect = editorElement.getBoundingClientRect();
+    const toolbarHeight = 30;
+    const toolbarWidth = 200;
+    const offset = 10;
 
-    const toolbarHeight = 10;
-    const offset = 120;
-
-    let computedTop =
+    const computedTop =
       rect.top -
       editorRect.top +
       editorElement.scrollTop -
       toolbarHeight -
       offset;
     let computedLeft =
-      rect.left - editorRect.left + editorElement.scrollLeft + rect.width / 2;
+      rect.left -
+      editorRect.left +
+      editorElement.scrollLeft +
+      rect.width / 2 -
+      toolbarWidth / 2;
 
-    const toolbarWidth = 100;
+    computedLeft = Math.max(
+      0,
+      Math.min(computedLeft, editorElement.clientWidth - toolbarWidth),
+    );
 
-    if (computedLeft < 0) computedLeft = 0;
-    if (computedLeft > editorElement.clientWidth - toolbarWidth)
-      computedLeft = editorElement.clientWidth - toolbarWidth;
+    const viewportWidth = window.innerWidth;
 
-    if (computedTop < 0) computedTop = rect.bottom - editorRect.top + 10;
+    if (editorRect.left + computedLeft + toolbarWidth > viewportWidth) {
+      computedLeft = viewportWidth - editorRect.left - toolbarWidth - offset;
+    }
 
     setStyle({
       top: computedTop,
-      left: computedLeft,
+      left: Math.max(0, computedLeft),
       opacity: 1,
     });
     setToolbarState('default');
-  }, [toolbarState]);
+  }, [toolbarState, editorClassname]);
 
   useEffect(() => {
     if (!editor) return;
