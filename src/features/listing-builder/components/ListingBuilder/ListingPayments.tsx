@@ -129,7 +129,7 @@ export const ListingPayments = ({
         minRewardAsk: form?.minRewardAsk,
         maxRewardAsk: form?.maxRewardAsk,
         token: form?.token,
-        rewards: form?.rewards,
+        rewards: form?.rewards || { 1: NaN },
         maxBonusSpots: form?.maxBonusSpots,
       },
     });
@@ -579,7 +579,7 @@ export const ListingPayments = ({
                         onChange(e);
                         setValue('minRewardAsk', undefined);
                         setValue('maxRewardAsk', undefined);
-                        setValue('rewards', undefined);
+                        setValue('rewards', { 1: NaN });
                         setValue('rewardAmount', undefined);
                       }}
                       value={value}
@@ -830,7 +830,10 @@ export const ListingPayments = ({
                 borderColor="brand.slate.200"
                 borderBottomWidth="1px"
               >
-                <Text>{calculateTotalPrizes()} Prizes</Text>
+                <Text>
+                  {calculateTotalPrizes()}{' '}
+                  {calculateTotalPrizes() > 1 ? 'Prizes' : 'Prize'}
+                </Text>
                 <Text>
                   {formatTotalPrice(calculateTotalReward())}{' '}
                   {selectedToken?.tokenSymbol} Total

@@ -93,12 +93,12 @@ export function YourLinks({ useFormStore }: Props) {
     posthog.capture('finish profile_talent');
     uploadProfile(
       {
-        discord: data.Discord,
-        twitter: data.Twitter,
-        github: data.GitHub,
-        linkedin: data.LinkedIn,
-        telegram: data.Telegram,
-        website: data.Website,
+        discord: data.discord,
+        twitter: data.twitter,
+        github: data.github,
+        linkedin: data.linkedin,
+        telegram: data.telegram,
+        website: data.website,
       },
       pow,
     );
