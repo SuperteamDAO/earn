@@ -3,35 +3,14 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useState } from 'react';
 
-import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { type GrantWithApplicationCount } from '@/features/grants';
+import { ReferenceCard } from '@/features/listings';
 import { GrantPageLayout } from '@/layouts/Grants';
 import { getURL } from '@/utils/validUrl';
 
 interface GrantsDetailsProps {
   grant: GrantWithApplicationCount | null;
 }
-
-const ReferenceCard = ({ link }: { link?: string }) => {
-  if (!link) return <></>;
-  return (
-    <Box
-      w="100%"
-      borderRadius={8}
-      cursor="pointer"
-      onClick={() => window.open(link, '_blank')}
-    >
-      <OgImageViewer
-        showTitle
-        externalUrl={link}
-        w={'100%'}
-        aspectRatio={1.91 / 1}
-        objectFit="cover"
-        borderRadius={6}
-      />
-    </Box>
-  );
-};
 
 function Grants({ grant: initialGrant }: GrantsDetailsProps) {
   const [grant] = useState<typeof initialGrant>(initialGrant);
