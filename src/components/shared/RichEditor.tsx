@@ -157,13 +157,23 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     const toolbarHeight = 30;
     const toolbarWidth = 200;
     const offset = 10;
+    const mobileBreakpoint = 768;
 
-    const computedTop =
-      rect.top -
-      editorRect.top +
-      editorElement.scrollTop -
-      toolbarHeight -
-      offset;
+    const isMobile = window.innerWidth <= mobileBreakpoint;
+
+    let computedTop;
+    if (isMobile) {
+      computedTop =
+        rect.bottom - editorRect.top + editorElement.scrollTop + offset;
+    } else {
+      computedTop =
+        rect.top -
+        editorRect.top +
+        editorElement.scrollTop -
+        toolbarHeight -
+        offset;
+    }
+
     let computedLeft =
       rect.left -
       editorRect.left +
