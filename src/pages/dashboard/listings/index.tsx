@@ -141,6 +141,7 @@ export default function SponsorListings() {
       'Draft',
       'In Progress',
       'In Review',
+      'Fndn to Pay',
       'Payment Pending',
       'Completed',
     ];
