@@ -175,6 +175,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'samoyedcoin',
   },
   {
+    tokenName: 'Pax Dollar (USDP)',
+    tokenSymbol: 'USDP',
+    mintAddress: 'HVbpJAQGNpkgBaYBZQBR1t7yFdvaYVp2vCQQfKKEN4tM',
+    icon: 'https://assets.coingecko.com/coins/images/6013/standard/Pax_Dollar.png?1696506427',
+    decimals: 6,
+    coingeckoSymbol: 'paxos-standard',
+  },
+  {
     tokenName: 'SynesisOne (SNS)',
     tokenSymbol: 'SNS',
     mintAddress: 'SNSNkV9zfG5ZKWQs6x4hxvBRV6s8SqMfSGCtECDvdMd',

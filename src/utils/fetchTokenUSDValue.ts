@@ -5,7 +5,7 @@ import { tokenList } from '@/constants';
 import logger from '@/lib/logger';
 
 const CG_BASE_URL = 'https://api.coingecko.com/api/v3';
-const STABLE_COINS = ['USDT', 'USDC'];
+const STABLE_COINS = ['USDT', 'USDC', 'USDP'];
 
 async function getHistoricalPrice(coingeckoSymbol: string, date: Date) {
   const formattedDate = dayjs(date).format('DD-MM-YYYY');
