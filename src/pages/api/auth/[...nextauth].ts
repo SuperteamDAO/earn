@@ -10,6 +10,7 @@ import {
   replyToEmail,
   resend,
 } from '@/features/emails';
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 export const authOptions: NextAuthOptions = {
@@ -55,7 +56,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (isBlocked) {
-          console.log('OTP Not Sent, Blocked Email');
+          logger.debug('OTP Not Sent, Blocked Email');
         }
 
         await resend.emails.send({
