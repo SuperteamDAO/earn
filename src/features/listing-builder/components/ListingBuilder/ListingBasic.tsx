@@ -580,7 +580,7 @@ export const ListingBasic = ({
               <Tooltip
                 isDisabled={!editable || !maxDeadline}
                 label={
-                  editable && maxDeadline
+                  editable && maxDeadline && session?.user.role !== 'GOD'
                     ? 'Max two weeks extension allowed from the original deadline'
                     : ''
                 }
@@ -613,7 +613,11 @@ export const ListingBasic = ({
                   }}
                   focusBorderColor="brand.purple"
                   id="deadline"
-                  max={editable ? maxDeadline : undefined}
+                  max={
+                    editable && session?.user.role !== 'GOD'
+                      ? maxDeadline
+                      : undefined
+                  }
                   min={
                     session?.user.role === 'GOD' ? undefined : `${date}T00:00`
                   }
