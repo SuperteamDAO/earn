@@ -73,6 +73,7 @@ const mergeListingWithInitialFormState = (
   references: (listing.references || []).map((e) => ({
     order: e.order,
     link: e.link,
+    title: e.title,
   })),
   publishedAt: listing.publishedAt,
   rewardAmount: listing.rewardAmount,
