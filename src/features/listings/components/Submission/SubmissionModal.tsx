@@ -444,7 +444,7 @@ export const SubmissionModal = ({
                         href={`/t/${user?.username}/edit`}
                         isExternal
                       >
-                        Click Here
+                        click here
                       </Link>
                     </Text>{' '}
                   </>

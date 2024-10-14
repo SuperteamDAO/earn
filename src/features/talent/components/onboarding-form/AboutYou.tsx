@@ -13,12 +13,13 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
-import { CountryList, type MultiSelectOptions } from '@/constants';
+import { countries, CountryList, type MultiSelectOptions } from '@/constants';
 import { SkillSelect } from '@/features/talent';
 import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { useUser } from '@/store/user';
@@ -81,6 +82,34 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
       setUsername(randomUsername?.username);
     }
   }, [randomUsername]);
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const currentLocation = watch('location');
+        if (!currentLocation) {
+          const response = await axios.get('https://ipapi.co/json/');
+          const locationData = response.data;
+
+          if (locationData && locationData.country_code) {
+            const country = countries.find(
+              (ct) =>
+                ct.code.toLowerCase() ===
+                locationData.country_code.toLowerCase(),
+            );
+
+            if (country) {
+              setValue('location', country.name);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch location:', error);
+      }
+    };
+
+    fetchLocation();
+  }, [setValue, watch]);
 
   const onSubmit = async (data: any) => {
     setPost(true);
@@ -148,42 +177,40 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
           </Box>
         </FormControl>
 
-        <FormControl>
-          <Flex justify="space-between" gap={8} w={'full'} mb={'1.25rem'}>
-            <Box w="full">
-              <FormLabel color={'brand.slate.500'}>First Name</FormLabel>
-              <Input
-                color={'gray.800'}
-                borderColor="brand.slate.300"
-                _placeholder={{
-                  color: 'brand.slate.400',
-                }}
-                focusBorderColor="brand.purple"
-                id="firstName"
-                placeholder="First Name"
-                {...register('firstName', { required: true })}
-                maxLength={100}
-              />
-            </Box>
-            <Box w="full">
-              <FormLabel color={'brand.slate.500'}>Last Name</FormLabel>
-              <Input
-                color={'gray.800'}
-                borderColor="brand.slate.300"
-                _placeholder={{
-                  color: 'brand.slate.400',
-                }}
-                focusBorderColor="brand.purple"
-                id="lastName"
-                placeholder="Last Name"
-                {...register('lastName', { required: true })}
-                maxLength={100}
-              />
-            </Box>
-          </Flex>
-        </FormControl>
+        <Flex justify="space-between" gap={8} w={'full'} mb={'1.25rem'}>
+          <FormControl w="full" isRequired>
+            <FormLabel color={'brand.slate.500'}>First Name</FormLabel>
+            <Input
+              color={'gray.800'}
+              borderColor="brand.slate.300"
+              _placeholder={{
+                color: 'brand.slate.400',
+              }}
+              focusBorderColor="brand.purple"
+              id="firstName"
+              placeholder="First Name"
+              {...register('firstName', { required: true })}
+              maxLength={100}
+            />
+          </FormControl>
+          <FormControl w="full" isRequired>
+            <FormLabel color={'brand.slate.500'}>Last Name</FormLabel>
+            <Input
+              color={'gray.800'}
+              borderColor="brand.slate.300"
+              _placeholder={{
+                color: 'brand.slate.400',
+              }}
+              focusBorderColor="brand.purple"
+              id="lastName"
+              placeholder="Last Name"
+              {...register('lastName', { required: true })}
+              maxLength={100}
+            />
+          </FormControl>
+        </Flex>
 
-        <FormControl>
+        <FormControl isRequired>
           <Box w={'full'} mb={'1.25rem'}>
             <FormLabel color={'brand.slate.500'}>Location</FormLabel>
             <Select
