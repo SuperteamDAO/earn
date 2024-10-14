@@ -14,6 +14,9 @@ const BottomBar = dynamic(() =>
 const BountySnackbar = dynamic(() =>
   import('./BountySnackbar').then((mod) => mod.BountySnackbar),
 );
+const GrantSnackbar = dynamic(() =>
+  import('./GrantSnackbar').then((mod) => mod.GrantSnackbar),
+);
 const DesktopNavbar = dynamic(() =>
   import('./DesktopNavbar').then((mod) => mod.DesktopNavbar),
 );
@@ -57,6 +60,7 @@ export const Header = () => {
     <>
       {!!isLoginOpen && <Login isOpen={isLoginOpen} onClose={onLoginClose} />}
       <BountySnackbar />
+      <GrantSnackbar />
       <Box pos="sticky" zIndex="sticky" top={0}>
         <DesktopNavbar
           onLoginOpen={onLoginOpen}
