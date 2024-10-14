@@ -1,4 +1,10 @@
-import { Box, FormLabel, Input, Text } from '@chakra-ui/react';
+import {
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Text,
+} from '@chakra-ui/react';
 
 type InputFieldProps = {
   label: string;
@@ -9,6 +15,7 @@ type InputFieldProps = {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   validationErrorMessage?: string;
   isRequired?: boolean;
+  validate?: (value: string) => boolean | string;
 };
 
 export const InputField = ({
@@ -19,10 +26,11 @@ export const InputField = ({
   isInvalid = false,
   onChange,
   validationErrorMessage,
+  validate,
   isRequired = false,
 }: InputFieldProps) => {
   return (
-    <Box w={'full'} mb={'1.25rem'}>
+    <FormControl w={'full'} mb={'1.25rem'} isInvalid={isInvalid}>
       <FormLabel color={'brand.slate.500'}>{label}</FormLabel>
       <Input
         color={'gray.800'}
@@ -33,7 +41,7 @@ export const InputField = ({
         focusBorderColor="brand.purple"
         id={name}
         placeholder={placeholder}
-        {...register(name, { required: isRequired })}
+        {...register(name, { required: isRequired, validate })}
         isInvalid={isInvalid}
         onChange={onChange}
       />
@@ -42,6 +50,9 @@ export const InputField = ({
           {validationErrorMessage}
         </Text>
       )}
-    </Box>
+      <FormErrorMessage>
+        {validationErrorMessage ? <>{validationErrorMessage}</> : <></>}
+      </FormErrorMessage>
+    </FormControl>
   );
 };

@@ -4,8 +4,10 @@ import {
   Flex,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
   Input,
+  Link,
   Select,
   Text,
   VStack,
@@ -259,21 +261,37 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
           </VStack>
         </FormControl>
 
-        <FormControl isInvalid={!!errors.publicKey}>
+        <FormControl isInvalid={!!errors.publicKey} isRequired>
           <Box w={'full'} mb={'1.25rem'}>
             <FormLabel color={'brand.slate.500'}>
-              Solana Wallet Address
+              Your Solana Wallet Address
             </FormLabel>
+            <FormHelperText mt={0} mb={4} color="brand.slate.500">
+              <>
+                This is where you will receive your rewards if you win. Download{' '}
+                <Text as="u">
+                  <Link href="https://backpack.app" isExternal>
+                    Backpack
+                  </Link>
+                </Text>{' '}
+                /{' '}
+                <Text as="u">
+                  <Link href="https://solflare.com" isExternal>
+                    Solflare
+                  </Link>
+                </Text>{' '}
+                if you don&apos;t have a Solana wallet
+              </>
+            </FormHelperText>
             <Input
               borderColor="brand.slate.300"
               _placeholder={{
                 color: 'brand.slate.400',
               }}
               focusBorderColor="brand.purple"
-              id={'bio'}
-              isReadOnly={false}
-              maxLength={180}
+              id={'publicKey'}
               placeholder="Enter your solana wallet address"
+              required
               {...register('publicKey', {
                 validate: (value) => {
                   if (!value) return true;
