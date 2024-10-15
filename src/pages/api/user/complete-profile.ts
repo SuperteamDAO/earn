@@ -42,6 +42,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     telegram,
     website,
     skills,
+    publicKey,
   } = req.body;
 
   try {
@@ -75,6 +76,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       linkedin,
       telegram,
       website,
+      publicKey,
       skills: correctedSkills,
       superteamLevel: 'Lurker',
       isTalentFilled: true,

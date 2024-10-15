@@ -6,12 +6,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { create } from 'zustand';
 
 import { Steps } from '@/components/shared/steps';
-import {
-  AboutYou,
-  type UserStoreType,
-  YourLinks,
-  YourWork,
-} from '@/features/talent';
+import { AboutYou, type UserStoreType, YourLinks } from '@/features/talent';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
@@ -19,25 +14,18 @@ import { getURL } from '@/utils/validUrl';
 
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {
-    bio: '',
     username: '',
     location: '',
     photo: '',
-    experience: '',
-    cryptoExperience: '',
-    currentEmployer: '',
-    community: '',
-    interests: '',
     skills: [],
     subSkills: '',
-    workPrefernce: '',
     discord: '',
     twitter: '',
     github: '',
     linkedin: '',
     website: '',
     telegram: '',
-    isPrivate: false,
+    publicKey: '',
   },
   emailVerified: false,
   updateState: (data) => {
@@ -56,12 +44,8 @@ const StepsCon = () => {
       number: 1,
     },
     {
-      label: 'Your Work',
-      number: 2,
-    },
-    {
       label: 'Links',
-      number: 3,
+      number: 2,
     },
   ];
 
@@ -70,10 +54,6 @@ const StepsCon = () => {
       title: 'Create Your Profile',
       subTitle:
         "If you're ready to start contributing to crypto projects, you're in the right place.",
-    },
-    {
-      title: 'Tell Us About Your Work',
-      subTitle: 'The more you tell us, the better we can match you!',
     },
     {
       title: 'Socials & Proof of Work',
@@ -115,7 +95,7 @@ const StepsCon = () => {
               {step.number !== stepList.length && (
                 <hr
                   style={{
-                    width: '50%',
+                    width: '100%',
                     outline:
                       currentStep >= step.number
                         ? '1px solid #6562FF'
@@ -132,9 +112,6 @@ const StepsCon = () => {
         <AboutYou setStep={setSteps} useFormStore={useFormStore} />
       )}
       {currentStep === 2 && (
-        <YourWork setStep={setSteps} useFormStore={useFormStore} />
-      )}
-      {currentStep === 3 && (
         <YourLinks setStep={setSteps} useFormStore={useFormStore} />
       )}
     </VStack>

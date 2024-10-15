@@ -7,6 +7,7 @@ interface SelectBoxProps {
   id: string;
   placeholder: string;
   register: any;
+  required?: boolean;
 }
 
 export const SelectBox = ({
@@ -16,6 +17,7 @@ export const SelectBox = ({
   id,
   placeholder,
   register,
+  required = false,
 }: SelectBoxProps) => {
   return (
     <Box w={'full'} mb={'1.25rem'}>
@@ -27,7 +29,7 @@ export const SelectBox = ({
         focusBorderColor="brand.purple"
         id={id}
         placeholder={placeholder}
-        {...register(id, { required: true })}
+        {...register(id, { required })}
       >
         {options.map((option) => {
           return (
