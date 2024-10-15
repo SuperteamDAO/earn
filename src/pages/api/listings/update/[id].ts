@@ -220,22 +220,26 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
         // sponsor is unverified and latest listing is in review for more than 2 weeks
         if (!isVerifying && !sponsor.isVerified) {
-          const latestBounty = await prisma.bounties.findFirst({
+          const twoWeeksAgo = dayjs().subtract(2, 'weeks');
+
+          const overdueBounty = await prisma.bounties.findFirst({
+            select: {
+              id: true,
+            },
             where: {
               sponsorId: userSponsorId,
               isArchived: false,
               isPublished: true,
               isActive: true,
               status: 'OPEN',
+              isWinnersAnnounced: false,
+              deadline: {
+                lt: twoWeeksAgo.toDate(),
+              },
             },
-            orderBy: { deadline: 'desc' },
-            select: { deadline: true, isWinnersAnnounced: true },
           });
 
-          if (latestBounty && !latestBounty.isWinnersAnnounced) {
-            const twoWeeksAgo = dayjs().subtract(2, 'weeks');
-            isVerifying = dayjs(latestBounty.deadline).isBefore(twoWeeksAgo);
-          }
+          isVerifying = !!overdueBounty;
         }
       }
     }
