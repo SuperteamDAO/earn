@@ -53,7 +53,7 @@ export const SubmissionPanel = ({
 
   return (
     <>
-      <Box w="100%">
+      <Box pos="sticky" top={'3rem'} w="100%">
         {submissions.length ? (
           <>
             <Box

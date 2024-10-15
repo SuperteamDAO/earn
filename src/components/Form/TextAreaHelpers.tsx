@@ -31,10 +31,11 @@ interface TextInputWithHelperProps {
   placeholder: string;
   register: any;
   errors: any;
-  validate: any;
+  validate?: any;
   defaultValue?: string;
   type?: string;
   isRequired?: boolean;
+  readOnly?: boolean;
 }
 
 export const TextAreaWithCounter = ({
@@ -98,6 +99,7 @@ export const TextInputWithHelper = ({
   defaultValue,
   type = 'text',
   isRequired,
+  readOnly = false,
 }: TextInputWithHelperProps) => (
   <FormControl isRequired={isRequired}>
     <FormLabel mb={0} color={'brand.slate.600'} fontWeight={600} htmlFor={id}>
@@ -111,7 +113,9 @@ export const TextInputWithHelper = ({
       _placeholder={{ color: 'brand.slate.300' }}
       focusBorderColor="brand.purple"
       id={id}
+      isDisabled={readOnly}
       placeholder={placeholder}
+      readOnly={readOnly}
       {...register(id, { validate })}
       defaultValue={defaultValue}
       type={type}

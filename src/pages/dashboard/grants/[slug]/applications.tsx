@@ -253,6 +253,114 @@ function GrantApplications({ slug }: Props) {
     }
   }, [applications, searchText]);
 
+  const [pageSelections, setPageSelections] = useState<Record<number, string>>(
+    {},
+  );
+
+  useEffect(() => {
+    if (selectedApplication) {
+      setPageSelections((prev) => ({
+        ...prev,
+        [skip]: selectedApplication.id,
+      }));
+    }
+  }, [selectedApplication, skip]);
+
+  const changePage = useCallback(
+    async (newSkip: number, selectIndex: number) => {
+      if (newSkip < 0 || newSkip >= grant?.totalApplications!) return;
+      setSkip(newSkip);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      await queryClient.prefetchQuery({
+        ...applicationsQuery(slug, { ...params, skip: newSkip }),
+        staleTime: Infinity,
+      });
+
+      const newApplications = queryClient.getQueryData<
+        GrantApplicationWithUser[]
+      >(['sponsor-applications', slug, { ...params, skip: newSkip }]);
+
+      if (newApplications && newApplications.length > 0) {
+        if (selectIndex === -1) {
+          const savedSelectionId = pageSelections[newSkip];
+          const savedApplication = savedSelectionId
+            ? newApplications.find((app) => app.id === savedSelectionId)
+            : null;
+
+          if (savedApplication) {
+            setSelectedApplication(savedApplication);
+          } else {
+            setSelectedApplication(newApplications[0]);
+          }
+        } else {
+          setSelectedApplication(
+            newApplications[Math.min(selectIndex, newApplications.length - 1)],
+          );
+        }
+      }
+    },
+    [
+      queryClient,
+      slug,
+      params,
+      grant?.totalApplications,
+      setSelectedApplication,
+      pageSelections,
+    ],
+  );
+
+  useEffect(() => {
+    const handleKeyDown = async (e: KeyboardEvent) => {
+      if (!applications?.length) return;
+
+      const currentIndex = applications.findIndex(
+        (app) => app.id === selectedApplication?.id,
+      );
+
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          if (currentIndex > 0) {
+            setSelectedApplication(applications[currentIndex - 1]);
+          } else if (skip > 0) {
+            // When going to the previous page, select the last item
+            await changePage(Math.max(skip - length, 0), length - 1);
+          }
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          if (currentIndex < applications.length - 1) {
+            setSelectedApplication(applications[currentIndex + 1]);
+          } else if (skip + length < grant?.totalApplications!) {
+            await changePage(skip + length, 0);
+          }
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          if (skip > 0) {
+            await changePage(Math.max(skip - length, 0), -1);
+          }
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          if (skip + length < grant?.totalApplications!) {
+            await changePage(skip + length, -1);
+          }
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [
+    applications,
+    selectedApplication,
+    skip,
+    length,
+    grant?.totalApplications,
+    changePage,
+  ]);
   return (
     <SponsorLayout isCollapsible>
       {isGrantLoading ? (
@@ -357,9 +465,7 @@ function GrantApplications({ slug }: Props) {
                             isDisabled={skip <= 0}
                             leftIcon={<ChevronLeftIcon w={5} h={5} />}
                             onClick={() =>
-                              skip >= length
-                                ? setSkip(skip - length)
-                                : setSkip(0)
+                              changePage(Math.max(skip - length, 0), length - 1)
                             }
                             size="sm"
                             variant="outline"
@@ -388,9 +494,7 @@ function GrantApplications({ slug }: Props) {
                               grant?.totalApplications! <= skip + length ||
                               (skip > 0 && skip % length !== 0)
                             }
-                            onClick={() =>
-                              skip % length === 0 && setSkip(skip + length)
-                            }
+                            onClick={() => changePage(skip + length, 0)}
                             rightIcon={<ChevronRightIcon w={5} h={5} />}
                             size="sm"
                             variant="outline"

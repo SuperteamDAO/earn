@@ -60,6 +60,14 @@ async function sendInvites(
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
+    const isBlocked = await prisma.blockedEmail.findUnique({
+      where: { email: email },
+    });
+
+    if (isBlocked) {
+      return res.status(400).json({ error: 'Blocked Email' });
+    }
+
     const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const token = crypto.randomBytes(32).toString('hex');
 
