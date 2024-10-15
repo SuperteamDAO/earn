@@ -95,8 +95,8 @@ export function YourLinks({ useFormStore }: Props) {
       {
         discord: data.discord,
         twitter: data.twitter,
-        github: data.gitHub,
-        linkedin: data.linkedIn,
+        github: data.github,
+        linkedin: data.linkedin,
         telegram: data.telegram,
         website: data.website,
       },

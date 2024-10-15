@@ -40,6 +40,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type GrantApplicationWithUser } from '../../types';
+import { MarkCompleted } from './MarkCompleted';
 import { ApproveModal } from './Modals/ApproveModal';
 import { RejectGrantApplicationModal } from './Modals/RejectModal';
 import { RecordPaymentButton } from './RecordPaymentButton';
@@ -90,6 +91,7 @@ export const ApplicationDetails = ({
 }: Props) => {
   const isPending = selectedApplication?.applicationStatus === 'Pending';
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
+  const isRejected = selectedApplication?.applicationStatus === 'Rejected';
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
 
@@ -131,7 +133,7 @@ export const ApplicationDetails = ({
     }
   };
 
-  const handlePaymentRecorded = (
+  const updateApplicationState = (
     updatedApplication: GrantApplicationWithUser,
   ) => {
     setSelectedApplication(updatedApplication);
@@ -338,6 +340,8 @@ export const ApplicationDetails = ({
       {applications?.length ? (
         <>
           <Box
+            pos="sticky"
+            top={'3rem'}
             py={1}
             borderBottom={'1px'}
             borderBottomColor={'brand.slate.200'}
@@ -419,18 +423,62 @@ export const ApplicationDetails = ({
                     </Button>
                   </>
                 )}
-                {isApproved &&
-                  isNativeAndNonST &&
-                  selectedApplication.totalPaid !==
-                    selectedApplication.approvedAmount && (
-                    <RecordPaymentButton
+                {isApproved && (
+                  <>
+                    <MarkCompleted
+                      isCompleted={selectedApplication.isShipped}
                       applicationId={selectedApplication.id}
-                      approvedAmount={selectedApplication.approvedAmount}
-                      totalPaid={selectedApplication.totalPaid}
-                      token={grant.token || 'USDC'}
-                      onPaymentRecorded={handlePaymentRecorded}
+                      onMarkCompleted={updateApplicationState}
                     />
-                  )}
+                    {isNativeAndNonST &&
+                      selectedApplication.totalPaid !==
+                        selectedApplication.approvedAmount && (
+                        <RecordPaymentButton
+                          applicationId={selectedApplication.id}
+                          approvedAmount={selectedApplication.approvedAmount}
+                          totalPaid={selectedApplication.totalPaid}
+                          token={grant.token || 'USDC'}
+                          onPaymentRecorded={updateApplicationState}
+                        />
+                      )}
+                    <Button
+                      color="#079669"
+                      bg="#ECFEF6"
+                      _disabled={{
+                        opacity: 1,
+                      }}
+                      pointerEvents={'none'}
+                      isDisabled={true}
+                      leftIcon={
+                        <Circle p={'5px'} bg="#079669">
+                          <CheckIcon color="white" boxSize="2.5" />
+                        </Circle>
+                      }
+                    >
+                      Approved
+                    </Button>
+                  </>
+                )}
+                {isRejected && (
+                  <>
+                    <Button
+                      color="#E11D48"
+                      bg="#FEF2F2"
+                      _disabled={{
+                        opacity: 1,
+                      }}
+                      pointerEvents={'none'}
+                      isDisabled={true}
+                      leftIcon={
+                        <Circle p={'5px'} bg="#E11D48">
+                          <CloseIcon color="white" boxSize="2" />
+                        </Circle>
+                      }
+                    >
+                      Rejected
+                    </Button>
+                  </>
+                )}
               </Flex>
             </Flex>
 

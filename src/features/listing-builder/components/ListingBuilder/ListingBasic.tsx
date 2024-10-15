@@ -139,7 +139,7 @@ export const ListingBasic = ({
       timeToComplete: z.string().nullable().optional(),
       referredBy: z.string().nullable().optional(),
       isPrivate: z.boolean(),
-      isFndnPaying: z.boolean(),
+      isFndnPaying: z.boolean()?.optional(),
     })
     .superRefine((data, ctx) => {
       if (
@@ -190,7 +190,7 @@ export const ListingBasic = ({
       timeToComplete: form?.timeToComplete,
       referredBy: form?.referredBy,
       isPrivate: form?.isPrivate,
-      isFndnPaying: fndnPayingCheck ? true : form?.isFndnPaying,
+      isFndnPaying: form?.isFndnPaying || fndnPayingCheck ? true : false,
     },
   });
 
@@ -215,7 +215,7 @@ export const ListingBasic = ({
         timeToComplete: form?.timeToComplete,
         referredBy: form?.referredBy,
         isPrivate: form?.isPrivate,
-        isFndnPaying: fndnPayingCheck ? true : form?.isFndnPaying,
+        isFndnPaying: form?.isFndnPaying,
       });
     }
   }, [form, user?.currentSponsor?.name, isProject]);
@@ -580,7 +580,7 @@ export const ListingBasic = ({
               <Tooltip
                 isDisabled={!editable || !maxDeadline}
                 label={
-                  editable && maxDeadline
+                  editable && maxDeadline && session?.user.role !== 'GOD'
                     ? 'Max two weeks extension allowed from the original deadline'
                     : ''
                 }
@@ -613,7 +613,11 @@ export const ListingBasic = ({
                   }}
                   focusBorderColor="brand.purple"
                   id="deadline"
-                  max={editable ? maxDeadline : undefined}
+                  max={
+                    editable && session?.user.role !== 'GOD'
+                      ? maxDeadline
+                      : undefined
+                  }
                   min={
                     session?.user.role === 'GOD' ? undefined : `${date}T00:00`
                   }

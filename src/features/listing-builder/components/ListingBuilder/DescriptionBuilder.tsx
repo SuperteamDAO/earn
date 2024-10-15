@@ -57,12 +57,12 @@ import ImageResize from 'tiptap-extension-resize-image';
 import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants';
-import { ReferenceCard } from '@/features/listings';
 import { uploadToCloudinary } from '@/utils/upload';
 
 import { useListingFormStore } from '../../store';
 import { type ListingFormType } from '../../types';
 import { ListingFormLabel, ListingTooltip, ToolbarButton } from './Form';
+import { ReferenceCard } from './ReferenceCard';
 
 const LinkModal = ({
   isOpen,
@@ -130,6 +130,7 @@ const schema = z.object({
             message: 'Please enter a valid URL',
           })
           .optional(),
+        title: z.string().optional(),
       }),
     )
     .optional(),
@@ -191,6 +192,7 @@ export const DescriptionBuilder = ({
         references: (form?.references || [])?.map((e) => ({
           order: e.order,
           link: e.link,
+          title: e.title,
         })),
       });
       if (editor && form?.description) {
@@ -658,6 +660,7 @@ export const DescriptionBuilder = ({
                     append({
                       order: fields.length + 1,
                       link: '',
+                      title: '',
                     })
                   }
                 >

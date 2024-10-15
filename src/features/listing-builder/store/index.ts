@@ -43,7 +43,7 @@ const initialFormState: ListingFormType = {
   minRewardAsk: undefined,
   maxRewardAsk: undefined,
   maxBonusSpots: undefined,
-  isFndnPaying: false,
+  isFndnPaying: undefined,
 };
 
 const mergeListingWithInitialFormState = (
@@ -73,6 +73,7 @@ const mergeListingWithInitialFormState = (
   references: (listing.references || []).map((e) => ({
     order: e.order,
     link: e.link,
+    title: e.title,
   })),
   publishedAt: listing.publishedAt,
   rewardAmount: listing.rewardAmount,
