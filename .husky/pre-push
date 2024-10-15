@@ -1,26 +1,16 @@
-#!/usr/bin/env node
+#!/bin/bash
 
-require('child_process').execSync('source "$(dirname -- "$0")/_/husky.sh"', { shell: '/bin/sh', stdio: 'inherit' });
+protected_branch="main"
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
 
-const { execSync } = require('child_process');
-const readline = require('readline');
-
-const protected_branch = 'husky-test';
-const current_branch = execSync('git symbolic-ref HEAD').toString().trim().split('/').pop();
-
-if (current_branch === protected_branch) {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
-
-  rl.question(`You're about to push to ${protected_branch}, is that what you intended? [y/n] `, (answer) => {
-    rl.close();
-    if (answer.toLowerCase() !== 'y') {
-      console.log('Push aborted.');
-      process.exit(1);
-    }
-  });
-} else {
-  process.exit(0);
-}
+if [ "$current_branch" = "$protected_branch" ]; then
+  read -p "You're about to push to $protected_branch, is that what you intended? [y/n] " -n 1 -r < /dev/tty
+  echo
+  if echo $REPLY | grep -E '^[Yy]$' > /dev/null
+  then
+    exit 0 # push will execute
+  fi
+  echo "Push aborted."
+  exit 1 # push will not execute
+fi
+exit 0 # push will execute
