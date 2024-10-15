@@ -543,6 +543,12 @@ model UnsubscribedEmail {
   createdAt DateTime @default(now())
 }
 
+model BlockedEmail {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
 enum TalentRankingSkills {
   DEVELOPMENT
   DESIGN
