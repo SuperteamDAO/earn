@@ -394,6 +394,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 onChange={(e) => setUsername(e.target.value)}
                 isInvalid={isInvalid}
                 validationErrorMessage={validationErrorMessage}
+                errors={errors}
               />
 
               <InputField
@@ -402,6 +403,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 name="firstName"
                 register={register}
                 isRequired
+                errors={errors}
               />
 
               <InputField
@@ -410,6 +412,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 name="lastName"
                 register={register}
                 isRequired
+                errors={errors}
               />
 
               <Box w={'full'} mb={'1.25rem'}>
@@ -450,6 +453,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   return validateSolAddress(value);
                 }}
                 validationErrorMessage={validationErrorMessage}
+                errors={errors}
               />
               <Text
                 mt={12}
@@ -582,6 +586,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 placeholder="Employer"
                 name="currentEmployer"
                 register={register}
+                errors={errors}
               />
 
               <FormLabel color={'brand.slate.500'}>Proof of Work</FormLabel>
