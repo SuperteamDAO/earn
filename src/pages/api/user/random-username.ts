@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   adjectives,
-  animals,
   colors,
   type Config,
   NumberDictionary,
+  starWars,
   uniqueNamesGenerator,
 } from 'unique-names-generator';
 
@@ -31,7 +31,7 @@ export default async function checkUsername(
   }
 
   const numberDictionary = NumberDictionary.generate({ min: 1, max: 99 });
-  const dictionaries = [adjectives, colors, animals];
+  const dictionaries = [adjectives, colors, starWars];
 
   let username: string | undefined;
   let attempt = 0;
