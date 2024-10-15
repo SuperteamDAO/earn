@@ -68,6 +68,9 @@ export function ListingPageLayout({
         rewardAmount: initialBounty.rewardAmount,
         type: initialBounty.type,
         isPublished: initialBounty.isPublished,
+        status: initialBounty.status,
+        sponsorId: initialBounty.sponsorId,
+        slug: initialBounty.slug,
       });
     }
   }, [initialBounty, submissionNumber]);

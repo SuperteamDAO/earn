@@ -89,7 +89,11 @@ export default function HomePage({
     }),
   );
 
-  const { data: grants } = useQuery(homepageGrantsQuery(userRegion));
+  const { data: grants } = useQuery(
+    homepageGrantsQuery({
+      userRegion,
+    }),
+  );
 
   useEffect(() => {
     if (reviewListings && completeListings) {
@@ -119,7 +123,7 @@ export default function HomePage({
           bounties={combinedListings}
           forYou={combinedForYouListings}
           isListingsLoading={false}
-          emoji="/assets/home/emojis/moneyman.png"
+          emoji="/assets/home/emojis/moneyman.webp"
           title="Freelance Gigs"
           viewAllLink="/all"
           take={20}
@@ -129,7 +133,7 @@ export default function HomePage({
           type="grants"
           title="Grants"
           sub="Equity-free funding opportunities for builders"
-          emoji="/assets/home/emojis/grants.png"
+          emoji="/assets/home/emojis/grants.webp"
           showViewAll
         >
           {!grants?.length && (

@@ -33,6 +33,7 @@ const allowedFields = [
   'maxRewardAsk',
   'isPublished',
   'isPrivate',
+  'isFndnPaying',
 ];
 
 async function bounty(req: NextApiRequestWithUser, res: NextApiResponse) {

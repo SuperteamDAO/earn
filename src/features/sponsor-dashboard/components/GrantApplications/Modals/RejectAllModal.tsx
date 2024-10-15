@@ -21,7 +21,7 @@ interface RejectModalProps {
   onRejectGrant: (applicationId: string[]) => void;
 }
 
-export const RejectAllModal = ({
+export const RejectAllGrantApplicationModal = ({
   rejectIsOpen,
   rejectOnClose,
   onRejectGrant,

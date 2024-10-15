@@ -2,7 +2,7 @@ import { Box, Divider, Flex, Grid, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 
 import { userCountQuery } from '@/features/home';
-import GlobalEarn from '@/public/assets/landingsponsor/displays/global-earn.png';
+import GlobalEarn from '@/public/assets/landingsponsor/displays/global-earn.webp';
 import EarnIcon from '@/public/assets/landingsponsor/icons/earn.svg';
 
 import { fontSize, maxW, padding } from '../utils';

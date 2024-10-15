@@ -36,6 +36,7 @@ export interface ListingFormType {
   minRewardAsk?: number;
   maxRewardAsk?: number;
   maxBonusSpots?: number;
+  isFndnPaying?: boolean;
 }
 
 export interface ListingStoreType {

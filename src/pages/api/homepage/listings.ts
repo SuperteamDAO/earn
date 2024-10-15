@@ -96,6 +96,7 @@ export async function getListings({
           slug: true,
           logo: true,
           isVerified: true,
+          st: true,
         },
       },
     },
@@ -124,7 +125,10 @@ export default async function handler(
   const params = req.query;
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
   const statusFilter = params.statusFilter as StatusFilter;
-  const userRegion = params.userRegion as Regions[];
+  let userRegion = params['userRegion[]'] as Regions[];
+  if (typeof userRegion === 'string') {
+    userRegion = [userRegion];
+  }
   let excludeIds = params['excludeIds[]'];
   if (typeof excludeIds === 'string') {
     excludeIds = [excludeIds];

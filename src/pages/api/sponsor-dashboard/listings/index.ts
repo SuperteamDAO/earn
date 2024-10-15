@@ -44,7 +44,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         b.status,
         b.deadline,
         b.isPublished,
-        b.isVerifying,
         b.rewards,
         b.rewardAmount,
         b.totalWinnersSelected,
@@ -55,13 +54,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         b.minRewardAsk,
         b.compensationType,
         b.createdAt,
+        b.isFndnPaying,
         NULL as airtableId,
         CAST((SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id) AS SIGNED) as submissionCount
       FROM Bounties b
       WHERE b.isActive = true
       AND b.isArchived = false
       AND b.sponsorId = ?
-      AND b.status = ?
+      AND b.status <> ?
       
       UNION ALL
       
@@ -74,7 +74,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         g.status,
         NULL as deadline,
         g.isPublished,
-        NULL as isVerifying,
         NULL as rewards,
         NULL as rewardAmount,
         NULL as totalWinnersSelected,
@@ -85,6 +84,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         g.minReward as minRewardAsk,
         NULL as compensationType,
         g.createdAt,
+        NULL as isFndnPaying,
         g.airtableId,
         CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
       FROM Grants g
@@ -97,7 +97,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ORDER BY createdAt DESC
     `,
       userSponsorId,
-      status.OPEN,
+      status.CLOSED,
       userSponsorId,
       GrantStatus.OPEN,
     );

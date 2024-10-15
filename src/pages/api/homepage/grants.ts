@@ -15,6 +15,7 @@ async function getGrants({ userRegion }: GrantProps) {
       isPublished: true,
       isActive: true,
       isArchived: false,
+      isPrivate: false,
       ...(userRegion ? { region: { in: userRegion } } : {}),
     },
     take: TAKE,
@@ -28,6 +29,7 @@ async function getGrants({ userRegion }: GrantProps) {
       maxReward: true,
       token: true,
       totalApproved: true,
+      historicalApplications: true,
       sponsor: {
         select: {
           id: true,
@@ -55,9 +57,18 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const params = req.query;
-  const userRegion = params.userRegion as Regions[];
+  let userRegion = params['userRegion[]'] as Regions[];
+  if (typeof userRegion === 'string') {
+    userRegion = [userRegion];
+  }
 
   const grants = await getGrants({ userRegion });
 
-  res.status(200).json(grants);
+  const grantsWithTotalApplications = grants.map((grant) => ({
+    ...grant,
+    totalApplications:
+      grant._count.GrantApplication + grant.historicalApplications,
+  }));
+
+  res.status(200).json(grantsWithTotalApplications);
 }

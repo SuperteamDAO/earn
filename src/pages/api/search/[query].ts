@@ -25,7 +25,10 @@ const Skills = {
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const params = req.query;
-  const query = (params.query as string).replace(/[^a-zA-Z0-9 _-]/g, '');
+  const query = (params.query as string).replace(
+    /[^a-zA-Z0-9 _\-@#$.&*():+=]/g,
+    ' ',
+  );
 
   const bountiesLimit = (req.query.bountiesLimit as string) || 5;
   const grantsLimit = (req.query.grantsLimit as string) || 2;
@@ -100,18 +103,36 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     .split(/\s+/)
     .map((c) => c.trim())
     .filter((c) => c !== '');
-  const whereClauses: string[] = [];
+  const wordClauses: string[] = [];
 
   words.forEach(() => {
     const multiWordCondition = `(
 b.title LIKE CONCAT('%', ?, '%') OR 
 s.name LIKE CONCAT('%', ?, '%')
 )`;
-    whereClauses.push(multiWordCondition);
+    wordClauses.push(multiWordCondition);
   });
 
-  const combinedWhereClause =
-    whereClauses.length > 0 ? whereClauses.join(' AND ') : '1=1';
+  const hackathonQuery = `
+  SELECT id
+  FROM Hackathon
+  WHERE name LIKE CONCAT('%', ?, '%')
+  LIMIT 1
+`;
+
+  let hackathonId: string | null = null;
+  const [hackathonResult] = await prisma.$queryRawUnsafe<
+    [{ id: string } | undefined]
+  >(hackathonQuery, query);
+
+  if (hackathonResult) {
+    hackathonId = hackathonResult.id;
+  }
+
+  const combinedWordClause =
+    wordClauses.length > 0 ? wordClauses.join(' AND ') : '1=1';
+
+  const hackathonIdQuery = 'b.hackathonId = ?';
 
   const bountiesCountQuery = `
     SELECT COUNT(*) as totalCount
@@ -122,7 +143,11 @@ s.name LIKE CONCAT('%', ?, '%')
     WHERE (1=1) AND (
     b.isPublished = 1 AND
     b.isPrivate = 0 AND
-    ${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
+    (
+      ${combinedWordClause} 
+      ${hackathonId ? `OR ${hackathonIdQuery}` : ''}
+    )
+      ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
     ) ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}
     ) as subquery;
@@ -138,7 +163,8 @@ s.name LIKE CONCAT('%', ?, '%')
     b.isPublished = 1 AND
     b.isActive = 1 AND
     b.isArchived = 0 AND
-    ${combinedWhereClause}
+    b.isPrivate = 0 AND
+    ${combinedWordClause}
     ) ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}
     ) as subquery;
@@ -180,7 +206,11 @@ s.name LIKE CONCAT('%', ?, '%')
     WHERE (1=1) AND (
     b.isPublished = 1 AND
     b.isPrivate = 0 AND
-    ${combinedWhereClause} ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
+    (
+      ${combinedWordClause}
+      ${hackathonId ? `OR ${hackathonIdQuery}` : ''}
+    )
+      ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
     ) ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}
     ORDER BY 
@@ -221,8 +251,8 @@ s.name LIKE CONCAT('%', ?, '%')
     ) as approvedApplications
     FROM Grants b
     JOIN Sponsors s ON b.sponsorId = s.id
-    WHERE b.isPublished = 1 AND b.isActive = 1 AND b.isArchived = 0
-    AND (${combinedWhereClause})
+    WHERE b.isPublished = 1 AND b.isActive = 1 AND b.isArchived = 0 AND b.isPrivate = 0
+    AND (${combinedWordClause})
     ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}
     ORDER BY b.createdAt DESC
@@ -230,6 +260,7 @@ s.name LIKE CONCAT('%', ?, '%')
   `;
 
   let bountiesValues: (string | number)[] = duplicateElements(words, 2);
+  if (hackathonId) bountiesValues.push(hackathonId);
   if (skills) bountiesValues = bountiesValues.concat(skillsFlattened);
   if (userRegion) bountiesValues.push(userRegion);
 

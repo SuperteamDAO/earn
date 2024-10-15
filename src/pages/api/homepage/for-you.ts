@@ -64,6 +64,9 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
       hackathonprize: false,
       isArchived: false,
       language: { in: ['eng', 'sco'] },
+      region: {
+        in: userRegion ? [Regions.GLOBAL, userRegion] : [Regions.GLOBAL],
+      },
       AND: [
         {
           OR: [
@@ -83,7 +86,6 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
                 array_contains: [skill],
               },
             })),
-            { region: { equals: userRegion } },
           ],
         },
       ],

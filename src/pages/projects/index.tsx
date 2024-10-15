@@ -32,7 +32,7 @@ export default function ProjectsPage() {
         <ListingTabs
           bounties={listings}
           isListingsLoading={isLoading}
-          emoji="/assets/home/emojis/moneyman.png"
+          emoji="/assets/home/emojis/moneyman.webp"
           title="Projects"
           viewAllLink="/projects/all"
           showViewAll

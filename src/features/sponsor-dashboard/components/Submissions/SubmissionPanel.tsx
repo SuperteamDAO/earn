@@ -29,6 +29,7 @@ interface Props {
   setRemainings: Dispatch<
     SetStateAction<{ podiums: number; bonus: number } | null>
   >;
+  isMultiSelectOn?: boolean;
 }
 
 export const SubmissionPanel = ({
@@ -39,17 +40,20 @@ export const SubmissionPanel = ({
   onWinnersAnnounceOpen,
   remainings,
   setRemainings,
+  isMultiSelectOn,
 }: Props) => {
   const afterAnnounceDate =
     bounty?.type === 'hackathon'
       ? dayjs().isAfter(bounty?.Hackathon?.announceDate)
       : true;
 
+  const isProject = bounty?.type === 'project';
+
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
 
   return (
     <>
-      <Box w="100%">
+      <Box pos="sticky" top={'3rem'} w="100%">
         {submissions.length ? (
           <>
             <Box
@@ -150,47 +154,51 @@ export const SubmissionPanel = ({
                       </Button>
                     )}
                   {!bounty?.isWinnersAnnounced && (
-                    <SelectWinner
-                      bounty={bounty}
-                      usedPositions={usedPositions}
-                      setRemainings={setRemainings}
-                      submissions={submissions}
-                      isHackathonPage={isHackathonPage}
-                    />
-                  )}
-                  {!bounty?.isWinnersAnnounced && (
-                    <Tooltip
-                      bg={'brand.purple'}
-                      hasArrow={true}
-                      isDisabled={!bounty?.isWinnersAnnounced}
-                      label="You cannot change the winners once the results are published!"
-                      placement="top"
-                    >
-                      <Button
-                        ml={4}
-                        _disabled={{
-                          bg: '#A1A1A1',
-                          cursor: 'not-allowed',
-                          _hover: {
-                            bg: '#A1A1A1',
-                          },
-                        }}
-                        isDisabled={
-                          !afterAnnounceDate ||
-                          isHackathonPage ||
-                          remainings?.podiums !== 0 ||
-                          remainings?.bonus !== 0
-                        }
-                        onClick={onWinnersAnnounceOpen}
-                        variant={'solid'}
-                      >
-                        Announce Winners
-                      </Button>
-                    </Tooltip>
+                    <>
+                      <SelectWinner
+                        onWinnersAnnounceOpen={onWinnersAnnounceOpen}
+                        isMultiSelectOn={!!isMultiSelectOn}
+                        bounty={bounty}
+                        usedPositions={usedPositions}
+                        setRemainings={setRemainings}
+                        submissions={submissions}
+                        isHackathonPage={isHackathonPage}
+                      />
+                      {!isProject && (
+                        <Tooltip
+                          bg={'brand.purple'}
+                          hasArrow={true}
+                          isDisabled={!bounty?.isWinnersAnnounced}
+                          label="You cannot change the winners once the results are published!"
+                          placement="top"
+                        >
+                          <Button
+                            ml={4}
+                            _disabled={{
+                              bg: '#A1A1A1',
+                              cursor: 'not-allowed',
+                              _hover: {
+                                bg: '#A1A1A1',
+                              },
+                            }}
+                            isDisabled={
+                              !afterAnnounceDate ||
+                              isHackathonPage ||
+                              remainings?.podiums !== 0 ||
+                              remainings?.bonus !== 0
+                            }
+                            onClick={onWinnersAnnounceOpen}
+                            variant={'solid'}
+                          >
+                            Announce Winners
+                          </Button>
+                        </Tooltip>
+                      )}
+                    </>
                   )}
                 </Flex>
               </Flex>
-              {!!remainings && (
+              {!!remainings && !isProject && (
                 <Flex
                   w="fit-content"
                   ml="auto"

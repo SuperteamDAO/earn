@@ -24,9 +24,9 @@ import { userCountQuery } from '@/features/home';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import Tensor from '@/public/assets/company-logos/tensor.svg';
-import Jupiter from '@/public/assets/landingsponsor/sponsors/jupiter.png';
-import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.png';
-import Squads from '@/public/assets/landingsponsor/sponsors/squads.png';
+import Jupiter from '@/public/assets/landingsponsor/sponsors/jupiter.webp';
+import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.webp';
+import Squads from '@/public/assets/landingsponsor/sponsors/squads.webp';
 import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 

@@ -1,4 +1,4 @@
-import { type SubmissionLabels } from '@prisma/client';
+import { type SubmissionLabels, type SubmissionStatus } from '@prisma/client';
 
 import type { Listing, Rewards } from '@/features/listings';
 
@@ -6,6 +6,7 @@ import { type User } from './user';
 
 interface SubmissionWithUser {
   id: string;
+  status: SubmissionStatus;
   link?: string;
   tweet?: string;
   otherInfo?: string;

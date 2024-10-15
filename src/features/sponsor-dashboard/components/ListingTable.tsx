@@ -10,6 +10,7 @@ import {
   MenuItem,
   MenuList,
   Table,
+  type TableColumnHeaderProps,
   TableContainer,
   Tag,
   Tbody,
@@ -103,7 +104,13 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
     verifyPaymentOnOpen();
   };
 
-  const ListingTh = ({ children }: { children: string }) => {
+  const ListingTh = ({
+    children,
+    style,
+  }: {
+    children: string;
+    style?: TableColumnHeaderProps;
+  }) => {
     return (
       <Th
         color="brand.slate.400"
@@ -111,6 +118,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
         fontWeight={500}
         letterSpacing={'-2%'}
         textTransform={'capitalize'}
+        {...style}
       >
         {children}
       </Th>
@@ -162,7 +170,13 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
           <Thead>
             <Tr bg="brand.slate.100">
               <ListingTh>Listing Name</ListingTh>
-              <ListingTh>Submissions</ListingTh>
+              <ListingTh
+                style={{
+                  textAlign: 'center',
+                }}
+              >
+                Submissions
+              </ListingTh>
               <ListingTh>Deadline</ListingTh>
               <ListingTh>Prize</ListingTh>
               <ListingTh>Status</ListingTh>
@@ -185,7 +199,10 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
               const pastDeadline = isDeadlineOver(listing?.deadline);
 
               const listingStatus = getListingStatus(listing);
-              const listingLabel = getListingTypeLabel(listing?.type!);
+              const listingLabel =
+                listingStatus === 'Draft'
+                  ? 'Draft'
+                  : getListingTypeLabel(listing?.type!);
 
               const listingLink =
                 listing?.type === 'grant'
@@ -235,6 +252,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           _hover={{ textDecoration: 'underline' }}
                           whiteSpace="nowrap"
                           textOverflow="ellipsis"
+                          title={listing.title}
                         >
                           {listing.title}
                         </Text>
@@ -319,7 +337,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                     </Tag>
                   </Td>
                   <Td px={3} py={2}>
-                    {listing.status === 'OPEN' && !!listing.isPublished && (
+                    {listing.status === 'OPEN' && !!listing.isPublished ? (
                       <Button
                         className="ph-no-capture"
                         color="#6366F1"
@@ -338,28 +356,34 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           ? 'Applications'
                           : 'Submissions'}
                       </Button>
-                    )}
-                    {!listing.isPublished &&
-                      !pastDeadline &&
-                      listing.type !== 'grant' && (
-                        <Link
-                          as={NextLink}
-                          href={`/dashboard/listings/${listing.slug}/edit/`}
+                    ) : (session?.user?.role === 'GOD' &&
+                        listing.type !== 'grant' &&
+                        !listing.isPublished) ||
+                      (!pastDeadline &&
+                        listing.type !== 'grant' &&
+                        (listing.status === 'OPEN' ||
+                          listing.status === 'PREVIEW')) ? (
+                      <Link
+                        as={NextLink}
+                        href={`/dashboard/listings/${listing.slug}/edit/`}
+                      >
+                        <Button
+                          color={'brand.slate.500'}
+                          fontSize={'13px'}
+                          fontWeight={500}
+                          _hover={{ bg: 'brand.slate.200' }}
+                          leftIcon={<Icon as={RiEditFill} />}
+                          size="sm"
+                          variant="ghost"
                         >
-                          <Button
-                            color={'brand.slate.500'}
-                            fontSize={'13px'}
-                            fontWeight={500}
-                            _hover={{ bg: 'brand.slate.200' }}
-                            isDisabled={listing.isVerifying}
-                            leftIcon={<Icon as={RiEditFill} />}
-                            size="sm"
-                            variant="ghost"
-                          >
-                            Edit
-                          </Button>
-                        </Link>
-                      )}
+                          Edit
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Text px={3} color="brand.slate.400">
+                        —
+                      </Text>
+                    )}
                   </Td>
                   <Td px={0} py={2}>
                     <Menu>
@@ -398,9 +422,10 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         {!!(
                           (session?.user?.role === 'GOD' &&
                             listing.type !== 'grant') ||
-                          (listing.isPublished &&
-                            !pastDeadline &&
-                            listing.type !== 'grant')
+                          (!pastDeadline &&
+                            listing.type !== 'grant' &&
+                            (listing.status === 'OPEN' ||
+                              listing.status === 'PREVIEW'))
                         ) && (
                           <Link
                             as={NextLink}
@@ -413,7 +438,6 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                               fontSize={'sm'}
                               fontWeight={500}
                               icon={<Icon as={PiNotePencil} w={4} h={4} />}
-                              isDisabled={listing.isVerifying}
                             >
                               Edit {listingLabel}
                             </MenuItem>

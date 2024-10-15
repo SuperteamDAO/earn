@@ -38,6 +38,7 @@ export const userSelectOptions = {
       isVerified: true,
       entityName: true,
       slug: true,
+      st: true,
     },
   },
   UserSponsors: {

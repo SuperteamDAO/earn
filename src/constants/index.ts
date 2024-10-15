@@ -175,6 +175,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'samoyedcoin',
   },
   {
+    tokenName: 'Pax Dollar (USDP)',
+    tokenSymbol: 'USDP',
+    mintAddress: 'HVbpJAQGNpkgBaYBZQBR1t7yFdvaYVp2vCQQfKKEN4tM',
+    icon: 'https://assets.coingecko.com/coins/images/6013/standard/Pax_Dollar.png?1696506427',
+    decimals: 6,
+    coingeckoSymbol: 'paxos-standard',
+  },
+  {
     tokenName: 'SynesisOne (SNS)',
     tokenSymbol: 'SNS',
     mintAddress: 'SNSNkV9zfG5ZKWQs6x4hxvBRV6s8SqMfSGCtECDvdMd',
@@ -389,6 +397,14 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32002.png',
     decimals: 6,
     coingeckoSymbol: 'zeta',
+  },
+  {
+    tokenName: 'Degod (DEGOD)',
+    tokenSymbol: 'DEGOD',
+    mintAddress: 'degod39zqQWzpG6h4b7SJLLTCFE6FeZnZD8BwHBFxaN',
+    icon: '/assets/coins/degods.png',
+    decimals: 6,
+    coingeckoSymbol: 'degod',
   },
 ];
 

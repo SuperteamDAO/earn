@@ -91,7 +91,12 @@ const generateTabContent = ({
   return (
     <Box>
       {!!forYou?.filter(filterFunction).length && (
-        <Box>
+        <Box
+          mb={4}
+          pb={4}
+          borderColor="brand.slate.200"
+          borderBottomWidth={'1px'}
+        >
           <Flex
             align="center"
             gap={3}
@@ -124,7 +129,7 @@ const generateTabContent = ({
           </Flex>
         </Box>
       )}
-      <Box mt={3} pt={4} borderColor="brand.slate.200" borderTopWidth={'1px'}>
+      <Box>
         <Text mb={2} color="gray.900" fontWeight={600}>
           All {title}
         </Text>

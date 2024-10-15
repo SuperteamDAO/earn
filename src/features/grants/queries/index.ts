@@ -1,2 +1,2 @@
 export * from './grants';
-export * from './user-application-status';
+export * from './user-application';

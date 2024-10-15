@@ -29,9 +29,7 @@ import {
   TextInputWithHelper,
 } from '@/components/Form/TextAreaHelpers';
 import { tokenList } from '@/constants';
-import { randomSubmissionCommentGenerator } from '@/features/comments';
-import { useUpdateUser, useUser } from '@/store/user';
-import { validateSolAddress } from '@/utils/validateSolAddress';
+import { useUser } from '@/store/user';
 
 import { submissionCountQuery } from '../../queries';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -90,7 +88,6 @@ export const SubmissionModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [error, setError] = useState<any>('');
-  const [publicKeyError, setPublicKeyError] = useState('');
   const [askError, setAskError] = useState('');
   const {
     register,
@@ -98,10 +95,10 @@ export const SubmissionModal = ({
     formState: { errors },
     reset,
     watch,
+    setValue,
   } = useForm();
 
   const { user, refetchUser } = useUser();
-  const updateUser = useUpdateUser();
   const posthog = usePostHog();
 
   useEffect(() => {
@@ -155,32 +152,26 @@ export const SubmissionModal = ({
     fetchData();
   }, [id, editMode, reset]);
 
+  useEffect(() => {
+    if (user?.publicKey) setValue('publicKey', user?.publicKey);
+  }, [user]);
+
   const submitSubmissions = async (data: any) => {
     posthog.capture('confirmed_submission');
     setIsLoading(true);
     try {
-      const {
-        applicationLink,
-        tweetLink,
-        otherInfo,
-        ask,
-        publicKey,
-        ...answers
-      } = data;
+      const { applicationLink, tweetLink, otherInfo, ask, ...answers } = data;
       const eligibilityAnswers =
         eligibility?.map((q) => ({
           question: q.question,
           answer: answers[`eligibility-${q.order}`],
         })) ?? [];
-      if (user?.publicKey !== publicKey) {
-        await updateUser.mutateAsync({ publicKey });
-      }
 
       const submissionEndpoint = editMode
         ? '/api/submission/update/'
         : '/api/submission/create/';
 
-      const response = await axios.post(submissionEndpoint, {
+      await axios.post(submissionEndpoint, {
         listingId: id,
         link: applicationLink || '',
         tweet: tweetLink || '',
@@ -190,20 +181,6 @@ export const SubmissionModal = ({
           ? eligibilityAnswers
           : null,
       });
-
-      if (!editMode) {
-        try {
-          await axios.post(`/api/comment/create`, {
-            message: randomSubmissionCommentGenerator(type),
-            listingId: id,
-            submissionId: response?.data?.id,
-            type: 'SUBMISSION',
-          });
-          window.dispatchEvent(new Event('update-comments'));
-        } catch (err) {
-          console.log(err);
-        }
-      }
 
       const hideEasterEggFromSponsorIds = [
         '53cbd2eb-14e5-4b8a-b6fe-e18e0c885145', // network schoool
@@ -459,33 +436,25 @@ export const SubmissionModal = ({
                 label="Your Solana Wallet Address"
                 helperText={
                   <>
-                    Add your Solana wallet address here. This is where you will
-                    receive your rewards if you win. Download{' '}
+                    This is where you will receive your rewards if you win. If
+                    you want to edit it,{' '}
                     <Text as="u">
-                      <Link href="https://backpack.app" isExternal>
-                        Backpack
+                      <Link
+                        color="blue.600"
+                        href={`/t/${user?.username}/edit`}
+                        isExternal
+                      >
+                        click here
                       </Link>
                     </Text>{' '}
-                    /{' '}
-                    <Text as="u">
-                      <Link href="https://solflare.com" isExternal>
-                        Solflare
-                      </Link>
-                    </Text>{' '}
-                    if you don&apos;t have a Solana wallet
                   </>
                 }
                 placeholder="Add your Solana wallet address"
                 register={register}
                 errors={errors}
-                validate={(address: string) =>
-                  validateSolAddress(address, setPublicKeyError)
-                }
                 defaultValue={user?.publicKey}
+                readOnly
               />
-              <Text mt={1} ml={1} color="red" fontSize="14px">
-                {publicKeyError}
-              </Text>
               {isHackathon && !editMode && (
                 <FormControl isRequired>
                   <Flex align="flex-start">
@@ -523,7 +492,7 @@ export const SubmissionModal = ({
             <Button
               className="ph-no-capture"
               w={'full'}
-              isDisabled={isTemplate}
+              isDisabled={isTemplate || listing.status === 'PREVIEW'}
               isLoading={!!isLoading}
               loadingText="Submitting..."
               type="submit"

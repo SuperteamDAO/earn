@@ -31,12 +31,15 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
             title: true,
             rewards: true,
             token: true,
+            winnersAnnouncedAt: true,
           },
         },
       },
       take: 15,
       orderBy: {
-        updatedAt: 'desc',
+        listing: {
+          winnersAnnouncedAt: 'desc',
+        },
       },
     });
 
@@ -55,7 +58,7 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
       };
     });
 
-    logger.info('Successfully fetched winning submissions', { earners });
+    logger.info('Successfully fetched winning submissions');
     res.status(200).json(earners);
   } catch (error: any) {
     logger.error('Error occurred while fetching winning submissions', {

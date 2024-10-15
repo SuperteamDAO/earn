@@ -21,8 +21,8 @@ export default function Radar() {
   const router = useRouter();
   const slug = 'radar';
 
-  const startDate = '2024-10-02 00:00:00.000';
-  const deadline = '2024-10-09 07:00:00.000';
+  const startDate = '2024-10-02T00:00:00.000Z';
+  const deadline = '2024-10-10T00:00:00.000Z';
 
   const now = new Date();
   const startTime = new Date(startDate);
@@ -68,12 +68,8 @@ export default function Radar() {
   const sortedTrackData = useMemo(() => {
     if (!trackData) return [];
 
-    const superteamTracks = trackData.filter((track) =>
-      track.sponsor.name.includes('Superteam'),
-    );
-    const otherTracks = trackData.filter(
-      (track) => !track.sponsor.name.includes('Superteam'),
-    );
+    const superteamTracks = trackData.filter((track) => track.sponsor.st);
+    const otherTracks = trackData.filter((track) => !track.sponsor.st);
 
     return [...otherTracks, ...superteamTracks];
   }, [trackData]);

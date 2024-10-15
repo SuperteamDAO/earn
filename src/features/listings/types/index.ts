@@ -1,4 +1,4 @@
-import type { BountyType, Regions } from '@prisma/client';
+import type { BountyType, Regions, status } from '@prisma/client';
 import type { User } from 'next-auth';
 
 import type { SuperteamName } from '@/features/listing-builder';
@@ -16,12 +16,11 @@ export interface Listing {
   deadline?: string;
   eligibility?: Eligibility[];
   references?: References[];
-  status?: 'OPEN' | 'REVIEW' | 'CLOSED';
+  status?: status;
   isActive?: boolean;
   isArchived?: boolean;
   isPublished?: boolean;
   isFeatured?: boolean;
-  isVerifying?: boolean;
   token?: string;
   rewardAmount?: number;
   rewards?: Rewards;
@@ -53,6 +52,7 @@ export interface Listing {
   _count?: {
     Comments?: number;
   };
+  isFndnPaying?: boolean;
 }
 
 export interface ListingHackathon {
@@ -85,6 +85,7 @@ interface Eligibility {
 export interface References {
   order: number;
   link?: string;
+  title?: string;
 }
 
 export interface Rewards {

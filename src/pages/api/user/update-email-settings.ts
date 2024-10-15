@@ -33,6 +33,25 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       ),
     );
 
+    console.log(categories);
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+
+    console.log(user);
+
+    if (user && user.email && categories.length > 0) {
+      console.log('yo');
+      logger.debug(`Removing unsubscribe entry for email: ${user.email}`);
+      await prisma.unsubscribedEmail.delete({
+        where: {
+          email: user.email,
+        },
+      });
+    }
+
     logger.info(
       `Email preferences updated successfully for user ID: ${userId}`,
     );
@@ -41,7 +60,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       .json({ message: 'Email preferences updated successfully!' });
   } catch (error: any) {
     logger.error(
-      `Failed to update email preferences for user ID: ${userId} - ${safeStringify(error)}`,
+      `Failed to update email preferences for user ID: ${userId} - ${safeStringify(
+        error,
+      )}`,
     );
     res.status(500).json({ message: 'Internal server error' });
   }

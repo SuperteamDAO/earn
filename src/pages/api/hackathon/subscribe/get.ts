@@ -26,7 +26,6 @@ export default async function handler(
 
     const result = await prisma.subscribeHackathon.findMany({
       where: { hackathonId: hackathon.id, isArchived: false },
-      include: { User: true },
     });
 
     logger.info(`Fetched subscription status for hackathon slug: ${slug}`);

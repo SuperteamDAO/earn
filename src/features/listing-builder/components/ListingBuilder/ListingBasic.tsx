@@ -6,6 +6,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormHelperText,
+  HStack,
   Input,
   InputGroup,
   InputRightElement,
@@ -22,6 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
+import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import {
   type Dispatch,
@@ -38,6 +40,7 @@ import { SkillSelect } from '@/components/shared/SkillSelect';
 import { type MultiSelectOptions } from '@/constants';
 import { CombinedRegions, Superteams } from '@/constants/Superteam';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
+import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 import { useListingFormStore } from '../../store';
@@ -53,7 +56,7 @@ interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   isNewOrDraft?: boolean;
   isDraftLoading: boolean;
-  createDraft: (data: ListingFormType) => Promise<void>;
+  createDraft: (data: ListingFormType, isPreview?: boolean) => Promise<void>;
   setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   subSkills: MultiSelectOptions[];
@@ -74,7 +77,14 @@ export const ListingBasic = ({
   subSkills,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
+  const { user } = useUser();
+  const { data: session } = useSession();
+
+  const isProject = type === 'project';
   const isDraft = isNewOrDraft || isDuplicating;
+
+  const fndnPayingCheck = user?.currentSponsor?.st && !isProject;
+
   const slugUniqueCheck = async (slug: string) => {
     try {
       const listingId = editable && !isDuplicating ? form?.id : null;
@@ -129,6 +139,7 @@ export const ListingBasic = ({
       timeToComplete: z.string().nullable().optional(),
       referredBy: z.string().nullable().optional(),
       isPrivate: z.boolean(),
+      isFndnPaying: z.boolean()?.optional(),
     })
     .superRefine((data, ctx) => {
       if (
@@ -179,6 +190,7 @@ export const ListingBasic = ({
       timeToComplete: form?.timeToComplete,
       referredBy: form?.referredBy,
       isPrivate: form?.isPrivate,
+      isFndnPaying: form?.isFndnPaying || fndnPayingCheck ? true : false,
     },
   });
 
@@ -203,14 +215,16 @@ export const ListingBasic = ({
         timeToComplete: form?.timeToComplete,
         referredBy: form?.referredBy,
         isPrivate: form?.isPrivate,
+        isFndnPaying: form?.isFndnPaying,
       });
     }
-  }, [form]);
+  }, [form, user?.currentSponsor?.name, isProject]);
 
   const title = watch('title');
   const slug = watch('slug');
   const applicationType = watch('applicationType');
   const isPrivate = watch('isPrivate');
+  const isFndnPaying = watch('isFndnPaying');
 
   const handleDeadlineSelection = (days: number) => {
     const deadlineDate = dayjs().add(days, 'day').format('YYYY-MM-DDTHH:mm');
@@ -289,8 +303,6 @@ export const ListingBasic = ({
     }
   }, [editable, form?.deadline]);
 
-  const isProject = type === 'project';
-
   const posthog = usePostHog();
 
   const onSubmit = (data: any) => {
@@ -308,7 +320,7 @@ export const ListingBasic = ({
     }
   };
 
-  const onDraftClick = async () => {
+  const onDraftClick = async (isPreview: boolean = false) => {
     const data = getValues();
     const mergedSkills = mergeSkills({
       skills: skills,
@@ -320,7 +332,7 @@ export const ListingBasic = ({
     } else {
       posthog.capture('edit listing_sponsor');
     }
-    createDraft(formData);
+    createDraft(formData, isPreview);
   };
 
   return (
@@ -568,7 +580,7 @@ export const ListingBasic = ({
               <Tooltip
                 isDisabled={!editable || !maxDeadline}
                 label={
-                  editable && maxDeadline
+                  editable && maxDeadline && session?.user.role !== 'GOD'
                     ? 'Max two weeks extension allowed from the original deadline'
                     : ''
                 }
@@ -601,8 +613,14 @@ export const ListingBasic = ({
                   }}
                   focusBorderColor="brand.purple"
                   id="deadline"
-                  max={editable ? maxDeadline : undefined}
-                  min={`${date}T00:00`}
+                  max={
+                    editable && session?.user.role !== 'GOD'
+                      ? maxDeadline
+                      : undefined
+                  }
+                  min={
+                    session?.user.role === 'GOD' ? undefined : `${date}T00:00`
+                  }
                   placeholder="deadline"
                   type={'datetime-local'}
                   {...register('deadline', { required: true })}
@@ -686,6 +704,29 @@ export const ListingBasic = ({
               {errors.referredBy ? <>{errors.referredBy.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
+          {fndnPayingCheck && (
+            <FormControl alignItems="center" gap={3} display="flex">
+              <Flex>
+                <ListingFormLabel htmlFor="isFndnPaying">
+                  Will the Solana Foundation pay for this listing?
+                </ListingFormLabel>
+                <ListingTooltip label='If this toggle is set to "True", Earn will automatically send the Foundation-KYC form to the winners of this listing. The Foundation will directly pay the winners.' />
+              </Flex>
+              <Switch
+                mb={2}
+                id="email-alerts"
+                {...register('isFndnPaying')}
+                isChecked={isFndnPaying}
+              />
+              <FormErrorMessage>
+                {errors.isFndnPaying ? (
+                  <>{errors.isFndnPaying.message}</>
+                ) : (
+                  <></>
+                )}
+              </FormErrorMessage>
+            </FormControl>
+          )}
           <FormControl alignItems="center" gap={3} display="flex">
             <Flex>
               <ListingFormLabel htmlFor="isPrivate">
@@ -716,20 +757,22 @@ export const ListingBasic = ({
               Continue
             </Button>
             {isDraft && (
-              <Button
-                className="ph-no-capture"
-                w="100%"
-                py={6}
-                color="brand.purple"
-                fontWeight={500}
-                bg="#EEF2FF"
-                borderRadius="sm"
-                isLoading={isDraftLoading}
-                onClick={onDraftClick}
-                variant={'ghost'}
-              >
-                Save Draft
-              </Button>
+              <HStack w="full">
+                <Button
+                  className="ph-no-capture"
+                  w="100%"
+                  py={6}
+                  color="brand.purple"
+                  fontWeight={500}
+                  bg="#EEF2FF"
+                  borderRadius="sm"
+                  isLoading={isDraftLoading}
+                  onClick={() => onDraftClick()}
+                  variant={'ghost'}
+                >
+                  Save Draft
+                </Button>
+              </HStack>
             )}
             {!isDraft && (
               <Button
@@ -739,7 +782,7 @@ export const ListingBasic = ({
                 fontWeight={500}
                 borderRadius="sm"
                 isLoading={isDraftLoading}
-                onClick={onDraftClick}
+                onClick={() => onDraftClick()}
                 variant={'solid'}
               >
                 Update Listing

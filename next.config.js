@@ -24,11 +24,26 @@ const nextConfig = {
         hostname: 'res.cloudinary.com',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: '*.googleusercontent.com',
+        pathname: '**',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },
   async headers() {
     const headers = [];
+
+    headers.push({
+      source: '/(.*)',
+      headers: [
+        {
+          key: 'X-Frame-Options',
+          value: 'SAMEORIGIN',
+        },
+      ],
+    });
 
     if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') {
       headers.push({

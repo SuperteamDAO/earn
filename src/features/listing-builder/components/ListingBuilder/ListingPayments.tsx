@@ -37,10 +37,12 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { produce } from 'immer';
 import debounce from 'lodash.debounce';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { LuEye } from 'react-icons/lu';
 
 import {
   BONUS_REWARD_POSITION,
@@ -82,7 +84,7 @@ interface PrizeListInterface {
 }
 interface Props {
   isDraftLoading: boolean;
-  createDraft: (data: ListingFormType) => Promise<void>;
+  createDraft: (data: ListingFormType, isPreview?: boolean) => Promise<void>;
   createAndPublishListing: (closeConfirm: () => void) => void;
   isListingPublishing: boolean;
   editable: boolean;
@@ -127,7 +129,7 @@ export const ListingPayments = ({
         minRewardAsk: form?.minRewardAsk,
         maxRewardAsk: form?.maxRewardAsk,
         token: form?.token,
-        rewards: form?.rewards,
+        rewards: form?.rewards || { 1: NaN },
         maxBonusSpots: form?.maxBonusSpots,
       },
     });
@@ -218,6 +220,33 @@ export const ListingPayments = ({
     });
   };
 
+  function deleteKeyRewards(rewards: Rewards, indexToDelete: string): Rewards {
+    return produce(rewards, (draft) => {
+      const entries = Object.entries(draft)
+        .filter(([key]) => key !== BONUS_REWARD_POSITION + '')
+        .sort(([a], [b]) => Number(a) - Number(b));
+      const deleteIndex = entries.findIndex(([key]) => key === indexToDelete);
+
+      if (deleteIndex !== -1) {
+        entries.splice(deleteIndex, 1);
+      }
+
+      Object.keys(draft).forEach((key) => {
+        if (key !== BONUS_REWARD_POSITION + '') {
+          delete draft[Number(key)];
+        }
+      });
+
+      entries.forEach(([, value], index) => {
+        draft[`${index + 1}`] = value;
+      });
+
+      if (BONUS_REWARD_POSITION in rewards) {
+        draft[BONUS_REWARD_POSITION] = rewards[BONUS_REWARD_POSITION];
+      }
+    });
+  }
+
   const [prizes, setPrizes] = useState<PrizeListInterface[]>(() =>
     generatePrizeList(form?.rewards),
   );
@@ -264,35 +293,18 @@ export const ListingPayments = ({
       value === undefined &&
       prizes.find((p) => p.value === BONUS_REWARD_POSITION)
     ) {
-      const filteredPrize = prizes.filter(
-        (p) => p.value !== BONUS_REWARD_POSITION,
-      );
-      setPrizes(filteredPrize);
       const updatedRewards = { ...rewards };
       delete updatedRewards[BONUS_REWARD_POSITION];
       setValue('rewards', updatedRewards, { shouldValidate: true });
     }
   };
 
-  function getPrizeLabels(pri: PrizeListInterface[]): PrizeListInterface[] {
-    return pri.map((prize, index) => ({
-      ...prize,
-      label:
-        prize.value === BONUS_REWARD_POSITION
-          ? prize.label
-          : `${getRankLabels(index + 1)} prize`,
-    }));
-  }
-
   const handlePrizeDelete = (prizeToDelete: keyof Rewards) => {
     if (prizeToDelete === BONUS_REWARD_POSITION) return;
-    const updatedPrizes = prizes.filter(
-      (prize) => prize.value !== prizeToDelete,
-    );
-    setPrizes(getPrizeLabels(updatedPrizes));
-    const updatedRewards = { ...rewards };
-    delete updatedRewards[prizeToDelete];
-    setValue('rewards', updatedRewards, { shouldValidate: true });
+    if (rewards) {
+      const updatedRewards = deleteKeyRewards(rewards, prizeToDelete + '');
+      setValue('rewards', updatedRewards, { shouldValidate: true });
+    }
   };
 
   const isProject = type === 'project';
@@ -347,10 +359,17 @@ export const ListingPayments = ({
     return errorMessage;
   };
 
-  const handleSaveDraft = async () => {
+  const onDraftClick = async (isPreview: boolean = false) => {
     const data = getValues();
     const formData = { ...form, ...data };
-    createDraft(formData);
+    if (isPreview) {
+      posthog.capture('preview listing_sponsor');
+    } else if (isNewOrDraft || isDuplicating) {
+      posthog.capture('save draft_sponsor');
+    } else {
+      posthog.capture('edit listing_sponsor');
+    }
+    createDraft(formData, isPreview);
   };
 
   const handleUpdateListing = async () => {
@@ -560,7 +579,7 @@ export const ListingPayments = ({
                         onChange(e);
                         setValue('minRewardAsk', undefined);
                         setValue('maxRewardAsk', undefined);
-                        setValue('rewards', undefined);
+                        setValue('rewards', { 1: NaN });
                         setValue('rewardAmount', undefined);
                       }}
                       value={value}
@@ -760,7 +779,9 @@ export const ListingPayments = ({
                 </Flex>
               </FormControl>
               <FormControl w="full" mt={5} isRequired>
-                <ListingFormLabel htmlFor="minRewardAsk">Upto</ListingFormLabel>
+                <ListingFormLabel htmlFor="minRewardAsk">
+                  Up to
+                </ListingFormLabel>
                 <Flex
                   pos="relative"
                   pr={5}
@@ -809,7 +830,10 @@ export const ListingPayments = ({
                 borderColor="brand.slate.200"
                 borderBottomWidth="1px"
               >
-                <Text>{calculateTotalPrizes()} Prizes</Text>
+                <Text>
+                  {calculateTotalPrizes()}{' '}
+                  {calculateTotalPrizes() > 1 ? 'Prizes' : 'Prize'}
+                </Text>
                 <Text>
                   {formatTotalPrice(calculateTotalReward())}{' '}
                   {selectedToken?.tokenSymbol} Total
@@ -1015,20 +1039,7 @@ export const ListingPayments = ({
                     const filteredPrize = prizes.filter(
                       (p) => p.value !== BONUS_REWARD_POSITION,
                     );
-                    const newPrize = [
-                      ...filteredPrize,
-                      {
-                        value: filteredPrize.length + 1 || 1,
-                        label: `${getRankLabels(filteredPrize.length + 1)} prize`,
-                        placeHolder: (MAX_PODIUMS - filteredPrize.length) * 500,
-                        defaultValue: NaN,
-                      },
-                      ...prizes.filter(
-                        (p) => p.value === BONUS_REWARD_POSITION,
-                      ),
-                    ];
                     handlePrizeValueChange(filteredPrize.length + 1 || 1, NaN);
-                    setPrizes(newPrize);
                   }}
                   variant="outline"
                 >
@@ -1048,16 +1059,8 @@ export const ListingPayments = ({
                     }
                     leftIcon={<AddIcon />}
                     onClick={() => {
-                      const newPrize = [
-                        ...prizes,
-                        {
-                          value: BONUS_REWARD_POSITION,
-                          label: BONUS_REWARD_LABEL,
-                          placeHolder: 10,
-                        },
-                      ];
-                      setPrizes(newPrize);
                       handleBonusChange(1);
+                      handlePrizeValueChange(BONUS_REWARD_POSITION, NaN);
                     }}
                   >
                     Add Bonus Prize
@@ -1081,23 +1084,36 @@ export const ListingPayments = ({
               </Button>
             )}
             {isDraft && (
-              <Button
-                className="ph-no-capture"
-                w="100%"
-                py={6}
-                color="brand.purple"
-                fontWeight={500}
-                bg="#EEF2FF"
-                borderRadius="sm"
-                isLoading={isDraftLoading}
-                onClick={() => {
-                  posthog.capture('save draft_sponsor');
-                  handleSaveDraft();
-                }}
-                variant={'ghost'}
-              >
-                Save Draft
-              </Button>
+              <HStack w="full">
+                <Button
+                  className="ph-no-capture"
+                  w="100%"
+                  py={6}
+                  color="brand.purple"
+                  fontWeight={500}
+                  bg="#EEF2FF"
+                  borderRadius="sm"
+                  isLoading={isDraftLoading}
+                  onClick={() => onDraftClick()}
+                  variant={'ghost'}
+                >
+                  Save Draft
+                </Button>
+                <Button
+                  className="ph-no-capture"
+                  w="100%"
+                  py={6}
+                  color="brand.slate.500"
+                  fontWeight={500}
+                  borderRadius="sm"
+                  isLoading={isDraftLoading}
+                  leftIcon={<LuEye />}
+                  onClick={() => onDraftClick(true)}
+                  variant={'outline'}
+                >
+                  Preview
+                </Button>
+              </HStack>
             )}
             {!isDraft && (
               <Button

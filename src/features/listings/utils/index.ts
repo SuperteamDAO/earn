@@ -18,12 +18,12 @@ export const formatDeadline = (
     return 'Rolling';
   }
   if (applicationType === 'fixed') {
-    return deadline ? dayjs(deadline).format('DD MMM h:mm A') : '-';
+    return deadline ? dayjs(deadline).format("DD MMM'YY h:mm A") : '-';
   }
   return '-';
 };
 
-export const isDeadlineOver = (deadline: string | undefined) =>
+export const isDeadlineOver = (deadline: string | Date | undefined) =>
   deadline ? dayjs().isAfter(dayjs(deadline)) : false;
 
 export const getRegionTooltipLabel = (
@@ -47,10 +47,12 @@ export const getRegionTooltipLabel = (
 export const getListingDraftStatus = (
   status: string | undefined,
   isPublished: boolean | undefined,
-  isVerifying: boolean | undefined,
 ) => {
-  if (status !== 'OPEN') return 'CLOSED';
-  if (isVerifying) return 'VERIFYING';
+  if (status === 'CLOSED') return 'CLOSED';
+  if (status === 'REVIEW') return 'REVIEW';
+  if (status === 'PREVIEW') return 'PREVIEW';
+  if (status === 'VERIFYING') return 'VERIFYING';
+  if (status === 'VERIFY_FAIL') return 'VERIFY_FAIL';
   if (isPublished) return 'PUBLISHED';
   return 'DRAFT';
 };
@@ -67,26 +69,34 @@ export const getListingStatus = (
   listing: Listing | ListingWithSubmissions | any,
   isGrant?: boolean,
 ) => {
-  if (!listing) return 'DRAFT';
+  if (!listing) return 'Draft';
 
   const listingStatus = getListingDraftStatus(
     listing?.status,
     listing?.isPublished,
-    listing?.isVerifying,
   );
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
 
+  if (listingStatus === 'PREVIEW') return 'Draft';
   if (listingStatus === 'VERIFYING') return 'Under Verification';
+  if (listingStatus === 'VERIFY_FAIL') return 'Verification Failed';
   if (listingStatus === 'DRAFT') return 'Draft';
   if (listing?.type === 'grant' || isGrant) return 'Ongoing';
 
   switch (listingStatus) {
     case 'CLOSED':
       return 'Closed';
+    case 'REVIEW':
     case 'PUBLISHED':
       if (!hasDeadlinePassed && !listing?.isWinnersAnnounced)
         return 'In Progress';
       if (!listing?.isWinnersAnnounced) return 'In Review';
+      if (
+        listing?.isWinnersAnnounced &&
+        listing?.totalPaymentsMade !== listing?.totalWinnersSelected &&
+        listing?.isFndnPaying
+      )
+        return 'Fndn to Pay';
       if (
         listing?.isWinnersAnnounced &&
         listing?.totalPaymentsMade !== listing?.totalWinnersSelected
@@ -109,8 +119,13 @@ export const getColorStyles = (status: string) => {
     case 'Completed':
       return { bgColor: '#D1FAE5', color: '#0D9488' };
     case 'Under Verification':
+    case 'Fndn to Pay':
+      return { bgColor: 'pink.100', color: 'pink.500' };
     case 'Payment Pending':
       return { bgColor: '#ffecb3', color: '#F59E0B' };
+    case 'Verification Failed':
+      return { bgColor: 'red.100', color: 'red.400' };
+    case 'Preview':
     case 'Draft':
       return { bgColor: 'brand.slate.100', color: 'brand.slate.400' };
     case 'In Review':

@@ -18,10 +18,12 @@ import React from 'react';
 import {
   LuCheck,
   LuClock,
+  LuEye,
   LuFile,
   LuMessageSquare,
   LuPause,
 } from 'react-icons/lu';
+import { MdLock } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import {
@@ -60,6 +62,7 @@ export function ListingHeader({
     publishedAt,
     isPublished,
     Hackathon,
+    isPrivate,
   } = listing;
   const router = useRouter();
   const posthog = usePostHog();
@@ -84,7 +87,14 @@ export function ListingHeader({
     />
   );
 
-  if (!isPublished && !publishedAt) {
+  if (status === 'PREVIEW') {
+    statusIcon = (
+      <Icon as={LuEye} {...statusIconStyles} color="brand.slate.400" />
+    );
+    statusText = 'Preview';
+    statusBgColor = 'brand.slate.200';
+    statusTextColor = 'brand.slate.500';
+  } else if (!isPublished && !publishedAt) {
     statusIcon = (
       <Icon as={LuFile} {...statusIconStyles} color="brand.slate.400" />
     );
@@ -174,6 +184,19 @@ export function ListingHeader({
     );
   };
 
+  const PrivateLabel = () => {
+    if (!isPrivate) return null;
+    return (
+      <>
+        <ListingHeaderSeparator />
+        <HStack>
+          <Icon as={MdLock} color="brand.slate.500" />
+          <Text color="brand.slate.400">Private</Text>
+        </HStack>
+      </>
+    );
+  };
+
   const HeaderSub = () => {
     return (
       <Flex align={'center'} wrap={'wrap'} gap={{ base: 1, md: 3 }}>
@@ -232,6 +255,7 @@ export function ListingHeader({
         <Flex display={'flex'}>
           <ListingStatus />
         </Flex>
+        <PrivateLabel />
         <ListingHeaderSeparator />
         <RegionLabel region={region} />
         <CommentCount />

@@ -1,23 +1,23 @@
-/* eslint-disable @next/next/no-html-link-for-pages */
 import {
   Box,
   Button,
-  Divider,
+  Center,
   Flex,
+  Heading,
   Image,
-  ListItem,
   Modal,
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
   Text,
-  UnorderedList,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { useListingFormStore } from '@/features/listing-builder';
+import { BountyIcon } from '@/svg/bounty-icon';
+import { ProjectIcon } from '@/svg/project-icon';
 
 export const CreateListingModal = ({
   isOpen = false,
@@ -28,127 +28,128 @@ export const CreateListingModal = ({
 }) => {
   const posthog = usePostHog();
   const router = useRouter();
-
   const { resetForm } = useListingFormStore();
+
   const resetListingForm = () => {
     resetForm();
   };
-  return (
-    <Modal isCentered isOpen={isOpen} onClose={onClose} size={'5xl'}>
-      <ModalOverlay />
-      <ModalContent mb="25%">
-        <ModalCloseButton color={'brand.slate.300'} />
-        <Flex>
-          <Flex direction={'column'} w="50%" px={6} py={4}>
-            <Image
-              w={14}
-              h={16}
-              mt={1}
-              alt={'New Bounty'}
-              src={'/assets/icons/bolt.svg'}
-            />
-            <Text
-              mt={4}
-              color="brand.slate.800"
-              fontSize={'xl'}
-              fontWeight={600}
-            >
-              Create a Bounty
-            </Text>
-            <Text mt={2} color="brand.slate.500">
-              Bounties are listings where all participants do the work, and the
-              best submission(s) are rewarded
-            </Text>
-            <Text mt={16} color="brand.slate.500" fontWeight={700}>
-              Great for:
-            </Text>
-            <UnorderedList mt={1} mb={4} ml={6} color="brand.slate.500">
-              <ListItem mb={1}>raising awareness for your product, or</ListItem>
-              <ListItem mb={1}>
-                when you want multiple deliverable options
-              </ListItem>
-              <ListItem mb={1}>
-                Examples: Twitter threads, long-form articles, merch/logo
-                design, product feedback, etc.
-              </ListItem>
-            </UnorderedList>
-            <Box flex="1" />
-            <Button
-              className="ph-no-capture"
-              w="full"
-              onClick={() => {
-                resetListingForm();
-                posthog.capture('create new bounty_sponsor');
-                if (!router.pathname.includes('bounty'))
-                  router.push('/dashboard/create-bounty');
-                else router.reload();
-              }}
-              size="lg"
-            >
-              Create New Bounty
-            </Button>
-          </Flex>
-          <Divider
-            w="1px"
-            h="lg"
-            borderColor={'brand.slate.200'}
-            orientation="vertical"
-          />
-          <Flex direction={'column'} w="50%" px={6} py={4}>
-            <Image
-              w={14}
-              h={16}
-              mt={1}
-              alt={'New Project'}
-              src={'/assets/icons/briefcase.svg'}
-            />
-            <Text
-              mt={4}
-              color="brand.slate.800"
-              fontSize={'xl'}
-              fontWeight={600}
-            >
-              Create a Project
-            </Text>
-            <Text mt={2} color="brand.slate.500">
-              Solicit applications based on a custom questionnaire, and select
-              one applicant to work on your listing
-            </Text>
-            <Text mt={16} color="brand.slate.500" fontWeight={700}>
-              Great for:
-            </Text>
-            <UnorderedList mt={1} mb={4} ml={6} color="brand.slate.500">
-              <ListItem mb={1}>the work to be done is specific, or</ListItem>
-              <ListItem mb={1}>
-                the output would require feedback and iteration
-              </ListItem>
-              <ListItem mb={1}>
-                Examples: Website/app development, website/app design, producing
-                hype videos, hiring a Twitter manager, etc.
-              </ListItem>
-            </UnorderedList>
-            <Box flex="1" />
-            <Divider
-              w="120px"
-              color="brand.slate.200"
-              orientation="horizontal"
-            />
 
-            <Button
-              className="ph-no-capture"
-              w="full"
-              onClick={() => {
-                resetListingForm();
-                posthog.capture('create new project_sponsor');
-                if (!router.pathname.includes('project'))
-                  router.push('/dashboard/create-project');
-                else router.reload();
-              }}
-              size="lg"
-            >
-              Create New Project
-            </Button>
-          </Flex>
+  const handleCreateBounty = () => {
+    resetListingForm();
+    posthog.capture('create new bounty_sponsor');
+    router.push('/dashboard/create-bounty');
+  };
+
+  const handleCreateProject = () => {
+    resetListingForm();
+    posthog.capture('create new project_sponsor');
+    router.push('/dashboard/create-project');
+  };
+
+  return (
+    <Modal isCentered isOpen={isOpen} onClose={onClose} size="4xl">
+      <ModalOverlay backdropFilter="blur(2px)" />
+      <ModalContent overflow="hidden" bg="white" borderRadius="lg">
+        <ModalCloseButton color="brand.slate.300" />
+        <Flex>
+          <Box pos="relative" flex={1}>
+            <Center pos="relative" mb={6} px={32} py={12} bg="#F5F3FF">
+              <Image
+                w="100%"
+                h="auto"
+                alt="Bounty Illustration"
+                src="/assets/dashboard/bounty_illustration.svg"
+              />
+              <Flex
+                pos="absolute"
+                top={4}
+                right={4}
+                align="center"
+                px={3}
+                py={1}
+                color="#8B5CF6"
+                bg="white"
+                borderRadius="full"
+              >
+                <BountyIcon
+                  styles={{
+                    width: '1rem',
+                    height: '1rem',
+                    marginRight: '0.25rem',
+                    color: 'red',
+                    fill: '#8B5CF6',
+                  }}
+                />
+                <Text fontSize="sm" fontWeight="bold">
+                  Bounty
+                </Text>
+              </Flex>
+            </Center>
+            <Box p={8}>
+              <Heading as="h3" mb={4} fontWeight={600} size="md">
+                Host a Work Competition
+              </Heading>
+              <Text mb={4} color="brand.slate.500">
+                All participants complete your scope of work, and the best
+                submission(s) are rewarded. Get multiple options to choose from.
+              </Text>
+              <Button w="full" py={7} onClick={handleCreateBounty} size="lg">
+                Create a Bounty
+              </Button>
+            </Box>
+          </Box>
+          <Box
+            pos="relative"
+            flex={1}
+            borderLeftWidth={'1px'}
+            borderLeftColor={'brand.slate.200'}
+          >
+            <Center pos="relative" mb={6} px={32} py={12} bg="#EFF6FF">
+              <Image
+                w="100%"
+                h="auto"
+                alt="Project Illustration"
+                src="/assets/dashboard/project_illustration.svg"
+              />
+              <Flex
+                pos="absolute"
+                top={4}
+                right={4}
+                align="center"
+                px={3}
+                py={1}
+                color="#3B82F6"
+                bg="white"
+                borderRadius="full"
+              >
+                <ProjectIcon
+                  styles={{
+                    width: '1rem',
+                    height: '1rem',
+                    marginRight: '0.25rem',
+                    color: 'red',
+                    fill: '#3B82F6',
+                  }}
+                />
+                <Text fontSize="sm" fontWeight="bold">
+                  Project
+                </Text>
+              </Flex>
+            </Center>
+            <Box p={8}>
+              <Heading as="h3" mb={4} fontWeight={600} size="md">
+                Hire a Freelancer
+              </Heading>
+              <Text mb={4} color="brand.slate.500">
+                Get applications based on a questionnaire set by you, and select
+                one applicant to work with. Give a fixed budget, or ask for
+                quotes.
+              </Text>
+              <Button w="full" py={7} onClick={handleCreateProject} size="lg">
+                Create a Project
+              </Button>
+            </Box>
+          </Box>
         </Flex>
       </ModalContent>
     </Modal>

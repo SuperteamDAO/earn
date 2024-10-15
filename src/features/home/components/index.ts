@@ -6,6 +6,7 @@ export * from './LiveListings';
 export * from './NavTabs';
 export * from './RecentEarners';
 export * from './RegionBanner';
+export * from './RelatedListings';
 export * from './SideBar';
 export * from './SponsorBanner';
 export * from './TotalStats';

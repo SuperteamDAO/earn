@@ -16,6 +16,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
   const { id, isPaid, paymentDetails } = req.body;
 
+  if (!paymentDetails || paymentDetails.length === 0 || !isPaid) {
+    logger.warn('Payment details are required');
+    res.status(400).json({
+      error: 'Payment details are required',
+      message: 'Payment details are required',
+    });
+  }
+
   try {
     const currentSubmission = await prisma.submission.findUnique({
       where: { id },
@@ -52,19 +60,15 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const bountyId = result.listingId;
     const updatedBounty: any = {};
 
-    if (isPaid) {
-      updatedBounty.totalPaymentsMade = {
-        increment: 1,
-      };
-      logger.info(
-        `Sending payment notification email for submission ID: ${id}`,
-      );
-      sendEmailNotification({
-        type: 'addPayment',
-        id,
-        triggeredBy: userId,
-      });
-    }
+    updatedBounty.totalPaymentsMade = {
+      increment: 1,
+    };
+    logger.info(`Sending payment notification email for submission ID: ${id}`);
+    sendEmailNotification({
+      type: 'addPayment',
+      id,
+      triggeredBy: userId,
+    });
 
     logger.debug(`Updating bounty with ID: ${bountyId}`);
     await prisma.bounties.update({

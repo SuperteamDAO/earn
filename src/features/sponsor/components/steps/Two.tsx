@@ -2,7 +2,7 @@ import { Divider, HStack, Text, VStack } from '@chakra-ui/react';
 import Image from 'next/image';
 
 import USDC from '@/public/assets/landingsponsor/icons/usdc.svg';
-import PiedPiper from '@/public/assets/landingsponsor/sponsors/piedPiper.png';
+import PiedPiper from '@/public/assets/landingsponsor/sponsors/piedPiper.webp';
 
 import { HighQualityImage } from '../HighQualityImage';
 
