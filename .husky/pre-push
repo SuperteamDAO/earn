@@ -1,18 +1,21 @@
 #!/usr/bin/env node
 
+require('child_process').execSync('source "$(dirname -- "$0")/_/husky.sh"', { shell: '/bin/sh', stdio: 'inherit' });
+
 const { execSync } = require('child_process');
+const readline = require('readline');
 
 const protected_branch = 'husky-test';
 const current_branch = execSync('git symbolic-ref HEAD').toString().trim().split('/').pop();
 
 if (current_branch === protected_branch) {
-  const readline = require('readline').createInterface({
+  const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
 
-  readline.question(`You're about to push to ${protected_branch}, is that what you intended? [y/n] `, (answer) => {
-    readline.close();
+  rl.question(`You're about to push to ${protected_branch}, is that what you intended? [y/n] `, (answer) => {
+    rl.close();
     if (answer.toLowerCase() !== 'y') {
       console.log('Push aborted.');
       process.exit(1);
