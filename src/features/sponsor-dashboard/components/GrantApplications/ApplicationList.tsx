@@ -1,16 +1,25 @@
 import { SearchIcon } from '@chakra-ui/icons';
 import {
   Box,
+  Button,
   Checkbox,
   Flex,
+  HStack,
   Input,
   InputGroup,
   InputLeftElement,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Tag,
   TagLabel,
   Text,
 } from '@chakra-ui/react';
-import { type GrantApplicationStatus } from '@prisma/client';
+import {
+  type GrantApplicationStatus,
+  type SubmissionLabels,
+} from '@prisma/client';
 import debounce from 'lodash.debounce';
 import React, {
   type Dispatch,
@@ -18,6 +27,7 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
+import { MdArrowDropDown } from 'react-icons/md';
 
 import { EarnAvatar } from '@/features/talent';
 
@@ -35,7 +45,17 @@ interface Props {
   isToggled: (id: string) => boolean;
   toggleAllApplications: () => void;
   isAllToggled: boolean;
+  filterLabel: SubmissionLabels | GrantApplicationStatus | undefined;
+  setFilterLabel: Dispatch<
+    SetStateAction<SubmissionLabels | GrantApplicationStatus | undefined>
+  >;
 }
+
+const ApplicationStatusFilter: GrantApplicationStatus[] = [
+  'Pending',
+  'Approved',
+  'Rejected',
+];
 
 export const ApplicationList = ({
   applications,
@@ -46,6 +66,8 @@ export const ApplicationList = ({
   isToggled,
   toggleAllApplications,
   isAllToggled,
+  filterLabel,
+  setFilterLabel,
 }: Props) => {
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -55,10 +77,16 @@ export const ApplicationList = ({
     };
   }, [debouncedSetSearchText]);
 
+  let bg, color;
+
+  if (filterLabel) {
+    ({ bg, color } = colorMap[filterLabel]);
+  }
+
   return (
     <>
       <Box
-        w="70%"
+        w="100%"
         bg="white"
         borderWidth={'1px'}
         borderColor={'brand.slate.200'}
@@ -67,6 +95,7 @@ export const ApplicationList = ({
         <Flex
           align={'center'}
           justify={'space-between'}
+          direction={'column'}
           gap={4}
           px={4}
           py={3}
@@ -74,35 +103,124 @@ export const ApplicationList = ({
           borderBottomColor="brand.slate.200"
           cursor="pointer"
         >
-          <Checkbox
-            mr={-2}
-            _checked={{
-              '& .chakra-checkbox__control': {
-                background: 'brand.purple',
-                borderColor: 'brand.purple',
-              },
-            }}
-            isChecked={isAllToggled}
-            onChange={() => toggleAllApplications()}
-          />
-          <InputGroup w={'full'} size="lg">
-            <Input
-              bg={'white'}
-              borderColor="brand.slate.200"
-              _placeholder={{
-                color: 'brand.slate.400',
-                fontWeight: 500,
-                fontSize: 'md',
+          <HStack w="full">
+            <Checkbox
+              _checked={{
+                '& .chakra-checkbox__control': {
+                  background: 'brand.purple',
+                  borderColor: 'brand.purple',
+                },
               }}
-              focusBorderColor="brand.purple"
-              onChange={(e) => debouncedSetSearchText(e.target.value)}
-              placeholder="Search Applications"
-              type="text"
+              isChecked={isAllToggled}
+              onChange={() => toggleAllApplications()}
             />
-            <InputLeftElement pointerEvents="none">
-              <SearchIcon color="brand.slate.400" />
-            </InputLeftElement>
-          </InputGroup>
+            <InputGroup w={'full'} size="lg">
+              <Input
+                bg={'white'}
+                borderColor="brand.slate.200"
+                _placeholder={{
+                  color: 'brand.slate.400',
+                  fontWeight: 500,
+                  fontSize: 'md',
+                }}
+                focusBorderColor="brand.purple"
+                onChange={(e) => debouncedSetSearchText(e.target.value)}
+                placeholder="Search Applications"
+                type="text"
+              />
+              <InputLeftElement pointerEvents="none">
+                <SearchIcon color="brand.slate.400" />
+              </InputLeftElement>
+            </InputGroup>
+          </HStack>
+          <Flex
+            align="center"
+            justify={'space-between'}
+            w="full"
+            cursor="default"
+          >
+            <Text color="brand.slate.500" fontSize="xs">
+              Filter By
+            </Text>
+            <Menu>
+              <MenuButton
+                as={Button}
+                h="auto"
+                px={2}
+                py={1}
+                color="brand.slate.500"
+                fontWeight={500}
+                textTransform="capitalize"
+                bg="transparent"
+                borderWidth={'1px'}
+                borderColor="brand.slate.300"
+                _hover={{ backgroundColor: 'transparent' }}
+                _active={{
+                  backgroundColor: 'transparent',
+                  borderWidth: '1px',
+                }}
+                _expanded={{ borderColor: 'brand.purple' }}
+                rightIcon={<MdArrowDropDown />}
+              >
+                <Tag minH="none" px={3} py={1} bg={bg} rounded="full">
+                  <TagLabel
+                    w="full"
+                    color={color}
+                    fontSize={'10px'}
+                    textAlign={'center'}
+                    textTransform={'capitalize'}
+                    whiteSpace={'nowrap'}
+                  >
+                    {filterLabel || 'Select Option'}
+                  </TagLabel>
+                </Tag>
+              </MenuButton>
+              <MenuList minW="130px" borderColor="brand.slate.300">
+                <MenuItem
+                  _focus={{ bg: 'brand.slate.100' }}
+                  onClick={() => setFilterLabel(undefined)}
+                >
+                  <Tag minH="none" px={3} py={1} rounded="full">
+                    <TagLabel
+                      w="full"
+                      fontSize={'10px'}
+                      textAlign={'center'}
+                      textTransform={'capitalize'}
+                      whiteSpace={'nowrap'}
+                    >
+                      Select Option
+                    </TagLabel>
+                  </Tag>
+                </MenuItem>
+                {ApplicationStatusFilter.map((status) => (
+                  <MenuItem
+                    key={status}
+                    _focus={{ bg: 'brand.slate.100' }}
+                    onClick={() => setFilterLabel(status)}
+                  >
+                    <Tag
+                      minH="none"
+                      px={3}
+                      py={1}
+                      bg={colorMap[status].bg}
+                      rounded="full"
+                    >
+                      <TagLabel
+                        w="full"
+                        color={colorMap[status].color}
+                        fontSize={'10px'}
+                        textAlign={'center'}
+                        textTransform={'capitalize'}
+                        whiteSpace={'nowrap'}
+                      >
+                        {status}
+                      </TagLabel>
+                    </Tag>
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+          </Flex>
         </Flex>
         {applications?.map((application) => {
           const { bg, color } =
@@ -147,7 +265,7 @@ export const ApplicationList = ({
                   id={application?.user?.id}
                   avatar={application?.user?.photo || undefined}
                 />
-                <Box w={48} ml={2}>
+                <Box w={40} ml={2}>
                   <Text
                     overflow={'hidden'}
                     color="brand.slate.700"

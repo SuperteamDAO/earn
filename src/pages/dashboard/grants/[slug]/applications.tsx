@@ -3,6 +3,8 @@ import {
   Box,
   Button,
   Flex,
+  Grid,
+  GridItem,
   HStack,
   Image,
   Popover,
@@ -16,7 +18,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { GrantApplicationStatus } from '@prisma/client';
+import { GrantApplicationStatus, type SubmissionLabels } from '@prisma/client';
 import {
   keepPreviousData,
   useMutation,
@@ -63,6 +65,9 @@ function GrantApplications({ slug }: Props) {
   const [selectedApplicationIds, setSelectedApplicationIds] = useState<
     Set<string>
   >(new Set());
+  const [filterLabel, setFilterLabel] = useState<
+    SubmissionLabels | GrantApplicationStatus | undefined
+  >(undefined);
 
   const queryClient = useQueryClient();
 
@@ -78,7 +83,7 @@ function GrantApplications({ slug }: Props) {
     onClose: rejectedOnClose,
   } = useDisclosure();
 
-  const params = { searchText, length, skip };
+  const params = { searchText, length, skip, filterLabel };
 
   const { data: applications, isLoading: isApplicationsLoading } = useQuery({
     ...applicationsQuery(slug, params),
@@ -393,44 +398,19 @@ function GrantApplications({ slug }: Props) {
               </Tab>
             </TabList>
             <TabPanels>
-              <TabPanel px={0}>
-                {!applications?.length &&
-                !searchText &&
-                !isApplicationsLoading ? (
-                  <>
-                    <Image
-                      w={32}
-                      mx="auto"
-                      mt={32}
-                      alt={'talent empty'}
-                      src="/assets/bg/talent-empty.svg"
-                    />
-                    <Text
-                      mx="auto"
-                      mt={5}
-                      color={'brand.slate.600'}
-                      fontSize={'lg'}
-                      fontWeight={600}
-                      textAlign={'center'}
+              <TabPanel w="full" px={0}>
+                <>
+                  <Flex align={'start'} w="full" bg="white">
+                    <Grid
+                      templateColumns="23rem 1fr"
+                      w="full"
+                      minH="600px"
+                      bg="white"
                     >
-                      You have not received any applications yet
-                    </Text>
-                    <Text
-                      mx="auto"
-                      mb={200}
-                      color={'brand.slate.400'}
-                      fontWeight={500}
-                      textAlign={'center'}
-                    >
-                      Once you start receiving applications, you will be able to
-                      review them here.
-                    </Text>
-                  </>
-                ) : (
-                  <>
-                    <Flex align={'start'} bg="white">
-                      <Flex flex="4 1 auto" minH="600px">
+                      <GridItem w="full" h="full">
                         <ApplicationList
+                          filterLabel={filterLabel}
+                          setFilterLabel={setFilterLabel}
                           applications={applications}
                           setSearchText={setSearchText}
                           selectedApplication={selectedApplication}
@@ -440,72 +420,117 @@ function GrantApplications({ slug }: Props) {
                           isAllToggled={isToggledAll}
                           toggleAllApplications={toggleAllApplications}
                         />
-                        <ApplicationDetails
-                          isMultiSelectOn={selectedApplicationIds.size > 0}
-                          grant={grant}
-                          applications={applications}
-                          selectedApplication={selectedApplication}
-                          setSelectedApplication={setSelectedApplication}
-                          params={params}
-                        />
-                      </Flex>
-                    </Flex>
-                    <Flex align="center" justify="start" gap={4} mt={4}>
-                      {!!searchText ? (
+                      </GridItem>
+                      <GridItem
+                        w="full"
+                        h="full"
+                        bg="white"
+                        borderColor="brand.slate.200"
+                        borderTopWidth="1px"
+                        borderRightWidth={'1px'}
+                        borderBottomWidth="1px"
+                        roundedRight={'xl'}
+                      >
+                        {!applications?.length &&
+                        !searchText &&
+                        !isApplicationsLoading ? (
+                          <>
+                            <Image
+                              w={32}
+                              mx="auto"
+                              mt={32}
+                              alt={'talent empty'}
+                              src="/assets/bg/talent-empty.svg"
+                            />
+                            <Text
+                              mx="auto"
+                              mt={5}
+                              color={'brand.slate.600'}
+                              fontSize={'lg'}
+                              fontWeight={600}
+                              textAlign={'center'}
+                            >
+                              {filterLabel
+                                ? `Zero Results`
+                                : 'People are working!'}
+                            </Text>
+                            <Text
+                              mx="auto"
+                              mb={200}
+                              color={'brand.slate.400'}
+                              fontWeight={500}
+                              textAlign={'center'}
+                            >
+                              {filterLabel
+                                ? `For the filters you have selected`
+                                : 'Submissions will start appearing here'}
+                            </Text>
+                          </>
+                        ) : (
+                          <ApplicationDetails
+                            isMultiSelectOn={selectedApplicationIds.size > 0}
+                            grant={grant}
+                            applications={applications}
+                            selectedApplication={selectedApplication}
+                            setSelectedApplication={setSelectedApplication}
+                            params={params}
+                          />
+                        )}
+                      </GridItem>
+                    </Grid>
+                  </Flex>
+                  <Flex align="center" justify="start" gap={4} mt={4}>
+                    {!!searchText ? (
+                      <Text color="brand.slate.400" fontSize="sm">
+                        Found{' '}
+                        <Text as="span" fontWeight={700}>
+                          {applications?.length || 0}
+                        </Text>{' '}
+                        {applications?.length === 1 ? 'result' : 'results'}
+                      </Text>
+                    ) : (
+                      <>
+                        <Button
+                          isDisabled={skip <= 0}
+                          leftIcon={<ChevronLeftIcon w={5} h={5} />}
+                          onClick={() =>
+                            changePage(Math.max(skip - length, 0), length - 1)
+                          }
+                          size="sm"
+                          variant="outline"
+                        >
+                          Previous
+                        </Button>
                         <Text color="brand.slate.400" fontSize="sm">
-                          Found{' '}
                           <Text as="span" fontWeight={700}>
-                            {applications?.length || 0}
+                            {skip + 1}
                           </Text>{' '}
-                          {applications?.length === 1 ? 'result' : 'results'}
+                          -{' '}
+                          <Text as="span" fontWeight={700}>
+                            {Math.min(skip + length, grant?.totalApplications!)}
+                          </Text>{' '}
+                          of{' '}
+                          <Text as="span" fontWeight={700}>
+                            {grant?.totalApplications}
+                          </Text>{' '}
+                          Applications
                         </Text>
-                      ) : (
-                        <>
-                          <Button
-                            isDisabled={skip <= 0}
-                            leftIcon={<ChevronLeftIcon w={5} h={5} />}
-                            onClick={() =>
-                              changePage(Math.max(skip - length, 0), length - 1)
-                            }
-                            size="sm"
-                            variant="outline"
-                          >
-                            Previous
-                          </Button>
-                          <Text color="brand.slate.400" fontSize="sm">
-                            <Text as="span" fontWeight={700}>
-                              {skip + 1}
-                            </Text>{' '}
-                            -{' '}
-                            <Text as="span" fontWeight={700}>
-                              {Math.min(
-                                skip + length,
-                                grant?.totalApplications!,
-                              )}
-                            </Text>{' '}
-                            of{' '}
-                            <Text as="span" fontWeight={700}>
-                              {grant?.totalApplications}
-                            </Text>{' '}
-                            Applications
-                          </Text>
-                          <Button
-                            isDisabled={
-                              grant?.totalApplications! <= skip + length ||
-                              (skip > 0 && skip % length !== 0)
-                            }
-                            onClick={() => changePage(skip + length, 0)}
-                            rightIcon={<ChevronRightIcon w={5} h={5} />}
-                            size="sm"
-                            variant="outline"
-                          >
-                            Next
-                          </Button>
-                        </>
-                      )}
-                    </Flex>
-                  </>
-                )}
+                        <Button
+                          isDisabled={
+                            grant?.totalApplications! <= skip + length ||
+                            (skip > 0 && skip % length !== 0)
+                          }
+                          onClick={() => changePage(skip + length, 0)}
+                          rightIcon={<ChevronRightIcon w={5} h={5} />}
+                          size="sm"
+                          variant="outline"
+                        >
+                          Next
+                        </Button>
+                      </>
+                    )}
+                  </Flex>
+                </>
               </TabPanel>
               <TabPanel px={0}>
                 <PaymentsHistoryTab grant={grant} grantId={grant?.id} />

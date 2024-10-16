@@ -1,3 +1,7 @@
+import {
+  type GrantApplicationStatus,
+  type SubmissionLabels,
+} from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import {
@@ -17,8 +21,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 20;
   const searchText = params.searchText as string;
+  const filterLabel = params.filterLabel as
+    | SubmissionLabels
+    | GrantApplicationStatus
+    | undefined;
 
-  const whereSearch = searchText
+  const textSearch = searchText
     ? {
         OR: [
           { user: { firstName: { contains: searchText } } },
@@ -40,6 +48,36 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             ],
           },
         ],
+      }
+    : {};
+
+  const filterSearch: {
+    applicationStatus?: GrantApplicationStatus;
+    label?: SubmissionLabels;
+  } = filterLabel
+    ? {
+        ...(filterLabel === 'Approved'
+          ? {
+              applicationStatus: 'Approved',
+            }
+          : {}),
+        ...(filterLabel === 'Rejected'
+          ? {
+              applicationStatus: 'Rejected',
+            }
+          : {}),
+        ...(filterLabel === 'Pending'
+          ? {
+              applicationStatus: 'Pending',
+            }
+          : {}),
+        ...(filterLabel !== 'Rejected' &&
+        filterLabel !== 'Approved' &&
+        filterLabel !== 'Pending'
+          ? {
+              label: filterLabel,
+            }
+          : {}),
       }
     : {};
 
@@ -71,7 +109,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           isActive: true,
           sponsorId: req.userSponsorId!,
         },
-        ...whereSearch,
+        ...textSearch,
+        ...filterSearch,
       },
       include: {
         user: {
