@@ -12,6 +12,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import NextImage from 'next/image';
 import NextLink from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -26,6 +27,7 @@ export const FeatureModal = ({
   forceOpen?: boolean;
 }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useUser();
   const updateUser = useUpdateUser();
   const [isOpen, setIsOpen] = useState(false);
@@ -44,10 +46,11 @@ export const FeatureModal = ({
         (user?.currentSponsorId &&
           user.featureModalShown === false &&
           (isSponsorsRoute || !router.pathname.includes('dashboard')) &&
-          latestActiveSlug) ||
+          latestActiveSlug &&
+          user.currentSponsor?.isVerified) ||
         forceOpen
       ) {
-        setIsOpen(true);
+        if (!searchParams.has('scout')) setIsOpen(true);
         if (!forceOpen) {
           await updateUser.mutateAsync({ featureModalShown: true });
         }
@@ -55,14 +58,7 @@ export const FeatureModal = ({
     };
 
     shouldShowModal();
-  }, [
-    user,
-    router.pathname,
-    updateUser,
-    latestActiveSlug,
-    isSponsorsRoute,
-    forceOpen,
-  ]);
+  }, [user, router.pathname, latestActiveSlug, isSponsorsRoute, forceOpen]);
 
   const handleClose = () => {
     setIsOpen(false);

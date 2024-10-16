@@ -18,7 +18,7 @@ export const formatDeadline = (
     return 'Rolling';
   }
   if (applicationType === 'fixed') {
-    return deadline ? dayjs(deadline).format('DD MMM h:mm A') : '-';
+    return deadline ? dayjs(deadline).format("DD MMM'YY h:mm A") : '-';
   }
   return '-';
 };

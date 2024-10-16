@@ -1,14 +1,23 @@
-import { Box, FormLabel, Input, Text } from '@chakra-ui/react';
+import {
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Text,
+} from '@chakra-ui/react';
+import { type FieldErrors, type UseFormRegister } from 'react-hook-form';
 
 type InputFieldProps = {
   label: string;
   placeholder: string;
   name: string;
-  register: any;
+  register: UseFormRegister<any>;
   isInvalid?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   validationErrorMessage?: string;
   isRequired?: boolean;
+  errors: FieldErrors<any>;
+  validate?: (value: string) => boolean | string;
 };
 
 export const InputField = ({
@@ -19,10 +28,30 @@ export const InputField = ({
   isInvalid = false,
   onChange,
   validationErrorMessage,
+  validate,
+  errors,
   isRequired = false,
 }: InputFieldProps) => {
+  const validateNonEmpty = (value: string) => {
+    return value.trim() !== '' || 'This field is required';
+  };
+
+  const combinedValidate = (value: string) => {
+    if (isRequired) {
+      const nonEmptyResult = validateNonEmpty(value);
+      if (nonEmptyResult !== true) {
+        return nonEmptyResult;
+      }
+    }
+    return validate ? validate(value) : true;
+  };
+
   return (
-    <Box w={'full'} mb={'1.25rem'}>
+    <FormControl
+      w={'full'}
+      mb={'1.25rem'}
+      isInvalid={isInvalid || !!errors?.[name]}
+    >
       <FormLabel color={'brand.slate.500'}>{label}</FormLabel>
       <Input
         color={'gray.800'}
@@ -33,8 +62,11 @@ export const InputField = ({
         focusBorderColor="brand.purple"
         id={name}
         placeholder={placeholder}
-        {...register(name, { required: isRequired })}
-        isInvalid={isInvalid}
+        {...register(name, {
+          required: isRequired ? 'This field is required' : false,
+          validate: combinedValidate,
+        })}
+        isInvalid={isInvalid || !!errors?.[name]}
         onChange={onChange}
       />
       {isInvalid && validationErrorMessage && (
@@ -42,6 +74,10 @@ export const InputField = ({
           {validationErrorMessage}
         </Text>
       )}
-    </Box>
+      <FormErrorMessage>
+        {errors && errors[name] && errors[name]?.message?.toString()}
+        {validationErrorMessage ? <>{validationErrorMessage}</> : <></>}
+      </FormErrorMessage>
+    </FormControl>
   );
 };

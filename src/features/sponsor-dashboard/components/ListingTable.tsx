@@ -252,6 +252,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           _hover={{ textDecoration: 'underline' }}
                           whiteSpace="nowrap"
                           textOverflow="ellipsis"
+                          title={listing.title}
                         >
                           {listing.title}
                         </Text>

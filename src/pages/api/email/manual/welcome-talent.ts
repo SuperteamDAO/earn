@@ -8,6 +8,7 @@ import {
   WelcomeTalentTemplate,
 } from '@/features/emails';
 import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 export default async function handler(
@@ -26,6 +27,14 @@ export default async function handler(
   if (!userEmail) {
     logger.warn('Invalid token - No email found');
     return res.status(400).json({ error: 'Invalid token' });
+  }
+
+  const isBlocked = await prisma.blockedEmail.findUnique({
+    where: { email: userEmail },
+  });
+
+  if (isBlocked) {
+    return res.status(400).json({ error: 'Blocked Email' });
   }
 
   try {

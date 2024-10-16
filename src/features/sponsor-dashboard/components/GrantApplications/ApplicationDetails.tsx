@@ -308,7 +308,7 @@ export const ApplicationDetails = ({
 
   return (
     <Box
-      w="150%"
+      w="100%"
       bg="white"
       borderColor="brand.slate.200"
       borderTopWidth="1px"
@@ -340,6 +340,8 @@ export const ApplicationDetails = ({
       {applications?.length ? (
         <>
           <Box
+            pos="sticky"
+            top={'3rem'}
             py={1}
             borderBottom={'1px'}
             borderBottomColor={'brand.slate.200'}
