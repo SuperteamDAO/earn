@@ -4,7 +4,6 @@ import {
   colors,
   type Config,
   NumberDictionary,
-  starWars,
   uniqueNamesGenerator,
 } from 'unique-names-generator';
 
@@ -31,7 +30,7 @@ export default async function checkUsername(
   }
 
   const numberDictionary = NumberDictionary.generate({ min: 1, max: 99 });
-  const dictionaries = [adjectives, colors, starWars];
+  const dictionaries = [adjectives, colors];
 
   let username: string | undefined;
   let attempt = 0;
@@ -57,6 +56,10 @@ export default async function checkUsername(
       logger.debug(
         `Attempt ${attempt + 1}: Checking username ${generatedUsername}`,
       );
+
+      generatedUsername = generatedUsername
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]/g, '-');
 
       const user = await prisma.user.findUnique({
         where: { username: generatedUsername },

@@ -73,7 +73,6 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
   const { data: randomUsername } = useQuery({
     ...usernameRandomQuery(user?.firstName),
     enabled: !!user && !user.username,
-    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -149,7 +148,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
   };
 
   return (
-    <Box w={'full'}>
+    <Box w={'full'} mb={'4rem'}>
       <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
         <FormControl isRequired>
           <Box w={'full'} mb={'1.25rem'}>
@@ -288,9 +287,13 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
           </VStack>
         </FormControl>
 
-        <FormControl isInvalid={!!errors.publicKey} isRequired>
+        <FormControl
+          aria-autocomplete="none"
+          isInvalid={!!errors.publicKey}
+          isRequired
+        >
           <Box w={'full'} mb={'1.25rem'}>
-            <FormLabel color={'brand.slate.500'}>
+            <FormLabel color={'brand.slate.500'} aria-autocomplete="none">
               Your Solana Wallet Address
             </FormLabel>
             <FormHelperText mt={0} mb={4} color="brand.slate.500">
@@ -315,9 +318,11 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               _placeholder={{
                 color: 'brand.slate.400',
               }}
+              aria-autocomplete="none"
+              autoComplete="off"
               focusBorderColor="brand.purple"
               id={'publicKey'}
-              placeholder="Enter your solana wallet address"
+              placeholder="Enter your Solana wallet address"
               required
               {...register('publicKey', {
                 validate: (value) => {
