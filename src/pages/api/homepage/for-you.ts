@@ -101,7 +101,6 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
       token: true,
       winnersAnnouncedAt: true,
       slug: true,
-      applicationType: true,
       isWinnersAnnounced: true,
       isFeatured: true,
       compensationType: true,

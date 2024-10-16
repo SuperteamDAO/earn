@@ -8,19 +8,12 @@ import { dayjs } from '@/utils/dayjs';
 
 export const formatDeadline = (
   deadline: string | undefined,
-  applicationType: 'fixed' | 'rolling' | undefined,
   type: string | undefined,
 ) => {
   if (type === 'grant') {
     return 'Ongoing';
   }
-  if (applicationType === 'rolling') {
-    return 'Rolling';
-  }
-  if (applicationType === 'fixed') {
-    return deadline ? dayjs(deadline).format("DD MMM'YY h:mm A") : '-';
-  }
-  return '-';
+  return deadline ? dayjs(deadline).format("DD MMM'YY h:mm A") : '-';
 };
 
 export const isDeadlineOver = (deadline: string | Date | undefined) =>

@@ -157,7 +157,6 @@ export function CreateListing({
           : undefined,
         templateId: form?.templateId,
         pocSocials: form?.pocSocials,
-        applicationType: form?.applicationType,
         timeToComplete: form?.timeToComplete,
         description: form?.description,
         type,
@@ -236,7 +235,6 @@ export function CreateListing({
           : undefined,
         templateId: data?.templateId,
         pocSocials: data?.pocSocials,
-        applicationType: data?.applicationType,
         timeToComplete: data?.timeToComplete,
         description: data?.description || '',
         eligibility: (data?.eligibility || []).map((q) => ({

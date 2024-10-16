@@ -129,7 +129,6 @@ async function findRelatedListings(
       b.token,
       b.winnersAnnouncedAt,
       b.slug,
-      b.applicationType,
       b.isWinnersAnnounced,
       b.isFeatured,
       b.compensationType,

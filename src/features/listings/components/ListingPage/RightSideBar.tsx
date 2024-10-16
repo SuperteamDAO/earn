@@ -53,7 +53,6 @@ export function RightSideBar({
     maxRewardAsk,
     minRewardAsk,
     Hackathon,
-    applicationType,
     timeToComplete,
     maxBonusSpots,
   } = listing;
@@ -242,19 +241,13 @@ export function RightSideBar({
                         fontSize={{ base: 'lg', md: 'xl' }}
                         fontWeight={500}
                       >
-                        {applicationType === 'fixed' ? (
-                          <Countdown
-                            date={deadline}
-                            renderer={CountDownRenderer}
-                            zeroPadDays={1}
-                          />
-                        ) : (
-                          'Rolling'
-                        )}
+                        <Countdown
+                          date={deadline}
+                          renderer={CountDownRenderer}
+                          zeroPadDays={1}
+                        />
                       </Text>
-                      <Text color={'#94A3B8'}>
-                        {applicationType === 'fixed' ? 'Remaining' : 'Deadline'}
-                      </Text>
+                      <Text color={'#94A3B8'}>Remaining</Text>
                     </VStack>
                   </Flex>
                 </Flex>
