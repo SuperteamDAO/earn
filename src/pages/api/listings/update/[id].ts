@@ -101,7 +101,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         listing.status === 'VERIFY_FAIL') &&
       req.role !== 'GOD'
     )
-      return res.status(500).json({
+      return res.status(400).json({
         message: `Listing is not open and hence cannot be edited`,
       });
 
