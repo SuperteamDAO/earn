@@ -95,11 +95,11 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       pastDeadline;
 
     if (
-      wasUnPublished ||
-      ((listing.status === 'CLOSED' ||
+      (wasUnPublished ||
+        listing.status === 'CLOSED' ||
         listing.status === 'VERIFYING' ||
         listing.status === 'VERIFY_FAIL') &&
-        req.role !== 'GOD')
+      req.role !== 'GOD'
     )
       return res.status(500).json({
         message: `Listing is not open and hence cannot be edited`,
