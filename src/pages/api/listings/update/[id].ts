@@ -231,7 +231,6 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               isArchived: false,
               isPublished: true,
               isActive: true,
-              status: 'OPEN',
               isWinnersAnnounced: false,
               deadline: {
                 lt: twoWeeksAgo.toDate(),
