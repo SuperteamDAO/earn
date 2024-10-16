@@ -48,7 +48,6 @@ export default async function handler(
         token: true,
         winnersAnnouncedAt: true,
         slug: true,
-        applicationType: true,
         isWinnersAnnounced: true,
         isFeatured: true,
         compensationType: true,

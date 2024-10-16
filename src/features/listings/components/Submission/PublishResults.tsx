@@ -200,8 +200,7 @@ export function PublishResults({
               </Box>
             </Alert>
           )}
-          {bounty?.applicationType !== 'rolling' &&
-            !isWinnersAnnounced &&
+          {!isWinnersAnnounced &&
             rewards &&
             totalWinners === rewards &&
             !isDeadlinePassed && (

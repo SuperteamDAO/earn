@@ -180,7 +180,6 @@ s.name LIKE CONCAT('%', ?, '%')
     b.title, 
     b.token, 
     b.slug, 
-    b.applicationType, 
     b.isWinnersAnnounced, 
     b.description, 
     b.compensationType, 
