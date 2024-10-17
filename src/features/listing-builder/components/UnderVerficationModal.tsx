@@ -46,7 +46,7 @@ export function UnderVerificationModal({ onClose, isOpen }: Props) {
               We need to verify your listing before it gets published
             </Text>
             <Text color="brand.slate.500">
-              {`It’s important for us to verify work opportunities added by new sponsors to maintain trust, and keep the platform free of any bad actors. We will try our best to verify your listing within 24 hours. `}
+              {`It's important for us to verify certain work opportunities to maintain trust, and keep the platform free of any bad actors. We will try our best to verify your listing within 24 hours. `}
             </Text>
             <Text color="brand.slate.500">
               {`Once verified, your listing will be published automatically. If we need any information, we will get in touch with you. `}
