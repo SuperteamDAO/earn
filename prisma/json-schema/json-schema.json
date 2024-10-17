@@ -1,0 +1,2268 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "Bounties": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deadline": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "eligibility": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "default": "OPEN",
+          "enum": [
+            "OPEN",
+            "REVIEW",
+            "CLOSED",
+            "VERIFYING",
+            "VERIFY_FAIL",
+            "PREVIEW"
+          ]
+        },
+        "token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rewardAmount": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "rewards": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "maxBonusSpots": {
+          "type": "integer",
+          "default": 0
+        },
+        "usdValue": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "default": "NATIVE",
+          "enum": [
+            "NATIVE",
+            "IMPORT"
+          ]
+        },
+        "isPublished": {
+          "type": "boolean",
+          "default": false
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "default": false
+        },
+        "isActive": {
+          "type": "boolean",
+          "default": true
+        },
+        "isArchived": {
+          "type": "boolean",
+          "default": false
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "applicationLink": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "skills": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "default": "bounty",
+          "enum": [
+            "bounty",
+            "project",
+            "hackathon"
+          ]
+        },
+        "requirements": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "totalPaymentsMade": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": 0
+        },
+        "totalWinnersSelected": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": 0
+        },
+        "isWinnersAnnounced": {
+          "type": "boolean",
+          "default": false
+        },
+        "region": {
+          "type": "string",
+          "default": "GLOBAL",
+          "enum": [
+            "GLOBAL",
+            "CHINA"
+          ]
+        },
+        "pocSocials": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hackathonprize": {
+          "type": "boolean",
+          "default": false
+        },
+        "applicationType": {
+          "type": "string",
+          "default": "fixed",
+          "enum": [
+            "rolling",
+            "fixed"
+          ]
+        },
+        "timeToComplete": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "references": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "referredBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "publishedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "isPrivate": {
+          "type": "boolean",
+          "default": false
+        },
+        "compensationType": {
+          "type": "string",
+          "default": "fixed",
+          "enum": [
+            "fixed",
+            "range",
+            "variable"
+          ]
+        },
+        "maxRewardAsk": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "minRewardAsk": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "template": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/BountiesTemplates"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sponsor": {
+          "$ref": "#/definitions/Sponsors"
+        },
+        "poc": {
+          "$ref": "#/definitions/User"
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shouldSendEmail": {
+          "type": "boolean",
+          "default": true
+        },
+        "isFndnPaying": {
+          "type": "boolean",
+          "default": false
+        },
+        "Submission": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Submission"
+          }
+        },
+        "SubscribeBounty": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubscribeBounty"
+          }
+        },
+        "Hackathon": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Hackathon"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "winnersAnnouncedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "Scouts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Scouts"
+          }
+        },
+        "Comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Comment"
+          }
+        }
+      },
+      "required": [
+        "title",
+        "slug",
+        "sponsorId",
+        "pocId",
+        "updatedAt"
+      ]
+    },
+    "BountiesTemplates": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "deadline": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "slug": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "color": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "emoji": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "default": false
+        },
+        "isActive": {
+          "type": "boolean",
+          "default": true
+        },
+        "isArchived": {
+          "type": "boolean",
+          "default": false
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "skills": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "default": "bounty",
+          "enum": [
+            "bounty",
+            "project",
+            "hackathon"
+          ]
+        },
+        "requirements": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "region": {
+          "type": "string",
+          "default": "GLOBAL",
+          "enum": [
+            "GLOBAL",
+            "CHINA"
+          ]
+        },
+        "applicationType": {
+          "type": "string",
+          "default": "fixed",
+          "enum": [
+            "rolling",
+            "fixed"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "default": "OPEN",
+          "enum": [
+            "OPEN",
+            "REVIEW",
+            "CLOSED",
+            "VERIFYING",
+            "VERIFY_FAIL",
+            "PREVIEW"
+          ]
+        },
+        "timeToComplete": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "references": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "referredBy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "publishedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "compensationType": {
+          "type": "string",
+          "default": "fixed",
+          "enum": [
+            "fixed",
+            "range",
+            "variable"
+          ]
+        },
+        "maxRewardAsk": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "minRewardAsk": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rewardAmount": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "rewards": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "maxBonusSpots": {
+          "type": "integer",
+          "default": 0
+        },
+        "usdValue": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "pocSocials": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "default": "NATIVE",
+          "enum": [
+            "NATIVE",
+            "IMPORT"
+          ]
+        },
+        "isPublished": {
+          "type": "boolean",
+          "default": false
+        },
+        "Bounties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Bounties"
+          }
+        },
+        "sponsor": {
+          "$ref": "#/definitions/Sponsors"
+        },
+        "poc": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "required": [
+        "updatedAt",
+        "sponsorId",
+        "pocId"
+      ]
+    },
+    "Comment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "listingType": {
+          "type": "string",
+          "default": "BOUNTY",
+          "enum": [
+            "BOUNTY",
+            "SUBMISSION"
+          ]
+        },
+        "isActive": {
+          "type": "boolean",
+          "default": true
+        },
+        "isArchived": {
+          "type": "boolean",
+          "default": false
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "submissionId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "default": "NORMAL",
+          "enum": [
+            "NORMAL",
+            "SUBMISSION",
+            "DEADLINE_EXTENSION",
+            "WINNER_ANNOUNCEMENT"
+          ]
+        },
+        "author": {
+          "$ref": "#/definitions/User"
+        },
+        "repliedTo": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Comment"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "replies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Comment"
+          }
+        },
+        "listing": {
+          "$ref": "#/definitions/Bounties"
+        }
+      },
+      "required": [
+        "message",
+        "authorId",
+        "listingId",
+        "updatedAt"
+      ]
+    },
+    "Grants": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shortDescription": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "minReward": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "maxReward": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "totalPaid": {
+          "type": "number",
+          "default": 0
+        },
+        "totalApproved": {
+          "type": "number",
+          "default": 0
+        },
+        "historicalApplications": {
+          "type": "integer",
+          "default": 0
+        },
+        "link": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "isPublished": {
+          "type": "boolean",
+          "default": false
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "default": false
+        },
+        "isActive": {
+          "type": "boolean",
+          "default": true
+        },
+        "isArchived": {
+          "type": "boolean",
+          "default": false
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "skills": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "logo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "region": {
+          "type": "string",
+          "default": "GLOBAL",
+          "enum": [
+            "GLOBAL",
+            "CHINA"
+          ]
+        },
+        "sponsor": {
+          "$ref": "#/definitions/Sponsors"
+        },
+        "poc": {
+          "$ref": "#/definitions/User"
+        },
+        "questions": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "pocSocials": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "default": "OPEN",
+          "enum": [
+            "OPEN",
+            "CLOSED"
+          ]
+        },
+        "GrantApplication": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GrantApplication"
+          }
+        },
+        "airtableId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "avgResponseTime": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": "24h"
+        },
+        "isNative": {
+          "type": "boolean",
+          "default": false
+        },
+        "isPrivate": {
+          "type": "boolean",
+          "default": false
+        },
+        "references": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "slug",
+        "sponsorId",
+        "pocId",
+        "updatedAt"
+      ]
+    },
+    "GrantApplication": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "applicationStatus": {
+          "type": "string",
+          "default": "Pending",
+          "enum": [
+            "Pending",
+            "Approved",
+            "Rejected"
+          ]
+        },
+        "projectTitle": {
+          "type": "string"
+        },
+        "projectOneLiner": {
+          "type": "string"
+        },
+        "projectDetails": {
+          "type": "string"
+        },
+        "projectTimeline": {
+          "type": "string"
+        },
+        "proofOfWork": {
+          "type": "string"
+        },
+        "walletAddress": {
+          "type": "string"
+        },
+        "twitter": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "milestones": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kpi": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "answers": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        },
+        "grant": {
+          "$ref": "#/definitions/Grants"
+        },
+        "label": {
+          "type": "string",
+          "default": "Unreviewed",
+          "enum": [
+            "Unreviewed",
+            "Reviewed",
+            "Shortlisted",
+            "Spam"
+          ]
+        },
+        "ask": {
+          "type": "number",
+          "default": 0
+        },
+        "approvedAmount": {
+          "type": "number",
+          "default": 0
+        },
+        "approvedAmountInUSD": {
+          "type": "number",
+          "default": 0
+        },
+        "decidedAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "totalPaid": {
+          "type": "number",
+          "default": 0
+        },
+        "isShipped": {
+          "type": "boolean",
+          "default": false
+        },
+        "paymentDetails": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "totalTranches": {
+          "type": "integer",
+          "default": 0
+        },
+        "like": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "likeCount": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "userId",
+        "grantId",
+        "projectTitle",
+        "projectOneLiner",
+        "projectDetails",
+        "projectTimeline",
+        "proofOfWork",
+        "walletAddress",
+        "updatedAt"
+      ]
+    },
+    "Submission": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "link": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tweet": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "default": "Pending",
+          "enum": [
+            "Pending",
+            "Approved",
+            "Rejected"
+          ]
+        },
+        "eligibilityAnswers": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "isWinner": {
+          "type": "boolean",
+          "default": false
+        },
+        "winnerPosition": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "isActive": {
+          "type": "boolean",
+          "default": true
+        },
+        "isArchived": {
+          "type": "boolean",
+          "default": false
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "like": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "likeCount": {
+          "type": "integer",
+          "default": 0
+        },
+        "isPaid": {
+          "type": "boolean",
+          "default": false
+        },
+        "paymentDetails": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "otherInfo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ask": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "default": "Unreviewed",
+          "enum": [
+            "Unreviewed",
+            "Reviewed",
+            "Shortlisted",
+            "Spam"
+          ]
+        },
+        "rewardInUSD": {
+          "type": "number",
+          "default": 0
+        },
+        "listing": {
+          "$ref": "#/definitions/Bounties"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        },
+        "ogImage": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "userId",
+        "listingId",
+        "updatedAt"
+      ]
+    },
+    "Sponsors": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "logo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "industry": {
+          "type": "string"
+        },
+        "twitter": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bio": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "isArchived": {
+          "type": "boolean",
+          "default": false
+        },
+        "isActive": {
+          "type": "boolean",
+          "default": true
+        },
+        "entityName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "isVerified": {
+          "type": "boolean",
+          "default": false
+        },
+        "isCaution": {
+          "type": "boolean",
+          "default": false
+        },
+        "st": {
+          "type": "boolean",
+          "default": false
+        },
+        "Hackathon": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Hackathon"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "UserSponsors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserSponsors"
+          }
+        },
+        "Bounties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Bounties"
+          }
+        },
+        "Templates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BountiesTemplates"
+          }
+        },
+        "Grants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Grants"
+          }
+        },
+        "User": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        },
+        "UserInvites": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserInvites"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "slug",
+        "industry",
+        "updatedAt"
+      ]
+    },
+    "Account": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "providerAccountId": {
+          "type": "string"
+        },
+        "refresh_token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "access_token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expires_at": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "token_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scope": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id_token": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "session_state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "required": [
+        "userId",
+        "type",
+        "provider",
+        "providerAccountId"
+      ]
+    },
+    "Session": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sessionToken": {
+          "type": "string"
+        },
+        "expires": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "required": [
+        "sessionToken",
+        "userId",
+        "expires"
+      ]
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "photo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "firstName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lastName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "isVerified": {
+          "type": "boolean",
+          "default": false
+        },
+        "role": {
+          "type": "string",
+          "default": "USER"
+        },
+        "isTalentFilled": {
+          "type": "boolean",
+          "default": false
+        },
+        "interests": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bio": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "twitter": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "discord": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "linkedin": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "website": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "telegram": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "community": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "experience": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "superteamLevel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "location": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cryptoExperience": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "workPrefernce": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "currentEmployer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "notifications": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "private": {
+          "type": "boolean",
+          "default": false
+        },
+        "skills": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "emailVerified": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "featureModalShown": {
+          "type": "boolean",
+          "default": false
+        },
+        "surveysShown": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "stRecommended": {
+          "type": "boolean",
+          "default": false
+        },
+        "acceptedTOS": {
+          "type": "boolean",
+          "default": false
+        },
+        "stLead": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "currentSponsor": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Sponsors"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "UserSponsors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserSponsors"
+          }
+        },
+        "poc": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Bounties"
+          }
+        },
+        "templates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BountiesTemplates"
+          }
+        },
+        "Comment": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Comment"
+          }
+        },
+        "Submission": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Submission"
+          }
+        },
+        "Grants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Grants"
+          }
+        },
+        "UserInvites": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserInvites"
+          }
+        },
+        "SubscribeBounty": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubscribeBounty"
+          }
+        },
+        "PoW": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PoW"
+          }
+        },
+        "accounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Account"
+          }
+        },
+        "sessions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Session"
+          }
+        },
+        "Hackathon": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Hackathon"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "emailSettings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EmailSettings"
+          }
+        },
+        "TalentRankings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TalentRankings"
+          }
+        },
+        "Scouts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Scouts"
+          }
+        },
+        "GrantApplication": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GrantApplication"
+          }
+        },
+        "SubscribeHackathon": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubscribeHackathon"
+          }
+        }
+      },
+      "required": [
+        "email",
+        "updatedAt"
+      ]
+    },
+    "Scouts": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "dollarsEarned": {
+          "type": "integer"
+        },
+        "score": {
+          "type": "number"
+        },
+        "invited": {
+          "type": "boolean"
+        },
+        "skills": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "listing": {
+          "$ref": "#/definitions/Bounties"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "required": [
+        "userId",
+        "listingId",
+        "dollarsEarned",
+        "score",
+        "invited",
+        "skills"
+      ]
+    },
+    "TalentRankings": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "skill": {
+          "type": "string",
+          "default": "ALL",
+          "enum": [
+            "DEVELOPMENT",
+            "DESIGN",
+            "CONTENT",
+            "OTHER",
+            "ALL"
+          ]
+        },
+        "timeframe": {
+          "type": "string",
+          "default": "ALL_TIME",
+          "enum": [
+            "THIS_YEAR",
+            "LAST_30_DAYS",
+            "LAST_7_DAYS",
+            "ALL_TIME"
+          ]
+        },
+        "rank": {
+          "type": "integer"
+        },
+        "submissions": {
+          "type": "integer",
+          "default": 0
+        },
+        "winRate": {
+          "type": "integer",
+          "default": 0
+        },
+        "wins": {
+          "type": "integer",
+          "default": 0
+        },
+        "totalEarnedInUSD": {
+          "type": "integer"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "required": [
+        "userId",
+        "rank",
+        "totalEarnedInUSD"
+      ]
+    },
+    "PoW": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "skills": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "link": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "subSkills": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "like": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "likeCount": {
+          "type": "integer",
+          "default": 0
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        },
+        "ogImage": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "description",
+        "link",
+        "updatedAt"
+      ]
+    },
+    "EmailSettings": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "category": {
+          "type": "string"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "required": [
+        "userId",
+        "category"
+      ]
+    },
+    "UserSponsors": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string",
+          "default": "MEMBER",
+          "enum": [
+            "ADMIN",
+            "MEMBER"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        },
+        "sponsor": {
+          "$ref": "#/definitions/Sponsors"
+        }
+      },
+      "required": [
+        "userId",
+        "sponsorId",
+        "updatedAt"
+      ]
+    },
+    "UserInvites": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "memberType": {
+          "type": "string",
+          "default": "MEMBER",
+          "enum": [
+            "ADMIN",
+            "MEMBER"
+          ]
+        },
+        "token": {
+          "type": "string"
+        },
+        "expires": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sender": {
+          "$ref": "#/definitions/User"
+        },
+        "sponsor": {
+          "$ref": "#/definitions/Sponsors"
+        }
+      },
+      "required": [
+        "email",
+        "senderId",
+        "updatedAt",
+        "sponsorId",
+        "token",
+        "expires"
+      ]
+    },
+    "emailLogs": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "BOUNTY_REVIEW",
+            "BOUNTY_DEADLINE",
+            "BOUNTY_DEADLINE_WEEK",
+            "BOUNTY_CLOSE_DEADLINE",
+            "NO_VERIFICATION",
+            "NO_ACTIVITY",
+            "NO_REVIEW_SPONSOR_1",
+            "NO_REVIEW_SPONSOR_2",
+            "ROLLING_15_DAYS",
+            "ROLLING_30_DAYS",
+            "NEW_LISTING",
+            "ROLLING_UNPUBLISH"
+          ]
+        },
+        "bountyId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "type",
+        "updatedAt"
+      ]
+    },
+    "SubscribeBounty": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "isArchived": {
+          "type": "boolean",
+          "default": false
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "User": {
+          "$ref": "#/definitions/User"
+        },
+        "Bounties": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Bounties"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "userId",
+        "bountyId",
+        "updatedAt"
+      ]
+    },
+    "SubscribeHackathon": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "isArchived": {
+          "type": "boolean",
+          "default": false
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "User": {
+          "$ref": "#/definitions/User"
+        },
+        "Hackthons": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Hackathon"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "userId",
+        "hackathonId",
+        "updatedAt"
+      ]
+    },
+    "VerificationToken": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        },
+        "expires": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "identifier",
+        "token",
+        "expires"
+      ]
+    },
+    "Hackathon": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "logo": {
+          "type": "string"
+        },
+        "deadline": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "altLogo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "announceDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "eligibility": {
+          "type": [
+            "number",
+            "string",
+            "boolean",
+            "object",
+            "array",
+            "null"
+          ]
+        },
+        "listings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Bounties"
+          }
+        },
+        "Sponsor": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Sponsors"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "User": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        },
+        "SubscribeHackathon": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubscribeHackathon"
+          }
+        }
+      },
+      "required": [
+        "slug",
+        "name",
+        "logo",
+        "description"
+      ]
+    },
+    "UnsubscribedEmail": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "email"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "bounties": {
+      "$ref": "#/definitions/Bounties"
+    },
+    "bountiesTemplates": {
+      "$ref": "#/definitions/BountiesTemplates"
+    },
+    "comment": {
+      "$ref": "#/definitions/Comment"
+    },
+    "grants": {
+      "$ref": "#/definitions/Grants"
+    },
+    "grantApplication": {
+      "$ref": "#/definitions/GrantApplication"
+    },
+    "submission": {
+      "$ref": "#/definitions/Submission"
+    },
+    "sponsors": {
+      "$ref": "#/definitions/Sponsors"
+    },
+    "account": {
+      "$ref": "#/definitions/Account"
+    },
+    "session": {
+      "$ref": "#/definitions/Session"
+    },
+    "user": {
+      "$ref": "#/definitions/User"
+    },
+    "scouts": {
+      "$ref": "#/definitions/Scouts"
+    },
+    "talentRankings": {
+      "$ref": "#/definitions/TalentRankings"
+    },
+    "poW": {
+      "$ref": "#/definitions/PoW"
+    },
+    "emailSettings": {
+      "$ref": "#/definitions/EmailSettings"
+    },
+    "userSponsors": {
+      "$ref": "#/definitions/UserSponsors"
+    },
+    "userInvites": {
+      "$ref": "#/definitions/UserInvites"
+    },
+    "emailLogs": {
+      "$ref": "#/definitions/emailLogs"
+    },
+    "subscribeBounty": {
+      "$ref": "#/definitions/SubscribeBounty"
+    },
+    "subscribeHackathon": {
+      "$ref": "#/definitions/SubscribeHackathon"
+    },
+    "verificationToken": {
+      "$ref": "#/definitions/VerificationToken"
+    },
+    "hackathon": {
+      "$ref": "#/definitions/Hackathon"
+    },
+    "unsubscribedEmail": {
+      "$ref": "#/definitions/UnsubscribedEmail"
+    }
+  }
+}
