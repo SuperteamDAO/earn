@@ -1,5 +1,3 @@
-import { type Regions } from '@prisma/client';
-
 import {
   type Listing,
   type References,
@@ -20,7 +18,7 @@ export interface ListingFormType {
   applicationType?: 'fixed' | 'rolling';
   timeToComplete?: string;
   type?: 'bounty' | 'hackathon' | 'project';
-  region?: Regions;
+  region?: string;
   referredBy?: string;
   requirements?: string;
   eligibility?: Ques[];

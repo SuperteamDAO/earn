@@ -1,4 +1,5 @@
-import { CombinedRegions } from '@/constants/Superteam';
+import { countries } from '@/constants';
+import { Superteams } from '@/constants/Superteam';
 import type {
   Listing,
   ListingWithSubmissions,
@@ -30,9 +31,9 @@ export const getRegionTooltipLabel = (
   region: string | undefined,
   isGrant: boolean = false,
 ) => {
-  const country = CombinedRegions.find(
-    (st) => st.region === region,
-  )?.displayValue;
+  const country = countries.find(
+    (country) => country.name.toLowerCase() === region?.toLowerCase(),
+  )?.name;
 
   switch (region) {
     case 'GLOBAL':
@@ -154,10 +155,25 @@ export function userRegionEligibilty(
     return true;
   }
 
-  const allRegions = CombinedRegions.find((st) => st.region === region);
+  let regionObject:
+    | { name: string; code: string; country?: string[] }
+    | undefined;
+  regionObject = countries.find(
+    (country) => country.name.toLowerCase() === region?.toLowerCase(),
+  );
+  if (!regionObject) {
+    regionObject = Superteams.find(
+      (superteam) =>
+        superteam.displayValue.toLowerCase() === region?.toLowerCase(),
+    );
+  }
 
   const isEligible =
-    !!(userLocation && allRegions?.country.includes(userLocation)) || false;
+    !!(
+      userLocation &&
+      (regionObject?.name === userLocation ||
+        regionObject?.country?.includes(userLocation))
+    ) || false;
 
   return isEligible;
 }

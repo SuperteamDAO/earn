@@ -20,7 +20,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Regions } from '@prisma/client';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useSession } from 'next-auth/react';
@@ -38,7 +37,7 @@ import { z } from 'zod';
 
 import { SkillSelect } from '@/components/shared/SkillSelect';
 import { type MultiSelectOptions } from '@/constants';
-import { CombinedRegions, Superteams } from '@/constants/Superteam';
+import { Superteams } from '@/constants/Superteam';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
@@ -48,6 +47,7 @@ import { type ListingFormType } from '../../types';
 import { getSuggestions, mergeSkills } from '../../utils';
 import { SelectSponsor } from '../SelectSponsor';
 import { ListingFormLabel, ListingTooltip } from './Form';
+import { RegionSelector } from './Form/RegionSelector';
 
 interface Props {
   editable: boolean;
@@ -175,6 +175,7 @@ export const ListingBasic = ({
     getValues,
     reset,
     trigger,
+    control,
     formState: { errors },
   } = useForm({
     mode: 'onTouched',
@@ -477,26 +478,9 @@ export const ListingBasic = ({
             skills={skills}
             subSkills={subSkills}
           />
-          <FormControl w="full" mb={5} isInvalid={!!errors.region}>
-            <Flex>
-              <ListingFormLabel htmlFor="region">
-                Listing Geography
-              </ListingFormLabel>
-              <ListingTooltip label="Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
-            </Flex>
-            <Select {...register('region')}>
-              <option value={Regions.GLOBAL}>Global</option>
-              {CombinedRegions.map((region) => (
-                <option value={region.region} key={region.displayValue}>
-                  {region.displayValue}
-                </option>
-              ))}
-            </Select>
-
-            <FormErrorMessage>
-              {errors.region ? <>{errors.region.message}</> : <></>}
-            </FormErrorMessage>
-          </FormControl>
+          <Box w="full" mb={5}>
+            <RegionSelector control={control} errors={errors} />
+          </Box>
           <FormControl
             w="full"
             mb={5}
