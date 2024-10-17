@@ -94,7 +94,7 @@ export function SponsorLayout({
 
   useEffect(() => {
     const modalsToShow = async () => {
-      if (!user?.currentSponsor?.entityName) {
+      if (!user?.currentSponsor?.entityName && session?.user.role !== 'GOD') {
         setIsEntityModalOpen(true);
       }
     };
