@@ -1,16 +1,18 @@
+import { t } from 'i18next';
+
 export function formatFromNow(now: string) {
   return now
-    .replace('a few seconds', '1s')
-    .replace('a minute', '1m')
-    .replace(' minutes', 'm')
-    .replace('an hour', '1h')
-    .replace(' hours', 'h')
-    .replace('a day', '1d')
-    .replace(' days', 'd')
-    .replace('a month', '1M')
-    .replace(' months', 'M')
-    .replace('a year', '1y')
-    .replace(' years', 'y');
+    .replace('a few seconds', '1' + t('commentUtils.timeUnits.second'))
+    .replace('a minute', '1' + t('commentUtils.timeUnits.minute'))
+    .replace(' minutes', t('commentUtils.timeUnits.minute'))
+    .replace('an hour', '1' + t('commentUtils.timeUnits.hour'))
+    .replace(' hours', t('commentUtils.timeUnits.hour'))
+    .replace('a day', '1' + t('commentUtils.timeUnits.day'))
+    .replace(' days', t('commentUtils.timeUnits.day'))
+    .replace('a month', '1' + t('commentUtils.timeUnits.month'))
+    .replace(' months', t('commentUtils.timeUnits.month'))
+    .replace('a year', '1' + t('commentUtils.timeUnits.year'))
+    .replace(' years', t('commentUtils.timeUnits.year'));
 }
 
 export function randomSubmissionCommentGenerator(type: string | undefined) {
@@ -18,41 +20,22 @@ export function randomSubmissionCommentGenerator(type: string | undefined) {
   const max = Math.floor(6);
   const random = Math.floor(Math.random() * (max - min + 1)) + min;
 
+  const commentKey = `commentUtils.submissionComments.${type || 'default'}`;
+
   switch (random) {
     case 1:
-      if (type === 'bounty') return 'Just submitted to this Bounty';
-      if (type === 'project') return 'Just applied to this Project';
-      break;
+      return t(`${commentKey}.justSubmitted`);
     case 2:
-      if (type === 'bounty')
-        return 'Is in the arena, they just submitted to this Bounty';
-      if (type === 'project')
-        return 'Is in the arena, they just applied to this Project';
-      break;
+      return t(`${commentKey}.inTheArena`);
     case 3:
-      if (type === 'bounty')
-        return 'Potential Winner? They just submitted to this bounty';
-      if (type === 'project')
-        return 'Potential Winner? They just applied to this project';
-      break;
+      return t(`${commentKey}.potentialWinner`);
     case 4:
-      if (type === 'bounty')
-        return 'Is stepping up; they just submitted to this bounty';
-      if (type === 'project')
-        return 'Is stepping up; they just applied to this project';
-      break;
+      return t(`${commentKey}.steppingUp`);
     case 5:
-      if (type === 'bounty') return 'Is in! They just submitted to this bounty';
-      if (type === 'project') return 'Is in! They just applied to this project';
-      break;
+      return t(`${commentKey}.isIn`);
     case 6:
-      if (type === 'bounty')
-        return 'Is on the move! They just submitted to this bounty';
-      if (type === 'project')
-        return 'Is on the move! They just applied to this project';
-      break;
+      return t(`${commentKey}.onTheMove`);
     default:
-      break;
+      return t('commentUtils.submissionComments.default');
   }
-  return 'Just submitted to this listing';
 }

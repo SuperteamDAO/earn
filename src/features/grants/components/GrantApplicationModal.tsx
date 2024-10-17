@@ -26,6 +26,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { FaXTwitter } from 'react-icons/fa6';
 
 import {
@@ -60,6 +61,7 @@ const steps = [
 
 export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
   const { id, token, minReward, maxReward, questions } = grant;
+  const { t } = useTranslation('common');
 
   const { user, refetchUser } = useUser();
 
@@ -135,7 +137,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
 
       onClose();
     } catch (e) {
-      setError('Sorry! Please try again or contact support.');
+      setError(t('grantApplicationModal.errorMessage'));
       setIsLoading(false);
     }
   };
@@ -148,7 +150,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
 
       if (askValue < min || askValue > max) {
         setAskError(
-          `Compensation must be between ${min.toLocaleString()} and ${max.toLocaleString()} ${token}`,
+          `${t('grantApplicationModal.grantAmount')} ${min.toLocaleString()} ${t('and')} ${max.toLocaleString()} ${token}`,
         );
         return;
       }
@@ -181,11 +183,9 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader px={{ base: 4, md: 10 }} pt={8} color="brand.slate.800">
-          Grant Application
+          {t('grantApplicationModal.title')}
           <Text mt={1} color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
-            If you&apos;re working on a project that will help the
-            sponsor&apos;s ecosystem grow, apply with your proposal here and
-            we&apos;ll respond soon!
+            {t('grantApplicationModal.description')}
           </Text>
           <Progress
             h={'1.5px'}
@@ -234,7 +234,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                   fontSize={'md'}
                   fontWeight={i - 1 < activeStep ? 500 : 400}
                 >
-                  {step.title}
+                  {t(`grantApplicationModal.${step.title.toLowerCase()}`)}
                 </Text>
               </Flex>
             ))}
@@ -265,9 +265,11 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
               <VStack gap={4} mb={5}>
                 <TextAreaWithCounter
                   id="projectTitle"
-                  label="Project Title"
-                  helperText="What should we call your project?"
-                  placeholder="Project Title"
+                  label={t('grantApplicationModal.projectTitle')}
+                  helperText={t('grantApplicationModal.projectTitleHelper')}
+                  placeholder={t(
+                    'grantApplicationModal.projectTitlePlaceholder',
+                  )}
                   register={register}
                   watch={watch}
                   errors={errors}
@@ -276,10 +278,14 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                 />
                 <TextAreaWithCounter
                   id="projectOneLiner"
-                  label="One-Liner Description"
-                  helperText="Describe your idea in one sentence."
+                  label={t('grantApplicationModal.oneLinerDescription')}
+                  helperText={t(
+                    'grantApplicationModal.oneLinerDescriptionHelper',
+                  )}
                   maxLength={150}
-                  placeholder="Sum up your project in one sentence"
+                  placeholder={t(
+                    'grantApplicationModal.oneLinerDescriptionPlaceholder',
+                  )}
                   register={register}
                   watch={watch}
                   errors={errors}
@@ -292,10 +298,10 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                     fontWeight={600}
                     htmlFor={'ask'}
                   >
-                    Grant Amount
+                    {t('grantApplicationModal.grantAmount')}
                   </FormLabel>
                   <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                    How much funding do you require to complete this project?
+                    {t('grantApplicationModal.grantAmountHelper')}
                   </FormHelperText>
                   <InputGroup>
                     <InputLeftAddon>
@@ -319,7 +325,9 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                       focusBorderColor="brand.purple"
                       id="ask"
                       onWheel={(e) => (e.target as HTMLElement).blur()}
-                      placeholder="Enter amount"
+                      placeholder={t(
+                        'grantApplicationModal.grantAmountPlaceholder',
+                      )}
                       {...register('ask')}
                       type="number"
                     />
@@ -330,11 +338,11 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                 </FormControl>
                 <TextInputWithHelper
                   id="walletAddress"
-                  label="Your Solana Wallet Address"
-                  helperText={
-                    'Where should we send the funds? No .sol domains please!'
-                  }
-                  placeholder="Add your Solana wallet address"
+                  label={t('grantApplicationModal.walletAddress')}
+                  helperText={t('grantApplicationModal.walletAddressHelper')}
+                  placeholder={t(
+                    'grantApplicationModal.walletAddressPlaceholder',
+                  )}
                   register={register}
                   errors={errors}
                   validate={(address: string) =>
@@ -354,9 +362,11 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
               <VStack gap={4} mb={5}>
                 <TextAreaWithCounter
                   id="projectDetails"
-                  label="Project Details"
-                  helperText="What is the problem you're trying to solve, and how you're going to solve it?"
-                  placeholder="Explain the problem you're solving and your solution"
+                  label={t('grantApplicationModal.projectDetails')}
+                  helperText={t('grantApplicationModal.projectDetailsHelper')}
+                  placeholder={t(
+                    'grantApplicationModal.projectDetailsPlaceholder',
+                  )}
                   register={register}
                   watch={watch}
                   errors={errors}
@@ -369,11 +379,13 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                     fontWeight={600}
                     htmlFor={id}
                   >
-                    Deadline (in{' '}
-                    {Intl.DateTimeFormat().resolvedOptions().timeZone})
+                    {t('grantApplicationModal.deadline', {
+                      timezone:
+                        Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    })}
                   </FormLabel>
                   <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                    What is the expected completion date for the project?
+                    {t('grantApplicationModal.deadlineHelper')}
                   </FormHelperText>
                   <Input
                     w={'full'}
@@ -403,7 +415,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                     focusBorderColor="brand.purple"
                     id="projectTimeline"
                     min={date}
-                    placeholder="deadline"
+                    placeholder={t('grantApplicationModal.deadlinePlaceholder')}
                     type={'date'}
                     {...register('projectTimeline', { required: true })}
                   />
@@ -411,9 +423,11 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
 
                 <TextAreaWithCounter
                   id="proofOfWork"
-                  label="Proof of Work"
-                  helperText="Include links to your best work that will make the community trust you to execute on this project."
-                  placeholder="Provide links to your portfolio or previous work"
+                  label={t('grantApplicationModal.proofOfWork')}
+                  helperText={t('grantApplicationModal.proofOfWorkHelper')}
+                  placeholder={t(
+                    'grantApplicationModal.proofOfWorkPlaceholder',
+                  )}
                   register={register}
                   watch={watch}
                   errors={errors}
@@ -427,10 +441,10 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                     fontWeight={600}
                     htmlFor={id}
                   >
-                    Personal Twitter Profile
+                    {t('grantApplicationModal.twitterProfile')}
                   </FormLabel>
                   <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                    Add your personal Twitter username
+                    {t('grantApplicationModal.twitterProfileHelper')}
                   </FormHelperText>
                   <Box mb={'1.25rem'}>
                     <Flex align="center" justify="center" direction="row">
@@ -485,7 +499,9 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                         }
                         focusBorderColor="brand.purple"
                         id="twitter"
-                        placeholder={'johncena'}
+                        placeholder={t(
+                          'grantApplicationModal.twitterProfilePlaceholder',
+                        )}
                         {...register('twitter', {
                           validate: (value) => {
                             if (
@@ -519,9 +535,13 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
               <VStack gap={4} mb={5}>
                 <TextAreaWithCounter
                   id="milestones"
-                  label="Goals and Milestones"
-                  helperText="List down the things you hope to achieve by the end of project duration."
-                  placeholder="Outline your project goals and milestones"
+                  label={t('grantApplicationModal.goalsAndMilestones')}
+                  helperText={t(
+                    'grantApplicationModal.goalsAndMilestonesHelper',
+                  )}
+                  placeholder={t(
+                    'grantApplicationModal.goalsAndMilestonesPlaceholder',
+                  )}
                   register={register}
                   watch={watch}
                   errors={errors}
@@ -530,9 +550,9 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                 />
                 <TextAreaWithCounter
                   id="kpi"
-                  label="Primary Key Performance Indicator"
-                  helperText="What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc."
-                  placeholder="What's the key metric for success?"
+                  label={t('grantApplicationModal.kpi')}
+                  helperText={t('grantApplicationModal.kpiHelper')}
+                  placeholder={t('grantApplicationModal.kpiPlaceholder')}
                   register={register}
                   watch={watch}
                   errors={errors}
@@ -543,8 +563,7 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
             )}
             {!!error && (
               <Text align="center" mb={2} color="red">
-                Sorry! An error occurred while submitting. <br />
-                Please try again or contact us at hello@superteamearn.com
+                {error}
               </Text>
             )}
             <Flex gap={2} mt={8}>
@@ -556,18 +575,20 @@ export const GrantApplicationModal = ({ isOpen, onClose, grant }: Props) => {
                   onClick={handleBack}
                   variant="unstyled"
                 >
-                  Back
+                  {t('grantApplicationModal.back')}
                 </Button>
               )}
               <Button
                 className="ph-no-capture"
                 w={'full'}
                 isLoading={!!isLoading}
-                loadingText="Applying..."
+                loadingText={t('grantApplicationModal.applying')}
                 type="submit"
                 variant="solid"
               >
-                {activeStep === steps.length - 1 ? 'Apply' : 'Continue'}
+                {activeStep === steps.length - 1
+                  ? t('grantApplicationModal.apply')
+                  : t('grantApplicationModal.continue')}
               </Button>
             </Flex>
           </form>

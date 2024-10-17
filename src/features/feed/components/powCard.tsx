@@ -1,5 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 
@@ -26,8 +27,10 @@ interface PowCardProps {
 }
 
 export function PowCard({ pow, type }: PowCardProps) {
+  const { t } = useTranslation('common');
+
   const content = {
-    actionText: 'added a personal project',
+    actionText: t('powCard.addedPersonalProject'),
     createdAt: pow?.createdAt || '',
     description: pow?.description,
   };
@@ -48,7 +51,7 @@ export function PowCard({ pow, type }: PowCardProps) {
           {pow?.title}
         </Text>
       </Flex>
-      <FeedCardLink href={pow?.link}>View Project</FeedCardLink>
+      <FeedCardLink href={pow?.link}>{t('powCard.viewProject')}</FeedCardLink>
     </>
   );
 

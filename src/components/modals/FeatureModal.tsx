@@ -14,6 +14,7 @@ import NextImage from 'next/image';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { latestActiveSlugQuery } from '@/features/sponsor-dashboard';
 import { useUpdateUser, useUser } from '@/store/user';
@@ -29,6 +30,7 @@ export const FeatureModal = ({
   const { user } = useUser();
   const updateUser = useUpdateUser();
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation('common');
 
   const { data: latestActiveSlug } = useQuery({
     ...latestActiveSlugQuery,
@@ -87,14 +89,9 @@ export const FeatureModal = ({
         </Box>
         <VStack align="start" gap={3} p={6}>
           <Text fontSize="lg" fontWeight={600}>
-            Introducing Scout
+            {t('featureModal.title')}
           </Text>
-          <Text color="brand.slate.500">
-            A curated list of the best talent on Superteam Earn that you can
-            invite to participate in your listings to get high quality
-            submissions! Add a new listing, or check out any of your currently
-            live listings to try Scout.
-          </Text>
+          <Text color="brand.slate.500">{t('featureModal.description')}</Text>
           <Link
             as={latestActiveSlug ? NextLink : 'div'}
             href={
@@ -108,10 +105,10 @@ export const FeatureModal = ({
             <Button gap={2} w="full" fontSize="sm" fontWeight={500}>
               {latestActiveSlug ? (
                 <>
-                  Check it out <ArrowForwardIcon />
+                  {t('featureModal.checkItOut')} <ArrowForwardIcon />
                 </>
               ) : (
-                'Good to know!'
+                t('featureModal.goodToKnow')
               )}
             </Button>
           </Link>

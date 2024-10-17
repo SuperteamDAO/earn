@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { getServerSession } from 'next-auth';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -160,9 +159,6 @@ export default function HomePage({
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context,
 ) => {
-  const translations = await serverSideTranslations(context.locale || 'en', [
-    'common',
-  ]);
   const session = await getServerSession(context.req, context.res, authOptions);
   let userRegion: Regions[] | null | undefined = null;
   let isAuth = false;
@@ -201,7 +197,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       openForYouListings: JSON.parse(JSON.stringify(openForYouListings)),
       isAuth,
       userRegion,
-      ...translations,
     },
   };
 };

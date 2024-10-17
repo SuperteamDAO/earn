@@ -9,6 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RxUpload } from 'react-icons/rx';
 import { toast } from 'sonner';
 
@@ -30,19 +31,18 @@ export const ImagePicker = ({
   );
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation('common');
 
   const handleFileChange = (file: File | null | undefined) => {
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('The image size must be smaller than 5MB');
+        toast.error(t('imagePicker.sizeError'));
         return;
       }
 
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
-        toast.error(
-          'Unsupported file format. Please use JPEG, PNG, or WebP Images.',
-        );
+        toast.error(t('imagePicker.formatError'));
         return;
       }
 
@@ -111,7 +111,7 @@ export const ImagePicker = ({
             h={20}
             borderRadius={'xl'}
             objectFit={'cover'}
-            alt="Preview"
+            alt={t('imagePicker.preview')}
             src={preview}
           />
         ) : (
@@ -135,7 +135,7 @@ export const ImagePicker = ({
             color={'brand.slate.400'}
             bg={'transparent'}
             _hover={{ bg: 'brand.slate.100' }}
-            aria-label="Remove image"
+            aria-label={t('imagePicker.removeImage')}
             icon={<CloseIcon />}
             onClick={handleReset}
             size="sm"
@@ -144,10 +144,10 @@ export const ImagePicker = ({
 
         <Flex justify={'center'} direction={'column'} px={5}>
           <Text mb={1} color={'brand.slate.500'} fontWeight={600}>
-            Choose or drag and drop media
+            {t('imagePicker.chooseOrDrag')}
           </Text>
           <Text color="brand.slate.400" fontSize="sm">
-            Maximum size 5 MB
+            {t('imagePicker.maxSize')}
           </Text>
         </Flex>
       </Flex>

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import {
   Button,
   HStack,
@@ -12,6 +13,7 @@ import {
 import axios from 'axios';
 import NextLink from 'next/link';
 import { useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { PDTG, TERMS_OF_USE } from '@/constants';
 import { useUser } from '@/store/user';
@@ -26,6 +28,7 @@ export const EntityNameModal = ({
   const [entityName, setEntityName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const { t } = useTranslation('common');
 
   const { user, refetchUser } = useUser();
   if (!user?.currentSponsor?.id) return null;
@@ -59,28 +62,29 @@ export const EntityNameModal = ({
       <ModalContent gap={6} overflow="hidden" p={6} rounded="lg">
         <VStack align="start">
           <Text fontSize="lg" fontWeight={500}>
-            Update Your Entity Name
+            {t('entityNameModal.title')}
           </Text>
           <Text color="brand.slate.400" fontSize="sm">
-            In accordance with our updated{' '}
-            <Link
-              textDecoration={'underline'}
-              href={TERMS_OF_USE}
-              rel="noopener noreferrer"
-              target="_blank"
-              textUnderlineOffset={2}
-            >
-              Terms of Use
-            </Link>
-            , we need to know the name of the entity that controls your project.
-            If you are a DAO, please mention the name of your DAO. If you{' '}
-            {"don't "}
-            have an entity, please mention your full name.
+            <Trans i18nKey="entityNameModal.description" ns="common">
+              In accordance with our updated{' '}
+              <Link
+                textDecoration={'underline'}
+                href={TERMS_OF_USE}
+                rel="noopener noreferrer"
+                target="_blank"
+                textUnderlineOffset={2}
+              >
+                Terms of Use
+              </Link>
+              , we need to know the name of the entity that controls your
+              project. If you are a DAO, please mention the name of your DAO. If
+              you don't have an entity, please mention your full name.
+            </Trans>
           </Text>
         </VStack>
         <Input
           onChange={(e) => setEntityName(e.target.value)}
-          placeholder="Entity Name"
+          placeholder={t('entityNameModal.inputPlaceholder')}
           value={entityName}
         />
         <HStack>
@@ -92,16 +96,16 @@ export const EntityNameModal = ({
             target="_blank"
           >
             <Button w="full" variant="outline">
-              Need Help?
+              {t('entityNameModal.needHelp')}
             </Button>
           </Link>
           <Button w="full" isLoading={loading} onClick={setDBEntityName}>
-            Update
+            {t('entityNameModal.update')}
           </Button>
         </HStack>
         {error && (
           <Text color="red" textAlign="center">
-            Some Error occurred, please try again later
+            {t('entityNameModal.error')}
           </Text>
         )}
       </ModalContent>

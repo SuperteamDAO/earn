@@ -1,4 +1,5 @@
 import { Link } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 import { type CommentType } from '@/interface/comments';
 import { isLink } from '@/utils/isLink';
@@ -33,6 +34,7 @@ export const CommentParser = ({
   listingType,
   isAnnounced,
 }: Props) => {
+  const { t } = useTranslation('common');
   const parsedComment = parseComment(value);
   if (type === 'SUBMISSION' && submissionId && isAnnounced)
     return (
@@ -42,7 +44,7 @@ export const CommentParser = ({
           color="brand.purple"
           href={`/listings/${listingType}/${listingSlug}/submission/${submissionId}`}
         >
-          check it out!
+          {t('commentParser.checkItOut')}
         </Link>
       </>
     );

@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import ResizeTextarea from 'react-textarea-autosize';
 import getCaretCoordinates from 'textarea-caret';
 
@@ -35,6 +36,7 @@ export const UserSuggestionTextarea = ({
   ...props
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const { t } = useTranslation('common');
 
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionPosition, setSuggestionPosition] = useState({
@@ -102,7 +104,8 @@ export const UserSuggestionTextarea = ({
           fontSize={'xs'}
           textAlign={'right'}
         >
-          {MAX_LENGTH - value.length} characters left
+          {MAX_LENGTH - value.length}{' '}
+          {t('userSuggestionTextarea.charactersLeft')}
         </Text>
       )}
       {showSuggestions && (

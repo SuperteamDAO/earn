@@ -7,6 +7,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 
@@ -37,6 +38,7 @@ interface Props {
   subSkillLabel?: string;
   helperText?: string;
 }
+
 export const SkillSelect = ({
   skills,
   subSkills,
@@ -44,12 +46,14 @@ export const SkillSelect = ({
   errorSubSkill,
   setSkills,
   setSubSkills,
-  skillLabel = 'Skills Needed',
-  subSkillLabel = 'Sub Skills Needed',
+  skillLabel,
+  subSkillLabel,
   helperText,
 }: Props) => {
   const animatedComponents = makeAnimated();
   const tempSubSkills: MultiSelectOptions[] = [];
+  const { t } = useTranslation('common');
+
   skills.forEach((s) => {
     const subSkillsForSkill =
       skillSubSkillMap[s.value as keyof typeof skillSubSkillMap];
@@ -78,7 +82,7 @@ export const SkillSelect = ({
             fontWeight={500}
             htmlFor={'skills'}
           >
-            {skillLabel}
+            {skillLabel || t('skillSelect.skillsNeeded')}
           </FormLabel>
           <Tooltip
             w="max"
@@ -89,12 +93,12 @@ export const SkillSelect = ({
             bg="brand.purple"
             borderRadius="0.5rem"
             hasArrow
-            label={`Select all that apply`}
+            label={t('skillSelect.selectAllThatApply')}
             placement="right-end"
           >
             <Image
               mt={-2}
-              alt={'Info Icon'}
+              alt={t('skillSelect.infoIconAlt')}
               src={'/assets/icons/info-icon.svg'}
             />
           </Tooltip>
@@ -139,7 +143,7 @@ export const SkillSelect = ({
             fontWeight={500}
             htmlFor={'subskills'}
           >
-            {subSkillLabel}
+            {subSkillLabel || t('skillSelect.subSkillsNeeded')}
           </FormLabel>
           <Tooltip
             w="max"
@@ -150,12 +154,12 @@ export const SkillSelect = ({
             bg="brand.purple"
             borderRadius="0.5rem"
             hasArrow
-            label={`Select all that apply`}
+            label={t('skillSelect.selectAllThatApply')}
             placement="right-end"
           >
             <Image
               mt={-2}
-              alt={'Info Icon'}
+              alt={t('skillSelect.infoIconAlt')}
               src={'/assets/icons/info-icon.svg'}
             />
           </Tooltip>

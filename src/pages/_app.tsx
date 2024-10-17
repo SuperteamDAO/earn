@@ -8,7 +8,6 @@ import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { SessionProvider } from 'next-auth/react';
-import { useTranslation } from 'next-i18next';
 import NextTopLoader from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
@@ -63,13 +62,6 @@ function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
   const { user } = useUser();
   const posthog = usePostHog();
-  const { i18n } = useTranslation();
-
-  useEffect(() => {
-    const lang = router.locale || 'en';
-    document.documentElement.lang = lang;
-    i18n.changeLanguage(lang);
-  }, [router.locale, i18n]);
 
   useEffect(() => {
     const handleRouteChange = () => posthog?.capture('$pageview');

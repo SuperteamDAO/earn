@@ -15,6 +15,7 @@ import axios from 'axios';
 import { type Survey, type SurveyQuestion } from 'posthog-js';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useUser } from '@/store/user';
 
@@ -34,6 +35,7 @@ export const SurveyModal = ({
 }) => {
   const { refetchUser } = useUser();
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
 
   const [question, setQuestion] = useState<SurveyQuestion | undefined | null>(
     null,
@@ -122,10 +124,10 @@ export const SurveyModal = ({
                   </Flex>
                   <Flex justify={'space-between'} flexGrow={1} mt={0.5}>
                     <Text color="brand.slate.400" fontSize="xs">
-                      {question.lowerBoundLabel}
+                      {t('survey.lowerBoundLabel')}
                     </Text>
                     <Text color="brand.slate.400" fontSize="xs">
-                      {question.upperBoundLabel}
+                      {t('survey.upperBoundLabel')}
                     </Text>
                   </Flex>
                 </Box>
@@ -157,10 +159,10 @@ export const SurveyModal = ({
               mt={4}
               isDisabled={!response}
               isLoading={isSubmitting}
-              loadingText="Submitting..."
+              loadingText={t('survey.submitting')}
               onClick={handleSubmit}
             >
-              Submit
+              {t('survey.submit')}
             </Button>
           </>
         )}

@@ -2,6 +2,7 @@ import { WarningIcon } from '@chakra-ui/icons';
 import { Button, Flex, Text, Tooltip, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { AuthWrapper } from '@/features/auth';
 import {
@@ -23,6 +24,7 @@ export const GrantApplicationButton = ({
 }: GrantApplicationButtonProps) => {
   const { user } = useUser();
   const { region, id, link, isNative } = grant;
+  const { t } = useTranslation('common');
 
   const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
 
@@ -38,19 +40,19 @@ export const GrantApplicationButton = ({
 
   switch (hasApplied) {
     case true:
-      buttonText = 'Applied Successfully';
+      buttonText = t('grantApplicationButton.appliedSuccessfully');
       buttonBG = 'green.500';
       isBtnDisabled = true;
       btnLoadingText = null;
       break;
 
     default:
-      buttonText = 'Apply Now';
+      buttonText = t('grantApplicationButton.applyNow');
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
         user?.id && user?.isTalentFilled && !isUserEligibleByRegion,
       );
-      btnLoadingText = 'Checking Application..';
+      btnLoadingText = t('grantApplicationButton.checkingApplication');
   }
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -97,9 +99,9 @@ export const GrantApplicationButton = ({
         >
           <AuthWrapper
             showCompleteProfileModal
-            completeProfileModalBodyText={
-              'Please complete your profile before applying for a grant.'
-            }
+            completeProfileModalBodyText={t(
+              'grantApplicationButton.completeProfileBeforeApplying',
+            )}
             style={{ w: 'full', direction: 'column' }}
           >
             <Button
@@ -127,8 +129,7 @@ export const GrantApplicationButton = ({
         <Flex gap="2" w="full" mb={4} p="3" bg={'#62F6FF10'}>
           <WarningIcon color="#1A7F86" />
           <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
-            You will be notified via email if your grant has been approved or
-            rejected.
+            {t('grantApplicationButton.applicationNotification')}
           </Text>
         </Flex>
       )}

@@ -11,6 +11,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
@@ -51,6 +52,7 @@ export const Comments = ({
 }: Props) => {
   const { user } = useUser();
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -166,7 +168,7 @@ export const Comments = ({
         <Image
           width={21}
           height={18}
-          alt="Comments Icon"
+          alt={t('comments.commentsIcon')}
           src="/assets/icons/comments.svg"
         />
         <HStack>
@@ -174,7 +176,7 @@ export const Comments = ({
             {count}
           </Text>
           <Text color="brand.slate.900" fontSize={'1.1rem'} fontWeight={400}>
-            {comments?.length === 1 ? 'Comment' : 'Comments'}
+            {count === 1 ? t('comments.comment') : t('comments.comments')}
           </Text>
         </HStack>
       </HStack>
@@ -194,7 +196,7 @@ export const Comments = ({
                 color: 'brand.slate.400',
               }}
               focusBorderColor="brand.purple"
-              placeholder="Write a comment"
+              placeholder={t('comments.writeComment')}
               value={newComment}
               setValue={setNewComment}
               variant="flushed"
@@ -203,7 +205,7 @@ export const Comments = ({
         </Flex>
         {!!newCommentError && (
           <Text mt={4} color="red">
-            Error in adding your comment! Please try again!
+            {t('comments.errorAddingComment')}
           </Text>
         )}
         <Collapse
@@ -225,13 +227,13 @@ export const Comments = ({
               onClick={() => setNewComment('')}
               variant="ghost"
             >
-              Cancel
+              {t('comments.cancel')}
             </Button>
             <AuthWrapper
               showCompleteProfileModal
-              completeProfileModalBodyText={
-                'Please complete your profile before commenting on the listing.'
-              }
+              completeProfileModalBodyText={t(
+                'comments.completeProfileBeforeCommenting',
+              )}
             >
               <Button
                 h="auto"
@@ -244,11 +246,11 @@ export const Comments = ({
                 fontWeight={500}
                 isDisabled={!!newCommentLoading || !newComment || isTemplate}
                 isLoading={!!newCommentLoading}
-                loadingText="Adding..."
+                loadingText={t('comments.adding')}
                 onClick={() => handleSubmit()}
                 variant="solid"
               >
-                Comment
+                {t('comments.comment')}
               </Button>
             </AuthWrapper>
           </Flex>
@@ -293,12 +295,12 @@ export const Comments = ({
             fontWeight={400}
             isDisabled={!!isLoading}
             isLoading={!!isLoading}
-            loadingText="Fetching Comments..."
+            loadingText={t('comments.fetchingComments')}
             onClick={() => getComments(comments.length)}
             rounded="md"
             variant="ghost"
           >
-            Show More Comments
+            {t('comments.showMoreComments')}
           </Button>
         </Flex>
       )}
