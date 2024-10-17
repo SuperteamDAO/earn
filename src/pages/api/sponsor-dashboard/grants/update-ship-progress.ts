@@ -47,7 +47,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const airtableRecordId = await fetchAirtableRecordId(
         url,
-        'Earn Application ID',
+        'earnApplicationId',
         id,
         config,
       );
