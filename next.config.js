@@ -29,6 +29,7 @@ const nextConfig = {
     ],
     formats: ['image/avif', 'image/webp'],
   },
+  transpilePackages: ['@premieroctet/next-admin'],
   async headers() {
     const headers = [];
 
@@ -67,6 +68,16 @@ const nextConfig = {
         destination: 'https://us.i.posthog.com/:path*',
       },
     ];
+  },
+  experimental: {
+    swcPlugins: [
+      [
+        'next-superjson-plugin',
+        {
+          excluded: [],
+        },
+      ],
+    ],
   },
 };
 

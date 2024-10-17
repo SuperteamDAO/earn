@@ -39,7 +39,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/public/*": ["./public/*"]
+      "@/public/*": ["./public/*"],
+      "@/prisma/*": ["prisma/*"]
     }
   },
   "exclude": ["./out/**/*", "./node_modules/**/*", "./utils/functions.ts"],

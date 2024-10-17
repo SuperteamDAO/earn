@@ -1,0 +1,46 @@
+name: Build Next.js Project
+
+on:
+  workflow_dispatch: # manual triggering
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+      - name: Install dependencies
+        run: |
+          node -v
+          npm -v
+          npm install -g pnpm
+          pnpm -v
+          pnpm i
+
+      - name: Build Next.js
+        run: |
+          pnpm build
+          ls -l ./.next
+
+      - name: Zip Project
+        run: |
+          mv ./.next earnbuild
+          zip -q -r earnbuild.zip earnbuild # zip --junk-paths
+          ls -l earnbuild.zip
+      - name: copy file via ssh key
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          source: earnbuild.zip
+          target: ~/apps/
