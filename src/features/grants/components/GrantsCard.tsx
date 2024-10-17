@@ -2,6 +2,7 @@ import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { tokenList } from '@/constants';
@@ -12,6 +13,7 @@ import { grantAmount } from '../utils';
 
 export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
   const router = useRouter();
+  const { t } = useTranslation('common');
 
   const {
     sponsor,
@@ -123,7 +125,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                   <Image
                     display="flex"
                     h={{ base: 3, sm: 4 }}
-                    alt={'grant'}
+                    alt={t('grantsCard.grant')}
                     src={'/assets/icons/bank.svg'}
                   />
                   <Text
@@ -132,7 +134,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                     fontSize={['x-small', 'xs', 'xs', 'xs']}
                     fontWeight={500}
                   >
-                    Grant
+                    {t('grantsCard.grant')}
                   </Text>
                 </Flex>
               </>
@@ -165,7 +167,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                       fontSize={['x-small', '0.6875rem']}
                     >
                       {' '}
-                      Avg. Grant
+                      {t('grantsCard.avgGrant')}
                     </Text>
                   </Text>
                 </Flex>
@@ -229,6 +231,7 @@ export const GrantCardMobile = ({
     totalApplications,
   } = grant;
   const router = useRouter();
+  const { t } = useTranslation('common');
 
   const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
 
@@ -351,7 +354,7 @@ export const GrantCardMobile = ({
                         fontSize={['x-small', '0.6875rem']}
                       >
                         {' '}
-                        Avg. Grant
+                        {t('grantsCard.avgGrant')}
                       </Text>
                     </Text>
                   </Flex>

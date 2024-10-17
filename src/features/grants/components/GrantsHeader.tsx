@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { LuCheck } from 'react-icons/lu';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
@@ -33,6 +34,7 @@ interface Props {
   slug: string;
   references: any;
 }
+
 export const GrantsHeader = ({
   sponsor,
   title,
@@ -41,6 +43,9 @@ export const GrantsHeader = ({
   slug,
   references,
 }: Props) => {
+  const { t } = useTranslation('common');
+  const router = useRouter();
+
   const statusIconStyles = { w: 5, h: 5 };
   let statusBgColor = '';
   let statusTextColor = '';
@@ -64,7 +69,7 @@ export const GrantsHeader = ({
       );
       statusBgColor = 'green.100';
       statusTextColor = 'green.600';
-      statusText = 'Open';
+      statusText = t('grantsHeader.open');
       break;
     case 'CLOSED':
       statusIcon = (
@@ -72,11 +77,9 @@ export const GrantsHeader = ({
       );
       statusBgColor = '#ffecb3';
       statusTextColor = '#F59E0B';
-      statusText = 'Closed';
+      statusText = t('grantsHeader.closed');
       break;
   }
-
-  const router = useRouter();
 
   return (
     <Box w="full" bg={'white'}>
@@ -129,7 +132,7 @@ export const GrantsHeader = ({
                   h="4"
                   mt={{ base: '1px', sm: 1 }}
                   mr={{ base: '1px', sm: 1 }}
-                  alt={'grant'}
+                  alt={t('grantsHeader.grant')}
                   src={'/assets/icons/bank.svg'}
                 />
                 <Text
@@ -137,7 +140,7 @@ export const GrantsHeader = ({
                   fontSize={{ base: 'xs', sm: 'md' }}
                   fontWeight={500}
                 >
-                  Grant
+                  {t('grantsHeader.grant')}
                 </Text>
               </Flex>
               <ListingHeaderSeparator />
@@ -168,7 +171,7 @@ export const GrantsHeader = ({
           <ListingTabLink
             w={{ md: '22rem' }}
             href={`/grants/${slug}/`}
-            text="Prizes"
+            text={t('grantsHeader.prizes')}
             isActive={false}
             styles={{
               pointerEvents: 'none',
@@ -177,14 +180,14 @@ export const GrantsHeader = ({
           />
           <ListingTabLink
             href={`/grants/${slug}/`}
-            text="Details"
+            text={t('grantsHeader.details')}
             isActive={!router.asPath.split('/')[3]?.includes('references')}
           />
 
           {references && references?.length > 0 && (
             <ListingTabLink
               href={`/grants/${slug}/references`}
-              text="References"
+              text={t('grantsHeader.references')}
               isActive={!!router.asPath.split('/')[3]?.includes('references')}
             />
           )}

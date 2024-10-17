@@ -1,4 +1,5 @@
 import { Alert, AlertIcon, Button, Link } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 export function TalentButton({
   showMessage,
@@ -9,12 +10,14 @@ export function TalentButton({
   isLoading?: boolean;
   checkTalent: () => void;
 }) {
+  const { t } = useTranslation('common');
+
   return (
     <>
       {!!showMessage && (
         <Alert mb={4} status="warning">
           <AlertIcon />
-          Please log in to continue!
+          {t('talentButton.loginMessage')}
         </Alert>
       )}
       <Link>
@@ -25,11 +28,11 @@ export function TalentButton({
           bg={'brand.purple.dark'}
           _hover={{ bg: 'brand.purple' }}
           isLoading={!!isLoading}
-          loadingText="Redirecting..."
+          loadingText={t('talentButton.loadingText')}
           onClick={() => checkTalent()}
           rounded="4px"
         >
-          Continue as talent {'->'}
+          {t('talentButton.buttonText')}
         </Button>
       </Link>
     </>

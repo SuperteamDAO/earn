@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { checkEmailValidity, validateEmailRegex } from '../utils/email';
 
@@ -15,6 +16,7 @@ export const EmailSignIn = () => {
 
   const router = useRouter();
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const emailInput = e.target.value.trim();
@@ -40,20 +42,16 @@ export const EmailSignIn = () => {
           });
         } else {
           setIsLoading(false);
-          setEmailError(
-            'This email address appears to be invalid or needs to be whitelisted. Please check and try again.',
-          );
+          setEmailError(t('emailSignIn.emailValidationError'));
         }
       } catch (error) {
         setIsLoading(false);
         console.error('Error during email validation:', error);
-        setEmailError(
-          'An error occurred while validating your email. Please try again later.',
-        );
+        setEmailError(t('emailSignIn.generalError'));
       }
     } else {
       setIsLoading(false);
-      setEmailError('Please enter a valid email address.');
+      setEmailError(t('emailSignIn.invalidEmail'));
     }
   };
 
@@ -75,7 +73,7 @@ export const EmailSignIn = () => {
           _placeholder={{ fontSize: '16px' }}
           onChange={handleEmailChange}
           onKeyDown={handleKeyDown}
-          placeholder="Enter Your Email Address"
+          placeholder={t('emailSignIn.emailPlaceholder')}
           size="lg"
           value={email}
         />
@@ -89,10 +87,11 @@ export const EmailSignIn = () => {
         fontWeight={500}
         isDisabled={isLoading}
         isLoading={isLoading}
+        loadingText={t('emailSignIn.redirecting')}
         onClick={handleEmailSignIn}
         size="lg"
       >
-        Continue with Email
+        {t('emailSignIn.continueWithEmail')}
       </Button>
       {emailError && (
         <Text

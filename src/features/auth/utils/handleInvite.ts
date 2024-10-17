@@ -1,3 +1,5 @@
+import { t } from 'i18next';
+
 import { createSponsorEmailSettings } from '@/features/sponsor-dashboard';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -20,7 +22,7 @@ export async function handleInviteAcceptance(
 
     if (!user) {
       logger.warn(`User not found for ID: ${userId}`);
-      return { success: false, message: 'User not found' };
+      return { success: false, message: t('handleInvite.userNotFound') };
     }
 
     let invite;
@@ -41,7 +43,7 @@ export async function handleInviteAcceptance(
       );
       return {
         success: false,
-        message: 'No valid invitation found',
+        message: t('handleInvite.noValidInvitation'),
         redirectUrl: '/new?onboarding=true&loginState=signedIn',
       };
     }
@@ -61,7 +63,7 @@ export async function handleInviteAcceptance(
       );
       return {
         success: false,
-        message: 'You are already a member of this sponsor',
+        message: t('handleInvite.alreadyMember'),
       };
     }
 
@@ -89,14 +91,14 @@ export async function handleInviteAcceptance(
     logger.info(`Invitation accepted successfully for user ${userId}`);
     return {
       success: true,
-      message: 'Invitation accepted successfully',
+      message: t('handleInvite.invitationAccepted'),
       redirectUrl: '/dashboard/listings/?loginState=signedIn',
     };
   } catch (error) {
     logger.error(`Error accepting invite: ${safeStringify(error)}`);
     return {
       success: false,
-      message: 'An error occurred while accepting the invitation',
+      message: t('handleInvite.error'),
     };
   }
 }

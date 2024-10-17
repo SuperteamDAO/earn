@@ -15,6 +15,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
 import { Discord, GitHub, Twitter } from '@/features/talent';
@@ -225,8 +226,10 @@ export const Footer = () => {
               © {currentYear} Superteam. All rights reserved.
             </Text>
             <Flex align="center">
+              <LanguageSwitcher />
               <Text
                 mr={2}
+                ml={4}
                 color="brand.slate.500"
                 fontSize="sm"
                 fontWeight="500"

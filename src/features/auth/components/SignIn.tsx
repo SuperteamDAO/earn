@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { MdOutlineEmail } from 'react-icons/md';
 
 import { TERMS_OF_USE } from '@/constants';
@@ -27,6 +28,7 @@ interface SigninProps {
 export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
   const router = useRouter();
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
 
   const handleGmailSignIn = async () => {
     posthog.capture('google_auth');
@@ -60,12 +62,12 @@ export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
                     onClick={handleGmailSignIn}
                     size="lg"
                   >
-                    Continue with Google
+                    {t('signIn.continueWithGoogle')}
                   </Button>
                   <Flex align={'center'} gap={4} w="100%" my={3}>
                     <Divider borderColor={'brand.slate.300'} />{' '}
                     <Text color={'brand.slate.400'} fontSize="14px">
-                      OR
+                      {t('signIn.or')}
                     </Text>{' '}
                     <Divider borderColor={'brand.slate.300'} />
                   </Flex>
@@ -84,7 +86,7 @@ export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
                     onClick={() => setLoginStep(1)}
                     size="lg"
                   >
-                    Continue with Email
+                    {t('signIn.continueWithEmail')}
                   </Button>
                 </Flex>
               )}
@@ -100,26 +102,28 @@ export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
             fontSize="xs"
             textAlign="center"
           >
-            By using this website, you agree to our{' '}
-            <Link
-              as={NextLink}
-              fontWeight={600}
-              href={TERMS_OF_USE}
-              isExternal
-              rel="noopener noreferrer"
-            >
-              Terms of Use
-            </Link>{' '}
-            and our{' '}
-            <Link
-              as={NextLink}
-              fontWeight={600}
-              href={`${router.basePath}/privacy-policy.pdf`}
-              isExternal
-            >
-              Privacy Policy
-            </Link>
-            .
+            <Trans i18nKey="signIn.termsAgreement" ns="common">
+              By using this website, you agree to our{' '}
+              <Link
+                as={NextLink}
+                fontWeight={600}
+                href={TERMS_OF_USE}
+                isExternal
+                rel="noopener noreferrer"
+              >
+                Terms of Use
+              </Link>{' '}
+              and our{' '}
+              <Link
+                as={NextLink}
+                fontWeight={600}
+                href={`${router.basePath}/privacy-policy.pdf`}
+                isExternal
+              >
+                Privacy Policy
+              </Link>
+              .
+            </Trans>
           </Text>
         </Box>
         <Box
@@ -129,16 +133,18 @@ export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
           borderBottomRadius="6px"
         >
           <Text color="brand.slate.400" fontSize="xs" textAlign="center">
-            Need help? Reach out to us at{' '}
-            <Text as="u">
-              <Link
-                as={NextLink}
-                href={'mailto:support@superteamearn.com'}
-                isExternal
-              >
-                support@superteamearn.com
-              </Link>
-            </Text>
+            <Trans i18nKey="signIn.needHelp" ns="common">
+              Need help? Reach out to us at{' '}
+              <Text as="u">
+                <Link
+                  as={NextLink}
+                  href={'mailto:support@superteamearn.com'}
+                  isExternal
+                >
+                  support@superteamearn.com
+                </Link>
+              </Text>
+            </Trans>
           </Text>
         </Box>
       </Box>

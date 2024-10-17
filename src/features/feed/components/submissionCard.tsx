@@ -1,6 +1,7 @@
 import { Avatar, Flex, Text, Tooltip } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { getURL } from '@/utils/validUrl';
@@ -16,6 +17,8 @@ interface SubCardProps {
 }
 
 export function SubmissionCard({ sub, type }: SubCardProps) {
+  const { t } = useTranslation('common');
+
   const firstName = sub?.firstName;
   const lastName = sub?.lastName;
   const photo = sub?.photo;
@@ -38,16 +41,16 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
 
   switch (sub?.listingType) {
     case 'bounty':
-      winningText = 'won a bounty';
-      submissionText = 'submitted to a bounty';
+      winningText = t('submissionCard.wonBounty');
+      submissionText = t('submissionCard.submittedToBounty');
       break;
     case 'hackathon':
-      winningText = 'won a hackathon track';
-      submissionText = 'submitted to a hackathon';
+      winningText = t('submissionCard.wonHackathonTrack');
+      submissionText = t('submissionCard.submittedToHackathon');
       break;
     case 'project':
-      winningText = 'got selected for a project';
-      submissionText = 'applied to a project';
+      winningText = t('submissionCard.selectedForProject');
+      submissionText = t('submissionCard.appliedToProject');
       break;
   }
 
@@ -85,9 +88,7 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
         bg="white"
         borderRadius={'lg'}
         isDisabled={!!sub?.id || isProject}
-        label={
-          'This submission will be accessible once winners for the listing have been announced.'
-        }
+        label={t('submissionCard.submissionAccessInfo')}
         shouldWrapChildren
       >
         <FeedCardLink
@@ -97,7 +98,9 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
             pointerEvents: sub?.id || isProject ? 'all' : 'none',
           }}
         >
-          {isProject ? 'View Listing' : 'View Submission'}
+          {isProject
+            ? t('submissionCard.viewListing')
+            : t('submissionCard.viewSubmission')}
         </FeedCardLink>
       </Tooltip>
     </>

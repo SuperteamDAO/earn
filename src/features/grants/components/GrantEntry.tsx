@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Image, Link, Text, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { tokenList } from '@/constants';
 
@@ -22,6 +23,7 @@ export const GrantEntry = ({
   minReward?: number;
   maxReward?: number;
 }) => {
+  const { t } = useTranslation('common');
   const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
 
   const GrantAmount = () => {
@@ -93,7 +95,7 @@ export const GrantEntry = ({
             size={'sm'}
             variant="outline"
           >
-            Apply Now
+            {t('grantEntry.applyNow')}
           </Button>
         </Link>
       </VStack>

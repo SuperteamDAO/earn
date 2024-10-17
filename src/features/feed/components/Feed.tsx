@@ -2,6 +2,7 @@ import { Box, Flex, Image, Select, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInView } from 'react-intersection-observer';
 
 import {
@@ -19,11 +20,12 @@ import { HomeIcon, LeaderboardIcon, WinnersIcon } from './icons';
 export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
   const router = useRouter();
   const { query } = router;
+  const { t } = useTranslation('common');
 
   const [activeMenu, setActiveMenu] = useState<'new' | 'popular'>(
     (query.filter as 'new' | 'popular') || 'popular',
   );
-  const [timePeriod, setTimePeriod] = useState('This Month');
+  const [timePeriod, setTimePeriod] = useState(t('feed.thisMonth'));
 
   const { ref, inView } = useInView();
 
@@ -93,7 +95,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
           updateQuery('filter', option);
         }}
       >
-        {option}
+        {t(`feed.${option}`)}
       </Text>
     );
   };
@@ -125,13 +127,17 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
             pr={5}
             borderRightWidth={'1px'}
           >
-            <NavItem name="Homepage" icon={HomeIcon} href="/" />
+            <NavItem name={t('feed.homepage')} icon={HomeIcon} href="/" />
             <NavItem
-              name="Leaderboard"
+              name={t('feed.leaderboard')}
               icon={LeaderboardIcon}
               href="/leaderboard"
             />
-            <NavItem name="Winners" icon={WinnersIcon} href="/feed/winners" />
+            <NavItem
+              name={t('feed.winners')}
+              icon={WinnersIcon}
+              href="/feed/winners"
+            />
           </Flex>
           <Flex direction={'column'} w="100%">
             <Box py={5} pl={{ base: 6, md: 5 }} borderBottomWidth={'1px'}>
@@ -140,7 +146,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                 fontSize={{ base: 'lg', lg: 'xl' }}
                 fontWeight={600}
               >
-                Activity Feed
+                {t('feed.activityFeed')}
               </Text>
               <Box
                 display={{ base: 'none', md: 'flex', lg: 'none' }}
@@ -160,7 +166,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                   color="brand.slate.600"
                   fontSize={{ base: 'sm', lg: 'md' }}
                 >
-                  Discover the best work on Earn
+                  {t('feed.discoverBestWork')}
                 </Text>
                 <Box
                   display={{ base: 'flex', md: 'none' }}
@@ -192,9 +198,9 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                       value={timePeriod}
                       variant={'unstyled'}
                     >
-                      <option>This Week</option>
-                      <option>This Month</option>
-                      <option>This Year</option>
+                      <option>{t('feed.thisWeek')}</option>
+                      <option>{t('feed.thisMonth')}</option>
+                      <option>{t('feed.thisYear')}</option>
                     </Select>
                   )}
                 </Flex>
@@ -245,7 +251,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                   <Image
                     w={32}
                     mx="auto"
-                    alt={'talent empty'}
+                    alt={t('feed.talentEmptyAlt')}
                     src="/assets/bg/talent-empty.svg"
                   />
                   <Text
@@ -257,7 +263,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                     fontWeight={500}
                     textAlign={'center'}
                   >
-                    No Activity Found
+                    {t('feed.noActivityFound')}
                   </Text>
                   <Text
                     mx="auto"
@@ -267,7 +273,7 @@ export const Feed = ({ isWinner = false }: { isWinner?: boolean }) => {
                     fontWeight={400}
                     textAlign={'center'}
                   >
-                    We couldn’t find any activity for your time filter
+                    {t('feed.noActivityFoundDescription')}
                   </Text>
                 </Box>
               )}

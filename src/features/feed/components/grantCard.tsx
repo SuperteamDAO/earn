@@ -1,6 +1,7 @@
 import { Avatar, Flex, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { getURL } from '@/utils/validUrl';
 
@@ -15,6 +16,8 @@ interface GrantCardProps {
 }
 
 export function GrantCard({ grant, type }: GrantCardProps) {
+  const { t } = useTranslation('common');
+
   const firstName = grant?.firstName;
   const lastName = grant?.lastName;
   const photo = grant?.photo;
@@ -23,7 +26,7 @@ export function GrantCard({ grant, type }: GrantCardProps) {
   const listingLink = `${getURL()}grants/${grant?.listingSlug}`;
 
   const content = {
-    actionText: 'won a grant',
+    actionText: t('grantCard.wonAGrant'),
     createdAt: grant?.createdAt,
   };
 
@@ -47,7 +50,7 @@ export function GrantCard({ grant, type }: GrantCardProps) {
           {grant?.listingTitle}
         </Text>
       </Flex>
-      <FeedCardLink href={listingLink}>View Grant</FeedCardLink>
+      <FeedCardLink href={listingLink}>{t('grantCard.viewGrant')}</FeedCardLink>
     </>
   );
 

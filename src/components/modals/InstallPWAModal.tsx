@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdIosShare, MdOutlineInstallMobile } from 'react-icons/md';
 
@@ -25,22 +26,33 @@ interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
-const ManualInstructions = () => (
-  <Box mb={8} py={2} borderRadius={4} bgColor="brand.slate.100">
-    <Text align="center">
-      Tap these icons (
-      <Icon as={MdIosShare} mr={1} color="brand.purple" fontWeight={600} />
-      or <Icon as={BsThreeDotsVertical} color="brand.purple" />) and select the
-      “Add to home screen” option.
-    </Text>
-  </Box>
-);
+const ManualInstructions = () => {
+  const { t } = useTranslation('common');
+  return (
+    <Box mb={8} py={2} borderRadius={4} bgColor="brand.slate.100">
+      <Text align="center">
+        {t('installPWAModal.manualInstructions', {
+          icon1: (
+            <Icon
+              as={MdIosShare}
+              mr={1}
+              color="brand.purple"
+              fontWeight={600}
+            />
+          ),
+          icon2: <Icon as={BsThreeDotsVertical} color="brand.purple" />,
+        })}
+      </Text>
+    </Box>
+  );
+};
 
 export const InstallPWAModal = () => {
   const { user } = useUser();
   const [mobileOs, setMobileOs] = useState<'Android' | 'iOS' | 'Other'>(
     'Other',
   );
+  const { t } = useTranslation('common');
 
   const {
     isOpen: isPWAModalOpen,
@@ -115,7 +127,7 @@ export const InstallPWAModal = () => {
         <ModalHeader borderBottom="1px" borderBottomColor="brand.slate.300">
           <HStack>
             <Icon as={MdOutlineInstallMobile} color={'brand.slate.500'} />
-            <Text fontSize={'lg'}>Install Earn</Text>
+            <Text fontSize={'lg'}>{t('installPWAModal.title')}</Text>
           </HStack>
         </ModalHeader>
         <ModalCloseButton mt={{ base: 2, md: 3 }} />
@@ -129,14 +141,14 @@ export const InstallPWAModal = () => {
                 width={63}
               />
               <Flex align={'center'} direction={'column'} my={12}>
-                <Text fontWeight={700}>Never miss a listing again!</Text>
+                <Text fontWeight={700}>{t('installPWAModal.neverMiss')}</Text>
                 <Text w="75%" mt={1} color="brand.slate.500" textAlign="center">
-                  Add Earn to your homescreen and always stay updated.
+                  {t('installPWAModal.addToHomescreen')}
                 </Text>
               </Flex>
               {isAutoInstallable ? (
                 <Button w={'full'} mt={4} onClick={installApp}>
-                  Add to Homescreen
+                  {t('installPWAModal.addButton')}
                 </Button>
               ) : (
                 <ManualInstructions />

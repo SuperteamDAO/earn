@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { withAxiom } = require('next-axiom');
 const { withSentryConfig } = require('@sentry/nextjs');
+const { i18n } = require('./next-i18next.config');
+
 const withPWA = require('next-pwa')({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
@@ -82,6 +84,7 @@ const nextConfig = {
 const combinedConfig = withAxiom(withPWA(nextConfig));
 
 module.exports = withSentryConfig(combinedConfig, {
+  i18n,
   org: 'superteam-7o',
   project: 'earn',
   silent: true,

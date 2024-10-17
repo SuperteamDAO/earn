@@ -1,4 +1,5 @@
 import { Flex, Image, Text } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 import { tokenList } from '@/constants';
 import { type Rewards } from '@/features/listings';
@@ -15,6 +16,8 @@ export const WinnerFeedImage = ({
   rewards: Rewards | undefined;
   grantApplicationAmount?: number;
 }) => {
+  const { t } = useTranslation('common');
+
   return (
     <Flex
       justify={'center'}
@@ -28,7 +31,7 @@ export const WinnerFeedImage = ({
         w={{ base: '36px', md: '80px' }}
         h={{ base: '36px', md: '80px' }}
         mx={'auto'}
-        alt="winner"
+        alt={t('winnerFeedImage.winner')}
         src={'/assets/icons/celebration.png'}
       />
       <Flex
@@ -72,9 +75,12 @@ export const WinnerFeedImage = ({
         borderRadius={'full'}
       >
         {!!grantApplicationAmount ? (
-          'GRANT'
+          t('winnerFeedImage.grant')
         ) : (
-          <>{getRankLabels(Number(winnerPosition))?.toUpperCase()} PRIZE</>
+          <>
+            {getRankLabels(Number(winnerPosition))?.toUpperCase()}{' '}
+            {t('winnerFeedImage.prize')}
+          </>
         )}
       </Text>
     </Flex>

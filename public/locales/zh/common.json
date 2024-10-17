@@ -1,0 +1,306 @@
+{
+  "freelanceGigs": "自由职业机会",
+  "grants": "资助",
+  "grantsDescription": "为开发者提供的无股权融资机会",
+  "noGrantsAvailable": "暂无可用资助！",
+  "subscribeToNotifications": "订阅通知以获取新资助信息。",
+  "bounties": "悬赏",
+  "projects": "项目",
+  "content": "内容",
+  "design": "设计",
+  "development": "开发",
+  "other": "其他",
+  "entityNameModal": {
+    "title": "更新您的实体名称",
+    "description": "根据我们更新的<1>使用条款</1>，我们需要知道控制您项目的实体名称。如果您是一个DAO，请提供您的DAO名称。如果您没有实体，请提供您的全名。",
+    "inputPlaceholder": "实体名称",
+    "needHelp": "需要帮助？",
+    "update": "更新",
+    "error": "发生错误，请稍后重试"
+  },
+  "featureModal": {
+    "title": "介绍 Scout",
+    "description": "这是 Superteam Earn 上最优秀人才的精选列表，您可以邀请他们参与您的列表，以获得高质量的提交！添加新列表，或查看您当前的任尝试 Scout。",
+    "checkItOut": "查看一下",
+    "goodToKnow": "很高兴知道！"
+  },
+  "installPWAModal": {
+    "title": "安装 Earn",
+    "neverMiss": "再也不会错过任何列表！",
+    "addToHomescreen": "将 Earn 添加到您的主屏幕，随时保持更新。",
+    "addButton": "添加到主屏幕",
+    "manualInstructions": "点击这些图标（或）并选择\"添加到主屏幕\"选项。"
+  },
+  "sponsorButton": {
+    "loginMessage": "请登录以继续！",
+    "buttonText": "以赞助商身份继续 ->",
+    "loadingText": "正在重定向..."
+  },
+  "talentButton": {
+    "loginMessage": "请登录以继续！",
+    "buttonText": "以人才身份继续 ->",
+    "loadingText": "正在重定向..."
+  },
+  "emptySection": {
+    "defaultTitle": "抱歉！未找到内容",
+    "defaultMessage": "出错了！请重试！"
+  },
+  "errorInfo": {
+    "defaultTitle": "发生错误！",
+    "defaultMessage": "出错了！请重试！"
+  },
+  "errorSection": {
+    "defaultTitle": "发生错误！",
+    "defaultMessage": "出错了！请重试！"
+  },
+  "imagePicker": {
+    "chooseOrDrag": "选择或拖放媒体",
+    "maxSize": "最大大小 5 MB",
+    "sizeError": "图片大小必须小 5MB",
+    "formatError": "不支持的文件格式。请使用 JPEG、PNG 或 WebP 图片。",
+    "removeImage": "移除图片",
+    "preview": "预览"
+  },
+  "loadingSection": {
+    "loading": "加载中..."
+  },
+  "skillSelect": {
+    "skillsNeeded": "所需技能",
+    "subSkillsNeeded": "所需子技能",
+    "selectAllThatApply": "选择所有适用项",
+    "infoIconAlt": "信息图标"
+  },
+  "survey": {
+    "submit": "提交",
+    "submitting": "正在提交...",
+    "lowerBoundLabel": "下限",
+    "upperBoundLabel": "上限"
+  },
+  "emailSignIn": {
+    "emailPlaceholder": "输入您的电子邮件地址",
+    "continueWithEmail": "使用电子邮件继续",
+    "redirecting": "正在重定向...",
+    "invalidEmail": "请输入有效的电子邮件地址。",
+    "emailValidationError": "此电子邮件地址似乎无效或需要被列入白名单。请检查并重试。",
+    "generalError": "验证您的电子邮件时发生错误。请稍后再试。"
+  },
+  "login": {
+    "oneStepAway": "您只差一步",
+    "joiningSuperteamEarn": "就能加入 Superteam Earn",
+    "earningGlobalStandards": "开始按全球标准赚钱"
+  },
+  "signIn": {
+    "continueWithGoogle": "使用 Google 继续",
+    "or": "或",
+    "continueWithEmail": "使用电子邮件继续",
+    "termsAgreement": "使用本网站表示您同意我们的<1>使用条款</1>和<2>隐私政策</2>。",
+    "needHelp": "需要帮助？请通过 <1>support@superteamearn.com</1> 联系我们"
+  },
+  "handleInvite": {
+    "userNotFound": "未找到用户",
+    "noValidInvitation": "未找到有效邀请",
+    "alreadyMember": "您已经是该赞助商的成员",
+    "invitationAccepted": "邀请已成功接受",
+    "error": "接受邀请时发生错误"
+  },
+  "comment": {
+    "sponsor": "赞助商",
+    "reply": "回复",
+    "replies": "回复",
+    "writeComment": "写评论",
+    "errorAddingComment": "添加评论时出错！请重试！",
+    "adding": "正在添加...",
+    "delete": "删除",
+    "deleteComment": "删除评论",
+    "deleteConfirmation": "您确定吗？此操作无法撤消。",
+    "deleteError": "删除评论失败",
+    "deleteTryAgain": "请稍后重试。",
+    "cancel": "取消",
+    "removeImage": "移除图片"
+  },
+  "commentParser": {
+    "checkItOut": "去看看！"
+  },
+  "comments": {
+    "commentsIcon": "评论图标",
+    "comment": "评论",
+    "comments": "评论",
+    "writeComment": "评论",
+    "errorAddingComment": "添加评论时出错！请重试！",
+    "cancel": "取消",
+    "adding": "正在添加...",
+    "fetchingComments": "正在获取评论...",
+    "showMoreComments": "显示更多评论",
+    "completeProfileBeforeCommenting": "请在评论列表之前完成您的个人资料。"
+  },
+  "userSuggestionTextarea": {
+    "charactersLeft": "剩余字符"
+  },
+  "commentUtils": {
+    "timeUnits": {
+      "second": "秒",
+      "minute": "分",
+      "hour": "小时",
+      "day": "天",
+      "month": "月",
+      "year": "年"
+    },
+    "submissionComments": {
+      "bounty": {
+        "justSubmitted": "刚刚提交了这个悬赏",
+        "inTheArena": "已进入竞争，他们刚刚提交了这个悬赏",
+        "potentialWinner": "潜在赢家？他们刚刚提交了这个悬赏",
+        "steppingUp": "正在加入；他们刚刚提交了这个悬赏",
+        "isIn": "已加入！他们刚刚提交了这个悬赏",
+        "onTheMove": "正在行动！他们刚刚提交了这个悬赏"
+      },
+      "project": {
+        "justApplied": "刚刚申请了这个项目",
+        "inTheArena": "已进入竞争，他们刚刚申请了这个项目",
+        "potentialWinner": "潜赢家？他们刚刚申请了这个项目",
+        "steppingUp": "正在加入；他们刚刚申请了这个项目",
+        "isIn": "已加入！他们刚刚申请了这个项目",
+        "onTheMove": "正在行动！他们刚刚申请了这个项目"
+      },
+      "default": "刚刚提交了这个列表"
+    }
+  },
+  "inviteMemberTemplate": {
+    "greeting": "您好，",
+    "inviteMessage": "{{senderName}} 邀请您加入 Superteam Earn 上的 <strong>{{sponsorName}}</strong>！",
+    "clickHere": "点击这里",
+    "acceptInvite": "接受邀请。",
+    "salutation": "此致，",
+    "signature": "Superteam Earn 团队"
+  },
+  "otpTemplate": {
+    "greeting": "您好，",
+    "otpMessage": "您登录 Superteam Earn 的一次性密码是 <b>{{token}}</b>。此密码有效期为 30 分钟。",
+    "salutation": "此致，",
+    "signature": "Superteam Earn 团队"
+  },
+  "welcomeSponsorTemplate": {
+    "welcome": "欢迎来到 Superteam Earn！",
+    "thankYou": "感谢您的注册。Earn 是加密货币领域首屈一指的人才匹配平台，受到数百家领公司和数千名经过验证的加密货币人才的青睐。",
+    "helpMessage": "如果您在 Earn 上设置列表时需要任何帮助，请随时通过 Telegram ",
+    "contactName": "Pratik",
+    "onTelegram": "。",
+    "salutation": "此致，",
+    "signature": "Superteam Earn 团队"
+  },
+  "welcomeTalentTemplate": {
+    "greeting": "好，让我们开门见山。",
+    "automatedEmail": "尽管这是一封自动发送的邮件...",
+    "realPerson": "我只是想打个招呼，让你知道我是一个真实的人。",
+    "introduction": "我是 Kash，是 <1>Superteam</1> 的核心贡献者。虽然我可能还不认识你，但我对你的加入感到非常兴奋。",
+    "respectInbox": "我向你保证，我们会尊重你的收件箱，只有在有新的机会或重大公告时才会给你发邮件。",
+    "favor": "在我结束之前，有一个小请求：",
+    "replyRequest": "回复这封邮件，告诉我你为什么加入 Superteam Earn？",
+    "learnMore": "我很想更多地了解你。",
+    "salutation": "期待很快与你交流，",
+    "signature": "Kash"
+  },
+  "feed": {
+    "activityFeed": "活动动态",
+    "discoverBestWork": "发现 Earn 上的最佳作品",
+    "new": "最新",
+    "popular": "热门",
+    "thisWeek": "本周",
+    "thisMonth": "本月",
+    "thisYear": "今年",
+    "noActivityFound": "未找到活动",
+    "noActivityFoundDescription": "我们无法找到符合您时间筛选条件的任何活动",
+    "homepage": "主页",
+    "leaderboard": "排行榜",
+    "winners": "获奖者",
+    "talentEmptyAlt": "人才为空"
+  },
+  "grantCard": {
+    "wonAGrant": "获得了资助",
+    "viewGrant": "查看资助"
+  },
+  "powCard": {
+    "addedPersonalProject": "添加了个人项目",
+    "viewProject": "查看项目"
+  },
+  "submissionCard": {
+    "wonBounty": "赢得了悬赏",
+    "submittedToBounty": "提交了悬赏",
+    "wonHackathonTrack": "赢得了黑客马拉松赛道",
+    "submittedToHackathon": "提交了黑客马拉松项目",
+    "selectedForProject": "被选中参与项目",
+    "appliedToProject": "申请了项目",
+    "viewListing": "查看列表",
+    "viewSubmission": "查看提交",
+    "submissionAccessInfo": "一旦列表的获胜者公布，此提交将可访问。"
+  },
+  "winnerFeedImage": {
+    "winner": "获奖者",
+    "grant": "资助",
+    "prize": "奖项"
+  },
+  "grantApplicationButton": {
+    "appliedSuccessfully": "申请成功",
+    "applyNow": "立即申请",
+    "checkingApplication": "正在检查申请..",
+    "completeProfileBeforeApplying": "请在申请资助之前完成您的个人资料。",
+    "applicationNotification": "如果您的资助申请被批准或拒绝，您将通过电子邮件收到通知。"
+  },
+  "grantApplicationModal": {
+    "title": "资助申请",
+    "description": "如果您正在开发一个能帮助赞助商生态系统成长的项目，请在此提交您的提案，我们将尽快回复！",
+    "basics": "基础信息",
+    "details": "详细信息",
+    "milestones": "里程碑",
+    "projectTitle": "项目标题",
+    "projectTitleHelper": "我们应该如何称呼您的项目？",
+    "projectTitlePlaceholder": "项目标题",
+    "oneLinerDescription": "一句话描述",
+    "oneLinerDescriptionHelper": "用一句话描述您的想法。",
+    "oneLinerDescriptionPlaceholder": "用一句话总结您的项目",
+    "grantAmount": "资助金额",
+    "grantAmountHelper": "完成这个项目需要多少资金？",
+    "grantAmountPlaceholder": "输入金额",
+    "walletAddress": "您的 Solana 钱包地址",
+    "walletAddressHelper": "我们应该将资金发送到哪里？请不要使用 .sol 域名！",
+    "walletAddressPlaceholder": "添加您的 Solana 钱包地址",
+    "projectDetails": "项目详情",
+    "projectDetailsHelper": "您试图解决什么问题，以及您将如何解决它？",
+    "projectDetailsPlaceholder": "解释您要解决的问题和您的解决方案",
+    "deadline": "截止日期",
+    "deadlineHelper": "项目预计完成的日期是什么时候？",
+    "deadlinePlaceholder": "截止日期",
+    "proofOfWork": "工作证明",
+    "proofOfWorkHelper": "包含您最好的作品链接，让社区相信您能够执行这个项目。",
+    "proofOfWorkPlaceholder": "提供您的作品集或以前工作的链接",
+    "twitterProfile": "个人 Twitter 资料",
+    "twitterProfileHelper": "添加您的个人 Twitter 用户名",
+    "twitterProfilePlaceholder": "johncena",
+    "goalsAndMilestones": "目标和里程碑",
+    "goalsAndMilestonesHelper": "列出您希望在项目结束时达成的事项。",
+    "goalsAndMilestonesPlaceholder": "概述您的项目目标和里程碑",
+    "kpi": "主要关键绩效指标",
+    "kpiHelper": "您将跟踪哪些指标来表明项目的成功/失败？在什么时候可以认为是成功的？可以是任何指标，例如安装量、用户数、浏览量、总锁定价值等。",
+    "kpiPlaceholder": "成功的关键指标是什么？",
+    "errorMessage": "抱歉！提交时发生错误。请重试或联系我们：hello@superteamearn.com",
+    "back": "返回",
+    "continue": "继续",
+    "apply": "申请",
+    "applying": "申请中..."
+  },
+  "grantEntry": {
+    "applyNow": "立即申请"
+  },
+  "grantsCard": {
+    "grant": "资助",
+    "avgGrant": "平均资助"
+  },
+  "grantsHeader": {
+    "open": "开放",
+    "closed": "已关闭",
+    "grant": "资助",
+    "prizes": "奖励",
+    "details": "详情",
+    "references": "参考"
+  }
+}

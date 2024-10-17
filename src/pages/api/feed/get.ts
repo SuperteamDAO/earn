@@ -136,7 +136,7 @@ export default async function handler(
           lte: endDate,
         },
         grant: {
-          isPrivate: false,
+          // isPrivate: false,
         },
       },
       skip: parseInt(skip as string, 10),

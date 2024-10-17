@@ -1,0 +1,306 @@
+{
+  "freelanceGigs": "Freelance Gigs",
+  "grants": "Grants",
+  "grantsDescription": "Equity-free funding opportunities for builders",
+  "noGrantsAvailable": "No grants available!",
+  "subscribeToNotifications": "Subscribe to notifications to get notified about new grants.",
+  "bounties": "Bounties",
+  "projects": "Projects",
+  "content": "Content",
+  "design": "Design",
+  "development": "Development",
+  "other": "Other",
+  "entityNameModal": {
+    "title": "Update Your Entity Name",
+    "description": "In accordance with our updated <1>Terms of Use</1>, we need to know the name of the entity that controls your project. If you are a DAO, please mention the name of your DAO. If you don't have an entity, please mention your full name.",
+    "inputPlaceholder": "Entity Name",
+    "needHelp": "Need Help?",
+    "update": "Update",
+    "error": "Some Error occurred, please try again later"
+  },
+  "featureModal": {
+    "title": "Introducing Scout",
+    "description": "A curated list of the best talent on Superteam Earn that you can invite to participate in your listings to get high quality submissions! Add a new listing, or check out any of your currently live listings to try Scout.",
+    "checkItOut": "Check it out",
+    "goodToKnow": "Good to know!"
+  },
+  "installPWAModal": {
+    "title": "Install Earn",
+    "neverMiss": "Never miss a listing again!",
+    "addToHomescreen": "Add Earn to your homescreen and always stay updated.",
+    "addButton": "Add to Homescreen",
+    "manualInstructions": "Tap these icons ( or ) and select the \"Add to home screen\" option."
+  },
+  "sponsorButton": {
+    "loginMessage": "Please log in to continue!",
+    "buttonText": "Continue as a sponsor ->",
+    "loadingText": "Redirecting..."
+  },
+  "talentButton": {
+    "loginMessage": "Please log in to continue!",
+    "buttonText": "Continue as talent ->",
+    "loadingText": "Redirecting..."
+  },
+  "emptySection": {
+    "defaultTitle": "Sorry! Nothing found",
+    "defaultMessage": "Something went wrong! Please try again!"
+  },
+  "errorInfo": {
+    "defaultTitle": "Error Occurred!",
+    "defaultMessage": "Something went wrong! Please try again!"
+  },
+  "errorSection": {
+    "defaultTitle": "Error Occurred!",
+    "defaultMessage": "Something went wrong! Please try again!"
+  },
+  "imagePicker": {
+    "chooseOrDrag": "Choose or drag and drop media",
+    "maxSize": "Maximum size 5 MB",
+    "sizeError": "The image size must be smaller than 5MB",
+    "formatError": "Unsupported file format. Please use JPEG, PNG, or WebP Images.",
+    "removeImage": "Remove image",
+    "preview": "Preview"
+  },
+  "loadingSection": {
+    "loading": "Loading..."
+  },
+  "skillSelect": {
+    "skillsNeeded": "Skills Needed",
+    "subSkillsNeeded": "Sub Skills Needed",
+    "selectAllThatApply": "Select all that apply",
+    "infoIconAlt": "Info Icon"
+  },
+  "survey": {
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "lowerBoundLabel": "Lower bound",
+    "upperBoundLabel": "Upper bound"
+  },
+  "emailSignIn": {
+    "emailPlaceholder": "Enter Your Email Address",
+    "continueWithEmail": "Continue with Email",
+    "redirecting": "Redirecting...",
+    "invalidEmail": "Please enter a valid email address.",
+    "emailValidationError": "This email address appears to be invalid or needs to be whitelisted. Please check and try again.",
+    "generalError": "An error occurred while validating your email. Please try again later."
+  },
+  "login": {
+    "oneStepAway": "You're one step away",
+    "joiningSuperteamEarn": "from joining Superteam Earn",
+    "earningGlobalStandards": "From earning in global standards"
+  },
+  "signIn": {
+    "continueWithGoogle": "Continue with Google",
+    "or": "OR",
+    "continueWithEmail": "Continue with Email",
+    "termsAgreement": "By using this website, you agree to our <1>Terms of Use</1> and our <2>Privacy Policy</2>.",
+    "needHelp": "Need help? Reach out to us at <1>support@superteamearn.com</1>"
+  },
+  "handleInvite": {
+    "userNotFound": "User not found",
+    "noValidInvitation": "No valid invitation found",
+    "alreadyMember": "You are already a member of this sponsor",
+    "invitationAccepted": "Invitation accepted successfully",
+    "error": "An error occurred while accepting the invitation"
+  },
+  "comment": {
+    "sponsor": "Sponsor",
+    "reply": "Reply",
+    "replies": "Replies",
+    "writeComment": "Write a comment",
+    "errorAddingComment": "Error in adding your comment! Please try again!",
+    "adding": "Adding...",
+    "delete": "Delete",
+    "deleteComment": "Delete Comment",
+    "deleteConfirmation": "Are you sure? You can't undo this action.",
+    "deleteError": "Failed to delete comment",
+    "deleteTryAgain": "Please try again later.",
+    "cancel": "Cancel",
+    "removeImage": "Remove image"
+  },
+  "commentParser": {
+    "checkItOut": "check it out!"
+  },
+  "comments": {
+    "commentsIcon": "Comments Icon",
+    "comment": "Comment",
+    "comments": "Comments",
+    "writeComment": "Write a comment",
+    "errorAddingComment": "Error in adding your comment! Please try again!",
+    "cancel": "Cancel",
+    "adding": "Adding...",
+    "fetchingComments": "Fetching Comments...",
+    "showMoreComments": "Show More Comments",
+    "completeProfileBeforeCommenting": "Please complete your profile before commenting on the listing."
+  },
+  "userSuggestionTextarea": {
+    "charactersLeft": "characters left"
+  },
+  "commentUtils": {
+    "timeUnits": {
+      "second": "s",
+      "minute": "m",
+      "hour": "h",
+      "day": "d",
+      "month": "M",
+      "year": "y"
+    },
+    "submissionComments": {
+      "bounty": {
+        "justSubmitted": "Just submitted to this Bounty",
+        "inTheArena": "Is in the arena, they just submitted to this Bounty",
+        "potentialWinner": "Potential Winner? They just submitted to this bounty",
+        "steppingUp": "Is stepping up; they just submitted to this bounty",
+        "isIn": "Is in! They just submitted to this bounty",
+        "onTheMove": "Is on the move! They just submitted to this bounty"
+      },
+      "project": {
+        "justApplied": "Just applied to this Project",
+        "inTheArena": "Is in the arena, they just applied to this Project",
+        "potentialWinner": "Potential Winner? They just applied to this project",
+        "steppingUp": "Is stepping up; they just applied to this project",
+        "isIn": "Is in! They just applied to this project",
+        "onTheMove": "Is on the move! They just applied to this project"
+      },
+      "default": "Just submitted to this listing"
+    }
+  },
+  "inviteMemberTemplate": {
+    "greeting": "Hello,",
+    "inviteMessage": "You have been invited by {{senderName}} to join <strong>{{sponsorName}}</strong> on Superteam Earn!",
+    "clickHere": "Click here",
+    "acceptInvite": "to accept the invite.",
+    "salutation": "Best,",
+    "signature": "Superteam Earn"
+  },
+  "otpTemplate": {
+    "greeting": "Hello,",
+    "otpMessage": "Your OTP for logging into Superteam Earn is <b>{{token}}</b>. This OTP is valid for 30 minutes.",
+    "salutation": "Best,",
+    "signature": "Superteam Earn"
+  },
+  "welcomeSponsorTemplate": {
+    "welcome": "Welcome to Superteam Earn!",
+    "thankYou": "Thank you for signing up. Earn is the premier talent-matching platform in crypto, favoured by hundreds of leading companies and thousands of verified crypto-focused talent.",
+    "helpMessage": "If you need any help related to setting up your listing on Earn, don't hesitate to get in touch with",
+    "contactName": "Pratik",
+    "onTelegram": "on Telegram.",
+    "salutation": "Best,",
+    "signature": "Superteam Earn"
+  },
+  "welcomeTalentTemplate": {
+    "greeting": "OK let's get this out of the way.",
+    "automatedEmail": "Even though this is an automated email...",
+    "realPerson": "I just wanted to say hey and let you know that I'm a real person.",
+    "introduction": "I'm Kash, and I'm a Core Contributor over at <1>Superteam</1>. I might not know you personally yet, but I'm pumped that you're here.",
+    "respectInbox": "You have my word that we'll be respectful of your inbox and only email you when we have some fresh new opportunities or a big announcement that we want to tell you about.",
+    "favor": "One favor before I go:",
+    "replyRequest": "reply to this email and let me know why you joined Superteam Earn?",
+    "learnMore": "Would love to learn more about you.",
+    "salutation": "Talk soon,",
+    "signature": "Kash"
+  },
+  "feed": {
+    "activityFeed": "Activity Feed",
+    "discoverBestWork": "Discover the best work on Earn",
+    "new": "New",
+    "popular": "Popular",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "thisYear": "This Year",
+    "noActivityFound": "No Activity Found",
+    "noActivityFoundDescription": "We couldn't find any activity for your time filter",
+    "homepage": "Homepage",
+    "leaderboard": "Leaderboard",
+    "winners": "Winners",
+    "talentEmptyAlt": "talent empty"
+  },
+  "grantCard": {
+    "wonAGrant": "won a grant",
+    "viewGrant": "View Grant"
+  },
+  "powCard": {
+    "addedPersonalProject": "added a personal project",
+    "viewProject": "View Project"
+  },
+  "submissionCard": {
+    "wonBounty": "won a bounty",
+    "submittedToBounty": "submitted to a bounty",
+    "wonHackathonTrack": "won a hackathon track",
+    "submittedToHackathon": "submitted to a hackathon",
+    "selectedForProject": "got selected for a project",
+    "appliedToProject": "applied to a project",
+    "viewListing": "View Listing",
+    "viewSubmission": "View Submission",
+    "submissionAccessInfo": "This submission will be accessible once winners for the listing have been announced."
+  },
+  "winnerFeedImage": {
+    "winner": "winner",
+    "grant": "GRANT",
+    "prize": "PRIZE"
+  },
+  "grantApplicationButton": {
+    "appliedSuccessfully": "Applied Successfully",
+    "applyNow": "Apply Now",
+    "checkingApplication": "Checking Application..",
+    "completeProfileBeforeApplying": "Please complete your profile before applying for a grant.",
+    "applicationNotification": "You will be notified via email if your grant has been approved or rejected."
+  },
+  "grantApplicationModal": {
+    "title": "Grant Application",
+    "description": "If you're working on a project that will help the sponsor's ecosystem grow, apply with your proposal here and we'll respond soon!",
+    "basics": "Basics",
+    "details": "Details",
+    "milestones": "Milestones",
+    "projectTitle": "Project Title",
+    "projectTitleHelper": "What should we call your project?",
+    "projectTitlePlaceholder": "Project Title",
+    "oneLinerDescription": "One-Liner Description",
+    "oneLinerDescriptionHelper": "Describe your idea in one sentence.",
+    "oneLinerDescriptionPlaceholder": "Sum up your project in one sentence",
+    "grantAmount": "Grant Amount",
+    "grantAmountHelper": "How much funding do you require to complete this project?",
+    "grantAmountPlaceholder": "Enter amount",
+    "walletAddress": "Your Solana Wallet Address",
+    "walletAddressHelper": "Where should we send the funds? No .sol domains please!",
+    "walletAddressPlaceholder": "Add your Solana wallet address",
+    "projectDetails": "Project Details",
+    "projectDetailsHelper": "What is the problem you're trying to solve, and how you're going to solve it?",
+    "projectDetailsPlaceholder": "Explain the problem you're solving and your solution",
+    "deadline": "Deadline",
+    "deadlineHelper": "What is the expected completion date for the project?",
+    "deadlinePlaceholder": "deadline",
+    "proofOfWork": "Proof of Work",
+    "proofOfWorkHelper": "Include links to your best work that will make the community trust you to execute on this project.",
+    "proofOfWorkPlaceholder": "Provide links to your portfolio or previous work",
+    "twitterProfile": "Personal Twitter Profile",
+    "twitterProfileHelper": "Add your personal Twitter username",
+    "twitterProfilePlaceholder": "johncena",
+    "goalsAndMilestones": "Goals and Milestones",
+    "goalsAndMilestonesHelper": "List down the things you hope to achieve by the end of project duration.",
+    "goalsAndMilestonesPlaceholder": "Outline your project goals and milestones",
+    "kpi": "Primary Key Performance Indicator",
+    "kpiHelper": "What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc.",
+    "kpiPlaceholder": "What's the key metric for success?",
+    "errorMessage": "Sorry! An error occurred while submitting. Please try again or contact us at hello@superteamearn.com",
+    "back": "Back",
+    "continue": "Continue",
+    "apply": "Apply",
+    "applying": "Applying..."
+  },
+  "grantEntry": {
+    "applyNow": "Apply Now"
+  },
+  "grantsCard": {
+    "grant": "Grant",
+    "avgGrant": "Avg. Grant"
+  },
+  "grantsHeader": {
+    "open": "Open",
+    "closed": "Closed",
+    "grant": "Grant",
+    "prizes": "Prizes",
+    "details": "Details",
+    "references": "References"
+  }
+}

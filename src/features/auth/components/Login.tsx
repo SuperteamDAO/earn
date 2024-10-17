@@ -1,6 +1,7 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Box, Modal, ModalContent, ModalOverlay, Text } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { SignIn } from './SignIn';
 
@@ -9,8 +10,11 @@ interface Props {
   onClose: () => void;
   isSponsor?: boolean;
 }
+
 export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
   const [loginStep, setLoginStep] = useState(0);
+  const { t } = useTranslation('common');
+
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -32,7 +36,7 @@ export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
             fontWeight={600}
             textAlign={'center'}
           >
-            You&apos;re one step away
+            {t('login.oneStepAway')}
           </Text>
           <Text
             color="brand.slate.600"
@@ -41,8 +45,8 @@ export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
             textAlign={'center'}
           >
             {isSponsor
-              ? 'from joining Superteam Earn'
-              : 'From earning in global standards'}
+              ? t('login.joiningSuperteamEarn')
+              : t('login.earningGlobalStandards')}
           </Text>
         </Box>
         <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />

@@ -29,6 +29,7 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { AuthWrapper } from '@/features/auth';
 import { EarnAvatar } from '@/features/talent';
@@ -77,6 +78,7 @@ export const Comment = ({
 }: Props) => {
   const { user } = useUser();
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
 
   const {
     isOpen: deleteIsOpen,
@@ -244,11 +246,11 @@ export const Comment = ({
                   <Image
                     width={13}
                     height={13}
-                    alt="Sponsor Verified Icon"
+                    alt={t('comment.sponsor')}
                     src="/assets/icons/verified-tick.svg"
                   />
                 )}
-                Sponsor
+                {t('comment.sponsor')}
               </Text>
             )}
             <Text
@@ -316,7 +318,10 @@ export const Comment = ({
                     fill="#4F46E5"
                   />
                 </svg>
-                {replies?.length} {replies?.length === 1 ? 'Reply' : 'Replies'}
+                {replies?.length}{' '}
+                {replies?.length === 1
+                  ? t('comment.reply')
+                  : t('comment.replies')}
               </Button>
             )}
             <Button
@@ -331,7 +336,7 @@ export const Comment = ({
               onClick={() => setShowReplyInput((prev) => !prev)}
               variant="link"
             >
-              Reply
+              {t('comment.reply')}
             </Button>
           </HStack>
           <Collapse
@@ -355,7 +360,7 @@ export const Comment = ({
                     color: 'brand.slate.400',
                   }}
                   focusBorderColor="brand.purple"
-                  placeholder="Write a comment"
+                  placeholder={t('comment.writeComment')}
                   value={newReply}
                   setValue={setNewReply}
                   variant="flushed"
@@ -363,7 +368,7 @@ export const Comment = ({
               </Flex>
               {!!newReplyError && (
                 <Text my={0} mt={4} color="red" fontSize="xs">
-                  Error in adding your comment! Please try again!
+                  {t('comment.errorAddingComment')}
                 </Text>
               )}
               <Collapse
@@ -397,10 +402,10 @@ export const Comment = ({
                       }}
                       isDisabled={!!newReplyLoading || !newReply || isTemplate}
                       isLoading={!!newReplyLoading}
-                      loadingText="Adding..."
+                      loadingText={t('comment.adding')}
                       onClick={() => handleSubmit()}
                     >
-                      Reply
+                      {t('comment.reply')}
                     </Button>
                   </AuthWrapper>
                 </Flex>
@@ -467,7 +472,7 @@ export const Comment = ({
                 rounded="sm"
                 tabIndex={-1}
               >
-                Delete
+                {t('comment.delete')}
               </MenuItem>
             </MenuList>
           </Menu>
@@ -481,18 +486,18 @@ export const Comment = ({
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete Comment
+              {t('comment.deleteComment')}
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Are you sure? You {"can't"} undo this action.
+              {t('comment.deleteConfirmation')}
               {deleteError && (
                 <Alert mt={3} rounded="md" status="error">
                   <AlertIcon />
                   <VStack>
-                    <AlertTitle>Failed to delete comment</AlertTitle>
+                    <AlertTitle>{t('comment.deleteError')}</AlertTitle>
                     <AlertDescription alignSelf="start">
-                      Please try again later.
+                      {t('comment.deleteTryAgain')}
                     </AlertDescription>
                   </VStack>
                 </Alert>
@@ -501,7 +506,7 @@ export const Comment = ({
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={deleteOnClose} variant="ghost">
-                Cancel
+                {t('comment.cancel')}
               </Button>
               <Button
                 className="ph-no-capture"
@@ -510,7 +515,7 @@ export const Comment = ({
                 isLoading={deleteLoading}
                 onClick={handleDelete}
               >
-                Delete
+                {t('comment.delete')}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

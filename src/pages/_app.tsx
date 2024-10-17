@@ -1,4 +1,5 @@
 import '../styles/globals.scss';
+import '../i18n';
 
 import { ChakraProvider } from '@chakra-ui/react';
 import { setUser } from '@sentry/nextjs';
