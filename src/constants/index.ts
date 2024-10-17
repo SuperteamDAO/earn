@@ -135,6 +135,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'kamino',
   },
   {
+    tokenName: 'Jito (JTO)',
+    tokenSymbol: 'JTO',
+    mintAddress: 'jtojtomepa8beP8AuQc6eXt5FriJwfFMwQx2v2f9mCL',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/28541.png',
+    decimals: 9,
+    coingeckoSymbol: 'jito-governance-token',
+  },
+  {
     tokenName: 'Metaplex (MPLX)',
     tokenSymbol: 'MPLX',
     mintAddress: 'METAewgxyPbgwsseH8T16a39CQ5VyVxZi9zXiDPY18m',
