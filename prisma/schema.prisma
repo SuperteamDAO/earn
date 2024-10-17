@@ -1,3 +1,8 @@
+generator jsonSchema {
+  provider              = "prisma-json-schema-generator"
+  includeRequiredFields = "true"
+}
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -183,6 +188,7 @@ model Grants {
   airtableId             String?
   avgResponseTime        String?            @default("24h")
   isNative               Boolean            @default(false)
+  isPrivate              Boolean            @default(false)
   references             Json?
 
   @@index([id, slug])
