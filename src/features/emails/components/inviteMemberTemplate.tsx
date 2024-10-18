@@ -1,5 +1,4 @@
 import React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 
 import { styles } from '../utils';
 
@@ -14,28 +13,21 @@ export const InviteMemberTemplate = ({
   sponsorName,
   link,
 }: TemplateProps) => {
-  const { t } = useTranslation('common');
-
   return (
     <div style={styles.container}>
-      <p style={styles.greetings}>{t('inviteMemberTemplate.greeting')}</p>
+      <p style={styles.greetings}>Hello,</p>
       <p style={styles.textWithMargin}>
-        <Trans
-          i18nKey="inviteMemberTemplate.inviteMessage"
-          values={{ senderName, sponsorName }}
-        >
-          You have been invited by {senderName} to join{' '}
-          <strong>{sponsorName}</strong> on Superteam Earn!
-        </Trans>{' '}
+        You have been invited by {senderName} to join{' '}
+        <strong>{sponsorName}</strong> {''} on Solar Earn!{' '}
         <a href={link} style={styles.link}>
-          {t('inviteMemberTemplate.clickHere')}
+          Click here
         </a>{' '}
-        {t('inviteMemberTemplate.acceptInvite')}
+        to accept the invite.
       </p>
       <p style={styles.salutation}>
-        {t('inviteMemberTemplate.salutation')}
+        Best,
         <br />
-        {t('inviteMemberTemplate.signature')}
+        Solar Earn
       </p>
     </div>
   );

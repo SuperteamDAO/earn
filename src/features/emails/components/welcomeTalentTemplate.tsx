@@ -1,36 +1,39 @@
 import React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 
 import { styles } from '../utils';
 
 export const WelcomeTalentTemplate = () => {
-  const { t } = useTranslation('common');
-
   return (
     <div style={styles.container}>
-      <p style={styles.textWithMargin}>{t('welcomeTalentTemplate.greeting')}</p>
-      <p style={styles.text}>{t('welcomeTalentTemplate.automatedEmail')}</p>
-      <p style={styles.text}>{t('welcomeTalentTemplate.realPerson')}</p>
-      <p style={styles.text}>
-        <Trans i18nKey="welcomeTalentTemplate.introduction">
-          I&apos;m Kash, and I&apos;m a Core Contributor over at{' '}
-          <a href="https://superteam.fun" style={styles.link}>
-            Superteam
-          </a>
-          . I might not know you personally yet, but I&apos;m pumped that
-          you&apos;re here.
-        </Trans>
+      <p style={styles.textWithMargin}>
+        OK let&apos;s get this out of the way.
       </p>
-      <p style={styles.text}>{t('welcomeTalentTemplate.respectInbox')}</p>
+      <p style={styles.text}>Even though this is an automated email...</p>
       <p style={styles.text}>
-        <strong>{t('welcomeTalentTemplate.favor')} </strong>
-        {t('welcomeTalentTemplate.replyRequest')}
+        I just wanted to say hey and let you know that I&apos;m a real person.
       </p>
-      <p style={styles.text}>{t('welcomeTalentTemplate.learnMore')}</p>
+      <p style={styles.text}>
+        I&apos;m Kash, and I&apos;m a Core Contributor over at{' '}
+        <a href="https://superteam.fun" style={styles.link}>
+          Solar
+        </a>
+        . I might not know you personally yet, but I&apos;m pumped that
+        you&apos;re here.
+      </p>
+      <p style={styles.text}>
+        You have my word that we&apos;ll be respectful of your inbox and only
+        email you when we have some fresh new opportunities or a big
+        announcement that we want to tell you about.
+      </p>
+      <p style={styles.text}>
+        <strong>One favor before I go: </strong> reply to this email and let me
+        know why you joined Solar Earn?
+      </p>
+      <p style={styles.text}>Would love to learn more about you.</p>
 
       <p style={styles.salutation}>
-        {t('welcomeTalentTemplate.salutation')} <br />
-        {t('welcomeTalentTemplate.signature')}
+        Talk soon, <br />
+        Kash
       </p>
     </div>
   );

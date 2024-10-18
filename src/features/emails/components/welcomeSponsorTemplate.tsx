@@ -1,33 +1,30 @@
 import React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
 
 import { PDTG } from '@/constants';
 
 import { styles } from '../utils';
 
 export const WelcomeSponsorTemplate = () => {
-  const { t } = useTranslation('common');
-
   return (
     <div style={styles.container}>
-      <p style={styles.text}>{t('welcomeSponsorTemplate.welcome')}</p>
+      <p style={styles.text}>Welcome to Solar Earn!</p>
       <p style={styles.textWithMargin}>
-        {t('welcomeSponsorTemplate.thankYou')}
+        Thank you for signing up. Earn is the premier talent-matching platform
+        in crypto, favoured by hundreds of leading companies and thousands of
+        verified crypto-focused talent.
       </p>
       <p style={styles.textWithMargin}>
-        <Trans i18nKey="welcomeSponsorTemplate.helpMessage" ns="common">
-          If you need any help related to setting up your listing on Earn,
-          don&apos;t hesitate to get in touch with&nbsp;
-          <a href={PDTG} style={styles.link}>
-            {t('welcomeSponsorTemplate.contactName')}
-          </a>
-          &nbsp;{t('welcomeSponsorTemplate.onTelegram')}
-        </Trans>
+        If you need any help related to setting up your listing on Earn,
+        don&apos;t hesitate to get in touch with&nbsp;
+        <a href={PDTG} style={styles.link}>
+          Pratik
+        </a>{' '}
+        on Telegram.&nbsp;
       </p>
       <p style={styles.salutation}>
-        {t('welcomeSponsorTemplate.salutation')}
+        Best,
         <br />
-        {t('welcomeSponsorTemplate.signature')}
+        Solar Earn
       </p>
     </div>
   );
