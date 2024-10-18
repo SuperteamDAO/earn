@@ -176,7 +176,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    let isVerifying = false;
+    let isVerifying = listing.status === 'VERIFYING';
     if (isPublished) {
       isVerifying =
         listing.status === 'VERIFYING' ||
