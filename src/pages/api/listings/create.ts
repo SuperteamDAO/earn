@@ -69,25 +69,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const correctedSkills = cleanSkills(skills);
 
-    let usdValue = 0;
-    if (isPublished && publishedAt) {
-      try {
-        let amount;
-        if (compensationType === 'fixed') {
-          amount = rewardAmount;
-        } else if (compensationType === 'range') {
-          amount = (minRewardAsk + maxRewardAsk) / 2;
-        }
-
-        if (amount && token) {
-          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
-          usdValue = tokenUsdValue * amount;
-        }
-      } catch (error) {
-        logger.error('Error calculating USD value:', error);
-      }
-    }
-
     // sponsor never had one live listing
     let isVerifying = false;
     if (isPublished) {
@@ -118,6 +99,25 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (isVerifying) {
       isPublished = false;
       publishedAt = null;
+    }
+
+    let usdValue = 0;
+    if (isPublished && publishedAt && !isVerifying) {
+      try {
+        let amount;
+        if (compensationType === 'fixed') {
+          amount = rewardAmount;
+        } else if (compensationType === 'range') {
+          amount = (minRewardAsk + maxRewardAsk) / 2;
+        }
+
+        if (amount && token) {
+          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
+          usdValue = tokenUsdValue * amount;
+        }
+      } catch (error) {
+        logger.error('Error calculating USD value:', error);
+      }
     }
 
     const finalData = {
