@@ -1,5 +1,4 @@
 import {
-  Badge,
   Box,
   Flex,
   FormControl,
@@ -36,9 +35,6 @@ interface RegionSelectorProps {
 const formatGroupLabel = (data: GroupBase<CountryOption>) => (
   <Flex align="center" justify="space-between">
     <Text fontWeight="bold">{data.label}</Text>
-    <Badge px="2" borderRadius="full" colorScheme="teal">
-      {data.options.length}
-    </Badge>
   </Flex>
 );
 

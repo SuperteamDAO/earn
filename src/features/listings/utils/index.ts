@@ -155,18 +155,7 @@ export function userRegionEligibilty(
     return true;
   }
 
-  let regionObject:
-    | { name: string; code: string; country?: string[] }
-    | undefined;
-  regionObject = countries.find(
-    (country) => country.name.toLowerCase() === region?.toLowerCase(),
-  );
-  if (!regionObject) {
-    regionObject = Superteams.find(
-      (superteam) =>
-        superteam.displayValue.toLowerCase() === region?.toLowerCase(),
-    );
-  }
+  const regionObject = region ? getCombinedRegion(region) : null;
 
   const isEligible =
     !!(
@@ -239,4 +228,29 @@ export const getListingIcon = (type: string) => {
     default:
       return '/assets/icons/bolt.svg';
   }
+};
+
+export const getCombinedRegion = (region: string) => {
+  let regionObject:
+    | {
+        name: string;
+        code: string;
+        country?: string[];
+        displayValue?: string;
+      }
+    | undefined;
+  regionObject = countries.find(
+    (country) => country.name.toLowerCase() === region?.toLowerCase(),
+  );
+  if (!regionObject) {
+    regionObject = Superteams.find(
+      (superteam) =>
+        superteam.displayValue.toLowerCase() === region?.toLowerCase(),
+    );
+    if (regionObject?.displayValue) {
+      regionObject.name = regionObject.displayValue;
+    }
+  }
+
+  return regionObject;
 };
