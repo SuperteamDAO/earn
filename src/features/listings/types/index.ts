@@ -1,4 +1,4 @@
-import type { BountyType, Regions, status } from '@prisma/client';
+import type { BountyType, status } from '@prisma/client';
 import type { User } from 'next-auth';
 
 import type { SuperteamName } from '@/features/listing-builder';
@@ -34,7 +34,7 @@ export interface Listing {
   type?: BountyType | string;
   applicationType?: 'fixed' | 'rolling';
   totalWinnersSelected?: number;
-  region?: Regions;
+  region?: string;
   totalPaymentsMade?: number;
   isWinnersAnnounced?: boolean;
   templateId?: string;

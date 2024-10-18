@@ -15,7 +15,8 @@ import React from 'react';
 import { LuGlobe } from 'react-icons/lu';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { CombinedRegions } from '@/constants/Superteam';
+import { countries } from '@/constants';
+import { Superteams } from '@/constants/Superteam';
 
 import { getRegionTooltipLabel } from '../../utils';
 
@@ -26,11 +27,25 @@ export const RegionLabel = ({
   region: string | undefined;
   isGrant?: boolean;
 }) => {
-  const regionObject = CombinedRegions.find((st) => st.region === region);
-  const displayValue = regionObject?.displayValue;
+  console.log('region', region);
+  let regionObject:
+    | { name: string; code: string; displayValue?: string }
+    | undefined;
+  regionObject = countries.find(
+    (country) => country.name.toLowerCase() === region?.toLowerCase(),
+  );
+  if (!regionObject) {
+    regionObject = Superteams.find(
+      (superteam) =>
+        superteam.displayValue.toLowerCase() === region?.toLowerCase(),
+    );
+  }
+  const displayValue = regionObject?.displayValue || regionObject?.name;
   const code = regionObject?.code;
 
   const regionTooltipLabel = getRegionTooltipLabel(region, isGrant);
+  console.log('region object', regionObject);
+  console.log('regionTooltipLabel', regionTooltipLabel);
   return (
     <>
       <Tooltip
