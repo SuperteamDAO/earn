@@ -68,5 +68,9 @@ local
 **/public/workbox-*.js.map
 **/public/worker-*.js.map
 **/public/fallback-*.js
+
 # Sentry Config File
 .env.sentry-build-plugin
+
+#
+.cursorrules
