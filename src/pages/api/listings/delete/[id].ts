@@ -26,7 +26,10 @@ async function bountyDelete(
       return res.status(error.status).json({ error: error.message });
     }
 
-    if (listing.status !== 'OPEN' || listing.isPublished) {
+    if (
+      (listing.status !== 'OPEN' && listing.status !== 'PREVIEW') ||
+      listing.isPublished
+    ) {
       logger.warn(`Bounty with ID: ${id} is not in a deletable state`);
       return res
         .status(400)
