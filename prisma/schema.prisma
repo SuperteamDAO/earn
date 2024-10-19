@@ -38,7 +38,7 @@ model Bounties {
   totalWinnersSelected Int?               @default(0)
   isWinnersAnnounced   Boolean            @default(false)
   templateId           String?
-  region               Regions            @default(GLOBAL)
+  region               String            @default("GLOBAL")
   pocSocials           String?
   hackathonprize       Boolean            @default(false)
   applicationType      ApplicationType    @default(fixed)
