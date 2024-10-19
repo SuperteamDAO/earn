@@ -2,6 +2,16 @@ import { Regions } from '@prisma/client';
 
 export const Superteams = [
   {
+    name: 'Global',
+    icons: '/assets/superteams/global.png',
+    banner: '',
+    region: Regions.GLOBAL,
+    displayValue: 'Global',
+    country: ['Global'],
+    code: 'GLOBAL',
+    hello: 'Hello',
+  },
+  {
     name: 'Superteam India',
     icons: '/assets/superteams/logosindia.jpg',
     banner: '/assets/superteams/banners/India.png',

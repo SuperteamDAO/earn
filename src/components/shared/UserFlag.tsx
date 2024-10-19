@@ -46,6 +46,16 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
       rounded="full"
       style={{ width: size, height: size }}
     />
+  ) : code === 'global' ? (
+    <Center
+      bgImage={'/assets/superteams/global.png'}
+      bgSize={'contain'}
+      borderWidth="1px"
+      borderStyle="solid"
+      borderColor="brand.slate.50"
+      rounded="full"
+      style={{ width: size, height: size }}
+    />
   ) : (
     <Center
       className={`fi fi-${code} fis`}
