@@ -34,6 +34,8 @@ import { EarnAvatar } from '@/features/talent';
 import { type GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils';
 
+export type ApplicationStatus = GrantApplicationStatus | 'Completed';
+
 interface Props {
   applications: GrantApplicationWithUser[] | undefined;
   setSearchText: (value: string) => void;
@@ -45,16 +47,17 @@ interface Props {
   isToggled: (id: string) => boolean;
   toggleAllApplications: () => void;
   isAllToggled: boolean;
-  filterLabel: SubmissionLabels | GrantApplicationStatus | undefined;
+  filterLabel: SubmissionLabels | ApplicationStatus | undefined;
   setFilterLabel: Dispatch<
-    SetStateAction<SubmissionLabels | GrantApplicationStatus | undefined>
+    SetStateAction<SubmissionLabels | ApplicationStatus | undefined>
   >;
 }
 
-const ApplicationStatusFilter: GrantApplicationStatus[] = [
+const ApplicationStatusFilter: ApplicationStatus[] = [
   'Pending',
   'Approved',
   'Rejected',
+  'Completed',
 ];
 
 export const ApplicationList = ({
@@ -223,8 +226,11 @@ export const ApplicationList = ({
           </Flex>
         </Flex>
         {applications?.map((application) => {
+          const applicationStatus = application?.isShipped
+            ? 'Completed'
+            : application?.applicationStatus;
           const { bg, color } =
-            colorMap[application?.applicationStatus as GrantApplicationStatus];
+            colorMap[applicationStatus as ApplicationStatus];
           return (
             <Flex
               key={application?.id}
@@ -297,7 +303,7 @@ export const ApplicationList = ({
                   textTransform={'capitalize'}
                   whiteSpace={'nowrap'}
                 >
-                  {application?.applicationStatus}
+                  {applicationStatus}
                 </TagLabel>
               </Tag>
             </Flex>
