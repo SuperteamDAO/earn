@@ -32,7 +32,7 @@ export interface Listing {
   poc?: User;
   source?: string;
   type?: BountyType | string;
-  applicationType?: 'fixed' | 'rolling';
+  applicationType?: 'fixed';
   totalWinnersSelected?: number;
   region?: Regions;
   totalPaymentsMade?: number;

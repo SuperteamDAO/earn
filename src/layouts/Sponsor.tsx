@@ -223,7 +223,7 @@ export function SponsorLayout({
                   isCreateListingAllowed !== undefined &&
                   isCreateListingAllowed === false &&
                   session?.user.role !== 'GOD'
-                    ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
+                    ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “In Review”. Please announce the winners for such listings to create new listings.'
                     : ''
                 }
               >

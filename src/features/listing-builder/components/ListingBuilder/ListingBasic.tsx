@@ -134,8 +134,7 @@ export const ListingBasic = ({
           },
         ),
       region: z.string().optional(),
-      applicationType: z.string().optional(),
-      deadline: z.string().optional(),
+      deadline: z.string(),
       timeToComplete: z.string().nullable().optional(),
       referredBy: z.string().nullable().optional(),
       isPrivate: z.boolean(),
@@ -151,17 +150,6 @@ export const ListingBasic = ({
         ctx.addIssue({
           path: ['timeToComplete'],
           message: 'Time to complete is required for projects',
-          code: 'custom',
-        });
-      }
-      if (
-        type !== 'hackathon' &&
-        applicationType !== 'rolling' &&
-        !data.deadline
-      ) {
-        ctx.addIssue({
-          path: ['deadline'],
-          message: 'Deadline is required',
           code: 'custom',
         });
       }
@@ -185,7 +173,6 @@ export const ListingBasic = ({
       skills: form?.skills,
       pocSocials: form?.pocSocials,
       region: form?.region,
-      applicationType: form?.applicationType,
       deadline: form?.deadline || undefined,
       timeToComplete: form?.timeToComplete,
       referredBy: form?.referredBy,
@@ -211,7 +198,6 @@ export const ListingBasic = ({
         skills: form?.skills,
         pocSocials: form?.pocSocials,
         region: form?.region,
-        applicationType: form?.applicationType || 'fixed',
         timeToComplete: form?.timeToComplete,
         referredBy: form?.referredBy,
         isPrivate: form?.isPrivate,
@@ -222,7 +208,6 @@ export const ListingBasic = ({
 
   const title = watch('title');
   const slug = watch('slug');
-  const applicationType = watch('applicationType');
   const isPrivate = watch('isPrivate');
   const isFndnPaying = watch('isFndnPaying');
 
@@ -526,50 +511,8 @@ export const ListingBasic = ({
               {errors.pocSocials ? <>{errors.pocSocials.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
-          {isProject && (
-            <FormControl
-              w="full"
-              mb={5}
-              isInvalid={!!errors.applicationType}
-              isRequired={isProject}
-            >
-              <Flex>
-                <ListingFormLabel htmlFor="applicationType">
-                  Application Type
-                </ListingFormLabel>
-              </Flex>
-
-              <Select
-                defaultValue={'fixed'}
-                {...register('applicationType', {
-                  required: true,
-                  onChange: (e) => {
-                    const value = e.target.value;
-                    if (value === 'rolling') {
-                      handleDeadlineSelection(30);
-                    }
-                  },
-                })}
-              >
-                <option value="fixed">Fixed Deadline</option>
-                <option value="rolling">Rolling Deadline</option>
-              </Select>
-
-              <FormErrorMessage>
-                {errors.applicationType ? (
-                  <>{errors.applicationType.message}</>
-                ) : (
-                  <></>
-                )}
-              </FormErrorMessage>
-            </FormControl>
-          )}
-          {type !== 'hackathon' && applicationType !== 'rolling' && (
-            <FormControl
-              mb={5}
-              isInvalid={!!errors.deadline}
-              isRequired={applicationType ? applicationType === 'fixed' : true}
-            >
+          {type !== 'hackathon' && (
+            <FormControl mb={5} isInvalid={!!errors.deadline} isRequired>
               <Flex align={'center'} justify={'start'}>
                 <ListingFormLabel htmlFor={'deadline'}>
                   Deadline (in{' '}
