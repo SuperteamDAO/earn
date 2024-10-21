@@ -24,7 +24,6 @@ const initialFormState: ListingFormType = {
   deadline: undefined,
   templateId: undefined,
   pocSocials: undefined,
-  applicationType: 'fixed',
   timeToComplete: undefined,
   type: undefined,
   region: Regions.GLOBAL,
@@ -59,9 +58,7 @@ const mergeListingWithInitialFormState = (
   deadline:
     !isDuplicating && listing.deadline
       ? dayjs(listing.deadline).format('YYYY-MM-DDTHH:mm')
-      : isDuplicating && listing.applicationType === 'rolling'
-        ? dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm')
-        : undefined,
+      : undefined,
   type: type,
   eligibility: (listing.eligibility || []).map((e) => ({
     order: e.order,

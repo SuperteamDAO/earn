@@ -89,7 +89,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const result = await prisma.grantApplication.update({
       where: { id },
       data: {
-        isShipped: true,
+        applicationStatus: 'Completed',
       },
       include: {
         user: true,

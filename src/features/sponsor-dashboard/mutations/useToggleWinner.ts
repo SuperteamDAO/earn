@@ -25,12 +25,10 @@ export const useToggleWinner = (
       id,
       isWinner,
       winnerPosition,
-      ask,
     }: {
       id: string;
       isWinner: boolean;
       winnerPosition: number | null;
-      ask: number | undefined;
     }) => {
       const response = await axios.post(
         `/api/sponsor-dashboard/submission/toggle-winner/`,
@@ -38,7 +36,6 @@ export const useToggleWinner = (
           id,
           isWinner,
           winnerPosition,
-          ask,
         },
       );
       if (!response.data) throw new Error('Failed to toggle winner');

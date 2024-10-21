@@ -176,25 +176,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    let usdValue = 0;
-    let amount;
-    if (isPublished && publishedAt) {
-      try {
-        if (compensationType === 'fixed') {
-          amount = rewardAmount;
-        } else if (compensationType === 'range') {
-          amount = (maxRewardAsk + minRewardAsk) / 2;
-        }
-        if (token && amount) {
-          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
-          usdValue = tokenUsdValue * amount;
-        }
-      } catch (err) {
-        logger.error('Error calculating USD value -', err);
-      }
-    }
-
-    let isVerifying = false;
+    let isVerifying = listing.status === 'VERIFYING';
     if (isPublished) {
       isVerifying =
         listing.status === 'VERIFYING' ||
@@ -225,6 +207,24 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (isVerifying) {
       isPublished = false;
       publishedAt = null;
+    }
+
+    let usdValue = 0;
+    let amount;
+    if (isPublished && publishedAt && !isVerifying) {
+      try {
+        if (compensationType === 'fixed') {
+          amount = rewardAmount;
+        } else if (compensationType === 'range') {
+          amount = (maxRewardAsk + minRewardAsk) / 2;
+        }
+        if (token && amount) {
+          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
+          usdValue = tokenUsdValue * amount;
+        }
+      } catch (err) {
+        logger.error('Error calculating USD value -', err);
+      }
     }
 
     const result = await prisma.bounties.update({

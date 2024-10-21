@@ -1,15 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { type, url, id } = req.body;
-
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   if (!type || !url || !id) {
@@ -21,27 +18,45 @@ export default async function handler(
 
   try {
     if (type === 'submission') {
-      logger.debug(`Updating submission ogImage for ID: ${id}`);
+      const submission = await prisma.submission.findUnique({
+        where: { id: id as string },
+        select: { ogImage: true },
+      });
+
+      if (submission?.ogImage && submission.ogImage !== 'error') {
+        logger.warn(`OG image already exists for submission ${id}`);
+        return res
+          .status(200)
+          .json({ success: false, error: 'Image already exists' });
+      }
+
       await prisma.submission.update({
         where: { id: id as string },
-        data: {
-          ogImage: url,
-        },
+        data: { ogImage: url },
       });
     } else if (type === 'pow') {
-      logger.debug(`Updating PoW ogImage for ID: ${id}`);
+      const pow = await prisma.poW.findUnique({
+        where: { id: id as string },
+        select: { ogImage: true },
+      });
+
+      if (pow?.ogImage && pow.ogImage !== 'error') {
+        logger.warn(`OG image already exists for PoW ${id}`);
+        return res
+          .status(200)
+          .json({ success: false, error: 'Image already exists' });
+      }
+
       await prisma.poW.update({
         where: { id: id as string },
-        data: {
-          ogImage: url,
-        },
+        data: { ogImage: url },
       });
     } else {
-      logger.warn('Invalid type provided');
       return res
         .status(400)
         .json({ success: false, error: 'Invalid type provided' });
     }
+
     logger.info(`Successfully updated ogImage for ${type} with ID: ${id}`);
     res.status(200).json({ success: true });
   } catch (error: any) {
@@ -52,3 +67,5 @@ export default async function handler(
     res.status(500).json({ success: false, error: error.message });
   }
 }
+
+export default withAuth(handler);

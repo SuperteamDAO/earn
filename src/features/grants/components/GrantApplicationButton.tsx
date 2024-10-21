@@ -35,7 +35,7 @@ export const GrantApplicationButton = ({
   let applicationState: 'APPLIED' | 'ALLOW NEW' | 'ALLOW EDIT' = 'ALLOW NEW';
   if (
     application?.applicationStatus === 'Pending' ||
-    (application?.applicationStatus === 'Approved' && !application?.isShipped)
+    application?.applicationStatus === 'Approved'
   ) {
     applicationState = 'APPLIED';
     if (application?.applicationStatus === 'Pending') {

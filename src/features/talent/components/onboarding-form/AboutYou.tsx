@@ -76,6 +76,16 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
   });
 
   useEffect(() => {
+    if (user) {
+      console.log('user', user);
+      setValue('firstName', user?.firstName);
+      setValue('lastName', user?.lastName);
+      setValue('photo', user?.photo);
+      setImageUrl(user.photo || '');
+    }
+  }, [user, setValue]);
+
+  useEffect(() => {
     if (user && !user?.username && randomUsername?.username) {
       setValue('username', randomUsername?.username);
       setUsername(randomUsername?.username);

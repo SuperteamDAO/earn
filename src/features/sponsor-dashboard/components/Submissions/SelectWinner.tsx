@@ -69,17 +69,12 @@ export const SelectWinner = ({
     rejectedOnClose();
   };
 
-  const selectWinner = async (
-    position: number,
-    id: string | undefined,
-    ask: number | undefined,
-  ) => {
+  const selectWinner = async (position: number, id: string | undefined) => {
     if (!id) return;
     toggleWinner({
       id,
       isWinner: !!position,
       winnerPosition: position || null,
-      ask,
     });
   };
   return (
@@ -137,11 +132,7 @@ export const SelectWinner = ({
             icon={<MdArrowDropDown />}
             isDisabled={!!bounty?.isWinnersAnnounced || isHackathonPage}
             onChange={(e) =>
-              selectWinner(
-                Number(e.target.value),
-                selectedSubmission?.id,
-                selectedSubmission?.ask,
-              )
+              selectWinner(Number(e.target.value), selectedSubmission?.id)
             }
             value={
               selectedSubmission?.isWinner

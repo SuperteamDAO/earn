@@ -54,6 +54,7 @@ interface Props {
 const ApplicationStatusFilter: GrantApplicationStatus[] = [
   'Pending',
   'Approved',
+  'Completed',
   'Rejected',
 ];
 
@@ -223,8 +224,9 @@ export const ApplicationList = ({
           </Flex>
         </Flex>
         {applications?.map((application) => {
+          const applicationStatus = application?.applicationStatus;
           const { bg, color } =
-            colorMap[application?.applicationStatus as GrantApplicationStatus];
+            colorMap[applicationStatus as GrantApplicationStatus];
           return (
             <Flex
               key={application?.id}
@@ -297,7 +299,7 @@ export const ApplicationList = ({
                   textTransform={'capitalize'}
                   whiteSpace={'nowrap'}
                 >
-                  {application?.applicationStatus}
+                  {applicationStatus}
                 </TagLabel>
               </Tag>
             </Flex>

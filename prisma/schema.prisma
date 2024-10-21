@@ -483,6 +483,15 @@ model emailLogs {
   updatedAt DateTime  @updatedAt
 }
 
+model ResendLogs {
+  id        String   @id @default(uuid())
+  email     String
+  subject   String
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model SubscribeBounty {
   id         String    @id @default(uuid())
   userId     String
@@ -604,6 +613,7 @@ enum GrantStatus {
 enum GrantApplicationStatus {
   Pending
   Approved
+  Completed
   Rejected
 }
 
