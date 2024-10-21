@@ -45,10 +45,16 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const event = webhook.verify(payload, headers) as WebhookEvent;
 
+        const recipientEmail = event.data.to[0];
+
+        if (!recipientEmail) {
+          return res.status(400).json({ error: 'No recipient email found' });
+        }
+
         if (event.type === 'email.bounced') {
           const last5Emails = await prisma.resendLogs.findMany({
             where: {
-              email: event.data.to[0]!,
+              email: recipientEmail,
             },
             orderBy: {
               createdAt: 'desc',
@@ -62,7 +68,7 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
           if (allBounced) {
             await prisma.blockedEmail.create({
               data: {
-                email: event.data.to[0]!,
+                email: recipientEmail,
               },
             });
           }
@@ -70,7 +76,7 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
 
         await prisma.resendLogs.create({
           data: {
-            email: event.data.to[0]!,
+            email: recipientEmail,
             subject: event.data.subject,
             status: event.type,
           },

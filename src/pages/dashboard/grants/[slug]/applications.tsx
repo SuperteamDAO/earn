@@ -37,7 +37,6 @@ import {
   ApplicationHeader,
   ApplicationList,
   applicationsQuery,
-  type ApplicationStatus,
   type GrantApplicationWithUser,
   PaymentsHistoryTab,
   RejectAllGrantApplicationModal,
@@ -67,7 +66,7 @@ function GrantApplications({ slug }: Props) {
     Set<string>
   >(new Set());
   const [filterLabel, setFilterLabel] = useState<
-    SubmissionLabels | ApplicationStatus | undefined
+    SubmissionLabels | GrantApplicationStatus | undefined
   >(undefined);
 
   const queryClient = useQueryClient();

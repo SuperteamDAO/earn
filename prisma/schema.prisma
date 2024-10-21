@@ -613,6 +613,7 @@ enum GrantStatus {
 enum GrantApplicationStatus {
   Pending
   Approved
+  Completed
   Rejected
 }
 

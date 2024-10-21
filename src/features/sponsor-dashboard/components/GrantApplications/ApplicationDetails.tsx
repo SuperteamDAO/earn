@@ -426,7 +426,9 @@ export const ApplicationDetails = ({
                 {isApproved && (
                   <>
                     <MarkCompleted
-                      isCompleted={selectedApplication.isShipped}
+                      isCompleted={
+                        selectedApplication.applicationStatus === 'Completed'
+                      }
                       applicationId={selectedApplication.id}
                       onMarkCompleted={updateApplicationState}
                     />
