@@ -96,10 +96,12 @@ export function SponsorLayout({
     const modalsToShow = async () => {
       if (!user?.currentSponsor?.entityName && session?.user.role !== 'GOD') {
         setIsEntityModalOpen(true);
+      } else {
+        setIsEntityModalOpen(false);
       }
     };
     modalsToShow();
-  }, [user]);
+  }, [user, session]);
 
   if (!session && status === 'loading') {
     return <LoadingSection />;
