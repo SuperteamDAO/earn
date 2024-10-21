@@ -55,6 +55,7 @@
     "jotai": "^2.9.2",
     "jsonwebtoken": "^9.0.2",
     "lodash.debounce": "^4.0.8",
+    "micro": "^10.0.1",
     "next": "14.2.5",
     "next-auth": "^4.24.6",
     "next-axiom": "^0.18.1",

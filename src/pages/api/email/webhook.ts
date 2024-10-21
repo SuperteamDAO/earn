@@ -1,4 +1,5 @@
 import { type IncomingMessage } from 'http';
+import { buffer } from 'micro';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { type WebhookRequiredHeaders } from 'svix';
 
@@ -32,26 +33,13 @@ interface WebhookEvent {
   type: EmailType;
 }
 
-async function getRawBody(req: NextApiRequest): Promise<string> {
-  return new Promise((resolve, reject) => {
-    let data = '';
-    req.on('data', (chunk) => {
-      data += chunk;
-    });
-    req.on('end', () => {
-      resolve(data);
-    });
-    req.on('error', reject);
-  });
-}
-
 const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
 
   switch (method) {
     case 'POST': {
       try {
-        const payload = await getRawBody(req);
+        const payload = (await buffer(req)).toString();
         const headers = req.headers as IncomingMessage['headers'] &
           WebhookRequiredHeaders;
 
