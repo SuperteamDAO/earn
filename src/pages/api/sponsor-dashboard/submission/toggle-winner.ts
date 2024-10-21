@@ -13,7 +13,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   logger.debug(`Request body: ${JSON.stringify(req.body)}`);
-  const { id, isWinner, winnerPosition, ask } = req.body;
+  const { id, isWinner, winnerPosition } = req.body;
 
   try {
     const currentSubmission = await prisma.submission.findUnique({
@@ -46,6 +46,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
       include: { listing: true },
     });
+
+    const ask = result.ask || 0;
 
     if (currentSubmission.isWinner !== isWinner) {
       const bountyId = result.listingId;

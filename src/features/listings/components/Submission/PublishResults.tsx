@@ -116,7 +116,6 @@ export function PublishResults({
             winnerPosition: 1,
             id: selectedSubmission?.id,
             isWinner: true,
-            ask: selectedSubmission?.ask,
           });
         }
       }
@@ -130,7 +129,6 @@ export function PublishResults({
             winnerPosition: null,
             id: selectedSubmission?.id,
             isWinner: false,
-            ask: selectedSubmission?.ask,
           });
         }
       }
