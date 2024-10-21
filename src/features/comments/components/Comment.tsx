@@ -322,7 +322,7 @@ export const Comment = ({
             )}
             <Button
               left={'-3px'}
-              color="brand.slate.800"
+              color="brand.slate.500"
               fontSize={{
                 base: 'xs',
                 md: 'sm',

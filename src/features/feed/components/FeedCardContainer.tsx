@@ -137,22 +137,22 @@ export const FeedCardContainer = ({
       py={{ base: 4, md: 8 }}
       borderColor={'brand.slate.200'}
       borderBottomWidth={type === 'activity' ? '1px' : '0px'}
-      cursor={
-        id && router.asPath !== `/feed/${cardType}/${id}/` ? 'pointer' : 'auto'
-      }
-      onClick={(e) => {
-        const target = e.target as HTMLElement;
-        const nonTargetElement =
-          target.closest('#comment-form') || target.closest('#feed-actions');
-
-        if (nonTargetElement) {
-          e.stopPropagation();
-          e.nativeEvent.stopImmediatePropagation();
-          return;
-        }
-        if (id && router.asPath !== `/feed/${cardType}/${id}/`)
-          router.push(`/feed/${cardType}/${id}`);
-      }}
+      // cursor={
+      //   id && router.asPath !== `/feed/${cardType}/${id}/` ? 'pointer' : 'auto'
+      // }
+      // onClick={(e) => {
+      //   const target = e.target as HTMLElement;
+      //   const nonTargetElement =
+      //     target.closest('#comment-form') || target.closest('#feed-actions');
+      //
+      //   if (nonTargetElement) {
+      //     e.stopPropagation();
+      //     e.nativeEvent.stopImmediatePropagation();
+      //     return;
+      //   }
+      //   if (id && router.asPath !== `/feed/${cardType}/${id}/`)
+      //     router.push(`/feed/${cardType}/${id}`);
+      // }}
     >
       <Flex gap={3}>
         <EarnAvatar
@@ -322,6 +322,7 @@ export const FeedCardContainer = ({
                 count={commentCount}
                 setCount={setCommentCount}
                 onSuccess={handleCommentSuccess}
+                take={3}
               />
             </Box>
           </Collapse>

@@ -13,6 +13,7 @@ export default async function comment(
   const params = req.query;
   const refId = params.id as string;
   const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
+  const take = params.take ? parseInt(params.take as string, 10) : 0;
 
   logger.debug(`Fetching comments for listingId=${refId}, skip=${skip}`);
 
@@ -31,7 +32,7 @@ export default async function comment(
         updatedAt: 'desc',
       },
       skip: skip ?? 0,
-      take: 10,
+      take,
       include: {
         author: {
           select: {

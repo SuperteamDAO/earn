@@ -23,6 +23,7 @@ interface Props {
   isAnnounced: boolean;
   isVerified?: boolean;
   count: number;
+  take?: number;
   setCount: Dispatch<SetStateAction<number>>;
   isTemplate?: boolean;
   onSuccess?: (newComment: Comment) => void;
@@ -38,6 +39,7 @@ export const Comments = ({
   isVerified = false,
   isTemplate = false,
   count,
+  take = 10,
   setCount,
   onSuccess,
 }: Props) => {
@@ -67,12 +69,13 @@ export const Comments = ({
     }
   };
 
-  const getComments = async (skip = 0) => {
+  const getComments = async (skip = 0, take = 10) => {
     setIsLoading(true);
     try {
       const commentsData = await axios.get(`/api/comment/${refId}`, {
         params: {
           skip,
+          take,
         },
       });
       const allComments = commentsData.data.result as Comment[];
@@ -93,7 +96,7 @@ export const Comments = ({
 
   useEffect(() => {
     if (!isLoading) return;
-    getComments();
+    getComments(0, take);
 
     window.addEventListener('update-comments', () => {
       getComments();
@@ -121,18 +124,10 @@ export const Comments = ({
           src="/assets/icons/comments.svg"
         />
         <HStack>
-          <Text
-            color="brand.slate.900"
-            fontSize={{ base: 'medium', md: 'lg' }}
-            fontWeight={600}
-          >
+          <Text color="brand.slate.900" fontSize={'medium'} fontWeight={600}>
             {count}
           </Text>
-          <Text
-            color="brand.slate.900"
-            fontSize={{ base: 'medium', md: 'lg' }}
-            fontWeight={400}
-          >
+          <Text color="brand.slate.900" fontSize={'medium'} fontWeight={400}>
             {comments?.length === 1 ? 'Comment' : 'Comments'}
           </Text>
         </HStack>
@@ -149,7 +144,7 @@ export const Comments = ({
         }}
         isTemplate={isTemplate}
       />
-      <VStack align="start" gap={5} w={'full'} pb={comments.length > 0 ? 8 : 0}>
+      <VStack align="start" gap={5} w={'full'} pb={comments.length > 0 ? 4 : 0}>
         {comments?.map((comment) => {
           return (
             <CommentUI
@@ -171,27 +166,17 @@ export const Comments = ({
         })}
       </VStack>
       {!!comments.length && comments.length !== count && (
-        <Flex
-          justify="center"
-          w="full"
-          py={3}
-          rounded="md"
-          style={{
-            boxShadow: '0px -1px 7px 0px rgba(193, 193, 193, 0.25)',
-          }}
-        >
+        <Flex justify="center" w="full" rounded="md">
           <Button
-            fontSize={{
-              base: 'md',
-              md: 'large',
-            }}
+            fontSize={'sm'}
             fontWeight={400}
+            border="none"
             isDisabled={!!isLoading}
             isLoading={!!isLoading}
             loadingText="Fetching Comments..."
             onClick={() => getComments(comments.length)}
             rounded="md"
-            variant="ghost"
+            variant="outlineSecondary"
           >
             Show More Comments
           </Button>
