@@ -1,12 +1,5 @@
-import {
-  Box,
-  Button,
-  Collapse,
-  Flex,
-  HStack,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import { type CommentRefType } from '@prisma/client';
 import axios from 'axios';
 import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
@@ -14,18 +7,15 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
-import { AuthWrapper } from '@/features/auth';
-import { EarnAvatar } from '@/features/talent/';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
-import { useUser } from '@/store/user';
 
 import { Comment as CommentUI } from './Comment';
-import { UserSuggestionTextarea } from './UserSuggestionTextarea';
+import { CommentForm } from './CommentForm';
 
 interface Props {
   refId: string;
-  refType: 'BOUNTY' | 'SUBMISSION';
+  refType: CommentRefType;
   sponsorId: string | undefined;
   poc: User | undefined;
   listingType: string;
@@ -35,6 +25,7 @@ interface Props {
   count: number;
   setCount: Dispatch<SetStateAction<number>>;
   isTemplate?: boolean;
+  onSuccess?: (newComment: Comment) => void;
 }
 export const Comments = ({
   refId,
@@ -48,16 +39,13 @@ export const Comments = ({
   isTemplate = false,
   count,
   setCount,
+  onSuccess,
 }: Props) => {
-  const { user } = useUser();
   const posthog = usePostHog();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState('');
-  const [newCommentLoading, setNewCommentLoading] = useState(false);
-  const [newCommentError, setNewCommentError] = useState(false);
   const [defaultSuggestions, setDefaultSuggestions] = useState<
     Map<string, User>
   >(new Map());
@@ -76,27 +64,6 @@ export const Comments = ({
       });
     } else {
       throw new Error('Comment not found');
-    }
-  };
-
-  const addNewComment = async () => {
-    posthog.capture('publish_comment');
-    setNewCommentLoading(true);
-    setNewCommentError(false);
-    try {
-      const newCommentData = await axios.post(`/api/comment/create`, {
-        message: newComment,
-        listingType: refType,
-        listingId: refId,
-        pocId: poc?.id,
-      });
-      setCount((count) => count + 1);
-      setComments((prevComments) => [newCommentData.data, ...prevComments]);
-      setNewComment('');
-      setNewCommentLoading(false);
-    } catch (e) {
-      setNewCommentError(true);
-      setNewCommentLoading(false);
     }
   };
 
@@ -124,10 +91,6 @@ export const Comments = ({
     setIsLoading(false);
   };
 
-  const handleSubmit = () => {
-    addNewComment();
-  };
-
   useEffect(() => {
     if (!isLoading) return;
     getComments();
@@ -136,18 +99,6 @@ export const Comments = ({
       getComments();
     });
   }, []);
-
-  useEffect(() => {
-    const comment = localStorage.getItem(`comment-${refId}`);
-    if (comment) {
-      setNewComment(comment);
-      localStorage.removeItem(`comment-${refId}`);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(`comment-${refId}`, newComment);
-  }, [newComment]);
 
   if (isLoading && !comments?.length) return <Loading />;
 
@@ -170,91 +121,35 @@ export const Comments = ({
           src="/assets/icons/comments.svg"
         />
         <HStack>
-          <Text color="brand.slate.900" fontSize={'1.1rem'} fontWeight={600}>
+          <Text
+            color="brand.slate.900"
+            fontSize={{ base: 'medium', md: 'lg' }}
+            fontWeight={600}
+          >
             {count}
           </Text>
-          <Text color="brand.slate.900" fontSize={'1.1rem'} fontWeight={400}>
+          <Text
+            color="brand.slate.900"
+            fontSize={{ base: 'medium', md: 'lg' }}
+            fontWeight={400}
+          >
             {comments?.length === 1 ? 'Comment' : 'Comments'}
           </Text>
         </HStack>
       </HStack>
-      <VStack gap={4} w={'full'} mb={4}>
-        <Flex gap={3} w="full">
-          <EarnAvatar size={'36px'} id={user?.id} avatar={user?.photo} />
-          <Box pos={'relative'} w="full" mt={0.5}>
-            <UserSuggestionTextarea
-              defaultSuggestions={defaultSuggestions}
-              pt={0}
-              fontSize={{
-                base: 'sm',
-                md: 'md',
-              }}
-              borderColor="brand.slate.200"
-              _placeholder={{
-                color: 'brand.slate.400',
-              }}
-              focusBorderColor="brand.purple"
-              placeholder="Write a comment"
-              value={newComment}
-              setValue={setNewComment}
-              variant="flushed"
-            />
-          </Box>
-        </Flex>
-        {!!newCommentError && (
-          <Text mt={4} color="red">
-            Error in adding your comment! Please try again!
-          </Text>
-        )}
-        <Collapse
-          in={!!newComment}
-          style={{ width: '100%' }}
-          unmountOnExit={true}
-        >
-          <Flex justify={'end'} gap={4} w="full">
-            <Button
-              h="auto"
-              px={5}
-              py={2}
-              fontSize={{
-                base: 'xx-small',
-                md: 'sm',
-              }}
-              fontWeight={500}
-              isDisabled={!!newCommentLoading || !newComment}
-              onClick={() => setNewComment('')}
-              variant="ghost"
-            >
-              Cancel
-            </Button>
-            <AuthWrapper
-              showCompleteProfileModal
-              completeProfileModalBodyText={
-                'Please complete your profile before commenting on the listing.'
-              }
-            >
-              <Button
-                h="auto"
-                px={5}
-                py={2}
-                fontSize={{
-                  base: 'xx-small',
-                  md: 'sm',
-                }}
-                fontWeight={500}
-                isDisabled={!!newCommentLoading || !newComment || isTemplate}
-                isLoading={!!newCommentLoading}
-                loadingText="Adding..."
-                onClick={() => handleSubmit()}
-                variant="solid"
-              >
-                Comment
-              </Button>
-            </AuthWrapper>
-          </Flex>
-        </Collapse>
-      </VStack>
-      <VStack align="start" gap={5} w={'full'} pb={8}>
+      <CommentForm
+        defaultSuggestions={defaultSuggestions}
+        refType={refType}
+        refId={refId}
+        poc={poc}
+        onSuccess={(newComment) => {
+          setCount((count) => count + 1);
+          setComments((prevComments) => [newComment, ...prevComments]);
+          onSuccess?.(newComment);
+        }}
+        isTemplate={isTemplate}
+      />
+      <VStack align="start" gap={5} w={'full'} pb={comments.length > 0 ? 8 : 0}>
         {comments?.map((comment) => {
           return (
             <CommentUI

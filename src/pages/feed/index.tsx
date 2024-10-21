@@ -1,5 +1,40 @@
-import { Feed } from '@/features/feed';
+import { type GetServerSideProps } from 'next';
+import { z } from 'zod';
 
-export default function FeedPage() {
-  return <Feed />;
+import { Feed, type FeedPostType, FeedPostTypeSchema } from '@/features/feed';
+
+interface Props {
+  type?: FeedPostType | null;
+  id?: string | null;
 }
+
+export default function FeedPage({ id, type }: Props) {
+  console.log('feed page id', id);
+  console.log('feed page type', type);
+  return <Feed id={id || undefined} type={type || undefined} />;
+}
+
+const UUIDSchema = z.string().uuid();
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { query } = context;
+
+  let type = query?.type || null;
+  let id = query?.id || null;
+
+  if (typeof type !== 'string' || !FeedPostTypeSchema.safeParse(type).success) {
+    type = null;
+  }
+
+  if (typeof id !== 'string' || !UUIDSchema.safeParse(id).success) {
+    id = null;
+  }
+
+  console.log('feed ssr id', id);
+  console.log('feed ssr type', type);
+  return {
+    props: {
+      type,
+      id,
+    },
+  };
+};

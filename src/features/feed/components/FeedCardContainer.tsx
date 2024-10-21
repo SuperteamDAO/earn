@@ -1,11 +1,15 @@
 import {
+  Avatar,
+  AvatarGroup,
   Box,
+  Collapse,
   Flex,
   Skeleton,
   SkeletonCircle,
   SkeletonText,
   Text,
   useBreakpointValue,
+  useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
@@ -16,10 +20,13 @@ import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
 import { AuthWrapper } from '@/features/auth';
+import { Comments } from '@/features/comments';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
+import { type FeedDataProps } from '../types';
+import { convertFeedPostTypeToCommentRefType } from '../utils';
 import { FeedCardHeader } from './FeedCardHeader';
 
 interface FeedCardContainerProps {
@@ -38,9 +45,11 @@ interface FeedCardContainerProps {
   id: string;
   like: any;
   commentLink?: string;
+  commentCount?: number;
   cardType: 'submission' | 'pow' | 'grant-application';
   link: string;
   userId: string;
+  recentCommenters?: FeedDataProps['recentCommenters'];
 }
 
 export const FeedCardContainer = ({
@@ -54,10 +63,11 @@ export const FeedCardContainer = ({
   username,
   id,
   like,
-  commentLink,
+  commentCount: initialCommentCount,
   cardType,
   link,
   userId,
+  recentCommenters: initialRecentCommenters,
 }: FeedCardContainerProps) => {
   const { user } = useUser();
 
@@ -65,6 +75,26 @@ export const FeedCardContainer = ({
     !!like?.find((e: any) => e.id === user?.id),
   );
   const [totalLikes, setTotalLikes] = useState<number>(like?.length ?? 0);
+  const {
+    onToggle: onToggleComment,
+    isOpen: isCommentOpen,
+    onClose: onCloseComment,
+  } = useDisclosure();
+  const [commentCount, setCommentCount] = useState(initialCommentCount || 0);
+  const [recentCommenters, setRecentCommenters] = useState(
+    initialRecentCommenters,
+  );
+
+  const handleCommentSuccess = () => {
+    console.log('user', user);
+    setCommentCount((prevCount) => (prevCount || 0) + 1);
+
+    setRecentCommenters((prevCommenters) => [
+      ...(prevCommenters ? prevCommenters.slice(0, 3) : []),
+      { author: { photo: user?.photo || null, name: user?.firstName || null } },
+    ]);
+    onCloseComment();
+  };
 
   const sanitizedLink = getURLSanitized(link);
 
@@ -97,6 +127,8 @@ export const FeedCardContainer = ({
   const posthog = usePostHog();
   const isSM = useBreakpointValue({ base: false, md: true });
 
+  const isFeedPage = router.pathname === '/feed';
+
   return (
     <Box
       mx="0"
@@ -105,13 +137,33 @@ export const FeedCardContainer = ({
       py={{ base: 4, md: 8 }}
       borderColor={'brand.slate.200'}
       borderBottomWidth={type === 'activity' ? '1px' : '0px'}
+      cursor={
+        id && router.asPath !== `/feed/${cardType}/${id}/` ? 'pointer' : 'auto'
+      }
+      onClick={(e) => {
+        const target = e.target as HTMLElement;
+        const nonTargetElement =
+          target.closest('#comment-form') || target.closest('#feed-actions');
+
+        if (nonTargetElement) {
+          e.stopPropagation();
+          e.nativeEvent.stopImmediatePropagation();
+          return;
+        }
+        if (id && router.asPath !== `/feed/${cardType}/${id}/`)
+          router.push(`/feed/${cardType}/${id}`);
+      }}
     >
       <Flex gap={3}>
         <EarnAvatar
           id={userId}
           avatar={photo}
           size={isSM ? '44px' : '32px'}
-          onClick={() => router.push(`/t/${username}`)}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.nativeEvent.stopImmediatePropagation();
+            router.push(`/t/${username}`);
+          }}
         />
         <Flex direction={'column'} w={'full'}>
           <FeedCardHeader
@@ -152,7 +204,17 @@ export const FeedCardContainer = ({
             </Flex>
           </Box>
           {id && (
-            <Flex align={'center'} mt={2} pointerEvents={id ? 'all' : 'none'}>
+            <Flex
+              align={'center'}
+              gap={8}
+              w="fit-content"
+              mt={2}
+              py={2}
+              pr={8}
+              pointerEvents={id ? 'all' : 'none'}
+              cursor="default"
+              id="feed-actions"
+            >
               <Box
                 className="ph-no-capture"
                 zIndex={10}
@@ -162,6 +224,7 @@ export const FeedCardContainer = ({
                 mr={2}
                 onClick={(e) => {
                   e.stopPropagation();
+                  e.nativeEvent.stopImmediatePropagation();
                   if (!user?.id) return;
                   handleLike();
                 }}
@@ -186,20 +249,82 @@ export const FeedCardContainer = ({
                   {totalLikes}
                 </Text>
               </Box>
-              {commentLink && (
+              <Box
+                className="ph-no-capture"
+                zIndex={10}
+                alignItems={'center'}
+                gap={1}
+                display={'flex'}
+                mr={2}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.nativeEvent.stopImmediatePropagation();
+                  if (isFeedPage) onToggleComment();
+                }}
+              >
                 <GoComment
                   color={'#64748b'}
                   size={isSM ? '21px' : '19px'}
                   style={{
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => {
-                    window.location.href = commentLink;
+                    cursor: isFeedPage ? 'pointer' : 'default',
                   }}
                 />
-              )}
+                {!!commentCount && (
+                  <Text
+                    color="brand.slate.500"
+                    fontSize={'md'}
+                    fontWeight={500}
+                  >
+                    {commentCount}
+                  </Text>
+                )}
+                <AvatarGroup ml={4} max={4} size={'xs'}>
+                  {recentCommenters?.map((comment, index) => (
+                    <Avatar
+                      key={index}
+                      pos="relative"
+                      name={comment.author.name || ''}
+                      src={comment.author.photo || ''}
+                    />
+                  ))}
+                </AvatarGroup>
+              </Box>
             </Flex>
           )}
+          <Collapse
+            animateOpacity
+            in={isCommentOpen}
+            style={{ width: '100%', overflow: 'visible!important' }}
+          >
+            <Box
+              mt={6}
+              id="comment-form"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
+              }}
+            >
+              {/* <CommentForm */}
+              {/*   refId={id} */}
+              {/*   refType={convertFeedPostTypeToCommentRefType(cardType)} */}
+              {/*   defaultSuggestions={new Map()} */}
+              {/*   onSuccess={handleCommentSuccess} */}
+              {/* /> */}
+              <Comments
+                isAnnounced={false}
+                listingSlug={''}
+                listingType={''}
+                poc={undefined}
+                sponsorId={undefined}
+                isVerified={false}
+                refId={id}
+                refType={convertFeedPostTypeToCommentRefType(cardType)}
+                count={commentCount}
+                setCount={setCommentCount}
+                onSuccess={handleCommentSuccess}
+              />
+            </Box>
+          </Collapse>
         </Flex>
       </Flex>
     </Box>

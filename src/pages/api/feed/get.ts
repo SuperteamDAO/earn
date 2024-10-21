@@ -1,7 +1,8 @@
 // activity feed
-import { type PoW } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
+import { type FeedPostType } from '@/features/feed';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -13,6 +14,10 @@ export default async function handler(
 ): Promise<void> {
   logger.debug(`Request query: ${safeStringify(req.query)}`);
   const { timePeriod, take = 15, skip = 0, isWinner, filter } = req.query;
+
+  const type = req.query.highlightType as FeedPostType;
+  let id = req.query.highlightId as string | undefined;
+  if (Number(skip) !== 0) id = undefined;
 
   try {
     const winnerFilter =
@@ -43,7 +48,67 @@ export default async function handler(
         break;
     }
 
+    const commentsWhere: Prisma.CommentFindManyArgs['where'] = {
+      isActive: true,
+      isArchived: false,
+      replyToId: null,
+    };
+
+    const commentsInclude: Prisma.CommentFindManyArgs = {
+      where: commentsWhere,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 3,
+      select: {
+        author: {
+          select: {
+            photo: true,
+            firstName: true,
+          },
+        },
+      },
+    };
+
+    const commentsCountInclude: Prisma.CommentFindManyArgs = {
+      where: commentsWhere,
+    };
+
     logger.debug(`Fetching submissions from ${startDate} to ${endDate}`);
+    const submissionInclude: Prisma.SubmissionInclude = {
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          photo: true,
+          username: true,
+        },
+      },
+      listing: {
+        select: {
+          id: true,
+          title: true,
+          rewards: true,
+          type: true,
+          slug: true,
+          isWinnersAnnounced: true,
+          token: true,
+          sponsor: {
+            select: {
+              name: true,
+              logo: true,
+            },
+          },
+          winnersAnnouncedAt: true,
+        },
+      },
+      Comments: commentsInclude,
+      _count: {
+        select: {
+          Comments: commentsCountInclude,
+        },
+      },
+    };
     const submissions = await prisma.submission.findMany({
       where: {
         createdAt: {
@@ -61,45 +126,43 @@ export default async function handler(
         filter === 'popular'
           ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
           : { createdAt: 'desc' },
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-            photo: true,
-            username: true,
-          },
-        },
-        listing: {
-          select: {
-            id: true,
-            title: true,
-            rewards: true,
-            type: true,
-            slug: true,
-            isWinnersAnnounced: true,
-            token: true,
-            sponsor: {
-              select: {
-                name: true,
-                logo: true,
-              },
-            },
-            winnersAnnouncedAt: true,
-          },
-        },
-      },
+      include: submissionInclude,
     });
 
+    const submissionHighlighted =
+      !!id && type === 'submission'
+        ? await prisma.submission.findUnique({
+            where: {
+              id,
+            },
+            include: submissionInclude,
+          })
+        : null;
+    if (submissionHighlighted) {
+      submissions.unshift(submissionHighlighted);
+    }
+
     logger.debug('Fetching PoWs');
-    let pow: (PoW & {
+    const poWInclude: Prisma.PoWInclude = {
       user: {
-        firstName: string | null;
-        lastName: string | null;
-        photo: string | null;
-        username: string | null;
-      };
-    })[] = [];
+        select: {
+          firstName: true,
+          lastName: true,
+          photo: true,
+          username: true,
+        },
+      },
+      Comments: commentsInclude,
+      _count: {
+        select: {
+          Comments: commentsCountInclude,
+        },
+      },
+    };
+    type PoWWithUserAndCommentsCount = Prisma.PoWGetPayload<{
+      include: typeof poWInclude;
+    }>;
+    let pow: PoWWithUserAndCommentsCount[] = [];
     if (isWinner !== 'true') {
       pow = await prisma.poW.findMany({
         where: {
@@ -114,20 +177,53 @@ export default async function handler(
           filter === 'popular'
             ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
             : { createdAt: 'desc' },
-        include: {
-          user: {
-            select: {
-              firstName: true,
-              lastName: true,
-              photo: true,
-              username: true,
-            },
-          },
-        },
+        include: poWInclude,
       });
+    }
+    const powHighlighted =
+      !!id && type === 'pow'
+        ? await prisma.poW.findUnique({
+            where: {
+              id,
+            },
+            include: poWInclude,
+          })
+        : null;
+    if (powHighlighted) {
+      pow.unshift(powHighlighted);
     }
 
     logger.debug(`Fetching grants from ${startDate} to ${endDate}`);
+    const grantApplicationInclude: Prisma.GrantApplicationInclude = {
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          photo: true,
+          username: true,
+        },
+      },
+      grant: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          token: true,
+          sponsor: {
+            select: {
+              name: true,
+              logo: true,
+            },
+          },
+        },
+      },
+      Comments: commentsInclude,
+      _count: {
+        select: {
+          Comments: commentsCountInclude,
+        },
+      },
+    };
     const grantApplications = await prisma.grantApplication.findMany({
       where: {
         applicationStatus: 'Approved',
@@ -148,31 +244,21 @@ export default async function handler(
               { decidedAt: 'desc' },
             ]
           : { decidedAt: 'desc' },
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-            photo: true,
-            username: true,
-          },
-        },
-        grant: {
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            token: true,
-            sponsor: {
-              select: {
-                name: true,
-                logo: true,
-              },
-            },
-          },
-        },
-      },
+      include: grantApplicationInclude,
     });
+
+    const grantApplicationHighlighted =
+      !!id && type === 'grant-application'
+        ? await prisma.grantApplication.findUnique({
+            where: {
+              id,
+            },
+            include: grantApplicationInclude,
+          })
+        : null;
+    if (grantApplicationHighlighted) {
+      grantApplications.unshift(grantApplicationHighlighted);
+    }
 
     logger.info(
       `Fetched ${submissions.length} submissions, ${pow.length} PoWs and ${grantApplications} grant applications`,
@@ -205,12 +291,16 @@ export default async function handler(
         listingSlug: sub.listing.slug,
         isWinnersAnnounced: sub.listing.isWinnersAnnounced,
         token: sub.listing.token,
+        //@ts-expect-error prisma ts error, this exists based on above include
         sponsorName: sub.listing.sponsor.name,
+        //@ts-expect-error prisma ts error, this exists based on above include
         sponsorLogo: sub.listing.sponsor.logo,
         type: 'Submission',
         like: sub.like,
         likeCount: sub.likeCount,
         ogImage: sub.ogImage,
+        commentCount: sub._count.Comments,
+        recentCommenters: sub.Comments,
       })),
       ...pow.map((pow) => ({
         id: pow.id,
@@ -226,6 +316,8 @@ export default async function handler(
         like: pow.like,
         likeCount: pow.likeCount,
         ogImage: pow.ogImage,
+        commentCount: pow._count.Comments,
+        recentCommenters: pow.Comments,
       })),
       ...grantApplications.map((ga) => ({
         id: ga.id,
@@ -238,16 +330,22 @@ export default async function handler(
         listingTitle: ga.grant.title,
         listingSlug: ga.grant.slug,
         token: ga.grant.token,
+        //@ts-expect-error prisma ts error, this exists based on above include
         sponsorName: ga.grant.sponsor.name,
+        //@ts-expect-error prisma ts error, this exists based on above include
         sponsorLogo: ga.grant.sponsor.logo,
         type: 'Grant',
         grantApplicationAmount: ga.approvedAmount,
         like: ga.like,
         likeCount: ga.likeCount,
+        commentCount: ga._count.Comments,
+        recentCommenters: ga.Comments,
       })),
     ];
 
     results.sort((a, b) => {
+      if (a.id === id) return -1;
+      if (b.id === id) return 1;
       if (filter === 'popular') {
         if (a.likeCount === b.likeCount) {
           return b.createdAt.getTime() - a.createdAt.getTime();

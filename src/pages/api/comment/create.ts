@@ -1,3 +1,4 @@
+import { type CommentRefType } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
@@ -20,8 +21,8 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
     const {
       pocId,
       message,
-      listingId,
-      listingType,
+      refId,
+      refType,
       replyToId,
       submissionId,
       replyToUserId,
@@ -29,13 +30,18 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
     let { type } = req.body as { type: CommentType | undefined };
     if (!type) type = 'NORMAL';
 
+    console.log('req', req.body);
+    console.log('refType', refType);
+    console.log('refId', refId);
+
     logger.debug('Creating a new comment in the database');
     const result = await prisma.comment.create({
       data: {
         authorId: userId as string,
         message: message as string,
         replyToId: replyToId as string | undefined,
-        listingId: listingId as string,
+        refId: refId as string,
+        refType: refType as CommentRefType,
         type,
         submissionId: submissionId as string | undefined,
       },
@@ -95,7 +101,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
       taggedUsers.forEach(async (taggedUser) => {
         sendEmailNotification({
           type: 'commentTag',
-          id: listingId,
+          id: refId,
           userId: taggedUser.id,
           otherInfo: {
             personName: result.author.username,
@@ -110,7 +116,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         );
         sendEmailNotification({
           type: 'commentReply',
-          id: listingId,
+          id: refId,
           userId: replyToUserId as string,
           triggeredBy: userId,
         });
@@ -121,21 +127,21 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         !taggedUsers.find((t) => t.id.includes(pocId)) &&
         !replyToId
       ) {
-        if (listingType === 'BOUNTY' && type === 'NORMAL') {
+        if (refType === 'BOUNTY' && type === 'NORMAL') {
           logger.info(`Sending email notification to POC ID: ${pocId}`);
           sendEmailNotification({
             type: 'commentSponsor',
-            id: listingId,
+            id: refId,
             userId: pocId as string,
             triggeredBy: userId,
           });
         }
 
-        if (listingType === 'SUBMISSION') {
+        if (refType === 'SUBMISSION') {
           logger.info(`Sending email notification for submission comment`);
           sendEmailNotification({
             type: 'commentSubmission',
-            id: listingId,
+            id: refId,
             otherInfo: {
               personName: result?.author?.firstName,
             },
