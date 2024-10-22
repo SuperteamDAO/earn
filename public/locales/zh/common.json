@@ -187,7 +187,7 @@
   },
   "welcomeSponsorTemplate": {
     "welcome": "欢迎来到 Superteam Earn！",
-    "thankYou": "感谢您的注册。Earn 是加密货币领域首屈一指的人才匹配平台，受到数百家领公司和数千名经过验证人才的青睐",
+    "thankYou": "感谢您的注册。Earn 是加密货币领域首屈一指的人才匹配平台，受到数百家��公司和数千名经过验证人才的青睐",
     "helpMessage": "如果您在 Earn 上设置列表时需要随时 Telegram ",
     "contactName": "Pratik",
     "onTelegram": "。",
@@ -829,6 +829,19 @@
     "sponsorBodyText": "您已经有一个赞助商档案，但在继续此操作之前，我们需要您提供其他详细信息。这不会影响您的赞助商档案。"
   },
   "ListingCard": {
+    "pfpAlt": "项目标志",
+    "by": "来自",
+    "skills": "技能",
+    "skillNames": {
+      "frontend": "前端",
+      "backend": "后端",
+      "writing": "写作",
+      "marketing": "营销",
+      "community": "社区",
+      "design": "设计"
+    },
+    "tokenIconAlt": "{{token}} 图标",
+    "submissions": "提交",
     "rollingDeadline": "滚动截止日期",
     "rolling": "滚动",
     "dueIn": "将于 {{time}} 到期",
@@ -911,7 +924,9 @@
     },
     "copyright": "© {{year}} Superteam。保留所有权利。",
     "region": "地区",
-    "globalFlag": "🌍"
+    "globalFlag": "🌍",
+    "whereTeamsCome": "Solana 团队来此完成工作",
+    "getStarted": "开始使用"
   },
   "LogoContextMenu": {
     "logoCopied": "Logo已复制",
@@ -926,7 +941,10 @@
     "leaderboard": "排行榜",
     "radarNavIcon": "雷达导航图标",
     "openDrawer": "打开抽屉",
-    "superteamEarn": "Superteam Earn"
+    "superteamEarn": "Superteam Earn",
+    "getStarted": "开始使用",
+    "createListing": "创建列表",
+    "sponsors": "赞助商"
   },
   "userMenu": {
     "completeProfile": "完成您的个人资料",
@@ -960,5 +978,177 @@
   "SearchModal": {
     "searchPlaceholder": "搜索 Superteam Earn 列表",
     "viewAllResults": "查看所有结果"
+  },
+  "stepOne": {
+    "piedPiperLogoAlt": "Pied Piper 标志",
+    "companyName": "公司名称",
+    "piedPiper": "Pied Piper",
+    "websiteURL": "网站 URL",
+    "piedPiperWebsite": "https://piedpiper.com",
+    "twitterHandle": "Twitter 用户名",
+    "piedPiperTwitter": "@piedpiper",
+    "createProfile": "创建档案"
+  },
+  "stepTwo": {
+    "piedPiperLogoAlt": "Pied Piper 标志",
+    "writeDeepDive": "撰写 PiperCoin 深度分析",
+    "byPiedPiper": "来自 Pied Piper",
+    "endsIn21Days": "21天后结束",
+    "piedPiperDescription": "Pied Piper 是一家开创性的中间输出压缩公司。该公司正在寻找赏金猎人深入研究 $PIPER 代币，并向新手解释代币的背景和用途。",
+    "skills": "技能",
+    "writing": "写作",
+    "marketing": "营销",
+    "community": "社区",
+    "usdcIconAlt": "USDC 图标",
+    "postBounty": "发布赏金"
+  },
+  "faqs": {
+    "title": "常见问题",
+    "whoQualifies": {
+      "question": "谁有资格成为赞助商？",
+      "answer": "任何在Solana生态系统中构建的团队或项目都可以在Superteam Earn上赞助一个列表。团队或运营的规模并不重要 — 您可以是一个代币化项目或一个小型资助接受者；只要您在Solana区块链上构建,您就可以在Earn上添加列表。"
+    },
+    "moneyNeeded": {
+      "question": "我需要投入多少资金？",
+      "answer": "每个列表没有上限或下限的资金要求。但是,每个列表提供的报酬将影响列表的分发（通过电子邮件、Discord、平台发现等）。"
+    },
+    "whoJudges": {
+      "question": "谁来评判悬赏和项目？",
+      "answer": "赞助商应该在Superteam Earn上审核、宣布和支付获胜者。在Earn内管理您的提交非常简单。"
+    },
+    "hiddenCosts": {
+      "question": "是否有任何隐藏的费用和收费？",
+      "answer": "完全没有！"
+    },
+    "whatCanUse": {
+      "question": "我可以将Superteam Earn用于什么？",
+      "answer": "Superteam Earn是一个从加密原生人才那里获得工作完成的平台。这可以是悬赏的形式（让多人完成相同的工作）或以项目列表的形式雇佣自由职业者。<br />Earn可用于完成任何小型到中型规模的任务,包括但不限于开发、写作、设计、研究和产品反馈。<br /><a style=\"color: blue\" href=\"https://in.superteam.fun/bounty-menu\" target=\"_blank\" >点击这里</a>访问列表菜单,其中包含想法、列表示例、建议的奖励范围等。"
+    },
+    "needHelp": {
+      "question": "我需要帮助我的列表。我如何联系？",
+      "answer": "您可以通过<a style=\"color: blue\" href=\"mailto:support@superteamearn.com\" target=\"_blank\">support@superteamearn.com</a>与我们联系,我们会尽快回复您。"
+    }
+  },
+  "Features": {
+    "yourDashboard": "您的仪表板",
+    "manageListingsDescription": "一种无缝管理所有列表的方式",
+    "sponsorDashboardScreenshot": "赞助商仪表板截图",
+    "publishListingTime": "< 1 分钟发布列表",
+    "publishListingDescription": "永远不用从头开始。无需费力编写自己的描述：复制现有悬赏或从 10+ 个模板中选择。",
+    "reviewAndSort": "审核和排序",
+    "reviewAndSortDescription": "审核提交不再是痛苦。使用我们直观的标签系统轻松对提交进行分类。",
+    "easyPayments": "轻松支付",
+    "easyPaymentsDescription": "直接从平台支付人才,无需担心将付款发送到错误的地址。",
+    "skillBasedTargeting": "基于技能的定位",
+    "skillBasedTargetingDescription": "每个新列表都会通过电子邮件和 Discord 发送给相关人员。",
+    "getQuotes": "获取报价",
+    "getQuotesDescription": "不确定如何为您的自由职业工作预算？选择从参与者那里接收报价。",
+    "inviteAndCollaborate": "邀请和协作",
+    "inviteAndCollaborateDescription": "通过电子邮件邀请多个团队成员,并协作管理您的列表。"
+  },
+  "hero": {
+    "title": "Solana 团队来此完成工作",
+    "description": "世界上最优秀的 Solana 人才都在 Superteam Earn。从合适的人那里,在合适的时间获得工作完成。",
+    "getStarted": "开始使用",
+    "step1": "第 1 步",
+    "createProfile": "创建个人资料",
+    "step2": "第 2 步",
+    "postListing": "发布您的列表",
+    "step3": "第 3 步",
+    "getSubmissions": "获取提交",
+    "squadsLogoAlt": "Squads 标志",
+    "tensorLogoAlt": "Tensor 标志",
+    "jupiterLogoAlt": "Jupiter 标志",
+    "deLogoAlt": "De 标志",
+    "madLadsLogoAlt": "Madlads 标志",
+    "solflareLogoAlt": "Solflare 标志",
+    "meteoraLogoAlt": "Meteroa 标志",
+    "monkeDaoLogoAlt": "MonkeDao 标志",
+    "bonkLogoAlt": "Bonk 标志"
+  },
+  "listingTypes": {
+    "startPosting": "从发布您的第一个悬赏或项目开始",
+    "bounty": "悬赏",
+    "bountyDescription": "悬赏是一种列表,每个人都完成给定的工作范围,并竞争奖金池",
+    "project": "项目",
+    "projectDescription": "项目是自由职业工作 — 人们提交他们的提案,但直到您选择他们才开始工作",
+    "purpleTickAlt": "紫色勾号",
+    "bountyFeatures": {
+      "awareness": "非常适合您想要接触尽可能多人的宣传活动",
+      "multipleOptions": "获得多个选项供选择",
+      "examples": "示例：Twitter 主题、深度分析、表情包、产品反馈等"
+    },
+    "projectFeatures": {
+      "collaboration": "非常适合需要协作和迭代的工作",
+      "singleOutput": "单一输出,完全符合您的具体需求",
+      "examples": "示例：全栈开发、宣传视频制作、招聘社区经理等"
+    }
+  },
+  "ListingWork": {
+    "getAlmostAnyKindOfWorkDone": "完成几乎任何类型的工作",
+    "fullStackDevelopment": "全栈开发",
+    "dReaderDescription": "dReader 正在寻找一名全栈开发人员,以构建一个允许创作者发布漫画、分析统计数据并与社区互动的功能。",
+    "okxSuperSeasonThreadBounty": "OKX 超级赛季主题悬赏",
+    "okxDescription": "为庆祝 Solana 超级赛季,OKX 呼吁所有加密货币爱好者深入了解 OKX Web3 钱包上的这项活动的细节,并在一个引人入胜的 Twitter 主题中分享他们的见解。",
+    "y00tsRoyaltyDashboardDesign": "y00ts 版税仪表板设计",
+    "deLabsDescription": "de[labs],即 y00ts、DeGods 和 BTC DeGods 背后的团队,正在寻找有才华的设计师来制作 y00ts 版税仪表板",
+    "communityManagerAtSarosFinance": "Saros Finance 的社区经理",
+    "sarosDescription": "Saros,一个 DeFi 移动超级应用程序,正在寻找一名社区经理,帮助制定社区增长策略并管理其社区",
+    "development": "开发",
+    "content": "内容",
+    "design": "设计",
+    "community": "社区",
+    "skills": {
+      "frontend": "前端",
+      "backend": "后端",
+      "writing": "写作",
+      "marketing": "营销",
+      "community": "社区",
+      "design": "设计"
+    }
+  },
+  "Stats": {
+    "distributionTitle": "Superteam 网络的分布",
+    "distributionDescription": "立即获得访问 Superteam 全球最佳加密人才网络的机会",
+    "globalDiscord": "全球 Discord",
+    "twitterFollowers": "Twitter 关注者",
+    "communityGDP": "社区 GDP",
+    "monthlyViews": "月浏览量",
+    "verifiedEarnUsers": "已验证的 Earn 用户",
+    "countries": "国家"
+  },
+  "testimonials": {
+    "chaseBarker": {
+      "message": "我再说一遍,Earn将成为Solana生态系统中最重要的非协议产品之一。它将开发者(以及其他人)与机会和协议与人才连接起来。",
+      "name": "Chase Barker",
+      "position": "Solana全球开发者增长"
+    },
+    "enoSim": {
+      "message": "我对@SuperteamEarn有一种💙的迷恋。我们团队用它来寻找加密原生人才。<br /><br />完美的招聘流程:<br /> 悬赏 -> 试用期 -> 全职offer。",
+      "name": "Eno Sim",
+      "position": "ISC联合创始人"
+    },
+    "evanSolomon": {
+      "message": "Superteam Earn是Solana协议和用户最被低估和最有价值的平台之一",
+      "name": "Evan Solomon",
+      "position": "Parcl业务发展负责人"
+    },
+    "tensorHQ": {
+      "logoAlt": "Tensor HQ标志",
+      "message": "Superteam都是大佬。<br />Superteam Earn太棒了。<br />每个人都应该使用它💜",
+      "pageViews": "页面浏览量",
+      "totalSubmissions": "总提交量",
+      "userAlt": "TensorHQ",
+      "name": "Tensor HQ, 来自Twitter"
+    }
+  },
+  "useSlugValidation": {
+    "invalidSlugFormat": "Slug只能包含小写字母、数字、'_'和'-'",
+    "slugAlreadyExists": "公司用户名已存在",
+    "errorCheckingSlug": "检查slug可用性时发生错误。"
+  },
+  "useSponsorNameValidation": {
+    "companyNameExists": "公司名称已存在",
+    "errorCheckingAvailability": "检查赞助商名称可用性时发生错误。"
   }
 }

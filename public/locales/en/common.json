@@ -829,6 +829,19 @@
     "sponsorBodyText": "You already have a sponsor profile, but we need other details from you before proceeding with this action. Doing this will not impact your sponsor profile."
   },
   "ListingCard": {
+    "pfpAlt": "Project Logo",
+    "by": "By",
+    "skills": "Skills",
+    "skillNames": {
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "writing": "Writing",
+      "marketing": "Marketing",
+      "community": "Community",
+      "design": "Design"
+    },
+    "tokenIconAlt": "{{token}} icon",
+    "submissions": "Submissions",
     "rollingDeadline": "Rolling Deadline",
     "rolling": "Rolling",
     "dueIn": "Due in {{time}}",
@@ -911,7 +924,9 @@
     },
     "copyright": "© {{year}} Superteam. All rights reserved.",
     "region": "REGION",
-    "globalFlag": "🌍"
+    "globalFlag": "🌍",
+    "whereTeamsCome": "Where Solana teams come to get sh*t done",
+    "getStarted": "Get Started"
   },
   "LogoContextMenu": {
     "logoCopied": "Logo copied",
@@ -926,7 +941,10 @@
     "leaderboard": "Leaderboard",
     "radarNavIcon": "Radar Nav Icon",
     "openDrawer": "Open Drawer",
-    "superteamEarn": "Superteam Earn"
+    "superteamEarn": "Superteam Earn",
+    "getStarted": "Get Started",
+    "createListing": "Create a Listing",
+    "sponsors": "SPONSORS"
   },
   "userMenu": {
     "completeProfile": "Complete your Profile",
@@ -960,5 +978,177 @@
   "SearchModal": {
     "searchPlaceholder": "Search for Superteam Earn Listings",
     "viewAllResults": "View All Results"
+  },
+  "stepOne": {
+    "piedPiperLogoAlt": "Pied Piper Logo",
+    "companyName": "Company name",
+    "piedPiper": "Pied Piper",
+    "websiteURL": "Website URL",
+    "piedPiperWebsite": "https://piedpiper.com",
+    "twitterHandle": "Twitter Handle",
+    "piedPiperTwitter": "@piedpiper",
+    "createProfile": "Create Profile"
+  },
+  "stepTwo": {
+    "piedPiperLogoAlt": "Pied Piper Logo",
+    "writeDeepDive": "Write a Deep Dive on PiperCoin",
+    "byPiedPiper": "By Pied Piper",
+    "endsIn21Days": "Ends in 21 days",
+    "piedPiperDescription": "Pied Piper is a pioneering middle-out compression company. The company is looking for bounty hunters to deep dive into the $PIPER coin, and explain the coin's background and utility to noobs.",
+    "skills": "Skills",
+    "writing": "Writing",
+    "marketing": "Marketing",
+    "community": "Community",
+    "usdcIconAlt": "USDC icon",
+    "postBounty": "Post Bounty"
+  },
+  "faqs": {
+    "title": "FAQs",
+    "whoQualifies": {
+      "question": "Who qualifies to be a sponsor?",
+      "answer": "Any team or project that is building in the Solana ecosystem can sponsor a listing on Superteam Earn. Size of the team or operations don't matter — you can be a tokenised project or a small grantee; as long as you are building on the Solana blockchain, you can add a listing on Earn."
+    },
+    "moneyNeeded": {
+      "question": "How much money do I need to put up?",
+      "answer": "There is no upper or lower limit of the amount of money you need to put up per listing. However, the compensation offered per listing will affect the distribution (via emails, discord, platform discovery, etc.) that the listing will get."
+    },
+    "whoJudges": {
+      "question": "Who judges the bounties & projects?",
+      "answer": "The sponsors are supposed to review, announce, and pay out the winners on Superteam Earn. It's super simple to manage your submissions, all within Earn."
+    },
+    "hiddenCosts": {
+      "question": "Are there any hidden costs and charges?",
+      "answer": "None at all!"
+    },
+    "whatCanUse": {
+      "question": "What can I use Superteam Earn for?",
+      "answer": "Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of boutnies (get the same work done by many people) or hiring freelancers in the form of Project listings.<br />Earn can be used to get any small to medium scale task done, including but not limited to development, writing, design, research, and product feedback.<br /><a style=\"color: blue\" href=\"https://in.superteam.fun/bounty-menu\" target=\"_blank\" >Click here</a> to access the Listings Menu, which contains ideas, listing examples, suggested prize ranges, etc."
+    },
+    "needHelp": {
+      "question": "I need help with my listing. How can I get in touch?",
+      "answer": "You can get in touch with us at <a style=\"color: blue\" href=\"mailto:support@superteamearn.com\" target=\"_blank\">support@superteamearn.com</a> and we will get back to you ASAP."
+    }
+  },
+  "Features": {
+    "yourDashboard": "YOUR DASHBOARD",
+    "manageListingsDescription": "A seamless way to manage all your listings in one place",
+    "sponsorDashboardScreenshot": "Sponsor dashboard screenshot",
+    "publishListingTime": "< 1 Min to Publish a Listing",
+    "publishListingDescription": "Never start from scratch. No hassle of writing your own descriptions: either duplicate an existing bounty, or choose from 10+ templates.",
+    "reviewAndSort": "Review & Sort",
+    "reviewAndSortDescription": "Reviewing submissions is no longer a pain. Effortlessly categorize submissions with our intuitive labelling system.",
+    "easyPayments": "Easy Payments",
+    "easyPaymentsDescription": "Pay talent directly from the platform without worrying about sending payment to the wrong address.",
+    "skillBasedTargeting": "Skill Based Targeting",
+    "skillBasedTargetingDescription": "Each new listing gets sent to relevant people via e-mail and Discord.",
+    "getQuotes": "Get Quotes",
+    "getQuotesDescription": "Not sure how to budget your freelance gig? Opt to receive quotes from participants instead.",
+    "inviteAndCollaborate": "Invite & Collaborate",
+    "inviteAndCollaborateDescription": "Invite multiple team members via email, and collaborate on managing your listings."
+  },
+  "hero": {
+    "title": "Where Solana teams come to get sh*t done",
+    "description": "The world's best Solana talent is on Superteam Earn. Get work done from the right people, at the right time.",
+    "getStarted": "Get Started",
+    "step1": "STEP 1",
+    "createProfile": "Create a profile",
+    "step2": "STEP 2",
+    "postListing": "Post your listing",
+    "step3": "STEP 3",
+    "getSubmissions": "Get submissions",
+    "squadsLogoAlt": "Squads Logo",
+    "tensorLogoAlt": "Tensor Logo",
+    "jupiterLogoAlt": "Jupiter Logo",
+    "deLogoAlt": "De Logo",
+    "madLadsLogoAlt": "Madlads Logo",
+    "solflareLogoAlt": "Solflare Logo",
+    "meteoraLogoAlt": "Meteroa Logo",
+    "monkeDaoLogoAlt": "MonkeDao Logo",
+    "bonkLogoAlt": "Bonk Logo"
+  },
+  "listingTypes": {
+    "startPosting": "Start by posting your first Bounty or Project",
+    "bounty": "Bounty",
+    "bountyDescription": "Bounties are listings where everyone completes a given scope of work, and competes for the prize pool",
+    "project": "Project",
+    "projectDescription": "Projects are freelance gigs — people apply with their proposals but don't begin working until you pick them",
+    "purpleTickAlt": "Purple Tick",
+    "bountyFeatures": {
+      "awareness": "Great for awareness campaigns where you want to reach the most people possible",
+      "multipleOptions": "Get multiple options to choose from",
+      "examples": "Examples: Twitter Threads, Deep-Dives, Memes, Product Feedback, and more"
+    },
+    "projectFeatures": {
+      "collaboration": "Perfect for work that requires collaboration and iteration",
+      "singleOutput": "Single output that is specific to your exact needs",
+      "examples": "Examples: Full Stack Development, Hype Video Production, Hiring a Community Manager, and more"
+    }
+  },
+  "ListingWork": {
+    "getAlmostAnyKindOfWorkDone": "Get almost any kind of work done",
+    "fullStackDevelopment": "Full Stack Development",
+    "dReaderDescription": "dReader is looking for a full stack developer to build a feature that allows creators to publish their comics, analyse stats and engage with their community.",
+    "okxSuperSeasonThreadBounty": "OKX Super Season Thread Bounty",
+    "okxDescription": "In celebration of the Solana Super Season, OKX is calling all crypto enthusiasts to dive into the details of this campaign on OKX Web3 Wallet, and share their insights in a captivating Twitter thread.",
+    "y00tsRoyaltyDashboardDesign": "y00ts royalty dashboard design",
+    "deLabsDescription": "de[labs], the team behind y00ts, DeGods, and BTC DeGods, is looking for a talented designers to make the y00ts royalty dashboard",
+    "communityManagerAtSarosFinance": "Community Manager at Saros Finance",
+    "sarosDescription": "Saros, a DeFi Mobile Superapp is looking for a community manager who can help strategise community growth, and manage its community",
+    "development": "development",
+    "content": "content",
+    "design": "design",
+    "community": "community",
+    "skills": {
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "writing": "Writing",
+      "marketing": "Marketing",
+      "community": "Community",
+      "design": "Design"
+    }
+  },
+  "Stats": {
+    "distributionTitle": "The distribution of the Superteam network",
+    "distributionDescription": "Get instant access to Superteam's network of the best crypto talent in the world",
+    "globalDiscord": "Global Discord",
+    "twitterFollowers": "Twitter Followers",
+    "communityGDP": "Community GDP",
+    "monthlyViews": "Monthly Views",
+    "verifiedEarnUsers": "Verified Earn Users",
+    "countries": "Countries"
+  },
+  "testimonials": {
+    "chaseBarker": {
+      "message": "I'll say it again, Earn is going to become one of the most important non-protocol products in the Solana ecosystem. Connecting developers (amongst others) to opportunity and protocols to talent.",
+      "name": "Chase Barker",
+      "position": "Global Developer Growth, Solana"
+    },
+    "enoSim": {
+      "message": "I have a 💙 affair with @SuperteamEarn. Our team uses it to scout crypto-native talent. <br /><br />Perfect hiring workflow:<br /> bounty -> trial period -> full-time offer.",
+      "name": "Eno Sim",
+      "position": "Co-Founder, ISC"
+    },
+    "evanSolomon": {
+      "message": "Superteam Earn is one of the most underrated and valuable platforms for both Solana protocols and users",
+      "name": "Evan Solomon",
+      "position": "BD Lead, Parcl"
+    },
+    "tensorHQ": {
+      "logoAlt": "Tensor HQ Logo",
+      "message": "Superteam are chads. <br />Superteam Earn is awesome. <br />Everybody should use it 💜",
+      "pageViews": "Page Views",
+      "totalSubmissions": "Total Submissions",
+      "userAlt": "TensorHQ",
+      "name": "Tensor HQ, on Twitter"
+    }
+  },
+  "useSlugValidation": {
+    "invalidSlugFormat": "Slug can only contain lowercase letters, numbers, '_', and '-'",
+    "slugAlreadyExists": "Company username already exists",
+    "errorCheckingSlug": "An error occurred while checking slug availability."
+  },
+  "useSponsorNameValidation": {
+    "companyNameExists": "Company name already exists",
+    "errorCheckingAvailability": "An error occurred while checking sponsor name availability."
   }
 }

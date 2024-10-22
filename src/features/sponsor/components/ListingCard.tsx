@@ -1,5 +1,6 @@
 import { Divider, HStack, Text, VStack } from '@chakra-ui/react';
 import { type StaticImageData } from 'next/image';
+import { useTranslation } from 'react-i18next';
 
 import { HighQualityImage } from './HighQualityImage';
 
@@ -64,6 +65,8 @@ export function ListingCard({
   tokenIcon,
   amount,
 }: ListingCardProps) {
+  const { t } = useTranslation('common');
+
   return (
     <VStack
       w="21.5rem"
@@ -76,13 +79,17 @@ export function ListingCard({
     >
       <VStack align="start" gap={4} h="full" p={4} pb={3}>
         <HStack gap={4} w="100%">
-          <HighQualityImage alt="Pied Piper Logo" width={49} src={pfp} />
+          <HighQualityImage
+            alt={t('ListingCard.pfpAlt')}
+            width={49}
+            src={pfp}
+          />
           <VStack align="start" flexGrow={1} gap={0} w="100%" fontSize={'sm'}>
             <Text color="brand.slate.700" fontWeight={600}>
               {title}
             </Text>
             <Text color="brand.slate.400" fontWeight={600} bg="brand.slate.50">
-              By {name}
+              {t('ListingCard.by')} {name}
             </Text>
           </VStack>
         </HStack>
@@ -96,7 +103,7 @@ export function ListingCard({
         </Text>
         <HStack justify="space-between" w="full" mt="auto" fontSize="x-small">
           <Text color="brand.slate.400" fontWeight={500}>
-            Skills
+            {t('ListingCard.skills')}
           </Text>
           <HStack>
             {skills.map((s) => (
@@ -110,7 +117,7 @@ export function ListingCard({
                 bg={skillColors[s].background}
                 rounded={6}
               >
-                {s}
+                {t(`ListingCard.skillNames.${s}`)}
               </Text>
             ))}
           </HStack>
@@ -123,7 +130,7 @@ export function ListingCard({
             height={18}
             width={18}
             src={tokenIcon}
-            alt={`${token} icon`}
+            alt={t('ListingCard.tokenIconAlt', { token })}
           />
           <Text color="brand.slate.800" fontWeight={600}>
             {amount}
@@ -134,7 +141,7 @@ export function ListingCard({
             {submissionCount}
           </Text>
           <Text color="brand.slate.500" fontWeight={600}>
-            Submissions
+            {t('ListingCard.submissions')}
           </Text>
         </HStack>
       </HStack>

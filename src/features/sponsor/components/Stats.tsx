@@ -1,5 +1,6 @@
 import { Box, Divider, Flex, Grid, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { userCountQuery } from '@/features/home';
 import GlobalEarn from '@/public/assets/landingsponsor/displays/global-earn.webp';
@@ -14,40 +15,41 @@ type Stats = {
   showEarn?: boolean;
 };
 
-const initialStats = [
-  {
-    title: '21K',
-    label: 'Global Discord',
-  },
-  {
-    title: '75K',
-    label: 'Twitter Followers',
-  },
-  {
-    title: '$4M',
-    label: 'Community GDP',
-  },
-  {
-    title: '100K',
-    label: 'Monthly Views',
-    showEarn: true,
-  },
-  {
-    title: '16K',
-    label: 'Verified Earn Users',
-    showEarn: true,
-  },
-  {
-    title: '20',
-    label: 'Countries',
-  },
-];
-
 export function Stats() {
+  const { t } = useTranslation();
   const { data: totals } = useQuery(userCountQuery);
 
+  const initialStats = [
+    {
+      title: '21K',
+      label: t('Stats.globalDiscord'),
+    },
+    {
+      title: '75K',
+      label: t('Stats.twitterFollowers'),
+    },
+    {
+      title: '$4M',
+      label: t('Stats.communityGDP'),
+    },
+    {
+      title: '100K',
+      label: t('Stats.monthlyViews'),
+      showEarn: true,
+    },
+    {
+      title: '16K',
+      label: t('Stats.verifiedEarnUsers'),
+      showEarn: true,
+    },
+    {
+      title: '20',
+      label: t('Stats.countries'),
+    },
+  ];
+
   const stats = initialStats.map((stat) => {
-    if (stat.label === 'Verified Earn Users' && totals?.totalUsers) {
+    if (stat.label === t('Stats.verifiedEarnUsers') && totals?.totalUsers) {
       return {
         ...stat,
         title: new Intl.NumberFormat('en-US', {
@@ -72,7 +74,7 @@ export function Stats() {
       <Box w="full" maxW={{ base: '20rem', xl: '30rem' }}>
         <HighQualityImage
           src={GlobalEarn}
-          alt="Superteam Earn Global"
+          alt={t('Stats.distributionTitle')}
           style={{
             width: '100%',
             maxWidth: '30rem',
@@ -85,15 +87,14 @@ export function Stats() {
           textAlign={{ base: 'center', lg: 'left' }}
         >
           <Text fontSize={fontSize} fontWeight={600} lineHeight={1}>
-            The distribution of the Superteam network
+            {t('Stats.distributionTitle')}
           </Text>
           <Text
             color="brand.slate.500"
             fontSize={{ base: '1.25rem', lg: '1.4rem' }}
             fontWeight={500}
           >
-            Get instant access to Superteam’s network of the best crypto talent
-            in the world
+            {t('Stats.distributionDescription')}
           </Text>
         </VStack>
         <Divider display={{ base: 'none', lg: 'block' }} />

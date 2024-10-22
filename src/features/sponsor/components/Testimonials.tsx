@@ -7,6 +7,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useTranslation } from 'next-i18next';
 
 import ISC from '@/public/assets/landingsponsor/sponsors/ISC.webp';
 import Parcl from '@/public/assets/landingsponsor/sponsors/parcl.webp';
@@ -22,40 +23,36 @@ import { HighQualityImage } from './HighQualityImage';
 import { Stars } from './Stars';
 import { TestimonialCard, type TestimonialProps } from './TestimonialCard';
 
-const testimonials: TestimonialProps[] = [
-  {
-    stars: 5,
-    message: `I'll say it again, Earn is going to become one of the most important non-protocol products in the Solana ecosystem. Connecting developers (amongst others) to opportunity and protocols to talent.`,
-    logo: Solana,
-    pfp: ChasedBarker,
-    name: 'Chase Barker',
-    position: 'Global Developer Growth, Solana',
-  },
-  {
-    stars: 5,
-    message: `I have a 💙 affair with 
-@SuperteamEarn. Our team uses it to scout crypto-native talent. 
-<br />
-<br />
-Perfect hiring workflow: 
-<br /> bounty -> trial period -> full-time offer.`,
-    logo: ISC,
-    pfp: Eno,
-    name: 'Eno Sim',
-    position: 'Co-Founder, ISC',
-  },
-  {
-    stars: 4,
-    message: `Superteam Earn is one of the most underrated and valuable platforms for both Solana protocols and 
-users`,
-    logo: Parcl,
-    pfp: EvanSolomon,
-    name: 'Evan Solomon',
-    position: 'BD Lead, Parcl',
-  },
-];
-
 export function Testimonials() {
+  const { t } = useTranslation('common');
+
+  const testimonials: TestimonialProps[] = [
+    {
+      stars: 5,
+      message: t('testimonials.chaseBarker.message'),
+      logo: Solana,
+      pfp: ChasedBarker,
+      name: t('testimonials.chaseBarker.name'),
+      position: t('testimonials.chaseBarker.position'),
+    },
+    {
+      stars: 5,
+      message: t('testimonials.enoSim.message'),
+      logo: ISC,
+      pfp: Eno,
+      name: t('testimonials.enoSim.name'),
+      position: t('testimonials.enoSim.position'),
+    },
+    {
+      stars: 4,
+      message: t('testimonials.evanSolomon.message'),
+      logo: Parcl,
+      pfp: EvanSolomon,
+      name: t('testimonials.evanSolomon.name'),
+      position: t('testimonials.evanSolomon.position'),
+    },
+  ];
+
   return (
     <VStack
       align="start"
@@ -87,7 +84,7 @@ export function Testimonials() {
           <Box w={{ base: '5rem', md: '8rem' }}>
             <HighQualityImage
               src={Tensor}
-              alt="Tensor HQ USer"
+              alt={t('testimonials.tensorHQ.logoAlt')}
               style={{
                 width: '100%',
                 height: '100%',
@@ -102,9 +99,7 @@ export function Testimonials() {
             fontSize={{ base: '1.4rem', md: '1.87rem' }}
             lineHeight={1.1}
           >
-            Superteam are chads. <br />
-            Superteam Earn is awesome. <br />
-            Everybody should use it 💜
+            {t('testimonials.tensorHQ.message')}
           </Text>
           <HStack gap={8}>
             <VStack align="start" gap={0}>
@@ -120,7 +115,7 @@ export function Testimonials() {
                 fontSize={{ base: '0.625rem', md: '0.925rem' }}
                 fontWeight={500}
               >
-                Page Views
+                {t('testimonials.tensorHQ.pageViews')}
               </Text>
             </VStack>
             <VStack align="start" gap={0}>
@@ -136,7 +131,7 @@ export function Testimonials() {
                 fontSize={{ base: '0.625rem', md: '0.925rem' }}
                 fontWeight={500}
               >
-                Total Submissions
+                {t('testimonials.tensorHQ.totalSubmissions')}
               </Text>
             </VStack>
           </HStack>
@@ -148,14 +143,14 @@ export function Testimonials() {
             >
               <HighQualityImage
                 src={TensorHQ}
-                alt="TensorHQ"
+                alt={t('testimonials.tensorHQ.userAlt')}
                 width={50}
                 height={50}
                 style={{ width: '100%', height: '100%' }}
               />
             </Box>
             <Text color="black" fontSize={{ base: '1rem', md: '1.5rem' }}>
-              Tensor HQ, on Twitter
+              {t('testimonials.tensorHQ.name')}
             </Text>
           </HStack>
         </VStack>

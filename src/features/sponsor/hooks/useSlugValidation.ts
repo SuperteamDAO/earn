@@ -1,6 +1,7 @@
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import logger from '@/lib/logger';
 import { useUser } from '@/store/user';
@@ -11,15 +12,14 @@ export const useSlugValidation = (initialValue = '') => {
   const [validationErrorMessage, setValidationErrorMessage] = useState('');
 
   const { user } = useUser();
+  const { t } = useTranslation();
 
   const slugPattern = /^[a-z0-9_-]+$/;
 
   const checkSlugAvailability = async (slug: string) => {
     if (!slugPattern.test(slug)) {
       setIsInvalid(true);
-      setValidationErrorMessage(
-        "Slug can only contain lowercase letters, numbers, '_', and '-'",
-      );
+      setValidationErrorMessage(t('useSlugValidation.invalidSlugFormat'));
       return;
     }
 
@@ -28,14 +28,12 @@ export const useSlugValidation = (initialValue = '') => {
       const available = response.data.available;
       setIsInvalid(!available);
       setValidationErrorMessage(
-        available ? '' : 'Company username already exists',
+        available ? '' : t('useSlugValidation.slugAlreadyExists'),
       );
     } catch (error) {
       logger.error(error);
       setIsInvalid(true);
-      setValidationErrorMessage(
-        'An error occurred while checking slug availability.',
-      );
+      setValidationErrorMessage(t('useSlugValidation.errorCheckingSlug'));
     }
   };
 

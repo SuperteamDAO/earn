@@ -19,6 +19,7 @@ import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { UserMenu } from '@/features/navbar';
 import { useUser } from '@/store/user';
@@ -26,6 +27,7 @@ import { useUser } from '@/store/user';
 import { NAV_LINKS } from '../utils';
 
 export const MobileNavbar = () => {
+  const { t } = useTranslation('common');
   const {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,
@@ -68,7 +70,7 @@ export const MobileNavbar = () => {
                     size="md"
                     variant="unstyled"
                   >
-                    Login
+                    {t('MobileNavbar.login')}
                   </Button>
                 </Link>
                 <Divider
@@ -90,7 +92,7 @@ export const MobileNavbar = () => {
                     size="md"
                     variant="unstyled"
                   >
-                    Get Started
+                    {t('MobileNavbar.getStarted')}
                   </Button>
                 </Link>
               </Flex>
@@ -109,7 +111,7 @@ export const MobileNavbar = () => {
                   size="md"
                   variant="unstyled"
                 >
-                  Get Started
+                  {t('MobileNavbar.getStarted')}
                 </Button>
               </Link>
             )}
@@ -129,7 +131,7 @@ export const MobileNavbar = () => {
                   size="md"
                   variant="unstyled"
                 >
-                  Create a Listing
+                  {t('MobileNavbar.createListing')}
                 </Button>
               </Link>
             )}
@@ -152,7 +154,7 @@ export const MobileNavbar = () => {
                     }}
                     href={navItem.link ?? '#'}
                   >
-                    {navItem.label}
+                    {t(`nav.${navItem.label.toLowerCase()}`)}
                   </Link>
                 );
               })}
@@ -179,7 +181,7 @@ export const MobileNavbar = () => {
         bg="transparent"
         _hover={{ bg: 'transparent' }}
         _active={{ bg: 'transparent' }}
-        aria-label="Open Drawer"
+        aria-label={t('MobileNavbar.openDrawer')}
         icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
         onClick={onDrawerOpen}
       />
@@ -200,7 +202,7 @@ export const MobileNavbar = () => {
             h={5}
             cursor="pointer"
             objectFit={'contain'}
-            alt={'Superteam Earn'}
+            alt={t('MobileNavbar.superteamEarn')}
             src={'/assets/logo/logo.svg'}
           />
           <>
@@ -216,7 +218,7 @@ export const MobileNavbar = () => {
               fontWeight={600}
               letterSpacing={'1.5px'}
             >
-              SPONSORS
+              {t('MobileNavbar.sponsors')}
             </Text>
           </>
         </Link>
@@ -236,7 +238,7 @@ export const MobileNavbar = () => {
             size="sm"
             variant="unstyled"
           >
-            Login
+            {t('MobileNavbar.login')}
           </Button>
         </Link>
       )}

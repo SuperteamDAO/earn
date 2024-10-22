@@ -7,6 +7,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { type StaticImageData } from 'next/image';
+import { useTranslation } from 'next-i18next';
 import { usePostHog } from 'posthog-js/react';
 
 import SponsorDashboard from '@/public/assets/landingsponsor/displays/sponsor-dashboard.webp';
@@ -29,39 +30,33 @@ interface FeatureProps {
 const features: FeatureProps[] = [
   {
     icon: Doc,
-    title: '< 1 Min to Publish a Listing',
-    description:
-      'Never start from scratch. No hassle of writing your own descriptions: either duplicate an existing bounty, or choose from 10+ templates.',
+    title: 'Features.publishListingTime',
+    description: 'Features.publishListingDescription',
   },
   {
     icon: Review,
-    title: 'Review & Sort',
-    description:
-      'Reviewing submissions is no longer a pain. Effortlessly categorize submissions with our intuitive labelling system. ',
+    title: 'Features.reviewAndSort',
+    description: 'Features.reviewAndSortDescription',
   },
   {
     icon: Dollar,
-    title: 'Easy Payments',
-    description:
-      'Pay talent directly from the platform without worrying about sending payment to the wrong address.',
+    title: 'Features.easyPayments',
+    description: 'Features.easyPaymentsDescription',
   },
   {
     icon: Skill,
-    title: 'Skill Based Targetting',
-    description:
-      'Each new listing gets sent to relevant people via e-mail and Discord.',
+    title: 'Features.skillBasedTargeting',
+    description: 'Features.skillBasedTargetingDescription',
   },
   {
     icon: Enter,
-    title: 'Get Quotes',
-    description:
-      'Not sure how to budget your freelance gig? Opt to receive quotes from participants instead.',
+    title: 'Features.getQuotes',
+    description: 'Features.getQuotesDescription',
   },
   {
     icon: Invite,
-    title: 'Invite & Collaborate',
-    description:
-      'Invite multiple team members via email, and collaborate on managing your listings.',
+    title: 'Features.inviteAndCollaborate',
+    description: 'Features.inviteAndCollaborateDescription',
   },
 ];
 
@@ -71,6 +66,7 @@ interface Props {
 
 export function Features({ showVideo }: Props) {
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
 
   return (
     <VStack pos="relative" w="full" my="8rem" px={padding} id="features">
@@ -90,7 +86,7 @@ export function Features({ showVideo }: Props) {
           textAlign="center"
           opacity={0.76}
         >
-          YOUR DASHBOARD
+          {t('Features.yourDashboard')}
         </Text>
         <Text
           maxW="48rem"
@@ -100,7 +96,7 @@ export function Features({ showVideo }: Props) {
           lineHeight={1.1}
           textAlign="center"
         >
-          A seamless way to manage all your listings in one place
+          {t('Features.manageListingsDescription')}
         </Text>
       </VStack>
       <Center
@@ -144,7 +140,7 @@ export function Features({ showVideo }: Props) {
             cursor: 'pointer',
           }}
           src={SponsorDashboard}
-          alt="Sponsord dashboard screenshot"
+          alt={t('Features.sponsorDashboardScreenshot')}
         />
       </Center>
       <Grid
@@ -166,16 +162,18 @@ export function Features({ showVideo }: Props) {
 }
 
 function Feature({ icon, title, description }: FeatureProps) {
+  const { t } = useTranslation('common');
+
   return (
     <VStack align="start" gap={4}>
       <HighQualityImage
         src={icon}
-        alt={title}
+        alt={t(title)}
         style={{ height: '1.8rem', width: '2rem' }}
       />
       <VStack align="start" gap={0}>
         <Text color="brand.slate.700" fontSize={'1.25rem'} fontWeight={600}>
-          {title}
+          {t(title)}
         </Text>
         <Text
           color="brand.slate.500"
@@ -183,7 +181,7 @@ function Feature({ icon, title, description }: FeatureProps) {
           fontWeight={500}
           lineHeight={1.2}
         >
-          {description}
+          {t(description)}
         </Text>
       </VStack>
     </VStack>
