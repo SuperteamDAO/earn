@@ -1,15 +1,21 @@
 {
   "freelanceGigs": "Freelance Gigs",
+  "become_a_sponsor": "Become a Sponsor",
+  "welcome_back": "Welcome back",
   "grants": "Grants",
   "grantsDescription": "Equity-free funding opportunities for builders",
   "noGrantsAvailable": "No grants available!",
   "subscribeToNotifications": "Subscribe to notifications to get notified about new grants.",
   "bounties": "Bounties",
-  "projects": "Projects",
-  "content": "Content",
-  "design": "Design",
-  "development": "Development",
-  "other": "Other",
+  "nav": {
+    "bounties": "Bounties",
+    "projects": "Projects",
+    "grants": "Grants",
+    "content": "Content",
+    "design": "Design",
+    "development": "Development",
+    "other": "Other"
+  },
   "entityNameModal": {
     "title": "Update Your Entity Name",
     "description": "In accordance with our updated <1>Terms of Use</1>, we need to know the name of the entity that controls your project. If you are a DAO, please mention the name of your DAO. If you don't have an entity, please mention your full name.",

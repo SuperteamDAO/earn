@@ -1,6 +1,7 @@
 import { Box, Divider, Flex, Skeleton, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
+import { useTranslation } from 'react-i18next';
 
 import { userStatsQuery } from '@/features/home';
 import { EarnAvatar } from '@/features/talent';
@@ -28,6 +29,8 @@ const Stat = ({ value, label }: StatProps) => {
 };
 
 export const UserStatsBanner = () => {
+  const { t } = useTranslation('common');
+
   const { user } = useUser();
   const { data: session, status } = useSession();
   const { data: stats, isLoading } = useQuery(userStatsQuery);
@@ -70,7 +73,7 @@ export const UserStatsBanner = () => {
             textOverflow={'ellipsis'}
             noOfLines={1}
           >
-            Welcome back, {user.firstName}
+            {t('welcome_back')}, {user.firstName}
           </Text>
           <Text color="#c4c2ef" fontSize={'sm'}>
             We’re so glad to have you on Earn

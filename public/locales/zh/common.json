@@ -1,18 +1,24 @@
 {
   "freelanceGigs": "自由职业机会",
-  "grants": "资助",
+  "become_a_sponsor": "成为赞助商",
+  "welcome_back": "欢迎回来",
   "grantsDescription": "为开发者提供的无股权融资机会",
   "noGrantsAvailable": "暂无可用资助！",
   "subscribeToNotifications": "订阅通知以获取新资助信息。",
   "bounties": "悬赏",
-  "projects": "项目",
-  "content": "内容",
-  "design": "设计",
-  "development": "开发",
-  "other": "其他",
+  "nav": {
+    "bounties": "悬赏",
+    "projects": "项目",
+    "grants": "资助",
+    "content": "内容",
+    "design": "设计",
+    "development": "开发",
+    "other": "其他"
+  },
+
   "entityNameModal": {
     "title": "更新您的实体名称",
-    "description": "根据我们更新的<1>使用条款</1>，我们需要知道控制您项目的实体名称。如果您是一个DAO，请提供您的DAO名称。如果您没有实体，请提供您的全名。",
+    "description": "根据我们更新的<1>使用条款</1>，我们需要知道控制您项目的实体名称。如果您是一个 DAO，请提供您的 DAO 名称。如果您没有实体，请提供您的全名。",
     "inputPlaceholder": "实体名称",
     "needHelp": "需要帮助？",
     "update": "更新",

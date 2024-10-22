@@ -3,10 +3,13 @@ import { Box, Link, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
+import { useTranslation } from 'react-i18next';
 
 import Briefcase from '@/public/assets/home/display/briefcase.webp';
 
 export const SponsorBanner = () => {
+  const { t } = useTranslation('common');
+
   const posthog = usePostHog();
   return (
     <Link
@@ -30,7 +33,8 @@ export const SponsorBanner = () => {
           fontWeight={600}
           _groupHover={{ textDecoration: 'underline' }}
         >
-          Become a Sponsor
+          {t('become_a_sponsor')}
+
           <ArrowForwardIcon ml={1} color="#777777" w={6} />
         </Text>
         <Text

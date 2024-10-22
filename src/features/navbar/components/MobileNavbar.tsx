@@ -21,6 +21,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useUser } from '@/store/user';
 
@@ -49,6 +50,8 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
     onOpen: onDrawerOpen,
     onClose: onDrawerClose,
   } = useDisclosure();
+
+  const { t } = useTranslation('common');
 
   const { data: session, status } = useSession();
   const posthog = usePostHog();
@@ -144,7 +147,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                     key={navItem.label}
                     className="ph-no-capture"
                     href={navItem.href ?? '#'}
-                    label={renderLabel(navItem)}
+                    label={t(renderLabel(navItem))}
                     isActive={isCurrent}
                   />
                 );

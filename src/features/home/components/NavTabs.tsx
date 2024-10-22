@@ -23,6 +23,7 @@ interface PillTabProps {
 function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
   const router = useRouter();
   const posthog = usePostHog();
+
   return (
     <Link
       className="ph-no-capture"
@@ -112,7 +113,7 @@ export function NavTabs({ ...flexProps }: FlexProps) {
             phEvent={navItem.pillPH}
             key={navItem.label}
           >
-            {t(`NavTabs.${navItem.label.toLowerCase()}`)}
+            {t(navItem.label)}
           </PillTab>
         );
       })}

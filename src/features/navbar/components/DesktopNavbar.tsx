@@ -19,6 +19,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
@@ -43,6 +44,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const maxWValue = isDashboardRoute ? '' : '7xl';
+  const { t } = useTranslation('common');
 
   return (
     <Flex
@@ -128,7 +130,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                     }}
                     key={navItem.label}
                     href={navItem.href ?? '#'}
-                    label={navItem.label}
+                    label={t(navItem.label)}
                     isActive={isCurrent}
                   />
                 );
