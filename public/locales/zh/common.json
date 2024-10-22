@@ -854,5 +854,90 @@
     "noCompletedListings": "没有已完成的列表！",
     "emojiAlt": "表情符号",
     "viewAll": "查看全部"
+  },
+  "AnnouncementBar": {
+    "clickHere": "点击此处",
+    "hackathonPrizes": "在 Solana 的全球黑客马拉松中解锁超过 25 万美元的奖金,仅在 Earn 上",
+    "viewTracks": "查看赛道"
+  },
+  "BountySnackbar": {
+    "previewSponsorMessage": "注意：此链接仅供预览使用，只有拥有它的人才能访问。这不是您与社区分享的最终链接",
+    "previewMessage": "此列表处于预览模式。请查看我们主页上的其他列表！",
+    "inactiveMessage": "此列表目前处于非活动状态。请查看我们主页上的其他列表！",
+    "expiredMessage": "此列表的截止日期已过。请查看主页上的其他列表！",
+    "cautionMessage": "请谨慎行事！一些用户已将此列表标记为可能具有误导性。",
+    "expiringMessage": "🕛 即将到期：趁还有机会赶快{{type}}！",
+    "submit": "提交",
+    "apply": "申请",
+    "highRewardMessage": "🤑 更多金钱，更少问题：高于平均水平的{{type}}总奖励",
+    "noBountySubmissions": "🔥 获胜机会高：此悬赏还没有人提交！",
+    "noProjectApplications": "🔥 机会在您这边！还没有人申请",
+    "fewBountySubmissions": "🔥 获胜机会高：此悬赏目前只有{{count}}个提交！",
+    "fewProjectApplications": "🔥 机会在您这边！申请的人不多",
+    "editIcon": "编辑图标"
+  },
+  "desktopNavbar": {
+    "logoAlt": "Superteam Earn",
+    "sponsors": "赞助商",
+    "search": "搜索",
+    "radarNavIconAlt": "雷达导航图标",
+    "becomeASponsor": "成为赞助商",
+    "login": "登录",
+    "signUp": "注册"
+  },
+  "footer": {
+    "logoAlt": "Superteam Earn",
+    "description": "在一个地方发现来自最佳 Solana 公司的高薪加密货币悬赏、项目和资助,并使用单一个人资料申请它们。",
+    "opportunities": {
+      "title": "机会",
+      "bounties": "悬赏",
+      "projects": "项目",
+      "grants": "资助"
+    },
+    "categories": {
+      "title": "类别",
+      "content": "内容",
+      "design": "设计",
+      "development": "开发",
+      "others": "其他"
+    },
+    "about": {
+      "title": "关于",
+      "faq": "常见问题",
+      "terms": "条款",
+      "privacyPolicy": "隐私政策",
+      "changelog": "更新日志",
+      "contactUs": "联系我们"
+    },
+    "copyright": "© {{year}} Superteam。保留所有权利。",
+    "region": "地区",
+    "globalFlag": "🌍"
+  },
+  "LogoContextMenu": {
+    "logoCopied": "Logo已复制",
+    "copyLogoAsSVG": "复制Logo为SVG",
+    "downloadAllAssets": "下载所有资源"
+  },
+  "MobileNavbar": {
+    "login": "登录",
+    "signUp": "注册",
+    "completeYourProfile": "完成您的个人资料",
+    "activityFeed": "活动动态",
+    "leaderboard": "排行榜",
+    "radarNavIcon": "雷达导航图标",
+    "openDrawer": "打开抽屉",
+    "superteamEarn": "Superteam Earn"
+  },
+  "userMenu": {
+    "completeProfile": "完成您的个人资料",
+    "newUser": "新用户",
+    "profile": "个人资料",
+    "editProfile": "编辑个人资料",
+    "sponsorDashboard": "赞助商仪表板",
+    "godMode": "上帝模式",
+    "createNewSponsor": "创建新赞助商",
+    "emailPreferences": "电子邮件偏好",
+    "getHelp": "获取帮助",
+    "logout": "退出登录"
   }
 }

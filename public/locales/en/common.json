@@ -854,5 +854,90 @@
     "noCompletedListings": "No completed listings!",
     "emojiAlt": "emoji",
     "viewAll": "View All"
+  },
+  "AnnouncementBar": {
+    "clickHere": "Click here",
+    "hackathonPrizes": "to unlock $250k+ in prizes at Solana's global hackathon, exclusively on Earn",
+    "viewTracks": "View Tracks"
+  },
+  "BountySnackbar": {
+    "previewSponsorMessage": "Note: This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community",
+    "previewMessage": "This Listing Is In Preview Mode. Check Out Other Listings on Our Homepage!",
+    "inactiveMessage": "This Listing Is Inactive Right Now. Check Out Other Listings on Our Homepage!",
+    "expiredMessage": "The Deadline for This Listing Has Passed. Check Out Other Listings on the Homepage!",
+    "cautionMessage": "Proceed with caution! Some users have flagged this listing as potentially misleading.",
+    "expiringMessage": "🕛 Expiring Soon: {{type}} while you still have the chance!",
+    "submit": "Submit",
+    "apply": "Apply",
+    "highRewardMessage": "🤑 Mo' Money, Fewer Problems: Higher than average total {{type}} reward",
+    "noBountySubmissions": "🔥 High chance of winning: No submissions have been made for this bounty yet!",
+    "noProjectApplications": "🔥 The Odds Are in Your Favour! No applications yet",
+    "fewBountySubmissions": "🔥 High chance of winning: Only {{count}} submission(s) have been made for this bounty yet!",
+    "fewProjectApplications": "🔥 The Odds Are in Your Favour! Not too many applications yet",
+    "editIcon": "Edit icon"
+  },
+  "desktopNavbar": {
+    "logoAlt": "Superteam Earn",
+    "sponsors": "SPONSORS",
+    "search": "Search",
+    "radarNavIconAlt": "Radar Nav Icon",
+    "becomeASponsor": "Become a Sponsor",
+    "login": "Login",
+    "signUp": "Sign Up"
+  },
+  "footer": {
+    "logoAlt": "Superteam Earn",
+    "description": "Discover high paying crypto bounties, projects and grants from the best Solana companies in one place and apply to them using a single profile.",
+    "opportunities": {
+      "title": "Opportunities",
+      "bounties": "Bounties",
+      "projects": "Projects",
+      "grants": "Grants"
+    },
+    "categories": {
+      "title": "Categories",
+      "content": "Content",
+      "design": "Design",
+      "development": "Development",
+      "others": "Others"
+    },
+    "about": {
+      "title": "About",
+      "faq": "FAQ",
+      "terms": "Terms",
+      "privacyPolicy": "Privacy Policy",
+      "changelog": "Changelog",
+      "contactUs": "Contact Us"
+    },
+    "copyright": "© {{year}} Superteam. All rights reserved.",
+    "region": "REGION",
+    "globalFlag": "🌍"
+  },
+  "LogoContextMenu": {
+    "logoCopied": "Logo copied",
+    "copyLogoAsSVG": "Copy logo as SVG",
+    "downloadAllAssets": "Download all assets"
+  },
+  "MobileNavbar": {
+    "login": "Login",
+    "signUp": "Sign Up",
+    "completeYourProfile": "Complete your Profile",
+    "activityFeed": "Activity Feed",
+    "leaderboard": "Leaderboard",
+    "radarNavIcon": "Radar Nav Icon",
+    "openDrawer": "Open Drawer",
+    "superteamEarn": "Superteam Earn"
+  },
+  "userMenu": {
+    "completeProfile": "Complete your Profile",
+    "newUser": "New User",
+    "profile": "Profile",
+    "editProfile": "Edit Profile",
+    "sponsorDashboard": "Sponsor Dashboard",
+    "godMode": "God Mode",
+    "createNewSponsor": "Create New Sponsor",
+    "emailPreferences": "Email Preferences",
+    "getHelp": "Get Help",
+    "logout": "Logout"
   }
 }

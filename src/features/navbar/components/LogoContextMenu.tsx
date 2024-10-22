@@ -8,6 +8,7 @@ import {
   useClipboard,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -20,12 +21,13 @@ export const LogoContextMenu = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { t } = useTranslation('common');
   const { onCopy: onCopyLogo } = useClipboard(logoSvg);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleCopyLogo = () => {
     onCopyLogo();
-    toast.success('Logo copied');
+    toast.success(t('LogoContextMenu.logoCopied'));
   };
 
   const handleDownload = () => {
@@ -53,10 +55,10 @@ export const LogoContextMenu = ({
         </MenuButton>
         <MenuList>
           <MenuItem icon={<CopyIcon />} onClick={handleCopyLogo}>
-            Copy logo as SVG
+            {t('LogoContextMenu.copyLogoAsSVG')}
           </MenuItem>
           <MenuItem icon={<DownloadIcon />} onClick={handleDownload}>
-            Download all assets
+            {t('LogoContextMenu.downloadAllAssets')}
           </MenuItem>
         </MenuList>
       </Menu>

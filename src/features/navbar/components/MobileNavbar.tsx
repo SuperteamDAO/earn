@@ -98,7 +98,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                   size="md"
                   variant="unstyled"
                 >
-                  Login
+                  {t('MobileNavbar.login')}
                 </Button>
                 <Divider
                   h={5}
@@ -117,7 +117,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                   size="md"
                   variant="unstyled"
                 >
-                  Sign Up
+                  {t('MobileNavbar.signUp')}
                 </Button>
               </Flex>
             )}
@@ -132,7 +132,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 size="md"
                 variant="unstyled"
               >
-                Complete your Profile
+                {t('MobileNavbar.completeYourProfile')}
               </Button>
             )}
             <Divider my={2} borderColor={'brand.slate.300'} />
@@ -165,17 +165,21 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                     }}
                     key={navItem.label}
                     href={navItem.href ?? '#'}
-                    label={renderLabel(navItem)}
+                    label={t(renderLabel(navItem))}
                     isActive={isCurrent}
                   />
                 );
               })}
             </Flex>
             <Divider my={2} borderColor={'brand.slate.300'} />
-            <NavLink href={'/feed'} label={'Activity Feed'} isActive={false} />
+            <NavLink
+              href={'/feed'}
+              label={t('MobileNavbar.activityFeed')}
+              isActive={false}
+            />
             <NavLink
               href={'/leaderboard'}
-              label={'Leaderboard'}
+              label={t('MobileNavbar.leaderboard')}
               isActive={false}
             />
             <Divider my={2} borderColor={'brand.slate.300'} />
@@ -189,7 +193,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               <Image
                 h={6}
                 objectFit={'contain'}
-                alt="Radar Nav Icon"
+                alt={t('MobileNavbar.radarNavIcon')}
                 src="/assets/hackathon/radar/nav.png"
               />
             </Link>
@@ -219,7 +223,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               bg="transparent"
               _hover={{ bg: 'transparent' }}
               _active={{ bg: 'transparent' }}
-              aria-label="Open Drawer"
+              aria-label={t('MobileNavbar.openDrawer')}
               icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
               onClick={onDrawerOpen}
             />
@@ -240,7 +244,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 h={5}
                 cursor="pointer"
                 objectFit={'contain'}
-                alt={'Superteam Earn'}
+                alt={t('MobileNavbar.superteamEarn')}
                 src={'/assets/logo/logo.svg'}
               />
             </Link>
@@ -259,7 +263,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               size="sm"
               variant="unstyled"
             >
-              Login
+              {t('MobileNavbar.login')}
             </Button>
           )}
         </Flex>
@@ -291,7 +295,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 className="ph-no-capture"
                 key={navItem.label}
                 href={navItem.href ?? '#'}
-                label={renderLabel(navItem)}
+                label={t(renderLabel(navItem))}
                 isActive={isCurrent}
                 fontSize={'sm'}
                 fontWeight={500}

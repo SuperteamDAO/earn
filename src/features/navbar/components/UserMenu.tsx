@@ -15,6 +15,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { useTranslation } from 'next-i18next';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
 
@@ -24,6 +25,7 @@ import { useLogout, useUser } from '@/store/user';
 export function UserMenu({}) {
   const router = useRouter();
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
 
   const { user } = useUser();
   const logout = useLogout();
@@ -71,7 +73,7 @@ export function UserMenu({}) {
           size="sm"
           variant={'ghost'}
         >
-          Complete your Profile
+          {t('userMenu.completeProfile')}
         </Button>
       )}
       <Menu>
@@ -108,7 +110,7 @@ export function UserMenu({}) {
               ml={2}
             >
               <Text color="brand.slate.600" fontSize="sm" fontWeight={500}>
-                {user?.firstName ?? 'New User'}
+                {user?.firstName ?? t('userMenu.newUser')}
               </Text>
             </Flex>
           </Flex>
@@ -127,7 +129,7 @@ export function UserMenu({}) {
                   posthog.capture('profile_user menu');
                 }}
               >
-                Profile
+                {t('userMenu.profile')}
               </MenuItem>
               <MenuItem
                 className="ph-no-capture"
@@ -140,7 +142,7 @@ export function UserMenu({}) {
                   posthog.capture('edit profile_user menu');
                 }}
               >
-                Edit Profile
+                {t('userMenu.editProfile')}
               </MenuItem>
             </>
           )}
@@ -158,11 +160,10 @@ export function UserMenu({}) {
                   posthog.capture('sponsor dashboard_user menu');
                 }}
               >
-                Sponsor Dashboard
+                {t('userMenu.sponsorDashboard')}
               </MenuItem>
             </>
           )}
-          <MenuDivider />
           {session?.user?.role === 'GOD' && (
             <Box display={{ base: 'none', sm: 'block' }}>
               <MenuGroup
@@ -171,7 +172,7 @@ export function UserMenu({}) {
                 color="brand.slate.400"
                 fontSize="xs"
                 fontWeight={500}
-                title="God Mode"
+                title={t('userMenu.godMode')}
               >
                 <MenuItem
                   as={NextLink}
@@ -180,7 +181,7 @@ export function UserMenu({}) {
                   fontWeight={600}
                   href={'/new/sponsor'}
                 >
-                  Create New Sponsor
+                  {t('userMenu.createNewSponsor')}
                 </MenuItem>
               </MenuGroup>
               <MenuDivider />
@@ -197,7 +198,7 @@ export function UserMenu({}) {
                 posthog.capture('email preferences_user menu');
               }}
             >
-              Email Preferences
+              {t('userMenu.emailPreferences')}
             </MenuItem>
           )}
           <MenuItem
@@ -210,7 +211,7 @@ export function UserMenu({}) {
               posthog.capture('get help_user menu');
             }}
           >
-            Get Help
+            {t('userMenu.getHelp')}
           </MenuItem>
           <MenuItem
             className="ph-no-capture"
@@ -222,7 +223,7 @@ export function UserMenu({}) {
               logout();
             }}
           >
-            Logout
+            {t('userMenu.logout')}
           </MenuItem>
         </MenuList>
       </Menu>
