@@ -10,8 +10,8 @@ interface FeedPostParams {
 
 const fetchFeedPost = async (
   params: FeedPostParams,
-): Promise<FeedDataProps> => {
-  const { data } = await axios.get<FeedDataProps>(
+): Promise<FeedDataProps[]> => {
+  const { data } = await axios.get<FeedDataProps[]>(
     `/api/feed/${params.type}/${params.id}/get`,
     {},
   );

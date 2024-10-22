@@ -18,15 +18,9 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   try {
-    const {
-      pocId,
-      message,
-      refId,
-      refType,
-      replyToId,
-      submissionId,
-      replyToUserId,
-    } = req.body;
+    const { pocId, message, refId, replyToId, submissionId, replyToUserId } =
+      req.body;
+    const refType = req.body.refType as CommentRefType;
     let { type } = req.body as { type: CommentType | undefined };
     if (!type) type = 'NORMAL';
 
@@ -105,6 +99,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
           userId: taggedUser.id,
           otherInfo: {
             personName: result.author.username,
+            type: refType,
           },
           triggeredBy: userId,
         });
@@ -119,6 +114,9 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
           id: refId,
           userId: replyToUserId as string,
           triggeredBy: userId,
+          otherInfo: {
+            type: refType,
+          },
         });
       }
 
@@ -137,13 +135,14 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
           });
         }
 
-        if (refType === 'SUBMISSION') {
-          logger.info(`Sending email notification for submission comment`);
+        if (refType !== 'BOUNTY' && type === 'NORMAL') {
+          logger.info(`Sending email notification for activity comment`);
           sendEmailNotification({
-            type: 'commentSubmission',
+            type: 'commentActivity',
             id: refId,
             otherInfo: {
               personName: result?.author?.firstName,
+              type: refType,
             },
             triggeredBy: userId,
           });

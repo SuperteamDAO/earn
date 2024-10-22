@@ -130,7 +130,7 @@ export default async function handler(
     });
 
     const submissionHighlighted =
-      !!id && type === 'submission'
+      !submissions.find((s) => s.id === id) && !!id && type === 'submission'
         ? await prisma.submission.findUnique({
             where: {
               id,
@@ -181,7 +181,7 @@ export default async function handler(
       });
     }
     const powHighlighted =
-      !!id && type === 'pow'
+      !pow.find((p) => p.id === id) && !!id && type === 'pow'
         ? await prisma.poW.findUnique({
             where: {
               id,
@@ -248,7 +248,9 @@ export default async function handler(
     });
 
     const grantApplicationHighlighted =
-      !!id && type === 'grant-application'
+      !grantApplications.find((ga) => ga.id === id) &&
+      !!id &&
+      type === 'grant-application'
         ? await prisma.grantApplication.findUnique({
             where: {
               id,
@@ -295,7 +297,7 @@ export default async function handler(
         sponsorName: sub.listing.sponsor.name,
         //@ts-expect-error prisma ts error, this exists based on above include
         sponsorLogo: sub.listing.sponsor.logo,
-        type: 'Submission',
+        type: 'submission',
         like: sub.like,
         likeCount: sub.likeCount,
         ogImage: sub.ogImage,
@@ -311,7 +313,7 @@ export default async function handler(
         lastName: pow.user.lastName,
         photo: pow.user.photo,
         username: pow.user.username,
-        type: 'PoW',
+        type: 'pow',
         link: pow.link,
         like: pow.like,
         likeCount: pow.likeCount,
@@ -334,7 +336,7 @@ export default async function handler(
         sponsorName: ga.grant.sponsor.name,
         //@ts-expect-error prisma ts error, this exists based on above include
         sponsorLogo: ga.grant.sponsor.logo,
-        type: 'Grant',
+        type: 'grant-application',
         grantApplicationAmount: ga.approvedAmount,
         like: ga.like,
         likeCount: ga.likeCount,

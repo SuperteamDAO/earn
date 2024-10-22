@@ -4,10 +4,11 @@ import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
-import { useGetFeed } from '@/features/feed';
+import { type FeedPostType, useGetFeed } from '@/features/feed';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 interface ActivityCardProps {
+  id: string;
   firstName: string;
   lastName: string;
   username: string;
@@ -16,11 +17,12 @@ interface ActivityCardProps {
   listingType: 'bounty' | 'hackathon' | 'project';
   isWinner: boolean;
   isWinnersAnnounced: boolean;
-  type: string;
+  type: FeedPostType;
   ogImage: string;
 }
 
 const ActivityCard = ({
+  id,
   firstName,
   lastName,
   username,
@@ -45,7 +47,7 @@ const ActivityCard = ({
       project: 'just got selected for a project',
     };
 
-    if (type === 'PoW') {
+    if (type === 'pow') {
       return 'just added a personal project';
     } else if (isWinner && isWinnersAnnounced) {
       return winnerActionText[listingType] || 'just achieved something great';
@@ -57,7 +59,10 @@ const ActivityCard = ({
   const actionText = getActionText();
 
   return (
-    <Flex as={NextLink} href={'/feed/?filter=new'}>
+    <Flex
+      as={NextLink}
+      href={!!id ? `/feed/?type=${type}&id=${id}` : '/feed/?filter=new'}
+    >
       <OgImageViewer
         h={12}
         w={20}
@@ -138,6 +143,7 @@ export const RecentActivity = () => {
           return (
             <ActivityCard
               key={i}
+              id={act.id}
               link={act.link}
               firstName={act.firstName}
               lastName={act.lastName}

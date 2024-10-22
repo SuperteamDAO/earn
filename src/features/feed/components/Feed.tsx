@@ -159,7 +159,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
           <>
             {feedItems.map((item, index) => {
               switch (item.type) {
-                case 'Submission':
+                case 'submission':
                   return (
                     <SubmissionCard
                       key={index}
@@ -167,11 +167,11 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
                       type="activity"
                     />
                   );
-                case 'PoW':
+                case 'pow':
                   return (
                     <PowCard key={index} pow={item as any} type="activity" />
                   );
-                case 'Grant':
+                case 'grant-application':
                   return (
                     <GrantCard
                       type="activity"

@@ -9,8 +9,6 @@ interface Props {
 }
 
 export default function FeedPage({ id, type }: Props) {
-  console.log('feed page id', id);
-  console.log('feed page type', type);
   return <Feed id={id || undefined} type={type || undefined} />;
 }
 
@@ -29,8 +27,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     id = null;
   }
 
-  console.log('feed ssr id', id);
-  console.log('feed ssr type', type);
   return {
     props: {
       type,

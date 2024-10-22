@@ -112,7 +112,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
       return talent?.feed;
     }
 
-    return talent?.feed?.filter((item) => item.type === 'PoW');
+    return talent?.feed?.filter((item) => item.type === 'pow');
   }, [activeTab, talent?.feed]);
 
   const addNewPow = () => {
@@ -584,7 +584,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 ) : (
                   filteredFeed?.map((item, index) => {
                     switch (item.type) {
-                      case 'Submission':
+                      case 'submission':
                         return (
                           <SubmissionCard
                             key={index}
@@ -592,7 +592,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                             type="profile"
                           />
                         );
-                      case 'PoW':
+                      case 'pow':
                         return (
                           <PowCard
                             key={index}
@@ -600,7 +600,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                             type="profile"
                           />
                         );
-                      case 'Grant':
+                      case 'grant-application':
                         return (
                           <GrantCard
                             type="profile"

@@ -17,6 +17,7 @@ interface SubCardProps {
 }
 
 export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
+  console.log('sub', sub);
   const firstName = sub?.firstName;
   const lastName = sub?.lastName;
   const photo = sub?.photo;

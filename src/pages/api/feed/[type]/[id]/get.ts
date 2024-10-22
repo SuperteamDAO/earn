@@ -1,4 +1,4 @@
-import { type PoW } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 
@@ -35,114 +35,153 @@ export default async function handler(
   }
 
   try {
-    let feedPost: any | null = null;
+    const commentsWhere: Prisma.CommentFindManyArgs['where'] = {
+      isActive: true,
+      isArchived: false,
+      replyToId: null,
+    };
+
+    const commentsInclude: Prisma.CommentFindManyArgs = {
+      where: commentsWhere,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 3,
+      select: {
+        author: {
+          select: {
+            photo: true,
+            firstName: true,
+          },
+        },
+      },
+    };
+
+    const commentsCountInclude: Prisma.CommentFindManyArgs = {
+      where: commentsWhere,
+    };
+    let feedPost: any[] | null = null;
     switch (type) {
       case 'submission': {
+        const submissionInclude: Prisma.SubmissionInclude = {
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              photo: true,
+              username: true,
+            },
+          },
+          listing: {
+            select: {
+              id: true,
+              title: true,
+              rewards: true,
+              type: true,
+              slug: true,
+              isWinnersAnnounced: true,
+              token: true,
+              sponsor: {
+                select: {
+                  name: true,
+                  logo: true,
+                },
+              },
+              winnersAnnouncedAt: true,
+            },
+          },
+          Comments: commentsInclude,
+          _count: {
+            select: {
+              Comments: commentsCountInclude,
+            },
+          },
+        };
         const submission = await prisma.submission.findUnique({
           where: {
             id,
           },
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                photo: true,
-                username: true,
-              },
-            },
-            listing: {
-              select: {
-                id: true,
-                title: true,
-                rewards: true,
-                type: true,
-                slug: true,
-                isWinnersAnnounced: true,
-                token: true,
-                sponsor: {
-                  select: {
-                    name: true,
-                    logo: true,
-                  },
-                },
-                winnersAnnouncedAt: true,
-              },
-            },
-          },
+          include: submissionInclude,
         });
         if (submission) {
-          feedPost = {
-            id: submission.listing.isWinnersAnnounced ? submission.id : null,
+          const similarSubmissions = await prisma.submission.findMany({
+            where: {
+              id: {
+                not: id,
+              },
+              listingId: submission?.listingId,
+            },
+            include: submissionInclude,
+          });
+          feedPost = [submission, ...similarSubmissions].map((sub) => ({
+            id: sub.listing.isWinnersAnnounced ? sub.id : null,
             createdAt:
-              submission.isWinner &&
-              submission.listing.isWinnersAnnounced &&
-              submission.listing.winnersAnnouncedAt
-                ? submission.listing.winnersAnnouncedAt
-                : submission.createdAt,
-            link: submission.listing.isWinnersAnnounced
-              ? submission.link
+              sub.isWinner &&
+              sub.listing.isWinnersAnnounced &&
+              sub.listing.winnersAnnouncedAt
+                ? sub.listing.winnersAnnouncedAt
+                : sub.createdAt,
+            link: sub.listing.isWinnersAnnounced ? sub.link : null,
+            tweet: sub.listing.isWinnersAnnounced ? sub.tweet : null,
+            otherInfo: sub.listing.isWinnersAnnounced ? sub.otherInfo : null,
+            isWinner: sub.listing.isWinnersAnnounced ? sub.isWinner : null,
+            winnerPosition: sub.listing.isWinnersAnnounced
+              ? sub.winnerPosition
               : null,
-            tweet: submission.listing.isWinnersAnnounced
-              ? submission.tweet
-              : null,
-            otherInfo: submission.listing.isWinnersAnnounced
-              ? submission.otherInfo
-              : null,
-            isWinner: submission.listing.isWinnersAnnounced
-              ? submission.isWinner
-              : null,
-            winnerPosition: submission.listing.isWinnersAnnounced
-              ? submission.winnerPosition
-              : null,
-            firstName: submission.user.firstName,
-            lastName: submission.user.lastName,
-            photo: submission.user.photo,
-            username: submission.user.username,
-            listingId: submission.listing.id,
-            listingTitle: submission.listing.title,
-            rewards: submission.listing.rewards,
-            listingType: submission.listing.type,
-            listingSlug: submission.listing.slug,
-            isWinnersAnnounced: submission.listing.isWinnersAnnounced,
-            token: submission.listing.token,
-            sponsorName: submission.listing.sponsor.name,
-            sponsorLogo: submission.listing.sponsor.logo,
-            type: 'Submission',
-            like: submission.like,
-            likeCount: submission.likeCount,
-            ogImage: submission.ogImage,
-          };
+            firstName: sub.user.firstName,
+            lastName: sub.user.lastName,
+            photo: sub.user.photo,
+            username: sub.user.username,
+            listingId: sub.listing.id,
+            listingTitle: sub.listing.title,
+            rewards: sub.listing.rewards,
+            listingType: sub.listing.type,
+            listingSlug: sub.listing.slug,
+            isWinnersAnnounced: sub.listing.isWinnersAnnounced,
+            token: sub.listing.token,
+            //@ts-expect-error prisma ts error, this exists based on above include
+            sponsorName: sub.listing.sponsor.name,
+            //@ts-expect-error prisma ts error, this exists based on above include
+            sponsorLogo: sub.listing.sponsor.logo,
+            type: 'submission',
+            like: sub.like,
+            likeCount: sub.likeCount,
+            ogImage: sub.ogImage,
+            commentCount: sub._count.Comments,
+            recentCommenters: sub.Comments,
+          }));
         }
         break;
       }
       case 'pow': {
-        const pow:
-          | (PoW & {
-              user: {
-                firstName: string | null;
-                lastName: string | null;
-                photo: string | null;
-                username: string | null;
-              };
-            })
-          | null = await prisma.poW.findUnique({
-          where: {
-            id,
-          },
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                photo: true,
-                username: true,
-              },
+        const poWInclude: Prisma.PoWInclude = {
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              photo: true,
+              username: true,
             },
           },
-        });
+          Comments: commentsInclude,
+          _count: {
+            select: {
+              Comments: commentsCountInclude,
+            },
+          },
+        };
+        type PoWWithUserAndCommentsCount = Prisma.PoWGetPayload<{
+          include: typeof poWInclude;
+        }>;
+        const pow: PoWWithUserAndCommentsCount | null =
+          await prisma.poW.findUnique({
+            where: {
+              id,
+            },
+            include: poWInclude,
+          });
         if (pow) {
-          feedPost = {
+          feedPost = [pow].map((pow) => ({
             id: pow.id,
             createdAt: pow.createdAt,
             description: pow.description,
@@ -151,76 +190,90 @@ export default async function handler(
             lastName: pow.user.lastName,
             photo: pow.user.photo,
             username: pow.user.username,
-            type: 'PoW',
+            type: 'pow',
             link: pow.link,
             like: pow.like,
             likeCount: pow.likeCount,
             ogImage: pow.ogImage,
-          };
+            commentCount: pow._count.Comments,
+            recentCommenters: pow.Comments,
+          }));
         }
         break;
       }
       case 'grant-application': {
-        const grantApplication = await prisma.grantApplication.findUnique({
-          where: {
-            id,
-          },
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                photo: true,
-                username: true,
-              },
+        const grantApplicationInclude: Prisma.GrantApplicationInclude = {
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              photo: true,
+              username: true,
             },
-            grant: {
-              select: {
-                id: true,
-                title: true,
-                slug: true,
-                token: true,
-                sponsor: {
-                  select: {
-                    name: true,
-                    logo: true,
-                  },
+          },
+          grant: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              token: true,
+              sponsor: {
+                select: {
+                  name: true,
+                  logo: true,
                 },
               },
             },
           },
+          Comments: commentsInclude,
+          _count: {
+            select: {
+              Comments: commentsCountInclude,
+            },
+          },
+        };
+        const grantApplication = await prisma.grantApplication.findUnique({
+          where: {
+            id,
+          },
+          include: grantApplicationInclude,
         });
         if (grantApplication) {
-          feedPost = {
-            id: grantApplication.id,
-            createdAt: grantApplication.decidedAt || grantApplication.createdAt,
-            firstName: grantApplication.user.firstName,
-            lastName: grantApplication.user.lastName,
-            photo: grantApplication.user.photo,
-            username: grantApplication.user.username,
-            listingId: grantApplication.grant.id,
-            listingTitle: grantApplication.grant.title,
-            listingSlug: grantApplication.grant.slug,
-            token: grantApplication.grant.token,
-            sponsorName: grantApplication.grant.sponsor.name,
-            sponsorLogo: grantApplication.grant.sponsor.logo,
-            type: 'Grant',
-            grantApplicationAmount: grantApplication.approvedAmount,
-            like: grantApplication.like,
-            likeCount: grantApplication.likeCount,
-          };
+          feedPost = [grantApplication].map((ga) => ({
+            id: ga.id,
+            createdAt: ga.decidedAt || ga.createdAt,
+            firstName: ga.user.firstName,
+            lastName: ga.user.lastName,
+            photo: ga.user.photo,
+            username: ga.user.username,
+            listingId: ga.grant.id,
+            listingTitle: ga.grant.title,
+            listingSlug: ga.grant.slug,
+            token: ga.grant.token,
+            //@ts-expect-error prisma ts error, this exists based on above include
+            sponsorName: ga.grant.sponsor.name,
+            //@ts-expect-error prisma ts error, this exists based on above include
+            sponsorLogo: ga.grant.sponsor.logo,
+            type: 'grant-application',
+            grantApplicationAmount: ga.approvedAmount,
+            like: ga.like,
+            likeCount: ga.likeCount,
+            commentCount: ga._count.Comments,
+            recentCommenters: ga.Comments,
+          }));
         }
         break;
       }
     }
     if (!feedPost) {
-      logger.warn(`No Post found for type ${type} with ID ${id}`);
+      logger.warn(`No Posts found for type ${type} with ID ${id}`);
       res.status(404).send({
-        error: `No Post found for type ${type} with ID ${id}`,
-        message: `No Post found for type ${type} with ID ${id}`,
+        error: `No Posts found for type ${type} with ID ${id}`,
+        message: `No Posts found for type ${type} with ID ${id}`,
       });
       return;
     }
+    console.log('feedPost', feedPost);
     res.status(200).json(feedPost);
     return;
   } catch (error: any) {

@@ -114,11 +114,7 @@ export const SubmissionCard = ({
           </Box>
         )}
       </HStack>
-      <LinkOverlay
-        as={NextLink}
-        w="full"
-        href={`/feed?type=submission&id=${id}`}
-      >
+      <LinkOverlay as={NextLink} w="full" href={`/feed/submission/${id}`}>
         <Image
           w={'full'}
           h={48}
@@ -157,7 +153,7 @@ export const SubmissionCard = ({
           />
           {likes?.length}
         </Button>
-        <LinkOverlay as={NextLink} href={`/feed?type=submission&id=${id}`}>
+        <LinkOverlay as={NextLink} href={`/feed/submission/${id}`}>
           <LuMessageCircle
             size={'1.23rem'}
             fill={'#CBD5E1'}

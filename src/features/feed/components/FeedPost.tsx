@@ -1,13 +1,11 @@
-import { Box, Image, Text, VStack } from '@chakra-ui/react';
+import { Image, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect } from 'react';
 
-import { Comments } from '@/features/comments';
 import { FeedPageLayout } from '@/layouts/Feed';
 
 import { fetchFeedPostQuery } from '../queries';
 import { type FeedPostType } from '../types';
-import { convertFeedPostTypeToCommentRefType } from '../utils';
 import { FeedCardContainerSkeleton } from './FeedCardContainer';
 import { GrantCard } from './grantCard';
 import { PowCard } from './powCard';
@@ -18,34 +16,17 @@ interface Props {
   id: string;
 }
 
-const CardComponents: Record<
-  FeedPostType,
-  (data: any, commentCount: number) => JSX.Element
-> = {
-  submission: (data, commentCount) => (
-    <SubmissionCard sub={data} type="activity" commentCount={commentCount} />
-  ),
-  pow: (data, commentCount) => (
-    <PowCard pow={data as any} type="activity" commentCount={commentCount} />
-  ),
-  'grant-application': (data, commentCount) => (
-    <GrantCard
-      grant={data as any}
-      type="activity"
-      commentCount={commentCount}
-    />
-  ),
-};
-
 export const FeedPost = ({ type, id }: Props) => {
-  const [commentCount, setCommentCount] = useState(0);
-
   const { data, isLoading } = useQuery(
     fetchFeedPostQuery({
       type,
       id,
     }),
   );
+
+  useEffect(() => {
+    console.log('feed data', data);
+  }, [data]);
 
   if (!data && !isLoading) {
     return (
@@ -81,31 +62,34 @@ export const FeedPost = ({ type, id }: Props) => {
       </FeedPageLayout>
     );
   }
-  const CardComponent = CardComponents[type];
-
   return (
     <FeedPageLayout>
       {isLoading || !data ? (
         <FeedCardContainerSkeleton />
       ) : (
         <>
-          {CardComponent ? CardComponent(data, commentCount) : null}
-          <Box px={6}>
-            {!!data.id && (
-              <Comments
-                isAnnounced={false}
-                listingSlug={''}
-                listingType={''}
-                poc={undefined}
-                sponsorId={undefined}
-                isVerified={false}
-                refId={id}
-                refType={convertFeedPostTypeToCommentRefType(type)}
-                count={commentCount}
-                setCount={setCommentCount}
-              />
-            )}
-          </Box>
+          {data.map((item, index) => {
+            switch (item.type) {
+              case 'submission':
+                return (
+                  <SubmissionCard
+                    key={index}
+                    sub={item as any}
+                    type="activity"
+                  />
+                );
+              case 'pow':
+                return (
+                  <PowCard key={index} pow={item as any} type="activity" />
+                );
+              case 'grant-application':
+                return (
+                  <GrantCard type="activity" grant={item as any} key={index} />
+                );
+              default:
+                return null;
+            }
+          })}
         </>
       )}
     </FeedPageLayout>

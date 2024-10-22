@@ -30,7 +30,7 @@ export interface FeedDataProps {
   token: string;
   sponsorName: string;
   sponsorLogo: string;
-  type: string;
+  type: FeedPostType;
   userId: string;
   likeCount: number;
   ogImage: string;

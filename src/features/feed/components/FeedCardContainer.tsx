@@ -127,8 +127,6 @@ export const FeedCardContainer = ({
   const posthog = usePostHog();
   const isSM = useBreakpointValue({ base: false, md: true });
 
-  const isFeedPage = router.pathname === '/feed';
-
   return (
     <Box
       mx="0"
@@ -259,14 +257,14 @@ export const FeedCardContainer = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   e.nativeEvent.stopImmediatePropagation();
-                  if (isFeedPage) onToggleComment();
+                  onToggleComment();
                 }}
               >
                 <GoComment
                   color={'#64748b'}
                   size={isSM ? '21px' : '19px'}
                   style={{
-                    cursor: isFeedPage ? 'pointer' : 'default',
+                    cursor: 'pointer',
                   }}
                 />
                 {!!commentCount && (
