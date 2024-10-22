@@ -12,7 +12,6 @@ import { CATEGORY_NAV_ITEMS } from '@/features/navbar';
 import { useUser } from '@/store/user';
 
 import { regionLiveCountQuery } from '../queries/region-live-count';
-import { t } from 'i18next';
 
 interface PillTabProps {
   href: string;
@@ -24,7 +23,6 @@ interface PillTabProps {
 function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
   const router = useRouter();
   const posthog = usePostHog();
-  const { t } = useTranslation('common');
 
   return (
     <Link
@@ -59,6 +57,7 @@ function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
 
 export function NavTabs({ ...flexProps }: FlexProps) {
   const { user } = useUser();
+  const { t } = useTranslation('common');
 
   const superteam = useMemo(() => {
     return (
