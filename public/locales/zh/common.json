@@ -1,7 +1,5 @@
 {
   "freelanceGigs": "自由职业机会",
-  "become_a_sponsor": "成为赞助商",
-  "welcome_back": "欢迎回来",
   "grantsDescription": "为开发者提供的无股权融资机会",
   "noGrantsAvailable": "暂无可用资助！",
   "subscribeToNotifications": "订阅通知以获取新资助信息。",
@@ -187,7 +185,7 @@
   },
   "welcomeSponsorTemplate": {
     "welcome": "欢迎来到 Superteam Earn！",
-    "thankYou": "感谢您的注册。Earn 是加密货币领域首屈一指的人才匹配平台，受到数百家领公司和数千名经过验证的加密货币人才的青睐。",
+    "thankYou": "感谢您的注册。Earn 是加密货币领域首屈一指的人才匹配平台，受到数百家领公司和数千名经过验证人才的青睐",
     "helpMessage": "如果您在 Earn 上设置列表时需要任何帮助，请随时通过 Telegram ",
     "contactName": "Pratik",
     "onTelegram": "。",
@@ -365,5 +363,58 @@
     "projects": "项目",
     "grants": "资助",
     "hackathons": "黑客马拉松"
+  },
+  "RecentEarners": {
+    "recentEarners": "最近赚取者",
+    "leaderboard": "排行榜",
+    "tokenIconAlt": "{{token}} 图标"
+  },
+  "RecentActivity": {
+    "recentActivity": "最近活动",
+    "viewAll": "查看全部",
+    "justSubmittedBounty": "刚刚提交了一个悬赏",
+    "justSubmittedHackathon": "刚刚提交了一个黑客马拉松项目",
+    "justAppliedProject": "刚刚申请了一个项目",
+    "justWonBounty": "刚刚赢得了一个悬赏",
+    "justWonHackathonTrack": "刚刚赢得了一个黑客马拉松赛道",
+    "justSelectedProject": "刚刚被选中参与一个项目",
+    "justAddedPersonalProject": "刚刚添加了一个个人项目",
+    "justAchievedSomethingGreat": "刚刚取得了重大成就",
+    "justTookAction": "刚刚采取了行动"
+  },
+  "RegionBanner": {
+    "greeting": "{{hello}}，{{region}}",
+    "welcome": "欢迎来到 Superteam {{region}} 的收益页面 — 利用这些机会按全球标准赚取收入，并成为 {{region}} 最独特的 Solana 社区成员！"
+  },
+  "SideBar": {
+    "liveListings": "实时列表",
+    "viewAll": "查看全部"
+  },
+  "SidebarBanner": {
+    "buildProject": "为最新的 Solana 全球黑客马拉松构建项目！",
+    "submitTracks": "提交到 Earn 上的任何 Radar 侧赛道，有机会赢得超过 25 万美元的奖金池。提交截止日期为 2024 年 10 月 9 日（UTC）。",
+    "viewTracks": "查看赛道"
+  },
+  "SponsorBanner": {
+    "becomeASponsor": "成为赞助商",
+    "reachTalent": "通过一个仪表板接触 30,000+ 加密人才",
+    "sponsorBriefcaseAlt": "赞助商公文包"
+  },
+  "TotalStats": {
+    "dollarIconAlt": "美元图标",
+    "totalValueEarned": "总赚取价值",
+    "suitcaseIconAlt": "公文包图标",
+    "opportunitiesListed": "已列出的机会"
+  },
+  "UserStatsBanner": {
+    "welcomeBack": "欢迎回来，{{name}}",
+    "gladToHaveYou": "我们很高兴您能在 Earn 上",
+    "totalEarned": "总收益",
+    "participated": "已参与",
+    "won": "已获胜"
+  },
+  "VibeCard": {
+    "peopleVibing": "人正在嗨",
+    "clickToVibe": "点击嗨起来"
   }
 }

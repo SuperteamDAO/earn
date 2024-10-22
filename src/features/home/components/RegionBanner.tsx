@@ -1,10 +1,13 @@
 import { Box, Text, VStack } from '@chakra-ui/react';
 import NextImage from 'next/image';
+import { useTranslation } from 'react-i18next';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { type Superteams } from '@/constants/Superteam';
 
 export function RegionBanner({ st }: { st: (typeof Superteams)[0] }) {
+  const { t } = useTranslation();
+
   return (
     <VStack pos="relative" w="full" h="18rem">
       <NextImage
@@ -37,7 +40,10 @@ export function RegionBanner({ st }: { st: (typeof Superteams)[0] }) {
               fontSize={{ base: '2xl', md: '3xl' }}
               fontWeight="bold"
             >
-              {st.hello}, {st.displayValue}
+              {t('RegionBanner.greeting', {
+                hello: st.hello,
+                region: st.displayValue,
+              })}
             </Text>
 
             <Text
@@ -47,10 +53,7 @@ export function RegionBanner({ st }: { st: (typeof Superteams)[0] }) {
               fontSize={{ base: 'sm', md: 'lg' }}
               fontWeight="medium"
             >
-              Welcome to Superteam {st.displayValue}
-              {`'s`} earnings page — use these opportunities to earn in global
-              standards and gain membership in the most exclusive Solana
-              community of {st.displayValue}!
+              {t('RegionBanner.welcome', { region: st.displayValue })}
             </Text>
           </>
         )}

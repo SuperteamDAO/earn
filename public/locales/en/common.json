@@ -1,7 +1,5 @@
 {
   "freelanceGigs": "Freelance Gigs",
-  "become_a_sponsor": "Become a Sponsor",
-  "welcome_back": "Welcome back",
   "grants": "Grants",
   "grantsDescription": "Equity-free funding opportunities for builders",
   "noGrantsAvailable": "No grants available!",
@@ -365,5 +363,58 @@
     "projects": "Projects",
     "grants": "Grants",
     "hackathons": "Hackathons"
+  },
+  "RecentEarners": {
+    "recentEarners": "RECENT EARNERS",
+    "leaderboard": "Leaderboard",
+    "tokenIconAlt": "{{token}} icon"
+  },
+  "RecentActivity": {
+    "recentActivity": "RECENT ACTIVITY",
+    "viewAll": "View All",
+    "justSubmittedBounty": "just submitted a bounty",
+    "justSubmittedHackathon": "just submitted to a hackathon",
+    "justAppliedProject": "just applied to a project",
+    "justWonBounty": "just won a bounty",
+    "justWonHackathonTrack": "just won a hackathon track",
+    "justSelectedProject": "just got selected for a project",
+    "justAddedPersonalProject": "just added a personal project",
+    "justAchievedSomethingGreat": "just achieved something great",
+    "justTookAction": "just took an action"
+  },
+  "RegionBanner": {
+    "greeting": "{{hello}}, {{region}}",
+    "welcome": "Welcome to Superteam {{region}}'s earnings page — use these opportunities to earn in global standards and gain membership in the most exclusive Solana community of {{region}}!"
+  },
+  "SideBar": {
+    "liveListings": "LIVE LISTINGS",
+    "viewAll": "View All"
+  },
+  "SidebarBanner": {
+    "buildProject": "Build a project for the latest Solana global hackathon!",
+    "submitTracks": "Submit to any of the Radar Side Tracks on Earn, and stand to win from a pool of $250k+. Deadline for submissions is October 9, 2024 (UTC).",
+    "viewTracks": "View Tracks"
+  },
+  "SponsorBanner": {
+    "becomeASponsor": "Become a Sponsor",
+    "reachTalent": "Reach 30,000+ crypto talent from one single dashboard",
+    "sponsorBriefcaseAlt": "Sponsor Briefcase"
+  },
+  "TotalStats": {
+    "dollarIconAlt": "Dollar icon",
+    "totalValueEarned": "Total Value Earned",
+    "suitcaseIconAlt": "Suitcase icon",
+    "opportunitiesListed": "Opportunities Listed"
+  },
+  "UserStatsBanner": {
+    "welcomeBack": "Welcome back, {{name}}",
+    "gladToHaveYou": "We're so glad to have you on Earn",
+    "totalEarned": "Total Earned",
+    "participated": "Participated",
+    "won": "Won"
+  },
+  "VibeCard": {
+    "peopleVibing": "people vibing rn",
+    "clickToVibe": "click to vibeeeee"
   }
 }

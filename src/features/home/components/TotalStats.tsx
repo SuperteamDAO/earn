@@ -1,4 +1,5 @@
 import { Box, Flex, Image, Skeleton, Text } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 export const TotalStats = ({
   bountyCount,
@@ -9,6 +10,8 @@ export const TotalStats = ({
   TVE: number | undefined;
   isTotalLoading: boolean;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Flex
       align={'center'}
@@ -26,7 +29,7 @@ export const TotalStats = ({
           h={'1.5625rem'}
           mr={'0.5rem'}
           mb={'auto'}
-          alt=""
+          alt={t('TotalStats.dollarIconAlt')}
           src="/assets/icons/lite-purple-dollar.svg"
         />
         <Box>
@@ -38,7 +41,7 @@ export const TotalStats = ({
             </Text>
           )}
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Total Value Earned
+            {t('TotalStats.totalValueEarned')}
           </Text>
         </Box>
       </Flex>
@@ -53,7 +56,7 @@ export const TotalStats = ({
           h={'25x'}
           mr={'0.5rem'}
           mb={'auto'}
-          alt="suitcase"
+          alt={t('TotalStats.suitcaseIconAlt')}
           src="/assets/icons/lite-purple-suitcase.svg"
         />
         <Box>
@@ -65,7 +68,7 @@ export const TotalStats = ({
             </Text>
           )}
           <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Opportunities Listed
+            {t('TotalStats.opportunitiesListed')}
           </Text>
         </Box>
       </Flex>

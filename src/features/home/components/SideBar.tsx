@@ -3,6 +3,7 @@ import { Flex, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
 
 import { recentEarnersQuery } from '@/features/listings';
 import { useUser } from '@/store/user';
@@ -22,6 +23,7 @@ interface SideBarProps {
 }
 
 export const HomeSideBar = ({ type }: SideBarProps) => {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user } = useUser();
 
@@ -36,7 +38,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
           <LiveListings>
             <Flex align="center" justify={'space-between'}>
               <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-                LIVE LISTINGS
+                {t('SideBar.liveListings')}
               </Text>
               <Text
                 as={NextLink}
@@ -45,7 +47,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
                 fontWeight={600}
                 href="/"
               >
-                View All
+                {t('SideBar.viewAll')}
                 <ArrowForwardIcon ml={1} />
               </Text>
             </Flex>
