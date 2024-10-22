@@ -12,6 +12,7 @@ import {
 import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { useListingFormStore } from '../../store';
@@ -43,14 +44,17 @@ interface QuestionCardProps {
 }
 
 const QuestionCard = ({ register, index, remove }: QuestionCardProps) => {
+  const { t } = useTranslation();
   return (
     <VStack align={'start'} w={'full'}>
       <FormControl isRequired>
-        <ListingFormLabel>Question {index + 1}</ListingFormLabel>
+        <ListingFormLabel>
+          {t('questionBuilder.question', { index: index + 1 })}
+        </ListingFormLabel>
         <Flex gap="4">
           <Input
             {...register(`eligibility.${index}.question`)}
-            placeholder="Enter your question here"
+            placeholder={t('questionBuilder.questionPlaceholder')}
           />
           {index > 0 && (
             <Button colorScheme="red" onClick={() => remove(index)}>
@@ -71,6 +75,7 @@ export const QuestionBuilder = ({
   editable,
   isDraftLoading,
 }: Props) => {
+  const { t } = useTranslation();
   const { form, updateState } = useListingFormStore();
   const { control, handleSubmit, register, reset, getValues } = useForm({
     defaultValues: {
@@ -133,15 +138,16 @@ export const QuestionBuilder = ({
     <form onSubmit={handleSubmit(onSubmit)}>
       <VStack align={'start'} gap={3} w={'2xl'} pt={5}>
         <HStack gap={3} w={'full'} p={5} bg={'#F7FAFC'} rounded={'md'}>
-          <Image alt={'hands'} src={'/assets/icons/hands.svg'} />
+          <Image
+            alt={t('questionBuilder.handsIconAlt')}
+            src={'/assets/icons/hands.svg'}
+          />
           <VStack align={'start'} justify={'start'}>
             <Text color={'#334254'} fontSize={'0.88rem'} fontWeight={600}>
-              Note
+              {t('questionBuilder.note')}
             </Text>
             <Text mt={'0px !important'} color={'#94A3B8'} fontSize={'0.88rem'}>
-              Names, Emails, Discord / Twitter IDs, SOL wallet and Profile Links
-              are collected by default. Please use this space to ask about
-              anything else!
+              {t('questionBuilder.noteDescription')}
             </Text>
           </VStack>
         </HStack>
@@ -170,7 +176,7 @@ export const QuestionBuilder = ({
             })
           }
         >
-          + Add Question
+          {t('questionBuilder.addQuestion')}
         </Button>
         <VStack gap={6} w={'full'} pt={10}>
           <Button
@@ -182,7 +188,7 @@ export const QuestionBuilder = ({
             type="submit"
             variant={!isDraft ? 'outline' : 'solid'}
           >
-            Continue
+            {t('common.continue')}
           </Button>
           {isDraft && (
             <HStack w="full">
@@ -198,7 +204,7 @@ export const QuestionBuilder = ({
                 onClick={() => onDraftClick()}
                 variant={'ghost'}
               >
-                Save Draft
+                {t('questionBuilder.saveDraft')}
               </Button>
             </HStack>
           )}
@@ -213,7 +219,7 @@ export const QuestionBuilder = ({
               onClick={() => onDraftClick()}
               variant={'solid'}
             >
-              Update Listing
+              {t('questionBuilder.updateListing')}
             </Button>
           )}
         </VStack>

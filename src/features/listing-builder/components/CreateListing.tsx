@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { SurveyModal } from '@/components/shared/Survey';
@@ -34,41 +35,6 @@ interface Props {
   prevStep?: number;
 }
 
-const defaultStepList = [
-  {
-    label: 'Template',
-    number: 1,
-    mainHead: 'List your Opportunity',
-    description:
-      'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
-  },
-  {
-    label: 'Basics',
-    number: 2,
-    mainHead: 'Create a Listing',
-    description: "Now let's learn a bit more about the work you need completed",
-  },
-  {
-    label: 'Description',
-    number: 3,
-    mainHead: 'Tell us some more',
-    description:
-      'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
-  },
-  {
-    label: 'Questions',
-    number: 4,
-    mainHead: 'Enter your questions',
-    description: 'What would you like to know about your applicants?',
-  },
-  {
-    label: 'Reward',
-    number: 5,
-    mainHead: 'Add the reward amount',
-    description: 'Decide the compensation amount for your listing',
-  },
-];
-
 export function CreateListing({
   listing,
   editable = false,
@@ -76,6 +42,7 @@ export function CreateListing({
   isDuplicating = false,
   prevStep,
 }: Props) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { user } = useUser();
   const { form, initializeForm } = useListingFormStore();
@@ -294,6 +261,39 @@ export function CreateListing({
       setIsDraftLoading(false);
     }
   };
+
+  const defaultStepList = [
+    {
+      label: t('createListing.template.label'),
+      number: 1,
+      mainHead: t('createListing.template.mainHead'),
+      description: t('createListing.template.description'),
+    },
+    {
+      label: t('createListing.basics.label'),
+      number: 2,
+      mainHead: t('createListing.basics.mainHead'),
+      description: t('createListing.basics.description'),
+    },
+    {
+      label: t('createListing.description.label'),
+      number: 3,
+      mainHead: t('createListing.description.mainHead'),
+      description: t('createListing.description.description'),
+    },
+    {
+      label: t('createListing.questions.label'),
+      number: 4,
+      mainHead: t('createListing.questions.mainHead'),
+      description: t('createListing.questions.description'),
+    },
+    {
+      label: t('createListing.reward.label'),
+      number: 5,
+      mainHead: t('createListing.reward.mainHead'),
+      description: t('createListing.reward.description'),
+    },
+  ];
 
   const getStepList = (type: string) => {
     const filteredStepList =

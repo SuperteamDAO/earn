@@ -2,6 +2,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import { useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 
@@ -28,6 +29,7 @@ export function SelectHackathon({
   type?: string;
   isExpanded?: boolean;
 }) {
+  const { t } = useTranslation();
   const [selectedHackathon, setSelectedHackathon] =
     useState<HackathonOption | null>(null);
   const setHackathonSponsor = useSetAtom(hackathonSponsorAtom);
@@ -136,7 +138,7 @@ export function SelectHackathon({
       components={{ SingleValue, Option }}
       value={selectedHackathon}
       onChange={(e) => handleChange(e)}
-      placeholder="Select Hackathon"
+      placeholder={t('SelectHackathon.selectHackathon')}
       loadOptions={loadHackathons}
       defaultOptions
       isClearable={false}

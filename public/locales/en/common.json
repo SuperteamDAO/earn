@@ -55,7 +55,9 @@
   },
   "errorSection": {
     "defaultTitle": "Error Occurred!",
-    "defaultMessage": "Something went wrong! Please try again!"
+    "defaultMessage": "Something went wrong! Please try again!",
+    "accessForbidden": "Access Forbidden",
+    "contactSupport": "Contact Support"
   },
   "imagePicker": {
     "chooseOrDrag": "Choose or drag and drop media",
@@ -465,5 +467,197 @@
       "semistarIconAlt": "semistar icon",
       "improveSkills": "Improve your skills & rise through the ranks"
     }
+  },
+  "createListing": {
+    "template": {
+      "label": "Template",
+      "mainHead": "List your Opportunity",
+      "description": "To save time, check out our ready made templates below. If you already have a listing elsewhere, use \"Start from Scratch\" and copy/paste your text."
+    },
+    "basics": {
+      "label": "Basics",
+      "mainHead": "Create a Listing",
+      "description": "Now let's learn a bit more about the work you need completed"
+    },
+    "description": {
+      "label": "Description",
+      "mainHead": "Tell us some more",
+      "description": "Add more details about the opportunity, submission requirements, reward(s) details, and resources"
+    },
+    "questions": {
+      "label": "Questions",
+      "mainHead": "Enter your questions",
+      "description": "What would you like to know about your applicants?"
+    },
+    "reward": {
+      "label": "Reward",
+      "mainHead": "Add the reward amount",
+      "description": "Decide the compensation amount for your listing"
+    }
+  },
+  "listingSuccessModal": {
+    "listingLive": "Your Listing is Live",
+    "shareVerified": "Share the love on your socials and invite Earn's best talent!",
+    "shareUnverified": "Share the love on your socials!",
+    "inviteTalent": "Invite Talent",
+    "viewListing": "View Listing",
+    "shareOn": "Share on",
+    "sponsorDashboard": "Sponsor Dashboard"
+  },
+  "previewListingModal": {
+    "previewListing": "Preview Listing",
+    "previewLinkTooltip": "This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community",
+    "secretDraftLink": "Secret Draft Link",
+    "continueEditing": "Continue Editing",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "preview": "Preview"
+  },
+  "underVerificationModal": {
+    "verificationNeeded": "We need to verify your listing before it gets published",
+    "verificationReason": "It's important for us to verify work opportunities added by new sponsors to maintain trust, and keep the platform free of any bad actors. We will try our best to verify your listing within 24 hours.",
+    "verificationProcess": "Once verified, your listing will be published automatically. If we need any information, we will get in touch with you.",
+    "understood": "Understood"
+  },
+  "template": {
+    "startFromScratch": "Start from Scratch"
+  },
+  "DescriptionBuilder": {
+    "eligibilityRequirements": "Eligibility Requirements",
+    "eligibilityRequirementsTooltip": "Add here if you have any specific eligibility requirements for the Listing.",
+    "addEligibilityRequirements": "Add Eligibility Requirements",
+    "charactersLeft": "{{count}} characters left",
+    "listingDetails": "Listing Details",
+    "listingDetailsTooltip": "Write details about the Listing - About, Requirements, Evaluation Criteria, Resources, Rewards, etc.",
+    "chatGPTEmoji": "🤖",
+    "chatGPTLink": "Go live in <1 min by using our drafting bot (ChatGPT 4 Required)",
+    "deliverableReferences": "Deliverable References",
+    "deliverableReferencesDescription": "Add links of other projects/websites as references for the kind of deliverables you are looking for.",
+    "addReference": "+ Add Reference",
+    "listingDetailsRequired": "Listing Details is a required field",
+    "continue": "Continue",
+    "saveDraft": "Save Draft",
+    "updateListing": "Update Listing",
+    "h1": "H1",
+    "h2": "H2",
+    "h3": "H3",
+    "editorPlaceholder": "Give more details about the Listing...",
+    "imageUploadError": "Failed to upload image.",
+    "deleteReference": "Delete reference",
+    "uploadingImage": "Uploading image...",
+    "dragAndDropFiles": "Drag and drop your files here",
+    "maxFileSize": "Max File Upload Size: 5MB",
+    "uploadFile": "Upload File",
+    "fileRejectionError": "File is too large or of invalid type.",
+    "addLink": "Add a link",
+    "cancel": "Cancel",
+    "submit": "Submit"
+  },
+  "ListingBasic": {
+    "listingTitle": "Listing Title",
+    "titleTooltip": "Use a short title to describe the Listing",
+    "titlePlaceholder": "Develop a new landing page",
+    "characterLimitReached": "Character limit reached",
+    "charactersLeft": "{{count}} characters left",
+    "referenceListings": "Reference Listings",
+    "continue": "Continue",
+    "saveDraft": "Save Draft",
+    "updateListing": "Update Listing",
+    "listingSlug": "Listing Slug",
+    "slugTooltip": "Use a short slug to describe the Listing",
+    "slugHelperText": "This field can't be edited after a listing has been published",
+    "slugPlaceholder": "develop-a-new-landing-page",
+    "listingGeography": "Listing Geography",
+    "geographyTooltip": "Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing.",
+    "global": "Global",
+    "pointOfContact": "Point of Contact (TG / X / Email)",
+    "pocTooltip": "Please add a social link of the person people reach out to in case they have questions about this listing.",
+    "pocPlaceholder": "https://x.com/elonmusk",
+    "applicationType": "Application Type",
+    "fixedDeadline": "Fixed Deadline",
+    "rollingDeadline": "Rolling Deadline",
+    "deadline": "Deadline (in {{timezone}})",
+    "deadlineTooltip": "Select the deadline date for accepting submissions",
+    "estimatedTimeToComplete": "Estimated Time to Complete",
+    "selectTimeToComplete": "Select time to complete",
+    "timeToComplete": {
+      "<1 Week": "<1 Week",
+      "1-2 Weeks": "1-2 Weeks",
+      "2-4 Weeks": "2-4 Weeks",
+      "4-8 Weeks": "4-8 Weeks",
+      ">8 Weeks": ">8 Weeks"
+    },
+    "referredBy": "Referred By",
+    "referredByTooltip": "Who referred you to add this listing on Superteam Earn?",
+    "selectReferrer": "Select",
+    "foundationPaying": "Will the Solana Foundation pay for this listing?",
+    "foundationPayingTooltip": "If this toggle is set to \"True\", Earn will automatically send the Foundation-KYC form to the winners of this listing. The Foundation will directly pay the winners.",
+    "privateListing": "Private Listing",
+    "privateListingTooltip": "Private listings are only accessible through direct links and do not appear on the Superteam Earn homepage or other public pages on the website."
+  },
+  "listingPayments": {
+    "bonusRewardLabel": "# of Bonus Prizes",
+    "bonusRewardLabel2": "Bonus Per Prize",
+    "compensationType": "Compensation Type",
+    "compensationTypeTooltip": "Would you like to keep a fixed compensation for this project, or let applicants send in their quotes?",
+    "selectCompensationType": "Select a Compensation Type",
+    "fixedCompensation": "Fixed Compensation",
+    "preDecidedRange": "Pre-decided Range",
+    "variableCompensation": "Variable Compensation",
+    "selectToken": "Select Token",
+    "searchToken": "Search token",
+    "totalCompensation": "Total Compensation (in {{token}})",
+    "from": "From",
+    "upTo": "Up to",
+    "totalPrizes": "{{count}} Prizes",
+    "totalReward": "{{amount}} {{token}} Total",
+    "addIndividualPrize": "Add Individual Prize",
+    "addBonusPrize": "Add Bonus Prize",
+    "publishNow": "Publish Now",
+    "saveDraft": "Save Draft",
+    "preview": "Preview",
+    "updateListing": "Update Listing",
+    "maxBonusPrizesWarning": "Maximum number of bonus prizes allowed is 50",
+    "bonusPrizesZeroWarning": "# of bonus prizes can't be 0",
+    "bonusPerPrizeZeroWarning": "Bonus per prize can't be 0",
+    "bonusPerPrizeLowWarning": "Bonus per prize can't be less than 0.01",
+    "errorSelectToken": "Please select a valid token",
+    "errorCompensationType": "Please add a compensation type",
+    "errorFixedRewardAmount": "Please specify the total reward amount to proceed",
+    "errorRangeRewardAmount": "Please specify your preferred minimum and maximum compensation range",
+    "errorInvalidRange": "The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it",
+    "errorEqualRange": "The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it.",
+    "errorBonusZero": "Bonus per prize can't be 0",
+    "errorBonusNotMentioned": "Bonus Reward is not mentioned",
+    "errorIncompleteRewards": "Please fill all podium ranks or remove unused",
+    "fixedCompensationHelper": "Interested applicants will apply if the pay fits their expectations",
+    "rangeCompensationHelper": "Allow applicants to send quotes within a specific range",
+    "variableCompensationHelper": "Allow applicants to send quotes of any amount",
+    "confirmPublishing": "Confirm Publishing?",
+    "privateListingDescription": "This listing will only be accessible via the link — and will not show up anywhere else on the site — since it has been marked as a \"Private Listing\"",
+    "publicListingDescription": "Publishing this listing means it will show up on the homepage for all visitors. Make sure the details in your listing are correct before you publish.",
+    "publishing": "Publishing...",
+    "publish": "Publish",
+    "lowValueListingWarning": "Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability.",
+    "enterHigherRange": "Enter the higher range",
+    "enterLowerRange": "Enter the lower range"
+  },
+  "questionBuilder": {
+    "handsIconAlt": "Hands icon",
+    "note": "Note",
+    "noteDescription": "Names, Emails, Discord / Twitter IDs, SOL wallet and Profile Links are collected by default. Please use this space to ask about anything else!",
+    "addQuestion": "+ Add Question",
+    "saveDraft": "Save Draft",
+    "updateListing": "Update Listing",
+    "question": "Question {{index}}",
+    "questionPlaceholder": "Enter your question here"
+  },
+  "common": {
+    "continue": "Continue",
+    "close": "Close",
+    "fieldRequired": "This field is required"
+  },
+  "SelectHackathon": {
+    "selectHackathon": "Select Hackathon"
   }
 }

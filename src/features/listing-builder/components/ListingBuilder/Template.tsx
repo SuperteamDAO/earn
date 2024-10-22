@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { type MultiSelectOptions } from '@/constants';
 import { getListingTypeLabel } from '@/features/listings';
@@ -32,6 +33,7 @@ export const Template = ({
   const posthog = usePostHog();
   const { user } = useUser();
   const { data: session } = useSession();
+  const { t } = useTranslation();
 
   const { data: templates = [] } = useQuery(listingTemplatesQuery(type));
 
@@ -101,7 +103,7 @@ export const Template = ({
           >
             <AddIcon mb="1rem" />
             <Text fontSize="1rem" fontWeight={500}>
-              Start from Scratch
+              {t('template.startFromScratch')}
             </Text>
           </Button>
           {templates.map((template: any) => {
