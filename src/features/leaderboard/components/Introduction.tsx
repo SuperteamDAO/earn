@@ -1,5 +1,6 @@
 import { Divider, Flex, Text, VStack } from '@chakra-ui/react';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 
 import Medal from '@/public/assets/leaderboard/medal.webp';
 
@@ -8,6 +9,8 @@ import Rank from '../icons/rank.svg';
 import Semistar from '../icons/semistart.svg';
 
 export function Introduction() {
+  const { t } = useTranslation('common');
+
   return (
     <VStack
       align="start"
@@ -19,39 +22,49 @@ export function Introduction() {
       rounded={12}
     >
       <VStack align="start">
-        <Image alt="Medal" src={Medal} height={26} width={26} />
-        <Text fontWeight={600}>Introducing Leaderboards</Text>
+        <Image
+          alt={t('leaderboard.introduction.medalAlt')}
+          src={Medal}
+          height={26}
+          width={26}
+        />
+        <Text fontWeight={600}>{t('leaderboard.introduction.title')}</Text>
         <Text color="brand.slate.600">
-          Get Inspired: Check out Earn profiles of the leading contributors of
-          the Solana ecosystem!
+          {t('leaderboard.introduction.description')}
         </Text>
       </VStack>
       <Divider />
       <VStack align="start">
         <Flex gap={2}>
-          <Image width={20} src={Progress} alt="progress icon" />
-          <Text color="brand.slate.600">Track your progress as you earn</Text>
+          <Image
+            width={20}
+            src={Progress}
+            alt={t('leaderboard.introduction.progressIconAlt')}
+          />
+          <Text color="brand.slate.600">
+            {t('leaderboard.introduction.trackProgress')}
+          </Text>
         </Flex>
         <Flex gap={2}>
           <Image
             width={20}
             src={Rank}
-            alt="progress icon"
+            alt={t('leaderboard.introduction.rankIconAlt')}
             style={{ paddingRight: '0.4rem' }}
           />
           <Text color="brand.slate.600">
-            Discover top profiles {'&'} their submissions
+            {t('leaderboard.introduction.discoverProfiles')}
           </Text>
         </Flex>
         <Flex gap={2}>
           <Image
             width={20}
             src={Semistar}
-            alt="progress icon"
+            alt={t('leaderboard.introduction.semistarIconAlt')}
             style={{ paddingRight: '0.6rem' }}
           />
           <Text color="brand.slate.600">
-            Improve your skills {'&'} rise through the ranks
+            {t('leaderboard.introduction.improveSkills')}
           </Text>
         </Flex>
       </VStack>

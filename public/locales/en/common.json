@@ -416,5 +416,54 @@
   "VibeCard": {
     "peopleVibing": "people vibing rn",
     "clickToVibe": "click to vibeeeee"
+  },
+  "leaderboard": {
+    "banner": {
+      "ranks3dAlt": "Ranks 3D",
+      "title": "Talent Leaderboard",
+      "description": "See where you stand amongst the Solana's top contributors",
+      "mobileImageAlt": "Illustration",
+      "desktopImageAlt": "Illustration"
+    },
+    "filterRow": {
+      "overallRankings": "Overall Rankings",
+      "content": "Content",
+      "design": "Design",
+      "development": "Development",
+      "others": "Others",
+      "skillFilterTooltip": "The skill filters showcase users based on the skills requested in the listings they've successfully won, not the skills listed in their talent profiles.",
+      "timeframe": "Timeframe",
+      "allTime": "All Time",
+      "thisYear": "This Year",
+      "last30Days": "Last 30 Days",
+      "last7Days": "Last 7 Days"
+    },
+    "comingSoon": {
+      "title": "Coming Soon...",
+      "description": "We're actively looking at ways of rewarding the top contributors. Not through a token or points, but with real, tangible benefits for people above a certain rank."
+    },
+    "ranksTable": {
+      "rank": "Rank",
+      "name": "Name",
+      "dollarsEarned": "Dollars Earned",
+      "dollarsEarnedShort": "$ Earned",
+      "winRate": "Win Rate",
+      "wins": "Wins",
+      "submissions": "Submissions",
+      "skills": "Skills",
+      "emptyLeaderboard": "The Leaderboard is empty for your filters",
+      "changeFilters": "Please change your filters or try again later"
+    },
+    "introduction": {
+      "medalAlt": "Medal",
+      "title": "Introducing Leaderboards",
+      "description": "Get Inspired: Check out Earn profiles of the leading contributors of the Solana ecosystem!",
+      "progressIconAlt": "progress icon",
+      "trackProgress": "Track your progress as you earn",
+      "rankIconAlt": "rank icon",
+      "discoverProfiles": "Discover top profiles & their submissions",
+      "semistarIconAlt": "semistar icon",
+      "improveSkills": "Improve your skills & rise through the ranks"
+    }
   }
 }

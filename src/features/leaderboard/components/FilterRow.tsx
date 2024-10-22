@@ -11,6 +11,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
+import { useTranslation } from 'next-i18next';
 import { useCallback } from 'react';
 
 import { Tooltip } from '@/components/shared/responsive-tooltip';
@@ -36,6 +37,8 @@ interface Props {
 }
 
 export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
+  const { t } = useTranslation('common');
+
   const debouncedSetSkill = useCallback(debounce(decideSkill, 500), []);
 
   function decideSkill(value: number) {
@@ -99,7 +102,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
               fontSize={tabfontsize}
               _selected={selectedStyles}
             >
-              Overall Rankings
+              {t('leaderboard.filterRow.overallRankings')}
             </Tab>
             <Divider h="1.5rem" mr={1} ml={2} orientation="vertical" />
             <Tab
@@ -108,7 +111,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
               fontSize={tabfontsize}
               _selected={selectedStyles}
             >
-              Content
+              {t('leaderboard.filterRow.content')}
             </Tab>
             <Tab
               my={0}
@@ -116,7 +119,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
               fontSize={tabfontsize}
               _selected={selectedStyles}
             >
-              Design
+              {t('leaderboard.filterRow.design')}
             </Tab>
             <Tab
               my={0}
@@ -124,7 +127,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
               fontSize={tabfontsize}
               _selected={selectedStyles}
             >
-              Development
+              {t('leaderboard.filterRow.development')}
             </Tab>
             <Tab
               my={0}
@@ -132,12 +135,10 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
               fontSize={tabfontsize}
               _selected={selectedStyles}
             >
-              Others
+              {t('leaderboard.filterRow.others')}
             </Tab>
             <Box>
-              <Tooltip
-                label={`The skill filters showcase users based on the skills requested in the listings they've successfully won, not the skills listed in their talent profiles.`}
-              >
+              <Tooltip label={t('leaderboard.filterRow.skillFilterTooltip')}>
                 <InfoOutlineIcon ml={2} w={3} h={3} />
               </Tooltip>
             </Box>
@@ -154,7 +155,9 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
         pl={2}
         fontSize={{ base: 'xs', sm: 'sm' }}
       >
-        <Text color="brand.slate.400">Timeframe</Text>
+        <Text color="brand.slate.400">
+          {t('leaderboard.filterRow.timeframe')}
+        </Text>
         <Flex>
           <Timeframe value={timeframe} setValue={setTimeframe} />
         </Flex>
@@ -170,6 +173,7 @@ function Timeframe({
   value: TIMEFRAME;
   setValue: (value: TIMEFRAME) => void;
 }) {
+  const { t } = useTranslation('common');
   const debouncedSetTimeframe = useCallback(debounce(setValue, 500), []);
 
   return (
@@ -180,10 +184,14 @@ function Timeframe({
       value={value}
       variant="unstyled"
     >
-      <option value="ALL_TIME">All Time</option>
-      <option value="THIS_YEAR">This Year</option>
-      <option value="LAST_30_DAYS">Last 30 Days</option>
-      <option value="LAST_7_DAYS">Last 7 Days</option>
+      <option value="ALL_TIME">{t('leaderboard.filterRow.allTime')}</option>
+      <option value="THIS_YEAR">{t('leaderboard.filterRow.thisYear')}</option>
+      <option value="LAST_30_DAYS">
+        {t('leaderboard.filterRow.last30Days')}
+      </option>
+      <option value="LAST_7_DAYS">
+        {t('leaderboard.filterRow.last7Days')}
+      </option>
     </Select>
   );
 }

@@ -20,6 +20,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { useTranslation } from 'next-i18next';
 import { usePostHog } from 'posthog-js/react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
@@ -42,6 +43,7 @@ interface Props {
 }
 
 export function RanksTable({ rankings, skill, userRank, loading }: Props) {
+  const { t } = useTranslation('common');
   const { user } = useUser();
   const posthog = usePostHog();
 
@@ -69,7 +71,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               textAlign={'center'}
               textTransform={'none'}
             >
-              Rank
+              {t('leaderboard.ranksTable.rank')}
             </Th>
             <Th
               px={{ base: 1, md: 2 }}
@@ -80,7 +82,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               textAlign={'start'}
               textTransform={'none'}
             >
-              Name
+              {t('leaderboard.ranksTable.name')}
             </Th>
             <Th
               px={{ base: 1, md: 2 }}
@@ -92,9 +94,11 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               textTransform={'none'}
             >
               <Text display={{ base: 'none', md: 'block' }}>
-                Dollars Earned
+                {t('leaderboard.ranksTable.dollarsEarned')}
               </Text>
-              <Text display={{ base: 'block', md: 'none' }}>$ Earned</Text>
+              <Text display={{ base: 'block', md: 'none' }}>
+                {t('leaderboard.ranksTable.dollarsEarnedShort')}
+              </Text>
             </Th>
             <Th
               px={{ base: 1, md: 2 }}
@@ -105,7 +109,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               textAlign={'center'}
               textTransform={'none'}
             >
-              Win Rate
+              {t('leaderboard.ranksTable.winRate')}
             </Th>
             <Th
               px={{ base: 1, md: 2 }}
@@ -116,7 +120,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               textAlign={'center'}
               textTransform={'none'}
             >
-              Wins
+              {t('leaderboard.ranksTable.wins')}
             </Th>
             <Th
               overflowX="hidden"
@@ -130,7 +134,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               textTransform={'none'}
               textOverflow="ellipsis"
             >
-              Submissions
+              {t('leaderboard.ranksTable.submissions')}
             </Th>
             <Th
               display={{ base: 'none', md: skill !== 'ALL' ? 'none' : 'block' }}
@@ -142,7 +146,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               textAlign={'start'}
               textTransform={'none'}
             >
-              Skills
+              {t('leaderboard.ranksTable.skills')}
             </Th>
           </Tr>
         </Thead>
@@ -176,9 +180,9 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               </svg>
             </Center>
             <VStack fontSize="xs" fontWeight={500}>
-              <Text>The Leaderboard is empty for your filters</Text>
+              <Text>{t('leaderboard.ranksTable.emptyLeaderboard')}</Text>
               <Text color="brand.slate.500">
-                Please change your filters or try again later
+                {t('leaderboard.ranksTable.changeFilters')}
               </Text>
             </VStack>
           </VStack>

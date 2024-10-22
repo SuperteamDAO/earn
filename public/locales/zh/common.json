@@ -186,14 +186,14 @@
   "welcomeSponsorTemplate": {
     "welcome": "欢迎来到 Superteam Earn！",
     "thankYou": "感谢您的注册。Earn 是加密货币领域首屈一指的人才匹配平台，受到数百家领公司和数千名经过验证人才的青睐",
-    "helpMessage": "如果您在 Earn 上设置列表时需要任何帮助，请随时通过 Telegram ",
+    "helpMessage": "如果您在 Earn 上设置列表时需要��帮助，请随时通过 Telegram ",
     "contactName": "Pratik",
     "onTelegram": "。",
     "salutation": "此致，",
     "signature": "Superteam Earn 团队"
   },
   "welcomeTalentTemplate": {
-    "greeting": "好，让我们开门见山。",
+    "greeting": "，让我们开门见山。",
     "automatedEmail": "尽管这是一封自动发送的邮件...",
     "realPerson": "我只是想打个招呼，让你知道我是一个真实的人。",
     "introduction": "我是 Kash，是 <1>Superteam</1> 的核心贡献者。虽然我可能还不认识你，但我对你的加入感到非常兴奋。",
@@ -275,7 +275,7 @@
     "deadlineHelper": "项目预计完成的日期是什么时候？",
     "deadlinePlaceholder": "截止日期",
     "proofOfWork": "工作证明",
-    "proofOfWorkHelper": "包含您最好的作品链接，让社区相信您能够执行这个项目。",
+    "proofOfWorkHelper": "包含您最好作品链接，让社区相信您能够执行这个项目。",
     "proofOfWorkPlaceholder": "提供您的作品集或以前工作的链接",
     "twitterProfile": "个人 Twitter 资料",
     "twitterProfileHelper": "添加您的个人 Twitter 用户名",
@@ -416,5 +416,54 @@
   "VibeCard": {
     "peopleVibing": "人正在嗨",
     "clickToVibe": "点击嗨起来"
+  },
+  "leaderboard": {
+    "banner": {
+      "ranks3dAlt": "3D 排名",
+      "title": "人才排行榜",
+      "description": "看看您在 Solana 顶级贡献者中的排名",
+      "mobileImageAlt": "插图",
+      "desktopImageAlt": "插图"
+    },
+    "filterRow": {
+      "overallRankings": "总体排名",
+      "content": "内容",
+      "design": "设计",
+      "development": "开发",
+      "others": "其他",
+      "skillFilterTooltip": "技能筛选器根据用户成功赢得的列表中要求的技能来展示用户，而不是根据他们人才档案中列出的技能。",
+      "timeframe": "时间范围",
+      "allTime": "所有时间",
+      "thisYear": "今年",
+      "last30Days": "最近30天",
+      "last7Days": "最近7天"
+    },
+    "comingSoon": {
+      "title": "即将推出...",
+      "description": "我们正在积极寻找奖励顶级贡献者的方法。不是通过代币或积分，而是为排名超过某个水平的人提供真实、切实的好处。"
+    },
+    "ranksTable": {
+      "rank": "排名",
+      "name": "姓名",
+      "dollarsEarned": "赚取美元",
+      "dollarsEarnedShort": "赚取$",
+      "winRate": "胜率",
+      "wins": "胜利次数",
+      "submissions": "提交次数",
+      "skills": "技能",
+      "emptyLeaderboard": "根据您的筛选条件，排行榜为空",
+      "changeFilters": "请更改您的筛选条件或稍后再试"
+    },
+    "introduction": {
+      "medalAlt": "奖牌",
+      "title": "排行榜介绍",
+      "description": "获得灵感：查看 Solana 生态系统领先贡献者的 Earn 档案！",
+      "progressIconAlt": "进度图标",
+      "trackProgress": "在赚钱的同时跟踪您的进度",
+      "rankIconAlt": "排名图标",
+      "discoverProfiles": "发现顶级档案及其提交",
+      "semistarIconAlt": "半星图标",
+      "improveSkills": "提高您的技能并在排名中上升"
+    }
   }
 }
