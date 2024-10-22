@@ -18,6 +18,7 @@ import debounce from 'lodash.debounce';
 import NextLink from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useState } from 'react';
 
 import { GrantsCard } from '@/features/grants';
@@ -68,6 +69,8 @@ export function SearchModal({ isOpen, onClose }: Props) {
     };
   }, [query]);
 
+  const { t } = useTranslation('common');
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'sm', sm: 'xl' }}>
       <ModalOverlay backdropFilter="blur(6px)" />
@@ -86,7 +89,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
               fontSize={{ base: 'sm', md: 'md' }}
               border="none"
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for Superteam Earn Listings"
+              placeholder={t('SearchModal.searchPlaceholder')}
               value={query}
               variant="filled"
             />
@@ -136,7 +139,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                 rounded="none"
                 variant="ghost"
               >
-                View All Results <ArrowForwardIcon />{' '}
+                {t('SearchModal.viewAllResults')} <ArrowForwardIcon />
               </Button>
             </Link>
           </VStack>

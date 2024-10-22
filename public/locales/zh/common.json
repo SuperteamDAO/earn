@@ -939,5 +939,26 @@
     "emailPreferences": "电子邮件偏好",
     "getHelp": "获取帮助",
     "logout": "退出登录"
+  },
+  "search": {
+    "enterKeyword": "输入关键词以查找所需内容。",
+    "resultsFound": "找到 {{count}} 个搜索结果",
+    "for": "搜索 \"{{query}}\""
+  },
+  "QueryInput": {
+    "searchIconAlt": "搜索图标",
+    "placeholder": "搜索 Superteam Earn 列表",
+    "loadingSpinnerAlt": "加载中"
+  },
+  "Results": {
+    "noResultsFound": "我们找不到任何相关结果",
+    "emptySearchField": "搜索字段为空",
+    "trySearchingElse": "尝试搜索其他内容",
+    "pleaseEnterKeyword": "请输入关键词进行搜索",
+    "viewMore": "查看更多"
+  },
+  "SearchModal": {
+    "searchPlaceholder": "搜索 Superteam Earn 列表",
+    "viewAllResults": "查看所有结果"
   }
 }

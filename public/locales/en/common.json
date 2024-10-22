@@ -939,5 +939,26 @@
     "emailPreferences": "Email Preferences",
     "getHelp": "Get Help",
     "logout": "Logout"
+  },
+  "search": {
+    "enterKeyword": "Enter a keyword to find what you need.",
+    "resultsFound": "Found {{count}} search results",
+    "for": "for \"{{query}}\""
+  },
+  "QueryInput": {
+    "searchIconAlt": "Search icon",
+    "placeholder": "Search for Superteam Earn Listings",
+    "loadingSpinnerAlt": "Loading"
+  },
+  "Results": {
+    "noResultsFound": "We couldn't find anything for that keyword",
+    "emptySearchField": "The search field is empty",
+    "trySearchingElse": "Try searching for something else",
+    "pleaseEnterKeyword": "Please enter a keyword to search",
+    "viewMore": "View More"
+  },
+  "SearchModal": {
+    "searchPlaceholder": "Search for Superteam Earn Listings",
+    "viewAllResults": "View All Results"
   }
 }
