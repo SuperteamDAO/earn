@@ -4,6 +4,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
@@ -11,6 +12,7 @@ import { CATEGORY_NAV_ITEMS } from '@/features/navbar';
 import { useUser } from '@/store/user';
 
 import { regionLiveCountQuery } from '../queries/region-live-count';
+import { t } from 'i18next';
 
 interface PillTabProps {
   href: string;
@@ -22,6 +24,8 @@ interface PillTabProps {
 function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
   const router = useRouter();
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
+
   return (
     <Link
       className="ph-no-capture"
@@ -110,7 +114,7 @@ export function NavTabs({ ...flexProps }: FlexProps) {
             phEvent={navItem.pillPH}
             key={navItem.label}
           >
-            {navItem.label}
+            {t(navItem.label)}
           </PillTab>
         );
       })}

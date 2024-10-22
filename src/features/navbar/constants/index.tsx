@@ -1,4 +1,3 @@
-import { t } from 'i18next';
 interface NavItem {
   label: string;
   posthog: string;
@@ -9,17 +8,17 @@ interface NavItem {
 
 export const LISTING_NAV_ITEMS: Array<NavItem> = [
   {
-    label: 'Bounties',
+    label: 'nav.bounties',
     href: '/bounties/',
     posthog: 'bounties_navbar',
   },
   {
-    label: 'Projects',
+    label: 'nav.projects',
     href: '/projects/',
     posthog: 'projects_navbar',
   },
   {
-    label: 'Grants',
+    label: 'nav.grants',
     href: '/grants/',
     posthog: 'grants_navbar',
   },
@@ -27,28 +26,28 @@ export const LISTING_NAV_ITEMS: Array<NavItem> = [
 
 export const CATEGORY_NAV_ITEMS: Array<NavItem & { pillPH: string }> = [
   {
-    label: 'Content',
+    label: 'nav.content',
     href: '/category/content/',
     posthog: 'content_navbar',
     pillPH: 'content_navpill',
     altActive: ['/category/design/all/'],
   },
   {
-    label: 'Design',
+    label: 'nav.design',
     href: '/category/design/',
     posthog: 'design_navbar',
     pillPH: 'design_navpill',
     altActive: ['/category/design/all/'],
   },
   {
-    label: 'Development',
+    label: 'nav.development',
     href: '/category/development/',
     posthog: 'development_navbar',
     pillPH: 'development_navpill',
     altActive: ['/category/development/all/'],
   },
   {
-    label: 'Other',
+    label: 'nav.other',
     href: '/category/other/',
     posthog: 'other_navbar',
     pillPH: 'other_navpill',
@@ -76,6 +75,6 @@ export function renderLabel(navItem: NavItem) {
     //     <RenaissanceSecondaryLogo styles={{ width: '116px', height: 'auto' }} />
     //   );
     default:
-      return t(navItem.label);
+      return navItem.label;
   }
 }
