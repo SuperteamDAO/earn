@@ -4,6 +4,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
@@ -55,6 +56,7 @@ function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
 
 export function NavTabs({ ...flexProps }: FlexProps) {
   const { user } = useUser();
+  const { t } = useTranslation('common');
 
   const superteam = useMemo(() => {
     return (
@@ -86,11 +88,11 @@ export function NavTabs({ ...flexProps }: FlexProps) {
       {...flexProps}
     >
       <PillTab href="/" altActive={['/all/']} phEvent="all_navpill">
-        All Opportunities
+        {t('NavTabs.allOpportunities')}
       </PillTab>
       <Hide above="md">
         <PillTab href="/hackathon/radar" phEvent="radar_navpill">
-          Radar 📡
+          {t('NavTabs.radar')}
         </PillTab>
       </Hide>
       {showRegionTab && (
@@ -110,7 +112,7 @@ export function NavTabs({ ...flexProps }: FlexProps) {
             phEvent={navItem.pillPH}
             key={navItem.label}
           >
-            {navItem.label}
+            {t(`NavTabs.${navItem.label.toLowerCase()}`)}
           </PillTab>
         );
       })}

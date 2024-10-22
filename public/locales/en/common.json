@@ -302,5 +302,62 @@
     "prizes": "Prizes",
     "details": "Details",
     "references": "References"
+  },
+  "AuthWrapper": {
+    "completeProfileModalDefaultText": "Please complete your profile before proceeding."
+  },
+  "Banner": {
+    "desktopImageAlt": "Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight",
+    "mobileImageAlt": "Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight",
+    "title": "Find Your Next High\nPaying Crypto Gig",
+    "description": "Participate in bounties or apply to freelance gigs of world-class crypto companies, all with a single profile.",
+    "signUpButton": "Sign Up",
+    "joinOthers": "Join {{count}}+ others"
+  },
+  "CategoryBanner": {
+    "content": {
+      "heading": "Find your next Content gig",
+      "description": "If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.",
+      "imageAlt": "Content category banner"
+    },
+    "development": {
+      "heading": "Find your next Development gig",
+      "description": "If building robust applications and scalable solutions is your forte, don't miss out on the earning opportunities listed below.",
+      "imageAlt": "Development category banner"
+    },
+    "design": {
+      "heading": "Find your next Design gig",
+      "description": "If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.",
+      "imageAlt": "Design category banner"
+    },
+    "other": {
+      "heading": "Find your next gig on Earn",
+      "description": "If you have a unique skill set that doesn't fit into the other categories, you might find your next gig here.",
+      "imageAlt": "Other category banner"
+    },
+    "signUpButton": "Sign Up"
+  },
+  "HowItWorks": {
+    "title": "HOW IT WORKS",
+    "step1": {
+      "title": "Create your profile",
+      "description": "by telling us about yourself"
+    },
+    "step2": {
+      "title": "Participate in Bounties & Projects",
+      "description": "to build proof of work"
+    },
+    "step3": {
+      "title": "Get Paid for Your Work",
+      "description": "in global standards"
+    }
+  },
+  "NavTabs": {
+    "allOpportunities": "All Opportunities",
+    "radar": "Radar 📡",
+    "bounties": "Bounties",
+    "projects": "Projects",
+    "grants": "Grants",
+    "hackathons": "Hackathons"
   }
 }

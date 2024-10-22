@@ -11,8 +11,8 @@ import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
-// import { useTranslation } from 'react-i18next';
 import { AuthWrapper } from '@/features/auth';
 import DesktopBanner from '@/public/assets/home/display/banner.webp';
 import MobileBanner from '@/public/assets/home/display/banner-mobile.webp';
@@ -36,7 +36,7 @@ const avatars = [
 
 export function HomeBanner() {
   const posthog = usePostHog();
-  // const { t } = useTranslation();
+  const { t } = useTranslation('common');
 
   const { data } = useQuery(userCountQuery);
 
@@ -54,7 +54,7 @@ export function HomeBanner() {
       <Show above="sm">
         <Image
           src={DesktopBanner}
-          alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
+          alt={t('Banner.desktopImageAlt')}
           layout="fill"
           objectFit="cover"
           quality={95}
@@ -72,7 +72,7 @@ export function HomeBanner() {
       <Show below="sm">
         <Image
           src={MobileBanner}
-          alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
+          alt={t('Banner.mobileImageAlt')}
           layout="fill"
           objectFit="cover"
           quality={95}
@@ -94,8 +94,7 @@ export function HomeBanner() {
         fontWeight={'700'}
         lineHeight={'120%'}
       >
-        Find Your Next High
-        <br /> Paying Crypto Gig
+        {t('Banner.title')}
       </Text>
       <Text
         pos="relative"
@@ -106,8 +105,7 @@ export function HomeBanner() {
         fontSize={{ base: '13px', md: 'lg' }}
         lineHeight={'130%'}
       >
-        Participate in bounties or apply to freelance gigs of world-class crypto
-        companies, all with a single profile.
+        {t('Banner.description')}
       </Text>
       <Flex
         zIndex={1}
@@ -134,7 +132,7 @@ export function HomeBanner() {
               posthog.capture('signup_banner');
             }}
           >
-            Sign Up
+            {t('Banner.signUpButton')}
           </Button>
         </AuthWrapper>
         <Flex align="center">
@@ -157,7 +155,9 @@ export function HomeBanner() {
               color="brand.slate.200"
               fontSize={{ base: '0.8rem', md: '0.875rem' }}
             >
-              Join {data?.totalUsers?.toLocaleString()}+ others
+              {t('Banner.joinOthers', {
+                count: data?.totalUsers,
+              })}
             </Text>
           )}
         </Flex>

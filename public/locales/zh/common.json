@@ -302,5 +302,62 @@
     "prizes": "奖励",
     "details": "详情",
     "references": "参考"
+  },
+  "AuthWrapper": {
+    "completeProfileModalDefaultText": "请在继续之前完成您的个人资料。"
+  },
+  "Banner": {
+    "desktopImageAlt": "插图 — 两个人在夜晚的户外使用笔记本电脑工作，周围是被月光照亮的神秘山景",
+    "mobileImageAlt": "插图 — 两个人在夜晚的户外使用笔记本电脑工作，周围是被月光照亮的神秘山景",
+    "title": "寻找您的下一个\n高薪加密货币工作",
+    "description": "参与赏金任务或申请世界级加密货币公司的自由职业工作，只需一个个人资料。",
+    "signUpButton": "注册",
+    "joinOthers": "加入其他 {{count}}+ 用户"
+  },
+  "CategoryBanner": {
+    "content": {
+      "heading": "寻找您的下一个内容创作工作",
+      "description": "如果您能撰写有见地的文章、制作令人惊叹的视频或创作出色的表情包，以下机会正在呼唤您。",
+      "imageAlt": "内容类别横幅"
+    },
+    "development": {
+      "heading": "寻找您的下一个开发工作",
+      "description": "如果构建强大的应用程序和可扩展的解决方案是您的强项，不要错过下面列出的赚钱机会。",
+      "imageAlt": "开发类别横幅"
+    },
+    "design": {
+      "heading": "寻找您的下一个设计工作",
+      "description": "如果用引人注目的设计让用户感到愉悦是您的专长，您应该看看下面的赚钱机会。",
+      "imageAlt": "设计类别横幅"
+    },
+    "other": {
+      "heading": "在Earn上寻找您的下一个工作",
+      "description": "如果您拥有不适合其他类别的独特技能，您可能会在这里找到您的下一个工作。",
+      "imageAlt": "其他类别横幅"
+    },
+    "signUpButton": "注册"
+  },
+  "HowItWorks": {
+    "title": "工作原理",
+    "step1": {
+      "title": "创建您的个人资料",
+      "description": "告诉我们关于您自己的信息"
+    },
+    "step2": {
+      "title": "参与悬赏和项目",
+      "description": "建立工作证明"
+    },
+    "step3": {
+      "title": "获得工作报酬",
+      "description": "按全球标准"
+    }
+  },
+  "NavTabs": {
+    "allOpportunities": "所有机会",
+    "radar": "雷达 📡",
+    "bounties": "悬赏",
+    "projects": "项目",
+    "grants": "资助",
+    "hackathons": "黑客马拉松"
   }
 }

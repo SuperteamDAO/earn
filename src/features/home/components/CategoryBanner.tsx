@@ -2,6 +2,7 @@ import { Box, Button, Text, useMediaQuery, VStack } from '@chakra-ui/react';
 import NextImage from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
@@ -13,36 +14,34 @@ type CategoryTypes = 'content' | 'development' | 'design' | 'other';
 type CategoryBanner = {
   type: CategoryTypes;
   img: string;
-  heading: string;
-  description: string;
+  headingKey: string;
+  descriptionKey: string;
 };
+
 const banners: CategoryBanner[] = [
   {
     type: 'content',
     img: bannerPrefix + 'Content.webp',
-    heading: 'Find your next Content gig',
-    description:
-      'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
+    headingKey: 'CategoryBanner.content.heading',
+    descriptionKey: 'CategoryBanner.content.description',
   },
   {
     type: 'development',
     img: bannerPrefix + 'Dev.webp',
-    heading: 'Find your next Development gig',
-    description: `If building robust applications and scalable solutions is your forte, don't miss out on the earning opportunities listed below.`,
+    headingKey: 'CategoryBanner.development.heading',
+    descriptionKey: 'CategoryBanner.development.description',
   },
   {
     type: 'design',
     img: bannerPrefix + 'Design.webp',
-    heading: 'Find your next Design gig',
-    description:
-      'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
+    headingKey: 'CategoryBanner.design.heading',
+    descriptionKey: 'CategoryBanner.design.description',
   },
   {
     type: 'other',
     img: bannerPrefix + 'Other.webp',
-    heading: 'Find your next gig on Earn',
-    description:
-      'If you have a unique skill set that doesn’t fit into the other categories, you might find your next gig here.',
+    headingKey: 'CategoryBanner.other.heading',
+    descriptionKey: 'CategoryBanner.other.description',
   },
 ];
 
@@ -51,6 +50,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
   const [banner, setBanner] = useState<CategoryBanner | null>(null);
   const posthog = usePostHog();
   const { user } = useUser();
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     setBanner(banners.find((b) => b.type === category) ?? null);
@@ -61,7 +61,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
       <VStack pos="relative" w="full" h="18rem">
         <NextImage
           src={banner.img}
-          alt={banner.type}
+          alt={t(`CategoryBanner.${banner.type}.imageAlt`)}
           width={1440}
           height={290}
           style={{
@@ -89,23 +89,23 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
           px={{ base: 3, md: 4 }}
           transform="translateY(-50%)"
         >
-          {banner.heading && (
+          {banner.headingKey && (
             <Text
               color="white"
               fontSize={{ base: '2xl', md: '4xl' }}
               fontWeight="bold"
             >
-              {banner.heading}
+              {t(banner.headingKey)}
             </Text>
           )}
-          {banner.description && (
+          {banner.descriptionKey && (
             <Text
               maxW="37rem"
               color="white"
               fontSize={{ base: 'sm', md: 'lg' }}
               fontWeight="medium"
             >
-              {banner.description}
+              {t(banner.descriptionKey)}
             </Text>
           )}
           {!user && (
@@ -123,7 +123,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
                   posthog.capture('signup_category banner');
                 }}
               >
-                Sign Up
+                {t('CategoryBanner.signUpButton')}
               </Button>
             </AuthWrapper>
           )}
