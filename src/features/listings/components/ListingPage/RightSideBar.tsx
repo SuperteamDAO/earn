@@ -15,6 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
+import { useTranslation } from 'react-i18next';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { exclusiveSponsorData, tokenList } from '@/constants/index';
@@ -42,6 +43,8 @@ export function RightSideBar({
   skills?: ParentSkills[];
   isTemplate?: boolean;
 }) {
+  const { t } = useTranslation();
+
   const {
     id,
     token,
@@ -135,7 +138,7 @@ export function RightSideBar({
                         <Image
                           w={8}
                           h={8}
-                          alt={'green doller'}
+                          alt={t('RightSideBar.tokenIcon')}
                           rounded={'full'}
                           src={
                             tokenList.filter((e) => e?.tokenSymbol === token)[0]
@@ -160,7 +163,9 @@ export function RightSideBar({
                           fontSize={'lg'}
                           fontWeight={400}
                         >
-                          {isProject ? 'Payment' : 'Total Prizes'}
+                          {isProject
+                            ? t('RightSideBar.payment')
+                            : t('RightSideBar.totalPrizes')}
                         </Text>
                       </Flex>
                     </Td>
@@ -199,7 +204,7 @@ export function RightSideBar({
                     <Image
                       w={'1.4rem'}
                       mt={-1}
-                      alt={'suit case'}
+                      alt={t('RightSideBar.suitcaseIcon')}
                       src={'/assets/icons/purple-suitcase.svg'}
                     />
                     <Text
@@ -216,10 +221,10 @@ export function RightSideBar({
                   </Flex>
                   <Text color={'#94A3B8'}>
                     {isProject
-                      ? 'Applications'
+                      ? t('RightSideBar.applications')
                       : submissionNumber === 1
-                        ? 'Submission'
-                        : 'Submissions'}
+                        ? t('RightSideBar.submission')
+                        : t('RightSideBar.submissions')}
                   </Text>
                 </Flex>
 
@@ -233,7 +238,7 @@ export function RightSideBar({
                     <Image
                       w={'1.4rem'}
                       mt={1}
-                      alt={'suit case'}
+                      alt={t('RightSideBar.timerIcon')}
                       src={'/assets/icons/purple-timer.svg'}
                     />
                     <VStack align={'start'} gap={0}>
@@ -249,11 +254,13 @@ export function RightSideBar({
                             zeroPadDays={1}
                           />
                         ) : (
-                          'Rolling'
+                          t('RightSideBar.rolling')
                         )}
                       </Text>
                       <Text color={'#94A3B8'}>
-                        {applicationType === 'fixed' ? 'Remaining' : 'Deadline'}
+                        {applicationType === 'fixed'
+                          ? t('RightSideBar.remaining')
+                          : t('RightSideBar.deadline')}
                       </Text>
                     </VStack>
                   </Flex>
@@ -270,7 +277,7 @@ export function RightSideBar({
                   <Image
                     w={'1.4rem'}
                     mt={1}
-                    alt={'suit case'}
+                    alt={t('RightSideBar.timerIcon')}
                     src={'/assets/icons/purple-timer.svg'}
                   />
                   <VStack align={'start'} gap={0}>
@@ -285,7 +292,9 @@ export function RightSideBar({
                         zeroPadDays={1}
                       />
                     </Text>
-                    <Text color={'#94A3B8'}>Until Submissions Open</Text>
+                    <Text color={'#94A3B8'}>
+                      {t('RightSideBar.untilSubmissionsOpen')}
+                    </Text>
                   </VStack>
                 </Flex>
               </Flex>
@@ -302,7 +311,9 @@ export function RightSideBar({
                 >
                   {timeToComplete}
                 </Text>
-                <Text color={'#94A3B8'}>Time to Complete</Text>
+                <Text color={'#94A3B8'}>
+                  {t('RightSideBar.timeToComplete')}
+                </Text>
               </Flex>
             )}
             <SubmissionActionButton listing={listing} isTemplate={isTemplate} />
@@ -310,8 +321,7 @@ export function RightSideBar({
               <Flex gap="2" w="full" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />
                 <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
-                  Don&apos;t start working just yet! Apply first, and then begin
-                  working only once you&apos;ve been hired for the project.
+                  {t('RightSideBar.dontStartWorkingYet')}
                 </Text>
               </Flex>
             )}
@@ -351,8 +361,8 @@ export function RightSideBar({
                     fontWeight={600}
                   >
                     {!Hackathon
-                      ? 'RELATED LIVE LISTINGS'
-                      : 'RELATED LIVE TRACKS'}
+                      ? t('RightSideBar.relatedLiveListings')
+                      : t('RightSideBar.relatedLiveTracks')}
                   </Text>
                 </Flex>
               </RelatedListings>

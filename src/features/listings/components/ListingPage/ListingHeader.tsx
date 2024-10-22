@@ -15,6 +15,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   LuCheck,
   LuClock,
@@ -48,6 +49,7 @@ export function ListingHeader({
   isTemplate?: boolean;
   commentCount?: number;
 }) {
+  const { t } = useTranslation();
   const {
     type,
     status,
@@ -89,38 +91,40 @@ export function ListingHeader({
     statusIcon = (
       <Icon as={LuEye} {...statusIconStyles} color="brand.slate.400" />
     );
-    statusText = 'Preview';
+    statusText = t('ListingHeader.preview');
     statusBgColor = 'brand.slate.200';
     statusTextColor = 'brand.slate.500';
   } else if (!isPublished && !publishedAt) {
     statusIcon = (
       <Icon as={LuFile} {...statusIconStyles} color="brand.slate.400" />
     );
-    statusText = 'Draft';
+    statusText = t('ListingHeader.draft');
     statusBgColor = 'brand.slate.200';
     statusTextColor = 'brand.slate.500';
   } else if (!isPublished && publishedAt) {
     statusIcon = <Icon as={LuPause} {...statusIconStyles} color="#ffecb3" />;
-    statusText = isMD ? 'Submissions Paused' : 'Paused';
+    statusText = isMD
+      ? t('ListingHeader.submissionsPaused')
+      : t('ListingHeader.paused');
     statusBgColor = '#ffecb3';
     statusTextColor = '#F59E0B';
   } else if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
     statusIcon = <Icon as={LuClock} {...statusIconStyles} color="#F3E8FF" />;
-    statusText = 'Opens Soon';
+    statusText = t('ListingHeader.opensSoon');
     statusBgColor = '#F3E8FF';
     statusTextColor = '#8B5CF6';
   } else if (status === 'OPEN' && isWinnersAnnounced) {
     statusIcon = (
       <Icon as={LuCheck} {...statusIconStyles} color={'brand.slate.400'} />
     );
-    statusText = 'Completed';
+    statusText = t('ListingHeader.completed');
     statusBgColor = 'brand.slate.200';
     statusTextColor = 'brand.slate.400';
   } else if (!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN') {
     statusIcon = (
       <PulseIcon {...statusIconStyles} bg={'orange.100'} text={'orange.600'} />
     );
-    statusText = 'In Review';
+    statusText = t('ListingHeader.inReview');
     statusBgColor = 'orange.100';
     statusTextColor = 'orange.600';
   } else if (!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN') {
@@ -132,7 +136,9 @@ export function ListingHeader({
         text="#16A34A"
       />
     );
-    statusText = isMD ? 'Submissions Open' : 'Open';
+    statusText = isMD
+      ? t('ListingHeader.submissionsOpen')
+      : t('ListingHeader.open');
     statusBgColor = 'green.100';
     statusTextColor = 'green.600';
   }
@@ -192,7 +198,7 @@ export function ListingHeader({
             fontWeight={500}
             whiteSpace={'nowrap'}
           >
-            by {sponsor?.name}
+            {t('ListingHeader.by')} {sponsor?.name}
           </Text>
           {!!sponsor?.isVerified && <VerifiedBadge />}
         </Flex>
@@ -213,8 +219,8 @@ export function ListingHeader({
               borderRadius={'lg'}
               label={
                 isProject
-                  ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
-                  : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
+                  ? t('ListingHeader.projectTooltip')
+                  : t('ListingHeader.bountyTooltip')
               }
             >
               <Flex>
@@ -230,7 +236,9 @@ export function ListingHeader({
                   fontSize={{ base: 'xs', sm: 'md' }}
                   fontWeight={500}
                 >
-                  {isProject ? 'Project' : 'Bounty'}
+                  {isProject
+                    ? t('ListingHeader.project')
+                    : t('ListingHeader.bounty')}
                 </Text>
               </Flex>
             </Tooltip>
@@ -316,7 +324,11 @@ export function ListingHeader({
             <ListingTabLink
               w={{ md: '22rem' }}
               href={`/listings/${type}/${slug}/`}
-              text={type === 'project' ? 'Inviting Proposals' : 'Prizes'}
+              text={
+                type === 'project'
+                  ? t('ListingHeader.invitingProposals')
+                  : t('ListingHeader.prizes')
+              }
               isActive={false}
               styles={{
                 pointerEvents: 'none',
@@ -329,7 +341,7 @@ export function ListingHeader({
                   ? `/listings/${type}/${slug}/`
                   : `/templates/listings/${slug}/`
               }
-              text="Details"
+              text={t('ListingHeader.details')}
               isActive={
                 !router.asPath.split('/')[4]?.includes('submission') &&
                 !router.asPath.split('/')[4]?.includes('references')
@@ -340,7 +352,7 @@ export function ListingHeader({
               <ListingTabLink
                 onClick={() => posthog.capture('submissions tab_listing')}
                 href={`/listings/${type}/${slug}/submission`}
-                text="Submissions"
+                text={t('ListingHeader.submissions')}
                 isActive={!!router.asPath.split('/')[4]?.includes('submission')}
                 subText={
                   isSubmissionNumberLoading ? '...' : submissionNumber + ''
@@ -356,7 +368,7 @@ export function ListingHeader({
                       ? `/listings/${type}/${slug}/references`
                       : `/templates/listings/${slug}/references`
                   }
-                  text="References"
+                  text={t('ListingHeader.references')}
                   isActive={
                     !!router.asPath.split('/')[4]?.includes('references')
                   }

@@ -18,6 +18,7 @@ import axios from 'axios';
 import { useAtomValue } from 'jotai';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
   selectedSubmissionAtom,
@@ -54,6 +55,7 @@ export function PublishResults({
   usedPositions,
   setRemainings,
 }: Props) {
+  const { t } = useTranslation();
   const [isPublishingResults, setIsPublishingResults] = useState(false);
   const [isWinnersAnnounced, setIsWinnersAnnounced] = useState(
     bounty?.isWinnersAnnounced,
@@ -85,17 +87,17 @@ export function PublishResults({
   if (!isWinnersAllSelected) {
     const remainingWinners = (rewards || 0) - totalWinners;
     alertType = 'error';
-    alertTitle = 'Select All Winners!';
-    alertDescription = `You still have to select ${remainingWinners} more ${
-      remainingWinners === 1 ? 'winner' : 'winners'
-    } before you can publish the results publicly.`;
+    alertTitle = t('publishResults.selectAllWinners');
+    alertDescription = t('publishResults.remainingWinnersToSelect', {
+      count: remainingWinners,
+    });
   } else if (rewards && totalPaymentsMade !== rewards) {
     const remainingPayments = (rewards || 0) - totalPaymentsMade;
     alertType = 'warning';
-    alertTitle = 'Pay All Winners!';
-    alertDescription = `Don't forget to pay your winners after publishing results. You have to pay to ${remainingPayments} ${
-      remainingPayments === 1 ? 'winner' : 'winners'
-    }.`;
+    alertTitle = t('publishResults.payAllWinners');
+    alertDescription = t('publishResults.remainingPaymentsToMake', {
+      count: remainingPayments,
+    });
   }
 
   const selectedSubmission = useAtomValue(selectedSubmissionAtom);
@@ -150,7 +152,7 @@ export function PublishResults({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Publish Results</ModalHeader>
+        <ModalHeader>{t('publishResults.publishResults')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {isWinnersAnnounced && (
@@ -165,16 +167,15 @@ export function PublishResults({
             >
               <AlertIcon boxSize="40px" mr={0} />
               <AlertTitle mt={4} mb={1} fontSize="lg">
-                Results Announced Successfully!
+                {t('publishResults.resultsAnnouncedSuccessfully')}
               </AlertTitle>
               <AlertDescription maxW="sm">
-                The results have been announced publicly. Everyone can view the
-                results on the Bounty&apos;s page.
+                {t('publishResults.resultsAnnouncedPublicly')}
                 <br />
                 <br />
                 {!bounty?.isWinnersAnnounced && (
                   <Text as="span" color="brand.slate.500" fontSize="sm">
-                    Refreshing...
+                    {t('publishResults.refreshing')}
                   </Text>
                 )}
               </AlertDescription>
@@ -185,10 +186,7 @@ export function PublishResults({
             totalWinners === rewards &&
             alertType !== 'error' && (
               <Text mb={4}>
-                Publishing the results of this listing will make the results
-                public for everyone to see!
-                <br />
-                YOU CAN&apos;T GO BACK ONCE YOU PUBLISH THE RESULTS!
+                {t('publishResults.publishingResultsDescription')}
               </Text>
             )}
           {!isWinnersAnnounced && alertTitle && alertDescription && (
@@ -208,10 +206,11 @@ export function PublishResults({
               <Alert mt={4} status="error">
                 <AlertIcon boxSize={8} />
                 <Box>
-                  <AlertTitle>Listing still in progress!</AlertTitle>
+                  <AlertTitle>
+                    {t('publishResults.listingStillInProgress')}
+                  </AlertTitle>
                   <AlertDescription>
-                    If you publish the results before the deadline, the listing
-                    will close since the winner(s) will have been announced.
+                    {t('publishResults.publishBeforeDeadlineWarning')}
                   </AlertDescription>
                 </Box>
               </Alert>
@@ -221,21 +220,21 @@ export function PublishResults({
           {!isWinnersAnnounced && (
             <>
               <Button onClick={onClose} variant="ghost">
-                Close
+                {t('common.close')}
               </Button>
               <Button
                 className="ph-no-capture"
                 ml={4}
                 isDisabled={!isWinnersAllSelected || alertType === 'error'}
                 isLoading={isPublishingResults}
-                loadingText={'Publishing...'}
+                loadingText={t('publishResults.publishing')}
                 onClick={() => {
                   posthog.capture('announce winners_sponsor');
                   publishResults();
                 }}
                 variant="solid"
               >
-                Publish
+                {t('publishResults.publish')}
               </Button>
             </>
           )}

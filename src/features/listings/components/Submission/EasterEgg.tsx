@@ -9,6 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
 import { type TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
 
@@ -50,6 +51,8 @@ const decorateOptions: TDecorateOptionsFn = (options) => {
 };
 
 export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
+  const { t } = useTranslation('common');
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalContent
@@ -72,7 +75,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
           <Box w="112px" mx="auto" mt="24px" mb="44px">
             <Image
               src="/assets/icons/celebration.png"
-              alt="celebration icon"
+              alt={t('easterEgg.celebrationIconAlt')}
               width="100"
               height="100"
             />
@@ -84,7 +87,9 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
             lineHeight="1"
             textAlign="center"
           >
-            {isProject ? 'Application' : 'Submission'} Received!
+            {isProject
+              ? t('easterEgg.applicationReceived')
+              : t('easterEgg.submissionReceived')}
           </Text>
           <Text
             mt={[8, 5]}
@@ -94,7 +99,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
             textAlign="center"
             opacity="0.6"
           >
-            Sending some vibes your way 💃 💃
+            {t('easterEgg.sendingVibes')}
           </Text>
         </Container>
         <AbsoluteCenter
@@ -110,7 +115,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
         >
           <Image
             src="/assets/memes/JohnCenaVibingToCupid.gif"
-            alt="John Cena Vibing to Cupid"
+            alt={t('easterEgg.johnCenaAlt')}
             style={{ width: '100%', marginTop: 'auto', display: 'block' }}
             width="500"
             height="600"
