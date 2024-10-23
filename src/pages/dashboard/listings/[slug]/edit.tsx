@@ -44,7 +44,6 @@ function EditBounty({ slug }: Props) {
         !bounty.title ||
         !bounty.skills ||
         !bounty.pocSocials ||
-        !bounty.applicationType ||
         !bounty.deadline ||
         (isProject && !bounty.timeToComplete)
       ) {

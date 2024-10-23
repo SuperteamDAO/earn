@@ -190,11 +190,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                 listing?.type ?? 'bounty',
               );
 
-              const deadline = formatDeadline(
-                listing?.deadline,
-                listing?.applicationType,
-                listing?.type,
-              );
+              const deadline = formatDeadline(listing?.deadline, listing?.type);
 
               const pastDeadline = isDeadlineOver(listing?.deadline);
 

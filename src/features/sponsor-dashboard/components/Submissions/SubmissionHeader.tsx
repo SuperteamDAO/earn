@@ -65,11 +65,7 @@ export const SubmissionHeader = ({
   const { resetForm } = useListingFormStore();
   const router = useRouter();
 
-  const deadline = formatDeadline(
-    bounty?.deadline,
-    bounty?.applicationType,
-    bounty?.type,
-  );
+  const deadline = formatDeadline(bounty?.deadline, bounty?.type);
 
   const listingPath = `listings/${bounty?.type}/${bounty?.slug}`;
   const { hasCopied, onCopy } = useClipboard(`${getURL()}${listingPath}`);

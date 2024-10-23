@@ -105,7 +105,7 @@ export function YourLinks({ useFormStore }: Props) {
   };
   return (
     <>
-      <Box w={'full'}>
+      <Box w={'full'} mb={'4rem'}>
         <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
           <FormControl w="full" mb={5}>
             <SocialInput watch={watch} register={register} />

@@ -1,13 +1,12 @@
-import { Box, Flex, Link, Text } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { useAtomValue } from 'jotai';
-import NextLink from 'next/link';
 import React from 'react';
 
-import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { type Listing } from '@/features/listings';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { selectedSubmissionAtom } from '../..';
+import { InfoBox } from '../InfoBox';
 import { Notes } from './Notes';
 
 interface Props {
@@ -47,94 +46,45 @@ export const Details = ({ bounty }: Props) => {
       >
         {!isProject && (
           <>
-            <Box mb={4}>
-              <Text
-                mb={1}
-                color="brand.slate.400"
-                fontSize="xs"
-                fontWeight={600}
-                textTransform={'uppercase'}
-              >
-                Main Submission
-              </Text>
-              <Link
-                as={NextLink}
-                color="brand.purple"
-                href={getURLSanitized(selectedSubmission?.link || '#')}
-                isExternal
-              >
-                {selectedSubmission?.link
+            <InfoBox
+              label="Main Submission"
+              content={
+                selectedSubmission?.link
                   ? getURLSanitized(selectedSubmission?.link)
-                  : '-'}
-              </Link>
-            </Box>
-            <Box mb={4}>
-              <Text
-                mb={1}
-                color="brand.slate.400"
-                fontSize="xs"
-                fontWeight={600}
-                textTransform={'uppercase'}
-              >
-                Tweet Link
-              </Text>
-              <Link
-                as={NextLink}
-                color="brand.purple"
-                href={selectedSubmission?.tweet || '#'}
-                isExternal
-              >
-                {selectedSubmission?.tweet ? selectedSubmission?.tweet : '-'}
-              </Link>
-            </Box>
+                  : '-'
+              }
+            />
+            <InfoBox
+              label="Tweet Link"
+              content={
+                selectedSubmission?.tweet
+                  ? getURLSanitized(selectedSubmission?.tweet)
+                  : '-'
+              }
+            />
           </>
         )}
         {bounty?.compensationType !== 'fixed' && (
-          <Box mb={4}>
-            <Text
-              mb={1}
-              color="brand.slate.400"
-              fontSize="xs"
-              fontWeight={600}
-              textTransform={'uppercase'}
-            >
-              Ask
-            </Text>
-            <Text color="brand.slate.700">
-              {selectedSubmission?.ask?.toLocaleString()} {bounty?.token}
-            </Text>
-          </Box>
+          <InfoBox
+            label="Ask"
+            content={`${selectedSubmission?.ask?.toLocaleString()} ${bounty?.token}`}
+          />
         )}
 
         {(isProject || isHackathon) &&
-          selectedSubmission?.eligibilityAnswers?.map(
-            (answer: any, answerIndex: number) => (
-              <Box key={answerIndex} mb={4}>
-                <Text
-                  mb={1}
-                  color="brand.slate.400"
-                  fontSize="xs"
-                  fontWeight={600}
-                  textTransform={'uppercase'}
-                >
-                  {answer.question}
-                </Text>
-                <LinkTextParser text={answer.answer} />
-              </Box>
-            ),
-          )}
-        <Box mb={4}>
-          <Text
-            mb={1}
-            color="brand.slate.400"
-            fontSize="xs"
-            fontWeight={600}
-            textTransform={'uppercase'}
-          >
-            Anything Else
-          </Text>
-          <LinkTextParser text={selectedSubmission?.otherInfo || ''} />
-        </Box>
+          selectedSubmission?.eligibilityAnswers?.map((answer: any) => (
+            <InfoBox
+              key={answer.question}
+              label={answer.question}
+              content={answer.answer}
+              isHtml
+            />
+          ))}
+        <InfoBox
+          label="Anything Else"
+          content={selectedSubmission?.otherInfo}
+          isHtml
+        />
       </Flex>
       <Flex w="25%" p={4}>
         {selectedSubmission && (

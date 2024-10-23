@@ -69,7 +69,6 @@ export async function getListings({
       token: true,
       winnersAnnouncedAt: true,
       slug: true,
-      applicationType: true,
       isWinnersAnnounced: true,
       isFeatured: true,
       compensationType: true,

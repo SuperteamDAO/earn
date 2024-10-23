@@ -3,22 +3,30 @@ import {
   Button,
   Flex,
   FormControl,
+  FormErrorMessage,
+  FormHelperText,
   FormLabel,
   Input,
+  Link,
   Select,
   Text,
-  Textarea,
   VStack,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
-import { type Dispatch, type SetStateAction, useState } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
-import { CountryList } from '@/constants';
+import { countries, CountryList, type MultiSelectOptions } from '@/constants';
+import { SkillSelect } from '@/features/talent';
+import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
+import { validateSolAddress } from '@/utils/validateSolAddress';
 
+import { usernameRandomQuery } from '../../queries';
 import { useUsernameValidation } from '../../utils';
 import type { UserStoreType } from './types';
 
@@ -31,39 +39,128 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [uploading, setUploading] = useState<boolean>(false);
   const { updateState, form } = useFormStore();
+  const [post, setPost] = useState(false);
+  const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
+  const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
   const { user } = useUser();
   const posthog = usePostHog();
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
   );
 
-  const { register, handleSubmit, watch } = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       firstName: user?.firstName,
       lastName: user?.lastName,
       username: user?.username ?? '',
       location: form.location,
       photo: user?.photo,
-      bio: form.bio,
+      publicKey: form.publicKey,
+      skills: form.skills,
+      subskills: form.subSkills,
     },
   });
 
   const { setUsername, isInvalid, validationErrorMessage, username } =
     useUsernameValidation();
 
+  const { data: randomUsername } = useQuery({
+    ...usernameRandomQuery(user?.firstName),
+    enabled: !!user && !user.username,
+  });
+
+  useEffect(() => {
+    if (user) {
+      console.log('user', user);
+      setValue('firstName', user?.firstName);
+      setValue('lastName', user?.lastName);
+      setValue('photo', user?.photo);
+      setImageUrl(user.photo || '');
+    }
+  }, [user, setValue]);
+
+  useEffect(() => {
+    if (user && !user?.username && randomUsername?.username) {
+      setValue('username', randomUsername?.username);
+      setUsername(randomUsername?.username);
+    }
+  }, [randomUsername]);
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const currentLocation = watch('location');
+        if (!currentLocation) {
+          const response = await axios.get('https://ipapi.co/json/');
+          const locationData = response.data;
+
+          if (locationData && locationData.country_code) {
+            const country = countries.find(
+              (ct) =>
+                ct.code.toLowerCase() ===
+                locationData.country_code.toLowerCase(),
+            );
+
+            if (country) {
+              setValue('location', country.name);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch location:', error);
+      }
+    };
+
+    fetchLocation();
+  }, [setValue, watch]);
+
   const onSubmit = async (data: any) => {
+    setPost(true);
+    if (skills.length === 0 || subSkills.length === 0) {
+      return false;
+    }
     if (isInvalid) {
-      return;
+      return false;
     }
     posthog.capture('about you_talent');
-    updateState({ ...data, photo: isGooglePhoto ? user?.photo : imageUrl });
+    updateState({
+      ...data,
+      photo: isGooglePhoto ? user?.photo : imageUrl,
+      skills: skills.map((mainskill) => {
+        const main =
+          skillSubSkillMap[mainskill.value as keyof typeof skillSubSkillMap];
+        const sub: SubSkillsType[] = [];
+
+        subSkills.forEach((subskill) => {
+          if (
+            main &&
+            main.some((subSkillObj) => subSkillObj.value === subskill.value)
+          ) {
+            sub.push(subskill.value as SubSkillsType);
+          }
+        });
+
+        return {
+          skills: mainskill.value,
+          subskills: sub ?? [],
+        };
+      }),
+      subSkills: JSON.stringify(subSkills.map((ele) => ele.value)),
+    });
     setStep((i) => i + 1);
+    return true;
   };
 
   return (
-    <Box w={'full'}>
+    <Box w={'full'} mb={'4rem'}>
       <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
-        <FormControl w="full" mb={5} isRequired>
+        <FormControl isRequired>
           <Box w={'full'} mb={'1.25rem'}>
             <FormLabel color={'brand.slate.500'}>Username</FormLabel>
             <Input
@@ -87,40 +184,42 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               </Text>
             )}
           </Box>
+        </FormControl>
 
-          <Flex justify="space-between" gap={8} w={'full'} mb={'1.25rem'}>
-            <Box w="full">
-              <FormLabel color={'brand.slate.500'}>First Name</FormLabel>
-              <Input
-                color={'gray.800'}
-                borderColor="brand.slate.300"
-                _placeholder={{
-                  color: 'brand.slate.400',
-                }}
-                focusBorderColor="brand.purple"
-                id="firstName"
-                placeholder="First Name"
-                {...register('firstName', { required: true })}
-                maxLength={100}
-              />
-            </Box>
-            <Box w="full">
-              <FormLabel color={'brand.slate.500'}>Last Name</FormLabel>
-              <Input
-                color={'gray.800'}
-                borderColor="brand.slate.300"
-                _placeholder={{
-                  color: 'brand.slate.400',
-                }}
-                focusBorderColor="brand.purple"
-                id="lastName"
-                placeholder="Last Name"
-                {...register('lastName', { required: true })}
-                maxLength={100}
-              />
-            </Box>
-          </Flex>
+        <Flex justify="space-between" gap={8} w={'full'} mb={'1.25rem'}>
+          <FormControl w="full" isRequired>
+            <FormLabel color={'brand.slate.500'}>First Name</FormLabel>
+            <Input
+              color={'gray.800'}
+              borderColor="brand.slate.300"
+              _placeholder={{
+                color: 'brand.slate.400',
+              }}
+              focusBorderColor="brand.purple"
+              id="firstName"
+              placeholder="First Name"
+              {...register('firstName', { required: true })}
+              maxLength={100}
+            />
+          </FormControl>
+          <FormControl w="full" isRequired>
+            <FormLabel color={'brand.slate.500'}>Last Name</FormLabel>
+            <Input
+              color={'gray.800'}
+              borderColor="brand.slate.300"
+              _placeholder={{
+                color: 'brand.slate.400',
+              }}
+              focusBorderColor="brand.purple"
+              id="lastName"
+              placeholder="Last Name"
+              {...register('lastName', { required: true })}
+              maxLength={100}
+            />
+          </FormControl>
+        </Flex>
 
+        <FormControl isRequired>
           <Box w={'full'} mb={'1.25rem'}>
             <FormLabel color={'brand.slate.500'}>Location</FormLabel>
             <Select
@@ -143,6 +242,8 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               })}
             </Select>
           </Box>
+        </FormControl>
+        <FormControl>
           <VStack align={'start'} gap={2} rowGap={'0'} my={3} mb={'25px'}>
             {user?.photo ? (
               <>
@@ -194,43 +295,80 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               </>
             )}
           </VStack>
+        </FormControl>
 
+        <FormControl
+          aria-autocomplete="none"
+          isInvalid={!!errors.publicKey}
+          isRequired
+        >
           <Box w={'full'} mb={'1.25rem'}>
-            <FormLabel color={'brand.slate.500'}>Your One-Line Bio</FormLabel>
-            <Textarea
+            <FormLabel color={'brand.slate.500'} aria-autocomplete="none">
+              Your Solana Wallet Address
+            </FormLabel>
+            <FormHelperText mt={0} mb={4} color="brand.slate.500">
+              <>
+                This is where you will receive your rewards if you win. Download{' '}
+                <Text as="u">
+                  <Link href="https://backpack.app" isExternal>
+                    Backpack
+                  </Link>
+                </Text>{' '}
+                /{' '}
+                <Text as="u">
+                  <Link href="https://solflare.com" isExternal>
+                    Solflare
+                  </Link>
+                </Text>{' '}
+                if you don&apos;t have a Solana wallet
+              </>
+            </FormHelperText>
+            <Input
               borderColor="brand.slate.300"
               _placeholder={{
                 color: 'brand.slate.400',
               }}
+              aria-autocomplete="none"
+              autoComplete="off"
               focusBorderColor="brand.purple"
-              id={'bio'}
-              maxLength={180}
-              placeholder="Here is a sample placeholder"
-              {...register('bio', { required: true })}
+              id={'publicKey'}
+              placeholder="Enter your Solana wallet address"
+              required
+              {...register('publicKey', {
+                validate: (value) => {
+                  if (!value) return true;
+                  return validateSolAddress(value);
+                },
+              })}
+              isInvalid={!!errors.publicKey}
             />
-            <Text
-              color={
-                (watch('bio')?.length || 0) > 160 ? 'red' : 'brand.slate.400'
-              }
-              fontSize={'xs'}
-              textAlign="right"
-            >
-              {180 - (watch('bio')?.length || 0)} characters left
-            </Text>
+            <FormErrorMessage>
+              {errors.publicKey ? <>{errors.publicKey.message}</> : <></>}
+            </FormErrorMessage>
           </Box>
-          <Button
-            className="ph-no-capture"
-            w={'full'}
-            h="50px"
-            color={'white'}
-            bg={'rgb(101, 98, 255)'}
-            isLoading={uploading}
-            spinnerPlacement="start"
-            type="submit"
-          >
-            Continue
-          </Button>
         </FormControl>
+        <SkillSelect
+          errorSkill={post && skills.length === 0}
+          errorSubSkill={post && subSkills.length === 0}
+          skills={skills}
+          subSkills={subSkills}
+          setSkills={setSkills}
+          setSubSkills={setSubSkills}
+          helperText="We will send email notifications of new listings for your selected skills"
+        />
+        <Button
+          className="ph-no-capture"
+          w={'full'}
+          h="50px"
+          my={5}
+          color={'white'}
+          bg={'rgb(101, 98, 255)'}
+          isLoading={uploading}
+          spinnerPlacement="start"
+          type="submit"
+        >
+          Continue
+        </Button>
       </form>
     </Box>
   );

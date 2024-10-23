@@ -1,0 +1,16 @@
+#!/bin/bash
+
+protected_branch="main"
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+if [ "$current_branch" = "$protected_branch" ]; then
+  read -p "You're about to push to $protected_branch, is that what you intended? [y/n]" -n 1 -r < /dev/tty
+  echo
+  if echo $REPLY | grep -E '^[Yy]$' > /dev/null
+  then
+    exit 0
+  fi
+  echo "Push aborted."
+  exit 1
+fi
+exit 0

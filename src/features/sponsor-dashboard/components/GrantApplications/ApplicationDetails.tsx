@@ -25,7 +25,6 @@ import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
-import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
 import {
@@ -40,6 +39,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type GrantApplicationWithUser } from '../../types';
+import { InfoBox } from '../InfoBox';
 import { MarkCompleted } from './MarkCompleted';
 import { ApproveModal } from './Modals/ApproveModal';
 import { RejectGrantApplicationModal } from './Modals/RejectModal';
@@ -59,28 +59,6 @@ interface Props {
     skip: number;
   };
 }
-
-const InfoBox = ({
-  label,
-  content,
-}: {
-  label: string;
-  content?: string | null;
-}) => (
-  <Box mb={4}>
-    <Text
-      mb={1}
-      color="brand.slate.400"
-      fontSize="xs"
-      fontWeight={600}
-      textTransform={'uppercase'}
-    >
-      {label}
-    </Text>
-    <LinkTextParser text={content || ''} />
-  </Box>
-);
-
 export const ApplicationDetails = ({
   grant,
   applications,
@@ -308,7 +286,7 @@ export const ApplicationDetails = ({
 
   return (
     <Box
-      w="150%"
+      w="100%"
       bg="white"
       borderColor="brand.slate.200"
       borderTopWidth="1px"
@@ -340,6 +318,8 @@ export const ApplicationDetails = ({
       {applications?.length ? (
         <>
           <Box
+            pos="sticky"
+            top={'3rem'}
             py={1}
             borderBottom={'1px'}
             borderBottomColor={'brand.slate.200'}
@@ -424,7 +404,9 @@ export const ApplicationDetails = ({
                 {isApproved && (
                   <>
                     <MarkCompleted
-                      isCompleted={selectedApplication.isShipped}
+                      isCompleted={
+                        selectedApplication.applicationStatus === 'Completed'
+                      }
                       applicationId={selectedApplication.id}
                       onMarkCompleted={updateApplicationState}
                     />
@@ -674,6 +656,7 @@ export const ApplicationDetails = ({
               <InfoBox
                 label="Project Details"
                 content={selectedApplication?.projectDetails}
+                isHtml
               />
               <InfoBox label="Twitter" content={selectedApplication?.twitter} />
               <InfoBox
@@ -683,14 +666,17 @@ export const ApplicationDetails = ({
               <InfoBox
                 label="Proof of Work"
                 content={selectedApplication?.proofOfWork}
+                isHtml
               />
               <InfoBox
                 label="Goals and Milestones"
                 content={selectedApplication?.milestones}
+                isHtml
               />
               <InfoBox
                 label="Primary Key Performance Indicator"
                 content={selectedApplication?.kpi}
+                isHtml
               />
               {Array.isArray(selectedApplication?.answers) &&
                 selectedApplication.answers.map(
@@ -699,6 +685,7 @@ export const ApplicationDetails = ({
                       key={answerIndex}
                       label={answer.question}
                       content={answer.answer}
+                      isHtml
                     />
                   ),
                 )}

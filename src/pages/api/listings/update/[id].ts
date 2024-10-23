@@ -95,13 +95,13 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       pastDeadline;
 
     if (
-      wasUnPublished ||
-      ((listing.status === 'CLOSED' ||
+      (wasUnPublished ||
+        listing.status === 'CLOSED' ||
         listing.status === 'VERIFYING' ||
         listing.status === 'VERIFY_FAIL') &&
-        req.role !== 'GOD')
+      req.role !== 'GOD'
     )
-      return res.status(500).json({
+      return res.status(400).json({
         message: `Listing is not open and hence cannot be edited`,
       });
 
@@ -176,25 +176,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    let usdValue = 0;
-    let amount;
-    if (isPublished && publishedAt) {
-      try {
-        if (compensationType === 'fixed') {
-          amount = rewardAmount;
-        } else if (compensationType === 'range') {
-          amount = (maxRewardAsk + minRewardAsk) / 2;
-        }
-        if (token && amount) {
-          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
-          usdValue = tokenUsdValue * amount;
-        }
-      } catch (err) {
-        logger.error('Error calculating USD value -', err);
-      }
-    }
-
-    let isVerifying = false;
+    let isVerifying = listing.status === 'VERIFYING';
     if (isPublished) {
       const sponsor = await prisma.sponsors.findUnique({
         where: { id: userSponsorId },
@@ -246,6 +228,24 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (isVerifying) {
       isPublished = false;
       publishedAt = null;
+    }
+
+    let usdValue = 0;
+    let amount;
+    if (isPublished && publishedAt && !isVerifying) {
+      try {
+        if (compensationType === 'fixed') {
+          amount = rewardAmount;
+        } else if (compensationType === 'range') {
+          amount = (maxRewardAsk + minRewardAsk) / 2;
+        }
+        if (token && amount) {
+          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
+          usdValue = tokenUsdValue * amount;
+        }
+      } catch (err) {
+        logger.error('Error calculating USD value -', err);
+      }
     }
 
     const result = await prisma.bounties.update({

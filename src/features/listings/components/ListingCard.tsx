@@ -7,7 +7,6 @@ import {
   SkeletonCircle,
   SkeletonText,
   Text,
-  useBreakpointValue,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -74,7 +73,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     title,
     token,
     slug,
-    applicationType,
     isWinnersAnnounced,
     isFeatured,
     compensationType,
@@ -87,8 +85,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   const router = useRouter();
   const isBounty = type === 'bounty';
 
-  const isSM = useBreakpointValue({ base: false, sm: true });
-
   const isBeforeDeadline = dayjs().isBefore(dayjs(deadline));
 
   const targetDate =
@@ -99,12 +95,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   let deadlineText;
 
   if (isBeforeDeadline) {
-    deadlineText =
-      applicationType === 'rolling'
-        ? isSM
-          ? 'Rolling Deadline'
-          : 'Rolling'
-        : `Due in ${formattedDeadline}`;
+    deadlineText = `Due in ${formattedDeadline}`;
   } else {
     deadlineText = isWinnersAnnounced
       ? `Completed ${formattedDeadline} ago`
@@ -346,7 +337,6 @@ export const ListingCardMobile = ({ bounty }: { bounty: Listing }) => {
     title,
     token,
     slug,
-    applicationType,
     compensationType,
     minRewardAsk,
     maxRewardAsk,
@@ -492,9 +482,7 @@ export const ListingCardMobile = ({ bounty }: { bounty: Listing }) => {
                     whiteSpace={'nowrap'}
                   >
                     {dayjs().isBefore(dayjs(deadline))
-                      ? applicationType === 'rolling'
-                        ? 'Rolling Deadline'
-                        : `Due ${dayjs(deadline).fromNow()}`
+                      ? `Due ${dayjs(deadline).fromNow()}`
                       : `Closed ${dayjs(deadline).fromNow()}`}
                   </Text>
                 </Flex>

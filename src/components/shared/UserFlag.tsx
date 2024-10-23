@@ -38,7 +38,7 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
   }, [location]);
   return code === 'balkan' ? (
     <Center
-      bgImage={'/assets/superteams/logosbalkan.png'}
+      bgImage={'/assets/superteams/logos/balkan.png'}
       bgSize={'contain'}
       borderWidth="1px"
       borderStyle="solid"

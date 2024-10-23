@@ -73,7 +73,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             increment: 1,
           },
           paymentDetails: updatedPaymentDetails as any,
-          isShipped: isFullyPaid,
+          ...(isFullyPaid && { applicationStatus: 'Completed' }),
         },
         include: {
           user: true,

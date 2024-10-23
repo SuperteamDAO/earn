@@ -33,7 +33,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       deadline,
       templateId,
       pocSocials,
-      applicationType,
       timeToComplete,
       description,
       type,
@@ -69,25 +68,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const correctedSkills = cleanSkills(skills);
-
-    let usdValue = 0;
-    if (isPublished && publishedAt) {
-      try {
-        let amount;
-        if (compensationType === 'fixed') {
-          amount = rewardAmount;
-        } else if (compensationType === 'range') {
-          amount = (minRewardAsk + maxRewardAsk) / 2;
-        }
-
-        if (amount && token) {
-          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
-          usdValue = tokenUsdValue * amount;
-        }
-      } catch (error) {
-        logger.error('Error calculating USD value:', error);
-      }
-    }
 
     let isVerifying = false;
 
@@ -144,6 +124,25 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       publishedAt = null;
     }
 
+    let usdValue = 0;
+    if (isPublished && publishedAt && !isVerifying) {
+      try {
+        let amount;
+        if (compensationType === 'fixed') {
+          amount = rewardAmount;
+        } else if (compensationType === 'range') {
+          amount = (minRewardAsk + maxRewardAsk) / 2;
+        }
+
+        if (amount && token) {
+          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
+          usdValue = tokenUsdValue * amount;
+        }
+      } catch (error) {
+        logger.error('Error calculating USD value:', error);
+      }
+    }
+
     const finalData = {
       sponsorId: userSponsorId,
       status,
@@ -156,7 +155,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       deadline,
       templateId,
       pocSocials,
-      applicationType,
       timeToComplete,
       description,
       type,

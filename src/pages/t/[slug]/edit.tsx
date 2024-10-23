@@ -47,6 +47,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
+import { validateSolAddress } from '@/utils/validateSolAddress';
 
 type FormData = {
   username: string;
@@ -69,6 +70,7 @@ type FormData = {
   currentEmployer?: string;
   skills?: any;
   private: boolean;
+  publicKey?: string;
 };
 
 const parseSkillsAndSubskills = (skillsObject: any) => {
@@ -88,7 +90,13 @@ const parseSkillsAndSubskills = (skillsObject: any) => {
 export default function EditProfilePage({ slug }: { slug: string }) {
   const { user, refetchUser } = useUser();
   const { data: session, status } = useSession();
-  const { register, handleSubmit, setValue, watch } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<FormData>();
 
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -179,6 +187,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         setIsPhotoLoading(false);
       } else {
         setIsPhotoLoading(false);
+      }
+
+      if (user.publicKey) {
+        setValue('publicKey', user.publicKey);
       }
     }
   }, [user, setValue]);
@@ -321,17 +333,17 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               Edit Profile
             </Heading>
             <form onSubmit={handleSubmit(onSubmit)}>
+              <Text
+                mt={12}
+                mb={5}
+                color={'brand.slate.600'}
+                fontSize="lg"
+                fontWeight={600}
+                letterSpacing={0.4}
+              >
+                PERSONAL INFO
+              </Text>
               <FormControl>
-                <Text
-                  mt={12}
-                  mb={5}
-                  color={'brand.slate.600'}
-                  fontSize="lg"
-                  fontWeight={600}
-                  letterSpacing={0.4}
-                >
-                  PERSONAL INFO
-                </Text>
                 <Box mb={4}>
                   <FormLabel
                     mb={'1'}
@@ -372,292 +384,305 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     />
                   )}
                 </Box>
-                <InputField
-                  label="Username"
-                  placeholder="Username"
-                  name="username"
-                  register={register}
-                  isRequired
-                  onChange={(e) => setUsername(e.target.value)}
-                  isInvalid={isInvalid}
-                  validationErrorMessage={validationErrorMessage}
-                />
-
-                <InputField
-                  label="First Name"
-                  placeholder="First Name"
-                  name="firstName"
-                  register={register}
-                  isRequired
-                />
-
-                <InputField
-                  label="Last Name"
-                  placeholder="Last Name"
-                  name="lastName"
-                  register={register}
-                  isRequired
-                />
-
-                <Box w={'full'} mb={'1.25rem'}>
-                  <FormLabel color={'brand.slate.500'}>
-                    Your One-Line Bio
-                  </FormLabel>
-                  <Textarea
-                    borderColor="brand.slate.300"
-                    _placeholder={{
-                      color: 'brand.slate.300',
-                    }}
-                    focusBorderColor="brand.purple"
-                    id={'bio'}
-                    maxLength={180}
-                    placeholder="Here is a sample placeholder"
-                    {...register('bio', { required: true })}
-                  />
-                  <Text
-                    color={
-                      (watch('bio')?.length || 0) > 160
-                        ? 'red'
-                        : 'brand.slate.400'
-                    }
-                    fontSize={'xs'}
-                    textAlign="right"
-                  >
-                    {180 - (watch('bio')?.length || 0)} characters left
-                  </Text>
-                </Box>
-
-                <Text
-                  mt={12}
-                  mb={5}
-                  color={'brand.slate.600'}
-                  fontSize="lg"
-                  fontWeight={600}
-                  letterSpacing={0.4}
-                >
-                  SOCIALS
-                </Text>
-
-                <SocialInput register={register} watch={watch} />
-
-                <Text
-                  mt={12}
-                  mb={5}
-                  color={'brand.slate.600'}
-                  fontSize="lg"
-                  fontWeight={600}
-                  letterSpacing={0.4}
-                >
-                  WORK
-                </Text>
-
-                <Box w={'full'} mb={'1.25rem'}>
-                  <FormLabel color={'brand.slate.500'}>
-                    What areas of Web3 are you most interested in?
-                  </FormLabel>
-                  <ReactSelect
-                    closeMenuOnSelect={false}
-                    components={animatedComponents}
-                    isMulti
-                    options={IndustryList.map((elm: string) => {
-                      return { label: elm, value: elm };
-                    })}
-                    value={DropDownValues.interests}
-                    required
-                    onChange={(selectedOptions: any) => {
-                      const selectedInterests = selectedOptions
-                        ? selectedOptions.map(
-                            (elm: { label: string; value: string }) => elm,
-                          )
-                        : [];
-                      setDropDownValues({
-                        ...DropDownValues,
-                        interests: selectedInterests,
-                      });
-                      setValue('interests', selectedInterests);
-                    }}
-                    styles={{
-                      control: (baseStyles) => ({
-                        ...baseStyles,
-                        backgroundColor: 'brand.slate.500',
-                        borderColor: 'brand.slate.300',
-                      }),
-                    }}
-                  />
-                </Box>
-
-                <Box w={'full'} mb={'1.25rem'}>
-                  <FormLabel color={'brand.slate.500'}>
-                    Community Affiliations
-                  </FormLabel>
-                  <ReactSelect
-                    closeMenuOnSelect={false}
-                    components={animatedComponents}
-                    isMulti
-                    options={CommunityList.map((elm: string) => {
-                      return { label: elm, value: elm };
-                    })}
-                    value={DropDownValues.community}
-                    required
-                    onChange={(e: any) => {
-                      const selectedCommunities = e
-                        ? e.map((elm: { label: string; value: string }) => elm)
-                        : [];
-                      setDropDownValues({
-                        ...DropDownValues,
-                        community: selectedCommunities,
-                      });
-                      setValue('community', selectedCommunities);
-                    }}
-                    styles={{
-                      control: (baseStyles) => ({
-                        ...baseStyles,
-                        backgroundColor: 'brand.slate.500',
-                        borderColor: 'brand.slate.300',
-                      }),
-                    }}
-                  />
-                </Box>
-
-                <SelectBox
-                  label="Work Experience"
-                  watchValue={watch('experience')}
-                  options={workExp}
-                  id="experience"
-                  placeholder="Pick Your Experience"
-                  register={register}
-                />
-
-                <SelectBox
-                  label="Location"
-                  watchValue={watch('location')}
-                  options={CountryList}
-                  id="location"
-                  placeholder="Select Your Country"
-                  register={register}
-                />
-
-                <SelectBox
-                  label="How familiar are you with Web3?"
-                  watchValue={watch('cryptoExperience')}
-                  options={web3Exp}
-                  id="cryptoExperience"
-                  placeholder="Pick your Experience"
-                  register={register}
-                />
-
-                <SelectBox
-                  label="Work Preference"
-                  watchValue={watch('workPrefernce')}
-                  options={workType}
-                  id="workPrefernce"
-                  placeholder="Type of Work"
-                  register={register}
-                />
-
-                <InputField
-                  label="Current Employer"
-                  placeholder="Employer"
-                  name="currentEmployer"
-                  register={register}
-                  isRequired
-                />
-
-                <FormLabel color={'brand.slate.500'}>Proof of Work</FormLabel>
-                <Box>
-                  {pow.map((data, idx) => {
-                    return (
-                      <Flex
-                        key={data.id}
-                        align={'center'}
-                        mt="2"
-                        mb={'1.5'}
-                        px={'1rem'}
-                        py={'0.5rem'}
-                        color={'brand.slate.500'}
-                        border={'1px solid gray'}
-                        borderColor="brand.slate.300"
-                        rounded={'md'}
-                      >
-                        <Text w={'full'} color={'gray.800'} fontSize={'0.8rem'}>
-                          {data.title}
-                        </Text>
-                        <Center columnGap={'0.8rem'}>
-                          <EditIcon
-                            onClick={() => {
-                              setSelectedProject(idx);
-                              onOpen();
-                            }}
-                            cursor={'pointer'}
-                            fontSize={'0.8rem'}
-                          />
-                          <DeleteIcon
-                            onClick={() => {
-                              setPow((prevPow) =>
-                                prevPow.filter((_ele, id) => idx !== id),
-                              );
-                            }}
-                            cursor={'pointer'}
-                            fontSize={'0.8rem'}
-                          />
-                        </Center>
-                      </Flex>
-                    );
-                  })}
-                </Box>
-                <Button
-                  w={'full'}
-                  mb={8}
-                  leftIcon={<AddIcon />}
-                  onClick={() => {
-                    onOpen();
-                  }}
-                  variant="outline"
-                >
-                  Add Project
-                </Button>
-
-                <SkillSelect
-                  skills={skills}
-                  subSkills={subSkills}
-                  setSkills={setSkills}
-                  setSubSkills={setSubSkills}
-                  skillLabel="Your Skills"
-                  subSkillLabel="Sub Skills"
-                  helperText="We will send email notifications of new listings for your selected skills"
-                />
-
-                <Checkbox
-                  mr={1}
-                  mb={8}
-                  color="brand.slate.500"
-                  fontWeight={500}
-                  _checked={{
-                    '& .chakra-checkbox__control': {
-                      background: 'brand.purple',
-                      borderColor: 'brand.purple',
-                    },
-                  }}
-                  colorScheme="purple"
-                  isChecked={privateValue}
-                  onChange={(e) => {
-                    setValue('private', e.target.checked);
-                  }}
-                  size="md"
-                >
-                  Keep my info private
-                </Checkbox>
-                <br />
-
-                <Button
-                  className="ph-no-capture"
-                  mb={12}
-                  isLoading={uploading || isLoading}
-                  type="submit"
-                >
-                  Update Profile
-                </Button>
               </FormControl>
+              <InputField
+                label="Username"
+                placeholder="Username"
+                name="username"
+                register={register}
+                isRequired
+                onChange={(e) => setUsername(e.target.value)}
+                isInvalid={isInvalid}
+                validationErrorMessage={validationErrorMessage}
+                errors={errors}
+              />
+
+              <InputField
+                label="First Name"
+                placeholder="First Name"
+                name="firstName"
+                register={register}
+                isRequired
+                errors={errors}
+              />
+
+              <InputField
+                label="Last Name"
+                placeholder="Last Name"
+                name="lastName"
+                register={register}
+                isRequired
+                errors={errors}
+              />
+
+              <Box w={'full'} mb={'1.25rem'}>
+                <FormLabel color={'brand.slate.500'}>
+                  Your One-Line Bio
+                </FormLabel>
+                <Textarea
+                  borderColor="brand.slate.300"
+                  _placeholder={{
+                    color: 'brand.slate.300',
+                  }}
+                  focusBorderColor="brand.purple"
+                  id={'bio'}
+                  maxLength={180}
+                  placeholder="Here is a sample placeholder"
+                  {...register('bio', { required: false })}
+                />
+                <Text
+                  color={
+                    (watch('bio')?.length || 0) > 160
+                      ? 'red'
+                      : 'brand.slate.400'
+                  }
+                  fontSize={'xs'}
+                  textAlign="right"
+                >
+                  {180 - (watch('bio')?.length || 0)} characters left
+                </Text>
+              </Box>
+              <InputField
+                label="Your Solana Wallet Address"
+                placeholder="Wallet Address"
+                name="publicKey"
+                register={register}
+                isRequired
+                isInvalid={!!errors.publicKey}
+                validate={(value: string) => {
+                  return validateSolAddress(value);
+                }}
+                validationErrorMessage={validationErrorMessage}
+                errors={errors}
+              />
+              <Text
+                mt={12}
+                mb={5}
+                color={'brand.slate.600'}
+                fontSize="lg"
+                fontWeight={600}
+                letterSpacing={0.4}
+              >
+                SOCIALS
+              </Text>
+
+              <SocialInput register={register} watch={watch} />
+
+              <Text
+                mt={12}
+                mb={5}
+                color={'brand.slate.600'}
+                fontSize="lg"
+                fontWeight={600}
+                letterSpacing={0.4}
+              >
+                WORK
+              </Text>
+
+              <FormControl w={'full'} mb={'1.25rem'}>
+                <FormLabel color={'brand.slate.500'}>
+                  What areas of Web3 are you most interested in?
+                </FormLabel>
+                <ReactSelect
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  isMulti
+                  options={IndustryList.map((elm: string) => {
+                    return { label: elm, value: elm };
+                  })}
+                  value={DropDownValues.interests}
+                  onChange={(selectedOptions: any) => {
+                    const selectedInterests = selectedOptions
+                      ? selectedOptions.map(
+                          (elm: { label: string; value: string }) => elm,
+                        )
+                      : [];
+                    setDropDownValues({
+                      ...DropDownValues,
+                      interests: selectedInterests,
+                    });
+                    setValue('interests', selectedInterests);
+                  }}
+                  styles={{
+                    control: (baseStyles) => ({
+                      ...baseStyles,
+                      backgroundColor: 'brand.slate.500',
+                      borderColor: 'brand.slate.300',
+                    }),
+                  }}
+                />
+              </FormControl>
+
+              <FormControl w={'full'} mb={'1.25rem'}>
+                <FormLabel color={'brand.slate.500'}>
+                  Community Affiliations
+                </FormLabel>
+                <ReactSelect
+                  closeMenuOnSelect={false}
+                  components={animatedComponents}
+                  isMulti
+                  options={CommunityList.map((elm: string) => {
+                    return { label: elm, value: elm };
+                  })}
+                  value={DropDownValues.community}
+                  onChange={(e: any) => {
+                    const selectedCommunities = e
+                      ? e.map((elm: { label: string; value: string }) => elm)
+                      : [];
+                    setDropDownValues({
+                      ...DropDownValues,
+                      community: selectedCommunities,
+                    });
+                    setValue('community', selectedCommunities);
+                  }}
+                  styles={{
+                    control: (baseStyles) => ({
+                      ...baseStyles,
+                      backgroundColor: 'brand.slate.500',
+                      borderColor: 'brand.slate.300',
+                    }),
+                  }}
+                />
+              </FormControl>
+
+              <SelectBox
+                label="Work Experience"
+                watchValue={watch('experience')}
+                options={workExp}
+                id="experience"
+                placeholder="Pick Your Experience"
+                register={register}
+              />
+
+              <SelectBox
+                label="Location"
+                watchValue={watch('location')}
+                options={CountryList}
+                id="location"
+                placeholder="Select Your Country"
+                register={register}
+              />
+
+              <SelectBox
+                label="How familiar are you with Web3?"
+                watchValue={watch('cryptoExperience')}
+                options={web3Exp}
+                id="cryptoExperience"
+                placeholder="Pick your Experience"
+                register={register}
+              />
+
+              <SelectBox
+                label="Work Preference"
+                watchValue={watch('workPrefernce')}
+                options={workType}
+                id="workPrefernce"
+                placeholder="Type of Work"
+                register={register}
+              />
+
+              <InputField
+                label="Current Employer"
+                placeholder="Employer"
+                name="currentEmployer"
+                register={register}
+                errors={errors}
+              />
+
+              <FormLabel color={'brand.slate.500'}>Proof of Work</FormLabel>
+              <Box>
+                {pow.map((data, idx) => {
+                  return (
+                    <Flex
+                      key={data.id}
+                      align={'center'}
+                      mt="2"
+                      mb={'1.5'}
+                      px={'1rem'}
+                      py={'0.5rem'}
+                      color={'brand.slate.500'}
+                      border={'1px solid gray'}
+                      borderColor="brand.slate.300"
+                      rounded={'md'}
+                    >
+                      <Text w={'full'} color={'gray.800'} fontSize={'0.8rem'}>
+                        {data.title}
+                      </Text>
+                      <Center columnGap={'0.8rem'}>
+                        <EditIcon
+                          onClick={() => {
+                            setSelectedProject(idx);
+                            onOpen();
+                          }}
+                          cursor={'pointer'}
+                          fontSize={'0.8rem'}
+                        />
+                        <DeleteIcon
+                          onClick={() => {
+                            setPow((prevPow) =>
+                              prevPow.filter((_ele, id) => idx !== id),
+                            );
+                          }}
+                          cursor={'pointer'}
+                          fontSize={'0.8rem'}
+                        />
+                      </Center>
+                    </Flex>
+                  );
+                })}
+              </Box>
+              <Button
+                w={'full'}
+                mb={8}
+                leftIcon={<AddIcon />}
+                onClick={() => {
+                  onOpen();
+                }}
+                variant="outline"
+              >
+                Add Project
+              </Button>
+
+              <SkillSelect
+                skills={skills}
+                subSkills={subSkills}
+                setSkills={setSkills}
+                setSubSkills={setSubSkills}
+                skillLabel="Your Skills"
+                subSkillLabel="Sub Skills"
+                helperText="We will send email notifications of new listings for your selected skills"
+              />
+
+              <Checkbox
+                mr={1}
+                mb={8}
+                color="brand.slate.500"
+                fontWeight={500}
+                _checked={{
+                  '& .chakra-checkbox__control': {
+                    background: 'brand.purple',
+                    borderColor: 'brand.purple',
+                  },
+                }}
+                colorScheme="purple"
+                isChecked={privateValue}
+                onChange={(e) => {
+                  setValue('private', e.target.checked);
+                }}
+                size="md"
+              >
+                Keep my info private
+              </Checkbox>
+              <br />
+
+              <Button
+                className="ph-no-capture"
+                mb={12}
+                isLoading={uploading || isLoading}
+                type="submit"
+              >
+                Update Profile
+              </Button>
             </form>
           </Box>
         </Box>

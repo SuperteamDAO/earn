@@ -47,7 +47,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const airtableRecordId = await fetchAirtableRecordId(
         url,
-        'Earn Application ID',
+        'earnApplicationId',
         id,
         config,
       );
@@ -89,7 +89,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const result = await prisma.grantApplication.update({
       where: { id },
       data: {
-        isShipped: true,
+        applicationStatus: 'Completed',
       },
       include: {
         user: true,
