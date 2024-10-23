@@ -890,7 +890,6 @@
     "editIcon": "Edit icon"
   },
   "desktopNavbar": {
-    "logoAlt": "Superteam Earn",
     "sponsors": "SPONSORS",
     "search": "Search",
     "radarNavIconAlt": "Radar Nav Icon",
@@ -922,7 +921,6 @@
       "changelog": "Changelog",
       "contactUs": "Contact Us"
     },
-    "copyright": "© {{year}} Superteam. All rights reserved.",
     "region": "REGION",
     "globalFlag": "🌍",
     "whereTeamsCome": "Where Solana teams come to get sh*t done",
@@ -965,7 +963,7 @@
   },
   "QueryInput": {
     "searchIconAlt": "Search icon",
-    "placeholder": "Search for Superteam Earn Listings",
+    "placeholder": "Search for Solar Earn Listings",
     "loadingSpinnerAlt": "Loading"
   },
   "Results": {
@@ -976,7 +974,7 @@
     "viewMore": "View More"
   },
   "SearchModal": {
-    "searchPlaceholder": "Search for Superteam Earn Listings",
+    "searchPlaceholder": "Search for Solar Earn Listings",
     "viewAllResults": "View All Results"
   },
   "stepOne": {

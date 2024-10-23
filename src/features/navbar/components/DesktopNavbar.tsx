@@ -74,7 +74,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 h={5}
                 cursor="pointer"
                 objectFit={'contain'}
-                alt={t('desktopNavbar.logoAlt')}
+                alt={'Solar Earn'}
                 src={'/assets/logo/logo.svg'}
               />
 
