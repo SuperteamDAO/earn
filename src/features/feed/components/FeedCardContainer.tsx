@@ -86,7 +86,6 @@ export const FeedCardContainer = ({
   );
 
   const handleCommentSuccess = () => {
-    console.log('user', user);
     setCommentCount((prevCount) => (prevCount || 0) + 1);
 
     setRecentCommenters((prevCommenters) => [

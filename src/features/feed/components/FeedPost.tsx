@@ -1,6 +1,5 @@
 import { Image, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
 
 import { FeedPageLayout } from '@/layouts/Feed';
 
@@ -23,10 +22,6 @@ export const FeedPost = ({ type, id }: Props) => {
       id,
     }),
   );
-
-  useEffect(() => {
-    console.log('feed data', data);
-  }, [data]);
 
   if (!data && !isLoading) {
     return (

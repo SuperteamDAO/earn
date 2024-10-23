@@ -3,17 +3,11 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-import {
-  FeedCardContainerSkeleton,
-  type FeedPostType,
-  PowCard,
-  SubmissionCard,
-  useGetFeed,
-} from '@/features/feed';
+import { type FeedPostType, useGetFeed } from '@/features/feed';
 import { VibeCard } from '@/features/home';
 import { FeedPageLayout } from '@/layouts/Feed';
 
-import { GrantCard } from './grantCard';
+import { FeedLoop } from './FeedLoop';
 
 interface Props {
   type?: FeedPostType;
@@ -42,10 +36,6 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
       highlightId: id,
       highlightType: type,
     });
-
-  useEffect(() => {
-    console.log('feed - ', data);
-  }, [data]);
 
   useEffect(() => {
     if (inView && hasNextPage) {
@@ -151,42 +141,12 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
         </Flex>
       </Box>
       <Box pl={{ base: 1, md: 0 }}>
-        {isLoading ? (
-          Array.from({ length: 5 }).map((_, index) => (
-            <FeedCardContainerSkeleton key={index} />
-          ))
-        ) : feedItems.length > 0 ? (
-          <>
-            {feedItems.map((item, index) => {
-              switch (item.type) {
-                case 'submission':
-                  return (
-                    <SubmissionCard
-                      key={index}
-                      sub={item as any}
-                      type="activity"
-                    />
-                  );
-                case 'pow':
-                  return (
-                    <PowCard key={index} pow={item as any} type="activity" />
-                  );
-                case 'grant-application':
-                  return (
-                    <GrantCard
-                      type="activity"
-                      grant={item as any}
-                      key={index}
-                    />
-                  );
-                default:
-                  return null;
-              }
-            })}
-            {isFetchingNextPage && <FeedCardContainerSkeleton />}
-            <div ref={ref} style={{ height: '10px' }} />
-          </>
-        ) : (
+        <FeedLoop
+          feed={feedItems}
+          ref={ref}
+          isFetchingNextPage={isFetchingNextPage}
+          isLoading={isLoading}
+        >
           <Box my={32}>
             <Image
               w={32}
@@ -216,7 +176,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
               We couldn’t find any activity for your time filter
             </Text>
           </Box>
-        )}
+        </FeedLoop>
       </Box>
     </FeedPageLayout>
   );

@@ -13,11 +13,19 @@ export default async function handler(
   res: NextApiResponse,
 ): Promise<void> {
   logger.debug(`Request query: ${safeStringify(req.query)}`);
-  const { timePeriod, take = 15, skip = 0, isWinner, filter } = req.query;
+  const {
+    timePeriod,
+    take = 15,
+    skip = 0,
+    isWinner,
+    filter,
+    userId,
+  } = req.query;
 
-  const type = req.query.highlightType as FeedPostType;
-  let id = req.query.highlightId as string | undefined;
-  if (Number(skip) !== 0) id = undefined;
+  const highlightType = req.query.highlightType as FeedPostType;
+  let highlightId = req.query.highlightId as string | undefined;
+  if (Number(skip) !== 0) highlightId = undefined;
+  const takeOnlyType = req.query.takeOnlyType as FeedPostType | undefined;
 
   try {
     const winnerFilter =
@@ -30,7 +38,7 @@ export default async function handler(
           }
         : {};
 
-    let startDate: Date;
+    let startDate: Date | undefined;
     const endDate: Date = new Date();
 
     switch (timePeriod) {
@@ -44,7 +52,7 @@ export default async function handler(
         startDate = dayjs().subtract(365, 'day').toDate();
         break;
       default:
-        startDate = dayjs().subtract(30, 'day').toDate();
+        startDate = undefined;
         break;
     }
 
@@ -109,31 +117,38 @@ export default async function handler(
         },
       },
     };
-    const submissions = await prisma.submission.findMany({
-      where: {
-        createdAt: {
-          gte: startDate,
-          lte: endDate,
-        },
-        ...winnerFilter,
-        listing: {
-          isPrivate: false,
-        },
-      },
-      skip: parseInt(skip as string, 10),
-      take: parseInt(take as string, 10),
-      orderBy:
-        filter === 'popular'
-          ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
-          : { createdAt: 'desc' },
-      include: submissionInclude,
-    });
+    const submissions =
+      !takeOnlyType || (takeOnlyType && takeOnlyType === 'submission')
+        ? await prisma.submission.findMany({
+            where: {
+              createdAt: {
+                ...(startDate ? { gte: startDate } : {}),
+                lte: endDate,
+              },
+              ...winnerFilter,
+              listing: {
+                isPrivate: false,
+              },
+              ...(userId ? { userId: userId as string } : {}),
+            },
+            skip: parseInt(skip as string, 10),
+            take: parseInt(take as string, 10),
+            orderBy:
+              filter === 'popular'
+                ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
+                : { createdAt: 'desc' },
+            include: submissionInclude,
+          })
+        : [];
 
     const submissionHighlighted =
-      !submissions.find((s) => s.id === id) && !!id && type === 'submission'
+      !submissions.find((s) => s.id === highlightId) &&
+      !!highlightId &&
+      highlightType === 'submission'
         ? await prisma.submission.findUnique({
             where: {
-              id,
+              id: highlightId,
+              ...(userId ? { userId: userId as string } : {}),
             },
             include: submissionInclude,
           })
@@ -164,27 +179,34 @@ export default async function handler(
     }>;
     let pow: PoWWithUserAndCommentsCount[] = [];
     if (isWinner !== 'true') {
-      pow = await prisma.poW.findMany({
-        where: {
-          createdAt: {
-            gte: startDate,
-            lte: endDate,
-          },
-        },
-        skip: parseInt(skip as string, 10),
-        take: parseInt(take as string, 10),
-        orderBy:
-          filter === 'popular'
-            ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
-            : { createdAt: 'desc' },
-        include: poWInclude,
-      });
+      pow =
+        !takeOnlyType || (takeOnlyType && takeOnlyType === 'pow')
+          ? await prisma.poW.findMany({
+              where: {
+                createdAt: {
+                  ...(startDate ? { gte: startDate } : {}),
+                  lte: endDate,
+                },
+                ...(userId ? { userId: userId as string } : {}),
+              },
+              skip: parseInt(skip as string, 10),
+              take: parseInt(take as string, 10),
+              orderBy:
+                filter === 'popular'
+                  ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
+                  : { createdAt: 'desc' },
+              include: poWInclude,
+            })
+          : [];
     }
     const powHighlighted =
-      !pow.find((p) => p.id === id) && !!id && type === 'pow'
+      !pow.find((p) => p.id === highlightId) &&
+      !!highlightId &&
+      highlightType === 'pow'
         ? await prisma.poW.findUnique({
             where: {
-              id,
+              id: highlightId,
+              ...(userId ? { userId: userId as string } : {}),
             },
             include: poWInclude,
           })
@@ -224,36 +246,41 @@ export default async function handler(
         },
       },
     };
-    const grantApplications = await prisma.grantApplication.findMany({
-      where: {
-        applicationStatus: 'Approved',
-        decidedAt: {
-          gte: startDate,
-          lte: endDate,
-        },
-        grant: {
-          isPrivate: false,
-        },
-      },
-      skip: parseInt(skip as string, 10),
-      take: parseInt(take as string, 10),
-      orderBy:
-        filter === 'popular'
-          ? [
-              // { approvedAmount: 'desc' },
-              { decidedAt: 'desc' },
-            ]
-          : { decidedAt: 'desc' },
-      include: grantApplicationInclude,
-    });
+    const grantApplications =
+      !takeOnlyType || (takeOnlyType && takeOnlyType === 'grant-application')
+        ? await prisma.grantApplication.findMany({
+            where: {
+              applicationStatus: 'Approved',
+              decidedAt: {
+                ...(startDate ? { gte: startDate } : {}),
+                lte: endDate,
+              },
+              grant: {
+                isPrivate: false,
+              },
+              ...(userId ? { userId: userId as string } : {}),
+            },
+            skip: parseInt(skip as string, 10),
+            take: parseInt(take as string, 10),
+            orderBy:
+              filter === 'popular'
+                ? [
+                    // { approvedAmount: 'desc' },
+                    { decidedAt: 'desc' },
+                  ]
+                : { decidedAt: 'desc' },
+            include: grantApplicationInclude,
+          })
+        : [];
 
     const grantApplicationHighlighted =
-      !grantApplications.find((ga) => ga.id === id) &&
-      !!id &&
-      type === 'grant-application'
+      !grantApplications.find((ga) => ga.id === highlightId) &&
+      !!highlightId &&
+      highlightType === 'grant-application'
         ? await prisma.grantApplication.findUnique({
             where: {
-              id,
+              id: highlightId,
+              ...(userId ? { userId: userId as string } : {}),
             },
             include: grantApplicationInclude,
           })
@@ -346,8 +373,8 @@ export default async function handler(
     ];
 
     results.sort((a, b) => {
-      if (a.id === id) return -1;
-      if (b.id === id) return 1;
+      if (a.id === highlightId) return -1;
+      if (b.id === highlightId) return 1;
       if (filter === 'popular') {
         if (a.likeCount === b.likeCount) {
           return b.createdAt.getTime() - a.createdAt.getTime();

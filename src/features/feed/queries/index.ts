@@ -12,13 +12,14 @@ interface GetFeedParams {
   take?: number;
   highlightId?: string;
   highlightType?: FeedPostType;
+  takeOnlyType?: FeedPostType;
+  userId?: string;
 }
 
 const fetchFeed = async ({
   pageParam,
   ...params
 }: GetFeedParams & { pageParam: number }) => {
-  console.log('fetch feed params', params);
   const { data } = await axios.get<FeedDataProps[]>('/api/feed/get', {
     params: {
       ...params,

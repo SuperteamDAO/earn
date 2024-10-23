@@ -273,7 +273,6 @@ export default async function handler(
       });
       return;
     }
-    console.log('feedPost', feedPost);
     res.status(200).json(feedPost);
     return;
   } catch (error: any) {

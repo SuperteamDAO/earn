@@ -33,14 +33,10 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       ),
     );
 
-    console.log(categories);
-
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { email: true },
     });
-
-    console.log(user);
 
     if (user && user.email && categories.length > 0) {
       logger.debug(`Removing unsubscribe entry for email: ${user.email}`);

@@ -24,10 +24,6 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
     let { type } = req.body as { type: CommentType | undefined };
     if (!type) type = 'NORMAL';
 
-    console.log('req', req.body);
-    console.log('refType', refType);
-    console.log('refId', refId);
-
     logger.debug('Creating a new comment in the database');
     const result = await prisma.comment.create({
       data: {
@@ -98,7 +94,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
           id: refId,
           userId: taggedUser.id,
           otherInfo: {
-            personName: result.author.username,
+            personName: result.author.firstName,
             type: refType,
           },
           triggeredBy: userId,

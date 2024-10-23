@@ -20,7 +20,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
   const { id, notes } = req.body;
 
-  console.log('notes - ', notes);
   if (!id || notes === undefined) {
     logger.warn('Missing parameters: id and notes are required');
     return res.status(400).json({ error: 'id and notes are required' });

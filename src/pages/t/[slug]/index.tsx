@@ -21,16 +21,12 @@ import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ShareIcon } from '@/components/shared/shareIcon';
-import {
-  type FeedDataProps,
-  GrantCard,
-  PowCard,
-  SubmissionCard,
-} from '@/features/feed';
+import { type FeedDataProps, FeedLoop, useGetFeed } from '@/features/feed';
 import {
   AddProject,
   EarnAvatar,
@@ -65,6 +61,33 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const [showSubskills, setShowSubskills] = useState<Record<number, boolean>>(
     {},
   );
+
+  const { ref, inView } = useInView();
+  const {
+    data: feed,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+  } = useGetFeed({
+    filter: 'new',
+    timePeriod: '',
+    isWinner: false,
+    take: 15,
+    userId: talent.id,
+    takeOnlyType: activeTab === 'activity' ? undefined : 'pow',
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, fetchNextPage, hasNextPage]);
 
   const handleToggleSubskills = (index: number) => {
     setShowSubskills({
@@ -106,14 +129,6 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const handleEditProfileClick = () => {
     router.push(`/t/${talent?.username}/edit`);
   };
-
-  const filteredFeed = useMemo(() => {
-    if (activeTab === 'activity') {
-      return talent?.feed;
-    }
-
-    return talent?.feed?.filter((item) => item.type === 'pow');
-  }, [activeTab, talent?.feed]);
 
   const addNewPow = () => {
     router.replace(router.asPath);
@@ -213,6 +228,8 @@ function TalentProfile({ talent, stats }: TalentProps) {
     talent?.firstName && talent?.lastName
       ? `${talent?.firstName} ${talent?.lastName} | Superteam Earn Talent`
       : 'Superteam Earn';
+
+  const feedItems = feed?.pages.flatMap((page) => page) ?? [];
 
   return (
     <>
@@ -531,7 +548,12 @@ function TalentProfile({ talent, stats }: TalentProps) {
               </Box>
               <Divider my={4} />
               <Box>
-                {filteredFeed?.length === 0 ? (
+                <FeedLoop
+                  feed={feedItems}
+                  ref={ref}
+                  isFetchingNextPage={isFetchingNextPage}
+                  isLoading={isLoading}
+                >
                   <>
                     <Image
                       w={32}
@@ -581,38 +603,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       Browse Bounties
                     </Button>
                   </>
-                ) : (
-                  filteredFeed?.map((item, index) => {
-                    switch (item.type) {
-                      case 'submission':
-                        return (
-                          <SubmissionCard
-                            key={index}
-                            sub={item as any}
-                            type="profile"
-                          />
-                        );
-                      case 'pow':
-                        return (
-                          <PowCard
-                            key={index}
-                            pow={item as any}
-                            type="profile"
-                          />
-                        );
-                      case 'grant-application':
-                        return (
-                          <GrantCard
-                            type="profile"
-                            grant={item as any}
-                            key={index}
-                          />
-                        );
-                      default:
-                        return null;
-                    }
-                  })
-                )}
+                </FeedLoop>
               </Box>
             </Box>
           </Box>
