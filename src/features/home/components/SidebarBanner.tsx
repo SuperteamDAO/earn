@@ -1,9 +1,12 @@
 import { Button, Flex, HStack, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 import { RadarLogo } from '@/svg/radar-logo';
 
 export const SidebarBanner = () => {
+  const { t } = useTranslation();
+
   return (
     <Flex
       direction={'column'}
@@ -29,7 +32,7 @@ export const SidebarBanner = () => {
         />
       </HStack>
       <Text color={'white'} fontSize={'lg'} fontWeight={'600'} opacity={0.9}>
-        Build a project for the latest Solana global hackathon!
+        {t('SidebarBanner.buildProject')}
       </Text>
       <Text
         mt={'0.5rem'}
@@ -37,8 +40,7 @@ export const SidebarBanner = () => {
         fontSize={'1rem'}
         lineHeight={'1.1875rem'}
       >
-        Submit to any of the Radar Side Tracks on Earn, and stand to win from a
-        pool of $250k+. Deadline for submissions is October 9, 2024 (UTC).
+        {t('SidebarBanner.submitTracks')}
       </Text>
       <Button
         as={NextLink}
@@ -53,7 +55,7 @@ export const SidebarBanner = () => {
         _hover={{ bg: 'orange.100' }}
         href="/hackathon/radar"
       >
-        View Tracks
+        {t('SidebarBanner.viewTracks')}
       </Button>
     </Flex>
   );

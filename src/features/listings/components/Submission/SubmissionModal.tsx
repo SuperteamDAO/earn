@@ -23,6 +23,7 @@ import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import {
   TextAreaWithCounter,
@@ -102,6 +103,7 @@ export const SubmissionModal = ({
   const { user, refetchUser } = useUser();
   const updateUser = useUpdateUser();
   const posthog = usePostHog();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -227,40 +229,26 @@ export const SubmissionModal = ({
   let subheadingText: JSX.Element | string = '';
   switch (type) {
     case 'project':
-      headerText = 'Submit Your Application';
+      headerText = t('SubmissionModal.submitYourApplication');
       subheadingText = (
         <>
-          Don&apos;t start working just yet! Apply first, and then begin working
-          only once you&apos;ve been hired for the project by the sponsor.
-          <Text mt={1}>
-            Please note that the sponsor might contact you to assess fit before
-            picking the winner.
-          </Text>
+          {t('SubmissionModal.dontStartWorkingYet')}
+          <Text mt={1}>{t('SubmissionModal.sponsorMayContact')}</Text>
         </>
       );
       break;
     case 'bounty':
-      headerText = 'Bounty Submission';
-      subheadingText = "We can't wait to see what you've created!";
+      headerText = t('SubmissionModal.bountySubmission');
+      subheadingText = t('SubmissionModal.cantWaitToSee');
       break;
     case 'hackathon':
-      headerText = 'Solana Radar Track Submission';
+      headerText = t('SubmissionModal.solanaRadarTrackSubmission');
       subheadingText = (
         <>
-          Note:
-          <Text>
-            1. In the “Link to your Submission” field, submit your hackathon
-            project’s most useful link (could be a loom video, GitHub link,
-            website, etc)
-          </Text>
-          <Text>
-            2. To be eligible for different challenges, you need to submit to
-            each challenge separately
-          </Text>
-          <Text>
-            3. {`There's no`} restriction on the number of challenges you can
-            submit to
-          </Text>
+          {t('SubmissionModal.note')}:
+          <Text>{t('SubmissionModal.submissionLinkNote')}</Text>
+          <Text>{t('SubmissionModal.separateSubmissionsNote')}</Text>
+          <Text>{t('SubmissionModal.noRestrictionNote')}</Text>
         </>
       );
       break;
@@ -304,9 +292,9 @@ export const SubmissionModal = ({
                 <>
                   <TextAreaWithCounter
                     id="applicationLink"
-                    label="Link to Your Submission"
-                    helperText="Make sure this link is accessible by everyone!"
-                    placeholder="Add a link"
+                    label={t('SubmissionModal.linkToYourSubmission')}
+                    helperText={t('SubmissionModal.makeSureLinkAccessible')}
+                    placeholder={t('SubmissionModal.addALink')}
                     register={register}
                     watch={watch}
                     maxLength={500}
@@ -315,9 +303,9 @@ export const SubmissionModal = ({
                   />
                   <TextAreaWithCounter
                     id="tweetLink"
-                    label="Tweet Link"
-                    helperText="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
-                    placeholder="Add a tweet's link"
+                    label={t('SubmissionModal.tweetLink')}
+                    helperText={t('SubmissionModal.tweetLinkHelperText')}
+                    placeholder={t('SubmissionModal.addTweetLink')}
                     register={register}
                     watch={watch}
                     maxLength={500}
@@ -379,15 +367,14 @@ export const SubmissionModal = ({
                     fontWeight={600}
                     htmlFor={'ask'}
                   >
-                    What&apos;s the compensation you require to complete this
-                    fully?
+                    {t('SubmissionModal.compensationRequired')}
                   </FormLabel>
                   <InputGroup>
                     <InputLeftAddon>
                       <Image
                         w={4}
                         h={4}
-                        alt={'green doller'}
+                        alt={t('SubmissionModal.greenDollar')}
                         rounded={'full'}
                         src={
                           tokenList.filter((e) => e?.tokenSymbol === token)[0]
@@ -412,7 +399,11 @@ export const SubmissionModal = ({
                           ) {
                             if (value < minRewardAsk || value > maxRewardAsk) {
                               setAskError(
-                                `Compensation must be between ${minRewardAsk} and ${maxRewardAsk} ${token}`,
+                                t('SubmissionModal.compensationRangeError', {
+                                  minRewardAsk,
+                                  maxRewardAsk,
+                                  token,
+                                }),
                               );
                               return false;
                             }
@@ -430,9 +421,9 @@ export const SubmissionModal = ({
               )}
               <TextAreaWithCounter
                 id="otherInfo"
-                label="Anything Else?"
-                helperText="If you have any other links or information you'd like to share with us, please add them here!"
-                placeholder="Add info or link"
+                label={t('SubmissionModal.anythingElse')}
+                helperText={t('SubmissionModal.otherInfoHelperText')}
+                placeholder={t('SubmissionModal.addInfoOrLink')}
                 register={register}
                 watch={watch}
                 maxLength={2000}
@@ -441,11 +432,10 @@ export const SubmissionModal = ({
 
               <TextInputWithHelper
                 id="publicKey"
-                label="Your Solana Wallet Address"
+                label={t('SubmissionModal.yourSolanaWalletAddress')}
                 helperText={
                   <>
-                    Add your Solana wallet address here. This is where you will
-                    receive your rewards if you win. Download{' '}
+                    {t('SubmissionModal.addSolanaWalletHelperText')}{' '}
                     <Text as="u">
                       <Link href="https://backpack.app" isExternal>
                         Backpack
@@ -457,10 +447,10 @@ export const SubmissionModal = ({
                         Solflare
                       </Link>
                     </Text>{' '}
-                    if you don&apos;t have a Solana wallet
+                    {t('SubmissionModal.ifYouDontHaveWallet')}
                   </>
                 }
-                placeholder="Add your Solana wallet address"
+                placeholder={t('SubmissionModal.addYourSolanaWalletAddress')}
                 register={register}
                 errors={errors}
                 validate={(address: string) =>
@@ -489,11 +479,7 @@ export const SubmissionModal = ({
                       color={'brand.slate.600'}
                       fontSize={'sm'}
                     >
-                      I confirm that I have reviewed the scope of this track and
-                      that my submission adheres to the specified requirements.
-                      Submitting a project that does not meet the submission
-                      requirements, including potential spam, may result in
-                      restrictions on future submissions.
+                      {t('SubmissionModal.confirmationText')}
                     </Text>
                   </Flex>
                 </FormControl>
@@ -501,8 +487,7 @@ export const SubmissionModal = ({
             </VStack>
             {!!error && (
               <Text align="center" mb={2} color="red">
-                Sorry! An error occurred while submitting. <br />
-                Please try again or contact us at support@superteamearn.com
+                {t('SubmissionModal.errorMessage')}
               </Text>
             )}
             <Button
@@ -510,11 +495,13 @@ export const SubmissionModal = ({
               w={'full'}
               isDisabled={isTemplate || listing.status === 'PREVIEW'}
               isLoading={!!isLoading}
-              loadingText="Submitting..."
+              loadingText={t('SubmissionModal.submitting')}
               type="submit"
               variant="solid"
             >
-              {!isProject ? 'Submit' : 'Apply'}
+              {!isProject
+                ? t('SubmissionModal.submit')
+                : t('SubmissionModal.apply')}
             </Button>
             <Text
               mt={2}
@@ -522,7 +509,7 @@ export const SubmissionModal = ({
               fontSize="sm"
               textAlign="center"
             >
-              By submitting/applying to this listing, you agree to our{' '}
+              {t('SubmissionModal.termsAgreement')}{' '}
               <Link
                 textDecoration={'underline'}
                 onClick={() => setIsTOSModalOpen(true)}
@@ -530,7 +517,7 @@ export const SubmissionModal = ({
                 target="_blank"
                 textUnderlineOffset={2}
               >
-                Terms of Use
+                {t('SubmissionModal.termsOfUse')}
               </Link>
               .
             </Text>

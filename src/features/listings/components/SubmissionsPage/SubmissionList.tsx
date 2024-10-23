@@ -1,5 +1,6 @@
 import { Image, SimpleGrid, Text, VStack } from '@chakra-ui/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import type { SubmissionWithUser } from '@/interface/submission';
 import { dayjs } from '@/utils/dayjs';
@@ -19,6 +20,8 @@ export const SubmissionList = ({
   endTime,
   setUpdate,
 }: Props) => {
+  const { t } = useTranslation('common');
+
   return (
     <>
       <VStack
@@ -70,7 +73,10 @@ export const SubmissionList = ({
               w={'full'}
               h={'25rem'}
             >
-              <Image alt={'submission'} src={'/assets/icons/submission.svg'} />
+              <Image
+                alt={t('submissionList.submissionIconAlt')}
+                src={'/assets/icons/submission.svg'}
+              />
               <Text
                 color={'gray.800'}
                 fontFamily={'var(--font-sans)'}
@@ -78,9 +84,9 @@ export const SubmissionList = ({
                 fontWeight={600}
                 textAlign="center"
               >
-                Submissions are not public until the submission deadline
+                {t('submissionList.submissionsNotPublic')}
                 <br />
-                has closed. Check back soon!
+                {t('submissionList.checkBackSoon')}
               </Text>
             </VStack>
           </>

@@ -33,7 +33,7 @@ export const SponsorBanner = () => {
           fontWeight={600}
           _groupHover={{ textDecoration: 'underline' }}
         >
-          {t('become_a_sponsor')}
+          {t('SponsorBanner.becomeASponsor')}
 
           <ArrowForwardIcon ml={1} color="#777777" w={6} />
         </Text>
@@ -44,11 +44,11 @@ export const SponsorBanner = () => {
           fontWeight={500}
           lineHeight={'1.1rem'}
         >
-          Reach 30,000+ crypto talent from one single dashboard
+          {t('SponsorBanner.reachTalent')}
         </Text>
       </Box>
       <Image
-        alt="Sponsor Briefcase"
+        alt={t('SponsorBanner.sponsorBriefcaseAlt')}
         src={Briefcase}
         style={{
           flex: 1,

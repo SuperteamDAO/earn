@@ -8,6 +8,7 @@ import {
 } from '@chakra-ui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { useTranslation } from 'next-i18next';
 import { usePostHog } from 'posthog-js/react';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
@@ -27,6 +28,7 @@ const toggleSubscription = async (id: string) => {
 };
 
 export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
+  const { t } = useTranslation('common');
   const { user } = useUser();
   const posthog = usePostHog();
   const queryClient = useQueryClient();
@@ -78,9 +80,9 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
       <HStack align="start">
         <AuthWrapper
           showCompleteProfileModal
-          completeProfileModalBodyText={
-            'Please complete your profile before subscribing to a listing.'
-          }
+          completeProfileModalBodyText={t(
+            'SubscribeListing.completeProfileModalText',
+          )}
         >
           <Button
             className="ph-no-capture"
@@ -91,7 +93,7 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
             color={'brand.slate.500'}
             fontWeight={500}
             borderColor="brand.slate.300"
-            aria-label="Notify"
+            aria-label={t('SubscribeListing.notifyAriaLabel')}
             isDisabled={isTemplate}
             onClick={() => {
               posthog.capture(
@@ -112,10 +114,10 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
             )}
             <Text display={{ base: 'none', md: 'inline' }}>
               {isSubscribeLoading
-                ? 'Subscribing'
+                ? t('SubscribeListing.subscribing')
                 : sub.find((e) => e.userId === user?.id)
-                  ? 'Subscribed'
-                  : 'Subscribe'}
+                  ? t('SubscribeListing.subscribed')
+                  : t('SubscribeListing.subscribe')}
             </Text>
           </Button>
         </AuthWrapper>

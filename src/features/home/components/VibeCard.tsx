@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import { type TConductorInstance } from 'react-canvas-confetti/dist/types';
+import { useTranslation } from 'react-i18next';
 
 import { AuthWrapper } from '@/features/auth';
 import { EarnAvatar } from '@/features/talent';
@@ -34,6 +35,7 @@ const dummyUsers = [
 ];
 
 export const VibeCard = () => {
+  const { t } = useTranslation();
   const [vibeCount, setVibeCount] = useState(13);
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [userIds, setUserIds] = useState<string[]>([]);
@@ -117,7 +119,7 @@ export const VibeCard = () => {
           <Text as="span" color="brand.slate.900">
             {vibeCount}{' '}
           </Text>
-          people vibing rn
+          {t('VibeCard.peopleVibing')}
         </Text>
         <Flex align={'center'}>
           {displayUsers.map((user, i) => (
@@ -147,7 +149,7 @@ export const VibeCard = () => {
           onClick={handleVibeClick}
           variant={'outline'}
         >
-          click to vibeeeee
+          {t('VibeCard.clickToVibe')}
         </Button>
       </AuthWrapper>
       <Fireworks onInit={onInit} />

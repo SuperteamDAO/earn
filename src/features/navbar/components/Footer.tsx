@@ -14,6 +14,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { UserFlag } from '@/components/shared/UserFlag';
@@ -38,30 +39,32 @@ const FooterColumn = ({
 }: {
   title: string;
   links: { href: string; text: string }[];
-}) => (
-  <Stack align="flex-start">
-    <Text
-      color="brand.slate.400"
-      fontSize={{ base: 'xs', md: 'sm' }}
-      fontWeight="500"
-      textTransform="uppercase"
-    >
-      {title}
-    </Text>
-    {links.map((link) => (
-      <Link
-        key={link.text}
-        as={NextLink}
-        color="brand.slate.500"
-        fontSize={{ base: 'sm', md: 'md' }}
-        _hover={{ color: 'brand.slate.600' }}
-        href={link.href}
+}) => {
+  return (
+    <Stack align="flex-start">
+      <Text
+        color="brand.slate.400"
+        fontSize={{ base: 'xs', md: 'sm' }}
+        fontWeight="500"
+        textTransform="uppercase"
       >
-        {link.text}
-      </Link>
-    ))}
-  </Stack>
-);
+        {title}
+      </Text>
+      {links.map((link) => (
+        <Link
+          key={link.text}
+          as={NextLink}
+          color="brand.slate.500"
+          fontSize={{ base: 'sm', md: 'md' }}
+          _hover={{ color: 'brand.slate.600' }}
+          href={link.href}
+        >
+          {link.text}
+        </Link>
+      ))}
+    </Stack>
+  );
+};
 
 const CountrySelector: React.FC = () => {
   const router = useRouter();
@@ -70,6 +73,8 @@ const CountrySelector: React.FC = () => {
     flag: '🌍',
     code: 'global',
   });
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     const path = router.asPath.toLowerCase();
@@ -106,7 +111,7 @@ const CountrySelector: React.FC = () => {
         >
           {selectedCountry?.flag &&
             (selectedCountry.code === 'global' ? (
-              <Text>🌍</Text>
+              <Text>{t('footer.globalFlag')}</Text>
             ) : (
               <UserFlag location={selectedCountry.code} isCode />
             ))}
@@ -139,36 +144,40 @@ const CountrySelector: React.FC = () => {
 };
 
 export const Footer = () => {
+  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   const opportunities = [
-    { text: 'Bounties', href: '/bounties' },
-    { text: 'Projects', href: '/projects' },
-    { text: 'Grants', href: '/grants' },
+    { text: t('footer.opportunities.bounties'), href: '/bounties' },
+    { text: t('footer.opportunities.projects'), href: '/projects' },
+    { text: t('footer.opportunities.grants'), href: '/grants' },
   ];
 
   const categories = [
-    { text: 'Content', href: '/category/content' },
-    { text: 'Design', href: '/category/design' },
-    { text: 'Development', href: '/category/development' },
-    { text: 'Others', href: '/category/other' },
+    { text: t('footer.categories.content'), href: '/category/content' },
+    { text: t('footer.categories.design'), href: '/category/design' },
+    { text: t('footer.categories.development'), href: '/category/development' },
+    { text: t('footer.categories.others'), href: '/category/other' },
   ];
 
   const about = [
     {
-      text: 'FAQ',
+      text: t('footer.about.faq'),
       href: 'https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4',
     },
     {
-      text: 'Terms',
+      text: t('footer.about.terms'),
       href: 'https://drive.google.com/file/d/1ybbO_UOTaIiyKb4Mbm3sNMbjTf5qj5mT/view',
     },
-    { text: 'Privacy Policy', href: '/privacy-policy.pdf' },
+    { text: t('footer.about.privacyPolicy'), href: '/privacy-policy.pdf' },
     {
-      text: 'Changelog',
+      text: t('footer.about.changelog'),
       href: 'https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827',
     },
-    { text: 'Contact Us', href: 'mailto:support@superteamearn.com' },
+    {
+      text: t('footer.about.contactUs'),
+      href: 'mailto:support@superteamearn.com',
+    },
   ];
 
   return (
@@ -184,7 +193,7 @@ export const Footer = () => {
               <Image
                 h={6}
                 mr={4}
-                alt="Superteam Earn"
+                alt={t('footer.logoAlt')}
                 src="/assets/logo/logo.svg"
               />
             </Flex>
@@ -193,9 +202,7 @@ export const Footer = () => {
               color="brand.slate.500"
               fontSize={{ base: 'sm', md: 'md' }}
             >
-              Discover high paying crypto bounties, projects and grants from the
-              best Solana companies in one place and apply to them using a
-              single profile.
+              {t('footer.description')}
             </Text>
             <Flex gap={4}>
               <GitHub link="https://github.com/SuperteamDAO/earn" />
@@ -209,9 +216,15 @@ export const Footer = () => {
             gap={{ base: 6, md: 16 }}
             w={{ base: '100%', md: 'auto' }}
           >
-            <FooterColumn title="Opportunities" links={opportunities} />
-            <FooterColumn title="Categories" links={categories} />
-            <FooterColumn title="About" links={about} />
+            <FooterColumn
+              title={t('footer.opportunities.title')}
+              links={opportunities}
+            />
+            <FooterColumn
+              title={t('footer.categories.title')}
+              links={categories}
+            />
+            <FooterColumn title={t('footer.about.title')} links={about} />
           </Flex>
         </Flex>
       </Container>
@@ -223,7 +236,7 @@ export const Footer = () => {
             direction={{ base: 'column', md: 'row' }}
           >
             <Text mb={{ base: 4, md: 0 }} color="brand.slate.500" fontSize="sm">
-              © {currentYear} Superteam. All rights reserved.
+              {t('footer.copyright', { year: currentYear })}
             </Text>
             <Flex align="center">
               <LanguageSwitcher />
@@ -234,7 +247,7 @@ export const Footer = () => {
                 fontSize="sm"
                 fontWeight="500"
               >
-                REGION
+                {t('footer.region')}
               </Text>
               <CountrySelector />
             </Flex>

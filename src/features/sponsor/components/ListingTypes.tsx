@@ -1,4 +1,6 @@
 import { Center, Flex, Text, VStack } from '@chakra-ui/react';
+import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 import PurpleTick from '@/public/assets/landingsponsor/icons/purple-tick.svg';
 
@@ -6,20 +8,22 @@ import { fontSize, maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
 const bountyFeatures = [
-  'Great for awareness campaigns where you want to reach the most people possible',
-  'Get multiple options to choose from',
-  'Examples: Twitter Threads, Deep-Dives, Memes, Product Feedback, and more',
+  'listingTypes.bountyFeatures.awareness',
+  'listingTypes.bountyFeatures.multipleOptions',
+  'listingTypes.bountyFeatures.examples',
 ];
 
 const projectFeatures = [
-  'Perfect for work that requires collaboration and iteration',
-  'Single output that is specific to your exact needs',
-  'Examples: Full Stack Development, Hype Video Production, Hiring a Community Manager, and more',
+  'listingTypes.projectFeatures.collaboration',
+  'listingTypes.projectFeatures.singleOutput',
+  'listingTypes.projectFeatures.examples',
 ];
 
 const normalFont = { base: '1.2rem' };
 
 export function ListingTypes() {
+  const { t } = useTranslation();
+
   return (
     <VStack gap={8} w="100%" maxW={maxW} px={padding}>
       <Text
@@ -30,7 +34,7 @@ export function ListingTypes() {
         lineHeight={1}
         textAlign="center"
       >
-        Start by posting your first Bounty or Project
+        {t('listingTypes.startPosting')}
       </Text>
       <Flex
         direction={{ base: 'column', md: 'row' }}
@@ -56,16 +60,15 @@ export function ListingTypes() {
           </Center>
           <VStack align="start" gap={1}>
             <Text fontSize={{ base: '1.625rem' }} fontWeight={600}>
-              Bounty
+              {t('listingTypes.bounty')}
             </Text>
             <Text fontSize={normalFont} fontWeight={500} lineHeight={1.1}>
-              Bounties are listings where everyone completes a given scope of
-              work, and competes for the prize pool
+              {t('listingTypes.bountyDescription')}
             </Text>
           </VStack>
           <VStack align="start" gap={4} mt={{ xl: '1rem' }}>
             {bountyFeatures.map((feature) => (
-              <Feature key={feature} description={feature} />
+              <Feature key={feature} description={t(feature)} />
             ))}
           </VStack>
         </VStack>
@@ -93,16 +96,15 @@ export function ListingTypes() {
           </Center>
           <VStack align="start" gap={1}>
             <Text fontSize={{ base: '1.625rem' }} fontWeight={600}>
-              Project
+              {t('listingTypes.project')}
             </Text>
             <Text fontSize={normalFont} fontWeight={500} lineHeight={1.1}>
-              Projects are freelance gigs — people apply with their proposals
-              but don’t begin working until you pick them
+              {t('listingTypes.projectDescription')}
             </Text>
           </VStack>
           <VStack align="start" gap={4} mt={{ xl: '1rem' }}>
             {projectFeatures.map((feature) => (
-              <Feature key={feature} description={feature} />
+              <Feature key={feature} description={t(feature)} />
             ))}
           </VStack>
         </VStack>
@@ -120,7 +122,7 @@ function Feature({ description }: FeatureProps) {
     <Flex align="start" direction={'row'} gap={4}>
       <HighQualityImage
         src={PurpleTick}
-        alt="Purple Tick"
+        alt={t('listingTypes.purpleTickAlt')}
         width={24}
         height={24}
       />

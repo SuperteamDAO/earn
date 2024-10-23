@@ -26,6 +26,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { t } from 'i18next';
 import { usePostHog } from 'posthog-js/react';
 import React, {
   type Dispatch,
@@ -36,6 +37,7 @@ import React, {
 } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { AiOutlineLink, AiOutlineOrderedList } from 'react-icons/ai';
 import { BiFontColor } from 'react-icons/bi';
 import {
@@ -89,15 +91,15 @@ const LinkModal = ({
           <ModalBody my={5}>
             <Input
               onChange={(e) => setLinkUrl(e.target.value)}
-              placeholder="add a link"
+              placeholder={t('DescriptionBuilder.addLink')}
               value={linkUrl}
             />
             <HStack justify={'end'} w={'full'} mt={5}>
               <Button mr={4} onClick={onClose} variant="ghost">
-                Cancel
+                {t('DescriptionBuilder.cancel')}
               </Button>
               <Button onClick={() => setLink(linkUrl)} variant="solid">
-                Submit
+                {t('DescriptionBuilder.submit')}
               </Button>
             </HStack>
           </ModalBody>
@@ -183,6 +185,7 @@ export const DescriptionBuilder = ({
 
   const [editorError, setEditorError] = useState(false);
 
+  const { t } = useTranslation();
   useEffect(() => {
     if (editable) {
       reset({
@@ -216,7 +219,7 @@ export const DescriptionBuilder = ({
         openOnClick: false,
       }),
       Placeholder.configure({
-        placeholder: 'Give more details about the Listing...',
+        placeholder: t('DescriptionBuilder.editorPlaceholder'),
         showOnlyWhenEditable: false,
       }),
       StarterKit.configure({
@@ -381,9 +384,11 @@ export const DescriptionBuilder = ({
           <Flex justify="start" w="full">
             <Flex>
               <ListingFormLabel htmlFor="requirements">
-                Eligibility Requirements
+                {t('DescriptionBuilder.eligibilityRequirements')}
               </ListingFormLabel>
-              <ListingTooltip label="Add here if you have any specific eligibility requirements for the Listing." />
+              <ListingTooltip
+                label={t('DescriptionBuilder.eligibilityRequirementsTooltip')}
+              />
             </Flex>
           </Flex>
           <Input
@@ -397,7 +402,7 @@ export const DescriptionBuilder = ({
             id="requirements"
             maxLength={220}
             {...register('requirements')}
-            placeholder="Add Eligibility Requirements"
+            placeholder={t('DescriptionBuilder.addEligibilityRequirements')}
             type={'text'}
           />
           <Text
@@ -407,13 +412,15 @@ export const DescriptionBuilder = ({
             fontSize={'xs'}
             textAlign="right"
           >
-            {220 - (requirements?.length || 0)} characters left
+            {t('DescriptionBuilder.charactersLeft', {
+              count: 220 - (requirements?.length || 0),
+            })}
           </Text>
         </Box>
         <Flex justify="space-between" w="full">
           <Flex>
             <ListingFormLabel htmlFor="description">
-              Listing Details
+              {t('DescriptionBuilder.listingDetails')}
             </ListingFormLabel>
             <Text
               as="sup"
@@ -425,7 +432,9 @@ export const DescriptionBuilder = ({
             >
               *
             </Text>
-            <ListingTooltip label="Write details about the Listing - About, Requirements, Evaluation Criteria, Resources, Rewards, etc." />
+            <ListingTooltip
+              label={t('DescriptionBuilder.listingDetailsTooltip')}
+            />
           </Flex>
           <ChakraLink
             className="ph-no-capture"
@@ -443,10 +452,11 @@ export const DescriptionBuilder = ({
             }}
             target="_blank"
           >
-            <Text textDecoration="none">🤖</Text>
+            <Text textDecoration="none">
+              {t('DescriptionBuilder.chatGPTEmoji')}
+            </Text>
             <Text textDecoration="underline" textUnderlineOffset={2}>
-              Go live in {'<1'} min by using our drafting bot (ChatGPT 4
-              Required)
+              {t('DescriptionBuilder.chatGPTLink')}
             </Text>
           </ChakraLink>
         </Flex>
@@ -468,7 +478,7 @@ export const DescriptionBuilder = ({
               }}
               borderLeft={'1px solid #D2D2D2'}
             >
-              H1
+              {t('DescriptionBuilder.h1')}
             </ToolbarButton>
             <ToolbarButton
               isActive={editor?.isActive('heading', { level: 2 })}
@@ -476,7 +486,7 @@ export const DescriptionBuilder = ({
                 editor?.chain().focus().toggleHeading({ level: 2 }).run();
               }}
             >
-              H2
+              {t('DescriptionBuilder.h2')}
             </ToolbarButton>
             <ToolbarButton
               isActive={editor?.isActive('heading', { level: 3 })}
@@ -484,7 +494,7 @@ export const DescriptionBuilder = ({
                 editor?.chain().focus().toggleHeading({ level: 3 }).run();
               }}
             >
-              H3
+              {t('DescriptionBuilder.h3')}
             </ToolbarButton>
             <ToolbarButton
               isActive={editor?.isActive('bold')}
@@ -618,15 +628,14 @@ export const DescriptionBuilder = ({
                   fontSize={'15px'}
                   fontWeight={600}
                 >
-                  Deliverable References
+                  {t('DescriptionBuilder.deliverableReferences')}
                 </Text>
                 <Text
                   mt={'0px !important'}
                   color={'#94A3B8'}
                   fontSize={'0.88rem'}
                 >
-                  Add links of other projects/websites as references for the
-                  kind of deliverables you are looking for.
+                  {t('DescriptionBuilder.deliverableReferencesDescription')}
                 </Text>
               </Flex>
               {fields.map((field, index) => (
@@ -642,7 +651,9 @@ export const DescriptionBuilder = ({
                     errors={errors}
                   />
                   <Button ml={4} onClick={() => remove(index)}>
-                    <DeleteIcon />
+                    <DeleteIcon
+                      aria-label={t('DescriptionBuilder.deleteReference')}
+                    />
                   </Button>
                 </Flex>
               ))}
@@ -661,7 +672,7 @@ export const DescriptionBuilder = ({
                     })
                   }
                 >
-                  + Add Reference
+                  {t('DescriptionBuilder.addReference')}
                 </Button>
               )}
             </>
@@ -670,7 +681,7 @@ export const DescriptionBuilder = ({
         <VStack gap={4} w={'full'} mt={16}>
           {editorError && (
             <Text align={'center'} color={'red'}>
-              Listing Details is a required field
+              {t('DescriptionBuilder.listingDetailsRequired')}
             </Text>
           )}
           <Button
@@ -683,7 +694,7 @@ export const DescriptionBuilder = ({
             type="submit"
             variant={!isDraft ? 'outline' : 'solid'}
           >
-            Continue
+            {t('DescriptionBuilder.continue')}
           </Button>
           {isDraft && (
             <HStack w="full">
@@ -699,7 +710,7 @@ export const DescriptionBuilder = ({
                 onClick={() => onDraftClick()}
                 variant={'ghost'}
               >
-                Save Draft
+                {t('DescriptionBuilder.saveDraft')}
               </Button>
             </HStack>
           )}
@@ -714,7 +725,7 @@ export const DescriptionBuilder = ({
               onClick={() => onDraftClick()}
               variant={'solid'}
             >
-              Update Listing
+              {t('DescriptionBuilder.updateListing')}
             </Button>
           )}
         </VStack>
@@ -752,6 +763,8 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
     disabled: isUploading,
   });
 
+  const { t } = useTranslation();
+
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -775,7 +788,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
               <VStack>
                 <Spinner color="brand.slate.500" size="xl" />
                 <Text fontSize="lg" fontWeight="bold">
-                  Uploading image...
+                  {t('DescriptionBuilder.uploadingImage')}
                 </Text>
               </VStack>
             ) : (
@@ -798,10 +811,10 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
                   />
                 </Flex>
                 <Text color="black" fontSize="lg" fontWeight="500">
-                  Drag and drop your files here
+                  {t('DescriptionBuilder.dragAndDropFiles')}
                 </Text>
                 <Text color="brand.slate.500" fontSize="md">
-                  Max File Upload Size: 5MB
+                  {t('DescriptionBuilder.maxFileSize')}
                 </Text>
                 <Button
                   mt={8}
@@ -814,19 +827,19 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
                   borderColor="brand.slate.200"
                   shadow="sm"
                 >
-                  Upload File
+                  {t('DescriptionBuilder.uploadFile')}
                 </Button>
               </>
             )}
           </Box>
           {fileRejections.length > 0 && (
             <Text mt={2} color="red.500">
-              File is too large or of invalid type.
+              {t('DescriptionBuilder.fileRejectionError')}
             </Text>
           )}
           {uploadError && (
             <Text mt={2} color="red.500">
-              {uploadError}
+              {t('DescriptionBuilder.imageUploadError')}
             </Text>
           )}
         </ModalBody>

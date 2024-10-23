@@ -74,7 +74,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 h={5}
                 cursor="pointer"
                 objectFit={'contain'}
-                alt={'Superteam Earn'}
+                alt={t('desktopNavbar.logoAlt')}
                 src={'/assets/logo/logo.svg'}
               />
 
@@ -87,7 +87,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                     orientation="vertical"
                   />
                   <Text fontSize="sm" letterSpacing={'1.5px'}>
-                    SPONSORS
+                    {t('desktopNavbar.sponsors')}
                   </Text>
                 </>
               )}
@@ -105,6 +105,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               _hover={{
                 bg: 'brand.slate.100',
               }}
+              aria-label={t('desktopNavbar.search')}
               onClick={onSearchOpen}
               variant="outline"
             >
@@ -144,7 +145,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 <Image
                   h={'1.1rem'}
                   objectFit={'contain'}
-                  alt="Radar Nav Icon"
+                  alt={t('desktopNavbar.radarNavIconAlt')}
                   src="/assets/hackathon/radar/nav.png"
                 />
               </Link>
@@ -195,7 +196,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   size="sm"
                   variant={'ghost'}
                 >
-                  Become a Sponsor
+                  {t('desktopNavbar.becomeASponsor')}
                   <Box
                     display="block"
                     w={1.5}
@@ -214,7 +215,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   size="sm"
                   variant={'ghost'}
                 >
-                  Login
+                  {t('desktopNavbar.login')}
                 </Button>
               </HStack>
               <Button
@@ -229,7 +230,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 size="sm"
                 variant="solid"
               >
-                Sign Up
+                {t('desktopNavbar.signUp')}
               </Button>
             </HStack>
           )}

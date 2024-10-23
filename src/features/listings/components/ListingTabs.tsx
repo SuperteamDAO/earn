@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { type User } from '@/interface/user';
@@ -170,15 +171,16 @@ export const ListingTabs = ({
   showViewAll = false,
   showNotifSub = true,
 }: ListingTabsProps) => {
+  const { t } = useTranslation();
   const { user } = useUser();
   const tabs: TabProps[] = [
     {
       id: 'tab1',
-      title: 'Open',
+      title: t('ListingTabs.open'),
       posthog: 'open_listings',
       content: generateTabContent({
         user,
-        title: 'Open',
+        title: t('ListingTabs.open'),
         bounties: bounties,
         forYou: forYou,
         take,
@@ -187,19 +189,18 @@ export const ListingTabs = ({
           bounty.status === 'OPEN' &&
           !dayjs().isAfter(bounty.deadline) &&
           !bounty.isWinnersAnnounced,
-        emptyTitle: 'No listings available!',
-        emptyMessage:
-          'Update your email preferences (from the user menu) to be notified about new work opportunities.',
+        emptyTitle: t('ListingTabs.noListingsAvailable'),
+        emptyMessage: t('ListingTabs.updateEmailPreferences'),
         showNotifSub,
       }),
     },
     {
       id: 'tab2',
-      title: 'In Review',
+      title: t('ListingTabs.inReview'),
       posthog: 'in review_listing',
       content: generateTabContent({
         user,
-        title: 'In Review',
+        title: t('ListingTabs.inReview'),
         bounties: bounties,
         forYou: forYou,
         take,
@@ -208,19 +209,18 @@ export const ListingTabs = ({
           !bounty.isWinnersAnnounced &&
           dayjs().isAfter(bounty.deadline) &&
           bounty.status === 'OPEN',
-        emptyTitle: 'No listings in review!',
-        emptyMessage:
-          'Subscribe to notifications to get notified about updates.',
+        emptyTitle: t('ListingTabs.noListingsInReview'),
+        emptyMessage: t('ListingTabs.subscribeToNotifications'),
         showNotifSub,
       }),
     },
     {
       id: 'tab3',
-      title: 'Completed',
+      title: t('ListingTabs.completed'),
       posthog: 'completed_listing',
       content: generateTabContent({
         user,
-        title: 'Completed',
+        title: t('ListingTabs.completed'),
         bounties: bounties,
         forYou: forYou,
         take,
@@ -250,9 +250,8 @@ export const ListingTabs = ({
 
           return dateB.getTime() - dateA.getTime();
         },
-        emptyTitle: 'No completed listings!',
-        emptyMessage:
-          'Subscribe to notifications to get notified about announcements.',
+        emptyTitle: t('ListingTabs.noCompletedListings'),
+        emptyMessage: t('ListingTabs.subscribeToNotifications'),
         showNotifSub,
       }),
     },
@@ -287,7 +286,7 @@ export const ListingTabs = ({
                 w={5}
                 h={5}
                 mr={2}
-                alt="emoji"
+                alt={t('ListingTabs.emojiAlt')}
                 src={emoji}
               />
             )}
@@ -364,7 +363,7 @@ export const ListingTabs = ({
                 size={{ base: 'x-small', md: 'sm' }}
                 variant={'ghost'}
               >
-                View All
+                {t('ListingTabs.viewAll')}
               </Button>
             </Link>
           </Flex>
@@ -386,7 +385,7 @@ export const ListingTabs = ({
             size="sm"
             variant="outline"
           >
-            View All
+            {t('ListingTabs.viewAll')}
           </Button>
         </Link>
       )}

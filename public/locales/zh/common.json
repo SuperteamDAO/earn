@@ -1,7 +1,6 @@
 {
   "freelanceGigs": "自由职业机会",
-  "become_a_sponsor": "成为赞助商",
-  "welcome_back": "欢迎回来",
+  "grants": "补助",
   "grantsDescription": "为开发者提供的无股权融资机会",
   "noGrantsAvailable": "暂无可用资助！",
   "subscribeToNotifications": "订阅通知以获取新资助信息。",
@@ -15,7 +14,6 @@
     "development": "开发",
     "other": "其他"
   },
-
   "entityNameModal": {
     "title": "更新您的实体名称",
     "description": "根据我们更新的<1>使用条款</1>，我们需要知道控制您项目的实体名称。如果您是一个 DAO，请提供您的 DAO 名称。如果您没有实体，请提供您的全名。",
@@ -26,7 +24,7 @@
   },
   "featureModal": {
     "title": "介绍 Scout",
-    "description": "这是 Superteam Earn 上最优秀人才的精选列表，您可以邀请他们参与您的列表，以获得高质量的提交！添加新列表，或查看您当前的任尝试 Scout。",
+    "description": "这是 Superteam Earn 上最优秀人才的精选列表，您可以邀请他们参与您的列表，以得高质量的提交！添加新列表，或查看您当前的任尝试 Scout。",
     "checkItOut": "查看一下",
     "goodToKnow": "很高兴知道！"
   },
@@ -57,11 +55,13 @@
   },
   "errorSection": {
     "defaultTitle": "发生错误！",
-    "defaultMessage": "出错了！请重试！"
+    "defaultMessage": "出错了！请重试！",
+    "accessForbidden": "访问被禁止！",
+    "contactSupport": "请联系支持以访问此部分。"
   },
   "imagePicker": {
     "chooseOrDrag": "选择或拖放媒体",
-    "maxSize": "最大大小 5 MB",
+    "maxSize": "大小限制 5 MB",
     "sizeError": "图片大小必须小 5MB",
     "formatError": "不支持的文件格式。请使用 JPEG、PNG 或 WebP 图片。",
     "removeImage": "移除图片",
@@ -162,7 +162,7 @@
       },
       "project": {
         "justApplied": "刚刚申请了这个项目",
-        "inTheArena": "已进入竞争，他们刚刚申请了这个项目",
+        "inTheArena": "已进入竞争，他们刚刚请了这个项目",
         "potentialWinner": "潜赢家？他们刚刚申请了这个项目",
         "steppingUp": "正在加入；他们刚刚申请了这个项目",
         "isIn": "已加入！他们刚刚申请了这个项目",
@@ -187,15 +187,15 @@
   },
   "welcomeSponsorTemplate": {
     "welcome": "欢迎来到 Superteam Earn！",
-    "thankYou": "感谢您的注册。Earn 是加密货币领域首屈一指的人才匹配平台，受到数百家领公司和数千名经过验证的加密货币人才的青睐。",
-    "helpMessage": "如果您在 Earn 上设置列表时需要任何帮助，请随时通过 Telegram ",
+    "thankYou": "感谢您的注册。Earn 是加密货币领域首屈一指的人才匹配平台，受到数百家公司和数千名经过验证人才的青睐",
+    "helpMessage": "如果您在 Earn 上设置列表时需要随时 Telegram ",
     "contactName": "Pratik",
     "onTelegram": "。",
     "salutation": "此致，",
     "signature": "Superteam Earn 团队"
   },
   "welcomeTalentTemplate": {
-    "greeting": "好，让我们开门见山。",
+    "greeting": "，让我开门见山。",
     "automatedEmail": "尽管这是一封自动发送的邮件...",
     "realPerson": "我只是想打个招呼，让你知道我是一个真实的人。",
     "introduction": "我是 Kash，是 <1>Superteam</1> 的核心贡献者。虽然我可能还不认识你，但我对你的加入感到非常兴奋。",
@@ -248,8 +248,8 @@
   "grantApplicationButton": {
     "appliedSuccessfully": "申请成功",
     "applyNow": "立即申请",
-    "checkingApplication": "正在检查申请..",
-    "completeProfileBeforeApplying": "请在申请资助之前完成您的个人资料。",
+    "checkingApplication": "在检查申请..",
+    "completeProfileBeforeApplying": "在申请资助之前完成您的个人资料。",
     "applicationNotification": "如果您的资助申请被批准或拒绝，您将通过电子邮件收到通知。"
   },
   "grantApplicationModal": {
@@ -271,15 +271,15 @@
     "walletAddressHelper": "我们应该将资金发送到哪里？请不要使用 .sol 域名！",
     "walletAddressPlaceholder": "添加您的 Solana 钱包地址",
     "projectDetails": "项目详情",
-    "projectDetailsHelper": "您试图解决什么问题，以及您将如何解决它？",
+    "projectDetailsHelper": "您试图解什么问题，以及您将如何解决它？",
     "projectDetailsPlaceholder": "解释您要解决的问题和您的解决方案",
     "deadline": "截止日期",
     "deadlineHelper": "项目预计完成的日期是什么时候？",
     "deadlinePlaceholder": "截止日期",
     "proofOfWork": "工作证明",
-    "proofOfWorkHelper": "包含您最好的作品链接，让社区相信您能够执行这个项目。",
+    "proofOfWorkHelper": "包含您最好作品链接，让社区相信您能执行这个目。",
     "proofOfWorkPlaceholder": "提供您的作品集或以前工作的链接",
-    "twitterProfile": "个人 Twitter 资料",
+    "twitterProfile": "个人 Twitter 料",
     "twitterProfileHelper": "添加您的个人 Twitter 用户名",
     "twitterProfilePlaceholder": "johncena",
     "goalsAndMilestones": "目标和里程碑",
@@ -308,5 +308,847 @@
     "prizes": "奖励",
     "details": "详情",
     "references": "参考"
+  },
+  "AuthWrapper": {
+    "completeProfileModalDefaultText": "请在继续之前完成您的个人资料。"
+  },
+  "Banner": {
+    "desktopImageAlt": "插图 — 两个人在夜晚的户外使用笔记本电脑工作，周围是被月光照亮的神秘山景",
+    "mobileImageAlt": "插图 — 两个人在夜晚的户外使用笔记本电脑工作，周围是被月光照亮的神秘山景",
+    "title": "寻找您的下一个\n高薪加密货币工作",
+    "description": "参与赏金任务或申请世界级加密货币公司的自由职业工作，只需一个个人资料。",
+    "signUpButton": "注册",
+    "joinOthers": "加入其他 {{count}}+ 用户"
+  },
+  "CategoryBanner": {
+    "content": {
+      "heading": "寻找您的下一个内容创作工作",
+      "description": "如果您能撰写有见地的章、制作令人惊叹的视频或创作出色的表情包，以下机会正在呼唤您。",
+      "imageAlt": "内容类别横幅"
+    },
+    "development": {
+      "heading": "寻找您的下一个开发工作",
+      "description": "如果构建强大的应用程序和可扩展的解决方案是您的强项，不要错过下面列出的赚钱机会。",
+      "imageAlt": "开发类别横幅"
+    },
+    "design": {
+      "heading": "寻找您的下一个设计工作",
+      "description": "如果用引人注目的设计让用户感到愉悦是您的专长，您应该看看下面的赚钱机会。",
+      "imageAlt": "设计类别横幅"
+    },
+    "other": {
+      "heading": "在Earn上寻找您的下一个工作",
+      "description": "如果您拥有不适合其他类别的独特技能，您可能会在这里找到您的下一个工作。",
+      "imageAlt": "其他类别横幅"
+    },
+    "signUpButton": "注册"
+  },
+  "HowItWorks": {
+    "title": "工作原理",
+    "step1": {
+      "title": "创建您的个人资料",
+      "description": "告诉我们关于您自己的信息"
+    },
+    "step2": {
+      "title": "参与悬赏和项目",
+      "description": "建立工作证明"
+    },
+    "step3": {
+      "title": "获得工作报酬",
+      "description": "全球标准"
+    }
+  },
+  "NavTabs": {
+    "allOpportunities": "所有机会",
+    "radar": "雷达 📡",
+    "bounties": "悬赏",
+    "projects": "项目",
+    "grants": "资助",
+    "hackathons": "黑客马拉松"
+  },
+  "RecentEarners": {
+    "recentEarners": "最近赚取者",
+    "leaderboard": "排行榜",
+    "tokenIconAlt": "{{token}} 图标"
+  },
+  "RecentActivity": {
+    "recentActivity": "最近活动",
+    "viewAll": "查看全部",
+    "justSubmittedBounty": "刚刚提交了一个悬赏",
+    "justSubmittedHackathon": "刚刚提交了一个黑马拉松项目",
+    "justAppliedProject": "刚刚申请了一个项目",
+    "justWonBounty": "刚刚赢得了一个悬赏",
+    "justWonHackathonTrack": "刚刚赢得了一个黑客马拉松赛道",
+    "justSelectedProject": "刚被选中参与一个项目",
+    "justAddedPersonalProject": "刚刚添加了一个个人项目",
+    "justAchievedSomethingGreat": "刚刚取得了重大成就",
+    "justTookAction": "刚刚采取了行动"
+  },
+  "RegionBanner": {
+    "greeting": "{{hello}}，{{region}}",
+    "welcome": "欢迎来到 Superteam {{region}} 的收益页面 — 利用这些机会按全球标准赚取入，并成为 {{region}} 最独特的 Solana 社区成员！"
+  },
+  "SideBar": {
+    "liveListings": "实时列表",
+    "viewAll": "查看全部"
+  },
+  "SidebarBanner": {
+    "buildProject": "为最新的 Solana 全球黑客马拉松构建项目！",
+    "submitTracks": "提交到 Earn 上的任何 Radar 侧赛道，有机会赢得超过 25 万美元的奖金池。提交截止日期为 2024 年 10 月 9 日（UTC）。",
+    "viewTracks": "查看赛道"
+  },
+  "SponsorBanner": {
+    "becomeASponsor": "成为赞助商",
+    "reachTalent": "通过一个仪表板接触 30,000+ 加密人才",
+    "sponsorBriefcaseAlt": "赞助商公文包"
+  },
+  "TotalStats": {
+    "dollarIconAlt": "美元图标",
+    "totalValueEarned": "总赚取价值",
+    "suitcaseIconAlt": "公文包图标",
+    "opportunitiesListed": "已列出的机会"
+  },
+  "UserStatsBanner": {
+    "welcomeBack": "欢迎回来，{{name}}",
+    "gladToHaveYou": "我们很高兴您能在 Earn 上",
+    "totalEarned": "总收益",
+    "participated": "已参与",
+    "won": "已获胜"
+  },
+  "VibeCard": {
+    "peopleVibing": "人正在嗨",
+    "clickToVibe": "点击嗨起来"
+  },
+  "leaderboard": {
+    "banner": {
+      "ranks3dAlt": "3D 排名",
+      "title": "人才排行榜",
+      "description": "看看您在 Solana 顶级贡献者中的排名",
+      "mobileImageAlt": "插图",
+      "desktopImageAlt": "插图"
+    },
+    "filterRow": {
+      "overallRankings": "总体排名",
+      "content": "内容",
+      "design": "设计",
+      "development": "开发",
+      "others": "其他",
+      "skillFilterTooltip": "技能筛选器根据用户成功赢得的列表中要求的技能来展示用户，而不是根据他们人才档案中列出的技能。",
+      "timeframe": "时间范围",
+      "allTime": "所有时间",
+      "thisYear": "今年",
+      "last30Days": "最近30天",
+      "last7Days": "最近7天"
+    },
+    "comingSoon": {
+      "title": "即将推出...",
+      "description": "我们正在积极寻找奖励顶级贡献者的方法。不是通过代币或积分，而是为排名超过某个水平的人提供真实、切实的好处。"
+    },
+    "ranksTable": {
+      "rank": "排名",
+      "name": "姓名",
+      "dollarsEarned": "赚取美元",
+      "dollarsEarnedShort": "赚取$",
+      "winRate": "胜率",
+      "wins": "胜利次数",
+      "submissions": "提交次数",
+      "skills": "技能",
+      "emptyLeaderboard": "根据的筛选条件，排行榜为空",
+      "changeFilters": "请更改您的筛选条件或稍后再试"
+    },
+    "introduction": {
+      "medalAlt": "奖牌",
+      "title": "排行榜介绍",
+      "description": "获得灵感：查看 Solana 生态系统领先贡献者的 Earn 档案！",
+      "progressIconAlt": "进度图标",
+      "trackProgress": "在赚钱的同时跟踪您的进度",
+      "rankIconAlt": "排名图标",
+      "discoverProfiles": "发现顶级档案及其提交",
+      "semistarIconAlt": "半星图标",
+      "improveSkills": "提高您的技能并在排名中上升"
+    }
+  },
+  "createListing": {
+    "template": {
+      "label": "模板",
+      "mainHead": "列出您的机会",
+      "description": "为节省时间，请查看下面的现成模板。如果您已经在其他地方有列表，请使用\"从头开始\"并复制/粘贴您的文本。"
+    },
+    "basics": {
+      "label": "基础信息",
+      "mainHead": "创建列表",
+      "description": "现在让我们了解更多关于您需要完成的工作"
+    },
+    "description": {
+      "label": "描述",
+      "mainHead": "告诉我们更多",
+      "description": "添加有关机会、提交要求、奖励详情和资源的更多详细信息"
+    },
+    "questions": {
+      "label": "问题",
+      "mainHead": "输入您的问题",
+      "description": "您想了解申请人的哪些信息？"
+    },
+    "reward": {
+      "label": "奖励",
+      "mainHead": "添加奖励金额",
+      "description": "决定您列表的报酬金额"
+    }
+  },
+  "listingSuccessModal": {
+    "listingLive": "您的列表已上线",
+    "shareVerified": "在您的社交媒体上分享并邀请Earn的最佳人才！",
+    "shareUnverified": "在您的社交媒体上分享！",
+    "inviteTalent": "邀请人才",
+    "viewListing": "查看列表",
+    "shareOn": "分享到",
+    "sponsorDashboard": "赞助商仪表板"
+  },
+  "previewListingModal": {
+    "previewListing": "预览列表",
+    "previewLinkTooltip": "此链接仅供预览使用，只有拥有它的人才能访问。这不是您与社区享的最终链接",
+    "secretDraftLink": "秘密草稿链接",
+    "continueEditing": "继续编辑",
+    "desktop": "桌面版",
+    "mobile": "移动版",
+    "preview": "预览"
+  },
+  "underVerificationModal": {
+    "verificationNeeded": "我们需要在发布之前验证您的列表",
+    "verificationReason": "对于我们来说，验证新赞助商添加的工作机会很重要，以维护信任并保持平台免受任何不良行为者的影响。我们将尽最大努力在24小时内验证您的列表。",
+    "verificationProcess": "一旦验证通过，您的列表将自动发布。如果我们需要任何信息，我们会与您联系。",
+    "understood": "明白了"
+  },
+  "template": {
+    "startFromScratch": "从头开始"
+  },
+  "DescriptionBuilder": {
+    "eligibilityRequirements": "资格要求",
+    "eligibilityRequirementsTooltip": "如果您对此列表有任何特定的资格要求,请在此处添加。",
+    "addEligibilityRequirements": "添加资格要求",
+    "charactersLeft": "还剩 {{count}} 个字符",
+    "listingDetails": "列表详情",
+    "listingDetailsTooltip": "写下关于列表的详细信息 - 关于、要求、评估标准、资源、奖励等。",
+    "chatGPTEmoji": "🤖",
+    "chatGPTLink": "使用我们的起草机器人在 <1 分钟内上线（需要 ChatGPT 4）",
+    "deliverableReferences": "可交付成果参考",
+    "deliverableReferencesDescription": "添加其他项目/网站的链接作为您正在寻找的可交付成果类型的参考。",
+    "addReference": "+ 添加参考",
+    "listingDetailsRequired": "列表详情是必填字段",
+    "continue": "继续",
+    "saveDraft": "保存草稿",
+    "updateListing": "更新列表",
+    "h1": "标题1",
+    "h2": "标题2",
+    "h3": "标题3",
+    "editorPlaceholder": "提供更多关于列表的详细信息...",
+    "imageUploadError": "上传图片失败。",
+    "deleteReference": "删除参考",
+    "uploadingImage": "正在上传图片...",
+    "dragAndDropFiles": "将文件拖放到此处",
+    "maxFileSize": "最大文件大小：5MB",
+    "uploadFile": "上传文件",
+    "fileRejectionError": "文件太大或类型无效。",
+    "addLink": "添加链接",
+    "cancel": "取消",
+    "submit": "提交"
+  },
+  "ListingBasic": {
+    "listingTitle": "列表标题",
+    "titleTooltip": "使用简短的标题描述列表",
+    "titlePlaceholder": "开发新的着陆页",
+    "characterLimitReached": "已达字符限制",
+    "charactersLeft": "还剩 {{count}} 个字符",
+    "referenceListings": "参考列表",
+    "continue": "继续",
+    "saveDraft": "保存草稿",
+    "updateListing": "更新列表",
+    "listingSlug": "列表短链接",
+    "slugTooltip": "使用简短的短链接描述列表",
+    "slugHelperText": "列表发布后此字段无法编辑",
+    "slugPlaceholder": "develop-a-new-landing-page",
+    "listingGeography": "列表地理位置",
+    "geographyTooltip": "选择此列表可用和相关的Superteam地区。只有您指定地区的用户才能申请/提交此列表。",
+    "global": "全球",
+    "pointOfContact": "联系人（TG / X / 电子邮件）",
+    "pocTooltip": "请添加人们在有关此列表的问题时可以联系的人的社交链接。",
+    "pocPlaceholder": "https://x.com/elonmusk",
+    "applicationType": "申请类型",
+    "fixedDeadline": "固定截止日期",
+    "rollingDeadline": "滚动截止日期",
+    "deadline": "截止日期（{{timezone}}）",
+    "deadlineTooltip": "选择接受提交的截止日期",
+    "estimatedTimeToComplete": "预计完成时间",
+    "selectTimeToComplete": "选择完成时间",
+    "timeToComplete": {
+      "<1 Week": "<1 周",
+      "1-2 Weeks": "1-2 周",
+      "2-4 Weeks": "2-4 周",
+      "4-8 Weeks": "4-8 周",
+      ">8 Weeks": ">8 周"
+    },
+    "referredBy": "推荐人",
+    "referredByTooltip": "谁推荐您在Superteam Earn上添加此列表？",
+    "selectReferrer": "选择",
+    "foundationPaying": "Solana基金会是否为此列表付费？",
+    "foundationPayingTooltip": "如果此开关设置为\"是\"，Earn将自动向此列表的获胜者发送Foundation-KYC表单。基金会将直接向获胜者付款。",
+    "privateListing": "私密列表",
+    "privateListingTooltip": "私密列表只能通过直接链接访问，不会出现在Superteam Earn主页或网站的其他公共页面上。"
+  },
+  "listingPayments": {
+    "bonusRewardLabel": "奖金奖项数量",
+    "bonusRewardLabel2": "每个奖金奖项金额",
+    "compensationType": "报酬类型",
+    "compensationTypeTooltip": "您想为这个项目保持固定报酬，还是让申请者提交他们的报价？",
+    "selectCompensationType": "选择报酬类型",
+    "fixedCompensation": "固定报酬",
+    "preDecidedRange": "预设范围",
+    "variableCompensation": "可变报酬",
+    "selectToken": "选择代币",
+    "searchToken": "搜索代币",
+    "totalCompensation": "总报酬（以 {{token}} 计）",
+    "from": "从",
+    "upTo": "到",
+    "totalPrizes": "{{count}} 个奖项",
+    "totalReward": "总计 {{amount}} {{token}}",
+    "addIndividualPrize": "添加个人奖项",
+    "addBonusPrize": "添加奖金奖项",
+    "publishNow": "立即发布",
+    "saveDraft": "保存草稿",
+    "preview": "预览",
+    "updateListing": "更新列表",
+    "maxBonusPrizesWarning": "最大允许的奖金奖项数量为50",
+    "bonusPrizesZeroWarning": "奖金奖项数量不能为0",
+    "bonusPerPrizeZeroWarning": "每个奖金奖项金额不能为0",
+    "bonusPerPrizeLowWarning": "每个奖金奖项金额不能小于0.01",
+    "errorSelectToken": "请选择有效的代币",
+    "errorCompensationType": "请添加报酬类型",
+    "errorFixedRewardAmount": "请指定总奖励金额以继续",
+    "errorRangeRewardAmount": "请指定您首选的最小和最大报酬范围",
+    "errorInvalidRange": "报酬范围不正确；最大值必须高于最小值。请调整",
+    "errorEqualRange": "报酬范围不正确；最大值必须高于最小值。请调整。",
+    "errorBonusZero": "每个奖金奖项不能为0",
+    "errorBonusNotMentioned": "未提及奖金奖励",
+    "errorIncompleteRewards": "请填写所有领奖台排名或删除未使用的",
+    "fixedCompensationHelper": "如果报酬符合他们的期望，感兴趣的申请者将会申请",
+    "rangeCompensationHelper": "允许申请者在特定范围内提交报价",
+    "variableCompensationHelper": "允许申请者提交任意金额的报价",
+    "confirmPublishing": "确认发布？",
+    "privateListingDescription": "由于此列表被标记为\"私密列表\"，它只能通过链接访问 — 不会在网站的其他地方显示。",
+    "publicListingDescription": "发布此列表意味着它将在所有访问者的主页上显示。发布前请确保您的列表详情正确无误。",
+    "publishing": "正在发布...",
+    "publish": "发布",
+    "lowValueListingWarning": "注意：由于此列表的价值≤100美元，它将不会出现在Earn的登陆页面上。增加总报酬以提高可发现性。",
+    "enterHigherRange": "输入较高范围",
+    "enterLowerRange": "输入较低范围"
+  },
+  "questionBuilder": {
+    "handsIconAlt": "手势图标",
+    "note": "注意",
+    "noteDescription": "默认情况下会收集姓名、电子邮件、Discord / Twitter ID、SOL钱包和个人资料链接。请使用此空间询问其他任何内容！",
+    "addQuestion": "+ 添加问题",
+    "saveDraft": "保存草稿",
+    "updateListing": "更新列表",
+    "question": "问题 {{index}}",
+    "questionPlaceholder": "在此输入您的问题"
+  },
+  "common": {
+    "continue": "继续",
+    "close": "关闭",
+    "fieldRequired": "此字段为必填项"
+  },
+  "SelectHackathon": {
+    "selectHackathon": "选择黑客马拉松"
+  },
+  "ExtraInfoSection": {
+    "regionalListing": "区域性{{type}}",
+    "listingOpenFor": "此{{type}}仅对以下地区的人开放：",
+    "hackathonTrack": "{{name}}赛道",
+    "viewAllChallenges": "查看所有挑战",
+    "eligibility": "资格要求",
+    "skillsNeeded": "所需技能",
+    "contact": "联系方式",
+    "reachOut": "联系我们",
+    "questionsAboutListing": "如果您对此列表有任何问题"
+  },
+  "ListingHeader": {
+    "preview": "预览",
+    "draft": "草稿",
+    "submissionsPaused": "提交已暂停",
+    "paused": "已暂停",
+    "opensSoon": "即将开放",
+    "completed": "已完成",
+    "inReview": "审核中",
+    "submissionsOpen": "提交开放",
+    "open": "开放",
+    "by": "由",
+    "projectTooltip": "项目是一个短期工作,赞助商征集多人的申请,并选择最佳人选来完成项目。",
+    "bountyTooltip": "悬赏对任何人开放参与和提交作品(只要他们满足下面提到的资格要求)。最佳提交作品将获胜！",
+    "project": "项目",
+    "bounty": "悬赏",
+    "invitingProposals": "邀请提案",
+    "prizes": "奖励",
+    "details": "详情",
+    "submissions": "提交",
+    "references": "参考"
+  },
+  "ReferenceCard": {
+    "referenceNumber": "参考 {{index}}",
+    "enterReferenceLinkPlaceholder": "输入参考链接"
+  },
+  "regionLabel": {
+    "global": "全球",
+    "only": "仅限"
+  },
+  "RightSideBar": {
+    "tokenIcon": "代币图标",
+    "payment": "支付",
+    "totalPrizes": "总奖金",
+    "suitcaseIcon": "公文包图标",
+    "applications": "申请",
+    "submission": "提交",
+    "submissions": "提交",
+    "timerIcon": "计时器图标",
+    "rolling": "滚动",
+    "remaining": "剩余",
+    "deadline": "截止日期",
+    "untilSubmissionsOpen": "距离提交开放",
+    "timeToComplete": "完成时间",
+    "dontStartWorkingYet": "先不要开始工作！先申请，只有在被录用后才开始工作。",
+    "relatedLiveListings": "相关实时列表",
+    "relatedLiveTracks": "相关实时赛道"
+  },
+  "SubscribeListing": {
+    "completeProfileModalText": "请在订阅列表之前完成您的个人资料。",
+    "notifyAriaLabel": "通知",
+    "subscribing": "正在订阅",
+    "subscribed": "已订阅",
+    "subscribe": "订阅"
+  },
+  "easterEgg": {
+    "celebrationIconAlt": "庆祝图标",
+    "applicationReceived": "申请已收到！",
+    "submissionReceived": "提交已收到！",
+    "sendingVibes": "为你送上一些好运 💃 💃",
+    "johnCenaAlt": "约翰·塞纳随着丘比特音乐律动"
+  },
+  "publishResults": {
+    "publishResults": "发布结果",
+    "resultsAnnouncedSuccessfully": "结果已成功公布！",
+    "resultsAnnouncedPublicly": "结果已公开宣布。每个人都可以在悬赏页面上查看结果。",
+    "refreshing": "刷新中...",
+    "publishingResultsDescription": "发布此列表的结果将使结果对所有人公开可见！一旦发布结果，您将无法撤回！",
+    "selectAllWinners": "选择所有获胜者！",
+    "remainingWinnersToSelect": "在公开发布结果之前，您还需要选择{{count}}名获胜者。",
+    "payAllWinners": "支付所有获胜者！",
+    "remainingPaymentsToMake": "发布结果后别忘了支付获胜者。您还需要支付{{count}}名获胜者。",
+    "listingStillInProgress": "列表仍在进行中！",
+    "publishBeforeDeadlineWarning": "如果您在截止日期之前发布结果，由于已宣布获胜者，列表将关闭。",
+    "publishing": "发布中...",
+    "publish": "发布"
+  },
+  "QuestionHandler": {
+    "characterLimitReached": "已达字符限制",
+    "charactersLeft": "还剩 {{count}} 个字符"
+  },
+  "SubmissionActionButton": {
+    "editApplication": "编辑申请",
+    "editSubmission": "编辑提交",
+    "appliedSuccessfully": "申请成功",
+    "submittedSuccessfully": "提交成功",
+    "applyNow": "立即申请",
+    "submitNow": "立即提交",
+    "sendQuote": "发送报价",
+    "checkingSubmission": "正在检查提交...",
+    "submissionsInReview": "提交正在审核中",
+    "winnersAnnounced": "获奖者已公布",
+    "johnCenaAlt": "约翰·塞纳随着丘比特音乐律动",
+    "completeProfileModalText": "请在提交列表之前完成您的个人资料。",
+    "hackathonOpenDate": "此赛道将于 {{date}} 开放提交"
+  },
+  "SubmissionModal": {
+    "submitYourApplication": "提交您的申请",
+    "dontStartWorkingYet": "先不要开始工作！先申请,只有在被录用后才开始工作。",
+    "sponsorMayContact": "请注意,赞助商可能会在选择获胜者之前联系您以评估适合度。",
+    "bountySubmission": "悬赏提交",
+    "cantWaitToSee": "我们迫不及待想看看您创造了什么！",
+    "solanaRadarTrackSubmission": "Solana Radar 赛道提交",
+    "note": "注意",
+    "submissionLinkNote": "1. 在\"提交链接\"字段中,提交您的黑客马拉松项目最有用的链接(可以是 loom 视频、GitHub 链接、网站等)",
+    "separateSubmissionsNote": "2. 要参与不同的挑战,您需要分别提交到每个挑战",
+    "noRestrictionNote": "3. 您可以提交的挑战数量没有限制",
+    "linkToYourSubmission": "您的提交链接",
+    "makeSureLinkAccessible": "确保此链接对所有人都可访问！",
+    "addALink": "添加链接",
+    "tweetLink": "推文链接",
+    "tweetLinkHelperText": "这有助于赞助商在 Twitter 上发现(可能会转发)您的作品！如果此提交是针对 Twitter 主题悬赏,您可以忽略此字段。",
+    "addTweetLink": "添加推文链接",
+    "compensationRequired": "完成这项工作需要多少报酬？",
+    "greenDollar": "绿色美元",
+    "compensationRangeError": "报酬必须在 {{minRewardAsk}} 和 {{maxRewardAsk}} {{token}} 之间",
+    "anythingElse": "还有什么要补充的吗？",
+    "otherInfoHelperText": "如果您有任何其他链接或信息想与我们分享,请在此添加！",
+    "addInfoOrLink": "添加信息或链接",
+    "yourSolanaWalletAddress": "您的 Solana 钱包地址",
+    "addSolanaWalletHelperText": "在此添加您的 Solana 钱包地址。如果您获胜,您将在这里收到奖励。下载",
+    "ifYouDontHaveWallet": "如果您没有 Solana 钱包",
+    "addYourSolanaWalletAddress": "添加您的 Solana 钱包地址",
+    "confirmationText": "我确认我已经审查了此赛道的范围,并且我的提交符合指定的要求。提交不符合提交要求的项目(包括潜在的垃圾信息)可能会导致未来提交受到限制。",
+    "errorMessage": "抱歉！提交时发生错误。请重试或联系我们：support@superteamearn.com",
+    "submitting": "正在提交...",
+    "submit": "提交",
+    "apply": "申请",
+    "termsAgreement": "通过提交/申请此列表,您同意我们的",
+    "termsOfUse": "使用条款",
+    "acknowledgement": "您承认您正在向 {{entityName ? `{entityName} (\"{sponsorName}\")` : sponsorName}} 提交您的作品或申请。",
+    "superteamEarnRole": "Superteam Earn 仅作为合作伙伴在其平台上列出竞赛、悬赏、项目或类似活动（\"活动\"）的平台（\"ST Earn 平台\"）。",
+    "superteamEarnLiability": "Superteam Earn 不对合作伙伴在 ST Earn 平台上列出的任何活动负责。合作伙伴对其活动的内容、规则、范围和执行全权负责。",
+    "userParticipationRisk": "用户参与合作伙伴列出的活动风险自负。Superteam Earn 对用户参与此类活动不承担任何责任。",
+    "disputeResolution": "用户和合作伙伴之间因活动而产生的任何争议或问题应由相关方直接解决。Superteam Earn 不负责调解或解决此类争议。",
+    "releaseOfLiability": "通过使用平台和参与任何活动，用户同意免除 Superteam Earn 因其参与合作伙伴列出的活动而产生的任何索赔、责任或损害。",
+    "noGuarantee": "Superteam Earn 不保证合作伙伴列出的活动的准确性或合法性。建议用户在参与任何活动之前谨慎行事并进行自己的尽职调查。",
+    "partnerIndemnification": "在平台上列出活动的合作伙伴同意赔偿并使 Superteam Earn 免受因其活动而产生的任何索赔、损害或责任。",
+    "additionalTerms": "这些条款是我们",
+    "termsOfUseLink": "使用条款",
+    "done": "完成"
+  },
+  "submissionList": {
+    "submissionIconAlt": "提交图标",
+    "submissionsNotPublic": "提交在截止日期结束之前不会公开。",
+    "checkBackSoon": "请稍后再来查看！"
+  },
+  "SubmissionPage": {
+    "winner": "🏆 获胜者: {{position}} 🏆",
+    "userSubmission": "{{name}}的提交",
+    "submissionImageAlt": "提交",
+    "visitLink": "访问链接"
+  },
+  "CompleteProfileModal": {
+    "addTalentProfile": "添加您的人才档案",
+    "completeProfile": "完成您的档案",
+    "sponsorBodyText": "您已经有一个赞助商档案，但在继续此操作之前，我们需要您提供其他详细信息。这不会影响您的赞助商档案。"
+  },
+  "ListingCard": {
+    "pfpAlt": "项目标志",
+    "by": "来自",
+    "skills": "技能",
+    "skillNames": {
+      "frontend": "前端",
+      "backend": "后端",
+      "writing": "写作",
+      "marketing": "营销",
+      "community": "社区",
+      "design": "设计"
+    },
+    "tokenIconAlt": "{{token}} 图标",
+    "submissions": "提交",
+    "rollingDeadline": "滚动截止日期",
+    "rolling": "滚动",
+    "dueIn": "将于 {{time}} 到期",
+    "completedAgo": "{{time}}前完成",
+    "expiredAgo": "{{time}}前过期",
+    "sponsorLogo": "{{name}} 的标志",
+    "bounty": "悬赏",
+    "project": "项目",
+    "featured": "精选"
+  },
+  "ListingSection": {
+    "emojiAlt": "表情符号",
+    "viewAll": "查看全部"
+  },
+  "ListingTabs": {
+    "open": "开放",
+    "inReview": "审核中",
+    "completed": "已完成",
+    "noListingsAvailable": "没有可用的列表！",
+    "updateEmailPreferences": "从用户菜单更新您的电子邮件偏好,以获得新工作机会的通知。",
+    "noListingsInReview": "没有正在审核的列表！",
+    "subscribeToNotifications": "订阅通知以获取更新信息。",
+    "noCompletedListings": "没有已完成的列表！",
+    "emojiAlt": "表情符号",
+    "viewAll": "查看全部"
+  },
+  "AnnouncementBar": {
+    "clickHere": "点击此处",
+    "hackathonPrizes": "在 Solana 的全球黑客马拉松中解锁超过 25 万美元的奖金,仅在 Earn 上",
+    "viewTracks": "查看赛道"
+  },
+  "BountySnackbar": {
+    "previewSponsorMessage": "注意：此链接仅供预览使用，只有拥有它的人才能访问。这不是您与社区分享的最终链接",
+    "previewMessage": "此列表处于预览模式。请查看我们主页上的其他列表！",
+    "inactiveMessage": "此列表目前处于非活动状态。请查看我们主页上的其他列表！",
+    "expiredMessage": "此列表的截止日期已过。请查看主页上的其他列表！",
+    "cautionMessage": "请谨慎行事！一些用户已将此列表标记为可能具有误导性。",
+    "expiringMessage": "🕛 即将到期：趁还有机会赶快{{type}}！",
+    "submit": "提交",
+    "apply": "申请",
+    "highRewardMessage": "🤑 更多金钱，更少问题：高于平均水平的{{type}}总奖励",
+    "noBountySubmissions": "🔥 获胜机会高：此悬赏还没有人提交！",
+    "noProjectApplications": "🔥 机会在您这边！还没有人申请",
+    "fewBountySubmissions": "🔥 获胜机会高：此悬赏目前只有{{count}}个提交！",
+    "fewProjectApplications": "🔥 机会在您这边！申请的人不多",
+    "editIcon": "编辑图标"
+  },
+  "desktopNavbar": {
+    "logoAlt": "Superteam Earn",
+    "sponsors": "赞助商",
+    "search": "搜索",
+    "radarNavIconAlt": "雷达导航图标",
+    "becomeASponsor": "成为赞助商",
+    "login": "登录",
+    "signUp": "注册"
+  },
+  "footer": {
+    "logoAlt": "Superteam Earn",
+    "description": "在一个地方发现来自最佳 Solana 公司的高薪加密货币悬赏、项目和资助,并使用单一个人资料申请它们。",
+    "opportunities": {
+      "title": "机会",
+      "bounties": "悬赏",
+      "projects": "项目",
+      "grants": "资助"
+    },
+    "categories": {
+      "title": "类别",
+      "content": "内容",
+      "design": "设计",
+      "development": "开发",
+      "others": "其他"
+    },
+    "about": {
+      "title": "关于",
+      "faq": "常见问题",
+      "terms": "条款",
+      "privacyPolicy": "隐私政策",
+      "changelog": "更新日志",
+      "contactUs": "联系我们"
+    },
+    "copyright": "© {{year}} Superteam。保留所有权利。",
+    "region": "地区",
+    "globalFlag": "🌍",
+    "whereTeamsCome": "Solana 团队来此完成工作",
+    "getStarted": "开始使用"
+  },
+  "LogoContextMenu": {
+    "logoCopied": "Logo已复制",
+    "copyLogoAsSVG": "复制Logo为SVG",
+    "downloadAllAssets": "下载所有资源"
+  },
+  "MobileNavbar": {
+    "login": "登录",
+    "signUp": "注册",
+    "completeYourProfile": "完成您的个人资料",
+    "activityFeed": "活动动态",
+    "leaderboard": "排行榜",
+    "radarNavIcon": "雷达导航图标",
+    "openDrawer": "打开抽屉",
+    "superteamEarn": "Superteam Earn",
+    "getStarted": "开始使用",
+    "createListing": "创建列表",
+    "sponsors": "赞助商"
+  },
+  "userMenu": {
+    "completeProfile": "完成您的个人资料",
+    "newUser": "新用户",
+    "profile": "个人资料",
+    "editProfile": "编辑个人资料",
+    "sponsorDashboard": "赞助商仪表板",
+    "godMode": "上帝模式",
+    "createNewSponsor": "创建新赞助商",
+    "emailPreferences": "电子邮件偏好",
+    "getHelp": "获取帮助",
+    "logout": "退出登录"
+  },
+  "search": {
+    "enterKeyword": "输入关键词以查找所需内容。",
+    "resultsFound": "找到 {{count}} 个搜索结果",
+    "for": "搜索 \"{{query}}\""
+  },
+  "QueryInput": {
+    "searchIconAlt": "搜索图标",
+    "placeholder": "搜索 Superteam Earn 列表",
+    "loadingSpinnerAlt": "加载中"
+  },
+  "Results": {
+    "noResultsFound": "我们找不到任何相关结果",
+    "emptySearchField": "搜索字段为空",
+    "trySearchingElse": "尝试搜索其他内容",
+    "pleaseEnterKeyword": "请输入关键词进行搜索",
+    "viewMore": "查看更多"
+  },
+  "SearchModal": {
+    "searchPlaceholder": "搜索 Superteam Earn 列表",
+    "viewAllResults": "查看所有结果"
+  },
+  "stepOne": {
+    "piedPiperLogoAlt": "Pied Piper 标志",
+    "companyName": "公司名称",
+    "piedPiper": "Pied Piper",
+    "websiteURL": "网站 URL",
+    "piedPiperWebsite": "https://piedpiper.com",
+    "twitterHandle": "Twitter 用户名",
+    "piedPiperTwitter": "@piedpiper",
+    "createProfile": "创建档案"
+  },
+  "stepTwo": {
+    "piedPiperLogoAlt": "Pied Piper 标志",
+    "writeDeepDive": "撰写 PiperCoin 深度分析",
+    "byPiedPiper": "来自 Pied Piper",
+    "endsIn21Days": "21天后结束",
+    "piedPiperDescription": "Pied Piper 是一家开创性的中间输出压缩公司。该公司正在寻找赏金猎人深入研究 $PIPER 代币，并向新手解释代币的背景和用途。",
+    "skills": "技能",
+    "writing": "写作",
+    "marketing": "营销",
+    "community": "社区",
+    "usdcIconAlt": "USDC 图标",
+    "postBounty": "发布赏金"
+  },
+  "faqs": {
+    "title": "常见问题",
+    "whoQualifies": {
+      "question": "谁有资格成为赞助商？",
+      "answer": "任何在Solana生态系统中构建的团队或项目都可以在Superteam Earn上赞助一个列表。团队或运营的规模并不重要 — 您可以是一个代币化项目或一个小型资助接受者；只要您在Solana区块链上构建,您就可以在Earn上添加列表。"
+    },
+    "moneyNeeded": {
+      "question": "我需要投入多少资金？",
+      "answer": "每个列表没有上限或下限的资金要求。但是,每个列表提供的报酬将影响列表的分发（通过电子邮件、Discord、平台发现等）。"
+    },
+    "whoJudges": {
+      "question": "谁来评判悬赏和项目？",
+      "answer": "赞助商应该在Superteam Earn上审核、宣布和支付获胜者。在Earn内管理您的提交非常简单。"
+    },
+    "hiddenCosts": {
+      "question": "是否有任何隐藏的费用和收费？",
+      "answer": "完全没有！"
+    },
+    "whatCanUse": {
+      "question": "我可以将Superteam Earn用于什么？",
+      "answer": "Superteam Earn是一个从加密原生人才那里获得工作完成的平台。这可以是悬赏的形式（让多人完成相同的工作）或以项目列表的形式雇佣自由职业者。<br />Earn可用于完成任何小型到中型规模的任务,包括但不限于开发、写作、设计、研究和产品反馈。<br /><a style=\"color: blue\" href=\"https://in.superteam.fun/bounty-menu\" target=\"_blank\" >点击这里</a>访问列表菜单,其中包含想法、列表示例、建议的奖励范围等。"
+    },
+    "needHelp": {
+      "question": "我需要帮助我的列表。我如何联系？",
+      "answer": "您可以通过<a style=\"color: blue\" href=\"mailto:support@superteamearn.com\" target=\"_blank\">support@superteamearn.com</a>与我们联系,我们会尽快回复您。"
+    }
+  },
+  "Features": {
+    "yourDashboard": "您的仪表板",
+    "manageListingsDescription": "一种无缝管理所有列表的方式",
+    "sponsorDashboardScreenshot": "赞助商仪表板截图",
+    "publishListingTime": "< 1 分钟发布列表",
+    "publishListingDescription": "永远不用从头开始。无需费力编写自己的描述：复制现有悬赏或从 10+ 个模板中选择。",
+    "reviewAndSort": "审核和排序",
+    "reviewAndSortDescription": "审核提交不再是痛苦。使用我们直观的标签系统轻松对提交进行分类。",
+    "easyPayments": "轻松支付",
+    "easyPaymentsDescription": "直接从平台支付人才,无需担心将付款发送到错误的地址。",
+    "skillBasedTargeting": "基于技能的定位",
+    "skillBasedTargetingDescription": "每个新列表都会通过电子邮件和 Discord 发送给相关人员。",
+    "getQuotes": "获取报价",
+    "getQuotesDescription": "不确定如何为您的自由职业工作预算？选择从参与者那里接收报价。",
+    "inviteAndCollaborate": "邀请和协作",
+    "inviteAndCollaborateDescription": "通过电子邮件邀请多个团队成员,并协作管理您的列表。"
+  },
+  "hero": {
+    "title": "Solana 团队来此完成工作",
+    "description": "世界上最优秀的 Solana 人才都在 Superteam Earn。从合适的人那里,在合适的时间获得工作完成。",
+    "getStarted": "开始使用",
+    "step1": "第 1 步",
+    "createProfile": "创建个人资料",
+    "step2": "第 2 步",
+    "postListing": "发布您的列表",
+    "step3": "第 3 步",
+    "getSubmissions": "获取提交",
+    "squadsLogoAlt": "Squads 标志",
+    "tensorLogoAlt": "Tensor 标志",
+    "jupiterLogoAlt": "Jupiter 标志",
+    "deLogoAlt": "De 标志",
+    "madLadsLogoAlt": "Madlads 标志",
+    "solflareLogoAlt": "Solflare 标志",
+    "meteoraLogoAlt": "Meteroa 标志",
+    "monkeDaoLogoAlt": "MonkeDao 标志",
+    "bonkLogoAlt": "Bonk 标志"
+  },
+  "listingTypes": {
+    "startPosting": "从发布您的第一个悬赏或项目开始",
+    "bounty": "悬赏",
+    "bountyDescription": "悬赏是一种列表,每个人都完成给定的工作范围,并竞争奖金池",
+    "project": "项目",
+    "projectDescription": "项目是自由职业工作 — 人们提交他们的提案,但直到您选择他们才开始工作",
+    "purpleTickAlt": "紫色勾号",
+    "bountyFeatures": {
+      "awareness": "非常适合您想要接触尽可能多人的宣传活动",
+      "multipleOptions": "获得多个选项供选择",
+      "examples": "示例：Twitter 主题、深度分析、表情包、产品反馈等"
+    },
+    "projectFeatures": {
+      "collaboration": "非常适合需要协作和迭代的工作",
+      "singleOutput": "单一输出,完全符合您的具体需求",
+      "examples": "示例：全栈开发、宣传视频制作、招聘社区经理等"
+    }
+  },
+  "ListingWork": {
+    "getAlmostAnyKindOfWorkDone": "完成几乎任何类型的工作",
+    "fullStackDevelopment": "全栈开发",
+    "dReaderDescription": "dReader 正在寻找一名全栈开发人员,以构建一个允许创作者发布漫画、分析统计数据并与社区互动的功能。",
+    "okxSuperSeasonThreadBounty": "OKX 超级赛季主题悬赏",
+    "okxDescription": "为庆祝 Solana 超级赛季,OKX 呼吁所有加密货币爱好者深入了解 OKX Web3 钱包上的这项活动的细节,并在一个引人入胜的 Twitter 主题中分享他们的见解。",
+    "y00tsRoyaltyDashboardDesign": "y00ts 版税仪表板设计",
+    "deLabsDescription": "de[labs],即 y00ts、DeGods 和 BTC DeGods 背后的团队,正在寻找有才华的设计师来制作 y00ts 版税仪表板",
+    "communityManagerAtSarosFinance": "Saros Finance 的社区经理",
+    "sarosDescription": "Saros,一个 DeFi 移动超级应用程序,正在寻找一名社区经理,帮助制定社区增长策略并管理其社区",
+    "development": "开发",
+    "content": "内容",
+    "design": "设计",
+    "community": "社区",
+    "skills": {
+      "frontend": "前端",
+      "backend": "后端",
+      "writing": "写作",
+      "marketing": "营销",
+      "community": "社区",
+      "design": "设计"
+    }
+  },
+  "Stats": {
+    "distributionTitle": "Superteam 网络的分布",
+    "distributionDescription": "立即获得访问 Superteam 全球最佳加密人才网络的机会",
+    "globalDiscord": "全球 Discord",
+    "twitterFollowers": "Twitter 关注者",
+    "communityGDP": "社区 GDP",
+    "monthlyViews": "月浏览量",
+    "verifiedEarnUsers": "已验证的 Earn 用户",
+    "countries": "国家"
+  },
+  "testimonials": {
+    "chaseBarker": {
+      "message": "我再说一遍,Earn将成为Solana生态系统中最重要的非协议产品之一。它将开发者(以及其他人)与机会和协议与人才连接起来。",
+      "name": "Chase Barker",
+      "position": "Solana全球开发者增长"
+    },
+    "enoSim": {
+      "message": "我对@SuperteamEarn有一种💙的迷恋。我们团队用它来寻找加密原生人才。<br /><br />完美的招聘流程:<br /> 悬赏 -> 试用期 -> 全职offer。",
+      "name": "Eno Sim",
+      "position": "ISC联合创始人"
+    },
+    "evanSolomon": {
+      "message": "Superteam Earn是Solana协议和用户最被低估和最有价值的平台之一",
+      "name": "Evan Solomon",
+      "position": "Parcl业务发展负责人"
+    },
+    "tensorHQ": {
+      "logoAlt": "Tensor HQ标志",
+      "message": "Superteam都是大佬。<br />Superteam Earn太棒了。<br />每个人都应该使用它💜",
+      "pageViews": "页面浏览量",
+      "totalSubmissions": "总提交量",
+      "userAlt": "TensorHQ",
+      "name": "Tensor HQ, 来自Twitter"
+    }
+  },
+  "useSlugValidation": {
+    "invalidSlugFormat": "Slug只能包含小写字母、数字、'_'和'-'",
+    "slugAlreadyExists": "公司用户名已存在",
+    "errorCheckingSlug": "检查slug可用性时发生错误。"
+  },
+  "useSponsorNameValidation": {
+    "companyNameExists": "公司名称已存在",
+    "errorCheckingAvailability": "检查赞助商名称可用性时发生错误。"
   }
 }

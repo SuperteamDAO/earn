@@ -1,10 +1,13 @@
 import { HStack, Text, VStack } from '@chakra-ui/react';
+import { useTranslation } from 'next-i18next';
 
 import PiedPiper from '@/public/assets/landingsponsor/sponsors/piedPiper.webp';
 
 import { HighQualityImage } from '../HighQualityImage';
 
 export function StepOne() {
+  const { t } = useTranslation('common');
+
   return (
     <VStack
       align="start"
@@ -19,10 +22,14 @@ export function StepOne() {
       rounded={6}
     >
       <HStack gap={4} w="100%">
-        <HighQualityImage alt="Pied Piper Logo" width={49} src={PiedPiper} />
+        <HighQualityImage
+          alt={t('stepOne.piedPiperLogoAlt')}
+          width={49}
+          src={PiedPiper}
+        />
         <VStack align="start" flexGrow={1} w="100%">
           <Text color="brand.slate.400" fontSize="sm" fontWeight="500">
-            Company name
+            {t('stepOne.companyName')}
           </Text>
           <Text
             w="100%"
@@ -35,13 +42,13 @@ export function StepOne() {
             border="1px solid"
             borderColor="brand.slate.200"
           >
-            Pied Piper
+            {t('stepOne.piedPiper')}
           </Text>
         </VStack>
       </HStack>
       <VStack align="start" flexGrow={1} w="100%">
         <Text color="brand.slate.400" fontSize="sm" fontWeight="500">
-          Website URL
+          {t('stepOne.websiteURL')}
         </Text>
         <Text
           w="100%"
@@ -54,12 +61,12 @@ export function StepOne() {
           border="1px solid"
           borderColor="brand.slate.200"
         >
-          https://piedpier.com
+          {t('stepOne.piedPiperWebsite')}
         </Text>
       </VStack>
       <VStack align="start" flexGrow={1} w="100%">
         <Text color="brand.slate.400" fontSize="sm" fontWeight="500">
-          Twitter Handle
+          {t('stepOne.twitterHandle')}
         </Text>
         <Text
           w="100%"
@@ -72,7 +79,7 @@ export function StepOne() {
           border="1px solid"
           borderColor="brand.slate.200"
         >
-          @piedpiper
+          {t('stepOne.piedPiperTwitter')}
         </Text>
       </VStack>
       <Text
@@ -85,7 +92,7 @@ export function StepOne() {
         bg="#EEF2FF"
         rounded={7}
       >
-        Create Profile
+        {t('stepOne.createProfile')}
       </Text>
     </VStack>
   );

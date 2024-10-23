@@ -37,11 +37,13 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { t } from 'i18next';
 import { produce } from 'immer';
 import debounce from 'lodash.debounce';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { LuEye } from 'react-icons/lu';
 
 import {
@@ -93,8 +95,8 @@ interface Props {
   isDuplicating?: boolean;
 }
 
-const BONUS_REWARD_LABEL = '# of Bonus Prizes';
-const BONUS_REWARD_LABEL_2 = 'Bonus Per Prize';
+const BONUS_REWARD_LABEL = t('listingPayments.bonusRewardLabel');
+const BONUS_REWARD_LABEL_2 = t('listingPayments.bonusRewardLabel2');
 
 export const ListingPayments = ({
   isListingPublishing,
@@ -145,9 +147,9 @@ export const ListingPayments = ({
   useEffect(() => {
     if (form && maxBonusSpots !== undefined) {
       if (maxBonusSpots > MAX_BONUS_SPOTS)
-        setWarningMessage('Maximum number of bonus prizes allow is 50');
+        setWarningMessage(t('listingPayments.maxBonusPrizesWarning'));
       if (maxBonusSpots === 0) {
-        setWarningMessage("# of bonus prizes can't be 0");
+        setWarningMessage(t('listingPayments.bonusPrizesZeroWarning'));
       }
     }
   }, [maxBonusSpots, form]);
@@ -155,9 +157,9 @@ export const ListingPayments = ({
   useEffect(() => {
     if (form && rewards && rewards[BONUS_REWARD_POSITION] !== undefined) {
       if (rewards[BONUS_REWARD_POSITION] === 0) {
-        setWarningMessage(`Bonus per prize can't be 0`);
+        setWarningMessage(t('listingPayments.bonusPerPrizeZeroWarning'));
       } else if (rewards[BONUS_REWARD_POSITION] < 0.01) {
-        setWarningMessage(`Bonus per prize can't be less than 0.01`);
+        setWarningMessage(t('listingPayments.bonusPerPrizeLowWarning'));
       }
     }
   }, [rewards]);
@@ -313,26 +315,23 @@ export const ListingPayments = ({
     let errorMessage = '';
 
     if (!selectedToken) {
-      errorMessage = 'Please select a valid token';
+      errorMessage = t('listingPayments.errorSelectToken');
     }
 
     if (isProject) {
       if (!compensationType) {
-        errorMessage = 'Please add a compensation type';
+        errorMessage = t('listingPayments.errorCompensationType');
       }
 
       if (compensationType === 'fixed' && !rewardAmount) {
-        errorMessage = 'Please specify the total reward amount to proceed';
+        errorMessage = t('listingPayments.errorFixedRewardAmount');
       } else if (compensationType === 'range') {
         if (!minRewardAsk || !maxRewardAsk) {
-          errorMessage =
-            'Please specify your preferred minimum and maximum compensation range';
+          errorMessage = t('listingPayments.errorRangeRewardAmount');
         } else if (maxRewardAsk < minRewardAsk) {
-          errorMessage =
-            'The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it';
+          errorMessage = t('listingPayments.errorInvalidRange');
         } else if (maxRewardAsk === minRewardAsk) {
-          errorMessage =
-            'The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it.';
+          errorMessage = t('listingPayments.errorEqualRange');
         }
       }
     } else {
@@ -341,18 +340,18 @@ export const ListingPayments = ({
         rewards[BONUS_REWARD_POSITION] &&
         rewards[BONUS_REWARD_POSITION] === 0
       ) {
-        errorMessage = "Bonus per prize can't be 0";
+        errorMessage = t('listingPayments.errorBonusZero');
       } else if (
         maxBonusSpots &&
         maxBonusSpots > 0 &&
         (!rewards?.[BONUS_REWARD_POSITION] ||
           isNaN(rewards?.[BONUS_REWARD_POSITION] || NaN))
       ) {
-        errorMessage = 'Bonus Reward is not mentioned';
+        errorMessage = t('listingPayments.errorBonusNotMentioned');
       } else if (rewards?.[BONUS_REWARD_POSITION] === 0) {
-        errorMessage = `Bonus per prize can't be 0`;
+        errorMessage = t('listingPayments.errorBonusZero');
       } else if (cleanRewardPrizes(rewards).length !== prizes.length) {
-        errorMessage = 'Please fill all podium ranks or remove unused';
+        errorMessage = t('listingPayments.errorIncompleteRewards');
       }
     }
 
@@ -455,19 +454,18 @@ export const ListingPayments = ({
     }
   };
 
-  let compensationHelperText;
+  let compensationHelperText = '';
 
+  const { t } = useTranslation();
   switch (compensationType) {
     case 'fixed':
-      compensationHelperText =
-        'Interested applicants will apply if the pay fits their expectations';
+      compensationHelperText = t('listingPayments.fixedCompensationHelper');
       break;
     case 'range':
-      compensationHelperText =
-        'Allow applicants to send quotes within a specific range';
+      compensationHelperText = t('listingPayments.rangeCompensationHelper');
       break;
     case 'variable':
-      compensationHelperText = 'Allow applicants to send quotes of any amount';
+      compensationHelperText = t('listingPayments.variableCompensationHelper');
       break;
   }
 
@@ -520,29 +518,29 @@ export const ListingPayments = ({
       <Modal isOpen={confirmIsOpen} onClose={confirmOnClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Confirm Publishing?</ModalHeader>
+          <ModalHeader>{t('listingPayments.confirmPublishing')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text>
               {form?.isPrivate
-                ? 'This listing will only be accessible via the link — and will not show up anywhere else on the site — since it has been marked as a "Private Listing"'
-                : 'Publishing this listing means it will show up on the homepage for all visitors. Make sure the details in your listing are correct before you publish.'}
+                ? t('listingPayments.privateListingDescription')
+                : t('listingPayments.publicListingDescription')}
             </Text>
           </ModalBody>
 
           <ModalFooter>
             <Button mr={4} onClick={confirmOnClose} variant="ghost">
-              Close
+              {t('common.close')}
             </Button>
             <Button
               mr={3}
               colorScheme="blue"
               disabled={isListingPublishing}
               isLoading={isListingPublishing}
-              loadingText="Publishing..."
+              loadingText={t('listingPayments.publishing')}
               onClick={() => createAndPublishListing(confirmOnClose)}
             >
-              Publish
+              {t('listingPayments.publish')}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -561,9 +559,11 @@ export const ListingPayments = ({
               <FormControl isRequired>
                 <Flex>
                   <ListingFormLabel htmlFor="compensationType">
-                    Compensation Type
+                    {t('listingPayments.compensationType')}
                   </ListingFormLabel>
-                  <ListingTooltip label="Would you like to keep a fixed compensation for this project, or let applicants send in their quotes?" />
+                  <ListingTooltip
+                    label={t('listingPayments.compensationTypeTooltip')}
+                  />
                 </Flex>
                 <Controller
                   control={control}
@@ -585,11 +585,17 @@ export const ListingPayments = ({
                       value={value}
                     >
                       <option hidden disabled value="">
-                        Select a Compensation Type
+                        {t('listingPayments.selectCompensationType')}
                       </option>
-                      <option value="fixed">Fixed Compensation</option>
-                      <option value="range">Pre-decided Range</option>
-                      <option value="variable">Variable Compensation</option>
+                      <option value="fixed">
+                        {t('listingPayments.fixedCompensation')}
+                      </option>
+                      <option value="range">
+                        {t('listingPayments.preDecidedRange')}
+                      </option>
+                      <option value="variable">
+                        {t('listingPayments.variableCompensation')}
+                      </option>
                     </Select>
                   )}
                 />
@@ -600,7 +606,9 @@ export const ListingPayments = ({
             </Box>
           )}
           <FormControl pos="relative">
-            <ListingFormLabel>Select Token</ListingFormLabel>
+            <ListingFormLabel>
+              {t('listingPayments.selectToken')}
+            </ListingFormLabel>
             <InputGroup alignItems={'center'} display={'flex'}>
               {token && (
                 <InputLeftElement
@@ -636,7 +644,7 @@ export const ListingPayments = ({
                   handleSearch('');
                 }}
                 onKeyDown={handleKeyDown}
-                placeholder="Search token"
+                placeholder={t('listingPayments.searchToken')}
                 value={searchTerm || ''}
               />
               <InputRightElement color="gray.700" fontSize="1rem">
@@ -687,8 +695,10 @@ export const ListingPayments = ({
           {compensationType === 'fixed' && isProject && (
             <FormControl w="full" mt={5} isRequired>
               <ListingFormLabel htmlFor="rewardAmount">
-                Total Compensation (in{' '}
-                {tokenList.find((t) => t.tokenSymbol === token)?.tokenSymbol})
+                {t('listingPayments.totalCompensation', {
+                  token: tokenList.find((t) => t.tokenSymbol === token)
+                    ?.tokenSymbol,
+                })}
               </ListingFormLabel>
 
               <Flex
@@ -719,7 +729,7 @@ export const ListingPayments = ({
                       color: 'brand.slate.300',
                     }}
                     {...register('rewardAmount', {
-                      required: 'This field is required',
+                      required: t('common.fieldRequired'),
                       setValueAs: (value) => parseFloat(value),
                     })}
                     placeholder={(MAX_PODIUMS * 500).toString()}
@@ -740,47 +750,8 @@ export const ListingPayments = ({
           {compensationType === 'range' && (
             <Flex gap="3" w="100%">
               <FormControl w="full" mt={5} isRequired>
-                <ListingFormLabel htmlFor="minRewardAsk">From</ListingFormLabel>
-                <Flex
-                  pos="relative"
-                  pr={5}
-                  borderWidth={1}
-                  borderStyle={'solid'}
-                  borderColor="brand.slate.300"
-                  borderRadius={'sm'}
-                  _focusWithin={{
-                    borderColor: 'brand.purple',
-                  }}
-                >
-                  <NumberInput
-                    w="full"
-                    color="brand.slate.500"
-                    border={'none'}
-                    focusBorderColor="rgba(0,0,0,0)"
-                    min={0}
-                  >
-                    <NumberInputField
-                      color={'brand.slate.800'}
-                      border={0}
-                      _focusWithin={{
-                        borderWidth: 0,
-                      }}
-                      _placeholder={{
-                        color: 'brand.slate.300',
-                      }}
-                      placeholder="Enter the lower range"
-                      {...register('minRewardAsk', {
-                        required: 'This field is required',
-                        setValueAs: (value) => parseFloat(value),
-                      })}
-                    />
-                  </NumberInput>
-                  <SelectedToken token={selectedToken} />
-                </Flex>
-              </FormControl>
-              <FormControl w="full" mt={5} isRequired>
                 <ListingFormLabel htmlFor="minRewardAsk">
-                  Up to
+                  {t('listingPayments.from')}
                 </ListingFormLabel>
                 <Flex
                   pos="relative"
@@ -809,7 +780,48 @@ export const ListingPayments = ({
                       _placeholder={{
                         color: 'brand.slate.300',
                       }}
-                      placeholder="Enter the higher range"
+                      placeholder={t('listingPayments.enterLowerRange')}
+                      {...register('minRewardAsk', {
+                        required: 'This field is required',
+                        setValueAs: (value) => parseFloat(value),
+                      })}
+                    />
+                  </NumberInput>
+                  <SelectedToken token={selectedToken} />
+                </Flex>
+              </FormControl>
+              <FormControl w="full" mt={5} isRequired>
+                <ListingFormLabel htmlFor="minRewardAsk">
+                  {t('listingPayments.upTo')}
+                </ListingFormLabel>
+                <Flex
+                  pos="relative"
+                  pr={5}
+                  borderWidth={1}
+                  borderStyle={'solid'}
+                  borderColor="brand.slate.300"
+                  borderRadius={'sm'}
+                  _focusWithin={{
+                    borderColor: 'brand.purple',
+                  }}
+                >
+                  <NumberInput
+                    w="full"
+                    color="brand.slate.500"
+                    border={'none'}
+                    focusBorderColor="rgba(0,0,0,0)"
+                    min={0}
+                  >
+                    <NumberInputField
+                      color={'brand.slate.800'}
+                      border={0}
+                      _focusWithin={{
+                        borderWidth: 0,
+                      }}
+                      _placeholder={{
+                        color: 'brand.slate.300',
+                      }}
+                      placeholder={t('listingPayments.enterHigherRange')}
                       {...register('maxRewardAsk', {
                         required: 'This field is required',
                         setValueAs: (value) => parseFloat(value),
@@ -830,10 +842,16 @@ export const ListingPayments = ({
                 borderColor="brand.slate.200"
                 borderBottomWidth="1px"
               >
-                <Text>{calculateTotalPrizes()} Prizes</Text>
                 <Text>
-                  {formatTotalPrice(calculateTotalReward())}{' '}
-                  {selectedToken?.tokenSymbol} Total
+                  {t('listingPayments.totalPrizes', {
+                    count: calculateTotalPrizes(),
+                  })}
+                </Text>
+                <Text>
+                  {t('listingPayments.totalReward', {
+                    amount: formatTotalPrice(calculateTotalReward()),
+                    token: selectedToken?.tokenSymbol,
+                  })}
                 </Text>
               </HStack>
               {prizes.map((el) => (
@@ -1016,7 +1034,7 @@ export const ListingPayments = ({
               {!!debouncedRewardAmount &&
                 debouncedRewardAmount <= 100 &&
                 (token === 'USDT' || token === 'USDC') &&
-                "Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability."}
+                t('listingPayments.lowValueListingWarning')}
             </Text>
             {type !== 'project' && (
               <HStack w="full">
@@ -1040,7 +1058,7 @@ export const ListingPayments = ({
                   }}
                   variant="outline"
                 >
-                  Add Individual Prize
+                  {t('listingPayments.addIndividualPrize')}
                 </Button>
                 {!prizes.find((p) => p.value === BONUS_REWARD_POSITION) && (
                   <Button
@@ -1060,7 +1078,7 @@ export const ListingPayments = ({
                       handlePrizeValueChange(BONUS_REWARD_POSITION, NaN);
                     }}
                   >
-                    Add Bonus Prize
+                    {t('listingPayments.addBonusPrize')}
                   </Button>
                 )}
               </HStack>
@@ -1077,7 +1095,7 @@ export const ListingPayments = ({
                 type="submit"
                 variant={'solid'}
               >
-                Publish Now
+                {t('listingPayments.publishNow')}
               </Button>
             )}
             {isDraft && (
@@ -1094,7 +1112,7 @@ export const ListingPayments = ({
                   onClick={() => onDraftClick()}
                   variant={'ghost'}
                 >
-                  Save Draft
+                  {t('listingPayments.saveDraft')}
                 </Button>
                 <Button
                   className="ph-no-capture"
@@ -1108,7 +1126,7 @@ export const ListingPayments = ({
                   onClick={() => onDraftClick(true)}
                   variant={'outline'}
                 >
-                  Preview
+                  {t('listingPayments.preview')}
                 </Button>
               </HStack>
             )}
@@ -1126,7 +1144,7 @@ export const ListingPayments = ({
                 }}
                 variant={'solid'}
               >
-                Update Listing
+                {t('listingPayments.updateListing')}
               </Button>
             )}
             {errorMessage && <Text color="red.500">{errorMessage}</Text>}

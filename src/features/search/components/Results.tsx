@@ -1,6 +1,7 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Button, Circle, Flex, Text, VStack } from '@chakra-ui/react';
 import { type Dispatch, type SetStateAction, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { GrantsCard } from '@/features/grants';
 import { ListingCard } from '@/features/listings';
@@ -29,6 +30,7 @@ export function Results({
   skills,
   status,
 }: Props) {
+  const { t } = useTranslation();
   const [bountiesOffset, setBountiesOffset] = useState(bountiesCount);
   const [grantsOffset, setGrantsOffset] = useState(grantsCount);
   return (
@@ -52,8 +54,8 @@ export function Results({
           <VStack gap={0}>
             <Text fontSize="sm" fontWeight="600" textAlign="center">
               {query.length > 0
-                ? 'We couldn’t find anything for that keyword'
-                : 'The search field is empty'}
+                ? t('Results.noResultsFound')
+                : t('Results.emptySearchField')}
             </Text>
             <Text
               color="brand.slate.400"
@@ -62,8 +64,8 @@ export function Results({
               textAlign="center"
             >
               {query.length > 0
-                ? 'Try searching for something else'
-                : 'Please enter a keyword to search'}
+                ? t('Results.trySearchingElse')
+                : t('Results.pleaseEnterKeyword')}
             </Text>
           </VStack>
         </VStack>
@@ -110,7 +112,7 @@ export function Results({
               rounded="none"
               variant="ghost"
             >
-              View More <ArrowForwardIcon />
+              {t('Results.viewMore')} <ArrowForwardIcon />
             </Button>
           )}
         </>

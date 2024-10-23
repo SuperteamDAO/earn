@@ -12,12 +12,15 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   onClose: () => void;
   isOpen: boolean;
 }
 export function UnderVerificationModal({ onClose, isOpen }: Props) {
+  const { t } = useTranslation();
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="sm">
       <ModalOverlay />
@@ -43,20 +46,20 @@ export function UnderVerificationModal({ onClose, isOpen }: Props) {
         <ModalBody>
           <VStack gap={3}>
             <Text fontSize="lg" fontWeight={600}>
-              We need to verify your listing before it gets published
+              {t('underVerificationModal.verificationNeeded')}
             </Text>
             <Text color="brand.slate.500">
-              {`It’s important for us to verify work opportunities added by new sponsors to maintain trust, and keep the platform free of any bad actors. We will try our best to verify your listing within 24 hours. `}
+              {t('underVerificationModal.verificationReason')}
             </Text>
             <Text color="brand.slate.500">
-              {`Once verified, your listing will be published automatically. If we need any information, we will get in touch with you. `}
+              {t('underVerificationModal.verificationProcess')}
             </Text>
           </VStack>
         </ModalBody>
         <ModalFooter>
           <Link as={NextLink} w="full" href="/dashboard/listings">
             <Button w="full" py={5}>
-              Understood
+              {t('underVerificationModal.understood')}
             </Button>
           </Link>
         </ModalFooter>

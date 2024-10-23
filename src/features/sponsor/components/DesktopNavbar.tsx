@@ -14,6 +14,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { useTranslation } from 'next-i18next';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
@@ -24,6 +25,7 @@ import { NAV_LINKS } from '../utils';
 
 export const DesktopNavbar = () => {
   const { data: session, status } = useSession();
+  const { t } = useTranslation('common');
 
   const { user } = useUser();
 
@@ -61,7 +63,7 @@ export const DesktopNavbar = () => {
               h={5}
               cursor="pointer"
               objectFit={'contain'}
-              alt={'Superteam Earn'}
+              alt={t('desktopNavbar.logoAlt')}
               src={'/assets/logo/logo.svg'}
             />
 
@@ -78,7 +80,7 @@ export const DesktopNavbar = () => {
                 fontWeight={600}
                 letterSpacing={'1.5px'}
               >
-                SPONSORS
+                {t('desktopNavbar.sponsors')}
               </Text>
             </>
           </Link>
@@ -103,7 +105,7 @@ export const DesktopNavbar = () => {
                     }}
                     href={navItem.link ?? '#'}
                   >
-                    {navItem.label}
+                    {t(`nav.${navItem.label.toLowerCase()}`)}
                   </Link>
                 );
               })}
@@ -141,7 +143,7 @@ export const DesktopNavbar = () => {
                     bg={'white'}
                     size="sm"
                   >
-                    Create a Listing
+                    {t('desktopNavbar.createListing')}
                   </Button>
                 </Link>
               )}
@@ -158,7 +160,7 @@ export const DesktopNavbar = () => {
                     bg={'white'}
                     size="sm"
                   >
-                    Get Started
+                    {t('desktopNavbar.getStarted')}
                   </Button>
                 </Link>
               )}
@@ -176,7 +178,7 @@ export const DesktopNavbar = () => {
                   onClick={() => posthog.capture('login_navbar')}
                 >
                   <Button fontSize="xs" size="sm" variant={'ghost'}>
-                    Login
+                    {t('desktopNavbar.login')}
                   </Button>
                 </Link>
                 <Link
@@ -191,7 +193,7 @@ export const DesktopNavbar = () => {
                     bg={'white'}
                     size="sm"
                   >
-                    Get Started
+                    {t('desktopNavbar.getStarted')}
                   </Button>
                 </Link>
               </HStack>

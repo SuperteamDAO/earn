@@ -3,6 +3,7 @@ import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
+import { useTranslation } from 'react-i18next';
 
 type ListingSectionProps = {
   children?: React.ReactNode;
@@ -25,6 +26,7 @@ export const ListingSection = ({
 }: ListingSectionProps) => {
   const router = useRouter();
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
 
   return (
     <Box
@@ -53,7 +55,7 @@ export const ListingSection = ({
             w={'1.4375rem'}
             h={'1.4375rem'}
             mr={'0.75rem'}
-            alt="emoji"
+            alt={t('ListingSection.emojiAlt')}
             src={emoji}
           />
           <Text
@@ -104,7 +106,7 @@ export const ListingSection = ({
               size="sm"
               variant="ghost"
             >
-              View All
+              {t('ListingSection.viewAll')}
             </Button>
           </Link>
         </Flex>
@@ -142,7 +144,7 @@ export const ListingSection = ({
             size="sm"
             variant="outline"
           >
-            View All
+            {t('ListingSection.viewAll')}
           </Button>
         </Link>
       </Flex>

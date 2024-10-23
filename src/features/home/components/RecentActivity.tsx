@@ -2,6 +2,7 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
+import { useTranslation } from 'react-i18next';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { useGetFeed } from '@/features/feed';
@@ -32,25 +33,32 @@ const ActivityCard = ({
   type,
   ogImage,
 }: ActivityCardProps) => {
+  const { t } = useTranslation();
+
   const getActionText = () => {
     const defaultActionText = {
-      bounty: 'just submitted a bounty',
-      hackathon: 'just submitted to a hackathon',
-      project: 'just applied to a project',
+      bounty: t('RecentActivity.justSubmittedBounty'),
+      hackathon: t('RecentActivity.justSubmittedHackathon'),
+      project: t('RecentActivity.justAppliedProject'),
     };
 
     const winnerActionText = {
-      bounty: 'just won a bounty',
-      hackathon: 'just won a hackathon track',
-      project: 'just got selected for a project',
+      bounty: t('RecentActivity.justWonBounty'),
+      hackathon: t('RecentActivity.justWonHackathonTrack'),
+      project: t('RecentActivity.justSelectedProject'),
     };
 
     if (type === 'PoW') {
-      return 'just added a personal project';
+      return t('RecentActivity.justAddedPersonalProject');
     } else if (isWinner && isWinnersAnnounced) {
-      return winnerActionText[listingType] || 'just achieved something great';
+      return (
+        winnerActionText[listingType] ||
+        t('RecentActivity.justAchievedSomethingGreat')
+      );
     } else {
-      return defaultActionText[listingType] || 'just took an action';
+      return (
+        defaultActionText[listingType] || t('RecentActivity.justTookAction')
+      );
     }
   };
 
@@ -106,6 +114,7 @@ const ActivityCard = ({
 };
 
 export const RecentActivity = () => {
+  const { t } = useTranslation();
   const posthog = usePostHog();
 
   const { data } = useGetFeed({ take: 5 });
@@ -116,7 +125,7 @@ export const RecentActivity = () => {
     <Box>
       <Flex align="center" justify={'space-between'}>
         <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-          RECENT ACTIVITY
+          {t('RecentActivity.recentActivity')}
         </Text>
         <Text
           className="ph-no-capture"
@@ -129,7 +138,7 @@ export const RecentActivity = () => {
             posthog.capture('recent winners_view all_homepage');
           }}
         >
-          View All
+          {t('RecentActivity.viewAll')}
           <ArrowForwardIcon ml={1} />
         </Text>
       </Flex>

@@ -1,7 +1,5 @@
 {
   "freelanceGigs": "Freelance Gigs",
-  "become_a_sponsor": "Become a Sponsor",
-  "welcome_back": "Welcome back",
   "grants": "Grants",
   "grantsDescription": "Equity-free funding opportunities for builders",
   "noGrantsAvailable": "No grants available!",
@@ -57,7 +55,9 @@
   },
   "errorSection": {
     "defaultTitle": "Error Occurred!",
-    "defaultMessage": "Something went wrong! Please try again!"
+    "defaultMessage": "Something went wrong! Please try again!",
+    "accessForbidden": "Access Forbidden",
+    "contactSupport": "Contact Support"
   },
   "imagePicker": {
     "chooseOrDrag": "Choose or drag and drop media",
@@ -308,5 +308,847 @@
     "prizes": "Prizes",
     "details": "Details",
     "references": "References"
+  },
+  "AuthWrapper": {
+    "completeProfileModalDefaultText": "Please complete your profile before proceeding."
+  },
+  "Banner": {
+    "desktopImageAlt": "Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight",
+    "mobileImageAlt": "Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight",
+    "title": "Find Your Next High\nPaying Crypto Gig",
+    "description": "Participate in bounties or apply to freelance gigs of world-class crypto companies, all with a single profile.",
+    "signUpButton": "Sign Up",
+    "joinOthers": "Join {{count}}+ others"
+  },
+  "CategoryBanner": {
+    "content": {
+      "heading": "Find your next Content gig",
+      "description": "If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.",
+      "imageAlt": "Content category banner"
+    },
+    "development": {
+      "heading": "Find your next Development gig",
+      "description": "If building robust applications and scalable solutions is your forte, don't miss out on the earning opportunities listed below.",
+      "imageAlt": "Development category banner"
+    },
+    "design": {
+      "heading": "Find your next Design gig",
+      "description": "If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.",
+      "imageAlt": "Design category banner"
+    },
+    "other": {
+      "heading": "Find your next gig on Earn",
+      "description": "If you have a unique skill set that doesn't fit into the other categories, you might find your next gig here.",
+      "imageAlt": "Other category banner"
+    },
+    "signUpButton": "Sign Up"
+  },
+  "HowItWorks": {
+    "title": "HOW IT WORKS",
+    "step1": {
+      "title": "Create your profile",
+      "description": "by telling us about yourself"
+    },
+    "step2": {
+      "title": "Participate in Bounties & Projects",
+      "description": "to build proof of work"
+    },
+    "step3": {
+      "title": "Get Paid for Your Work",
+      "description": "in global standards"
+    }
+  },
+  "NavTabs": {
+    "allOpportunities": "All Opportunities",
+    "radar": "Radar 📡",
+    "bounties": "Bounties",
+    "projects": "Projects",
+    "grants": "Grants",
+    "hackathons": "Hackathons"
+  },
+  "RecentEarners": {
+    "recentEarners": "RECENT EARNERS",
+    "leaderboard": "Leaderboard",
+    "tokenIconAlt": "{{token}} icon"
+  },
+  "RecentActivity": {
+    "recentActivity": "RECENT ACTIVITY",
+    "viewAll": "View All",
+    "justSubmittedBounty": "just submitted a bounty",
+    "justSubmittedHackathon": "just submitted to a hackathon",
+    "justAppliedProject": "just applied to a project",
+    "justWonBounty": "just won a bounty",
+    "justWonHackathonTrack": "just won a hackathon track",
+    "justSelectedProject": "just got selected for a project",
+    "justAddedPersonalProject": "just added a personal project",
+    "justAchievedSomethingGreat": "just achieved something great",
+    "justTookAction": "just took an action"
+  },
+  "RegionBanner": {
+    "greeting": "{{hello}}, {{region}}",
+    "welcome": "Welcome to Superteam {{region}}'s earnings page — use these opportunities to earn in global standards and gain membership in the most exclusive Solana community of {{region}}!"
+  },
+  "SideBar": {
+    "liveListings": "LIVE LISTINGS",
+    "viewAll": "View All"
+  },
+  "SidebarBanner": {
+    "buildProject": "Build a project for the latest Solana global hackathon!",
+    "submitTracks": "Submit to any of the Radar Side Tracks on Earn, and stand to win from a pool of $250k+. Deadline for submissions is October 9, 2024 (UTC).",
+    "viewTracks": "View Tracks"
+  },
+  "SponsorBanner": {
+    "becomeASponsor": "Become a Sponsor",
+    "reachTalent": "Reach 30,000+ crypto talent from one single dashboard",
+    "sponsorBriefcaseAlt": "Sponsor Briefcase"
+  },
+  "TotalStats": {
+    "dollarIconAlt": "Dollar icon",
+    "totalValueEarned": "Total Value Earned",
+    "suitcaseIconAlt": "Suitcase icon",
+    "opportunitiesListed": "Opportunities Listed"
+  },
+  "UserStatsBanner": {
+    "welcomeBack": "Welcome back, {{name}}",
+    "gladToHaveYou": "We're so glad to have you on Earn",
+    "totalEarned": "Total Earned",
+    "participated": "Participated",
+    "won": "Won"
+  },
+  "VibeCard": {
+    "peopleVibing": "people vibing rn",
+    "clickToVibe": "click to vibeeeee"
+  },
+  "leaderboard": {
+    "banner": {
+      "ranks3dAlt": "Ranks 3D",
+      "title": "Talent Leaderboard",
+      "description": "See where you stand amongst the Solana's top contributors",
+      "mobileImageAlt": "Illustration",
+      "desktopImageAlt": "Illustration"
+    },
+    "filterRow": {
+      "overallRankings": "Overall Rankings",
+      "content": "Content",
+      "design": "Design",
+      "development": "Development",
+      "others": "Others",
+      "skillFilterTooltip": "The skill filters showcase users based on the skills requested in the listings they've successfully won, not the skills listed in their talent profiles.",
+      "timeframe": "Timeframe",
+      "allTime": "All Time",
+      "thisYear": "This Year",
+      "last30Days": "Last 30 Days",
+      "last7Days": "Last 7 Days"
+    },
+    "comingSoon": {
+      "title": "Coming Soon...",
+      "description": "We're actively looking at ways of rewarding the top contributors. Not through a token or points, but with real, tangible benefits for people above a certain rank."
+    },
+    "ranksTable": {
+      "rank": "Rank",
+      "name": "Name",
+      "dollarsEarned": "Dollars Earned",
+      "dollarsEarnedShort": "$ Earned",
+      "winRate": "Win Rate",
+      "wins": "Wins",
+      "submissions": "Submissions",
+      "skills": "Skills",
+      "emptyLeaderboard": "The Leaderboard is empty for your filters",
+      "changeFilters": "Please change your filters or try again later"
+    },
+    "introduction": {
+      "medalAlt": "Medal",
+      "title": "Introducing Leaderboards",
+      "description": "Get Inspired: Check out Earn profiles of the leading contributors of the Solana ecosystem!",
+      "progressIconAlt": "progress icon",
+      "trackProgress": "Track your progress as you earn",
+      "rankIconAlt": "rank icon",
+      "discoverProfiles": "Discover top profiles & their submissions",
+      "semistarIconAlt": "semistar icon",
+      "improveSkills": "Improve your skills & rise through the ranks"
+    }
+  },
+  "createListing": {
+    "template": {
+      "label": "Template",
+      "mainHead": "List your Opportunity",
+      "description": "To save time, check out our ready made templates below. If you already have a listing elsewhere, use \"Start from Scratch\" and copy/paste your text."
+    },
+    "basics": {
+      "label": "Basics",
+      "mainHead": "Create a Listing",
+      "description": "Now let's learn a bit more about the work you need completed"
+    },
+    "description": {
+      "label": "Description",
+      "mainHead": "Tell us some more",
+      "description": "Add more details about the opportunity, submission requirements, reward(s) details, and resources"
+    },
+    "questions": {
+      "label": "Questions",
+      "mainHead": "Enter your questions",
+      "description": "What would you like to know about your applicants?"
+    },
+    "reward": {
+      "label": "Reward",
+      "mainHead": "Add the reward amount",
+      "description": "Decide the compensation amount for your listing"
+    }
+  },
+  "listingSuccessModal": {
+    "listingLive": "Your Listing is Live",
+    "shareVerified": "Share the love on your socials and invite Earn's best talent!",
+    "shareUnverified": "Share the love on your socials!",
+    "inviteTalent": "Invite Talent",
+    "viewListing": "View Listing",
+    "shareOn": "Share on",
+    "sponsorDashboard": "Sponsor Dashboard"
+  },
+  "previewListingModal": {
+    "previewListing": "Preview Listing",
+    "previewLinkTooltip": "This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community",
+    "secretDraftLink": "Secret Draft Link",
+    "continueEditing": "Continue Editing",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "preview": "Preview"
+  },
+  "underVerificationModal": {
+    "verificationNeeded": "We need to verify your listing before it gets published",
+    "verificationReason": "It's important for us to verify work opportunities added by new sponsors to maintain trust, and keep the platform free of any bad actors. We will try our best to verify your listing within 24 hours.",
+    "verificationProcess": "Once verified, your listing will be published automatically. If we need any information, we will get in touch with you.",
+    "understood": "Understood"
+  },
+  "template": {
+    "startFromScratch": "Start from Scratch"
+  },
+  "DescriptionBuilder": {
+    "eligibilityRequirements": "Eligibility Requirements",
+    "eligibilityRequirementsTooltip": "Add here if you have any specific eligibility requirements for the Listing.",
+    "addEligibilityRequirements": "Add Eligibility Requirements",
+    "charactersLeft": "{{count}} characters left",
+    "listingDetails": "Listing Details",
+    "listingDetailsTooltip": "Write details about the Listing - About, Requirements, Evaluation Criteria, Resources, Rewards, etc.",
+    "chatGPTEmoji": "🤖",
+    "chatGPTLink": "Go live in <1 min by using our drafting bot (ChatGPT 4 Required)",
+    "deliverableReferences": "Deliverable References",
+    "deliverableReferencesDescription": "Add links of other projects/websites as references for the kind of deliverables you are looking for.",
+    "addReference": "+ Add Reference",
+    "listingDetailsRequired": "Listing Details is a required field",
+    "continue": "Continue",
+    "saveDraft": "Save Draft",
+    "updateListing": "Update Listing",
+    "h1": "H1",
+    "h2": "H2",
+    "h3": "H3",
+    "editorPlaceholder": "Give more details about the Listing...",
+    "imageUploadError": "Failed to upload image.",
+    "deleteReference": "Delete reference",
+    "uploadingImage": "Uploading image...",
+    "dragAndDropFiles": "Drag and drop your files here",
+    "maxFileSize": "Max File Upload Size: 5MB",
+    "uploadFile": "Upload File",
+    "fileRejectionError": "File is too large or of invalid type.",
+    "addLink": "Add a link",
+    "cancel": "Cancel",
+    "submit": "Submit"
+  },
+  "ListingBasic": {
+    "listingTitle": "Listing Title",
+    "titleTooltip": "Use a short title to describe the Listing",
+    "titlePlaceholder": "Develop a new landing page",
+    "characterLimitReached": "Character limit reached",
+    "charactersLeft": "{{count}} characters left",
+    "referenceListings": "Reference Listings",
+    "continue": "Continue",
+    "saveDraft": "Save Draft",
+    "updateListing": "Update Listing",
+    "listingSlug": "Listing Slug",
+    "slugTooltip": "Use a short slug to describe the Listing",
+    "slugHelperText": "This field can't be edited after a listing has been published",
+    "slugPlaceholder": "develop-a-new-landing-page",
+    "listingGeography": "Listing Geography",
+    "geographyTooltip": "Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing.",
+    "global": "Global",
+    "pointOfContact": "Point of Contact (TG / X / Email)",
+    "pocTooltip": "Please add a social link of the person people reach out to in case they have questions about this listing.",
+    "pocPlaceholder": "https://x.com/elonmusk",
+    "applicationType": "Application Type",
+    "fixedDeadline": "Fixed Deadline",
+    "rollingDeadline": "Rolling Deadline",
+    "deadline": "Deadline (in {{timezone}})",
+    "deadlineTooltip": "Select the deadline date for accepting submissions",
+    "estimatedTimeToComplete": "Estimated Time to Complete",
+    "selectTimeToComplete": "Select time to complete",
+    "timeToComplete": {
+      "<1 Week": "<1 Week",
+      "1-2 Weeks": "1-2 Weeks",
+      "2-4 Weeks": "2-4 Weeks",
+      "4-8 Weeks": "4-8 Weeks",
+      ">8 Weeks": ">8 Weeks"
+    },
+    "referredBy": "Referred By",
+    "referredByTooltip": "Who referred you to add this listing on Superteam Earn?",
+    "selectReferrer": "Select",
+    "foundationPaying": "Will the Solana Foundation pay for this listing?",
+    "foundationPayingTooltip": "If this toggle is set to \"True\", Earn will automatically send the Foundation-KYC form to the winners of this listing. The Foundation will directly pay the winners.",
+    "privateListing": "Private Listing",
+    "privateListingTooltip": "Private listings are only accessible through direct links and do not appear on the Superteam Earn homepage or other public pages on the website."
+  },
+  "listingPayments": {
+    "bonusRewardLabel": "# of Bonus Prizes",
+    "bonusRewardLabel2": "Bonus Per Prize",
+    "compensationType": "Compensation Type",
+    "compensationTypeTooltip": "Would you like to keep a fixed compensation for this project, or let applicants send in their quotes?",
+    "selectCompensationType": "Select a Compensation Type",
+    "fixedCompensation": "Fixed Compensation",
+    "preDecidedRange": "Pre-decided Range",
+    "variableCompensation": "Variable Compensation",
+    "selectToken": "Select Token",
+    "searchToken": "Search token",
+    "totalCompensation": "Total Compensation (in {{token}})",
+    "from": "From",
+    "upTo": "Up to",
+    "totalPrizes": "{{count}} Prizes",
+    "totalReward": "{{amount}} {{token}} Total",
+    "addIndividualPrize": "Add Individual Prize",
+    "addBonusPrize": "Add Bonus Prize",
+    "publishNow": "Publish Now",
+    "saveDraft": "Save Draft",
+    "preview": "Preview",
+    "updateListing": "Update Listing",
+    "maxBonusPrizesWarning": "Maximum number of bonus prizes allowed is 50",
+    "bonusPrizesZeroWarning": "# of bonus prizes can't be 0",
+    "bonusPerPrizeZeroWarning": "Bonus per prize can't be 0",
+    "bonusPerPrizeLowWarning": "Bonus per prize can't be less than 0.01",
+    "errorSelectToken": "Please select a valid token",
+    "errorCompensationType": "Please add a compensation type",
+    "errorFixedRewardAmount": "Please specify the total reward amount to proceed",
+    "errorRangeRewardAmount": "Please specify your preferred minimum and maximum compensation range",
+    "errorInvalidRange": "The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it",
+    "errorEqualRange": "The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it.",
+    "errorBonusZero": "Bonus per prize can't be 0",
+    "errorBonusNotMentioned": "Bonus Reward is not mentioned",
+    "errorIncompleteRewards": "Please fill all podium ranks or remove unused",
+    "fixedCompensationHelper": "Interested applicants will apply if the pay fits their expectations",
+    "rangeCompensationHelper": "Allow applicants to send quotes within a specific range",
+    "variableCompensationHelper": "Allow applicants to send quotes of any amount",
+    "confirmPublishing": "Confirm Publishing?",
+    "privateListingDescription": "This listing will only be accessible via the link — and will not show up anywhere else on the site — since it has been marked as a \"Private Listing\"",
+    "publicListingDescription": "Publishing this listing means it will show up on the homepage for all visitors. Make sure the details in your listing are correct before you publish.",
+    "publishing": "Publishing...",
+    "publish": "Publish",
+    "lowValueListingWarning": "Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability.",
+    "enterHigherRange": "Enter the higher range",
+    "enterLowerRange": "Enter the lower range"
+  },
+  "questionBuilder": {
+    "handsIconAlt": "Hands icon",
+    "note": "Note",
+    "noteDescription": "Names, Emails, Discord / Twitter IDs, SOL wallet and Profile Links are collected by default. Please use this space to ask about anything else!",
+    "addQuestion": "+ Add Question",
+    "saveDraft": "Save Draft",
+    "updateListing": "Update Listing",
+    "question": "Question {{index}}",
+    "questionPlaceholder": "Enter your question here"
+  },
+  "common": {
+    "continue": "Continue",
+    "close": "Close",
+    "fieldRequired": "This field is required"
+  },
+  "SelectHackathon": {
+    "selectHackathon": "Select Hackathon"
+  },
+  "ExtraInfoSection": {
+    "regionalListing": "REGIONAL {{type}}",
+    "listingOpenFor": "This {{type}} is only open for people in",
+    "hackathonTrack": "{{name}} TRACK",
+    "viewAllChallenges": "View All Challenges",
+    "eligibility": "ELIGIBILITY",
+    "skillsNeeded": "SKILLS NEEDED",
+    "contact": "CONTACT",
+    "reachOut": "Reach out",
+    "questionsAboutListing": "if you have any questions about this listing"
+  },
+  "ListingHeader": {
+    "preview": "Preview",
+    "draft": "Draft",
+    "submissionsPaused": "Submissions Paused",
+    "paused": "Paused",
+    "opensSoon": "Opens Soon",
+    "completed": "Completed",
+    "inReview": "In Review",
+    "submissionsOpen": "Submissions Open",
+    "open": "Open",
+    "by": "by",
+    "projectTooltip": "A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.",
+    "bountyTooltip": "Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!",
+    "project": "Project",
+    "bounty": "Bounty",
+    "invitingProposals": "Inviting Proposals",
+    "prizes": "Prizes",
+    "details": "Details",
+    "submissions": "Submissions",
+    "references": "References"
+  },
+  "ReferenceCard": {
+    "referenceNumber": "Reference {{index}}",
+    "enterReferenceLinkPlaceholder": "Enter a reference link"
+  },
+  "regionLabel": {
+    "global": "Global",
+    "only": "Only"
+  },
+  "RightSideBar": {
+    "tokenIcon": "Token icon",
+    "payment": "Payment",
+    "totalPrizes": "Total Prizes",
+    "suitcaseIcon": "Suitcase icon",
+    "applications": "Applications",
+    "submission": "Submission",
+    "submissions": "Submissions",
+    "timerIcon": "Timer icon",
+    "rolling": "Rolling",
+    "remaining": "Remaining",
+    "deadline": "Deadline",
+    "untilSubmissionsOpen": "Until Submissions Open",
+    "timeToComplete": "Time to Complete",
+    "dontStartWorkingYet": "Don't start working just yet! Apply first, and then begin working only once you've been hired for the project.",
+    "relatedLiveListings": "RELATED LIVE LISTINGS",
+    "relatedLiveTracks": "RELATED LIVE TRACKS"
+  },
+  "SubscribeListing": {
+    "completeProfileModalText": "Please complete your profile before subscribing to a listing.",
+    "notifyAriaLabel": "Notify",
+    "subscribing": "Subscribing",
+    "subscribed": "Subscribed",
+    "subscribe": "Subscribe"
+  },
+  "easterEgg": {
+    "celebrationIconAlt": "celebration icon",
+    "applicationReceived": "Application Received!",
+    "submissionReceived": "Submission Received!",
+    "sendingVibes": "Sending some vibes your way 💃 💃",
+    "johnCenaAlt": "John Cena Vibing to Cupid"
+  },
+  "publishResults": {
+    "publishResults": "Publish Results",
+    "resultsAnnouncedSuccessfully": "Results Announced Successfully!",
+    "resultsAnnouncedPublicly": "The results have been announced publicly. Everyone can view the results on the Bounty's page.",
+    "refreshing": "Refreshing...",
+    "publishingResultsDescription": "Publishing the results of this listing will make the results public for everyone to see! YOU CAN'T GO BACK ONCE YOU PUBLISH THE RESULTS!",
+    "selectAllWinners": "Select All Winners!",
+    "remainingWinnersToSelect": "You still have to select {{count}} more winner(s) before you can publish the results publicly.",
+    "payAllWinners": "Pay All Winners!",
+    "remainingPaymentsToMake": "Don't forget to pay your winners after publishing results. You have to pay to {{count}} winner(s).",
+    "listingStillInProgress": "Listing still in progress!",
+    "publishBeforeDeadlineWarning": "If you publish the results before the deadline, the listing will close since the winner(s) will have been announced.",
+    "publishing": "Publishing...",
+    "publish": "Publish"
+  },
+  "QuestionHandler": {
+    "characterLimitReached": "Character limit reached",
+    "charactersLeft": "{{count}} characters left"
+  },
+  "SubmissionActionButton": {
+    "editApplication": "Edit Application",
+    "editSubmission": "Edit Submission",
+    "appliedSuccessfully": "Applied Successfully",
+    "submittedSuccessfully": "Submitted Successfully",
+    "applyNow": "Apply Now",
+    "submitNow": "Submit Now",
+    "sendQuote": "Send Quote",
+    "checkingSubmission": "Checking Submission...",
+    "submissionsInReview": "Submissions in Review",
+    "winnersAnnounced": "Winners Announced",
+    "johnCenaAlt": "John Cena Vibing to Cupid",
+    "completeProfileModalText": "Please complete your profile before submitting to a listing.",
+    "hackathonOpenDate": "This track will open for submissions on {{date}}"
+  },
+  "SubmissionModal": {
+    "submitYourApplication": "Submit Your Application",
+    "dontStartWorkingYet": "Don't start working just yet! Apply first, and then begin working only once you've been hired for the project.",
+    "sponsorMayContact": "Please note that the sponsor might contact you to assess fit before picking the winner.",
+    "bountySubmission": "Bounty Submission",
+    "cantWaitToSee": "We can't wait to see what you've created!",
+    "solanaRadarTrackSubmission": "Solana Radar Track Submission",
+    "note": "Note",
+    "submissionLinkNote": "1. In the \"Link to your Submission\" field, submit your hackathon project's most useful link (could be a loom video, GitHub link, website, etc)",
+    "separateSubmissionsNote": "2. To be eligible for different challenges, you need to submit to each challenge separately",
+    "noRestrictionNote": "3. There's no restriction on the number of challenges you can submit to",
+    "linkToYourSubmission": "Link to Your Submission",
+    "makeSureLinkAccessible": "Make sure this link is accessible by everyone!",
+    "addALink": "Add a link",
+    "tweetLink": "Tweet Link",
+    "tweetLinkHelperText": "This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field.",
+    "addTweetLink": "Add a tweet's link",
+    "compensationRequired": "What's the compensation you require to complete this fully?",
+    "greenDollar": "green dollar",
+    "compensationRangeError": "Compensation must be between {{minRewardAsk}} and {{maxRewardAsk}} {{token}}",
+    "anythingElse": "Anything Else?",
+    "otherInfoHelperText": "If you have any other links or information you'd like to share with us, please add them here!",
+    "addInfoOrLink": "Add info or link",
+    "yourSolanaWalletAddress": "Your Solana Wallet Address",
+    "addSolanaWalletHelperText": "Add your Solana wallet address here. This is where you will receive your rewards if you win. Download",
+    "ifYouDontHaveWallet": "if you don't have a Solana wallet",
+    "addYourSolanaWalletAddress": "Add your Solana wallet address",
+    "confirmationText": "I confirm that I have reviewed the scope of this track and that my submission adheres to the specified requirements. Submitting a project that does not meet the submission requirements, including potential spam, may result in restrictions on future submissions.",
+    "errorMessage": "Sorry! An error occurred while submitting. Please try again or contact us at support@superteamearn.com",
+    "submitting": "Submitting...",
+    "submit": "Submit",
+    "apply": "Apply",
+    "termsAgreement": "By submitting/applying to this listing, you agree to our",
+    "termsOfUse": "Terms of Use",
+    "acknowledgement": "You acknowledge that you are submitting your work or application to {{entityName ? `{entityName} (\"{sponsorName}\")` : sponsorName}}.",
+    "superteamEarnRole": "Superteam Earn acts solely as a platform for the Partner to list contests, bounties, projects or similar engagements (\"Activities\") on its platform (\"ST Earn Platform\").",
+    "superteamEarnLiability": "Superteam Earn shall not be liable for any Activities listed by the Partner on the ST Earn Platform. The Partner is solely responsible for the content, rules, scope and execution of their Activities.",
+    "userParticipationRisk": "Users participating in Activities listed by Partners do so at their own risk and discretion. Superteam Earn disclaims all liabilities related to user participation in such Activities.",
+    "disputeResolution": "Any disputes or issues arising between users and partners regarding Activities shall be resolved directly between the parties involved. Superteam Earn shall not be responsible for mediating or resolving such disputes.",
+    "releaseOfLiability": "By using the platform and participating in any Activities, users agree to release Superteam Earn from any claims, liabilities, or damages arising from their participation in Activities listed by Partners.",
+    "noGuarantee": "Superteam Earn does not guarantee the accuracy or legality of Activities listed by Partners. Users are advised to exercise caution and conduct their own due diligence before participating in any Activities.",
+    "partnerIndemnification": "Partners listing Activities on the Platform agree to indemnify and hold Superteam Earn harmless from any claims, damages, or liabilities arising from their Activities.",
+    "additionalTerms": "These terms are in addition to our",
+    "termsOfUseLink": "Terms of Use",
+    "done": "Done"
+  },
+  "submissionList": {
+    "submissionIconAlt": "submission icon",
+    "submissionsNotPublic": "Submissions are not public until the submission deadline has closed.",
+    "checkBackSoon": "Check back soon!"
+  },
+  "SubmissionPage": {
+    "winner": "🏆 WINNER: {{position}} 🏆",
+    "userSubmission": "{{name}}'s Submission",
+    "submissionImageAlt": "submission",
+    "visitLink": "Visit Link"
+  },
+  "CompleteProfileModal": {
+    "addTalentProfile": "Add your talent profile",
+    "completeProfile": "Complete your profile",
+    "sponsorBodyText": "You already have a sponsor profile, but we need other details from you before proceeding with this action. Doing this will not impact your sponsor profile."
+  },
+  "ListingCard": {
+    "pfpAlt": "Project Logo",
+    "by": "By",
+    "skills": "Skills",
+    "skillNames": {
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "writing": "Writing",
+      "marketing": "Marketing",
+      "community": "Community",
+      "design": "Design"
+    },
+    "tokenIconAlt": "{{token}} icon",
+    "submissions": "Submissions",
+    "rollingDeadline": "Rolling Deadline",
+    "rolling": "Rolling",
+    "dueIn": "Due in {{time}}",
+    "completedAgo": "Completed {{time}} ago",
+    "expiredAgo": "Expired {{time}} ago",
+    "sponsorLogo": "{{name}}'s logo",
+    "bounty": "Bounty",
+    "project": "Project",
+    "featured": "FEATURED"
+  },
+  "ListingSection": {
+    "emojiAlt": "emoji",
+    "viewAll": "View All"
+  },
+  "ListingTabs": {
+    "open": "Open",
+    "inReview": "In Review",
+    "completed": "Completed",
+    "noListingsAvailable": "No listings available!",
+    "updateEmailPreferences": "Update your email preferences (from the user menu) to be notified about new work opportunities.",
+    "noListingsInReview": "No listings in review!",
+    "subscribeToNotifications": "Subscribe to notifications to get notified about updates.",
+    "noCompletedListings": "No completed listings!",
+    "emojiAlt": "emoji",
+    "viewAll": "View All"
+  },
+  "AnnouncementBar": {
+    "clickHere": "Click here",
+    "hackathonPrizes": "to unlock $250k+ in prizes at Solana's global hackathon, exclusively on Earn",
+    "viewTracks": "View Tracks"
+  },
+  "BountySnackbar": {
+    "previewSponsorMessage": "Note: This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community",
+    "previewMessage": "This Listing Is In Preview Mode. Check Out Other Listings on Our Homepage!",
+    "inactiveMessage": "This Listing Is Inactive Right Now. Check Out Other Listings on Our Homepage!",
+    "expiredMessage": "The Deadline for This Listing Has Passed. Check Out Other Listings on the Homepage!",
+    "cautionMessage": "Proceed with caution! Some users have flagged this listing as potentially misleading.",
+    "expiringMessage": "🕛 Expiring Soon: {{type}} while you still have the chance!",
+    "submit": "Submit",
+    "apply": "Apply",
+    "highRewardMessage": "🤑 Mo' Money, Fewer Problems: Higher than average total {{type}} reward",
+    "noBountySubmissions": "🔥 High chance of winning: No submissions have been made for this bounty yet!",
+    "noProjectApplications": "🔥 The Odds Are in Your Favour! No applications yet",
+    "fewBountySubmissions": "🔥 High chance of winning: Only {{count}} submission(s) have been made for this bounty yet!",
+    "fewProjectApplications": "🔥 The Odds Are in Your Favour! Not too many applications yet",
+    "editIcon": "Edit icon"
+  },
+  "desktopNavbar": {
+    "logoAlt": "Superteam Earn",
+    "sponsors": "SPONSORS",
+    "search": "Search",
+    "radarNavIconAlt": "Radar Nav Icon",
+    "becomeASponsor": "Become a Sponsor",
+    "login": "Login",
+    "signUp": "Sign Up"
+  },
+  "footer": {
+    "logoAlt": "Superteam Earn",
+    "description": "Discover high paying crypto bounties, projects and grants from the best Solana companies in one place and apply to them using a single profile.",
+    "opportunities": {
+      "title": "Opportunities",
+      "bounties": "Bounties",
+      "projects": "Projects",
+      "grants": "Grants"
+    },
+    "categories": {
+      "title": "Categories",
+      "content": "Content",
+      "design": "Design",
+      "development": "Development",
+      "others": "Others"
+    },
+    "about": {
+      "title": "About",
+      "faq": "FAQ",
+      "terms": "Terms",
+      "privacyPolicy": "Privacy Policy",
+      "changelog": "Changelog",
+      "contactUs": "Contact Us"
+    },
+    "copyright": "© {{year}} Superteam. All rights reserved.",
+    "region": "REGION",
+    "globalFlag": "🌍",
+    "whereTeamsCome": "Where Solana teams come to get sh*t done",
+    "getStarted": "Get Started"
+  },
+  "LogoContextMenu": {
+    "logoCopied": "Logo copied",
+    "copyLogoAsSVG": "Copy logo as SVG",
+    "downloadAllAssets": "Download all assets"
+  },
+  "MobileNavbar": {
+    "login": "Login",
+    "signUp": "Sign Up",
+    "completeYourProfile": "Complete your Profile",
+    "activityFeed": "Activity Feed",
+    "leaderboard": "Leaderboard",
+    "radarNavIcon": "Radar Nav Icon",
+    "openDrawer": "Open Drawer",
+    "superteamEarn": "Superteam Earn",
+    "getStarted": "Get Started",
+    "createListing": "Create a Listing",
+    "sponsors": "SPONSORS"
+  },
+  "userMenu": {
+    "completeProfile": "Complete your Profile",
+    "newUser": "New User",
+    "profile": "Profile",
+    "editProfile": "Edit Profile",
+    "sponsorDashboard": "Sponsor Dashboard",
+    "godMode": "God Mode",
+    "createNewSponsor": "Create New Sponsor",
+    "emailPreferences": "Email Preferences",
+    "getHelp": "Get Help",
+    "logout": "Logout"
+  },
+  "search": {
+    "enterKeyword": "Enter a keyword to find what you need.",
+    "resultsFound": "Found {{count}} search results",
+    "for": "for \"{{query}}\""
+  },
+  "QueryInput": {
+    "searchIconAlt": "Search icon",
+    "placeholder": "Search for Superteam Earn Listings",
+    "loadingSpinnerAlt": "Loading"
+  },
+  "Results": {
+    "noResultsFound": "We couldn't find anything for that keyword",
+    "emptySearchField": "The search field is empty",
+    "trySearchingElse": "Try searching for something else",
+    "pleaseEnterKeyword": "Please enter a keyword to search",
+    "viewMore": "View More"
+  },
+  "SearchModal": {
+    "searchPlaceholder": "Search for Superteam Earn Listings",
+    "viewAllResults": "View All Results"
+  },
+  "stepOne": {
+    "piedPiperLogoAlt": "Pied Piper Logo",
+    "companyName": "Company name",
+    "piedPiper": "Pied Piper",
+    "websiteURL": "Website URL",
+    "piedPiperWebsite": "https://piedpiper.com",
+    "twitterHandle": "Twitter Handle",
+    "piedPiperTwitter": "@piedpiper",
+    "createProfile": "Create Profile"
+  },
+  "stepTwo": {
+    "piedPiperLogoAlt": "Pied Piper Logo",
+    "writeDeepDive": "Write a Deep Dive on PiperCoin",
+    "byPiedPiper": "By Pied Piper",
+    "endsIn21Days": "Ends in 21 days",
+    "piedPiperDescription": "Pied Piper is a pioneering middle-out compression company. The company is looking for bounty hunters to deep dive into the $PIPER coin, and explain the coin's background and utility to noobs.",
+    "skills": "Skills",
+    "writing": "Writing",
+    "marketing": "Marketing",
+    "community": "Community",
+    "usdcIconAlt": "USDC icon",
+    "postBounty": "Post Bounty"
+  },
+  "faqs": {
+    "title": "FAQs",
+    "whoQualifies": {
+      "question": "Who qualifies to be a sponsor?",
+      "answer": "Any team or project that is building in the Solana ecosystem can sponsor a listing on Superteam Earn. Size of the team or operations don't matter — you can be a tokenised project or a small grantee; as long as you are building on the Solana blockchain, you can add a listing on Earn."
+    },
+    "moneyNeeded": {
+      "question": "How much money do I need to put up?",
+      "answer": "There is no upper or lower limit of the amount of money you need to put up per listing. However, the compensation offered per listing will affect the distribution (via emails, discord, platform discovery, etc.) that the listing will get."
+    },
+    "whoJudges": {
+      "question": "Who judges the bounties & projects?",
+      "answer": "The sponsors are supposed to review, announce, and pay out the winners on Superteam Earn. It's super simple to manage your submissions, all within Earn."
+    },
+    "hiddenCosts": {
+      "question": "Are there any hidden costs and charges?",
+      "answer": "None at all!"
+    },
+    "whatCanUse": {
+      "question": "What can I use Superteam Earn for?",
+      "answer": "Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of boutnies (get the same work done by many people) or hiring freelancers in the form of Project listings.<br />Earn can be used to get any small to medium scale task done, including but not limited to development, writing, design, research, and product feedback.<br /><a style=\"color: blue\" href=\"https://in.superteam.fun/bounty-menu\" target=\"_blank\" >Click here</a> to access the Listings Menu, which contains ideas, listing examples, suggested prize ranges, etc."
+    },
+    "needHelp": {
+      "question": "I need help with my listing. How can I get in touch?",
+      "answer": "You can get in touch with us at <a style=\"color: blue\" href=\"mailto:support@superteamearn.com\" target=\"_blank\">support@superteamearn.com</a> and we will get back to you ASAP."
+    }
+  },
+  "Features": {
+    "yourDashboard": "YOUR DASHBOARD",
+    "manageListingsDescription": "A seamless way to manage all your listings in one place",
+    "sponsorDashboardScreenshot": "Sponsor dashboard screenshot",
+    "publishListingTime": "< 1 Min to Publish a Listing",
+    "publishListingDescription": "Never start from scratch. No hassle of writing your own descriptions: either duplicate an existing bounty, or choose from 10+ templates.",
+    "reviewAndSort": "Review & Sort",
+    "reviewAndSortDescription": "Reviewing submissions is no longer a pain. Effortlessly categorize submissions with our intuitive labelling system.",
+    "easyPayments": "Easy Payments",
+    "easyPaymentsDescription": "Pay talent directly from the platform without worrying about sending payment to the wrong address.",
+    "skillBasedTargeting": "Skill Based Targeting",
+    "skillBasedTargetingDescription": "Each new listing gets sent to relevant people via e-mail and Discord.",
+    "getQuotes": "Get Quotes",
+    "getQuotesDescription": "Not sure how to budget your freelance gig? Opt to receive quotes from participants instead.",
+    "inviteAndCollaborate": "Invite & Collaborate",
+    "inviteAndCollaborateDescription": "Invite multiple team members via email, and collaborate on managing your listings."
+  },
+  "hero": {
+    "title": "Where Solana teams come to get sh*t done",
+    "description": "The world's best Solana talent is on Superteam Earn. Get work done from the right people, at the right time.",
+    "getStarted": "Get Started",
+    "step1": "STEP 1",
+    "createProfile": "Create a profile",
+    "step2": "STEP 2",
+    "postListing": "Post your listing",
+    "step3": "STEP 3",
+    "getSubmissions": "Get submissions",
+    "squadsLogoAlt": "Squads Logo",
+    "tensorLogoAlt": "Tensor Logo",
+    "jupiterLogoAlt": "Jupiter Logo",
+    "deLogoAlt": "De Logo",
+    "madLadsLogoAlt": "Madlads Logo",
+    "solflareLogoAlt": "Solflare Logo",
+    "meteoraLogoAlt": "Meteroa Logo",
+    "monkeDaoLogoAlt": "MonkeDao Logo",
+    "bonkLogoAlt": "Bonk Logo"
+  },
+  "listingTypes": {
+    "startPosting": "Start by posting your first Bounty or Project",
+    "bounty": "Bounty",
+    "bountyDescription": "Bounties are listings where everyone completes a given scope of work, and competes for the prize pool",
+    "project": "Project",
+    "projectDescription": "Projects are freelance gigs — people apply with their proposals but don't begin working until you pick them",
+    "purpleTickAlt": "Purple Tick",
+    "bountyFeatures": {
+      "awareness": "Great for awareness campaigns where you want to reach the most people possible",
+      "multipleOptions": "Get multiple options to choose from",
+      "examples": "Examples: Twitter Threads, Deep-Dives, Memes, Product Feedback, and more"
+    },
+    "projectFeatures": {
+      "collaboration": "Perfect for work that requires collaboration and iteration",
+      "singleOutput": "Single output that is specific to your exact needs",
+      "examples": "Examples: Full Stack Development, Hype Video Production, Hiring a Community Manager, and more"
+    }
+  },
+  "ListingWork": {
+    "getAlmostAnyKindOfWorkDone": "Get almost any kind of work done",
+    "fullStackDevelopment": "Full Stack Development",
+    "dReaderDescription": "dReader is looking for a full stack developer to build a feature that allows creators to publish their comics, analyse stats and engage with their community.",
+    "okxSuperSeasonThreadBounty": "OKX Super Season Thread Bounty",
+    "okxDescription": "In celebration of the Solana Super Season, OKX is calling all crypto enthusiasts to dive into the details of this campaign on OKX Web3 Wallet, and share their insights in a captivating Twitter thread.",
+    "y00tsRoyaltyDashboardDesign": "y00ts royalty dashboard design",
+    "deLabsDescription": "de[labs], the team behind y00ts, DeGods, and BTC DeGods, is looking for a talented designers to make the y00ts royalty dashboard",
+    "communityManagerAtSarosFinance": "Community Manager at Saros Finance",
+    "sarosDescription": "Saros, a DeFi Mobile Superapp is looking for a community manager who can help strategise community growth, and manage its community",
+    "development": "development",
+    "content": "content",
+    "design": "design",
+    "community": "community",
+    "skills": {
+      "frontend": "Frontend",
+      "backend": "Backend",
+      "writing": "Writing",
+      "marketing": "Marketing",
+      "community": "Community",
+      "design": "Design"
+    }
+  },
+  "Stats": {
+    "distributionTitle": "The distribution of the Superteam network",
+    "distributionDescription": "Get instant access to Superteam's network of the best crypto talent in the world",
+    "globalDiscord": "Global Discord",
+    "twitterFollowers": "Twitter Followers",
+    "communityGDP": "Community GDP",
+    "monthlyViews": "Monthly Views",
+    "verifiedEarnUsers": "Verified Earn Users",
+    "countries": "Countries"
+  },
+  "testimonials": {
+    "chaseBarker": {
+      "message": "I'll say it again, Earn is going to become one of the most important non-protocol products in the Solana ecosystem. Connecting developers (amongst others) to opportunity and protocols to talent.",
+      "name": "Chase Barker",
+      "position": "Global Developer Growth, Solana"
+    },
+    "enoSim": {
+      "message": "I have a 💙 affair with @SuperteamEarn. Our team uses it to scout crypto-native talent. <br /><br />Perfect hiring workflow:<br /> bounty -> trial period -> full-time offer.",
+      "name": "Eno Sim",
+      "position": "Co-Founder, ISC"
+    },
+    "evanSolomon": {
+      "message": "Superteam Earn is one of the most underrated and valuable platforms for both Solana protocols and users",
+      "name": "Evan Solomon",
+      "position": "BD Lead, Parcl"
+    },
+    "tensorHQ": {
+      "logoAlt": "Tensor HQ Logo",
+      "message": "Superteam are chads. <br />Superteam Earn is awesome. <br />Everybody should use it 💜",
+      "pageViews": "Page Views",
+      "totalSubmissions": "Total Submissions",
+      "userAlt": "TensorHQ",
+      "name": "Tensor HQ, on Twitter"
+    }
+  },
+  "useSlugValidation": {
+    "invalidSlugFormat": "Slug can only contain lowercase letters, numbers, '_', and '-'",
+    "slugAlreadyExists": "Company username already exists",
+    "errorCheckingSlug": "An error occurred while checking slug availability."
+  },
+  "useSponsorNameValidation": {
+    "companyNameExists": "Company name already exists",
+    "errorCheckingAvailability": "An error occurred while checking sponsor name availability."
   }
 }

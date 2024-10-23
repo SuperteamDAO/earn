@@ -12,6 +12,7 @@ import {
   UnorderedList,
   VStack,
 } from '@chakra-ui/react';
+import { useTranslation } from 'next-i18next';
 
 import { TERMS_OF_USE } from '@/constants';
 
@@ -26,6 +27,8 @@ export const SubmissionTerms = ({
   sponsorName: string;
   entityName?: string;
 }) => {
+  const { t } = useTranslation('common');
+
   return (
     <Modal
       autoFocus={false}
@@ -53,7 +56,7 @@ export const SubmissionTerms = ({
             </svg>
           </Center>
           <Text align="start" fontSize="xl" fontWeight={600} lineHeight={1}>
-            Terms of Use
+            {t('SubmissionModal.termsOfUse')}
           </Text>
         </HStack>
         <Divider borderBottomWidth={2} />
@@ -68,52 +71,21 @@ export const SubmissionTerms = ({
         >
           <UnorderedList>
             <ListItem>
-              You acknowledge that you are submitting your work or application
-              to {entityName ? `${entityName} ("${sponsorName}")` : sponsorName}
-              .
+              {t('SubmissionModal.acknowledgement', {
+                entityName,
+                sponsorName,
+              })}
             </ListItem>
-            <ListItem>
-              Superteam Earn acts solely as a platform for the Partner to list
-              contests, bounties, projects or similar engagements{' '}
-              {`("Activities")`} on its platform {`(“ST Earn Platform”)`}.
-            </ListItem>
-            <ListItem>
-              Superteam Earn shall not be liable for any Activities listed by
-              the Partner on the ST Earn Platform. The Partner is solely
-              responsible for the content, rules, scope and execution of their
-              Activities.
-            </ListItem>
-            <ListItem>
-              Users participating in Activities listed by Partners do so at
-              their own risk and discretion. Superteam Earn disclaims all
-              liabilities related to user participation in such Activities.
-            </ListItem>
-            <ListItem>
-              Any disputes or issues arising between users and partners
-              regarding Activities shall be resolved directly between the
-              parties involved. Superteam Earn shall not be responsible for
-              mediating or resolving such disputes.
-            </ListItem>
-            <ListItem>
-              By using the platform and participating in any Activities, users
-              agree to release Superteam Earn from any claims, liabilities, or
-              damages arising from their participation in Activities listed by
-              Partners.
-            </ListItem>
-            <ListItem>
-              Superteam Earn does not guarantee the accuracy or legality of
-              Activities listed by Partners. Users are advised to exercise
-              caution and conduct their own due diligence before participating
-              in any Activities.
-            </ListItem>
-            <ListItem>
-              Partners listing Activities on the Platform agree to indemnify and
-              hold Superteam Earn harmless from any claims, damages, or
-              liabilities arising from their Activities.
-            </ListItem>
+            <ListItem>{t('SubmissionModal.superteamEarnRole')}</ListItem>
+            <ListItem>{t('SubmissionModal.superteamEarnLiability')}</ListItem>
+            <ListItem>{t('SubmissionModal.userParticipationRisk')}</ListItem>
+            <ListItem>{t('SubmissionModal.disputeResolution')}</ListItem>
+            <ListItem>{t('SubmissionModal.releaseOfLiability')}</ListItem>
+            <ListItem>{t('SubmissionModal.noGuarantee')}</ListItem>
+            <ListItem>{t('SubmissionModal.partnerIndemnification')}</ListItem>
           </UnorderedList>
           <Text as={'p'} lineHeight={1.25}>
-            These terms are in addition to our{' '}
+            {t('SubmissionModal.additionalTerms')}
             <Link
               textDecoration={'underline'}
               href={TERMS_OF_USE}
@@ -121,12 +93,12 @@ export const SubmissionTerms = ({
               target="_blank"
               textUnderlineOffset={2}
             >
-              Terms of Use
+              {t('SubmissionModal.termsOfUseLink')}
             </Link>
             .
           </Text>
           <Button ml="auto" px={10} fontSize="lg" onClick={onClose}>
-            Done
+            {t('SubmissionModal.done')}
           </Button>
         </VStack>
       </ModalContent>

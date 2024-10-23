@@ -24,6 +24,7 @@ import { Regions } from '@prisma/client';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useSession } from 'next-auth/react';
+import { useTranslation } from 'next-i18next';
 import { usePostHog } from 'posthog-js/react';
 import {
   type Dispatch,
@@ -79,6 +80,7 @@ export const ListingBasic = ({
   const { form, updateState } = useListingFormStore();
   const { user } = useUser();
   const { data: session } = useSession();
+  const { t } = useTranslation('common');
 
   const isProject = type === 'project';
   const isDraft = isNewOrDraft || isDuplicating;
@@ -347,9 +349,9 @@ export const ListingBasic = ({
           <FormControl w="full" mb={5} isInvalid={!!errors.title} isRequired>
             <Flex>
               <ListingFormLabel htmlFor={'title'}>
-                Listing Title
+                {t('ListingBasic.listingTitle')}
               </ListingFormLabel>
-              <ListingTooltip label="Use a short title to describe the Listing" />
+              <ListingTooltip label={t('ListingBasic.titleTooltip')} />
             </Flex>
 
             <Input
@@ -372,7 +374,7 @@ export const ListingBasic = ({
                   }
                 },
               })}
-              placeholder="Develop a new landing page"
+              placeholder={t('ListingBasic.titlePlaceholder')}
             />
             <Text
               color={(title?.length || 0) > 70 ? 'red' : 'brand.slate.400'}
@@ -382,9 +384,13 @@ export const ListingBasic = ({
               {title &&
                 title?.length > 50 &&
                 (80 - title?.length === 0 ? (
-                  <p>Character limit reached</p>
+                  <p>{t('ListingBasic.characterLimitReached')}</p>
                 ) : (
-                  <p>{80 - (title.length || 0)} characters left</p>
+                  <p>
+                    {t('ListingBasic.charactersLeft', {
+                      count: 80 - (title.length || 0),
+                    })}
+                  </p>
                 ))}
             </Text>
             {suggestions.length > 0 && (
@@ -396,7 +402,9 @@ export const ListingBasic = ({
                 fontWeight={500}
                 fontStyle="italic"
               >
-                <Text w="max-content">Reference Listings:</Text>
+                <Text w="max-content">
+                  {t('ListingBasic.referenceListings')}:
+                </Text>
                 <Flex align="center" wrap="wrap" columnGap={1.5}>
                   {suggestions.map((suggestion, index) => (
                     <Flex key={suggestion.link} align="center" gap={2}>
@@ -428,8 +436,10 @@ export const ListingBasic = ({
           </FormControl>
           <FormControl w="full" mb={5} isInvalid={!!errors.slug} isRequired>
             <Flex>
-              <ListingFormLabel htmlFor={'slug'}>Listing Slug</ListingFormLabel>
-              <ListingTooltip label="Use a short slug to describe the Listing" />
+              <ListingFormLabel htmlFor={'slug'}>
+                {t('ListingBasic.listingSlug')}
+              </ListingFormLabel>
+              <ListingTooltip label={t('ListingBasic.slugTooltip')} />
             </Flex>
             <FormHelperText
               mt={-1.5}
@@ -438,7 +448,7 @@ export const ListingBasic = ({
               color="brand.slate.400"
               fontSize={'13px'}
             >
-              This field can&apos;t be edited after a listing has been published
+              {t('ListingBasic.slugHelperText')}
             </FormHelperText>
 
             <InputGroup>
@@ -459,7 +469,7 @@ export const ListingBasic = ({
                     setValue('slug', newValue);
                   },
                 })}
-                placeholder="develop-a-new-landing-page"
+                placeholder={t('ListingBasic.slugPlaceholder')}
               />
               {isSlugGenerating && (
                 <InputRightElement>
@@ -480,12 +490,12 @@ export const ListingBasic = ({
           <FormControl w="full" mb={5} isInvalid={!!errors.region}>
             <Flex>
               <ListingFormLabel htmlFor="region">
-                Listing Geography
+                {t('ListingBasic.listingGeography')}
               </ListingFormLabel>
-              <ListingTooltip label="Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
+              <ListingTooltip label={t('ListingBasic.geographyTooltip')} />
             </Flex>
             <Select {...register('region')}>
-              <option value={Regions.GLOBAL}>Global</option>
+              <option value={Regions.GLOBAL}>{t('ListingBasic.global')}</option>
               {CombinedRegions.map((region) => (
                 <option value={region.region} key={region.displayValue}>
                   {region.displayValue}
@@ -505,9 +515,9 @@ export const ListingBasic = ({
           >
             <Flex>
               <ListingFormLabel htmlFor={'pocSocials'}>
-                Point of Contact (TG / X / Email)
+                {t('ListingBasic.pointOfContact')}
               </ListingFormLabel>
-              <ListingTooltip label="Please add a social link of the person people reach out to in case they have questions about this listing." />
+              <ListingTooltip label={t('ListingBasic.pocTooltip')} />
             </Flex>
 
             <Input
@@ -520,7 +530,7 @@ export const ListingBasic = ({
               {...register('pocSocials', {
                 onChange: () => debouncedPocSocialsValidation(),
               })}
-              placeholder="https://x.com/elonmusk"
+              placeholder={t('ListingBasic.pocPlaceholder')}
             />
             <FormErrorMessage>
               {errors.pocSocials ? <>{errors.pocSocials.message}</> : <></>}
@@ -535,7 +545,7 @@ export const ListingBasic = ({
             >
               <Flex>
                 <ListingFormLabel htmlFor="applicationType">
-                  Application Type
+                  {t('ListingBasic.applicationType')}
                 </ListingFormLabel>
               </Flex>
 
@@ -551,8 +561,10 @@ export const ListingBasic = ({
                   },
                 })}
               >
-                <option value="fixed">Fixed Deadline</option>
-                <option value="rolling">Rolling Deadline</option>
+                <option value="fixed">{t('ListingBasic.fixedDeadline')}</option>
+                <option value="rolling">
+                  {t('ListingBasic.rollingDeadline')}
+                </option>
               </Select>
 
               <FormErrorMessage>
@@ -572,10 +584,11 @@ export const ListingBasic = ({
             >
               <Flex align={'center'} justify={'start'}>
                 <ListingFormLabel htmlFor={'deadline'}>
-                  Deadline (in{' '}
-                  {Intl.DateTimeFormat().resolvedOptions().timeZone})
+                  {t('ListingBasic.deadline', {
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                  })}
                 </ListingFormLabel>
-                <ListingTooltip label="Select the deadline date for accepting submissions" />
+                <ListingTooltip label={t('ListingBasic.deadlineTooltip')} />
               </Flex>
               <Tooltip
                 isDisabled={!editable || !maxDeadline}
@@ -655,7 +668,7 @@ export const ListingBasic = ({
             >
               <Flex>
                 <ListingFormLabel htmlFor="timeToComplete">
-                  Estimated Time to Complete
+                  {t('ListingBasic.estimatedTimeToComplete')}
                 </ListingFormLabel>
               </Flex>
 
@@ -663,12 +676,12 @@ export const ListingBasic = ({
                 _placeholder={{
                   color: 'brand.slate.300',
                 }}
-                placeholder="Select time to complete"
+                placeholder={t('ListingBasic.selectTimeToComplete')}
                 {...register('timeToComplete', { required: true })}
               >
                 {timeToCompleteOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(`ListingBasic.timeToComplete.${option.value}`)}
                   </option>
                 ))}
               </Select>
@@ -684,12 +697,15 @@ export const ListingBasic = ({
           <FormControl w="full" mb={5} isInvalid={!!errors.referredBy}>
             <Flex>
               <ListingFormLabel htmlFor="referredBy">
-                Referred By
+                {t('ListingBasic.referredBy')}
               </ListingFormLabel>
-              <ListingTooltip label="Who referred you to add this listing on Superteam Earn?" />
+              <ListingTooltip label={t('ListingBasic.referredByTooltip')} />
             </Flex>
 
-            <Select {...register('referredBy')} placeholder="Select">
+            <Select
+              {...register('referredBy')}
+              placeholder={t('ListingBasic.selectReferrer')}
+            >
               {Superteams.map((st) => (
                 <option value={st.name} key={st.name}>
                   {st.name}
@@ -704,9 +720,11 @@ export const ListingBasic = ({
             <FormControl alignItems="center" gap={3} display="flex">
               <Flex>
                 <ListingFormLabel htmlFor="isFndnPaying">
-                  Will the Solana Foundation pay for this listing?
+                  {t('ListingBasic.foundationPaying')}
                 </ListingFormLabel>
-                <ListingTooltip label='If this toggle is set to "True", Earn will automatically send the Foundation-KYC form to the winners of this listing. The Foundation will directly pay the winners.' />
+                <ListingTooltip
+                  label={t('ListingBasic.foundationPayingTooltip')}
+                />
               </Flex>
               <Switch
                 mb={2}
@@ -726,9 +744,9 @@ export const ListingBasic = ({
           <FormControl alignItems="center" gap={3} display="flex">
             <Flex>
               <ListingFormLabel htmlFor="isPrivate">
-                Private Listing
+                {t('ListingBasic.privateListing')}
               </ListingFormLabel>
-              <ListingTooltip label="Private listings are only accessible through direct links and do not appear on the Superteam Earn homepage or other public pages on the website." />
+              <ListingTooltip label={t('ListingBasic.privateListingTooltip')} />
             </Flex>
             <Switch
               mb={2}
@@ -750,7 +768,7 @@ export const ListingBasic = ({
               type="submit"
               variant={!isDraft ? 'outline' : 'solid'}
             >
-              Continue
+              {t('ListingBasic.continue')}
             </Button>
             {isDraft && (
               <HStack w="full">
@@ -766,7 +784,7 @@ export const ListingBasic = ({
                   onClick={() => onDraftClick()}
                   variant={'ghost'}
                 >
-                  Save Draft
+                  {t('ListingBasic.saveDraft')}
                 </Button>
               </HStack>
             )}
@@ -781,7 +799,7 @@ export const ListingBasic = ({
                 onClick={() => onDraftClick()}
                 variant={'solid'}
               >
-                Update Listing
+                {t('ListingBasic.updateListing')}
               </Button>
             )}
           </VStack>

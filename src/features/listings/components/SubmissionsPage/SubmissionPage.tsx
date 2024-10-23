@@ -14,6 +14,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { TalentBio } from '@/features/talent';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -38,6 +39,7 @@ export const SubmissionPage = ({
   link,
   isLoading,
 }: Props) => {
+  const { t } = useTranslation();
   const { data: ogData } = useQuery(ogImageQuery(link));
   const router = useRouter();
   const [isMobile] = useMediaQuery('(max-width: 768px)');
@@ -99,7 +101,9 @@ export const SubmissionPage = ({
             rounded="md"
           >
             <Text fontWeight={700} textTransform={'uppercase'}>
-              🏆 WINNER: {nthLabelGenerator(submission?.winnerPosition ?? 0)} 🏆
+              {t('SubmissionPage.winner', {
+                position: nthLabelGenerator(submission?.winnerPosition ?? 0),
+              })}
             </Text>
           </Box>
         )}
@@ -111,7 +115,7 @@ export const SubmissionPage = ({
         >
           <Flex justify={'space-between'} w={'full'} mt={5}>
             <Text color={'black'} fontSize={'22px'} fontWeight={600}>
-              {user?.firstName}&apos;s Submission
+              {t('SubmissionPage.userSubmission', { name: user?.firstName })}
             </Text>
           </Flex>
           <Image
@@ -119,7 +123,7 @@ export const SubmissionPage = ({
             h={'30rem'}
             py={7}
             objectFit={'cover'}
-            alt={'submission'}
+            alt={t('SubmissionPage.submissionImageAlt')}
             rounded={'2rem'}
             src={ogData?.images?.[0]?.url || '/assets/bg/og.svg'}
           />
@@ -135,7 +139,7 @@ export const SubmissionPage = ({
               isExternal
               variant="solid"
             >
-              Visit Link
+              {t('SubmissionPage.visitLink')}
             </Button>
           </HStack>
           {isMobile && (

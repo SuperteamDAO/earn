@@ -1,6 +1,7 @@
 import { Button, Link, Text, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useTranslation } from 'next-i18next';
 import { usePostHog } from 'posthog-js/react';
 
 import { useUser } from '@/store/user';
@@ -9,10 +10,9 @@ import { fontSize, maxW2, padding } from '../utils';
 
 export function Footer() {
   const { data: session } = useSession();
-
   const { user } = useUser();
-
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
 
   function getStartedWhere(authenticated: boolean, isSponsor: boolean) {
     if (!authenticated) return '/new/sponsor';
@@ -39,7 +39,7 @@ export function Footer() {
         fontWeight={600}
         textAlign={'center'}
       >
-        Where Solana teams come to get sh*t done
+        {t('footer.whereTeamsCome')}
       </Text>
       <Link
         className="ph-no-capture"
@@ -58,7 +58,7 @@ export function Footer() {
           borderRadius="0.625rem"
           variant={'solid'}
         >
-          Get Started
+          {t('footer.getStarted')}
         </Button>
       </Link>
     </VStack>

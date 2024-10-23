@@ -3,6 +3,7 @@ import { HStack, Text } from '@chakra-ui/react';
 import { type status } from '@prisma/client';
 import { atom, useAtom } from 'jotai';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
@@ -25,6 +26,7 @@ export const BountySnackbar = () => {
   const router = useRouter();
   const [bountySnackbar] = useAtom(bountySnackbarAtom);
   const user = useUser();
+  const { t } = useTranslation('common');
 
   const { asPath, query } = router;
 
@@ -65,38 +67,37 @@ export const BountySnackbar = () => {
       : null;
     if (status === 'PREVIEW') {
       if (user.user?.currentSponsorId === sponsorId) {
-        return 'Note: This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community';
-      } else
-        return 'This Listing Is In Preview Mode. Check Out Other Listings on Our Homepage!';
+        return t('BountySnackbar.previewSponsorMessage');
+      } else return t('BountySnackbar.previewMessage');
     }
-    if (!isPublished)
-      return 'This Listing Is Inactive Right Now. Check Out Other Listings on Our Homepage!';
-    if (isExpired)
-      return 'The Deadline for This Listing Has Passed. Check Out Other Listings on the Homepage!';
-    if (isCaution)
-      return 'Proceed with caution! Some users have flagged this listing as potentially misleading.';
+    if (!isPublished) return t('BountySnackbar.inactiveMessage');
+    if (isExpired) return t('BountySnackbar.expiredMessage');
+    if (isCaution) return t('BountySnackbar.cautionMessage');
     if (daysToDeadline && daysToDeadline < 3)
-      return `🕛 Expiring Soon: ${
-        type === 'bounty' ? 'Submit' : 'Apply'
-      } while you still have the chance!`;
+      return t('BountySnackbar.expiringMessage', {
+        type:
+          type === 'bounty'
+            ? t('BountySnackbar.submit')
+            : t('BountySnackbar.apply'),
+      });
     if (
       rewardAmount &&
       ((type === 'bounty' && rewardAmount > 1000) ||
         (type === 'project' && rewardAmount > 1500))
     )
-      return `🤑 Mo' Money, Fewer Problems: Higher than average total ${type} reward`;
+      return t('BountySnackbar.highRewardMessage', { type });
     if (
       (type === 'bounty' && submissionCount <= 1) ||
       (type === 'project' && submissionCount < 10)
     ) {
       if (submissionCount === 0) {
         return type === 'bounty'
-          ? '🔥 High chance of winning: No submissions have been made for this bounty yet!'
-          : '🔥 The Odds Are in Your Favour! No applications yet';
+          ? t('BountySnackbar.noBountySubmissions')
+          : t('BountySnackbar.noProjectApplications');
       }
       return type === 'bounty'
-        ? `🔥 High chance of winning: Only ${submissionCount} submission(s) have been made for this bounty yet!`
-        : '🔥 The Odds Are in Your Favour! Not too many applications yet';
+        ? t('BountySnackbar.fewBountySubmissions', { count: submissionCount })
+        : t('BountySnackbar.fewProjectApplications');
     }
 
     return null;
@@ -119,7 +120,9 @@ export const BountySnackbar = () => {
           router.push(`/dashboard/listings/${slug}/edit`);
         }}
       >
-        {isPreviewSponsor && <EditIcon />}
+        {isPreviewSponsor && (
+          <EditIcon aria-label={t('BountySnackbar.editIcon')} />
+        )}
         <Text
           p={3}
           fontSize={{ base: 'xs', md: 'sm' }}

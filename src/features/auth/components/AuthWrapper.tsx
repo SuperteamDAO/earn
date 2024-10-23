@@ -1,6 +1,7 @@
 import { Flex, type FlexProps, useDisclosure } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import { type ReactNode, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Login } from '@/features/auth';
 import { CompleteProfileModal } from '@/features/listings';
@@ -19,8 +20,9 @@ export function AuthWrapper({
   style,
   onClick,
   showCompleteProfileModal = false,
-  completeProfileModalBodyText = 'Please complete your profile before proceeding.',
+  completeProfileModalBodyText,
 }: AuthWrapperProps) {
+  const { t } = useTranslation('common');
   const { status } = useSession();
   const isAuthenticated = status === 'authenticated';
   const isLoading = status === 'loading';
@@ -75,7 +77,10 @@ export function AuthWrapper({
         <CompleteProfileModal
           isOpen={profileModalIsOpen}
           onClose={profileModalOnClose}
-          bodyText={completeProfileModalBodyText}
+          bodyText={
+            completeProfileModalBodyText ||
+            t('AuthWrapper.completeProfileModalDefaultText')
+          }
           isSponsor={isSponsor}
         />
       )}

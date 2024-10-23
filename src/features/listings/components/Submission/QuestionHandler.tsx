@@ -1,5 +1,6 @@
 import { FormLabel, Text } from '@chakra-ui/react';
 import { type FieldValues, type UseFormRegister } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 
@@ -20,6 +21,8 @@ export const QuestionHandler = ({
   validate,
   error,
 }: QuestionProps) => {
+  const { t } = useTranslation();
+
   return (
     <>
       <FormLabel mb={1} color={'brand.slate.600'} fontWeight={600}>
@@ -39,9 +42,13 @@ export const QuestionHandler = ({
       >
         {watch(label)?.length > 2500 &&
           (3000 - (watch(label)?.length || 0) === 0 ? (
-            <p>Character limit reached</p>
+            <p>{t('QuestionHandler.characterLimitReached')}</p>
           ) : (
-            <p>{3000 - (watch(label)?.length || 0)} characters left</p>
+            <p>
+              {t('QuestionHandler.charactersLeft', {
+                count: 3000 - (watch(label)?.length || 0),
+              })}
+            </p>
           ))}
       </Text>
 

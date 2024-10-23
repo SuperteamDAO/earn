@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
 import { IoIosStar } from 'react-icons/io';
 import { MdModeComment } from 'react-icons/md';
 
@@ -66,6 +67,8 @@ export const ListingCardSkeleton = () => {
 };
 
 export const ListingCard = ({ bounty }: { bounty: Listing }) => {
+  const { t } = useTranslation();
+
   const {
     rewardAmount,
     deadline,
@@ -102,13 +105,13 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     deadlineText =
       applicationType === 'rolling'
         ? isSM
-          ? 'Rolling Deadline'
-          : 'Rolling'
-        : `Due in ${formattedDeadline}`;
+          ? t('ListingCard.rollingDeadline')
+          : t('ListingCard.rolling')
+        : t('ListingCard.dueIn', { time: formattedDeadline });
   } else {
     deadlineText = isWinnersAnnounced
-      ? `Completed ${formattedDeadline} ago`
-      : `Expired ${formattedDeadline} ago`;
+      ? t('ListingCard.completedAgo', { time: formattedDeadline })
+      : t('ListingCard.expiredAgo', { time: formattedDeadline });
   }
 
   const sponsorLogo = sponsor?.logo
@@ -138,7 +141,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             w={{ base: 14, sm: 16 }}
             h={{ base: 14, sm: 16 }}
             mr={{ base: 3, sm: 5 }}
-            alt={sponsor?.name}
+            alt={t('ListingCard.sponsorLogo', { name: sponsor?.name })}
             rounded={5}
             src={sponsorLogo}
           />
@@ -222,7 +225,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                   fontSize={['x-small', 'xs', 'xs', 'xs']}
                   fontWeight={500}
                 >
-                  {type && type.charAt(0).toUpperCase() + type.slice(1)}
+                  {type && t(`ListingCard.${type}`)}
                 </Text>
               </>
               <Text
@@ -280,7 +283,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                     pt={0.5}
                     fontWeight={600}
                   >
-                    FEATURED
+                    {t('ListingCard.featured')}
                   </Text>
                 </Flex>
               )}

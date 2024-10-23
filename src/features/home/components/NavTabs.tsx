@@ -89,11 +89,11 @@ export function NavTabs({ ...flexProps }: FlexProps) {
       {...flexProps}
     >
       <PillTab href="/" altActive={['/all/']} phEvent="all_navpill">
-        All Opportunities
+        {t('NavTabs.allOpportunities')}
       </PillTab>
       <Hide above="md">
         <PillTab href="/hackathon/radar" phEvent="radar_navpill">
-          Radar 📡
+          {t('NavTabs.radar')}
         </PillTab>
       </Hide>
       {showRegionTab && (

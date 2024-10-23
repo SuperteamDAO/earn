@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useTranslation } from 'next-i18next';
 import { usePostHog } from 'posthog-js/react';
 
 import Bonk from '@/public/assets/landingsponsor/sponsors/bonk.webp';
@@ -30,16 +31,16 @@ import { StepTwo } from './steps/Two';
 
 export function Hero() {
   const { data: session } = useSession();
-
   const { user } = useUser();
-
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
 
   function getStartedWhere(authenticated: boolean, isSponsor: boolean) {
     if (!authenticated) return '/new/sponsor';
     if (!isSponsor) return '/new/sponsor';
     return '/dashboard/listings/?open=1';
   }
+
   return (
     <>
       <VStack
@@ -69,7 +70,7 @@ export function Hero() {
             lineHeight="1.15em"
             letterSpacing={'-0.04em'}
           >
-            Where Solana teams come to get sh*t done
+            {t('hero.title')}
           </Text>
           <Text
             w="100%"
@@ -81,8 +82,7 @@ export function Hero() {
               textWrap: 'pretty',
             }}
           >
-            The world’s best Solana talent is on Superteam Earn. Get work done
-            from the right people, at the right time.
+            {t('hero.description')}
           </Text>
 
           <Flex justify="center" gap="2rem" w="100%">
@@ -104,7 +104,7 @@ export function Hero() {
                 borderRadius="0.625rem"
                 variant={'solid'}
               >
-                Get Started
+                {t('hero.getStarted')}
               </Button>
             </Link>
           </Flex>
@@ -127,10 +127,10 @@ export function Hero() {
             <StepOne />
             <HStack>
               <Text color="brand.slate.800" fontWeight={600}>
-                STEP 1
+                {t('hero.step1')}
               </Text>
               <Text color="brand.slate.500" fontWeight={600}>
-                Create a profile
+                {t('hero.createProfile')}
               </Text>
             </HStack>
           </VStack>
@@ -153,10 +153,10 @@ export function Hero() {
             <StepTwo />
             <HStack>
               <Text color="brand.slate.800" fontWeight={600}>
-                STEP 2
+                {t('hero.step2')}
               </Text>
               <Text color="brand.slate.500" fontWeight={600}>
-                Post your listing
+                {t('hero.postListing')}
               </Text>
             </HStack>
           </VStack>
@@ -183,10 +183,10 @@ export function Hero() {
             <StepThree />
             <HStack>
               <Text color="brand.slate.800" fontWeight={600}>
-                STEP 3
+                {t('hero.step3')}
               </Text>
               <Text color="brand.slate.500" fontWeight={600}>
-                Get submissions
+                {t('hero.getSubmissions')}
               </Text>
             </HStack>
           </VStack>
@@ -207,7 +207,7 @@ export function Hero() {
           <HighQualityImage
             height={22}
             src={Squads}
-            alt="Squads Logo"
+            alt={t('hero.squadsLogoAlt')}
             unoptimized={true}
             priority={true}
             loading="eager"
@@ -215,14 +215,14 @@ export function Hero() {
           <HighQualityImage
             height={26}
             src={Tensor}
-            alt="Tensor Logo"
+            alt={t('hero.tensorLogoAlt')}
             unoptimized={true}
             priority={true}
             loading="eager"
           />
           <HighQualityImage
             src={Jupiter}
-            alt="Jupiter Logo"
+            alt={t('hero.jupiterLogoAlt')}
             height={21}
             unoptimized={true}
             priority={true}
@@ -230,7 +230,7 @@ export function Hero() {
           />
           <HighQualityImage
             src={De}
-            alt="De Logo"
+            alt={t('hero.deLogoAlt')}
             height={48}
             unoptimized={true}
             priority={true}
@@ -238,7 +238,7 @@ export function Hero() {
           />
           <HighQualityImage
             src={MadLads}
-            alt="Madlads  Logo"
+            alt={t('hero.madLadsLogoAlt')}
             height={38}
             unoptimized={true}
             priority={true}
@@ -246,7 +246,7 @@ export function Hero() {
           />
           <HighQualityImage
             src={Solflare}
-            alt="Solflare Logo"
+            alt={t('hero.solflareLogoAlt')}
             height={41}
             unoptimized={true}
             priority={true}
@@ -254,7 +254,7 @@ export function Hero() {
           />
           <HighQualityImage
             src={Meteora}
-            alt="Meteroa Logo"
+            alt={t('hero.meteoraLogoAlt')}
             height={28}
             unoptimized={true}
             priority={true}
@@ -262,7 +262,7 @@ export function Hero() {
           />
           <HighQualityImage
             src={MonkeDao}
-            alt="MonkeDao Logo"
+            alt={t('hero.monkeDaoLogoAlt')}
             height={25}
             unoptimized={true}
             priority={true}
@@ -270,7 +270,7 @@ export function Hero() {
           />
           <HighQualityImage
             src={Bonk}
-            alt="Bonk Logo"
+            alt={t('hero.bonkLogoAlt')}
             height={42}
             unoptimized={true}
             priority={true}

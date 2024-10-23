@@ -8,41 +8,40 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 import { fontSize, maxW, padding } from '../utils';
 
 const faqs = [
   {
-    question: 'Who qualifies to be a sponsor?',
-    answer: `Any team or project that is building in the Solana ecosystem can sponsor a listing on Superteam Earn. Size of the team or operations don't matter — you can be a tokenised project or a small grantee; as long as you are building on the Solana blockchain, you can add a listing on Earn.`,
+    question: 'faqs.whoQualifies.question',
+    answer: 'faqs.whoQualifies.answer',
   },
   {
-    question: 'How much money do I need to put up?',
-    answer: `There is no upper or lower limit of the amount of money you need to put up per listing. However, the compensation offered per listing will affect the distribution (via emails, discord, platform discovery, etc.) that the listing will get.`,
+    question: 'faqs.moneyNeeded.question',
+    answer: 'faqs.moneyNeeded.answer',
   },
   {
-    question: 'Who judges the bounties & projects?',
-    answer: `The sponsors are supposed to review, announce, and pay out the winners on Superteam Earn. It's super simple to manage your submissions, all within Earn.`,
+    question: 'faqs.whoJudges.question',
+    answer: 'faqs.whoJudges.answer',
   },
   {
-    question: 'Are there any hidden costs and charges?',
-    answer: `None at all!`,
+    question: 'faqs.hiddenCosts.question',
+    answer: 'faqs.hiddenCosts.answer',
   },
   {
-    question: 'What can I use Superteam Earn for?',
-    answer: `Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of boutnies (get the same work done by many people) or hiring freelancers in the form of Project listings.
-<br />
-Earn can be used to get any small to medium scale task done, including but not limited to development, writing, design, research, and product feedback.
-<br />
-<a style="color: blue" href="https://in.superteam.fun/bounty-menu" target="_blank" >Click here</a> to access the Listings Menu, which contains ideas, listing examples, suggested prize ranges, etc.`,
+    question: 'faqs.whatCanUse.question',
+    answer: 'faqs.whatCanUse.answer',
   },
   {
-    question: 'I need help with my listing. How can I get in touch?',
-    answer: `You can get in touch with us at <a style="color: blue" href="mailto:support@superteamearn.com" target="_blank">support@superteamearn.com</a> and we will get back to you ASAP.`,
+    question: 'faqs.needHelp.question',
+    answer: 'faqs.needHelp.answer',
   },
 ];
 
 export function FAQs() {
+  const { t } = useTranslation();
+
   return (
     <VStack w="full" pt="2rem" pb="4rem" bg="#EEF2FF" id="faqs">
       <Text
@@ -53,7 +52,7 @@ export function FAQs() {
         fontWeight={600}
         textAlign="center"
       >
-        FAQs
+        {t('faqs.title')}
       </Text>
       <Accordion
         w="full"
@@ -77,14 +76,14 @@ export function FAQs() {
                 rounded="0.25rem"
               >
                 <Box as="span" flex="1" textAlign="left">
-                  {faq.question}
+                  {t(faq.question)}
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
             </h2>
             <AccordionPanel
               pb={4}
-              dangerouslySetInnerHTML={{ __html: faq.answer }}
+              dangerouslySetInnerHTML={{ __html: t(faq.answer) }}
             />
           </AccordionItem>
         ))}

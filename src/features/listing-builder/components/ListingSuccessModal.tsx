@@ -20,6 +20,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FaXTwitter } from 'react-icons/fa6';
 import { LuCheck } from 'react-icons/lu';
 
@@ -40,6 +41,8 @@ export const ListingSuccessModal = ({
   type,
   isVerified,
 }: Props) => {
+  const { t } = useTranslation();
+
   const listingLink = (medium?: 'twitter' | 'telegram') =>
     `${getURL()}listings/${type}/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`;
 
@@ -80,7 +83,7 @@ ${listingLink('twitter')}
                 fontSize={'lg'}
                 fontWeight={600}
               >
-                Your Listing is Live
+                {t('listingSuccessModal.listingLive')}
               </Text>
               <Text
                 mt={-2}
@@ -89,8 +92,8 @@ ${listingLink('twitter')}
                 fontWeight={400}
               >
                 {isVerified
-                  ? 'Share the love on your socials and invite Earn’s best talent!'
-                  : 'Share the love on your socials!'}
+                  ? t('listingSuccessModal.shareVerified')
+                  : t('listingSuccessModal.shareUnverified')}
               </Text>
               <VStack gap={4} w={'full'} mt={3}>
                 <Button
@@ -146,7 +149,8 @@ ${listingLink('twitter')}
                     }}
                     variant="solid"
                   >
-                    Invite Talent <AddIcon h="0.8em" w="0.8em" />
+                    {t('listingSuccessModal.inviteTalent')}{' '}
+                    <AddIcon h="0.8em" w="0.8em" />
                   </Button>
                 ) : (
                   <Button
@@ -158,7 +162,8 @@ ${listingLink('twitter')}
                     }}
                     variant="solid"
                   >
-                    View Listing <ArrowForwardIcon h="0.8em" w="0.8em" />
+                    {t('listingSuccessModal.viewListing')}{' '}
+                    <ArrowForwardIcon h="0.8em" w="0.8em" />
                   </Button>
                 )}
                 <Flex
@@ -176,16 +181,18 @@ ${listingLink('twitter')}
                     href={twitterShareLink}
                     target="_blank"
                   >
-                    Share on
+                    {t('listingSuccessModal.shareOn')}
                     <FaXTwitter style={{ width: '1em', height: '1em' }} />
                   </Link>
                   {isVerified ? (
                     <Link as={NextLink} href={`/listings/${type}/${slug}`}>
-                      View Listing <ArrowForwardIcon />
+                      {t('listingSuccessModal.viewListing')}{' '}
+                      <ArrowForwardIcon />
                     </Link>
                   ) : (
                     <Link as={NextLink} href={`/dashboard/listings/`}>
-                      Sponsor Dashboard <ArrowForwardIcon />
+                      {t('listingSuccessModal.sponsorDashboard')}{' '}
+                      <ArrowForwardIcon />
                     </Link>
                   )}
                 </Flex>

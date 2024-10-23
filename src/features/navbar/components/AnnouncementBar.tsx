@@ -1,9 +1,11 @@
 import { Box, Link, Text, useMediaQuery } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const AnnouncementBar = () => {
   const [isSmallerThan800] = useMediaQuery('(max-width: 800px)');
+  const { t } = useTranslation();
 
   const href = '/hackathon/radar';
   if (isSmallerThan800) {
@@ -23,10 +25,9 @@ export const AnnouncementBar = () => {
           textAlign="center"
         >
           <Link as={NextLink} textDecoration={'underline'} href={href}>
-            Click here
+            {t('AnnouncementBar.clickHere')}
           </Link>{' '}
-          to unlock $250k+ in prizes at Solana’s global hackathon, exclusively
-          on Earn
+          {t('AnnouncementBar.hackathonPrizes')}
         </Text>
       </Box>
     );

@@ -1,5 +1,6 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Box, HStack, Link, Text, VStack } from '@chakra-ui/react';
+import { useTranslation } from 'next-i18next';
 import { usePostHog } from 'posthog-js/react';
 
 import { type ParentSkills } from '@/interface/skills';
@@ -24,16 +25,22 @@ export function ExtraInfoSection({
   isGrant = false,
 }: ExtraInfoSectionProps) {
   const posthog = usePostHog();
+  const { t } = useTranslation('common');
+
   return (
     <VStack gap={8} w={{ base: 'full', md: '22rem' }} pt={2}>
       {region && region !== 'GLOBAL' && (
         <VStack align={'start'} w="full" fontSize={'sm'}>
           <Text color={'brand.slate.600'} fontWeight={600}>
-            REGIONAL {isGrant ? 'GRANT' : 'LISTING'}
+            {t('ExtraInfoSection.regionalListing', {
+              type: isGrant ? t('common:grants') : t('common:freelanceGigs'),
+            })}
           </Text>
           <Text h="100%" color={'brand.slate.500'}>
             <>
-              This {isGrant ? 'grant' : 'listing'} is only open for people in{' '}
+              {t('ExtraInfoSection.listingOpenFor', {
+                type: isGrant ? t('common:grants') : t('common:freelanceGigs'),
+              })}
               <Text fontWeight={600}>{region}</Text>
             </>
           </Text>
@@ -42,7 +49,9 @@ export function ExtraInfoSection({
       {Hackathon && (
         <VStack align={'start'} w="full" fontSize="sm">
           <Text color={'brand.slate.600'} fontWeight={600}>
-            {Hackathon.name?.toUpperCase()} TRACK
+            {t('ExtraInfoSection.hackathonTrack', {
+              name: Hackathon.name?.toUpperCase(),
+            })}
           </Text>
           <Text color={'brand.slate.500'}>{Hackathon.description}</Text>
           <Link
@@ -51,7 +60,7 @@ export function ExtraInfoSection({
             href={`/hackathon/${Hackathon.name?.toLowerCase()}`}
             isExternal
           >
-            View All Challenges
+            {t('ExtraInfoSection.viewAllChallenges')}
             <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
           </Link>
         </VStack>
@@ -59,7 +68,7 @@ export function ExtraInfoSection({
       {requirements && (
         <VStack align={'start'} w={'full'} fontSize="sm">
           <Text h="100%" color={'brand.slate.600'} fontWeight={600}>
-            ELIGIBILITY
+            {t('ExtraInfoSection.eligibility')}
           </Text>
           <Text color={'brand.slate.500'}>{requirements}</Text>
         </VStack>
@@ -72,7 +81,7 @@ export function ExtraInfoSection({
           fontWeight={600}
           textAlign="center"
         >
-          SKILLS NEEDED
+          {t('ExtraInfoSection.skillsNeeded')}
         </Text>
         <HStack flexWrap={'wrap'} gap={3}>
           {skills?.map((skill) => (
@@ -105,7 +114,7 @@ export function ExtraInfoSection({
             fontWeight={600}
             textAlign="center"
           >
-            CONTACT
+            {t('ExtraInfoSection.contact')}
           </Text>
           <Text>
             <Link
@@ -116,11 +125,11 @@ export function ExtraInfoSection({
               isExternal
               onClick={() => posthog.capture('reach out_listing')}
             >
-              Reach out
+              {t('ExtraInfoSection.reachOut')}
               <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
             </Link>
             <Text as="span" color={'brand.slate.500'}>
-              if you have any questions about this listing
+              {t('ExtraInfoSection.questionsAboutListing')}
             </Text>
           </Text>
         </VStack>

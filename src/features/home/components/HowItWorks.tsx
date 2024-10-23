@@ -2,6 +2,7 @@ import { Box, Center, Flex, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
+import { useTranslation } from 'react-i18next';
 import { LuCheck } from 'react-icons/lu';
 
 import { AuthWrapper } from '@/features/auth';
@@ -126,6 +127,7 @@ export const HowItWorks = () => {
     ...userStatsQuery,
     enabled: !!user,
   });
+  const { t } = useTranslation('common');
 
   const hasSubmissions = (stats?.participations ?? 0) > 0;
   const hasWins = (stats?.wins ?? 0) > 0;
@@ -142,7 +144,7 @@ export const HowItWorks = () => {
     >
       <Box opacity={isLoading ? '0.2' : '1'}>
         <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
-          HOW IT WORKS
+          {t('HowItWorks.title')}
         </Text>
         <Flex h={'12.5rem'}>
           <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
@@ -180,10 +182,10 @@ export const HowItWorks = () => {
                   }
                 }}
               >
-                Create your profile
+                {t('HowItWorks.step1.title')}
               </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                by telling us about yourself
+                {t('HowItWorks.step1.description')}
               </Text>
             </Box>
             <Box ml={'0.8125rem'}>
@@ -207,10 +209,10 @@ export const HowItWorks = () => {
                   }
                 }}
               >
-                {`Participate in Bounties & Projects`}
+                {t('HowItWorks.step2.title')}
               </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                to build proof of work
+                {t('HowItWorks.step2.description')}
               </Text>
             </Box>
             <Box ml={'0.8125rem'}>
@@ -232,10 +234,10 @@ export const HowItWorks = () => {
                   }
                 }}
               >
-                Get Paid for Your Work
+                {t('HowItWorks.step3.title')}
               </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                in global standards
+                {t('HowItWorks.step3.description')}
               </Text>
             </Box>
           </VStack>

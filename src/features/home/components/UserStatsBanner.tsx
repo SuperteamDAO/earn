@@ -73,10 +73,10 @@ export const UserStatsBanner = () => {
             textOverflow={'ellipsis'}
             noOfLines={1}
           >
-            {t('welcome_back')}, {user.firstName}
+            {t('UserStatsBanner.welcomeBack', { name: user.firstName })}
           </Text>
           <Text color="#c4c2ef" fontSize={'sm'}>
-            We’re so glad to have you on Earn
+            {t('UserStatsBanner.gladToHaveYou')}
           </Text>
         </VStack>
       </Flex>
@@ -90,10 +90,13 @@ export const UserStatsBanner = () => {
         >
           <Stat
             value={'$' + formatNumberWithSuffix(stats.totalWinnings ?? 0, 1)}
-            label="Total Earned"
+            label={t('UserStatsBanner.totalEarned')}
           />
-          <Stat value={stats.participations} label="Participated" />
-          <Stat value={stats.wins} label="Won" />
+          <Stat
+            value={stats.participations}
+            label={t('UserStatsBanner.participated')}
+          />
+          <Stat value={stats.wins} label={t('UserStatsBanner.won')} />
         </Flex>
       )}
     </Flex>

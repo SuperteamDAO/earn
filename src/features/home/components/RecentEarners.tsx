@@ -3,6 +3,7 @@ import { Box, Center, Flex, Image, Link, Text, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { tokenList } from '@/constants';
 import { EarnAvatar } from '@/features/talent';
@@ -28,6 +29,7 @@ const Earner = ({
   username,
   id,
 }: EarnerProps) => {
+  const { t } = useTranslation();
   const tokenObj = tokenList.find((t) => t.tokenSymbol === token);
   const tokenIcon = tokenObj
     ? tokenObj.icon
@@ -65,7 +67,7 @@ const Earner = ({
           <Image
             w={5}
             h={5}
-            alt={`${token} icon`}
+            alt={t('RecentEarners.tokenIconAlt', { token: token })}
             rounded={'full'}
             src={tokenIcon}
           />
@@ -82,6 +84,7 @@ const Earner = ({
 };
 
 export const RecentEarners = ({ earners }: { earners?: User[] }) => {
+  const { t } = useTranslation();
   const marqueeRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
@@ -119,7 +122,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
     <Box>
       <Flex align={'center'} justify={'space-between'} mb={4}>
         <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-          RECENT EARNERS
+          {t('RecentEarners.recentEarners')}
         </Text>
         <Text
           className="ph-no-capture"
@@ -132,7 +135,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
             posthog.capture('view leaderboard_homepage');
           }}
         >
-          Leaderboard
+          {t('RecentEarners.leaderboard')}
           <ArrowForwardIcon ml={1} />
         </Text>
       </Flex>

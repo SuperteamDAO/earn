@@ -12,6 +12,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { LuGlobe } from 'react-icons/lu';
 
 import { UserFlag } from '@/components/shared/UserFlag';
@@ -30,6 +31,7 @@ export const RegionLabel = ({
   const displayValue = regionObject?.displayValue;
   const code = regionObject?.code;
 
+  const { t } = useTranslation();
   const regionTooltipLabel = getRegionTooltipLabel(region, isGrant);
   return (
     <>
@@ -56,7 +58,9 @@ export const RegionLabel = ({
             whiteSpace={'nowrap'}
             rounded={'full'}
           >
-            {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
+            {region === 'GLOBAL'
+              ? t('regionLabel.global')
+              : `${displayValue} ${t('regionLabel.only')}`}
           </Text>
         </HStack>
       </Tooltip>

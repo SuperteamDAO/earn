@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
+import { useTranslation } from 'next-i18next';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
@@ -32,6 +33,7 @@ export const SubmissionActionButton = ({
   listing,
   isTemplate = false,
 }: Props) => {
+  const { t } = useTranslation('common');
   const {
     id,
     status,
@@ -104,23 +106,28 @@ export const SubmissionActionButton = ({
 
   switch (buttonState) {
     case 'edit':
-      buttonText = isProject ? 'Edit Application' : 'Edit Submission';
+      buttonText = isProject
+        ? t('SubmissionActionButton.editApplication')
+        : t('SubmissionActionButton.editSubmission');
       isBtnDisabled = false;
       btnLoadingText = null;
       break;
 
     case 'submitted':
       buttonText = isProject
-        ? 'Applied Successfully'
-        : 'Submitted Successfully';
+        ? t('SubmissionActionButton.appliedSuccessfully')
+        : t('SubmissionActionButton.submittedSuccessfully');
       buttonBG = 'green.500';
       isBtnDisabled = true;
       btnLoadingText = null;
       break;
 
     default:
-      buttonText = isProject ? 'Apply Now' : 'Submit Now';
-      if (listing.compensationType === 'variable') buttonText = 'Send Quote';
+      buttonText = isProject
+        ? t('SubmissionActionButton.applyNow')
+        : t('SubmissionActionButton.submitNow');
+      if (listing.compensationType === 'variable')
+        buttonText = t('SubmissionActionButton.sendQuote');
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
         pastDeadline ||
@@ -130,13 +137,13 @@ export const SubmissionActionButton = ({
               !hasHackathonStarted ||
               !isUserEligibleByRegion)),
       );
-      btnLoadingText = 'Checking Submission..';
+      btnLoadingText = t('SubmissionActionButton.checkingSubmission');
   }
   if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
-    buttonText = 'Submissions in Review';
+    buttonText = t('SubmissionActionButton.submissionsInReview');
     buttonBG = 'gray.500';
   } else if (isWinnersAnnounced) {
-    buttonText = 'Winners Announced';
+    buttonText = t('SubmissionActionButton.winnersAnnounced');
     buttonBG = 'gray.500';
   }
 
@@ -178,9 +185,8 @@ export const SubmissionActionButton = ({
         />
       )}
       <Image
-        // Hack to show GIF Immediately when Easter Egg is visible
         src="/assets/memes/JohnCenaVibingToCupid.gif"
-        alt="John Cena Vibing to Cupid"
+        alt={t('SubmissionActionButton.johnCenaAlt')}
         style={{
           width: '100%',
           marginTop: 'auto',
@@ -212,9 +218,9 @@ export const SubmissionActionButton = ({
       >
         <AuthWrapper
           showCompleteProfileModal
-          completeProfileModalBodyText={
-            'Please complete your profile before submitting to a listing.'
-          }
+          completeProfileModalBodyText={t(
+            'SubmissionActionButton.completeProfileModalText',
+          )}
           style={{ w: 'full', cursor: 'pointer' }}
         >
           <Tooltip
@@ -227,7 +233,9 @@ export const SubmissionActionButton = ({
               !isUserEligibleByRegion
                 ? regionTooltipLabel
                 : !hasHackathonStarted
-                  ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
+                  ? t('SubmissionActionButton.hackathonOpenDate', {
+                      date: hackathonStartDate?.format('DD MMMM, YYYY'),
+                    })
                   : ''
             }
             rounded="md"

@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { usePostHog } from 'posthog-js/react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   isOpen: boolean;
@@ -26,16 +27,17 @@ export function CompleteProfileModal({
   isSponsor,
 }: Props) {
   const posthog = usePostHog();
+  const { t } = useTranslation();
 
   const header = isSponsor
-    ? 'Add your talent profile'
-    : 'Complete your profile';
+    ? t('CompleteProfileModal.addTalentProfile')
+    : t('CompleteProfileModal.completeProfile');
 
-  const body = isSponsor
-    ? 'You already have a sponsor profile, but we need other details from you before proceeding with this action. Doing this will not impact your sponsor profile.'
-    : bodyText;
+  const body = isSponsor ? t('CompleteProfileModal.sponsorBodyText') : bodyText;
 
-  const CTA = isSponsor ? 'Add Talent Profile' : 'Complete Profile';
+  const CTA = isSponsor
+    ? t('CompleteProfileModal.addTalentProfile')
+    : t('CompleteProfileModal.completeProfile');
 
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose} size="md">

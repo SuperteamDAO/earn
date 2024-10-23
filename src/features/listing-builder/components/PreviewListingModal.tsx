@@ -20,6 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   isOpen: boolean;
@@ -27,6 +28,7 @@ interface Props {
   previewUrl: string;
 }
 export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
+  const { t } = useTranslation();
   const [tabIndex, setTabIndex] = useState(0); // 0 for Desktop, 1 for Mobile
   const [isLoading, setIsLoading] = useState(true);
   const posthog = usePostHog();
@@ -42,7 +44,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
         <ModalHeader px="6" py="4">
           <Grid alignItems="center" gap={4} templateColumns="1fr auto 1fr">
             <Text color="brand.slate.500" fontSize="lg" fontWeight="600">
-              Preview Listing
+              {t('previewListingModal.previewListing')}
             </Text>
 
             <Tabs
@@ -60,7 +62,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                     borderColor: 'brand.purple',
                   }}
                 >
-                  Desktop
+                  {t('previewListingModal.desktop')}
                 </Tab>
                 <Tab
                   color="brand.slate.400"
@@ -71,7 +73,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                     borderColor: 'brand.purple',
                   }}
                 >
-                  Mobile
+                  {t('previewListingModal.mobile')}
                 </Tab>
               </TabList>
             </Tabs>
@@ -81,7 +83,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                 <Tooltip
                   aria-label="Preview link tooltip"
                   hasArrow
-                  label="This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community"
+                  label={t('previewListingModal.previewLinkTooltip')}
                   placement="top"
                 >
                   <IconButton
@@ -107,7 +109,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                   rightIcon={<ExternalLinkIcon />}
                   variant="outlineSecondary"
                 >
-                  Secret Draft Link
+                  {t('previewListingModal.secretDraftLink')}
                 </Button>
               </Flex>
 
@@ -119,7 +121,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                 }}
                 variant="solid"
               >
-                Continue Editing
+                {t('previewListingModal.continueEditing')}
               </Button>
             </Flex>
           </Grid>
@@ -159,7 +161,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                   border: 'none',
                   overflow: 'hidden',
                 }}
-                title="Preview"
+                title={t('previewListingModal.preview')}
                 onLoad={() => setIsLoading(false)}
               ></iframe>
             </Box>
