@@ -4,6 +4,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import { LuArrowRight } from 'react-icons/lu';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
@@ -175,6 +176,7 @@ export const Comments = ({
             isLoading={!!isLoading}
             loadingText="Fetching Comments..."
             onClick={() => getComments(comments.length)}
+            rightIcon={<LuArrowRight />}
             rounded="md"
             variant="outlineSecondary"
           >
