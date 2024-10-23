@@ -24,7 +24,7 @@
   },
   "featureModal": {
     "title": "Introducing Scout",
-    "description": "A curated list of the best talent on Superteam Earn that you can invite to participate in your listings to get high quality submissions! Add a new listing, or check out any of your currently live listings to try Scout.",
+    "description": "A curated list of the best talent on Solar Earn that you can invite to participate in your listings to get high quality submissions! Add a new listing, or check out any of your currently live listings to try Scout.",
     "checkItOut": "Check it out",
     "goodToKnow": "Good to know!"
   },
@@ -92,7 +92,7 @@
   },
   "login": {
     "oneStepAway": "You're one step away",
-    "joiningSuperteamEarn": "from joining Superteam Earn",
+    "joiningSolarEarn": "from joining Solar Earn",
     "earningGlobalStandards": "From earning in global standards"
   },
   "signIn": {
@@ -100,7 +100,7 @@
     "or": "OR",
     "continueWithEmail": "Continue with Email",
     "termsAgreement": "By using this website, you agree to our <1>Terms of Use</1> and our <2>Privacy Policy</2>.",
-    "needHelp": "Need help? Reach out to us at <1>support@superteamearn.com</1>"
+    "needHelp": "Need help? Reach out to us at <1>support@Solarearn.com</1>"
   },
   "handleInvite": {
     "userNotFound": "User not found",
@@ -173,35 +173,35 @@
   },
   "inviteMemberTemplate": {
     "greeting": "Hello,",
-    "inviteMessage": "You have been invited by {{senderName}} to join <strong>{{sponsorName}}</strong> on Superteam Earn!",
+    "inviteMessage": "You have been invited by {{senderName}} to join <strong>{{sponsorName}}</strong> on Solar Earn!",
     "clickHere": "Click here",
     "acceptInvite": "to accept the invite.",
     "salutation": "Best,",
-    "signature": "Superteam Earn"
+    "signature": "Solar Earn"
   },
   "otpTemplate": {
     "greeting": "Hello,",
-    "otpMessage": "Your OTP for logging into Superteam Earn is <b>{{token}}</b>. This OTP is valid for 30 minutes.",
+    "otpMessage": "Your OTP for logging into Solar Earn is <b>{{token}}</b>. This OTP is valid for 30 minutes.",
     "salutation": "Best,",
-    "signature": "Superteam Earn"
+    "signature": "Solar Earn"
   },
   "welcomeSponsorTemplate": {
-    "welcome": "Welcome to Superteam Earn!",
+    "welcome": "Welcome to Solar Earn!",
     "thankYou": "Thank you for signing up. Earn is the premier talent-matching platform in crypto, favoured by hundreds of leading companies and thousands of verified crypto-focused talent.",
     "helpMessage": "If you need any help related to setting up your listing on Earn, don't hesitate to get in touch with",
     "contactName": "Pratik",
     "onTelegram": "on Telegram.",
     "salutation": "Best,",
-    "signature": "Superteam Earn"
+    "signature": "Solar Earn"
   },
   "welcomeTalentTemplate": {
     "greeting": "OK let's get this out of the way.",
     "automatedEmail": "Even though this is an automated email...",
     "realPerson": "I just wanted to say hey and let you know that I'm a real person.",
-    "introduction": "I'm Kash, and I'm a Core Contributor over at <1>Superteam</1>. I might not know you personally yet, but I'm pumped that you're here.",
+    "introduction": "I'm Kash, and I'm a Core Contributor over at <1>Solar</1>. I might not know you personally yet, but I'm pumped that you're here.",
     "respectInbox": "You have my word that we'll be respectful of your inbox and only email you when we have some fresh new opportunities or a big announcement that we want to tell you about.",
     "favor": "One favor before I go:",
-    "replyRequest": "reply to this email and let me know why you joined Superteam Earn?",
+    "replyRequest": "reply to this email and let me know why you joined Solar Earn?",
     "learnMore": "Would love to learn more about you.",
     "salutation": "Talk soon,",
     "signature": "Kash"
@@ -288,7 +288,7 @@
     "kpi": "Primary Key Performance Indicator",
     "kpiHelper": "What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc.",
     "kpiPlaceholder": "What's the key metric for success?",
-    "errorMessage": "Sorry! An error occurred while submitting. Please try again or contact us at hello@superteamearn.com",
+    "errorMessage": "Sorry! An error occurred while submitting. Please try again or contact us at hello@Solarearn.com",
     "back": "Back",
     "continue": "Continue",
     "apply": "Apply",
@@ -386,7 +386,7 @@
   },
   "RegionBanner": {
     "greeting": "{{hello}}, {{region}}",
-    "welcome": "Welcome to Superteam {{region}}'s earnings page — use these opportunities to earn in global standards and gain membership in the most exclusive Solana community of {{region}}!"
+    "welcome": "Welcome to Solar {{region}}'s earnings page — use these opportunities to earn in global standards and gain membership in the most exclusive Solana community of {{region}}!"
   },
   "SideBar": {
     "liveListings": "LIVE LISTINGS",
@@ -568,7 +568,7 @@
     "slugHelperText": "This field can't be edited after a listing has been published",
     "slugPlaceholder": "develop-a-new-landing-page",
     "listingGeography": "Listing Geography",
-    "geographyTooltip": "Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing.",
+    "geographyTooltip": "Select the Solar region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing.",
     "global": "Global",
     "pointOfContact": "Point of Contact (TG / X / Email)",
     "pocTooltip": "Please add a social link of the person people reach out to in case they have questions about this listing.",
@@ -588,12 +588,12 @@
       ">8 Weeks": ">8 Weeks"
     },
     "referredBy": "Referred By",
-    "referredByTooltip": "Who referred you to add this listing on Superteam Earn?",
+    "referredByTooltip": "Who referred you to add this listing on Solar Earn?",
     "selectReferrer": "Select",
     "foundationPaying": "Will the Solana Foundation pay for this listing?",
     "foundationPayingTooltip": "If this toggle is set to \"True\", Earn will automatically send the Foundation-KYC form to the winners of this listing. The Foundation will directly pay the winners.",
     "privateListing": "Private Listing",
-    "privateListingTooltip": "Private listings are only accessible through direct links and do not appear on the Superteam Earn homepage or other public pages on the website."
+    "privateListingTooltip": "Private listings are only accessible through direct links and do not appear on the Solar Earn homepage or other public pages on the website."
   },
   "listingPayments": {
     "bonusRewardLabel": "# of Bonus Prizes",
@@ -794,20 +794,20 @@
     "ifYouDontHaveWallet": "if you don't have a Solana wallet",
     "addYourSolanaWalletAddress": "Add your Solana wallet address",
     "confirmationText": "I confirm that I have reviewed the scope of this track and that my submission adheres to the specified requirements. Submitting a project that does not meet the submission requirements, including potential spam, may result in restrictions on future submissions.",
-    "errorMessage": "Sorry! An error occurred while submitting. Please try again or contact us at support@superteamearn.com",
+    "errorMessage": "Sorry! An error occurred while submitting. Please try again or contact us at support@Solarearn.com",
     "submitting": "Submitting...",
     "submit": "Submit",
     "apply": "Apply",
     "termsAgreement": "By submitting/applying to this listing, you agree to our",
     "termsOfUse": "Terms of Use",
     "acknowledgement": "You acknowledge that you are submitting your work or application to {{entityName ? `{entityName} (\"{sponsorName}\")` : sponsorName}}.",
-    "superteamEarnRole": "Superteam Earn acts solely as a platform for the Partner to list contests, bounties, projects or similar engagements (\"Activities\") on its platform (\"ST Earn Platform\").",
-    "superteamEarnLiability": "Superteam Earn shall not be liable for any Activities listed by the Partner on the ST Earn Platform. The Partner is solely responsible for the content, rules, scope and execution of their Activities.",
-    "userParticipationRisk": "Users participating in Activities listed by Partners do so at their own risk and discretion. Superteam Earn disclaims all liabilities related to user participation in such Activities.",
-    "disputeResolution": "Any disputes or issues arising between users and partners regarding Activities shall be resolved directly between the parties involved. Superteam Earn shall not be responsible for mediating or resolving such disputes.",
-    "releaseOfLiability": "By using the platform and participating in any Activities, users agree to release Superteam Earn from any claims, liabilities, or damages arising from their participation in Activities listed by Partners.",
-    "noGuarantee": "Superteam Earn does not guarantee the accuracy or legality of Activities listed by Partners. Users are advised to exercise caution and conduct their own due diligence before participating in any Activities.",
-    "partnerIndemnification": "Partners listing Activities on the Platform agree to indemnify and hold Superteam Earn harmless from any claims, damages, or liabilities arising from their Activities.",
+    "SolarEarnRole": "Solar Earn acts solely as a platform for the Partner to list contests, bounties, projects or similar engagements (\"Activities\") on its platform (\"ST Earn Platform\").",
+    "SolarEarnLiability": "Solar Earn shall not be liable for any Activities listed by the Partner on the ST Earn Platform. The Partner is solely responsible for the content, rules, scope and execution of their Activities.",
+    "userParticipationRisk": "Users participating in Activities listed by Partners do so at their own risk and discretion. Solar Earn disclaims all liabilities related to user participation in such Activities.",
+    "disputeResolution": "Any disputes or issues arising between users and partners regarding Activities shall be resolved directly between the parties involved. Solar Earn shall not be responsible for mediating or resolving such disputes.",
+    "releaseOfLiability": "By using the platform and participating in any Activities, users agree to release Solar Earn from any claims, liabilities, or damages arising from their participation in Activities listed by Partners.",
+    "noGuarantee": "Solar Earn does not guarantee the accuracy or legality of Activities listed by Partners. Users are advised to exercise caution and conduct their own due diligence before participating in any Activities.",
+    "partnerIndemnification": "Partners listing Activities on the Platform agree to indemnify and hold Solar Earn harmless from any claims, damages, or liabilities arising from their Activities.",
     "additionalTerms": "These terms are in addition to our",
     "termsOfUseLink": "Terms of Use",
     "done": "Done"
@@ -898,7 +898,7 @@
     "signUp": "Sign Up"
   },
   "footer": {
-    "logoAlt": "Superteam Earn",
+    "logoAlt": "Solar Earn",
     "description": "Discover high paying crypto bounties, projects and grants from the best Solana companies in one place and apply to them using a single profile.",
     "opportunities": {
       "title": "Opportunities",
@@ -939,7 +939,7 @@
     "leaderboard": "Leaderboard",
     "radarNavIcon": "Radar Nav Icon",
     "openDrawer": "Open Drawer",
-    "superteamEarn": "Superteam Earn",
+    "SolarEarn": "Solar Earn",
     "getStarted": "Get Started",
     "createListing": "Create a Listing",
     "sponsors": "SPONSORS"
@@ -1004,7 +1004,7 @@
     "title": "FAQs",
     "whoQualifies": {
       "question": "Who qualifies to be a sponsor?",
-      "answer": "Any team or project that is building in the Solana ecosystem can sponsor a listing on Superteam Earn. Size of the team or operations don't matter — you can be a tokenised project or a small grantee; as long as you are building on the Solana blockchain, you can add a listing on Earn."
+      "answer": "Any team or project that is building in the Solana ecosystem can sponsor a listing on Solar Earn. Size of the team or operations don't matter — you can be a tokenised project or a small grantee; as long as you are building on the Solana blockchain, you can add a listing on Earn."
     },
     "moneyNeeded": {
       "question": "How much money do I need to put up?",
@@ -1012,19 +1012,19 @@
     },
     "whoJudges": {
       "question": "Who judges the bounties & projects?",
-      "answer": "The sponsors are supposed to review, announce, and pay out the winners on Superteam Earn. It's super simple to manage your submissions, all within Earn."
+      "answer": "The sponsors are supposed to review, announce, and pay out the winners on Solar Earn. It's super simple to manage your submissions, all within Earn."
     },
     "hiddenCosts": {
       "question": "Are there any hidden costs and charges?",
       "answer": "None at all!"
     },
     "whatCanUse": {
-      "question": "What can I use Superteam Earn for?",
-      "answer": "Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of boutnies (get the same work done by many people) or hiring freelancers in the form of Project listings.<br />Earn can be used to get any small to medium scale task done, including but not limited to development, writing, design, research, and product feedback.<br /><a style=\"color: blue\" href=\"https://in.superteam.fun/bounty-menu\" target=\"_blank\" >Click here</a> to access the Listings Menu, which contains ideas, listing examples, suggested prize ranges, etc."
+      "question": "What can I use Solar Earn for?",
+      "answer": "Solar Earn is a platform to get work done from crypto-native talent. This can be in the form of boutnies (get the same work done by many people) or hiring freelancers in the form of Project listings.<br />Earn can be used to get any small to medium scale task done, including but not limited to development, writing, design, research, and product feedback.<br /><a style=\"color: blue\" href=\"https://in.Solar.fun/bounty-menu\" target=\"_blank\" >Click here</a> to access the Listings Menu, which contains ideas, listing examples, suggested prize ranges, etc."
     },
     "needHelp": {
       "question": "I need help with my listing. How can I get in touch?",
-      "answer": "You can get in touch with us at <a style=\"color: blue\" href=\"mailto:support@superteamearn.com\" target=\"_blank\">support@superteamearn.com</a> and we will get back to you ASAP."
+      "answer": "You can get in touch with us at <a style=\"color: blue\" href=\"mailto:support@Solarearn.com\" target=\"_blank\">support@Solarearn.com</a> and we will get back to you ASAP."
     }
   },
   "Features": {
@@ -1046,7 +1046,7 @@
   },
   "hero": {
     "title": "Where Solana teams come to get sh*t done",
-    "description": "The world's best Solana talent is on Superteam Earn. Get work done from the right people, at the right time.",
+    "description": "The world's best Solana talent is on Solar Earn. Get work done from the right people, at the right time.",
     "getStarted": "Get Started",
     "step1": "STEP 1",
     "createProfile": "Create a profile",
@@ -1106,8 +1106,8 @@
     }
   },
   "Stats": {
-    "distributionTitle": "The distribution of the Superteam network",
-    "distributionDescription": "Get instant access to Superteam's network of the best crypto talent in the world",
+    "distributionTitle": "The distribution of the Solar network",
+    "distributionDescription": "Get instant access to Solar's network of the best crypto talent in the world",
     "globalDiscord": "Global Discord",
     "twitterFollowers": "Twitter Followers",
     "communityGDP": "Community GDP",
@@ -1122,18 +1122,18 @@
       "position": "Global Developer Growth, Solana"
     },
     "enoSim": {
-      "message": "I have a 💙 affair with @SuperteamEarn. Our team uses it to scout crypto-native talent. <br /><br />Perfect hiring workflow:<br /> bounty -> trial period -> full-time offer.",
+      "message": "I have a 💙 affair with @SolarEarn. Our team uses it to scout crypto-native talent. <br /><br />Perfect hiring workflow:<br /> bounty -> trial period -> full-time offer.",
       "name": "Eno Sim",
       "position": "Co-Founder, ISC"
     },
     "evanSolomon": {
-      "message": "Superteam Earn is one of the most underrated and valuable platforms for both Solana protocols and users",
+      "message": "Solar Earn is one of the most underrated and valuable platforms for both Solana protocols and users",
       "name": "Evan Solomon",
       "position": "BD Lead, Parcl"
     },
     "tensorHQ": {
       "logoAlt": "Tensor HQ Logo",
-      "message": "Superteam are chads. <br />Superteam Earn is awesome. <br />Everybody should use it 💜",
+      "message": "Solar are chads. <br />Solar Earn is awesome. <br />Everybody should use it 💜",
       "pageViews": "Page Views",
       "totalSubmissions": "Total Submissions",
       "userAlt": "TensorHQ",

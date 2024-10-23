@@ -76,8 +76,8 @@ export const SubmissionTerms = ({
                 sponsorName,
               })}
             </ListItem>
-            <ListItem>{t('SubmissionModal.superteamEarnRole')}</ListItem>
-            <ListItem>{t('SubmissionModal.superteamEarnLiability')}</ListItem>
+            <ListItem>{t('SubmissionModal.SolarEarnRole')}</ListItem>
+            <ListItem>{t('SubmissionModal.SolarEarnLiability')}</ListItem>
             <ListItem>{t('SubmissionModal.userParticipationRisk')}</ListItem>
             <ListItem>{t('SubmissionModal.disputeResolution')}</ListItem>
             <ListItem>{t('SubmissionModal.releaseOfLiability')}</ListItem>
