@@ -15,9 +15,8 @@ import React from 'react';
 import { LuGlobe } from 'react-icons/lu';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { CombinedRegions } from '@/constants/Superteam';
 
-import { getRegionTooltipLabel } from '../../utils';
+import { getCombinedRegion, getRegionTooltipLabel } from '../../utils';
 
 export const RegionLabel = ({
   region,
@@ -26,8 +25,8 @@ export const RegionLabel = ({
   region: string | undefined;
   isGrant?: boolean;
 }) => {
-  const regionObject = CombinedRegions.find((st) => st.region === region);
-  const displayValue = regionObject?.displayValue;
+  const regionObject = region ? getCombinedRegion(region) : null;
+  const displayValue = regionObject?.name;
   const code = regionObject?.code;
 
   const regionTooltipLabel = getRegionTooltipLabel(region, isGrant);
