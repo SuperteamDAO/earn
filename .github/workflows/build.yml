@@ -33,8 +33,10 @@ jobs:
       - name: Zip Project
         run: |
           mv ./.next earnbuild
-          zip -q -r earnbuild.zip earnbuild # zip --junk-paths
+          cd ./earnbuild
+          zip -q -r earnbuild.zip . -x "*cache*/*"
           ls -l earnbuild.zip
+          mv earnbuild.zip ..
       - name: copy file via ssh key
         uses: appleboy/scp-action@v0.1.7
         with:
