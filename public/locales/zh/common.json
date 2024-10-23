@@ -1,6 +1,6 @@
 {
   "freelanceGigs": "自由职业机会",
-  "grants": "Grants",
+  "grants": "补助",
   "grantsDescription": "为开发者提供的无股权融资机会",
   "noGrantsAvailable": "暂无可用资助！",
   "subscribeToNotifications": "订阅通知以获取新资助信息。",
@@ -61,7 +61,7 @@
   },
   "imagePicker": {
     "chooseOrDrag": "选择或拖放媒体",
-    "maxSize": "大大小 5 MB",
+    "maxSize": "大小限制 5 MB",
     "sizeError": "图片大小必须小 5MB",
     "formatError": "不支持的文件格式。请使用 JPEG、PNG 或 WebP 图片。",
     "removeImage": "移除图片",
@@ -98,7 +98,7 @@
   "signIn": {
     "continueWithGoogle": "使用 Google 继续",
     "or": "或",
-    "continueWithEmail": "使用电子邮件续",
+    "continueWithEmail": "使用电子邮件继续",
     "termsAgreement": "使用本网站表示您同意我们的<1>使用条款</1>和<2>隐私政策</2>。",
     "needHelp": "需要帮助？请通过 <1>support@superteamearn.com</1> 联系我们"
   },
@@ -187,7 +187,7 @@
   },
   "welcomeSponsorTemplate": {
     "welcome": "欢迎来到 Superteam Earn！",
-    "thankYou": "感谢您的注册。Earn 是加密货币领域首屈一指的人才匹配平台，受到数百家��公司和数千名经过验证人才的青睐",
+    "thankYou": "感谢您的注册。Earn 是加密货币领域首屈一指的人才匹配平台，受到数百家公司和数千名经过验证人才的青睐",
     "helpMessage": "如果您在 Earn 上设置列表时需要随时 Telegram ",
     "contactName": "Pratik",
     "onTelegram": "。",
