@@ -45,7 +45,7 @@ export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
             textAlign={'center'}
           >
             {isSponsor
-              ? t('login.joiningSuperteamEarn')
+              ? t('login.joiningSolarEarn')
               : t('login.earningGlobalStandards')}
           </Text>
         </Box>

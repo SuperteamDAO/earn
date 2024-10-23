@@ -165,37 +165,37 @@ export function SponsorLayout({
 
   const LinkItems: Array<LinkItemProps> = isHackathonRoute
     ? [
-        { name: 'All Tracks', link: `/hackathon`, icon: MdList },
-        {
-          name: 'Get Help',
-          link: PDTG,
-          icon: MdOutlineChatBubbleOutline,
-          posthog: 'get help_sponsor',
-        },
-      ]
+      { name: 'All Tracks', link: `/hackathon`, icon: MdList },
+      {
+        name: 'Get Help',
+        link: PDTG,
+        icon: MdOutlineChatBubbleOutline,
+        posthog: 'get help_sponsor',
+      },
+    ]
     : [
-        { name: 'My Listings', link: '/listings', icon: BiListUl },
-        {
-          name: 'Team Settings',
-          link: '/team-settings',
-          icon: RiUserSettingsLine,
-        },
-        ...(isLocalProfileVisible
-          ? [
-              {
-                name: 'Local Profiles',
-                link: '/local-profiles',
-                icon: LuUsers,
-              },
-            ]
-          : []),
-        {
-          name: 'Get Help',
-          link: PDTG,
-          icon: LuMessageSquare,
-          posthog: 'get help_sponsor',
-        },
-      ];
+      { name: 'My Listings', link: '/listings', icon: BiListUl },
+      {
+        name: 'Team Settings',
+        link: '/team-settings',
+        icon: RiUserSettingsLine,
+      },
+      ...(isLocalProfileVisible
+        ? [
+          {
+            name: 'Local Profiles',
+            link: '/local-profiles',
+            icon: LuUsers,
+          },
+        ]
+        : []),
+      {
+        name: 'Get Help',
+        link: PDTG,
+        icon: LuMessageSquare,
+        posthog: 'get help_sponsor',
+      },
+    ];
 
   const showLoading = !isHackathonRoute
     ? !user?.currentSponsor?.id
@@ -210,8 +210,8 @@ export function SponsorLayout({
       className="bg-white"
       meta={
         <Meta
-          title="Superteam Earn | Work to Earn in Crypto"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          title="Solar Earn | Work to Earn in Crypto"
+          description="Explore the latest bounties on Solar Earn, offering opportunities in the crypto space across Design, Development, and Content."
           canonical="https://earn.superteam.fun"
         />
       }
@@ -274,8 +274,8 @@ export function SponsorLayout({
               <Tooltip
                 label={
                   isCreateListingAllowed !== undefined &&
-                  isCreateListingAllowed === false &&
-                  session?.user.role !== 'GOD'
+                    isCreateListingAllowed === false &&
+                    session?.user.role !== 'GOD'
                     ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
                     : ''
                 }

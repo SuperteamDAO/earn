@@ -236,7 +236,7 @@ export const Footer = () => {
             direction={{ base: 'column', md: 'row' }}
           >
             <Text mb={{ base: 4, md: 0 }} color="brand.slate.500" fontSize="sm">
-              {t('footer.copyright', { year: currentYear })}
+              © {currentYear} Solar. All rights reserved.
             </Text>
             <Flex align="center">
               <LanguageSwitcher />
