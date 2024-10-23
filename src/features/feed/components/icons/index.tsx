@@ -106,3 +106,51 @@ export const WinnersIcon = () => {
     </svg>
   );
 };
+
+export const AllPostsIcon = () => {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clip-path="url(#clip0_7_2238)">
+        <path
+          d="M2.66659 14.6667H13.3333C13.6869 14.6667 14.026 14.5262 14.2761 14.2762C14.5261 14.0261 14.6666 13.687 14.6666 13.3333V2.66668C14.6666 2.31305 14.5261 1.97392 14.2761 1.72387C14.026 1.47382 13.6869 1.33334 13.3333 1.33334H5.33325C4.97963 1.33334 4.64049 1.47382 4.39044 1.72387C4.14039 1.97392 3.99992 2.31305 3.99992 2.66668V13.3333C3.99992 13.687 3.85944 14.0261 3.60939 14.2762C3.35935 14.5262 3.02021 14.6667 2.66659 14.6667ZM2.66659 14.6667C2.31296 14.6667 1.97382 14.5262 1.72378 14.2762C1.47373 14.0261 1.33325 13.687 1.33325 13.3333V7.33334C1.33325 6.60001 1.93325 6.00001 2.66659 6.00001H3.99992"
+          stroke="#64748B"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M12.0001 9.33334H6.66675"
+          stroke="#64748B"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M10.0001 12H6.66675"
+          stroke="#64748B"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M6.66675 4H12.0001V6.66667H6.66675V4Z"
+          stroke="#64748B"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_7_2238">
+          <rect width="16" height="16" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};

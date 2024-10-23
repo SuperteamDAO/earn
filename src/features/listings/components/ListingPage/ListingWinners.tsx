@@ -136,7 +136,7 @@ export function ListingWinners({ bounty }: Props) {
                   key={submission.id}
                   href={
                     !isProject
-                      ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/#details`
+                      ? `/feed/submission/${submission?.id}`
                       : `/t/${submission?.user?.username}`
                   }
                   passHref
@@ -226,7 +226,7 @@ export function ListingWinners({ bounty }: Props) {
                   as={NextLink}
                   href={
                     !isProject
-                      ? `/listings/${bounty?.type}/${bounty?.slug}/submission/${submission?.id}/#details`
+                      ? `/feed/submission/${submission?.id}`
                       : `/t/${submission?.user?.username}`
                   }
                   passHref

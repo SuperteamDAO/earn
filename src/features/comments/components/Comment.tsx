@@ -24,6 +24,7 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
+import { type CommentRefType } from '@prisma/client';
 import axios from 'axios';
 import Image from 'next/image';
 import NextLink from 'next/link';
@@ -46,7 +47,7 @@ interface Props {
   comment: IComment;
   poc: User | undefined;
   refId: string;
-  refType: 'BOUNTY' | 'SUBMISSION';
+  refType: CommentRefType;
   sponsorId: string | undefined;
   defaultSuggestions: Map<string, User>;
   deleteComment: (commentId: string) => Promise<void>;
@@ -138,8 +139,8 @@ export const Comment = ({
     setNewReplyError(false);
     const newReplyData = await axios.post(`/api/comment/create`, {
       message: msg,
-      listingType: refType,
-      listingId: refId,
+      refType: refType,
+      refId: refId,
       replyToId: comment?.id ?? null,
       replyToUserId: comment?.authorId ?? null,
       pocId: poc?.id,
@@ -321,7 +322,7 @@ export const Comment = ({
             )}
             <Button
               left={'-3px'}
-              color="brand.slate.800"
+              color="brand.slate.500"
               fontSize={{
                 base: 'xs',
                 md: 'sm',

@@ -8,7 +8,7 @@ type EmailType =
   | 'announceWinners'
   | 'application'
   | 'commentSponsor'
-  | 'commentSubmission'
+  | 'commentActivity'
   | 'createListing'
   | 'deadlineExtended'
   | 'submissionRejected'

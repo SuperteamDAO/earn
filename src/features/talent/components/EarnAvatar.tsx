@@ -13,7 +13,7 @@ export const EarnAvatar = ({
   avatar?: string;
   size?: '24px' | '28px' | '32px' | '36px' | '40px' | '44px' | '52px' | '64px';
   borderRadius?: string;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLDivElement> | undefined;
 }) => {
   const [hasError, setHasError] = useState(false);
 
@@ -22,7 +22,7 @@ export const EarnAvatar = ({
   };
 
   return (
-    <Box onClick={onClick}>
+    <Box h="min-content" onClick={onClick}>
       {!hasError && avatar ? (
         <Image
           flexGrow={1}

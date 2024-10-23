@@ -11,15 +11,16 @@ export default async function comment(
   logger.info(`Request Query: ${safeStringify(req.query)}`);
 
   const params = req.query;
-  const listingId = params.id as string;
+  const refId = params.id as string;
   const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
+  const take = params.take ? parseInt(params.take as string, 10) : 0;
 
-  logger.debug(`Fetching comments for listingId=${listingId}, skip=${skip}`);
+  logger.debug(`Fetching comments for listingId=${refId}, skip=${skip}`);
 
   try {
     const result = await prisma.comment.findMany({
       where: {
-        listingId,
+        refId,
         isActive: true,
         isArchived: false,
         replyToId: null,
@@ -31,7 +32,7 @@ export default async function comment(
         updatedAt: 'desc',
       },
       skip: skip ?? 0,
-      take: 10,
+      take,
       include: {
         author: {
           select: {
@@ -63,7 +64,7 @@ export default async function comment(
 
     const commentsCount = await prisma.comment.count({
       where: {
-        listingId,
+        refId,
         isActive: true,
         isArchived: false,
         replyToId: null,
@@ -74,7 +75,7 @@ export default async function comment(
     });
 
     logger.info(
-      `Fetched ${result.length} comments and count=${commentsCount} for listingId=${listingId}`,
+      `Fetched ${result.length} comments and count=${commentsCount} for listingId=${refId}`,
     );
 
     res.status(200).json({
@@ -83,11 +84,11 @@ export default async function comment(
     });
   } catch (error: any) {
     logger.error(
-      `Error occurred while fetching comments for listingId=${listingId}: ${safeStringify(error)}`,
+      `Error occurred while fetching comments for listingId=${refId}: ${safeStringify(error)}`,
     );
     res.status(400).json({
       error: 'Error occurred while fetching comments.',
-      message: `Error occurred while fetching bounty with listingId=${listingId}.`,
+      message: `Error occurred while fetching bounty with listingId=${refId}.`,
     });
   }
 }
