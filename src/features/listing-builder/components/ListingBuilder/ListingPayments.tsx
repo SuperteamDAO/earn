@@ -145,7 +145,7 @@ export const ListingPayments = ({
   useEffect(() => {
     if (form && maxBonusSpots !== undefined) {
       if (maxBonusSpots > MAX_BONUS_SPOTS)
-        setWarningMessage('Maximum number of bonus prizes allow is 50');
+        setWarningMessage('Maximum number of bonus prizes allowed is 50');
       if (maxBonusSpots === 0) {
         setWarningMessage("# of bonus prizes can't be 0");
       }
