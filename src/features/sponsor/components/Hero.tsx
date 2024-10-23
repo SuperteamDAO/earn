@@ -11,15 +11,15 @@ import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 
-import Bonk from '@/public/assets/landingsponsor/sponsors/bonk.png';
-import De from '@/public/assets/landingsponsor/sponsors/de.png';
-import Jupiter from '@/public/assets/landingsponsor/sponsors/jupiter.png';
-import MadLads from '@/public/assets/landingsponsor/sponsors/madlads.png';
-import Meteora from '@/public/assets/landingsponsor/sponsors/meteora.png';
-import MonkeDao from '@/public/assets/landingsponsor/sponsors/monkedao.png';
-import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.png';
-import Squads from '@/public/assets/landingsponsor/sponsors/squads.png';
-import Tensor from '@/public/assets/landingsponsor/sponsors/tensor.png';
+import Bonk from '@/public/assets/landingsponsor/sponsors/bonk.webp';
+import De from '@/public/assets/landingsponsor/sponsors/de.webp';
+import Jupiter from '@/public/assets/landingsponsor/sponsors/jupiter.webp';
+import MadLads from '@/public/assets/landingsponsor/sponsors/madlads.webp';
+import Meteora from '@/public/assets/landingsponsor/sponsors/meteora.webp';
+import MonkeDao from '@/public/assets/landingsponsor/sponsors/monkedao.webp';
+import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.webp';
+import Squads from '@/public/assets/landingsponsor/sponsors/squads.webp';
+import Tensor from '@/public/assets/landingsponsor/sponsors/tensor.webp';
 import { useUser } from '@/store/user';
 
 import { fontSize, maxW, padding } from '../utils';

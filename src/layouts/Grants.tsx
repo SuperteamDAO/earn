@@ -1,8 +1,9 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Box, Flex, HStack, Image, Link, Text, VStack } from '@chakra-ui/react';
+import { useAtom } from 'jotai';
 import Head from 'next/head';
 import { usePostHog } from 'posthog-js/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -18,6 +19,8 @@ import {
 } from '@/features/grants';
 import { LiveGrants } from '@/features/home';
 import { ExtraInfoSection } from '@/features/listings';
+import { grantSnackbarAtom } from '@/features/navbar';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
@@ -34,8 +37,17 @@ export function GrantPageLayout({
   const [grant] = useState<typeof initialGrant>(initialGrant);
   const encodedTitle = encodeURIComponent(initialGrant?.title || '');
   const posthog = usePostHog();
+  const [, setGrantSnackbar] = useAtom(grantSnackbarAtom);
 
   const iterableSkills = initialGrant?.skills?.map((e) => e.skills) ?? [];
+
+  useEffect(() => {
+    if (initialGrant) {
+      setGrantSnackbar({
+        isPublished: !!initialGrant?.isPublished,
+      });
+    }
+  }, [initialGrant]);
 
   return (
     <Default
@@ -191,10 +203,15 @@ export function GrantPageLayout({
                                 fontWeight={500}
                               >
                                 {grant.totalApproved
-                                  ? `$` +
-                                    Math.round(
-                                      grant?.totalApproved /
-                                        grant?.totalApplications,
+                                  ? new Intl.NumberFormat('en-US', {
+                                      maximumFractionDigits: 0,
+                                      currency: 'USD',
+                                      style: 'currency',
+                                    }).format(
+                                      Math.round(
+                                        grant?.totalApproved /
+                                          grant?.totalApplications,
+                                      ),
                                     )
                                   : '—'}
                               </Text>
@@ -220,7 +237,12 @@ export function GrantPageLayout({
                                 fontSize={{ base: 'lg', md: 'xl' }}
                                 fontWeight={500}
                               >
-                                ${Math.round(grant?.totalApproved || 0)}
+                                $
+                                {formatNumberWithSuffix(
+                                  Math.round(grant?.totalApproved || 0),
+                                  1,
+                                  true,
+                                )}
                               </Text>
                             </Flex>
                             <Text

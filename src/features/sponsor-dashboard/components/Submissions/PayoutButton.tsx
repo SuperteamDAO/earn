@@ -22,6 +22,7 @@ import React, { useState } from 'react';
 import { tokenList } from '@/constants';
 import { type Listing, type Rewards } from '@/features/listings';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { selectedSubmissionAtom } from '../..';
@@ -211,11 +212,15 @@ export const PayoutButton = ({ bounty }: Props) => {
         >
           {connected
             ? truncatePublicKey(publicKey?.toBase58(), 3)
-            : `Pay ${bounty?.token} ${
-                bounty?.rewards?.[
-                  selectedSubmission?.winnerPosition as keyof Rewards
-                ] || '0'
-              }`}
+            : `Pay ${
+                formatNumberWithSuffix(
+                  bounty?.rewards?.[
+                    selectedSubmission?.winnerPosition as keyof Rewards
+                  ]!,
+                  2,
+                  true,
+                ) || '0'
+              } ${bounty?.token}`}
         </DynamicWalletMultiButton>
       </div>
       {connected && (
@@ -245,11 +250,18 @@ export const PayoutButton = ({ bounty }: Props) => {
           size="md"
           variant="solid"
         >
-          Pay {bounty?.token}{' '}
-          {!!bounty?.rewards &&
-            bounty?.rewards[
-              selectedSubmission?.winnerPosition as keyof Rewards
-            ]}
+          Pay{' '}
+          {
+            (!!bounty?.rewards &&
+              formatNumberWithSuffix(
+                bounty?.rewards[
+                  selectedSubmission?.winnerPosition as keyof Rewards
+                ]!,
+              ),
+            2,
+            true)
+          }{' '}
+          {bounty?.token}
         </Button>
       )}
     </>

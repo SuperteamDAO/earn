@@ -157,7 +157,6 @@ export function CreateListing({
           : undefined,
         templateId: form?.templateId,
         pocSocials: form?.pocSocials,
-        applicationType: form?.applicationType,
         timeToComplete: form?.timeToComplete,
         description: form?.description,
         type,
@@ -182,6 +181,7 @@ export function CreateListing({
         maxRewardAsk: form?.maxRewardAsk,
         isPublished: true,
         isPrivate: form?.isPrivate,
+        isFndnPaying: form?.isFndnPaying,
         status: 'OPEN',
       };
 
@@ -235,7 +235,6 @@ export function CreateListing({
           : undefined,
         templateId: data?.templateId,
         pocSocials: data?.pocSocials,
-        applicationType: data?.applicationType,
         timeToComplete: data?.timeToComplete,
         description: data?.description || '',
         eligibility: (data?.eligibility || []).map((q) => ({
@@ -246,10 +245,12 @@ export function CreateListing({
         references: (data?.references || []).map((r) => ({
           link: r.link,
           order: r.order,
+          title: r.title,
         })),
         region: data?.region,
         referredBy: data?.referredBy,
         isPrivate: data?.isPrivate,
+        isFndnPaying: data?.isFndnPaying,
         requirements: data?.requirements,
         rewardAmount: data?.rewardAmount,
         rewards: data?.rewards,

@@ -88,7 +88,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const bgImages = ['1.png', '2.png', '3.png', '4.png', '5.png'];
+  const bgImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp'];
 
   useEffect(() => {
     setRandomIndex(Math.floor(Math.random() * bgImages.length));
@@ -337,18 +337,22 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       </Text>
                     </Text>
                   )}
-                  <Text mt={3} color={'brand.slate.400'}>
-                    Works at{' '}
-                    <Text as={'span'} color={'brand.slate.500'}>
-                      {talent?.currentEmployer}
+                  {talent?.currentEmployer && (
+                    <Text mt={3} color={'brand.slate.400'}>
+                      Works at{' '}
+                      <Text as={'span'} color={'brand.slate.500'}>
+                        {talent?.currentEmployer}
+                      </Text>
                     </Text>
-                  </Text>
-                  <Text mt={3} color={'brand.slate.400'}>
-                    Based in{' '}
-                    <Text as={'span'} color={'brand.slate.500'}>
-                      {talent?.location}
+                  )}
+                  {talent?.location && (
+                    <Text mt={3} color={'brand.slate.400'}>
+                      Based in{' '}
+                      <Text as={'span'} color={'brand.slate.500'}>
+                        {talent?.location}
+                      </Text>
                     </Text>
-                  </Text>
+                  )}
                 </Box>
                 <Box w={{ base: '100%', md: '50%' }}>
                   <Text color={'brand.slate.900'} fontWeight={500}>

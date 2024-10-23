@@ -17,7 +17,7 @@ function AllListingsPage() {
         <ListingTabs
           bounties={listings}
           isListingsLoading={isLoading}
-          emoji="/assets/home/emojis/moneyman.png"
+          emoji="/assets/home/emojis/moneyman.webp"
           title="Freelance Gigs"
           viewAllLink="/all"
         />

@@ -82,12 +82,12 @@ async function getHackathonListings(
         totalWinnersSelected: true,
         totalPaymentsMade: true,
         isWinnersAnnounced: true,
-        applicationType: true,
         sponsor: {
           select: {
             name: true,
             logo: true,
             isVerified: true,
+            st: true,
           },
         },
         Hackathon: {

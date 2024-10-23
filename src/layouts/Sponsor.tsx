@@ -29,14 +29,10 @@ import {
   SelectHackathon,
   SelectSponsor,
 } from '@/features/listing-builder';
-import {
-  CreateListingModal,
-  NavItem,
-  SponsorInfoModal,
-} from '@/features/sponsor-dashboard';
+import { CreateListingModal, NavItem } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { useUpdateUser, useUser } from '@/store/user';
+import { useUser } from '@/store/user';
 
 interface LinkItemProps {
   name: string;
@@ -54,7 +50,6 @@ export function SponsorLayout({
   isCollapsible?: boolean;
 }) {
   const { user } = useUser();
-  const updateUser = useUpdateUser();
   const { data: session, status } = useSession();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -89,63 +84,24 @@ export function SponsorLayout({
     }
   }, [open]);
 
-  const {
-    data: isCreateListingAllowed,
-    refetch: isCreateListingAllowedRefetch,
-  } = useQuery(isCreateListingAllowedQuery);
-
-  const {
-    isOpen: isSponsorInfoModalOpen,
-    onOpen: onSponsorInfoModalOpen,
-    onClose: onSponsorInfoModalClose,
-  } = useDisclosure();
-
-  const { onOpen: onScoutAnnounceModalOpen } = useDisclosure();
-
-  function sponsorInfoCloseAltered() {
-    onSponsorInfoModalClose();
-    if (user?.featureModalShown === false && user?.currentSponsorId)
-      onScoutAnnounceModalOpen();
-  }
+  const { data: isCreateListingAllowed } = useQuery(
+    isCreateListingAllowedQuery,
+  );
 
   const handleEntityClose = () => {
     setIsEntityModalOpen(false);
   };
 
-  // ENTITY NAME TO SPONSORS
-  useEffect(() => {
-    isCreateListingAllowedRefetch();
-    const timer = setTimeout(async () => {
-      if (user) {
-        if (
-          user.currentSponsorId &&
-          (!user.firstName || !user.lastName || !user.username)
-        ) {
-          onSponsorInfoModalOpen();
-        } else if (user.featureModalShown === false && user.currentSponsorId) {
-          onScoutAnnounceModalOpen();
-          await updateUser.mutateAsync({ featureModalShown: true });
-        }
-      }
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [user]);
-
   useEffect(() => {
     const modalsToShow = async () => {
-      if (
-        user?.currentSponsorId &&
-        (!user?.firstName || !user?.lastName || !user?.username)
-      ) {
-        onSponsorInfoModalOpen();
-      } else if (user?.featureModalShown === false && user?.currentSponsorId) {
-        onScoutAnnounceModalOpen();
-        await updateUser.mutateAsync({ featureModalShown: true });
+      if (!user?.currentSponsor?.entityName && session?.user.role !== 'GOD') {
+        setIsEntityModalOpen(true);
+      } else {
+        setIsEntityModalOpen(false);
       }
     };
     modalsToShow();
-  }, [user]);
+  }, [user, session]);
 
   if (!session && status === 'loading') {
     return <LoadingSection />;
@@ -216,15 +172,8 @@ export function SponsorLayout({
         />
       }
     >
-      <FeatureModal
-        isSponsorsRoute
-        forceOpen={user?.featureModalShown === false}
-      />
+      <FeatureModal isSponsorsRoute />
 
-      <SponsorInfoModal
-        onClose={sponsorInfoCloseAltered}
-        isOpen={isSponsorInfoModalOpen}
-      />
       <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
       <Flex display={{ base: 'flex', md: 'none' }} minH="80vh" px={3}>
         <Text
@@ -276,7 +225,7 @@ export function SponsorLayout({
                   isCreateListingAllowed !== undefined &&
                   isCreateListingAllowed === false &&
                   session?.user.role !== 'GOD'
-                    ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
+                    ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “In Review”. Please announce the winners for such listings to create new listings.'
                     : ''
                 }
               >

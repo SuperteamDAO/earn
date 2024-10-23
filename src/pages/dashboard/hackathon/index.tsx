@@ -415,7 +415,6 @@ export default function Hackathon() {
                 {bounties.map((currentBounty) => {
                   const deadline = formatDeadline(
                     currentBounty?.deadline,
-                    currentBounty?.applicationType,
                     currentBounty?.type,
                   );
 

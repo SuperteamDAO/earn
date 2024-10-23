@@ -8,7 +8,7 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RxUpload } from 'react-icons/rx';
 import { toast } from 'sonner';
 
@@ -28,6 +28,9 @@ export const ImagePicker = ({
   const [preview, setPreview] = useState<string | null>(
     defaultValue?.url || null,
   );
+  useEffect(() => {
+    setPreview(defaultValue?.url || null);
+  }, [defaultValue]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 

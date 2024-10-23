@@ -321,7 +321,7 @@ export const SubmissionList = ({
               px={4}
               py={2}
               bg={
-                selectedSubmission?.user?.id === submission?.user?.id
+                selectedSubmission?.id === submission?.id
                   ? 'brand.slate.100'
                   : 'transparent'
               }

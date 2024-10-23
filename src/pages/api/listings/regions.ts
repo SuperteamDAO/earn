@@ -53,7 +53,6 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         token: true,
         winnersAnnouncedAt: true,
         slug: true,
-        applicationType: true,
         isWinnersAnnounced: true,
         isFeatured: true,
         compensationType: true,
@@ -96,6 +95,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         isPublished: true,
         isActive: true,
         isArchived: false,
+        isPrivate: false,
         region: {
           in: [region.toUpperCase() as Regions, Regions.GLOBAL],
         },

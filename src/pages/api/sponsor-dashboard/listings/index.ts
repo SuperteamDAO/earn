@@ -22,7 +22,6 @@ type BountyGrant = {
   totalWinnersSelected: number | null;
   totalPaymentsMade: number;
   isWinnersAnnounced: boolean | null;
-  applicationType: string | null;
   maxRewardAsk: number | null;
   minRewardAsk: number | null;
   compensationType: string | null;
@@ -49,11 +48,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         b.totalWinnersSelected,
         b.totalPaymentsMade,
         b.isWinnersAnnounced,
-        b.applicationType,
         b.maxRewardAsk,
         b.minRewardAsk,
         b.compensationType,
         b.createdAt,
+        b.isFndnPaying,
         NULL as airtableId,
         CAST((SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id) AS SIGNED) as submissionCount
       FROM Bounties b
@@ -78,11 +77,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         NULL as totalWinnersSelected,
         g.totalPaid as totalPaymentsMade,
         NULL as isWinnersAnnounced,
-        NULL as applicationType,
         g.maxReward as maxRewardAsk,
         g.minReward as minRewardAsk,
         NULL as compensationType,
         g.createdAt,
+        NULL as isFndnPaying,
         g.airtableId,
         CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
       FROM Grants g

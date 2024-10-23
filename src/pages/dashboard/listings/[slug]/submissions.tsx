@@ -21,7 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -68,7 +68,9 @@ export default function BountySubmissions({ slug }: Props) {
   const { user } = useUser();
   const [currentPage, setCurrentPage] = useState(1);
 
-  const setSelectedSubmission = useSetAtom(selectedSubmissionAtom);
+  const [selectedSubmission, setSelectedSubmission] = useAtom(
+    selectedSubmissionAtom,
+  );
 
   const [searchText, setSearchText] = useState('');
 
@@ -113,10 +115,6 @@ export default function BountySubmissions({ slug }: Props) {
   }, [selectedSubmissionIds]);
 
   useEffect(() => {
-    setIsToggledAll(isAllCurrentToggled());
-  }, [selectedSubmissionIds, submissions]);
-
-  useEffect(() => {
     const newSet = new Set(selectedSubmissionIds);
     Array.from(selectedSubmissionIds).forEach((a) => {
       const submissionWithId = submissions?.find(
@@ -130,7 +128,7 @@ export default function BountySubmissions({ slug }: Props) {
   }, [submissions]);
 
   const isAllCurrentToggled = () =>
-    submissions
+    paginatedSubmissions
       ?.filter((submission) => submission.status === 'Pending')
       .every((submission) => selectedSubmissionIds.has(submission.id)) || false;
 
@@ -152,24 +150,6 @@ export default function BountySubmissions({ slug }: Props) {
     },
     [selectedSubmissionIds, submissions],
   );
-
-  const toggleAllSubmissions = () => {
-    if (!isAllCurrentToggled()) {
-      setSelectedSubmissionIds((prev) => {
-        const newSet = new Set(prev);
-        submissions
-          ?.filter((submission) => submission.status === 'Pending')
-          .map((submission) => newSet.add(submission.id));
-        return newSet;
-      });
-    } else {
-      setSelectedSubmissionIds((prev) => {
-        const newSet = new Set(prev);
-        submissions?.map((submission) => newSet.delete(submission.id));
-        return newSet;
-      });
-    }
-  };
 
   const rejectSubmissions = useRejectSubmissions(slug);
 
@@ -277,6 +257,28 @@ export default function BountySubmissions({ slug }: Props) {
     );
   }, [filteredSubmissions, currentPage]);
 
+  useEffect(() => {
+    setIsToggledAll(isAllCurrentToggled());
+  }, [selectedSubmissionIds, paginatedSubmissions]);
+
+  const toggleAllSubmissions = () => {
+    if (!isAllCurrentToggled()) {
+      setSelectedSubmissionIds((prev) => {
+        const newSet = new Set(prev);
+        paginatedSubmissions
+          ?.filter((submission) => submission.status === 'Pending')
+          .map((submission) => newSet.add(submission.id));
+        return newSet;
+      });
+    } else {
+      setSelectedSubmissionIds((prev) => {
+        const newSet = new Set(prev);
+        paginatedSubmissions?.map((submission) => newSet.delete(submission.id));
+        return newSet;
+      });
+    }
+  };
+
   const totalPages = Math.ceil(filteredSubmissions.length / submissionsPerPage);
 
   const usedPositions = submissions
@@ -290,6 +292,130 @@ export default function BountySubmissions({ slug }: Props) {
   const isExpired = dayjs(bounty?.deadline).isBefore(dayjs());
 
   const isSponsorVerified = bounty?.sponsor?.isVerified;
+
+  const [pageSelections, setPageSelections] = useState<Record<number, string>>(
+    {},
+  );
+
+  useEffect(() => {
+    if (selectedSubmission) {
+      setPageSelections((prev) => ({
+        ...prev,
+        [currentPage]: selectedSubmission.id,
+      }));
+    }
+  }, [selectedSubmission, currentPage]);
+
+  useEffect(() => {
+    if (paginatedSubmissions.length > 0) {
+      const savedSelectionId = pageSelections[currentPage];
+      const submissionToSelect = paginatedSubmissions.find(
+        (sub) => sub.id === savedSelectionId,
+      );
+
+      if (
+        submissionToSelect &&
+        submissionToSelect.id !== selectedSubmission?.id
+      ) {
+        setSelectedSubmission(submissionToSelect);
+      } else if (
+        !submissionToSelect &&
+        (!selectedSubmission ||
+          !paginatedSubmissions.some((sub) => sub.id === selectedSubmission.id))
+      ) {
+        setSelectedSubmission(paginatedSubmissions[0]);
+      }
+    }
+  }, [currentPage, paginatedSubmissions, pageSelections]);
+
+  const changePage = useCallback(
+    async (newPage: number, selectIndex: number) => {
+      if (newPage < 1 || newPage > totalPages) return;
+
+      setCurrentPage(newPage);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      const newPaginatedSubmissions = filteredSubmissions.slice(
+        (newPage - 1) * submissionsPerPage,
+        newPage * submissionsPerPage,
+      );
+
+      const submissionToSelect = newPaginatedSubmissions[selectIndex];
+      if (submissionToSelect) {
+        setSelectedSubmission(submissionToSelect);
+      }
+    },
+    [
+      filteredSubmissions,
+      submissionsPerPage,
+      totalPages,
+      setSelectedSubmission,
+    ],
+  );
+
+  useEffect(() => {
+    const handleKeyDown = async (e: KeyboardEvent) => {
+      if (!filteredSubmissions.length) return;
+
+      const currentIndex = paginatedSubmissions.findIndex(
+        (sub) => sub.id === selectedSubmission?.id,
+      );
+
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          if (currentIndex > 0) {
+            setSelectedSubmission(paginatedSubmissions[currentIndex - 1]);
+          } else if (currentPage > 1) {
+            await changePage(currentPage - 1, submissionsPerPage - 1);
+          }
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          if (currentIndex < paginatedSubmissions.length - 1) {
+            setSelectedSubmission(paginatedSubmissions[currentIndex + 1]);
+          } else if (currentPage < totalPages) {
+            await changePage(currentPage + 1, 0);
+          }
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          if (currentPage > 1) {
+            const savedSelectionIndex = pageSelections[currentPage - 1]
+              ? paginatedSubmissions.findIndex(
+                  (sub) => sub.id === pageSelections[currentPage - 1],
+                )
+              : 0;
+            await changePage(currentPage - 1, savedSelectionIndex);
+          }
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          if (currentPage < totalPages) {
+            const savedSelectionIndex = pageSelections[currentPage + 1]
+              ? paginatedSubmissions.findIndex(
+                  (sub) => sub.id === pageSelections[currentPage + 1],
+                )
+              : 0;
+            await changePage(currentPage + 1, savedSelectionIndex);
+          }
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [
+    filteredSubmissions,
+    paginatedSubmissions,
+    selectedSubmission,
+    currentPage,
+    totalPages,
+    pageSelections,
+    setSelectedSubmission,
+    changePage,
+    submissionsPerPage,
+  ]);
 
   return (
     <SponsorLayout isCollapsible>
@@ -594,13 +720,14 @@ export default function BountySubmissions({ slug }: Props) {
                         fill="#E11D48"
                       />
                     </svg>
-                    Reject All
+                    Reject {selectedSubmissionIds.size} Applications
                   </Button>
                 </HStack>
               </PopoverBody>
             </PopoverContent>
           </Popover>
           <RejectAllSubmissionModal
+            allSubmissionsLength={submissions?.length || 0}
             submissionIds={Array.from(selectedSubmissionIds)}
             rejectIsOpen={rejectedIsOpen}
             rejectOnClose={rejectedOnClose}

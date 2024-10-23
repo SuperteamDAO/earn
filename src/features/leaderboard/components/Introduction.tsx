@@ -1,7 +1,7 @@
 import { Divider, Flex, Text, VStack } from '@chakra-ui/react';
 import Image from 'next/image';
 
-import Medal from '@/public/assets/leaderboard/medal.png';
+import Medal from '@/public/assets/leaderboard/medal.webp';
 
 import Progress from '../icons/progress.svg';
 import Rank from '../icons/rank.svg';

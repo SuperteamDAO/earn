@@ -56,6 +56,7 @@ model Bounties {
   poc                  User               @relation("poc", fields: [pocId], references: [id])
   language             String?
   shouldSendEmail      Boolean            @default(true)
+  isFndnPaying         Boolean            @default(false)
   Submission           Submission[]
   SubscribeBounty      SubscribeBounty[]
   Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
@@ -182,6 +183,7 @@ model Grants {
   airtableId             String?
   avgResponseTime        String?            @default("24h")
   isNative               Boolean            @default(false)
+  isPrivate              Boolean            @default(false)
   references             Json?
 
   @@index([id, slug])
@@ -277,6 +279,7 @@ model Sponsors {
   entityName   String?
   isVerified   Boolean             @default(false)
   isCaution    Boolean             @default(false)
+  st           Boolean             @default(false)
   Hackathon    Hackathon?
   UserSponsors UserSponsors[]
   Bounties     Bounties[]
@@ -480,6 +483,15 @@ model emailLogs {
   updatedAt DateTime  @updatedAt
 }
 
+model ResendLogs {
+  id        String   @id @default(uuid())
+  email     String
+  subject   String
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model SubscribeBounty {
   id         String    @id @default(uuid())
   userId     String
@@ -540,6 +552,12 @@ model UnsubscribedEmail {
   createdAt DateTime @default(now())
 }
 
+model BlockedEmail {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
 enum TalentRankingSkills {
   DEVELOPMENT
   DESIGN
@@ -595,6 +613,7 @@ enum GrantStatus {
 enum GrantApplicationStatus {
   Pending
   Approved
+  Completed
   Rejected
 }
 

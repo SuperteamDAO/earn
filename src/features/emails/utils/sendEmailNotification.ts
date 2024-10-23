@@ -17,9 +17,11 @@ type EmailType =
   | 'applicationTalent'
   | 'applicationSponsor'
   | 'grantApproved'
+  | 'grantCompleted'
   | 'grantRejected'
   | 'grantPaymentReceived'
-  | 'superteamWinners'
+  | 'STWinners'
+  | 'nonSTWinners'
   | 'commentReply'
   | 'commentTag'
   | 'scoutInvite';

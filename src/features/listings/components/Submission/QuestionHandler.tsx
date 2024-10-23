@@ -1,12 +1,12 @@
 import { FormLabel, Text } from '@chakra-ui/react';
-import { type FieldValues, type UseFormRegister } from 'react-hook-form';
+import { type UseFormRegister } from 'react-hook-form';
 
 import { AutoResizeTextarea } from '@/components/shared/autosize-textarea';
 
 interface QuestionProps {
   question: string;
   label: string;
-  register: UseFormRegister<FieldValues>;
+  register: UseFormRegister<any>;
   watch?: any;
   validate?: any;
   error?: string;

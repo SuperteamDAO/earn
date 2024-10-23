@@ -23,6 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Regions } from '@prisma/client';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
+import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import {
   type Dispatch,
@@ -39,6 +40,7 @@ import { SkillSelect } from '@/components/shared/SkillSelect';
 import { type MultiSelectOptions } from '@/constants';
 import { CombinedRegions, Superteams } from '@/constants/Superteam';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
+import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
 import { useListingFormStore } from '../../store';
@@ -75,7 +77,14 @@ export const ListingBasic = ({
   subSkills,
 }: Props) => {
   const { form, updateState } = useListingFormStore();
+  const { user } = useUser();
+  const { data: session } = useSession();
+
+  const isProject = type === 'project';
   const isDraft = isNewOrDraft || isDuplicating;
+
+  const fndnPayingCheck = user?.currentSponsor?.st && !isProject;
+
   const slugUniqueCheck = async (slug: string) => {
     try {
       const listingId = editable && !isDuplicating ? form?.id : null;
@@ -125,11 +134,11 @@ export const ListingBasic = ({
           },
         ),
       region: z.string().optional(),
-      applicationType: z.string().optional(),
-      deadline: z.string().optional(),
+      deadline: z.string(),
       timeToComplete: z.string().nullable().optional(),
       referredBy: z.string().nullable().optional(),
       isPrivate: z.boolean(),
+      isFndnPaying: z.boolean()?.optional(),
     })
     .superRefine((data, ctx) => {
       if (
@@ -141,17 +150,6 @@ export const ListingBasic = ({
         ctx.addIssue({
           path: ['timeToComplete'],
           message: 'Time to complete is required for projects',
-          code: 'custom',
-        });
-      }
-      if (
-        type !== 'hackathon' &&
-        applicationType !== 'rolling' &&
-        !data.deadline
-      ) {
-        ctx.addIssue({
-          path: ['deadline'],
-          message: 'Deadline is required',
           code: 'custom',
         });
       }
@@ -175,11 +173,11 @@ export const ListingBasic = ({
       skills: form?.skills,
       pocSocials: form?.pocSocials,
       region: form?.region,
-      applicationType: form?.applicationType,
       deadline: form?.deadline || undefined,
       timeToComplete: form?.timeToComplete,
       referredBy: form?.referredBy,
       isPrivate: form?.isPrivate,
+      isFndnPaying: form?.isFndnPaying || fndnPayingCheck ? true : false,
     },
   });
 
@@ -200,18 +198,18 @@ export const ListingBasic = ({
         skills: form?.skills,
         pocSocials: form?.pocSocials,
         region: form?.region,
-        applicationType: form?.applicationType || 'fixed',
         timeToComplete: form?.timeToComplete,
         referredBy: form?.referredBy,
         isPrivate: form?.isPrivate,
+        isFndnPaying: form?.isFndnPaying,
       });
     }
-  }, [form]);
+  }, [form, user?.currentSponsor?.name, isProject]);
 
   const title = watch('title');
   const slug = watch('slug');
-  const applicationType = watch('applicationType');
   const isPrivate = watch('isPrivate');
+  const isFndnPaying = watch('isFndnPaying');
 
   const handleDeadlineSelection = (days: number) => {
     const deadlineDate = dayjs().add(days, 'day').format('YYYY-MM-DDTHH:mm');
@@ -289,8 +287,6 @@ export const ListingBasic = ({
       setMaxDeadline(twoWeeksLater.format('YYYY-MM-DDTHH:mm'));
     }
   }, [editable, form?.deadline]);
-
-  const isProject = type === 'project';
 
   const posthog = usePostHog();
 
@@ -515,50 +511,8 @@ export const ListingBasic = ({
               {errors.pocSocials ? <>{errors.pocSocials.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
-          {isProject && (
-            <FormControl
-              w="full"
-              mb={5}
-              isInvalid={!!errors.applicationType}
-              isRequired={isProject}
-            >
-              <Flex>
-                <ListingFormLabel htmlFor="applicationType">
-                  Application Type
-                </ListingFormLabel>
-              </Flex>
-
-              <Select
-                defaultValue={'fixed'}
-                {...register('applicationType', {
-                  required: true,
-                  onChange: (e) => {
-                    const value = e.target.value;
-                    if (value === 'rolling') {
-                      handleDeadlineSelection(30);
-                    }
-                  },
-                })}
-              >
-                <option value="fixed">Fixed Deadline</option>
-                <option value="rolling">Rolling Deadline</option>
-              </Select>
-
-              <FormErrorMessage>
-                {errors.applicationType ? (
-                  <>{errors.applicationType.message}</>
-                ) : (
-                  <></>
-                )}
-              </FormErrorMessage>
-            </FormControl>
-          )}
-          {type !== 'hackathon' && applicationType !== 'rolling' && (
-            <FormControl
-              mb={5}
-              isInvalid={!!errors.deadline}
-              isRequired={applicationType ? applicationType === 'fixed' : true}
-            >
+          {type !== 'hackathon' && (
+            <FormControl mb={5} isInvalid={!!errors.deadline} isRequired>
               <Flex align={'center'} justify={'start'}>
                 <ListingFormLabel htmlFor={'deadline'}>
                   Deadline (in{' '}
@@ -569,7 +523,7 @@ export const ListingBasic = ({
               <Tooltip
                 isDisabled={!editable || !maxDeadline}
                 label={
-                  editable && maxDeadline
+                  editable && maxDeadline && session?.user.role !== 'GOD'
                     ? 'Max two weeks extension allowed from the original deadline'
                     : ''
                 }
@@ -602,8 +556,14 @@ export const ListingBasic = ({
                   }}
                   focusBorderColor="brand.purple"
                   id="deadline"
-                  max={editable ? maxDeadline : undefined}
-                  min={`${date}T00:00`}
+                  max={
+                    editable && session?.user.role !== 'GOD'
+                      ? maxDeadline
+                      : undefined
+                  }
+                  min={
+                    session?.user.role === 'GOD' ? undefined : `${date}T00:00`
+                  }
                   placeholder="deadline"
                   type={'datetime-local'}
                   {...register('deadline', { required: true })}
@@ -687,6 +647,29 @@ export const ListingBasic = ({
               {errors.referredBy ? <>{errors.referredBy.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
+          {fndnPayingCheck && (
+            <FormControl alignItems="center" gap={3} display="flex">
+              <Flex>
+                <ListingFormLabel htmlFor="isFndnPaying">
+                  Will the Solana Foundation pay for this listing?
+                </ListingFormLabel>
+                <ListingTooltip label='If this toggle is set to "True", Earn will automatically send the Foundation-KYC form to the winners of this listing. The Foundation will directly pay the winners.' />
+              </Flex>
+              <Switch
+                mb={2}
+                id="email-alerts"
+                {...register('isFndnPaying')}
+                isChecked={isFndnPaying}
+              />
+              <FormErrorMessage>
+                {errors.isFndnPaying ? (
+                  <>{errors.isFndnPaying.message}</>
+                ) : (
+                  <></>
+                )}
+              </FormErrorMessage>
+            </FormControl>
+          )}
           <FormControl alignItems="center" gap={3} display="flex">
             <Flex>
               <ListingFormLabel htmlFor="isPrivate">

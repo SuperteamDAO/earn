@@ -12,6 +12,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ogImageQuery } from '@/queries/og';
 
 interface Props {
+  title?: string;
   showTitle?: boolean;
   externalUrl?: string;
   imageUrl?: string;
@@ -27,17 +28,17 @@ interface Props {
 
 const getRandomFallbackImage = (): string => {
   const fallbackImages = [
-    '/assets/fallback/og/1.png',
-    '/assets/fallback/og/2.png',
-    '/assets/fallback/og/3.png',
-    '/assets/fallback/og/4.png',
-    '/assets/fallback/og/5.png',
-    '/assets/fallback/og/6.png',
-    '/assets/fallback/og/7.png',
-    '/assets/fallback/og/8.png',
-    '/assets/fallback/og/9.png',
-    '/assets/fallback/og/10.png',
-    '/assets/fallback/og/11.png',
+    '/assets/fallback/og/1.webp',
+    '/assets/fallback/og/2.webp',
+    '/assets/fallback/og/3.webp',
+    '/assets/fallback/og/4.webp',
+    '/assets/fallback/og/5.webp',
+    '/assets/fallback/og/6.webp',
+    '/assets/fallback/og/7.webp',
+    '/assets/fallback/og/8.webp',
+    '/assets/fallback/og/9.webp',
+    '/assets/fallback/og/10.webp',
+    '/assets/fallback/og/11.webp',
   ];
 
   const randomIndex = Math.floor(Math.random() * fallbackImages.length);
@@ -45,6 +46,7 @@ const getRandomFallbackImage = (): string => {
 };
 
 export const OgImageViewer = ({
+  title,
   showTitle,
   externalUrl,
   imageUrl,
@@ -60,19 +62,34 @@ export const OgImageViewer = ({
   const { data: ogData, isLoading } = useQuery(ogImageQuery(externalUrl!));
 
   useEffect(() => {
-    if (ogData?.images?.[0]?.url) {
-      setCurrentImageUrl(ogData.images?.[0]?.url);
-      if (type && id) {
-        axios.post('/api/og/update', {
-          type,
-          url: ogData.images?.[0]?.url,
-          id,
-        });
+    const updateOgImage = async () => {
+      if (ogData?.images?.[0]?.url && type && id) {
+        try {
+          await axios.post('/api/og/update', {
+            type,
+            url: ogData.images[0].url,
+            id,
+          });
+          setCurrentImageUrl(ogData.images[0].url);
+        } catch (error) {
+          await axios.post('/api/og/update', {
+            type,
+            url: 'error',
+            id,
+          });
+          setCurrentImageUrl(fallbackImage);
+        }
+      } else if (!imageUrl && !externalUrl) {
+        setCurrentImageUrl(fallbackImage);
       }
-    } else if (!imageUrl && !externalUrl) {
+    };
+
+    if (!currentImageUrl) {
+      updateOgImage();
+    } else if (currentImageUrl === 'error') {
       setCurrentImageUrl(fallbackImage);
     }
-  }, [ogData, imageUrl, externalUrl, type, id]);
+  }, [ogData, imageUrl, externalUrl, type, id, fallbackImage]);
 
   const handleImageError = useCallback(() => {
     setCurrentImageUrl(fallbackImage);
@@ -91,7 +108,7 @@ export const OgImageViewer = ({
         src={currentImageUrl || fallbackImage}
         {...props}
       />
-      {showTitle && !!ogData && (
+      {showTitle && (
         <Text
           pt={2}
           color="brand.slate.500"
@@ -99,7 +116,7 @@ export const OgImageViewer = ({
           textOverflow="ellipsis"
           noOfLines={1}
         >
-          {ogData?.title}
+          {title || ogData?.title || ''}
         </Text>
       )}
     </div>

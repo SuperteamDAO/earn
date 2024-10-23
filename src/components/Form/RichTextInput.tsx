@@ -5,7 +5,7 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 import React from 'react';
-import { type Control, type FieldValues, useController } from 'react-hook-form';
+import { type Control, useController } from 'react-hook-form';
 
 import { RichEditor } from '../shared/RichEditor';
 
@@ -14,7 +14,7 @@ interface RichTextInputWithHelperProps {
   label: string;
   helperText?: string;
   placeholder?: string;
-  control: Control<FieldValues>;
+  control: Control<any>;
   validate?: (value: string) => boolean | string;
   defaultValue?: string;
   isRequired?: boolean;

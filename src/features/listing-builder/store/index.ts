@@ -24,7 +24,6 @@ const initialFormState: ListingFormType = {
   deadline: undefined,
   templateId: undefined,
   pocSocials: undefined,
-  applicationType: 'fixed',
   timeToComplete: undefined,
   type: undefined,
   region: Regions.GLOBAL,
@@ -43,6 +42,7 @@ const initialFormState: ListingFormType = {
   minRewardAsk: undefined,
   maxRewardAsk: undefined,
   maxBonusSpots: undefined,
+  isFndnPaying: undefined,
 };
 
 const mergeListingWithInitialFormState = (
@@ -58,9 +58,7 @@ const mergeListingWithInitialFormState = (
   deadline:
     !isDuplicating && listing.deadline
       ? dayjs(listing.deadline).format('YYYY-MM-DDTHH:mm')
-      : isDuplicating && listing.applicationType === 'rolling'
-        ? dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm')
-        : undefined,
+      : undefined,
   type: type,
   eligibility: (listing.eligibility || []).map((e) => ({
     order: e.order,
@@ -72,6 +70,7 @@ const mergeListingWithInitialFormState = (
   references: (listing.references || []).map((e) => ({
     order: e.order,
     link: e.link,
+    title: e.title,
   })),
   publishedAt: listing.publishedAt,
   rewardAmount: listing.rewardAmount,
@@ -80,6 +79,7 @@ const mergeListingWithInitialFormState = (
   minRewardAsk: listing.minRewardAsk,
   maxRewardAsk: listing.maxRewardAsk,
   maxBonusSpots: listing.maxBonusSpots,
+  isFndnPaying: listing.isFndnPaying,
 });
 
 export const useListingFormStore = create<ListingStoreType>()((set) => ({

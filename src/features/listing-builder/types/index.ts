@@ -17,7 +17,6 @@ export interface ListingFormType {
   deadline?: string;
   templateId?: string;
   pocSocials?: string;
-  applicationType?: 'fixed' | 'rolling';
   timeToComplete?: string;
   type?: 'bounty' | 'hackathon' | 'project';
   region?: Regions;
@@ -36,6 +35,7 @@ export interface ListingFormType {
   minRewardAsk?: number;
   maxRewardAsk?: number;
   maxBonusSpots?: number;
+  isFndnPaying?: boolean;
 }
 
 export interface ListingStoreType {

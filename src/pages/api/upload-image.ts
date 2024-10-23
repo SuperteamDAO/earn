@@ -1,7 +1,8 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { type NextApiRequest, type NextApiResponse } from 'next';
+import { type NextApiResponse } from 'next';
 import sharp from 'sharp';
 
+import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -11,10 +12,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   try {
@@ -64,6 +62,8 @@ export default async function handler(
       .json({ error: 'Server error', details: error.message });
   }
 }
+
+export default withAuth(handler);
 
 export const config = {
   api: {

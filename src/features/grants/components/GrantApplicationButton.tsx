@@ -2,6 +2,7 @@ import { WarningIcon } from '@chakra-ui/icons';
 import { Button, Flex, Text, Tooltip, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
+import { LuPencil } from 'react-icons/lu';
 
 import { AuthWrapper } from '@/features/auth';
 import {
@@ -10,7 +11,7 @@ import {
 } from '@/features/listings';
 import { useUser } from '@/store/user';
 
-import { userApplicationStatusQuery } from '../queries/user-application-status';
+import { userApplicationQuery } from '../queries';
 import { type Grant } from '../types';
 import { GrantApplicationModal } from './GrantApplicationModal';
 
@@ -26,31 +27,57 @@ export const GrantApplicationButton = ({
 
   const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
 
-  const { data: applicationStatus, isLoading: isUserApplicationLoading } =
-    useQuery({ ...userApplicationStatusQuery(id), enabled: !!user?.id });
+  const { data: application, isLoading: isUserApplicationLoading } = useQuery({
+    ...userApplicationQuery(id),
+    enabled: !!user?.id,
+  });
 
-  const hasApplied = applicationStatus?.hasPendingApplication;
+  let applicationState: 'APPLIED' | 'ALLOW NEW' | 'ALLOW EDIT' = 'ALLOW NEW';
+  if (
+    application?.applicationStatus === 'Pending' ||
+    application?.applicationStatus === 'Approved'
+  ) {
+    applicationState = 'APPLIED';
+    if (application?.applicationStatus === 'Pending') {
+      if (grant.isNative) {
+        applicationState = 'ALLOW EDIT';
+      }
+    }
+  }
+
+  const hasApplied =
+    applicationState === 'APPLIED' || applicationState === 'ALLOW EDIT';
 
   let buttonText;
   let buttonBG;
   let isBtnDisabled;
   let btnLoadingText;
 
-  switch (hasApplied) {
-    case true:
+  switch (applicationState) {
+    case 'APPLIED':
       buttonText = 'Applied Successfully';
       buttonBG = 'green.500';
       isBtnDisabled = true;
       btnLoadingText = null;
       break;
 
-    default:
-      buttonText = 'Apply Now';
-      buttonBG = 'brand.purple';
+    case 'ALLOW EDIT':
+      buttonText = 'Edit Application';
       isBtnDisabled = Boolean(
         user?.id && user?.isTalentFilled && !isUserEligibleByRegion,
       );
       btnLoadingText = 'Checking Application..';
+      break;
+
+    default:
+      buttonText = 'Apply Now';
+      buttonBG = 'brand.purple';
+      isBtnDisabled = Boolean(
+        !grant.isPublished ||
+          (user?.id && user?.isTalentFilled && !isUserEligibleByRegion),
+      );
+      btnLoadingText = 'Checking Application..';
+      break;
   }
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -72,6 +99,9 @@ export const GrantApplicationButton = ({
           onClose={onClose}
           isOpen={isOpen}
           grant={grant}
+          grantApplication={
+            applicationState === 'ALLOW EDIT' ? application : undefined
+          }
         />
       )}
       <Tooltip
@@ -103,6 +133,7 @@ export const GrantApplicationButton = ({
             style={{ w: 'full', direction: 'column' }}
           >
             <Button
+              gap={4}
               w={'full'}
               mt={grant?.link && !grant?.isNative ? 4 : 0}
               mb={{ base: 12, md: 5 }}
@@ -116,8 +147,9 @@ export const GrantApplicationButton = ({
               loadingText={btnLoadingText}
               onClick={handleSubmit}
               size="lg"
-              variant="solid"
+              variant={applicationState === 'ALLOW EDIT' ? 'outline' : 'solid'}
             >
+              {applicationState === 'ALLOW EDIT' && <LuPencil />}
               {buttonText}
             </Button>
           </AuthWrapper>

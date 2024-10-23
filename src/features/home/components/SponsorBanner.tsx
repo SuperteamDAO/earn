@@ -1,13 +1,18 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import { Box, Link, Text } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
-import Briefcase from '@/public/assets/home/display/briefcase.png';
+import Briefcase from '@/public/assets/home/display/briefcase.webp';
+
+import { userCountQuery } from '../queries';
 
 export const SponsorBanner = () => {
   const posthog = usePostHog();
+
+  const { data } = useQuery(userCountQuery);
   return (
     <Link
       className="ph-no-capture"
@@ -40,7 +45,11 @@ export const SponsorBanner = () => {
           fontWeight={500}
           lineHeight={'1.1rem'}
         >
-          Reach 30,000+ crypto talent from one single dashboard
+          Reach{' '}
+          {(
+            Math.floor((data?.totalUsers || 0) / 10000) * 10000
+          ).toLocaleString()}
+          + crypto talent from one single dashboard
         </Text>
       </Box>
       <Image

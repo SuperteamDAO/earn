@@ -190,16 +190,15 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                 listing?.type ?? 'bounty',
               );
 
-              const deadline = formatDeadline(
-                listing?.deadline,
-                listing?.applicationType,
-                listing?.type,
-              );
+              const deadline = formatDeadline(listing?.deadline, listing?.type);
 
               const pastDeadline = isDeadlineOver(listing?.deadline);
 
               const listingStatus = getListingStatus(listing);
-              const listingLabel = getListingTypeLabel(listing?.type!);
+              const listingLabel =
+                listingStatus === 'Draft'
+                  ? 'Draft'
+                  : getListingTypeLabel(listing?.type!);
 
               const listingLink =
                 listing?.type === 'grant'
@@ -249,6 +248,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           _hover={{ textDecoration: 'underline' }}
                           whiteSpace="nowrap"
                           textOverflow="ellipsis"
+                          title={listing.title}
                         >
                           {listing.title}
                         </Text>
@@ -333,7 +333,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                     </Tag>
                   </Td>
                   <Td px={3} py={2}>
-                    {listing.status === 'OPEN' && !!listing.isPublished && (
+                    {listing.status === 'OPEN' && !!listing.isPublished ? (
                       <Button
                         className="ph-no-capture"
                         color="#6366F1"
@@ -352,16 +352,13 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           ? 'Applications'
                           : 'Submissions'}
                       </Button>
-                    )}
-                    {!!(
-                      (session?.user?.role === 'GOD' &&
+                    ) : (session?.user?.role === 'GOD' &&
                         listing.type !== 'grant' &&
                         !listing.isPublished) ||
-                      (!listing.isPublished &&
-                        !pastDeadline &&
+                      (!pastDeadline &&
                         listing.type !== 'grant' &&
-                        listing.status === 'OPEN')
-                    ) && (
+                        (listing.status === 'OPEN' ||
+                          listing.status === 'PREVIEW')) ? (
                       <Link
                         as={NextLink}
                         href={`/dashboard/listings/${listing.slug}/edit/`}
@@ -378,6 +375,10 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           Edit
                         </Button>
                       </Link>
+                    ) : (
+                      <Text px={3} color="brand.slate.400">
+                        —
+                      </Text>
                     )}
                   </Td>
                   <Td px={0} py={2}>
@@ -417,10 +418,10 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         {!!(
                           (session?.user?.role === 'GOD' &&
                             listing.type !== 'grant') ||
-                          (listing.isPublished &&
-                            !pastDeadline &&
+                          (!pastDeadline &&
                             listing.type !== 'grant' &&
-                            listing.status === 'OPEN')
+                            (listing.status === 'OPEN' ||
+                              listing.status === 'PREVIEW'))
                         ) && (
                           <Link
                             as={NextLink}

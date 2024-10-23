@@ -8,22 +8,15 @@ import { dayjs } from '@/utils/dayjs';
 
 export const formatDeadline = (
   deadline: string | undefined,
-  applicationType: 'fixed' | 'rolling' | undefined,
   type: string | undefined,
 ) => {
   if (type === 'grant') {
     return 'Ongoing';
   }
-  if (applicationType === 'rolling') {
-    return 'Rolling';
-  }
-  if (applicationType === 'fixed') {
-    return deadline ? dayjs(deadline).format('DD MMM h:mm A') : '-';
-  }
-  return '-';
+  return deadline ? dayjs(deadline).format("DD MMM'YY h:mm A") : '-';
 };
 
-export const isDeadlineOver = (deadline: string | undefined) =>
+export const isDeadlineOver = (deadline: string | Date | undefined) =>
   deadline ? dayjs().isAfter(dayjs(deadline)) : false;
 
 export const getRegionTooltipLabel = (
@@ -69,7 +62,7 @@ export const getListingStatus = (
   listing: Listing | ListingWithSubmissions | any,
   isGrant?: boolean,
 ) => {
-  if (!listing) return 'DRAFT';
+  if (!listing) return 'Draft';
 
   const listingStatus = getListingDraftStatus(
     listing?.status,
@@ -77,7 +70,7 @@ export const getListingStatus = (
   );
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
 
-  if (listingStatus === 'PREVIEW') return 'Preview';
+  if (listingStatus === 'PREVIEW') return 'Draft';
   if (listingStatus === 'VERIFYING') return 'Under Verification';
   if (listingStatus === 'VERIFY_FAIL') return 'Verification Failed';
   if (listingStatus === 'DRAFT') return 'Draft';
@@ -91,6 +84,12 @@ export const getListingStatus = (
       if (!hasDeadlinePassed && !listing?.isWinnersAnnounced)
         return 'In Progress';
       if (!listing?.isWinnersAnnounced) return 'In Review';
+      if (
+        listing?.isWinnersAnnounced &&
+        listing?.totalPaymentsMade !== listing?.totalWinnersSelected &&
+        listing?.isFndnPaying
+      )
+        return 'Fndn to Pay';
       if (
         listing?.isWinnersAnnounced &&
         listing?.totalPaymentsMade !== listing?.totalWinnersSelected
@@ -113,6 +112,8 @@ export const getColorStyles = (status: string) => {
     case 'Completed':
       return { bgColor: '#D1FAE5', color: '#0D9488' };
     case 'Under Verification':
+    case 'Fndn to Pay':
+      return { bgColor: 'pink.100', color: 'pink.500' };
     case 'Payment Pending':
       return { bgColor: '#ffecb3', color: '#F59E0B' };
     case 'Verification Failed':

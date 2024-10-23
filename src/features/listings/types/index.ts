@@ -32,7 +32,7 @@ export interface Listing {
   poc?: User;
   source?: string;
   type?: BountyType | string;
-  applicationType?: 'fixed' | 'rolling';
+  applicationType?: 'fixed';
   totalWinnersSelected?: number;
   region?: Regions;
   totalPaymentsMade?: number;
@@ -52,6 +52,7 @@ export interface Listing {
   _count?: {
     Comments?: number;
   };
+  isFndnPaying?: boolean;
 }
 
 export interface ListingHackathon {
@@ -84,6 +85,7 @@ interface Eligibility {
 export interface References {
   order: number;
   link?: string;
+  title?: string;
 }
 
 export interface Rewards {

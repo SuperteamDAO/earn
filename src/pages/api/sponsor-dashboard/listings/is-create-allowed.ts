@@ -13,22 +13,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const listingsCount = await prisma.bounties.count({
       where: {
         sponsorId: userSponsorId,
-        OR: [
-          {
-            applicationType: 'rolling',
-            isPublished: true,
-            isActive: true,
-            isWinnersAnnounced: false,
-          },
-          {
-            isPublished: true,
-            isActive: true,
-            deadline: {
-              lte: new Date(),
-            },
-            isWinnersAnnounced: false,
-          },
-        ],
+        isPublished: true,
+        isActive: true,
+        deadline: {
+          lte: new Date(),
+        },
+        isWinnersAnnounced: false,
       },
     });
     if (listingsCount >= 5) {

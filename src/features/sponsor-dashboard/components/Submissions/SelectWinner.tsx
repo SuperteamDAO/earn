@@ -1,4 +1,4 @@
-import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
+import { CloseIcon } from '@chakra-ui/icons';
 import {
   Button,
   Circle,
@@ -69,17 +69,12 @@ export const SelectWinner = ({
     rejectedOnClose();
   };
 
-  const selectWinner = async (
-    position: number,
-    id: string | undefined,
-    ask: number | undefined,
-  ) => {
+  const selectWinner = async (position: number, id: string | undefined) => {
     if (!id) return;
     toggleWinner({
       id,
       isWinner: !!position,
       winnerPosition: position || null,
-      ask,
     });
   };
   return (
@@ -102,20 +97,6 @@ export const SelectWinner = ({
             {isPending && (
               <>
                 <Button
-                  color="#079669"
-                  bg="#ECFEF6"
-                  _hover={{ bg: '#D1FAE5' }}
-                  isDisabled={isMultiSelectOn}
-                  leftIcon={
-                    <Circle p={'5px'} bg="#079669">
-                      <CheckIcon color="white" boxSize="2.5" />
-                    </Circle>
-                  }
-                  onClick={onWinnersAnnounceOpen}
-                >
-                  Approve
-                </Button>
-                <Button
                   color="#E11D48"
                   bg="#FEF2F2"
                   _hover={{ bg: '#FED7D7' }}
@@ -128,6 +109,12 @@ export const SelectWinner = ({
                   onClick={rejectedOnOpen}
                 >
                   Reject
+                </Button>
+                <Button
+                  isDisabled={isMultiSelectOn}
+                  onClick={onWinnersAnnounceOpen}
+                >
+                  Announce As Winner
                 </Button>
               </>
             )}
@@ -145,11 +132,7 @@ export const SelectWinner = ({
             icon={<MdArrowDropDown />}
             isDisabled={!!bounty?.isWinnersAnnounced || isHackathonPage}
             onChange={(e) =>
-              selectWinner(
-                Number(e.target.value),
-                selectedSubmission?.id,
-                selectedSubmission?.ask,
-              )
+              selectWinner(Number(e.target.value), selectedSubmission?.id)
             }
             value={
               selectedSubmission?.isWinner
