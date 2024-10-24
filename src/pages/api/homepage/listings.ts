@@ -9,7 +9,7 @@ const TAKE = 20;
 interface BountyProps {
   order?: 'asc' | 'desc';
   statusFilter?: StatusFilter;
-  userRegion?: Regions[] | null;
+  userRegion?: string[] | null;
   excludeIds?: string[];
 }
 

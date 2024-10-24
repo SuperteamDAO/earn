@@ -44,7 +44,7 @@ export default async function handler(
       to: [userEmail],
       subject: 'Welcome to Superteam Earn!',
       react: WelcomeTalentTemplate(),
-      reply_to: replyToEmail,
+      replyTo: replyToEmail,
     });
 
     logger.info(`Welcome email sent successfully to: ${userEmail}`);

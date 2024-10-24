@@ -9,6 +9,7 @@ import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
+import { dayjs } from '@/utils/dayjs';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -68,30 +69,53 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const correctedSkills = cleanSkills(skills);
 
-    // sponsor never had one live listing
     let isVerifying = false;
+
     if (isPublished) {
-      isVerifying =
-        (
-          await prisma.sponsors.findUnique({
-            where: {
-              id: userSponsorId,
-            },
-            select: {
-              isCaution: true,
-            },
-          })
-        )?.isCaution || false;
-      if (!isVerifying) {
-        isVerifying =
-          (await prisma.bounties.count({
+      const sponsor = await prisma.sponsors.findUnique({
+        where: { id: userSponsorId },
+        select: { isCaution: true, isVerified: true },
+      });
+
+      if (sponsor) {
+        // sponsor is sus, be caution
+        isVerifying = sponsor.isCaution;
+
+        if (!isVerifying) {
+          // sponsor never had a live listing
+          const bountyCount = await prisma.bounties.count({
             where: {
               sponsorId: userSponsorId,
               isArchived: false,
               isPublished: true,
               isActive: true,
             },
-          })) === 0;
+          });
+          isVerifying = bountyCount === 0;
+        }
+
+        // sponsor is unverified and latest listing is in review for more than 2 weeks
+        if (!isVerifying && !sponsor.isVerified) {
+          const twoWeeksAgo = dayjs().subtract(2, 'weeks');
+
+          const overdueBounty = await prisma.bounties.findFirst({
+            select: {
+              id: true,
+            },
+            where: {
+              sponsorId: userSponsorId,
+              isArchived: false,
+              isPublished: true,
+              isActive: true,
+              isWinnersAnnounced: false,
+              deadline: {
+                lt: twoWeeksAgo.toDate(),
+              },
+            },
+          });
+
+          isVerifying = !!overdueBounty;
+        }
       }
     }
 

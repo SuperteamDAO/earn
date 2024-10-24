@@ -157,7 +157,7 @@ body {
   color: #475569 !important;
 }
 
-#reset-des {
+.listing-description {
   >*:first-child {
     margin-top: 1rem !important; // Adjusts top padding for the first paragraph
   }
@@ -211,6 +211,14 @@ pre {
     border: "none";
     outline: "none !important";
   }
+}
+
+.tiptap {
+  min-height: 100% !important;
+  border: 0px !important;
+  overscroll-behavior: none;
+  outline: none !important;
+  padding: 0rem 1rem;
 }
 
 //earn-loader-css

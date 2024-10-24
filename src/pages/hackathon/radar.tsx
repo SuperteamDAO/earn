@@ -12,10 +12,10 @@ import { Meta } from '@/layouts/Meta';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RadarLogo } from '@/svg/radar-logo';
 
-const MotionBox = motion(Box);
-const MotionFlex = motion(Flex);
-const MotionText = motion(Text);
-const MotionButton = motion(Button);
+const MotionBox = motion(Box as any);
+const MotionFlex = motion(Flex as any);
+const MotionText = motion(Text as any);
+const MotionButton = motion(Button as any);
 
 export default function Radar() {
   const router = useRouter();

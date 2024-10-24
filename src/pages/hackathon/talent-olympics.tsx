@@ -15,7 +15,6 @@ import {
   HStack,
   IconButton,
   Image,
-  keyframes,
   Link,
   Modal,
   ModalBody,
@@ -28,6 +27,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { keyframes } from '@emotion/react';
 import { type SubscribeHackathon } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';

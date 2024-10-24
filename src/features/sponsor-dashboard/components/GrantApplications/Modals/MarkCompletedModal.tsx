@@ -111,5 +111,3 @@ export function MarkCompleteModal({
     </>
   );
 }
-
-export default MarkCompleteModal;

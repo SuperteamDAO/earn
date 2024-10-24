@@ -24,6 +24,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import RichTextInputWithHelper from '@/components/Form/RichTextInput';
 import {
   TextAreaWithCounter,
   TextInputWithHelper,
@@ -35,7 +36,6 @@ import { submissionCountQuery } from '../../queries';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
 import { isValidUrl } from '../../utils';
-import { QuestionHandler } from './QuestionHandler';
 import { SubmissionTerms } from './SubmissionTerms';
 
 interface Props {
@@ -91,6 +91,7 @@ export const SubmissionModal = ({
   const [askError, setAskError] = useState('');
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
     reset,
@@ -318,48 +319,43 @@ export const SubmissionModal = ({
                   {isHackathon &&
                     eligibilityQs?.map((e, i) => {
                       return (
-                        <FormControl
-                          key={e?.order}
+                        <RichTextInputWithHelper
+                          id={`eligibility-${e?.order}`}
+                          label={e?.question}
+                          control={control}
                           isRequired={e.optional !== true}
-                        >
-                          <QuestionHandler
-                            error={isHackathon && e.error}
-                            validate={(value: string) => {
-                              if (!isHackathon) return true;
-                              if (value && e.isLink) {
-                                if (!isValidUrl(value) && eligibilityQs[i]) {
-                                  const cloneEligibilityQs = [...eligibilityQs];
-                                  const currElgibile = cloneEligibilityQs[i];
-                                  if (currElgibile) {
-                                    currElgibile.error =
-                                      'Please enter a valid link';
-                                    setEligibilityQs(cloneEligibilityQs);
-                                    return false;
-                                  }
+                          key={e?.order}
+                          validate={(value: string) => {
+                            if (!isHackathon) return true;
+                            if (value && e.isLink) {
+                              if (!isValidUrl(value) && eligibilityQs[i]) {
+                                const cloneEligibilityQs = [...eligibilityQs];
+                                const currElgibile = cloneEligibilityQs[i];
+                                if (currElgibile) {
+                                  currElgibile.error =
+                                    'Please enter a valid link';
+                                  setEligibilityQs(cloneEligibilityQs);
+                                  return false;
                                 }
                               }
-                              return true;
-                            }}
-                            register={register}
-                            question={e?.question}
-                            label={`eligibility-${e?.order}`}
-                            watch={watch}
-                          />
-                        </FormControl>
+                            }
+                            return true;
+                          }}
+                        />
                       );
                     })}
                 </>
               ) : (
                 eligibility?.map((e) => {
                   return (
-                    <FormControl key={e?.order} isRequired>
-                      <QuestionHandler
-                        register={register}
-                        question={e?.question}
-                        label={`eligibility-${e?.order}`}
-                        watch={watch}
+                    <Box key={e.order} w="full">
+                      <RichTextInputWithHelper
+                        control={control}
+                        label={e?.question}
+                        id={`eligibility-${e?.order}`}
+                        isRequired
                       />
-                    </FormControl>
+                    </Box>
                   );
                 })
               )}
@@ -420,15 +416,12 @@ export const SubmissionModal = ({
                   </Text>
                 </FormControl>
               )}
-              <TextAreaWithCounter
-                id="otherInfo"
+              <RichTextInputWithHelper
+                control={control}
                 label="Anything Else?"
+                id={`otherInfo`}
                 helperText="If you have any other links or information you'd like to share with us, please add them here!"
                 placeholder="Add info or link"
-                register={register}
-                watch={watch}
-                maxLength={2000}
-                errors={errors}
               />
 
               <TextInputWithHelper

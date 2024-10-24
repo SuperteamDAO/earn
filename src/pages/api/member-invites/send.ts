@@ -93,7 +93,7 @@ async function sendInvites(
         senderName: `${user.firstName} ${user.lastName}`,
         link: `${getURL()}signup?invite=${token}`,
       }),
-      reply_to: replyToEmail,
+      replyTo: replyToEmail,
     });
 
     logger.info(`Invite sent successfully to ${email} by user ${userId}`);

@@ -12,7 +12,12 @@ import {
   homepageGrantsQuery,
   homepageListingsQuery,
 } from '@/features/home';
-import { type Listing, ListingSection, ListingTabs } from '@/features/listings';
+import {
+  getCombinedRegion,
+  type Listing,
+  ListingSection,
+  ListingTabs,
+} from '@/features/listings';
 import { Home } from '@/layouts/Home';
 
 import { authOptions } from './api/auth/[...nextauth]';
@@ -23,7 +28,8 @@ interface Props {
   listings: Listing[];
   openForYouListings: Listing[];
   isAuth: boolean;
-  userRegion: Regions[] | null;
+  userRegion: string[] | null;
+  userGrantsRegion: Regions[] | null;
 }
 
 const InstallPWAModal = dynamic(
@@ -50,6 +56,7 @@ export default function HomePage({
   isAuth,
   userRegion,
   openForYouListings,
+  userGrantsRegion,
 }: Props) {
   const [combinedListings, setCombinedListings] = useState(listings);
   const [combinedForYouListings, setCombinedForYouListings] =
@@ -91,7 +98,7 @@ export default function HomePage({
 
   const { data: grants } = useQuery(
     homepageGrantsQuery({
-      userRegion,
+      userRegion: userGrantsRegion,
     }),
   );
 
@@ -158,18 +165,26 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   context,
 ) => {
   const session = await getServerSession(context.req, context.res, authOptions);
-  let userRegion: Regions[] | null | undefined = null;
+  let userRegion: string[] | null | undefined = null;
+  let userGrantsRegion: Regions[] | null | undefined = null;
   let isAuth = false;
 
   if (session && session.user.id) {
     isAuth = true;
-    const matchedRegion = CombinedRegions.find((region) =>
-      region.country.includes(session.user.location!),
-    );
-    if (matchedRegion?.region) {
-      userRegion = [matchedRegion.region, Regions.GLOBAL];
+    const matchedRegion = getCombinedRegion(session.user.location);
+    console.log('matched region ', matchedRegion);
+    if (matchedRegion) {
+      userRegion = [matchedRegion.name, Regions.GLOBAL];
     } else {
       userRegion = [Regions.GLOBAL];
+    }
+    const matchedGrantsRegion = CombinedRegions.find((region) =>
+      region.country.includes(session.user.location!),
+    );
+    if (matchedGrantsRegion?.region) {
+      userGrantsRegion = [matchedGrantsRegion.region, Regions.GLOBAL];
+    } else {
+      userGrantsRegion = [Regions.GLOBAL];
     }
   }
 
@@ -195,6 +210,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       openForYouListings: JSON.parse(JSON.stringify(openForYouListings)),
       isAuth,
       userRegion,
+      userGrantsRegion,
     },
   };
 };

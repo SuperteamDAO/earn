@@ -1,9 +1,12 @@
 import { Regions } from '@prisma/client';
 import { type NextApiResponse } from 'next';
 
-import { CombinedRegions } from '@/constants/Superteam';
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import { getStatusFilterQuery, type StatusFilter } from '@/features/listings';
+import {
+  getCombinedRegion,
+  getStatusFilterQuery,
+  type StatusFilter,
+} from '@/features/listings';
 import { prisma } from '@/prisma';
 
 const TAKE = 20;
@@ -32,7 +35,9 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
       (skill) => skill.skills,
     ) || [];
 
-  const userRegion = await getUserRegion(user?.location || null);
+  const userRegion = user?.location
+    ? getCombinedRegion(user?.location)
+    : undefined;
 
   const statusFilterQuery = getStatusFilterQuery(statusFilter);
   let orderBy:
@@ -65,7 +70,7 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
       isArchived: false,
       language: { in: ['eng', 'sco'] },
       region: {
-        in: userRegion ? [Regions.GLOBAL, userRegion] : [Regions.GLOBAL],
+        in: userRegion ? [Regions.GLOBAL, userRegion.name] : [Regions.GLOBAL],
       },
       AND: [
         {
@@ -145,16 +150,6 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
   }
 
   return listings;
-}
-
-async function getUserRegion(location: string | null) {
-  if (!location) return Regions.GLOBAL;
-
-  const matchedRegion = CombinedRegions.find((region) =>
-    region.country.includes(location),
-  );
-
-  return matchedRegion?.region;
 }
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
