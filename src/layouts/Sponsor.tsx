@@ -29,7 +29,11 @@ import {
   SelectHackathon,
   SelectSponsor,
 } from '@/features/listing-builder';
-import { CreateListingModal, NavItem } from '@/features/sponsor-dashboard';
+import {
+  CreateListingModal,
+  NavItem,
+  SponsorInfoModal,
+} from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
@@ -53,6 +57,11 @@ export function SponsorLayout({
   const { data: session, status } = useSession();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isSponsorInfoModalOpen,
+    onOpen: onSponsorInfoModalOpen,
+    onClose: onSponsorInfoModalClose,
+  } = useDisclosure();
   const posthog = usePostHog();
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
   const { query } = router;
@@ -94,7 +103,15 @@ export function SponsorLayout({
 
   useEffect(() => {
     const modalsToShow = async () => {
-      if (!user?.currentSponsor?.entityName && session?.user.role !== 'GOD') {
+      if (
+        user?.currentSponsorId &&
+        (!user?.firstName || !user?.lastName || !user?.username)
+      ) {
+        onSponsorInfoModalOpen();
+      } else if (
+        !user?.currentSponsor?.entityName &&
+        session?.user.role !== 'GOD'
+      ) {
         setIsEntityModalOpen(true);
       } else {
         setIsEntityModalOpen(false);
@@ -173,6 +190,10 @@ export function SponsorLayout({
       }
     >
       <FeatureModal isSponsorsRoute />
+      <SponsorInfoModal
+        onClose={onSponsorInfoModalClose}
+        isOpen={isSponsorInfoModalOpen}
+      />
 
       <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
       <Flex display={{ base: 'flex', md: 'none' }} minH="80vh" px={3}>
