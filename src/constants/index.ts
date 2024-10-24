@@ -151,6 +151,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'metaplex',
   },
   {
+    tokenName: 'Send (SEND)',
+    tokenSymbol: 'SEND',
+    mintAddress: 'SENDdRQtYMWaQrBroBrJ2Q53fgVuq95CV9UPGEvpCxa',
+    icon: 'https://assets.coingecko.com/coins/images/39222/standard/photo1719676966.jpeg?1721182505',
+    decimals: 6,
+    coingeckoSymbol: 'send-2',
+  },
+  {
     tokenName: 'PayPal USD (PYUSD)',
     tokenSymbol: 'PYUSD',
     mintAddress: '2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo',
