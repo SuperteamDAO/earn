@@ -130,7 +130,14 @@ export default async function handler(
     logger.debug(`Fetching grants from ${startDate} to ${endDate}`);
     const grantApplications = await prisma.grantApplication.findMany({
       where: {
-        applicationStatus: 'Approved',
+        OR: [
+          {
+            applicationStatus: 'Approved',
+          },
+          {
+            applicationStatus: 'Completed',
+          },
+        ],
         decidedAt: {
           gte: startDate,
           lte: endDate,

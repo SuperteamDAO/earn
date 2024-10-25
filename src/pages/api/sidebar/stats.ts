@@ -31,7 +31,14 @@ export default async function handler(
           approvedAmountInUSD: true,
         },
         where: {
-          applicationStatus: 'Approved',
+          OR: [
+            {
+              applicationStatus: 'Approved',
+            },
+            {
+              applicationStatus: 'Completed',
+            },
+          ],
         },
       });
 

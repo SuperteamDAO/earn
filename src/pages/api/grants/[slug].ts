@@ -34,7 +34,14 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           select: {
             GrantApplication: {
               where: {
-                applicationStatus: 'Approved',
+                OR: [
+                  {
+                    applicationStatus: 'Approved',
+                  },
+                  {
+                    applicationStatus: 'Completed',
+                  },
+                ],
               },
             },
           },
