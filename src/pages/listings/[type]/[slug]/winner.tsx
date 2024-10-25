@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   getListingTypeLabel,
   type Listing,
@@ -112,14 +113,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     );
     bountyData = bountyDetails.data;
 
-    const submissionsDetails = await axios.get(
+    const submissionsDetails = await axios.get<SubmissionWithUser[]>(
       `${fullUrl}api/listings/${bountyDetails.data.id}/winners/`,
     );
-    const { data } = submissionsDetails;
+    let { data } = submissionsDetails;
+    data = data.filter((d) => d.winnerPosition !== BONUS_REWARD_POSITION);
     const winners = sortRank(
-      data.map(
-        (submission: SubmissionWithUser) => submission.winnerPosition || '',
-      ),
+      data.map((submission) => submission.winnerPosition || NaN),
     );
     const sortedSubmissions = winners.map((position) =>
       data.find((d: SubmissionWithUser) => d.winnerPosition === position),
