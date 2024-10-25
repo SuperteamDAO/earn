@@ -1,4 +1,4 @@
-import { Box, Link, Text, useMediaQuery } from '@chakra-ui/react';
+import { Box, Text, useMediaQuery } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,6 @@ export const AnnouncementBar = () => {
   const [isSmallerThan800] = useMediaQuery('(max-width: 800px)');
   const { t } = useTranslation();
 
-  const href = '/hackathon/radar';
   if (isSmallerThan800) {
     return (
       <Box
@@ -16,7 +15,7 @@ export const AnnouncementBar = () => {
         w="full"
         color="white"
         bgColor={'brand.purple'}
-        href={href}
+        href="/your-target-url" // 如果需要链接，请在这里添加目标 URL
       >
         <Text
           p={3}
@@ -24,9 +23,6 @@ export const AnnouncementBar = () => {
           fontWeight={500}
           textAlign="center"
         >
-          <Link as={NextLink} textDecoration={'underline'} href={href}>
-            {t('AnnouncementBar.clickHere')}
-          </Link>{' '}
           {t('AnnouncementBar.hackathonPrizes')}
         </Text>
       </Box>

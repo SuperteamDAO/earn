@@ -1,12 +1,9 @@
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useTranslation } from 'react-i18next';
 
-import { RadarLogo } from '@/svg/radar-logo';
-
 export const SidebarBanner = () => {
   const { t } = useTranslation();
-
   return (
     <Flex
       direction={'column'}
@@ -15,22 +12,11 @@ export const SidebarBanner = () => {
       h={'max-content'}
       px={6}
       py={8}
-      bgImage={"url('/assets/hackathon/radar/sidebar-bg.webp')"}
       bgSize="cover"
       bgPosition="center"
       bgRepeat="no-repeat"
       rounded={'lg'}
     >
-      <HStack>
-        <RadarLogo
-          styles={{
-            width: '100%',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            marginBottom: '8px',
-          }}
-        />
-      </HStack>
       <Text color={'white'} fontSize={'lg'} fontWeight={'600'} opacity={0.9}>
         {t('SidebarBanner.buildProject')}
       </Text>
@@ -53,7 +39,6 @@ export const SidebarBanner = () => {
         bg="#fff"
         borderRadius={8}
         _hover={{ bg: 'orange.100' }}
-        href="/hackathon/radar"
       >
         {t('SidebarBanner.viewTracks')}
       </Button>

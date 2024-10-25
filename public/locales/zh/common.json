@@ -360,11 +360,9 @@
   },
   "NavTabs": {
     "allOpportunities": "所有机会",
-    "radar": "雷达 📡",
     "bounties": "悬赏",
     "projects": "项目",
-    "grants": "资助",
-    "hackathons": "黑客马拉松"
+    "grants": "资助"
   },
   "RecentEarners": {
     "recentEarners": "最近赚取者",
@@ -391,11 +389,6 @@
   "SideBar": {
     "liveListings": "实时列表",
     "viewAll": "查看全部"
-  },
-  "SidebarBanner": {
-    "buildProject": "为最新的 Solana 全球黑客马拉松构建项目！",
-    "submitTracks": "提交到 Earn 上的任何 Radar 侧赛道，有机会赢得超过 25 万美元的奖金池。提交截止日期为 2024 年 10 月 9 日（UTC）。",
-    "viewTracks": "查看赛道"
   },
   "SponsorBanner": {
     "becomeASponsor": "成为赞助商",
@@ -772,7 +765,6 @@
     "sponsorMayContact": "请注意，赞助商可能会在选择获胜者之前联系您以评估适合度。",
     "bountySubmission": "悬赏提交",
     "cantWaitToSee": "我们迫不及待想看看您创造了什么！",
-    "solanaRadarTrackSubmission": "Solana Radar 赛道提交",
     "note": "注意",
     "submissionLinkNote": "1. 在\"提交链接\"字段中，提交您的黑客马拉松项目最有用的链接 (可以是 loom 视频、GitHub 链接、网站等)",
     "separateSubmissionsNote": "2. 要参与不同的挑战，您需要分别提交到每个挑战",
@@ -892,7 +884,6 @@
   "desktopNavbar": {
     "sponsors": "赞助商",
     "search": "搜索",
-    "radarNavIconAlt": "雷达导航图标",
     "becomeASponsor": "成为赞助商",
     "login": "登录",
     "signUp": "注册"
@@ -936,7 +927,6 @@
     "completeYourProfile": "完成您的个人资料",
     "activityFeed": "活动动态",
     "leaderboard": "排行榜",
-    "radarNavIcon": "雷达导航图标",
     "openDrawer": "打开抽屉",
     "SolarEarn": "Solar Earn",
     "getStarted": "开始使用",

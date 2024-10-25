@@ -359,12 +359,11 @@
     }
   },
   "NavTabs": {
-    "allOpportunities": "All Opportunities",
-    "radar": "Radar 📡",
-    "bounties": "Bounties",
-    "projects": "Projects",
-    "grants": "Grants",
-    "hackathons": "Hackathons"
+    "allOpportunities": "所有机会",
+    "bounties": "悬赏",
+    "projects": "项目",
+    "grants": "资助",
+    "hackathons": "黑客马拉松"
   },
   "RecentEarners": {
     "recentEarners": "RECENT EARNERS",
@@ -391,11 +390,6 @@
   "SideBar": {
     "liveListings": "LIVE LISTINGS",
     "viewAll": "View All"
-  },
-  "SidebarBanner": {
-    "buildProject": "Build a project for the latest Solana global hackathon!",
-    "submitTracks": "Submit to any of the Radar Side Tracks on Earn, and stand to win from a pool of $250k+. Deadline for submissions is October 9, 2024 (UTC).",
-    "viewTracks": "View Tracks"
   },
   "SponsorBanner": {
     "becomeASponsor": "Become a Sponsor",
@@ -772,7 +766,6 @@
     "sponsorMayContact": "Please note that the sponsor might contact you to assess fit before picking the winner.",
     "bountySubmission": "Bounty Submission",
     "cantWaitToSee": "We can't wait to see what you've created!",
-    "solanaRadarTrackSubmission": "Solana Radar Track Submission",
     "note": "Note",
     "submissionLinkNote": "1. In the \"Link to your Submission\" field, submit your hackathon project's most useful link (could be a loom video, GitHub link, website, etc)",
     "separateSubmissionsNote": "2. To be eligible for different challenges, you need to submit to each challenge separately",
@@ -869,9 +862,8 @@
     "viewAll": "View All"
   },
   "AnnouncementBar": {
-    "clickHere": "Click here",
-    "hackathonPrizes": "to unlock $250k+ in prizes at Solana's global hackathon, exclusively on Earn",
-    "viewTracks": "View Tracks"
+    "clickHere": "点击这里",
+    "hackathonPrizes": "参加黑客马拉松赢取奖品"
   },
   "BountySnackbar": {
     "previewSponsorMessage": "Note: This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community",
@@ -892,7 +884,6 @@
   "desktopNavbar": {
     "sponsors": "SPONSORS",
     "search": "Search",
-    "radarNavIconAlt": "Radar Nav Icon",
     "becomeASponsor": "Become a Sponsor",
     "login": "Login",
     "signUp": "Sign Up"
@@ -937,7 +928,6 @@
     "completeYourProfile": "Complete your Profile",
     "activityFeed": "Activity Feed",
     "leaderboard": "Leaderboard",
-    "radarNavIcon": "Radar Nav Icon",
     "openDrawer": "Open Drawer",
     "SolarEarn": "Solar Earn",
     "getStarted": "Get Started",
