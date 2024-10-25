@@ -1,4 +1,3 @@
-import { SearchIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
   Box,
@@ -13,6 +12,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { SearchIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -136,19 +136,6 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   />
                 );
               })}
-              <Link
-                as={NextLink}
-                alignItems="center"
-                display="flex"
-                href="/hackathon/radar"
-              >
-                <Image
-                  h={'1.1rem'}
-                  objectFit={'contain'}
-                  alt={t('desktopNavbar.radarNavIconAlt')}
-                  src="/assets/hackathon/radar/nav.png"
-                />
-              </Link>
               {/* {HACKATHON_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
