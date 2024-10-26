@@ -9,16 +9,16 @@ importers:
   .:
     dependencies:
       '@chakra-ui/icons':
-        specifier: ^2.2.4
+        specifier: ^2.1.1
         version: 2.2.4(@chakra-ui/react@2.10.3(@emotion/react@11.13.3(@types/react@18.3.3)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(framer-motion@11.11.9(@emotion/is-prop-valid@1.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@chakra-ui/react':
-        specifier: ^2.10.3
+        specifier: ^2.8.2
         version: 2.10.3(@emotion/react@11.13.3(@types/react@18.3.3)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(framer-motion@11.11.9(@emotion/is-prop-valid@1.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@emotion/react':
-        specifier: ^11.13.3
+        specifier: ^11.11.3
         version: 11.13.3(@types/react@18.3.3)(react@18.3.1)
       '@emotion/styled':
-        specifier: ^11.13.0
+        specifier: ^11.11.0
         version: 11.13.0(@emotion/react@11.13.3(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1)
       '@hookform/resolvers':
         specifier: ^3.9.0
@@ -33,10 +33,10 @@ importers:
         specifier: 5.18.0
         version: 5.18.0(prisma@5.18.0)
       '@sentry/nextjs':
-        specifier: ^8.35.0
+        specifier: ^8
         version: 8.35.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@1.26.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.53.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@1.26.0(@opentelemetry/api@1.9.0))(next@14.2.5(@babel/core@7.25.9)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.80.3))(react@18.3.1)(webpack@5.91.0)
       '@solana/spl-token':
-        specifier: ^0.4.9
+        specifier: ^0.4.8
         version: 0.4.9(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.4.5)(utf-8-validate@5.0.10)
       '@solana/wallet-adapter-base':
         specifier: ^0.9.23
@@ -48,61 +48,61 @@ importers:
         specifier: ^0.9.35
         version: 0.9.35(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
       '@solana/web3.js':
-        specifier: ^1.95.4
+        specifier: ^1.93.0
         version: 1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@tanstack/react-query':
-        specifier: ^5.59.15
+        specifier: ^5.51.23
         version: 5.59.15(react@18.3.1)
       '@tiptap/extension-color':
-        specifier: ^2.9.0
+        specifier: ^2.4.0
         version: 2.9.0(@tiptap/core@2.9.0(@tiptap/pm@2.9.0))(@tiptap/extension-text-style@2.9.0(@tiptap/core@2.9.0(@tiptap/pm@2.9.0)))
       '@tiptap/extension-image':
-        specifier: ^2.9.0
+        specifier: ^2.4.0
         version: 2.9.0(@tiptap/core@2.9.0(@tiptap/pm@2.9.0))
       '@tiptap/extension-link':
-        specifier: ^2.9.0
+        specifier: ^2.4.0
         version: 2.9.0(@tiptap/core@2.9.0(@tiptap/pm@2.9.0))(@tiptap/pm@2.9.0)
       '@tiptap/extension-list-item':
-        specifier: ^2.9.0
+        specifier: ^2.4.0
         version: 2.9.0(@tiptap/core@2.9.0(@tiptap/pm@2.9.0))
       '@tiptap/extension-placeholder':
-        specifier: ^2.9.0
+        specifier: ^2.4.0
         version: 2.9.0(@tiptap/core@2.9.0(@tiptap/pm@2.9.0))(@tiptap/pm@2.9.0)
       '@tiptap/extension-text-style':
-        specifier: ^2.9.0
+        specifier: ^2.4.0
         version: 2.9.0(@tiptap/core@2.9.0(@tiptap/pm@2.9.0))
       '@tiptap/extension-underline':
-        specifier: ^2.9.0
+        specifier: ^2.4.0
         version: 2.9.0(@tiptap/core@2.9.0(@tiptap/pm@2.9.0))
       '@tiptap/pm':
-        specifier: ^2.9.0
+        specifier: ^2.4.0
         version: 2.9.0
       '@tiptap/react':
-        specifier: ^2.9.0
+        specifier: ^2.4.0
         version: 2.9.0(@tiptap/core@2.9.0(@tiptap/pm@2.9.0))(@tiptap/pm@2.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tiptap/starter-kit':
-        specifier: ^2.9.0
+        specifier: ^2.4.0
         version: 2.9.0
       '@vercel/og':
-        specifier: ^0.6.3
+        specifier: ^0.6.2
         version: 0.6.3
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.47)
       axios:
-        specifier: ^1.7.7
+        specifier: ^1.7.3
         version: 1.7.7
       boring-avatars:
-        specifier: ^1.11.2
+        specifier: ^1.10.1
         version: 1.11.2
       cloudinary:
-        specifier: ^2.5.1
+        specifier: ^2.4.0
         version: 2.5.1
       datauri:
         specifier: ^4.1.0
         version: 4.1.0
       dayjs:
-        specifier: ^1.11.13
+        specifier: ^1.11.12
         version: 1.11.13
       eslint-plugin-prettier:
         specifier: ^5.2.1
@@ -111,19 +111,19 @@ importers:
         specifier: ^7.2.3
         version: 7.2.3
       framer-motion:
-        specifier: ^11.11.9
+        specifier: ^11.2.10
         version: 11.11.9(@emotion/is-prop-valid@1.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       franc:
         specifier: ^6.2.0
         version: 6.2.0
       html-react-parser:
-        specifier: ^5.1.18
+        specifier: ^5.1.1
         version: 5.1.18(@types/react@18.3.3)(react@18.3.1)
       husky:
-        specifier: ^9.1.6
+        specifier: ^9.1.4
         version: 9.1.6
       i18next:
-        specifier: ^23.16.2
+        specifier: ^23.15.2
         version: 23.16.2
       i18next-browser-languagedetector:
         specifier: ^8.0.0
@@ -135,7 +135,7 @@ importers:
         specifier: ^10.1.1
         version: 10.1.1
       jotai:
-        specifier: ^2.10.1
+        specifier: ^2.9.2
         version: 2.10.1(@types/react@18.3.3)(react@18.3.1)
       jsonwebtoken:
         specifier: ^9.0.2
@@ -147,7 +147,7 @@ importers:
         specifier: 14.2.5
         version: 14.2.5(@babel/core@7.25.9)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.80.3)
       next-auth:
-        specifier: ^4.24.8
+        specifier: ^4.24.6
         version: 4.24.8(next@14.2.5(@babel/core@7.25.9)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.80.3))(nodemailer@6.9.15)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-axiom:
         specifier: ^0.18.1
@@ -159,13 +159,13 @@ importers:
         specifier: ^5.6.0
         version: 5.6.0(@babel/core@7.25.9)(@types/babel__core@7.20.5)(next@14.2.5(@babel/core@7.25.9)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.80.3))(webpack@5.91.0)
       next-seo:
-        specifier: ^6.6.0
+        specifier: ^6.5.0
         version: 6.6.0(next@14.2.5(@babel/core@7.25.9)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.80.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       nextjs-toploader:
-        specifier: ^1.6.12
+        specifier: ^1.6.11
         version: 1.6.12(next@14.2.5(@babel/core@7.25.9)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.80.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       nodemailer:
-        specifier: ^6.9.15
+        specifier: ^6.9.11
         version: 6.9.15
       papaparse:
         specifier: ^5.4.1
@@ -174,7 +174,7 @@ importers:
         specifier: ^8.4.47
         version: 8.4.47
       posthog-js:
-        specifier: ^1.174.3
+        specifier: ^1.157.2
         version: 1.174.3
       react:
         specifier: 18.3.1
@@ -183,37 +183,37 @@ importers:
         specifier: ^2.0.7
         version: 2.0.7(react@18.3.1)
       react-countdown:
-        specifier: ^2.3.6
+        specifier: ^2.3.5
         version: 2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
       react-dropzone:
-        specifier: ^14.2.10
+        specifier: ^14.2.3
         version: 14.2.10(react@18.3.1)
       react-hook-form:
-        specifier: ^7.53.1
+        specifier: ^7.52.2
         version: 7.53.1(react@18.3.1)
       react-i18next:
-        specifier: ^15.1.0
+        specifier: ^15.0.3
         version: 15.1.0(i18next@23.16.2)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.0(@babel/core@7.25.9)(@babel/preset-env@7.25.9(@babel/core@7.25.9))(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
       react-icons:
-        specifier: ^5.3.0
+        specifier: ^5.2.1
         version: 5.3.0(react@18.3.1)
       react-intersection-observer:
-        specifier: ^9.13.1
+        specifier: ^9.13.0
         version: 9.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-select:
-        specifier: ^5.8.1
+        specifier: ^5.8.0
         version: 5.8.1(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-textarea-autosize:
-        specifier: ^8.5.4
+        specifier: ^8.5.3
         version: 8.5.4(@types/react@18.3.3)(react@18.3.1)
       resend:
         specifier: ^3.5.0
         version: 3.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       sass:
-        specifier: ^1.80.3
+        specifier: ^1.77.5
         version: 1.80.3
       sharp:
         specifier: ^0.32.6
@@ -228,7 +228,7 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0
       tiptap-extension-resize-image:
-        specifier: ^1.1.9
+        specifier: ^1.1.7
         version: 1.1.9(@tiptap/core@2.9.0(@tiptap/pm@2.9.0))(@tiptap/extension-image@2.9.0(@tiptap/core@2.9.0(@tiptap/pm@2.9.0)))(@tiptap/pm@2.9.0)
       tslog:
         specifier: ^4.9.3
@@ -240,23 +240,23 @@ importers:
         specifier: ^3.23.8
         version: 3.23.8
       zustand:
-        specifier: ^4.5.5
+        specifier: ^4.5.4
         version: 4.5.5(@types/react@18.3.3)(immer@10.1.1)(react@18.3.1)
     devDependencies:
       '@tanstack/eslint-plugin-query':
-        specifier: ^5.59.7
+        specifier: ^5.51.15
         version: 5.59.7(eslint@8.57.1)(typescript@5.4.5)
       '@tanstack/react-query-devtools':
-        specifier: ^5.59.15
+        specifier: ^5.51.23
         version: 5.59.15(@tanstack/react-query@5.59.15(react@18.3.1))(react@18.3.1)
       '@types/eslint':
-        specifier: ~8.56.12
+        specifier: ~8.56.2
         version: 8.56.12
       '@types/eslint-config-prettier':
         specifier: ~6.11.3
         version: 6.11.3
       '@types/jsonwebtoken':
-        specifier: ^9.0.7
+        specifier: ^9.0.6
         version: 9.0.7
       '@types/lodash.debounce':
         specifier: ~4.0.9
@@ -265,7 +265,7 @@ importers:
         specifier: 20.14.2
         version: 20.14.2
       '@types/papaparse':
-        specifier: ^5.3.15
+        specifier: ^5.3.14
         version: 5.3.15
       '@types/react':
         specifier: 18.3.3
@@ -277,10 +277,10 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       '@typescript-eslint/eslint-plugin':
-        specifier: ^6.21.0
+        specifier: ^6.19.0
         version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.4.5))(eslint@8.57.1)(typescript@5.4.5)
       '@typescript-eslint/parser':
-        specifier: ^6.21.0
+        specifier: ^6.19.0
         version: 6.21.0(eslint@8.57.1)(typescript@5.4.5)
       babel-plugin-superjson-next:
         specifier: ^0.4.5
@@ -289,10 +289,10 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       eslint:
-        specifier: ^8.57.1
+        specifier: ^8.57.0
         version: 8.57.1
       eslint-config-next:
-        specifier: ^14.2.15
+        specifier: ^14.2.6
         version: 14.2.15(eslint@8.57.1)(typescript@5.4.5)
       eslint-config-prettier:
         specifier: ^9.1.0
@@ -301,7 +301,7 @@ importers:
         specifier: ^0.11.0
         version: 0.11.0(eslint@8.57.1)(typescript@5.4.5)
       eslint-plugin-react:
-        specifier: ^7.37.1
+        specifier: ^7.35.0
         version: 7.37.1(eslint@8.57.1)
       eslint-plugin-react-hooks:
         specifier: ^4.6.2
@@ -310,16 +310,16 @@ importers:
         specifier: ^12.1.1
         version: 12.1.1(eslint@8.57.1)
       eslint-plugin-unused-imports:
-        specifier: ^3.2.0
+        specifier: ^3.1.0
         version: 3.2.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.4.5))(eslint@8.57.1)(typescript@5.4.5))(eslint@8.57.1)
       lint-staged:
-        specifier: ^15.2.10
+        specifier: ^15.2.8
         version: 15.2.10
       next-superjson-plugin:
         specifier: ^0.6.3
         version: 0.6.3(next@14.2.5(@babel/core@7.25.9)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.80.3))(superjson@1.13.3)
       prettier:
-        specifier: ^3.3.3
+        specifier: ^3.3.2
         version: 3.3.3
       prisma:
         specifier: 5.18.0
@@ -337,7 +337,7 @@ importers:
         specifier: 5.4.5
         version: 5.4.5
       typescript-eslint:
-        specifier: ^7.18.0
+        specifier: ^7.11.0
         version: 7.18.0(eslint@8.57.1)(typescript@5.4.5)
 
 packages:

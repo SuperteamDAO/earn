@@ -29,12 +29,17 @@ interface Props {
   onSearchOpen: () => void;
 }
 
-const UserMenu = dynamic(() =>
-  import('./UserMenu').then((mod) => mod.UserMenu),
+const UserMenu = dynamic(
+  () => import('./UserMenu').then((mod) => mod.UserMenu),
+  {
+    ssr: false,
+  },
 );
-
-const LogoContextMenu = dynamic(() =>
-  import('./LogoContextMenu').then((mod) => mod.LogoContextMenu),
+const LogoContextMenu = dynamic(
+  () => import('./LogoContextMenu').then((mod) => mod.LogoContextMenu),
+  {
+    ssr: false,
+  },
 );
 
 export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
@@ -136,19 +141,6 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   />
                 );
               })}
-              <Link
-                as={NextLink}
-                alignItems="center"
-                display="flex"
-                href="/hackathon/radar"
-              >
-                <Image
-                  h={'1.1rem'}
-                  objectFit={'contain'}
-                  alt={t('desktopNavbar.radarNavIconAlt')}
-                  src="/assets/hackathon/radar/nav.png"
-                />
-              </Link>
               {/* {HACKATHON_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (

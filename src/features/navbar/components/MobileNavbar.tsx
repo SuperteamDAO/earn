@@ -182,21 +182,6 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               label={t('MobileNavbar.leaderboard')}
               isActive={false}
             />
-            <Divider my={2} borderColor={'brand.slate.300'} />
-            <Link
-              as={NextLink}
-              alignItems="center"
-              display="flex"
-              pt={2}
-              href="/hackathon/radar"
-            >
-              <Image
-                h={6}
-                objectFit={'contain'}
-                alt={t('MobileNavbar.radarNavIcon')}
-                src="/assets/hackathon/radar/nav.png"
-              />
-            </Link>
           </DrawerBody>
         </DrawerContent>
       </Drawer>

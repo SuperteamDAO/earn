@@ -1,4 +1,4 @@
-import { Box, Link, Text, useMediaQuery } from '@chakra-ui/react';
+import { Box, Text, useMediaQuery } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,9 +24,6 @@ export const AnnouncementBar = () => {
           fontWeight={500}
           textAlign="center"
         >
-          <Link as={NextLink} textDecoration={'underline'} href={href}>
-            {t('AnnouncementBar.clickHere')}
-          </Link>{' '}
           {t('AnnouncementBar.hackathonPrizes')}
         </Text>
       </Box>

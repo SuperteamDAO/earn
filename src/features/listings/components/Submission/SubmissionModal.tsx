@@ -242,7 +242,6 @@ export const SubmissionModal = ({
       subheadingText = t('SubmissionModal.cantWaitToSee');
       break;
     case 'hackathon':
-      headerText = t('SubmissionModal.solanaRadarTrackSubmission');
       subheadingText = (
         <>
           {t('SubmissionModal.note')}:
