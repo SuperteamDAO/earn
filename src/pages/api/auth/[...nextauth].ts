@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
           to: [identifier],
           subject: 'Log in to Superteam Earn',
           react: OTPTemplate({ token }),
-          reply_to: replyToEmail,
+          replyTo: replyToEmail,
         });
       },
       maxAge: 30 * 60,

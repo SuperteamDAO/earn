@@ -147,13 +147,26 @@ export default function Talent() {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { req } = context;
 
-  const res = await axios.get(`${getURL()}api/user`, {
-    headers: {
-      Cookie: req.headers.cookie,
-    },
-  });
+  try {
+    const res = await axios.get(`${getURL()}api/user`, {
+      headers: {
+        Cookie: req.headers.cookie,
+      },
+    });
 
-  if (res.data.isTalentFilled === true) {
+    if (res.data.isTalentFilled === true) {
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        },
+      };
+    }
+
+    return {
+      props: {},
+    };
+  } catch (error: any) {
     return {
       redirect: {
         destination: '/',
@@ -161,8 +174,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-
-  return {
-    props: {},
-  };
 };

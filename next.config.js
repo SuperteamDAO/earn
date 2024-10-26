@@ -16,7 +16,6 @@ const nextConfig = {
   poweredByHeader: false,
   trailingSlash: true,
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     remotePatterns: [
       {

@@ -63,7 +63,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       prisma.grantApplication.count({
         where: {
           grant: { sponsorId: userSponsorId },
-          applicationStatus: 'Approved',
+          OR: [
+            {
+              applicationStatus: 'Approved',
+            },
+            {
+              applicationStatus: 'Completed',
+            },
+          ],
         },
       }),
       prisma.submission.count({

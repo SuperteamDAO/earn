@@ -45,7 +45,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     if (user && user.email && categories.length > 0) {
       console.log('yo');
       logger.debug(`Removing unsubscribe entry for email: ${user.email}`);
-      await prisma.unsubscribedEmail.delete({
+      await prisma.unsubscribedEmail.deleteMany({
         where: {
           email: user.email,
         },

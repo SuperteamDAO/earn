@@ -100,7 +100,14 @@ export default async function grants(
           select: {
             GrantApplication: {
               where: {
-                applicationStatus: 'Approved',
+                OR: [
+                  {
+                    applicationStatus: 'Approved',
+                  },
+                  {
+                    applicationStatus: 'Completed',
+                  },
+                ],
               },
             },
           },

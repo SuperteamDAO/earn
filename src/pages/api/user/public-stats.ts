@@ -51,7 +51,9 @@ export default async function handler(
     ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
 
     const grantWinnings = result.GrantApplication.filter(
-      (g) => g.applicationStatus === 'Approved',
+      (g) =>
+        g.applicationStatus === 'Approved' ||
+        g.applicationStatus === 'Completed',
     ).reduce(
       (sum, application) => sum + (application.approvedAmountInUSD || 0),
       0,

@@ -80,6 +80,9 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
       console.log('user', user);
       setValue('firstName', user?.firstName);
       setValue('lastName', user?.lastName);
+      setValue('publicKey', user?.publicKey || '');
+      setValue('username', user?.username || '');
+      setUsername(user?.username || '');
       setValue('photo', user?.photo);
       setImageUrl(user.photo || '');
     }
