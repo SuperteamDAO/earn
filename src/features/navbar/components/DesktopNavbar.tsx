@@ -1,3 +1,4 @@
+import { SearchIcon } from '@chakra-ui/icons';
 import {
   AbsoluteCenter,
   Box,
@@ -12,7 +13,6 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { SearchIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';

@@ -7,6 +7,7 @@ export const AnnouncementBar = () => {
   const [isSmallerThan800] = useMediaQuery('(max-width: 800px)');
   const { t } = useTranslation();
 
+  const href = '/hackathon/radar';
   if (isSmallerThan800) {
     return (
       <Box
@@ -15,7 +16,7 @@ export const AnnouncementBar = () => {
         w="full"
         color="white"
         bgColor={'brand.purple'}
-        href="/your-target-url" // 如果需要链接，请在这里添加目标 URL
+        href={href}
       >
         <Text
           p={3}
