@@ -377,6 +377,7 @@ model User {
   Scouts             Scouts[]
   GrantApplication   GrantApplication[]
   SubscribeHackathon SubscribeHackathon[]
+  isBlocked          Boolean              @default(false)
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
