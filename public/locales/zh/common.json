@@ -96,8 +96,6 @@
     "earningGlobalStandards": "开始按全球标准赚钱"
   },
   "signIn": {
-    "continueWithGoogle": "使用 Google 继续",
-    "or": "或",
     "continueWithEmail": "使用电子邮件继续",
     "termsAgreement": "使用本网站表示您同意我们的<1>使用条款</1>和<2>隐私政策</2>。",
     "needHelp": "需要帮助？请通过 <1>support@Solarearn.com</1> 联系我们"
@@ -619,7 +617,7 @@
     "errorFixedRewardAmount": "请指定总奖励金额以继续",
     "errorRangeRewardAmount": "请指定您首选的最小和最大报酬范围",
     "errorInvalidRange": "报酬范围不正确；最大值必须高于最小值。请调整",
-    "errorEqualRange": "报酬范围不正确；最大值必须高于最小值。请调整。",
+    "errorEqualRange": "报酬范围不正确；最大值必须高于最小值。��调整。",
     "errorBonusZero": "每个奖金奖项不能为 0",
     "errorBonusNotMentioned": "未提及奖金奖励",
     "errorIncompleteRewards": "请填写所有领奖台排名或删除未使用的",

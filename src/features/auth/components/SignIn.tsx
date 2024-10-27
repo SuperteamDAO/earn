@@ -1,22 +1,11 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Link,
-  SlideFade,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Link, SlideFade, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { signIn } from 'next-auth/react';
-import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { MdOutlineEmail } from 'react-icons/md';
 
 import { TERMS_OF_USE } from '@/constants';
-import { GoogleIcon } from '@/svg/google';
 
 import { EmailSignIn } from './EmailSignIn';
 
@@ -27,15 +16,7 @@ interface SigninProps {
 
 export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
   const router = useRouter();
-  const posthog = usePostHog();
   const { t } = useTranslation('common');
-
-  const handleGmailSignIn = async () => {
-    posthog.capture('google_auth');
-    signIn('google', {
-      callbackUrl: `${router.asPath}?loginState=signedIn`,
-    });
-  };
 
   return (
     <>
@@ -53,24 +34,6 @@ export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
                   fontSize="md"
                   textAlign="center"
                 >
-                  <Button
-                    className="ph-no-capture"
-                    w="100%"
-                    fontSize="17px"
-                    fontWeight={500}
-                    leftIcon={<GoogleIcon />}
-                    onClick={handleGmailSignIn}
-                    size="lg"
-                  >
-                    {t('signIn.continueWithGoogle')}
-                  </Button>
-                  <Flex align={'center'} gap={4} w="100%" my={3}>
-                    <Divider borderColor={'brand.slate.300'} />{' '}
-                    <Text color={'brand.slate.400'} fontSize="14px">
-                      {t('signIn.or')}
-                    </Text>{' '}
-                    <Divider borderColor={'brand.slate.300'} />
-                  </Flex>
                   <Button
                     w="100%"
                     h="2.9rem"
