@@ -88,6 +88,97 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       publishedAt = new Date();
     }
 
+    const type = updatedData.type || listing.type;
+    if (
+      ('isPublished' in updatedData && isPublished) ||
+      (listing.isPublished &&
+        ('rewards' in updatedData ||
+          'rewardAmount' in updatedData ||
+          'token' in updatedData ||
+          'maxBonusSpots' in updatedData ||
+          'minRewardAsk' in updatedData ||
+          'maxRewardAsk' in updatedData ||
+          'compensationType' in updatedData))
+    ) {
+      if ('token' in updatedData && !token) {
+        return res.status(400).json({ error: 'Please select a valid token' });
+      }
+
+      if (type === 'project') {
+        const finalCompensationType =
+          compensationType || listing.compensationType;
+        const finalRewardAmount = rewardAmount ?? listing.rewardAmount;
+        const finalMinRewardAsk = minRewardAsk ?? listing.minRewardAsk;
+        const finalMaxRewardAsk = maxRewardAsk ?? listing.maxRewardAsk;
+
+        if ('compensationType' in updatedData && !finalCompensationType) {
+          return res
+            .status(400)
+            .json({ error: 'Please add a compensation type' });
+        }
+
+        if (
+          finalCompensationType === 'fixed' &&
+          'rewardAmount' in updatedData &&
+          !finalRewardAmount
+        ) {
+          return res.status(400).json({
+            error: 'Please specify the total reward amount to proceed',
+          });
+        }
+
+        if (finalCompensationType === 'range') {
+          const isUpdatingRange =
+            'minRewardAsk' in updatedData || 'maxRewardAsk' in updatedData;
+          if (isUpdatingRange && (!finalMinRewardAsk || !finalMaxRewardAsk)) {
+            return res.status(400).json({
+              error:
+                'Please specify your preferred minimum and maximum compensation range',
+            });
+          }
+          if (isUpdatingRange && finalMaxRewardAsk <= finalMinRewardAsk) {
+            return res.status(400).json({
+              error:
+                'The compensation range is incorrect; the maximum must be higher than the minimum',
+            });
+          }
+        }
+      } else {
+        const finalRewards = rewards || listing.rewards;
+
+        if ('rewards' in updatedData && finalRewards) {
+          if (BONUS_REWARD_POSITION in finalRewards) {
+            if (finalRewards[BONUS_REWARD_POSITION] === 0) {
+              return res.status(400).json({
+                error: "Bonus per prize can't be 0",
+              });
+            }
+            if (finalRewards[BONUS_REWARD_POSITION] < 0.01) {
+              return res.status(400).json({
+                error: "Bonus per prize can't be less than 0.01",
+              });
+            }
+          }
+
+          const prizePositions = Object.keys(finalRewards)
+            .filter((key) => key !== BONUS_REWARD_POSITION.toString())
+            .map(Number);
+
+          for (let i = 1; i <= prizePositions.length; i++) {
+            if (
+              !prizePositions.includes(i) ||
+              !finalRewards[i] ||
+              isNaN(finalRewards[i])
+            ) {
+              return res.status(400).json({
+                error: 'Please fill all podium ranks or remove unused',
+              });
+            }
+          }
+        }
+      }
+    }
+
     const pastDeadline = isDeadlineOver(listing?.deadline || undefined);
     const wasUnPublished =
       listing.status === 'OPEN' &&
@@ -176,31 +267,52 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
+    const sponsor = await prisma.sponsors.findUnique({
+      where: { id: userSponsorId },
+      select: { isCaution: true, isVerified: true, st: true },
+    });
+
     let isVerifying = listing.status === 'VERIFYING';
     if (isPublished) {
-      isVerifying =
-        listing.status === 'VERIFYING' ||
-        (
-          await prisma.sponsors.findUnique({
-            where: {
-              id: userSponsorId,
-            },
-            select: {
-              isCaution: true,
-            },
-          })
-        )?.isCaution ||
-        false;
-      if (!isVerifying) {
-        isVerifying =
-          (await prisma.bounties.count({
+      if (sponsor) {
+        // sponsor is sus, be caution
+        isVerifying = sponsor.isCaution;
+
+        if (!isVerifying) {
+          // sponsor never had a live listing
+          const bountyCount = await prisma.bounties.count({
             where: {
               sponsorId: userSponsorId,
               isArchived: false,
               isPublished: true,
               isActive: true,
             },
-          })) === 0;
+          });
+          isVerifying = bountyCount === 0;
+        }
+
+        // sponsor is unverified and latest listing is in review for more than 2 weeks
+        if (!isVerifying && !sponsor.isVerified) {
+          const twoWeeksAgo = dayjs().subtract(2, 'weeks');
+
+          const overdueBounty = await prisma.bounties.findFirst({
+            select: {
+              id: true,
+            },
+            where: {
+              sponsorId: userSponsorId,
+              isArchived: false,
+              isPublished: true,
+              isActive: true,
+              isWinnersAnnounced: false,
+              deadline: {
+                lt: twoWeeksAgo.toDate(),
+              },
+            },
+          });
+
+          isVerifying = !!overdueBounty;
+        }
       }
     }
 
@@ -227,6 +339,9 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
+    const isFndnPaying =
+      sponsor?.st && type !== 'project' ? data.isFndnPaying : false;
+
     const result = await prisma.bounties.update({
       where: { id: id as string },
       data: {
@@ -243,6 +358,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         publishedAt,
         usdValue,
         language,
+        isFndnPaying,
         ...(skillsToUpdate !== undefined && { skills: skillsToUpdate }),
       },
     });

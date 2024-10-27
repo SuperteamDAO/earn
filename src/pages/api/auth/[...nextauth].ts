@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
           to: [identifier],
           subject: 'Log in to Superteam Earn',
           react: OTPTemplate({ token }),
-          reply_to: replyToEmail,
+          replyTo: replyToEmail,
         });
       },
       maxAge: 30 * 60,
@@ -74,6 +74,18 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   callbacks: {
+    async signIn({ user }) {
+      const userRecord = await prisma.user.findUnique({
+        where: { email: user.email as string },
+        select: { isBlocked: true },
+      });
+
+      if (userRecord?.isBlocked) {
+        return '/blocked';
+      }
+
+      return true;
+    },
     async jwt({ token, user, account }) {
       return { ...token, ...user, ...account };
     },

@@ -9,7 +9,7 @@ const TAKE = 20;
 interface BountyProps {
   order?: 'asc' | 'desc';
   statusFilter?: StatusFilter;
-  userRegion?: Regions[] | null;
+  userRegion?: string[] | null;
   excludeIds?: string[];
 }
 
@@ -69,7 +69,6 @@ export async function getListings({
       token: true,
       winnersAnnouncedAt: true,
       slug: true,
-      applicationType: true,
       isWinnersAnnounced: true,
       isFeatured: true,
       compensationType: true,

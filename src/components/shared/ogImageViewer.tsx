@@ -62,19 +62,34 @@ export const OgImageViewer = ({
   const { data: ogData, isLoading } = useQuery(ogImageQuery(externalUrl!));
 
   useEffect(() => {
-    if (ogData?.images?.[0]?.url) {
-      setCurrentImageUrl(ogData.images?.[0]?.url);
-      if (type && id) {
-        axios.post('/api/og/update', {
-          type,
-          url: ogData.images?.[0]?.url,
-          id,
-        });
+    const updateOgImage = async () => {
+      if (ogData?.images?.[0]?.url && type && id) {
+        try {
+          await axios.post('/api/og/update', {
+            type,
+            url: ogData.images[0].url,
+            id,
+          });
+          setCurrentImageUrl(ogData.images[0].url);
+        } catch (error) {
+          await axios.post('/api/og/update', {
+            type,
+            url: 'error',
+            id,
+          });
+          setCurrentImageUrl(fallbackImage);
+        }
+      } else if (!imageUrl && !externalUrl) {
+        setCurrentImageUrl(fallbackImage);
       }
-    } else if (!imageUrl && !externalUrl) {
+    };
+
+    if (!currentImageUrl) {
+      updateOgImage();
+    } else if (currentImageUrl === 'error') {
       setCurrentImageUrl(fallbackImage);
     }
-  }, [ogData, imageUrl, externalUrl, type, id]);
+  }, [ogData, imageUrl, externalUrl, type, id, fallbackImage]);
 
   const handleImageError = useCallback(() => {
     setCurrentImageUrl(fallbackImage);
@@ -101,7 +116,7 @@ export const OgImageViewer = ({
           textOverflow="ellipsis"
           noOfLines={1}
         >
-          {title || ogData?.title}
+          {title || ogData?.title || ''}
         </Text>
       )}
     </div>

@@ -250,7 +250,14 @@ export default async function handler(
       !takeOnlyType || (takeOnlyType && takeOnlyType === 'grant-application')
         ? await prisma.grantApplication.findMany({
             where: {
-              applicationStatus: 'Approved',
+              OR: [
+                {
+                  applicationStatus: 'Approved',
+                },
+                {
+                  applicationStatus: 'Completed',
+                },
+              ],
               decidedAt: {
                 ...(startDate ? { gte: startDate } : {}),
                 lte: endDate,
@@ -281,6 +288,14 @@ export default async function handler(
             where: {
               id: highlightId,
               ...(userId ? { userId: userId as string } : {}),
+              OR: [
+                {
+                  applicationStatus: 'Approved',
+                },
+                {
+                  applicationStatus: 'Completed',
+                },
+              ],
             },
             include: grantApplicationInclude,
           })

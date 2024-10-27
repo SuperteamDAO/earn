@@ -20,7 +20,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Regions } from '@prisma/client';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useSession } from 'next-auth/react';
@@ -38,7 +37,7 @@ import { z } from 'zod';
 
 import { SkillSelect } from '@/components/shared/SkillSelect';
 import { type MultiSelectOptions } from '@/constants';
-import { CombinedRegions, Superteams } from '@/constants/Superteam';
+import { Superteams } from '@/constants/Superteam';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
@@ -48,6 +47,7 @@ import { type ListingFormType } from '../../types';
 import { getSuggestions, mergeSkills } from '../../utils';
 import { SelectSponsor } from '../SelectSponsor';
 import { ListingFormLabel, ListingTooltip } from './Form';
+import { RegionSelector } from './Form/RegionSelector';
 
 interface Props {
   editable: boolean;
@@ -134,8 +134,7 @@ export const ListingBasic = ({
           },
         ),
       region: z.string().optional(),
-      applicationType: z.string().optional(),
-      deadline: z.string().optional(),
+      deadline: z.string(),
       timeToComplete: z.string().nullable().optional(),
       referredBy: z.string().nullable().optional(),
       isPrivate: z.boolean(),
@@ -154,17 +153,6 @@ export const ListingBasic = ({
           code: 'custom',
         });
       }
-      if (
-        type !== 'hackathon' &&
-        applicationType !== 'rolling' &&
-        !data.deadline
-      ) {
-        ctx.addIssue({
-          path: ['deadline'],
-          message: 'Deadline is required',
-          code: 'custom',
-        });
-      }
     });
 
   const {
@@ -175,6 +163,7 @@ export const ListingBasic = ({
     getValues,
     reset,
     trigger,
+    control,
     formState: { errors },
   } = useForm({
     mode: 'onTouched',
@@ -185,7 +174,6 @@ export const ListingBasic = ({
       skills: form?.skills,
       pocSocials: form?.pocSocials,
       region: form?.region,
-      applicationType: form?.applicationType,
       deadline: form?.deadline || undefined,
       timeToComplete: form?.timeToComplete,
       referredBy: form?.referredBy,
@@ -211,7 +199,6 @@ export const ListingBasic = ({
         skills: form?.skills,
         pocSocials: form?.pocSocials,
         region: form?.region,
-        applicationType: form?.applicationType || 'fixed',
         timeToComplete: form?.timeToComplete,
         referredBy: form?.referredBy,
         isPrivate: form?.isPrivate,
@@ -222,7 +209,6 @@ export const ListingBasic = ({
 
   const title = watch('title');
   const slug = watch('slug');
-  const applicationType = watch('applicationType');
   const isPrivate = watch('isPrivate');
   const isFndnPaying = watch('isFndnPaying');
 
@@ -477,26 +463,9 @@ export const ListingBasic = ({
             skills={skills}
             subSkills={subSkills}
           />
-          <FormControl w="full" mb={5} isInvalid={!!errors.region}>
-            <Flex>
-              <ListingFormLabel htmlFor="region">
-                Listing Geography
-              </ListingFormLabel>
-              <ListingTooltip label="Select the Superteam region this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
-            </Flex>
-            <Select {...register('region')}>
-              <option value={Regions.GLOBAL}>Global</option>
-              {CombinedRegions.map((region) => (
-                <option value={region.region} key={region.displayValue}>
-                  {region.displayValue}
-                </option>
-              ))}
-            </Select>
-
-            <FormErrorMessage>
-              {errors.region ? <>{errors.region.message}</> : <></>}
-            </FormErrorMessage>
-          </FormControl>
+          <Box w="full" mb={5}>
+            <RegionSelector control={control} errors={errors} />
+          </Box>
           <FormControl
             w="full"
             mb={5}
@@ -526,50 +495,8 @@ export const ListingBasic = ({
               {errors.pocSocials ? <>{errors.pocSocials.message}</> : <></>}
             </FormErrorMessage>
           </FormControl>
-          {isProject && (
-            <FormControl
-              w="full"
-              mb={5}
-              isInvalid={!!errors.applicationType}
-              isRequired={isProject}
-            >
-              <Flex>
-                <ListingFormLabel htmlFor="applicationType">
-                  Application Type
-                </ListingFormLabel>
-              </Flex>
-
-              <Select
-                defaultValue={'fixed'}
-                {...register('applicationType', {
-                  required: true,
-                  onChange: (e) => {
-                    const value = e.target.value;
-                    if (value === 'rolling') {
-                      handleDeadlineSelection(30);
-                    }
-                  },
-                })}
-              >
-                <option value="fixed">Fixed Deadline</option>
-                <option value="rolling">Rolling Deadline</option>
-              </Select>
-
-              <FormErrorMessage>
-                {errors.applicationType ? (
-                  <>{errors.applicationType.message}</>
-                ) : (
-                  <></>
-                )}
-              </FormErrorMessage>
-            </FormControl>
-          )}
-          {type !== 'hackathon' && applicationType !== 'rolling' && (
-            <FormControl
-              mb={5}
-              isInvalid={!!errors.deadline}
-              isRequired={applicationType ? applicationType === 'fixed' : true}
-            >
+          {type !== 'hackathon' && (
+            <FormControl mb={5} isInvalid={!!errors.deadline} isRequired>
               <Flex align={'center'} justify={'start'}>
                 <ListingFormLabel htmlFor={'deadline'}>
                   Deadline (in{' '}

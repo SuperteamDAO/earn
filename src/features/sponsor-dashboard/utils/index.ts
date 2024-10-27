@@ -10,6 +10,7 @@ export const colorMap = {
   Rejected: { bg: 'red.100', color: 'red.600' },
   Pending: { bg: 'orange.100', color: 'orange.800' },
   Winner: { bg: 'green.100', color: 'green.800' },
+  Completed: { bg: 'blue.100', color: 'blue.600' },
 };
 
 export async function createSponsorEmailSettings(userId: string) {

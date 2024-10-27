@@ -600,6 +600,7 @@ export const DescriptionBuilder = ({
             <div style={{ height: '100% !important' }} className="reset">
               <EditorContent
                 id="reset-des"
+                className="listing-description"
                 width={'100%'}
                 height={'100%'}
                 editor={editor}

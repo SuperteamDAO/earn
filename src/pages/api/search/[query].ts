@@ -180,7 +180,6 @@ s.name LIKE CONCAT('%', ?, '%')
     b.title, 
     b.token, 
     b.slug, 
-    b.applicationType, 
     b.isWinnersAnnounced, 
     b.description, 
     b.compensationType, 
@@ -247,7 +246,7 @@ s.name LIKE CONCAT('%', ?, '%')
     (
       SELECT COUNT(*)
       FROM GrantApplication ga
-      WHERE ga.grantId = b.id AND ga.applicationStatus = 'Approved'
+      WHERE ga.grantId = b.id AND (ga.applicationStatus = 'Approved' OR ga.applicationStatus = 'Completed')
     ) as approvedApplications
     FROM Grants b
     JOIN Sponsors s ON b.sponsorId = s.id

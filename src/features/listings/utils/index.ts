@@ -1,4 +1,5 @@
-import { CombinedRegions } from '@/constants/Superteam';
+import { countries } from '@/constants';
+import { Superteams } from '@/constants/Superteam';
 import type {
   Listing,
   ListingWithSubmissions,
@@ -8,19 +9,12 @@ import { dayjs } from '@/utils/dayjs';
 
 export const formatDeadline = (
   deadline: string | undefined,
-  applicationType: 'fixed' | 'rolling' | undefined,
   type: string | undefined,
 ) => {
   if (type === 'grant') {
     return 'Ongoing';
   }
-  if (applicationType === 'rolling') {
-    return 'Rolling';
-  }
-  if (applicationType === 'fixed') {
-    return deadline ? dayjs(deadline).format("DD MMM'YY h:mm A") : '-';
-  }
-  return '-';
+  return deadline ? dayjs(deadline).format("DD MMM'YY h:mm A") : '-';
 };
 
 export const isDeadlineOver = (deadline: string | Date | undefined) =>
@@ -30,9 +24,9 @@ export const getRegionTooltipLabel = (
   region: string | undefined,
   isGrant: boolean = false,
 ) => {
-  const country = CombinedRegions.find(
-    (st) => st.region === region,
-  )?.displayValue;
+  const country = countries.find(
+    (country) => country.name.toLowerCase() === region?.toLowerCase(),
+  )?.name;
 
   switch (region) {
     case 'GLOBAL':
@@ -154,10 +148,14 @@ export function userRegionEligibilty(
     return true;
   }
 
-  const allRegions = CombinedRegions.find((st) => st.region === region);
+  const regionObject = region ? getCombinedRegion(region) : null;
 
   const isEligible =
-    !!(userLocation && allRegions?.country.includes(userLocation)) || false;
+    !!(
+      userLocation &&
+      (regionObject?.name === userLocation ||
+        regionObject?.country?.includes(userLocation))
+    ) || false;
 
   return isEligible;
 }
@@ -223,4 +221,29 @@ export const getListingIcon = (type: string) => {
     default:
       return '/assets/icons/bolt.svg';
   }
+};
+
+export const getCombinedRegion = (region: string) => {
+  let regionObject:
+    | {
+        name: string;
+        code: string;
+        country?: string[];
+        displayValue?: string;
+      }
+    | undefined;
+  regionObject = countries.find(
+    (country) => country.name.toLowerCase() === region?.toLowerCase(),
+  );
+  if (!regionObject) {
+    regionObject = Superteams.find(
+      (superteam) =>
+        superteam.displayValue.toLowerCase() === region?.toLowerCase(),
+    );
+    if (regionObject?.displayValue) {
+      regionObject.name = regionObject.displayValue;
+    }
+  }
+
+  return regionObject;
 };

@@ -43,7 +43,14 @@ async function getGrants({ userRegion }: GrantProps) {
         select: {
           GrantApplication: {
             where: {
-              applicationStatus: 'Approved',
+              OR: [
+                {
+                  applicationStatus: 'Approved',
+                },
+                {
+                  applicationStatus: 'Completed',
+                },
+              ],
             },
           },
         },

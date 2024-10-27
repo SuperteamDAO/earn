@@ -38,7 +38,7 @@ model Bounties {
   totalWinnersSelected Int?               @default(0)
   isWinnersAnnounced   Boolean            @default(false)
   templateId           String?
-  region               Regions            @default(GLOBAL)
+  region               String             @default("GLOBAL")
   pocSocials           String?
   hackathonprize       Boolean            @default(false)
   applicationType      ApplicationType    @default(fixed)
@@ -382,6 +382,7 @@ model User {
   Scouts             Scouts[]
   GrantApplication   GrantApplication[]
   SubscribeHackathon SubscribeHackathon[]
+  isBlocked          Boolean              @default(false)
 
   @@index([email, publicKey, username])
   @@index([currentSponsorId])
@@ -487,6 +488,15 @@ model emailLogs {
   bountyId  String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+model ResendLogs {
+  id        String   @id @default(uuid())
+  email     String
+  subject   String
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model SubscribeBounty {
@@ -610,6 +620,7 @@ enum GrantStatus {
 enum GrantApplicationStatus {
   Pending
   Approved
+  Completed
   Rejected
 }
 
