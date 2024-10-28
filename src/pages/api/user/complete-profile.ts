@@ -16,6 +16,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { safeStringify } from '@/utils/safeStringify';
+import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
@@ -46,6 +47,18 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   } = req.body;
 
   try {
+    if (publicKey) {
+      const walletValidation = validateSolanaAddress(publicKey);
+
+      if (!walletValidation.isValid) {
+        return res.status(400).json({
+          error: 'Invalid Wallet Address',
+          message:
+            walletValidation.error || 'Invalid Solana wallet address provided.',
+        });
+      }
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: userId as string },
     });

@@ -24,7 +24,7 @@ import { SkillSelect } from '@/features/talent';
 import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
-import { validateSolAddress } from '@/utils/validateSolAddress';
+import { validateSolAddressUI } from '@/utils/validateSolAddress';
 
 import { usernameRandomQuery } from '../../queries';
 import { useUsernameValidation } from '../../utils';
@@ -340,7 +340,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               {...register('publicKey', {
                 validate: (value) => {
                   if (!value) return true;
-                  return validateSolAddress(value);
+                  return validateSolAddressUI(value);
                 },
               })}
               isInvalid={!!errors.publicKey}

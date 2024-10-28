@@ -42,7 +42,7 @@ import {
 } from '@/features/talent';
 import { useUpdateUser, useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
-import { validateSolAddress } from '@/utils/validateSolAddress';
+import { validateSolAddressUI } from '@/utils/validateSolAddress';
 
 import { userApplicationQuery } from '../queries';
 import { type Grant } from '../types';
@@ -395,7 +395,7 @@ export const GrantApplicationModal = ({
                   register={register}
                   errors={errors}
                   validate={(address: string) =>
-                    validateSolAddress(address, setPublicKeyError)
+                    validateSolAddressUI(address, setPublicKeyError)
                   }
                   defaultValue={user?.publicKey}
                   isRequired

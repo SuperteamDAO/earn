@@ -13,6 +13,7 @@ import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
+import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
 const allowedFields = [
   'username',
@@ -47,6 +48,19 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { skills, ...data } = req.body;
 
   const updatedData = filterAllowedFields(data, allowedFields);
+
+  if ('publicKey' in updatedData) {
+    const walletValidation = validateSolanaAddress(updatedData.publicKey);
+
+    if (!walletValidation.isValid) {
+      logger.warn(`Invalid public key provided for user ID: ${userId}`);
+      return res.status(400).json({
+        error: 'Invalid Wallet Address',
+        message:
+          walletValidation.error || 'Invalid Solana wallet address provided.',
+      });
+    }
+  }
 
   if (updatedData.twitter) {
     const username = extractTwitterUsername(updatedData.twitter);
