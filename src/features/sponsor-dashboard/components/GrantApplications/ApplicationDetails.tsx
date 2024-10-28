@@ -568,6 +568,7 @@ export const ApplicationDetails = ({
 
           <Box
             overflowY={'scroll'}
+            w="100%"
             maxW="60rem"
             h={'67.15rem'}
             css={{

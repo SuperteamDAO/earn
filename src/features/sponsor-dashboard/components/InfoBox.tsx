@@ -32,13 +32,7 @@ export const InfoBox = ({
       {label}
     </Text>
     {isHtml ? (
-      <Box
-        overflow={'visible'}
-        w={'full'}
-        h={'full'}
-        whiteSpace={'pre'}
-        id="reset-des"
-      >
+      <Box overflow={'visible'} w={'full'} h={'full'} id="reset-des">
         {parse(
           content?.startsWith('"')
             ? JSON.parse(content || '')
