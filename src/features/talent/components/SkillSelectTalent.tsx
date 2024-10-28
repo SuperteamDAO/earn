@@ -137,6 +137,7 @@ export const SkillSelect = ({
               borderColor: state.isFocused ? 'brand.purple' : 'brand.slate.300',
             }),
           }}
+          required={true}
           closeMenuOnSelect={false}
           components={animatedComponents}
           isMulti
