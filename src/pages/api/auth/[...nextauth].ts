@@ -74,6 +74,18 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   callbacks: {
+    async signIn({ user }) {
+      const userRecord = await prisma.user.findUnique({
+        where: { email: user.email as string },
+        select: { isBlocked: true },
+      });
+
+      if (userRecord?.isBlocked) {
+        return '/blocked';
+      }
+
+      return true;
+    },
     async jwt({ token, user, account }) {
       return { ...token, ...user, ...account };
     },

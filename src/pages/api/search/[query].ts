@@ -193,7 +193,7 @@ s.name LIKE CONCAT('%', ?, '%')
                 (
                     SELECT COUNT(*)
                     FROM Comment c
-                    WHERE c.listingId = b.id
+                    WHERE c.refId = b.id
                       AND c.isActive = TRUE
                       AND c.isArchived = FALSE
                       AND c.replyToId IS NULL
@@ -242,6 +242,8 @@ s.name LIKE CONCAT('%', ?, '%')
     b.region,
     b.createdAt,
     b.updatedAt,
+    b.totalApproved,
+    b.historicalApplications,
     JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified) as sponsor,
     (
       SELECT COUNT(*)
@@ -323,7 +325,13 @@ s.name LIKE CONCAT('%', ?, '%')
       searchType: 'listing',
     }));
 
-    const results = [...bounties, ...grants];
+    const grantsWithTotalApplications = grants.map((grant) => ({
+      ...grant,
+      totalApplications:
+        grant.approvedApplications + grant.historicalApplications,
+    }));
+
+    const results = [...bounties, ...grantsWithTotalApplications];
 
     res.status(200).json({
       results,
@@ -331,7 +339,7 @@ s.name LIKE CONCAT('%', ?, '%')
         bountiesCount[0].totalCount + grantsCount[0].totalCount
       ).toString(),
       bountiesCount: bounties.length,
-      grantsCount: grants.length,
+      grantsCount: grantsWithTotalApplications.length,
     });
   } catch (err: any) {
     logger.error('Error fetching bounties or grants:', err);

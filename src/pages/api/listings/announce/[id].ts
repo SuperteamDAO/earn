@@ -148,7 +148,8 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     await prisma.comment.create({
       data: {
         authorId: userId!,
-        listingId: id,
+        refId: id,
+        refType: 'BOUNTY',
         message: comment,
         type: 'WINNER_ANNOUNCEMENT',
       },

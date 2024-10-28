@@ -10,6 +10,7 @@ import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
+import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
 async function grantApplication(
   req: NextApiRequestWithUser,
@@ -33,6 +34,16 @@ async function grantApplication(
     answers,
   } = req.body;
   let { twitter } = req.body;
+
+  const walletValidation = validateSolanaAddress(walletAddress);
+
+  if (!walletValidation.isValid) {
+    return res.status(400).json({
+      error: 'Invalid Wallet Address',
+      message:
+        walletValidation.error || 'Invalid Solana wallet address provided.',
+    });
+  }
 
   const formattedProjectTimeline = dayjs(projectTimeline).format('D MMMM YYYY');
   const parsedAsk = parseInt(ask, 10);
