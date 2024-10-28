@@ -127,27 +127,30 @@ model BountiesTemplates {
 }
 
 model Comment {
-  id           String      @id @default(uuid())
-  message      String      @db.VarChar(1000)
+  id           String         @id @default(uuid())
+  message      String         @db.VarChar(1000)
   authorId     String
-  listingType  ListingType @default(BOUNTY)
-  listingId    String
-  isActive     Boolean     @default(true)
-  isArchived   Boolean     @default(false)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  refType      CommentRefType @default(BOUNTY)
+  refId        String
+  isActive     Boolean        @default(true)
+  isArchived   Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
   replyToId    String?
   submissionId String?
-  type         CommentType @default(NORMAL)
-  author       User        @relation(fields: [authorId], references: [id])
-  repliedTo    Comment?    @relation("CommentReplies", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  replies      Comment[]   @relation("CommentReplies")
-  listing      Bounties    @relation(fields: [listingId], references: [id])
+  type         CommentType    @default(NORMAL)
+  author       User           @relation(fields: [authorId], references: [id])
+  repliedTo    Comment?       @relation("CommentReplies", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies      Comment[]      @relation("CommentReplies")
+  listing      Bounties?      @relation(fields: [refId], references: [id], map: "Comment_Listing_fkey")
+  submission   Submission?    @relation(fields: [refId], references: [id], map: "Comment_Submission_fkey")
+  pow   PoW?    @relation(fields: [refId], references: [id], map: "Comment_PoW_fkey")
+  GrantApplication   GrantApplication?    @relation(fields: [refId], references: [id], map: "Comment_GrantApplication_fkey")
 
-  @@index([id, listingId])
+  @@index([id, refId])
   @@index([authorId])
   @@index([replyToId])
-  @@index([listingId])
+  @@index([refId])
 }
 
 model Grants {
@@ -221,6 +224,7 @@ model GrantApplication {
   totalTranches       Int                    @default(0)
   like                Json?
   likeCount           Int                    @default(0)
+  Comments           Comment[]
 
   @@index([userId])
   @@index([grantId])
@@ -253,6 +257,7 @@ model Submission {
   user               User             @relation(fields: [userId], references: [id])
   ogImage            String?          @db.Text
   notes              String?          @db.VarChar(500)
+  Comments           Comment[]
 
   @@index([id, listingId])
   @@index([userId])
@@ -430,6 +435,7 @@ model PoW {
   likeCount   Int      @default(0)
   user        User     @relation(fields: [userId], references: [id])
   ogImage     String?  @db.Text
+  Comments           Comment[]
 
   @@index([userId])
   @@index([createdAt])
@@ -624,9 +630,11 @@ enum BountyType {
   hackathon
 }
 
-enum ListingType {
+enum CommentRefType {
   BOUNTY
   SUBMISSION
+  GRANT_APPLICATION
+  POW
 }
 
 enum CommentType {

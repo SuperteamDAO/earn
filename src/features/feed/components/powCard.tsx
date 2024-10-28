@@ -3,6 +3,7 @@ import React from 'react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 
+import { type FeedDataProps } from '../types';
 import { FeedCardContainer } from './FeedCardContainer';
 import { FeedCardLink } from './FeedCardLink';
 
@@ -21,11 +22,14 @@ interface PowCardProps {
     userId: string;
     likeCount: number;
     ogImage: string;
+    commentCount?: number;
+    recentCommenters?: FeedDataProps['recentCommenters'];
   };
   type: 'profile' | 'activity';
+  commentCount?: number;
 }
 
-export function PowCard({ pow, type }: PowCardProps) {
+export function PowCard({ pow, type, commentCount }: PowCardProps) {
   const content = {
     actionText: 'added a personal project',
     createdAt: pow?.createdAt || '',
@@ -66,6 +70,8 @@ export function PowCard({ pow, type }: PowCardProps) {
       cardType="pow"
       link={pow?.link}
       userId={pow?.userId}
+      commentCount={commentCount || pow.commentCount}
+      recentCommenters={pow?.recentCommenters}
     >
       <OgImageViewer
         type="pow"

@@ -1,13 +1,19 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { type FeedDataProps } from '../types';
+import { type FeedDataProps, type FeedPostType } from '../types';
+
+export * from './feed-post';
 
 interface GetFeedParams {
   filter?: 'popular' | 'new';
   timePeriod?: string;
   isWinner?: boolean;
   take?: number;
+  highlightId?: string;
+  highlightType?: FeedPostType;
+  takeOnlyType?: FeedPostType;
+  userId?: string;
 }
 
 const fetchFeed = async ({

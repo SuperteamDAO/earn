@@ -407,7 +407,8 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       await prisma.comment.create({
         data: {
           message: `The deadline for this listing has been updated to ${dayjsDeadline.format('h:mm A, MMMM D, YYYY (UTC)')} `,
-          listingId: result.id,
+          refId: result.id,
+          refType: 'BOUNTY',
           authorId: userId,
           type: 'DEADLINE_EXTENSION',
         },

@@ -12,9 +12,10 @@ import { WinnerFeedImage } from './WinnerFeedImage';
 interface GrantCardProps {
   grant: FeedDataProps;
   type: 'profile' | 'activity';
+  commentCount?: number;
 }
 
-export function GrantCard({ grant, type }: GrantCardProps) {
+export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
   const firstName = grant?.firstName;
   const lastName = grant?.lastName;
   const photo = grant?.photo;
@@ -66,6 +67,8 @@ export function GrantCard({ grant, type }: GrantCardProps) {
       cardType="grant-application"
       link={listingLink}
       userId={grant?.userId}
+      commentCount={commentCount || grant.commentCount}
+      recentCommenters={grant?.recentCommenters}
     >
       {
         <WinnerFeedImage

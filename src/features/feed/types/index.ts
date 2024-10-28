@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 import { type Rewards } from '@/features/listings';
 
 export interface FeedDataProps {
@@ -28,9 +30,24 @@ export interface FeedDataProps {
   token: string;
   sponsorName: string;
   sponsorLogo: string;
-  type: string;
+  type: FeedPostType;
   userId: string;
   likeCount: number;
   ogImage: string;
   grantApplicationAmount: number;
+  commentCount: number;
+  recentCommenters: {
+    author: {
+      photo: string | null;
+      name: string | null;
+    };
+  }[];
 }
+
+export const FeedPostTypeSchema = z.enum([
+  'pow',
+  'grant-application',
+  'submission',
+]);
+export const FEED_POST_TYPE = FeedPostTypeSchema.options;
+export type FeedPostType = z.infer<typeof FeedPostTypeSchema>;

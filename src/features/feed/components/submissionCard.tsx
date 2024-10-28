@@ -13,9 +13,10 @@ import { WinnerFeedImage } from './WinnerFeedImage';
 interface SubCardProps {
   sub: FeedDataProps;
   type: 'profile' | 'activity';
+  commentCount?: number;
 }
 
-export function SubmissionCard({ sub, type }: SubCardProps) {
+export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
   const firstName = sub?.firstName;
   const lastName = sub?.lastName;
   const photo = sub?.photo;
@@ -118,6 +119,8 @@ export function SubmissionCard({ sub, type }: SubCardProps) {
       cardType="submission"
       link={link}
       userId={sub?.userId}
+      commentCount={commentCount || sub.commentCount}
+      recentCommenters={sub?.recentCommenters}
     >
       {sub?.isWinner && sub?.isWinnersAnnounced ? (
         <WinnerFeedImage
