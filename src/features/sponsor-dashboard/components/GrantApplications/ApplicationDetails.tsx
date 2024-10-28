@@ -285,15 +285,7 @@ export const ApplicationDetails = ({
   };
 
   return (
-    <Box
-      w="100%"
-      bg="white"
-      borderColor="brand.slate.200"
-      borderTopWidth="1px"
-      borderRightWidth={'1px'}
-      borderBottomWidth="1px"
-      roundedRight={'xl'}
-    >
+    <Box w="100%" bg="white" roundedRight={'xl'}>
       <RejectGrantApplicationModal
         applicationId={selectedApplication?.id}
         rejectIsOpen={rejectedIsOpen}
@@ -576,6 +568,7 @@ export const ApplicationDetails = ({
 
           <Box
             overflowY={'scroll'}
+            maxW="60rem"
             h={'67.15rem'}
             css={{
               '&::-webkit-scrollbar': {
