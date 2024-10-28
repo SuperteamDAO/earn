@@ -127,25 +127,25 @@ model BountiesTemplates {
 }
 
 model Comment {
-  id           String         @id @default(uuid())
-  message      String         @db.VarChar(1000)
-  authorId     String
-  refType      CommentRefType @default(BOUNTY)
-  refId        String
-  isActive     Boolean        @default(true)
-  isArchived   Boolean        @default(false)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  replyToId    String?
-  submissionId String?
-  type         CommentType    @default(NORMAL)
-  author       User           @relation(fields: [authorId], references: [id])
-  repliedTo    Comment?       @relation("CommentReplies", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  replies      Comment[]      @relation("CommentReplies")
-  listing      Bounties?      @relation(fields: [refId], references: [id], map: "Comment_Listing_fkey")
-  submission   Submission?    @relation(fields: [refId], references: [id], map: "Comment_Submission_fkey")
-  pow   PoW?    @relation(fields: [refId], references: [id], map: "Comment_PoW_fkey")
-  GrantApplication   GrantApplication?    @relation(fields: [refId], references: [id], map: "Comment_GrantApplication_fkey")
+  id               String            @id @default(uuid())
+  message          String            @db.VarChar(1000)
+  authorId         String
+  refType          CommentRefType    @default(BOUNTY)
+  refId            String
+  isActive         Boolean           @default(true)
+  isArchived       Boolean           @default(false)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  replyToId        String?
+  submissionId     String?
+  type             CommentType       @default(NORMAL)
+  author           User              @relation(fields: [authorId], references: [id])
+  repliedTo        Comment?          @relation("CommentReplies", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies          Comment[]         @relation("CommentReplies")
+  listing          Bounties?         @relation(fields: [refId], references: [id], map: "Comment_Listing_fkey")
+  submission       Submission?       @relation(fields: [refId], references: [id], map: "Comment_Submission_fkey")
+  pow              PoW?              @relation(fields: [refId], references: [id], map: "Comment_PoW_fkey")
+  GrantApplication GrantApplication? @relation(fields: [refId], references: [id], map: "Comment_GrantApplication_fkey")
 
   @@index([id, refId])
   @@index([authorId])
@@ -224,7 +224,7 @@ model GrantApplication {
   totalTranches       Int                    @default(0)
   like                Json?
   likeCount           Int                    @default(0)
-  Comments           Comment[]
+  Comments            Comment[]
 
   @@index([userId])
   @@index([grantId])
@@ -422,20 +422,20 @@ model TalentRankings {
 }
 
 model PoW {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   userId      String
   title       String
-  description String   @db.Text
+  description String    @db.Text
   skills      Json?
   link        String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
   subSkills   Json?
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime  @updatedAt
   like        Json?
-  likeCount   Int      @default(0)
-  user        User     @relation(fields: [userId], references: [id])
-  ogImage     String?  @db.Text
-  Comments           Comment[]
+  likeCount   Int       @default(0)
+  user        User      @relation(fields: [userId], references: [id])
+  ogImage     String?   @db.Text
+  Comments    Comment[]
 
   @@index([userId])
   @@index([createdAt])
