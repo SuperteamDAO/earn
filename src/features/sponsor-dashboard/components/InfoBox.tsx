@@ -39,12 +39,7 @@ export const InfoBox = ({
         whiteSpace={'pre'}
         id="reset-des"
       >
-        {parse(
-          content?.startsWith('"')
-            ? JSON.parse(content || '')
-            : (content ?? ''),
-          options,
-        )}
+        {parse(content || '', options)}
       </Box>
     ) : (
       <LinkTextParser text={content || ''} />
