@@ -153,7 +153,11 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                   >
                     $
                     {formatNumberWithSuffix(
-                      Number((totalApproved / totalApplications).toFixed(2)),
+                      Number(
+                        (
+                          Number(totalApproved) / Number(totalApplications)
+                        ).toFixed(2),
+                      ),
                     )}
                     <Text
                       as="span"
