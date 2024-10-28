@@ -32,4 +32,10 @@ export const exclusiveSponsorData: Record<
     bgImage: '/assets/category_assets/bg/content.webp',
     showPrivates: true,
   },
+  soon: {
+    title: 'SOON',
+    description:
+      'Fuel your innovation and embrace mass adoption with SOON. A global competition to drive innovation and push the boundaries of the SVM ecosystem. Start building on SOON! ',
+    bgImage: '/assets/category_assets/bg/content.webp',
+  },
 };
