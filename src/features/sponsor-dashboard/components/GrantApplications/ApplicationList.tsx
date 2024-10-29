@@ -88,6 +88,7 @@ export const ApplicationList = ({
     <>
       <Box
         w="100%"
+        h="100%"
         bg="white"
         borderWidth={'1px'}
         borderColor={'brand.slate.200'}
