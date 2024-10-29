@@ -47,7 +47,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
-import { validateSolAddress } from '@/utils/validateSolAddress';
+import { validateSolAddressUI } from '@/utils/validateSolAddress';
 
 type FormData = {
   username: string;
@@ -450,7 +450,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 isRequired
                 isInvalid={!!errors.publicKey}
                 validate={(value: string) => {
-                  return validateSolAddress(value);
+                  return validateSolAddressUI(value);
                 }}
                 validationErrorMessage={validationErrorMessage}
                 errors={errors}

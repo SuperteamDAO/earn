@@ -40,9 +40,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           sponsorId: userSponsorId,
         },
       }),
-      prisma.grants.aggregate({
-        _sum: { totalPaid: true },
-        where: { sponsorId: userSponsorId },
+      prisma.grantApplication.aggregate({
+        _sum: { approvedAmountInUSD: true },
+        where: {
+          grant: { sponsorId: userSponsorId },
+          OR: [
+            {
+              applicationStatus: 'Approved',
+            },
+            {
+              applicationStatus: 'Completed',
+            },
+          ],
+        },
       }),
       prisma.bounties.count({
         where: {
@@ -87,7 +97,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const totalRewardAmount =
       (totalListingRewards._sum.usdValue || 0) +
-      (totalGrantRewards._sum.totalPaid || 0);
+      (totalGrantRewards._sum.approvedAmountInUSD || 0);
     const totalListingsAndGrants = totalListings + totalGrants;
     const totalSubmissionsAndApplications =
       totalSubmissions + totalApplications;

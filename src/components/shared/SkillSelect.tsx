@@ -173,6 +173,7 @@ export const SkillSelect = ({
           components={animatedComponents}
           isMulti
           value={subSkills}
+          required={true}
           options={removeDuplicates(subSkillOptions)}
           onChange={(e) => {
             setSubSkills(e as any);

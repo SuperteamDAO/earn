@@ -138,7 +138,7 @@ async function findRelatedListings(
       (
         SELECT COUNT(*)
         FROM Comment c
-        WHERE c.listingId = b.id 
+        WHERE c.refId = b.id 
           AND c.isActive = true 
           AND c.isArchived = false
           AND c.replyToId IS NULL

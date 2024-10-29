@@ -37,6 +37,7 @@ interface Grant {
   applicationStatus?: 'Pending' | 'Approved' | 'Rejected';
   totalPaid: number;
   totalApproved: number;
+  historicalApplications: number;
   avgResponseTime?: string;
   airtableId?: string;
   isNative?: boolean;
