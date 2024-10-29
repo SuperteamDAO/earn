@@ -125,7 +125,7 @@ export const SubmissionModal = ({
             ask,
           };
 
-          if ((isProject || isHackathon) && eligibility) {
+          if (eligibility) {
             const transformedAnswers = eligibilityAnswers.reduce(
               (acc: FormFields, curr: EligibilityAnswer) => {
                 const index = eligibility.findIndex(
@@ -293,7 +293,7 @@ export const SubmissionModal = ({
             })}
           >
             <VStack gap={4} mb={5}>
-              {!isProject ? (
+              {!isProject && (
                 <>
                   <TextAreaWithCounter
                     id="applicationLink"
@@ -316,49 +316,48 @@ export const SubmissionModal = ({
                     maxLength={500}
                     errors={errors}
                   />
-                  {isHackathon &&
-                    eligibilityQs?.map((e, i) => {
-                      return (
-                        <RichTextInputWithHelper
-                          id={`eligibility-${e?.order}`}
-                          label={e?.question}
-                          control={control}
-                          isRequired={e.optional !== true}
-                          key={e?.order}
-                          validate={(value: string) => {
-                            if (!isHackathon) return true;
-                            if (value && e.isLink) {
-                              if (!isValidUrl(value) && eligibilityQs[i]) {
-                                const cloneEligibilityQs = [...eligibilityQs];
-                                const currElgibile = cloneEligibilityQs[i];
-                                if (currElgibile) {
-                                  currElgibile.error =
-                                    'Please enter a valid link';
-                                  setEligibilityQs(cloneEligibilityQs);
-                                  return false;
-                                }
+                </>
+              )}
+              {isHackathon
+                ? eligibilityQs?.map((e, i) => {
+                    return (
+                      <RichTextInputWithHelper
+                        id={`eligibility-${e?.order}`}
+                        label={e?.question}
+                        control={control}
+                        isRequired={e.optional !== true}
+                        key={e?.order}
+                        validate={(value: string) => {
+                          if (!isHackathon) return true;
+                          if (value && e.isLink) {
+                            if (!isValidUrl(value) && eligibilityQs[i]) {
+                              const cloneEligibilityQs = [...eligibilityQs];
+                              const currElgibile = cloneEligibilityQs[i];
+                              if (currElgibile) {
+                                currElgibile.error =
+                                  'Please enter a valid link';
+                                setEligibilityQs(cloneEligibilityQs);
+                                return false;
                               }
                             }
-                            return true;
-                          }}
-                        />
-                      );
-                    })}
-                </>
-              ) : (
-                eligibility?.map((e) => {
-                  return (
-                    <Box key={e.order} w="full">
-                      <RichTextInputWithHelper
-                        control={control}
-                        label={e?.question}
-                        id={`eligibility-${e?.order}`}
-                        isRequired
+                          }
+                          return true;
+                        }}
                       />
-                    </Box>
-                  );
-                })
-              )}
+                    );
+                  })
+                : eligibility?.map((e) => {
+                    return (
+                      <Box key={e.order} w="full">
+                        <RichTextInputWithHelper
+                          control={control}
+                          label={e?.question}
+                          id={`eligibility-${e?.order}`}
+                          isRequired
+                        />
+                      </Box>
+                    );
+                  })}
               {compensationType !== 'fixed' && (
                 <FormControl isRequired>
                   <FormLabel
