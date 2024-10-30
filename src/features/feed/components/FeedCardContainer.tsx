@@ -86,8 +86,6 @@ export const FeedCardContainer = ({
   );
 
   const handleCommentSuccess = () => {
-    setCommentCount((prevCount) => (prevCount || 0) + 1);
-
     setRecentCommenters((prevCommenters) => [
       ...(prevCommenters ? prevCommenters.slice(0, 3) : []),
       { author: { photo: user?.photo || null, name: user?.firstName || null } },
