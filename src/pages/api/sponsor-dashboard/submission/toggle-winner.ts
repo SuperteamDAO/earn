@@ -15,6 +15,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   logger.debug(`Request body: ${JSON.stringify(req.body)}`);
   const { id, isWinner, winnerPosition } = req.body;
 
+  if (
+    (isWinner !== undefined && winnerPosition === undefined) ||
+    (isWinner === undefined && winnerPosition !== undefined)
+  ) {
+    return res.status(400).json({
+      error:
+        'isWinner and winnerPosition must be provided together if either is present',
+    });
+  }
+
   try {
     const currentSubmission = await prisma.submission.findUnique({
       where: { id },
@@ -29,12 +39,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const userSponsorId = req.userSponsorId;
 
-    const { error } = await checkListingSponsorAuth(
+    const { listing, error } = await checkListingSponsorAuth(
       userSponsorId,
       currentSubmission.listingId,
     );
     if (error) {
       return res.status(error.status).json({ error: error.message });
+    }
+
+    if (listing.isWinnersAnnounced) {
+      return res.status(400).json({
+        error: 'Submissions cant be toggled post winner announcement',
+      });
     }
 
     logger.debug(`Updating submission with ID: ${id}`);

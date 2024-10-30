@@ -43,6 +43,13 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         .json({ message: `Bounty with id=${id} is not active.` });
     }
 
+    if (!listing?.isPublished) {
+      logger.warn(`Bounty with ID: ${id} is not published`);
+      return res
+        .status(400)
+        .json({ message: `Bounty with id=${id} is not published.` });
+    }
+
     const totalRewards = [
       ...cleanRewards(listing?.rewards as Rewards, true),
       ...Array(listing?.maxBonusSpots ?? 0).map(() => BONUS_REWARD_POSITION),

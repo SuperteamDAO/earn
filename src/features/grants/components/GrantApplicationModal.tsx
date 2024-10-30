@@ -11,6 +11,7 @@ import {
   Input,
   InputGroup,
   InputLeftAddon,
+  Link,
   Modal,
   ModalCloseButton,
   ModalContent,
@@ -25,7 +26,7 @@ import {
 import { type GrantApplication } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaXTwitter } from 'react-icons/fa6';
 
@@ -42,7 +43,6 @@ import {
 } from '@/features/talent';
 import { useUpdateUser, useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
-import { validateSolAddressUI } from '@/utils/validateSolAddress';
 
 import { userApplicationQuery } from '../queries';
 import { type Grant } from '../types';
@@ -98,7 +98,6 @@ export const GrantApplicationModal = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [publicKeyError, setPublicKeyError] = useState('');
   const [askError, setAskError] = useState('');
   const {
     register,
@@ -107,6 +106,7 @@ export const GrantApplicationModal = ({
     reset,
     watch,
     control,
+    setValue,
   } = useForm<GrantApplicationForm>({
     defaultValues: {
       projectTitle: grantApplication?.projectTitle || '',
@@ -138,6 +138,10 @@ export const GrantApplicationModal = ({
   const queryClient = useQueryClient();
 
   const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (user?.publicKey) setValue('publicKey', user?.publicKey);
+  }, [user]);
 
   const submitApplication = async (data: any) => {
     setIsLoading(true);
@@ -386,25 +390,29 @@ export const GrantApplicationModal = ({
                   </Text>
                 </FormControl>
                 <TextInputWithHelper
-                  id="walletAddress"
+                  id="publicKey"
                   label="Your Solana Wallet Address"
                   helperText={
-                    'Where should we send the funds? No .sol domains please!'
+                    <>
+                      This is where you will receive your rewards if you win. If
+                      you want to edit it,{' '}
+                      <Text as="u">
+                        <Link
+                          color="blue.600"
+                          href={`/t/${user?.username}/edit`}
+                          isExternal
+                        >
+                          click here
+                        </Link>
+                      </Text>{' '}
+                    </>
                   }
                   placeholder="Add your Solana wallet address"
                   register={register}
                   errors={errors}
-                  validate={(address: string) =>
-                    validateSolAddressUI(address, setPublicKeyError)
-                  }
                   defaultValue={user?.publicKey}
-                  isRequired
+                  readOnly
                 />
-                {publicKeyError && (
-                  <Text mt={1} ml={1} color="red" fontSize="14px">
-                    {publicKeyError}
-                  </Text>
-                )}
               </VStack>
             )}
             {activeStep === 1 && (
