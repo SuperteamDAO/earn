@@ -641,7 +641,7 @@ export const ListingBasic = ({
               </Flex>
               <Switch
                 mb={2}
-                id="email-alerts"
+                id="isFndnPaying"
                 {...register('isFndnPaying')}
                 isChecked={isFndnPaying}
               />
@@ -663,7 +663,7 @@ export const ListingBasic = ({
             </Flex>
             <Switch
               mb={2}
-              id="email-alerts"
+              id="isPrivate"
               {...register('isPrivate')}
               isChecked={isPrivate}
             />
