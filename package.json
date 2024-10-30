@@ -84,7 +84,7 @@
     "react-textarea-autosize": "^8.5.4",
     "resend": "^4.0.0",
     "sass": "^1.80.4",
-    "sharp": "^0.33.5",
+    "sharp": "^0.32.6",
     "slugify": "^1.6.6",
     "sonner": "^1.5.0",
     "svix": "^1.37.0",
