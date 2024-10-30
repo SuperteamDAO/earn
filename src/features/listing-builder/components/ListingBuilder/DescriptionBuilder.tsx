@@ -596,7 +596,7 @@ export const DescriptionBuilder = ({
             </ToolbarButton>
           </Flex>
 
-          <Box w={'full'} h={'full'} mb={10}>
+          <Box w={'full'} h={'full'} mb={10} border={'1px solid #ddd'}>
             <div style={{ height: '100% !important' }} className="reset">
               <EditorContent
                 id="reset-des"

@@ -60,6 +60,10 @@ async function sendInvites(
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
+    if (req.role !== 'GOD' && user.UserSponsors[0]?.role !== 'ADMIN') {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
     const isBlocked = await prisma.blockedEmail.findUnique({
       where: { email: email },
     });
