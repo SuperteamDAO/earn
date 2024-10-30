@@ -16,7 +16,6 @@ interface Props {
 export const Details = ({ bounty }: Props) => {
   const selectedSubmission = useAtomValue(selectedSubmissionAtom);
   const isProject = bounty?.type === 'project';
-  const isHackathon = bounty?.type === 'hackathon';
 
   return (
     <Flex
@@ -71,8 +70,8 @@ export const Details = ({ bounty }: Props) => {
           />
         )}
 
-        {(isProject || isHackathon) &&
-          selectedSubmission?.eligibilityAnswers?.map((answer: any) => (
+        {selectedSubmission?.eligibilityAnswers &&
+          selectedSubmission.eligibilityAnswers.map((answer: any) => (
             <InfoBox
               key={answer.question}
               label={answer.question}
