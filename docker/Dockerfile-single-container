@@ -1,0 +1,38 @@
+# Start from an official Ubuntu image
+FROM ubuntu:22.04
+
+# Install curl, Node.js, pnpm, and MySQL server dependencies
+RUN apt-get update && \
+    apt-get install -y curl gnupg && \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs mysql-server && \
+    npm install -g pnpm && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and pnpm-lock.yaml for pnpm install
+COPY package.json pnpm-lock.yaml /app/
+COPY prisma /app/prisma
+
+# Install project dependencies
+RUN pnpm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Start MySQL, set up the database and user, run migrations, and build the project
+RUN service mysql start && \
+    sleep 5 && \
+    mysql -e "CREATE DATABASE earn" && \
+    mysql -e "CREATE USER 'earn'@'localhost' IDENTIFIED BY 'earn'" && \
+    mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'earn'@'localhost'" && \
+    npx prisma migrate dev --name init && npx prisma generate && \
+    pnpm build
+
+# Expose the application port (default 3000)
+EXPOSE 3000
+
+# Start MySQL and the application
+CMD service mysql start && pnpm start
