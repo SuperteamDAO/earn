@@ -1,2 +1,7 @@
 node_modules
 .git
+.devcontainer
+.github
+.next
+.vscode
+out
