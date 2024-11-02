@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development next dev",
     "build": "prisma generate && next build",
+    "build:docker:standalone:container": "docker build -f docker/Dockerfile-standalone-container -t earn-standalone .",
     "start": "cross-env NODE_ENV=production next start",
     "lint": "next lint",
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
