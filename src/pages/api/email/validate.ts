@@ -16,11 +16,15 @@ export default async function handler(
   }
 
   try {
-    const { data } = await axios.get(
-      `https://api.zerobounce.net/v2/validate?api_key=${process.env.ZEROBOUNCE_API_KEY}&email=${email}`,
-    );
-
-    return res.status(200).json({ isValid: data.status === 'valid' });
+    if (process.env.ZEROBOUNCE_API_KEY) {
+      const { data } = await axios.get(
+        `https://api.zerobounce.net/v2/validate?api_key=${process.env.ZEROBOUNCE_API_KEY}&email=${email}`,
+      );
+      return res.status(200).json({ isValid: data.status === 'valid' });
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return res.status(200).json({ isValid: emailRegex.test(email) });
+    }
   } catch (error) {
     console.error('Error validating email:', error);
     return res.status(500).json({ message: 'Error validating email' });

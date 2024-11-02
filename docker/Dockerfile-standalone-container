@@ -22,6 +22,8 @@ RUN pnpm install
 # Copy the rest of the application code
 COPY . .
 
+RUN pnpm run build
+
 # Copy the entrypoint script and make it executable
 COPY docker/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
