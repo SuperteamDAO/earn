@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    image: earn-standalone
+    ports:
+      - "3000:3000"
+    environment:
+      - ZEROBOUNCE_API_KEY=your_api_key
+      - NEXTAUTH_URL=https://your_auth_call_back_url.com
+      - RESEND_EMAIL=your_resend_email@email.com
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

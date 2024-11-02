@@ -22,17 +22,16 @@ RUN pnpm install
 # Copy the rest of the application code
 COPY . .
 
-# Start MySQL, set up the database and user, run migrations, and build the project
-RUN service mysql start && \
-    sleep 5 && \
-    mysql -e "CREATE DATABASE earn" && \
-    mysql -e "CREATE USER 'earn'@'localhost' IDENTIFIED BY 'earn'" && \
-    mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'earn'@'localhost'" && \
-    npx prisma migrate dev --name init && npx prisma generate && \
-    pnpm build
+# Copy the entrypoint script and make it executable
+COPY docker/docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Expose the application port (default 3000)
 EXPOSE 3000
 
-# Start MySQL and the application
-CMD service mysql start && pnpm start
+# Use the entrypoint script for setup and startup
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["pnpm", "start"]
+
+# Define a volume for MySQL data
+VOLUME /var/lib/mysql
