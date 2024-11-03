@@ -118,32 +118,25 @@ export const SubmissionModal = ({
             ask,
           } = response.data;
 
-          let formData = {
-            applicationLink,
-            tweetLink,
-            otherInfo,
-            ask,
-          };
+          setValue('applicationLink', applicationLink);
+          setValue('tweetLink', tweetLink);
+          setValue('otherInfo', otherInfo);
+          setValue('ask', ask);
 
           if (eligibility) {
-            const transformedAnswers = eligibilityAnswers.reduce(
-              (acc: FormFields, curr: EligibilityAnswer) => {
-                const index = eligibility.findIndex(
-                  (e) => e.question === curr.question,
+            eligibilityAnswers.forEach((curr: EligibilityAnswer) => {
+              const index = eligibility.findIndex(
+                (e) => e.question === curr.question,
+              );
+
+              if (index !== -1) {
+                setValue(
+                  `eligibility-${eligibility[index]!.order}`,
+                  curr.answer,
                 );
-
-                if (index !== -1) {
-                  acc[`eligibility-${eligibility[index]!.order}`] = curr.answer;
-                }
-
-                return acc;
-              },
-              {} as FormFields,
-            );
-            formData = { ...formData, ...transformedAnswers };
+              }
+            }, {} as FormFields);
           }
-
-          reset(formData);
         } catch (error) {
           console.error('Failed to fetch submission data', error);
         }
@@ -151,7 +144,7 @@ export const SubmissionModal = ({
     };
 
     fetchData();
-  }, [id, editMode, reset]);
+  }, [id, editMode, reset, listing]);
 
   useEffect(() => {
     if (user?.publicKey) setValue('publicKey', user?.publicKey);
