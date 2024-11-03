@@ -12,12 +12,24 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+const ALLOWED_FORMATS = ['jpeg', 'png', 'webp'];
+
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   try {
     const { imageBase64, type, folder } = req.body;
     const buffer = Buffer.from(imageBase64, 'base64');
+
+    const metadata = await sharp(buffer).metadata();
+    console.log(metadata);
+    if (!metadata.format || !ALLOWED_FORMATS.includes(metadata.format)) {
+      logger.warn(`Invalid image format detected: ${metadata.format}`);
+      return res.status(400).json({
+        error: 'Invalid image format',
+        message: `File type must be one of: ${ALLOWED_FORMATS.map((f) => `image/${f}`).join(', ')}`,
+      });
+    }
 
     const isDev = process.env.VERCEL_ENV !== 'production';
     const folderName = isDev ? `${folder}-dev` : folder;

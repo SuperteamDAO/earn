@@ -201,13 +201,13 @@ model GrantApplication {
   applicationStatus   GrantApplicationStatus @default(Pending)
   projectTitle        String
   projectOneLiner     String
-  projectDetails      String                 @db.VarChar(3000)
+  projectDetails      String                 @db.Text
   projectTimeline     String
-  proofOfWork         String                 @db.VarChar(3000)
+  proofOfWork         String                 @db.Text 
   walletAddress       String
   twitter             String?
-  milestones          String?                @db.VarChar(3000)
-  kpi                 String?                @db.VarChar(3000)
+  milestones          String?                @db.Text 
+  kpi                 String?                @db.Text 
   answers             Json?
   createdAt           DateTime               @default(now())
   updatedAt           DateTime               @updatedAt
@@ -249,7 +249,7 @@ model Submission {
   likeCount          Int              @default(0)
   isPaid             Boolean          @default(false)
   paymentDetails     Json?
-  otherInfo          String?          @db.VarChar(2000)
+  otherInfo          String?          @db.Text
   ask                Int?
   label              SubmissionLabels @default(Unreviewed)
   rewardInUSD        Float            @default(0)

@@ -33,12 +33,7 @@ export const InfoBox = ({
     </Text>
     {isHtml ? (
       <Box overflow={'visible'} w={'full'} h={'full'} id="reset-des">
-        {parse(
-          content?.startsWith('"')
-            ? JSON.parse(content || '')
-            : (content ?? ''),
-          options,
-        )}
+        {parse(content || '', options)}
       </Box>
     ) : (
       <LinkTextParser text={content || ''} />

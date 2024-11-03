@@ -136,6 +136,10 @@ export default function SponsorListings() {
     return allListings?.some((listing) => listing.type === 'grant');
   }, [allListings]);
 
+  const hasHackathons = useMemo(() => {
+    return allListings?.some((listing) => listing.type === 'hackathon');
+  }, [allListings]);
+
   const ALL_FILTERS = useMemo(() => {
     const filters = [
       'Draft',
@@ -163,12 +167,19 @@ export default function SponsorListings() {
 
   const handleTabChange = useCallback(
     (index: number) => {
-      const tabTypes = ['all', 'bounty', 'project', hasGrants ? 'grant' : ''];
+      let tabTypes = [
+        'all',
+        'bounty',
+        'project',
+        hasGrants ? 'grant' : '',
+        hasHackathons ? 'hackathon' : '',
+      ];
+      tabTypes = tabTypes.filter(Boolean);
       const tabType = tabTypes[index] || 'all';
       setSelectedTab(tabType);
       setCurrentPage(0);
     },
-    [hasGrants],
+    [hasGrants, hasHackathons],
   );
 
   return (
@@ -338,6 +349,16 @@ export default function SponsorListings() {
                   Grants
                 </Tab>
               )}
+              {hasHackathons && (
+                <Tab
+                  color="brand.slate.400"
+                  fontSize={'sm'}
+                  fontWeight={500}
+                  _selected={selectedStyles}
+                >
+                  Hackathons
+                </Tab>
+              )}
             </TabList>
             <TabPanels>
               <TabPanel px={0}>
@@ -350,6 +371,11 @@ export default function SponsorListings() {
                 <MemoizedListingTable listings={paginatedListings} />
               </TabPanel>
               {hasGrants && (
+                <TabPanel px={0}>
+                  <MemoizedListingTable listings={paginatedListings} />
+                </TabPanel>
+              )}
+              {hasHackathons && (
                 <TabPanel px={0}>
                   <MemoizedListingTable listings={paginatedListings} />
                 </TabPanel>
