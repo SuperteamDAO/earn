@@ -247,6 +247,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'uxd-stablecoin',
   },
   {
+    tokenName: 'Solayer USD (sUSD)',
+    tokenSymbol: 'sUSD',
+    mintAddress: 'susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X',
+    icon: 'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f736f6c617965722d6c6162732f746f6b656e2d6d657461646174612f6d61696e2f737573642f696d6167652e706e67',
+    decimals: 6,
+    coingeckoSymbol: 'solayer-usd',
+  },
+  {
     tokenName: 'Raydium (RAY)',
     tokenSymbol: 'RAY',
     mintAddress: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
