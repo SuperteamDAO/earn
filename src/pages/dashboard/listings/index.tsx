@@ -167,13 +167,14 @@ export default function SponsorListings() {
 
   const handleTabChange = useCallback(
     (index: number) => {
-      const tabTypes = [
+      let tabTypes = [
         'all',
         'bounty',
         'project',
         hasGrants ? 'grant' : '',
         hasHackathons ? 'hackathon' : '',
       ];
+      tabTypes = tabTypes.filter(Boolean);
       const tabType = tabTypes[index] || 'all';
       setSelectedTab(tabType);
       setCurrentPage(0);
