@@ -5,7 +5,8 @@
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:@tanstack/eslint-plugin-query/recommended"
+    "plugin:@tanstack/eslint-plugin-query/recommended",
+    "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@tanstack/query"],
@@ -19,7 +20,8 @@
     ],
     "@tanstack/query/exhaustive-deps": "error",
     "@tanstack/query/no-rest-destructuring": "error",
-    "@tanstack/query/stable-query-client": "error"
+    "@tanstack/query/stable-query-client": "error",
+    "prettier/prettier": "error"
   },
   "overrides": [
     // Configuration for TypeScript files
