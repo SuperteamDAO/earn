@@ -35,7 +35,6 @@ import { useUser } from '@/store/user';
 import { submissionCountQuery } from '../../queries';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
-import { isValidUrl } from '../../utils';
 import { SubmissionTerms } from './SubmissionTerms';
 
 interface Props {
@@ -77,12 +76,6 @@ export const SubmissionModal = ({
 
   const queryClient = useQueryClient();
 
-  const [eligibilityQs, setEligibilityQs] = useState(
-    eligibility?.map((q) => ({
-      ...q,
-      error: '',
-    })),
-  );
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
@@ -311,46 +304,20 @@ export const SubmissionModal = ({
                   />
                 </>
               )}
-              {isHackathon
-                ? eligibilityQs?.map((e, i) => {
-                    return (
+              {eligibility &&
+                eligibility?.map((e) => {
+                  return (
+                    <Box key={e.order} w="full">
                       <RichTextInputWithHelper
-                        id={`eligibility-${e?.order}`}
-                        label={e?.question}
                         control={control}
-                        isRequired={e.optional !== true}
-                        key={e?.order}
-                        validate={(value: string) => {
-                          if (!isHackathon) return true;
-                          if (value && e.isLink) {
-                            if (!isValidUrl(value) && eligibilityQs[i]) {
-                              const cloneEligibilityQs = [...eligibilityQs];
-                              const currElgibile = cloneEligibilityQs[i];
-                              if (currElgibile) {
-                                currElgibile.error =
-                                  'Please enter a valid link';
-                                setEligibilityQs(cloneEligibilityQs);
-                                return false;
-                              }
-                            }
-                          }
-                          return true;
-                        }}
+                        label={e?.question}
+                        id={`eligibility-${e?.order}`}
+                        isRequired
                       />
-                    );
-                  })
-                : eligibility?.map((e) => {
-                    return (
-                      <Box key={e.order} w="full">
-                        <RichTextInputWithHelper
-                          control={control}
-                          label={e?.question}
-                          id={`eligibility-${e?.order}`}
-                          isRequired
-                        />
-                      </Box>
-                    );
-                  })}
+                    </Box>
+                  );
+                })}
+
               {compensationType !== 'fixed' && (
                 <FormControl isRequired>
                   <FormLabel

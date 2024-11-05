@@ -200,7 +200,6 @@ export const GrantApplicationModal = ({
   };
 
   const handleNext = () => {
-    console.log('handle Next');
     if (activeStep === 0) {
       const askValue = watch('ask') || 0;
       const min = minReward || 0;
@@ -314,7 +313,6 @@ export const GrantApplicationModal = ({
           <form
             style={{ width: '100%' }}
             onSubmit={handleSubmit((e) => {
-              console.log('handlingsubmit');
               if (activeStep === steps.length - 1) {
                 submitApplication(e);
               } else {
