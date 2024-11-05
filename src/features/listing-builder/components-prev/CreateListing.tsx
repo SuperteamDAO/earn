@@ -10,8 +10,8 @@ import { type MultiSelectOptions } from '@/constants';
 import { getListingDraftStatus, type Listing } from '@/features/listings';
 import { useUser } from '@/store/user';
 
-import { useListingFormStore } from '../store';
-import { type ListingFormType } from '../types';
+import { useListingFormStore } from '../store/index';
+import { type ListingFormData } from '../types';
 import { splitSkills } from '../utils';
 import {
   DescriptionBuilder,
@@ -23,7 +23,7 @@ import {
 } from './ListingBuilder';
 import { ListingSuccessModal } from './ListingSuccessModal';
 import { PreviewListingModal } from './PreviewListingModal';
-import { hackathonSponsorAtom } from './SelectSponsor';
+import { hackathonSponsorAtom } from '../../sponsor-dashboard/components/SelectSponsor';
 import { UnderVerificationModal } from './UnderVerficationModal';
 
 interface Props {
@@ -158,17 +158,17 @@ export function CreateListing({
         description: form?.description,
         type,
         region: form?.region,
-        referredBy: form?.referredBy,
-        eligibility: (form?.eligibility || []).map((q) => ({
-          question: q.question,
-          order: q.order,
-          type: q.type,
-        })),
-        references: (form?.references || []).map((r) => ({
-          link: r.link,
-          order: r.order,
-        })),
-        requirements: form?.requirements,
+        // referredBy: form?.referredBy,
+        // eligibility: (form?.eligibility || []).map((q) => ({
+        //   question: q.question,
+        //   order: q.order,
+        //   type: q.type,
+        // })),
+        // references: (form?.references || []).map((r) => ({
+        //   link: r.link,
+        //   order: r.order,
+        // })),
+        // requirements: form?.requirements,
         rewardAmount: form?.rewardAmount,
         rewards: form?.rewards,
         maxBonusSpots: form?.maxBonusSpots,
@@ -210,7 +210,7 @@ export function CreateListing({
     }
   };
 
-  const createDraft = async (data: ListingFormType, isPreview?: boolean) => {
+  const createDraft = async (data: ListingFormData, isPreview?: boolean) => {
     setIsDraftLoading(true);
 
     let api = `/api/${basePath}/create`;
@@ -234,21 +234,21 @@ export function CreateListing({
         pocSocials: data?.pocSocials,
         timeToComplete: data?.timeToComplete,
         description: data?.description || '',
-        eligibility: (data?.eligibility || []).map((q) => ({
-          question: q.question,
-          order: q.order,
-          type: q.type,
-        })),
-        references: (data?.references || []).map((r) => ({
-          link: r.link,
-          order: r.order,
-          title: r.title,
-        })),
+        // eligibility: (data?.eligibility || []).map((q) => ({
+        //   question: q.question,
+        //   order: q.order,
+        //   type: q.type,
+        // })),
+        // references: (data?.references || []).map((r) => ({
+        //   link: r.link,
+        //   order: r.order,
+        //   title: r.title,
+        // })),
         region: data?.region,
-        referredBy: data?.referredBy,
+        // referredBy: data?.referredBy,
         isPrivate: data?.isPrivate,
         isFndnPaying: data?.isFndnPaying,
-        requirements: data?.requirements,
+        // requirements: data?.requirements,
         rewardAmount: data?.rewardAmount,
         rewards: data?.rewards,
         maxBonusSpots: data?.maxBonusSpots,

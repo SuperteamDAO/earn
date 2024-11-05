@@ -12,7 +12,7 @@ import { getURL } from '@/utils/validUrl';
 
 import { isCreateListingAllowedQuery } from '../../queries/is-create-allowed';
 import { listingTemplatesQuery } from '../../queries/listing-templates';
-import { useListingFormStore } from '../../store';
+import { useListingFormStore } from '../../store/index-2';
 import { splitSkills } from '../../utils';
 
 interface Props {

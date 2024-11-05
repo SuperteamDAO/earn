@@ -59,8 +59,8 @@ import { z } from 'zod';
 import { URL_REGEX } from '@/constants';
 import { uploadToCloudinary } from '@/utils/upload';
 
-import { useListingFormStore } from '../../store';
-import { type ListingFormType } from '../../types';
+import { useListingFormStore } from '../../store/index-2';
+import { type ListingFormData } from '../../types';
 import { ListingFormLabel, ListingTooltip, ToolbarButton } from './Form';
 import { ReferenceCard } from './ReferenceCard';
 
@@ -109,7 +109,7 @@ const LinkModal = ({
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
-  createDraft: (data: ListingFormType, isPreview?: boolean) => Promise<void>;
+  createDraft: (data: ListingFormData, isPreview?: boolean) => Promise<void>;
   isDraftLoading?: boolean;
   editable?: boolean;
   type?: 'bounty' | 'project' | 'hackathon';
@@ -167,8 +167,8 @@ export const DescriptionBuilder = ({
     mode: 'onBlur',
     defaultValues: {
       description: form?.description || '',
-      requirements: form?.requirements,
-      references: form?.references,
+      // requirements: form?.requirements,
+      // references: form?.references,
     },
   });
 
@@ -188,12 +188,12 @@ export const DescriptionBuilder = ({
     if (editable) {
       reset({
         description: form?.description,
-        requirements: form?.requirements,
-        references: (form?.references || [])?.map((e) => ({
-          order: e.order,
-          link: e.link,
-          title: e.title,
-        })),
+        // requirements: form?.requirements,
+        // references: (form?.references || [])?.map((e) => ({
+        //   order: e.order,
+        //   link: e.link,
+        //   title: e.title,
+        // })),
       });
       if (editor && form?.description) {
         editor.commands.setContent(form?.description);

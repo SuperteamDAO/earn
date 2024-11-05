@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { CreateListing } from '@/features/listing-builder';
+// import { CreateListing } from '@/features/listing-builder';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
@@ -69,12 +69,13 @@ function EditBounty({ slug }: Props) {
       {isLoading ? (
         <LoadingSection />
       ) : bounty ? (
-        <CreateListing
-          listing={bounty}
-          editable
-          prevStep={prevStep}
-          type={bounty.type as 'bounty' | 'project' | 'hackathon'}
-        />
+        //<CreateListing
+         // listing={bounty}
+          //editable
+          //prevStep={prevStep}
+          //type={bounty.type as 'bounty' | 'project' | 'hackathon'}
+        ///>
+        <></>
       ) : (
         <div>Error loading bounty details.</div>
       )}

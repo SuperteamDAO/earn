@@ -9,7 +9,7 @@ import { EarnAvatar } from '@/features/talent';
 import type { SponsorType } from '@/interface/sponsor';
 import { useUpdateUser, useUser } from '@/store/user';
 
-import { hackathonSponsorAtom } from '../SelectSponsor';
+import { hackathonSponsorAtom } from './SelectSponsor';
 
 interface HackathonOptionType extends SponsorType {
   role?: string;

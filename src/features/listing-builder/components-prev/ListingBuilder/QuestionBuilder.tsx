@@ -14,13 +14,13 @@ import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { useListingFormStore } from '../../store';
-import { type ListingFormType } from '../../types';
+import { useListingFormStore } from '../../store/index-2';
+import { type ListingFormData } from '../../types';
 import { ListingFormLabel } from './Form';
 
 interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
-  createDraft: (data: ListingFormType, isPreview?: boolean) => Promise<void>;
+  createDraft: (data: ListingFormData, isPreview?: boolean) => Promise<void>;
   editable: boolean;
   isNewOrDraft?: boolean;
   isDuplicating?: boolean;

@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { CreateListing } from '@/features/listing-builder';
+// import { CreateListing } from '@/features/listing-builder';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard'; // Adjust the import path as needed
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
@@ -33,12 +33,13 @@ export default function DuplicateBounty({ slug }: Props) {
       {isLoading ? (
         <LoadingSection />
       ) : bounty ? (
-        <CreateListing
-          listing={bounty}
-          editable
-          isDuplicating
-          type={bounty.type as 'bounty' | 'project' | 'hackathon'}
-        />
+        //<CreateListing
+          //listing={bounty}
+          //editable
+          //isDuplicating
+         // type={bounty.type as 'bounty' | 'project' | 'hackathon'}
+       // />
+       <></>
       ) : (
         <div>Error loading bounty details.</div>
       )}

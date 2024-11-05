@@ -58,8 +58,8 @@ import {
   sortRank,
 } from '@/utils/rank';
 
-import { useListingFormStore } from '../../store';
-import { type ListingFormType } from '../../types';
+import { useListingFormStore } from '../../store/index-2';
+import { type ListingFormData } from '../../types';
 import {
   caculateBonus,
   calculateTotalOfArray,
@@ -84,7 +84,7 @@ interface PrizeListInterface {
 }
 interface Props {
   isDraftLoading: boolean;
-  createDraft: (data: ListingFormType, isPreview?: boolean) => Promise<void>;
+  createDraft: (data: ListingFormData, isPreview?: boolean) => Promise<void>;
   createAndPublishListing: (closeConfirm: () => void) => void;
   isListingPublishing: boolean;
   editable: boolean;
@@ -277,7 +277,7 @@ export const ListingPayments = ({
   }, [form, reset, editable]);
 
   const handleTokenChange = (tokenSymbol: string | undefined) => {
-    setValue('token', tokenSymbol);
+    // setValue('token', tokenSymbol);
     const selectedToken = tokenList.find((t) => t.tokenSymbol === tokenSymbol);
     setSearchTerm(selectedToken?.tokenName);
     setSelectedToken(selectedToken);
@@ -303,7 +303,7 @@ export const ListingPayments = ({
     if (prizeToDelete === BONUS_REWARD_POSITION) return;
     if (rewards) {
       const updatedRewards = deleteKeyRewards(rewards, prizeToDelete + '');
-      setValue('rewards', updatedRewards, { shouldValidate: true });
+      // setValue('rewards', updatedRewards, { shouldValidate: true });
     }
   };
 

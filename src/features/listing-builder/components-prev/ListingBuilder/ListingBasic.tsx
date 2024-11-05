@@ -42,10 +42,10 @@ import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
-import { useListingFormStore } from '../../store';
-import { type ListingFormType } from '../../types';
+import { useListingFormStore } from '../../store/index-2';
+import { type ListingFormData } from '../../types';
 import { getSuggestions, mergeSkills } from '../../utils';
-import { SelectSponsor } from '../SelectSponsor';
+import { SelectSponsor } from '../../../sponsor-dashboard/components/SelectSponsor';
 import { ListingFormLabel, ListingTooltip } from './Form';
 import { RegionSelector } from './Form/RegionSelector';
 
@@ -56,7 +56,7 @@ interface Props {
   setSteps: Dispatch<SetStateAction<number>>;
   isNewOrDraft?: boolean;
   isDraftLoading: boolean;
-  createDraft: (data: ListingFormType, isPreview?: boolean) => Promise<void>;
+  createDraft: (data: ListingFormData, isPreview?: boolean) => Promise<void>;
   setSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   setSubSkills: Dispatch<SetStateAction<MultiSelectOptions[]>>;
   subSkills: MultiSelectOptions[];
@@ -176,7 +176,7 @@ export const ListingBasic = ({
       region: form?.region,
       deadline: form?.deadline || undefined,
       timeToComplete: form?.timeToComplete,
-      referredBy: form?.referredBy,
+      // referredBy: form?.referredBy,
       isPrivate: form?.isPrivate,
       isFndnPaying: form?.isFndnPaying || fndnPayingCheck ? true : false,
     },
@@ -200,7 +200,7 @@ export const ListingBasic = ({
         pocSocials: form?.pocSocials,
         region: form?.region,
         timeToComplete: form?.timeToComplete,
-        referredBy: form?.referredBy,
+        // referredBy: form?.referredBy,
         isPrivate: form?.isPrivate,
         isFndnPaying: form?.isFndnPaying,
       });
@@ -318,7 +318,7 @@ export const ListingBasic = ({
     } else {
       posthog.capture('edit listing_sponsor');
     }
-    createDraft(formData, isPreview);
+    // createDraft(formData, isPreview);
   };
 
   return (
@@ -612,25 +612,25 @@ export const ListingBasic = ({
               </FormErrorMessage>
             </FormControl>
           )}
-          <FormControl w="full" mb={5} isInvalid={!!errors.referredBy}>
-            <Flex>
-              <ListingFormLabel htmlFor="referredBy">
-                Referred By
-              </ListingFormLabel>
-              <ListingTooltip label="Who referred you to add this listing on Superteam Earn?" />
-            </Flex>
-
-            <Select {...register('referredBy')} placeholder="Select">
-              {Superteams.map((st) => (
-                <option value={st.name} key={st.name}>
-                  {st.name}
-                </option>
-              ))}
-            </Select>
-            <FormErrorMessage>
-              {errors.referredBy ? <>{errors.referredBy.message}</> : <></>}
-            </FormErrorMessage>
-          </FormControl>
+          {/* <FormControl w="full" mb={5} isInvalid={!!errors.referredBy}> */}
+          {/*   <Flex> */}
+          {/*     <ListingFormLabel htmlFor="referredBy"> */}
+          {/*       Referred By */}
+          {/*     </ListingFormLabel> */}
+          {/*     <ListingTooltip label="Who referred you to add this listing on Superteam Earn?" /> */}
+          {/*   </Flex> */}
+          {/**/}
+          {/*   <Select {...register('referredBy')} placeholder="Select"> */}
+          {/*     {Superteams.map((st) => ( */}
+          {/*       <option value={st.name} key={st.name}> */}
+          {/*         {st.name} */}
+          {/*       </option> */}
+          {/*     ))} */}
+          {/*   </Select> */}
+          {/*   <FormErrorMessage> */}
+          {/*     {errors.referredBy ? <>{errors.referredBy.message}</> : <></>} */}
+          {/*   </FormErrorMessage> */}
+          {/* </FormControl> */}
           {fndnPayingCheck && (
             <FormControl alignItems="center" gap={3} display="flex">
               <Flex>

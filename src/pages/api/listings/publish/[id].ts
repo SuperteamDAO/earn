@@ -1,11 +1,8 @@
 import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
-import {
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
+import { checkListingSponsorAuth, NextApiRequestWithSponsor, withSponsorAuth } from '@/features/auth';
+import { createListingFormSchema } from '@/features/listing-builder';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -13,10 +10,17 @@ import { cleanSkills } from '@/utils/cleanSkills';
 import { dayjs } from '@/utils/dayjs';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
+import { Prisma } from '@prisma/client';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
+  const id = req.query.id as string;
   const userId = req.userId;
   const userSponsorId = req.userSponsorId;
+
+  if(!userId) {
+    logger.warn('Invalid token: User Id is missing');
+    return res.status(400).json({ error: 'Invalid token' });
+  }
 
   if (!userSponsorId) {
     logger.warn('Invalid token: User Sponsor Id is missing');
@@ -26,9 +30,32 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   try {
+    const sponsor = await prisma.sponsors.findUnique({
+      where: { id: userSponsorId },
+      select: { isCaution: true, isVerified: true, st: true },
+    });
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId as string },
+    });
+
+    const { error } = await checkListingSponsorAuth(userSponsorId, id as string);
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
+    }
+
+    const listingSchema = createListingFormSchema(
+      user?.role === 'GOD',
+      false, 
+      !!req.body.isDuplicating, 
+      undefined, 
+      sponsor?.st 
+    );
+
+    const validatedData = await listingSchema.parseAsync(req.body);
+
     const {
       title,
-      pocId,
       skills,
       slug,
       deadline,
@@ -38,10 +65,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       description,
       type,
       region,
-      referredBy,
       eligibility,
-      references,
-      requirements,
       rewardAmount,
       rewards,
       maxBonusSpots,
@@ -50,115 +74,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       minRewardAsk,
       maxRewardAsk,
       isPrivate,
-      status,
-    } = req.body;
+      isFndnPaying: rawIsFndnPaying,
+    } = validatedData;
+
     let { isPublished } = req.body;
-
     let publishedAt;
-    let language = '';
-
-    if (description) {
-      language = franc(description);
-      // both 'eng' and 'sco' are english listings
-    } else {
-      language = 'eng';
-    }
-
+    let language = description ? franc(description) : 'eng';
     const correctedSkills = cleanSkills(skills);
 
     let isVerifying = false;
 
-    const sponsor = await prisma.sponsors.findUnique({
-      where: { id: userSponsorId },
-      select: { isCaution: true, isVerified: true, st: true },
-    });
-
-    const isFndnPaying =
-      sponsor?.st && type !== 'project' ? req.body.isFndnPaying : false;
-
     if (isPublished) {
       publishedAt = new Date();
-
-      if (!token) {
-        return res.status(400).json({ error: 'Please select a valid token' });
-      }
-
-      if (type === 'project') {
-        if (!compensationType) {
-          return res
-            .status(400)
-            .json({ error: 'Please add a compensation type' });
-        }
-
-        if (compensationType === 'fixed' && !rewardAmount) {
-          return res.status(400).json({
-            error: 'Please specify the total reward amount to proceed',
-          });
-        }
-
-        if (compensationType === 'range') {
-          if (!minRewardAsk || !maxRewardAsk) {
-            return res.status(400).json({
-              error:
-                'Please specify your preferred minimum and maximum compensation range',
-            });
-          }
-          if (maxRewardAsk <= minRewardAsk) {
-            return res.status(400).json({
-              error:
-                'The compensation range is incorrect; the maximum must be higher than the minimum',
-            });
-          }
-        }
-      } else {
-        if (maxBonusSpots !== undefined) {
-          if (maxBonusSpots > 50) {
-            return res.status(400).json({
-              error: 'Maximum number of bonus prizes allowed is 50',
-            });
-          }
-          if (maxBonusSpots === 0) {
-            return res.status(400).json({
-              error: "# of bonus prizes can't be 0",
-            });
-          }
-
-          if (
-            maxBonusSpots > 0 &&
-            (!rewards?.[BONUS_REWARD_POSITION] ||
-              isNaN(rewards[BONUS_REWARD_POSITION]))
-          ) {
-            return res.status(400).json({
-              error: 'Bonus Reward is not mentioned',
-            });
-          }
-        }
-
-        if (rewards?.[BONUS_REWARD_POSITION] !== undefined) {
-          if (rewards[BONUS_REWARD_POSITION] === 0) {
-            return res.status(400).json({
-              error: "Bonus per prize can't be 0",
-            });
-          }
-          if (rewards[BONUS_REWARD_POSITION] < 0.01) {
-            return res.status(400).json({
-              error: "Bonus per prize can't be less than 0.01",
-            });
-          }
-        }
-
-        const prizePositions = Object.keys(rewards || {})
-          .filter((key) => key !== BONUS_REWARD_POSITION.toString())
-          .map(Number);
-
-        for (let i = 1; i <= prizePositions.length; i++) {
-          if (!prizePositions.includes(i) || !rewards[i] || isNaN(rewards[i])) {
-            return res.status(400).json({
-              error: 'Please fill all podium ranks or remove unused',
-            });
-          }
-        }
-      }
 
       if (sponsor) {
         // sponsor is sus, be caution
@@ -182,9 +109,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           const twoWeeksAgo = dayjs().subtract(2, 'weeks');
 
           const overdueBounty = await prisma.bounties.findFirst({
-            select: {
-              id: true,
-            },
+            select: { id: true },
             where: {
               sponsorId: userSponsorId,
               isArchived: false,
@@ -214,7 +139,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         if (compensationType === 'fixed') {
           amount = rewardAmount;
         } else if (compensationType === 'range') {
-          amount = (minRewardAsk + maxRewardAsk) / 2;
+          amount = ((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2;
         }
 
         if (amount && token) {
@@ -226,26 +151,24 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
-    const finalData = {
+    const isFndnPaying = sponsor?.st && type !== 'project' ? rawIsFndnPaying : false;
+
+    const data: Prisma.BountiesUncheckedCreateInput = {
       sponsorId: userSponsorId,
-      status,
       title,
       usdValue,
       publishedAt,
-      pocId,
+      pocId: userId,
       skills: correctedSkills,
       slug,
-      deadline,
+      deadline: new Date(deadline),
       templateId,
       pocSocials,
       timeToComplete,
       description,
       type,
       region,
-      referredBy,
       eligibility,
-      references,
-      requirements,
       rewardAmount,
       rewards,
       maxBonusSpots,
@@ -257,15 +180,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isPrivate,
       language,
       isFndnPaying,
+      status: isVerifying ? 'VERIFYING' : 'OPEN',
     };
 
-    logger.debug(`Creating bounty with data: ${safeStringify(finalData)}`);
-    const result = await prisma.bounties.create({
-      data: {
-        ...finalData,
-        status: isVerifying ? 'VERIFYING' : status || 'OPEN',
-      },
-    });
+    logger.debug(`Publishing listing with data: ${safeStringify(data)}`);
+    const result = await prisma.bounties.update({
+      where: { id },
+      data,
+    })
 
     if (isVerifying) {
       try {
@@ -276,7 +198,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           listingId: result.id,
         });
       } catch (err) {
-        console.log('Failed to send Verification Message to discord', err);
         logger.error('Failed to send Verification Message to discord', err);
       }
     } else {
@@ -293,6 +214,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         logger.error('Discord Listing Update Message Error', err);
       }
     }
+
     logger.info(`Bounty created successfully with ID: ${result.id}`);
     logger.debug(`Created bounty data: ${safeStringify(result)}`);
 

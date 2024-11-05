@@ -3,7 +3,7 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-import { CreateListing } from '@/features/listing-builder';
+// import { CreateListing } from '@/features/listing-builder';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
@@ -28,7 +28,8 @@ function EditBounty({ listing }: Props) {
 
   return (
     <SponsorLayout>
-      <CreateListing listing={bounty} editable type={'hackathon'} />
+      {/* <CreateListing listing={bounty} editable type={'hackathon'} /> */}
+      <></>
     </SponsorLayout>
   );
 }

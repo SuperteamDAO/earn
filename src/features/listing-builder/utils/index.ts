@@ -14,3 +14,11 @@ export const formatTotalPrice = (total: number) =>
     currency: 'USD',
     maximumFractionDigits: 2,
   }).format(total as number);
+
+export const timeToCompleteOptions = [
+  { value: '<1 Week', label: '<1 Week' },
+  { value: '1-2 Weeks', label: '1-2 Weeks' },
+  { value: '2-4 Weeks', label: '2-4 Weeks' },
+  { value: '4-8 Weeks', label: '4-8 Weeks' },
+  { value: '>8 Weeks', label: '>8 Weeks' },
+];

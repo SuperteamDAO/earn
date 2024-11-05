@@ -1,111 +1,151 @@
-import { Regions } from '@prisma/client';
-import dayjs from 'dayjs';
-import { produce } from 'immer';
-import { create } from 'zustand';
+import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
+import { type UseFormReturn } from 'react-hook-form';
+import axios from 'axios';
+import { atomWithQuery, atomWithMutation } from 'jotai-tanstack-query';
+import { createListingFormSchema } from '../types/schema';
+import { ListingFormData } from '../types';
 
-import { type Listing } from '@/features/listings';
+type FormReturn = UseFormReturn<ListingFormData>;
 
-import { type ListingFormType, type ListingStoreType } from '../types';
+const formAtom = atom<FormReturn | null>(null);
+const isGodAtom = atom<boolean>(false);
+const isSTAtom = atom<boolean>(false);
+const editableAtom = atom<boolean>(false);
+const isDuplicatingAtom = atom<boolean>(false);
+const listingIdAtom = atom<string | undefined>(undefined);
 
-const listingDescriptionHeadings = [
-  'About the Listing & Scope',
-  'Rewards',
-  'Judging Criteria',
-  'Submission Requirements',
-  'Resources',
-]
-  .map((heading) => `<h1 key=${heading}>${heading}</h1>`)
-  .join('');
+const formSchemaAtom = atom((get) => 
+  createListingFormSchema(
+    get(isGodAtom),
+    get(editableAtom),
+    get(isDuplicatingAtom),
+    get(listingIdAtom),
+    get(isSTAtom)
+  )
+);
 
-const initialFormState: ListingFormType = {
-  id: '',
-  title: '',
-  slug: '',
-  deadline: undefined,
-  templateId: undefined,
-  pocSocials: undefined,
-  timeToComplete: undefined,
-  type: undefined,
-  region: Regions.GLOBAL,
-  referredBy: undefined,
-  requirements: '',
-  eligibility: [],
-  references: [],
-  isPrivate: false,
-  skills: [],
-  description: listingDescriptionHeadings,
-  publishedAt: '',
-  rewardAmount: undefined,
-  rewards: undefined,
-  token: 'USDC',
-  compensationType: 'fixed',
-  minRewardAsk: undefined,
-  maxRewardAsk: undefined,
-  maxBonusSpots: undefined,
-  isFndnPaying: undefined,
-};
+const draftStorageAtom = atomWithStorage<Partial<ListingFormData>>('listing-draft', {});
 
-const mergeListingWithInitialFormState = (
-  listing: Listing,
-  isDuplicating: boolean,
-  type: 'bounty' | 'project' | 'hackathon',
-): ListingFormType => ({
-  ...initialFormState,
-  ...listing,
-  title:
-    isDuplicating && listing.title ? `${listing.title} (2)` : listing.title,
-  slug: isDuplicating && listing.slug ? `${listing.slug}-2` : listing.slug,
-  deadline:
-    !isDuplicating && listing.deadline
-      ? dayjs(listing.deadline).format('YYYY-MM-DDTHH:mm')
-      : undefined,
-  type: type,
-  eligibility: (listing.eligibility || []).map((e) => ({
-    order: e.order,
-    question: e.question,
-    type: e.type as 'text',
-    delete: true,
-    label: e.question,
-  })),
-  references: (listing.references || []).map((e) => ({
-    order: e.order,
-    link: e.link,
-    title: e.title,
-  })),
-  publishedAt: listing.publishedAt,
-  rewardAmount: listing.rewardAmount,
-  rewards: listing.rewards,
-  token: listing.token || 'USDC',
-  minRewardAsk: listing.minRewardAsk,
-  maxRewardAsk: listing.maxRewardAsk,
-  maxBonusSpots: listing.maxBonusSpots,
-  isFndnPaying: listing.isFndnPaying,
-});
-
-export const useListingFormStore = create<ListingStoreType>()((set) => ({
-  form: {},
-  updateState: (data) => {
-    set(
-      produce((draft) => {
-        draft.form = { ...draft.form, ...data };
-      }),
-    );
-  },
-  resetForm: () => {
-    set(
-      produce((draft) => {
-        draft.form = { ...initialFormState };
-      }),
-    );
-  },
-  initializeForm: (listing, isDuplicating, type) => {
-    const mergedState = listing
-      ? mergeListingWithInitialFormState(listing, isDuplicating, type)
-      : initialFormState;
-    set(
-      produce((draft) => {
-        draft.form = mergedState;
-      }),
-    );
-  },
+const saveDraftMutationAtom = atomWithMutation((get) => ({
+  mutationKey: ['saveDraft'],
+  mutationFn: async (data: Partial<ListingFormData>) => {
+    const response = await axios.post('/api/listings/draft', {
+      ...data,
+      id: get(listingIdAtom)
+    });
+    return response.data;
+  }
 }));
+
+const submitListingMutationAtom = atomWithMutation((get) => ({
+  mutationKey: ['submitListing'],
+  mutationFn: async (data: ListingFormData) => {
+    const isEditing = get(editableAtom) && !get(isDuplicatingAtom);
+    const endpoint = isEditing ? '/api/listings/update' : '/api/listings/publish';
+    const response = await axios.post(`${endpoint}/${get(listingIdAtom)}`, {
+      ...data,
+      isDuplicating: get(isDuplicatingAtom)
+    });
+    return response.data;
+  }
+}));
+
+type ListingResponse = ListingFormData | null;
+const fetchListingAtom = atomWithQuery<ListingResponse>((get) => ({
+  queryKey: ['listing', get(listingIdAtom)],
+  queryFn: async ({ queryKey: [_, id] }): Promise<ListingResponse> => {
+    if (!id) return null;
+    try {
+      const response = await axios.get<ListingFormData>(`/api/listings/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching listing:', error);
+      return null;
+    }
+  },
+  enabled: Boolean(get(listingIdAtom)) && get(editableAtom)
+}));
+
+const formErrorsAtom = atom(
+  (get) => get(formAtom)?.formState.errors ?? {}
+);
+
+const formDirtyAtom = atom(
+  (get) => get(formAtom)?.formState.isDirty ?? false
+);
+
+const isSubmittingAtom = atom(
+  (get) => get(formAtom)?.formState.isSubmitting ?? false
+);
+
+const isSavingDraftAtom = atom(
+  (get) => get(saveDraftMutationAtom).isPending
+);
+
+const isSubmittingListingAtom = atom(
+  (get) => get(submitListingMutationAtom).isPending
+);
+
+const formActionsAtom = atom(
+  null,
+  (get, set, action: { type: string; payload?: any }) => {
+    const form = get(formAtom);
+    if (!form) return;
+
+    switch (action.type) {
+      case 'SAVE_DRAFT': {
+        const formData = form.getValues();
+        set(draftStorageAtom, formData);
+        const saveDraftMutation = get(saveDraftMutationAtom);
+        saveDraftMutation.mutate(formData);
+        break;
+      }
+
+      case 'SUBMIT': {
+        const formData = form.getValues();
+        const submitMutation = get(submitListingMutationAtom);
+        submitMutation.mutate(formData);
+        set(draftStorageAtom, {});
+        break;
+      }
+
+      case 'RESET': {
+        form.reset();
+        set(draftStorageAtom, {});
+        break;
+      }
+
+      case 'LOAD_DRAFT': {
+        const draft = get(draftStorageAtom);
+        form.reset(draft);
+        break;
+      }
+
+      case 'SET_FORM': {
+        set(formAtom, action.payload);
+        break;
+      }
+    }
+  }
+);
+
+export {
+  formAtom,
+  isGodAtom,
+  isSTAtom,
+  editableAtom,
+  isDuplicatingAtom,
+  listingIdAtom,
+  formSchemaAtom,
+  draftStorageAtom,
+  saveDraftMutationAtom,
+  submitListingMutationAtom,
+  fetchListingAtom,
+  formErrorsAtom,
+  formDirtyAtom,
+  isSubmittingAtom,
+  formActionsAtom,
+  isSavingDraftAtom,
+  isSubmittingListingAtom
+};
