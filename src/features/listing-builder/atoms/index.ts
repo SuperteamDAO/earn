@@ -4,7 +4,7 @@ import { type UseFormReturn } from 'react-hook-form';
 import axios from 'axios';
 import { atomWithQuery, atomWithMutation } from 'jotai-tanstack-query';
 import { createListingFormSchema } from '../types/schema';
-import { ListingFormData } from '../types';
+import { ListingFormData, ListingStatus } from '../types';
 
 type FormReturn = UseFormReturn<ListingFormData>;
 
@@ -14,6 +14,7 @@ const isSTAtom = atom<boolean>(false);
 const editableAtom = atom<boolean>(false);
 const isDuplicatingAtom = atom<boolean>(false);
 const listingIdAtom = atom<string | undefined>(undefined);
+const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
 
 const formSchemaAtom = atom((get) => 
   createListingFormSchema(
@@ -147,5 +148,6 @@ export {
   isSubmittingAtom,
   formActionsAtom,
   isSavingDraftAtom,
-  isSubmittingListingAtom
+  isSubmittingListingAtom,
+  listingStatusAtom
 };

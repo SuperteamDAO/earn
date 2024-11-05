@@ -58,7 +58,7 @@ import {
   sortRank,
 } from '@/utils/rank';
 
-import { useListingFormStore } from '../../store/index-2';
+import { useListingFormStore } from '../../atoms/index-2';
 import { type ListingFormData } from '../../types';
 import {
   caculateBonus,

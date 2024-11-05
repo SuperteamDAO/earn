@@ -11,7 +11,7 @@ import {
   listingIdAtom,
   editableAtom,
   isDuplicatingAtom
-} from '../store';
+} from '../atoms';
 
 export const useListingForm = () => {
   const [form] = useAtom(formAtom);

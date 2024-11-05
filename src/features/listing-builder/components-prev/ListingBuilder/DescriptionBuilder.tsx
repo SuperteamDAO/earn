@@ -59,7 +59,7 @@ import { z } from 'zod';
 import { URL_REGEX } from '@/constants';
 import { uploadToCloudinary } from '@/utils/upload';
 
-import { useListingFormStore } from '../../store/index-2';
+import { useListingFormStore } from '../../atoms/index-2';
 import { type ListingFormData } from '../../types';
 import { ListingFormLabel, ListingTooltip, ToolbarButton } from './Form';
 import { ReferenceCard } from './ReferenceCard';

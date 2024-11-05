@@ -10,7 +10,7 @@ import { type MultiSelectOptions } from '@/constants';
 import { getListingDraftStatus, type Listing } from '@/features/listings';
 import { useUser } from '@/store/user';
 
-import { useListingFormStore } from '../store/index';
+import { useListingFormStore } from '../atoms/index';
 import { type ListingFormData } from '../types';
 import { splitSkills } from '../utils';
 import {

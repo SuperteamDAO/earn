@@ -42,7 +42,7 @@ import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
-import { useListingFormStore } from '../../store/index-2';
+import { useListingFormStore } from '../../atoms/index-2';
 import { type ListingFormData } from '../../types';
 import { getSuggestions, mergeSkills } from '../../utils';
 import { SelectSponsor } from '../../../sponsor-dashboard/components/SelectSponsor';

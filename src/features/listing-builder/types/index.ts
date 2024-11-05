@@ -21,3 +21,5 @@ export interface ListingStoreType {
     type: 'bounty' | 'project' | 'hackathon',
   ) => void;
 }
+
+export type ListingStatus = 'draft' | 'published' | 'unpublished' | 'verifying'

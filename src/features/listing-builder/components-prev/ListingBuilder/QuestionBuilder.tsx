@@ -14,7 +14,7 @@ import React, { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { useListingFormStore } from '../../store/index-2';
+import { useListingFormStore } from '../../atoms/index-2';
 import { type ListingFormData } from '../../types';
 import { ListingFormLabel } from './Form';
 
