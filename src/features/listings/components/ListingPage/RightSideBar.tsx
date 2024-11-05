@@ -209,7 +209,7 @@ export function RightSideBar({
                       {isSubmissionNumberLoading
                         ? '...'
                         : !isProject
-                          ? submissionNumber?.toLocaleString()
+                          ? submissionNumber?.toLocaleString('en-us')
                           : submissionRange}
                     </Text>
                   </Flex>

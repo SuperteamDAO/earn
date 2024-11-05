@@ -155,7 +155,7 @@ export function HomeBanner() {
               color="brand.slate.200"
               fontSize={{ base: '0.8rem', md: '0.875rem' }}
             >
-              Join {data?.totalUsers?.toLocaleString()}+ others
+              Join {data?.totalUsers?.toLocaleString('en-us')}+ others
             </Text>
           )}
         </Flex>

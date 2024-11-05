@@ -59,7 +59,7 @@ export const TrackBox = ({
           fontSize={{ base: 'sm', md: 'md' }}
           fontWeight={600}
         >
-          {rewardAmount?.toLocaleString()}
+          {rewardAmount?.toLocaleString('en-us')}
         </Text>
         <Text
           color={'brand.slate.400'}

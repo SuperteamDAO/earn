@@ -72,7 +72,7 @@ export default function Scribes() {
               fontSize={{ base: 'xl', md: '2xl' }}
               fontWeight={600}
             >
-              ${stats?.totalRewardAmount.toLocaleString()}
+              ${stats?.totalRewardAmount.toLocaleString('en-us')}
             </Text>
           </Flex>
           <Flex direction={'column'}>
