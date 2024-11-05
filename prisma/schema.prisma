@@ -203,11 +203,11 @@ model GrantApplication {
   projectOneLiner     String
   projectDetails      String                 @db.Text
   projectTimeline     String
-  proofOfWork         String                 @db.Text 
+  proofOfWork         String                 @db.Text
   walletAddress       String
   twitter             String?
-  milestones          String?                @db.Text 
-  kpi                 String?                @db.Text 
+  milestones          String?                @db.Text
+  kpi                 String?                @db.Text
   answers             Json?
   createdAt           DateTime               @default(now())
   updatedAt           DateTime               @updatedAt
@@ -652,28 +652,7 @@ enum JobType {
 
 enum Regions {
   GLOBAL
-  INDIA
-  VIETNAM
-  GERMANY
-  TURKEY
-  MEXICO
-  UK
-  UAE
-  NIGERIA
-  ISRAEL
-  BRAZIL
-  MALAYSIA
-  BALKAN
-  PHILIPPINES
-  JAPAN
-  FRANCE
-  CANADA
-  SINGAPORE
-
-  UKRAINE
-  ARGENTINA
-  USA
-  SPAIN
+  CHINA
 }
 
 enum CompensationType {
