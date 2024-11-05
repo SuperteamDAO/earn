@@ -4,7 +4,7 @@ import { signIn } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 
-import { checkEmailValidity, validateEmailRegex } from '../utils/email';
+import { validateEmailRegex } from '../utils/email';
 
 export const EmailSignIn = () => {
   const [email, setEmail] = useState('');
@@ -30,7 +30,8 @@ export const EmailSignIn = () => {
 
     if (isEmailValid) {
       try {
-        const isValidEmail = await checkEmailValidity(email);
+        // const isValidEmail = await checkEmailValidity(email);
+        const isValidEmail = true;
         if (isValidEmail) {
           posthog.capture('email OTP_auth');
           localStorage.setItem('emailForSignIn', email);
