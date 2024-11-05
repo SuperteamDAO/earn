@@ -1,8 +1,11 @@
 import { Link } from '@chakra-ui/react';
+import { useAtomValue } from 'jotai';
 
 import { type CommentType } from '@/interface/comments';
 import { isLink } from '@/utils/isLink';
 import { truncateString } from '@/utils/truncateString';
+
+import { validUsernamesAtom } from '../atoms';
 
 interface Props {
   listingSlug: string;
@@ -13,18 +16,6 @@ interface Props {
   submissionId?: string;
 }
 
-function parseComment(comment: string) {
-  const parts = comment.split(/(\s+|@[a-z0-9_-]+)/g).filter(Boolean);
-  return parts.map((part) => {
-    if (part.startsWith('@') && part.length > 1) {
-      return { type: 'mention', value: part };
-    } else if (isLink(part)) {
-      return { type: 'link', value: part };
-    }
-    return { type: 'text', value: part };
-  });
-}
-
 export const CommentParser = ({
   value,
   type,
@@ -33,6 +24,24 @@ export const CommentParser = ({
   listingType,
   isAnnounced,
 }: Props) => {
+  const validUsernames = useAtomValue(validUsernamesAtom);
+
+  function parseComment(comment: string) {
+    const parts = comment.split(/(\s+|@[a-z0-9_-]+)/g).filter(Boolean);
+    return parts.map((part) => {
+      if (
+        part.startsWith('@') &&
+        part.length > 1 &&
+        validUsernames.includes(part.split('@')[1] || '')
+      ) {
+        return { type: 'mention', value: part };
+      } else if (isLink(part)) {
+        return { type: 'link', value: part };
+      }
+      return { type: 'text', value: part };
+    });
+  }
+
   const parsedComment = parseComment(value);
   if (type === 'SUBMISSION' && submissionId && isAnnounced)
     return (
