@@ -357,8 +357,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         !listing.isPublished) ||
                       (!pastDeadline &&
                         listing.type !== 'grant' &&
-                        (listing.status === 'OPEN' ||
-                          listing.status === 'PREVIEW')) ? (
+                        listing.status === 'OPEN') ? (
                       <Link
                         as={NextLink}
                         href={`/dashboard/listings/${listing.slug}/edit/`}
@@ -420,8 +419,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                             listing.type !== 'grant') ||
                           (!pastDeadline &&
                             listing.type !== 'grant' &&
-                            (listing.status === 'OPEN' ||
-                              listing.status === 'PREVIEW'))
+                            listing.status === 'OPEN')
                         ) && (
                           <Link
                             as={NextLink}
