@@ -1,6 +1,7 @@
 import { Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { type CommentRefType } from '@prisma/client';
 import axios from 'axios';
+import { useSetAtom } from 'jotai';
 import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
@@ -11,6 +12,7 @@ import { Loading } from '@/components/shared/Loading';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 
+import { validUsernamesAtom } from '../atoms';
 import { Comment as CommentUI } from './Comment';
 import { CommentForm } from './CommentForm';
 
@@ -52,6 +54,7 @@ export const Comments = ({
   const [defaultSuggestions, setDefaultSuggestions] = useState<
     Map<string, User>
   >(new Map());
+  const setValidUsernames = useSetAtom(validUsernamesAtom);
 
   const deleteComment = async (commentId: string) => {
     posthog.capture('delete_comment');
@@ -89,6 +92,7 @@ export const Comments = ({
           suggestions.set(comment.authorId, comment.author),
         );
       });
+      setValidUsernames(commentsData.data.validUsernames as string[]);
     } catch (e) {
       setError(true);
     }

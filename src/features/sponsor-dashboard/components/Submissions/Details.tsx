@@ -66,7 +66,7 @@ export const Details = ({ bounty }: Props) => {
         {bounty?.compensationType !== 'fixed' && (
           <InfoBox
             label="Ask"
-            content={`${selectedSubmission?.ask?.toLocaleString()} ${bounty?.token}`}
+            content={`${selectedSubmission?.ask?.toLocaleString('en-us')} ${bounty?.token}`}
           />
         )}
 
