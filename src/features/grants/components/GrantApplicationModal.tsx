@@ -208,7 +208,7 @@ export const GrantApplicationModal = ({
 
       if (askValue < min || askValue > max) {
         setAskError(
-          `Compensation must be between ${min.toLocaleString()} and ${max.toLocaleString()} ${token}`,
+          `Compensation must be between ${min.toLocaleString('en-us')} and ${max.toLocaleString('en-us')} ${token}`,
         );
         return;
       }

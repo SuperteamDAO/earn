@@ -129,7 +129,7 @@ export const UserDrawer = ({
                     fontSize="1.05rem"
                     fontWeight={500}
                   >
-                    ${user.totalEarnings.toLocaleString()}
+                    ${user.totalEarnings.toLocaleString('en-us')}
                   </Text>
                   <Text color="brand.slate.500" fontSize={'0.92rem'}>
                     $ Earned

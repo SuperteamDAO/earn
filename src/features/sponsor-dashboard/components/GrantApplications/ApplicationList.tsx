@@ -46,6 +46,7 @@ interface Props {
   toggleAllApplications: () => void;
   isAllToggled: boolean;
   filterLabel: SubmissionLabels | GrantApplicationStatus | undefined;
+  isToggleDisabled: boolean;
   setFilterLabel: Dispatch<
     SetStateAction<SubmissionLabels | GrantApplicationStatus | undefined>
   >;
@@ -69,6 +70,7 @@ export const ApplicationList = ({
   isAllToggled,
   filterLabel,
   setFilterLabel,
+  isToggleDisabled,
 }: Props) => {
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -113,7 +115,8 @@ export const ApplicationList = ({
                   borderColor: 'brand.purple',
                 },
               }}
-              isChecked={isAllToggled}
+              isChecked={!isToggleDisabled ? isAllToggled : false}
+              isDisabled={isToggleDisabled}
               onChange={() => toggleAllApplications()}
             />
             <InputGroup w={'full'} size="lg">

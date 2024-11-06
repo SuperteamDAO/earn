@@ -11,11 +11,11 @@ const formatNumber = (num: string) => {
   }
 
   if (number >= 1000000) {
-    return `${(number / 1000000).toLocaleString(undefined, { maximumFractionDigits: 2 })}m`;
+    return `${(number / 1000000).toLocaleString('en-us', { maximumFractionDigits: 2 })}m`;
   } else if (number >= 10000) {
-    return `${(number / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })}k`;
+    return `${(number / 1000).toLocaleString('en-us', { maximumFractionDigits: 2 })}k`;
   } else {
-    return number.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    return number.toLocaleString('en-us', { maximumFractionDigits: 2 });
   }
 };
 

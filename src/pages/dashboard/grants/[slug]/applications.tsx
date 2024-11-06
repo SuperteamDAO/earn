@@ -419,6 +419,12 @@ function GrantApplications({ slug }: Props) {
                           toggleApplication={toggleApplication}
                           isAllToggled={isToggledAll}
                           toggleAllApplications={toggleAllApplications}
+                          isToggleDisabled={
+                            applications?.filter(
+                              (application) =>
+                                application.applicationStatus === 'Pending',
+                            ).length === 0
+                          }
                         />
                       </GridItem>
                       <GridItem
