@@ -1,5 +1,5 @@
 import { skillsArraySchema } from "@/interface/skills";
-import { BountyType, CompensationType } from "@prisma/client";
+import { BountyType, CompensationType, status } from "@prisma/client";
 import { z } from "zod";
 import { dayjs } from '@/utils/dayjs';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
@@ -126,7 +126,6 @@ export const createListingFormSchema = (
 
     timeToComplete: z.string().optional(),
     templateId: z.string().uuid().optional(),
-    publishedAt: z.string().datetime().optional(),
     eligibility: z.array(eligibilityQuestionSchema).optional(),
     skills: skillsArraySchema,
 
@@ -153,6 +152,11 @@ export const createListingFormSchema = (
       }
     ),
     isPrivate: z.boolean().default(false),
+
+    // values that will not be set on any API, but useful for response
+    isPublished: z.boolean().optional(),
+    status: z.nativeEnum(status).optional(),
+    publishedAt: z.string().datetime().optional(),
   }).superRefine((data, ctx) => {
       if (data.compensationType === "fixed") {
         if (!data.rewards || Object.keys(data.rewards).length === 0) {

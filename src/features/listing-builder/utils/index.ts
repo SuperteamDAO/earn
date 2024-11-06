@@ -1,3 +1,5 @@
+import { ListingFormData, ListingStatus } from '../types';
+
 export * from './skills';
 export * from './suggestions';
 
@@ -22,3 +24,20 @@ export const timeToCompleteOptions = [
   { value: '4-8 Weeks', label: '4-8 Weeks' },
   { value: '>8 Weeks', label: '>8 Weeks' },
 ];
+
+export const listingToStatus = (listing: ListingFormData): ListingStatus => {
+  if(listing.status === 'OPEN') {
+    if(listing.isPublished) {
+      return 'published'
+    } else {
+      if(!!listing.publishedAt) {
+        return 'unpublished'
+      } else {
+        return 'draft'
+      }
+    }
+  } else if (listing.status === 'VERIFYING') {
+    return 'verifying'
+  }
+  return 'draft'
+}

@@ -1,7 +1,9 @@
 import { Meta } from "@/layouts/Meta";
 import { cn } from "@/utils";
-import { type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import {Header} from "./Header";
+import { useAtomValue } from "jotai";
+import { listingSlugAtom } from "../../atoms";
 
 interface LayoutProps {
   meta?: ReactNode;
@@ -15,6 +17,7 @@ export function Layout({
   children,
   ...props
 }: LayoutProps) {
+
   return (
     <div 
       className={cn(

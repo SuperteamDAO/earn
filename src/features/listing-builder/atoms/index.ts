@@ -1,4 +1,4 @@
-import { atom } from 'jotai';
+import { atom, createStore } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { type UseFormReturn } from 'react-hook-form';
 import axios from 'axios';
@@ -11,15 +11,16 @@ type FormReturn = UseFormReturn<ListingFormData>;
 const formAtom = atom<FormReturn | null>(null);
 const isGodAtom = atom<boolean>(false);
 const isSTAtom = atom<boolean>(false);
-const editableAtom = atom<boolean>(false);
+const isEditingAtom = atom<boolean>(false);
 const isDuplicatingAtom = atom<boolean>(false);
 const listingIdAtom = atom<string | undefined>(undefined);
+const listingSlugAtom = atom<string | undefined>(undefined);
 const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
 
 const formSchemaAtom = atom((get) => 
   createListingFormSchema(
     get(isGodAtom),
-    get(editableAtom),
+    get(isEditingAtom),
     get(isDuplicatingAtom),
     get(listingIdAtom),
     get(isSTAtom)
@@ -42,7 +43,7 @@ const saveDraftMutationAtom = atomWithMutation((get) => ({
 const submitListingMutationAtom = atomWithMutation((get) => ({
   mutationKey: ['submitListing'],
   mutationFn: async (data: ListingFormData) => {
-    const isEditing = get(editableAtom) && !get(isDuplicatingAtom);
+    const isEditing = get(isEditingAtom) && !get(isDuplicatingAtom);
     const endpoint = isEditing ? '/api/listings/update' : '/api/listings/publish';
     const response = await axios.post(`${endpoint}/${get(listingIdAtom)}`, {
       ...data,
@@ -54,18 +55,18 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
 
 type ListingResponse = ListingFormData | null;
 const fetchListingAtom = atomWithQuery<ListingResponse>((get) => ({
-  queryKey: ['listing', get(listingIdAtom)],
-  queryFn: async ({ queryKey: [_, id] }): Promise<ListingResponse> => {
-    if (!id) return null;
+  queryKey: ['listing', get(listingSlugAtom)],
+  queryFn: async ({ queryKey: [_, slug] }): Promise<ListingResponse> => {
+    if (!slug) return null;
     try {
-      const response = await axios.get<ListingFormData>(`/api/listings/${id}`);
+      const response = await axios.get<ListingFormData>(`/api/sponsor-dashboard/${slug}/listing`);
       return response.data;
     } catch (error) {
       console.error('Error fetching listing:', error);
       return null;
     }
   },
-  enabled: Boolean(get(listingIdAtom)) && get(editableAtom)
+  enabled: Boolean(get(listingSlugAtom)),
 }));
 
 const formErrorsAtom = atom(
@@ -88,9 +89,10 @@ const isSubmittingListingAtom = atom(
   (get) => get(submitListingMutationAtom).isPending
 );
 
+type ACTION = 'SAVE_DRAFT' | 'SUBMIT' | 'RESET' | 'LOAD_DRAFT' | 'SET_FORM';
 const formActionsAtom = atom(
   null,
-  (get, set, action: { type: string; payload?: any }) => {
+  (get, set, action: { type: ACTION; payload?: any }) => {
     const form = get(formAtom);
     if (!form) return;
 
@@ -135,9 +137,10 @@ export {
   formAtom,
   isGodAtom,
   isSTAtom,
-  editableAtom,
+  isEditingAtom,
   isDuplicatingAtom,
   listingIdAtom,
+  listingSlugAtom,
   formSchemaAtom,
   draftStorageAtom,
   saveDraftMutationAtom,

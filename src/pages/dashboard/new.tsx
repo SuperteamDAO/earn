@@ -1,10 +1,9 @@
-import { ListingBuilderLayout } from "@/features/listing-builder";
+import { ListingBuilder } from "@/features/listing-builder";
 
 function NewListing() {
   return (
-    <ListingBuilderLayout>
-      <></>
-    </ListingBuilderLayout>
+    <ListingBuilder />
+    // <ListingBuilder listingSlug='deep-dive-251' />
   );
 }
 

@@ -54,7 +54,7 @@ export function Header() {
                 <Eye />
                 Preview
               </Button>
-              <Button>
+              <Button className='px-6'>
                 Continue
               </Button>
               <UserMenu />

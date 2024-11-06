@@ -9,7 +9,7 @@ import {
   draftStorageAtom,
   fetchListingAtom,
   listingIdAtom,
-  editableAtom,
+  isEditingAtom,
   isDuplicatingAtom
 } from '../atoms';
 
@@ -19,7 +19,7 @@ export const useListingForm = () => {
   const dispatchForm = useSetAtom(formActionsAtom);
   const draft = useAtomValue(draftStorageAtom);
   const listing = useAtomValue(fetchListingAtom);
-  const isEditing = useAtomValue(editableAtom);
+  const isEditing = useAtomValue(isEditingAtom);
   const isDuplicating = useAtomValue(isDuplicatingAtom);
   const listingId = useAtomValue(listingIdAtom);
 
