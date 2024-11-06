@@ -216,7 +216,7 @@ export default function NewProfilePage({
                 </AvatarGroup>
                 {totals?.totalUsers !== null && (
                   <Text pos="relative" color="brand.slate.500" fontSize="sm">
-                    Join {totals?.totalUsers?.toLocaleString()}+ others
+                    Join {totals?.totalUsers?.toLocaleString('en-us')}+ others
                   </Text>
                 )}
               </Flex>

@@ -128,7 +128,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
         Wins: user.wins,
         Submissions: user.totalSubmissions,
-        'Total Earnings': `$${user.totalEarnings.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`,
+        'Total Earnings': `$${user.totalEarnings.toLocaleString('en-us', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`,
         Bio: user.bio,
         Skills: parentSkills.length > 0 ? parentSkills.join(', ') : '-',
         Subkills: subSkills.length > 0 ? subSkills.join(', ') : '-',

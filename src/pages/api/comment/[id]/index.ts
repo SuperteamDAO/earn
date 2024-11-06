@@ -74,6 +74,18 @@ export default async function comment(
       },
     });
 
+    const mentionedUsernames = extractUsernames(result);
+    const validUsernames = await prisma.user.findMany({
+      where: {
+        username: {
+          in: Array.from(mentionedUsernames),
+        },
+      },
+      select: {
+        username: true,
+      },
+    });
+
     logger.info(
       `Fetched ${result.length} comments and count=${commentsCount} for listingId=${refId}`,
     );
@@ -81,6 +93,9 @@ export default async function comment(
     res.status(200).json({
       count: commentsCount,
       result,
+      validUsernames: validUsernames
+        .map((user) => user.username)
+        .filter(Boolean),
     });
   } catch (error: any) {
     logger.error(
@@ -91,4 +106,32 @@ export default async function comment(
       message: `Error occurred while fetching bounty with listingId=${refId}.`,
     });
   }
+}
+
+function extractUsernames(comments: any[]): Set<string> {
+  const usernames = new Set<string>();
+  const usernamePattern = /^[a-z0-9_-]+$/;
+
+  const processMessage = (message: string) => {
+    const matches = message.match(/@(\w+)/g);
+    if (matches) {
+      matches.forEach((match) => {
+        const username = match.slice(1);
+        if (username && usernamePattern.test(username)) {
+          usernames.add(username);
+        }
+      });
+    }
+  };
+
+  comments.forEach((comment) => {
+    processMessage(comment.message);
+    if (comment.replies && comment.replies.length > 0) {
+      comment.replies.forEach((reply: any) => {
+        processMessage(reply.message);
+      });
+    }
+  });
+
+  return usernames;
 }

@@ -170,7 +170,7 @@ const MemberRow = ({ user }: { user: LocalProfile }) => {
           fontWeight={500}
         >
           $
-          {user.totalEarnings.toLocaleString(undefined, {
+          {user.totalEarnings.toLocaleString('en-us', {
             maximumFractionDigits: 0,
           })}
         </Text>

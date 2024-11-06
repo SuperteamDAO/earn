@@ -18,12 +18,15 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { type z } from 'zod';
 
 import RichTextInputWithHelper from '@/components/Form/RichTextInput';
 import {
@@ -36,7 +39,7 @@ import { useUser } from '@/store/user';
 import { submissionCountQuery } from '../../queries';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
-import { isValidUrl } from '../../utils';
+import { submissionSchema } from '../../utils/submissionFormSchema';
 import { SubmissionTerms } from './SubmissionTerms';
 
 interface Props {
@@ -50,12 +53,7 @@ interface Props {
   onSurveyOpen: () => void;
 }
 
-interface EligibilityAnswer {
-  question: string;
-  answer: string;
-}
-
-type FormFields = Record<string, string>;
+type FormData = z.infer<ReturnType<typeof submissionSchema>>;
 
 export const SubmissionModal = ({
   isOpen,
@@ -77,19 +75,11 @@ export const SubmissionModal = ({
   } = listing;
 
   const queryClient = useQueryClient();
-
-  const [eligibilityQs, setEligibilityQs] = useState(
-    eligibility?.map((q) => ({
-      ...q,
-      error: '',
-    })),
-  );
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
-  const [error, setError] = useState<any>('');
-  const [askError, setAskError] = useState('');
+  const [error, setError] = useState('');
   const {
     register,
     control,
@@ -98,13 +88,24 @@ export const SubmissionModal = ({
     reset,
     watch,
     setValue,
-  } = useForm();
-
-  const router = useRouter();
-  const { query } = router;
-
+  } = useForm<FormData>({
+    resolver: zodResolver(
+      submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0),
+    ),
+    defaultValues: {
+      eligibilityAnswers:
+        Array.isArray(listing.eligibility) && listing.eligibility.length > 0
+          ? listing.eligibility.map((q) => ({
+              question: q.question,
+              answer: '',
+            }))
+          : undefined,
+    },
+  });
   const { user, refetchUser } = useUser();
   const posthog = usePostHog();
+  const router = useRouter();
+  const { query } = router;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -122,62 +123,55 @@ export const SubmissionModal = ({
             ask,
           } = response.data;
 
-          setValue('applicationLink', applicationLink);
-          setValue('tweetLink', tweetLink);
-          setValue('otherInfo', otherInfo);
-          setValue('ask', ask);
-
-          if (eligibility) {
-            eligibilityAnswers.forEach((curr: EligibilityAnswer) => {
-              const index = eligibility.findIndex(
-                (e) => e.question === curr.question,
-              );
-
-              if (index !== -1) {
-                setValue(
-                  `eligibility-${eligibility[index]!.order}`,
-                  curr.answer,
-                );
-              }
-            }, {} as FormFields);
-          }
+          reset({
+            applicationLink,
+            tweetLink,
+            otherInfo,
+            ask,
+            eligibilityAnswers,
+            publicKey: user?.publicKey,
+          });
         } catch (error) {
           console.error('Failed to fetch submission data', error);
+          toast.error('Failed to load submission data');
         }
       }
     };
 
     fetchData();
-  }, [id, editMode, reset, listing]);
+  }, [id, editMode, reset]);
 
   useEffect(() => {
     if (user?.publicKey) setValue('publicKey', user?.publicKey);
-  }, [user]);
+  }, [user, setValue]);
 
-  const submitSubmissions = async (data: any) => {
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
+
+  const submitSubmissions = async (data: FormData) => {
+    if (Object.keys(errors).length > 0) {
+      Object.entries(errors).forEach(([_, error]) => {
+        if (error?.message) {
+          toast.error(error.message);
+        }
+      });
+      return;
+    }
     posthog.capture('confirmed_submission');
     setIsLoading(true);
     try {
-      const { applicationLink, tweetLink, otherInfo, ask, ...answers } = data;
-      const eligibilityAnswers =
-        eligibility?.map((q) => ({
-          question: q.question,
-          answer: answers[`eligibility-${q.order}`],
-        })) ?? [];
-
       const submissionEndpoint = editMode
         ? '/api/submission/update/'
         : '/api/submission/create/';
 
       await axios.post(submissionEndpoint, {
         listingId: id,
-        link: applicationLink || '',
-        tweet: tweetLink || '',
-        otherInfo: otherInfo || '',
-        ask: ask || null,
-        eligibilityAnswers: eligibilityAnswers?.length
-          ? eligibilityAnswers
-          : null,
+        link: data.applicationLink || '',
+        tweet: data.tweetLink || '',
+        otherInfo: data.otherInfo || '',
+        ask: data.ask || null,
+        eligibilityAnswers: data.eligibilityAnswers || null,
       });
 
       const hideEasterEggFromSponsorIds = [
@@ -206,9 +200,16 @@ export const SubmissionModal = ({
         });
       }
 
+      toast.success(
+        editMode
+          ? 'Submission updated successfully'
+          : 'Submission created successfully',
+      );
       onClose();
     } catch (e) {
       setError('Sorry! Please try again or contact support.');
+      toast.error('Failed to submit. Please try again or contact support.');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -315,46 +316,16 @@ export const SubmissionModal = ({
                   />
                 </>
               )}
-              {isHackathon
-                ? eligibilityQs?.map((e, i) => {
-                    return (
-                      <RichTextInputWithHelper
-                        id={`eligibility-${e?.order}`}
-                        label={e?.question}
-                        control={control}
-                        isRequired={e.optional !== true}
-                        key={e?.order}
-                        validate={(value: string) => {
-                          if (!isHackathon) return true;
-                          if (value && e.isLink) {
-                            if (!isValidUrl(value) && eligibilityQs[i]) {
-                              const cloneEligibilityQs = [...eligibilityQs];
-                              const currElgibile = cloneEligibilityQs[i];
-                              if (currElgibile) {
-                                currElgibile.error =
-                                  'Please enter a valid link';
-                                setEligibilityQs(cloneEligibilityQs);
-                                return false;
-                              }
-                            }
-                          }
-                          return true;
-                        }}
-                      />
-                    );
-                  })
-                : eligibility?.map((e) => {
-                    return (
-                      <Box key={e.order} w="full">
-                        <RichTextInputWithHelper
-                          control={control}
-                          label={e?.question}
-                          id={`eligibility-${e?.order}`}
-                          isRequired
-                        />
-                      </Box>
-                    );
-                  })}
+              {eligibility?.map((e, index) => (
+                <Box key={e.order} w="full">
+                  <RichTextInputWithHelper
+                    control={control}
+                    label={e?.question}
+                    id={`eligibilityAnswers.${index}.answer`}
+                    isRequired
+                  />
+                </Box>
+              ))}
               {compensationType !== 'fixed' && (
                 <FormControl isRequired>
                   <FormLabel
@@ -383,33 +354,13 @@ export const SubmissionModal = ({
                       </Text>
                     </InputLeftAddon>
                     <Input
-                      borderColor={'brand.slate.300'}
+                      borderColor="brand.slate.300"
                       focusBorderColor="brand.purple"
                       id="ask"
-                      {...register('ask', {
-                        valueAsNumber: true,
-                        validate: (value) => {
-                          if (
-                            compensationType === 'range' &&
-                            minRewardAsk &&
-                            maxRewardAsk
-                          ) {
-                            if (value < minRewardAsk || value > maxRewardAsk) {
-                              setAskError(
-                                `Compensation must be between ${minRewardAsk} and ${maxRewardAsk} ${token}`,
-                              );
-                              return false;
-                            }
-                          }
-                          return true;
-                        },
-                      })}
+                      {...register('ask', { valueAsNumber: true })}
                       type="number"
                     />
                   </InputGroup>
-                  <Text mt={1} ml={1} color="red" fontSize="14px">
-                    {askError}
-                  </Text>
                 </FormControl>
               )}
               <RichTextInputWithHelper

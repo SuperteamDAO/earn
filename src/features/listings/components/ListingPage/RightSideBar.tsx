@@ -26,12 +26,27 @@ import { cleanRewardPrizes } from '@/utils/rank';
 
 import { submissionCountQuery } from '../../queries';
 import type { Listing } from '../../types';
-import { digitsInLargestString } from '../../utils';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 import { ExtraInfoSection } from './ExtraInfoSection';
 import { ListingWinners } from './ListingWinners';
 import { PrizesList } from './PrizesList';
+
+function digitsInLargestString(numbers: string[]): number {
+  const largest = numbers.reduce((max, current) => {
+    const cleanedCurrent = current.replace(/[,\.]/g, '');
+    const cleanedMax = max.replace(/[,\.]/g, '');
+
+    return cleanedCurrent.length > cleanedMax.length
+      ? current
+      : cleanedCurrent.length === cleanedMax.length &&
+          cleanedCurrent > cleanedMax
+        ? current
+        : max;
+  }, '');
+
+  return largest.replace(/[,\.]/g, '').length;
+}
 
 export function RightSideBar({
   listing,
@@ -209,7 +224,7 @@ export function RightSideBar({
                       {isSubmissionNumberLoading
                         ? '...'
                         : !isProject
-                          ? submissionNumber?.toLocaleString()
+                          ? submissionNumber?.toLocaleString('en-us')
                           : submissionRange}
                     </Text>
                   </Flex>

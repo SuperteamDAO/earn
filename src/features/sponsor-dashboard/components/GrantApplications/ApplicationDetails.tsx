@@ -481,7 +481,7 @@ export const ApplicationDetails = ({
                     fontWeight={600}
                     whiteSpace={'nowrap'}
                   >
-                    {`${selectedApplication?.approvedAmount?.toLocaleString()}`}
+                    {`${selectedApplication?.approvedAmount?.toLocaleString('en-us')}`}
                     <Text as="span" ml={0.5} color="brand.slate.400">
                       {grant?.token}
                     </Text>
@@ -610,7 +610,7 @@ export const ApplicationDetails = ({
                     fontWeight={600}
                     whiteSpace={'nowrap'}
                   >
-                    {`${selectedApplication?.ask?.toLocaleString()}`}
+                    {`${selectedApplication?.ask?.toLocaleString('en-us')}`}
                     <Text as="span" ml={0.5} color="brand.slate.400">
                       {grant?.token}
                     </Text>

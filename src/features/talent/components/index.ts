@@ -6,4 +6,3 @@ export * from './shareProfile';
 export * from './SkillSelectTalent';
 export * from './SocialInput';
 export * from './Socials';
-export * from './TalentBio';

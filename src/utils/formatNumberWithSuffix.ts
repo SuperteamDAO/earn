@@ -15,7 +15,7 @@ export const formatNumberWithSuffix = (
     tier = 0;
   }
 
-  if (tier === 0) return amount.toLocaleString();
+  if (tier === 0) return amount.toLocaleString('en-us');
 
   const suffix = suffixes[tier];
   const scale = Math.pow(10, tier * 3);
@@ -30,7 +30,7 @@ export const formatNumberWithSuffix = (
   } else {
     formattedNumber =
       scaled % 1 === 0
-        ? scaled.toLocaleString()
+        ? scaled.toLocaleString('en-us')
         : scaled.toFixed(1).replace(/\.0$/, '').toLocaleString();
   }
 

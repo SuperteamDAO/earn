@@ -859,7 +859,7 @@ function TrackBox({
                 fontSize={{ base: 'sm', md: 'md' }}
                 fontWeight={600}
               >
-                {amount?.toLocaleString()}
+                {amount?.toLocaleString('en-us')}
               </Text>
               <Text
                 color={'brand.slate.400'}

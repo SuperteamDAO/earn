@@ -46,9 +46,9 @@ export const SponsorBanner = () => {
           lineHeight={'1.1rem'}
         >
           Reach{' '}
-          {(
-            Math.floor((data?.totalUsers || 0) / 10000) * 10000
-          ).toLocaleString()}
+          {(Math.floor((data?.totalUsers || 0) / 10000) * 10000).toLocaleString(
+            'en-us',
+          )}
           + crypto talent from one single dashboard
         </Text>
       </Box>
