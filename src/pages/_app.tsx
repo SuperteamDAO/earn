@@ -1,4 +1,5 @@
 import '../styles/globals.scss';
+import '@/components/tiptap/styles/index.css';
 
 import { ChakraProvider } from '@chakra-ui/react';
 import { setUser } from '@sentry/nextjs';
@@ -17,6 +18,7 @@ import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
 
 import theme from '../config/chakra.config';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 // Chakra / Next/font don't play well in config.ts file for the theme. So we extend the theme here. (only the fonts)
 const extendThemeWithNextFonts = {
@@ -110,7 +112,9 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       <PostHogProvider client={posthog}>
         <SessionProvider session={session}>
           <ChakraProvider theme={extendThemeWithNextFonts}>
-            <MyApp Component={Component} pageProps={pageProps} />
+            <TooltipProvider>
+              <MyApp Component={Component} pageProps={pageProps} />
+            </TooltipProvider>
           </ChakraProvider>
         </SessionProvider>
       </PostHogProvider>

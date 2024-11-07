@@ -9,14 +9,14 @@ import { BONUS_REWARD_POSITION, MAX_BONUS_SPOTS, MAX_PODIUMS, tokenList } from "
 
 export const createListingFormSchema = (
   isGod: boolean,
-  editable: boolean,
+  isEditing: boolean,
   isDuplicating: boolean,
   id?: string,
   isST?: boolean,
 ) => {
   const slugUniqueCheck = async (slug: string) => {
     try {
-      const listingId = editable && !isDuplicating ? id : null;
+      const listingId = isEditing && !isDuplicating ? id : null;
       await axios.get(
         `/api/listings/check-slug?slug=${slug}&check=true&id=${listingId}`,
       );

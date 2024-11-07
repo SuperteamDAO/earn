@@ -6,14 +6,12 @@ import { useAtomValue } from "jotai";
 import { listingSlugAtom } from "../../atoms";
 
 interface LayoutProps {
-  meta?: ReactNode;
   children: ReactNode;
   className?: string;
 }
 
 export function Layout({
   className,
-  meta,
   children,
   ...props
 }: LayoutProps) {
@@ -21,7 +19,7 @@ export function Layout({
   return (
     <div 
       className={cn(
-        "flex min-h-screen flex-col justify-between",
+        "flex min-h-screen flex-col justify-between bg-background",
         className
       )}
       {...props}

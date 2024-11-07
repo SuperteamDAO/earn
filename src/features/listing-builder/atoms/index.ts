@@ -8,6 +8,8 @@ import { ListingFormData, ListingStatus } from '../types';
 
 type FormReturn = UseFormReturn<ListingFormData>;
 
+const store: ReturnType<typeof createStore> = createStore()
+
 const formAtom = atom<FormReturn | null>(null);
 const isGodAtom = atom<boolean>(false);
 const isSTAtom = atom<boolean>(false);
@@ -26,8 +28,6 @@ const formSchemaAtom = atom((get) =>
     get(isSTAtom)
   )
 );
-
-const draftStorageAtom = atomWithStorage<Partial<ListingFormData>>('listing-draft', {});
 
 const saveDraftMutationAtom = atomWithMutation((get) => ({
   mutationKey: ['saveDraft'],
@@ -89,7 +89,7 @@ const isSubmittingListingAtom = atom(
   (get) => get(submitListingMutationAtom).isPending
 );
 
-type ACTION = 'SAVE_DRAFT' | 'SUBMIT' | 'RESET' | 'LOAD_DRAFT' | 'SET_FORM';
+type ACTION = 'SAVE_DRAFT' | 'SUBMIT' | 'RESET' | 'LOAD_DRAFT' | 'SET';
 const formActionsAtom = atom(
   null,
   (get, set, action: { type: ACTION; payload?: any }) => {
@@ -99,7 +99,6 @@ const formActionsAtom = atom(
     switch (action.type) {
       case 'SAVE_DRAFT': {
         const formData = form.getValues();
-        set(draftStorageAtom, formData);
         const saveDraftMutation = get(saveDraftMutationAtom);
         saveDraftMutation.mutate(formData);
         break;
@@ -109,24 +108,17 @@ const formActionsAtom = atom(
         const formData = form.getValues();
         const submitMutation = get(submitListingMutationAtom);
         submitMutation.mutate(formData);
-        set(draftStorageAtom, {});
         break;
       }
 
       case 'RESET': {
         form.reset();
-        set(draftStorageAtom, {});
         break;
       }
 
-      case 'LOAD_DRAFT': {
-        const draft = get(draftStorageAtom);
-        form.reset(draft);
-        break;
-      }
-
-      case 'SET_FORM': {
-        set(formAtom, action.payload);
+      case 'SET': {
+        console.log('hit set')
+        form.reset(action.payload)
         break;
       }
     }
@@ -134,6 +126,7 @@ const formActionsAtom = atom(
 );
 
 export {
+  store,
   formAtom,
   isGodAtom,
   isSTAtom,
@@ -142,7 +135,6 @@ export {
   listingIdAtom,
   listingSlugAtom,
   formSchemaAtom,
-  draftStorageAtom,
   saveDraftMutationAtom,
   submitListingMutationAtom,
   fetchListingAtom,

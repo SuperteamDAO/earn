@@ -1,4 +1,5 @@
-import { ListingFormData, ListingStatus } from '../types';
+import { z } from 'zod';
+import { createListingFormSchema, ListingFormData, ListingStatus } from '../types';
 
 export * from './skills';
 export * from './suggestions';
@@ -41,3 +42,27 @@ export const listingToStatus = (listing: ListingFormData): ListingStatus => {
   }
   return 'draft'
 }
+
+export const getListingDefaults = (isGod: boolean, editable: boolean, isDuplicating: boolean, isST: boolean) => {
+  const schema = createListingFormSchema(isGod, editable, isDuplicating, undefined, isST);
+  const innerSchema = schema._def.schema as z.ZodObject<any>;
+  const shape = innerSchema.shape;
+
+  const defaults: Record<string, any> = {};
+
+  for (const [key, value] of Object.entries(shape)) {
+    const zodValue = value as z.ZodTypeAny;
+    
+    if (zodValue instanceof z.ZodDefault) {
+      defaults[key] = zodValue._def.defaultValue();
+    } else if (zodValue instanceof z.ZodOptional) {
+      defaults[key] = '';
+    } else if ('defaultValue' in zodValue._def) {
+      defaults[key] = zodValue._def.defaultValue;
+    } else {
+      defaults[key] = '';
+    }
+  }
+
+  return defaults as ListingFormData;
+};

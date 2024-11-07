@@ -6,7 +6,7 @@ import {
   formAtom,
   formSchemaAtom,
   formActionsAtom,
-  draftStorageAtom,
+  listingStorageAtom,
   fetchListingAtom,
   listingIdAtom,
   isEditingAtom,
@@ -17,7 +17,7 @@ export const useListingForm = () => {
   const [form] = useAtom(formAtom);
   const formSchema = useAtomValue(formSchemaAtom);
   const dispatchForm = useSetAtom(formActionsAtom);
-  const draft = useAtomValue(draftStorageAtom);
+  const draft = useAtomValue(listingStorageAtom);
   const listing = useAtomValue(fetchListingAtom);
   const isEditing = useAtomValue(isEditingAtom);
   const isDuplicating = useAtomValue(isDuplicatingAtom);
@@ -30,7 +30,7 @@ export const useListingForm = () => {
 
   useEffect(() => {
     if (!form) {
-      dispatchForm({ type: 'SET_FORM', payload: methods });
+      dispatchForm({ type: 'SET', payload: methods });
     }
   }, [form, methods, dispatchForm]);
 
