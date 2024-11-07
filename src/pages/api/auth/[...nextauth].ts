@@ -2,7 +2,6 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import NextAuth, { type NextAuthOptions } from 'next-auth';
 import type { Adapter } from 'next-auth/adapters';
 import EmailProvider from 'next-auth/providers/email';
-import GoogleProvider from 'next-auth/providers/google';
 
 import {
   kashEmail,
@@ -16,21 +15,6 @@ import { prisma } from '@/prisma';
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID as string,
-      clientSecret: process.env.GOOGLE_SECRET as string,
-      allowDangerousEmailAccountLinking: true,
-      profile(profile) {
-        return {
-          id: Number(profile.sub),
-          firstName: profile.given_name,
-          lastName: profile.family_name,
-          email: profile.email,
-          emailVerified: profile.emailVerified,
-          photo: profile.picture,
-        } as any;
-      },
-    }),
     EmailProvider({
       async generateVerificationToken() {
         const digits = '0123456789';

@@ -58,7 +58,6 @@ const CreateSponsor = () => {
   const [industries, setIndustries] = useState<string>();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loginStep, setLoginStep] = useState(0);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
   );
@@ -225,7 +224,7 @@ const CreateSponsor = () => {
               >
                 from joining Superteam Earn
               </Text>
-              <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
+              <SignIn />
             </Box>
           </Box>
         </>
@@ -693,14 +692,14 @@ const CreateSponsor = () => {
                 )}
                 {(validationSlugErrorMessage ||
                   sponsorNameValidationErrorMessage) && (
-                  <Text align={'center'} color="yellow.500">
-                    If you want access to the existing account, contact us on
-                    Telegram at{' '}
-                    <Link href={PDTG} isExternal>
-                      @pratikdholani
-                    </Link>
-                  </Text>
-                )}
+                    <Text align={'center'} color="yellow.500">
+                      If you want access to the existing account, contact us on
+                      Telegram at{' '}
+                      <Link href={PDTG} isExternal>
+                        @pratikdholani
+                      </Link>
+                    </Text>
+                  )}
               </Box>
               <Button
                 className="ph-no-capture"
