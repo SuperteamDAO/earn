@@ -68,6 +68,7 @@
     "class-variance-authority": "^0.7.0",
     "cloudinary": "^2.5.1",
     "clsx": "^2.1.1",
+    "cmdk": "1.0.0",
     "datauri": "^4.1.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.12",
