@@ -1,4 +1,4 @@
-import { Flex, type FlexProps, Hide, Link } from '@chakra-ui/react';
+import { Flex, type FlexProps, Link } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -88,11 +88,6 @@ export function NavTabs({ ...flexProps }: FlexProps) {
       <PillTab href="/" altActive={['/all/']} phEvent="all_navpill">
         All Opportunities
       </PillTab>
-      <Hide above="md">
-        <PillTab href="/hackathon/radar" phEvent="radar_navpill">
-          Radar 📡
-        </PillTab>
-      </Hide>
       {showRegionTab && (
         <PillTab
           href={`/regions/${region.toLowerCase()}/`}

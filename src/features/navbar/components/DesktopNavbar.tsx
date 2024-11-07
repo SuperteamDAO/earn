@@ -133,19 +133,6 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   />
                 );
               })}
-              <Link
-                as={NextLink}
-                alignItems="center"
-                display="flex"
-                href="/hackathon/radar"
-              >
-                <Image
-                  h={'1.1rem'}
-                  objectFit={'contain'}
-                  alt="Radar Nav Icon"
-                  src="/assets/hackathon/radar/nav.png"
-                />
-              </Link>
               {/* {HACKATHON_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
