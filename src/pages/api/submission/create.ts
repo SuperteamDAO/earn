@@ -2,7 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
-import { submissionSchema } from '@/features/listings';
+import { isDeadlineOver, submissionSchema } from '@/features/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -12,7 +12,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   const {
     listingId,
     applicationLink,
-    tweetLink,
+    tweet,
     otherInfo,
     eligibilityAnswers,
     ask,
@@ -31,6 +31,14 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
+    const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
+
+    if (hasDeadlinePassed) {
+      return res.status(400).json({
+        message: 'Submissions closed',
+      });
+    }
+
     try {
       const validatedData = submissionSchema(
         listing as any,
@@ -38,7 +46,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         listing.maxRewardAsk || 0,
       ).parse({
         applicationLink,
-        tweetLink,
+        tweet,
         otherInfo,
         ask,
         eligibilityAnswers,
@@ -62,7 +70,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
           userId: userId as string,
           listingId,
           link: validatedData.applicationLink || '',
-          tweet: validatedData.tweetLink || '',
+          tweet: validatedData.tweet || '',
           otherInfo: validatedData.otherInfo || '',
           eligibilityAnswers: validatedData.eligibilityAnswers || undefined,
           ask: validatedData.ask || null,

@@ -2,6 +2,11 @@ import {
   Box,
   Button,
   Checkbox,
+  Drawer,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
   Flex,
   FormControl,
   FormLabel,
@@ -10,11 +15,6 @@ import {
   InputGroup,
   InputLeftAddon,
   Link,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -55,7 +55,7 @@ interface Props {
 
 type FormData = z.infer<ReturnType<typeof submissionSchema>>;
 
-export const SubmissionModal = ({
+export const SubmissionDrawer = ({
   isOpen,
   onClose,
   editMode,
@@ -79,7 +79,6 @@ export const SubmissionModal = ({
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
-  const [error, setError] = useState('');
   const {
     register,
     control,
@@ -117,7 +116,7 @@ export const SubmissionModal = ({
 
           const {
             link: applicationLink,
-            tweet: tweetLink,
+            tweet,
             otherInfo,
             eligibilityAnswers,
             ask,
@@ -125,7 +124,7 @@ export const SubmissionModal = ({
 
           reset({
             applicationLink,
-            tweetLink,
+            tweet,
             otherInfo,
             ask,
             eligibilityAnswers,
@@ -145,19 +144,7 @@ export const SubmissionModal = ({
     if (user?.publicKey) setValue('publicKey', user?.publicKey);
   }, [user, setValue]);
 
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
-
   const submitSubmissions = async (data: FormData) => {
-    if (Object.keys(errors).length > 0) {
-      Object.entries(errors).forEach(([_, error]) => {
-        if (error?.message) {
-          toast.error(error.message);
-        }
-      });
-      return;
-    }
     posthog.capture('confirmed_submission');
     setIsLoading(true);
     try {
@@ -168,7 +155,7 @@ export const SubmissionModal = ({
       await axios.post(submissionEndpoint, {
         listingId: id,
         link: data.applicationLink || '',
-        tweet: data.tweetLink || '',
+        tweet: data.tweet || '',
         otherInfo: data.otherInfo || '',
         ask: data.ask || null,
         eligibilityAnswers: data.eligibilityAnswers || null,
@@ -207,7 +194,6 @@ export const SubmissionModal = ({
       );
       onClose();
     } catch (e) {
-      setError('Sorry! Please try again or contact support.');
       toast.error('Failed to submit. Please try again or contact support.');
     } finally {
       setIsLoading(false);
@@ -258,143 +244,167 @@ export const SubmissionModal = ({
   }
 
   return (
-    <Modal
-      closeOnOverlayClick={false}
-      isCentered
-      isOpen={isOpen}
-      onClose={onClose}
-      scrollBehavior={'inside'}
-      size={'xl'}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader px={{ base: 4, md: 10 }} pt={8} color="brand.slate.800">
+    <Drawer isOpen={isOpen} onClose={onClose} placement="right" size={'lg'}>
+      <DrawerOverlay />
+      <DrawerContent flexDir="column" display="flex">
+        <DrawerHeader px={{ base: 2, md: 6 }} pt={6} color="brand.slate.800">
           {headerText}
-          <Text mt={1} color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
+          <Text color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
             {subheadingText}
           </Text>
-        </ModalHeader>
-        <ModalCloseButton mt={5} />
-        <VStack
-          align={'start'}
-          gap={3}
-          overflowY={'auto'}
-          maxH={'50rem'}
-          px={{ base: 4, md: 10 }}
-          pb={10}
+          <DrawerCloseButton mt={5} />
+        </DrawerHeader>
+        <Flex
+          justify={'space-between'}
+          direction="column"
+          h="100vh"
+          px={{ base: 2, md: 6 }}
         >
-          <Box></Box>
           <form
             style={{ width: '100%' }}
-            onSubmit={handleSubmit((e) => {
-              submitSubmissions(e);
-            })}
-          >
-            <VStack gap={4} mb={5}>
-              {!isProject && (
-                <>
-                  <TextAreaWithCounter
-                    id="applicationLink"
-                    label="Link to Your Submission"
-                    helperText="Make sure this link is accessible by everyone!"
-                    placeholder="Add a link"
-                    register={register}
-                    watch={watch}
-                    maxLength={500}
-                    errors={errors}
-                    isRequired
-                  />
-                  <TextAreaWithCounter
-                    id="tweetLink"
-                    label="Tweet Link"
-                    helperText="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
-                    placeholder="Add a tweet's link"
-                    register={register}
-                    watch={watch}
-                    maxLength={500}
-                    errors={errors}
-                  />
-                </>
-              )}
-              {eligibility?.map((e, index) => (
-                <Box key={e.order} w="full">
-                  <RichTextInputWithHelper
-                    control={control}
-                    label={e?.question}
-                    id={`eligibilityAnswers.${index}.answer`}
-                    isRequired
-                  />
-                </Box>
-              ))}
-              {compensationType !== 'fixed' && (
-                <FormControl isRequired>
-                  <FormLabel
-                    mb={1}
-                    color={'brand.slate.600'}
-                    fontWeight={600}
-                    htmlFor={'ask'}
-                  >
-                    What&apos;s the compensation you require to complete this
-                    fully?
-                  </FormLabel>
-                  <InputGroup>
-                    <InputLeftAddon>
-                      <Image
-                        w={4}
-                        h={4}
-                        alt={'green doller'}
-                        rounded={'full'}
-                        src={
-                          tokenList.filter((e) => e?.tokenSymbol === token)[0]
-                            ?.icon ?? '/assets/icons/green-dollar.svg'
-                        }
-                      />
-                      <Text ml={2} color="brand.slate.500" fontWeight={500}>
-                        {token}
-                      </Text>
-                    </InputLeftAddon>
-                    <Input
-                      borderColor="brand.slate.300"
-                      focusBorderColor="brand.purple"
-                      id="ask"
-                      {...register('ask', { valueAsNumber: true })}
-                      type="number"
-                    />
-                  </InputGroup>
-                </FormControl>
-              )}
-              <RichTextInputWithHelper
-                control={control}
-                label="Anything Else?"
-                id={`otherInfo`}
-                helperText="If you have any other links or information you'd like to share with us, please add them here!"
-                placeholder="Add info or link"
-              />
-
-              <TextInputWithHelper
-                id="publicKey"
-                label="Your Solana Wallet Address"
-                helperText={
-                  <>
-                    This is where you will receive your rewards if you win. If
-                    you want to edit it,{' '}
-                    <Text as="u">
-                      <Link
-                        color="blue.600"
-                        href={`/t/${user?.username}/edit`}
-                        isExternal
-                      >
-                        click here
-                      </Link>
-                    </Text>{' '}
-                  </>
+            onSubmit={handleSubmit(
+              (data) => {
+                submitSubmissions(data);
+              },
+              (errors) => {
+                console.log(errors);
+                const firstError = Object.values(errors)[0];
+                if (firstError) {
+                  toast.error(firstError.message);
                 }
-                placeholder="Add your Solana wallet address"
-                register={register}
-                errors={errors}
-                defaultValue={user?.publicKey}
-                readOnly
-              />
+              },
+            )}
+          >
+            <Flex
+              direction={'column'}
+              overflowY="auto"
+              h={'calc(100vh - 210px)'}
+              p={4}
+              borderWidth="1px"
+              borderColor="brand.slate.200"
+              borderRadius={'0.5rem'}
+              shadow="0px 1px 3px rgba(0, 0, 0, 0.08), 0px 1px 2px rgba(0, 0, 0, 0.06)"
+              css={{
+                '&::-webkit-scrollbar': {
+                  width: '4px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  width: '6px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: '#cbd5e1',
+                  borderRadius: '30px',
+                },
+              }}
+            >
+              <VStack gap={4} mb={5}>
+                {!isProject && (
+                  <>
+                    <TextAreaWithCounter
+                      id="applicationLink"
+                      label="Link to Your Submission"
+                      helperText="Make sure this link is accessible by everyone!"
+                      placeholder="Add a link"
+                      register={register}
+                      watch={watch}
+                      maxLength={500}
+                      errors={errors}
+                      isRequired
+                    />
+                    <TextAreaWithCounter
+                      id="tweet"
+                      label="Tweet Link"
+                      helperText="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
+                      placeholder="Add a tweet's link"
+                      register={register}
+                      watch={watch}
+                      maxLength={500}
+                      errors={errors}
+                    />
+                  </>
+                )}
+                {eligibility?.map((e, index) => (
+                  <Box key={e.order} w="full">
+                    <RichTextInputWithHelper
+                      control={control}
+                      label={e?.question}
+                      id={`eligibilityAnswers.${index}.answer`}
+                      isRequired
+                    />
+                  </Box>
+                ))}
+                {compensationType !== 'fixed' && (
+                  <FormControl isRequired>
+                    <FormLabel
+                      mb={1}
+                      color={'brand.slate.600'}
+                      fontWeight={600}
+                      htmlFor={'ask'}
+                    >
+                      What&apos;s the compensation you require to complete this
+                      fully?
+                    </FormLabel>
+                    <InputGroup>
+                      <InputLeftAddon>
+                        <Image
+                          w={4}
+                          h={4}
+                          alt={'green doller'}
+                          rounded={'full'}
+                          src={
+                            tokenList.filter((e) => e?.tokenSymbol === token)[0]
+                              ?.icon ?? '/assets/icons/green-dollar.svg'
+                          }
+                        />
+                        <Text ml={2} color="brand.slate.500" fontWeight={500}>
+                          {token}
+                        </Text>
+                      </InputLeftAddon>
+                      <Input
+                        borderColor="brand.slate.300"
+                        focusBorderColor="brand.purple"
+                        id="ask"
+                        {...register('ask', { valueAsNumber: true })}
+                        type="number"
+                      />
+                    </InputGroup>
+                  </FormControl>
+                )}
+                <RichTextInputWithHelper
+                  control={control}
+                  label="Anything Else?"
+                  id={`otherInfo`}
+                  helperText="If you have any other links or information you'd like to share with us, please add them here!"
+                  placeholder="Add info or link"
+                />
+
+                <TextInputWithHelper
+                  id="publicKey"
+                  label="Your Solana Wallet Address"
+                  helperText={
+                    <>
+                      This is where you will receive your rewards if you win. If
+                      you want to edit it,{' '}
+                      <Text as="u">
+                        <Link
+                          color="blue.600"
+                          href={`/t/${user?.username}/edit`}
+                          isExternal
+                        >
+                          click here
+                        </Link>
+                      </Text>{' '}
+                    </>
+                  }
+                  placeholder="Add your Solana wallet address"
+                  register={register}
+                  errors={errors}
+                  defaultValue={user?.publicKey}
+                  readOnly
+                />
+              </VStack>
+            </Flex>
+            <Flex direction={'column'} w="100%" py={4} bg="white">
               {isHackathon && !editMode && (
                 <FormControl isRequired>
                   <Flex align="flex-start">
@@ -422,55 +432,49 @@ export const SubmissionModal = ({
                   </Flex>
                 </FormControl>
               )}
-            </VStack>
-            {!!error && (
-              <Text align="center" mb={2} color="red">
-                Sorry! An error occurred while submitting. <br />
-                Please try again or contact us at support@superteamearn.com
-              </Text>
-            )}
-            <Button
-              className="ph-no-capture"
-              w={'full'}
-              isDisabled={
-                isTemplate || (!listing.isPublished && !!query['preview'])
-              }
-              isLoading={!!isLoading}
-              loadingText="Submitting..."
-              type="submit"
-              variant="solid"
-            >
-              {!isProject ? 'Submit' : 'Apply'}
-            </Button>
-            <Text
-              mt={2}
-              color="brand.slate.400"
-              fontSize="sm"
-              textAlign="center"
-            >
-              By submitting/applying to this listing, you agree to our{' '}
-              <Link
-                textDecoration={'underline'}
-                onClick={() => setIsTOSModalOpen(true)}
-                rel="noopener noreferrer"
-                target="_blank"
-                textUnderlineOffset={2}
+              <Button
+                className="ph-no-capture"
+                w={'full'}
+                isDisabled={
+                  isTemplate || (!listing.isPublished && !!query['preview'])
+                }
+                isLoading={!!isLoading}
+                loadingText="Submitting..."
+                type="submit"
+                variant="solid"
               >
-                Terms of Use
-              </Link>
-              .
-            </Text>
+                {!isProject ? 'Submit' : 'Apply'}
+              </Button>
+              <Text
+                mt={2}
+                color="brand.slate.400"
+                fontSize="sm"
+                textAlign="center"
+              >
+                By submitting/applying to this listing, you agree to our{' '}
+                <Link
+                  textDecoration={'underline'}
+                  onClick={() => setIsTOSModalOpen(true)}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  textUnderlineOffset={2}
+                >
+                  Terms of Use
+                </Link>
+                .
+              </Text>
+            </Flex>
           </form>
-        </VStack>
-        {listing?.sponsor?.name && (
-          <SubmissionTerms
-            entityName={listing.sponsor.entityName}
-            isOpen={isTOSModalOpen}
-            onClose={() => setIsTOSModalOpen(false)}
-            sponsorName={listing.sponsor.name}
-          />
-        )}
-      </ModalContent>
-    </Modal>
+          {listing?.sponsor?.name && (
+            <SubmissionTerms
+              entityName={listing.sponsor.entityName}
+              isOpen={isTOSModalOpen}
+              onClose={() => setIsTOSModalOpen(false)}
+              sponsorName={listing.sponsor.name}
+            />
+          )}
+        </Flex>
+      </DrawerContent>
+    </Drawer>
   );
 };
