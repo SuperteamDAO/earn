@@ -10,7 +10,6 @@ export const getColorStyles = (status: string) => {
       return { bgColor: '#ffecb3', color: '#F59E0B' };
     case 'Verification Failed':
       return { bgColor: 'red.100', color: 'red.400' };
-    case 'Preview':
     case 'Draft':
       return { bgColor: 'brand.slate.100', color: 'brand.slate.400' };
     case 'In Review':

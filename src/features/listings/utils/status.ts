@@ -38,7 +38,6 @@ export const getListingDraftStatus = (
 ) => {
   if (status === 'CLOSED') return 'CLOSED';
   if (status === 'REVIEW') return 'REVIEW';
-  if (status === 'PREVIEW') return 'PREVIEW';
   if (status === 'VERIFYING') return 'VERIFYING';
   if (status === 'VERIFY_FAIL') return 'VERIFY_FAIL';
   if (isPublished) return 'PUBLISHED';
@@ -65,7 +64,6 @@ export const getListingStatus = (
   );
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
 
-  if (listingStatus === 'PREVIEW') return 'Draft';
   if (listingStatus === 'VERIFYING') return 'Under Verification';
   if (listingStatus === 'VERIFY_FAIL') return 'Verification Failed';
   if (listingStatus === 'DRAFT') return 'Draft';

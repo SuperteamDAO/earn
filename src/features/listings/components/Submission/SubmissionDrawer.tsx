@@ -21,6 +21,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -102,6 +103,8 @@ export const SubmissionDrawer = ({
   });
   const { user, refetchUser } = useUser();
   const posthog = usePostHog();
+  const router = useRouter();
+  const { query } = router;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -432,7 +435,9 @@ export const SubmissionDrawer = ({
               <Button
                 className="ph-no-capture"
                 w={'full'}
-                isDisabled={isTemplate || listing.status === 'PREVIEW'}
+                isDisabled={
+                  isTemplate || (!listing.isPublished && !!query['preview'])
+                }
                 isLoading={!!isLoading}
                 loadingText="Submitting..."
                 type="submit"

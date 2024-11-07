@@ -2,6 +2,7 @@ import { Button, Flex, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
@@ -61,6 +62,8 @@ export const SubmissionActionButton = ({
   const isSubmitted = submissionStatus?.isSubmitted ?? false;
 
   const posthog = usePostHog();
+  const router = useRouter();
+  const { query } = router;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -130,7 +133,7 @@ export const SubmissionActionButton = ({
         pastDeadline ||
           (user?.id &&
             user?.isTalentFilled &&
-            ((bountyDraftStatus !== 'PUBLISHED' && status !== 'PREVIEW') ||
+            ((bountyDraftStatus !== 'PUBLISHED' && !query['preview']) ||
               !hasHackathonStarted ||
               !isUserEligibleByRegion)),
       );
