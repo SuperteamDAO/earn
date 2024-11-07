@@ -10,61 +10,46 @@ const submissionSchema = (
   z
     .object({
       applicationLink: z.string().url('Invalid URL').optional(),
-      tweetLink: z.string().url('Invalid Tweet Link').optional(),
+      tweet: z.union([z.literal(''), z.string().trim().url()]),
       otherInfo: z.string().optional(),
-      ask: z.preprocess(
-        (val) => (val === '' ? undefined : Number(val)),
-        z
-          .number()
-          .optional()
-          .refine(
-            (value) =>
-              value === undefined ||
-              (minRewardAsk !== undefined &&
-                maxRewardAsk !== undefined &&
-                value >= minRewardAsk &&
-                value <= maxRewardAsk),
-            {
-              message: `Compensation must be between ${minRewardAsk} and ${maxRewardAsk}`,
-            },
-          ),
-      ),
-      publicKey: z.string().optional(),
+      ask: z.union([z.number().int().min(0), z.null()]).optional(),
+      publicKey: z.string(),
       eligibilityAnswers: z
-        .array(
-          z.object({
-            question: z.string(),
-            answer: z.string(),
-          }),
-        )
+        .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
     })
     .superRefine((data, ctx) => {
-      if (listing.type === 'project' && !data.applicationLink) {
+      if (listing.type !== 'project' && !data.applicationLink) {
         ctx.addIssue({
           code: 'custom',
           path: ['applicationLink'],
           message: 'Application link is required for non-project listings',
         });
       }
-      if (listing.type === 'project' && data.tweetLink) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['tweetLink'],
-          message: 'Tweet link can only be provided for non-project listings',
-        });
-      }
-      if (
-        listing.type === 'project' &&
-        listing.compensationType !== 'fixed' &&
-        data.ask === undefined
-      ) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['ask'],
-          message:
-            'Compensation is required for project listings with non-fixed compensation',
-        });
+      if (listing.type === 'project' && listing.compensationType !== 'fixed') {
+        if (data.ask === undefined || data.ask === null) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['ask'],
+            message:
+              'Compensation is required for project listings with non-fixed compensation',
+          });
+        } else if (!data.ask) {
+          if (data.ask < minRewardAsk) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['ask'],
+              message: `Compensation must be at least ${minRewardAsk}`,
+            });
+          }
+          if (data.ask > maxRewardAsk) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['ask'],
+              message: `Compensation cannot exceed ${maxRewardAsk}`,
+            });
+          }
+        }
       }
 
       const hasEligibilityQuestions =

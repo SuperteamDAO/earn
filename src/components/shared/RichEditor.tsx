@@ -65,6 +65,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
       const html = editor.getHTML();
       onChange(html === '<p></p>' ? '' : html);
     },
+    immediatelyRender: false,
   });
 
   useEffect(() => {

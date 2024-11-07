@@ -21,7 +21,7 @@ import { useUser } from '@/store/user';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { EasterEgg } from './EasterEgg';
-import { SubmissionModal } from './SubmissionModal';
+import { SubmissionDrawer } from './SubmissionDrawer';
 
 interface Props {
   listing: Listing;
@@ -72,12 +72,12 @@ export const SubmissionActionButton = ({
   const buttonState = getButtonState();
 
   const handleSubmit = () => {
+    onOpen();
     if (buttonState === 'submit') {
       posthog.capture('start_submission');
     } else if (buttonState === 'edit') {
       posthog.capture('edit_submission');
     }
-    onOpen();
   };
 
   const hackathonStartDate = Hackathon?.startDate
@@ -155,7 +155,7 @@ export const SubmissionActionButton = ({
   return (
     <>
       {isOpen && (
-        <SubmissionModal
+        <SubmissionDrawer
           id={id}
           onClose={onClose}
           isOpen={isOpen}
