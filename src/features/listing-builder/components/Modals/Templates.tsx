@@ -68,17 +68,19 @@ export function Templates() {
         </DialogHeader>
         <div className='mt-4'>
           <div className="grid grid-cols-4 gap-6 ">
-            <Button
-              className="ph-no-capture flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700"
-              variant="outline"
-              disabled={isDisabled}
-              onClick={() => {
-                posthog.capture('start from scratch_sponsor');
-              }}
-            >
-              <Plus className="h-6 w-6" />
-              <span className="text-base font-medium">Start from Scratch</span>
-            </Button>
+            <DialogClose>
+              <Button
+                className="ph-no-capture flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700"
+                variant="outline"
+                disabled={isDisabled}
+                onClick={() => {
+                  posthog.capture('start from scratch_sponsor');
+                }}
+              >
+                <Plus className="h-6 w-6" />
+                <span className="text-base font-medium">Start from Scratch</span>
+              </Button>
+            </DialogClose>
 
             {templates.map((template) => {
               const sponsors = [...new Set(template?.Bounties?.map(b => b.sponsor))];

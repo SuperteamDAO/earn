@@ -144,5 +144,5 @@ export {
   formActionsAtom,
   isSavingDraftAtom,
   isSubmittingListingAtom,
-  listingStatusAtom
+  listingStatusAtom,
 };

@@ -20,7 +20,7 @@ export function TitleAndType() {
       control={form?.control}
       render={({field}) => {
         return (
-          <FormItem >
+          <FormItem  >
             <FormLabel>Listing Title</FormLabel>
             <div className="flex border rounded-md ring-primary has-[:focus]:ring-1">
               <Type />

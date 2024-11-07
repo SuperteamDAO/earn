@@ -23,7 +23,7 @@ import { Provider, useAtomValue, useSetAtom } from "jotai";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { DescriptionAndTemplate, TitleAndType } from "./Form";
+import { Deadline, DescriptionAndTemplate, POC, TitleAndType, EligibilityQuestions } from "./Form";
 import { Templates } from "./Modals";
 
 interface Props {
@@ -79,9 +79,17 @@ const preventEnterKeySubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {
           <form onSubmit={formHook.handleSubmit(() => {})} className="space-y-8 max-w-5xl mx-auto py-10 w-full"
             onKeyDown={preventEnterKeySubmission}
           >
-            <TitleAndType />
-            <DescriptionAndTemplate />
-
+            <div className="grid grid-cols-9 gap-4">
+              <div className="col-span-6 space-y-4">
+                <TitleAndType />
+                <DescriptionAndTemplate />
+              </div>
+              <div className="col-span-3 space-y-4">
+                <Deadline />
+                <POC />
+                <EligibilityQuestions />
+              </div>
+            </div>
           </form>
         </Form>
       </>

@@ -6,6 +6,7 @@ import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
 import axios from "axios";
 import { timeToCompleteOptions } from "../utils";
 import { BONUS_REWARD_POSITION, MAX_BONUS_SPOTS, MAX_PODIUMS, tokenList } from "@/constants";
+import { DEADLINE_FORMAT } from "../components/Form";
 
 export const createListingFormSchema = (
   isGod: boolean,
@@ -96,10 +97,7 @@ export const createListingFormSchema = (
     .regex(
       /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
       'Slug should only contain lowercase alphabets, numbers, and hyphens',
-    )
-    .refine(slugUniqueCheck, {
-      message: 'Slug already exists. Please try another.',
-    }),
+    ),
     pocSocials: z
     .string()
     .min(1, 'Point of Contact is required')
@@ -118,7 +116,9 @@ export const createListingFormSchema = (
     description: z.string().min(1, "Description is required"),
     type: z.nativeEnum(BountyType).default('bounty'),
     region: z.string().default("GLOBAL"),
-    deadline: z.string().datetime().min(1, "Deadline is required")
+    deadline: z.string().datetime({
+      message: 'Deadline is required'
+    }).min(1, "Deadline is required").default(dayjs().add(7, 'day').format(DEADLINE_FORMAT))
     .refine(
       (date) => isGod || dayjs(date).isAfter(dayjs()), 
       "Deadline cannot be in the past"
@@ -157,7 +157,15 @@ export const createListingFormSchema = (
     isPublished: z.boolean().optional(),
     status: z.nativeEnum(status).optional(),
     publishedAt: z.string().datetime().optional(),
-  }).superRefine((data, ctx) => {
+  }).superRefine(async (data, ctx) => {
+      if (data.slug && !(await slugUniqueCheck(data.slug))) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Slug already exists. Please try another.',
+          path: ['slug']
+        });
+      }
+
       if (data.compensationType === "fixed") {
         if (!data.rewards || Object.keys(data.rewards).length === 0) {
           ctx.addIssue({
