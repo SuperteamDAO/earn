@@ -175,7 +175,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   fontSize="xs"
                   onClick={() => {
                     posthog.capture('create a listing_navbar');
-                    router.push('/sponsor');
+                    router.push('/new/sponsor/');
                   }}
                   size="sm"
                   variant={'ghost'}

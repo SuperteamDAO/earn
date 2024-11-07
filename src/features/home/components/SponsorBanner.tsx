@@ -25,7 +25,7 @@ export const SponsorBanner = () => {
       bg="brand.purple.50"
       _hover={{ textDecoration: 'none' }}
       data-group
-      href="/sponsor"
+      href="/new/sponsor"
       onClick={() => posthog?.capture('become a sponsor_banner')}
       rounded="lg"
     >
