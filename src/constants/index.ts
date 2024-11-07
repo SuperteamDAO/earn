@@ -199,6 +199,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'paxos-standard',
   },
   {
+    tokenName: 'Zeus (ZEUS)',
+    tokenSymbol: 'ZEUS',
+    mintAddress: 'ZEUS1aR7aX8DFFJf5QjWj2ftDDdNTroMNGo8YoQm3Gq',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/30391.png',
+    decimals: 6,
+    coingeckoSymbol: 'zeus-network',
+  },
+  {
     tokenName: 'SynesisOne (SNS)',
     tokenSymbol: 'SNS',
     mintAddress: 'SNSNkV9zfG5ZKWQs6x4hxvBRV6s8SqMfSGCtECDvdMd',
