@@ -37,6 +37,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
           twitter,
           bio,
           entityName,
+          isActive: user.role === 'GOD',
         },
       });
 

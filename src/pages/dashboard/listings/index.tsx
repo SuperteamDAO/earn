@@ -12,6 +12,7 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -24,10 +25,12 @@ import {
   Tag,
   TagLabel,
   Text,
+  Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
+import { useSession } from 'next-auth/react';
 import React, {
   useCallback,
   useEffect,
@@ -35,9 +38,11 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { Trans } from 'react-i18next';
 import { MdArrowDropDown } from 'react-icons/md';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { isCreateListingAllowedQuery } from '@/features/listing-builder';
 import {
   getColorStyles,
   getListingStatus,
@@ -57,12 +62,25 @@ const MemoizedListingTable = React.memo(ListingTable);
 
 export default function SponsorListings() {
   const { user } = useUser();
+  const { data: session, status } = useSession();
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedTab, setSelectedTab] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const listingsPerPage = 15;
 
+  const {
+    data: isCreateListingAllowedResponse,
+    refetch: isCreateListingAllowedRefetch,
+  } = useQuery(isCreateListingAllowedQuery);
+
+  const isCreateListingAllowed = isCreateListingAllowedResponse?.allowed;
+  const isSponsorActive = isCreateListingAllowedResponse?.isActive;
+
+  const cannotCreateNewListing =
+    isCreateListingAllowed !== undefined &&
+    isCreateListingAllowed === false &&
+    session?.user.role !== 'GOD';
   const { data: sponsorStats, isLoading: isStatsLoading } = useQuery(
     sponsorStatsQuery(user?.currentSponsorId),
   );
@@ -136,16 +154,11 @@ export default function SponsorListings() {
     return allListings?.some((listing) => listing.type === 'grant');
   }, [allListings]);
 
-  const hasHackathons = useMemo(() => {
-    return allListings?.some((listing) => listing.type === 'hackathon');
-  }, [allListings]);
-
   const ALL_FILTERS = useMemo(() => {
     const filters = [
       'Draft',
       'In Progress',
       'In Review',
-      'Fndn to Pay',
       'Payment Pending',
       'Completed',
     ];
@@ -167,20 +180,16 @@ export default function SponsorListings() {
 
   const handleTabChange = useCallback(
     (index: number) => {
-      let tabTypes = [
-        'all',
-        'bounty',
-        'project',
-        hasGrants ? 'grant' : '',
-        hasHackathons ? 'hackathon' : '',
-      ];
-      tabTypes = tabTypes.filter(Boolean);
+      const tabTypes = ['all', 'bounty', 'project', hasGrants ? 'grant' : ''];
       const tabType = tabTypes[index] || 'all';
       setSelectedTab(tabType);
       setCurrentPage(0);
     },
-    [hasGrants, hasHackathons],
+    [hasGrants],
   );
+  const godEmail = process.env.NEXT_PUBLIC_EARN_GOD_EMAIL;
+  const godTelegram = process.env.NEXT_PUBLIC_EARN_GOD_TELEGRAM;
+  const godTelegramLink = `https://t.me/${godTelegram}`;
 
   return (
     <SponsorLayout>
@@ -349,16 +358,6 @@ export default function SponsorListings() {
                   Grants
                 </Tab>
               )}
-              {hasHackathons && (
-                <Tab
-                  color="brand.slate.400"
-                  fontSize={'sm'}
-                  fontWeight={500}
-                  _selected={selectedStyles}
-                >
-                  Hackathons
-                </Tab>
-              )}
             </TabList>
             <TabPanels>
               <TabPanel px={0}>
@@ -375,16 +374,12 @@ export default function SponsorListings() {
                   <MemoizedListingTable listings={paginatedListings} />
                 </TabPanel>
               )}
-              {hasHackathons && (
-                <TabPanel px={0}>
-                  <MemoizedListingTable listings={paginatedListings} />
-                </TabPanel>
-              )}
             </TabPanels>
           </Tabs>
           <CreateListingModal
             isOpen={isOpenCreateListing}
             onClose={onCloseCreateListing}
+            cannotCreateNewListing={cannotCreateNewListing}
           />
           {!!paginatedListings?.length && (
             <Flex align="center" justify="end" mt={6}>
@@ -457,19 +452,41 @@ export default function SponsorListings() {
           >
             and start getting contributions
           </Text>
-          <Button
-            display="block"
-            w={'200px'}
-            mx="auto"
-            mt={6}
-            mb={48}
-            fontSize="md"
-            leftIcon={<AddIcon w={3} h={3} />}
-            onClick={onOpenCreateListing}
-            variant="solid"
+          <Tooltip
+            label={
+              cannotCreateNewListing ? (
+                isSponsorActive ? (
+                  'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
+                ) : (
+                  <Trans
+                    i18nKey="newSponsor.contactAdminDetail"
+                    values={{ godEmail, godTelegram }}
+                    components={{
+                      1: <Link href={`mailto:${godEmail}`} />,
+                      3: <Link href={godTelegramLink} isExternal />,
+                    }}
+                  />
+                )
+              ) : (
+                ''
+              )
+            }
           >
-            Create New Listing
-          </Button>
+            <Button
+              display="block"
+              w={'200px'}
+              mx="auto"
+              mt={6}
+              mb={48}
+              fontSize="md"
+              isDisabled={cannotCreateNewListing}
+              leftIcon={<AddIcon w={3} h={3} />}
+              onClick={onOpenCreateListing}
+              variant="solid"
+            >
+              Create New Listing
+            </Button>
+          </Tooltip>
         </>
       )}
       {!isListingsLoading &&

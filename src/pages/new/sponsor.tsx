@@ -2,7 +2,6 @@ import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
-  Divider,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -15,16 +14,14 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
-import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
-import { type FieldValues, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { IndustryList, PDTG } from '@/constants';
@@ -33,7 +30,7 @@ import {
   useSlugValidation,
   useSponsorNameValidation,
 } from '@/features/sponsor';
-import { useUsernameValidation } from '@/features/talent';
+import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
@@ -43,7 +40,6 @@ const CreateSponsor = () => {
   const router = useRouter();
   const animatedComponents = makeAnimated();
   const { data: session, status } = useSession();
-  const { user, refetchUser } = useUser();
   const {
     handleSubmit,
     register,
@@ -51,16 +47,15 @@ const CreateSponsor = () => {
     watch,
     getValues,
   } = useForm();
-  const posthog = usePostHog();
-
-  const [logoUrl, setLogoUrl] = useState<string>('');
-  const [pfpUrl, setPfpUrl] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState<string>('');
   const [industries, setIndustries] = useState<string>();
-  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
-    user?.photo?.includes('googleusercontent.com') || false,
-  );
+  const [loginStep, setLoginStep] = useState(0);
+
+  const { user } = useUser();
+  const posthog = usePostHog();
 
   const {
     setSponsorName,
@@ -68,27 +63,8 @@ const CreateSponsor = () => {
     validationErrorMessage: sponsorNameValidationErrorMessage,
     sponsorName,
   } = useSponsorNameValidation();
-  const {
-    setSlug,
-    isInvalid: isSlugInvalid,
-    validationErrorMessage: validationSlugErrorMessage,
-    slug,
-  } = useSlugValidation();
-  const {
-    setUsername,
-    isInvalid: isUsernameInvalid,
-    validationErrorMessage: validationUsernameErrorMessage,
-    username,
-  } = useUsernameValidation(user?.username);
-
-  useEffect(() => {
-    if (user?.photo) {
-      setPfpUrl(user?.photo);
-    }
-    if (user?.username) {
-      setUsername(user?.username);
-    }
-  }, [user]);
+  const { setSlug, isInvalid, validationErrorMessage, slug } =
+    useSlugValidation();
 
   useEffect(() => {
     if (user?.currentSponsorId && session?.user?.role !== 'GOD') {
@@ -96,88 +72,29 @@ const CreateSponsor = () => {
     }
   }, [user?.currentSponsorId, router]);
 
-  const {
-    mutate: createSponsor,
-    isPending,
-    isError,
-  } = useMutation({
-    mutationFn: async (data: FieldValues) => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const sponsorData = {
-            bio: data.bio,
-            industry: industries ?? '',
-            name: sponsorName,
-            slug,
-            logo: logoUrl ?? '',
-            twitter: data.twitterHandle,
-            url: data.sponsorurl ?? '',
-            entityName: data.entityName,
-          };
-
-          const userData = {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            username: data.username,
-            photo: isGooglePhoto ? user?.photo : pfpUrl,
-          };
-
-          const updateUser =
-            userData.firstName !== user?.firstName ||
-            userData.lastName !== user?.lastName ||
-            userData.username !== user?.username ||
-            userData.photo !== user?.photo;
-
-          // Step 1: Create sponsor
-          await axios.post('/api/sponsors/create', sponsorData);
-
-          // Step 2: Update user details if necessary
-          if (updateUser) {
-            await axios.post('/api/sponsors/usersponsor-details/', userData);
-          }
-
-          // Step 3: Send welcome email
-          await axios.post(`/api/email/manual/welcome-sponsor`);
-
-          resolve('Success');
-        } catch (error) {
-          console.log('Error in createSponsor:', error);
-          reject(error);
-        }
-      });
-    },
-    onSuccess: async () => {
-      await refetchUser();
-      router.push('/dashboard/listings?open=1');
-    },
-    onError: (error) => {
-      console.log('Failed to create sponsor', error);
-      if (axios.isAxiosError(error)) {
-        if (
-          (error.response?.data?.error as string)
-            ?.toLowerCase()
-            ?.includes('unique constraint failed')
-        ) {
-          setErrorMessage('Sponsor name or username already exists');
-          toast.error('Sorry! Sponsor name or username already exists.');
-        } else {
-          toast.error(
-            `Failed to create sponsor: ${error.response?.data?.message || error.message}`,
-          );
-        }
-      } else {
-        toast.error('An unexpected error occurred while creating the sponsor.');
-      }
-    },
-  });
-
-  const handleCreateSponsor = async (e: FieldValues) => {
-    posthog.capture('complete profile_sponsor');
+  const createNewSponsor = async (sponsor: SponsorType) => {
     if (getValues('bio').length > 180) {
       setErrorMessage('Company short bio length exceeded the limit');
       return;
     }
-    createSponsor(e);
+    setIsLoading(true);
+    setHasError(false);
+    try {
+      await axios.post('/api/sponsors/create', {
+        ...sponsor,
+      });
+      await axios.post(`/api/email/manual/welcome-sponsor`);
+      router.push('/dashboard/listings?open=1');
+    } catch (e: any) {
+      if (e?.response?.status === 403) {
+        setErrorMessage('Sorry! You are not authorized to create a sponsor.');
+      }
+      if (e?.response?.data?.error?.code === 'P2002') {
+        setErrorMessage('Sorry! Sponsor name or username already exists.');
+      }
+      setIsLoading(false);
+      setHasError(true);
+    }
   };
 
   if (!session && status === 'loading') {
@@ -250,174 +167,27 @@ const CreateSponsor = () => {
           </VStack>
           <VStack w={'2xl'} pt={10}>
             <form
-              onSubmit={handleSubmit(handleCreateSponsor)}
+              onSubmit={handleSubmit(async (e) => {
+                posthog.capture('complete profile_sponsor');
+                createNewSponsor({
+                  bio: e.bio,
+                  industry: industries ?? '',
+                  name: sponsorName,
+                  slug,
+                  logo: imageUrl ?? '',
+                  twitter: e.twitterHandle,
+                  url: e.sponsorurl ?? '',
+                  entityName: e.entityName,
+                });
+              })}
               style={{ width: '100%' }}
             >
-              <Text
-                as="h3"
-                mb={4}
-                color="brand.slate.600"
-                fontSize={'xl'}
-                fontWeight={600}
-              >
-                About You
-              </Text>
-
               <Flex justify={'space-between'} gap={2} w={'full'}>
                 <FormControl isRequired>
                   <FormLabel
                     color={'brand.slate.500'}
                     fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'firstName'}
-                  >
-                    First Name
-                  </FormLabel>
-
-                  <Input
-                    color={'gray.800'}
-                    borderColor="brand.slate.300"
-                    _placeholder={{
-                      color: 'brand.slate.400',
-                    }}
-                    focusBorderColor="brand.purple"
-                    id="firstName"
-                    placeholder="First Name"
-                    {...register('firstName', { required: true })}
-                    defaultValue={user?.firstName}
-                    maxLength={100}
-                  />
-
-                  <FormErrorMessage>
-                    {errors.sponsorname ? (
-                      <>{errors.sponsorname.message}</>
-                    ) : (
-                      <></>
-                    )}
-                  </FormErrorMessage>
-                </FormControl>
-                <FormControl w={'full'} isRequired>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'lastName'}
-                  >
-                    Last Name
-                  </FormLabel>
-                  <Input
-                    color={'gray.800'}
-                    borderColor="brand.slate.300"
-                    _placeholder={{
-                      color: 'brand.slate.400',
-                    }}
-                    focusBorderColor="brand.purple"
-                    id="lastName"
-                    placeholder="Last Name"
-                    {...register('lastName', { required: true })}
-                    defaultValue={user?.lastName}
-                    maxLength={100}
-                  />
-                  <FormErrorMessage>
-                    {errors.slug ? <>{errors.slug.message}</> : <></>}
-                  </FormErrorMessage>
-                </FormControl>
-              </Flex>
-
-              <FormControl w={'full'} my={6} isRequired>
-                <HStack mb={2}>
-                  <FormLabel
-                    m={0}
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'username'}
-                  >
-                    Username
-                  </FormLabel>
-                </HStack>
-                <Input
-                  color={'gray.800'}
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.400',
-                  }}
-                  focusBorderColor="brand.purple"
-                  id="username"
-                  placeholder="Username"
-                  {...register('username', { required: true })}
-                  isInvalid={isUsernameInvalid}
-                  maxLength={40}
-                  onChange={(e) => setUsername(e.target.value)}
-                  value={username}
-                />
-                {isUsernameInvalid && (
-                  <Text color={'red'} fontSize={'sm'}>
-                    {validationUsernameErrorMessage}
-                  </Text>
-                )}
-                <FormErrorMessage>
-                  {errors.entityName ? <>{errors.entityName.message}</> : <></>}
-                </FormErrorMessage>
-              </FormControl>
-              <>
-                <FormLabel
-                  mb={2}
-                  pb={'0'}
-                  color={'brand.slate.500'}
-                  requiredIndicator={<></>}
-                >
-                  Profile Picture
-                </FormLabel>
-                {user?.photo ? (
-                  <ImagePicker
-                    defaultValue={{ url: user?.photo }}
-                    onChange={async (e) => {
-                      setIsUploading(true);
-                      const a = await uploadToCloudinary(e, 'earn-pfp');
-                      setPfpUrl(a);
-                      setIsGooglePhoto(false);
-                      setIsUploading(false);
-                    }}
-                    onReset={() => {
-                      setPfpUrl('');
-                      setIsUploading(false);
-                    }}
-                  />
-                ) : (
-                  <ImagePicker
-                    onChange={async (e) => {
-                      setIsUploading(true);
-                      const a = await uploadToCloudinary(e, 'earn-pfp');
-                      setPfpUrl(a);
-                      if (user?.photo) setIsGooglePhoto(false);
-                      setIsUploading(false);
-                    }}
-                    onReset={() => {
-                      setPfpUrl('');
-                      setIsUploading(false);
-                    }}
-                  />
-                )}
-              </>
-
-              <Divider my={6} borderColor="brand.slate.400" />
-
-              <Text
-                as="h3"
-                mb={4}
-                color="brand.slate.600"
-                fontSize={'xl'}
-                fontWeight={600}
-              >
-                About Your Company
-              </Text>
-              <Flex justify={'space-between'} gap={2} w={'full'}>
-                <FormControl isRequired>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
+                    fontWeight={600}
                     htmlFor={'sponsorname'}
                   >
                     Company Name
@@ -457,7 +227,7 @@ const CreateSponsor = () => {
                   <FormLabel
                     color={'brand.slate.500'}
                     fontSize={'15px'}
-                    fontWeight={500}
+                    fontWeight={600}
                     htmlFor={'slug'}
                   >
                     Company Username
@@ -470,11 +240,11 @@ const CreateSponsor = () => {
                     id="slug"
                     placeholder="starkindustries"
                     {...register('slug')}
-                    isInvalid={isSlugInvalid}
+                    isInvalid={isInvalid}
                     onChange={(e) => setSlug(e.target.value)}
                     value={slug}
                   />
-                  {isSlugInvalid && (
+                  {isInvalid && (
                     <Text
                       mt={1}
                       color={'red'}
@@ -482,7 +252,7 @@ const CreateSponsor = () => {
                       lineHeight={'15px'}
                       letterSpacing={'-1%'}
                     >
-                      {validationSlugErrorMessage}
+                      {validationErrorMessage}
                     </Text>
                   )}
                   <FormErrorMessage>
@@ -495,7 +265,7 @@ const CreateSponsor = () => {
                   <FormLabel
                     color={'brand.slate.500'}
                     fontSize={'15px'}
-                    fontWeight={500}
+                    fontWeight={600}
                     htmlFor={'sponsorname'}
                   >
                     Company URL
@@ -520,7 +290,7 @@ const CreateSponsor = () => {
                   <FormLabel
                     color={'brand.slate.500'}
                     fontSize={'15px'}
-                    fontWeight={500}
+                    fontWeight={600}
                     htmlFor={'twitterHandle'}
                   >
                     Company Twitter
@@ -549,7 +319,7 @@ const CreateSponsor = () => {
                       m={0}
                       color={'brand.slate.500'}
                       fontSize={'15px'}
-                      fontWeight={500}
+                      fontWeight={600}
                       htmlFor={'entityName'}
                     >
                       Entity Name
@@ -584,39 +354,39 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </HStack>
-              <VStack align={'start'} gap={2} w="full" mt={6} mb={3}>
-                <Heading
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={500}
-                >
-                  Company Logo{' '}
-                  <span
-                    style={{
-                      color: 'red',
-                    }}
+              {
+                <VStack align={'start'} gap={2} mt={6} mb={3}>
+                  <Heading
+                    color={'brand.slate.500'}
+                    fontSize={'15px'}
+                    fontWeight={600}
                   >
-                    *
-                  </span>
-                </Heading>
-                <HStack gap={5} w="full">
-                  <ImagePicker
-                    onChange={async (e) => {
-                      setIsUploading(true);
-                      const a = await uploadToCloudinary(e, 'earn-sponsor');
-                      setLogoUrl(a);
-                      setIsUploading(false);
-                    }}
-                  />
-                </HStack>
-              </VStack>
+                    Company Logo{' '}
+                    <span
+                      style={{
+                        color: 'red',
+                      }}
+                    >
+                      *
+                    </span>
+                  </Heading>
+                  <HStack gap={5}>
+                    <ImagePicker
+                      onChange={async (e) => {
+                        const a = await uploadToCloudinary(e, 'earn-sponsor');
+                        setImageUrl(a);
+                      }}
+                    />
+                  </HStack>
+                </VStack>
+              }
 
               <HStack justify={'space-between'} w={'full'} mt={6}>
                 <FormControl w={'full'} isRequired>
                   <FormLabel
                     color={'brand.slate.500'}
                     fontSize={'15px'}
-                    fontWeight={500}
+                    fontWeight={600}
                     htmlFor={'industry'}
                   >
                     Industry
@@ -650,7 +420,7 @@ const CreateSponsor = () => {
                   <FormLabel
                     color={'brand.slate.500'}
                     fontSize={'15px'}
-                    fontWeight={500}
+                    fontWeight={600}
                     htmlFor={'bio'}
                   >
                     Company Short Bio
@@ -682,15 +452,15 @@ const CreateSponsor = () => {
                 </FormControl>
               </Box>
               <Box my={8}>
-                {isError && (
+                {hasError && (
                   <Text align="center" mb={2} color="red">
                     {errorMessage}
-                    {(validationSlugErrorMessage ||
+                    {(validationErrorMessage ||
                       sponsorNameValidationErrorMessage) &&
                       'Company name/username already exists.'}
                   </Text>
                 )}
-                {(validationSlugErrorMessage ||
+                {(validationErrorMessage ||
                   sponsorNameValidationErrorMessage) && (
                     <Text align={'center'} color="yellow.500">
                       If you want access to the existing account, contact us on
@@ -704,8 +474,8 @@ const CreateSponsor = () => {
               <Button
                 className="ph-no-capture"
                 w="full"
-                isDisabled={logoUrl === ''}
-                isLoading={!!isUploading || !!isPending}
+                isDisabled={imageUrl === ''}
+                isLoading={!!isLoading}
                 loadingText="Creating..."
                 size="lg"
                 type="submit"

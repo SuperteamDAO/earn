@@ -1,6 +1,15 @@
-import { AddIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
+import { AddIcon, CheckIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Button,
+  Flex,
+  Icon,
+  Link,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -12,6 +21,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { Trans } from 'react-i18next';
 import type { IconType } from 'react-icons';
 import { BiListUl } from 'react-icons/bi';
 import { LuLock, LuMessageSquare, LuUsers } from 'react-icons/lu';
@@ -36,7 +46,7 @@ import {
 } from '@/features/sponsor-dashboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { useUser } from '@/store/user';
+import { useUpdateUser, useUser } from '@/store/user';
 
 interface LinkItemProps {
   name: string;
@@ -54,14 +64,11 @@ export function SponsorLayout({
   isCollapsible?: boolean;
 }) {
   const { user } = useUser();
+  const updateUser = useUpdateUser();
   const { data: session, status } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: isSponsorInfoModalOpen,
-    onOpen: onSponsorInfoModalOpen,
-    onClose: onSponsorInfoModalClose,
-  } = useDisclosure();
   const posthog = usePostHog();
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
   const { query } = router;
@@ -93,13 +100,58 @@ export function SponsorLayout({
     }
   }, [open]);
 
-  const { data: isCreateListingAllowed } = useQuery(
-    isCreateListingAllowedQuery,
-  );
+  const {
+    data: isCreateListingAllowedResponse,
+    refetch: isCreateListingAllowedRefetch,
+  } = useQuery(isCreateListingAllowedQuery);
+
+  const isCreateListingAllowed = isCreateListingAllowedResponse?.allowed;
+  const [isSponsorActive, setIsSponsorActive] = useState(false);
+  useEffect(() => {
+    if (isCreateListingAllowedResponse?.isActive === true) {
+      setIsSponsorActive(true);
+    } else {
+      setIsSponsorActive(false);
+    }
+  }, [isCreateListingAllowedResponse]);
+
+  const {
+    isOpen: isSponsorInfoModalOpen,
+    onOpen: onSponsorInfoModalOpen,
+    onClose: onSponsorInfoModalClose,
+  } = useDisclosure();
+
+  const { onOpen: onScoutAnnounceModalOpen } = useDisclosure();
+
+  function sponsorInfoCloseAltered() {
+    onSponsorInfoModalClose();
+    if (user?.featureModalShown === false && user?.currentSponsorId)
+      onScoutAnnounceModalOpen();
+  }
 
   const handleEntityClose = () => {
     setIsEntityModalOpen(false);
   };
+
+  // ENTITY NAME TO SPONSORS
+  useEffect(() => {
+    isCreateListingAllowedRefetch();
+    const timer = setTimeout(async () => {
+      if (user) {
+        if (
+          user.currentSponsorId &&
+          (!user.firstName || !user.lastName || !user.username)
+        ) {
+          onSponsorInfoModalOpen();
+        } else if (user.featureModalShown === false && user.currentSponsorId) {
+          onScoutAnnounceModalOpen();
+          await updateUser.mutateAsync({ featureModalShown: true });
+        }
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [user]);
 
   useEffect(() => {
     const modalsToShow = async () => {
@@ -108,17 +160,13 @@ export function SponsorLayout({
         (!user?.firstName || !user?.lastName || !user?.username)
       ) {
         onSponsorInfoModalOpen();
-      } else if (
-        !user?.currentSponsor?.entityName &&
-        session?.user.role !== 'GOD'
-      ) {
-        setIsEntityModalOpen(true);
-      } else {
-        setIsEntityModalOpen(false);
+      } else if (user?.featureModalShown === false && user?.currentSponsorId) {
+        onScoutAnnounceModalOpen();
+        await updateUser.mutateAsync({ featureModalShown: true });
       }
     };
     modalsToShow();
-  }, [user, session]);
+  }, [user]);
 
   if (!session && status === 'loading') {
     return <LoadingSection />;
@@ -138,37 +186,37 @@ export function SponsorLayout({
 
   const LinkItems: Array<LinkItemProps> = isHackathonRoute
     ? [
-        { name: 'All Tracks', link: `/hackathon`, icon: MdList },
-        {
-          name: 'Get Help',
-          link: PDTG,
-          icon: MdOutlineChatBubbleOutline,
-          posthog: 'get help_sponsor',
-        },
-      ]
+      { name: 'All Tracks', link: `/hackathon`, icon: MdList },
+      {
+        name: 'Get Help',
+        link: PDTG,
+        icon: MdOutlineChatBubbleOutline,
+        posthog: 'get help_sponsor',
+      },
+    ]
     : [
-        { name: 'My Listings', link: '/listings', icon: BiListUl },
-        {
-          name: 'Team Settings',
-          link: '/team-settings',
-          icon: RiUserSettingsLine,
-        },
-        ...(isLocalProfileVisible
-          ? [
-              {
-                name: 'Local Profiles',
-                link: '/local-profiles',
-                icon: LuUsers,
-              },
-            ]
-          : []),
-        {
-          name: 'Get Help',
-          link: PDTG,
-          icon: LuMessageSquare,
-          posthog: 'get help_sponsor',
-        },
-      ];
+      { name: 'My Listings', link: '/listings', icon: BiListUl },
+      {
+        name: 'Team Settings',
+        link: '/team-settings',
+        icon: RiUserSettingsLine,
+      },
+      ...(isLocalProfileVisible
+        ? [
+          {
+            name: 'Local Profiles',
+            link: '/local-profiles',
+            icon: LuUsers,
+          },
+        ]
+        : []),
+      {
+        name: 'Get Help',
+        link: PDTG,
+        icon: LuMessageSquare,
+        posthog: 'get help_sponsor',
+      },
+    ];
 
   const showLoading = !isHackathonRoute
     ? !user?.currentSponsor?.id
@@ -177,24 +225,53 @@ export function SponsorLayout({
   const showContent = isHackathonRoute
     ? user?.hackathonId || session?.user?.role === 'GOD'
     : user?.currentSponsor?.id;
+  // 从环境变量 EARN_GOD_EMAIL 获取管理员邮件地址
+  const godEmail = process.env.NEXT_PUBLIC_EARN_GOD_EMAIL;
+  const godTelegram = process.env.NEXT_PUBLIC_EARN_GOD_TELEGRAM;
+  const godTelegramLink = `https://t.me/${godTelegram}`;
+
+  // activate sponsor
+  const activateSponsor = async () => {
+    setIsLoading(true);
+    try {
+      await axios.post('/api/sponsors/activate', {
+        userId: session?.user.id,
+        sponsorId: user?.currentSponsorId,
+      });
+      // isSponsorActive = true;
+      setIsSponsorActive(true);
+    } catch (error: any) {
+      console.error('Error activating sponsor:', error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const cannotCreateNewListing =
+    isCreateListingAllowed !== undefined &&
+    isCreateListingAllowed === false &&
+    session?.user.role !== 'GOD';
 
   return (
     <Default
       className="bg-white"
       meta={
         <Meta
-          title="Superteam Earn | Work to Earn in Crypto"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          title="Solar Earn | Work to Earn in Crypto"
+          description="Explore the latest bounties on Solar Earn, offering opportunities in the crypto space across Design, Development, and Content."
           canonical="https://earn.superteam.fun"
         />
       }
     >
-      <FeatureModal isSponsorsRoute />
-      <SponsorInfoModal
-        onClose={onSponsorInfoModalClose}
-        isOpen={isSponsorInfoModalOpen}
+      <FeatureModal
+        isSponsorsRoute
+        forceOpen={user?.featureModalShown === false}
       />
 
+      <SponsorInfoModal
+        onClose={sponsorInfoCloseAltered}
+        isOpen={isSponsorInfoModalOpen}
+      />
       <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
       <Flex display={{ base: 'flex', md: 'none' }} minH="80vh" px={3}>
         <Text
@@ -238,16 +315,31 @@ export function SponsorLayout({
               )}
             </Box>
           )}
-          <CreateListingModal isOpen={isOpen} onClose={onClose} />
+          <CreateListingModal
+            isOpen={isOpen}
+            onClose={onClose}
+            cannotCreateNewListing={cannotCreateNewListing}
+          />
           <Flex align="center" justify="space-between" px={4} pb={6}>
             {!isHackathonRoute ? (
               <Tooltip
                 label={
-                  isCreateListingAllowed !== undefined &&
-                  isCreateListingAllowed === false &&
-                  session?.user.role !== 'GOD'
-                    ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “In Review”. Please announce the winners for such listings to create new listings.'
-                    : ''
+                  cannotCreateNewListing ? (
+                    isSponsorActive ? (
+                      'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
+                    ) : (
+                      <Trans
+                        i18nKey="newSponsor.contactAdminDetail"
+                        values={{ godEmail, godTelegram }}
+                        components={{
+                          1: <Link href={`mailto:${godEmail}`} />,
+                          3: <Link href={godTelegramLink} isExternal />,
+                        }}
+                      />
+                    )
+                  ) : (
+                    ''
+                  )
                 }
               >
                 <Button
@@ -256,11 +348,7 @@ export function SponsorLayout({
                   w="full"
                   py={'22px'}
                   fontSize="md"
-                  isDisabled={
-                    isCreateListingAllowed !== undefined &&
-                    isCreateListingAllowed === false &&
-                    session?.user.role !== 'GOD'
-                  }
+                  isDisabled={cannotCreateNewListing}
                   onClick={() => {
                     posthog.capture('create new listing_sponsor');
                     onOpen();
@@ -277,9 +365,7 @@ export function SponsorLayout({
                   >
                     Create New Listing
                   </Text>
-                  {isCreateListingAllowed !== undefined &&
-                    isCreateListingAllowed === false &&
-                    session?.user.role !== 'GOD' && <Icon as={LuLock} />}
+                  {cannotCreateNewListing && <Icon as={LuLock} />}
                 </Button>
               </Tooltip>
             ) : (
@@ -305,6 +391,35 @@ export function SponsorLayout({
               </Button>
             )}
           </Flex>
+          {session?.user.role === 'GOD' && (
+            <Flex align="center" justify="space-between" px={4} pb={6}>
+              <Button
+                className="ph-no-capture"
+                gap={2}
+                w="full"
+                py={'22px'}
+                fontSize="md"
+                // onClick={() => alert('Activate Sponsor')}
+                isDisabled={isSponsorActive === true || isLoading}
+                isLoading={isLoading}
+                loadingText="Activating..."
+                onClick={activateSponsor}
+                variant="solid"
+              >
+                <CheckIcon w={3} h={3} />
+                <Text
+                  className="nav-item-text"
+                  pos={isExpanded ? 'static' : 'absolute'}
+                  ml={isExpanded ? 0 : '-9999px'}
+                  opacity={isExpanded ? 1 : 0}
+                  transition="all 0.2s ease-in-out"
+                >
+                  Activate Sponsor
+                </Text>
+              </Button>
+            </Flex>
+          )}
+
           {LinkItems.map((link) => (
             <NavItem
               onClick={() => {

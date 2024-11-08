@@ -69,6 +69,10 @@ export function Banner({
                     whiteSpace={'nowrap'}
                   >
                     {sponsor?.name}
+                    <br />
+                    --- isActive: {sponsor?.isActive}
+                    <br />
+                    --- slug: {sponsor?.slug}
                   </Text>
                   <div>{!!sponsor?.isVerified && <VerifiedBadgeLarge />}</div>
                 </Flex>
@@ -93,6 +97,7 @@ export function Banner({
                   fontWeight={400}
                   whiteSpace={'nowrap'}
                 >
+                  abc--
                   {!isHackathon
                     ? `Sponsor since ${stats?.yearOnPlatform}`
                     : 'Hackathon'}

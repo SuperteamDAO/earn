@@ -46,6 +46,7 @@ export default async function handler(
         type: true,
         title: true,
         token: true,
+        isActive: true,
         winnersAnnouncedAt: true,
         slug: true,
         isWinnersAnnounced: true,
@@ -72,6 +73,7 @@ export default async function handler(
           select: {
             name: true,
             slug: true,
+            // isActive: true,
             logo: true,
             isVerified: true,
             url: true,

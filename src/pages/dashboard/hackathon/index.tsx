@@ -301,6 +301,7 @@ export default function Hackathon() {
           <CreateListingModal
             isOpen={isOpenCreateListing}
             onClose={onCloseCreateListing}
+            cannotCreateNewListing={true}
           />
           <Image
             w={32}
@@ -415,6 +416,7 @@ export default function Hackathon() {
                 {bounties.map((currentBounty) => {
                   const deadline = formatDeadline(
                     currentBounty?.deadline,
+                    currentBounty?.applicationType,
                     currentBounty?.type,
                   );
 
@@ -652,21 +654,21 @@ export default function Hackathon() {
                               currentBounty.status === 'OPEN' &&
                               !currentBounty.isPublished
                             ) && (
-                              <>
-                                <MenuItem
-                                  py={2}
-                                  color={'brand.slate.500'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  icon={
-                                    <Icon as={IoEyeOffOutline} boxSize={4} />
-                                  }
-                                  onClick={() => handleUnpublish(currentBounty)}
-                                >
-                                  Unpublish
-                                </MenuItem>
-                              </>
-                            )}
+                                <>
+                                  <MenuItem
+                                    py={2}
+                                    color={'brand.slate.500'}
+                                    fontSize={'sm'}
+                                    fontWeight={500}
+                                    icon={
+                                      <Icon as={IoEyeOffOutline} boxSize={4} />
+                                    }
+                                    onClick={() => handleUnpublish(currentBounty)}
+                                  >
+                                    Unpublish
+                                  </MenuItem>
+                                </>
+                              )}
                           </MenuList>
                         </Menu>
                       </Td>

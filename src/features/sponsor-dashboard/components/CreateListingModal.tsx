@@ -22,9 +22,11 @@ import { ProjectIcon } from '@/svg/project-icon';
 export const CreateListingModal = ({
   isOpen = false,
   onClose,
+  cannotCreateNewListing,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  cannotCreateNewListing: boolean;
 }) => {
   const posthog = usePostHog();
   const router = useRouter();
@@ -93,7 +95,13 @@ export const CreateListingModal = ({
                 All participants complete your scope of work, and the best
                 submission(s) are rewarded. Get multiple options to choose from.
               </Text>
-              <Button w="full" py={7} onClick={handleCreateBounty} size="lg">
+              <Button
+                w="full"
+                py={7}
+                isDisabled={cannotCreateNewListing}
+                onClick={handleCreateBounty}
+                size="lg"
+              >
                 Create a Bounty
               </Button>
             </Box>
@@ -145,7 +153,13 @@ export const CreateListingModal = ({
                 one applicant to work with. Give a fixed budget, or ask for
                 quotes.
               </Text>
-              <Button w="full" py={7} onClick={handleCreateProject} size="lg">
+              <Button
+                w="full"
+                py={7}
+                isDisabled={cannotCreateNewListing}
+                onClick={handleCreateProject}
+                size="lg"
+              >
                 Create a Project
               </Button>
             </Box>
