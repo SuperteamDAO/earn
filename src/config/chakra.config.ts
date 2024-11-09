@@ -17,6 +17,7 @@ const theme = extendTheme({
       'purple.300': '#A5B4FC',
       'purple.400': '#818CF8',
       slate: {
+        50: '#f8fafc',
         100: '#f1f5f9',
         200: '#e2e8f0',
         300: '#cbd5e1',
@@ -26,6 +27,7 @@ const theme = extendTheme({
         700: '#334155',
         800: '#1e293b',
         900: '#0f172a',
+        950: '#020617',
       },
       grey: {
         50: '#F7FAFC',
