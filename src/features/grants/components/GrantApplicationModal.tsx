@@ -30,11 +30,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaXTwitter } from 'react-icons/fa6';
 
-import RichTextInputWithHelper from '@/components/Form/RichTextInput';
-import {
-  TextAreaWithCounter,
-  TextInputWithHelper,
-} from '@/components/Form/TextAreaHelpers';
+import { FormField } from '@/components/Form/FormField';
 import { tokenList } from '@/constants';
 import {
   extractTwitterUsername,
@@ -99,41 +95,34 @@ export const GrantApplicationModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [askError, setAskError] = useState('');
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-    control,
-    setValue,
-  } = useForm<GrantApplicationForm>({
-    defaultValues: {
-      projectTitle: grantApplication?.projectTitle || '',
-      projectOneLiner: grantApplication?.projectOneLiner || '',
-      ask: grantApplication?.ask || undefined,
-      walletAddress: grantApplication?.walletAddress || user?.publicKey || '',
-      projectDetails: grantApplication?.projectDetails || '',
-      projectTimeline: grantApplication?.projectTimeline
-        ? dayjs(grantApplication?.projectTimeline, 'D MMMM YYYY').format(
-            'YYYY-MM-DD',
-          )
-        : '',
-      proofOfWork: grantApplication?.proofOfWork || '',
-      milestones: grantApplication?.milestones || '',
-      kpi: grantApplication?.kpi || '',
-      twitter: grantApplication?.twitter
-        ? extractTwitterUsername(grantApplication?.twitter) || ''
-        : extractTwitterUsername(user?.twitter || '') || '',
-      ...(grantApplication?.answers
-        ? Object.fromEntries(
-            (grantApplication.answers as unknown as EligibilityAnswer[]).map(
-              (answer, index) => [`answer-${index + 1}`, answer.answer],
-            ),
-          )
-        : {}),
-    },
-  });
+  const { register, handleSubmit, reset, watch, control, setValue } =
+    useForm<GrantApplicationForm>({
+      defaultValues: {
+        projectTitle: grantApplication?.projectTitle || '',
+        projectOneLiner: grantApplication?.projectOneLiner || '',
+        ask: grantApplication?.ask || undefined,
+        walletAddress: grantApplication?.walletAddress || user?.publicKey || '',
+        projectDetails: grantApplication?.projectDetails || '',
+        projectTimeline: grantApplication?.projectTimeline
+          ? dayjs(grantApplication?.projectTimeline, 'D MMMM YYYY').format(
+              'YYYY-MM-DD',
+            )
+          : '',
+        proofOfWork: grantApplication?.proofOfWork || '',
+        milestones: grantApplication?.milestones || '',
+        kpi: grantApplication?.kpi || '',
+        twitter: grantApplication?.twitter
+          ? extractTwitterUsername(grantApplication?.twitter) || ''
+          : extractTwitterUsername(user?.twitter || '') || '',
+        ...(grantApplication?.answers
+          ? Object.fromEntries(
+              (grantApplication.answers as unknown as EligibilityAnswer[]).map(
+                (answer, index) => [`answer-${index + 1}`, answer.answer],
+              ),
+            )
+          : {}),
+      },
+    });
 
   const queryClient = useQueryClient();
 
@@ -324,26 +313,24 @@ export const GrantApplicationModal = ({
           >
             {activeStep === 0 && (
               <VStack gap={4} mb={5}>
-                <TextAreaWithCounter
-                  id="projectTitle"
+                <FormField
+                  name="projectTitle"
                   label="Project Title"
                   helperText="What should we call your project?"
                   placeholder="Project Title"
-                  register={register}
-                  watch={watch}
-                  errors={errors}
-                  isRequired
+                  control={control}
+                  type="textarea"
                   maxLength={100}
+                  isRequired
                 />
-                <TextAreaWithCounter
-                  id="projectOneLiner"
+                <FormField
+                  name="projectOneLiner"
                   label="One-Liner Description"
                   helperText="Describe your idea in one sentence."
-                  maxLength={150}
                   placeholder="Sum up your project in one sentence"
-                  register={register}
-                  watch={watch}
-                  errors={errors}
+                  control={control}
+                  type="textarea"
+                  maxLength={150}
                   isRequired
                 />
                 <FormControl isRequired>
@@ -389,8 +376,8 @@ export const GrantApplicationModal = ({
                     {askError}
                   </Text>
                 </FormControl>
-                <TextInputWithHelper
-                  id="publicKey"
+                <FormField
+                  name="walletAddress"
                   label="Your Solana Wallet Address"
                   helperText={
                     <>
@@ -408,8 +395,7 @@ export const GrantApplicationModal = ({
                     </>
                   }
                   placeholder="Add your Solana wallet address"
-                  register={register}
-                  errors={errors}
+                  control={control}
                   defaultValue={user?.publicKey}
                   readOnly
                 />
@@ -417,12 +403,13 @@ export const GrantApplicationModal = ({
             )}
             {activeStep === 1 && (
               <VStack gap={4} mb={5}>
-                <RichTextInputWithHelper
-                  id="projectDetails"
+                <FormField
+                  name="projectDetails"
                   label="Project Details"
                   helperText="What is the problem you're trying to solve, and how you're going to solve it?"
                   placeholder="Explain the problem you're solving and your solution"
                   control={control}
+                  type="rich-text"
                   isRequired
                 />
                 <FormControl isRequired>
@@ -471,13 +458,13 @@ export const GrantApplicationModal = ({
                     {...register('projectTimeline', { required: true })}
                   />
                 </FormControl>
-
-                <RichTextInputWithHelper
-                  id="proofOfWork"
+                <FormField
+                  name="proofOfWork"
                   label="Proof of Work"
                   helperText="Include links to your best work that will make the community trust you to execute on this project."
                   placeholder="Provide links to your portfolio or previous work"
                   control={control}
+                  type="rich-text"
                   isRequired
                 />
 
@@ -565,11 +552,12 @@ export const GrantApplicationModal = ({
 
                 {questions &&
                   questions.map((e: any) => (
-                    <RichTextInputWithHelper
+                    <FormField
                       key={e?.order}
-                      id={`answer-${e?.order}`}
+                      name={`answer-${e?.order}`}
                       label={e?.question}
                       control={control}
+                      type="rich-text"
                       isRequired
                     />
                   ))}
@@ -577,21 +565,23 @@ export const GrantApplicationModal = ({
             )}
             {activeStep === 2 && (
               <VStack gap={4} mb={5}>
-                <RichTextInputWithHelper
-                  id="milestones"
+                <FormField
+                  name="milestones"
                   label="Goals and Milestones"
                   helperText="List down the things you hope to achieve by the end of project duration."
                   placeholder="Outline your project goals and milestones"
                   control={control}
+                  type="rich-text"
                   isRequired
                   h="8rem"
                 />
-                <RichTextInputWithHelper
-                  id="kpi"
+                <FormField
+                  name="kpi"
                   label="Primary Key Performance Indicator"
                   helperText="What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc."
                   placeholder="What's the key metric for success?"
                   control={control}
+                  type="rich-text"
                   isRequired
                   h="8rem"
                 />

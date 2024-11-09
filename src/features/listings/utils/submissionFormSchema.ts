@@ -13,7 +13,7 @@ const submissionSchema = (
       tweet: z.union([z.literal(''), z.string().trim().url()]),
       otherInfo: z.string().optional(),
       ask: z.union([z.number().int().min(0), z.null()]).optional(),
-      publicKey: z.string(),
+      publicKey: z.string().optional(),
       eligibilityAnswers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),

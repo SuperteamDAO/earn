@@ -28,11 +28,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
 
-import RichTextInputWithHelper from '@/components/Form/RichTextInput';
-import {
-  TextAreaWithCounter,
-  TextInputWithHelper,
-} from '@/components/Form/TextAreaHelpers';
+import { FormField } from '@/components/Form/FormField';
 import { tokenList } from '@/constants';
 import { useUser } from '@/store/user';
 
@@ -79,28 +75,21 @@ export const SubmissionDrawer = ({
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-    setValue,
-  } = useForm<FormData>({
-    resolver: zodResolver(
-      submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0),
-    ),
-    defaultValues: {
-      eligibilityAnswers:
-        Array.isArray(listing.eligibility) && listing.eligibility.length > 0
-          ? listing.eligibility.map((q) => ({
-              question: q.question,
-              answer: '',
-            }))
-          : undefined,
-    },
-  });
+  const { control, handleSubmit, reset, setValue, register } =
+    useForm<FormData>({
+      resolver: zodResolver(
+        submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0),
+      ),
+      defaultValues: {
+        eligibilityAnswers:
+          Array.isArray(listing.eligibility) && listing.eligibility.length > 0
+            ? listing.eligibility.map((q) => ({
+                question: q.question,
+                answer: '',
+              }))
+            : undefined,
+      },
+    });
   const { user, refetchUser } = useUser();
   const posthog = usePostHog();
   const router = useRouter();
@@ -300,35 +289,34 @@ export const SubmissionDrawer = ({
               <VStack gap={4} mb={5}>
                 {!isProject && (
                   <>
-                    <TextAreaWithCounter
-                      id="applicationLink"
+                    <FormField
+                      name="applicationLink"
                       label="Link to Your Submission"
                       helperText="Make sure this link is accessible by everyone!"
                       placeholder="Add a link"
-                      register={register}
-                      watch={watch}
+                      control={control}
+                      type="textarea"
                       maxLength={500}
-                      errors={errors}
                       isRequired
                     />
-                    <TextAreaWithCounter
-                      id="tweet"
+                    <FormField
+                      name="tweet"
                       label="Tweet Link"
                       helperText="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
                       placeholder="Add a tweet's link"
-                      register={register}
-                      watch={watch}
+                      control={control}
+                      type="textarea"
                       maxLength={500}
-                      errors={errors}
                     />
                   </>
                 )}
                 {eligibility?.map((e, index) => (
                   <Box key={e.order} w="full">
-                    <RichTextInputWithHelper
-                      control={control}
+                    <FormField
+                      name={`eligibilityAnswers.${index}.answer`}
                       label={e?.question}
-                      id={`eligibilityAnswers.${index}.answer`}
+                      control={control}
+                      type="rich-text"
                       isRequired
                     />
                   </Box>
@@ -370,16 +358,16 @@ export const SubmissionDrawer = ({
                     </InputGroup>
                   </FormControl>
                 )}
-                <RichTextInputWithHelper
-                  control={control}
+                <FormField
+                  name="otherInfo"
                   label="Anything Else?"
-                  id={`otherInfo`}
-                  helperText="If you have any other links or information you'd like to share with us, please add them here!"
+                  helperText="If you have any other links..."
                   placeholder="Add info or link"
+                  control={control}
+                  type="rich-text"
                 />
-
-                <TextInputWithHelper
-                  id="publicKey"
+                <FormField
+                  name="publicKey"
                   label="Your Solana Wallet Address"
                   helperText={
                     <>
@@ -397,8 +385,7 @@ export const SubmissionDrawer = ({
                     </>
                   }
                   placeholder="Add your Solana wallet address"
-                  register={register}
-                  errors={errors}
+                  control={control}
                   defaultValue={user?.publicKey}
                   readOnly
                 />
