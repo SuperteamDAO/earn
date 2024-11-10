@@ -49,7 +49,12 @@ export function TokenSelect() {
                 >
                   {field.value
                     ? 
-                      <TokenLabel showIcon showSymbol postfix='Coin' />
+                      <TokenLabel showIcon showSymbol postfix='Coin'
+                      classNames={{
+                        symbol: 'text-slate-900',
+                        postfix: 'text-slate-900'
+                      }}
+                    />
                     : "Select Token"}
                   <ChevronDown className="opacity-50" />
                 </Button>

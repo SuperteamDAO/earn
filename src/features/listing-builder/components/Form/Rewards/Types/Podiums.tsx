@@ -4,16 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
 import { TokenNumberInput } from "../Tokens";
 import { getRankLabels } from "@/utils/rank";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useListingForm } from "@/features/listing-builder/hooks";
 import { useWatch } from "react-hook-form";
-import { useSetAtom } from "jotai";
-import { listingTotalPrizesAtom } from "@/features/listing-builder/atoms";
 
 export const Podiums = () => {
   const form = useListingForm();
 
-  const totalPrizes = useSetAtom(listingTotalPrizesAtom)
+  const [_,setTotalPrizes] = useState(0);
   const rewards = useWatch({
     control: form.control,
     name: 'rewards',
@@ -75,7 +73,7 @@ export const Podiums = () => {
           ? maxBonusSpots || 0
           : 0;
       const totalPrizesCount = numRegularRewards + numBonusSpots;
-      totalPrizes(totalPrizesCount);
+      setTotalPrizes(totalPrizesCount);
     },
     [form, maxBonusSpots]
   );
@@ -115,7 +113,7 @@ export const Podiums = () => {
       [BONUS_REWARD_POSITION]: NaN
     };
     form?.setValue("rewards", updatedRewards);
-    form?.setValue("maxBonusSpots", 1);
+    form?.setValue("maxBonusSpots", undefined);
     updateTotalReward(updatedRewards);
   }, [form, rewards, updateTotalReward]);
 
@@ -133,8 +131,8 @@ export const Podiums = () => {
         name="rewards"
         render={() => (
           <FormItem>
-            <div className="space-y-4 max-h-[60vh] overflow-y-auto p-4 border rounded-md">
-              {rewardPositions.map((position) => (
+            <div className="space-y-4 max-h-[62vh] overflow-y-auto p-4 border rounded-md">
+              {rewardPositions.map((position,index) => (
                 <FormField
                   key={position}
                   name={`rewards.${position}`}
@@ -149,9 +147,9 @@ export const Podiums = () => {
                         <div className='relative'>
                           <TokenNumberInput
                             {...field}
-                            placeholder='Enter Reward'
+                            placeholder={`${5000 - (index * 500)}`} 
                             className='pr-6'
-                            value={field.value}
+                            value={rewards[position]}
                             onChange={(value) => {
                               field.onChange(value);
                               const updatedRewards = {
@@ -193,7 +191,7 @@ export const Podiums = () => {
                   <div className="flex justify-between items-center">
                     <div className="flex-1 space-y-2">
                       <FormField
-                        name={`rewards."${BONUS_REWARD_POSITION}"`}
+                        name={`rewards.${BONUS_REWARD_POSITION}`}
                         render={({field}) => (
                           <FormItem>
                             <div className="flex justify-between py-1.5">
@@ -202,9 +200,9 @@ export const Podiums = () => {
                             <FormControl>
                               <TokenNumberInput
                                 {...field}
-                                placeholder='Enter Bonus per Prize'
+                                placeholder='10'
                                 className='rounded-r-none relative focus-within:z-10'
-                                value={field.value}
+                                value={rewards[BONUS_REWARD_POSITION]}
                                 onChange={(value) => {
                                   field.onChange(value);
                                   const updatedRewards = {
@@ -229,7 +227,7 @@ export const Podiums = () => {
                             <FormControl>
                               <div className="relative">
                                 <TokenNumberInput
-                                  placeholder="Enter Bonus Spots"
+                                  placeholder="50"
                                   {...field}
                                   min={1}
                                   max={MAX_BONUS_SPOTS}

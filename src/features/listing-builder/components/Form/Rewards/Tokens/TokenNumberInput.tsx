@@ -42,16 +42,16 @@ export const TokenNumberInput = React.forwardRef<HTMLInputElement, TokenNumberIn
     const [isFocused, setIsFocused] = useState(false);
     const [inputValue, setInputValue] = useState<string>('');
 
-    useEffect(() => {
-      if (!isFocused) {
-        setInputValue(formatNumber(value));
-      }
-    }, [value, isFocused]);
-
     const formatNumber = useCallback((num: number | null) => {
       if (num === null || num === undefined || isNaN(num)) return '';
       return num.toLocaleString('en-US', { maximumFractionDigits: 2 });
     }, []);
+
+    useEffect(() => {
+      if (!isFocused) {
+        setInputValue(formatNumber(value));
+      }
+    }, [value, isFocused, formatNumber]);
 
     const parseNumber = useCallback((str: string) => {
       if (!str) return null;
@@ -126,7 +126,7 @@ export const TokenNumberInput = React.forwardRef<HTMLInputElement, TokenNumberIn
           className={cn(
             'border-0 pl-2 py-2 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-left',
             '[-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
-            'placeholder:text-slate-400 placeholder:text-xs'
+            'placeholder:text-slate-400 '
           )}
         />
       </div>

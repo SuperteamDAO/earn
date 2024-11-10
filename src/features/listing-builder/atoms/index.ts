@@ -13,7 +13,6 @@ const isDuplicatingAtom = atom<boolean>(false);
 const listingIdAtom = atom<string | undefined>(undefined);
 const listingSlugAtom = atom<string | undefined>(undefined);
 const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
-const listingTotalPrizesAtom = atom<number>(0)
 
 const formSchemaAtom = atom((get) => 
   createListingFormSchema(
@@ -83,5 +82,4 @@ export {
   submitListingMutationAtom,
   fetchListingAtom,
   listingStatusAtom,
-  listingTotalPrizesAtom
 };

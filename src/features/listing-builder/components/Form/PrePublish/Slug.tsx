@@ -7,7 +7,7 @@ import { slugCheckQuery } from "@/features/listing-builder/queries/slug-check";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { Loader2 } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
 import slugify from "slugify";
 
@@ -15,6 +15,8 @@ export function Slug() {
   const form = useListingForm()
   const isEditing = useAtomValue(isEditingAtom)
   const isDuplicating = useAtomValue(isDuplicatingAtom)
+
+  const [isValidated, setIsValidated] = useState(false);
 
   const title = useWatch({
     control: form.control,
@@ -36,7 +38,7 @@ export function Slug() {
 
   const {data: generatedSlugValidated, isFetching: generatedSlugFetching} = useQuery({
     ...slugCheckQuery({slug: slugifiedTitle, check: false}),
-    enabled: !!(((title && !isEditing) || (title && isDuplicating))),
+    enabled: !!(((!!title && !isEditing) || (!!title && isDuplicating))),
     retry: false
   })
 
@@ -54,7 +56,7 @@ export function Slug() {
   const listingId = useAtomValue(listingIdAtom)
   const {isError: isSlugCheckError, isFetching: slugCheckFetching} = useQuery({
     ...slugCheckQuery({slug: debouncedSlug, check: true, id: listingId }),
-    enabled: !!(!isEditing || isDuplicating),
+    enabled: isValidated && !!(!isEditing || isDuplicating) && !!debouncedSlug,
     retry: false,
   })
 
@@ -65,10 +67,17 @@ export function Slug() {
         message:'Slug already exists. Please try another.',
         type: 'manual',
       })
-    } else {
-      form.trigger('slug');
     }
   },[isSlugCheckError, debouncedSlug])
+
+  useEffect(() => {
+    async function validateSlug() {
+      setIsValidated(false);
+      const validated = await form.trigger('slug')
+      setIsValidated(validated)
+    }
+    validateSlug()
+  }, [slug]);
   return (
     <FormField
       control={form.control}

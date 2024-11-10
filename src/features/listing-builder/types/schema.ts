@@ -48,7 +48,7 @@ export const createListingFormSchema = (
   .record(
     z.coerce.number(),
     z.number({
-      message: 'Reward amount is required',
+      message: 'Required',
     })
       .min(0.01, "Reward")
   )
@@ -107,10 +107,10 @@ export const createListingFormSchema = (
 
   return z.object({
     id: z.string().optional(),
-    title: z.string().min(1, "Title is required"),
+    title: z.string().min(1, "Required"),
     slug: z
     .string()
-    .min(1, 'Slug is required')
+    .min(1, 'Required')
     .regex(
       /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
       'Slug should only contain lowercase alphabets, numbers, and hyphens',
@@ -124,7 +124,7 @@ export const createListingFormSchema = (
     // ),
     pocSocials: z
     .string()
-    .min(1, 'Point of Contact is required')
+    .min(1, 'Required')
     .refine(
       (value) => {
         return (
@@ -137,12 +137,12 @@ export const createListingFormSchema = (
         message: 'Please enter a valid X / Telegram link, or email address',
       },
     ),
-    description: z.string().min(1, "Description is required"),
+    description: z.string().min(1, "Required"),
     type: z.nativeEnum(BountyType).default('bounty'),
     region: z.string().default(Regions.GLOBAL),
     deadline: z.string().datetime({
-      message: 'Deadline is required'
-    }).min(1, "Deadline is required").default(dayjs().add(7, 'day').format(DEADLINE_FORMAT))
+      message: 'Required'
+    }).min(1, "Required").default(dayjs().add(7, 'day').format(DEADLINE_FORMAT))
     .refine(
       (date) => isGod || dayjs(date).isAfter(dayjs()), 
       "Deadline cannot be in the past"
@@ -156,14 +156,18 @@ export const createListingFormSchema = (
     token: z.enum(tokenList.map(token => token.tokenSymbol) as [string, ...string[]], {
       errorMap: () => ({ message: 'Token Not Allowed'})
     }).default("USDC"),
-    rewardAmount: z.number().min(0).optional(),
+    rewardAmount: z
+    .number({
+      message: 'Required',
+    })
+    .min(0).optional(),
     rewards: rewardsSchema.optional(),
     compensationType: z.nativeEnum(CompensationType).default("fixed"),
     minRewardAsk: z.number().min(0).optional(),
     maxRewardAsk: z.number().min(0).optional(),
     maxBonusSpots: z
     .number({
-      message: 'Reward amount is required',
+      message: 'Required',
     })
     .min(1).max(50).optional(),
     isFndnPaying: z.boolean()

@@ -2,10 +2,8 @@ import { Button } from "@/components/ui/button";
 import { calculateTotalPrizes } from "@/features/listing-builder/utils/rewards";
 import { TokenLabel } from "./Tokens";
 import { useListingForm } from "@/features/listing-builder/hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
-import { useAtomValue } from "jotai";
-import { listingTotalPrizesAtom } from "@/features/listing-builder/atoms";
 
 function RewardsFooter() {
   const form = useListingForm()
@@ -13,12 +11,20 @@ function RewardsFooter() {
     control: form.control,
     name:'type'
   })
+  const rewards = useWatch({
+    control: form.control,
+    name:'rewards'
+  })
+  const maxBonusSpots = useWatch({
+    control: form.control,
+    name:'maxBonusSpots'
+  })
   const rewardAmount = useWatch({
     control: form.control,
     name:'rewardAmount'
   })
 
-  const totalPrize = useAtomValue(listingTotalPrizesAtom)
+  const totalPrize = useMemo(() => calculateTotalPrizes(rewards, maxBonusSpots || 0), [type, maxBonusSpots])
 
   return (
     <div className='w-full space-y-4'>

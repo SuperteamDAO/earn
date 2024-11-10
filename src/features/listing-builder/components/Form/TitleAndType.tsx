@@ -51,8 +51,13 @@ function Type() {
         return (
           <FormItem >
             <FormControl>
-              <Select onValueChange={field.onChange} defaultValue={field.value} 
+              <Select defaultValue={field.value} 
                 disabled={isEditing}
+                onValueChange={(e) => {
+                  field.onChange(e)
+                  form.setValue('rewards', undefined)
+                  form.setValue('rewardAmount', undefined)
+                }}
               >
                 <SelectTrigger className='border-0 w-32 rounded-none focus:ring-0 border-r'>
                   <div className="flex items-center gap-2">
