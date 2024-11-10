@@ -9,20 +9,36 @@ const submissionSchema = (
 ) =>
   z
     .object({
-      applicationLink: z.string().url('Invalid URL').optional(),
-      tweet: z.union([z.literal(''), z.string().trim().url()]),
+      link: z
+        .union([
+          z.literal(''),
+          z
+            .string()
+            .url('Invalid URL')
+            .max(500, 'URL cannot exceed 500 characters'),
+        ])
+        .optional(),
+      tweet: z
+        .union([
+          z.literal(''),
+          z
+            .string()
+            .trim()
+            .url()
+            .max(500, 'Tweet cannot exceed 500 characters'),
+        ])
+        .optional(),
       otherInfo: z.string().optional(),
       ask: z.union([z.number().int().min(0), z.null()]).optional(),
-      publicKey: z.string().optional(),
       eligibilityAnswers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
     })
     .superRefine((data, ctx) => {
-      if (listing.type !== 'project' && !data.applicationLink) {
+      if (listing.type !== 'project' && !data.link) {
         ctx.addIssue({
           code: 'custom',
-          path: ['applicationLink'],
+          path: ['link'],
           message: 'Application link is required for non-project listings',
         });
       }
@@ -31,8 +47,7 @@ const submissionSchema = (
           ctx.addIssue({
             code: 'custom',
             path: ['ask'],
-            message:
-              'Compensation is required for project listings with non-fixed compensation',
+            message: 'Compensation is required',
           });
         } else if (!data.ask) {
           if (data.ask < minRewardAsk) {

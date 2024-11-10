@@ -1,108 +1,98 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import { isDeadlineOver, submissionSchema } from '@/features/listings';
+import {
+  submissionSchema,
+  validateSubmissionRequest,
+} from '@/features/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  const userId = req.userId;
-  const {
-    listingId,
-    applicationLink,
-    tweet,
-    otherInfo,
-    eligibilityAnswers,
-    ask,
-  } = req.body;
+async function updateSubmission(
+  userId: string,
+  listingId: string,
+  data: any,
+  listing: any,
+) {
+  const validationResult = submissionSchema(
+    listing,
+    listing.minRewardAsk || 0,
+    listing.maxRewardAsk || 0,
+  ).safeParse(data);
+
+  if (!validationResult.success) {
+    throw new Error(JSON.stringify(validationResult.error.formErrors));
+  }
+
+  const validatedData = validationResult.data;
+
+  const existingSubmission = await prisma.submission.findFirst({
+    where: { userId, listingId },
+  });
+
+  if (!existingSubmission) {
+    throw new Error('Submission not found');
+  }
+
+  const formattedData = {
+    link: validatedData.link || '',
+    tweet: validatedData.tweet || '',
+    otherInfo: validatedData.otherInfo || '',
+    eligibilityAnswers: validatedData.eligibilityAnswers || undefined,
+    ask: validatedData.ask || 0,
+  };
+
+  return prisma.submission.update({
+    where: { id: existingSubmission.id },
+    data: formattedData,
+  });
+}
+
+async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
+  const { userId } = req;
+  const { listingId, ...submissionData } = req.body;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
-  logger.debug(`User: ${safeStringify(req.userId)}`);
+  logger.debug(`User: ${safeStringify(userId)}`);
 
   if (!listingId) {
     return res.status(400).json({
-      message: 'Listing ID is required.',
+      error: 'Missing required field',
+      message: 'Listing ID is required',
     });
   }
 
   try {
-    const listing = await prisma.bounties.findUnique({
-      where: { id: listingId },
-    });
+    const { listing } = await validateSubmissionRequest(
+      userId as string,
+      listingId,
+    );
 
-    if (!listing) {
-      return res.status(404).json({
-        message: 'Listing not found',
-      });
-    }
+    const result = await updateSubmission(
+      userId as string,
+      listingId,
+      submissionData,
+      listing,
+    );
 
-    const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
-
-    if (hasDeadlinePassed) {
-      return res.status(400).json({
-        message: 'Submissions closed',
-      });
-    }
-
-    const submission = await prisma.submission.findFirst({
-      where: {
-        userId,
-        listingId,
-      },
-    });
-
-    if (!submission) {
-      return res.status(404).json({
-        message: 'Submission not found.',
-      });
-    }
-
-    try {
-      const validatedData = submissionSchema(
-        listing as any,
-        listing.minRewardAsk || 0,
-        listing.maxRewardAsk || 0,
-      ).parse({
-        applicationLink,
-        tweet,
-        otherInfo,
-        ask,
-        eligibilityAnswers,
-      });
-
-      const result = await prisma.submission.update({
-        where: {
-          id: submission.id,
-        },
-        data: {
-          link: validatedData.applicationLink || '',
-          tweet: validatedData.tweet || '',
-          otherInfo: validatedData.otherInfo || '',
-          eligibilityAnswers: validatedData.eligibilityAnswers || undefined,
-          ask: validatedData.ask || 0,
-        },
-      });
-
-      return res.status(200).json(result);
-    } catch (validationError: any) {
-      if (validationError.errors) {
-        return res.status(400).json({
-          message: 'Validation error',
-          errors: validationError.errors,
-        });
-      }
-      throw validationError;
-    }
+    return res.status(200).json(result);
   } catch (error: any) {
     logger.error(
-      `User ${userId} unable to edit submission: ${safeStringify(error)}`,
+      `User ${userId} unable to update submission: ${safeStringify(error)}`,
     );
-    return res.status(400).json({
+
+    let statusCode = 403;
+    try {
+      JSON.parse(error.message);
+      statusCode = 400;
+    } catch {}
+
+    return res.status(statusCode).json({
       error: error.message,
-      message: `User ${userId} unable to edit submission, ${error.message}`,
+      message: `Unable to update submission: ${error.message}`,
     });
   }
 }
 
-export default withAuth(handler);
+export default withAuth(submission);

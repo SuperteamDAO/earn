@@ -1,13 +1,3 @@
-import {
-  Box,
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
-  Input,
-  Text,
-  Textarea,
-} from '@chakra-ui/react';
 import { type ReactNode } from 'react';
 import {
   type Control,
@@ -16,6 +6,17 @@ import {
   type Path,
   type PathValue,
 } from 'react-hook-form';
+
+import {
+  FormControl,
+  FormDescription,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/utils';
 
 import { RichEditor } from '../shared/RichEditor';
 
@@ -37,7 +38,7 @@ interface FormFieldProps<T extends FieldValues> {
   validate?: (value: any) => boolean | string;
 }
 
-export const FormField = <T extends FieldValues>({
+export const CustomFormField = <T extends FieldValues>({
   name,
   label,
   control,
@@ -63,35 +64,46 @@ export const FormField = <T extends FieldValues>({
           value={field.value}
           onChange={field.onChange}
           placeholder={placeholder}
-          isError={!!error}
+          error={!!error}
           height={h}
         />
       );
     }
 
-    const Component = isTextArea ? Textarea : Input;
-    return (
-      <Component
-        {...field}
-        id={name}
-        borderColor="brand.slate.300"
-        _placeholder={{ color: 'brand.slate.300' }}
-        focusBorderColor="brand.purple"
-        placeholder={placeholder}
-        isReadOnly={readOnly}
-        isDisabled={readOnly}
-        type={type !== 'textarea' ? type : undefined}
-        {...(isTextArea && { minH })}
-        {...(maxLength && {
-          maxLength,
-          onChange: (
-            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-          ) => {
-            if (e.target.value.length <= maxLength) {
+    if (isTextArea) {
+      return (
+        <Textarea
+          {...field}
+          id={name}
+          placeholder={placeholder}
+          disabled={readOnly}
+          className={cn(
+            'min-h-[unset]',
+            minH !== 'unset' && `min-h-[${minH}]`,
+            readOnly && 'cursor-not-allowed opacity-50',
+          )}
+          onChange={(e) => {
+            if (!maxLength || e.target.value.length <= maxLength) {
               field.onChange(e);
             }
-          },
-        })}
+          }}
+        />
+      );
+    }
+
+    return (
+      <Input
+        {...field}
+        id={name}
+        type={type}
+        placeholder={placeholder}
+        disabled={readOnly}
+        className={cn(readOnly && 'cursor-not-allowed opacity-50')}
+        onChange={(e) => {
+          if (!maxLength || e.target.value.length <= maxLength) {
+            field.onChange(e);
+          }
+        }}
       />
     );
   };
@@ -122,46 +134,45 @@ export const FormField = <T extends FieldValues>({
         const isAtLimit = maxLength && charCount === maxLength;
 
         return (
-          <FormControl isInvalid={!!error} isRequired={isRequired}>
+          <FormItem>
             <FormLabel
-              mb={0}
-              color="brand.slate.600"
-              fontWeight="semibold"
-              htmlFor={name}
+              className={cn(
+                'mb-0 font-semibold text-slate-600',
+                isRequired &&
+                  'after:ml-0.5 after:text-destructive after:content-["*"]',
+              )}
             >
               {label}
             </FormLabel>
 
             {helperText && (
-              <FormHelperText mt={0} mb={2} color="brand.slate.500">
+              <FormDescription className="mb-2 mt-0 text-slate-500">
                 {helperText}
-              </FormHelperText>
+              </FormDescription>
             )}
 
-            {renderField(field, error)}
+            <FormControl>{renderField(field, error)}</FormControl>
 
-            <Box minH="20px">
+            <div className="min-h-[20px]">
               {error ? (
-                <FormErrorMessage mt={1}>
-                  {error.message as string}
-                </FormErrorMessage>
+                <FormMessage className="mt-1">{error.message}</FormMessage>
               ) : (
                 !isRichText &&
                 isNearLimit && (
-                  <Text
-                    mt={1}
-                    color={isAtLimit ? 'red.500' : 'brand.slate.500'}
-                    fontSize="xs"
-                    textAlign="right"
+                  <p
+                    className={cn(
+                      'mt-1 text-right text-xs',
+                      isAtLimit ? 'text-destructive' : 'text-slate-500',
+                    )}
                   >
                     {isAtLimit
                       ? 'Character limit reached'
                       : `${maxLength - charCount} characters remaining`}
-                  </Text>
+                  </p>
                 )
               )}
-            </Box>
-          </FormControl>
+            </div>
+          </FormItem>
         );
       }}
     />
