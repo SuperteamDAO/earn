@@ -1,10 +1,9 @@
-import { useAtomValue } from "jotai";
-import { formAtom } from "../../atoms";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { SkillsSelect } from "@/components/shared/SkillsSelectNew";
+import { useListingForm } from "../../hooks";
 
 export function Skills() {
-  const form = useAtomValue(formAtom)
+  const form = useListingForm()
   return (
     <FormField
       name='skills'

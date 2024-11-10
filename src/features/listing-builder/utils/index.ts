@@ -53,9 +53,7 @@ export const getListingDefaults = (isGod: boolean, editable: boolean, isDuplicat
   for (const [key, value] of Object.entries(shape)) {
     const zodValue = value as z.ZodTypeAny;
 
-    console.log("default zod key",key, zodValue._def.defaultValue,zodValue._def.defaultValue?.())
     if (zodValue instanceof z.ZodDefault) {
-      console.log("default zod value",zodValue._def.defaultValue())
       defaults[key] = zodValue._def.defaultValue();
     } else if (zodValue instanceof z.ZodOptional) {
       if(zodValue instanceof z.ZodObject) defaults[key] = {};
@@ -63,7 +61,6 @@ export const getListingDefaults = (isGod: boolean, editable: boolean, isDuplicat
           else if(zodValue instanceof z.ZodString) defaults[key] = '';
             else defaults[key] = undefined;
     } else if ('defaultValue' in zodValue._def) {
-      console.log("default zod value",zodValue._def.defaultValue)
       defaults[key] = zodValue._def.defaultValue;
     } else {
       if(zodValue instanceof z.ZodString) defaults[key] = '';

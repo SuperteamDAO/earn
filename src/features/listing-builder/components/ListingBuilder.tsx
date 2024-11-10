@@ -7,23 +7,20 @@ import {
   fetchListingAtom,
   listingIdAtom,
   ListingFormData,
-  formSchemaAtom,
   isGodAtom,
   isSTAtom,
-  formAtom,
   listingStatusAtom,
   listingToStatus,
   getListingDefaults,
   store,
 } from "@/features/listing-builder";
 import { useUser } from "@/store/user";
-import { HydrateAtoms, useInitAtom, useInitAtomValue } from "@/utils/atoms";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Provider, useAtomValue, useSetAtom } from "jotai";
+import { HydrateAtoms, useInitAtom } from "@/utils/atoms";
+import { Provider, useAtomValue } from "jotai";
 import { useSession } from "next-auth/react";
+import { Deadline, DescriptionAndTemplate, POC, TitleAndType, EligibilityQuestions, Skills, Rewards } from "./Form";
+import { useListingForm } from "../hooks";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { Deadline, DescriptionAndTemplate, POC, TitleAndType, EligibilityQuestions, Skills } from "./Form";
 
 interface Props {
   listingSlug?: string;
@@ -31,69 +28,51 @@ interface Props {
   isDuplicating?: boolean;
 }
 
-// export function ListingBuilder({listingSlug, isEditing, isDuplicating}: Props) {
 function ListingBuilder({defaultListing}: {defaultListing: ListingFormData}) {
-
-  // const listingSlugValue = useInitAtomValue(listingSlugAtom, listingSlug)
-  const listingSlugValue = useAtomValue(listingSlugAtom)
-  const listingIdValue = useAtomValue(listingIdAtom)
-  const listingStatusValue = useAtomValue(listingStatusAtom)
-  // const setListingId = useSetAtom(listingIdAtom)
-
-  useEffect(() => {
-    console.log('check listingSlugValue',listingSlugValue)
-  },[listingSlugValue])
-  useEffect(() => {
-    console.log('check listingIdValue',listingIdValue)
-  },[listingIdValue])
-  useEffect(() => {
-    console.log('check listingStatusValue',listingStatusValue)
-  },[listingStatusValue])
 
   const { data: listing } = useAtomValue(fetchListingAtom);
   useInitAtom(listingIdAtom, listing?.id)
   useInitAtom(listingStatusAtom, listing ? listingToStatus(listing) : undefined)
 
-  const formSchema = useAtomValue(formSchemaAtom);
   const isEditing = useAtomValue(isEditingAtom);
+  const formHook = useListingForm(isEditing ? listing ?? defaultListing : defaultListing)
 
-  const formHook = useForm<ListingFormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: isEditing ? listing ?? defaultListing : defaultListing,
-    mode: 'onChange',
-  });
-  useInitAtom(formAtom, formHook)
+  const preventEnterKeySubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    const target = e.target;
+    if (e.key === "Enter" && target instanceof HTMLInputElement) {
+      e.preventDefault();
+    }
+  };
 
-const preventEnterKeySubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {
-	const target = e.target;
-	if (e.key === "Enter" && target instanceof HTMLInputElement) {
-		e.preventDefault();
-	}
-};
-  
+  useEffect(() => {
+    console.log('formHook',formHook)
+  },[formHook])
   return (
-    <ListingBuilderLayout>
-      <>
-        <Form {...formHook} >
-          <form onSubmit={formHook.handleSubmit(() => {})} className="space-y-8 max-w-5xl mx-auto py-10 w-full"
-            onKeyDown={preventEnterKeySubmission}
-          >
+    <>
+      <Form {...formHook} >
+        <form onSubmit={formHook?.handleSubmit(() => {})} 
+          onKeyDown={preventEnterKeySubmission}
+        >
+          <ListingBuilderLayout>
+            <div className="space-y-8 max-w-5xl mx-auto py-10 w-full">
             <div className="grid grid-cols-9 gap-4">
               <div className="col-span-6 space-y-4">
                 <TitleAndType />
                 <DescriptionAndTemplate />
               </div>
               <div className="col-span-3 space-y-4">
+                <Rewards />
                 <Deadline />
                 <Skills />
                 <POC />
                 <EligibilityQuestions />
               </div>
             </div>
-          </form>
-        </Form>
-      </>
-    </ListingBuilderLayout>
+            </div>
+          </ListingBuilderLayout>
+        </form>
+      </Form>
+    </>
   )
 }
 

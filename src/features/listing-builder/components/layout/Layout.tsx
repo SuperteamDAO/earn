@@ -3,7 +3,6 @@ import { cn } from "@/utils";
 import { useEffect, type ReactNode } from "react";
 import {Header} from "./Header";
 import { useAtomValue } from "jotai";
-import { listingSlugAtom } from "../../atoms";
 
 interface LayoutProps {
   children: ReactNode;
@@ -15,7 +14,6 @@ export function Layout({
   children,
   ...props
 }: LayoutProps) {
-
   return (
     <div 
       className={cn(

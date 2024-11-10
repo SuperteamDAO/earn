@@ -4,16 +4,14 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { useQuery } from "@tanstack/react-query"
-import { listingTemplatesQuery } from "../../queries/listing-templates"
-import { useAtom, useAtomValue, useSetAtom } from "jotai"
+import { listingTemplatesQuery } from "../../../queries/listing-templates"
 import { usePostHog } from "posthog-js/react"
-import { isCreateListingAllowedQuery } from "../../queries"
+import { isCreateListingAllowedQuery } from "../../../queries"
 import { useSession } from "next-auth/react"
 import { useEffect } from "react"
 import { useUser } from "@/store/user"
@@ -22,7 +20,8 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { cn } from "@/utils"
 import { getURL } from "@/utils/validUrl"
 import Link from "next/link"
-import { formActionsAtom, formAtom, isDuplicatingAtom, isEditingAtom } from "../../atoms"
+import { useFormContext, useWatch } from "react-hook-form"
+import { ListingFormData } from "../../../types"
 
 export function Templates() {
   const posthog = usePostHog();
@@ -32,9 +31,14 @@ export function Templates() {
   // const isEditing = useAtomValue(isEditingAtom)
   // const isDuplicating = useAtomValue(isDuplicatingAtom)
 
-  const form = useAtomValue(formAtom);
-  const formAction = useSetAtom(formActionsAtom);
-  const { data: templates = [] } = useQuery(listingTemplatesQuery(form?.getValues().type || 'bounty'));
+  // const form = useAtomValue(formAtom);
+  // const formAction = useSetAtom(formActionsAtom);
+  const form = useFormContext<ListingFormData>();
+  const type = useWatch({
+    control:form.control,
+    name:'type'
+  })
+  const { data: templates = [] } = useQuery(listingTemplatesQuery(type || 'bounty'));
 
   const {
     data: isCreateListingAllowed,
@@ -157,7 +161,8 @@ export function Templates() {
                         disabled={isDisabled}
                         onClick={() => {
                           posthog.capture('template_sponsor');
-                          formAction({type: 'SET',payload: template})
+                          // formAction({type: 'SET',payload: template})
+                          form.reset(template as any)
                         }}
                       >
                         Use

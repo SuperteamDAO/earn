@@ -1,10 +1,9 @@
 import { Input } from "@/components/ui/input";
-import { useAtomValue } from "jotai";
-import { formAtom } from "../../atoms";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useListingForm } from "../../hooks";
 
 export function POC() {
-  const form = useAtomValue(formAtom)
+  const form = useListingForm()
   return (
     <FormField
       name='pocSocials'

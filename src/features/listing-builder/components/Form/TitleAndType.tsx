@@ -1,10 +1,11 @@
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getListingIcon } from "@/features/listings";
-import { useAtomValue } from "jotai";
-import { formAtom } from "../../atoms";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useEffect } from "react";
+import Image from "next/image";
+import { useListingForm } from "../../hooks";
+import { useAtomValue } from "jotai";
+import { isEditingAtom } from "../../atoms";
 
 const typeOptions = [
   { value: 'bounty', label: 'Bounty' },
@@ -13,11 +14,11 @@ const typeOptions = [
 ] as const;
 
 export function TitleAndType() {
-  const form = useAtomValue(formAtom)
+  const form = useListingForm()
   return (
     <FormField
       name='title'
-      control={form?.control}
+      control={form.control}
       render={({field}) => {
         return (
           <FormItem  >
@@ -40,20 +41,19 @@ export function TitleAndType() {
 }
 
 function Type() {
-  const form = useAtomValue(formAtom)
-  const type = form?.watch('type')
-  useEffect(() => {
-    console.log('type', type)
-  },[type])
+  const form = useListingForm()
+  const isEditing = useAtomValue(isEditingAtom)
   return (
     <FormField
       name='type'
-      control={form?.control}
+      control={form.control}
       render={({field}) => {
         return (
           <FormItem >
             <FormControl>
-              <Select onValueChange={field.onChange} defaultValue={field.value} >
+              <Select onValueChange={field.onChange} defaultValue={field.value} 
+                disabled={isEditing}
+              >
                 <SelectTrigger className='border-0 w-32 rounded-none focus:ring-0 border-r'>
                   <div className="flex items-center gap-2">
                     <SelectValue />
@@ -63,10 +63,11 @@ function Type() {
                   {typeOptions.map(({ value, label }) => (
                     <SelectItem key={value} value={value}>
                       <div className="flex items-center gap-2 text-xs">
-                        <img 
+                        <Image 
                           src={getListingIcon(value)} 
                           alt={value}
                           className="h-4 w-4" 
+                          width={16} height={16}
                         />
                         <span>{label}</span>
                       </div>

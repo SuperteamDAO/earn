@@ -1,4 +1,4 @@
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, useWatch } from "react-hook-form";
 import { Baseline, Info, Link2, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,11 +17,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useAtomValue } from "jotai";
-import { formAtom } from "../../atoms";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/utils";
 import { useEffect } from "react";
+import { useListingForm } from "../../hooks";
 
 const questionTypes = [
   { value: "text", label: "Text", icon: Baseline },
@@ -29,10 +28,14 @@ const questionTypes = [
 ];
 
 export function EligibilityQuestions() {
-  const form = useAtomValue(formAtom);
+  const form = useListingForm();
+  const type = useWatch({
+    control:form.control,
+    name:'type'
+  })
 
   const { fields, append, remove } = useFieldArray({
-    control: form?.control,
+    control: form.control,
     name: "eligibility",
   });
 
@@ -49,18 +52,18 @@ export function EligibilityQuestions() {
   };
 
   useEffect(() => {
-    if(form?.getValues().type === 'project') {
+    if(type === 'project') {
       if(fields.length === 0) handleAddQuestion()
     } else {
       if(fields.length === 1 && fields[0]?.question === "") {
         handleRemoveQuestion(0)
       }
     }
-  },[form?.getValues().type])
+  },[type])
 
   return (
     <FormField
-      control={form?.control}
+      control={form.control}
       name={`eligibility`}
       render={() => (
         <FormItem className='pt-2'>
@@ -72,7 +75,7 @@ export function EligibilityQuestions() {
               </TooltipTrigger>
               <TooltipContent className='bg-slate-100 text-slate-700'>
                 <p className='max-w-sm'>
-                  {form?.getValues().type === 'project' ? 
+                  {type === 'project' ? 
                     `Applicant’s names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!` :
                     `The main bounty submission link, the submitter’s names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`
                   }
@@ -84,7 +87,7 @@ export function EligibilityQuestions() {
             {fields.map((field, index) => (
               <FormField
                 key={field.id}
-                control={form?.control}
+                control={form.control}
                 name={`eligibility.${index}.question`}
                 render={() => (
                   <div key={field.id} className='group'>
@@ -92,13 +95,17 @@ export function EligibilityQuestions() {
                       <FormLabel>Question {index+1}</FormLabel>
                       <div className="flex border rounded-md ring-primary has-[:focus]:ring-1 items-center">
                         <FormField
-                          control={form?.control}
+                          control={form.control}
                           name={`eligibility.${index}.type`}
                           render={({ field }) => (
                             <FormItem className="w-fit">
                               <Select
                                 value={field.value}
-                                onValueChange={field.onChange}
+                                onValueChange={(value) => {
+                                  field.onChange(value);
+                                  // solves a bug when we change type, but the prev type error is still there.
+                                  form.trigger(`eligibility.${index}.question`);
+                                }}
                               >
                                 <FormControl>
                                   <SelectTrigger className="w-fit rounded-none border-0 focus:ring-0 gap-1 border-r">
@@ -130,7 +137,7 @@ export function EligibilityQuestions() {
                         />
 
                         <FormField
-                          control={form?.control}
+                          control={form.control}
                           name={`eligibility.${index}.question`}
                           render={({ field }) => (
                             <FormItem className="flex-1">
@@ -146,14 +153,14 @@ export function EligibilityQuestions() {
                         />
 
                         <FormField
-                          control={form?.control}
+                          control={form.control}
                           name={`eligibility.${index}.order`}
                           render={({ field }) => (
                             <input type="hidden" {...field} value={index + 1} />
                           )}
                         />
 
-                        {(fields.length !== 1 || form?.getValues().type !== 'project') && (
+                        {(fields.length !== 1 || type !== 'project') && (
                           <Button
                             type="button"
                             variant="ghost"
@@ -172,7 +179,7 @@ export function EligibilityQuestions() {
               />
             ))}
 
-            {form?.getValues().type === 'project' || fields.length < 2 ? (
+            {type === 'project' || fields.length < 2 ? (
               <div className='flex justify-between'>
                 <FormMessage />
                 <Button

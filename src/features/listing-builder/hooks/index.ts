@@ -1,65 +1,75 @@
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
-import { 
-  formAtom,
-  formSchemaAtom,
-  formActionsAtom,
-  listingStorageAtom,
-  fetchListingAtom,
-  listingIdAtom,
-  isEditingAtom,
-  isDuplicatingAtom
-} from '../atoms';
+import { useForm, useFormContext, UseFormReturn } from "react-hook-form";
+import { ListingFormData } from "../types";
+import { useAtomValue } from "jotai";
+import { formSchemaAtom, isDuplicatingAtom, isEditingAtom, listingIdAtom, saveDraftMutationAtom, submitListingMutationAtom } from "../atoms";
+import { useCallback, useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export const useListingForm = () => {
-  const [form] = useAtom(formAtom);
-  const formSchema = useAtomValue(formSchemaAtom);
-  const dispatchForm = useSetAtom(formActionsAtom);
-  const draft = useAtomValue(listingStorageAtom);
-  const listing = useAtomValue(fetchListingAtom);
-  const isEditing = useAtomValue(isEditingAtom);
-  const isDuplicating = useAtomValue(isDuplicatingAtom);
-  const listingId = useAtomValue(listingIdAtom);
+interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
+  saveDraft: () => Promise<void>;
+  submitListing: () => Promise<void>;
+  resetForm: () => void;
+}
 
-  const methods = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: draft
-  });
+export const useListingForm = (defaultValues?: ListingFormData): UseListingFormReturn => {
+  let formMethods: UseFormReturn<ListingFormData> | null = null;
+  let isNewFormInitialized = false;
 
-  useEffect(() => {
-    if (!form) {
-      dispatchForm({ type: 'SET', payload: methods });
+  try {
+    formMethods = useFormContext<ListingFormData>();
+  } catch (error) {
+    // No existing form context
+  }
+
+  const formSchema = useAtomValue(formSchemaAtom)
+  if (!formMethods || !Object.keys(formMethods).length) {
+    formMethods = useForm<ListingFormData>({
+      resolver: zodResolver(formSchema),
+      defaultValues,
+      mode: 'onTouched'
+    });
+    isNewFormInitialized = true;
+  }
+
+  const { getValues, reset } = formMethods;
+
+  const saveDraftMutation = useAtomValue(saveDraftMutationAtom);
+  const submitListingMutation = useAtomValue(submitListingMutationAtom);
+
+  const saveDraft = useCallback(async () => {
+    const formData = getValues();
+    try {
+      await saveDraftMutation.mutateAsync(formData);
+    } catch (error) {
+      console.error('Error saving draft:', error);
     }
-  }, [form, methods, dispatchForm]);
+  }, [getValues, saveDraftMutation]);
 
-  useEffect(() => {
-    if (listing.data && isEditing && !isDuplicating) {
-      methods.reset(listing.data);
+  const submitListing = useCallback(async () => {
+    const formData = getValues();
+    try {
+      await submitListingMutation.mutateAsync(formData);
+    } catch (error) {
+      console.error('Error submitting listing:', error);
     }
-  }, [listing, isEditing, isDuplicating, methods]);
-  ;
+  }, [getValues, submitListingMutation]);
 
-  // Auto-save draft every 30 seconds if form is dirty
+  const resetForm = useCallback(() => {
+    reset();
+  }, [reset]);
+
   useEffect(() => {
-    if (!form?.formState.isDirty) return;
-
-    const timer = setInterval(() => {
-      dispatchForm({ type: 'SAVE_DRAFT' });
-    }, 30000);
-
-    return () => clearInterval(timer);
-  }, [form?.formState.isDirty, dispatchForm]);
+    if (isNewFormInitialized && process.env.NODE_ENV !== 'production') {
+      console.warn(
+        'useListingForm: Initialized a new form instance because no form context was found. If this is unintended, ensure your component is wrapped with FormProvider.'
+      );
+    }
+  }, [isNewFormInitialized]);
 
   return {
-    form: methods,
-    saveDraft: () => dispatchForm({ type: 'SAVE_DRAFT' }),
-    submitListing: () => dispatchForm({ type: 'SUBMIT' }),
-    resetForm: () => dispatchForm({ type: 'RESET' }),
-    loadDraft: () => dispatchForm({ type: 'LOAD_DRAFT' }),
-    isEditing,
-    isDuplicating,
-    listingId
+    ...formMethods,
+    saveDraft,
+    submitListing,
+    resetForm,
   };
 };

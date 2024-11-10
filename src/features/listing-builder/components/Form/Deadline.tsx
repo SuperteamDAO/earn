@@ -1,10 +1,12 @@
 import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAtomValue } from "jotai";
-import { formAtom, isEditingAtom, isGodAtom } from "../../atoms";
+import { isEditingAtom, isGodAtom } from "../../atoms";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
+import { useListingForm } from "../../hooks";
+import { useWatch } from "react-hook-form";
 
 const deadlineOptions = [
   { label: '1 Week', value: 7 },
@@ -15,8 +17,11 @@ const deadlineOptions = [
 export const DEADLINE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
 
 export function Deadline() {
-  const form = useAtomValue(formAtom)
-  const listing = form?.getValues()
+  const form = useListingForm()
+  const deadline = useWatch({
+    name:'deadline',
+    control:form.control
+  })
 
   const [maxDeadline, setMaxDeadline] = useState<Date | undefined>(undefined);
   const [minDeadline, setMinDeadline] = useState<Date | undefined>(new Date());
@@ -25,8 +30,8 @@ export function Deadline() {
   const isGod = useAtomValue(isGodAtom);
 
   useEffect(() => {
-    if (editable && listing?.deadline) {
-      const originalDeadline = dayjs(listing?.deadline);
+    if (editable && deadline) {
+      const originalDeadline = dayjs(deadline);
       const twoWeeksLater = originalDeadline.add(2, 'weeks');
       setMaxDeadline(twoWeeksLater.toDate());
     }
@@ -44,7 +49,7 @@ export function Deadline() {
   useEffect(() => {
     // TODO: Debug why zod default for deadline specifically is not working
     if(form) {
-      if(!form.getValues().deadline)
+      if(!deadline)
         form.setValue('deadline',handleDeadlineSelection(Number(7)))
     }
   }, [form]);
@@ -52,7 +57,7 @@ export function Deadline() {
   return (
     <FormField
       name='deadline'
-      control={form?.control}
+      control={form.control}
       render={({field}) => {
         return (
           <FormItem className="">

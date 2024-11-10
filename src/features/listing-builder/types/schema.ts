@@ -1,5 +1,5 @@
 import { skillsArraySchema } from "@/interface/skills";
-import { BountyType, CompensationType, status } from "@prisma/client";
+import { BountyType, CompensationType, Regions, status } from "@prisma/client";
 import { z } from "zod";
 import { dayjs } from '@/utils/dayjs';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
@@ -7,6 +7,7 @@ import axios from "axios";
 import { timeToCompleteOptions } from "../utils";
 import { BONUS_REWARD_POSITION, MAX_BONUS_SPOTS, MAX_PODIUMS, tokenList } from "@/constants";
 import { DEADLINE_FORMAT } from "../components/Form";
+import { fetchSlugCheck } from "../queries/slug-check";
 
 export const createListingFormSchema = (
   isGod: boolean,
@@ -18,23 +19,39 @@ export const createListingFormSchema = (
   const slugUniqueCheck = async (slug: string) => {
     try {
       const listingId = isEditing && !isDuplicating ? id : null;
-      await axios.get(
-        `/api/listings/check-slug?slug=${slug}&check=true&id=${listingId}`,
-      );
+      await fetchSlugCheck({
+        slug,
+        id: listingId || undefined,
+        check: true
+      })
+      console.log('slug check?')
       return true;
     } catch (error) {
       return false;
     }
   };
 
-  const eligibilityQuestionSchema = z.object({
-    order: z.number(),
-    question: z.string().min(1),
-    type: z.enum(["text", "link"]),
-  });
+  const eligibilityQuestionSchema = z.discriminatedUnion("type", [
+    z.object({
+      order: z.number(),
+      question: z.string().min(1),
+      type: z.literal("text"),
+    }),
+    z.object({
+      order: z.number(),
+      question: z.string().url(),
+      type: z.literal("link"),
+    }),
+  ]);
 
   const rewardsSchema = z
-  .record(z.coerce.number(), z.number().min(0.01))
+  .record(
+    z.coerce.number(),
+    z.number({
+      message: 'Reward amount is required',
+    })
+      .min(0.01, "Reward")
+  )
   .refine(
     (rewards) => {
       const positions = Object.keys(rewards).map(Number);
@@ -97,7 +114,14 @@ export const createListingFormSchema = (
     .regex(
       /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
       'Slug should only contain lowercase alphabets, numbers, and hyphens',
-    ),
+    ), 
+    // we cannot do this here, coz once slug is dirty, any field change will trigger this
+    // .refine(
+    //   async (slug) => await slugUniqueCheck(slug),
+    //   {
+    //     message: 'Slug already exists. Please try another.',
+    //   },
+    // ),
     pocSocials: z
     .string()
     .min(1, 'Point of Contact is required')
@@ -115,7 +139,7 @@ export const createListingFormSchema = (
     ),
     description: z.string().min(1, "Description is required"),
     type: z.nativeEnum(BountyType).default('bounty'),
-    region: z.string().default("GLOBAL"),
+    region: z.string().default(Regions.GLOBAL),
     deadline: z.string().datetime({
       message: 'Deadline is required'
     }).min(1, "Deadline is required").default(dayjs().add(7, 'day').format(DEADLINE_FORMAT))
@@ -137,7 +161,11 @@ export const createListingFormSchema = (
     compensationType: z.nativeEnum(CompensationType).default("fixed"),
     minRewardAsk: z.number().min(0).optional(),
     maxRewardAsk: z.number().min(0).optional(),
-    maxBonusSpots: z.number().min(1).max(50).optional(),
+    maxBonusSpots: z
+    .number({
+      message: 'Reward amount is required',
+    })
+    .min(1).max(50).optional(),
     isFndnPaying: z.boolean()
     .default(false)
     .refine(

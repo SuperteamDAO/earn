@@ -8,6 +8,7 @@ import { cn } from "@/utils";
 import {StatusBadge} from "./StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
+import { PrePublish } from "../Form/PrePublish";
 
 const UserMenu = dynamic(() =>
   import('@/features/navbar').then((mod) => mod.UserMenu)
@@ -54,9 +55,7 @@ export function Header() {
                 <Eye />
                 Preview
               </Button>
-              <Button className='px-6'>
-                Continue
-              </Button>
+              <PrePublish />
               <UserMenu />
             </>
           )}
