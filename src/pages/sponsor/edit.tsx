@@ -3,16 +3,12 @@ import {
   Box,
   Button,
   Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Heading,
   HStack,
-  Input,
   Text,
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -21,50 +17,61 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { IndustryList } from '@/constants';
 import {
+  type SponsorBase,
+  sponsorBaseSchema,
   useSlugValidation,
   useSponsorNameValidation,
 } from '@/features/sponsor';
 import { sponsorQuery } from '@/features/sponsor-dashboard';
-import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 
-const UpdateSponsor = () => {
+export default function UpdateSponsor() {
   const router = useRouter();
   const animatedComponents = makeAnimated();
   const { data: session, status } = useSession();
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    watch,
-    getValues,
-    reset,
-  } = useForm({
+  const { user, refetchUser } = useUser();
+
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const form = useForm<SponsorBase>({
+    resolver: zodResolver(sponsorBaseSchema),
     defaultValues: {
-      sponsorname: '',
+      name: '',
       slug: '',
-      sponsorurl: '',
-      twitterHandle: '',
       bio: '',
+      logo: '',
       industry: '',
+      url: '',
+      twitter: '',
       entityName: '',
     },
   });
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [isImageUploading, setIsImageUploading] = useState(false);
-  const [isPhotoLoading, setIsPhotoLoading] = useState(true);
-  const [industries, setIndustries] = useState<string>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [hasError, setHasError] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const { user, refetchUser } = useUser();
+
+  const {
+    setSponsorName,
+    isInvalid: isSponsorNameInvalid,
+    validationErrorMessage: sponsorNameValidationErrorMessage,
+    sponsorName,
+  } = useSponsorNameValidation();
 
   const {
     setSlug,
@@ -72,12 +79,6 @@ const UpdateSponsor = () => {
     validationErrorMessage: slugValidationErrorMessage,
     slug,
   } = useSlugValidation();
-  const {
-    setSponsorName,
-    isInvalid: isSponsorNameInvalid,
-    validationErrorMessage: sponsorNameValidationErrorMessage,
-    sponsorName,
-  } = useSponsorNameValidation();
 
   const { data: sponsorData } = useQuery(sponsorQuery(user?.currentSponsorId));
 
@@ -87,41 +88,37 @@ const UpdateSponsor = () => {
         sponsorData;
       setSponsorName(name);
       setSlug(slug);
-      reset({
-        bio,
-        sponsorname: name,
+      setLogoUrl(logo || '');
+      form.reset({
+        name,
         slug,
-        sponsorurl: url,
-        twitterHandle: twitter,
+        bio,
+        logo,
+        industry,
+        url,
+        twitter,
         entityName,
       });
-      if (logo) {
-        setImageUrl(logo);
-      }
-      setIsPhotoLoading(false);
-      setIndustries(industry);
     }
-  }, [sponsorData, reset, setSlug, setSponsorName]);
+  }, [sponsorData, form.reset, setSlug, setSponsorName]);
 
-  const updateSponsor = async (sponsor: SponsorType) => {
-    if (getValues('bio').length > 180) {
-      setErrorMessage('Company short bio length exceeded the limit');
-      return;
-    }
+  const onSubmit = async (data: SponsorBase) => {
     setIsLoading(true);
-    setHasError(false);
     try {
-      await axios.post('/api/sponsors/edit', {
-        ...sponsor,
-      });
+      await axios.post('/api/sponsors/edit', data);
       await refetchUser();
-
+      toast.success('Sponsor profile updated successfully!');
       router.push('/dashboard/listings');
-    } catch (e: any) {
-      if (e?.response?.data?.error?.code === 'P2002') {
-        setErrorMessage('Sorry! Sponsor name or username already exists.');
+    } catch (error) {
+      console.error('Error updating sponsor:', error);
+      if (
+        axios.isAxiosError(error) &&
+        error.response?.data?.error?.code === 'P2002'
+      ) {
+        toast.error('Sorry! Sponsor name or username already exists.');
+      } else {
+        toast.error('Failed to update sponsor profile. Please try again.');
       }
-      setHasError(true);
     } finally {
       setIsLoading(false);
     }
@@ -147,324 +144,219 @@ const UpdateSponsor = () => {
           </Text>
         </VStack>
         <VStack w={'2xl'} pt={10}>
-          <form
-            onSubmit={handleSubmit(async (e) => {
-              updateSponsor({
-                bio: e.bio,
-                industry: industries ?? '',
-                name: sponsorName,
-                slug: slug,
-                logo: imageUrl ?? '',
-                twitter: e.twitterHandle,
-                url: e.sponsorurl ?? '',
-                entityName: e.entityName,
-              });
-            })}
-            style={{ width: '100%' }}
-          >
-            <Flex justify={'space-between'} gap={2} w={'full'}>
-              <FormControl isRequired>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                  htmlFor={'sponsorname'}
-                >
-                  Company Name
-                </FormLabel>
-                <Input
-                  w={'full'}
-                  borderColor={'brand.slate.300'}
-                  _placeholder={{ color: 'brand.slate.300' }}
-                  focusBorderColor="brand.purple"
-                  id="sponsorname"
-                  placeholder="Stark Industries"
-                  {...register('sponsorname')}
-                  isInvalid={isSponsorNameInvalid}
-                  onChange={(e) => setSponsorName(e.target.value)}
-                  value={sponsorName}
-                />
-                {isSponsorNameInvalid && (
-                  <Text color={'red'} fontSize={'sm'}>
-                    {sponsorNameValidationErrorMessage}
-                  </Text>
-                )}
-                <FormErrorMessage>
-                  {errors.sponsorname ? (
-                    <>{errors.sponsorname.message}</>
-                  ) : (
-                    <></>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              style={{ width: '100%' }}
+            >
+              <Flex justify={'space-between'} gap={2} w={'full'}>
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel isRequired>Company Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Stark Industries"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setSponsorName(e.target.value);
+                          }}
+                          value={sponsorName}
+                        />
+                      </FormControl>
+                      {isSponsorNameInvalid && (
+                        <p className="text-sm text-red-500">
+                          {sponsorNameValidationErrorMessage}
+                        </p>
+                      )}
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </FormErrorMessage>
-              </FormControl>
-              <FormControl w={'full'} isRequired>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                  htmlFor={'slug'}
-                >
-                  Company Username
-                </FormLabel>
-                <Input
-                  w={'full'}
-                  borderColor={'brand.slate.300'}
-                  _placeholder={{ color: 'brand.slate.300' }}
-                  focusBorderColor="brand.purple"
-                  id="slug"
-                  placeholder="starkindustries"
-                  {...register('slug')}
-                  isInvalid={isSlugInvalid}
-                  onChange={(e) => setSlug(e.target.value)}
-                  value={slug}
                 />
-                {isSlugInvalid && (
-                  <Text color={'red'} fontSize={'sm'}>
-                    {slugValidationErrorMessage}
-                  </Text>
-                )}
-                <FormErrorMessage>
-                  {errors.slug ? <>{errors.slug.message}</> : <></>}
-                </FormErrorMessage>
-              </FormControl>
-            </Flex>
-            <HStack justify={'space-between'} w={'full'} my={6}>
-              <FormControl w={'full'} isRequired>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                  htmlFor={'sponsorname'}
-                >
-                  Company URL
-                </FormLabel>
-                <Input
-                  borderColor={'brand.slate.300'}
-                  _placeholder={{ color: 'brand.slate.300' }}
-                  focusBorderColor="brand.purple"
-                  id="sponsorurl"
-                  placeholder="https://starkindustries.com"
-                  {...register('sponsorurl')}
-                />
-                <FormErrorMessage>
-                  {errors.sponsorurl ? <>{errors.sponsorurl.message}</> : <></>}
-                </FormErrorMessage>
-              </FormControl>
-              <FormControl w={'full'} isRequired>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                  htmlFor={'twitterHandle'}
-                >
-                  Company Twitter
-                </FormLabel>
-                <Input
-                  w={'full'}
-                  borderColor={'brand.slate.300'}
-                  _placeholder={{ color: 'brand.slate.300' }}
-                  id="twitterHandle"
-                  placeholder="@StarkIndustries"
-                  {...register('twitterHandle')}
-                />
-                <FormErrorMessage>
-                  {errors.twitterHandle ? (
-                    <>{errors.twitterHandle.message}</>
-                  ) : (
-                    <></>
+
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel isRequired>Company Username</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="starkindustries"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setSlug(e.target.value);
+                          }}
+                          value={slug}
+                        />
+                      </FormControl>
+                      {isSlugInvalid && (
+                        <p className="text-sm text-red-500">
+                          {slugValidationErrorMessage}
+                        </p>
+                      )}
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </FormErrorMessage>
-              </FormControl>
-            </HStack>
-
-            <HStack w="full">
-              <FormControl w={'full'} isRequired>
-                <HStack mb={2}>
-                  <FormLabel
-                    m={0}
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={600}
-                    htmlFor={'entityName'}
-                  >
-                    Entity Name
-                  </FormLabel>
-                  <Tooltip
-                    fontSize="xs"
-                    label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
-                  >
-                    <InfoOutlineIcon
-                      color="brand.slate.500"
-                      w={3}
-                      h={3}
-                      display={{ base: 'none', md: 'block' }}
-                    />
-                  </Tooltip>
-                </HStack>
-                <Input
-                  w={'full'}
-                  borderColor={'brand.slate.300'}
-                  _placeholder={{ color: 'brand.slate.300' }}
-                  focusBorderColor="brand.purple"
-                  id="entityName"
-                  placeholder="Full Entity Name"
-                  {...register('entityName')}
                 />
-                <FormErrorMessage>
-                  {errors.entityName ? <>{errors.entityName.message}</> : <></>}
-                </FormErrorMessage>
-              </FormControl>
-            </HStack>
+              </Flex>
+              <HStack justify={'space-between'} w={'full'} my={6}>
+                <FormField
+                  control={form.control}
+                  name="url"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel isRequired>Company URL</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://starkindustries.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <VStack align={'start'} gap={2} my={3}>
-              <Heading
-                color={'brand.slate.500'}
-                fontSize={'15px'}
-                fontWeight={600}
-              >
-                Company Logo{' '}
-                <span
-                  style={{
-                    color: 'red',
-                  }}
-                >
-                  *
-                </span>
-              </Heading>
-              <HStack gap={5}>
-                {isPhotoLoading ? (
-                  <></>
-                ) : imageUrl ? (
-                  <ImagePicker
-                    onChange={async (e) => {
-                      setIsImageUploading(true);
-                      const a = await uploadToCloudinary(e, 'earn-sponsor');
-                      setImageUrl(a);
-                      setIsImageUploading(false);
-                    }}
-                    defaultValue={{ url: imageUrl }}
-                    onReset={() => {
-                      setImageUrl('');
-                    }}
-                  />
-                ) : (
-                  <ImagePicker
-                    onChange={async (e) => {
-                      setIsImageUploading(true);
-                      const a = await uploadToCloudinary(e, 'earn-sponsor');
-                      setImageUrl(a);
-                      setIsImageUploading(false);
-                    }}
-                    onReset={() => {
-                      setImageUrl('');
-                    }}
-                  />
-                )}
+                <FormField
+                  control={form.control}
+                  name="twitter"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel isRequired>Company Twitter</FormLabel>
+                      <FormControl>
+                        <Input placeholder="@StarkIndustries" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </HStack>
-            </VStack>
 
-            <HStack justify={'space-between'} w={'full'} mt={6}>
-              <FormControl w={'full'} isRequired>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                  htmlFor={'industry'}
-                >
-                  Industry
+              <HStack w="full">
+                <FormField
+                  control={form.control}
+                  name="entityName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel isRequired className="flex items-center gap-2">
+                        Entity Name
+                        <Tooltip
+                          fontSize="xs"
+                          label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                        >
+                          <InfoOutlineIcon
+                            color="brand.slate.500"
+                            w={3}
+                            h={3}
+                            display={{ base: 'none', md: 'block' }}
+                          />
+                        </Tooltip>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Full Entity Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </HStack>
+
+              <VStack align={'start'} gap={2} my={3}>
+                <FormLabel isRequired className="mb-2">
+                  Company Logo
                 </FormLabel>
-
-                <Select
-                  closeMenuOnSelect={false}
-                  components={animatedComponents}
-                  isMulti
-                  options={IndustryList.map((industry) => ({
-                    value: industry,
-                    label: industry,
-                  }))}
-                  styles={{
-                    control: (baseStyles) => ({
-                      ...baseStyles,
-                      backgroundColor: 'brand.slate.500',
-                      borderColor: 'brand.slate.300',
-                    }),
+                <ImagePicker
+                  defaultValue={logoUrl ? { url: logoUrl } : undefined}
+                  onChange={async (e) => {
+                    setIsUploading(true);
+                    const url = await uploadToCloudinary(e, 'earn-sponsor');
+                    setLogoUrl(url);
+                    form.setValue('logo', url);
+                    setIsUploading(false);
                   }}
-                  onChange={(e) =>
-                    setIndustries(e.map((i: any) => i.value).join(', '))
-                  }
-                  defaultValue={industries
-                    ?.split(', ')
-                    .map((industry) => ({ value: industry, label: industry }))}
-                  value={industries
-                    ?.split(', ')
-                    .map((industry) => ({ value: industry, label: industry }))}
+                  onReset={() => {
+                    setLogoUrl(null);
+                    form.setValue('logo', '');
+                  }}
                 />
-                <FormErrorMessage>
-                  {errors.industry ? <>{errors.industry.message}</> : <></>}
-                </FormErrorMessage>
-              </FormControl>
-            </HStack>
-            <Box my={6}>
-              <FormControl isRequired>
-                <FormLabel
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={600}
-                  htmlFor={'bio'}
-                >
-                  Company Short Bio
-                </FormLabel>
-                <Input
-                  w={'full'}
-                  borderColor={'brand.slate.300'}
-                  _placeholder={{ color: 'brand.slate.300' }}
-                  focusBorderColor="brand.purple"
-                  id="bio"
-                  maxLength={180}
-                  {...register('bio')}
-                  placeholder="What does your company do?"
+              </VStack>
+
+              <HStack justify={'space-between'} w={'full'} mt={6}>
+                <FormField
+                  control={form.control}
+                  name="industry"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel isRequired>Industry</FormLabel>
+                      <FormControl>
+                        <Select
+                          closeMenuOnSelect={false}
+                          components={animatedComponents}
+                          isMulti
+                          options={IndustryList.map((industry) => ({
+                            value: industry,
+                            label: industry,
+                          }))}
+                          onChange={(selected) => {
+                            const values = selected.map(
+                              (item: any) => item.value,
+                            );
+                            field.onChange(values.join(', '));
+                          }}
+                          value={field.value.split(', ').map((industry) => ({
+                            value: industry,
+                            label: industry,
+                          }))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <Text
-                  color={
-                    (watch('bio')?.length || 0) > 160
-                      ? 'red'
-                      : 'brand.slate.400'
-                  }
-                  fontSize={'xs'}
-                  textAlign="right"
+              </HStack>
+              <Box my={6}>
+                <FormField
+                  control={form.control}
+                  name="bio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel isRequired>Company Short Bio</FormLabel>
+                      <FormControl>
+                        <Input
+                          maxLength={180}
+                          placeholder="What does your company do?"
+                          {...field}
+                        />
+                      </FormControl>
+                      <div className="text-right text-xs text-slate-400">
+                        {180 - (field.value?.length || 0)} characters left
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Box>
+              <Box mt={8}>
+                <Button
+                  w="full"
+                  disabled={!logoUrl || isUploading}
+                  isLoading={isLoading}
+                  size="lg"
+                  type="submit"
+                  variant="solid"
                 >
-                  {180 - (watch('bio')?.length || 0)} characters left
-                </Text>
-                <FormErrorMessage>
-                  {errors.bio ? <>{errors.bio.message}</> : <></>}
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
-            <Box mt={8}>
-              {hasError && (
-                <Text align="center" mb={4} color="red">
-                  {errorMessage ||
-                    'Sorry! An error occurred while editing your company profile!'}
-                  <br />
-                  Please update the details & try again or contact support!
-                </Text>
-              )}
-              <Button
-                w="full"
-                isDisabled={imageUrl === ''}
-                isLoading={!!isLoading || isImageUploading}
-                size="lg"
-                type="submit"
-                variant="solid"
-              >
-                Update Profile
-              </Button>
-            </Box>
-          </form>
+                  Update Profile
+                </Button>
+              </Box>
+            </form>
+          </Form>
         </VStack>
       </VStack>
     </Default>
   );
-};
-
-export default UpdateSponsor;
+}

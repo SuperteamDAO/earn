@@ -20,6 +20,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { RichEditor } from '@/components/shared/RichEditor';
 import {
@@ -185,9 +186,19 @@ export const GrantApplicationModal = ({
 
       await refetchUser();
 
+      toast.success(
+        grantApplication
+          ? 'Application updated successfully!'
+          : 'Application submitted successfully!',
+      );
+
       onClose();
     } catch (e) {
       setIsLoading(false);
+      toast.error('Failed to submit application', {
+        description:
+          'Please try again later or contact support if the issue persists.',
+      });
     }
   };
 
