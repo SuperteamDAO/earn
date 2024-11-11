@@ -446,6 +446,14 @@ export const tokenList: Token[] = [
     decimals: 9,
     coingeckoSymbol: '',
   },
+  {
+    tokenName: 'Octokn (OTK)',
+    tokenSymbol: 'OTK',
+    mintAddress: 'octo82drBEdm8CSDaEKBymVn86TBtgmPnDdmE64PTqJ',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/24381.png',
+    decimals: 9,
+    coingeckoSymbol: 'octo-gaming',
+  },
 ];
 
 export const CountryList: string[] = [
