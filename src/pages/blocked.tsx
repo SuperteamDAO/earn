@@ -23,8 +23,11 @@ export default function Blocked() {
           textAlign={'center'}
         >
           Your access to Earn has been restricted. Please get in touch with{' '}
-          <Link color={'brand.purple'} href="mailto:support@superteamearn.com">
-            support@superteamearn.com
+          <Link
+            color={'brand.purple'}
+            href="mailto:vesper.yang.blockchain@gmail.com"
+          >
+            vesper.yang.blockchain@gmail.com
           </Link>{' '}
           if you have any questions for more information.
         </Text>

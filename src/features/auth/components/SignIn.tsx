@@ -59,10 +59,10 @@ export const SignIn = () => {
             <Text as="u">
               <Link
                 as={NextLink}
-                href={'mailto:support@superteamearn.com'}
+                href={'mailto:vesper.yang.blockchain@gmail.com'}
                 isExternal
               >
-                support@superteamearn.com
+                vesper.yang.blockchain@gmail.com
               </Link>
             </Text>
           </Text>

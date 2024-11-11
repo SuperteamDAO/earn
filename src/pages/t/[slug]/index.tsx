@@ -313,21 +313,21 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 >
                   {user?.id === talent?.id
                     ? renderButton(
-                      <EditIcon />,
-                      'Edit Profile',
-                      handleEditProfileClick,
-                    )
+                        <EditIcon />,
+                        'Edit Profile',
+                        handleEditProfileClick,
+                      )
                     : renderButton(<EmailIcon />, 'Reach Out', () => {
-                      posthog.capture('reach out_talent profile');
-                      const email = encodeURIComponent(talent?.email || '');
-                      const subject = encodeURIComponent(
-                        'Saw Your ST Earn Profile!',
-                      );
-                      const bcc = encodeURIComponent(
-                        'support@superteamearn.com',
-                      );
-                      window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
-                    })}
+                        posthog.capture('reach out_talent profile');
+                        const email = encodeURIComponent(talent?.email || '');
+                        const subject = encodeURIComponent(
+                          'Saw Your ST Earn Profile!',
+                        );
+                        const bcc = encodeURIComponent(
+                          'vesper.yang.blockchain@gmail.com',
+                        );
+                        window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
+                      })}
                   {renderButton(<ShareIcon />, 'Share', onOpen, true)}
                 </Flex>
               </Flex>

@@ -167,7 +167,10 @@ export const Footer = () => {
       text: 'Changelog',
       href: '#',
     },
-    { text: 'Contact Us', href: 'mailto:support@superteamearn.com' },
+    {
+      text: 'Contact Us',
+      href: 'mailto:vesper.yang.blockchain@gmail.com',
+    },
   ];
 
   return (
