@@ -696,7 +696,7 @@ const CreateSponsor = () => {
                       If you want access to the existing account, contact us on
                       Telegram at{' '}
                       <Link href={PDTG} isExternal>
-                        @pratikdholani
+                        @cryptosheep1
                       </Link>
                     </Text>
                   )}
