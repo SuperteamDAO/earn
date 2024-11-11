@@ -93,7 +93,7 @@ const CountrySelector: React.FC = () => {
 
   const dropdownCountries =
     selectedCountry.name !== 'Global'
-      ? [{ name: 'Global', flag: '🌍', code: 'global' }, ...countries]
+      ? [{ name: 'Global', flag: '🌏', code: 'global' }, ...countries]
       : countries;
 
   return (
