@@ -18,7 +18,7 @@ export const sponsorBaseSchema = z.object({
   entityName: z.string().min(1, 'Entity name is required'),
 });
 
-export const userDetailsSchema = z.object({
+export const userSponsorDetailsSchema = z.object({
   firstName: z
     .string()
     .min(1, 'First name is required')
@@ -40,11 +40,11 @@ export const userDetailsSchema = z.object({
 
 export const sponsorFormSchema = z.object({
   sponsor: sponsorBaseSchema,
-  user: userDetailsSchema.optional(),
+  user: userSponsorDetailsSchema.optional(),
 });
 
 export type SponsorBase = z.infer<typeof sponsorBaseSchema>;
-export type UserDetails = z.infer<typeof userDetailsSchema>;
+export type UserSponsorDetails = z.infer<typeof userSponsorDetailsSchema>;
 export type SponsorFormValues = z.infer<typeof sponsorFormSchema>;
 
 export const transformFormToApiData = (data: SponsorFormValues) => {
@@ -74,7 +74,10 @@ export const transformFormToApiData = (data: SponsorFormValues) => {
   };
 };
 
-export const shouldUpdateUser = (formData: UserDetails, currentUser: any) => {
+export const shouldUpdateUser = (
+  formData: UserSponsorDetails,
+  currentUser: any,
+) => {
   return (
     formData.firstName !== currentUser?.firstName ||
     formData.lastName !== currentUser?.lastName ||
