@@ -9,6 +9,7 @@ export * from './local-profiles';
 export * from './members';
 export * from './scouts';
 export * from './sponsor';
+export * from './sponsor-grants';
 export * from './sponsor-listings';
 export * from './sponsor-stats';
 export * from './submissions';
