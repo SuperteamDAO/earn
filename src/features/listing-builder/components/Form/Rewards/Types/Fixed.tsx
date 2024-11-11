@@ -28,7 +28,7 @@ export function Fixed() {
               className='pr-6'
               onChange={(e) => {
                 field.onChange(e)
-                form.setValue(`rewards.${1}`, e || NaN)
+                form.setValue(`rewards`, {1: e || NaN})
               }}
             />
           </FormControl>

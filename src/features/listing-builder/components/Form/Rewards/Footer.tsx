@@ -5,7 +5,7 @@ import { useListingForm } from "@/features/listing-builder/hooks";
 import { useEffect, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
 
-function RewardsFooter() {
+function RewardsFooter({closeSheet}: {closeSheet: () => void}) {
   const form = useListingForm()
   const type = useWatch({
     control: form.control,
@@ -29,13 +29,15 @@ function RewardsFooter() {
   return (
     <div className='w-full space-y-4'>
       <div className='flex justify-between items-center text-sm font-medium'>
-        {type !== 'project' && (
+        {type !== 'project' ? (
           <span className='flex gap-2 '>
             <p className=''>{totalPrize}</p>
             <p className='text-slate-400'>
               Total {totalPrize > 1 ? 'Prizes' : 'Prize'}
             </p>
           </span>
+        ) : (
+          <p className='text-slate-400'>Total Prize</p>
         )}
         <TokenLabel
           showIcon
@@ -43,7 +45,13 @@ function RewardsFooter() {
           amount={rewardAmount}
         />
       </div>
-      <Button className='w-full'>
+      <Button type='submit' className='w-full'
+        onClick={async () => {
+          if(await form.validateRewards()) {
+            closeSheet()
+          }
+        }}
+      >
         Continue
       </Button>
     </div>

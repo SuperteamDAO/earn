@@ -11,7 +11,6 @@ import { useWatch } from "react-hook-form";
 export const Podiums = () => {
   const form = useListingForm();
 
-  const [_,setTotalPrizes] = useState(0);
   const rewards = useWatch({
     control: form.control,
     name: 'rewards',
@@ -28,6 +27,9 @@ export const Podiums = () => {
     control: form.control,
     name: 'maxBonusSpots',
   }) || NaN;
+  useEffect(() => {
+    console.log('maxBonusSpots', maxBonusSpots)
+  }, [maxBonusSpots]);
 
   useEffect(() => {
     // react hook form has a bug that saves rewards as array when single item instead of object
@@ -50,12 +52,13 @@ export const Podiums = () => {
   );
 
   const updateTotalReward = useCallback(
-    (currentRewards: Record<string, number>) => {
-      const regularSum = Object.entries(currentRewards).reduce(
+    (currentRewards: Record<string, number>, maxBonusSpots?: number) => {
+      const totalRewards = Object.entries(currentRewards).reduce(
         (sum, [pos, value]) => {
           if (isNaN(value)) return sum;
 
           if (Number(pos) === BONUS_REWARD_POSITION) {
+            console.log('bonus reward', value, maxBonusSpots)
             return sum + value * (maxBonusSpots || 0);
           }
           return sum + value;
@@ -63,19 +66,9 @@ export const Podiums = () => {
         0
       );
 
-      form.setValue('rewardAmount', regularSum, { shouldValidate: true });
-
-      const numRegularRewards = Object.keys(currentRewards).filter(
-        (pos) => Number(pos) !== BONUS_REWARD_POSITION
-      ).length;
-      const numBonusSpots =
-        currentRewards[BONUS_REWARD_POSITION] !== undefined
-          ? maxBonusSpots || 0
-          : 0;
-      const totalPrizesCount = numRegularRewards + numBonusSpots;
-      setTotalPrizes(totalPrizesCount);
+      form.setValue('rewardAmount', totalRewards, { shouldValidate: true });
     },
-    [form, maxBonusSpots]
+    [form]
   );
 
   const addReward = useCallback(() => {
@@ -233,7 +226,7 @@ export const Podiums = () => {
                                   max={MAX_BONUS_SPOTS}
                                   onChange={(value) => {
                                     field.onChange(value);
-                                    updateTotalReward(rewards);
+                                    updateTotalReward(rewards,value || undefined);
                                   }}
                                   hideToken
                                   className='rounded-l-none relative focus-within:z-10 pr-6'
@@ -257,7 +250,7 @@ export const Podiums = () => {
 
                   <FormField
                     control={form.control}
-                    name={`rewards."${BONUS_REWARD_POSITION}"`}
+                    name={`rewards.${BONUS_REWARD_POSITION}`}
                     render={() => (
                       <FormItem className="flex flex-col gap-2 relative group">
                         <FormMessage />

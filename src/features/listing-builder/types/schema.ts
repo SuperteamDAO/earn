@@ -8,14 +8,18 @@ import { timeToCompleteOptions } from "../utils";
 import { BONUS_REWARD_POSITION, MAX_BONUS_SPOTS, MAX_PODIUMS, tokenList } from "@/constants";
 import { DEADLINE_FORMAT } from "../components/Form";
 import { fetchSlugCheck } from "../queries/slug-check";
+import { ListingFormData } from ".";
 
-export const createListingFormSchema = (
+export const createListingRefinements = async (
+  data: ListingFormData,
+  ctx: z.RefinementCtx,
   isGod: boolean,
   isEditing: boolean,
   isDuplicating: boolean,
-  id?: string,
   isST?: boolean,
+  id?: string,
 ) => {
+  console.log('zod validating')
   const slugUniqueCheck = async (slug: string) => {
     try {
       const listingId = isEditing && !isDuplicating ? id : null;
@@ -30,6 +34,97 @@ export const createListingFormSchema = (
       return false;
     }
   };
+  if (data.slug && !(await slugUniqueCheck(data.slug))) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Slug already exists. Please try another.',
+      path: ['slug']
+    });
+  }
+
+  if (data.compensationType === "fixed") {
+    if (!data.rewards || Object.keys(data.rewards).length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Rewards is required for fixed compensation type",
+        path: ["rewards"]
+      });
+    }
+
+    if (data.rewards) {
+      const totalRewards = Object.entries(data.rewards).reduce(
+        (sum, [pos, value]) => {
+          if (isNaN(value)) return sum;
+
+          if (Number(pos) === BONUS_REWARD_POSITION) {
+            return sum + value * (data.maxBonusSpots || 0);
+          }
+          return sum + value;
+        },
+        0
+      );
+      if (totalRewards !== data.rewardAmount) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Total of rewards must equal the reward amount",
+          path: ["rewards"]
+        });
+      }
+
+      if(!!data.rewards?.[BONUS_REWARD_POSITION] && !data.maxBonusSpots) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.too_small,
+          path: ['maxBonusSpots'],
+          message: 'Required',
+          minimum: 1,
+          inclusive: true,
+          type: 'number'
+        });
+      }
+    }
+  }
+
+  if (data.compensationType === "range") {
+    if (!data.minRewardAsk) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Minimum reward is required for range compensation type",
+        path: ["minRewardAsk"]
+      });
+    }
+    if (!data.maxRewardAsk) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Maximum reward is required for range compensation type",
+        path: ["maxRewardAsk"]
+      });
+    }
+    if (data.minRewardAsk && data.maxRewardAsk && data.maxRewardAsk < data.minRewardAsk) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Maximum reward must be greater than minimum reward",
+        path: ["maxRewardAsk"]
+      });
+    }
+
+    if (data.rewardAmount && data.maxRewardAsk && data.rewardAmount !== data.maxRewardAsk) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Reward amount must equal maximum reward for range compensation",
+        path: ["rewardAmount"]
+      });
+    }
+  }
+}
+
+export const createListingFormSchema = (
+  isGod: boolean,
+  isEditing: boolean,
+  isDuplicating: boolean,
+  id?: string,
+  isST?: boolean,
+) => {
+
 
   const eligibilityQuestionSchema = z.discriminatedUnion("type", [
     z.object({
@@ -189,90 +284,8 @@ export const createListingFormSchema = (
     isPublished: z.boolean().optional(),
     status: z.nativeEnum(status).optional(),
     publishedAt: z.string().datetime().optional(),
-  }).superRefine(async (data, ctx) => {
-      if (data.slug && !(await slugUniqueCheck(data.slug))) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Slug already exists. Please try another.',
-          path: ['slug']
-        });
-      }
-
-      if (data.compensationType === "fixed") {
-        if (!data.rewards || Object.keys(data.rewards).length === 0) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Rewards is required for fixed compensation type",
-            path: ["rewards"]
-          });
-        }
-
-        if (data.rewards) {
-          const totalRewards = Object.values(data.rewards).reduce((sum, value) => sum + value, 0);
-          if (totalRewards !== data.rewardAmount) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: "Total of rewards must equal the reward amount",
-              path: ["rewardAmount"]
-            });
-          }
-        }
-      }
-
-      if (data.compensationType === "range") {
-        if (!data.minRewardAsk) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Minimum reward is required for range compensation type",
-            path: ["minRewardAsk"]
-          });
-        }
-        if (!data.maxRewardAsk) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Maximum reward is required for range compensation type",
-            path: ["maxRewardAsk"]
-          });
-        }
-        if (data.minRewardAsk && data.maxRewardAsk && data.maxRewardAsk < data.minRewardAsk) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Maximum reward must be greater than minimum reward",
-            path: ["maxRewardAsk"]
-          });
-        }
-
-        if (data.rewardAmount && data.maxRewardAsk && data.rewardAmount !== data.maxRewardAsk) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Reward amount must equal maximum reward for range compensation",
-            path: ["rewardAmount"]
-          });
-        }
-      }
-
-      if (
-        data.type === 'project' &&
-          !timeToCompleteOptions.some(
-            (option) => option.value === data.timeToComplete,
-          )
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['timeToComplete'],
-          message: 'Time to complete is required for projects',
-        });
-      }
-
-      if(!!data.maxBonusSpots && (!data.rewards?.[BONUS_REWARD_POSITION] ||
-        isNaN(data.rewards[BONUS_REWARD_POSITION]))) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ['rewards'],
-          message: 'Bonus Reward is not mentioned',
-        });
-      }
-
+  }).superRefine( (data, ctx) => {
+      createListingRefinements(data, ctx, isGod, isEditing, isDuplicating, isST, id);
     });
 
 }

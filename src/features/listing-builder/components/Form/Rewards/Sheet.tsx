@@ -14,7 +14,7 @@ import { useListingForm } from "@/features/listing-builder/hooks"
 import { useWatch } from "react-hook-form"
 import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
-import { memo, useEffect, useMemo } from "react"
+import { memo, useEffect, useMemo, useState } from "react"
 import { PaymentType } from "./PaymentType"
 import { calculateTotalPrizes } from "@/features/listing-builder/utils/rewards"
 import { formatNumberWithSuffix } from "@/utils/formatNumberWithSuffix"
@@ -22,6 +22,7 @@ import { formatNumberWithSuffix } from "@/utils/formatNumberWithSuffix"
 export function RewardsSheet() {
 
   const form = useListingForm()
+  const [open, setOpen] = useState(false)
 
   const type = useWatch({
     control: form.control,
@@ -35,7 +36,7 @@ export function RewardsSheet() {
   }, [form])
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger className='w-full'>
         <FormField
           control={form.control}
@@ -82,7 +83,7 @@ export function RewardsSheet() {
         <div className='mt-auto'>
           <Separator className='w-[150%] relative -left-20 my-4'/>
           <SheetFooter >
-            <Footer />
+            <Footer closeSheet={() => setOpen(false)} />
           </SheetFooter>
         </div>
       </SheetContent>

@@ -45,29 +45,47 @@ export const listingToStatus = (listing: ListingFormData): ListingStatus => {
 
 export const getListingDefaults = (isGod: boolean, editable: boolean, isDuplicating: boolean, isST: boolean) => {
   const schema = createListingFormSchema(isGod, editable, isDuplicating, undefined, isST);
-  const innerSchema = schema._def.schema as z.ZodObject<any>;
+  
+  // Get the inner schema by unwrapping the ZodEffects
+  const getInnerSchema = (schema: z.ZodTypeAny): z.ZodObject<any> => {
+    if (schema instanceof z.ZodEffects) {
+      return getInnerSchema(schema.innerType());
+    }
+    return schema as z.ZodObject<any>;
+  };
+
+  const innerSchema = getInnerSchema(schema);
   const shape = innerSchema.shape;
-
+  
   const defaults: Record<string, any> = {};
-
+  
   for (const [key, value] of Object.entries(shape)) {
     const zodValue = value as z.ZodTypeAny;
-
+    
     if (zodValue instanceof z.ZodDefault) {
       defaults[key] = zodValue._def.defaultValue();
     } else if (zodValue instanceof z.ZodOptional) {
-      if(zodValue instanceof z.ZodObject) defaults[key] = {};
-        else if(zodValue instanceof z.ZodArray) defaults[key] = [];
-          else if(zodValue instanceof z.ZodString) defaults[key] = '';
-            else defaults[key] = undefined;
+      if (zodValue._def.innerType instanceof z.ZodObject) {
+        defaults[key] = {};
+      } else if (zodValue._def.innerType instanceof z.ZodArray) {
+        defaults[key] = [];
+      } else if (zodValue._def.innerType instanceof z.ZodString) {
+        defaults[key] = '';
+      } else {
+        defaults[key] = undefined;
+      }
     } else if ('defaultValue' in zodValue._def) {
       defaults[key] = zodValue._def.defaultValue;
     } else {
-      if(zodValue instanceof z.ZodString) defaults[key] = '';
-      if(zodValue instanceof z.ZodObject) defaults[key] = {};
-        else if(zodValue instanceof z.ZodArray) defaults[key] = [];
-          else if(zodValue instanceof z.ZodString) defaults[key] = '';
-            else defaults[key] = undefined;
+      if (zodValue instanceof z.ZodObject) {
+        defaults[key] = {};
+      } else if (zodValue instanceof z.ZodArray) {
+        defaults[key] = [];
+      } else if (zodValue instanceof z.ZodString) {
+        defaults[key] = '';
+      } else {
+        defaults[key] = undefined;
+      }
     }
   }
 

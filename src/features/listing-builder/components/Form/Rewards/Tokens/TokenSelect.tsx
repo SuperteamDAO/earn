@@ -60,7 +60,8 @@ export function TokenSelect() {
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
+            <PopoverContent className="w-[29rem] p-0"
+            >
               <Command>
                 <CommandInput
                   placeholder="Search token..."
