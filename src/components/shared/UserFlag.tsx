@@ -48,7 +48,7 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
     />
   ) : code === 'global' ? (
     <Center
-      bgImage={'/assets/superteams/global.png'}
+      bgImage={'/assets/superteams/globe.png'}
       bgSize={'contain'}
       borderWidth="1px"
       borderStyle="solid"
