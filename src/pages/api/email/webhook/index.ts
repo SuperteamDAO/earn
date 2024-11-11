@@ -52,25 +52,25 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         if (event.type === 'email.bounced') {
-          const last10Emails = await prisma.resendLogs.findMany({
+          const last6Emails = await prisma.resendLogs.findMany({
             where: {
               email: recipientEmail,
             },
             orderBy: {
               createdAt: 'desc',
             },
-            take: 10,
+            take: 6,
           });
 
-          const bouncedEmails = last10Emails.filter(
+          const bouncedEmails = last6Emails.filter(
             (email) => email.status === 'email.bounced',
           );
-          const delayedEmails = last10Emails.filter(
+          const delayedEmails = last6Emails.filter(
             (email) => email.status === 'email.delivery_delayed',
           );
 
-          const hasEnoughBounced = bouncedEmails.length >= 5;
-          const hasEnoughDelayed = delayedEmails.length >= 5;
+          const hasEnoughBounced = bouncedEmails.length >= 3;
+          const hasEnoughDelayed = delayedEmails.length >= 3;
 
           if (hasEnoughBounced && hasEnoughDelayed) {
             await prisma.blockedEmail.create({
