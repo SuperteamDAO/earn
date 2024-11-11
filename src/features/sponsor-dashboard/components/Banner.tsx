@@ -14,7 +14,6 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
-import { PDTG } from '@/constants';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
 
@@ -211,7 +210,7 @@ export function Banner({
         <Link
           className="ph-no-capture"
           _hover={{ textDecoration: 'none' }}
-          href={PDTG}
+          href="https://t.me/cryptosheep1/"
           isExternal
           onClick={() => posthog.capture('message pratik_sponsor')}
         >
@@ -221,8 +220,8 @@ export function Banner({
                 w={'3.2rem'}
                 h={14}
                 mr={3}
-                alt="message pratik"
-                src="/assets/sponsor/pratik.webp"
+                alt="message vesper"
+                src="/assets/sponsor/vesper.jpg"
               />
               <Box>
                 <Text

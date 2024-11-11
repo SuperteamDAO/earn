@@ -355,7 +355,7 @@ export const VerifyPaymentModal = ({
             </VStack>
             <VStack>
               <Link
-                href="https://t.me/pratikdholani/"
+                href="https://t.me/cryptosheep1/"
                 isExternal
                 rel="noopener noreferrer"
               >
@@ -432,20 +432,20 @@ export const VerifyPaymentModal = ({
                               </Text>
                               {submission.winnerPosition ===
                                 BONUS_REWARD_POSITION && (
-                                <HStack gap={0}>
-                                  <Text>(</Text>
-                                  <Text
-                                    overflow="hidden"
-                                    maxW="5rem"
-                                    textTransform="none"
-                                    textOverflow="ellipsis"
-                                    noOfLines={1}
-                                  >
-                                    @{submission.user.username}
-                                  </Text>
-                                  <Text>)</Text>
-                                </HStack>
-                              )}
+                                  <HStack gap={0}>
+                                    <Text>(</Text>
+                                    <Text
+                                      overflow="hidden"
+                                      maxW="5rem"
+                                      textTransform="none"
+                                      textOverflow="ellipsis"
+                                      noOfLines={1}
+                                    >
+                                      @{submission.user.username}
+                                    </Text>
+                                    <Text>)</Text>
+                                  </HStack>
+                                )}
                             </HStack>
                             <HStack>
                               <Image
@@ -457,7 +457,7 @@ export const VerifyPaymentModal = ({
                               <Text color="brand.slate.800" fontWeight={600}>
                                 {formatNumberWithSuffix(
                                   listing?.rewards?.[
-                                    submission.winnerPosition || 0
+                                  submission.winnerPosition || 0
                                   ] || 0,
                                 )}
                               </Text>
@@ -536,7 +536,7 @@ export const VerifyPaymentModal = ({
               </Button>
               {status === 'retry' && (
                 <Link
-                  href="https://t.me/pratikdholani/"
+                  href="https://t.me/cryptosheep1/"
                   isExternal
                   rel="noopener noreferrer"
                 >
