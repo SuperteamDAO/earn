@@ -218,7 +218,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 h={5}
                 cursor="pointer"
                 objectFit={'contain'}
-                alt={'Superteam Earn'}
+                alt={'Solar Earn'}
                 src={'/assets/logo/logo.svg'}
               />
             </Link>

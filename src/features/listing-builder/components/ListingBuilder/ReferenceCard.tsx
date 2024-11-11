@@ -61,7 +61,7 @@ export const ReferenceCard = ({ register, index, errors }: Props) => {
               color: 'brand.slate.300',
             }}
             focusBorderColor="brand.purple"
-            placeholder="Superteam Landing Page"
+            placeholder="Solar Landing Page"
           />
           <FormErrorMessage>
             {errors.references?.[index]?.title?.message}

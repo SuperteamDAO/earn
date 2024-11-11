@@ -15,7 +15,7 @@ export const WelcomeTalentTemplate = () => {
       <p style={styles.text}>
         I&apos;m Kash, and I&apos;m a Core Contributor over at{' '}
         <a href="https://superteam.fun" style={styles.link}>
-          Superteam
+          Solar
         </a>
         . I might not know you personally yet, but I&apos;m pumped that
         you&apos;re here.
@@ -27,7 +27,7 @@ export const WelcomeTalentTemplate = () => {
       </p>
       <p style={styles.text}>
         <strong>One favor before I go: </strong> reply to this email and let me
-        know why you joined Superteam Earn?
+        know why you joined Solar Earn?
       </p>
       <p style={styles.text}>Would love to learn more about you.</p>
 

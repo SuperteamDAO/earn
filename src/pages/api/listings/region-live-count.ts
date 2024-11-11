@@ -18,7 +18,7 @@ export default async function regionLiveCount(
   const st = Superteams.find((team) => team.region.toLowerCase() === region);
   const superteam = st?.name;
 
-  logger.debug(`Superteam listing count for region ${region}: ${superteam}`);
+  logger.debug(`Solar listing count for region ${region}: ${superteam}`);
 
   try {
     logger.debug('Fetching Count');

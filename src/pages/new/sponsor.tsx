@@ -188,7 +188,7 @@ const CreateSponsor = () => {
     <Default
       meta={
         <Meta
-          title="Create Sponsor | Superteam Earn"
+          title="Create Sponsor | Solar Earn"
           description="Every Solana opportunity in one place!"
           canonical="https://earn.superteam.fun/new/sponsor/"
         />
@@ -222,7 +222,7 @@ const CreateSponsor = () => {
                 fontWeight={400}
                 textAlign={'center'}
               >
-                from joining Superteam Earn
+                from joining Solar Earn
               </Text>
               <SignIn />
             </Box>
@@ -237,7 +237,7 @@ const CreateSponsor = () => {
               fontSize={'24px'}
               fontWeight={700}
             >
-              Welcome to Superteam Earn
+              Welcome to Solar Earn
             </Heading>
             <Text
               color={'gray.400'}

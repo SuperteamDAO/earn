@@ -86,10 +86,10 @@ export const FeatureModal = ({
             Introducing Scout
           </Text>
           <Text color="brand.slate.500">
-            A curated list of the best talent on Superteam Earn that you can
-            invite to participate in your listings to get high quality
-            submissions! Add a new listing, or check out any of your currently
-            live listings to try Scout.
+            A curated list of the best talent on Solar Earn that you can invite
+            to participate in your listings to get high quality submissions! Add
+            a new listing, or check out any of your currently live listings to
+            try Scout.
           </Text>
           <Link
             as={latestActiveSlug ? NextLink : 'div'}

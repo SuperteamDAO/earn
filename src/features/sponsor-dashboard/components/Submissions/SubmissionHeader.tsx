@@ -78,7 +78,7 @@ export const SubmissionHeader = ({
       : `${getURL()}listings/${bounty?.type}/${bounty?.slug}/`;
 
   const socialListingLink = (medium?: 'twitter' | 'telegram') =>
-    `${listingLink}${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;
+    `${listingLink}${medium ? `?utm_source=solarearn&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;
 
   const tweetShareContent = `Check out my newly added @SuperteamEarn opportunity!
 
@@ -181,26 +181,26 @@ ${socialListingLink('twitter')}
             (session?.user?.role === 'GOD' && bounty?.type !== 'grant') ||
             (bounty?.isPublished && !pastDeadline && bounty.type !== 'grant')
           ) && (
-            <Link
-              as={NextLink}
-              _hover={{ textDecoration: 'none' }}
-              href={
-                bounty
-                  ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
-                  : ''
-              }
-              onClick={resetForm}
-            >
-              <Button
-                color={'brand.slate.400'}
-                _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
-                leftIcon={<LuPencil />}
-                variant={'ghost'}
+              <Link
+                as={NextLink}
+                _hover={{ textDecoration: 'none' }}
+                href={
+                  bounty
+                    ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
+                    : ''
+                }
+                onClick={resetForm}
               >
-                Edit
-              </Button>
-            </Link>
-          )}
+                <Button
+                  color={'brand.slate.400'}
+                  _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
+                  leftIcon={<LuPencil />}
+                  variant={'ghost'}
+                >
+                  Edit
+                </Button>
+              </Link>
+            )}
         </Flex>
       </Flex>
       <Divider />
