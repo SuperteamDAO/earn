@@ -52,7 +52,7 @@ export const RegionSelector: React.FC<RegionSelectorProps> = ({
     return [
       { value: Regions.GLOBAL, label: 'Global' },
       {
-        label: 'Superteam Regions',
+        label: 'Solar Regions',
         options: Superteams.map((region) => ({
           value: region.region,
           label: region.displayValue,
@@ -72,7 +72,7 @@ export const RegionSelector: React.FC<RegionSelectorProps> = ({
     <FormControl w="full" mb={5} isInvalid={!!errors.region}>
       <Flex>
         <ListingFormLabel htmlFor="region">Listing Geography</ListingFormLabel>
-        <ListingTooltip label="Select the Superteam region or country this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
+        <ListingTooltip label="Select the Solar region or country this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
       </Flex>
       <Box>
         <Controller

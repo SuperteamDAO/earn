@@ -55,24 +55,21 @@ const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
       hideFooter
       meta={
         <Head>
-          <title>{`${title} Opportunities | Superteam Earn`}</title>
+          <title>{`${title} Opportunities | Solar Earn`}</title>
           <meta
             name="description"
             content={`
 Check out all of ${title}’s latest earning opportunities on a single page.
 `}
           />
-          <meta property="og:title" content={`${title} on Superteam Earn`} />
+          <meta property="og:title" content={`${title} on Solar Earn`} />
           <meta property="og:image" content={ogImage.toString()} />
-          <meta name="twitter:title" content={`${title} on Superteam Earn`} />
+          <meta name="twitter:title" content={`${title} on Solar Earn`} />
           <meta name="twitter:image" content={ogImage.toString()} />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta
-            property="og:image:alt"
-            content={`${title} on Superteam Earn`}
-          />
+          <meta property="og:image:alt" content={`${title} on Solar Earn`} />
           <meta charSet="UTF-8" key="charset" />
           <meta
             name="viewport"

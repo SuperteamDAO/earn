@@ -73,43 +73,42 @@ export const SubmissionTerms = ({
               .
             </ListItem>
             <ListItem>
-              Superteam Earn acts solely as a platform for the Partner to list
+              Solar Earn acts solely as a platform for the Partner to list
               contests, bounties, projects or similar engagements{' '}
               {`("Activities")`} on its platform {`(“ST Earn Platform”)`}.
             </ListItem>
             <ListItem>
-              Superteam Earn shall not be liable for any Activities listed by
-              the Partner on the ST Earn Platform. The Partner is solely
-              responsible for the content, rules, scope and execution of their
-              Activities.
+              Solar Earn shall not be liable for any Activities listed by the
+              Partner on the ST Earn Platform. The Partner is solely responsible
+              for the content, rules, scope and execution of their Activities.
             </ListItem>
             <ListItem>
               Users participating in Activities listed by Partners do so at
-              their own risk and discretion. Superteam Earn disclaims all
+              their own risk and discretion. Solar Earn disclaims all
               liabilities related to user participation in such Activities.
             </ListItem>
             <ListItem>
               Any disputes or issues arising between users and partners
               regarding Activities shall be resolved directly between the
-              parties involved. Superteam Earn shall not be responsible for
+              parties involved. Solar Earn shall not be responsible for
               mediating or resolving such disputes.
             </ListItem>
             <ListItem>
               By using the platform and participating in any Activities, users
-              agree to release Superteam Earn from any claims, liabilities, or
+              agree to release Solar Earn from any claims, liabilities, or
               damages arising from their participation in Activities listed by
               Partners.
             </ListItem>
             <ListItem>
-              Superteam Earn does not guarantee the accuracy or legality of
+              Solar Earn does not guarantee the accuracy or legality of
               Activities listed by Partners. Users are advised to exercise
               caution and conduct their own due diligence before participating
               in any Activities.
             </ListItem>
             <ListItem>
               Partners listing Activities on the Platform agree to indemnify and
-              hold Superteam Earn harmless from any claims, damages, or
-              liabilities arising from their Activities.
+              hold Solar Earn harmless from any claims, damages, or liabilities
+              arising from their Activities.
             </ListItem>
           </UnorderedList>
           <Text as={'p'} lineHeight={1.25}>

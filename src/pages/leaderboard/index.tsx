@@ -108,8 +108,8 @@ function TalentLeaderboard({
     <Default
       meta={
         <Meta
-          title={`Talent Leaderboard | Superteam Earn`}
-          description={`Talent Leaderboard | Superteam Earn`}
+          title={`Talent Leaderboard | Solar Earn`}
+          description={`Talent Leaderboard | Solar Earn`}
         />
       }
     >

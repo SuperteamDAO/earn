@@ -135,7 +135,7 @@ const UpdateSponsor = () => {
     <Default
       meta={
         <Meta
-          title="Edit Sponsor Profile | Superteam Earn"
+          title="Edit Sponsor Profile | Solar Earn"
           description="Every Solana opportunity in one place!"
         />
       }

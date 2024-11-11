@@ -21,8 +21,8 @@ export default function Scribes() {
       className="bg-white"
       meta={
         <Meta
-          title="Solana Scribes | Superteam Earn"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          title="Solana Scribes | Solar Earn"
+          description="Explore the latest bounties on Solar Earn, offering opportunities in the crypto space across Design, Development, and Content."
           canonical="https://earn.superteam.fun"
         />
       }

@@ -16,7 +16,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const st = Superteams.find((team) => team.region.toLowerCase() === region);
   const superteam = st?.name;
 
-  logger.debug(`Superteam for region ${region}: ${superteam}`);
+  logger.debug(`Solar for region ${region}: ${superteam}`);
 
   const result: { bounties: any[]; grants: any[] } = {
     bounties: [],

@@ -617,7 +617,7 @@ export const ListingBasic = ({
               <ListingFormLabel htmlFor="referredBy">
                 Referred By
               </ListingFormLabel>
-              <ListingTooltip label="Who referred you to add this listing on Superteam Earn?" />
+              <ListingTooltip label="Who referred you to add this listing on Solar Earn?" />
             </Flex>
 
             <Select {...register('referredBy')} placeholder="Select">
@@ -659,7 +659,7 @@ export const ListingBasic = ({
               <ListingFormLabel htmlFor="isPrivate">
                 Private Listing
               </ListingFormLabel>
-              <ListingTooltip label="Private listings are only accessible through direct links and do not appear on the Superteam Earn homepage or other public pages on the website." />
+              <ListingTooltip label="Private listings are only accessible through direct links and do not appear on the Solar Earn homepage or other public pages on the website." />
             </Flex>
             <Switch
               mb={2}

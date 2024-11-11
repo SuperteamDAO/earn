@@ -108,18 +108,15 @@ export function ListingPageLayout({
     <Default
       meta={
         <Head>
-          <title>{`${
-            initialBounty?.title || 'Apply'
-          } by ${initialBounty?.sponsor?.name} | Superteam Earn Listing`}</title>
+          <title>{`${initialBounty?.title || 'Apply'
+            } by ${initialBounty?.sponsor?.name} | Solar Earn Listing`}</title>
           <meta
             name="description"
-            content={`${getListingTypeLabel(initialBounty?.type ?? 'Listing')} on Superteam Earn | ${
-              initialBounty?.sponsor?.name
-            } is seeking freelancers and builders ${
-              initialBounty?.title
+            content={`${getListingTypeLabel(initialBounty?.type ?? 'Listing')} on Solar Earn | ${initialBounty?.sponsor?.name
+              } is seeking freelancers and builders ${initialBounty?.title
                 ? `to work on ${initialBounty.title}`
                 : '| Apply Here'
-            }`}
+              }`}
           />
           <link
             rel="canonical"
@@ -127,18 +124,18 @@ export function ListingPageLayout({
           />
           <meta
             property="og:title"
-            content={`${initialBounty?.title || 'Listing'} | Superteam Earn`}
+            content={`${initialBounty?.title || 'Listing'} | Solar Earn`}
           />
           <meta property="og:image" content={ogImage.toString()} />
           <meta
             name="twitter:title"
-            content={`${initialBounty?.title || 'Listing'} | Superteam Earn`}
+            content={`${initialBounty?.title || 'Listing'} | Solar Earn`}
           />
           <meta name="twitter:image" content={ogImage.toString()} />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="Superteam Bounty" />
+          <meta property="og:image:alt" content="Solar Bounty" />
           <meta charSet="UTF-8" key="charset" />
           <meta
             name="viewport"

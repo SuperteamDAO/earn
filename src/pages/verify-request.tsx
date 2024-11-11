@@ -42,7 +42,7 @@ export default function VerifyRequest() {
             mx="auto"
             cursor="pointer"
             objectFit={'contain'}
-            alt={'Superteam Earn'}
+            alt={'Solar Earn'}
             onClick={() => {
               router.push('/');
             }}

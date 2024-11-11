@@ -124,7 +124,7 @@ export const InstallPWAModal = () => {
             <Flex align={'center'} direction={'column'} mt={10}>
               <Image
                 src={'/android-chrome-512x512.png'}
-                alt="Superteam Earn Icon"
+                alt="Solar Earn Icon"
                 height={63}
                 width={63}
               />

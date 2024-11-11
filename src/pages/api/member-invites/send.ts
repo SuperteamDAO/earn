@@ -91,7 +91,7 @@ async function sendInvites(
     await resend.emails.send({
       from: kashEmail,
       to: [email],
-      subject: `${user.firstName} has invited you to join ${user.currentSponsor.name}'s profile on Superteam Earn`,
+      subject: `${user.firstName} has invited you to join ${user.currentSponsor.name}'s profile on Solar Earn`,
       react: InviteMemberTemplate({
         sponsorName: user.currentSponsor.name,
         senderName: `${user.firstName} ${user.lastName}`,

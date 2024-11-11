@@ -42,18 +42,15 @@ function WinnerBounty({
 
   return (
     <Head>
-      <title>{`${
-        initialBounty?.title || 'Apply'
-      } by ${initialBounty?.sponsor?.name} | Superteam Earn Listing`}</title>
+      <title>{`${initialBounty?.title || 'Apply'
+        } by ${initialBounty?.sponsor?.name} | Solar Earn Listing`}</title>
       <meta
         name="description"
-        content={`${getListingTypeLabel(initialBounty?.type ?? 'Bounty')} on Superteam Earn | ${
-          initialBounty?.sponsor?.name
-        } is seeking freelancers and builders ${
-          initialBounty?.title
+        content={`${getListingTypeLabel(initialBounty?.type ?? 'Bounty')} on Solar Earn | ${initialBounty?.sponsor?.name
+          } is seeking freelancers and builders ${initialBounty?.title
             ? `to work on ${initialBounty.title}`
             : '| Apply Here'
-        }`}
+          }`}
       />
       <link
         rel="canonical"
@@ -62,19 +59,19 @@ function WinnerBounty({
       <meta property="og:image" content={`${image.toString()}`} />
       <meta
         property="og:title"
-        content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
+        content={`${initialBounty?.title || 'Bounty'} | Solar Earn`}
       />
       <meta
         name="twitter:title"
-        content={`${initialBounty?.title || 'Bounty'} | Superteam Earn`}
+        content={`${initialBounty?.title || 'Bounty'} | Solar Earn`}
       />
-      <meta name="twitter:site" content="https://earn.superteam.fun" />
-      <meta name="twitter:creator" content="@SuperteamEarn" />
+      <meta name="twitter:site" content="#" />
+      <meta name="twitter:creator" content="@solana_zh" />
       <meta name="twitter:image" content={`${image.toString()}`} />
       <meta name="twitter:card" content="summary_large_image" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="675" />
-      <meta property="og:image:alt" content="Superteam Bounty" />
+      <meta property="og:image:alt" content="Solar Bounty" />
       <meta charSet="UTF-8" key="charset" />
       <meta
         name="viewport"
