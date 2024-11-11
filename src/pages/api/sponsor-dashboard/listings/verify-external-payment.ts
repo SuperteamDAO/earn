@@ -69,6 +69,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (!listing) return res.status(400).json({ error: 'Listing not found' });
 
+    if (!listing.isWinnersAnnounced)
+      return res.status(400).json({ error: 'Listing not announced' });
+
     const validationResults: ValidatePaymentResult[] = [];
 
     for (const paymentLink of paymentLinks) {

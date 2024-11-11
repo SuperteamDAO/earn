@@ -38,6 +38,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         message: 'application not found',
       });
     }
+    if (application.applicationStatus !== 'Completed') {
+      logger.warn('Application is not completed');
+      return res.status(400).json({
+        error: 'Application is not completed',
+        message: 'Application is not completed',
+      });
+    }
     if (application.grant.airtableId) {
       const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
       const url = airtableUrl(
