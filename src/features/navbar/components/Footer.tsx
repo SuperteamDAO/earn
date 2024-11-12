@@ -187,7 +187,7 @@ export const Footer = () => {
                 h={6}
                 mr={4}
                 alt="Solar Earn"
-                src="/assets/logo/logo.svg"
+                src="/assets/logo/logo-light.png"
               />
             </Flex>
             <Text

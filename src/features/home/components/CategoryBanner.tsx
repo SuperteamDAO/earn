@@ -19,30 +19,27 @@ type CategoryBanner = {
 const banners: CategoryBanner[] = [
   {
     type: 'content',
-    img: bannerPrefix + 'Content.webp',
-    heading: 'Find your next Content gig',
-    description:
-      'If you can write insightful essays, make stunning videos, or create killer memes, the opportunities below are calling your name.',
+    img: bannerPrefix + 'content.jpg',
+    heading: '投研学霸',
+    description: '探索内容创作任务',
   },
   {
     type: 'development',
-    img: bannerPrefix + 'Dev.webp',
-    heading: 'Find your next Development gig',
-    description: `If building robust applications and scalable solutions is your forte, don't miss out on the earning opportunities listed below.`,
+    img: bannerPrefix + 'dev.jpg',
+    heading: '技术极客',
+    description: `探索开发赏金任务`,
   },
   {
     type: 'design',
-    img: bannerPrefix + 'Design.webp',
-    heading: 'Find your next Design gig',
-    description:
-      'If delighting users with eye-catching designs is your jam, you should check out the earning opportunities below.',
+    img: bannerPrefix + 'design.jpg',
+    heading: '创意大咖',
+    description: '探索艺术赏金任务',
   },
   {
     type: 'other',
-    img: bannerPrefix + 'Other.webp',
-    heading: 'Find your next gig on Earn',
-    description:
-      'If you have a unique skill set that doesn’t fit into the other categories, you might find your next gig here.',
+    img: bannerPrefix + 'other.jpg',
+    heading: '自由发挥',
+    description: '探索其他赏金任务',
   },
 ];
 
@@ -68,7 +65,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            objectPosition: 'center',
+            objectPosition: 'top',
           }}
         />
         <Box

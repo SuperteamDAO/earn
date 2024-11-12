@@ -219,7 +219,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 cursor="pointer"
                 objectFit={'contain'}
                 alt={'Solar Earn'}
-                src={'/assets/logo/logo.svg'}
+                src={'/assets/logo/logo-light.png'}
               />
             </Link>
           </AbsoluteCenter>
