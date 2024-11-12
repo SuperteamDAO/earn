@@ -36,21 +36,24 @@ function WinnerBounty({
   image.searchParams.set('id', bounty?.id || '');
   image.searchParams.set('rewards', JSON.stringify(bounty?.rewards));
   image.searchParams.set('token', bounty?.token || '');
-  image.searchParams.set('logo', url + 'assets/logo/st-earn-white.svg');
+  image.searchParams.set('logo', url + 'assets/logo/logo-light.png');
   image.searchParams.set('fallback', url + 'assets/fallback/avatar.png');
   image.searchParams.set('submissions', JSON.stringify(submissions));
 
   return (
     <Head>
-      <title>{`${initialBounty?.title || 'Apply'
-        } by ${initialBounty?.sponsor?.name} | Solar Earn Listing`}</title>
+      <title>{`${
+        initialBounty?.title || 'Apply'
+      } by ${initialBounty?.sponsor?.name} | Solar Earn Listing`}</title>
       <meta
         name="description"
-        content={`${getListingTypeLabel(initialBounty?.type ?? 'Bounty')} on Solar Earn | ${initialBounty?.sponsor?.name
-          } is seeking freelancers and builders ${initialBounty?.title
+        content={`${getListingTypeLabel(initialBounty?.type ?? 'Bounty')} on Solar Earn | ${
+          initialBounty?.sponsor?.name
+        } is seeking freelancers and builders ${
+          initialBounty?.title
             ? `to work on ${initialBounty.title}`
             : '| Apply Here'
-          }`}
+        }`}
       />
       <link
         rel="canonical"
