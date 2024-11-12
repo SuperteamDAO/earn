@@ -15,6 +15,8 @@ export interface Option {
   disable?: boolean;
   /** fixed option that can't be removed. */
   fixed?: boolean;
+  /** fixed option that can't be seen. */
+  hidden?: boolean;
   /** Group the options by providing key. */
   [key: string]: string | boolean | undefined;
 }
@@ -460,8 +462,10 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   variant='secondary'
                   className={cn(
                     badgeClassName,
+                    option.hidden && 'hidden',
                   )}
                   data-fixed={option.fixed}
+                  data-hidden={option.hidden}
                   data-disabled={disabled || undefined}
                 >
                   {option.label}
