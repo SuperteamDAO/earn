@@ -378,8 +378,10 @@ const CreateSponsor = () => {
                             placeholder="starkindustries"
                             {...field}
                             onChange={(e) => {
-                              field.onChange(e);
-                              setSlug(e.target.value);
+                              const lowercaseValue =
+                                e.target.value.toLowerCase();
+                              field.onChange(lowercaseValue);
+                              setSlug(lowercaseValue);
                             }}
                             value={slug}
                           />
@@ -531,8 +533,7 @@ const CreateSponsor = () => {
                         'Company name/username already exists.'}
                     </Text>
                   )}
-                  {(validationSlugErrorMessage ||
-                    sponsorNameValidationErrorMessage) && (
+                  {sponsorNameValidationErrorMessage && (
                     <Text align={'center'} color="yellow.500">
                       If you want access to the existing account, contact us on
                       Telegram at{' '}
