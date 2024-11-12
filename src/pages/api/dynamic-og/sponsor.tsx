@@ -149,7 +149,7 @@ export default async function handler(request: NextRequest) {
               marginTop: '74px',
             }}
           >
-            View Bounties
+            View Opportunities
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="34"

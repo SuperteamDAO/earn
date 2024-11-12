@@ -22,7 +22,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const buffer = Buffer.from(imageBase64, 'base64');
 
     const metadata = await sharp(buffer).metadata();
-    console.log(metadata);
     if (!metadata.format || !ALLOWED_FORMATS.includes(metadata.format)) {
       logger.warn(`Invalid image format detected: ${metadata.format}`);
       return res.status(400).json({
