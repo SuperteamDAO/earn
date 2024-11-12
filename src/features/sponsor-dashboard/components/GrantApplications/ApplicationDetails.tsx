@@ -579,8 +579,8 @@ export const ApplicationDetails = ({
                 width: '6px',
               },
               '&::-webkit-scrollbar-thumb': {
-                background: '#e2e8f0',
-                borderRadius: '24px',
+                background: '#cbd5e1',
+                borderRadius: '30px',
               },
             }}
           >

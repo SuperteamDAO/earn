@@ -202,7 +202,8 @@ export const GrantApplicationModal = ({
     }
   };
 
-  const handleNext = () => {
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
     const fieldsToValidate = {
       0: ['projectTitle', 'projectOneLiner', 'walletAddress'],
       1: [
@@ -484,7 +485,7 @@ export const GrantApplicationModal = ({
                         <FormControl>
                           <Input
                             className={cn(
-                              'border-input text-brand-slate-500 focus-visible:ring-brand-purple',
+                              'border-input focus-visible:ring-brand-purple',
                               'relative w-full',
                               '[&::-webkit-calendar-picker-indicator]:opacity-0',
                               '[&::-webkit-calendar-picker-indicator]:absolute',
@@ -541,20 +542,16 @@ export const GrantApplicationModal = ({
                         <FormControl>
                           <div className="mb-5 flex items-center">
                             <div className="relative mt-2 flex items-center">
-                              <Twitter className="mr-3 h-5 w-5 text-brand-slate-600" />
+                              <Twitter className="mr-3 h-5 w-5 text-slate-600" />
                             </div>
-                            <div className="mt-2 flex h-[43px] items-center rounded-l-md border border-r-0 border-input px-3">
-                              <span className="text-sm font-medium text-brand-slate-600 md:text-[0.875rem]">
+                            <div className="mt-2 flex h-9 items-center rounded-l-md border border-r-0 border-input px-3">
+                              <span className="text-sm font-medium text-slate-600 md:text-[0.875rem]">
                                 x.com/
                               </span>
                             </div>
                             <Input
                               {...field}
-                              className={cn(
-                                'h-[43px] rounded-l-none text-sm font-medium text-gray-800',
-                                'border-input focus-visible:ring-brand-purple',
-                                'placeholder:text-brand-slate-300',
-                              )}
+                              className={'rounded-l-none'}
                               defaultValue={
                                 extractTwitterUsername(user?.twitter || '') ||
                                 undefined
@@ -675,6 +672,7 @@ export const GrantApplicationModal = ({
                     className="ph-no-capture"
                     w={'full'}
                     onClick={handleNext}
+                    type="button"
                     variant="solid"
                   >
                     Continue

@@ -33,14 +33,13 @@ interface RichEditorProps {
   height?: string;
   placeholder?: string;
   error?: boolean;
-  maxHeight?: string;
 }
 
 export const RichEditor: React.FC<RichEditorProps> = ({
   id,
   value,
   onChange,
-  height = 'h-9',
+  height = '10rem',
   placeholder = 'Write something...',
   error = false,
 }) => {
@@ -58,6 +57,11 @@ export const RichEditor: React.FC<RichEditorProps> = ({
       }),
     ],
     content: value || undefined,
+    editorProps: {
+      attributes: {
+        class: 'mx-auto focus:outline-none',
+      },
+    },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       onChange(html === '<p></p>' ? '' : html);
@@ -80,15 +84,22 @@ export const RichEditor: React.FC<RichEditorProps> = ({
       <FloatingToolbar editor={editor} editorClassname={`editor-${id}`} />
       <div
         className={cn(
-          'w-full overflow-y-auto rounded-md border py-2',
+          'mt-2 w-full overflow-y-auto rounded-md border py-2 shadow-sm [&_*]:!text-[0.875rem]',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-sm',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-slate-400',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:float-left',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:h-0',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:pointer-events-none',
           height,
           error ? 'border border-destructive' : 'border-input',
           'focus-within:border focus-within:border-brand-purple',
           `editor-${id}`,
         )}
+        id="reset-des"
         ref={editorRef}
       >
-        <EditorContent editor={editor} className="mt-0 md:text-sm" />
+        <EditorContent editor={editor} className="mt-0 text-sm" />
       </div>
     </div>
   );
@@ -271,6 +282,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
           <Button
             key={index}
             variant="ghost"
+            type="button"
             size="sm"
             className={cn(
               'h-full rounded-none border-l px-2',
@@ -302,7 +314,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     return (
       <>
         <Input
-          className="h-full rounded-none border-0 text-sm focus-visible:ring-0"
+          className="h-8 rounded-none border-0 text-sm focus-visible:ring-0"
           placeholder="https://..."
           value={linkUrl}
           onChange={(e) => setLinkUrl(e.target.value)}
@@ -322,8 +334,8 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
         {!!linkUrl && (
           <Button
             variant="ghost"
-            size="sm"
-            className="h-full rounded-none border-l px-2"
+            type="button"
+            className="h-11 rounded-none border-l px-2"
             onClick={() => {
               const { href } = editor.getAttributes('link');
               if (href) {
@@ -336,8 +348,8 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
         )}
         <Button
           variant="ghost"
-          size="sm"
-          className="h-full rounded-none border-l px-2"
+          type="button"
+          className="h-11 rounded-none border-l px-2"
           onClick={() => {
             editor.chain().focus().unsetLink().run();
             setToolbarState('default');
@@ -347,8 +359,8 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
         </Button>
         <Button
           variant="ghost"
-          size="sm"
-          className="h-full rounded-none border-l px-2 lg:hidden"
+          type="button"
+          className="h-11 rounded-none border-l px-2 lg:hidden"
           onClick={() => {
             addLinkToEditor();
           }}
