@@ -3,6 +3,7 @@ import { Templates } from "./Templates";
 import { MinimalTiptapEditor } from "@/components/tiptap";
 import { useListingForm } from "../../../hooks";
 import { useWatch } from "react-hook-form";
+import { useEffect, useMemo } from "react";
 
 export function DescriptionAndTemplate() {
   const form = useListingForm()
@@ -10,6 +11,12 @@ export function DescriptionAndTemplate() {
     control: form.control,
     name: 'type'
   })
+  const templateId = useWatch({
+    control: form.control,
+    name: 'templateId'
+  });
+
+  const editorKey = useMemo(() => `editor-${templateId}`, [templateId]);
 
   return (
     <FormField
@@ -27,8 +34,12 @@ export function DescriptionAndTemplate() {
             <div className="flex border rounded-md ring-primary has-[:focus]:ring-1">
               <FormControl>
                 <MinimalTiptapEditor
+                  key={editorKey}
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(e) => {
+                    field.onChange(e)
+                    form.onChange()
+                  }}
                   onBlur={field.onBlur}
                   ref={field.ref}
                   className="w-full border-0 min-h-[60vh]"

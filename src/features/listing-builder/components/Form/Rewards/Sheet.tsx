@@ -31,8 +31,7 @@ export function RewardsSheet() {
 
   const hasRewardsErrors = useMemo(() => {
     const errors = form.formState.errors
-    return errors.rewards?.message || 
-      (errors.rewards && Object.keys(errors.rewards).some(key => errors?.rewards?.[key]?.message));
+    return (errors.rewards && Object.keys(errors.rewards).some(key => errors?.rewards?.[key]?.message)) || (errors.maxBonusSpots) || (errors.minRewardAsk) || (errors.maxRewardAsk);
   }, [form])
 
   return (
@@ -54,14 +53,16 @@ export function RewardsSheet() {
                     Edit
                   </Button>
                 </div>
-                <FormMessage />
-                {hasRewardsErrors && (
+                {hasRewardsErrors ? (
                   <p
                     className={"text-xs font-medium text-destructive"}
                   >
                     Please Resolve all errors in rewards
                   </p>
-                )}
+                ) : (
+                    <FormMessage />
+                  )
+                }
               </FormItem>
             )
           }}
@@ -149,7 +150,7 @@ const Label = memo(() => {
     name:'maxRewardAsk'
   })
 
-  const totalPrizes = useMemo(() => calculateTotalPrizes(rewards, maxBonusSpots || 0), [type, maxBonusSpots])
+  const totalPrizes = useMemo(() => calculateTotalPrizes(rewards, maxBonusSpots || 0), [rewards, maxBonusSpots])
 
   useEffect(() => {
     console.log('compensationType',compensationType)

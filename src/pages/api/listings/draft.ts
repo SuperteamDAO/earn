@@ -54,7 +54,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const data: Prisma.BountiesUncheckedCreateInput = {
       title: title || 'Untitled Draft',
-      slug: slug || `draft-${Date.now()}`,
+      slug: `${slug}-${Date.now()}` || `draft-${Date.now()}`,
       description,
       deadline: deadline ? new Date(deadline) : undefined,
       pocSocials,
@@ -90,6 +90,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error) {
+    console.log('error', error);
     logger.error('Error saving draft:', error);
     return res.status(500).json({ error: 'Failed to save draft' });
   }

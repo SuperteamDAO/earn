@@ -44,7 +44,7 @@ export const listingToStatus = (listing: ListingFormData): ListingStatus => {
 }
 
 export const getListingDefaults = (isGod: boolean, editable: boolean, isDuplicating: boolean, isST: boolean) => {
-  const schema = createListingFormSchema(isGod, editable, isDuplicating, undefined, isST);
+  const schema = createListingFormSchema(isGod, editable, isDuplicating, isST);
   
   // Get the inner schema by unwrapping the ZodEffects
   const getInnerSchema = (schema: z.ZodTypeAny): z.ZodObject<any> => {

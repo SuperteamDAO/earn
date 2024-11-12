@@ -1,12 +1,12 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/components/ui/multi-select";
-import { isDuplicatingAtom, isEditingAtom, listingIdAtom } from "@/features/listing-builder/atoms";
+import { isDuplicatingAtom, isEditingAtom, } from "@/features/listing-builder/atoms";
 import { useListingForm } from "@/features/listing-builder/hooks";
 import { slugCheckQuery } from "@/features/listing-builder/queries/slug-check";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { Loader2 } from "lucide-react";
+import { CheckIcon, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useWatch } from "react-hook-form";
 import slugify from "slugify";
@@ -25,6 +25,10 @@ export function Slug() {
   const slug = useWatch({
     control: form.control,
     name: 'slug'
+  })
+  const listingId = useWatch({
+    control: form.control,
+    name: 'id'
   })
 
   const debouncedTitle = useDebounce(title)
@@ -53,7 +57,6 @@ export function Slug() {
   },[generatedSlugValidated])
 
   const debouncedSlug = useDebounce(slug)
-  const listingId = useAtomValue(listingIdAtom)
   const {isError: isSlugCheckError, isFetching: slugCheckFetching} = useQuery({
     ...slugCheckQuery({slug: debouncedSlug, check: true, id: listingId }),
     enabled: isValidated && !!(!isEditing || isDuplicating) && !!debouncedSlug,
@@ -93,9 +96,13 @@ export function Slug() {
                   disabled={isEditing || generatedSlugFetching}
                   onBlur={() => null}
                 />
-                {slugCheckFetching || generatedSlugFetching &&(
+                {slugCheckFetching || generatedSlugFetching ?(
                   <Loader2 className="absolute right-2 top-1.5 text-slate-300 animate-spin" />
-                )}
+                ) : (
+                    <span className="absolute right-2 top-1.5 text-background w-5 h-5 flex items-center bg-slate-400 rounded-full p-1 scale-75">
+                      <CheckIcon className="w-full h-full stroke-[3px]" />
+                    </span>
+                  )}
               </div>
             </FormControl>
             <FormMessage />

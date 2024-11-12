@@ -58,6 +58,7 @@ function Type() {
                   form.setValue('rewards', undefined)
                   form.setValue('rewardAmount', undefined)
                   if(e !== 'project') form.setValue('compensationType','fixed')
+                  form.setFocus('title')
                 }}
               >
                 <SelectTrigger className='border-0 w-32 rounded-none focus:ring-0 border-r'>

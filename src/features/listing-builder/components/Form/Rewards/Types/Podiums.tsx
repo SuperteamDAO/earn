@@ -19,9 +19,6 @@ export const Podiums = () => {
   useEffect(() => {
     console.log('rewards', rewards)
   }, [rewards]);
-  useEffect(() => {
-    console.log('form errors', form.formState.errors)
-  }, [form]);
 
   const maxBonusSpots = useWatch({
     control: form.control,
@@ -67,6 +64,7 @@ export const Podiums = () => {
       );
 
       form.setValue('rewardAmount', totalRewards, { shouldValidate: true });
+      form.onChange()
     },
     [form]
   );
@@ -202,7 +200,7 @@ export const Podiums = () => {
                                     ...rewards,
                                     [BONUS_REWARD_POSITION]: value ?? 0
                                   };
-                                  updateTotalReward(updatedRewards);
+                                  updateTotalReward(updatedRewards, maxBonusSpots);
                                 }}
                               />
                             </FormControl>
@@ -298,7 +296,6 @@ export const Podiums = () => {
                   </Button>
                 )}
               </div>
-              <FormMessage />
             </div>
             <FormMessage />
           </FormItem>

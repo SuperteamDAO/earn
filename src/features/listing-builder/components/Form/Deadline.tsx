@@ -72,6 +72,7 @@ export function Deadline() {
                   } else {
                     field.onChange(undefined);
                   }
+                  form.onChange()
                 }}
                 use12HourFormat hideSeconds
                 max={maxDeadline ? (maxDeadline) : undefined}

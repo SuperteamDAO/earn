@@ -14,14 +14,18 @@ import { Foundation } from "./Foundation"
 import { useAtom } from "jotai"
 import { isGodAtom, isSTAtom } from "@/features/listing-builder/atoms"
 import { ExternalLink } from "lucide-react"
+import { useListingForm } from "@/features/listing-builder/hooks"
+import { useState } from "react"
 
 export function PrePublish() {
   const isST = useAtom(isSTAtom)
+  const form = useListingForm()
+  const [open, isOpen] = useState(false)
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>Continue</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={isOpen}>
+      <Button onClick={async () => {
+        if(await form.validateBasics()) isOpen(true)
+      }}>Continue</Button>
       <DialogContent className="sm:max-w-[500px]  py-4" >
         <DialogHeader className=''>
           <DialogTitle className='text-md '>Few more things to consider:</DialogTitle>
@@ -37,7 +41,14 @@ export function PrePublish() {
         </div>
         <DialogFooter className="pt-4 flex sm:justify-between w-full">
           <Button variant='outline' className="gap-8">Preview <ExternalLink /> </Button>
-          <Button className='px-12' >Publish</Button>
+          <Button className='px-12' 
+            onClick={async() => {
+              if(await form.trigger()) {
+                form.submitListing()
+              }
+            }}
+          >
+            Publish</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

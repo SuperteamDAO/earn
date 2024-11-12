@@ -58,10 +58,6 @@ export const MinimalTiptapEditor = React.forwardRef<HTMLDivElement, MinimalTipta
       ...props
     })
 
-    React.useEffect(() => {
-      if(value) editor?.commands.setContent(value)
-    },[ value])
-
     if (!editor) {
       return null
     }

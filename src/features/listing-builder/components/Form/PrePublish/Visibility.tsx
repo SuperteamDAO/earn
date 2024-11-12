@@ -30,6 +30,7 @@ export function Visibility() {
               <Select onValueChange={(e) => {
                 if(e === 'private') field.onChange(true)
                   else field.onChange(false)
+                form.onChange()
               }} defaultValue={field.value ? 'private': 'public'} >
                 <SelectTrigger className=' w-32 '>
                   <div className="flex items-center gap-2">

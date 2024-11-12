@@ -48,7 +48,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       user?.role === 'GOD',
       false, 
       !!req.body.isDuplicating, 
-      undefined, 
       sponsor?.st 
     );
 

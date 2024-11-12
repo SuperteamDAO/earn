@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import MultipleSelector, { type Option, type MultipleSelectorRef } from "@/components/ui/multi-select";
+import MultipleSelector, { MultiSelectRef, type Option  } from "@/components/ui/multi-select";
 import type { Skills, ParentSkills, SubSkillsType } from "@/interface/skills";
 import { skillSubSkillMap } from "@/interface/skills";
 
@@ -16,9 +16,12 @@ interface SkillsSelectProps {
   className?: string;
 }
 
-export const SkillsSelect = React.forwardRef<MultipleSelectorRef, SkillsSelectProps>(
+export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
   ({ defaultValue = [], onChange, className }, ref) => {
     const [selectedSkills, setSelectedSkills] = React.useState<Skills>(defaultValue);
+    // React.useEffect(() => {
+    //   setSelectedSkills(defaultValue)
+    // },[defaultValue])
 
     const hasSubskills = React.useCallback((parentSkill: ParentSkills) => {
       const skillEntry = selectedSkills.find(s => s.skills === parentSkill);

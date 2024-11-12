@@ -3,8 +3,6 @@ import { BountyType, CompensationType, Regions, status } from "@prisma/client";
 import { z } from "zod";
 import { dayjs } from '@/utils/dayjs';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
-import axios from "axios";
-import { timeToCompleteOptions } from "../utils";
 import { BONUS_REWARD_POSITION, MAX_BONUS_SPOTS, MAX_PODIUMS, tokenList } from "@/constants";
 import { DEADLINE_FORMAT } from "../components/Form";
 import { fetchSlugCheck } from "../queries/slug-check";
@@ -13,14 +11,11 @@ import { ListingFormData } from ".";
 export const createListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
-  isGod: boolean,
   isEditing: boolean,
   isDuplicating: boolean,
-  isST?: boolean,
-  id?: string,
 ) => {
   console.log('zod validating')
-  const slugUniqueCheck = async (slug: string) => {
+  const slugUniqueCheck = async (slug: string, id?: string) => {
     try {
       const listingId = isEditing && !isDuplicating ? id : null;
       await fetchSlugCheck({
@@ -34,7 +29,7 @@ export const createListingRefinements = async (
       return false;
     }
   };
-  if (data.slug && !(await slugUniqueCheck(data.slug))) {
+  if (data.slug && !(await slugUniqueCheck(data.slug, data.id))) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: 'Slug already exists. Please try another.',
@@ -42,13 +37,23 @@ export const createListingRefinements = async (
     });
   }
 
+  if(!data.rewardAmount) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Please add rewards",
+      path: ["rewards"]
+    })
+  }
   if (data.compensationType === "fixed") {
-    if (!data.rewards || Object.keys(data.rewards).length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Rewards is required for fixed compensation type",
-        path: ["rewards"]
-      });
+    console.log('rewards validation', data.rewards)
+    if(data.type === 'bounty') {
+      if (!data.rewards || Object.keys(data.rewards).length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Rewards is required for fixed compensation type",
+          path: ["rewards"]
+        });
+      }
     }
 
     if (data.rewards) {
@@ -121,11 +126,8 @@ export const createListingFormSchema = (
   isGod: boolean,
   isEditing: boolean,
   isDuplicating: boolean,
-  id?: string,
   isST?: boolean,
 ) => {
-
-
   const eligibilityQuestionSchema = z.discriminatedUnion("type", [
     z.object({
       order: z.number(),
@@ -258,8 +260,8 @@ export const createListingFormSchema = (
     .min(0).optional(),
     rewards: rewardsSchema.optional(),
     compensationType: z.nativeEnum(CompensationType).default("fixed"),
-    minRewardAsk: z.number().min(0).optional(),
-    maxRewardAsk: z.number().min(0).optional(),
+    minRewardAsk: z.number().min(0).optional().nullable(),
+    maxRewardAsk: z.number().min(0).optional().nullable(),
     maxBonusSpots: z
     .number({
       message: 'Required',
@@ -285,7 +287,7 @@ export const createListingFormSchema = (
     status: z.nativeEnum(status).optional(),
     publishedAt: z.string().datetime().optional(),
   }).superRefine( (data, ctx) => {
-      createListingRefinements(data, ctx, isGod, isEditing, isDuplicating, isST, id);
+      createListingRefinements(data, ctx, isEditing, isDuplicating);
     });
 
 }

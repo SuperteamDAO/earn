@@ -21,7 +21,10 @@ export function Foundation() {
             <FormControl className='flex items-center'>
               <Switch
                 checked={field.value}
-                onCheckedChange={field.onChange}
+                onCheckedChange={(e) => {
+                  field.onChange(e)
+                  form.onChange()
+                }}
               />
             </FormControl>
           </FormItem>

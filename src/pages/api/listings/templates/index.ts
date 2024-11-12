@@ -6,7 +6,24 @@ import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 export type BountyTemplateWithSponsor = Prisma.BountiesTemplatesGetPayload<{
-  include: {
+  select: {
+    id: true,
+    title: true,
+    description: true,
+    skills: true,
+    rewards: true,
+    rewardAmount: true,
+    minRewardAsk: true,
+    maxRewardAsk: true,
+    maxBonusSpots: true,
+    emoji: true,
+    compensationType: true,
+    type: true,
+    token: true,
+    color: true,
+    language: true,
+    region: true,
+    slug: true,
     Bounties: {
       select: {
         sponsor: {
@@ -37,7 +54,24 @@ export default async function bounties(
         type,
       },
       take: 20,
-      include: {
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        skills: true,
+        rewards: true,
+        rewardAmount: true,
+        minRewardAsk: true,
+        maxRewardAsk: true,
+        maxBonusSpots: true,
+        emoji: true,
+        compensationType: true,
+        type: true,
+        token: true,
+        color: true,
+        language: true,
+        region: true,
+        slug: true,
         Bounties: {
           distinct: ['sponsorId'],
           take: 3,  

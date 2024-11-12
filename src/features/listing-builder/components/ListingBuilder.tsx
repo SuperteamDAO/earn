@@ -5,7 +5,6 @@ import {
   ListingBuilderLayout,
   listingSlugAtom,
   fetchListingAtom,
-  listingIdAtom,
   ListingFormData,
   isGodAtom,
   isSTAtom,
@@ -31,27 +30,30 @@ interface Props {
 function ListingBuilder({defaultListing}: {defaultListing: ListingFormData}) {
 
   const { data: listing } = useAtomValue(fetchListingAtom);
-  useInitAtom(listingIdAtom, listing?.id)
   useInitAtom(listingStatusAtom, listing ? listingToStatus(listing) : undefined)
 
   const isEditing = useAtomValue(isEditingAtom);
-  const formHook = useListingForm(isEditing ? listing ?? defaultListing : defaultListing)
+  const form = useListingForm(isEditing ? listing ?? defaultListing : defaultListing)
 
-  const preventEnterKeySubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {
-    const target = e.target;
-    if (e.key === "Enter" && target instanceof HTMLInputElement) {
-      e.preventDefault();
-    }
-  };
+  // const preventEnterKeySubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {
+  //   const target = e.target;
+  //   if (e.key === "Enter" && target instanceof HTMLInputElement) {
+  //     e.preventDefault();
+  //   }
+  // };
 
   useEffect(() => {
-    console.log('formHook',formHook)
-  },[formHook])
+    console.log('form errors', form.formState.errors)
+  }, [form]);
+  useEffect(() => {
+    console.log('formHook',form)
+  },[form])
   return (
     <>
-      <Form {...formHook} >
-        <form onSubmit={formHook?.handleSubmit(() => {})} 
-          onKeyDown={preventEnterKeySubmission}
+      <Form {...form} >
+        <form 
+          // onKeyDown={preventEnterKeySubmission}
+          onChange={form.onChange}
         >
           <ListingBuilderLayout>
             <div className="space-y-8 max-w-5xl mx-auto py-10 w-full">

@@ -101,7 +101,10 @@ export function GeoLock() {
               <RegionCombobox
                 options={options ?? []}
                 value={field.value}
-                onChange={field.onChange}
+                onChange={(e) => {
+                  field.onChange(e)
+                  form.onChange()
+                }}
               />
             </FormControl>
           </FormItem>

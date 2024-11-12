@@ -1,13 +1,14 @@
 import { useForm, useFormContext, UseFormReturn } from "react-hook-form";
 import { createListingRefinements, ListingFormData } from "../types";
-import { useAtomValue } from "jotai";
-import { formSchemaAtom, isDuplicatingAtom, isEditingAtom, isGodAtom, isSTAtom, listingIdAtom, saveDraftMutationAtom, submitListingMutationAtom } from "../atoms";
-import { useCallback, useEffect } from "react";
+import { useAtom, useAtomValue } from "jotai";
+import { formSchemaAtom, isDuplicatingAtom, isEditingAtom, isGodAtom, isSTAtom, saveDraftMutationAtom, submitListingMutationAtom } from "../atoms";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import debounce from "lodash.debounce";
 
 interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
-  saveDraft: () => Promise<void>;
+  onChange: () => Promise<void>;
   submitListing: () => Promise<void>;
   resetForm: () => void;
   validateRewards: () => Promise<boolean>
@@ -39,14 +40,48 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
   const saveDraftMutation = useAtomValue(saveDraftMutationAtom);
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
 
-  const saveDraft = useCallback(async () => {
-    const formData = getValues();
+  const saveDraft = useCallback(async (formData: ListingFormData) => {
     try {
-      await saveDraftMutation.mutateAsync(formData);
+      console.log('main save draft')
+      const data = await saveDraftMutation.mutateAsync(formData);
+      console.log('draft data - ', data)
+      formMethods.setValue('id', data.id)
+      // await (
+      //   new Promise((resolve) => 
+      //     setTimeout(() => resolve("Done!"), 2000)
+      //   )
+      // )
     } catch (error) {
       console.error('Error saving draft:', error);
     }
   }, [getValues, saveDraftMutation]);
+
+  const isSavingRef = useRef(false);
+
+  const deboncedDraftSave = useMemo(
+    () =>
+      debounce(async (formData: ListingFormData) => {
+        console.log('call debounce draft')
+        console.log('isSaving', isSavingRef.current)
+        if (isSavingRef.current) return;
+        isSavingRef.current = true;
+        try {
+          await saveDraft(formData);
+        } finally {
+          isSavingRef.current = false;
+        }
+      }, 2000),
+    [saveDraft]
+  );
+
+  
+  const onChange = async () => {
+    const data = getValues();
+    try {
+      console.log('call onchange')
+      deboncedDraftSave(data);
+    } catch (e) {}
+  };
 
   const submitListing = useCallback(async () => {
     const formData = getValues();
@@ -65,7 +100,6 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
   const isEditing = useAtomValue(isEditingAtom);
   const isDuplicating = useAtomValue(isDuplicatingAtom);
   const isST = useAtomValue(isSTAtom);
-  const listingId = useAtomValue(listingIdAtom);
 
   type ValidationFields = Partial<Record<keyof ListingFormData, true>>;
 
@@ -84,7 +118,7 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
 
     const innerSchema = formSchema._def.schema;
     const partialSchema = innerSchema.pick(fields).superRefine((data, ctx) => {
-      createListingRefinements(data as any, ctx, isGod, isEditing, isDuplicating, isST, listingId);
+      createListingRefinements(data as any, ctx, isEditing, isDuplicating);
     });
 
     try {
@@ -105,7 +139,7 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
       }
       return false;
     }
-  }, [formMethods, formSchema, isGod, isEditing, isDuplicating, isST, listingId]);
+  }, [formMethods, formSchema, isGod, isEditing, isDuplicating, isST]);
 
   // Usage:
   const validateRewards = () => validateFields({
@@ -128,6 +162,12 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
     skills: true,
     pocSocials: true,
     eligibility: true,
+    compensationType: true,
+    token: true,
+    rewardAmount: true,
+    minRewardAsk: true,
+    maxRewardAsk: true,
+    maxBonusSpots: true,
   });
 
   useEffect(() => {
@@ -138,9 +178,13 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
     }
   }, [isNewFormInitialized]);
 
+  useEffect(() => {
+    console.log('form is dirty', formMethods.formState.isDirty)
+  },[formMethods])
+
   return {
     ...formMethods,
-    saveDraft,
+    onChange,
     submitListing,
     resetForm,
     validateRewards,

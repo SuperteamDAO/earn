@@ -20,20 +20,15 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { cn } from "@/utils"
 import { getURL } from "@/utils/validUrl"
 import Link from "next/link"
-import { useFormContext, useWatch } from "react-hook-form"
-import { ListingFormData } from "../../../types"
+import { useWatch } from "react-hook-form"
+import { useListingForm } from "@/features/listing-builder/hooks"
 
 export function Templates() {
   const posthog = usePostHog();
   const { data: session } = useSession();
   const { user } = useUser();
 
-  // const isEditing = useAtomValue(isEditingAtom)
-  // const isDuplicating = useAtomValue(isDuplicatingAtom)
-
-  // const form = useAtomValue(formAtom);
-  // const formAction = useSetAtom(formActionsAtom);
-  const form = useFormContext<ListingFormData>();
+  const form = useListingForm();
   const type = useWatch({
     control:form.control,
     name:'type'
@@ -161,8 +156,12 @@ export function Templates() {
                         disabled={isDisabled}
                         onClick={() => {
                           posthog.capture('template_sponsor');
-                          // formAction({type: 'SET',payload: template})
+                          console.log('template', template)
+                          const id = form.getValues().id
                           form.reset(template as any)
+                          form.setValue('templateId', template.id)
+                          form.setValue('id', id)
+                          form.onChange()
                         }}
                       >
                         Use

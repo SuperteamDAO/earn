@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/utils";
 import {StatusBadge} from "./StatusBadge";
 import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
+import { ChevronLeft, Eye } from "lucide-react";
 import { PrePublish } from "../Form/PrePublish";
 
 const UserMenu = dynamic(() =>
@@ -39,6 +39,11 @@ export function Header() {
               SPONSORS
             </span>
           </NextLink>
+          <NextLink href='/dashboard/listings'>
+            <Button variant='outline'>
+              <ChevronLeft /> Go Back
+            </Button>
+          </NextLink>
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-4 py-2">
@@ -51,6 +56,7 @@ export function Header() {
           {status === 'authenticated' && session && (
             <>
               <StatusBadge />
+              <p className='text-sm text-slate-400 font-medium'>auto saved</p>
               <Button variant='outline' className='text-slate-400'>
                 <Eye />
                 Preview

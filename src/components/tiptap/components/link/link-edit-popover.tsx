@@ -36,10 +36,9 @@ const LinkEditPopover = ({ editor, size, variant }: LinkEditPopoverProps) => {
             }
           ]
         })
-        .setLink({ href: url })
+        .setLink({ href: url, target: openInNewTab ? '_blank' : '' })
         .run()
 
-      editor.commands.enter()
     },
     [editor]
   )
