@@ -14,6 +14,9 @@ const listingSlugAtom = atom<string | undefined>(undefined);
 const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
 const isDraftSavingAtom = atom(false)
 
+const confirmModalAtom = atom<"SUCCESS" | "VERIFICATION" | undefined>(undefined)
+const previewAtom = atom(false)
+
 const formSchemaAtom = atom((get) => 
   createListingFormSchema(
     get(isGodAtom),
@@ -36,9 +39,10 @@ const saveDraftMutationAtom = atomWithMutation(() => ({
 const submitListingMutationAtom = atomWithMutation((get) => ({
   mutationKey: ['submitListing'],
   mutationFn: async (data: ListingFormData) => {
+    if(!data.id) throw new Error('Missing ID')
     const isEditing = get(isEditingAtom) && !get(isDuplicatingAtom);
     const endpoint = isEditing ? '/api/listings/update' : '/api/listings/publish';
-    const response = await axios.post(`${endpoint}/${data.id}`, {
+    const response = await axios.post<ListingFormData>(`${endpoint}/${data.id}`, {
       ...data,
       isDuplicating: get(isDuplicatingAtom)
     });
@@ -74,5 +78,7 @@ export {
   submitListingMutationAtom,
   fetchListingAtom,
   listingStatusAtom,
-  isDraftSavingAtom
+  isDraftSavingAtom,
+  confirmModalAtom,
+  previewAtom
 };

@@ -20,6 +20,7 @@ import { useSession } from "next-auth/react";
 import { Deadline, DescriptionAndTemplate, POC, TitleAndType, EligibilityQuestions, Skills, Rewards } from "./Form";
 import { useListingForm } from "../hooks";
 import { useEffect } from "react";
+import { ListingSuccessModal, PreviewListingModal, UnderVerificationModal } from "./Modals";
 
 interface Props {
   listingSlug?: string;
@@ -42,12 +43,6 @@ function ListingBuilder({defaultListing}: {defaultListing: ListingFormData}) {
     }
   };
 
-  useEffect(() => {
-    console.log('form errors', form.formState.errors)
-  }, [form]);
-  useEffect(() => {
-    console.log('formHook',form)
-  },[form])
   return (
     <>
       <Form {...form} >
@@ -59,20 +54,23 @@ function ListingBuilder({defaultListing}: {defaultListing: ListingFormData}) {
         >
           <ListingBuilderLayout>
             <div className="space-y-8 max-w-5xl mx-auto py-10 w-full">
-            <div className="grid grid-cols-9 gap-4">
-              <div className="col-span-6 space-y-4">
-                <TitleAndType />
-                <DescriptionAndTemplate />
-              </div>
-              <div className="col-span-3 space-y-4">
-                <Rewards />
-                <Deadline />
-                <Skills />
-                <POC />
-                <EligibilityQuestions />
+              <div className="grid grid-cols-9 gap-4">
+                <div className="col-span-6 space-y-4">
+                  <TitleAndType />
+                  <DescriptionAndTemplate />
+                </div>
+                <div className="col-span-3 space-y-4">
+                  <Rewards />
+                  <Deadline />
+                  <Skills />
+                  <POC />
+                  <EligibilityQuestions />
+                </div>
               </div>
             </div>
-            </div>
+            <ListingSuccessModal />
+            <PreviewListingModal />
+            <UnderVerificationModal />
           </ListingBuilderLayout>
         </form>
       </Form>
@@ -88,7 +86,6 @@ function ListingBuilderProvider({listingSlug, isEditing, isDuplicating}: Props) 
   const isST = !!user?.currentSponsor?.st
 
   const defaultListing = getListingDefaults(isGod, !!isEditing, !!isDuplicating, isST)
-  console.log('defaultListing', defaultListing)
 
   return (
     <Provider store={store}>

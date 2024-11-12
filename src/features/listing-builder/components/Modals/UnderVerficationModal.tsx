@@ -1,30 +1,23 @@
+import React from 'react';
+import Link from 'next/link';
 import {
-  Button,
-  Center,
-  Link,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
-import NextLink from 'next/link';
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { useAtom } from 'jotai';
+import { confirmModalAtom } from '../../atoms';
 
-interface Props {
-  onClose: () => void;
-  isOpen: boolean;
-}
-export function UnderVerificationModal({ onClose, isOpen }: Props) {
+export const UnderVerificationModal = () => {
+  const [confirmModal] = useAtom(confirmModalAtom)
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="sm">
-      <ModalOverlay />
-      <ModalContent overflow="hidden" w="100%" h={'max'} rounded="lg">
-        <ModalHeader>
-          <VStack mt={4}>
-            <Center p={8} bg="#EFF6FF" rounded="full">
+    <Dialog open={confirmModal === 'VERIFICATION'} onOpenChange={() => null}>
+      <DialogContent hideCloseIcon className="max-w-sm overflow-hidden">
+        <DialogHeader>
+          <div className="flex justify-center mt-4">
+            <div className="p-8 bg-blue-50 rounded-full">
               <svg
                 width="73"
                 height="73"
@@ -37,30 +30,30 @@ export function UnderVerificationModal({ onClose, isOpen }: Props) {
                   fill="#2563EB"
                 />
               </svg>
-            </Center>
-          </VStack>
-        </ModalHeader>
-        <ModalBody>
-          <VStack gap={3}>
-            <Text fontSize="lg" fontWeight={600}>
-              We need to verify your listing before it gets published
-            </Text>
-            <Text color="brand.slate.500">
-              {`It's important for us to verify certain work opportunities to maintain trust, and keep the platform free of any bad actors. We will try our best to verify your listing within 24 hours. `}
-            </Text>
-            <Text color="brand.slate.500">
-              {`Once verified, your listing will be published automatically. If we need any information, we will get in touch with you. `}
-            </Text>
-          </VStack>
-        </ModalBody>
-        <ModalFooter>
-          <Link as={NextLink} w="full" href="/dashboard/listings">
-            <Button w="full" py={5}>
+            </div>
+          </div>
+        </DialogHeader>
+
+        <div className="flex flex-col gap-3 text-center">
+          <h2 className="text-lg font-semibold">
+            We need to verify your listing before it gets published
+          </h2>
+          <p className="text-slate-500">
+            It's important for us to verify certain work opportunities to maintain trust, and keep the platform free of any bad actors. We will try our best to verify your listing within 24 hours.
+          </p>
+          <p className="text-slate-500">
+            Once verified, your listing will be published automatically. If we need any information, we will get in touch with you.
+          </p>
+        </div>
+
+        <DialogFooter>
+          <Link href="/dashboard/listings" className="w-full">
+            <Button className="w-full py-5">
               Understood
             </Button>
           </Link>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
-}
+};

@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import debounce from "lodash.debounce";
+import { Bounties } from "@prisma/client";
 
 interface SaveQueueState {
   isProcessing: boolean;
@@ -19,7 +20,7 @@ const queueRef: SaveQueueState = {
 
 interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
   onChange: () => void;
-  submitListing: () => Promise<void>;
+  submitListing: () => Promise<Bounties>;
   resetForm: () => void;
   validateRewards: () => Promise<boolean>
   validateBasics: () => Promise<boolean>
@@ -108,11 +109,7 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
 
   const submitListing = useCallback(async () => {
     const formData = getValues();
-    try {
-      await submitListingMutation.mutateAsync(formData);
-    } catch (error) {
-      console.error('Error submitting listing:', error);
-    }
+    return await submitListingMutation.mutateAsync(formData);
   }, [getValues, submitListingMutation]);
 
   const resetForm = useCallback(() => {

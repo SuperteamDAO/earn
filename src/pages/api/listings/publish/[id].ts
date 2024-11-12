@@ -76,7 +76,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isFndnPaying: rawIsFndnPaying,
     } = validatedData;
 
-    let { isPublished } = req.body;
+    let isPublished = true;
     let publishedAt;
     let language = description ? franc(description) : 'eng';
     const correctedSkills = cleanSkills(skills);
@@ -156,7 +156,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       sponsorId: userSponsorId,
       title,
       usdValue,
-      publishedAt,
       pocId: userId,
       skills: correctedSkills,
       slug,
@@ -175,11 +174,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       compensationType,
       minRewardAsk,
       maxRewardAsk,
-      isPublished,
       isPrivate,
       language,
       isFndnPaying,
       status: isVerifying ? 'VERIFYING' : 'OPEN',
+      publishedAt,
+      isPublished,
     };
 
     logger.debug(`Publishing listing with data: ${safeStringify(data)}`);

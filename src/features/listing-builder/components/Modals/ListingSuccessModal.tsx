@@ -16,16 +16,11 @@ import { useUser } from '@/store/user';
 import { useClipboard } from '@chakra-ui/react';
 import { useListingForm } from '../../hooks';
 import { useWatch } from 'react-hook-form';
+import { useAtom } from 'jotai';
+import { confirmModalAtom } from '../../atoms';
 
-interface ListingSuccessModalProps {
-  onClose: () => void;
-  isOpen: boolean;
-}
-
-export const ListingSuccessModal = ({
-  isOpen,
-  onClose,
-}: ListingSuccessModalProps) => {
+export const ListingSuccessModal = () => {
+  const [confirmModal] = useAtom(confirmModalAtom)
   const { user } = useUser();
   const router = useRouter();
 
@@ -50,18 +45,16 @@ export const ListingSuccessModal = ({
   
   const { hasCopied, onCopy } = useClipboard(listingLink());
 
-  const handleViewOrInvite = () => {
-    const path = isVerified 
+  const handleViewOrInvite = useMemo(() => {
+    return isVerified 
       ? `/dashboard/listings/${slug}/submissions?scout`
       : `/listings/${type}/${slug}`;
-    router.push(path);
-  };
+  },[isVerified]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={confirmModal === 'SUCCESS'} onOpenChange={() => null}>
       <DialogOverlay />
-      <DialogContent className="overflow-hidden w-full max-w-sm rounded-lg p-0">
-        <div className="flex flex-col items-start gap-4 w-full">
+      <DialogContent hideCloseIcon  className="p-0 max-w-sm flex flex-col items-start gap-4 overflow-hidden">
           <div className="w-full py-20 bg-emerald-50">
             <div className="mx-auto w-fit p-3 bg-emerald-500 rounded-full">
               <Check className="w-6 h-6 text-white stroke-[3]" />
@@ -96,13 +89,15 @@ export const ListingSuccessModal = ({
                 )}
               </Button>
 
-              <Button className="w-full gap-2" onClick={handleViewOrInvite}>
+            <Link href={handleViewOrInvite}>
+              <Button className="w-full gap-2" >
                 {isVerified ? (
                   <>Invite Talent <Plus className="h-4 w-4" /></>
                 ) : (
                   <>View Listing <ChevronRight className="h-4 w-4" /></>
                 )}
               </Button>
+            </Link>
 
               <div className="flex justify-between w-full text-sm text-slate-500 font-medium">
                 <Link 
@@ -124,7 +119,6 @@ export const ListingSuccessModal = ({
               </div>
             </div>
           </div>
-        </div>
       </DialogContent>
     </Dialog>
   );

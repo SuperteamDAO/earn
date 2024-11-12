@@ -1,171 +1,125 @@
-import { ExternalLinkIcon, InfoIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  IconButton,
-  Link,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Spinner,
-  Tab,
-  TabList,
-  Tabs,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
+import React, { useMemo, useState } from 'react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useState } from 'react';
+import { Info, ExternalLink, Loader2 } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { useAtom } from 'jotai';
+import { previewAtom } from '../../atoms';
+import { useListingForm } from '../../hooks';
+import { useWatch } from 'react-hook-form';
 
-interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  previewUrl: string;
-}
-export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
-  const [tabIndex, setTabIndex] = useState(0); // 0 for Desktop, 1 for Mobile
+export const PreviewListingModal = () => {
+  const [showPreview, setShowPreview] = useAtom(previewAtom)
+  const [activeView, setActiveView] = useState('desktop');
   const [isLoading, setIsLoading] = useState(true);
   const posthog = usePostHog();
 
-  const handleTabsChange = (index: number) => {
-    setTabIndex(index);
-  };
+  const form = useListingForm()
+  const type = useWatch({
+    control: form.control,
+    name:'type'
+  })
+  const slug = useWatch({
+    control: form.control,
+    name:'slug'
+  })
+  const previewUrl = useMemo(() => {
+    return `/listings/${type}/${slug}?preview=1`
+  }, [type, slug])
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="full">
-      <ModalOverlay />
-      <ModalContent bg="white">
-        <ModalHeader px="6" py="4">
-          <Grid alignItems="center" gap={4} templateColumns="1fr auto 1fr">
-            <Text color="brand.slate.500" fontSize="lg" fontWeight="600">
+    <Dialog open={showPreview} onOpenChange={setShowPreview}>
+      <DialogContent hideCloseIcon className="max-w-full h-full p-0">
+        <DialogHeader className="px-6 py-4 border-b">
+          <div className="grid grid-cols-3 items-center gap-4">
+            <DialogTitle className="text-lg font-semibold text-slate-500">
               Preview Listing
-            </Text>
+            </DialogTitle>
 
             <Tabs
-              index={tabIndex}
-              onChange={handleTabsChange}
-              variant="unstyled"
+              value={activeView}
+              onValueChange={setActiveView}
+              className="justify-self-center"
             >
-              <TabList>
-                <Tab
-                  color="brand.slate.400"
-                  fontWeight="600"
-                  _selected={{
-                    color: 'brand.slate.500',
-                    borderBottom: '2px solid',
-                    borderColor: 'brand.purple',
-                  }}
-                >
-                  Desktop
-                </Tab>
-                <Tab
-                  color="brand.slate.400"
-                  fontWeight="600"
-                  _selected={{
-                    color: 'brand.slate.500',
-                    borderBottom: '2px solid',
-                    borderColor: 'brand.purple',
-                  }}
-                >
-                  Mobile
-                </Tab>
-              </TabList>
+              <TabsList>
+                <TabsTrigger value="desktop">Desktop</TabsTrigger>
+                <TabsTrigger value="mobile">Mobile</TabsTrigger>
+              </TabsList>
             </Tabs>
 
-            <Flex align="center" justifySelf="end" gap="4">
-              <Flex align="center">
-                <Tooltip
-                  aria-label="Preview link tooltip"
-                  hasArrow
-                  label="This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community"
-                  placement="top"
-                >
-                  <IconButton
-                    color="brand.slate.300"
-                    _hover={{
-                      bg: 'none',
-                    }}
-                    aria-label="Info"
-                    icon={<InfoIcon />}
-                    variant="ghost"
-                  />
-                </Tooltip>
+            <div className="flex items-center justify-end gap-4">
+              <div className="flex items-center gap-2">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="text-slate-300 hover:text-slate-400">
+                        <Info className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      This link is for preview purposes only and is accessible only to those who have it. 
+                      It is not your final link for sharing with your community
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
 
                 <Button
+                  variant="outline"
                   className="ph-no-capture"
-                  as={Link}
-                  color="brand.slate.500"
-                  href={previewUrl}
-                  isExternal
                   onClick={() => {
                     posthog.capture('new tab_preview');
+                    window.open(previewUrl, '_blank');
                   }}
-                  rightIcon={<ExternalLinkIcon />}
-                  variant="outlineSecondary"
                 >
                   Secret Draft Link
+                  <ExternalLink className="ml-2 h-4 w-4" />
                 </Button>
-              </Flex>
+              </div>
 
               <Button
                 className="ph-no-capture"
                 onClick={() => {
                   posthog.capture('continue editing_preview');
-                  onClose();
+                  setShowPreview(false);
                 }}
-                variant="solid"
               >
                 Continue Editing
               </Button>
-            </Flex>
-          </Grid>
-        </ModalHeader>
-        <ModalBody p="0">
-          <Box overflow="hidden" w="80%" h="100%" mx="auto" my={10}>
-            <Box
-              pos="relative"
-              overflow="hidden"
-              w={tabIndex === 0 ? '100%' : '420px'}
-              h="900px"
-              mx="auto"
-              borderWidth="2px"
-              borderColor="brand.slate.100"
-              rounded="lg"
-            >
-              {isLoading && (
-                <Flex
-                  pos="absolute"
-                  zIndex="1"
-                  top="0"
-                  left="0"
-                  align="center"
-                  justify="center"
-                  w="100%"
-                  h="100%"
-                  bg="whiteAlpha.800"
-                >
-                  <Spinner color="brand.purple" size="xl" />
-                </Flex>
-              )}
-              <iframe
-                src={previewUrl + '?preview=1'}
-                width="100%"
-                height="100%"
-                style={{
-                  border: 'none',
-                  overflow: 'hidden',
-                }}
-                title="Preview"
-                onLoad={() => setIsLoading(false)}
-              ></iframe>
-            </Box>
-          </Box>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+            </div>
+          </div>
+        </DialogHeader>
+
+        <div className="p-10 h-full">
+          <div className="relative w-4/5 h-[900px] mx-auto rounded-lg border-2 border-slate-100 overflow-hidden"
+               style={{ 
+                 width: activeView === 'mobile' ? '420px' : '100%' 
+               }}>
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-10">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            )}
+            <iframe
+              src={`${previewUrl}&nsb=1`}
+              className="w-full h-full"
+              title="Preview"
+              onLoad={() => setIsLoading(false)}
+            />
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

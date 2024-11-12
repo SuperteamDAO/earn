@@ -7,11 +7,12 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/utils";
 import {StatusBadge} from "./StatusBadge";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Eye } from "lucide-react";
+import { ChevronLeft, Eye, Loader2 } from "lucide-react";
 import { PrePublish } from "../Form/PrePublish";
 import { useListingForm } from "../../hooks";
-import { useAtomValue } from "jotai";
-import { isDraftSavingAtom } from "../../atoms";
+import { useAtomValue, useSetAtom } from "jotai";
+import { isDraftSavingAtom, previewAtom } from "../../atoms";
+import { useWatch } from "react-hook-form";
 
 const UserMenu = dynamic(() =>
   import('@/features/navbar').then((mod) => mod.UserMenu)
@@ -21,6 +22,12 @@ export function Header() {
   const { data: session, status } = useSession();
   const posthog = usePostHog();
   const isDraftSaving = useAtomValue(isDraftSavingAtom)
+  const setShowPreview = useSetAtom(previewAtom)
+  const form = useListingForm()
+  const id = useWatch({
+    control: form.control,
+    name: 'id'
+  })
 
   return (
     <div className="hidden border-b bg-background lg:block">
@@ -60,9 +67,16 @@ export function Header() {
           {status === 'authenticated' && session && (
             <>
               <StatusBadge />
-              <p className='text-sm text-slate-400 font-medium'>auto saved</p>
+              <p className='text-sm text-slate-400 font-medium w-20'>
+                {isDraftSaving ? (
+                  <Loader2 className="animate-spin mx-auto w-4 h-4" />
+                ): "auto saved"}
+              </p>
               <Button variant='outline' className='text-slate-400'
-                disabled={isDraftSaving}
+                disabled={isDraftSaving || !id}
+                onClick={() => {
+                  setShowPreview(true)
+                }}
               >
                 <Eye />
                 Preview

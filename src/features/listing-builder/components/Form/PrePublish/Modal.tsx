@@ -11,11 +11,12 @@ import { GeoLock, Visibility } from ".."
 import { Separator } from "@/components/ui/separator"
 import { Slug } from "./Slug"
 import { Foundation } from "./Foundation"
-import { useAtom, useAtomValue } from "jotai"
-import { isDraftSavingAtom, isGodAtom, isSTAtom } from "@/features/listing-builder/atoms"
-import { ExternalLink } from "lucide-react"
+import { useAtom, useAtomValue, useSetAtom } from "jotai"
+import { confirmModalAtom, isDraftSavingAtom, isEditingAtom, isSTAtom, previewAtom, submitListingMutationAtom } from "@/features/listing-builder/atoms"
+import { ExternalLink, Loader2 } from "lucide-react"
 import { useListingForm } from "@/features/listing-builder/hooks"
 import { useState } from "react"
+import { toast } from "sonner"
 
 export function PrePublish() {
   const isST = useAtom(isSTAtom)
@@ -23,9 +24,14 @@ export function PrePublish() {
   const [open, isOpen] = useState(false)
 
   const isDraftSaving = useAtomValue(isDraftSavingAtom)
+  const setConfirmModal = useSetAtom(confirmModalAtom)
+  const setShowPreview = useSetAtom(previewAtom)
 
+  const isEditing = useAtomValue(isEditingAtom)
+
+  const submitListingMutation = useAtomValue(submitListingMutationAtom);
   return (
-    <Dialog open={open} onOpenChange={isOpen}>
+    <Dialog open={open} onOpenChange={isOpen} >
       <Button
         disabled={isDraftSaving}
         onClick={async () => {
@@ -48,16 +54,36 @@ export function PrePublish() {
           )}
         </div>
         <DialogFooter className="pt-4 flex sm:justify-between w-full">
-          <Button variant='outline' className="gap-8">Preview <ExternalLink /> </Button>
+          <Button variant='outline' className="gap-8"
+            disabled={isDraftSaving || submitListingMutation.isPending}
+            onClick={() => {
+              setShowPreview(true)
+            }}
+          >Preview <ExternalLink /> </Button>
           <Button className='px-12' 
             onClick={async() => {
               if(await form.trigger()) {
-                form.submitListing()
+                try {
+                  const data = await form.submitListing()
+                  isOpen(false)
+                  if(data.status === 'VERIFYING') {
+                    setConfirmModal('VERIFICATION')
+                  } else {
+                    setConfirmModal('SUCCESS')
+                  }
+                } catch (error) {
+                  console.log(error)
+                  toast.error('Failed to create listing, please try again later', {
+                  })
+                }
               }
             }}
-            disabled={isDraftSaving}
+            disabled={isDraftSaving || submitListingMutation.isPending}
           >
-            Publish</Button>
+            {submitListingMutation.isPending ? (
+              <Loader2 className="animate-spin w-4 h-4" />
+            ): isEditing ? "Update" : "Publish"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
