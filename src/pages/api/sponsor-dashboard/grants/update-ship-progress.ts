@@ -85,7 +85,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       logger.info('Application doesnt have airtable id');
     }
   } catch (err) {
-    logger.error('Failed to update Airtable record: ', err);
+    logger.error('Error syncing with Airtable', err);
     return res.status(404).json({
       error: 'AIRTABLE RECIPIENT UPDATE FAILED',
       message: 'Airtable record update failed',
