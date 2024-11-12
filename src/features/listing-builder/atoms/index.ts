@@ -12,6 +12,7 @@ const isEditingAtom = atom<boolean>(false);
 const isDuplicatingAtom = atom<boolean>(false);
 const listingSlugAtom = atom<string | undefined>(undefined);
 const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
+const isDraftSavingAtom = atom(false)
 
 const formSchemaAtom = atom((get) => 
   createListingFormSchema(
@@ -73,4 +74,5 @@ export {
   submitListingMutationAtom,
   fetchListingAtom,
   listingStatusAtom,
+  isDraftSavingAtom
 };

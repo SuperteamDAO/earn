@@ -30,6 +30,9 @@ export function Slug() {
     control: form.control,
     name: 'id'
   })
+  useEffect(() => {
+    console.log('listingId',listingId)
+  },[listingId])
 
   const debouncedTitle = useDebounce(title)
   const slugifiedTitle = useMemo(() => {
@@ -42,7 +45,7 @@ export function Slug() {
 
   const {data: generatedSlugValidated, isFetching: generatedSlugFetching} = useQuery({
     ...slugCheckQuery({slug: slugifiedTitle, check: false}),
-    enabled: !!(((!!title && !isEditing) || (!!title && isDuplicating))),
+    enabled: !!(((!!title && !isEditing) || (!!title && isDuplicating))) && !slug,
     retry: false
   })
 
@@ -72,6 +75,10 @@ export function Slug() {
       })
     }
   },[isSlugCheckError, debouncedSlug])
+
+  useEffect(() => {
+    console.log('slugCheckFetching',slugCheckFetching)
+  },[slugCheckFetching])
 
   useEffect(() => {
     async function validateSlug() {

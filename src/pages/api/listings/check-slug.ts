@@ -5,7 +5,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-const checkSlug = async (slug: string): Promise<boolean> => {
+export const checkSlug = async (slug: string): Promise<boolean> => {
   try {
     const existingBounty = await prisma.bounties.findFirst({ where: { slug } });
     return Boolean(existingBounty);
@@ -15,7 +15,7 @@ const checkSlug = async (slug: string): Promise<boolean> => {
   }
 };
 
-const generateUniqueSlug = async (title: string): Promise<string> => {
+export const generateUniqueSlug = async (title: string): Promise<string> => {
   let slug = slugify(title, { lower: true, strict: true });
   let slugExists = await checkSlug(slug);
   let i = 1;

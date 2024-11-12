@@ -11,8 +11,8 @@ import { GeoLock, Visibility } from ".."
 import { Separator } from "@/components/ui/separator"
 import { Slug } from "./Slug"
 import { Foundation } from "./Foundation"
-import { useAtom } from "jotai"
-import { isGodAtom, isSTAtom } from "@/features/listing-builder/atoms"
+import { useAtom, useAtomValue } from "jotai"
+import { isDraftSavingAtom, isGodAtom, isSTAtom } from "@/features/listing-builder/atoms"
 import { ExternalLink } from "lucide-react"
 import { useListingForm } from "@/features/listing-builder/hooks"
 import { useState } from "react"
@@ -21,11 +21,19 @@ export function PrePublish() {
   const isST = useAtom(isSTAtom)
   const form = useListingForm()
   const [open, isOpen] = useState(false)
+
+  const isDraftSaving = useAtomValue(isDraftSavingAtom)
+
   return (
     <Dialog open={open} onOpenChange={isOpen}>
-      <Button onClick={async () => {
-        if(await form.validateBasics()) isOpen(true)
-      }}>Continue</Button>
+      <Button
+        disabled={isDraftSaving}
+        onClick={async () => {
+          if(await form.validateBasics()) isOpen(true)
+        }}
+      >
+        Continue
+      </Button>
       <DialogContent className="sm:max-w-[500px]  py-4" >
         <DialogHeader className=''>
           <DialogTitle className='text-md '>Few more things to consider:</DialogTitle>
@@ -47,6 +55,7 @@ export function PrePublish() {
                 form.submitListing()
               }
             }}
+            disabled={isDraftSaving}
           >
             Publish</Button>
         </DialogFooter>

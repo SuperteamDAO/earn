@@ -7,6 +7,7 @@ import { safeStringify } from "@/utils/safeStringify";
 import { Prisma } from "@prisma/client";
 import { franc } from "franc";
 import { NextApiResponse } from "next";
+import { checkSlug, generateUniqueSlug } from "./check-slug";
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   try {
@@ -52,9 +53,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const cleanedSkills = skills ? cleanSkills(skills) : undefined;
 
+    let reTitle = title || 'Untitled Draft';
+    const uniqueSlug = id ? slug : slug ? await generateUniqueSlug(slug) :await generateUniqueSlug(reTitle)
     const data: Prisma.BountiesUncheckedCreateInput = {
-      title: title || 'Untitled Draft',
-      slug: `${slug}-${Date.now()}` || `draft-${Date.now()}`,
+      title: reTitle,
+      slug: uniqueSlug || `untitled-draft-${Date.now()}`, // by frontend logic, should never reach untitle slug
       description,
       deadline: deadline ? new Date(deadline) : undefined,
       pocSocials,

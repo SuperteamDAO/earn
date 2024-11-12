@@ -1,14 +1,24 @@
 import { useForm, useFormContext, UseFormReturn } from "react-hook-form";
 import { createListingRefinements, ListingFormData } from "../types";
-import { useAtom, useAtomValue } from "jotai";
-import { formSchemaAtom, isDuplicatingAtom, isEditingAtom, isGodAtom, isSTAtom, saveDraftMutationAtom, submitListingMutationAtom } from "../atoms";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { formSchemaAtom, isDraftSavingAtom, isDuplicatingAtom, isEditingAtom, isGodAtom, isSTAtom, saveDraftMutationAtom, submitListingMutationAtom } from "../atoms";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import debounce from "lodash.debounce";
 
+interface SaveQueueState {
+  isProcessing: boolean;
+  shouldProcessNext: boolean;
+  id?: string;
+}
+const queueRef: SaveQueueState = {
+  isProcessing: false,
+  shouldProcessNext: false
+};
+
 interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
-  onChange: () => Promise<void>;
+  onChange: () => void;
   submitListing: () => Promise<void>;
   resetForm: () => void;
   validateRewards: () => Promise<boolean>
@@ -39,49 +49,62 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
 
   const saveDraftMutation = useAtomValue(saveDraftMutationAtom);
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
+  const setDraftSaving = useSetAtom(isDraftSavingAtom)
 
-  const saveDraft = useCallback(async (formData: ListingFormData) => {
+  const processSaveQueue = async () => {
+    setDraftSaving(true)
+    if (queueRef.isProcessing) {
+      queueRef.shouldProcessNext = true;
+      return;
+    }
+
+    queueRef.isProcessing = true;
+    queueRef.shouldProcessNext = false;
+
     try {
-      console.log('main save draft')
-      const data = await saveDraftMutation.mutateAsync(formData);
-      console.log('draft data - ', data)
-      formMethods.setValue('id', data.id)
-      // await (
-      //   new Promise((resolve) => 
-      //     setTimeout(() => resolve("Done!"), 2000)
-      //   )
-      // )
+      const dataToSave = getValues();
+      const data = await saveDraftMutation.mutateAsync({
+        ...dataToSave,
+        id: queueRef.id,
+      });
+      console.log('before save',dataToSave)
+      console.log('data',data)
+      
+      formMethods.setValue('id', data.id);
+      if(!dataToSave.slug) formMethods.setValue('slug', data.slug);
+      queueRef.id = data.id;
+
     } catch (error) {
       console.error('Error saving draft:', error);
+    } finally {
+      queueRef.isProcessing = false;
+      
+      setDraftSaving(false)
+      // Check if we need to process another save
+      if (queueRef.shouldProcessNext) {
+        // Use setTimeout to break the call stack and ensure queue state is updated
+        setTimeout(() => {
+          void processSaveQueue();
+        }, 0);
+      }
     }
-  }, [getValues, saveDraftMutation]);
-
-  const isSavingRef = useRef(false);
-
-  const deboncedDraftSave = useMemo(
-    () =>
-      debounce(async (formData: ListingFormData) => {
-        console.log('call debounce draft')
-        console.log('isSaving', isSavingRef.current)
-        if (isSavingRef.current) return;
-        isSavingRef.current = true;
-        try {
-          await saveDraft(formData);
-        } finally {
-          isSavingRef.current = false;
-        }
-      }, 2000),
-    [saveDraft]
-  );
-
-  
-  const onChange = async () => {
-    const data = getValues();
-    try {
-      console.log('call onchange')
-      deboncedDraftSave(data);
-    } catch (e) {}
   };
+
+  // Create the debounced function ref that persists across renders
+  const debouncedSaveRef = useRef<ReturnType<typeof debounce>>();
+  
+  // Initialize the debounced function once
+  useEffect(() => {
+    debouncedSaveRef.current = debounce(() => {
+    console.log('debounce')
+      void processSaveQueue();
+    }, 1000);
+  }, []); // Empty dependency array - only create once
+
+  const onChange = useCallback(() => {
+    setDraftSaving(true)
+    debouncedSaveRef.current?.();
+  }, []);
 
   const submitListing = useCallback(async () => {
     const formData = getValues();
@@ -178,16 +201,12 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
     }
   }, [isNewFormInitialized]);
 
-  useEffect(() => {
-    console.log('form is dirty', formMethods.formState.isDirty)
-  },[formMethods])
-
   return {
     ...formMethods,
     onChange,
     submitListing,
     resetForm,
     validateRewards,
-    validateBasics
+    validateBasics,
   };
 };

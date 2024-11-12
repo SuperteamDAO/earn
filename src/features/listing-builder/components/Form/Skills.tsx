@@ -28,6 +28,7 @@ export function Skills() {
                 onChange={(e) => {
                   field.onChange(e)
                   form.onChange()
+                  form.trigger('skills')
                 }}
               />
             </FormControl>

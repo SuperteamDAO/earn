@@ -158,9 +158,13 @@ export function Templates() {
                           posthog.capture('template_sponsor');
                           console.log('template', template)
                           const id = form.getValues().id
-                          form.reset(template as any)
-                          form.setValue('templateId', template.id)
-                          form.setValue('id', id)
+                          const slug = form.getValues().slug
+                          form.reset({
+                            ...template as any,
+                            id,
+                            slug,
+                            templateId: template.id
+                          })
                           form.onChange()
                         }}
                       >

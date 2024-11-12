@@ -21,10 +21,10 @@ import {
   QuestionBuilder,
   Template,
 } from './ListingBuilder';
-import { ListingSuccessModal } from './ListingSuccessModal';
-import { PreviewListingModal } from './PreviewListingModal';
+import { ListingSuccessModal } from '../components/Modals/ListingSuccessModal';
+import { PreviewListingModal } from '../components/Modals/PreviewListingModal';
 import { hackathonSponsorAtom } from '../../sponsor-dashboard/components/SelectSponsor';
-import { UnderVerificationModal } from './UnderVerficationModal';
+import { UnderVerificationModal } from '../components/Modals/UnderVerficationModal';
 
 interface Props {
   listing?: Listing;

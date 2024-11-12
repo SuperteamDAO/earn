@@ -35,12 +35,12 @@ function ListingBuilder({defaultListing}: {defaultListing: ListingFormData}) {
   const isEditing = useAtomValue(isEditingAtom);
   const form = useListingForm(isEditing ? listing ?? defaultListing : defaultListing)
 
-  // const preventEnterKeySubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {
-  //   const target = e.target;
-  //   if (e.key === "Enter" && target instanceof HTMLInputElement) {
-  //     e.preventDefault();
-  //   }
-  // };
+  const preventEnterKeySubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    const target = e.target;
+    if (e.key === "Enter" && target instanceof HTMLInputElement) {
+      e.preventDefault();
+    }
+  };
 
   useEffect(() => {
     console.log('form errors', form.formState.errors)
@@ -51,8 +51,10 @@ function ListingBuilder({defaultListing}: {defaultListing: ListingFormData}) {
   return (
     <>
       <Form {...form} >
-        <form 
-          // onKeyDown={preventEnterKeySubmission}
+        <form onSubmit={(e) => {
+          e.preventDefault()
+        }} 
+          onKeyDown={preventEnterKeySubmission}
           onChange={form.onChange}
         >
           <ListingBuilderLayout>

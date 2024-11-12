@@ -9,6 +9,9 @@ import {StatusBadge} from "./StatusBadge";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Eye } from "lucide-react";
 import { PrePublish } from "../Form/PrePublish";
+import { useListingForm } from "../../hooks";
+import { useAtomValue } from "jotai";
+import { isDraftSavingAtom } from "../../atoms";
 
 const UserMenu = dynamic(() =>
   import('@/features/navbar').then((mod) => mod.UserMenu)
@@ -17,6 +20,7 @@ const UserMenu = dynamic(() =>
 export function Header() {
   const { data: session, status } = useSession();
   const posthog = usePostHog();
+  const isDraftSaving = useAtomValue(isDraftSavingAtom)
 
   return (
     <div className="hidden border-b bg-background lg:block">
@@ -57,7 +61,9 @@ export function Header() {
             <>
               <StatusBadge />
               <p className='text-sm text-slate-400 font-medium'>auto saved</p>
-              <Button variant='outline' className='text-slate-400'>
+              <Button variant='outline' className='text-slate-400'
+                disabled={isDraftSaving}
+              >
                 <Eye />
                 Preview
               </Button>
