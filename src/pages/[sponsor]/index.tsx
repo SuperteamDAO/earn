@@ -180,7 +180,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
       </Flex>
 
       <Box w={'100%'} bg="white">
-        <Box maxW="5xl" mx="auto" px={4}>
+        <Box maxW="5xl" mx="auto" px={4} pb={20}>
           <ListingTabs
             bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}
