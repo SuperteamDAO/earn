@@ -51,7 +51,10 @@ export const SubmissionActionButton = ({
 
   const isAuthenticated = authStatus === 'authenticated';
 
-  const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
+  const isUserEligibleByRegion = userRegionEligibilty({
+    region,
+    userLocation: user?.location,
+  });
 
   const { data: submissionStatus, isLoading: isUserSubmissionLoading } =
     useQuery({

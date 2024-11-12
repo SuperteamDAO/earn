@@ -1,19 +1,12 @@
 import {
-  Box,
   Button,
-  Checkbox,
   Drawer,
   DrawerCloseButton,
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
   Flex,
-  FormControl,
-  FormLabel,
   Image,
-  Input,
-  InputGroup,
-  InputLeftAddon,
   Link,
   Text,
   VStack,
@@ -28,11 +21,18 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
 
-import RichTextInputWithHelper from '@/components/Form/RichTextInput';
+import { RichEditor } from '@/components/shared/RichEditor';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
-  TextAreaWithCounter,
-  TextInputWithHelper,
-} from '@/components/Form/TextAreaHelpers';
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { tokenList } from '@/constants';
 import { useUser } from '@/store/user';
 
@@ -79,15 +79,9 @@ export const SubmissionDrawer = ({
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-    setValue,
-  } = useForm<FormData>({
+  const [termsAccepted, setTermsAccepted] = useState(false);
+
+  const form = useForm<FormData>({
     resolver: zodResolver(
       submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0),
     ),
@@ -114,21 +108,15 @@ export const SubmissionDrawer = ({
             params: { id },
           });
 
-          const {
-            link: applicationLink,
-            tweet,
-            otherInfo,
-            eligibilityAnswers,
-            ask,
-          } = response.data;
+          const { link, tweet, otherInfo, eligibilityAnswers, ask } =
+            response.data;
 
-          reset({
-            applicationLink,
+          form.reset({
+            link,
             tweet,
             otherInfo,
             ask,
             eligibilityAnswers,
-            publicKey: user?.publicKey,
           });
         } catch (error) {
           console.error('Failed to fetch submission data', error);
@@ -138,13 +126,9 @@ export const SubmissionDrawer = ({
     };
 
     fetchData();
-  }, [id, editMode, reset]);
+  }, [id, editMode, form.reset]);
 
-  useEffect(() => {
-    if (user?.publicKey) setValue('publicKey', user?.publicKey);
-  }, [user, setValue]);
-
-  const submitSubmissions = async (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     posthog.capture('confirmed_submission');
     setIsLoading(true);
     try {
@@ -154,11 +138,11 @@ export const SubmissionDrawer = ({
 
       await axios.post(submissionEndpoint, {
         listingId: id,
-        link: data.applicationLink || '',
+        link: data.link || '',
         tweet: data.tweet || '',
         otherInfo: data.otherInfo || '',
         ask: data.ask || null,
-        eligibilityAnswers: data.eligibilityAnswers || null,
+        eligibilityAnswers: data.eligibilityAnswers || [],
       });
 
       const hideEasterEggFromSponsorIds = [
@@ -174,7 +158,7 @@ export const SubmissionDrawer = ({
         showEasterEgg();
       if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
 
-      reset();
+      form.reset();
       await queryClient.invalidateQueries({
         queryKey: userSubmissionQuery(id!, user!.id).queryKey,
       });
@@ -260,211 +244,264 @@ export const SubmissionDrawer = ({
           h="100vh"
           px={{ base: 2, md: 6 }}
         >
-          <form
-            style={{ width: '100%' }}
-            onSubmit={handleSubmit(
-              (data) => {
-                submitSubmissions(data);
-              },
-              (errors) => {
-                console.log(errors);
-                const firstError = Object.values(errors)[0];
-                if (firstError) {
-                  toast.error(firstError.message);
-                }
-              },
-            )}
-          >
-            <Flex
-              direction={'column'}
-              overflowY="auto"
-              h={'calc(100vh - 210px)'}
-              p={4}
-              borderWidth="1px"
-              borderColor="brand.slate.200"
-              borderRadius={'0.5rem'}
-              shadow="0px 1px 3px rgba(0, 0, 0, 0.08), 0px 1px 2px rgba(0, 0, 0, 0.06)"
-              css={{
-                '&::-webkit-scrollbar': {
-                  width: '4px',
-                },
-                '&::-webkit-scrollbar-track': {
-                  width: '6px',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  background: '#cbd5e1',
-                  borderRadius: '30px',
-                },
-              }}
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              style={{ width: '100%' }}
             >
-              <VStack gap={4} mb={5}>
-                {!isProject && (
-                  <>
-                    <TextAreaWithCounter
-                      id="applicationLink"
-                      label="Link to Your Submission"
-                      helperText="Make sure this link is accessible by everyone!"
-                      placeholder="Add a link"
-                      register={register}
-                      watch={watch}
-                      maxLength={500}
-                      errors={errors}
-                      isRequired
-                    />
-                    <TextAreaWithCounter
-                      id="tweet"
-                      label="Tweet Link"
-                      helperText="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
-                      placeholder="Add a tweet's link"
-                      register={register}
-                      watch={watch}
-                      maxLength={500}
-                      errors={errors}
-                    />
-                  </>
-                )}
-                {eligibility?.map((e, index) => (
-                  <Box key={e.order} w="full">
-                    <RichTextInputWithHelper
-                      control={control}
-                      label={e?.question}
-                      id={`eligibilityAnswers.${index}.answer`}
-                      isRequired
-                    />
-                  </Box>
-                ))}
-                {compensationType !== 'fixed' && (
-                  <FormControl isRequired>
-                    <FormLabel
-                      mb={1}
-                      color={'brand.slate.600'}
-                      fontWeight={600}
-                      htmlFor={'ask'}
-                    >
-                      What&apos;s the compensation you require to complete this
-                      fully?
-                    </FormLabel>
-                    <InputGroup>
-                      <InputLeftAddon>
-                        <Image
-                          w={4}
-                          h={4}
-                          alt={'green doller'}
-                          rounded={'full'}
-                          src={
-                            tokenList.filter((e) => e?.tokenSymbol === token)[0]
-                              ?.icon ?? '/assets/icons/green-dollar.svg'
-                          }
-                        />
-                        <Text ml={2} color="brand.slate.500" fontWeight={500}>
-                          {token}
-                        </Text>
-                      </InputLeftAddon>
-                      <Input
-                        borderColor="brand.slate.300"
-                        focusBorderColor="brand.purple"
-                        id="ask"
-                        {...register('ask', { valueAsNumber: true })}
-                        type="number"
-                      />
-                    </InputGroup>
-                  </FormControl>
-                )}
-                <RichTextInputWithHelper
-                  control={control}
-                  label="Anything Else?"
-                  id={`otherInfo`}
-                  helperText="If you have any other links or information you'd like to share with us, please add them here!"
-                  placeholder="Add info or link"
-                />
-
-                <TextInputWithHelper
-                  id="publicKey"
-                  label="Your Solana Wallet Address"
-                  helperText={
+              <Flex
+                direction={'column'}
+                overflowY="auto"
+                h={'calc(100vh - 250px)'}
+                p={4}
+                borderWidth="1px"
+                borderColor="brand.slate.200"
+                borderRadius={'0.5rem'}
+                shadow="0px 1px 3px rgba(0, 0, 0, 0.08), 0px 1px 2px rgba(0, 0, 0, 0.06)"
+                css={{
+                  '&::-webkit-scrollbar': {
+                    width: '4px',
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    width: '6px',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: '#cbd5e1',
+                    borderRadius: '30px',
+                  },
+                }}
+              >
+                <VStack gap={4} mb={5}>
+                  {!isProject && (
                     <>
+                      <FormField
+                        control={form.control}
+                        name="link"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel isRequired>
+                              Link to Your Submission
+                            </FormLabel>
+                            <FormDescription>
+                              Make sure this link is accessible by everyone!
+                            </FormDescription>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                maxLength={500}
+                                placeholder="Add a link"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="tweet"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Tweet Link</FormLabel>
+                            <FormDescription>
+                              This helps sponsors discover (and maybe repost)
+                              your work on Twitter!
+                            </FormDescription>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                maxLength={500}
+                                placeholder="Add a tweet's link"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
+                  )}
+                  {eligibility?.map((e, index) => (
+                    <FormField
+                      key={e.order}
+                      control={form.control}
+                      name={`eligibilityAnswers.${index}.answer`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel isRequired>{e?.question}</FormLabel>
+                          <FormControl>
+                            <RichEditor
+                              id={`eligibility-${index}`}
+                              value={field.value}
+                              onChange={field.onChange}
+                              error={false}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  ))}
+                  {compensationType !== 'fixed' && (
+                    <FormField
+                      control={form.control}
+                      name="ask"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel isRequired>
+                            What&apos;s the compensation you require to complete
+                            this fully?
+                          </FormLabel>
+                          <FormControl>
+                            <div className="flex">
+                              <div className="mt-2 flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted pl-3 pr-5">
+                                <Image
+                                  className="h-4 w-4 rounded-full"
+                                  alt="green dollar"
+                                  src={
+                                    tokenList.filter(
+                                      (e) => e?.tokenSymbol === token,
+                                    )[0]?.icon ??
+                                    '/assets/icons/green-dollar.svg'
+                                  }
+                                />
+                                <p className="font-medium text-slate-500">
+                                  {token}
+                                </p>
+                              </div>
+                              <Input
+                                className="rounded-l-none"
+                                {...field}
+                                type="number"
+                                value={field.value ?? ''}
+                                onChange={(e) => {
+                                  const value =
+                                    e.target.value === ''
+                                      ? null
+                                      : Number(e.target.value);
+                                  field.onChange(value);
+                                }}
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                  <FormField
+                    control={form.control}
+                    name="otherInfo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Anything Else?</FormLabel>
+                        <FormDescription>
+                          If you have any other links...
+                        </FormDescription>
+                        <FormControl>
+                          <RichEditor
+                            id="otherInfo"
+                            value={field.value || ''}
+                            onChange={field.onChange}
+                            error={false}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormItem>
+                    <FormLabel>Your Solana Wallet Address</FormLabel>
+                    <FormDescription>
                       This is where you will receive your rewards if you win. If
                       you want to edit it,{' '}
-                      <Text as="u">
+                      <span className="underline">
                         <Link
-                          color="blue.600"
+                          className="text-blue-600 hover:text-blue-700"
                           href={`/t/${user?.username}/edit`}
-                          isExternal
+                          rel="noopener noreferrer"
+                          target="_blank"
                         >
                           click here
                         </Link>
-                      </Text>{' '}
-                    </>
-                  }
-                  placeholder="Add your Solana wallet address"
-                  register={register}
-                  errors={errors}
-                  defaultValue={user?.publicKey}
-                  readOnly
-                />
-              </VStack>
-            </Flex>
-            <Flex direction={'column'} w="100%" py={4} bg="white">
-              {isHackathon && !editMode && (
-                <FormControl isRequired>
-                  <Flex align="flex-start">
-                    <Checkbox
-                      mt={1}
-                      mr={2}
-                      _checked={{
-                        '& .chakra-checkbox__control': {
-                          background: 'brand.purple',
-                          borderColor: 'brand.purple',
-                        },
-                      }}
+                      </span>
+                    </FormDescription>
+                    <Input
+                      value={user?.publicKey || ''}
+                      placeholder="Add your Solana wallet address"
+                      className="opacity-50"
+                      readOnly
                     />
-                    <Text
-                      alignSelf="center"
-                      color={'brand.slate.600'}
-                      fontSize={'sm'}
+                  </FormItem>
+                </VStack>
+              </Flex>
+              <Flex
+                direction={'column'}
+                flex={1}
+                w="100%"
+                h="100%"
+                mt="auto"
+                py={4}
+                bg="white"
+              >
+                {isHackathon && !editMode && (
+                  <div className="mb-4 flex items-start space-x-3">
+                    <Checkbox
+                      id="terms"
+                      className="mt-1 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                      checked={termsAccepted}
+                      onCheckedChange={(checked) =>
+                        setTermsAccepted(checked as boolean)
+                      }
+                    />
+                    <label
+                      htmlFor="terms"
+                      className="text-sm leading-none text-slate-600"
                     >
                       I confirm that I have reviewed the scope of this track and
                       that my submission adheres to the specified requirements.
                       Submitting a project that does not meet the submission
                       requirements, including potential spam, may result in
                       restrictions on future submissions.
-                    </Text>
-                  </Flex>
-                </FormControl>
-              )}
-              <Button
-                className="ph-no-capture"
-                w={'full'}
-                isDisabled={
-                  isTemplate || (!listing.isPublished && !!query['preview'])
-                }
-                isLoading={!!isLoading}
-                loadingText="Submitting..."
-                type="submit"
-                variant="solid"
-              >
-                {!isProject ? 'Submit' : 'Apply'}
-              </Button>
-              <Text
-                mt={2}
-                color="brand.slate.400"
-                fontSize="sm"
-                textAlign="center"
-              >
-                By submitting/applying to this listing, you agree to our{' '}
-                <Link
-                  textDecoration={'underline'}
-                  onClick={() => setIsTOSModalOpen(true)}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  textUnderlineOffset={2}
+                    </label>
+                  </div>
+                )}
+
+                <Button
+                  className="ph-no-capture"
+                  w={'full'}
+                  isDisabled={
+                    isTemplate ||
+                    (!listing.isPublished && !!query['preview']) ||
+                    (isHackathon && !editMode && !termsAccepted)
+                  }
+                  isLoading={!!isLoading}
+                  loadingText="Submitting..."
+                  type="submit"
+                  variant="solid"
                 >
-                  Terms of Use
-                </Link>
-                .
-              </Text>
-            </Flex>
-          </form>
+                  {!isProject ? 'Submit' : 'Apply'}
+                </Button>
+                <Text
+                  mt={2}
+                  color="brand.slate.400"
+                  fontSize="sm"
+                  textAlign="center"
+                >
+                  By submitting/applying to this listing, you agree to our{' '}
+                  <Link
+                    textDecoration={'underline'}
+                    onClick={() => setIsTOSModalOpen(true)}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    textUnderlineOffset={2}
+                  >
+                    Terms of Use
+                  </Link>
+                  .
+                </Text>
+              </Flex>
+            </form>
+          </Form>
           {listing?.sponsor?.name && (
             <SubmissionTerms
               entityName={listing.sponsor.entityName}

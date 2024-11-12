@@ -110,6 +110,17 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           const parsedAmount = data[k]?.approvedAmount
             ? parseInt(data[k]?.approvedAmount + '', 10)
             : 0;
+
+          if (!currentApplicant.grant.maxReward) {
+            throw new Error(
+              `Grant ${currentApplicant.grantId} has no maximum reward limit set`,
+            );
+          }
+          if (parsedAmount > currentApplicant.grant.maxReward) {
+            throw new Error(
+              `Approved amount ${parsedAmount} exceeds maximum reward limit of ${currentApplicant.grant.maxReward} for application ${currentApplicant.id}`,
+            );
+          }
           const tokenUSDValue = await fetchTokenUSDValue(
             currentApplicant.grant.token!,
           );
@@ -182,21 +193,25 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         });
       });
     } else {
-      const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
-      const url = airtableUrl(
-        process.env.AIRTABLE_GRANTS_BASE_ID!,
-        process.env.AIRTABLE_GRANTS_TABLE_NAME!,
-      );
+      try {
+        const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
+        const url = airtableUrl(
+          process.env.AIRTABLE_GRANTS_BASE_ID!,
+          process.env.AIRTABLE_GRANTS_TABLE_NAME!,
+        );
 
-      const airtableData = result.map((r) =>
-        convertGrantApplicationToAirtable(r),
-      );
-      const airtablePayload = airtableUpsert(
-        'earnApplicationId',
-        airtableData.map((a) => ({ fields: a })),
-      );
+        const airtableData = result.map((r) =>
+          convertGrantApplicationToAirtable(r),
+        );
+        const airtablePayload = airtableUpsert(
+          'earnApplicationId',
+          airtableData.map((a) => ({ fields: a })),
+        );
 
-      await axios.patch(url, JSON.stringify(airtablePayload), config);
+        await axios.patch(url, JSON.stringify(airtablePayload), config);
+      } catch (err) {
+        logger.error('Error syncing with Airtable', err);
+      }
     }
 
     return res.status(200).json(result);

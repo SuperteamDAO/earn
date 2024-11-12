@@ -44,10 +44,15 @@ export const getRegionTooltipLabel = (
   }
 };
 
-export function userRegionEligibilty(
-  region: string | undefined,
-  userLocation: string | undefined,
-) {
+export function userRegionEligibilty({
+  region,
+  userLocation,
+}: {
+  region: string | undefined;
+  userLocation: string | undefined;
+}) {
+  console.log(region, userLocation);
+
   if (region === 'GLOBAL') {
     return true;
   }

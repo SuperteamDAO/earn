@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Flex,
   FormControl,
@@ -11,6 +10,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useState } from 'react';
@@ -18,6 +18,11 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import {
+  type UserSponsorDetails,
+  userSponsorDetailsSchema,
+} from '@/features/sponsor';
 import { useUsernameValidation } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
@@ -30,12 +35,13 @@ export const SponsorInfoModal = ({
   onClose: () => void;
 }) => {
   const { user, refetchUser } = useUser();
-  const { register, handleSubmit } = useForm({
+  const form = useForm<UserSponsorDetails>({
+    resolver: zodResolver(userSponsorDetailsSchema),
     defaultValues: {
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      username: user?.username ?? '',
-      photo: user?.photo,
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      username: user?.username || '',
+      photo: user?.photo || '',
     },
   });
   const [imageUrl, setImageUrl] = useState<string>('');
@@ -44,11 +50,15 @@ export const SponsorInfoModal = ({
     user?.photo?.includes('googleusercontent.com') || false,
   );
 
-  const { setUsername, isInvalid, validationErrorMessage, username } =
-    useUsernameValidation();
+  const {
+    setUsername,
+    isInvalid: isUsernameInvalid,
+    validationErrorMessage: usernameValidationError,
+    username,
+  } = useUsernameValidation();
 
   const updateUserMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: UserSponsorDetails) => {
       const response = await axios.post(
         '/api/sponsors/usersponsor-details/',
         data,
@@ -66,10 +76,9 @@ export const SponsorInfoModal = ({
     },
   });
 
-  const onSubmit = (data: any) => {
-    if (isInvalid) {
-      return;
-    }
+  const onSubmit = (data: UserSponsorDetails) => {
+    if (isUsernameInvalid) return;
+
     const finalData = {
       ...data,
       photo: isGooglePhoto ? user?.photo : imageUrl,
@@ -90,113 +99,101 @@ export const SponsorInfoModal = ({
         <Text mb={3} color="brand.slate.600" fontSize={'2xl'} fontWeight={600}>
           Complete Your Profile
         </Text>
-        <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
-          <FormControl w="full" isRequired>
-            <Box w={'full'} mb={'1.25rem'}>
-              <FormLabel color={'brand.slate.500'}>Username</FormLabel>
-              <Input
-                color={'gray.800'}
-                borderColor="brand.slate.300"
-                _placeholder={{
-                  color: 'brand.slate.400',
-                }}
-                focusBorderColor="brand.purple"
-                id="username"
-                placeholder="Username"
-                {...register('username', { required: true })}
-                isInvalid={isInvalid}
-                onChange={(e) => setUsername(e.target.value)}
-                value={username}
-              />
-              {isInvalid && (
-                <Text color={'red'} fontSize={'sm'}>
-                  {validationErrorMessage}
-                </Text>
+        <Form {...form}>
+          <form
+            style={{ width: '100%' }}
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Username"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        setUsername(e.target.value);
+                      }}
+                      value={username}
+                    />
+                  </FormControl>
+                  {isUsernameInvalid && (
+                    <p className="text-sm text-red-500">
+                      {usernameValidationError}
+                    </p>
+                  )}
+                  <FormMessage />
+                </FormItem>
               )}
-            </Box>
+            />
 
             <Flex justify="space-between" gap={8} w={'full'} mb={'1.25rem'}>
-              <Box w="full">
-                <FormLabel color={'brand.slate.500'}>First Name</FormLabel>
-                <Input
-                  color={'gray.800'}
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.400',
-                  }}
-                  focusBorderColor="brand.purple"
-                  id="firstName"
-                  placeholder="First Name"
-                  {...register('firstName', { required: true })}
-                />
-              </Box>
-              <Box w="full">
-                <FormLabel color={'brand.slate.500'}>Last Name</FormLabel>
-                <Input
-                  color={'gray.800'}
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.400',
-                  }}
-                  focusBorderColor="brand.purple"
-                  id="lastName"
-                  placeholder="Last Name"
-                  {...register('lastName', { required: true })}
-                />
-              </Box>
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="First Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Last Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </Flex>
 
             <VStack align={'start'} gap={2} rowGap={'0'} my={3} mb={'25px'}>
+              <FormLabel>Profile Picture</FormLabel>
               {user?.photo ? (
-                <>
-                  <FormLabel
-                    mb={'0'}
-                    pb={'0'}
-                    color={'brand.slate.500'}
-                    requiredIndicator={<></>}
-                  >
-                    Profile Picture
-                  </FormLabel>
-                  <Box w="full" mt={1}>
-                    <ImagePicker
-                      defaultValue={{ url: user.photo }}
-                      onChange={async (e) => {
-                        setUploading(true);
-                        const a = await uploadToCloudinary(e, 'earn-pfp');
-                        setIsGooglePhoto(false);
-                        setImageUrl(a);
-                        setUploading(false);
-                      }}
-                      onReset={() => {
-                        setImageUrl('');
-                        setUploading(false);
-                      }}
-                    />
-                  </Box>
-                </>
+                <ImagePicker
+                  defaultValue={{ url: user.photo }}
+                  onChange={async (e) => {
+                    setUploading(true);
+                    const url = await uploadToCloudinary(e, 'earn-pfp');
+                    setIsGooglePhoto(false);
+                    setImageUrl(url);
+                    form.setValue('photo', url);
+                    setUploading(false);
+                  }}
+                  onReset={() => {
+                    setImageUrl('');
+                    form.setValue('photo', '');
+                    setUploading(false);
+                  }}
+                />
               ) : (
-                <>
-                  <FormLabel
-                    mb={'0'}
-                    pb={'0'}
-                    color={'brand.slate.500'}
-                    requiredIndicator={<></>}
-                  >
-                    Profile Picture
-                  </FormLabel>
-                  <ImagePicker
-                    onChange={async (e) => {
-                      setUploading(true);
-                      const a = await uploadToCloudinary(e, 'earn-pfp');
-                      setImageUrl(a);
-                      setUploading(false);
-                    }}
-                    onReset={() => {
-                      setImageUrl('');
-                      setUploading(false);
-                    }}
-                  />
-                </>
+                <ImagePicker
+                  onChange={async (e) => {
+                    setUploading(true);
+                    const url = await uploadToCloudinary(e, 'earn-pfp');
+                    setImageUrl(url);
+                    form.setValue('photo', url);
+                    setUploading(false);
+                  }}
+                  onReset={() => {
+                    setImageUrl('');
+                    form.setValue('photo', '');
+                    setUploading(false);
+                  }}
+                />
               )}
             </VStack>
 
@@ -209,8 +206,8 @@ export const SponsorInfoModal = ({
             >
               Submit
             </Button>
-          </FormControl>
-        </form>
+          </form>
+        </Form>
       </ModalContent>
     </Modal>
   );
