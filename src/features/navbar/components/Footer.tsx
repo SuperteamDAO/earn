@@ -91,6 +91,11 @@ const CountrySelector: React.FC = () => {
     }
   };
 
+  const dropdownCountries =
+    selectedCountry.name !== 'Global'
+      ? [{ name: 'Global', flag: '🌏', code: 'global' }, ...countries]
+      : countries;
+
   return (
     <Popover closeOnBlur={true} closeOnEsc={true}>
       <PopoverTrigger>
@@ -115,7 +120,7 @@ const CountrySelector: React.FC = () => {
       <PopoverContent w="200px">
         <PopoverBody p={0}>
           <Stack gap={0}>
-            {countries.map((country) => (
+            {dropdownCountries.map((country) => (
               <Flex
                 key={country.name}
                 align="center"
