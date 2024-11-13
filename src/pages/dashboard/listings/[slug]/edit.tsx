@@ -1,14 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-// import { CreateListing } from '@/features/listing-builder';
+import {
+  ListingBuilder,
+  type ListingFormData,
+} from '@/features/listing-builder';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard';
-import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
-import { ListingBuilder } from '@/features/listing-builder';
 
 interface Props {
   slug: string;
@@ -23,7 +24,7 @@ function EditBounty({ slug }: Props) {
   );
 
   useEffect(() => {
-    console.log('listing', listing)
+    console.log('listing', listing);
     if (listing) {
       if (listing.sponsorId !== user?.currentSponsorId) {
         router.push('/dashboard/listings');
@@ -37,8 +38,11 @@ function EditBounty({ slug }: Props) {
       {isLoading ? (
         <LoadingSection />
       ) : listing ? (
-          <>
-            <ListingBuilder listing={listing} isEditing={!!listing.publishedAt} />
+        <>
+          <ListingBuilder
+            listing={listing as unknown as ListingFormData}
+            isEditing={!!listing.publishedAt}
+          />
         </>
       ) : (
         <div>Error loading bounty details.</div>

@@ -4,9 +4,11 @@ import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-// import { CreateListing } from '@/features/listing-builder';
-import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard'; // Adjust the import path as needed
-import { SponsorLayout } from '@/layouts/Sponsor';
+import {
+  ListingBuilder,
+  type ListingFormData,
+} from '@/features/listing-builder';
+import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard';
 import { useUser } from '@/store/user';
 
 interface Props {
@@ -17,33 +19,40 @@ export default function DuplicateBounty({ slug }: Props) {
   const router = useRouter();
   const { user } = useUser();
 
-  const { data: bounty, isLoading } = useQuery({
+  const { data: listing, isLoading } = useQuery({
     ...sponsorDashboardListingQuery(slug),
     enabled: !!user?.currentSponsorId,
   });
 
   useEffect(() => {
-    if (bounty && bounty.sponsorId !== user?.currentSponsorId) {
+    if (listing && listing.sponsorId !== user?.currentSponsorId) {
       router.push('/dashboard/listings');
     }
-  }, [bounty, user?.currentSponsorId, router]);
+  }, [listing, user?.currentSponsorId, router]);
 
   return (
-    <SponsorLayout>
+    <>
       {isLoading ? (
         <LoadingSection />
-      ) : bounty ? (
-        //<CreateListing
-          //listing={bounty}
-          //editable
-          //isDuplicating
-         // type={bounty.type as 'bounty' | 'project' | 'hackathon'}
-       // />
-       <></>
+      ) : listing ? (
+        <>
+          <ListingBuilder
+            listing={
+              {
+                ...listing,
+                title: listing.title + ' (copy)',
+                slug: '',
+                isPublished: false,
+                publishedAt: null,
+                id: undefined,
+              } as unknown as ListingFormData
+            }
+          />
+        </>
       ) : (
         <div>Error loading bounty details.</div>
       )}
-    </SponsorLayout>
+    </>
   );
 }
 

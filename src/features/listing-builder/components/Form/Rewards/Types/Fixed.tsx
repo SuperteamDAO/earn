@@ -1,41 +1,49 @@
-import {TokenNumberInput} from "../Tokens";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage, useFormField } from "@/components/ui/form";
-import { useListingForm } from "@/features/listing-builder/hooks";
-import { useEffect } from "react";
-import { useWatch } from "react-hook-form";
+import { useEffect } from 'react';
+import { useWatch } from 'react-hook-form';
+
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+
+import { useListingForm } from '../../../../hooks';
+import { TokenNumberInput } from '../Tokens';
 
 export function Fixed() {
-  const form = useListingForm()
+  const form = useListingForm();
 
   const rewards = useWatch({
     control: form.control,
     name: 'rewards',
-  }) ;
+  });
   const type = useWatch({
     control: form.control,
     name: 'type',
-  }) ;
+  });
   useEffect(() => {
-    console.log('rewards', rewards)
-  },[rewards])
+    console.log('rewards', rewards);
+  }, [rewards]);
   useEffect(() => {
-    if(type === 'project') form.setValue('rewardAmount', rewards?.[1])
-  },[type])
+    if (type === 'project') form.setValue('rewardAmount', rewards?.[1]);
+  }, [type]);
   return (
-  <FormField
+    <FormField
       control={form.control}
       name={'rewardAmount'}
-      render={({field}) => (
+      render={({ field }) => (
         <FormItem>
           <FormLabel>Fixed Prize</FormLabel>
           <FormControl>
             <TokenNumberInput
               {...field}
-              placeholder='10,000'
-              className='pr-6'
+              placeholder="10,000"
+              className="pr-6"
               onChange={(e) => {
-                field.onChange(e)
-                form.setValue(`rewards`, {1: e || NaN})
+                field.onChange(e);
+                form.setValue(`rewards`, { 1: e || NaN });
               }}
             />
           </FormControl>
@@ -43,5 +51,5 @@ export function Fixed() {
         </FormItem>
       )}
     />
-  )
+  );
 }

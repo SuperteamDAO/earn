@@ -1,17 +1,17 @@
-import { atom, createStore } from 'jotai';
 import axios from 'axios';
-import { atomWithQuery, atomWithMutation } from 'jotai-tanstack-query';
-import { createListingFormSchema } from '../types/schema';
-import { ListingFormData, ListingStatus } from '../types';
+import { atom, createStore } from 'jotai';
+import { atomWithMutation } from 'jotai-tanstack-query';
 
-const store: ReturnType<typeof createStore> = createStore()
+import { type ListingFormData, type ListingStatus } from '../types';
+import { createListingFormSchema } from '../types/schema';
+
+const store: ReturnType<typeof createStore> = createStore();
 
 const isGodAtom = atom<boolean>(false);
 const isSTAtom = atom<boolean>(false);
 const isEditingAtom = atom<boolean>(false);
-const isDuplicatingAtom = atom<boolean>(false);
 const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
-const isDraftSavingAtom = atom(false)
+const isDraftSavingAtom = atom(false);
 
 interface SaveQueueState {
   isProcessing: boolean;
@@ -20,19 +20,16 @@ interface SaveQueueState {
 }
 const draftQueueAtom = atom<SaveQueueState>({
   isProcessing: false,
-  shouldProcessNext: false
-})
+  shouldProcessNext: false,
+});
 
-const confirmModalAtom = atom<"SUCCESS" | "VERIFICATION" | undefined>(undefined)
-const previewAtom = atom(false)
+const confirmModalAtom = atom<'SUCCESS' | 'VERIFICATION' | undefined>(
+  undefined,
+);
+const previewAtom = atom(false);
 
-const formSchemaAtom = atom((get) => 
-  createListingFormSchema(
-    get(isGodAtom),
-    get(isEditingAtom),
-    get(isDuplicatingAtom),
-    get(isSTAtom)
-  )
+const formSchemaAtom = atom((get) =>
+  createListingFormSchema(get(isGodAtom), get(isEditingAtom), get(isSTAtom)),
 );
 
 const saveDraftMutationAtom = atomWithMutation(() => ({
@@ -42,21 +39,25 @@ const saveDraftMutationAtom = atomWithMutation(() => ({
       ...data,
     });
     return response.data;
-  }
+  },
 }));
 
 const submitListingMutationAtom = atomWithMutation((get) => ({
   mutationKey: ['submitListing'],
   mutationFn: async (data: ListingFormData) => {
-    if(!data.id) throw new Error('Missing ID')
-    const isEditing = get(isEditingAtom) && !get(isDuplicatingAtom);
-    const endpoint = isEditing ? '/api/listings/update' : '/api/listings/publish';
-    const response = await axios.post<ListingFormData>(`${endpoint}/${data.id}`, {
-      ...data,
-      isDuplicating: get(isDuplicatingAtom)
-    });
+    if (!data.id) throw new Error('Missing ID');
+    const isEditing = get(isEditingAtom);
+    const endpoint = isEditing
+      ? '/api/listings/update'
+      : '/api/listings/publish';
+    const response = await axios.post<ListingFormData>(
+      `${endpoint}/${data.id}`,
+      {
+        ...data,
+      },
+    );
     return response.data;
-  }
+  },
 }));
 
 // type ListingResponse = ListingFormData | null;
@@ -76,17 +77,16 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
 // }));
 
 export {
-  store,
+  confirmModalAtom,
+  draftQueueAtom,
+  formSchemaAtom,
+  isDraftSavingAtom,
+  isEditingAtom,
   isGodAtom,
   isSTAtom,
-  isEditingAtom,
-  isDuplicatingAtom,
-  formSchemaAtom,
-  saveDraftMutationAtom,
-  submitListingMutationAtom,
   listingStatusAtom,
-  isDraftSavingAtom,
-  confirmModalAtom,
   previewAtom,
-  draftQueueAtom
+  saveDraftMutationAtom,
+  store,
+  submitListingMutationAtom,
 };

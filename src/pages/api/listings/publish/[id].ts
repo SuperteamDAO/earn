@@ -1,7 +1,12 @@
+import { type Prisma } from '@prisma/client';
 import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
-import { checkListingSponsorAuth, NextApiRequestWithSponsor, withSponsorAuth } from '@/features/auth';
+import {
+  checkListingSponsorAuth,
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
 import { createListingFormSchema } from '@/features/listing-builder';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
@@ -10,14 +15,13 @@ import { cleanSkills } from '@/utils/cleanSkills';
 import { dayjs } from '@/utils/dayjs';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
-import { Prisma } from '@prisma/client';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const id = req.query.id as string;
   const userId = req.userId;
   const userSponsorId = req.userSponsorId;
 
-  if(!userId) {
+  if (!userId) {
     logger.warn('Invalid token: User Id is missing');
     return res.status(400).json({ error: 'Invalid token' });
   }
@@ -39,16 +43,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id: userId as string },
     });
 
-    const { error } = await checkListingSponsorAuth(userSponsorId, id as string);
+    const { error } = await checkListingSponsorAuth(
+      userSponsorId,
+      id as string,
+    );
     if (error) {
       return res.status(error.status).json({ error: error.message });
     }
 
     const listingSchema = createListingFormSchema(
       user?.role === 'GOD',
-      false, 
-      !!req.body.isDuplicating, 
-      sponsor?.st 
+      false,
+      sponsor?.st,
     );
 
     const validatedData = await listingSchema.parseAsync(req.body);
@@ -78,7 +84,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     let isPublished = true;
     let publishedAt;
-    let language = description ? franc(description) : 'eng';
+    const language = description ? franc(description) : 'eng';
     const correctedSkills = cleanSkills(skills);
 
     let isVerifying = false;
@@ -150,7 +156,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
-    const isFndnPaying = sponsor?.st && type !== 'project' ? rawIsFndnPaying : false;
+    const isFndnPaying =
+      sponsor?.st && type !== 'project' ? rawIsFndnPaying : false;
 
     const data: Prisma.BountiesUncheckedCreateInput = {
       sponsorId: userSponsorId,
@@ -186,7 +193,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const result = await prisma.bounties.update({
       where: { id },
       data,
-    })
+    });
 
     if (isVerifying) {
       try {

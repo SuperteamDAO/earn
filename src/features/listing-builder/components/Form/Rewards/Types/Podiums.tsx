@@ -1,13 +1,25 @@
-import { BONUS_REWARD_POSITION, MAX_BONUS_SPOTS, MAX_PODIUMS } from "@/constants";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
-import { TokenNumberInput } from "../Tokens";
-import { getRankLabels } from "@/utils/rank";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useListingForm } from "@/features/listing-builder/hooks";
-import { useWatch } from "react-hook-form";
-import { calculateTotalRewardsForPodium } from "@/features/listing-builder/utils";
+import { Plus, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useWatch } from 'react-hook-form';
+
+import { Button } from '@/components/ui/button';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  BONUS_REWARD_POSITION,
+  MAX_BONUS_SPOTS,
+  MAX_PODIUMS,
+} from '@/constants';
+import { calculateTotalRewardsForPodium } from '@/features/listing-builder';
+import { getRankLabels } from '@/utils/rank';
+
+import { useListingForm } from '../../../../hooks';
+import { TokenNumberInput } from '../Tokens';
 
 export const Podiums = () => {
   const form = useListingForm();
@@ -15,18 +27,19 @@ export const Podiums = () => {
   const rewards = useWatch({
     control: form.control,
     name: 'rewards',
-  }) || {"1": NaN};
+  }) || { '1': NaN };
 
   useEffect(() => {
-    console.log('rewards', rewards)
+    console.log('rewards', rewards);
   }, [rewards]);
 
-  const maxBonusSpots = useWatch({
-    control: form.control,
-    name: 'maxBonusSpots',
-  }) || NaN;
+  const maxBonusSpots =
+    useWatch({
+      control: form.control,
+      name: 'maxBonusSpots',
+    }) || NaN;
   useEffect(() => {
-    console.log('maxBonusSpots', maxBonusSpots)
+    console.log('maxBonusSpots', maxBonusSpots);
   }, [maxBonusSpots]);
 
   useEffect(() => {
@@ -43,27 +56,28 @@ export const Podiums = () => {
   const rewardPositions = useMemo(
     () =>
       Object.keys(rewards)
-      .map(Number)
-      .filter((pos) => pos !== BONUS_REWARD_POSITION)
-      .sort((a, b) => a - b),
-    [rewards]
+        .map(Number)
+        .filter((pos) => pos !== BONUS_REWARD_POSITION)
+        .sort((a, b) => a - b),
+    [rewards],
   );
 
   const updateTotalReward = useCallback(
     (currentRewards: Record<string, number>, maxBonusSpots?: number) => {
-      const totalRewards = calculateTotalRewardsForPodium(currentRewards, maxBonusSpots);
+      const totalRewards = calculateTotalRewardsForPodium(
+        currentRewards,
+        maxBonusSpots,
+      );
 
       form.setValue('rewardAmount', totalRewards, { shouldValidate: true });
-      form.onChange()
+      form.onChange();
     },
-    [form]
+    [form],
   );
 
   const addReward = useCallback(() => {
     const nextPosition =
-      rewardPositions.length > 0
-        ? Math.max(...rewardPositions) + 1
-        : 1;
+      rewardPositions.length > 0 ? Math.max(...rewardPositions) + 1 : 1;
 
     const updatedRewards = {
       ...rewards,
@@ -74,34 +88,41 @@ export const Podiums = () => {
     updateTotalReward(updatedRewards);
   }, [form, rewards, rewardPositions, updateTotalReward]);
 
-
-  const removeReward = useCallback((position: number) => {
+  const removeReward = useCallback(
+    (position: number) => {
+      //eslint-disable-next-line
     const { [position]: removed, ...rest } = rewards;
-    const reindexedRewards = Object.entries(rest).reduce((acc, [key, value]) => {
-      const pos = Number(key);
-      if (pos === BONUS_REWARD_POSITION) return { ...acc, [key]: value };
-      const newPos = pos > position ? pos - 1 : pos;
-      return { ...acc, [newPos]: value };
-    }, {});
+      const reindexedRewards = Object.entries(rest).reduce(
+        (acc, [key, value]) => {
+          const pos = Number(key);
+          if (pos === BONUS_REWARD_POSITION) return { ...acc, [key]: value };
+          const newPos = pos > position ? pos - 1 : pos;
+          return { ...acc, [newPos]: value };
+        },
+        {},
+      );
 
-    form?.setValue("rewards", reindexedRewards);
-    updateTotalReward(reindexedRewards);
-  }, [form, rewards, updateTotalReward]);
+      form?.setValue('rewards', reindexedRewards);
+      updateTotalReward(reindexedRewards);
+    },
+    [form, rewards, updateTotalReward],
+  );
 
   const addBonusReward = useCallback(() => {
     const updatedRewards = {
       ...rewards,
-      [BONUS_REWARD_POSITION]: NaN
+      [BONUS_REWARD_POSITION]: NaN,
     };
-    form?.setValue("rewards", updatedRewards);
-    form?.setValue("maxBonusSpots", undefined);
+    form?.setValue('rewards', updatedRewards);
+    form?.setValue('maxBonusSpots', undefined);
     updateTotalReward(updatedRewards);
   }, [form, rewards, updateTotalReward]);
 
   const removeBonusReward = useCallback(() => {
+    //eslint-disable-next-line
     const { [BONUS_REWARD_POSITION]: removed, ...rest } = rewards;
-    form?.setValue("rewards", rest);
-    form?.setValue("maxBonusSpots", undefined);
+    form?.setValue('rewards', rest);
+    form?.setValue('maxBonusSpots', undefined);
     updateTotalReward(rest);
   }, [form, rewards, updateTotalReward]);
 
@@ -112,36 +133,36 @@ export const Podiums = () => {
         name="rewards"
         render={() => (
           <FormItem>
-            <div className="space-y-4 max-h-[62vh] overflow-y-auto p-4 border rounded-md">
-              {rewardPositions.map((position,index) => (
+            <div className="max-h-[62vh] space-y-4 overflow-y-auto rounded-md border p-4">
+              {rewardPositions.map((position, index) => (
                 <FormField
                   key={position}
                   name={`rewards.${position}`}
-                  render={({field}) => (
-                    <FormItem className="flex flex-col gap-2 relative group">
+                  render={({ field }) => (
+                    <FormItem className="group relative flex flex-col gap-2">
                       <div className="flex justify-between">
                         <FormLabel className="w-24 capitalize">
                           {getRankLabels(position)} Prize
                         </FormLabel>
                       </div>
                       <FormControl>
-                        <div className='relative'>
+                        <div className="relative">
                           <TokenNumberInput
                             {...field}
-                            placeholder={`${5000 - (index * 500)}`} 
-                            className='pr-6'
+                            placeholder={`${5000 - index * 500}`}
+                            className="pr-6"
                             value={rewards[position]}
                             onChange={(value) => {
                               field.onChange(value);
                               const updatedRewards = {
                                 ...rewards,
-                                [position]: value ?? NaN
+                                [position]: value ?? NaN,
                               };
                               updateTotalReward(updatedRewards);
                             }}
                             onBlur={(event) => {
                               // react form hook has a bug where onblur error is not set when only one podium reward is available before adding any value
-                              if(!event.target.value) {
+                              if (!event.target.value) {
                                 form.setError(`rewards.${position}`, {
                                   message: 'Reward amount is required',
                                 });
@@ -149,12 +170,12 @@ export const Podiums = () => {
                             }}
                           />
                           {rewardPositions.length > 1 && (
-                            <Button 
+                            <Button
                               type="button"
                               variant="ghost"
                               size="icon"
                               onClick={() => removeReward(position)}
-                              className="absolute top-0 right-0 hidden group-hover:flex text-muted-foreground hover:text-destructive"
+                              className="absolute right-0 top-0 hidden text-muted-foreground hover:text-destructive group-hover:flex"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -168,29 +189,34 @@ export const Podiums = () => {
               ))}
 
               {rewards[BONUS_REWARD_POSITION] !== undefined && (
-                <div className="flex flex-col gap-2 relative group">
-                  <div className="flex justify-between items-center">
+                <div className="group relative flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
                     <div className="flex-1 space-y-2">
                       <FormField
                         name={`rewards.${BONUS_REWARD_POSITION}`}
-                        render={({field}) => (
+                        render={({ field }) => (
                           <FormItem>
                             <div className="flex justify-between py-1.5">
-                              <FormLabel className="w-24">Bonus Per Prize</FormLabel>
+                              <FormLabel className="w-24">
+                                Bonus Per Prize
+                              </FormLabel>
                             </div>
                             <FormControl>
                               <TokenNumberInput
                                 {...field}
-                                placeholder='10'
-                                className='rounded-r-none relative focus-within:z-10'
+                                placeholder="10"
+                                className="relative rounded-r-none focus-within:z-10"
                                 value={rewards[BONUS_REWARD_POSITION]}
                                 onChange={(value) => {
                                   field.onChange(value);
                                   const updatedRewards = {
                                     ...rewards,
-                                    [BONUS_REWARD_POSITION]: value ?? 0
+                                    [BONUS_REWARD_POSITION]: value ?? 0,
                                   };
-                                  updateTotalReward(updatedRewards, maxBonusSpots);
+                                  updateTotalReward(
+                                    updatedRewards,
+                                    maxBonusSpots,
+                                  );
                                 }}
                               />
                             </FormControl>
@@ -214,17 +240,20 @@ export const Podiums = () => {
                                   max={MAX_BONUS_SPOTS}
                                   onChange={(value) => {
                                     field.onChange(value);
-                                    updateTotalReward(rewards,value || undefined);
+                                    updateTotalReward(
+                                      rewards,
+                                      value || undefined,
+                                    );
                                   }}
                                   hideToken
-                                  className='rounded-l-none relative focus-within:z-10 pr-6'
+                                  className="relative rounded-l-none pr-6 focus-within:z-10"
                                 />
-                                <Button 
+                                <Button
                                   type="button"
                                   variant="ghost"
                                   size="icon"
                                   onClick={removeBonusReward}
-                                  className="absolute top-0 right-0 hidden group-hover:flex text-muted-foreground hover:text-destructive"
+                                  className="absolute right-0 top-0 hidden text-muted-foreground hover:text-destructive group-hover:flex"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -240,7 +269,7 @@ export const Podiums = () => {
                     control={form.control}
                     name={`rewards.${BONUS_REWARD_POSITION}`}
                     render={() => (
-                      <FormItem className="flex flex-col gap-2 relative group">
+                      <FormItem className="group relative flex flex-col gap-2">
                         <FormMessage />
                       </FormItem>
                     )}
@@ -249,7 +278,7 @@ export const Podiums = () => {
                     control={form.control}
                     name="maxBonusSpots"
                     render={() => (
-                      <FormItem className="flex flex-col gap-2 relative group">
+                      <FormItem className="group relative flex flex-col gap-2">
                         <FormMessage />
                       </FormItem>
                     )}
@@ -259,7 +288,7 @@ export const Podiums = () => {
             </div>
 
             <div className="mt-8">
-              <div className="flex gap-2 justify-between">
+              <div className="flex justify-between gap-2">
                 {rewardPositions.length < MAX_PODIUMS && (
                   <Button
                     size="sm"

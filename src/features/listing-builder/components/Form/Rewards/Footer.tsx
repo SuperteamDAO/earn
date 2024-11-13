@@ -1,60 +1,63 @@
-import { Button } from "@/components/ui/button";
-import { calculateTotalPrizes } from "@/features/listing-builder/utils/rewards";
-import { TokenLabel } from "./Tokens";
-import { useListingForm } from "@/features/listing-builder/hooks";
-import { useEffect, useMemo, useState } from "react";
-import { useWatch } from "react-hook-form";
+import { useMemo } from 'react';
+import { useWatch } from 'react-hook-form';
 
-function RewardsFooter({closeSheet}: {closeSheet: () => void}) {
-  const form = useListingForm()
+import { Button } from '@/components/ui/button';
+import { calculateTotalPrizes } from '@/features/listing-builder';
+
+import { useListingForm } from '../../../hooks';
+import { TokenLabel } from './Tokens';
+
+function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
+  const form = useListingForm();
   const type = useWatch({
     control: form.control,
-    name:'type'
-  })
+    name: 'type',
+  });
   const rewards = useWatch({
     control: form.control,
-    name:'rewards'
-  })
+    name: 'rewards',
+  });
   const maxBonusSpots = useWatch({
     control: form.control,
-    name:'maxBonusSpots'
-  })
+    name: 'maxBonusSpots',
+  });
   const rewardAmount = useWatch({
     control: form.control,
-    name:'rewardAmount'
-  })
+    name: 'rewardAmount',
+  });
 
-  const totalPrize = useMemo(() => calculateTotalPrizes(rewards, maxBonusSpots || 0), [type, maxBonusSpots])
+  const totalPrize = useMemo(
+    () => calculateTotalPrizes(rewards, maxBonusSpots || 0),
+    [type, maxBonusSpots],
+  );
 
   return (
-    <div className='w-full space-y-4'>
-      <div className='flex justify-between items-center text-sm font-medium'>
+    <div className="w-full space-y-4">
+      <div className="flex items-center justify-between text-sm font-medium">
         {type !== 'project' ? (
-          <span className='flex gap-2 '>
-            <p className=''>{totalPrize}</p>
-            <p className='text-slate-400'>
+          <span className="flex gap-2">
+            <p className="">{totalPrize}</p>
+            <p className="text-slate-400">
               Total {totalPrize > 1 ? 'Prizes' : 'Prize'}
             </p>
           </span>
         ) : (
-          <p className='text-slate-400'>Total Prize</p>
+          <p className="text-slate-400">Total Prize</p>
         )}
-        <TokenLabel
-          showIcon
-          showSymbol
-          amount={rewardAmount}
-        />
+        <TokenLabel showIcon showSymbol amount={rewardAmount} />
       </div>
-      <Button type='submit' className='w-full'
+      <Button
+        type="submit"
+        className="w-full"
         onClick={async () => {
-          if(await form.validateRewards()) {
-            closeSheet()
+          if (await form.validateRewards()) {
+            closeSheet();
           }
         }}
       >
         Continue
       </Button>
     </div>
-  )
+  );
 }
-export {RewardsFooter as Footer}
+export { RewardsFooter as Footer };

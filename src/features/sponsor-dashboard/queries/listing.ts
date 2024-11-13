@@ -1,12 +1,12 @@
 import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { ListingFormData } from '@/features/listing-builder';
+import { type Listing } from '@/features/listings';
 
 const fetchListing = async (
   slug: string,
   isHackathon?: boolean,
-): Promise<ListingFormData> => {
+): Promise<Listing> => {
   const response = await axios.get(`/api/sponsor-dashboard/${slug}/listing/`, {
     params: { isHackathon },
   });

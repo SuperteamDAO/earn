@@ -8,8 +8,8 @@ import {
   withSponsorAuth,
 } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
-import { isDeadlineOver } from '@/features/listings';
 import { createListingFormSchema } from '@/features/listing-builder';
+import { isDeadlineOver } from '@/features/listings';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -57,7 +57,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   logger.debug(`Request query: ${safeStringify(req.query)}`);
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
-  if(!userId) {
+  if (!userId) {
     logger.warn('Invalid token: User Id is missing');
     return res.status(400).json({ error: 'Invalid token' });
   }
@@ -71,7 +71,10 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const userSponsorId = req.userSponsorId;
     const userId = req.userId;
 
-    const { error, listing } = await checkListingSponsorAuth(userSponsorId, id as string);
+    const { error, listing } = await checkListingSponsorAuth(
+      userSponsorId,
+      id as string,
+    );
     if (error) {
       return res.status(error.status).json({ error: error.message });
     }
@@ -89,9 +92,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const listingSchema = createListingFormSchema(
       user?.role === 'GOD',
       true,
-      !!req.body.isDuplicating, 
-      id as string,
-      sponsor?.st
+      sponsor?.st,
     );
 
     const validatedData = await listingSchema.parseAsync({
@@ -112,19 +113,18 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     } = validatedData;
 
     let { maxBonusSpots } = validatedData;
-    const {status} = listing
-    let {isPublished} = listing
+    const { status } = listing;
+    const { isPublished } = listing;
 
     // Check if listing is editable
     const pastDeadline = isDeadlineOver(listing?.deadline || undefined);
-    if(pastDeadline && user?.role !== 'GOD') {
+    if (pastDeadline && user?.role !== 'GOD') {
       return res.status(400).json({
         message: `Listing is past deadline, hence cannot be edited`,
       });
     }
 
-    if (!listing.isPublished && 
-      req.role !== 'GOD') {
+    if (!listing.isPublished && req.role !== 'GOD') {
       return res.status(400).json({
         message: `Listing is not published, hence cannot be edited`,
       });
@@ -135,8 +135,12 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     // Handle skills update
-    const skillsToUpdate = 'skills' in validatedData ? 
-      (skills ? cleanSkills(skills) : []) : undefined;
+    const skillsToUpdate =
+      'skills' in validatedData
+        ? skills
+          ? cleanSkills(skills)
+          : []
+        : undefined;
 
     // Handle winners count update
     const newRewardsCount = Object.keys(rewards || {}).length;
@@ -144,12 +148,18 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ? listing.totalWinnersSelected - (maxBonusSpots ?? 0)
       : 0;
 
-    let totalWinnersSelected = 0
+    let totalWinnersSelected = 0;
     if (newRewardsCount < currentTotalWinners) {
       totalWinnersSelected = newRewardsCount;
 
-      for (let position = newRewardsCount + 1; position <= currentTotalWinners; position++) {
-        logger.debug(`Resetting winner position: ${position} for listing ID: ${id}`);
+      for (
+        let position = newRewardsCount + 1;
+        position <= currentTotalWinners;
+        position++
+      ) {
+        logger.debug(
+          `Resetting winner position: ${position} for listing ID: ${id}`,
+        );
         await prisma.submission.updateMany({
           where: {
             listingId: id as string,
@@ -192,7 +202,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     // Handle verification status
-    let isVerifying = listing.status === 'VERIFYING';
+    const isVerifying = listing.status === 'VERIFYING';
 
     // Calculate USD value
     let usdValue = 0;
@@ -205,7 +215,10 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           amount = ((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2;
         }
         if (token && amount) {
-          const tokenUsdValue = await fetchTokenUSDValue(token, listing.publishedAt);
+          const tokenUsdValue = await fetchTokenUSDValue(
+            token,
+            listing.publishedAt,
+          );
           usdValue = tokenUsdValue * amount;
         }
       } catch (err) {
@@ -214,7 +227,8 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const language = description ? franc(description) : 'eng';
-    const isFndnPaying = sponsor?.st && type !== 'project' ? data.isFndnPaying : false;
+    const isFndnPaying =
+      sponsor?.st && type !== 'project' ? data.isFndnPaying : false;
 
     // Update listing
     const result = await prisma.bounties.update({
@@ -250,10 +264,13 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     // Handle deadline change notification
-    const deadlineChanged = listing.deadline?.toString() !== result.deadline?.toString();
+    const deadlineChanged =
+      listing.deadline?.toString() !== result.deadline?.toString();
     if (deadlineChanged && result.isPublished && userId) {
       const dayjsDeadline = dayjs(result.deadline);
-      logger.debug(`Creating comment for deadline extension for listing ID: ${result.id}`);
+      logger.debug(
+        `Creating comment for deadline extension for listing ID: ${result.id}`,
+      );
       await prisma.comment.create({
         data: {
           message: `The deadline for this listing has been updated to ${dayjsDeadline.format('h:mm A, MMMM D, YYYY (UTC)')}`,
@@ -277,7 +294,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error: any) {
-    console.log('error',JSON.stringify(error))
+    console.log('error', JSON.stringify(error));
     logger.error(
       `Error occurred while updating listing with id = ${id}: ${safeStringify(error)}`,
     );

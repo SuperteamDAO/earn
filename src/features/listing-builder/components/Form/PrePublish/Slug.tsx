@@ -1,125 +1,137 @@
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useDebounce } from "@/components/ui/multi-select";
-import { isDuplicatingAtom, isEditingAtom, } from "@/features/listing-builder/atoms";
-import { useListingForm } from "@/features/listing-builder/hooks";
-import { slugCheckQuery } from "@/features/listing-builder/queries/slug-check";
-import { useQuery } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
-import { CheckIcon, Loader2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { useWatch } from "react-hook-form";
-import slugify from "slugify";
+import { useQuery } from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
+import { CheckIcon, Loader2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { useWatch } from 'react-hook-form';
+import slugify from 'slugify';
+
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useDebounce } from '@/components/ui/multi-select';
+import { slugCheckQuery } from '@/features/listing-builder';
+
+import { isEditingAtom } from '../../../atoms';
+import { useListingForm } from '../../../hooks';
 
 export function Slug() {
-  const form = useListingForm()
-  const isEditing = useAtomValue(isEditingAtom)
-  const isDuplicating = useAtomValue(isDuplicatingAtom)
+  const form = useListingForm();
+  const isEditing = useAtomValue(isEditingAtom);
 
   const [isValidated, setIsValidated] = useState(false);
 
   const title = useWatch({
     control: form.control,
-    name: 'title'
-  })
+    name: 'title',
+  });
   const slug = useWatch({
     control: form.control,
-    name: 'slug'
-  })
+    name: 'slug',
+  });
   const listingId = useWatch({
     control: form.control,
-    name: 'id'
-  })
+    name: 'id',
+  });
   const publishedAt = useWatch({
     control: form.control,
-    name: 'publishedAt'
-  })
+    name: 'publishedAt',
+  });
   useEffect(() => {
-    console.log('listingId',listingId)
-  },[listingId])
+    console.log('listingId', listingId);
+  }, [listingId]);
 
-  const debouncedTitle = useDebounce(title)
+  const debouncedTitle = useDebounce(title);
   const slugifiedTitle = useMemo(() => {
     return slugify(title, {
       lower: true,
       strict: true,
     });
-  }, [debouncedTitle])
+  }, [debouncedTitle]);
 
+  const { data: generatedSlugValidated, isFetching: generatedSlugFetching } =
+    useQuery({
+      ...slugCheckQuery({ slug: slugifiedTitle, check: false }),
+      enabled: !!(!!title && !isEditing) && !slug,
+      retry: false,
+    });
 
-  const {data: generatedSlugValidated, isFetching: generatedSlugFetching} = useQuery({
-    ...slugCheckQuery({slug: slugifiedTitle, check: false}),
-    enabled: !!(((!!title && !isEditing) || (!!title && isDuplicating))) && !slug,
-    retry: false
-  })
-
-  useEffect(() =>{
-    if(generatedSlugValidated?.data.slug){
-      console.log('is this running?')
-      form.setValue('slug',generatedSlugValidated.data.slug, {
+  useEffect(() => {
+    if (generatedSlugValidated?.data.slug) {
+      console.log('is this running?');
+      form.setValue('slug', generatedSlugValidated.data.slug, {
         shouldValidate: true,
-        shouldDirty: true
-      })
+        shouldDirty: true,
+      });
     }
-  },[generatedSlugValidated])
+  }, [generatedSlugValidated]);
 
-  const debouncedSlug = useDebounce(slug)
-  const {isError: isSlugCheckError, isFetching: slugCheckFetching} = useQuery({
-    ...slugCheckQuery({slug: debouncedSlug, check: true, id: listingId }),
-    enabled: isValidated && !!(!isEditing || isDuplicating) && !!debouncedSlug,
-    retry: false,
-  })
+  const debouncedSlug = useDebounce(slug);
+  const { isError: isSlugCheckError, isFetching: slugCheckFetching } = useQuery(
+    {
+      ...slugCheckQuery({ slug: debouncedSlug, check: true, id: listingId }),
+      enabled: isValidated && !!!isEditing && !!debouncedSlug,
+      retry: false,
+    },
+  );
 
   useEffect(() => {
-    if(isSlugCheckError) {
-      if(slug === '') return
-      form.setError('slug',{
-        message:'Slug already exists. Please try another.',
+    if (isSlugCheckError) {
+      if (slug === '') return;
+      form.setError('slug', {
+        message: 'Slug already exists. Please try another.',
         type: 'manual',
-      })
+      });
     }
-  },[isSlugCheckError, debouncedSlug])
+  }, [isSlugCheckError, debouncedSlug]);
 
   useEffect(() => {
-    console.log('slugCheckFetching',slugCheckFetching)
-  },[slugCheckFetching])
+    console.log('slugCheckFetching', slugCheckFetching);
+  }, [slugCheckFetching]);
 
   useEffect(() => {
     async function validateSlug() {
       setIsValidated(false);
-      const validated = await form.trigger('slug')
-      setIsValidated(validated)
+      const validated = await form.trigger('slug');
+      setIsValidated(validated);
     }
-    validateSlug()
+    validateSlug();
   }, [slug]);
   return (
     <FormField
       control={form.control}
-      name='slug'
-      render={({field}) => {
+      name="slug"
+      render={({ field }) => {
         return (
           <FormItem>
-            <FormLabel className='text-slate-500 font-semibold'>Customise URL (Slug)</FormLabel>
+            <FormLabel className="font-semibold text-slate-500">
+              Customise URL (Slug)
+            </FormLabel>
             <FormControl>
               <div className="relative">
-                <Input {...field} 
-                  placeholder='write-a-twitter-thread-on-Solana'
-                  disabled={(!isDuplicating && !!publishedAt) || generatedSlugFetching}
+                <Input
+                  {...field}
+                  placeholder="write-a-twitter-thread-on-Solana"
+                  disabled={!!publishedAt || generatedSlugFetching}
                   onBlur={() => null}
                 />
-                {slugCheckFetching || generatedSlugFetching ?(
-                  <Loader2 className="absolute right-2 top-1.5 text-slate-300 animate-spin" />
+                {slugCheckFetching || generatedSlugFetching ? (
+                  <Loader2 className="absolute right-2 top-1.5 animate-spin text-slate-300" />
                 ) : (
-                    <span className="absolute right-2 top-1.5 text-background w-5 h-5 flex items-center bg-slate-400 rounded-full p-1 scale-75">
-                      <CheckIcon className="w-full h-full stroke-[3px]" />
-                    </span>
-                  )}
+                  <span className="absolute right-2 top-1.5 flex h-5 w-5 scale-75 items-center rounded-full bg-slate-400 p-1 text-background">
+                    <CheckIcon className="h-full w-full stroke-[3px]" />
+                  </span>
+                )}
               </div>
             </FormControl>
             <FormMessage />
           </FormItem>
-        )
+        );
       }}
     />
-  )
+  );
 }

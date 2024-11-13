@@ -1,7 +1,14 @@
 import { z } from 'zod';
-import { createListingFormSchema, ListingFormData, ListingStatus } from '../types';
+
 import { BONUS_REWARD_POSITION } from '@/constants';
 
+import {
+  createListingFormSchema,
+  type ListingFormData,
+  type ListingStatus,
+} from '../types';
+
+export * from './rewards';
 export * from './skills';
 export * from './suggestions';
 
@@ -28,25 +35,29 @@ export const timeToCompleteOptions = [
 ];
 
 export const listingToStatus = (listing: ListingFormData): ListingStatus => {
-  if(listing.status === 'OPEN') {
-    if(listing.isPublished) {
-      return 'published'
+  if (listing.status === 'OPEN') {
+    if (listing.isPublished) {
+      return 'published';
     } else {
-      if(!!listing.publishedAt) {
-        return 'unpublished'
+      if (!!listing.publishedAt) {
+        return 'unpublished';
       } else {
-        return 'draft'
+        return 'draft';
       }
     }
   } else if (listing.status === 'VERIFYING') {
-    return 'verifying'
+    return 'verifying';
   }
-  return 'draft'
-}
+  return 'draft';
+};
 
-export const getListingDefaults = (isGod: boolean, editable: boolean, isDuplicating: boolean, isST: boolean) => {
-  const schema = createListingFormSchema(isGod, editable, isDuplicating, isST);
-  
+export const getListingDefaults = (
+  isGod: boolean,
+  editable: boolean,
+  isST: boolean,
+) => {
+  const schema = createListingFormSchema(isGod, editable, isST);
+
   // Get the inner schema by unwrapping the ZodEffects
   const getInnerSchema = (schema: z.ZodTypeAny): z.ZodObject<any> => {
     if (schema instanceof z.ZodEffects) {
@@ -57,12 +68,12 @@ export const getListingDefaults = (isGod: boolean, editable: boolean, isDuplicat
 
   const innerSchema = getInnerSchema(schema);
   const shape = innerSchema.shape;
-  
+
   const defaults: Record<string, any> = {};
-  
+
   for (const [key, value] of Object.entries(shape)) {
     const zodValue = value as z.ZodTypeAny;
-    
+
     if (zodValue instanceof z.ZodDefault) {
       defaults[key] = zodValue._def.defaultValue();
     } else if (zodValue instanceof z.ZodOptional) {
@@ -93,17 +104,17 @@ export const getListingDefaults = (isGod: boolean, editable: boolean, isDuplicat
   return defaults as ListingFormData;
 };
 
-export const calculateTotalRewardsForPodium = (currentRewards: Record<string, number>, maxBonusSpots?: number) => {
-  return Object.entries(currentRewards).reduce(
-    (sum, [pos, value]) => {
-      if (isNaN(value)) return sum;
+export const calculateTotalRewardsForPodium = (
+  currentRewards: Record<string, number>,
+  maxBonusSpots?: number,
+) => {
+  return Object.entries(currentRewards).reduce((sum, [pos, value]) => {
+    if (isNaN(value)) return sum;
 
-      if (Number(pos) === BONUS_REWARD_POSITION) {
-        console.log('bonus reward', value, maxBonusSpots)
-        return sum + value * (maxBonusSpots || 0);
-      }
-      return sum + value;
-    },
-    0
-  );
-}
+    if (Number(pos) === BONUS_REWARD_POSITION) {
+      console.log('bonus reward', value, maxBonusSpots);
+      return sum + value * (maxBonusSpots || 0);
+    }
+    return sum + value;
+  }, 0);
+};

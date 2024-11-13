@@ -36,7 +36,6 @@ import { MdInsertLink } from 'react-icons/md';
 import { toast } from 'sonner';
 
 import { tokenList } from '@/constants';
-import { useListingFormStore } from '@/features/listing-builder';
 import {
   formatDeadline,
   getColorStyles,
@@ -62,7 +61,6 @@ export const SubmissionHeader = ({
   isHackathonPage = false,
 }: Props) => {
   const { data: session } = useSession();
-  const { resetForm } = useListingFormStore();
   const router = useRouter();
 
   const deadline = formatDeadline(bounty?.deadline, bounty?.type);
@@ -189,7 +187,6 @@ ${socialListingLink('twitter')}
                   ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
                   : ''
               }
-              onClick={resetForm}
             >
               <Button
                 color={'brand.slate.400'}

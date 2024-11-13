@@ -1,5 +1,6 @@
-import { cn } from "@/utils"
-import { Button } from "@/components/ui/button"
+import { Check, ChevronDown } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -7,34 +8,33 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
+} from '@/components/ui/command';
 import {
-  Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from '@/components/ui/form';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { tokenList } from "@/constants";
-import { Check, ChevronDown } from "lucide-react"
-import {  TokenLabel } from "./TokenLabel"
-import { useListingForm } from "@/features/listing-builder/hooks"
+} from '@/components/ui/popover';
+import { tokenList } from '@/constants';
+import { cn } from '@/utils';
+
+import { useListingForm } from '../../../../hooks';
+import { TokenLabel } from './TokenLabel';
 
 export function TokenSelect() {
-  const form = useListingForm()
+  const form = useListingForm();
   return (
     <FormField
-      name='token'
+      name="token"
       control={form?.control}
       render={({ field }) => (
-        <FormItem className="flex flex-col w-full">
+        <FormItem className="flex w-full flex-col">
           <FormLabel>Payment</FormLabel>
           <Popover>
             <PopoverTrigger asChild>
@@ -43,30 +43,30 @@ export function TokenSelect() {
                   variant="outline"
                   role="combobox"
                   className={cn(
-                    "w-full justify-between",
-                    !field.value && "text-muted-foreground"
+                    'w-full justify-between',
+                    !field.value && 'text-muted-foreground',
                   )}
                 >
-                  {field.value
-                    ? 
-                      <TokenLabel showIcon showSymbol postfix='Coin'
+                  {field.value ? (
+                    <TokenLabel
+                      showIcon
+                      showSymbol
+                      postfix="Coin"
                       classNames={{
                         symbol: 'text-slate-900',
-                        postfix: 'text-slate-900'
+                        postfix: 'text-slate-900',
                       }}
                     />
-                    : "Select Token"}
+                  ) : (
+                    'Select Token'
+                  )}
                   <ChevronDown className="opacity-50" />
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className="w-[29rem] p-0"
-            >
+            <PopoverContent className="w-[29rem] p-0">
               <Command>
-                <CommandInput
-                  placeholder="Search token..."
-                  className="h-9"
-                />
+                <CommandInput placeholder="Search token..." className="h-9" />
                 <CommandList>
                   <CommandEmpty>No Token found.</CommandEmpty>
                   <CommandGroup>
@@ -75,21 +75,17 @@ export function TokenSelect() {
                         value={token.tokenName}
                         key={token.tokenSymbol}
                         onSelect={() => {
-                          field.onChange(token.tokenSymbol)
-                          form.onChange()
+                          field.onChange(token.tokenSymbol);
+                          form.onChange();
                         }}
                       >
-                        <TokenLabel 
-                          token={token}
-                          showIcon
-                          showName
-                        />
+                        <TokenLabel token={token} showIcon showName />
                         <Check
                           className={cn(
-                            "ml-auto",
+                            'ml-auto',
                             token.tokenSymbol === field.value
-                              ? "opacity-100"
-                              : "opacity-0"
+                              ? 'opacity-100'
+                              : 'opacity-0',
                           )}
                         />
                       </CommandItem>
@@ -102,7 +98,6 @@ export function TokenSelect() {
           <FormMessage />
         </FormItem>
       )}
-
     />
-  )
+  );
 }

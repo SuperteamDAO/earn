@@ -1,20 +1,25 @@
-import { NextApiRequestWithSponsor, withSponsorAuth } from "@/features/auth";
-import { ListingFormData } from "@/features/listing-builder";
-import logger from "@/lib/logger";
-import { prisma } from "@/prisma";
-import { cleanSkills } from "@/utils/cleanSkills";
-import { safeStringify } from "@/utils/safeStringify";
-import { Prisma } from "@prisma/client";
-import { franc } from "franc";
-import { NextApiResponse } from "next";
-import { checkSlug, generateUniqueSlug } from "./check-slug";
+import { type Prisma } from '@prisma/client';
+import { franc } from 'franc';
+import { type NextApiResponse } from 'next';
+
+import {
+  type NextApiRequestWithSponsor,
+  withSponsorAuth,
+} from '@/features/auth';
+import { type ListingFormData } from '@/features/listing-builder';
+import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
+import { cleanSkills } from '@/utils/cleanSkills';
+import { safeStringify } from '@/utils/safeStringify';
+
+import { generateUniqueSlug } from './check-slug';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   try {
     const userId = req.userId;
     const userSponsorId = req.userSponsorId;
 
-    if(!userId) {
+    if (!userId) {
       logger.warn('Invalid token: User Id is missing');
       return res.status(400).json({ error: 'Invalid token' });
     }
@@ -46,15 +51,34 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       minRewardAsk,
       maxRewardAsk,
       isPrivate,
-      skills
+      skills,
     } = req.body as Partial<ListingFormData>;
+
+    const isBountyPublishedAlready = id
+      ? await prisma.bounties.findUnique({
+          where: {
+            id,
+            isPublished: true,
+          },
+        })
+      : false;
+    if (isBountyPublishedAlready) {
+      res.status(403).send({
+        error: 'Not Allowed',
+        message: ' Published Listings are not allowed to be draft',
+      });
+    }
 
     const language = description ? franc(description) : 'eng';
 
     const cleanedSkills = skills ? cleanSkills(skills) : undefined;
 
-    let reTitle = title || 'Untitled Draft';
-    const uniqueSlug = id ? slug : slug ? await generateUniqueSlug(slug) :await generateUniqueSlug(reTitle)
+    const reTitle = title || 'Untitled Draft';
+    const uniqueSlug = id
+      ? slug
+      : slug
+        ? await generateUniqueSlug(slug)
+        : await generateUniqueSlug(reTitle);
     const data: Prisma.BountiesUncheckedCreateInput = {
       title: reTitle,
       slug: uniqueSlug || `untitled-draft-${Date.now()}`, // by frontend logic, should never reach untitle slug
@@ -80,14 +104,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       pocId: userId,
     };
 
-    const result = id 
+    const result = id
       ? await prisma.bounties.update({
-        where: { id },
-        data,
-      })
+          where: { id },
+          data,
+        })
       : await prisma.bounties.create({
-        data,
-      });
+          data,
+        });
 
     logger.debug(`Draft saved successfully: ${result.id}`);
 
