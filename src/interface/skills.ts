@@ -121,7 +121,9 @@ const skillSchema = z.object({
   return data.subskills.every(ss => validSubskills.includes(ss));
 }, "Invalid subskills for selected skill");
 
-export const skillsArraySchema = z.array(skillSchema)
+export const skillsArraySchema = z.array(skillSchema, {
+  message: 'Required'
+})
 .refine((skills) => {
   const parentSkills = skills.map(s => s.skills);
   return new Set(parentSkills).size === parentSkills.length;

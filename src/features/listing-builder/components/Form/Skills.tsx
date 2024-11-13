@@ -24,7 +24,7 @@ export function Skills() {
             <FormControl>
               <SkillsSelect
                 key={skillsKey}
-                defaultValue={field.value} 
+                defaultValue={field.value || []} 
                 onChange={(e) => {
                   field.onChange(e)
                   form.onChange()

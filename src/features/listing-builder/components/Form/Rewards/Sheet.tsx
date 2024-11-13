@@ -43,7 +43,7 @@ export function RewardsSheet() {
           render={({}) =>{
             return (
               <FormItem className='flex flex-col items-start w-full group'>
-                <FormLabel>Rewards</FormLabel>
+                <FormLabel className='mb-1'>Rewards</FormLabel>
                 <div className='flex pl-3 h-9 bg-slate-50 border-slate-200 border w-full rounded-md items-center'>
                   <Label />
                   <Button variant='link'

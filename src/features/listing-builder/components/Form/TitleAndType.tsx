@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useListingForm } from "../../hooks";
 import { useAtomValue } from "jotai";
 import { isEditingAtom } from "../../atoms";
+import { useEffect } from "react";
 
 const typeOptions = [
   { value: 'bounty', label: 'Bounty' },

@@ -277,6 +277,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error: any) {
+    console.log('error',JSON.stringify(error))
     logger.error(
       `Error occurred while updating listing with id = ${id}: ${safeStringify(error)}`,
     );

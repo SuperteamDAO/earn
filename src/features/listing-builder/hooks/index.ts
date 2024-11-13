@@ -1,26 +1,16 @@
 import { useForm, useFormContext, UseFormReturn } from "react-hook-form";
 import { createListingRefinements, ListingFormData } from "../types";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { formSchemaAtom, isDraftSavingAtom, isDuplicatingAtom, isEditingAtom, isGodAtom, isSTAtom, saveDraftMutationAtom, submitListingMutationAtom } from "../atoms";
+import { draftQueueAtom, formSchemaAtom, isDraftSavingAtom, isDuplicatingAtom, isEditingAtom, isGodAtom, isSTAtom, saveDraftMutationAtom, submitListingMutationAtom } from "../atoms";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import debounce from "lodash.debounce";
-import { Bounties } from "@prisma/client";
-
-interface SaveQueueState {
-  isProcessing: boolean;
-  shouldProcessNext: boolean;
-  id?: string;
-}
-const queueRef: SaveQueueState = {
-  isProcessing: false,
-  shouldProcessNext: false
-};
+import { useRouter } from "next/router";
 
 interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
   onChange: () => void;
-  submitListing: () => Promise<Bounties>;
+  submitListing: () => Promise<ListingFormData>;
   resetForm: () => void;
   validateRewards: () => Promise<boolean>
   validateBasics: () => Promise<boolean>
@@ -29,6 +19,8 @@ interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
 export const useListingForm = (defaultValues?: ListingFormData): UseListingFormReturn => {
   let formMethods: UseFormReturn<ListingFormData> | null = null;
   let isNewFormInitialized = false;
+
+  const router = useRouter()
 
   try {
     formMethods = useFormContext<ListingFormData>();
@@ -52,22 +44,28 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
   const setDraftSaving = useSetAtom(isDraftSavingAtom)
 
+  const [queueRef, setQueueRef] = useAtom(draftQueueAtom)
   const processSaveQueue = async () => {
     setDraftSaving(true)
     if (queueRef.isProcessing) {
-      queueRef.shouldProcessNext = true;
+      // queueRef.shouldProcessNext = true;
+      setQueueRef(q => ({
+        ...q,
+        shouldProcessNext: true
+      }))
       return;
     }
 
-    queueRef.isProcessing = true;
-    queueRef.shouldProcessNext = false;
-
+    // queueRef.isProcessing = true;
+    // queueRef.shouldProcessNext = false;
+    setQueueRef(q => ({
+      ...q,
+      shouldProcessNext: false,
+      isProcessing: true
+    }))
     try {
       const dataToSave = getValues();
-      const data = await saveDraftMutation.mutateAsync({
-        ...dataToSave,
-        id: queueRef.id,
-      });
+      const data = await saveDraftMutation.mutateAsync(dataToSave);
       console.log('before save',dataToSave)
       console.log('data',data)
       
@@ -75,11 +73,23 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
       if(!dataToSave.slug) formMethods.setValue('slug', data.slug);
       queueRef.id = data.id;
 
+      console.log('asPath',router.asPath)
+      console.log('data slug',data.slug)
+      // if(router.asPath.split('/')[4] === 'edit') {
+      //   console.log('replacee')
+      //   router.replace(`/dashboard/listings/${data.slug}/edit/`,{},{
+      //     shallow: true,
+      //   } )
+      // }
+
     } catch (error) {
       console.error('Error saving draft:', error);
     } finally {
-      queueRef.isProcessing = false;
-      
+      // queueRef.isProcessing = false;
+      setQueueRef(q => ({
+        ...q,
+        isProcessing: false
+      }))
       setDraftSaving(false)
       // Check if we need to process another save
       if (queueRef.shouldProcessNext) {

@@ -147,7 +147,10 @@ export const createListingFormSchema = (
     z.number({
       message: 'Required',
     })
-      .min(0.01, "Reward")
+      .min(0.01, "Reward"),
+    {
+      message: 'Required'
+    }
   )
   .refine(
     (rewards) => {
@@ -246,7 +249,7 @@ export const createListingFormSchema = (
     ),
 
     timeToComplete: z.string().optional(),
-    templateId: z.string().uuid().optional(),
+    templateId: z.string().optional().nullable(),
     eligibility: z.array(eligibilityQuestionSchema).optional(),
     skills: skillsArraySchema,
 
@@ -266,7 +269,7 @@ export const createListingFormSchema = (
     .number({
       message: 'Required',
     })
-    .min(1).max(50).optional(),
+    .min(0).max(50).optional(),
     isFndnPaying: z.boolean()
     .default(false)
     .refine(
@@ -283,9 +286,14 @@ export const createListingFormSchema = (
     isPrivate: z.boolean().default(false),
 
     // values that will not be set on any API, but useful for response
-    isPublished: z.boolean().optional(),
-    status: z.nativeEnum(status).optional(),
-    publishedAt: z.string().datetime().optional(),
+    isPublished: z.boolean().optional().nullable(),
+    status: z.nativeEnum(status).optional().nullable(),
+    publishedAt: z.union([
+      z.string().datetime(),
+      z.date(),
+      z.null()
+    ]).optional(),
+    sponsorId: z.string().optional(),
   }).superRefine( (data, ctx) => {
       createListingRefinements(data, ctx, isEditing, isDuplicating);
     });

@@ -53,10 +53,14 @@ export function EligibilityQuestions() {
 
   useEffect(() => {
     if(type === 'project') {
-      if(fields.length === 0) handleAddQuestion()
+      if(fields.length === 0) {
+        handleAddQuestion()
+        form.setFocus('title')
+      }
     } else {
       if(fields.length === 1 && fields[0]?.question === "") {
         handleRemoveQuestion(0)
+        form.setFocus('title')
       }
     }
   },[type])

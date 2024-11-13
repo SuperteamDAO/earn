@@ -10,9 +10,18 @@ const isGodAtom = atom<boolean>(false);
 const isSTAtom = atom<boolean>(false);
 const isEditingAtom = atom<boolean>(false);
 const isDuplicatingAtom = atom<boolean>(false);
-const listingSlugAtom = atom<string | undefined>(undefined);
 const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
 const isDraftSavingAtom = atom(false)
+
+interface SaveQueueState {
+  isProcessing: boolean;
+  shouldProcessNext: boolean;
+  id?: string;
+}
+const draftQueueAtom = atom<SaveQueueState>({
+  isProcessing: false,
+  shouldProcessNext: false
+})
 
 const confirmModalAtom = atom<"SUCCESS" | "VERIFICATION" | undefined>(undefined)
 const previewAtom = atom(false)
@@ -50,21 +59,21 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
   }
 }));
 
-type ListingResponse = ListingFormData | null;
-const fetchListingAtom = atomWithQuery<ListingResponse>((get) => ({
-  queryKey: ['listing', get(listingSlugAtom)],
-  queryFn: async ({ queryKey: [_, slug] }): Promise<ListingResponse> => {
-    if (!slug) return null;
-    try {
-      const response = await axios.get<ListingFormData>(`/api/sponsor-dashboard/${slug}/listing`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching listing:', error);
-      return null;
-    }
-  },
-  enabled: Boolean(get(listingSlugAtom)),
-}));
+// type ListingResponse = ListingFormData | null;
+// const fetchListingAtom = atomWithQuery<ListingResponse>((get) => ({
+//   queryKey: ['listing', get(listingSlugAtom)],
+//   queryFn: async ({ queryKey: [_, slug] }): Promise<ListingResponse> => {
+//     if (!slug) return null;
+//     try {
+//       const response = await axios.get<ListingFormData>(`/api/sponsor-dashboard/${slug}/listing`);
+//       return response.data;
+//     } catch (error) {
+//       console.error('Error fetching listing:', error);
+//       return null;
+//     }
+//   },
+//   enabled: Boolean(get(listingSlugAtom)),
+// }));
 
 export {
   store,
@@ -72,13 +81,12 @@ export {
   isSTAtom,
   isEditingAtom,
   isDuplicatingAtom,
-  listingSlugAtom,
   formSchemaAtom,
   saveDraftMutationAtom,
   submitListingMutationAtom,
-  fetchListingAtom,
   listingStatusAtom,
   isDraftSavingAtom,
   confirmModalAtom,
-  previewAtom
+  previewAtom,
+  draftQueueAtom
 };

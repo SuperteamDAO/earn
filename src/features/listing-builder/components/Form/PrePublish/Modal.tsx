@@ -17,6 +17,8 @@ import { ExternalLink, Loader2 } from "lucide-react"
 import { useListingForm } from "@/features/listing-builder/hooks"
 import { useState } from "react"
 import { toast } from "sonner"
+import { useWatch } from "react-hook-form"
+import { useRouter } from "next/router"
 
 export function PrePublish() {
   const isST = useAtom(isSTAtom)
@@ -30,8 +32,13 @@ export function PrePublish() {
   const isEditing = useAtomValue(isEditingAtom)
 
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
+
+  const router = useRouter()
   return (
-    <Dialog open={open} onOpenChange={isOpen} >
+    <Dialog open={open} onOpenChange={(e) =>{
+      if(isDraftSaving) return
+      isOpen(e)
+    }} >
       <Button
         disabled={isDraftSaving}
         onClick={async () => {
@@ -62,14 +69,19 @@ export function PrePublish() {
           >Preview <ExternalLink /> </Button>
           <Button className='px-12' 
             onClick={async() => {
+              console.log('values ', form.getValues())
               if(await form.trigger()) {
                 try {
                   const data = await form.submitListing()
                   isOpen(false)
-                  if(data.status === 'VERIFYING') {
-                    setConfirmModal('VERIFICATION')
+                  if(isEditing) {
+                    router.push('/dashboard/listings')
                   } else {
-                    setConfirmModal('SUCCESS')
+                    if(data.status === 'VERIFYING') {
+                      setConfirmModal('VERIFICATION')
+                    } else {
+                      setConfirmModal('SUCCESS')
+                    }
                   }
                 } catch (error) {
                   console.log(error)
@@ -82,7 +94,7 @@ export function PrePublish() {
           >
             {submitListingMutation.isPending ? (
               <Loader2 className="animate-spin w-4 h-4" />
-            ): isEditing ? "Update" : "Publish"}
+            ): !!isEditing ? "Update" : "Publish"}
           </Button>
         </DialogFooter>
       </DialogContent>

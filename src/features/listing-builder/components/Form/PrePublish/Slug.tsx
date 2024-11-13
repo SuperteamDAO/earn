@@ -30,6 +30,10 @@ export function Slug() {
     control: form.control,
     name: 'id'
   })
+  const publishedAt = useWatch({
+    control: form.control,
+    name: 'publishedAt'
+  })
   useEffect(() => {
     console.log('listingId',listingId)
   },[listingId])
@@ -100,7 +104,7 @@ export function Slug() {
               <div className="relative">
                 <Input {...field} 
                   placeholder='write-a-twitter-thread-on-Solana'
-                  disabled={isEditing || generatedSlugFetching}
+                  disabled={(!isDuplicating && !!publishedAt) || generatedSlugFetching}
                   onBlur={() => null}
                 />
                 {slugCheckFetching || generatedSlugFetching ?(

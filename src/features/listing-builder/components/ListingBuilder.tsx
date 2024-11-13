@@ -3,15 +3,14 @@ import {
   isEditingAtom, 
   isDuplicatingAtom,
   ListingBuilderLayout,
-  listingSlugAtom,
-  fetchListingAtom,
   ListingFormData,
   isGodAtom,
   isSTAtom,
-  listingStatusAtom,
-  listingToStatus,
   getListingDefaults,
   store,
+  listingToStatus,
+  listingStatusAtom,
+  draftQueueAtom,
 } from "@/features/listing-builder";
 import { useUser } from "@/store/user";
 import { HydrateAtoms, useInitAtom } from "@/utils/atoms";
@@ -19,22 +18,29 @@ import { Provider, useAtomValue } from "jotai";
 import { useSession } from "next-auth/react";
 import { Deadline, DescriptionAndTemplate, POC, TitleAndType, EligibilityQuestions, Skills, Rewards } from "./Form";
 import { useListingForm } from "../hooks";
-import { useEffect } from "react";
 import { ListingSuccessModal, PreviewListingModal, UnderVerificationModal } from "./Modals";
+import { useSearchParams } from "next/navigation";
+import { BountyType } from "@prisma/client";
+import { useEffect } from "react";
 
 interface Props {
-  listingSlug?: string;
   isEditing?: boolean;
   isDuplicating?: boolean;
+  listing?: ListingFormData
 }
 
 function ListingBuilder({defaultListing}: {defaultListing: ListingFormData}) {
 
-  const { data: listing } = useAtomValue(fetchListingAtom);
-  useInitAtom(listingStatusAtom, listing ? listingToStatus(listing) : undefined)
+  const isEditing = useAtomValue(isEditingAtom)
+  useEffect(() => {
+    console.log('isEditing type', isEditing)
+  },[isEditing])
 
-  const isEditing = useAtomValue(isEditingAtom);
-  const form = useListingForm(isEditing ? listing ?? defaultListing : defaultListing)
+  const form = useListingForm(defaultListing)
+  useInitAtom(listingStatusAtom, defaultListing ? listingToStatus(defaultListing) : undefined)
+
+  const params = useSearchParams()
+  form.setValue('type',params.get('type') as BountyType || 'bounty')
 
   const preventEnterKeySubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {
     const target = e.target;
@@ -43,6 +49,9 @@ function ListingBuilder({defaultListing}: {defaultListing: ListingFormData}) {
     }
   };
 
+  useEffect(() => {
+    console.log('errors',form.formState.errors)
+  },[form.formState.errors])
   return (
     <>
       <Form {...form} >
@@ -78,23 +87,30 @@ function ListingBuilder({defaultListing}: {defaultListing: ListingFormData}) {
   )
 }
 
-// atom values wont be available here, will only exist in child of HydrateAtoms
-function ListingBuilderProvider({listingSlug, isEditing, isDuplicating}: Props) {
+// atom values wont be available here, will only exist in child of HydrateAtoms immeditealy
+function ListingBuilderProvider({isEditing, isDuplicating, listing}: Props) {
   const { data: session } = useSession();
   const { user } = useUser();
   const isGod = session?.user.role === 'GOD'
   const isST = !!user?.currentSponsor?.st
 
-  const defaultListing = getListingDefaults(isGod, !!isEditing, !!isDuplicating, isST)
+  const defaultListing = listing || getListingDefaults(isGod, !!isEditing, !!isDuplicating, isST)
+  console.log('isEditing',isEditing)
+
 
   return (
     <Provider store={store}>
       <HydrateAtoms initialValues={[
-        [listingSlugAtom, listingSlug],
         [isEditingAtom, isEditing],
         [isDuplicatingAtom, isDuplicating],
         [isGodAtom, isGod],
         [isSTAtom, isST],
+        [listingStatusAtom,listingToStatus(defaultListing)],
+        [draftQueueAtom, {
+          isProcessing: false,
+          shouldProcessNext: false,
+          id: defaultListing.id
+        }]
       ]}>
         <ListingBuilder defaultListing={defaultListing} />
       </HydrateAtoms>
