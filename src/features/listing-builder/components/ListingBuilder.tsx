@@ -40,7 +40,9 @@ function ListingBuilder({defaultListing}: {defaultListing: ListingFormData}) {
   useInitAtom(listingStatusAtom, defaultListing ? listingToStatus(defaultListing) : undefined)
 
   const params = useSearchParams()
-  form.setValue('type',params.get('type') as BountyType || 'bounty')
+  useEffect(() => {
+    if(params.has('type')) form.setValue('type',params.get('type') as BountyType || 'bounty')
+  },[])
 
   const preventEnterKeySubmission = (e: React.KeyboardEvent<HTMLFormElement>) => {
     const target = e.target;

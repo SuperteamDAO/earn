@@ -7,6 +7,7 @@ import { useListingForm } from "../../hooks";
 import { useAtomValue } from "jotai";
 import { isEditingAtom } from "../../atoms";
 import { useEffect } from "react";
+import { calculateTotalRewardsForPodium } from "../../utils";
 
 const typeOptions = [
   { value: 'bounty', label: 'Bounty' },
@@ -56,9 +57,26 @@ function Type() {
                 disabled={isEditing}
                 onValueChange={(e) => {
                   field.onChange(e)
-                  form.setValue('rewards', undefined)
-                  form.setValue('rewardAmount', undefined)
-                  if(e !== 'project') form.setValue('compensationType','fixed')
+                  // form.setValue('rewards', undefined)
+                  // form.setValue('rewardAmount', undefined)
+                  // if(e !== 'project') {
+                  //   form.setValue('compensationType','fixed')
+                  // } 
+                  //
+                  const values =form.getValues()
+                  if(e !== 'project') {
+                    form.setValue('rewardAmount',
+                      calculateTotalRewardsForPodium(
+                        values.rewards || {},
+                        values.maxBonusSpots
+                      ))
+                  } else {
+                    if(values.compensationType === 'fixed') {
+                      form.setValue('rewardAmount', values.rewards?.[1])
+                    } else {
+                      form.setValue('rewardAmount', undefined)
+                    }
+                  }
                   form.setFocus('title')
                 }}
               >

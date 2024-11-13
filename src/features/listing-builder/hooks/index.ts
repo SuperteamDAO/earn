@@ -113,7 +113,7 @@ export const useListingForm = (defaultValues?: ListingFormData): UseListingFormR
   }, []); // Empty dependency array - only create once
 
   const onChange = useCallback(() => {
-    setDraftSaving(true)
+    // setDraftSaving(true)
     debouncedSaveRef.current?.();
   }, []);
 

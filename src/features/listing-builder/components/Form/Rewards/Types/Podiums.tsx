@@ -7,6 +7,7 @@ import { getRankLabels } from "@/utils/rank";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useListingForm } from "@/features/listing-builder/hooks";
 import { useWatch } from "react-hook-form";
+import { calculateTotalRewardsForPodium } from "@/features/listing-builder/utils";
 
 export const Podiums = () => {
   const form = useListingForm();
@@ -50,18 +51,7 @@ export const Podiums = () => {
 
   const updateTotalReward = useCallback(
     (currentRewards: Record<string, number>, maxBonusSpots?: number) => {
-      const totalRewards = Object.entries(currentRewards).reduce(
-        (sum, [pos, value]) => {
-          if (isNaN(value)) return sum;
-
-          if (Number(pos) === BONUS_REWARD_POSITION) {
-            console.log('bonus reward', value, maxBonusSpots)
-            return sum + value * (maxBonusSpots || 0);
-          }
-          return sum + value;
-        },
-        0
-      );
+      const totalRewards = calculateTotalRewardsForPodium(currentRewards, maxBonusSpots);
 
       form.setValue('rewardAmount', totalRewards, { shouldValidate: true });
       form.onChange()

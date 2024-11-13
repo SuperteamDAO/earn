@@ -37,14 +37,14 @@ export const createListingRefinements = async (
     });
   }
 
-  if(!data.rewardAmount) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Please add rewards",
-      path: ["rewards"]
-    })
-  }
   if (data.compensationType === "fixed") {
+    if( !data.rewardAmount) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please add rewards",
+        path: ["rewards"]
+      })
+    }
     console.log('rewards validation', data.rewards)
     if(data.type === 'bounty') {
       if (!data.rewards || Object.keys(data.rewards).length === 0) {
@@ -68,7 +68,7 @@ export const createListingRefinements = async (
         },
         0
       );
-      if (totalRewards !== data.rewardAmount) {
+      if (data.type !== 'project' && totalRewards !== data.rewardAmount) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Total of rewards must equal the reward amount",
@@ -109,14 +109,6 @@ export const createListingRefinements = async (
         code: z.ZodIssueCode.custom,
         message: "Maximum reward must be greater than minimum reward",
         path: ["maxRewardAsk"]
-      });
-    }
-
-    if (data.rewardAmount && data.maxRewardAsk && data.rewardAmount !== data.maxRewardAsk) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Reward amount must equal maximum reward for range compensation",
-        path: ["rewardAmount"]
       });
     }
   }

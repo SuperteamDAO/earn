@@ -11,9 +11,16 @@ export function Fixed() {
     control: form.control,
     name: 'rewards',
   }) ;
+  const type = useWatch({
+    control: form.control,
+    name: 'type',
+  }) ;
   useEffect(() => {
     console.log('rewards', rewards)
   },[rewards])
+  useEffect(() => {
+    if(type === 'project') form.setValue('rewardAmount', rewards?.[1])
+  },[type])
   return (
   <FormField
       control={form.control}
