@@ -101,7 +101,7 @@ const FormLabel = React.forwardRef<
       className={cn(
         isRequired && 'after:ml-0.5 after:text-red-500 after:content-["*"]',
         error && 'text-destructive',
-        'text-[0.92rem] text-slate-600',
+        'text-[0.9rem] text-slate-600',
         className,
       )}
       htmlFor={formItemId}

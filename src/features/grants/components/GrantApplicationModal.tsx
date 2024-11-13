@@ -2,7 +2,6 @@ import { CheckIcon } from '@chakra-ui/icons';
 import {
   Button,
   Flex,
-  Image,
   Modal,
   ModalCloseButton,
   ModalContent,
@@ -22,18 +21,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { RichEditor } from '@/components/shared/RichEditor';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
+import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
-import { tokenList } from '@/constants';
 import { extractTwitterUsername, Twitter } from '@/features/talent';
 import { useUpdateUser, useUser } from '@/store/user';
 import { cn } from '@/utils';
@@ -332,315 +322,162 @@ export const GrantApplicationModal = ({
             >
               {activeStep === 0 && (
                 <VStack gap={4} mb={5}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="projectTitle"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Project Title</FormLabel>
-                        <FormDescription>
-                          What should we call your project?
-                        </FormDescription>
-                        <FormControl>
-                          <Input {...field} placeholder="Project Title" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
+                    label="Project Title"
+                    description="What should we call your project?"
+                    isRequired
+                  >
+                    <Input placeholder="Project Title" />
+                  </FormFieldWrapper>
+
+                  <FormFieldWrapper
                     control={form.control}
                     name="projectOneLiner"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>One-Liner Description</FormLabel>
-                        <FormDescription>
-                          Describe your idea in one sentence.
-                        </FormDescription>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Sum up your project in one sentence"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="One-Liner Description"
+                    description="Describe your idea in one sentence."
+                    isRequired
+                  >
+                    <Input placeholder="Sum up your project in one sentence" />
+                  </FormFieldWrapper>
 
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="ask"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>
-                          What&apos;s the compensation you require to complete
-                          this fully?
-                        </FormLabel>
-                        <FormControl>
-                          <div className="flex">
-                            <div className="mt-2 flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted pl-3 pr-5">
-                              <Image
-                                className="h-4 w-4 rounded-full"
-                                alt="green dollar"
-                                src={
-                                  tokenList.filter(
-                                    (e) => e?.tokenSymbol === token,
-                                  )[0]?.icon ?? '/assets/icons/green-dollar.svg'
-                                }
-                              />
-                              <p className="font-medium text-slate-500">
-                                {token}
-                              </p>
-                            </div>
-                            <Input
-                              className="rounded-l-none"
-                              {...field}
-                              type="number"
-                              value={field.value ?? ''}
-                              onChange={(e) => {
-                                const value =
-                                  e.target.value === ''
-                                    ? null
-                                    : Number(e.target.value);
-                                field.onChange(value);
-                              }}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    label="What's the compensation you require to complete this fully?"
+                    isRequired
+                    isTokenInput
+                    token={token}
                   />
 
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="walletAddress"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Your Solana Wallet Address</FormLabel>
-                        <FormDescription>
-                          This is where you will receive your rewards if you
-                          win. If you want to edit it,{' '}
-                          <a
-                            href={`/t/${user?.username}/edit`}
-                            className="text-blue-600 underline hover:text-blue-700"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            click here
-                          </a>
-                        </FormDescription>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="opacity-50"
-                            placeholder="Add your Solana wallet address"
-                            readOnly
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Your Solana Wallet Address"
+                    description={
+                      <>
+                        This is where you will receive your rewards if you win.
+                        If you want to edit it,{' '}
+                        <a
+                          href={`/t/${user?.username}/edit`}
+                          className="text-blue-600 underline hover:text-blue-700"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          click here
+                        </a>
+                      </>
+                    }
+                  >
+                    <Input
+                      className="opacity-50"
+                      placeholder="Add your Solana wallet address"
+                      readOnly
+                    />
+                  </FormFieldWrapper>
                 </VStack>
               )}
               {activeStep === 1 && (
                 <VStack gap={4} mb={5}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="projectDetails"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Project Details</FormLabel>
-                        <FormDescription>
-                          What is the problem you&apos;re trying to solve, and
-                          how you&apos;re going to solve it?
-                        </FormDescription>
-                        <FormControl>
-                          <RichEditor
-                            id="projectDetails"
-                            value={field.value}
-                            onChange={field.onChange}
-                            placeholder="Explain the problem you're solving and your solution"
-                            error={false}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    label="Project Details"
+                    description="What is the problem you're trying to solve, and how you're going to solve it?"
+                    isRequired
+                    isRichEditor
                   />
-                  <FormField
+
+                  <FormFieldWrapper
                     control={form.control}
                     name="projectTimeline"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>
-                          Deadline (in{' '}
-                          {Intl.DateTimeFormat().resolvedOptions().timeZone})
-                        </FormLabel>
-                        <FormDescription>
-                          What is the expected completion date for the project?
-                        </FormDescription>
-                        <FormControl>
-                          <Input
-                            className={cn(
-                              'border-input focus-visible:ring-brand-purple',
-                              'relative w-full',
-                              '[&::-webkit-calendar-picker-indicator]:opacity-0',
-                              '[&::-webkit-calendar-picker-indicator]:absolute',
-                              '[&::-webkit-calendar-picker-indicator]:inset-0',
-                              '[&::-webkit-calendar-picker-indicator]:w-full',
-                              '[&::-webkit-calendar-picker-indicator]:h-full',
-                              '[&::-webkit-calendar-picker-indicator]:cursor-pointer',
-                            )}
-                            min={date}
-                            placeholder="deadline"
-                            type="date"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
+                    label={`Deadline (in ${Intl.DateTimeFormat().resolvedOptions().timeZone})`}
+                    description="What is the expected completion date for the project?"
+                    isRequired
+                  >
+                    <Input
+                      className={cn(
+                        'relative w-full',
+                        '[&::-webkit-calendar-picker-indicator]:opacity-0',
+                        '[&::-webkit-calendar-picker-indicator]:absolute',
+                        '[&::-webkit-calendar-picker-indicator]:inset-0',
+                        '[&::-webkit-calendar-picker-indicator]:w-full',
+                        '[&::-webkit-calendar-picker-indicator]:h-full',
+                        '[&::-webkit-calendar-picker-indicator]:cursor-pointer',
+                      )}
+                      min={date}
+                      placeholder="deadline"
+                      type="date"
+                    />
+                  </FormFieldWrapper>
+
+                  <FormFieldWrapper
                     control={form.control}
                     name="proofOfWork"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Proof of Work</FormLabel>
-                        <FormDescription>
-                          Include links to your best work that will make the
-                          community trust you to execute on this project.
-                        </FormDescription>
-                        <FormControl>
-                          <RichEditor
-                            id="proofOfWork"
-                            value={field.value}
-                            onChange={field.onChange}
-                            placeholder="Provide links to your portfolio or previous work"
-                            error={false}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    label="Proof of Work"
+                    description="Include links to your best work that will make the community trust you to execute on this project."
+                    isRequired
+                    isRichEditor
                   />
 
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="twitter"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>
-                          Personal Twitter Profile
-                        </FormLabel>
-                        <FormDescription>
-                          Add your personal Twitter username
-                        </FormDescription>
-                        <FormControl>
-                          <div className="mb-5 flex items-center">
-                            <div className="relative mt-2 flex items-center">
-                              <Twitter className="mr-3 h-5 w-5 text-slate-600" />
-                            </div>
-                            <div className="mt-2 flex h-9 items-center rounded-l-md border border-r-0 border-input px-3">
-                              <span className="text-sm font-medium text-slate-600 md:text-[0.875rem]">
-                                x.com/
-                              </span>
-                            </div>
-                            <Input
-                              {...field}
-                              className={'rounded-l-none'}
-                              defaultValue={
-                                extractTwitterUsername(user?.twitter || '') ||
-                                undefined
-                              }
-                              placeholder="johncena"
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Personal Twitter Profile"
+                    description="Add your personal Twitter username"
+                    isRequired
+                  >
+                    <div className="mb-5 flex items-center">
+                      <div className="relative flex items-center">
+                        <Twitter className="mr-3 h-5 w-5 text-slate-600" />
+                      </div>
+                      <div className="flex h-9 items-center rounded-l-md border border-r-0 border-input px-3">
+                        <span className="text-sm font-medium text-slate-600 md:text-[0.875rem]">
+                          x.com/
+                        </span>
+                      </div>
+                      <Input
+                        className="rounded-l-none"
+                        defaultValue={
+                          extractTwitterUsername(user?.twitter || '') ||
+                          undefined
+                        }
+                        placeholder="johncena"
+                      />
+                    </div>
+                  </FormFieldWrapper>
 
                   {questions?.map((question: any) => (
-                    <FormField
+                    <FormFieldWrapper
                       key={question.order}
                       control={form.control}
                       name={`answer-${question.order}`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel isRequired>{question.question}</FormLabel>
-                          <FormControl>
-                            <RichEditor
-                              id={`answer-${question.order}`}
-                              value={field.value?.toString() || ''}
-                              onChange={field.onChange}
-                              error={false}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label={question.question}
+                      isRequired
+                      isRichEditor
                     />
                   ))}
                 </VStack>
               )}
               {activeStep === 2 && (
                 <VStack gap={4} mb={5}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="milestones"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Goals and Milestones</FormLabel>
-                        <FormDescription>
-                          List down the things you hope to achieve by the end of
-                          project duration.
-                        </FormDescription>
-                        <FormControl>
-                          <RichEditor
-                            id="milestones"
-                            value={field.value}
-                            onChange={field.onChange}
-                            placeholder="Outline your project goals and milestones"
-                            error={false}
-                            height="h-32"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    label="Goals and Milestones"
+                    description="List down the things you hope to achieve by the end of project duration."
+                    isRequired
+                    isRichEditor
                   />
-                  <FormField
+
+                  <FormFieldWrapper
                     control={form.control}
                     name="kpi"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>
-                          Primary Key Performance Indicator
-                        </FormLabel>
-                        <FormDescription>
-                          What metric will you track to indicate success/failure
-                          of the project? At what point will it be a success?
-                          Could be anything, e.g. installs, users, views, TVL,
-                          etc.
-                        </FormDescription>
-                        <FormControl>
-                          <RichEditor
-                            id="kpi"
-                            value={field.value}
-                            onChange={field.onChange}
-                            placeholder="What's the key metric for success?"
-                            error={false}
-                            height="h-32"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    label="Primary Key Performance Indicator"
+                    description="What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc."
+                    isRequired
+                    isRichEditor
                   />
                 </VStack>
               )}

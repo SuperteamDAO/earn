@@ -1,9 +1,6 @@
 import {
   Button,
   Flex,
-  FormControl,
-  FormLabel,
-  Input,
   Modal,
   ModalContent,
   ModalOverlay,
@@ -18,7 +15,9 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormLabel } from '@/components/ui/form';
+import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
+import { Input } from '@/components/ui/input';
 import {
   type UserSponsorDetails,
   userSponsorDetailsSchema,
@@ -104,60 +103,38 @@ export const SponsorInfoModal = ({
             style={{ width: '100%' }}
             onSubmit={form.handleSubmit(onSubmit)}
           >
-            <FormField
+            <FormFieldWrapper
               control={form.control}
               name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Username"
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        setUsername(e.target.value);
-                      }}
-                      value={username}
-                    />
-                  </FormControl>
-                  {isUsernameInvalid && (
-                    <p className="text-sm text-red-500">
-                      {usernameValidationError}
-                    </p>
-                  )}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+              label="Username"
+            >
+              <Input
+                placeholder="Username"
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+                value={username}
+              />
+            </FormFieldWrapper>
+            {isUsernameInvalid && (
+              <p className="text-sm text-red-500">{usernameValidationError}</p>
+            )}
             <Flex justify="space-between" gap={8} w={'full'} mb={'1.25rem'}>
-              <FormField
+              <FormFieldWrapper
                 control={form.control}
                 name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="First Name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
+                label="First Name"
+              >
+                <Input placeholder="First Name" />
+              </FormFieldWrapper>
+
+              <FormFieldWrapper
                 control={form.control}
                 name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Last Name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                label="Last Name"
+              >
+                <Input placeholder="Last Name" />
+              </FormFieldWrapper>
             </Flex>
 
             <VStack align={'start'} gap={2} rowGap={'0'} my={3} mb={'25px'}>

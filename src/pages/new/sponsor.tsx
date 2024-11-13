@@ -4,10 +4,8 @@ import {
   Button,
   Divider,
   Flex,
-  FormControl,
   Heading,
   HStack,
-  Input,
   Link,
   Text,
   Tooltip,
@@ -21,18 +19,20 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
 import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
+import { Input } from '@/components/ui/input';
+import { MultiSelect } from '@/components/ui/multi-select';
 import { IndustryList, PDTG } from '@/constants';
 import { SignIn } from '@/features/auth';
 import {
@@ -51,7 +51,6 @@ import { uploadToCloudinary } from '@/utils/upload';
 
 const CreateSponsor = () => {
   const router = useRouter();
-  const animatedComponents = makeAnimated();
   const { data: session, status } = useSession();
   const { user, refetchUser } = useUser();
   const posthog = usePostHog();
@@ -256,60 +255,43 @@ const CreateSponsor = () => {
                 </Text>
 
                 <Flex justify={'space-between'} gap={2} w={'full'} mb={4}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="user.firstName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>First Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="First Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
+                    label="First Name"
+                    isRequired
+                  >
+                    <Input placeholder="First Name" />
+                  </FormFieldWrapper>
+                  <FormFieldWrapper
                     control={form.control}
                     name="user.lastName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Last Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Last Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Last Name"
+                    isRequired
+                  >
+                    <Input placeholder="Last Name" />
+                  </FormFieldWrapper>
                 </Flex>
                 <Flex mb={4}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="user.username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Username</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Username"
-                            {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              setUsername(e.target.value);
-                            }}
-                            value={username}
-                          />
-                        </FormControl>
-                        {isUsernameInvalid && (
-                          <p className="text-sm text-red-500">
-                            {validationUsernameErrorMessage}
-                          </p>
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Username"
+                    isRequired
+                  >
+                    <Input
+                      placeholder="Username"
+                      onChange={(e) => {
+                        setUsername(e.target.value);
+                      }}
+                      value={username}
+                    />
+                  </FormFieldWrapper>
+                  {isUsernameInvalid && (
+                    <p className="text-sm text-red-500">
+                      {validationUsernameErrorMessage}
+                    </p>
+                  )}
                 </Flex>
                 <>
                   <FormLabel isRequired>Profile Picture</FormLabel>
@@ -340,124 +322,88 @@ const CreateSponsor = () => {
                   About Your Company
                 </Text>
                 <Flex justify={'space-between'} gap={2} w={'full'}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Company Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Stark Industries"
-                            {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              setSponsorName(e.target.value);
-                            }}
-                            value={sponsorName}
-                          />
-                        </FormControl>
-                        {isSponsorNameInvalid && (
-                          <p className="text-sm text-red-500">
-                            {sponsorNameValidationErrorMessage}
-                          </p>
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
+                    label="Company Name"
+                    isRequired
+                  >
+                    <Input
+                      placeholder="Stark Industries"
+                      onChange={(e) => {
+                        setSponsorName(e.target.value);
+                      }}
+                      value={sponsorName}
+                    />
+                  </FormFieldWrapper>
+                  {isSponsorNameInvalid && (
+                    <p className="text-sm text-red-500">
+                      {sponsorNameValidationErrorMessage}
+                    </p>
+                  )}
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.slug"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Company Username</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="starkindustries"
-                            {...field}
-                            onChange={(e) => {
-                              const lowercaseValue =
-                                e.target.value.toLowerCase();
-                              field.onChange(lowercaseValue);
-                              setSlug(lowercaseValue);
-                            }}
-                            value={slug}
-                          />
-                        </FormControl>
-                        {isSlugInvalid && (
-                          <p className="text-sm text-red-500">
-                            {validationSlugErrorMessage}
-                          </p>
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Company Username"
+                    isRequired
+                  >
+                    <Input
+                      placeholder="starkindustries"
+                      onChange={(e) => {
+                        const lowercaseValue = e.target.value.toLowerCase();
+                        setSlug(lowercaseValue);
+                      }}
+                      value={slug}
+                    />
+                  </FormFieldWrapper>
+                  {isSlugInvalid && (
+                    <p className="text-sm text-red-500">
+                      {validationSlugErrorMessage}
+                    </p>
+                  )}
                 </Flex>
                 <HStack justify={'space-between'} w={'full'} my={6}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Company URL</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="https://starkindustries.com"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Company URL"
+                  >
+                    <Input placeholder="https://starkindustries.com" />
+                  </FormFieldWrapper>
 
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.twitter"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Company Twitter</FormLabel>
-                        <FormControl>
-                          <Input placeholder="@StarkIndustries" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Company Twitter"
+                    isRequired
+                  >
+                    <Input placeholder="@StarkIndustries" />
+                  </FormFieldWrapper>
                 </HStack>
                 <HStack w="full">
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.entityName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel
-                          isRequired
-                          className="flex items-center gap-2"
+                    label={
+                      <div className="flex items-center gap-2">
+                        Entity Name
+                        <Tooltip
+                          fontSize="xs"
+                          label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
                         >
-                          Entity Name
-                          <Tooltip
-                            fontSize="xs"
-                            label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
-                          >
-                            <InfoOutlineIcon
-                              color="brand.slate.500"
-                              w={3}
-                              h={3}
-                              display={{ base: 'none', md: 'block' }}
-                            />
-                          </Tooltip>
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="Full Entity Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          <InfoOutlineIcon
+                            color="brand.slate.500"
+                            w={3}
+                            h={3}
+                            display={{ base: 'none', md: 'block' }}
+                          />
+                        </Tooltip>
+                      </div>
+                    }
+                    isRequired
+                  >
+                    <Input placeholder="Full Entity Name" />
+                  </FormFieldWrapper>
                 </HStack>
                 <VStack align={'start'} gap={2} w="full" mt={6} mb={3}>
                   <FormLabel isRequired>Company Logo</FormLabel>
@@ -480,21 +426,18 @@ const CreateSponsor = () => {
                       <FormItem>
                         <FormLabel isRequired>Industry</FormLabel>
                         <FormControl>
-                          <Select
+                          <MultiSelect
                             closeMenuOnSelect={false}
-                            components={animatedComponents}
                             isMulti
-                            options={IndustryList.map((elm: string) => ({
+                            options={IndustryList.map((elm) => ({
                               label: elm,
                               value: elm,
                             }))}
-                            onChange={(selected) => {
-                              const values = selected.map(
-                                (item: any) => item.value,
-                              );
+                            onChange={(selected: any) => {
+                              const values =
+                                selected?.map((item: any) => item.value) || [];
                               field.onChange(values.join(', '));
                             }}
-                            className="w-full"
                           />
                         </FormControl>
                         <FormMessage />
@@ -503,26 +446,21 @@ const CreateSponsor = () => {
                   />
                 </HStack>
                 <Box my={6}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.bio"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Company Short Bio</FormLabel>
-                        <FormControl>
-                          <Input
-                            maxLength={180}
-                            placeholder="What does your company do?"
-                            {...field}
-                          />
-                        </FormControl>
-                        <div className="text-right text-xs text-slate-400">
-                          {180 - (field.value?.length || 0)} characters left
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Company Short Bio"
+                    isRequired
+                  >
+                    <Input
+                      maxLength={180}
+                      placeholder="What does your company do?"
+                    />
+                  </FormFieldWrapper>
+                  <div className="text-right text-xs text-slate-400">
+                    {180 - (form.watch('sponsor.bio')?.length || 0)} characters
+                    left
+                  </div>
                 </Box>
                 <Box my={8}>
                   {isError && (

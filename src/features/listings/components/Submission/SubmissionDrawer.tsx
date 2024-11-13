@@ -6,7 +6,6 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
-  Image,
   Link,
   Text,
   VStack,
@@ -21,19 +20,10 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
 
-import { RichEditor } from '@/components/shared/RichEditor';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
+import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
-import { tokenList } from '@/constants';
 import { useUser } from '@/store/user';
 
 import { submissionCountQuery } from '../../queries';
@@ -274,164 +264,55 @@ export const SubmissionDrawer = ({
                 <VStack gap={4} mb={5}>
                   {!isProject && (
                     <>
-                      <FormField
+                      <FormFieldWrapper
                         control={form.control}
                         name="link"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel isRequired>
-                              Link to Your Submission
-                            </FormLabel>
-                            <FormDescription>
-                              Make sure this link is accessible by everyone!
-                            </FormDescription>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                maxLength={500}
-                                placeholder="Add a link"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
+                        label="Link to Your Submission"
+                        description="Make sure this link is accessible by everyone!"
+                        isRequired
+                      >
+                        <Input maxLength={500} placeholder="Add a link" />
+                      </FormFieldWrapper>
+                      <FormFieldWrapper
                         control={form.control}
                         name="tweet"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Tweet Link</FormLabel>
-                            <FormDescription>
-                              This helps sponsors discover (and maybe repost)
-                              your work on Twitter!
-                            </FormDescription>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                maxLength={500}
-                                placeholder="Add a tweet's link"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                        label="Tweet Link"
+                        description="This helps sponsors discover (and maybe repost) your work on Twitter!"
+                      >
+                        <Input
+                          maxLength={500}
+                          placeholder="Add a tweet's link"
+                        />
+                      </FormFieldWrapper>
                     </>
                   )}
                   {eligibility?.map((e, index) => (
-                    <FormField
-                      key={e.order}
+                    <FormFieldWrapper
                       control={form.control}
                       name={`eligibilityAnswers.${index}.answer`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel isRequired>{e?.question}</FormLabel>
-                          <FormControl>
-                            <RichEditor
-                              id={`eligibility-${index}`}
-                              value={field.value}
-                              onChange={field.onChange}
-                              error={false}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label={e.question}
+                      isRequired
+                      isRichEditor
+                      key={e.order}
                     />
                   ))}
                   {compensationType !== 'fixed' && (
-                    <FormField
+                    <FormFieldWrapper
                       control={form.control}
                       name="ask"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel isRequired>
-                            What&apos;s the compensation you require to complete
-                            this fully?
-                          </FormLabel>
-                          <FormControl>
-                            <div className="flex">
-                              <div className="mt-2 flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted pl-3 pr-5">
-                                <Image
-                                  className="h-4 w-4 rounded-full"
-                                  alt="green dollar"
-                                  src={
-                                    tokenList.filter(
-                                      (e) => e?.tokenSymbol === token,
-                                    )[0]?.icon ??
-                                    '/assets/icons/green-dollar.svg'
-                                  }
-                                />
-                                <p className="font-medium text-slate-500">
-                                  {token}
-                                </p>
-                              </div>
-                              <Input
-                                className="rounded-l-none"
-                                {...field}
-                                type="number"
-                                value={field.value ?? ''}
-                                onChange={(e) => {
-                                  const value =
-                                    e.target.value === ''
-                                      ? null
-                                      : Number(e.target.value);
-                                  field.onChange(value);
-                                }}
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      label="What's the compensation you require to complete this fully?"
+                      isRequired
+                      isTokenInput
+                      token={token}
                     />
                   )}
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="otherInfo"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Anything Else?</FormLabel>
-                        <FormDescription>
-                          If you have any other links...
-                        </FormDescription>
-                        <FormControl>
-                          <RichEditor
-                            id="otherInfo"
-                            value={field.value || ''}
-                            onChange={field.onChange}
-                            error={false}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    label="Anything Else?"
+                    description="If you have any other links..."
+                    isRichEditor
                   />
-
-                  <FormItem>
-                    <FormLabel>Your Solana Wallet Address</FormLabel>
-                    <FormDescription>
-                      This is where you will receive your rewards if you win. If
-                      you want to edit it,{' '}
-                      <span className="underline">
-                        <Link
-                          className="text-blue-600 hover:text-blue-700"
-                          href={`/t/${user?.username}/edit`}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          click here
-                        </Link>
-                      </span>
-                    </FormDescription>
-                    <Input
-                      value={user?.publicKey || ''}
-                      placeholder="Add your Solana wallet address"
-                      className="opacity-50"
-                      readOnly
-                    />
-                  </FormItem>
                 </VStack>
               </Flex>
               <Flex
