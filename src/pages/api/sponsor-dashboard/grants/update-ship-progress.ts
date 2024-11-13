@@ -38,11 +38,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         message: 'application not found',
       });
     }
-    if (application.applicationStatus !== 'Completed') {
-      logger.warn('Application is not completed');
+    if (application.applicationStatus !== 'Approved') {
+      logger.warn('Application is not approved');
       return res.status(400).json({
-        error: 'Application is not completed',
-        message: 'Application is not completed',
+        error: 'Application is not approved',
+        message: 'Application is not approved',
       });
     }
     if (application.grant.airtableId) {
