@@ -127,7 +127,7 @@ export const useListingForm = (
 
   const onChange = useCallback(() => {
     // setDraftSaving(true)
-    debouncedSaveRef.current?.();
+    if (!isEditing) debouncedSaveRef.current?.();
   }, []);
 
   const submitListing = useCallback(async () => {

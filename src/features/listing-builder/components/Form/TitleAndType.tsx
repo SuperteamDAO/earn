@@ -36,15 +36,15 @@ export function TitleAndType() {
       control={form.control}
       render={({ field }) => {
         return (
-          <FormItem>
+          <FormItem className="gap-2">
             <FormLabel>Listing Title</FormLabel>
-            <div className="flex rounded-md border ring-primary has-[:focus]:ring-1">
+            <div className="flex w-full rounded-md border ring-primary has-[:focus]:ring-1">
               <Type />
               <FormControl>
                 <Input
                   placeholder="Develop Something on solana"
                   {...field}
-                  className="border-none focus-visible:ring-0"
+                  className="mt-0 border-none focus-visible:ring-0"
                   defaultValue={''}
                 />
               </FormControl>
@@ -66,7 +66,7 @@ function Type() {
       control={form.control}
       render={({ field }) => {
         return (
-          <FormItem>
+          <FormItem className="w-fit">
             <FormControl>
               <Select
                 defaultValue={field.value}
@@ -98,7 +98,7 @@ function Type() {
                   form.setFocus('title');
                 }}
               >
-                <SelectTrigger className="w-32 rounded-none border-0 border-r focus:ring-0">
+                <SelectTrigger className="h-full w-32 rounded-none border-0 border-r focus:ring-0">
                   <div className="flex items-center gap-2">
                     <SelectValue />
                   </div>

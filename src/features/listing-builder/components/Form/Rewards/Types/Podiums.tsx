@@ -132,14 +132,14 @@ export const Podiums = () => {
         key="rewards"
         name="rewards"
         render={() => (
-          <FormItem>
+          <FormItem className="gap-2">
             <div className="max-h-[62vh] space-y-4 overflow-y-auto rounded-md border p-4">
               {rewardPositions.map((position, index) => (
                 <FormField
                   key={position}
                   name={`rewards.${position}`}
                   render={({ field }) => (
-                    <FormItem className="group relative flex flex-col gap-2">
+                    <FormItem className="group relative gap-2">
                       <div className="flex justify-between">
                         <FormLabel className="w-24 capitalize">
                           {getRankLabels(position)} Prize
@@ -195,9 +195,9 @@ export const Podiums = () => {
                       <FormField
                         name={`rewards.${BONUS_REWARD_POSITION}`}
                         render={({ field }) => (
-                          <FormItem>
-                            <div className="flex justify-between py-1.5">
-                              <FormLabel className="w-24">
+                          <FormItem className="gap-2">
+                            <div className="flex justify-between">
+                              <FormLabel className="w-fit">
                                 Bonus Per Prize
                               </FormLabel>
                             </div>
@@ -229,7 +229,7 @@ export const Podiums = () => {
                         control={form.control}
                         name="maxBonusSpots"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="gap-2">
                             <FormLabel># of Prizes</FormLabel>
                             <FormControl>
                               <div className="relative">

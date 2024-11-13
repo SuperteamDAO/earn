@@ -1,6 +1,7 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -41,6 +42,7 @@ export function PrePublish() {
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
 
   const router = useRouter();
+  const posthog = usePostHog();
   return (
     <Dialog
       open={open}
@@ -50,8 +52,10 @@ export function PrePublish() {
       }}
     >
       <Button
+        className="ph-no-capture"
         disabled={isDraftSaving}
         onClick={async () => {
+          posthog.capture('basics_sponsor');
           if (await form.validateBasics()) isOpen(true);
         }}
       >
@@ -90,8 +94,10 @@ export function PrePublish() {
                   const data = await form.submitListing();
                   isOpen(false);
                   if (isEditing) {
+                    posthog.capture('update listing_sponsor');
                     router.push('/dashboard/listings');
                   } else {
+                    posthog.capture('publish listing_sponsor');
                     if (data.status === 'VERIFYING') {
                       setConfirmModal('VERIFICATION');
                     } else {

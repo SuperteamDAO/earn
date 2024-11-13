@@ -49,16 +49,21 @@ export function RewardsSheet() {
   }, [form]);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet
+      open={open}
+      onOpenChange={(e) => {
+        if (e && !hasRewardsErrors) setOpen(e);
+      }}
+    >
       <SheetTrigger className="w-full">
         <FormField
           control={form.control}
           name="rewards"
           render={({}) => {
             return (
-              <FormItem className="group flex w-full flex-col items-start">
-                <FormLabel className="mb-1">Rewards</FormLabel>
-                <div className="flex h-9 w-full items-center rounded-md border border-slate-200 bg-slate-50 pl-3">
+              <FormItem className="group items-start gap-1.5">
+                <FormLabel className="">Rewards</FormLabel>
+                <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-3">
                   <Label />
                   <Button
                     variant="link"

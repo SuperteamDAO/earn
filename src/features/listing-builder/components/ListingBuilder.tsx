@@ -1,6 +1,7 @@
 import { type BountyType } from '@prisma/client';
 import { Provider, useAtomValue } from 'jotai';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
@@ -45,7 +46,7 @@ function ListingBuilder({
 }) {
   const isEditing = useAtomValue(isEditingAtom);
   useEffect(() => {
-    console.log('isEditing type', isEditing);
+    console.log('isEditing inside hydrate', isEditing);
   }, [isEditing]);
 
   const form = useListingForm(defaultListing);
@@ -92,7 +93,7 @@ function ListingBuilder({
                   <TitleAndType />
                   <DescriptionAndTemplate />
                 </div>
-                <div className="col-span-3 space-y-4">
+                <div className="col-span-3 space-y-6">
                   <Rewards />
                   <Deadline />
                   <Skills />
@@ -119,7 +120,7 @@ interface Props {
 
 // atom values wont be available here, will only exist in child of HydrateAtoms immeditealy
 function ListingBuilderProvider({ isEditing, isDuplicating, listing }: Props) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { user } = useUser();
   const isGod = session?.user.role === 'GOD';
   const isST = !!user?.currentSponsor?.st;
@@ -127,6 +128,12 @@ function ListingBuilderProvider({ isEditing, isDuplicating, listing }: Props) {
   const defaultListing =
     listing || getListingDefaults(isGod, !!isEditing, isST);
   console.log('isEditing', isEditing);
+
+  const router = useRouter();
+  if (!session && status === 'unauthenticated') {
+    router.push('/');
+    return null;
+  }
 
   return (
     <Provider store={store}>

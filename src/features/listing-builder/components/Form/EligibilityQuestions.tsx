@@ -76,7 +76,7 @@ export function EligibilityQuestions() {
       control={form.control}
       name={`eligibility`}
       render={() => (
-        <FormItem className="pt-2">
+        <FormItem className="gap-2 pt-2">
           <div className="flex items-center gap-2">
             <FormLabel className="font-bold uppercase text-slate-400">
               Custom Questions
@@ -102,7 +102,7 @@ export function EligibilityQuestions() {
                 name={`eligibility.${index}.question`}
                 render={() => (
                   <div key={field.id} className="group">
-                    <FormItem>
+                    <FormItem className="gap-2">
                       <FormLabel>Question {index + 1}</FormLabel>
                       <div className="flex items-center rounded-md border ring-primary has-[:focus]:ring-1">
                         <FormField
@@ -112,6 +112,7 @@ export function EligibilityQuestions() {
                             <FormItem className="w-fit">
                               <Select
                                 value={field.value}
+                                defaultValue="text"
                                 onValueChange={(value) => {
                                   field.onChange(value);
                                   // solves a bug when we change type, but the prev type error is still there.

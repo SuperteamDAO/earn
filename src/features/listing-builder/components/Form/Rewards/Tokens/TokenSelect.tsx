@@ -34,7 +34,7 @@ export function TokenSelect() {
       name="token"
       control={form?.control}
       render={({ field }) => (
-        <FormItem className="flex w-full flex-col">
+        <FormItem className="gap-2">
           <FormLabel>Payment</FormLabel>
           <Popover>
             <PopoverTrigger asChild>

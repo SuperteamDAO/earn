@@ -27,7 +27,7 @@ export function Skills() {
       control={form?.control}
       render={({ field }) => {
         return (
-          <FormItem>
+          <FormItem className="gap-2">
             <FormLabel>Skills Needed</FormLabel>
             <FormControl>
               <SkillsSelect

@@ -67,7 +67,7 @@ export function Templates() {
       <DialogTrigger asChild>
         <Button variant="ghost" className="text-blue-600 hover:text-blue-600">
           <LayoutGrid className="fill-blue-600" />
-          Browser Templates
+          Browse Templates
         </Button>
       </DialogTrigger>
       <DialogContent className="w-max max-w-none p-8">

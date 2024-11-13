@@ -42,11 +42,9 @@ export function PaymentType() {
       control={form.control}
       render={({ field }) => {
         return (
-          <FormItem className="flex items-center justify-between">
-            <div className="text-xs text-slate-400">
-              <FormLabel className="font-semibold text-slate-500">
-                Payment Type
-              </FormLabel>
+          <FormItem className="flex flex-row items-center justify-between">
+            <div className="">
+              <FormLabel className="">Payment Type</FormLabel>
               <FormDescription>
                 {descriptionByType(field.value)}
               </FormDescription>

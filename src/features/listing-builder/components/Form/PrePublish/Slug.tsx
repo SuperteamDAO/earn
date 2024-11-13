@@ -107,10 +107,8 @@ export function Slug() {
       name="slug"
       render={({ field }) => {
         return (
-          <FormItem>
-            <FormLabel className="font-semibold text-slate-500">
-              Customise URL (Slug)
-            </FormLabel>
+          <FormItem className="gap-2">
+            <FormLabel className="">Customise URL (Slug)</FormLabel>
             <FormControl>
               <div className="relative">
                 <Input

@@ -99,14 +99,14 @@ export const createListingRefinements = async (
     if (!data.minRewardAsk) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Minimum reward is required for range compensation type',
+        message: 'Required',
         path: ['minRewardAsk'],
       });
     }
     if (!data.maxRewardAsk) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Maximum reward is required for range compensation type',
+        message: 'Required',
         path: ['maxRewardAsk'],
       });
     }
@@ -129,18 +129,11 @@ export const createListingFormSchema = (
   isEditing: boolean,
   isST?: boolean,
 ) => {
-  const eligibilityQuestionSchema = z.discriminatedUnion('type', [
-    z.object({
-      order: z.number(),
-      question: z.string().min(1),
-      type: z.literal('text'),
-    }),
-    z.object({
-      order: z.number(),
-      question: z.string().url(),
-      type: z.literal('link'),
-    }),
-  ]);
+  const eligibilityQuestionSchema = z.object({
+    order: z.number(),
+    question: z.string().min(1),
+    type: z.enum(['text', 'link']),
+  });
 
   const rewardsSchema = z
     .record(

@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/utils';
 
-import { isDraftSavingAtom, previewAtom } from '../../atoms';
+import { isDraftSavingAtom, isEditingAtom, previewAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 import { PrePublish } from '../Form/PrePublish';
 import { StatusBadge } from './StatusBadge';
@@ -30,6 +30,7 @@ export function Header() {
     control: form.control,
     name: 'id',
   });
+  const isEditing = useAtomValue(isEditingAtom);
 
   return (
     <div className="hidden border-b bg-background lg:block">
@@ -65,13 +66,15 @@ export function Header() {
           {status === 'authenticated' && session && (
             <>
               <StatusBadge />
-              <p className="w-20 text-sm font-medium text-slate-400">
-                {isDraftSaving ? (
-                  <Loader2 className="mx-auto h-4 w-4 animate-spin" />
-                ) : (
-                  'auto saved'
-                )}
-              </p>
+              {!isEditing && (
+                <p className="w-20 text-sm font-medium text-slate-400">
+                  {isDraftSaving ? (
+                    <Loader2 className="mx-auto h-4 w-4 animate-spin" />
+                  ) : (
+                    'auto saved'
+                  )}
+                </p>
+              )}
               <Button
                 variant="outline"
                 className="text-slate-400"

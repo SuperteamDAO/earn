@@ -34,7 +34,7 @@ export function Fixed() {
       control={form.control}
       name={'rewardAmount'}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className="gap-2">
           <FormLabel>Fixed Prize</FormLabel>
           <FormControl>
             <TokenNumberInput

@@ -87,6 +87,16 @@ const submissionSchema = (
                 message: `Answer for "${question.question}" is required`,
               });
             }
+            if (answer && (question.isLink || question.type === 'link')) {
+              const urlResult = z.string().url().safeParse(answer);
+              if (!urlResult.success) {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.custom,
+                  message: 'Please enter a valid URL',
+                  path: ['eligibilityAnswers', index, 'answer'],
+                });
+              }
+            }
           });
         }
       }
