@@ -1,8 +1,9 @@
-import * as React from 'react'
-import { cn } from '@/utils'
+import * as React from 'react';
+
+import { cn } from '@/utils';
 
 interface ResizeProps extends React.HTMLAttributes<HTMLDivElement> {
-  isResizing?: boolean
+  isResizing?: boolean;
 }
 
 export const ResizeHandle = React.forwardRef<HTMLDivElement, ResizeProps>(
@@ -14,16 +15,16 @@ export const ResizeHandle = React.forwardRef<HTMLDivElement, ResizeProps>(
           'opacity-0 [backdrop-filter:saturate(1.8)_blur(20px)]',
           {
             'opacity-80': isResizing,
-            'group-hover/node-image:opacity-80': !isResizing
+            'group-hover/node-image:opacity-80': !isResizing,
           },
           'before:absolute before:inset-y-0 before:-left-1 before:-right-1',
-          className
+          className,
         )}
         ref={ref}
         {...props}
       ></div>
-    )
-  }
-)
+    );
+  },
+);
 
-ResizeHandle.displayName = 'ResizeHandle'
+ResizeHandle.displayName = 'ResizeHandle';

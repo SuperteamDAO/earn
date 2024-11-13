@@ -1,3 +1,3 @@
-import {DescriptionAndTemplate} from './DescriptionAndTemplate'
+import { DescriptionAndTemplate } from './DescriptionAndTemplate';
 
-export {DescriptionAndTemplate}
+export { DescriptionAndTemplate };

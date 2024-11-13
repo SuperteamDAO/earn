@@ -1,23 +1,25 @@
-import React from 'react';
+import { useAtom } from 'jotai';
 import Link from 'next/link';
+import React from 'react';
+
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { useAtom } from 'jotai';
+
 import { confirmModalAtom } from '../../atoms';
 
 export const UnderVerificationModal = () => {
-  const [confirmModal] = useAtom(confirmModalAtom)
+  const [confirmModal] = useAtom(confirmModalAtom);
   return (
     <Dialog open={confirmModal === 'VERIFICATION'} onOpenChange={() => null}>
       <DialogContent hideCloseIcon className="max-w-sm overflow-hidden">
         <DialogHeader>
-          <div className="flex justify-center mt-4">
-            <div className="p-8 bg-blue-50 rounded-full">
+          <div className="mt-4 flex justify-center">
+            <div className="rounded-full bg-blue-50 p-8">
               <svg
                 width="73"
                 height="73"
@@ -39,18 +41,19 @@ export const UnderVerificationModal = () => {
             We need to verify your listing before it gets published
           </h2>
           <p className="text-slate-500">
-            It's important for us to verify certain work opportunities to maintain trust, and keep the platform free of any bad actors. We will try our best to verify your listing within 24 hours.
+            {`It's`} important for us to verify certain work opportunities to
+            maintain trust, and keep the platform free of any bad actors. We
+            will try our best to verify your listing within 24 hours.
           </p>
           <p className="text-slate-500">
-            Once verified, your listing will be published automatically. If we need any information, we will get in touch with you.
+            Once verified, your listing will be published automatically. If we
+            need any information, we will get in touch with you.
           </p>
         </div>
 
         <DialogFooter>
           <Link href="/dashboard/listings" className="w-full">
-            <Button className="w-full py-5">
-              Understood
-            </Button>
+            <Button className="w-full py-5">Understood</Button>
           </Link>
         </DialogFooter>
       </DialogContent>

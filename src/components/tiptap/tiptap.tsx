@@ -1,24 +1,27 @@
-import * as React from 'react'
+import { type Content, type Editor, EditorContent } from '@tiptap/react';
+import * as React from 'react';
 
-import type { Content, Editor } from '@tiptap/react'
-import type { UseMinimalTiptapEditorProps } from './hooks/use-minimal-tiptap'
-import { EditorContent } from '@tiptap/react'
-import { Separator } from '@/components/ui/separator'
-import { cn } from '@/utils'
-import { SectionOne } from './components/section/one'
-import { SectionTwo } from './components/section/two'
-import { SectionThree } from './components/section/three'
-import { SectionFour } from './components/section/four'
-import { SectionFive } from './components/section/five'
-import { LinkBubbleMenu } from './components/bubble-menu/link-bubble-menu'
-import { useMinimalTiptapEditor } from './hooks/use-minimal-tiptap'
-import { MeasuredContainer } from './components/measured-container'
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/utils';
 
-export interface MinimalTiptapProps extends Omit<UseMinimalTiptapEditorProps, 'onUpdate'> {
-  value?: Content
-  onChange?: (value: Content) => void
-  className?: string
-  editorContentClassName?: string
+import { LinkBubbleMenu } from './components/bubble-menu/link-bubble-menu';
+import { MeasuredContainer } from './components/measured-container';
+import { SectionFive } from './components/section/five';
+import { SectionFour } from './components/section/four';
+import { SectionOne } from './components/section/one';
+import { SectionThree } from './components/section/three';
+import { SectionTwo } from './components/section/two';
+import {
+  useMinimalTiptapEditor,
+  type UseMinimalTiptapEditorProps,
+} from './hooks/use-minimal-tiptap';
+
+export interface MinimalTiptapProps
+  extends Omit<UseMinimalTiptapEditorProps, 'onUpdate'> {
+  value?: Content;
+  onChange?: (value: Content) => void;
+  className?: string;
+  editorContentClassName?: string;
 }
 
 const Toolbar = ({ editor }: { editor: Editor }) => (
@@ -30,7 +33,14 @@ const Toolbar = ({ editor }: { editor: Editor }) => (
 
       <SectionTwo
         editor={editor}
-        activeActions={['bold', 'italic', 'underline', 'strikethrough', 'code', 'clearFormatting']}
+        activeActions={[
+          'bold',
+          'italic',
+          'underline',
+          'strikethrough',
+          'code',
+          'clearFormatting',
+        ]}
         mainActionCount={5}
       />
 
@@ -40,46 +50,57 @@ const Toolbar = ({ editor }: { editor: Editor }) => (
 
       <Separator orientation="vertical" className="mx-2 h-7" />
 
-      <SectionFour editor={editor} activeActions={['orderedList', 'bulletList']} mainActionCount={2} />
+      <SectionFour
+        editor={editor}
+        activeActions={['orderedList', 'bulletList']}
+        mainActionCount={2}
+      />
 
       <Separator orientation="vertical" className="mx-2 h-7" />
 
-      <SectionFive editor={editor} activeActions={['codeBlock', 'blockquote', 'horizontalRule']} mainActionCount={0} />
+      <SectionFive
+        editor={editor}
+        activeActions={['codeBlock', 'blockquote', 'horizontalRule']}
+        mainActionCount={0}
+      />
     </div>
   </div>
-)
+);
 
-export const MinimalTiptapEditor = React.forwardRef<HTMLDivElement, MinimalTiptapProps>(
-  ({ value, onChange, className, editorContentClassName, ...props }, ref) => {
+export const MinimalTiptapEditor = React.forwardRef<
+  HTMLDivElement,
+  MinimalTiptapProps
+>(({ value, onChange, className, editorContentClassName, ...props }, ref) => {
+  const editor = useMinimalTiptapEditor({
+    value,
+    onUpdate: onChange,
+    ...props,
+  });
 
-    const editor = useMinimalTiptapEditor({
-      value,
-      onUpdate: onChange,
-      ...props
-    })
-
-    if (!editor) {
-      return null
-    }
-
-    return (
-      <MeasuredContainer
-        as="div"
-        name="editor"
-        ref={ref}
-        className={cn(
-          'flex h-auto min-h-72 w-full flex-col rounded-md border border-input shadow-sm focus-within:border-primary',
-          className
-        )}
-      >
-        <Toolbar editor={editor} />
-        <EditorContent editor={editor} className={cn('minimal-tiptap-editor', editorContentClassName)} />
-        <LinkBubbleMenu editor={editor} />
-      </MeasuredContainer>
-    )
+  if (!editor) {
+    return null;
   }
-)
 
-MinimalTiptapEditor.displayName = 'MinimalTiptapEditor'
+  return (
+    <MeasuredContainer
+      as="div"
+      name="editor"
+      ref={ref}
+      className={cn(
+        'flex h-auto min-h-72 w-full flex-col rounded-md border border-input shadow-sm focus-within:border-primary',
+        className,
+      )}
+    >
+      <Toolbar editor={editor} />
+      <EditorContent
+        editor={editor}
+        className={cn('minimal-tiptap-editor', editorContentClassName)}
+      />
+      <LinkBubbleMenu editor={editor} />
+    </MeasuredContainer>
+  );
+});
 
-export default MinimalTiptapEditor
+MinimalTiptapEditor.displayName = 'MinimalTiptapEditor';
+
+export default MinimalTiptapEditor;

@@ -1,2 +1,2 @@
-import {Layout as ListingBuilderLayout } from './Layout'
-export {ListingBuilderLayout}
+import { Layout as ListingBuilderLayout } from './Layout';
+export { ListingBuilderLayout };

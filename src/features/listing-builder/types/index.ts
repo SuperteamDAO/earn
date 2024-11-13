@@ -1,10 +1,11 @@
-import { createListingFormSchema } from './schema';
-import { z } from 'zod';
+import { type z } from 'zod';
 
+import { type createListingFormSchema } from './schema';
+
+export * from './schema';
 export * from './SuperteamName';
-export * from './schema'
 
 export type ListingFormSchema = ReturnType<typeof createListingFormSchema>;
 export type ListingFormData = z.infer<ListingFormSchema>;
 
-export type ListingStatus = 'draft' | 'published' | 'unpublished' | 'verifying'
+export type ListingStatus = 'draft' | 'published' | 'unpublished' | 'verifying';

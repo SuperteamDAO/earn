@@ -1,4 +1,4 @@
-import { ListingBuilder } from "@/features/listing-builder";
+import { ListingBuilder } from '@/features/listing-builder';
 
 function NewListing() {
   return (

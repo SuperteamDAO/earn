@@ -18,7 +18,10 @@ export const checkListingSponsorAuth = async (
   if (!listing) {
     logger.warn(`Listing with ID: ${listingId} not found`);
     return {
-      error: { status: 404, message: `Listing with id=${listingId} not found.` },
+      error: {
+        status: 404,
+        message: `Listing with id=${listingId} not found.`,
+      },
     };
   }
 

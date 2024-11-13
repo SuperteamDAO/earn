@@ -1,12 +1,25 @@
-import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAtomValue } from "jotai";
-import { isEditingAtom, isGodAtom } from "../../atoms";
-import { DateTimePicker } from "@/components/ui/datetime-picker";
-import { useEffect, useState } from "react";
-import dayjs from "dayjs";
-import { useListingForm } from "../../hooks";
-import { useWatch } from "react-hook-form";
+import dayjs from 'dayjs';
+import { useAtomValue } from 'jotai';
+import { useEffect, useState } from 'react';
+import { useWatch } from 'react-hook-form';
+
+import { DateTimePicker } from '@/components/ui/datetime-picker';
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+import { isEditingAtom, isGodAtom } from '../../atoms';
+import { useListingForm } from '../../hooks';
 
 const deadlineOptions = [
   { label: '1 Week', value: 7 },
@@ -14,14 +27,14 @@ const deadlineOptions = [
   { label: '3 Weeks', value: 21 },
 ];
 
-export const DEADLINE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+export const DEADLINE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
 
 export function Deadline() {
-  const form = useListingForm()
+  const form = useListingForm();
   const deadline = useWatch({
-    name:'deadline',
-    control:form.control
-  })
+    name: 'deadline',
+    control: form.control,
+  });
 
   const [maxDeadline, setMaxDeadline] = useState<Date | undefined>(undefined);
   const [minDeadline, setMinDeadline] = useState<Date | undefined>(new Date());
@@ -38,9 +51,9 @@ export function Deadline() {
   }, [editable]);
 
   useEffect(() => {
-    if(isGod) setMinDeadline(undefined)
-    else setMinDeadline(new Date())
-  },[isGod])
+    if (isGod) setMinDeadline(undefined);
+    else setMinDeadline(new Date());
+  }, [isGod]);
 
   const handleDeadlineSelection = (days: number) => {
     return dayjs().add(days, 'day').format(DEADLINE_FORMAT);
@@ -48,50 +61,54 @@ export function Deadline() {
 
   useEffect(() => {
     // TODO: Debug why zod default for deadline specifically is not working
-    if(form) {
-      if(!deadline)
-        form.setValue('deadline',handleDeadlineSelection(Number(7)))
+    if (form) {
+      if (!deadline)
+        form.setValue('deadline', handleDeadlineSelection(Number(7)));
     }
   }, [form]);
 
   return (
     <FormField
-      name='deadline'
+      name="deadline"
       control={form.control}
-      render={({field}) => {
+      render={({ field }) => {
         return (
           <FormItem className="">
             <FormLabel>Deadline</FormLabel>
-            <div className="flex border rounded-md ring-primary has-[:focus]:ring-1 has-[data-[state=open]]:ring-1">
-              <DateTimePicker value={field.value ? new Date(field.value) : undefined} 
+            <div className="flex rounded-md border ring-primary has-[:focus]:ring-1 has-[data-[state=open]]:ring-1">
+              <DateTimePicker
+                value={field.value ? new Date(field.value) : undefined}
                 onChange={(date) => {
-                  console.log('DateTimePicker date', date)
+                  console.log('DateTimePicker date', date);
                   if (date) {
                     const formattedDate = dayjs(date).format(DEADLINE_FORMAT);
                     field.onChange(formattedDate);
                   } else {
                     field.onChange(undefined);
                   }
-                  form.onChange()
+                  form.onChange();
                 }}
-                use12HourFormat hideSeconds
-                max={maxDeadline ? (maxDeadline) : undefined}
-                min={minDeadline ? (minDeadline) : undefined}
+                use12HourFormat
+                hideSeconds
+                max={maxDeadline ? maxDeadline : undefined}
+                min={minDeadline ? minDeadline : undefined}
                 classNames={{
                   trigger: 'border-0',
                 }}
               />
-              <Select onValueChange={(data) => {
-                field.onChange(handleDeadlineSelection(Number(data)))
+              <Select
+                onValueChange={(data) => {
+                  field.onChange(handleDeadlineSelection(Number(data)));
                 }}
-               defaultValue={'7'}>
-                <SelectTrigger className='border-0 w-32 rounded-none focus:ring-0 border-l '>
+                defaultValue={'7'}
+              >
+                <SelectTrigger className="w-32 rounded-none border-0 border-l focus:ring-0">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {deadlineOptions.map(({ value, label }) => (
-                    <SelectItem key={value} value={value+''}>
-                      <div className="flex items-center gap-2 text-xs pl-2 text-slate-500">
+                    <SelectItem key={value} value={value + ''}>
+                      <div className="flex items-center gap-2 pl-2 text-xs text-slate-500">
                         <span>{label}</span>
                       </div>
                     </SelectItem>
@@ -101,9 +118,8 @@ export function Deadline() {
             </div>
             <FormMessage />
           </FormItem>
-        )
+        );
       }}
     />
   );
 }
-

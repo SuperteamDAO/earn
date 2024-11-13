@@ -1,4 +1,4 @@
-import { Extension } from '@tiptap/react'
+import { Extension } from '@tiptap/react';
 
 export const ResetMarksOnEnter = Extension.create({
   name: 'resetMarksOnEnter',
@@ -13,13 +13,13 @@ export const ResetMarksOnEnter = Extension.create({
           editor.isActive('underline') ||
           editor.isActive('code')
         ) {
-          editor.commands.splitBlock({ keepMarks: false })
+          editor.commands.splitBlock({ keepMarks: false });
 
-          return true
+          return true;
         }
 
-        return false
-      }
-    }
-  }
-})
+        return false;
+      },
+    };
+  },
+});

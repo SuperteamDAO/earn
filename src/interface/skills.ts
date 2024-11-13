@@ -1,5 +1,6 @@
-import { type MultiSelectOptions } from '@/constants';
 import { z } from 'zod';
+
+import { type MultiSelectOptions } from '@/constants';
 
 const skillSubSkillMap = {
   Frontend: [
@@ -110,25 +111,32 @@ type SkillMap = {
   color: string;
 };
 
-const allSubSkills = Object.values(skillSubSkillMap)
-.flatMap(skills => skills.map(s => s.value));
+const allSubSkills = Object.values(skillSubSkillMap).flatMap((skills) =>
+  skills.map((s) => s.value),
+);
 
-const skillSchema = z.object({
-  skills: z.enum(Object.keys(skillSubSkillMap) as [ParentSkills, ...ParentSkills[]]),
-  subskills: z.array(z.enum(allSubSkills as [SubSkillsType, ...SubSkillsType[]]))
-}).refine((data) => {
-  const validSubskills = skillSubSkillMap[data.skills].map(s => s.value);
-  return data.subskills.every(ss => validSubskills.includes(ss));
-}, "Invalid subskills for selected skill");
+const skillSchema = z
+  .object({
+    skills: z.enum(
+      Object.keys(skillSubSkillMap) as [ParentSkills, ...ParentSkills[]],
+    ),
+    subskills: z.array(
+      z.enum(allSubSkills as [SubSkillsType, ...SubSkillsType[]]),
+    ),
+  })
+  .refine((data) => {
+    const validSubskills = skillSubSkillMap[data.skills].map((s) => s.value);
+    return data.subskills.every((ss) => validSubskills.includes(ss));
+  }, 'Invalid subskills for selected skill');
 
-export const skillsArraySchema = z.array(skillSchema, {
-  message: 'Required'
-})
-.refine((skills) => {
-  const parentSkills = skills.map(s => s.skills);
-  return new Set(parentSkills).size === parentSkills.length;
-}, "Duplicate parent skills are not allowed");
-
+export const skillsArraySchema = z
+  .array(skillSchema, {
+    message: 'Required',
+  })
+  .refine((skills) => {
+    const parentSkills = skills.map((s) => s.skills);
+    return new Set(parentSkills).size === parentSkills.length;
+  }, 'Duplicate parent skills are not allowed');
 
 interface UseSkillsFormProps<T extends object> {
   form: T;
@@ -147,35 +155,41 @@ export const useSkillsForm = <T extends object>({
     onUpdate(fieldName, newSkills);
   };
 
-  const addSkill = (parentSkill: ParentSkills, subskills: SubSkillsType[] = []) => {
+  const addSkill = (
+    parentSkill: ParentSkills,
+    subskills: SubSkillsType[] = [],
+  ) => {
     const newSkills: Skills = [
-      ...currentSkills.filter(s => s.skills !== parentSkill),
-      { skills: parentSkill, subskills }
+      ...currentSkills.filter((s) => s.skills !== parentSkill),
+      { skills: parentSkill, subskills },
     ];
     updateSkills(newSkills);
   };
 
   const removeSkill = (parentSkill: ParentSkills) => {
-    updateSkills(currentSkills.filter(s => s.skills !== parentSkill));
+    updateSkills(currentSkills.filter((s) => s.skills !== parentSkill));
   };
 
-  const updateSubskills = (parentSkill: ParentSkills, subskills: SubSkillsType[]) => {
-    const newSkills: Skills = currentSkills.map(skill => 
-      skill.skills === parentSkill
-        ? { ...skill, subskills }
-        : skill
+  const updateSubskills = (
+    parentSkill: ParentSkills,
+    subskills: SubSkillsType[],
+  ) => {
+    const newSkills: Skills = currentSkills.map((skill) =>
+      skill.skills === parentSkill ? { ...skill, subskills } : skill,
     );
     updateSkills(newSkills);
   };
 
-  const getValidSubskillsForParent = (parentSkill: ParentSkills): SubSkillsType[] => {
-    return skillSubSkillMap[parentSkill].map(s => s.value);
+  const getValidSubskillsForParent = (
+    parentSkill: ParentSkills,
+  ): SubSkillsType[] => {
+    return skillSubSkillMap[parentSkill].map((s) => s.value);
   };
 
   const getAvailableSkills = (): ParentSkills[] => {
-    const usedSkills = new Set(currentSkills.map(s => s.skills));
+    const usedSkills = new Set(currentSkills.map((s) => s.skills));
     return Object.keys(skillSubSkillMap).filter(
-      skill => !usedSkills.has(skill as ParentSkills)
+      (skill) => !usedSkills.has(skill as ParentSkills),
     ) as ParentSkills[];
   };
 
@@ -186,10 +200,9 @@ export const useSkillsForm = <T extends object>({
     updateSubskills,
     getAvailableSkills,
     getValidSubskillsForParent,
-    validate: () => skillsArraySchema.safeParse(currentSkills)
+    validate: () => skillsArraySchema.safeParse(currentSkills),
   };
 };
-
 
 export type { ParentSkills, SkillMap, Skills, SubSkillsType };
 export { MainSkills, skillSubSkillMap };

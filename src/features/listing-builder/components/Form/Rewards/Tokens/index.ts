@@ -1,3 +1,3 @@
-export * from './TokenLabel'
-export * from './TokenNumberInput'
-export * from './TokenSelect'
+export * from './TokenLabel';
+export * from './TokenNumberInput';
+export * from './TokenSelect';

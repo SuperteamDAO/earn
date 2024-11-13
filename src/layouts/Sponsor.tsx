@@ -24,9 +24,7 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { PDTG } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
-import {
-  isCreateListingAllowedQuery,
-} from '@/features/listing-builder';
+import { isCreateListingAllowedQuery } from '@/features/listing-builder';
 import {
   CreateListingModal,
   NavItem,

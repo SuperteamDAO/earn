@@ -1,1 +1,1 @@
-export * from './tiptap'
+export * from './tiptap';

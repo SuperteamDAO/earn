@@ -1,3 +1,3 @@
-import {PrePublish} from './Modal'
+import { PrePublish } from './Modal';
 
-export {PrePublish}
+export { PrePublish };

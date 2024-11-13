@@ -6,8 +6,8 @@ export * from './LocalProfiles';
 export * from './Members';
 export * from './NavItems';
 export * from './Scouts';
+export * from './SelectHackathon';
+export * from './SelectSponsor';
 export * from './SponsorInfoModal';
 export * from './SponsorPrize';
 export * from './Submissions';
-export * from './SelectHackathon'
-export * from './SelectSponsor';

@@ -1,3 +1,14 @@
+import { memo, useEffect, useMemo, useState } from 'react';
+import { useWatch } from 'react-hook-form';
+
+import { Button } from '@/components/ui/button';
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Separator } from '@/components/ui/separator';
 import {
   Sheet,
   SheetContent,
@@ -5,238 +16,241 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { Fixed, Podiums, Range, Variable } from "./Types"
-import { Footer } from "./Footer"
-import { Separator } from "@/components/ui/separator"
-import { TokenLabel, TokenSelect } from "./Tokens"
-import { useListingForm } from "@/features/listing-builder/hooks"
-import { useWatch } from "react-hook-form"
-import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Button } from "@/components/ui/button"
-import { memo, useEffect, useMemo, useState } from "react"
-import { PaymentType } from "./PaymentType"
-import { calculateTotalPrizes } from "@/features/listing-builder/utils/rewards"
-import { formatNumberWithSuffix } from "@/utils/formatNumberWithSuffix"
+} from '@/components/ui/sheet';
+import { calculateTotalPrizes } from '@/features/listing-builder';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+
+import { useListingForm } from '../../../hooks';
+import { Footer } from './Footer';
+import { PaymentType } from './PaymentType';
+import { TokenLabel, TokenSelect } from './Tokens';
+import { Fixed, Podiums, Range, Variable } from './Types';
 
 export function RewardsSheet() {
-
-  const form = useListingForm()
-  const [open, setOpen] = useState(false)
+  const form = useListingForm();
+  const [open, setOpen] = useState(false);
 
   const type = useWatch({
     control: form.control,
-    name:'type'
-  })
+    name: 'type',
+  });
 
   const hasRewardsErrors = useMemo(() => {
-    const errors = form.formState.errors
-    return (errors.rewards && Object.keys(errors.rewards).some(key => errors?.rewards?.[key]?.message)) || (errors.maxBonusSpots) || (errors.minRewardAsk) || (errors.maxRewardAsk);
-  }, [form])
+    const errors = form.formState.errors;
+    return (
+      (errors.rewards &&
+        Object.keys(errors.rewards).some(
+          (key) => errors?.rewards?.[key]?.message,
+        )) ||
+      errors.maxBonusSpots ||
+      errors.minRewardAsk ||
+      errors.maxRewardAsk
+    );
+  }, [form]);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger className='w-full'>
+      <SheetTrigger className="w-full">
         <FormField
           control={form.control}
           name="rewards"
-          render={({}) =>{
+          render={({}) => {
             return (
-              <FormItem className='flex flex-col items-start w-full group'>
-                <FormLabel className='mb-1'>Rewards</FormLabel>
-                <div className='flex pl-3 h-9 bg-slate-50 border-slate-200 border w-full rounded-md items-center'>
+              <FormItem className="group flex w-full flex-col items-start">
+                <FormLabel className="mb-1">Rewards</FormLabel>
+                <div className="flex h-9 w-full items-center rounded-md border border-slate-200 bg-slate-50 pl-3">
                   <Label />
-                  <Button variant='link'
-                    size='sm'
-                    className='ml-auto group-hover:underline'
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="ml-auto group-hover:underline"
                   >
                     Edit
                   </Button>
                 </div>
                 {hasRewardsErrors ? (
-                  <p
-                    className={"text-xs font-medium text-destructive"}
-                  >
+                  <p className={'text-xs font-medium text-destructive'}>
                     Please Resolve all errors in rewards
                   </p>
                 ) : (
-                    <FormMessage />
-                  )
-                }
+                  <FormMessage />
+                )}
               </FormItem>
-            )
+            );
           }}
         />
       </SheetTrigger>
       <SheetContent
-        side='right' className='overflow-hidden flex flex-col sm:max-w-lg'
+        side="right"
+        className="flex flex-col overflow-hidden sm:max-w-lg"
       >
         <SheetHeader>
           <SheetTitle>Add Rewards</SheetTitle>
         </SheetHeader>
-        <div className='py-2 flex flex-col gap-y-4'>
+        <div className="flex flex-col gap-y-4 py-2">
           <TokenSelect />
-          {type === 'project' && (
-            <PaymentType />
-          )}
+          {type === 'project' && <PaymentType />}
           <Type />
         </div>
-        <div className='mt-auto'>
-          <Separator className='w-[150%] relative -left-20 my-4'/>
-          <SheetFooter >
+        <div className="mt-auto">
+          <Separator className="relative -left-20 my-4 w-[150%]" />
+          <SheetFooter>
             <Footer closeSheet={() => setOpen(false)} />
           </SheetFooter>
         </div>
       </SheetContent>
     </Sheet>
-  )
+  );
 }
 
 const Type = memo(() => {
-
-  const form = useListingForm()
+  const form = useListingForm();
   const type = useWatch({
     control: form.control,
-    name:'type'
-  })
+    name: 'type',
+  });
   const compensationType = useWatch({
     control: form.control,
-    name:'compensationType'
-  })
+    name: 'compensationType',
+  });
   if (type !== 'project') {
-    return <Podiums />
+    return <Podiums />;
   } else {
     switch (compensationType) {
       case 'fixed':
-        return <Fixed />
+        return <Fixed />;
       case 'range':
-        return <Range />
+        return <Range />;
       case 'variable':
-        return <Variable />
+        return <Variable />;
       default:
-        return null
+        return null;
     }
   }
-})
+});
+Type.displayName = 'CompensationType';
 
 const Label = memo(() => {
-  const form = useListingForm()
+  const form = useListingForm();
   const type = useWatch({
     control: form.control,
-    name:'type'
-  })
+    name: 'type',
+  });
   const compensationType = useWatch({
     control: form.control,
-    name:'compensationType'
-  })
+    name: 'compensationType',
+  });
   const rewards = useWatch({
     control: form.control,
-    name:'rewards'
-  })
+    name: 'rewards',
+  });
   const maxBonusSpots = useWatch({
     control: form.control,
-    name:'maxBonusSpots'
-  })
+    name: 'maxBonusSpots',
+  });
   const totalReward = useWatch({
     control: form.control,
-    name:'rewardAmount'
-  })
+    name: 'rewardAmount',
+  });
   const minRewardAsk = useWatch({
     control: form.control,
-    name:'minRewardAsk'
-  })
+    name: 'minRewardAsk',
+  });
   const maxRewardAsk = useWatch({
     control: form.control,
-    name:'maxRewardAsk'
-  })
+    name: 'maxRewardAsk',
+  });
 
-  const totalPrizes = useMemo(() => calculateTotalPrizes(rewards, maxBonusSpots || 0), [rewards, maxBonusSpots])
+  const totalPrizes = useMemo(
+    () => calculateTotalPrizes(rewards, maxBonusSpots || 0),
+    [rewards, maxBonusSpots],
+  );
 
   useEffect(() => {
-    console.log('compensationType',compensationType)
-  },[compensationType])
+    console.log('compensationType', compensationType);
+  }, [compensationType]);
 
   useEffect(() => {
-    console.log('type',type)
-  },[type])
+    console.log('type', type);
+  }, [type]);
 
-  if(type !== 'project') {
+  if (type !== 'project') {
     return (
       <>
-        <TokenLabel showIcon showSymbol 
+        <TokenLabel
+          showIcon
+          showSymbol
           amount={totalReward || 0}
           classNames={{
-            amount: 'font-medium text-sm'
+            amount: 'font-medium text-sm',
           }}
-        /> 
+        />
         <TypeLabelText>
           | {totalPrizes} {totalPrizes === 1 ? 'Prize' : 'Prizes'}
         </TypeLabelText>
       </>
-    )
+    );
   } else {
-    if(compensationType === 'fixed') {
+    if (compensationType === 'fixed') {
       return (
         <>
-          <TokenLabel showIcon showSymbol 
+          <TokenLabel
+            showIcon
+            showSymbol
             amount={totalReward || 0}
             classNames={{
-              amount: 'font-medium text-sm'
+              amount: 'font-medium text-sm',
             }}
-          /> 
-          <TypeLabelText>
-            | Fixed Prize
-          </TypeLabelText>
+          />
+          <TypeLabelText>| Fixed Prize</TypeLabelText>
         </>
-      )
-    } else if(compensationType === 'range') {
+      );
+    } else if (compensationType === 'range') {
       return (
         <>
-          <TokenLabel showIcon 
+          <TokenLabel
+            showIcon
             amount={minRewardAsk || 0}
             classNames={{
-              amount: 'font-medium text-sm mr-0'
+              amount: 'font-medium text-sm mr-0',
             }}
-            formatter={(n) => formatNumberWithSuffix(n)+'' || "0"}
-            className='mr-1'
+            formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
+            className="mr-1"
           />
           <p>-</p>
-          <TokenLabel showIcon={false} showSymbol 
-            className='ml-1'
+          <TokenLabel
+            showIcon={false}
+            showSymbol
+            className="ml-1"
             amount={maxRewardAsk || 0}
             classNames={{
-              amount: 'font-medium text-sm ml-0'
+              amount: 'font-medium text-sm ml-0',
             }}
-            formatter={(n) => formatNumberWithSuffix(n)+'' || "0"}
+            formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
           />
-          <TypeLabelText>
-            | Range Prize
-          </TypeLabelText>
+          <TypeLabelText>| Range Prize</TypeLabelText>
         </>
-      )
-    } else if(compensationType === 'variable') {
+      );
+    } else if (compensationType === 'variable') {
       <>
         <TokenLabel showIcon showSymbol />
-        <TypeLabelText>
-          | Variable Prize
-        </TypeLabelText>
-      </>
+        <TypeLabelText>| Variable Prize</TypeLabelText>
+      </>;
     }
   }
   return (
     <>
       <TokenLabel showIcon showSymbol />
-      <TypeLabelText>
-        | Variable Prize
-      </TypeLabelText>
+      <TypeLabelText>| Variable Prize</TypeLabelText>
     </>
-  )
-})
+  );
+});
+Label.displayName = 'CompensationTypeLabel';
 
-function TypeLabelText({children}: {children: React.ReactNode}) {
+function TypeLabelText({ children }: { children: React.ReactNode }) {
   return (
-    <p className='text-xs text-slate-400 capitalize whitespace-nowrap overflow-hidden text-ellipsis ml-1'>
+    <p className="ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs capitalize text-slate-400">
       {children}
     </p>
-  )
+  );
 }

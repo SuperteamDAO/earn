@@ -1,6 +1,7 @@
-import { Rewards } from "@/features/listings";
-import { cleanRewards } from "@/utils/rank";
+import { type Rewards } from '@/features/listings';
+import { cleanRewards } from '@/utils/rank';
 
-export const calculateTotalPrizes = (rewards: Rewards | undefined, maxBonusSpots: number) =>
-    cleanRewards(rewards, true).length + (maxBonusSpots ?? 0);
-
+export const calculateTotalPrizes = (
+  rewards: Rewards | undefined,
+  maxBonusSpots: number,
+) => cleanRewards(rewards, true).length + (maxBonusSpots ?? 0);

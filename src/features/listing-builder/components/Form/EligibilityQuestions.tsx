@@ -1,14 +1,8 @@
-import { useFieldArray, useWatch } from "react-hook-form";
-import { Baseline, Info, Link2, Plus, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { Baseline, Info, Link2, Plus, Trash2 } from 'lucide-react';
+import { useEffect } from 'react';
+import { useFieldArray, useWatch } from 'react-hook-form';
+
+import { Button } from '@/components/ui/button';
 import {
   FormControl,
   FormDescription,
@@ -16,34 +10,46 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/utils";
-import { useEffect } from "react";
-import { useListingForm } from "../../hooks";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { cn } from '@/utils';
+
+import { useListingForm } from '../../hooks';
 
 const questionTypes = [
-  { value: "text", label: "Text", icon: Baseline },
-  { value: "link", label: "Link", icon: Link2 },
+  { value: 'text', label: 'Text', icon: Baseline },
+  { value: 'link', label: 'Link', icon: Link2 },
 ];
 
 export function EligibilityQuestions() {
   const form = useListingForm();
   const type = useWatch({
-    control:form.control,
-    name:'type'
-  })
+    control: form.control,
+    name: 'type',
+  });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "eligibility",
+    name: 'eligibility',
   });
 
   const handleAddQuestion = () => {
     append({
       order: fields.length + 1,
-      question: "",
-      type: "text",
+      question: '',
+      type: 'text',
     });
   };
 
@@ -52,37 +58,38 @@ export function EligibilityQuestions() {
   };
 
   useEffect(() => {
-    if(type === 'project') {
-      if(fields.length === 0) {
-        handleAddQuestion()
-        form.setFocus('title')
+    if (type === 'project') {
+      if (fields.length === 0) {
+        handleAddQuestion();
+        form.setFocus('title');
       }
     } else {
-      if(fields.length === 1 && fields[0]?.question === "") {
-        handleRemoveQuestion(0)
-        form.setFocus('title')
+      if (fields.length === 1 && fields[0]?.question === '') {
+        handleRemoveQuestion(0);
+        form.setFocus('title');
       }
     }
-  },[type])
+  }, [type]);
 
   return (
     <FormField
       control={form.control}
       name={`eligibility`}
       render={() => (
-        <FormItem className='pt-2'>
-          <div className='flex items-center gap-2'>
-            <FormLabel className='uppercase text-slate-400 font-bold'>Custom Questions</FormLabel>
+        <FormItem className="pt-2">
+          <div className="flex items-center gap-2">
+            <FormLabel className="font-bold uppercase text-slate-400">
+              Custom Questions
+            </FormLabel>
             <Tooltip delayDuration={100}>
               <TooltipTrigger>
-                <Info className='h-3 w-3 text-slate-400' />
+                <Info className="h-3 w-3 text-slate-400" />
               </TooltipTrigger>
-              <TooltipContent className='bg-slate-100 text-slate-700'>
-                <p className='max-w-sm'>
-                  {type === 'project' ? 
-                    `Applicant’s names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!` :
-                    `The main bounty submission link, the submitter’s names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`
-                  }
+              <TooltipContent className="bg-slate-100 text-slate-700">
+                <p className="max-w-sm">
+                  {type === 'project'
+                    ? `Applicant’s names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`
+                    : `The main bounty submission link, the submitter’s names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`}
                 </p>
               </TooltipContent>
             </Tooltip>
@@ -94,10 +101,10 @@ export function EligibilityQuestions() {
                 control={form.control}
                 name={`eligibility.${index}.question`}
                 render={() => (
-                  <div key={field.id} className='group'>
-                    <FormItem  >
-                      <FormLabel>Question {index+1}</FormLabel>
-                      <div className="flex border rounded-md ring-primary has-[:focus]:ring-1 items-center">
+                  <div key={field.id} className="group">
+                    <FormItem>
+                      <FormLabel>Question {index + 1}</FormLabel>
+                      <div className="flex items-center rounded-md border ring-primary has-[:focus]:ring-1">
                         <FormField
                           control={form.control}
                           name={`eligibility.${index}.type`}
@@ -112,23 +119,28 @@ export function EligibilityQuestions() {
                                 }}
                               >
                                 <FormControl>
-                                  <SelectTrigger className="w-fit rounded-none border-0 focus:ring-0 gap-1 border-r">
-                                    <SelectValue className="w-fit ">
+                                  <SelectTrigger className="w-fit gap-1 rounded-none border-0 border-r focus:ring-0">
+                                    <SelectValue className="w-fit">
                                       {(() => {
                                         const selectedType = questionTypes.find(
-                                          (type) => type.value === field.value
+                                          (type) => type.value === field.value,
                                         );
-                                        if (!selectedType) return "Type";
+                                        if (!selectedType) return 'Type';
                                         const Icon = selectedType.icon;
-                                        return <Icon className="h-4 w-4 text-slate-500" />;
+                                        return (
+                                          <Icon className="h-4 w-4 text-slate-500" />
+                                        );
                                       })()}
                                     </SelectValue>
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
                                   {questionTypes.map((type) => (
-                                    <SelectItem key={type.value} value={type.value}>
-                                      <div className="flex items-center text-slate-500 gap-2">
+                                    <SelectItem
+                                      key={type.value}
+                                      value={type.value}
+                                    >
+                                      <div className="flex items-center gap-2 text-slate-500">
                                         <type.icon className="h-4 w-4" />
                                         {type.label}
                                       </div>
@@ -146,10 +158,10 @@ export function EligibilityQuestions() {
                           render={({ field }) => (
                             <FormItem className="flex-1">
                               <FormControl>
-                                <Input 
-                                  {...field} 
-                                  placeholder="Enter your question" 
-                                  className='border-none focus-visible:ring-0'
+                                <Input
+                                  {...field}
+                                  placeholder="Enter your question"
+                                  className="border-none focus-visible:ring-0"
                                 />
                               </FormControl>
                             </FormItem>
@@ -169,7 +181,7 @@ export function EligibilityQuestions() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="text-muted-foreground hover:text-destructive hidden group-hover:flex"
+                            className="hidden text-muted-foreground hover:text-destructive group-hover:flex"
                             onClick={() => handleRemoveQuestion(index)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -184,16 +196,15 @@ export function EligibilityQuestions() {
             ))}
 
             {type === 'project' || fields.length < 2 ? (
-              <div className='flex justify-between'>
+              <div className="flex justify-between">
                 <FormMessage />
                 <Button
                   type="button"
-                  variant={fields.length === 0 ? "outline":"link"}
-                  size='sm'
+                  variant={fields.length === 0 ? 'outline' : 'link'}
+                  size="sm"
                   className={cn(
-                    fields.length > 0 && "w-fit px-0 ml-auto flex",
-                    fields.length === 0 && "w-full text-slate-500 mt-2",
-
+                    fields.length > 0 && 'ml-auto flex w-fit px-0',
+                    fields.length === 0 && 'mt-2 w-full text-slate-500',
                   )}
                   onClick={handleAddQuestion}
                 >
@@ -201,7 +212,9 @@ export function EligibilityQuestions() {
                 </Button>
               </div>
             ) : (
-                <FormDescription>Max two custom questions allow for bounties</FormDescription>
+              <FormDescription>
+                Max two custom questions allow for bounties
+              </FormDescription>
             )}
           </div>
         </FormItem>

@@ -1,3 +1,3 @@
-import {RewardsSheet} from './Sheet'
+import { RewardsSheet } from './Sheet';
 
-export {RewardsSheet as Rewards}
+export { RewardsSheet as Rewards };

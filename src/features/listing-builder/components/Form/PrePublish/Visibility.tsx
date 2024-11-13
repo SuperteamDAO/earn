@@ -1,38 +1,57 @@
-import { FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form"
-import { LockKeyhole, Users } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useListingForm } from "../../../hooks";
+import { LockKeyhole, Users } from 'lucide-react';
+
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+import { useListingForm } from '../../../hooks';
 
 const visibilityTypes = [
-  { value: "public", label: "Public", icon: Users  },
-  { value: "private", label: "Private", icon: LockKeyhole },
+  { value: 'public', label: 'Public', icon: Users },
+  { value: 'private', label: 'Private', icon: LockKeyhole },
 ];
 
 export function Visibility() {
-  const form = useListingForm()
-  if(!form) return null
+  const form = useListingForm();
+  if (!form) return null;
   return (
     <FormField
-      name='isPrivate'
+      name="isPrivate"
       control={form.control}
-      render={({field}) => {
+      render={({ field }) => {
         return (
-          <FormItem className='flex justify-between items-center'>
+          <FormItem className="flex items-center justify-between">
             <div className="text-xs text-slate-400">
-              <FormLabel className='text-slate-500 font-semibold'>Visibility</FormLabel>
+              <FormLabel className="font-semibold text-slate-500">
+                Visibility
+              </FormLabel>
               <FormDescription>
-                {field.value ?
-                'Only accessible via the URL' 
-                : 'Anyone can see this listing '}
+                {field.value
+                  ? 'Only accessible via the URL'
+                  : 'Anyone can see this listing '}
               </FormDescription>
             </div>
-            <FormControl className='flex items-center'>
-              <Select onValueChange={(e) => {
-                if(e === 'private') field.onChange(true)
-                  else field.onChange(false)
-                form.onChange()
-              }} defaultValue={field.value ? 'private': 'public'} >
-                <SelectTrigger className=' w-32 '>
+            <FormControl className="flex items-center">
+              <Select
+                onValueChange={(e) => {
+                  if (e === 'private') field.onChange(true);
+                  else field.onChange(false);
+                  form.onChange();
+                }}
+                defaultValue={field.value ? 'private' : 'public'}
+              >
+                <SelectTrigger className="w-32">
                   <div className="flex items-center gap-2">
                     <SelectValue />
                   </div>
@@ -50,8 +69,8 @@ export function Visibility() {
               </Select>
             </FormControl>
           </FormItem>
-        )
+        );
       }}
     />
-  )
+  );
 }

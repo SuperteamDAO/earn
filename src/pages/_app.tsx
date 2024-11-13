@@ -13,12 +13,12 @@ import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
 
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { useUser } from '@/store/user';
 import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
 
 import theme from '../config/chakra.config';
-import { TooltipProvider } from '@/components/ui/tooltip';
 
 // Chakra / Next/font don't play well in config.ts file for the theme. So we extend the theme here. (only the fonts)
 const extendThemeWithNextFonts = {

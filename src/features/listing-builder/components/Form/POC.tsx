@@ -1,25 +1,31 @@
-import { Input } from "@/components/ui/input";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useListingForm } from "../../hooks";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+
+import { useListingForm } from '../../hooks';
 
 export function POC() {
-  const form = useListingForm()
+  const form = useListingForm();
   return (
     <FormField
-      name='pocSocials'
+      name="pocSocials"
       control={form?.control}
-      render={({field}) => {
+      render={({ field }) => {
         return (
-          <FormItem  >
+          <FormItem>
             <FormLabel>Point of Contact</FormLabel>
             <FormControl>
-              <Input placeholder='yb@superteamearn.com' {...field} />
+              <Input placeholder="yb@superteamearn.com" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
-        )
+        );
       }}
     />
   );
 }
-

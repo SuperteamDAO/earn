@@ -1,52 +1,55 @@
-import * as React from 'react'
-import type { ShouldShowProps } from '../../types'
-import type { Editor } from '@tiptap/react'
-import { BubbleMenu } from '@tiptap/react'
-import { LinkEditBlock } from '../link/link-edit-block'
-import { LinkPopoverBlock } from '../link/link-popover-block'
+import { BubbleMenu, type Editor } from '@tiptap/react';
+import * as React from 'react';
+
+import type { ShouldShowProps } from '../../types';
+import { LinkEditBlock } from '../link/link-edit-block';
+import { LinkPopoverBlock } from '../link/link-popover-block';
 
 interface LinkBubbleMenuProps {
-  editor: Editor
+  editor: Editor;
 }
 
 interface LinkAttributes {
-  href: string
-  target: string
+  href: string;
+  target: string;
 }
 
 export const LinkBubbleMenu: React.FC<LinkBubbleMenuProps> = ({ editor }) => {
-  const [showEdit, setShowEdit] = React.useState(false)
-  const [linkAttrs, setLinkAttrs] = React.useState<LinkAttributes>({ href: '', target: '' })
-  const [selectedText, setSelectedText] = React.useState('')
+  const [showEdit, setShowEdit] = React.useState(false);
+  const [linkAttrs, setLinkAttrs] = React.useState<LinkAttributes>({
+    href: '',
+    target: '',
+  });
+  const [selectedText, setSelectedText] = React.useState('');
 
   const updateLinkState = React.useCallback(() => {
-    const { from, to } = editor.state.selection
-    const { href, target } = editor.getAttributes('link')
-    const text = editor.state.doc.textBetween(from, to, ' ')
+    const { from, to } = editor.state.selection;
+    const { href, target } = editor.getAttributes('link');
+    const text = editor.state.doc.textBetween(from, to, ' ');
 
-    setLinkAttrs({ href, target })
-    setSelectedText(text)
-  }, [editor])
+    setLinkAttrs({ href, target });
+    setSelectedText(text);
+  }, [editor]);
 
   const shouldShow = React.useCallback(
     ({ editor, from, to }: ShouldShowProps) => {
       if (from === to) {
-        return false
+        return false;
       }
-      const { href } = editor.getAttributes('link')
+      const { href } = editor.getAttributes('link');
 
       if (href) {
-        updateLinkState()
-        return true
+        updateLinkState();
+        return true;
       }
-      return false
+      return false;
     },
-    [updateLinkState]
-  )
+    [updateLinkState],
+  );
 
   const handleEdit = React.useCallback(() => {
-    setShowEdit(true)
-  }, [])
+    setShowEdit(true);
+  }, []);
 
   const onSetLink = React.useCallback(
     (url: string, text?: string, openInNewTab?: boolean) => {
@@ -62,24 +65,24 @@ export const LinkBubbleMenu: React.FC<LinkBubbleMenuProps> = ({ editor }) => {
               type: 'link',
               attrs: {
                 href: url,
-                target: openInNewTab ? '_blank' : ''
-              }
-            }
-          ]
+                target: openInNewTab ? '_blank' : '',
+              },
+            },
+          ],
         })
         .setLink({ href: url, target: openInNewTab ? '_blank' : '' })
-        .run()
-      setShowEdit(false)
-      updateLinkState()
+        .run();
+      setShowEdit(false);
+      updateLinkState();
     },
-    [editor, updateLinkState]
-  )
+    [editor, updateLinkState],
+  );
 
   const onUnsetLink = React.useCallback(() => {
-    editor.chain().focus().extendMarkRange('link').unsetLink().run()
-    setShowEdit(false)
-    updateLinkState()
-  }, [editor, updateLinkState])
+    editor.chain().focus().extendMarkRange('link').unsetLink().run();
+    setShowEdit(false);
+    updateLinkState();
+  }, [editor, updateLinkState]);
 
   return (
     <BubbleMenu
@@ -87,7 +90,7 @@ export const LinkBubbleMenu: React.FC<LinkBubbleMenuProps> = ({ editor }) => {
       shouldShow={shouldShow}
       tippyOptions={{
         placement: 'bottom-start',
-        onHidden: () => setShowEdit(false)
+        onHidden: () => setShowEdit(false),
       }}
     >
       {showEdit ? (
@@ -99,8 +102,12 @@ export const LinkBubbleMenu: React.FC<LinkBubbleMenuProps> = ({ editor }) => {
           className="w-full min-w-80 rounded-md border bg-popover p-4 text-popover-foreground outline-none"
         />
       ) : (
-        <LinkPopoverBlock onClear={onUnsetLink} url={linkAttrs.href} onEdit={handleEdit} />
+        <LinkPopoverBlock
+          onClear={onUnsetLink}
+          url={linkAttrs.href}
+          onEdit={handleEdit}
+        />
       )}
     </BubbleMenu>
-  )
-}
+  );
+};

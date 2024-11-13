@@ -1,4 +1,18 @@
-import { Button } from "@/components/ui/button"
+import { useQuery } from '@tanstack/react-query';
+import { Eye, LayoutGrid, Plus } from 'lucide-react';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { usePostHog } from 'posthog-js/react';
+import { useEffect } from 'react';
+import { useWatch } from 'react-hook-form';
+
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/components/ui/card';
 import {
   Dialog,
   DialogClose,
@@ -7,21 +21,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { useQuery } from "@tanstack/react-query"
-import { listingTemplatesQuery } from "../../../queries/listing-templates"
-import { usePostHog } from "posthog-js/react"
-import { isCreateListingAllowedQuery } from "../../../queries"
-import { useSession } from "next-auth/react"
-import { useEffect } from "react"
-import { useUser } from "@/store/user"
-import { Eye, LayoutGrid, Plus } from "lucide-react"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { cn } from "@/utils"
-import { getURL } from "@/utils/validUrl"
-import Link from "next/link"
-import { useWatch } from "react-hook-form"
-import { useListingForm } from "@/features/listing-builder/hooks"
+} from '@/components/ui/dialog';
+import { useUser } from '@/store/user';
+import { cn } from '@/utils';
+import { getURL } from '@/utils/validUrl';
+
+import { useListingForm } from '../../../hooks';
+import {
+  isCreateListingAllowedQuery,
+  listingTemplatesQuery,
+} from '../../../queries';
 
 export function Templates() {
   const posthog = usePostHog();
@@ -30,10 +39,12 @@ export function Templates() {
 
   const form = useListingForm();
   const type = useWatch({
-    control:form.control,
-    name:'type'
-  })
-  const { data: templates = [] } = useQuery(listingTemplatesQuery(type || 'bounty'));
+    control: form.control,
+    name: 'type',
+  });
+  const { data: templates = [] } = useQuery(
+    listingTemplatesQuery(type || 'bounty'),
+  );
 
   const {
     data: isCreateListingAllowed,
@@ -44,29 +55,31 @@ export function Templates() {
     isCreateListingAllowedRefetch();
   }, [user]);
 
-  const isDisabled = isCreateListingAllowed !== undefined && 
-    isCreateListingAllowed === false && 
+  const isDisabled =
+    isCreateListingAllowed !== undefined &&
+    isCreateListingAllowed === false &&
     session?.user.role !== 'GOD';
 
   return (
-    <Dialog 
-      // defaultOpen={!(isEditing && !isDuplicating)}
+    <Dialog
+    // defaultOpen={!(isEditing && !isDuplicating)}
     >
       <DialogTrigger asChild>
-        <Button variant="ghost" className='text-blue-600 hover:text-blue-600'>
-          <LayoutGrid className='fill-blue-600 ' />
+        <Button variant="ghost" className="text-blue-600 hover:text-blue-600">
+          <LayoutGrid className="fill-blue-600" />
           Browser Templates
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-none w-max p-8" >
+      <DialogContent className="w-max max-w-none p-8">
         <DialogHeader>
           <DialogTitle>Start with Templates</DialogTitle>
           <DialogDescription>
-            Save hours of work writing a description, use existing tried & tested templates  
+            Save hours of work writing a description, use existing tried &
+            tested templates
           </DialogDescription>
         </DialogHeader>
-        <div className='mt-4'>
-          <div className="grid grid-cols-4 gap-6 ">
+        <div className="mt-4">
+          <div className="grid grid-cols-4 gap-6">
             <DialogClose>
               <Button
                 className="ph-no-capture flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700"
@@ -77,21 +90,26 @@ export function Templates() {
                 }}
               >
                 <Plus className="h-6 w-6" />
-                <span className="text-base font-medium">Start from Scratch</span>
+                <span className="text-base font-medium">
+                  Start from Scratch
+                </span>
               </Button>
             </DialogClose>
 
             {templates.map((template) => {
-              const sponsors = [...new Set(template?.Bounties?.map(b => b.sponsor))];
+              const sponsors = [
+                ...new Set(template?.Bounties?.map((b) => b.sponsor)),
+              ];
               const uniqueSponsors = sponsors.slice(0, 3);
 
               return (
                 <Card key={template.id} className="w-60">
-                  <CardHeader className={cn(
-                    "flex h-28 items-center justify-center text-4xl"
-                  )}
+                  <CardHeader
+                    className={cn(
+                      'flex h-28 items-center justify-center text-4xl',
+                    )}
                     style={{
-                      backgroundColor: template.color || 'white'
+                      backgroundColor: template.color || 'white',
                     }}
                   >
                     {template.emoji}
@@ -109,8 +127,8 @@ export function Templates() {
                               <div
                                 key={sponsor.name}
                                 className={cn(
-                                  "h-6 w-6 rounded-full border border-white",
-                                  idx !== 0 && "-ml-3"
+                                  'h-6 w-6 rounded-full border border-white',
+                                  idx !== 0 && '-ml-3',
                                 )}
                               >
                                 <img
@@ -123,14 +141,15 @@ export function Templates() {
                           </div>
                           <span className="text-xs text-slate-400">
                             Used by {uniqueSponsors[0]?.name}
-                            {uniqueSponsors[1] && ` & ${uniqueSponsors[1].name}`}
+                            {uniqueSponsors[1] &&
+                              ` & ${uniqueSponsors[1].name}`}
                           </span>
                         </div>
                       ) : (
-                          <p className="text-sm text-slate-400">
-                            {`Pre-fill info with "${template.title}" template`}
-                          </p>
-                        )}
+                        <p className="text-sm text-slate-400">
+                          {`Pre-fill info with "${template.title}" template`}
+                        </p>
+                      )}
                     </div>
                   </CardContent>
 
@@ -141,31 +160,32 @@ export function Templates() {
                       className="flex-1 text-slate-500"
                       asChild
                     >
-                      <Link href={`${getURL()}templates/listings/${template.slug}`} 
+                      <Link
+                        href={`${getURL()}templates/listings/${template.slug}`}
                         target="_blank"
                       >
-                      <Eye  />
-                      Preview
+                        <Eye />
+                        Preview
                       </Link>
                     </Button>
                     <DialogClose asChild>
                       <Button
                         variant="default"
                         size="sm"
-                        className="flex-1 ph-no-capture"
+                        className="ph-no-capture flex-1"
                         disabled={isDisabled}
                         onClick={() => {
                           posthog.capture('template_sponsor');
-                          console.log('template', template)
-                          const id = form.getValues().id
-                          const slug = form.getValues().slug
+                          console.log('template', template);
+                          const id = form.getValues().id;
+                          const slug = form.getValues().slug;
                           form.reset({
-                            ...template as any,
+                            ...(template as any),
                             id,
                             slug,
-                            templateId: template.id
-                          })
-                          form.onChange()
+                            templateId: template.id,
+                          });
+                          form.onChange();
                         }}
                       >
                         Use
@@ -179,5 +199,5 @@ export function Templates() {
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
