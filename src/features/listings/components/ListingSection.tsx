@@ -8,7 +8,7 @@ type ListingSectionProps = {
   children?: React.ReactNode;
   title: string;
   sub: string;
-  emoji: string;
+  emoji?: string;
   type: 'bounties' | 'grants';
   showViewAll?: boolean;
   viewAllLink?: string;
@@ -49,13 +49,15 @@ export const ListingSection = ({
         borderBottomColor="#E2E8F0"
       >
         <Flex align={'center'}>
-          <Image
-            w={'1.4375rem'}
-            h={'1.4375rem'}
-            mr={'0.75rem'}
-            alt="emoji"
-            src={emoji}
-          />
+          {emoji && (
+            <Image
+              w={'1.4375rem'}
+              h={'1.4375rem'}
+              mr={'0.75rem'}
+              alt="emoji"
+              src={emoji}
+            />
+          )}
           <Text
             color={'#334155'}
             fontSize={{ base: 14, md: 16 }}

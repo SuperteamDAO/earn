@@ -1,11 +1,19 @@
-import { ChevronRightIcon } from '@chakra-ui/icons';
-import { Box, HStack, IconButton, Input } from '@chakra-ui/react';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import TaskItem from '@tiptap/extension-task-item';
 import TaskList from '@tiptap/extension-task-list';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import {
+  Bold,
+  ChevronRight,
+  ExternalLink,
+  Italic,
+  Link as LinkIcon,
+  List,
+  ListOrdered,
+  Trash2,
+} from 'lucide-react';
 import React, {
   useCallback,
   useEffect,
@@ -13,14 +21,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  BiBold,
-  BiItalic,
-  BiLink,
-  BiLinkExternal,
-  BiTrashAlt,
-} from 'react-icons/bi';
-import { FaListOl, FaListUl } from 'react-icons/fa6';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/utils';
 
 interface RichEditorProps {
   id: string;
@@ -28,8 +32,7 @@ interface RichEditorProps {
   onChange: (value: string) => void;
   height?: string;
   placeholder?: string;
-  isError?: boolean;
-  maxHeight?: string;
+  error?: boolean;
 }
 
 export const RichEditor: React.FC<RichEditorProps> = ({
@@ -37,9 +40,8 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   value,
   onChange,
   height = '10rem',
-  maxHeight = '10rem',
   placeholder = 'Write something...',
-  isError = false,
+  error = false,
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const editor = useEditor({
@@ -57,14 +59,14 @@ export const RichEditor: React.FC<RichEditorProps> = ({
     content: value || undefined,
     editorProps: {
       attributes: {
-        class:
-          'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none',
+        class: 'mx-auto focus:outline-none',
       },
     },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       onChange(html === '<p></p>' ? '' : html);
     },
+    immediatelyRender: false,
   });
 
   useEffect(() => {
@@ -78,43 +80,28 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   }
 
   return (
-    <Box pos="relative" w="full">
+    <div className="relative w-full">
       <FloatingToolbar editor={editor} editorClassname={`editor-${id}`} />
-      <Box
-        className={`editor-${id}`}
-        ref={editorRef}
-        sx={{
-          '.ProseMirror p.is-editor-empty:first-child::before': {
-            color: 'var(--chakra-colors-gray-300)',
-            content: 'attr(data-placeholder)',
-            float: 'left',
-            height: 0,
-            pointerEvents: 'none',
-          },
-        }}
-        overflowY="auto"
-        w="full"
-        h={height}
-        maxH={maxHeight}
-        py={2}
-        borderWidth={isError ? '2px' : '1px'}
-        borderColor={isError ? 'red.500' : 'brand.slate.300'}
-        _focusWithin={{
-          borderColor: 'brand.purple',
-          borderWidth: '2px',
-        }}
+      <div
+        className={cn(
+          'mt-2 w-full overflow-y-auto rounded-md border py-2 shadow-sm [&_*]:!text-[0.875rem]',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-sm',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-slate-400',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:float-left',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:h-0',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:pointer-events-none',
+          height,
+          error ? 'border border-destructive' : 'border-input',
+          'focus-within:border focus-within:border-brand-purple',
+          `editor-${id}`,
+        )}
         id="reset-des"
-        rounded="lg"
+        ref={editorRef}
       >
-        <EditorContent
-          editor={editor}
-          style={{
-            height: '87%',
-            marginTop: '0px !important',
-          }}
-        />
-      </Box>
-    </Box>
+        <EditorContent editor={editor} className="mt-0 text-sm" />
+      </div>
+    </div>
   );
 };
 
@@ -125,7 +112,7 @@ interface FloatingToolbarProps {
 
 const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
   editor,
-  editorClassname: editorClassname,
+  editorClassname,
 }) => {
   const [style, setStyle] = useState({ top: 0, left: 0, opacity: 0 });
   const [toolbarState, setToolbarState] = useState<
@@ -248,31 +235,31 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     () => [
       {
         ariaLabel: 'Bold',
-        icon: <BiBold />,
+        icon: <Bold className="h-4 w-4" />,
         isActive: () => editor.isActive('bold'),
         action: () => editor.chain().focus().toggleBold().run(),
       },
       {
         ariaLabel: 'Italic',
-        icon: <BiItalic />,
+        icon: <Italic className="h-4 w-4" />,
         isActive: () => editor.isActive('italic'),
         action: () => editor.chain().focus().toggleItalic().run(),
       },
       {
         ariaLabel: 'Ordered List',
-        icon: <FaListOl />,
+        icon: <ListOrdered className="h-4 w-4" />,
         isActive: () => editor.isActive('orderedList'),
         action: () => editor.chain().focus().toggleOrderedList().run(),
       },
       {
         ariaLabel: 'Unordered List',
-        icon: <FaListUl />,
+        icon: <List className="h-4 w-4" />,
         isActive: () => editor.isActive('bulletList'),
         action: () => editor.chain().focus().toggleBulletList().run(),
       },
       {
         ariaLabel: 'Insert Link',
-        icon: <BiLink />,
+        icon: <LinkIcon className="h-4 w-4" />,
         isActive: () => editor.isActive('link'),
         action: () => {
           setToolbarState('link');
@@ -292,19 +279,20 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     () => (
       <>
         {toolbarButtons.map((button, index) => (
-          <IconButton
+          <Button
             key={index}
-            h="full"
-            color={button.isActive() ? 'brand.slate.900' : 'brand.slate.500'}
-            bg={button.isActive() ? 'brand.slate.200' : 'white'}
-            borderLeftWidth={index === 0 ? 0 : 1}
-            borderLeftColor="brand.slate.300"
-            borderRadius={0}
-            aria-label={button.ariaLabel}
-            icon={button.icon}
-            onClick={button.action}
+            variant="ghost"
+            type="button"
             size="sm"
-          />
+            className={cn(
+              'h-full rounded-none border-l px-2',
+              index === 0 && 'border-l-0',
+              button.isActive() && 'bg-muted',
+            )}
+            onClick={button.action}
+          >
+            {button.icon}
+          </Button>
         ))}
       </>
     ),
@@ -326,16 +314,9 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     return (
       <>
         <Input
-          w="full"
-          h="full"
-          fontSize={'sm'}
-          border={'none'}
-          _focusVisible={{ outline: 'none', border: 'none' }}
-          _placeholder={{
-            color: 'brand.slate.300',
-          }}
-          outline={'none'}
-          autoFocus
+          className="h-8 rounded-none border-0 text-sm focus-visible:ring-0"
+          placeholder="https://..."
+          value={linkUrl}
           onChange={(e) => setLinkUrl(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -349,59 +330,43 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
               setLinkUrl('');
             }
           }}
-          placeholder="https://..."
-          size="sm"
-          value={linkUrl}
         />
         {!!linkUrl && (
-          <IconButton
-            h="full"
-            color={'brand.slate.500'}
-            bg={'white'}
-            borderLeftWidth={1}
-            borderLeftColor="brand.slate.300"
-            borderRadius={0}
-            aria-label="Open Link"
-            icon={<BiLinkExternal />}
+          <Button
+            variant="ghost"
+            type="button"
+            className="h-11 rounded-none border-l px-2"
             onClick={() => {
               const { href } = editor.getAttributes('link');
               if (href) {
                 window.open(href, '_blank');
               }
             }}
-            size="sm"
-          />
+          >
+            <ExternalLink className="h-4 w-4" />
+          </Button>
         )}
-        <IconButton
-          h="full"
-          color={'brand.slate.500'}
-          bg={'white'}
-          borderLeftWidth={1}
-          borderLeftColor="brand.slate.300"
-          borderRadius={0}
-          aria-label="Remove Link"
-          icon={<BiTrashAlt />}
+        <Button
+          variant="ghost"
+          type="button"
+          className="h-11 rounded-none border-l px-2"
           onClick={() => {
             editor.chain().focus().unsetLink().run();
             setToolbarState('default');
           }}
-          size="sm"
-        />
-        <IconButton
-          display={{ base: 'block', lg: 'none' }}
-          h="full"
-          color={'brand.slate.500'}
-          bg={'white'}
-          borderLeftWidth={1}
-          borderLeftColor="brand.slate.300"
-          borderRadius={0}
-          aria-label="Open Link"
-          icon={<ChevronRightIcon w={5} h={5} />}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          type="button"
+          className="h-11 rounded-none border-l px-2 lg:hidden"
           onClick={() => {
             addLinkToEditor();
           }}
-          size="sm"
-        />
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
       </>
     );
   }, [editor, linkUrl]);
@@ -411,31 +376,26 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
   }
 
   return (
-    <Box
-      pos="absolute"
-      zIndex={1000}
-      pointerEvents={style.opacity === 0 ? 'none' : 'auto'}
+    <div
+      ref={toolbarRef}
+      className="absolute z-50"
       style={{
         top: `${style.top}px`,
         left: `${style.left}px`,
         opacity: style.opacity,
         transition: 'opacity 0.2s',
+        pointerEvents: style.opacity === 0 ? 'none' : 'auto',
       }}
     >
-      <HStack
-        gap={0}
-        overflow="hidden"
-        h={8}
-        color="brand.slate.500"
-        bg="white"
-        borderWidth={1}
-        borderColor="brand.slate.300"
-        borderRadius="md"
-        shadow="md"
+      <div
+        className={cn(
+          'flex h-8 overflow-hidden rounded-md border bg-background shadow-md',
+          'text-muted-foreground',
+        )}
       >
         {toolbarState === 'default' && <DefaultToolbar />}
         {toolbarState === 'link' && <LinkToolbar />}
-      </HStack>
-    </Box>
+      </div>
+    </div>
   );
 };

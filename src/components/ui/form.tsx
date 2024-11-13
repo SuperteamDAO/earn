@@ -42,10 +42,9 @@ const FormField = <
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
-  const getFieldState = useFormContext()?.getFieldState || undefined;
-  const formState = useFormContext()?.formState;
+  const { getFieldState, formState } = useFormContext();
 
-  const fieldState = getFieldState?.(fieldContext.name, formState);
+  const fieldState = getFieldState(fieldContext.name, formState);
 
   if (!fieldContext) {
     throw new Error('useFormField should be used within <FormField>');
@@ -79,22 +78,32 @@ const FormItem = React.forwardRef<
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn('space-y-2', className)} {...props} />
+      <div ref={ref} className={cn('w-full', className)} {...props} />
     </FormItemContext.Provider>
   );
 });
 FormItem.displayName = 'FormItem';
 
+interface FormLabelProps
+  extends React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> {
+  isRequired?: boolean;
+}
+
 const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
->(({ className, ...props }, ref) => {
+  FormLabelProps
+>(({ className, isRequired, ...props }, ref) => {
   const { error, formItemId } = useFormField();
 
   return (
     <Label
       ref={ref}
-      className={cn(error && 'text-destructive', className)}
+      className={cn(
+        isRequired && 'after:ml-0.5 after:text-red-500 after:content-["*"]',
+        error && 'text-destructive',
+        'text-[0.92rem] text-slate-600',
+        className,
+      )}
       htmlFor={formItemId}
       {...props}
     />
@@ -135,7 +144,10 @@ const FormDescription = React.forwardRef<
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn('text-[0.8rem] text-muted-foreground', className)}
+      className={cn(
+        'mt-0 text-[0.8rem] text-muted-foreground text-slate-500',
+        className,
+      )}
       {...props}
     />
   );
@@ -147,7 +159,7 @@ const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField();
-  const body = error?.message ? String(error?.message) : children;
+  const body = error ? String(error?.message) : children;
 
   if (!body) {
     return null;
@@ -157,7 +169,7 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn('text-xs font-medium text-destructive', className)}
+      className={cn('text-[0.8rem] font-medium text-destructive', className)}
       {...props}
     >
       {body}

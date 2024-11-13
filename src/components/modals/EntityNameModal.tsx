@@ -34,7 +34,7 @@ export const EntityNameModal = ({
     setLoading(true);
     try {
       if (user.currentSponsor) {
-        await axios.post('/api/sponsors/edit', {
+        await axios.post('/api/sponsors/update-entity-name', {
           entityName,
         });
         await refetchUser();

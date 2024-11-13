@@ -17,10 +17,15 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineInsertLink } from 'react-icons/md';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
+import { Loading } from '@/components/shared/Loading';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { exclusiveSponsorData } from '@/constants';
-import { ListingTabs } from '@/features/listings';
-import { sponsorListingsQuery } from '@/features/sponsor-dashboard';
+import { GrantsCard } from '@/features/grants';
+import { ListingSection, ListingTabs } from '@/features/listings';
+import {
+  sponsorGrantsQuery,
+  sponsorListingsQuery,
+} from '@/features/sponsor-dashboard';
 import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { prisma } from '@/prisma';
@@ -36,6 +41,10 @@ interface Props {
 const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
   const { data: listings, isLoading: isListingsLoading } = useQuery(
     sponsorListingsQuery(slug),
+  );
+
+  const { data: grants, isLoading: isGrantsLoading } = useQuery(
+    sponsorGrantsQuery(slug),
   );
 
   const logo = sponsor.logo;
@@ -171,7 +180,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
       </Flex>
 
       <Box w={'100%'} bg="white">
-        <Box maxW="5xl" mx="auto" px={4}>
+        <Box maxW="5xl" mx="auto" px={4} pb={20}>
           <ListingTabs
             bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}
@@ -179,6 +188,28 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             take={20}
             showNotifSub={false}
           />
+          {!!grants && !!grants.length && (
+            <ListingSection
+              type="grants"
+              title={`Grants`}
+              sub="Equity-free funding opportunities for builders"
+            >
+              {isGrantsLoading && (
+                <Flex
+                  align="center"
+                  justify="center"
+                  direction="column"
+                  minH={52}
+                >
+                  <Loading />
+                </Flex>
+              )}
+              {!isGrantsLoading &&
+                grants?.map((grant) => (
+                  <GrantsCard grant={grant} key={grant.id} />
+                ))}
+            </ListingSection>
+          )}
         </Box>
       </Box>
     </Default>

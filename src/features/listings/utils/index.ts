@@ -5,3 +5,4 @@ export * from './region';
 export * from './status';
 export * from './submissionFormSchema';
 export * from './tweetTemplate';
+export * from './validateSubmissionRequest';
