@@ -220,22 +220,17 @@ const CreateSponsor = () => {
         </>
       ) : (
         <VStack w="full" pt={8} pb={24}>
-          <VStack>
+          <VStack spacing={2}>
             <Heading
-              color={'gray.700'}
-              fontFamily={'var(--font-sans)'}
-              fontSize={'24px'}
-              fontWeight={700}
+              color="gray.900"
+              fontSize="3xl"
+              fontWeight="semibold"
+              letterSpacing="-0.02em"
             >
               Welcome to Superteam Earn
             </Heading>
-            <Text
-              color={'gray.400'}
-              fontFamily={'var(--font-sans)'}
-              fontSize={'20px'}
-              fontWeight={500}
-            >
-              {"Let's start with some basic information about your team"}
+            <Text color="gray.600" fontSize="lg" fontWeight="normal">
+              Let&apos;s start with some basic information about your team
             </Text>
           </VStack>
           <VStack w={'2xl'} pt={10}>
@@ -245,11 +240,12 @@ const CreateSponsor = () => {
                 style={{ width: '100%' }}
               >
                 <Text
-                  as="h3"
-                  mb={4}
-                  color="brand.slate.600"
-                  fontSize={'xl'}
-                  fontWeight={600}
+                  as="h2"
+                  mb={5}
+                  color="gray.900"
+                  fontSize="xl"
+                  fontWeight="semibold"
+                  letterSpacing="-0.01em"
                 >
                   About You
                 </Text>
@@ -310,14 +306,15 @@ const CreateSponsor = () => {
                   />
                 </>
 
-                <Divider my={6} borderColor="brand.slate.400" />
+                <Divider my={12} borderColor="brand.slate.400" />
 
                 <Text
-                  as="h3"
-                  mb={4}
-                  color="brand.slate.600"
-                  fontSize={'xl'}
-                  fontWeight={600}
+                  as="h2"
+                  mb={5}
+                  color="gray.900"
+                  fontSize="xl"
+                  fontWeight="semibold"
+                  letterSpacing="-0.01em"
                 >
                   About Your Company
                 </Text>
@@ -385,7 +382,7 @@ const CreateSponsor = () => {
                     control={form.control}
                     name="sponsor.entityName"
                     label={
-                      <div className="flex items-center gap-2">
+                      <>
                         Entity Name
                         <Tooltip
                           fontSize="xs"
@@ -393,19 +390,21 @@ const CreateSponsor = () => {
                         >
                           <InfoOutlineIcon
                             color="brand.slate.500"
+                            mt={1}
+                            ml={1}
                             w={3}
                             h={3}
                             display={{ base: 'none', md: 'block' }}
                           />
                         </Tooltip>
-                      </div>
+                      </>
                     }
                     isRequired
                   >
                     <Input placeholder="Full Entity Name" />
                   </FormFieldWrapper>
                 </HStack>
-                <VStack align={'start'} gap={2} w="full" mt={6} mb={3}>
+                <Box w="full" mt={6} mb={3}>
                   <FormLabel isRequired>Company Logo</FormLabel>
                   <ImagePicker
                     onChange={async (e) => {
@@ -416,7 +415,7 @@ const CreateSponsor = () => {
                       setIsUploading(false);
                     }}
                   />
-                </VStack>
+                </Box>
 
                 <HStack justify={'space-between'} w={'full'} mt={6}>
                   <FormField
@@ -438,6 +437,7 @@ const CreateSponsor = () => {
                                 selected?.map((item: any) => item.value) || [];
                               field.onChange(values.join(', '));
                             }}
+                            className="mt-2"
                           />
                         </FormControl>
                         <FormMessage />

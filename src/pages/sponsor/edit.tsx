@@ -138,11 +138,17 @@ export default function UpdateSponsor() {
     >
       <VStack w="full" pt={12} pb={24}>
         <VStack>
-          <Text color={'gray.700'} fontSize={'3xl'} fontWeight={700}>
+          <Text
+            mb={8}
+            color="gray.900"
+            fontSize="3xl"
+            fontWeight="semibold"
+            letterSpacing="-0.02em"
+          >
             Edit Sponsor Profile
           </Text>
         </VStack>
-        <VStack w={'2xl'} pt={10}>
+        <VStack w={'2xl'}>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -214,7 +220,7 @@ export default function UpdateSponsor() {
                   control={form.control}
                   name="entityName"
                   label={
-                    <div className="flex items-center gap-2">
+                    <>
                       Entity Name
                       <Tooltip
                         fontSize="xs"
@@ -222,12 +228,14 @@ export default function UpdateSponsor() {
                       >
                         <InfoOutlineIcon
                           color="brand.slate.500"
+                          mt={1}
+                          ml={1}
                           w={3}
                           h={3}
                           display={{ base: 'none', md: 'block' }}
                         />
                       </Tooltip>
-                    </div>
+                    </>
                   }
                   isRequired
                 >
@@ -235,10 +243,8 @@ export default function UpdateSponsor() {
                 </FormFieldWrapper>
               </HStack>
 
-              <VStack align={'start'} gap={2} my={3}>
-                <FormLabel isRequired className="mb-2">
-                  Company Logo
-                </FormLabel>
+              <Box w="full" mt={6} mb={3}>
+                <FormLabel isRequired>Company Logo</FormLabel>
                 <ImagePicker
                   defaultValue={logoUrl ? { url: logoUrl } : undefined}
                   onChange={async (e) => {
@@ -248,12 +254,8 @@ export default function UpdateSponsor() {
                     form.setValue('logo', url);
                     setIsUploading(false);
                   }}
-                  onReset={() => {
-                    setLogoUrl(null);
-                    form.setValue('logo', '');
-                  }}
                 />
-              </VStack>
+              </Box>
 
               <HStack justify={'space-between'} w={'full'} mt={6}>
                 <FormField
@@ -270,11 +272,19 @@ export default function UpdateSponsor() {
                             label: elm,
                             value: elm,
                           }))}
+                          value={field.value
+                            ?.split(', ')
+                            .map((value) => ({
+                              label: value,
+                              value: value,
+                            }))
+                            .filter(Boolean)}
                           onChange={(selected: any) => {
                             const values =
                               selected?.map((item: any) => item.value) || [];
                             field.onChange(values.join(', '));
                           }}
+                          className="mt-2"
                         />
                       </FormControl>
                       <FormMessage />

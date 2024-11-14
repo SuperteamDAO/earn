@@ -95,7 +95,13 @@ export const SponsorInfoModal = ({
     >
       <ModalOverlay />
       <ModalContent px={6} py={5}>
-        <Text mb={3} color="brand.slate.600" fontSize={'2xl'} fontWeight={600}>
+        <Text
+          mb={4}
+          color="gray.900"
+          fontSize="xl"
+          fontWeight="semibold"
+          letterSpacing="-0.02em"
+        >
           Complete Your Profile
         </Text>
         <Form {...form}>
@@ -119,7 +125,7 @@ export const SponsorInfoModal = ({
             {isUsernameInvalid && (
               <p className="text-sm text-red-500">{usernameValidationError}</p>
             )}
-            <Flex justify="space-between" gap={8} w={'full'} mb={'1.25rem'}>
+            <Flex justify="space-between" gap={8} w={'full'} my={'1.25rem'}>
               <FormFieldWrapper
                 control={form.control}
                 name="firstName"
@@ -139,39 +145,22 @@ export const SponsorInfoModal = ({
 
             <VStack align={'start'} gap={2} rowGap={'0'} my={3} mb={'25px'}>
               <FormLabel>Profile Picture</FormLabel>
-              {user?.photo ? (
-                <ImagePicker
-                  defaultValue={{ url: user.photo }}
-                  onChange={async (e) => {
-                    setUploading(true);
-                    const url = await uploadToCloudinary(e, 'earn-pfp');
-                    setIsGooglePhoto(false);
-                    setImageUrl(url);
-                    form.setValue('photo', url);
-                    setUploading(false);
-                  }}
-                  onReset={() => {
-                    setImageUrl('');
-                    form.setValue('photo', '');
-                    setUploading(false);
-                  }}
-                />
-              ) : (
-                <ImagePicker
-                  onChange={async (e) => {
-                    setUploading(true);
-                    const url = await uploadToCloudinary(e, 'earn-pfp');
-                    setImageUrl(url);
-                    form.setValue('photo', url);
-                    setUploading(false);
-                  }}
-                  onReset={() => {
-                    setImageUrl('');
-                    form.setValue('photo', '');
-                    setUploading(false);
-                  }}
-                />
-              )}
+              <ImagePicker
+                defaultValue={user?.photo ? { url: user.photo } : undefined}
+                onChange={async (e) => {
+                  setUploading(true);
+                  const url = await uploadToCloudinary(e, 'earn-pfp');
+                  setIsGooglePhoto(false);
+                  setImageUrl(url);
+                  form.setValue('photo', url);
+                  setUploading(false);
+                }}
+                onReset={() => {
+                  setImageUrl('');
+                  form.setValue('photo', '');
+                  setUploading(false);
+                }}
+              />
             </VStack>
 
             <Button

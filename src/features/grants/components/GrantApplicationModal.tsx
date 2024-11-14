@@ -371,7 +371,7 @@ export const GrantApplicationModal = ({
                     }
                   >
                     <Input
-                      className="opacity-50"
+                      className="cursor-not-allowed text-slate-600 opacity-80"
                       placeholder="Add your Solana wallet address"
                       readOnly
                     />
@@ -387,6 +387,7 @@ export const GrantApplicationModal = ({
                     description="What is the problem you're trying to solve, and how you're going to solve it?"
                     isRequired
                     isRichEditor
+                    richEditorPlaceholder="Explain the problem you're solving and your solution"
                   />
 
                   <FormFieldWrapper
@@ -419,6 +420,7 @@ export const GrantApplicationModal = ({
                     description="Include links to your best work that will make the community trust you to execute on this project."
                     isRequired
                     isRichEditor
+                    richEditorPlaceholder="Provide links to your portfolio or previous work"
                   />
 
                   <FormFieldWrapper
@@ -469,6 +471,7 @@ export const GrantApplicationModal = ({
                     description="List down the things you hope to achieve by the end of project duration."
                     isRequired
                     isRichEditor
+                    richEditorPlaceholder="Outline your project goals and milestones"
                   />
 
                   <FormFieldWrapper
@@ -478,6 +481,7 @@ export const GrantApplicationModal = ({
                     description="What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc."
                     isRequired
                     isRichEditor
+                    richEditorPlaceholder="What's the key metric for success"
                   />
                 </VStack>
               )}

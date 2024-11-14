@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { URL_REGEX } from '@/constants';
+
 import { type Listing } from '../types';
 
 const submissionSchema = (
@@ -10,22 +12,12 @@ const submissionSchema = (
   z
     .object({
       link: z
-        .union([
-          z.literal(''),
-          z
-            .string()
-            .url('Invalid URL')
-            .max(500, 'URL cannot exceed 500 characters'),
-        ])
+        .union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')])
         .optional(),
       tweet: z
         .union([
           z.literal(''),
-          z
-            .string()
-            .trim()
-            .url()
-            .max(500, 'Tweet cannot exceed 500 characters'),
+          z.string().trim().regex(URL_REGEX, 'Invalid URL'),
         ])
         .optional(),
       otherInfo: z.string().optional(),

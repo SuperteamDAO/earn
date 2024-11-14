@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { URL_REGEX } from '@/constants';
+
 export const sponsorBaseSchema = z.object({
   name: z.string().min(1, 'Company name is required'),
   slug: z
@@ -13,7 +15,9 @@ export const sponsorBaseSchema = z.object({
     .max(180, 'Bio must be less than 180 characters'),
   logo: z.string().min(1, 'Company logo is required'),
   industry: z.string().min(1, 'At least one industry must be selected'),
-  url: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
+  url: z
+    .union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')])
+    .optional(),
   twitter: z.string().min(1, 'Twitter handle is required'),
   entityName: z.string().min(1, 'Entity name is required'),
 });

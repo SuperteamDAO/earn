@@ -21,7 +21,7 @@ import { toast } from 'sonner';
 import { type z } from 'zod';
 
 import { Checkbox } from '@/components/ui/checkbox';
-import { Form } from '@/components/ui/form';
+import { Form, FormDescription, FormLabel } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@/store/user';
@@ -277,7 +277,7 @@ export const SubmissionDrawer = ({
                         control={form.control}
                         name="tweet"
                         label="Tweet Link"
-                        description="This helps sponsors discover (and maybe repost) your work on Twitter!"
+                        description="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
                       >
                         <Input
                           maxLength={500}
@@ -310,9 +310,33 @@ export const SubmissionDrawer = ({
                     control={form.control}
                     name="otherInfo"
                     label="Anything Else?"
-                    description="If you have any other links..."
+                    description="If you have any other links or information you'd like to share with us, please add them here!"
                     isRichEditor
+                    richEditorPlaceholder="Add info or link"
                   />
+                  <div className="flex w-full flex-col gap-2">
+                    <div>
+                      <FormLabel>Your Solana Wallet Address</FormLabel>
+                      <FormDescription>
+                        This is where you will receive your rewards if you win.
+                        If you want to edit it,{' '}
+                        <a
+                          href={`/t/${user?.username}/edit`}
+                          className="text-blue-600 underline hover:text-blue-700"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          click here
+                        </a>
+                      </FormDescription>
+                    </div>
+                    <Input
+                      className="cursor-not-allowed text-slate-600 opacity-80"
+                      placeholder="Add your Solana wallet address"
+                      readOnly
+                      value={user?.publicKey || ''}
+                    />
+                  </div>
                 </VStack>
               </Flex>
               <Flex

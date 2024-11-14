@@ -21,6 +21,7 @@ export const FormFieldWrapper = ({
   isRichEditor = false,
   isTokenInput = false,
   token,
+  richEditorPlaceholder,
 }: {
   control: any;
   name: string;
@@ -31,6 +32,7 @@ export const FormFieldWrapper = ({
   isRichEditor?: boolean;
   isTokenInput?: boolean;
   token?: string;
+  richEditorPlaceholder?: string;
 }) => {
   return (
     <FormField
@@ -50,6 +52,7 @@ export const FormFieldWrapper = ({
                   value={field.value || ''}
                   onChange={field.onChange}
                   error={false}
+                  placeholder={richEditorPlaceholder}
                 />
               ) : isTokenInput ? (
                 <TokenInput
