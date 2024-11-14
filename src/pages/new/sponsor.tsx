@@ -365,7 +365,7 @@ const CreateSponsor = () => {
                     </FormLabel>
                     <Tooltip
                       fontSize="xs"
-                      label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                      label="Please mention your official Telegram username."
                     >
                       <InfoOutlineIcon
                         color="brand.slate.500"
