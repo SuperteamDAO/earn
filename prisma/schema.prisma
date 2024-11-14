@@ -177,7 +177,7 @@ model Grants {
   updatedAt              DateTime           @updatedAt
   skills                 Json?
   logo                   String?
-  region                 Regions            @default(GLOBAL)
+  region                 String            @default("GLOBAL")
   sponsor                Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                    User               @relation(fields: [pocId], references: [id])
   questions              Json?

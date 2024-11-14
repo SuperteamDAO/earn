@@ -1,4 +1,3 @@
-import { type Regions } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -6,7 +5,7 @@ import { prisma } from '@/prisma';
 const TAKE = 20;
 
 interface GrantProps {
-  userRegion?: Regions[] | null;
+  userRegion?: string[] | null;
 }
 
 async function getGrants({ userRegion }: GrantProps) {
@@ -64,7 +63,7 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const params = req.query;
-  let userRegion = params['userRegion[]'] as Regions[];
+  let userRegion = params['userRegion[]'] as string[];
   if (typeof userRegion === 'string') {
     userRegion = [userRegion];
   }
