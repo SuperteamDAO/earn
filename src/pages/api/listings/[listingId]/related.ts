@@ -159,6 +159,7 @@ async function findRelatedListings(
     FROM Bounties b
     LEFT JOIN Sponsors s ON b.sponsorId = s.id
     WHERE b.id != ${listingId}
+      AND b.isPrivate = false
       AND b.isPublished = true
       AND b.isActive = true
       AND b.status = 'OPEN'
