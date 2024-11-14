@@ -17,6 +17,7 @@ import {
   submitListingMutationAtom,
 } from '../atoms';
 import { createListingRefinements, type ListingFormData } from '../types';
+import { refineReadyListing } from '../utils';
 
 interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
   onChange: () => void;
@@ -131,7 +132,7 @@ export const useListingForm = (
   }, []);
 
   const submitListing = useCallback(async () => {
-    const formData = getValues();
+    const formData = refineReadyListing(getValues());
     return await submitListingMutation.mutateAsync(formData);
   }, [getValues, submitListingMutation]);
 

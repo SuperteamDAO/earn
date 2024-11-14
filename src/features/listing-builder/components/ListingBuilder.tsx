@@ -54,6 +54,9 @@ function ListingBuilder({
     listingStatusAtom,
     defaultListing ? listingToStatus(defaultListing) : undefined,
   );
+  useEffect(() => {
+    form.reset(defaultListing);
+  }, [defaultListing]);
 
   const params = useSearchParams();
   useEffect(() => {

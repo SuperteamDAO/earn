@@ -29,7 +29,6 @@ const allowedFields = [
   'templateId',
   'pocSocials',
   'applicationType',
-  'timeToComplete',
   'description',
   'eligibility',
   'references',
@@ -242,6 +241,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         isFndnPaying,
         totalWinnersSelected,
         ...(skillsToUpdate !== undefined && { skills: skillsToUpdate }),
+        sponsorId: userSponsorId,
       },
     });
 
