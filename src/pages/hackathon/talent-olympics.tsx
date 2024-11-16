@@ -201,8 +201,8 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
       className="bg-white"
       meta={
         <Meta
-          title="Talent Olympics | Superteam Earn"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          title="Talent Olympics | Solar Earn"
+          description="Explore the latest bounties on Solar Earn, offering opportunities in the crypto space across Design, Development, and Content."
           canonical="https://earn.superteam.fun"
         />
       }
@@ -390,7 +390,7 @@ function Hero({
           as={NextImage}
           w={{ base: '5rem', sm: '7rem' }}
           h={PoweredByHeight}
-          alt="Superteam"
+          alt="Solar"
           src={Superteam}
         />
         <Image
@@ -1334,24 +1334,24 @@ interface CountryLeader {
   location: string;
   submission_count: number;
 }
-export const getServerSideProps: GetServerSideProps = async ({}) => {
+export const getServerSideProps: GetServerSideProps = async ({ }) => {
   const countryLeaders = await prisma.$queryRaw<CountryLeader[]>`
-SELECT 
+SELECT
     u.location,
     COUNT(s.id) as submission_count
-FROM 
+FROM
     Hackathon h
-JOIN 
+JOIN
     Bounties b ON h.id = b.hackathonId
-JOIN 
+JOIN
     Submission s ON b.id = s.listingId
-JOIN 
+JOIN
     User u ON s.userId = u.id
-WHERE 
+WHERE
     h.slug = ${'talent-olympics'}
-GROUP BY 
+GROUP BY
     u.location
-ORDER BY 
+ORDER BY
     submission_count DESC
 LIMIT 10;
 `;

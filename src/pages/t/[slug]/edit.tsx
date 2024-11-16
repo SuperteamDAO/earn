@@ -322,7 +322,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       <Default
         meta={
           <Meta
-            title="Superteam Earn"
+            title="Solar Earn"
             description="Every Solana opportunity in one place!"
           />
         }
@@ -494,8 +494,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   onChange={(selectedOptions: any) => {
                     const selectedInterests = selectedOptions
                       ? selectedOptions.map(
-                          (elm: { label: string; value: string }) => elm,
-                        )
+                        (elm: { label: string; value: string }) => elm,
+                      )
                       : [];
                     setDropDownValues({
                       ...DropDownValues,

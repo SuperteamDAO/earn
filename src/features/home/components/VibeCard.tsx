@@ -47,7 +47,7 @@ export const VibeCard = () => {
   const { data: fetchedUsers = [] } = useQuery(pfpsQuery(userIds));
 
   useEffect(() => {
-    audioRef.current = new Audio('/assets/memes/chipichapa.mp3');
+    audioRef.current = new Audio('/assets/memes/jiesuan.mp3');
     audioRef.current.onended = () => setIsAudioPlaying(false);
     return () => {
       if (audioRef.current) {

@@ -109,8 +109,8 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
           transform="translate(-50%,0%)"
         >
           <Image
-            src="/assets/memes/JohnCenaVibingToCupid.gif"
-            alt="John Cena Vibing to Cupid"
+            src="/assets/memes/jiesuan.gif"
+            alt="结算动画"
             style={{ width: '100%', marginTop: 'auto', display: 'block' }}
             width="500"
             height="600"
@@ -120,7 +120,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
           />
         </AbsoluteCenter>
         <audio
-          src="/assets/memes/JohnCenaVibingToCupid.mp3"
+          src="/assets/memes/jiesuan.mp3"
           style={{ display: 'none' }}
           autoPlay
           loop

@@ -9,8 +9,8 @@ export default function Blocked() {
     <Default
       meta={
         <Meta
-          title="Blocked | Superteam Earn"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          title="Blocked | Solar Earn"
+          description="Explore the latest bounties on Solar Earn, offering opportunities in the crypto space across Design, Development, and Content."
           canonical="https://earn.superteam.fun"
         />
       }
@@ -23,8 +23,11 @@ export default function Blocked() {
           textAlign={'center'}
         >
           Your access to Earn has been restricted. Please get in touch with{' '}
-          <Link color={'brand.purple'} href="mailto:support@superteamearn.com">
-            support@superteamearn.com
+          <Link
+            color={'brand.purple'}
+            href="mailto:vesper.yang.blockchain@gmail.com"
+          >
+            vesper.yang.blockchain@gmail.com
           </Link>{' '}
           if you have any questions for more information.
         </Text>

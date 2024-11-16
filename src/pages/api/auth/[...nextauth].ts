@@ -46,7 +46,7 @@ export const authOptions: NextAuthOptions = {
         await resend.emails.send({
           from: kashEmail,
           to: [identifier],
-          subject: 'Log in to Superteam Earn',
+          subject: 'Log in to Solar Earn',
           react: OTPTemplate({ token }),
           replyTo: replyToEmail,
         });

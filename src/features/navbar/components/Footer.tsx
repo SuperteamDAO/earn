@@ -156,18 +156,21 @@ export const Footer = () => {
   const about = [
     {
       text: 'FAQ',
-      href: 'https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4',
+      href: '#',
     },
     {
       text: 'Terms',
-      href: 'https://drive.google.com/file/d/1ybbO_UOTaIiyKb4Mbm3sNMbjTf5qj5mT/view',
+      href: '#',
     },
     { text: 'Privacy Policy', href: '/privacy-policy.pdf' },
     {
       text: 'Changelog',
-      href: 'https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827',
+      href: '#',
     },
-    { text: 'Contact Us', href: 'mailto:support@superteamearn.com' },
+    {
+      text: 'Contact Us',
+      href: 'mailto:vesper.yang.blockchain@gmail.com',
+    },
   ];
 
   return (
@@ -183,8 +186,8 @@ export const Footer = () => {
               <Image
                 h={6}
                 mr={4}
-                alt="Superteam Earn"
-                src="/assets/logo/logo.svg"
+                alt="Solar Earn"
+                src="/assets/logo/logo-light.png"
               />
             </Flex>
             <Text
@@ -222,7 +225,7 @@ export const Footer = () => {
             direction={{ base: 'column', md: 'row' }}
           >
             <Text mb={{ base: 4, md: 0 }} color="brand.slate.500" fontSize="sm">
-              © {currentYear} Superteam. All rights reserved.
+              © {currentYear} Solar. All rights reserved.
             </Text>
             <Flex align="center">
               <Text

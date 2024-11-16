@@ -47,10 +47,10 @@ export function RegionBanner({ st }: { st: (typeof Superteams)[0] }) {
               fontSize={{ base: 'sm', md: 'lg' }}
               fontWeight="medium"
             >
-              Welcome to Superteam {st.displayValue}
-              {`'s`} earnings page — use these opportunities to earn in global
-              standards and gain membership in the most exclusive Solana
-              community of {st.displayValue}!
+              歡迎來到 Solar Earn 賞金頁面！這裏有不同類型的賞金任務，Solar
+              們可以根據自己的特長、興趣來認領任務;
+              項目方們可以發佈賞金任務讓社區成員們參與，共建 Solar 社區和 Solana
+              生態。
             </Text>
           </>
         )}

@@ -42,11 +42,11 @@ export default function VerifyRequest() {
             mx="auto"
             cursor="pointer"
             objectFit={'contain'}
-            alt={'Superteam Earn'}
+            alt={'Solar Earn'}
             onClick={() => {
               router.push('/');
             }}
-            src={'/assets/logo/logo.svg'}
+            src={'/assets/logo/logo-light.png'}
           />
         </Link>
       </Box>

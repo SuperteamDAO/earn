@@ -7,7 +7,7 @@ import { styles } from '../utils';
 export const WelcomeSponsorTemplate = () => {
   return (
     <div style={styles.container}>
-      <p style={styles.text}>Welcome to Superteam Earn!</p>
+      <p style={styles.text}>Welcome to Solar Earn!</p>
       <p style={styles.textWithMargin}>
         Thank you for signing up. Earn is the premier talent-matching platform
         in crypto, favoured by hundreds of leading companies and thousands of
@@ -24,7 +24,7 @@ export const WelcomeSponsorTemplate = () => {
       <p style={styles.salutation}>
         Best,
         <br />
-        Superteam Earn
+        Solar Earn
       </p>
     </div>
   );

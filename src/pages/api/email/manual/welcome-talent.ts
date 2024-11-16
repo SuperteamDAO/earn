@@ -42,7 +42,7 @@ export default async function handler(
     await resend.emails.send({
       from: kashEmail,
       to: [userEmail],
-      subject: 'Welcome to Superteam Earn!',
+      subject: 'Welcome to Solar Earn!',
       react: WelcomeTalentTemplate(),
       replyTo: replyToEmail,
     });

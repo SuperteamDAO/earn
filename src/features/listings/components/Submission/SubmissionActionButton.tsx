@@ -183,7 +183,7 @@ export const SubmissionActionButton = ({
       )}
       <Image
         // Hack to show GIF Immediately when Easter Egg is visible
-        src="/assets/memes/JohnCenaVibingToCupid.gif"
+        src="/assets/memes/jiesuan.gif"
         alt="John Cena Vibing to Cupid"
         style={{
           width: '100%',

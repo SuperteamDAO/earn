@@ -3,8 +3,8 @@ import { Regions } from '@prisma/client';
 export const Superteams = [
   {
     name: 'Solar',
-    icons: '/assets/superteams/logosturkey.jpg',
-    banner: '/assets/superteams/banners/Turkey.png',
+    icons: '/assets/superteams/logos/solar.png',
+    banner: '/assets/superteams/banners/china.jpg',
     region: Regions.CHINA,
     displayValue: 'China',
     country: ['China'],

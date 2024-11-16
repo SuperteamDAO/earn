@@ -24,8 +24,8 @@ export default function ProjectsPage() {
   return (
     <Home type="listing">
       <Meta
-        title="Apply to Projects in the Crypto Space | Superteam Earn"
-        description="Discover unique crypto projects seeking talent. Apply on Superteam Earn and take your chance to work and earn in the crypto space."
+        title="Apply to Projects in the Crypto Space | Solar Earn"
+        description="Discover unique crypto projects seeking talent. Apply on Solar Earn and take your chance to work and earn in the crypto space."
         canonical="https://earn.superteam.fun/projects/"
       />
       <Box w={'100%'}>
