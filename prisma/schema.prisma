@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -203,11 +204,11 @@ model GrantApplication {
   projectOneLiner     String
   projectDetails      String                 @db.Text
   projectTimeline     String
-  proofOfWork         String                 @db.Text 
+  proofOfWork         String                 @db.Text
   walletAddress       String
   twitter             String?
-  milestones          String?                @db.Text 
-  kpi                 String?                @db.Text 
+  milestones          String?                @db.Text
+  kpi                 String?                @db.Text
   answers             Json?
   createdAt           DateTime               @default(now())
   updatedAt           DateTime               @updatedAt
@@ -609,7 +610,6 @@ enum status {
   CLOSED
   VERIFYING
   VERIFY_FAIL
-  PREVIEW
 }
 
 enum GrantStatus {

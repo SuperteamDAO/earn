@@ -25,7 +25,10 @@ export const GrantApplicationButton = ({
   const { user } = useUser();
   const { region, id, link, isNative } = grant;
 
-  const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
+  const isUserEligibleByRegion = userRegionEligibilty({
+    region,
+    userLocation: user?.location,
+  });
 
   const { data: application, isLoading: isUserApplicationLoading } = useQuery({
     ...userApplicationQuery(id),

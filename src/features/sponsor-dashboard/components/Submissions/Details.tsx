@@ -30,8 +30,8 @@ export const Details = ({ bounty }: Props) => {
           width: '6px',
         },
         '&::-webkit-scrollbar-thumb': {
-          background: '#e2e8f0',
-          borderRadius: '24px',
+          background: '#cbd5e1',
+          borderRadius: '30px',
         },
       }}
     >
@@ -66,7 +66,7 @@ export const Details = ({ bounty }: Props) => {
         {bounty?.compensationType !== 'fixed' && (
           <InfoBox
             label="Ask"
-            content={`${selectedSubmission?.ask?.toLocaleString()} ${bounty?.token}`}
+            content={`${selectedSubmission?.ask?.toLocaleString('en-us')} ${bounty?.token}`}
           />
         )}
 

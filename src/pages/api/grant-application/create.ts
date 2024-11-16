@@ -1,100 +1,110 @@
-import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
-import { convertGrantApplicationToAirtable } from '@/features/grants';
+import {
+  grantApplicationSchema,
+  handleAirtableSync,
+  validateGrantRequest,
+} from '@/features/grants';
 import { extractTwitterUsername } from '@/features/talent';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 import { validateSolanaAddress } from '@/utils/validateSolAddress';
+
+async function createGrantApplication(
+  userId: string,
+  grantId: string,
+  data: any,
+  grant: any,
+) {
+  const validationResult = grantApplicationSchema(
+    grant.minReward,
+    grant.maxReward,
+    grant.token,
+    grant.questions,
+  ).safeParse(data);
+
+  if (!validationResult.success) {
+    throw new Error(JSON.stringify(validationResult.error.formErrors));
+  }
+
+  const validatedData = validationResult.data;
+
+  const walletValidation = validateSolanaAddress(validatedData.walletAddress);
+  if (!walletValidation.isValid) {
+    throw new Error(
+      walletValidation.error || 'Invalid Solana wallet address provided',
+    );
+  }
+
+  const formattedData = {
+    userId,
+    grantId,
+    projectTitle: validatedData.projectTitle,
+    projectOneLiner: validatedData.projectOneLiner,
+    projectDetails: validatedData.projectDetails,
+    projectTimeline: dayjs(validatedData.projectTimeline).format('D MMMM YYYY'),
+    proofOfWork: validatedData.proofOfWork,
+    milestones: validatedData.milestones,
+    kpi: validatedData.kpi,
+    walletAddress: validatedData.walletAddress,
+    ask: validatedData.ask,
+    twitter: validatedData.twitter
+      ? `https://x.com/${extractTwitterUsername(validatedData.twitter)}`
+      : null,
+    answers: validatedData.answers || [],
+  };
+
+  return prisma.grantApplication.create({
+    data: formattedData,
+  });
+}
 
 async function grantApplication(
   req: NextApiRequestWithUser,
   res: NextApiResponse,
 ) {
-  const userId = req.userId;
+  const { userId } = req;
+  const { grantId, ...applicationData } = req.body;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
-  const {
-    grantId,
-    projectTitle,
-    projectOneLiner,
-    projectDetails,
-    projectTimeline,
-    proofOfWork,
-    milestones,
-    kpi,
-    walletAddress,
-    ask,
-    answers,
-  } = req.body;
-  let { twitter } = req.body;
-
-  const walletValidation = validateSolanaAddress(walletAddress);
-
-  if (!walletValidation.isValid) {
-    return res.status(400).json({
-      error: 'Invalid Wallet Address',
-      message:
-        walletValidation.error || 'Invalid Solana wallet address provided.',
-    });
-  }
-
-  const formattedProjectTimeline = dayjs(projectTimeline).format('D MMMM YYYY');
-  const parsedAsk = parseInt(ask, 10);
-
-  if (twitter) {
-    const username = extractTwitterUsername(twitter);
-    twitter = `https://x.com/${username}` || null;
-  }
-
   try {
-    logger.debug('Creating grant application in the database');
-    const result = await prisma.grantApplication.create({
-      data: {
-        userId: userId as string,
+    const { grant, user } = await validateGrantRequest(
+      userId as string,
+      grantId,
+    );
+
+    const existingApplication = await prisma.grantApplication.findFirst({
+      where: {
         grantId,
-        projectTitle,
-        projectOneLiner,
-        projectDetails,
-        projectTimeline: formattedProjectTimeline,
-        proofOfWork,
-        milestones,
-        kpi,
-        walletAddress,
-        ask: parsedAsk,
-        twitter,
-        answers,
-      },
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-            email: true,
-            discord: true,
-          },
-        },
-        grant: {
-          select: {
-            airtableId: true,
-            isNative: true,
-          },
+        userId,
+        applicationStatus: {
+          in: ['Pending', 'Approved'],
         },
       },
     });
 
-    if (result.grant.isNative === true && !result.grant.airtableId) {
+    if (existingApplication) {
+      throw new Error('Application already exists');
+    }
+
+    const result = await createGrantApplication(
+      userId as string,
+      grantId,
+      applicationData,
+      grant,
+    );
+
+    if (grant.isNative === true && !grant.airtableId) {
       try {
-        sendEmailNotification({
+        await sendEmailNotification({
           type: 'application',
-          id: result.id,
-          userId: result?.userId,
+          id: grant.id,
+          userId: user.id,
           triggeredBy: userId,
         });
       } catch (err) {
@@ -102,27 +112,12 @@ async function grantApplication(
       }
     }
 
-    logger.info(
-      `Grant application created successfully for user ID: ${userId}`,
-    );
-    logger.debug(`Grant application result: ${safeStringify(result)}`);
-
-    if (result.grant.airtableId) {
-      const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
-      const url = airtableUrl(
-        process.env.AIRTABLE_GRANTS_BASE_ID!,
-        process.env.AIRTABLE_GRANTS_TABLE_NAME!,
-      );
-
-      const airtableData = convertGrantApplicationToAirtable(result);
-      const airtablePayload = airtableUpsert('earnApplicationId', [
-        { fields: airtableData },
-      ]);
-
-      logger.debug(`Airtable payload: ${safeStringify(airtablePayload)}`);
-
-      await axios.patch(url, JSON.stringify(airtablePayload), config);
-      logger.info('Airtable record updated successfully');
+    if (grant.airtableId) {
+      try {
+        await handleAirtableSync(result);
+      } catch (err) {
+        logger.error('Error syncing with Airtable:', err);
+      }
     }
 
     return res.status(200).json(result);
@@ -130,12 +125,16 @@ async function grantApplication(
     logger.error(
       `User ${userId} unable to apply for grant: ${safeStringify(error)}`,
     );
-    if (error.response) {
-      logger.error(`Response data: ${safeStringify(error.response.data)}`);
-    }
-    return res.status(400).json({
+
+    let statusCode = 403;
+    try {
+      JSON.parse(error.message);
+      statusCode = 400;
+    } catch {}
+
+    return res.status(statusCode).json({
       error: error.message,
-      message: 'Error occurred while adding a new grant application.',
+      message: `Unable to submit grant application: ${error.message}`,
     });
   }
 }

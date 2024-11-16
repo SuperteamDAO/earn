@@ -98,6 +98,7 @@ export const ImagePicker = ({
   return (
     <Box
       pos={'relative'}
+      mt={2}
       p={4}
       border="1px dashed"
       borderColor={isDragging ? 'brand.primary' : 'brand.slate.300'}

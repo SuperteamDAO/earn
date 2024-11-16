@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { sponsorBaseSchema } from '@/features/sponsor';
 import { createSponsorEmailSettings } from '@/features/sponsor-dashboard';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -21,8 +22,20 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.debug(`Request body: ${safeStringify(req.body)}`);
 
+    const validationResult = sponsorBaseSchema.safeParse(req.body);
+
+    if (!validationResult.success) {
+      logger.warn(
+        `Invalid sponsor data: ${safeStringify(validationResult.error)}`,
+      );
+      return res.status(400).json({
+        error: 'Invalid sponsor data',
+        details: validationResult.error.errors,
+      });
+    }
+
     const { name, slug, logo, url, industry, twitter, bio, entityName } =
-      req.body;
+      validationResult.data;
 
     if (!user.currentSponsorId || user.role === 'GOD') {
       logger.info(`Creating new sponsor for user: ${userId}`);

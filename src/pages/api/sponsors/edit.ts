@@ -4,11 +4,12 @@ import {
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
+import { sponsorBaseSchema } from '@/features/sponsor';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function user(req: NextApiRequestWithSponsor, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   try {
@@ -23,8 +24,20 @@ async function user(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug(`Request body: ${safeStringify(req.body)}`);
 
+    const validationResult = sponsorBaseSchema.safeParse(req.body);
+
+    if (!validationResult.success) {
+      logger.warn(
+        `Invalid sponsor data: ${safeStringify(validationResult.error)}`,
+      );
+      return res.status(400).json({
+        error: 'Invalid sponsor data',
+        details: validationResult.error.errors,
+      });
+    }
+
     const { name, slug, logo, url, industry, twitter, bio, entityName } =
-      req.body;
+      validationResult.data;
 
     const result = await prisma.sponsors.update({
       where: {
@@ -55,4 +68,4 @@ async function user(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   }
 }
 
-export default withSponsorAuth(user);
+export default withSponsorAuth(handler);

@@ -481,7 +481,7 @@ export const ApplicationDetails = ({
                     fontWeight={600}
                     whiteSpace={'nowrap'}
                   >
-                    {`${selectedApplication?.approvedAmount?.toLocaleString()}`}
+                    {`${selectedApplication?.approvedAmount?.toLocaleString('en-us')}`}
                     <Text as="span" ml={0.5} color="brand.slate.400">
                       {grant?.token}
                     </Text>
@@ -579,8 +579,8 @@ export const ApplicationDetails = ({
                 width: '6px',
               },
               '&::-webkit-scrollbar-thumb': {
-                background: '#e2e8f0',
-                borderRadius: '24px',
+                background: '#cbd5e1',
+                borderRadius: '30px',
               },
             }}
           >
@@ -610,7 +610,7 @@ export const ApplicationDetails = ({
                     fontWeight={600}
                     whiteSpace={'nowrap'}
                   >
-                    {`${selectedApplication?.ask?.toLocaleString()}`}
+                    {`${selectedApplication?.ask?.toLocaleString('en-us')}`}
                     <Text as="span" ml={0.5} color="brand.slate.400">
                       {grant?.token}
                     </Text>

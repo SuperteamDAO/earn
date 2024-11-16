@@ -1,8 +1,3 @@
-import {
-  clusterApiUrl,
-  Connection,
-  type VersionedTransactionResponse,
-} from '@solana/web3.js';
 import { type NextApiResponse } from 'next';
 
 import { tokenList } from '@/constants';
@@ -12,6 +7,7 @@ import {
   withSponsorAuth,
 } from '@/features/auth';
 import {
+  validatePayment,
   type ValidatePaymentResult,
   type VerifyPaymentsFormData,
 } from '@/features/sponsor-dashboard';
@@ -31,8 +27,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userSponsorId = req.userSponsorId;
 
   try {
-    const connection = new Connection(clusterApiUrl('mainnet-beta'));
-
     logger.debug(`Request body: ${safeStringify(req.body)}`);
     let { paymentLinks } = req.body as VerifyPaymentsFormData;
     const { listingId } = req.body as VerifyPaymentsFormData & {
@@ -69,6 +63,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (!listing) return res.status(400).json({ error: 'Listing not found' });
 
+    if (!listing.isWinnersAnnounced)
+      return res.status(400).json({ error: 'Listing not announced' });
+
+    const dbToken = tokenList.find((t) => t.tokenSymbol === listing.token);
+    if (!dbToken) {
+      return res
+        .status(400)
+        .json({ error: "Token doesn't exist for this listing" });
+    }
+
     const validationResults: ValidatePaymentResult[] = [];
 
     for (const paymentLink of paymentLinks) {
@@ -95,6 +99,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           (s) => s.id === paymentLink.submissionId,
         );
         if (!submission) throw new Error('Submission not found');
+
         const {
           user: { publicKey },
           winnerPosition,
@@ -107,85 +112,21 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
         const winnerReward = (listing.rewards as Record<string, any>)?.[
           winnerPosition + ''
-        ] as number | null | undefined;
+        ] as number;
         if (!winnerReward) {
           logger.error('Winner Position has no reward');
           throw new Error('Winner Position has no reward');
         }
 
-        const dbToken = tokenList.find((t) => t.tokenSymbol === listing.token);
-        if (!dbToken) {
-          logger.error(`Token doesn't exist for this listing`);
-          throw new Error(`Token doesn't exist for this listing`);
-        }
+        const validationResult = await validatePayment({
+          txId: paymentLink.txId,
+          recipientPublicKey: publicKey!,
+          expectedAmount: winnerReward,
+          tokenMintAddress: dbToken.mintAddress,
+        });
 
-        logger.debug(
-          `Getting Transaction Information from RPC for txId: ${paymentLink.txId}`,
-        );
-        let tx: VersionedTransactionResponse | null = null;
-        const maxRetries = 3;
-        const delayMs = 5000;
-
-        try {
-          for (let attempt = 1; attempt <= maxRetries; attempt++) {
-            try {
-              tx = await connection.getTransaction(paymentLink.txId, {
-                commitment: 'confirmed',
-                maxSupportedTransactionVersion: 10,
-              });
-              break;
-            } catch (err) {
-              if (attempt === maxRetries) {
-                throw err;
-              }
-              await wait(delayMs);
-            }
-          }
-        } catch (err) {
-          throw new Error(`Failed (Couldn't fetch transaction details)`);
-        }
-
-        if (!tx) {
-          throw new Error('Failed (Invalid URL)');
-        }
-
-        const { meta } = tx;
-
-        if (!meta) {
-          throw new Error(`Failed (Invalid URL)`);
-        }
-
-        const preBalance = meta?.preTokenBalances?.find(
-          (balance) => balance.owner === publicKey,
-        );
-        const postBalance = meta?.postTokenBalances?.find(
-          (balance) => balance.owner === publicKey,
-        );
-        if (!postBalance) {
-          throw new Error(
-            `Failed (Receiver’s public key doesn’t match our records.)`,
-          );
-        }
-
-        if (postBalance.mint !== dbToken?.mintAddress) {
-          throw new Error(
-            `Failed (Transferred token doesn't match the listing reward token)`,
-          );
-        }
-
-        const preAmount = preBalance?.uiTokenAmount.uiAmount || 0;
-        const postAmount = postBalance.uiTokenAmount.uiAmount;
-        if (!postAmount) {
-          throw new Error(
-            `Failed (Transferred amount doesn’t match the amount)`,
-          );
-        }
-        const actualTransferAmount = postAmount - preAmount;
-        if (Math.abs(actualTransferAmount - winnerReward) > 0.000001) {
-          // Using small epsilon for float comparison
-          throw new Error(
-            `Failed (Transferred amount doesn’t match the amount)`,
-          );
+        if (!validationResult.isValid) {
+          throw new Error(`Failed (${validationResult.error})`);
         }
         validationResults.push({
           submissionId: paymentLink.submissionId,

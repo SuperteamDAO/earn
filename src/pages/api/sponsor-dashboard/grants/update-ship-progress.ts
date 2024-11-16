@@ -38,6 +38,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         message: 'application not found',
       });
     }
+    if (application.applicationStatus !== 'Approved') {
+      logger.warn('Application is not approved');
+      return res.status(400).json({
+        error: 'Application is not approved',
+        message: 'Application is not approved',
+      });
+    }
     if (application.grant.airtableId) {
       const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
       const url = airtableUrl(
@@ -78,7 +85,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       logger.info('Application doesnt have airtable id');
     }
   } catch (err) {
-    logger.error('Failed to update Airtable record: ', err);
+    logger.error('Error syncing with Airtable', err);
     return res.status(404).json({
       error: 'AIRTABLE RECIPIENT UPDATE FAILED',
       message: 'Airtable record update failed',

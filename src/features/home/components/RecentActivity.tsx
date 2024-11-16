@@ -49,6 +49,8 @@ const ActivityCard = ({
 
     if (type === 'pow') {
       return 'just added a personal project';
+    } else if (type === 'grant-application') {
+      return 'just won a grant';
     } else if (isWinner && isWinnersAnnounced) {
       return winnerActionText[listingType] || 'just achieved something great';
     } else {

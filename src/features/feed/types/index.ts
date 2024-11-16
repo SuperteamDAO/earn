@@ -49,5 +49,5 @@ export const FeedPostTypeSchema = z.enum([
   'grant-application',
   'submission',
 ]);
-export const FEED_POST_TYPE = FeedPostTypeSchema.options;
+
 export type FeedPostType = z.infer<typeof FeedPostTypeSchema>;
