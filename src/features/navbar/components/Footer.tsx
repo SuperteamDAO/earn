@@ -1,5 +1,6 @@
 import {
   Box,
+  Center,
   Container,
   Flex,
   Image,
@@ -21,13 +22,11 @@ import { Discord, GitHub, Twitter } from '@/features/talent';
 
 type Country = {
   name: string;
-  flag: string;
   code: string;
 };
 
 const countries: Country[] = Superteams.map((superteam) => ({
   name: superteam.displayValue,
-  flag: superteam.icons,
   code: superteam.code ?? 'GLOBAL',
 }));
 
@@ -62,11 +61,22 @@ const FooterColumn = ({
   </Stack>
 );
 
+const GlobalFlag = ({ size = '16px' }) => (
+  <Center
+    bgImage="/assets/superteams/globe.png"
+    bgSize="contain"
+    borderWidth="1px"
+    borderStyle="solid"
+    borderColor="brand.slate.50"
+    rounded="full"
+    style={{ width: size, height: size }}
+  />
+);
+
 const CountrySelector: React.FC = () => {
   const router = useRouter();
   const [selectedCountry, setSelectedCountry] = useState<Country>({
     name: 'Global',
-    flag: '🌍',
     code: 'global',
   });
 
@@ -77,8 +87,6 @@ const CountrySelector: React.FC = () => {
     );
     if (matchedCountry) {
       setSelectedCountry(matchedCountry);
-    } else {
-      setSelectedCountry({ name: 'Global', flag: '🌍', code: 'global' });
     }
   }, [router.asPath]);
 
@@ -91,10 +99,10 @@ const CountrySelector: React.FC = () => {
     }
   };
 
-  const dropdownCountries =
-    selectedCountry.name !== 'Global'
-      ? [{ name: 'Global', flag: '🌏', code: 'global' }, ...countries]
-      : countries;
+  const dropdownCountries = [
+    { name: 'Global', code: 'global' },
+    ...countries.filter((country) => country.name !== 'Global'),
+  ];
 
   return (
     <Popover closeOnBlur={true} closeOnEsc={true}>
@@ -108,13 +116,12 @@ const CountrySelector: React.FC = () => {
           borderRadius="md"
           cursor="pointer"
         >
-          {selectedCountry?.flag &&
-            (selectedCountry.code === 'global' ? (
-              <Text>🌍</Text>
-            ) : (
-              <UserFlag location={selectedCountry.code} isCode />
-            ))}
-          <Text userSelect={'none'}>{selectedCountry.name}</Text>
+          {selectedCountry.code === 'global' ? (
+            <GlobalFlag />
+          ) : (
+            <UserFlag location={selectedCountry.code} isCode />
+          )}
+          <Text userSelect="none">{selectedCountry.name}</Text>
         </Flex>
       </PopoverTrigger>
       <PopoverContent w="200px">
@@ -131,7 +138,11 @@ const CountrySelector: React.FC = () => {
                 cursor="pointer"
                 onClick={() => handleCountrySelect(country)}
               >
-                <UserFlag location={country.code} isCode />
+                {country.code === 'global' ? (
+                  <GlobalFlag />
+                ) : (
+                  <UserFlag location={country.code} isCode />
+                )}
                 <Text>{country.name}</Text>
               </Flex>
             ))}
