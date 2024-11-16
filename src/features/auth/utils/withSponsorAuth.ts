@@ -34,6 +34,7 @@ export const withSponsorAuth = (handler: Handler): NextApiHandler => {
       });
 
       if (!user || !user.currentSponsorId) {
+        /// ///
         logger.warn('User does not have a current sponsor or is unauthorized');
         return res
           .status(403)

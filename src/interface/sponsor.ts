@@ -1,4 +1,5 @@
 interface SponsorType {
+  ///
   id?: string;
   slug: string;
   name: string;
@@ -7,6 +8,7 @@ interface SponsorType {
   industry?: string;
   twitter?: string;
   bio?: string;
+  isActive: boolean;
   entityName?: string;
   isVerified?: boolean;
   isCaution?: boolean;

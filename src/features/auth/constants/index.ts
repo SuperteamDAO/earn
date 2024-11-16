@@ -35,6 +35,7 @@ export const userSelectOptions = {
       id: true,
       name: true,
       logo: true,
+      isActive: true,
       isVerified: true,
       entityName: true,
       slug: true,

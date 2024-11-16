@@ -280,7 +280,7 @@ model Sponsors {
   createdAt    DateTime            @default(now())
   updatedAt    DateTime            @updatedAt
   isArchived   Boolean             @default(false)
-  isActive     Boolean             @default(true)
+  isActive     Boolean             @default(false)
   entityName   String?
   isVerified   Boolean             @default(false)
   isCaution    Boolean             @default(false)

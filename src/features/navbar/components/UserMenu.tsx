@@ -21,7 +21,7 @@ import { useEffect } from 'react';
 import { EarnAvatar, EmailSettingsModal } from '@/features/talent';
 import { useLogout, useUser } from '@/store/user';
 
-export function UserMenu({}) {
+export function UserMenu({ }) {
   const router = useRouter();
   const posthog = usePostHog();
 
@@ -71,7 +71,7 @@ export function UserMenu({}) {
           size="sm"
           variant={'ghost'}
         >
-          Complete your Profile
+          Please complete your profile before commenting on the listing.
         </Button>
       )}
       <Menu>
@@ -162,7 +162,6 @@ export function UserMenu({}) {
               </MenuItem>
             </>
           )}
-          <MenuDivider />
           {session?.user?.role === 'GOD' && (
             <Box display={{ base: 'none', sm: 'block' }}>
               <MenuGroup
@@ -182,6 +181,15 @@ export function UserMenu({}) {
                 >
                   Create New Sponsor
                 </MenuItem>
+                {/* <MenuItem
+                  as={NextLink}
+                  color="brand.slate.500"
+                  fontSize="sm"
+                  fontWeight={600}
+                  href={'/admin/sponsors'}
+                >
+                  {t('userMenu.bountyDashboard')}
+                </MenuItem> */}
               </MenuGroup>
               <MenuDivider />
             </Box>
