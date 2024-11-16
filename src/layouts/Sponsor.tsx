@@ -379,7 +379,6 @@ export function SponsorLayout({
                 w="full"
                 py={'22px'}
                 fontSize="md"
-                // onClick={() => alert('Activate Sponsor')}
                 isDisabled={isSponsorActive === true || isLoading}
                 isLoading={isLoading}
                 loadingText="Activating..."

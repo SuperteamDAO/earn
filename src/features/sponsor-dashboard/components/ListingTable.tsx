@@ -22,6 +22,7 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -39,6 +40,7 @@ import {
 import { PiNotePencil } from 'react-icons/pi';
 import { RiEditFill } from 'react-icons/ri';
 import { TbFileDollar } from 'react-icons/tb';
+import { TiInputChecked } from 'react-icons/ti';
 import { toast } from 'sonner';
 
 import { tokenList } from '@/constants';
@@ -102,6 +104,22 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
   const handleVerifyPayment = async (listing: ListingWithSubmissions) => {
     setSelectedListing(listing);
     verifyPaymentOnOpen();
+  };
+
+  const handleReviewBounty = async (bountyId: string) => {
+    // setSelectedListing();
+    console.log(/handleReviewBounty..../);
+
+    try {
+      await axios.post(`/api/bounties/activate`, {
+        userId: session?.user.id,
+        bountyId: bountyId,
+      });
+    } catch (error: any) {
+      console.error('Error activating bounty:', error.message);
+    } finally {
+      // setIsLoading(false);
+    }
   };
 
   const ListingTh = ({
@@ -353,8 +371,8 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           : 'Submissions'}
                       </Button>
                     ) : (session?.user?.role === 'GOD' &&
-                        listing.type !== 'grant' &&
-                        !listing.isPublished) ||
+                      listing.type !== 'grant' &&
+                      !listing.isPublished) ||
                       (!pastDeadline &&
                         listing.type !== 'grant' &&
                         (listing.status === 'OPEN' ||
@@ -416,6 +434,22 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         )}
 
                         {!!(
+                          session?.user?.role === 'GOD' &&
+                          listing.type === 'bounty' &&
+                          listing.status === 'VERIFYING'
+                        ) && (
+                            <MenuItem
+                              color={'brand.slate.500'}
+                              fontSize={'sm'}
+                              fontWeight={500}
+                              icon={<Icon as={TiInputChecked} w={4} h={4} />}
+                              onClick={() => handleReviewBounty(listing.id)}
+                            >
+                              Review {listingLabel}
+                            </MenuItem>
+                          )}
+
+                        {!!(
                           (session?.user?.role === 'GOD' &&
                             listing.type !== 'grant') ||
                           (!pastDeadline &&
@@ -423,41 +457,43 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                             (listing.status === 'OPEN' ||
                               listing.status === 'PREVIEW'))
                         ) && (
-                          <Link
-                            as={NextLink}
-                            _hover={{ textDecoration: 'none' }}
-                            href={`/dashboard/listings/${listing.slug}/edit`}
-                            onClick={resetForm}
-                          >
+                            <>
+                              <Link
+                                as={NextLink}
+                                _hover={{ textDecoration: 'none' }}
+                                href={`/dashboard/listings/${listing.slug}/edit`}
+                                onClick={resetForm}
+                              >
+                                <MenuItem
+                                  color={'brand.slate.500'}
+                                  fontSize={'sm'}
+                                  fontWeight={500}
+                                  icon={<Icon as={PiNotePencil} w={4} h={4} />}
+                                >
+                                  Edit {listingLabel}
+                                </MenuItem>
+                              </Link>
+                            </>
+                          )}
+                        {(listing.type === 'bounty' ||
+                          listing.type === 'project') && (
                             <MenuItem
+                              className="ph-no-capture"
                               color={'brand.slate.500'}
                               fontSize={'sm'}
                               fontWeight={500}
-                              icon={<Icon as={PiNotePencil} w={4} h={4} />}
+                              icon={<Icon as={IoDuplicateOutline} w={4} h={4} />}
+                              onClick={() => {
+                                posthog.capture('duplicate listing_sponsor');
+                                window.open(
+                                  `${router.basePath}/dashboard/listings/${listing.slug}/duplicate`,
+                                  '_blank',
+                                );
+                              }}
                             >
-                              Edit {listingLabel}
+                              Duplicate
                             </MenuItem>
-                          </Link>
-                        )}
-                        {(listing.type === 'bounty' ||
-                          listing.type === 'project') && (
-                          <MenuItem
-                            className="ph-no-capture"
-                            color={'brand.slate.500'}
-                            fontSize={'sm'}
-                            fontWeight={500}
-                            icon={<Icon as={IoDuplicateOutline} w={4} h={4} />}
-                            onClick={() => {
-                              posthog.capture('duplicate listing_sponsor');
-                              window.open(
-                                `${router.basePath}/dashboard/listings/${listing.slug}/duplicate`,
-                                '_blank',
-                              );
-                            }}
-                          >
-                            Duplicate
-                          </MenuItem>
-                        )}
+                          )}
                         {listingStatus === 'Draft' &&
                           listing?.type !== 'grant' && (
                             <>

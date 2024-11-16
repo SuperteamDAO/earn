@@ -12,7 +12,6 @@ async function activateSponsor(
   req: ActivateSponsorRequest,
   res: NextApiResponse,
 ) {
-  const userId = req.userId;
   try {
     const { sponsorId } = req.body;
 
