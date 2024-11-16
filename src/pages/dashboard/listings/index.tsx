@@ -12,7 +12,6 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -38,7 +37,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Trans } from 'react-i18next';
 import { MdArrowDropDown } from 'react-icons/md';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -454,22 +452,11 @@ export default function SponsorListings() {
           </Text>
           <Tooltip
             label={
-              cannotCreateNewListing ? (
-                isSponsorActive ? (
-                  'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
-                ) : (
-                  <Trans
-                    i18nKey="newSponsor.contactAdminDetail"
-                    values={{ godEmail, godTelegram }}
-                    components={{
-                      1: <Link href={`mailto:${godEmail}`} />,
-                      3: <Link href={godTelegramLink} isExternal />,
-                    }}
-                  />
-                )
-              ) : (
-                ''
-              )
+              cannotCreateNewListing
+                ? isSponsorActive
+                  ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
+                  : '发送邮件至 abc@solar.com 或者Telegrem @abc，联系管理员，开启相关权限'
+                : ''
             }
           >
             <Button

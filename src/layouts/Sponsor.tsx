@@ -1,13 +1,5 @@
 import { AddIcon, CheckIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  Icon,
-  Link,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import NextLink from 'next/link';
@@ -21,7 +13,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Trans } from 'react-i18next';
 import type { IconType } from 'react-icons';
 import { BiListUl } from 'react-icons/bi';
 import { LuLock, LuMessageSquare, LuUsers } from 'react-icons/lu';
@@ -324,22 +315,11 @@ export function SponsorLayout({
             {!isHackathonRoute ? (
               <Tooltip
                 label={
-                  cannotCreateNewListing ? (
-                    isSponsorActive ? (
-                      'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
-                    ) : (
-                      <Trans
-                        i18nKey="newSponsor.contactAdminDetail"
-                        values={{ godEmail, godTelegram }}
-                        components={{
-                          1: <Link href={`mailto:${godEmail}`} />,
-                          3: <Link href={godTelegramLink} isExternal />,
-                        }}
-                      />
-                    )
-                  ) : (
-                    ''
-                  )
+                  cannotCreateNewListing
+                    ? isSponsorActive
+                      ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
+                      : '发送邮件至 abc@solar.com 或者Telegrem @abc，联系管理员，开启相关权限'
+                    : ''
                 }
               >
                 <Button
