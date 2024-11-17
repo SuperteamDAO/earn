@@ -27,7 +27,10 @@ export function DescriptionAndTemplate() {
     name: 'templateId',
   });
 
-  const editorKey = useMemo(() => `editor-${templateId}`, [templateId]);
+  const editorKey = useMemo(
+    () => `editor-${templateId || 'default'}`,
+    [templateId],
+  );
   const posthog = usePostHog();
 
   return (

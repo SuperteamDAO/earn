@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { SkillsSelect } from '@/components/shared/SkillsSelectNew';
@@ -19,6 +19,14 @@ export function Skills() {
     control: form.control,
     name: 'templateId',
   });
+  const skills = useWatch({
+    control: form.control,
+    name: 'skills',
+  });
+
+  useEffect(() => {
+    console.log('skills', skills);
+  }, [skills]);
 
   const skillsKey = useMemo(() => `editor-${templateId}`, [templateId]);
   return (

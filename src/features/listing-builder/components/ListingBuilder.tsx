@@ -54,9 +54,9 @@ function ListingBuilder({
     listingStatusAtom,
     defaultListing ? listingToStatus(defaultListing) : undefined,
   );
-  useEffect(() => {
-    form.reset(defaultListing);
-  }, [defaultListing]);
+  // useEffect(() => {
+  //   form.reset(defaultListing);
+  // }, [defaultListing]);
 
   useEffect(() => {
     if (isDuplicating) form.onChange();

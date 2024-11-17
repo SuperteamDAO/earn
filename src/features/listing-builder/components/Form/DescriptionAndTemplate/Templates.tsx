@@ -31,6 +31,7 @@ import {
   isCreateListingAllowedQuery,
   listingTemplatesQuery,
 } from '../../../queries';
+import { cleanTemplate } from '../../../utils';
 
 export function Templates() {
   const posthog = usePostHog();
@@ -177,14 +178,12 @@ export function Templates() {
                         onClick={() => {
                           posthog.capture('template_sponsor');
                           console.log('template', template);
-                          const id = form.getValues().id;
-                          const slug = form.getValues().slug;
-                          form.reset({
-                            ...(template as any),
-                            id,
-                            slug,
-                            templateId: template.id,
-                          });
+                          form.reset(
+                            cleanTemplate(
+                              template as any,
+                              form.getValues(),
+                            ) as any,
+                          );
                           form.onChange();
                         }}
                       >

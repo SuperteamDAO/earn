@@ -1,6 +1,8 @@
 import { type BountyType } from '@prisma/client';
 import { z } from 'zod';
 
+import { type Listing } from '@/features/listings';
+
 import {
   createListingFormSchema,
   type ListingFormData,
@@ -106,4 +108,40 @@ export const getListingDefaults = (
     defaults['eligibility'] = [{ type: 'text', question: '', order: 1 }];
   }
   return defaults as ListingFormData;
+};
+
+export const cleanTemplate = (
+  template: Listing,
+  prevValues: ListingFormData,
+) => {
+  const reTemplate: Partial<Listing> = { ...template } as any;
+
+  reTemplate.templateId = reTemplate.id;
+  reTemplate.id = prevValues.id;
+  reTemplate.slug = prevValues.slug;
+  reTemplate.compensationType = prevValues.compensationType;
+  reTemplate.rewards = prevValues.rewards;
+  reTemplate.deadline = prevValues.deadline;
+  reTemplate.maxBonusSpots = prevValues.maxBonusSpots;
+  reTemplate.minRewardAsk = prevValues.minRewardAsk || undefined;
+  reTemplate.maxRewardAsk = prevValues.maxRewardAsk || undefined;
+  reTemplate.pocSocials = prevValues.pocSocials;
+  reTemplate.rewardAmount = prevValues.rewardAmount;
+  reTemplate.rewards = prevValues.rewards;
+  reTemplate.region = prevValues.region;
+
+  delete reTemplate.isFeatured;
+  delete reTemplate.isActive;
+  delete reTemplate.isArchived;
+  delete reTemplate.applicationType;
+  delete reTemplate.isPublished;
+  delete reTemplate.pocId;
+  delete reTemplate.publishedAt;
+  delete reTemplate.references;
+  delete reTemplate.referredBy;
+  delete reTemplate.requirements;
+  delete reTemplate.sponsorId;
+  delete reTemplate.timeToComplete;
+
+  return reTemplate;
 };
