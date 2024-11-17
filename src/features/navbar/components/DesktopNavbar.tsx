@@ -180,7 +180,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   size="sm"
                   variant={'ghost'}
                 >
-                  Become a Sponsor
+                  成为赞助商
                   <Box
                     display="block"
                     w={1.5}
@@ -199,7 +199,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   size="sm"
                   variant={'ghost'}
                 >
-                  Login
+                  登录
                 </Button>
               </HStack>
               <Button
@@ -214,7 +214,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 size="sm"
                 variant="solid"
               >
-                Sign Up
+                注册
               </Button>
             </HStack>
           )}

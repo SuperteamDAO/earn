@@ -91,7 +91,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                   size="md"
                   variant="unstyled"
                 >
-                  Login
+                  登录
                 </Button>
                 <Divider
                   h={5}
@@ -110,7 +110,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                   size="md"
                   variant="unstyled"
                 >
-                  Sign Up
+                  注册
                 </Button>
               </Flex>
             )}
@@ -125,7 +125,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 size="md"
                 variant="unstyled"
               >
-                Complete your Profile
+                完善您的个人资料
               </Button>
             )}
             <Divider my={2} borderColor={'brand.slate.300'} />
@@ -165,10 +165,10 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               })}
             </Flex>
             <Divider my={2} borderColor={'brand.slate.300'} />
-            <NavLink href={'/feed'} label={'Activity Feed'} isActive={false} />
+            <NavLink href={'/feed'} label={'动态'} isActive={false} />
             <NavLink
               href={'/leaderboard'}
-              label={'Leaderboard'}
+              label={'排行榜'}
               isActive={false}
             />
           </DrawerBody>
@@ -237,7 +237,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               size="sm"
               variant="unstyled"
             >
-              Login
+              登录
             </Button>
           )}
         </Flex>
