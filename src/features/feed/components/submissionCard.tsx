@@ -26,7 +26,9 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
 
   const listingLink = `${getURL()}listings/${sub?.listingType}/${sub?.listingSlug}`;
 
-  const submissionLink = `${getURL()}feed/submission/${sub?.id}`;
+  const submissionLink = sub?.link
+    ? sub.link
+    : `${getURL()}feed/submission/${sub?.id}`;
 
   const link = sub?.isWinnersAnnounced
     ? isProject
