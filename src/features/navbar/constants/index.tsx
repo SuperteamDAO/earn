@@ -8,17 +8,17 @@ interface NavItem {
 
 export const LISTING_NAV_ITEMS: Array<NavItem> = [
   {
-    label: 'Bounties',
+    label: '悬赏',
     href: '/bounties/',
     posthog: 'bounties_navbar',
   },
   {
-    label: 'Projects',
+    label: '项目',
     href: '/projects/',
     posthog: 'projects_navbar',
   },
   {
-    label: 'Grants',
+    label: '资助',
     href: '/grants/',
     posthog: 'grants_navbar',
   },
@@ -26,28 +26,28 @@ export const LISTING_NAV_ITEMS: Array<NavItem> = [
 
 export const CATEGORY_NAV_ITEMS: Array<NavItem & { pillPH: string }> = [
   {
-    label: 'Content',
+    label: '内容',
     href: '/category/content/',
     posthog: 'content_navbar',
     pillPH: 'content_navpill',
     altActive: ['/category/design/all/'],
   },
   {
-    label: 'Design',
+    label: '设计',
     href: '/category/design/',
     posthog: 'design_navbar',
     pillPH: 'design_navpill',
     altActive: ['/category/design/all/'],
   },
   {
-    label: 'Development',
+    label: '开发',
     href: '/category/development/',
     posthog: 'development_navbar',
     pillPH: 'development_navpill',
     altActive: ['/category/development/all/'],
   },
   {
-    label: 'Other',
+    label: '其他',
     href: '/category/other/',
     posthog: 'other_navbar',
     pillPH: 'other_navpill',
