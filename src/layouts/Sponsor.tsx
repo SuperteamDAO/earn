@@ -31,6 +31,7 @@ import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { PDTG } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
+import { Login } from '@/features/auth';
 import {
   isCreateListingAllowedQuery,
   SelectHackathon,
@@ -132,8 +133,7 @@ export function SponsorLayout({
   }
 
   if (!session && status === 'unauthenticated') {
-    router.push('/');
-    return null;
+    return <Login isOpen={true} onClose={() => {}} />;
   }
 
   const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
