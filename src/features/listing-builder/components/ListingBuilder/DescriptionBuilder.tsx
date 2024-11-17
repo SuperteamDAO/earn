@@ -6,7 +6,6 @@ import {
   HStack,
   Icon,
   Input,
-  Link as ChakraLink,
   Modal,
   ModalBody,
   ModalContent,
@@ -429,28 +428,6 @@ export const DescriptionBuilder = ({
             </Text>
             <ListingTooltip label="Write details about the Listing - About, Requirements, Evaluation Criteria, Resources, Rewards, etc." />
           </Flex>
-          <ChakraLink
-            className="ph-no-capture"
-            gap={1}
-            display="flex"
-            color="brand.slate.400"
-            fontSize={'13px'}
-            _hover={{
-              textDecoration: 'none',
-              color: 'brand.slate.500',
-            }}
-            href="https://chat.openai.com/g/g-HS6eWTMku-st-earn-listings-bot"
-            onClick={() => {
-              posthog.capture('chatGPT bot_sponsor');
-            }}
-            target="_blank"
-          >
-            <Text textDecoration="none">🤖</Text>
-            <Text textDecoration="underline" textUnderlineOffset={2}>
-              Go live in {'<1'} min by using our drafting bot (ChatGPT 4
-              Required)
-            </Text>
-          </ChakraLink>
         </Flex>
         <VStack w={'min-content'} mb={8}>
           <Flex
