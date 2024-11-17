@@ -129,10 +129,7 @@ export function CreateListing({
 
   const basePath = type === 'hackathon' ? 'hackathon' : 'listings';
   const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
-  const isNewOrDraft =
-    listingDraftStatus === 'DRAFT' ||
-    listingDraftStatus === 'PREVIEW' ||
-    newListing === true;
+  const isNewOrDraft = listingDraftStatus === 'DRAFT' || newListing === true;
 
   useEffect(() => {
     initializeForm(listing!, isDuplicating, type);
@@ -265,7 +262,7 @@ export function CreateListing({
         ...(type === 'hackathon' ? { hackathonSponsor } : {}),
         ...draft,
         isPublished: editable && !isDuplicating ? listing?.isPublished : false,
-        status: isPreview ? 'PREVIEW' : 'OPEN',
+        status: 'OPEN',
       });
       const resType = result.data.type;
       const resSlug = result.data.slug;
@@ -277,7 +274,7 @@ export function CreateListing({
           onPreviewOpen();
         }
         router.replace(
-          `/dashboard/listings/${resSlug}/edit?preview=1`,
+          `/dashboard/listings/${resSlug}/edit?preview=1&nsb=1`,
           undefined,
           { shallow: true },
         );
@@ -322,7 +319,7 @@ export function CreateListing({
           <PreviewListingModal
             isOpen={isPreviewOpen}
             onClose={onPreviewClose}
-            previewUrl={`/listings/${isType}/${slug}`}
+            previewUrl={`/listings/${isType}/${slug}?preview=1`}
           />
           {isSuccessOpen && (
             <ListingSuccessModal

@@ -13,13 +13,10 @@ export const config = {
 };
 
 type EmailType =
-  | 'email.sent'
   | 'email.delivered'
   | 'email.delivery_delayed'
   | 'email.complained'
-  | 'email.bounced'
-  | 'email.opened'
-  | 'email.clicked';
+  | 'email.bounced';
 
 interface WebhookEvent {
   created_at: string;
@@ -31,6 +28,40 @@ interface WebhookEvent {
     to: string[];
   };
   type: EmailType;
+}
+
+async function handleEmailBounce(recipientEmail: string) {
+  const last6Emails = await prisma.resendLogs.findMany({
+    where: {
+      email: recipientEmail,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    take: 6,
+  });
+
+  const lastThreeAreBounced = last6Emails
+    .slice(0, 3)
+    .every((email) => email.status === 'email.bounced');
+
+  const bouncedEmails = last6Emails.filter(
+    (email) => email.status === 'email.bounced',
+  );
+  const delayedEmails = last6Emails.filter(
+    (email) => email.status === 'email.delivery_delayed',
+  );
+
+  const hasEnoughBounced = bouncedEmails.length >= 3;
+  const hasEnoughDelayed = delayedEmails.length >= 3;
+
+  if (lastThreeAreBounced || (hasEnoughBounced && hasEnoughDelayed)) {
+    await prisma.blockedEmail.create({
+      data: {
+        email: recipientEmail,
+      },
+    });
+  }
 }
 
 const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -52,26 +83,7 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         if (event.type === 'email.bounced') {
-          const last5Emails = await prisma.resendLogs.findMany({
-            where: {
-              email: recipientEmail,
-            },
-            orderBy: {
-              createdAt: 'desc',
-            },
-            take: 5,
-          });
-          const allBounced =
-            last5Emails.length === 5 &&
-            last5Emails.every((email) => email.status === 'email.bounced');
-
-          if (allBounced) {
-            await prisma.blockedEmail.create({
-              data: {
-                email: recipientEmail,
-              },
-            });
-          }
+          await handleEmailBounce(recipientEmail);
         }
 
         await prisma.resendLogs.create({

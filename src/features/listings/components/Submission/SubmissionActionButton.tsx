@@ -2,6 +2,7 @@ import { Button, Flex, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
@@ -21,7 +22,7 @@ import { useUser } from '@/store/user';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { EasterEgg } from './EasterEgg';
-import { SubmissionModal } from './SubmissionModal';
+import { SubmissionDrawer } from './SubmissionDrawer';
 
 interface Props {
   listing: Listing;
@@ -50,7 +51,10 @@ export const SubmissionActionButton = ({
 
   const isAuthenticated = authStatus === 'authenticated';
 
-  const isUserEligibleByRegion = userRegionEligibilty(region, user?.location);
+  const isUserEligibleByRegion = userRegionEligibilty({
+    region,
+    userLocation: user?.location,
+  });
 
   const { data: submissionStatus, isLoading: isUserSubmissionLoading } =
     useQuery({
@@ -61,6 +65,8 @@ export const SubmissionActionButton = ({
   const isSubmitted = submissionStatus?.isSubmitted ?? false;
 
   const posthog = usePostHog();
+  const router = useRouter();
+  const { query } = router;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -72,12 +78,12 @@ export const SubmissionActionButton = ({
   const buttonState = getButtonState();
 
   const handleSubmit = () => {
+    onOpen();
     if (buttonState === 'submit') {
       posthog.capture('start_submission');
     } else if (buttonState === 'edit') {
       posthog.capture('edit_submission');
     }
-    onOpen();
   };
 
   const hackathonStartDate = Hackathon?.startDate
@@ -130,7 +136,7 @@ export const SubmissionActionButton = ({
         pastDeadline ||
           (user?.id &&
             user?.isTalentFilled &&
-            ((bountyDraftStatus !== 'PUBLISHED' && status !== 'PREVIEW') ||
+            ((bountyDraftStatus !== 'PUBLISHED' && !query['preview']) ||
               !hasHackathonStarted ||
               !isUserEligibleByRegion)),
       );
@@ -155,7 +161,7 @@ export const SubmissionActionButton = ({
   return (
     <>
       {isOpen && (
-        <SubmissionModal
+        <SubmissionDrawer
           id={id}
           onClose={onClose}
           isOpen={isOpen}

@@ -31,7 +31,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug, type } = context.query;
   const { req } = context;
   const host = req.headers.host || '';
-  console.log(host);
 
   const redirectToEarnSlugs = [
     'write-a-twitter-thread-about-airspaces',

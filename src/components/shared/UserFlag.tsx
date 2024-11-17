@@ -35,7 +35,6 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
         setCode(country.code);
       }
     }
-    console.log('location', location);
   }, [location]);
   return code === 'balkan' ? (
     <Center

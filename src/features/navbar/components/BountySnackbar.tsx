@@ -28,8 +28,6 @@ export const BountySnackbar = () => {
 
   const { asPath, query } = router;
 
-  if (!!query['preview']) return null;
-
   const showSnackbar = asPath.split('/')[1] === 'listings';
 
   if (!bountySnackbar) return null;
@@ -41,18 +39,21 @@ export const BountySnackbar = () => {
     type,
     isPublished,
     isCaution,
-    status,
     sponsorId,
     slug,
   } = bountySnackbar;
 
+  const isPreview = !!query['preview'];
+  // nsb == no snackbar, but only for previews or drafts, solves edge case of isCaution listing snackbar
+  if (!!query['nsb'] && !isPublished) return null;
+
   const isExpired = deadline && dayjs(deadline).isBefore(dayjs());
 
   const isPreviewSponsor =
-    status === 'PREVIEW' && user.user?.currentSponsorId === sponsorId;
+    !isPublished && isPreview && user.user?.currentSponsorId === sponsorId;
 
   const getBackgroundColor = () => {
-    if (status === 'PREVIEW') return 'brand.slate.500';
+    if (!isPublished && isPreview) return 'brand.slate.500';
     if (!isPublished) return '#DC4830';
     if (isExpired) return '#6A6A6A';
     if (isCaution) return '#DC4830';
@@ -63,7 +64,7 @@ export const BountySnackbar = () => {
     const daysToDeadline = deadline
       ? dayjs(deadline).diff(dayjs(), 'day')
       : null;
-    if (status === 'PREVIEW') {
+    if (!isPublished && isPreview) {
       if (user.user?.currentSponsorId === sponsorId) {
         return 'Note: This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community';
       } else

@@ -1,60 +1,98 @@
 import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import {
+  submissionSchema,
+  validateSubmissionRequest,
+} from '@/features/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
-  const userId = req.userId;
+async function updateSubmission(
+  userId: string,
+  listingId: string,
+  data: any,
+  listing: any,
+) {
+  const validationResult = submissionSchema(
+    listing,
+    listing.minRewardAsk || 0,
+    listing.maxRewardAsk || 0,
+  ).safeParse(data);
 
-  const { listingId, link, tweet, otherInfo, eligibilityAnswers, ask } =
-    req.body;
+  if (!validationResult.success) {
+    throw new Error(JSON.stringify(validationResult.error.formErrors));
+  }
+
+  const validatedData = validationResult.data;
+
+  const existingSubmission = await prisma.submission.findFirst({
+    where: { userId, listingId },
+  });
+
+  if (!existingSubmission) {
+    throw new Error('Submission not found');
+  }
+
+  const formattedData = {
+    link: validatedData.link || '',
+    tweet: validatedData.tweet || '',
+    otherInfo: validatedData.otherInfo || '',
+    eligibilityAnswers: validatedData.eligibilityAnswers || undefined,
+    ask: validatedData.ask || 0,
+  };
+
+  return prisma.submission.update({
+    where: { id: existingSubmission.id },
+    data: formattedData,
+  });
+}
+
+async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
+  const { userId } = req;
+  const { listingId, ...submissionData } = req.body;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
+  logger.debug(`User: ${safeStringify(userId)}`);
 
   if (!listingId) {
     return res.status(400).json({
-      message: 'Listing ID is required.',
+      error: 'Missing required field',
+      message: 'Listing ID is required',
     });
   }
 
   try {
-    const submission = await prisma.submission.findFirst({
-      where: {
-        userId,
-        listingId,
-      },
-    });
+    const { listing } = await validateSubmissionRequest(
+      userId as string,
+      listingId,
+    );
 
-    if (!submission) {
-      return res.status(404).json({
-        message: 'Submission not found.',
-      });
-    }
-
-    const result = await prisma.submission.update({
-      where: {
-        id: submission.id,
-      },
-      data: {
-        listingId,
-        link: link || '',
-        tweet: tweet || '',
-        otherInfo: otherInfo || '',
-        eligibilityAnswers: eligibilityAnswers || undefined,
-        ask: ask || null,
-      },
-    });
+    const result = await updateSubmission(
+      userId as string,
+      listingId,
+      submissionData,
+      listing,
+    );
 
     return res.status(200).json(result);
   } catch (error: any) {
-    logger.error(`User ${userId} unable to edit submission: ${error.message}`);
-    return res.status(500).json({
+    logger.error(
+      `User ${userId} unable to update submission: ${safeStringify(error)}`,
+    );
+
+    let statusCode = 403;
+    try {
+      JSON.parse(error.message);
+      statusCode = 400;
+    } catch {}
+
+    return res.status(statusCode).json({
       error: error.message,
-      message: 'Error occurred while updating the submission.',
+      message: `Unable to update submission: ${error.message}`,
     });
   }
 }
 
-export default withAuth(handler);
+export default withAuth(submission);

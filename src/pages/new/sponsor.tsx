@@ -4,32 +4,42 @@ import {
   Button,
   Divider,
   Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
   Heading,
   HStack,
-  Input,
   Link,
   Text,
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
-import { type FieldValues, useForm } from 'react-hook-form';
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
+import { Input } from '@/components/ui/input';
+import { MultiSelect } from '@/components/ui/multi-select';
 import { IndustryList, PDTG } from '@/constants';
 import { SignIn } from '@/features/auth';
 import {
+  shouldUpdateUser,
+  sponsorFormSchema,
+  type SponsorFormValues,
+  transformFormToApiData,
   useSlugValidation,
   useSponsorNameValidation,
 } from '@/features/sponsor';
@@ -41,27 +51,36 @@ import { uploadToCloudinary } from '@/utils/upload';
 
 const CreateSponsor = () => {
   const router = useRouter();
-  const animatedComponents = makeAnimated();
   const { data: session, status } = useSession();
   const { user, refetchUser } = useUser();
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    watch,
-    getValues,
-  } = useForm();
   const posthog = usePostHog();
 
   const [logoUrl, setLogoUrl] = useState<string>('');
-  const [pfpUrl, setPfpUrl] = useState<string>('');
-  const [industries, setIndustries] = useState<string>();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loginStep, setLoginStep] = useState(0);
-  const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
-    user?.photo?.includes('googleusercontent.com') || false,
-  );
+
+  const form = useForm<SponsorFormValues>({
+    resolver: zodResolver(sponsorFormSchema),
+    defaultValues: {
+      sponsor: {
+        name: '',
+        slug: '',
+        bio: '',
+        logo: '',
+        industry: '',
+        url: '',
+        twitter: '',
+        entityName: '',
+      },
+      user: {
+        firstName: user?.firstName || '',
+        lastName: user?.lastName || '',
+        username: user?.username || '',
+        photo: user?.photo || '',
+      },
+    },
+  });
 
   const {
     setSponsorName,
@@ -84,10 +103,11 @@ const CreateSponsor = () => {
 
   useEffect(() => {
     if (user?.photo) {
-      setPfpUrl(user?.photo);
+      form.setValue('user.photo', user.photo);
     }
     if (user?.username) {
-      setUsername(user?.username);
+      setUsername(user.username);
+      form.setValue('user.username', user.username);
     }
   }, [user]);
 
@@ -102,50 +122,23 @@ const CreateSponsor = () => {
     isPending,
     isError,
   } = useMutation({
-    mutationFn: async (data: FieldValues) => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const sponsorData = {
-            bio: data.bio,
-            industry: industries ?? '',
-            name: sponsorName,
-            slug,
-            logo: logoUrl ?? '',
-            twitter: data.twitterHandle,
-            url: data.sponsorurl ?? '',
-            entityName: data.entityName,
-          };
+    mutationFn: async (data: SponsorFormValues) => {
+      const { sponsorData, userData } = transformFormToApiData(data);
 
-          const userData = {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            username: data.username,
-            photo: isGooglePhoto ? user?.photo : pfpUrl,
-          };
+      try {
+        await axios.post('/api/sponsors/create', sponsorData);
 
-          const updateUser =
-            userData.firstName !== user?.firstName ||
-            userData.lastName !== user?.lastName ||
-            userData.username !== user?.username ||
-            userData.photo !== user?.photo;
-
-          // Step 1: Create sponsor
-          await axios.post('/api/sponsors/create', sponsorData);
-
-          // Step 2: Update user details if necessary
-          if (updateUser) {
-            await axios.post('/api/sponsors/usersponsor-details/', userData);
-          }
-
-          // Step 3: Send welcome email
-          await axios.post(`/api/email/manual/welcome-sponsor`);
-
-          resolve('Success');
-        } catch (error) {
-          console.log('Error in createSponsor:', error);
-          reject(error);
+        if (userData && shouldUpdateUser(userData, user)) {
+          await axios.post('/api/sponsors/usersponsor-details/', userData);
         }
-      });
+
+        await axios.post('/api/email/manual/welcome-sponsor');
+
+        return 'Success';
+      } catch (error) {
+        console.error('Error in createSponsor:', error);
+        throw error;
+      }
     },
     onSuccess: async () => {
       await refetchUser();
@@ -172,13 +165,9 @@ const CreateSponsor = () => {
     },
   });
 
-  const handleCreateSponsor = async (e: FieldValues) => {
+  const onSubmit = (data: SponsorFormValues) => {
     posthog.capture('complete profile_sponsor');
-    if (getValues('bio').length > 180) {
-      setErrorMessage('Company short bio length exceeded the limit');
-      return;
-    }
-    createSponsor(e);
+    createSponsor(data);
   };
 
   if (!session && status === 'loading') {
@@ -231,490 +220,281 @@ const CreateSponsor = () => {
         </>
       ) : (
         <VStack w="full" pt={8} pb={24}>
-          <VStack>
+          <VStack spacing={2}>
             <Heading
-              color={'gray.700'}
-              fontFamily={'var(--font-sans)'}
-              fontSize={'24px'}
-              fontWeight={700}
+              color="gray.900"
+              fontSize="3xl"
+              fontWeight="semibold"
+              letterSpacing="-0.02em"
             >
               Welcome to Superteam Earn
             </Heading>
-            <Text
-              color={'gray.400'}
-              fontFamily={'var(--font-sans)'}
-              fontSize={'20px'}
-              fontWeight={500}
-            >
-              {"Let's start with some basic information about your team"}
+            <Text color="gray.600" fontSize="lg" fontWeight="normal">
+              Let&apos;s start with some basic information about your team
             </Text>
           </VStack>
           <VStack w={'2xl'} pt={10}>
-            <form
-              onSubmit={handleSubmit(handleCreateSponsor)}
-              style={{ width: '100%' }}
-            >
-              <Text
-                as="h3"
-                mb={4}
-                color="brand.slate.600"
-                fontSize={'xl'}
-                fontWeight={600}
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                style={{ width: '100%' }}
               >
-                About You
-              </Text>
-
-              <Flex justify={'space-between'} gap={2} w={'full'}>
-                <FormControl isRequired>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'firstName'}
-                  >
-                    First Name
-                  </FormLabel>
-
-                  <Input
-                    color={'gray.800'}
-                    borderColor="brand.slate.300"
-                    _placeholder={{
-                      color: 'brand.slate.400',
-                    }}
-                    focusBorderColor="brand.purple"
-                    id="firstName"
-                    placeholder="First Name"
-                    {...register('firstName', { required: true })}
-                    defaultValue={user?.firstName}
-                    maxLength={100}
-                  />
-
-                  <FormErrorMessage>
-                    {errors.sponsorname ? (
-                      <>{errors.sponsorname.message}</>
-                    ) : (
-                      <></>
-                    )}
-                  </FormErrorMessage>
-                </FormControl>
-                <FormControl w={'full'} isRequired>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'lastName'}
-                  >
-                    Last Name
-                  </FormLabel>
-                  <Input
-                    color={'gray.800'}
-                    borderColor="brand.slate.300"
-                    _placeholder={{
-                      color: 'brand.slate.400',
-                    }}
-                    focusBorderColor="brand.purple"
-                    id="lastName"
-                    placeholder="Last Name"
-                    {...register('lastName', { required: true })}
-                    defaultValue={user?.lastName}
-                    maxLength={100}
-                  />
-                  <FormErrorMessage>
-                    {errors.slug ? <>{errors.slug.message}</> : <></>}
-                  </FormErrorMessage>
-                </FormControl>
-              </Flex>
-
-              <FormControl w={'full'} my={6} isRequired>
-                <HStack mb={2}>
-                  <FormLabel
-                    m={0}
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'username'}
-                  >
-                    Username
-                  </FormLabel>
-                </HStack>
-                <Input
-                  color={'gray.800'}
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.400',
-                  }}
-                  focusBorderColor="brand.purple"
-                  id="username"
-                  placeholder="Username"
-                  {...register('username', { required: true })}
-                  isInvalid={isUsernameInvalid}
-                  maxLength={40}
-                  onChange={(e) => setUsername(e.target.value)}
-                  value={username}
-                />
-                {isUsernameInvalid && (
-                  <Text color={'red'} fontSize={'sm'}>
-                    {validationUsernameErrorMessage}
-                  </Text>
-                )}
-                <FormErrorMessage>
-                  {errors.entityName ? <>{errors.entityName.message}</> : <></>}
-                </FormErrorMessage>
-              </FormControl>
-              <>
-                <FormLabel
-                  mb={2}
-                  pb={'0'}
-                  color={'brand.slate.500'}
-                  requiredIndicator={<></>}
+                <Text
+                  as="h2"
+                  mb={5}
+                  color="gray.900"
+                  fontSize="xl"
+                  fontWeight="semibold"
+                  letterSpacing="-0.01em"
                 >
-                  Profile Picture
-                </FormLabel>
-                {user?.photo ? (
-                  <ImagePicker
-                    defaultValue={{ url: user?.photo }}
-                    onChange={async (e) => {
-                      setIsUploading(true);
-                      const a = await uploadToCloudinary(e, 'earn-pfp');
-                      setPfpUrl(a);
-                      setIsGooglePhoto(false);
-                      setIsUploading(false);
-                    }}
-                    onReset={() => {
-                      setPfpUrl('');
-                      setIsUploading(false);
-                    }}
-                  />
-                ) : (
-                  <ImagePicker
-                    onChange={async (e) => {
-                      setIsUploading(true);
-                      const a = await uploadToCloudinary(e, 'earn-pfp');
-                      setPfpUrl(a);
-                      if (user?.photo) setIsGooglePhoto(false);
-                      setIsUploading(false);
-                    }}
-                    onReset={() => {
-                      setPfpUrl('');
-                      setIsUploading(false);
-                    }}
-                  />
-                )}
-              </>
+                  About You
+                </Text>
 
-              <Divider my={6} borderColor="brand.slate.400" />
-
-              <Text
-                as="h3"
-                mb={4}
-                color="brand.slate.600"
-                fontSize={'xl'}
-                fontWeight={600}
-              >
-                About Your Company
-              </Text>
-              <Flex justify={'space-between'} gap={2} w={'full'}>
-                <FormControl isRequired>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'sponsorname'}
+                <Flex justify={'space-between'} gap={2} w={'full'} mb={4}>
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="user.firstName"
+                    label="First Name"
+                    isRequired
                   >
-                    Company Name
-                  </FormLabel>
-                  <Input
-                    w={'full'}
-                    borderColor={'brand.slate.300'}
-                    _placeholder={{ color: 'brand.slate.300' }}
-                    focusBorderColor="brand.purple"
-                    id="sponsorname"
-                    placeholder="Stark Industries"
-                    {...register('sponsorname')}
-                    isInvalid={isSponsorNameInvalid}
-                    onChange={(e) => setSponsorName(e.target.value)}
-                    value={sponsorName}
+                    <Input placeholder="First Name" />
+                  </FormFieldWrapper>
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="user.lastName"
+                    label="Last Name"
+                    isRequired
+                  >
+                    <Input placeholder="Last Name" />
+                  </FormFieldWrapper>
+                </Flex>
+                <Flex mb={4}>
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="user.username"
+                    label="Username"
+                    isRequired
+                  >
+                    <Input
+                      placeholder="Username"
+                      onChange={(e) => {
+                        setUsername(e.target.value);
+                      }}
+                      value={username}
+                    />
+                  </FormFieldWrapper>
+                  {isUsernameInvalid && (
+                    <p className="text-sm text-red-500">
+                      {validationUsernameErrorMessage}
+                    </p>
+                  )}
+                </Flex>
+                <>
+                  <FormLabel isRequired>Profile Picture</FormLabel>
+                  <ImagePicker
+                    defaultValue={user?.photo ? { url: user.photo } : undefined}
+                    onChange={async (e) => {
+                      setIsUploading(true);
+                      const url = await uploadToCloudinary(e, 'earn-pfp');
+                      form.setValue('user.photo', url);
+                      setIsUploading(false);
+                    }}
+                    onReset={() => {
+                      form.setValue('user.photo', '');
+                      setIsUploading(false);
+                    }}
                   />
+                </>
+
+                <Divider my={12} borderColor="brand.slate.400" />
+
+                <Text
+                  as="h2"
+                  mb={5}
+                  color="gray.900"
+                  fontSize="xl"
+                  fontWeight="semibold"
+                  letterSpacing="-0.01em"
+                >
+                  About Your Company
+                </Text>
+                <Flex justify={'space-between'} gap={2} w={'full'}>
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="sponsor.name"
+                    label="Company Name"
+                    isRequired
+                  >
+                    <Input
+                      placeholder="Stark Industries"
+                      onChange={(e) => {
+                        setSponsorName(e.target.value);
+                      }}
+                      value={sponsorName}
+                    />
+                  </FormFieldWrapper>
                   {isSponsorNameInvalid && (
-                    <Text
-                      mt={1}
-                      color={'red'}
-                      fontSize={'sm'}
-                      lineHeight={'15px'}
-                      letterSpacing={'-1%'}
-                    >
+                    <p className="text-sm text-red-500">
                       {sponsorNameValidationErrorMessage}
-                    </Text>
+                    </p>
                   )}
-                  <FormErrorMessage>
-                    {errors.sponsorname ? (
-                      <>{errors.sponsorname.message}</>
-                    ) : (
-                      <></>
-                    )}
-                  </FormErrorMessage>
-                </FormControl>
-                <FormControl w={'full'} isRequired>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'slug'}
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="sponsor.slug"
+                    label="Company Username"
+                    isRequired
                   >
-                    Company Username
-                  </FormLabel>
-                  <Input
-                    w={'full'}
-                    borderColor={'brand.slate.300'}
-                    _placeholder={{ color: 'brand.slate.300' }}
-                    focusBorderColor="brand.purple"
-                    id="slug"
-                    placeholder="starkindustries"
-                    {...register('slug')}
-                    isInvalid={isSlugInvalid}
-                    onChange={(e) => setSlug(e.target.value)}
-                    value={slug}
-                  />
+                    <Input
+                      placeholder="starkindustries"
+                      onChange={(e) => {
+                        const lowercaseValue = e.target.value.toLowerCase();
+                        setSlug(lowercaseValue);
+                      }}
+                      value={slug}
+                    />
+                  </FormFieldWrapper>
                   {isSlugInvalid && (
-                    <Text
-                      mt={1}
-                      color={'red'}
-                      fontSize={'sm'}
-                      lineHeight={'15px'}
-                      letterSpacing={'-1%'}
-                    >
+                    <p className="text-sm text-red-500">
                       {validationSlugErrorMessage}
-                    </Text>
+                    </p>
                   )}
-                  <FormErrorMessage>
-                    {errors.slug ? <>{errors.slug.message}</> : <></>}
-                  </FormErrorMessage>
-                </FormControl>
-              </Flex>
-              <HStack justify={'space-between'} w={'full'} my={6}>
-                <FormControl w={'full'}>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'sponsorname'}
+                </Flex>
+                <HStack justify={'space-between'} w={'full'} my={6}>
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="sponsor.url"
+                    label="Company URL"
                   >
-                    Company URL
-                  </FormLabel>
-                  <Input
-                    borderColor={'brand.slate.300'}
-                    _placeholder={{ color: 'brand.slate.300' }}
-                    focusBorderColor="brand.purple"
-                    id="sponsorurl"
-                    placeholder="https://starkindustries.com"
-                    {...register('sponsorurl')}
-                  />
-                  <FormErrorMessage>
-                    {errors.sponsorurl ? (
-                      <>{errors.sponsorurl.message}</>
-                    ) : (
-                      <></>
-                    )}
-                  </FormErrorMessage>
-                </FormControl>
-                <FormControl w={'full'} isRequired>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'twitterHandle'}
+                    <Input placeholder="https://starkindustries.com" />
+                  </FormFieldWrapper>
+
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="sponsor.twitter"
+                    label="Company Twitter"
+                    isRequired
                   >
-                    Company Twitter
-                  </FormLabel>
-                  <Input
-                    w={'full'}
-                    borderColor={'brand.slate.300'}
-                    _placeholder={{ color: 'brand.slate.300' }}
-                    id="twitterHandle"
-                    placeholder="@StarkIndustries"
-                    {...register('twitterHandle')}
-                  />
-                  <FormErrorMessage>
-                    {errors.twitterHandle ? (
-                      <>{errors.twitterHandle.message}</>
-                    ) : (
-                      <></>
-                    )}
-                  </FormErrorMessage>
-                </FormControl>
-              </HStack>
-              <HStack w="full">
-                <FormControl w={'full'} isRequired>
-                  <HStack mb={2}>
-                    <FormLabel
-                      m={0}
-                      color={'brand.slate.500'}
-                      fontSize={'15px'}
-                      fontWeight={500}
-                      htmlFor={'entityName'}
-                    >
-                      Entity Name
-                    </FormLabel>
-                    <Tooltip
-                      fontSize="xs"
-                      label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
-                    >
-                      <InfoOutlineIcon
-                        color="brand.slate.500"
-                        w={3}
-                        h={3}
-                        display={{ base: 'none', md: 'block' }}
-                      />
-                    </Tooltip>
-                  </HStack>
-                  <Input
-                    w={'full'}
-                    borderColor={'brand.slate.300'}
-                    _placeholder={{ color: 'brand.slate.300' }}
-                    focusBorderColor="brand.purple"
-                    id="entityName"
-                    placeholder="Full Entity Name"
-                    {...register('entityName')}
-                  />
-                  <FormErrorMessage>
-                    {errors.entityName ? (
-                      <>{errors.entityName.message}</>
-                    ) : (
-                      <></>
-                    )}
-                  </FormErrorMessage>
-                </FormControl>
-              </HStack>
-              <VStack align={'start'} gap={2} w="full" mt={6} mb={3}>
-                <Heading
-                  color={'brand.slate.500'}
-                  fontSize={'15px'}
-                  fontWeight={500}
-                >
-                  Company Logo{' '}
-                  <span
-                    style={{
-                      color: 'red',
-                    }}
+                    <Input placeholder="@StarkIndustries" />
+                  </FormFieldWrapper>
+                </HStack>
+                <HStack w="full">
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="sponsor.entityName"
+                    label={
+                      <>
+                        Entity Name
+                        <Tooltip
+                          fontSize="xs"
+                          label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                        >
+                          <InfoOutlineIcon
+                            color="brand.slate.500"
+                            mt={1}
+                            ml={1}
+                            w={3}
+                            h={3}
+                            display={{ base: 'none', md: 'block' }}
+                          />
+                        </Tooltip>
+                      </>
+                    }
+                    isRequired
                   >
-                    *
-                  </span>
-                </Heading>
-                <HStack gap={5} w="full">
+                    <Input placeholder="Full Entity Name" />
+                  </FormFieldWrapper>
+                </HStack>
+                <Box w="full" mt={6} mb={3}>
+                  <FormLabel isRequired>Company Logo</FormLabel>
                   <ImagePicker
                     onChange={async (e) => {
                       setIsUploading(true);
-                      const a = await uploadToCloudinary(e, 'earn-sponsor');
-                      setLogoUrl(a);
+                      const url = await uploadToCloudinary(e, 'earn-sponsor');
+                      setLogoUrl(url);
+                      form.setValue('sponsor.logo', url);
                       setIsUploading(false);
                     }}
                   />
+                </Box>
+
+                <HStack justify={'space-between'} w={'full'} mt={6}>
+                  <FormField
+                    control={form.control}
+                    name="sponsor.industry"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel isRequired>Industry</FormLabel>
+                        <FormControl>
+                          <MultiSelect
+                            closeMenuOnSelect={false}
+                            isMulti
+                            options={IndustryList.map((elm) => ({
+                              label: elm,
+                              value: elm,
+                            }))}
+                            onChange={(selected: any) => {
+                              const values =
+                                selected?.map((item: any) => item.value) || [];
+                              field.onChange(values.join(', '));
+                            }}
+                            className="mt-2"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </HStack>
-              </VStack>
-
-              <HStack justify={'space-between'} w={'full'} mt={6}>
-                <FormControl w={'full'} isRequired>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'industry'}
+                <Box my={6}>
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="sponsor.bio"
+                    label="Company Short Bio"
+                    isRequired
                   >
-                    Industry
-                  </FormLabel>
-
-                  <Select
-                    closeMenuOnSelect={false}
-                    components={animatedComponents}
-                    isMulti
-                    options={IndustryList.map((elm: string) => {
-                      return { label: elm, value: elm };
-                    })}
-                    styles={{
-                      control: (baseStyles) => ({
-                        ...baseStyles,
-                        backgroundColor: 'brand.slate.500',
-                        borderColor: 'brand.slate.300',
-                      }),
-                    }}
-                    onChange={(e) =>
-                      setIndustries(e.map((i: any) => i.value).join(', '))
-                    }
-                  />
-                  <FormErrorMessage>
-                    {errors.industry ? <>{errors.industry.message}</> : <></>}
-                  </FormErrorMessage>
-                </FormControl>
-              </HStack>
-              <Box my={6}>
-                <FormControl isRequired>
-                  <FormLabel
-                    color={'brand.slate.500'}
-                    fontSize={'15px'}
-                    fontWeight={500}
-                    htmlFor={'bio'}
-                  >
-                    Company Short Bio
-                  </FormLabel>
-                  <Input
-                    w={'full'}
-                    borderColor={'brand.slate.300'}
-                    _placeholder={{ color: 'brand.slate.300' }}
-                    focusBorderColor="brand.purple"
-                    id="bio"
-                    maxLength={180}
-                    {...register('bio')}
-                    placeholder="What does your company do?"
-                  />
-                  <Text
-                    color={
-                      (watch('bio')?.length || 0) > 160
-                        ? 'red'
-                        : 'brand.slate.400'
-                    }
-                    fontSize={'xs'}
-                    textAlign="right"
-                  >
-                    {180 - (watch('bio')?.length || 0)} characters left
-                  </Text>
-                  <FormErrorMessage>
-                    {errors.bio ? <>{errors.bio.message}</> : <></>}
-                  </FormErrorMessage>
-                </FormControl>
-              </Box>
-              <Box my={8}>
-                {isError && (
-                  <Text align="center" mb={2} color="red">
-                    {errorMessage}
-                    {(validationSlugErrorMessage ||
-                      sponsorNameValidationErrorMessage) &&
-                      'Company name/username already exists.'}
-                  </Text>
-                )}
-                {(validationSlugErrorMessage ||
-                  sponsorNameValidationErrorMessage) && (
-                  <Text align={'center'} color="yellow.500">
-                    If you want access to the existing account, contact us on
-                    Telegram at{' '}
-                    <Link href={PDTG} isExternal>
-                      @pratikdholani
-                    </Link>
-                  </Text>
-                )}
-              </Box>
-              <Button
-                className="ph-no-capture"
-                w="full"
-                isDisabled={logoUrl === ''}
-                isLoading={!!isUploading || !!isPending}
-                loadingText="Creating..."
-                size="lg"
-                type="submit"
-                variant="solid"
-              >
-                Create Sponsor
-              </Button>
-            </form>
+                    <Input
+                      maxLength={180}
+                      placeholder="What does your company do?"
+                    />
+                  </FormFieldWrapper>
+                  <div className="text-right text-xs text-slate-400">
+                    {180 - (form.watch('sponsor.bio')?.length || 0)} characters
+                    left
+                  </div>
+                </Box>
+                <Box my={8}>
+                  {isError && (
+                    <Text align="center" mb={2} color="red">
+                      {errorMessage}
+                      {(validationSlugErrorMessage ||
+                        sponsorNameValidationErrorMessage) &&
+                        'Company name/username already exists.'}
+                    </Text>
+                  )}
+                  {sponsorNameValidationErrorMessage && (
+                    <Text align={'center'} color="yellow.500">
+                      If you want access to the existing account, contact us on
+                      Telegram at{' '}
+                      <Link href={PDTG} isExternal>
+                        @pratikdholani
+                      </Link>
+                    </Text>
+                  )}
+                </Box>
+                <Button
+                  className="ph-no-capture"
+                  w="full"
+                  disabled={!logoUrl || isUploading}
+                  isLoading={!!isUploading || !!isPending}
+                  loadingText="Creating..."
+                  size="lg"
+                  type="submit"
+                  variant="solid"
+                >
+                  Create Sponsor
+                </Button>
+              </form>
+            </Form>
           </VStack>
         </VStack>
       )}

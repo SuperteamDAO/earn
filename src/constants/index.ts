@@ -199,6 +199,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'paxos-standard',
   },
   {
+    tokenName: 'Zeus (ZEUS)',
+    tokenSymbol: 'ZEUS',
+    mintAddress: 'ZEUS1aR7aX8DFFJf5QjWj2ftDDdNTroMNGo8YoQm3Gq',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/30391.png',
+    decimals: 6,
+    coingeckoSymbol: 'zeus-network',
+  },
+  {
     tokenName: 'SynesisOne (SNS)',
     tokenSymbol: 'SNS',
     mintAddress: 'SNSNkV9zfG5ZKWQs6x4hxvBRV6s8SqMfSGCtECDvdMd',
@@ -437,6 +445,14 @@ export const tokenList: Token[] = [
     icon: '/assets/coins/vin.png',
     decimals: 9,
     coingeckoSymbol: '',
+  },
+  {
+    tokenName: 'Octokn (OTK)',
+    tokenSymbol: 'OTK',
+    mintAddress: 'octo82drBEdm8CSDaEKBymVn86TBtgmPnDdmE64PTqJ',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/24381.png',
+    decimals: 9,
+    coingeckoSymbol: 'octo-gaming',
   },
 ];
 
@@ -746,7 +762,8 @@ export const MAX_COMMENT_SUGGESTIONS = 5;
 export const TERMS_OF_USE =
   'https://drive.google.com/file/d/1ybbO_UOTaIiyKb4Mbm3sNMbjTf5qj5mT/view?usp=sharing';
 
-export const URL_REGEX = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+export const URL_REGEX =
+  /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/i;
 
 export const MAX_PODIUMS = 10;
 export const MAX_BONUS_SPOTS = 50;
