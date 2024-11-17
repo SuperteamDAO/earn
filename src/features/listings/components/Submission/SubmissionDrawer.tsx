@@ -82,7 +82,7 @@ export const SubmissionDrawer = ({
               question: q.question,
               answer: '',
             }))
-          : undefined,
+          : [],
     },
   });
   const { user, refetchUser } = useUser();
