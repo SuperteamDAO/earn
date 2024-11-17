@@ -11,7 +11,7 @@ import { type Control, Controller, type FieldErrors } from 'react-hook-form';
 import ReactSelect, { type GroupBase, type SingleValue } from 'react-select';
 
 import { countries } from '@/constants';
-import { CombinedRegions, Superteams } from '@/constants/Superteam';
+import { Superteams } from '@/constants/Superteam';
 
 import { ListingFormLabel, ListingTooltip } from '.';
 
@@ -43,11 +43,11 @@ export const RegionSelector: React.FC<RegionSelectorProps> = ({
   errors,
 }) => {
   const options: SelectOption[] = useMemo(() => {
-    const superteamCountries = CombinedRegions.flatMap(
-      (region) => region.country,
+    const superteamCountries = Superteams.flatMap((region) =>
+      region.code.toLowerCase(),
     );
     const nonSuperteamCountries = countries.filter(
-      (country) => !superteamCountries.includes(country.name) && country.iso,
+      (country) => !superteamCountries.includes(country.code.toLowerCase()),
     );
     return [
       { value: Regions.GLOBAL, label: 'Global' },
