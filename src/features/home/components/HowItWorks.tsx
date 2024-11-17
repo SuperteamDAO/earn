@@ -21,11 +21,11 @@ const StepIcon = ({ step }: { step: number }) => {
         <path
           opacity="0.3"
           d="M12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7C16 9.20914 14.2091 11 12 11Z"
-          fill="#6366F1"
+          fill="#9945FF"
         />
         <path
           d="M3.00065 20.1992C3.38826 15.4265 7.26191 13 11.9833 13C16.7712 13 20.7049 15.2932 20.9979 20.2C21.0096 20.3955 20.9979 21 20.2467 21C16.5411 21 11.0347 21 3.7275 21C3.47671 21 2.97954 20.4592 3.00065 20.1992Z"
-          fill="#6366F1"
+          fill="#9945FF"
         />
       </svg>
     );
@@ -42,14 +42,14 @@ const StepIcon = ({ step }: { step: number }) => {
           fillRule="evenodd"
           clipRule="evenodd"
           d="M15 19.5229C15 20.265 15.9624 20.5564 16.374 19.9389L22.2227 11.166C22.5549 10.6676 22.1976 10 21.5986 10H17V4.47708C17 3.73503 16.0376 3.44363 15.626 4.06106L9.77735 12.834C9.44507 13.3324 9.80237 14 10.4014 14H15V19.5229Z"
-          fill="#6366F1"
+          fill="#9945FF"
         />
         <path
           opacity="0.3"
           fillRule="evenodd"
           clipRule="evenodd"
           d="M3 6.5C3 5.67157 3.67157 5 4.5 5H9.5C10.3284 5 11 5.67157 11 6.5C11 7.32843 10.3284 8 9.5 8H4.5C3.67157 8 3 7.32843 3 6.5ZM3 18.5C3 17.6716 3.67157 17 4.5 17H9.5C10.3284 17 11 17.6716 11 18.5C11 19.3284 10.3284 20 9.5 20H4.5C3.67157 20 3 19.3284 3 18.5ZM2.5 11C1.67157 11 1 11.6716 1 12.5C1 13.3284 1.67157 14 2.5 14H6.5C7.32843 14 8 13.3284 8 12.5C8 11.6716 7.32843 11 6.5 11H2.5Z"
-          fill="#6366F1"
+          fill="#9945FF"
         />
       </svg>
     );
@@ -69,13 +69,13 @@ const StepIcon = ({ step }: { step: number }) => {
           width="10"
           height="12"
           rx="2"
-          fill="#6366F1"
+          fill="#9945FF"
         />
         <path
           fillRule="evenodd"
           clipRule="evenodd"
           d="M4 6C2.89543 6 2 6.89543 2 8V20C2 21.1046 2.89543 22 4 22H20C21.1046 22 22 21.1046 22 20V8C22 6.89543 21.1046 6 20 6H4ZM20 14C20 15.1046 19.1046 16 18 16C16.8954 16 16 15.1046 16 14C16 12.8954 16.8954 12 18 12C19.1046 12 20 12.8954 20 14Z"
-          fill="#6366F1"
+          fill="#9945FF"
         />
       </svg>
     );
@@ -97,7 +97,7 @@ const Step = ({
       w={'2.375rem'}
       h={'2.375rem'}
       color={isComplete ? '#FFFFFF' : '#94A3B8'}
-      bg={isComplete ? '#6366F1' : '#F4F4FE'}
+      bg={isComplete ? '#9945FF' : '#F4F4FE'}
       rounded={'full'}
     >
       {isComplete ? (
@@ -111,7 +111,7 @@ const Step = ({
           top="110%"
           w={'0.12rem'}
           h={'90%'}
-          bg={isComplete ? 'brand.purple.dark' : 'brand.slate.400'}
+          bg={isComplete ? '#9945FF' : 'brand.slate.400'}
           opacity={0.6}
         />
       )}
@@ -190,14 +190,12 @@ export const HowItWorks = () => {
               <Text
                 as="button"
                 color={
-                  !isLoading && hasSubmissions
-                    ? 'brand.slate.500'
-                    : 'brand.purple'
+                  !isLoading && hasSubmissions ? 'brand.slate.500' : '#9945FF'
                 }
                 fontSize={'md'}
                 fontWeight={500}
                 _hover={{
-                  color: 'brand.purple',
+                  color: '#9945FF',
                 }}
                 onClick={() => {
                   if (!isLoading && hasSubmissions) return;
