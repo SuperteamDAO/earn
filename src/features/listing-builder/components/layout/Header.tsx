@@ -77,9 +77,10 @@ export function Header() {
               )}
               <Button
                 variant="outline"
-                className="text-slate-400"
+                className="ph-no-capture text-slate-400"
                 disabled={isDraftSaving || !id}
                 onClick={() => {
+                  posthog.capture('preview_listing');
                   setShowPreview(true);
                 }}
               >

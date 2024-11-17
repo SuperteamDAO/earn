@@ -77,9 +77,10 @@ export function PrePublish() {
         <DialogFooter className="flex w-full pt-4 sm:justify-between">
           <Button
             variant="outline"
-            className="gap-8"
+            className="ph-no-capture gap-8"
             disabled={isDraftSaving || submitListingMutation.isPending}
             onClick={() => {
+              posthog.capture('preview_listing');
               setShowPreview(true);
             }}
           >
