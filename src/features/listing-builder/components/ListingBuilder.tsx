@@ -130,7 +130,7 @@ function ListingBuilderProvider({ isEditing, isDuplicating, listing }: Props) {
       isGod,
       !!isEditing,
       isST,
-      params.get('type') as BountyType,
+      (params.get('type') as BountyType) || 'bounty',
     );
   console.log('isEditing', isEditing);
 
