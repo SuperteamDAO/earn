@@ -37,7 +37,6 @@ import { z } from 'zod';
 
 import { SkillSelect } from '@/components/shared/SkillSelect';
 import { type MultiSelectOptions } from '@/constants';
-import { Superteams } from '@/constants/Superteam';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
@@ -136,7 +135,7 @@ export const ListingBasic = ({
       region: z.string().optional(),
       deadline: z.string(),
       timeToComplete: z.string().nullable().optional(),
-      referredBy: z.string().nullable().optional(),
+      // referredBy: z.string().nullable().optional(),
       isPrivate: z.boolean(),
       isFndnPaying: z.boolean()?.optional(),
     })
@@ -176,7 +175,7 @@ export const ListingBasic = ({
       region: form?.region,
       deadline: form?.deadline || undefined,
       timeToComplete: form?.timeToComplete,
-      referredBy: form?.referredBy,
+      // referredBy: form?.referredBy,
       isPrivate: form?.isPrivate,
       isFndnPaying: form?.isFndnPaying || fndnPayingCheck ? true : false,
     },
@@ -200,7 +199,7 @@ export const ListingBasic = ({
         pocSocials: form?.pocSocials,
         region: form?.region,
         timeToComplete: form?.timeToComplete,
-        referredBy: form?.referredBy,
+        // referredBy: form?.referredBy,
         isPrivate: form?.isPrivate,
         isFndnPaying: form?.isFndnPaying,
       });
@@ -612,25 +611,6 @@ export const ListingBasic = ({
               </FormErrorMessage>
             </FormControl>
           )}
-          <FormControl w="full" mb={5} isInvalid={!!errors.referredBy}>
-            <Flex>
-              <ListingFormLabel htmlFor="referredBy">
-                Referred By
-              </ListingFormLabel>
-              <ListingTooltip label="Who referred you to add this listing on Solar Earn?" />
-            </Flex>
-
-            <Select {...register('referredBy')} placeholder="Select">
-              {Superteams.map((st) => (
-                <option value={st.name} key={st.name}>
-                  {st.name}
-                </option>
-              ))}
-            </Select>
-            <FormErrorMessage>
-              {errors.referredBy ? <>{errors.referredBy.message}</> : <></>}
-            </FormErrorMessage>
-          </FormControl>
           {fndnPayingCheck && (
             <FormControl alignItems="center" gap={3} display="flex">
               <Flex>
