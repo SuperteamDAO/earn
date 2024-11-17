@@ -23,6 +23,11 @@ export const FeedCardLink = ({
       whiteSpace={'nowrap'}
       {...style}
       display={{ base: 'none', md: 'flex' }}
+      _hover={{
+        textDecoration: 'underline',
+        textDecorationColor: '#6366F1',
+        textUnderlineOffset: 2,
+      }}
     >
       <LinkOverlay href={href} rel="noopener noreferrer" target="_blank">
         <Text
