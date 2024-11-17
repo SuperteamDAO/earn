@@ -6,13 +6,13 @@ import {
   HStack,
   Link,
   Text,
+  Tooltip,
   useBreakpointValue,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
-import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { formatTotalPrice } from '@/features/listing-builder';
 import { EarnAvatar } from '@/features/talent';

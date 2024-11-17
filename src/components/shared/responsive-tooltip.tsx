@@ -3,16 +3,17 @@ import {
   type TooltipProps,
   useOutsideClick,
 } from '@chakra-ui/react';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 // click to open toolips on mobiles
 
 interface Props extends TooltipProps {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   children: React.ReactNode;
 }
 
-export const Tooltip = (props: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const Tooltip = ({ isOpen, setIsOpen, children, ...props }: Props) => {
   const ref = useRef<HTMLDivElement | null>(null);
 
   useOutsideClick({
@@ -38,7 +39,7 @@ export const Tooltip = (props: Props) => {
         }}
         onClick={() => setIsOpen(true)}
       >
-        {props.children}
+        {children}
       </button>
     </ChakraTooltip>
   );

@@ -11,7 +11,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Tooltip } from '@/components/shared/responsive-tooltip';
 
@@ -37,6 +37,7 @@ interface Props {
 
 export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
   const debouncedSetSkill = useCallback(debounce(decideSkill, 500), []);
+  const [isLabelOpen, setIsLabelOpen] = useState(false);
 
   function decideSkill(value: number) {
     switch (value) {
@@ -136,9 +137,18 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
             </Tab>
             <Box>
               <Tooltip
+                isOpen={isLabelOpen}
+                setIsOpen={setIsLabelOpen}
                 label={`The skill filters showcase users based on the skills requested in the listings they've successfully won, not the skills listed in their talent profiles.`}
               >
-                <InfoOutlineIcon ml={2} w={3} h={3} />
+                <InfoOutlineIcon
+                  onMouseEnter={() => setIsLabelOpen(true)}
+                  onMouseLeave={() => setIsLabelOpen(false)}
+                  onClick={() => setIsLabelOpen(true)}
+                  ml={2}
+                  w={3}
+                  h={3}
+                />
               </Tooltip>
             </Box>
           </TabList>

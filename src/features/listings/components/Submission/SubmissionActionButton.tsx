@@ -45,6 +45,8 @@ export const SubmissionActionButton = ({
   } = listing;
 
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
+  const [isLabelOpen, setIsLabelOpen] = useState(false);
+
   const { user } = useUser();
 
   const { status: authStatus } = useSession();
@@ -228,6 +230,8 @@ export const SubmissionActionButton = ({
           style={{ w: 'full', cursor: 'pointer' }}
         >
           <Tooltip
+            isOpen={isLabelOpen}
+            setIsOpen={setIsLabelOpen}
             bg="brand.slate.500"
             hasArrow
             isDisabled={
@@ -242,24 +246,31 @@ export const SubmissionActionButton = ({
             }
             rounded="md"
           >
-            <Button
-              gap={4}
-              w={'full'}
-              mb={{ base: 12, md: 5 }}
-              textColor={buttonTextColor}
-              bg={buttonBG}
-              _hover={{ bg: buttonBG }}
-              _disabled={{ opacity: '70%' }}
-              isDisabled={isBtnDisabled}
-              isLoading={isUserSubmissionLoading}
-              loadingText={btnLoadingText}
-              onClick={handleSubmit}
-              size="lg"
-              variant={buttonState === 'edit' ? 'outline' : 'solid'}
+            <div
+              onClick={() => setIsLabelOpen(true)}
+              onMouseEnter={() => setIsLabelOpen(true)}
+              onMouseLeave={() => setIsLabelOpen(false)}
+              style={{ width: '100%' }}
             >
-              {buttonState === 'edit' && <LuPencil />}
-              {buttonText}
-            </Button>
+              <Button
+                gap={4}
+                w={'full'}
+                mb={{ base: 12, md: 5 }}
+                textColor={buttonTextColor}
+                bg={buttonBG}
+                _hover={{ bg: buttonBG }}
+                _disabled={{ opacity: '70%' }}
+                isDisabled={isBtnDisabled}
+                isLoading={isUserSubmissionLoading}
+                loadingText={btnLoadingText}
+                onClick={handleSubmit}
+                size="lg"
+                variant={buttonState === 'edit' ? 'outline' : 'solid'}
+              >
+                {buttonState === 'edit' && <LuPencil />}
+                {buttonText}
+              </Button>
+            </div>
           </Tooltip>
         </AuthWrapper>
       </Flex>
