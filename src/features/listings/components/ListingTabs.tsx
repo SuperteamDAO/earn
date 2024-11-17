@@ -1,11 +1,19 @@
 import { ArrowForwardIcon, InfoOutlineIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Image,
+  Link,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
-import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
