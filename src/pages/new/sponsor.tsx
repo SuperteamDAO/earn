@@ -312,7 +312,7 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </HStack>
-              <HStack w="full">
+              <HStack w="full" my={6}>
                 <FormControl w={'full'} isRequired>
                   <HStack mb={2}>
                     <FormLabel
@@ -344,6 +344,48 @@ const CreateSponsor = () => {
                     id="entityName"
                     placeholder="Full Entity Name"
                     {...register('entityName')}
+                  />
+                  <FormErrorMessage>
+                    {errors.entityName ? (
+                      <>{errors.entityName.message}</>
+                    ) : (
+                      <></>
+                    )}
+                  </FormErrorMessage>
+                </FormControl>
+              </HStack>
+              <HStack w="full">
+                <FormControl w={'full'} isRequired>
+                  <HStack mb={2}>
+                    <FormLabel
+                      m={0}
+                      color={'brand.slate.500'}
+                      fontSize={'15px'}
+                      fontWeight={700}
+                      htmlFor={'twitterHandle'}
+                    >
+                      Telegram
+                    </FormLabel>
+                    <Tooltip
+                      fontSize="xs"
+                      label="Please mention your official Telegram username."
+                    >
+                      <InfoOutlineIcon
+                        color="brand.slate.500"
+                        w={3}
+                        h={3}
+                        display={{ base: 'none', md: 'block' }}
+                      />
+                    </Tooltip>
+                  </HStack>
+                  <Input
+                    w={'full'}
+                    borderColor={'brand.slate.300'}
+                    _placeholder={{ color: 'brand.slate.300' }}
+                    focusBorderColor="brand.purple"
+                    id="twitterHandle"
+                    placeholder="telegram Name"
+                    {...register('twitterHandle')}
                   />
                   <FormErrorMessage>
                     {errors.entityName ? (
@@ -462,14 +504,14 @@ const CreateSponsor = () => {
                 )}
                 {(validationErrorMessage ||
                   sponsorNameValidationErrorMessage) && (
-                    <Text align={'center'} color="yellow.500">
-                      If you want access to the existing account, contact us on
-                      Telegram at{' '}
-                      <Link href={PDTG} isExternal>
-                        @cryptosheep1
-                      </Link>
-                    </Text>
-                  )}
+                  <Text align={'center'} color="yellow.500">
+                    If you want access to the existing account, contact us on
+                    Telegram at{' '}
+                    <Link href={PDTG} isExternal>
+                      @cryptosheep1
+                    </Link>
+                  </Text>
+                )}
               </Box>
               <Button
                 className="ph-no-capture"
