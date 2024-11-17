@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  AvatarGroup,
-  Box,
-  Button,
-  Flex,
-  Show,
-  Text,
-} from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
@@ -14,7 +6,6 @@ import React from 'react';
 
 import { AuthWrapper } from '@/features/auth';
 import DesktopBanner from '@/public/assets/home/display/banner.webp';
-import MobileBanner from '@/public/assets/home/display/banner-mobile.webp';
 
 import { userCountQuery } from '../queries/user-count';
 
@@ -49,41 +40,22 @@ export function HomeBanner() {
       p={{ base: '5', md: '10' }}
       rounded={'md'}
     >
-      <Show above="sm">
-        <Image
-          src={DesktopBanner}
-          alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
-          layout="fill"
-          objectFit="cover"
-          quality={95}
-          priority
-          loading="eager"
-          sizes="70vw"
-          style={{
-            width: '100%',
-            maxWidth: '100%',
-            borderRadius: 'var(--chakra-radii-md)',
-            pointerEvents: 'none',
-          }}
-        />
-      </Show>
-      <Show below="sm">
-        <Image
-          src={MobileBanner}
-          alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
-          layout="fill"
-          objectFit="cover"
-          quality={95}
-          priority
-          loading="eager"
-          sizes="100vw"
-          style={{
-            width: '100%',
-            maxWidth: '100%',
-            borderRadius: 'var(--chakra-radii-md)',
-          }}
-        />
-      </Show>
+      <Image
+        src={DesktopBanner}
+        alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
+        layout="fill"
+        objectFit="cover"
+        quality={95}
+        priority
+        loading="eager"
+        sizes="70vw"
+        style={{
+          width: '100%',
+          maxWidth: '100%',
+          borderRadius: 'var(--chakra-radii-md)',
+          pointerEvents: 'none',
+        }}
+      />
       <Text
         pos="relative"
         zIndex={1}
