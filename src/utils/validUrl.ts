@@ -7,5 +7,10 @@ export const getURL = () => {
   url = url.includes('http') ? url : `https://${url}`;
   // Make sure to including trailing `/`.
   url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
+
+  console.log('NEXT_PUBLIC_SITE_URL: ', process?.env?.NEXT_PUBLIC_SITE_URL);
+  console.log('NEXT_PUBLIC_VERCEL_URL: ', process?.env?.NEXT_PUBLIC_VERCEL_URL);
+  console.log('getURL: ', url);
+
   return url;
 };
