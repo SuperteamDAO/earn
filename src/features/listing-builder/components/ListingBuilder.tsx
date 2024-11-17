@@ -58,14 +58,9 @@ function ListingBuilder({
     form.reset(defaultListing);
   }, [defaultListing]);
 
-  const params = useSearchParams();
   useEffect(() => {
-    console.log('start effect');
-    if (params.has('type'))
-      form.setValue('type', (params.get('type') as BountyType) || 'bounty');
-
     if (isDuplicating) form.onChange();
-  }, []);
+  }, [isDuplicating]);
 
   const preventEnterKeySubmission = (
     e: React.KeyboardEvent<HTMLFormElement>,
@@ -128,8 +123,15 @@ function ListingBuilderProvider({ isEditing, isDuplicating, listing }: Props) {
   const isGod = session?.user.role === 'GOD';
   const isST = !!user?.currentSponsor?.st;
 
+  const params = useSearchParams();
   const defaultListing =
-    listing || getListingDefaults(isGod, !!isEditing, isST);
+    listing ||
+    getListingDefaults(
+      isGod,
+      !!isEditing,
+      isST,
+      params.get('type') as BountyType,
+    );
   console.log('isEditing', isEditing);
 
   const router = useRouter();

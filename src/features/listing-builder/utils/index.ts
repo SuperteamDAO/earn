@@ -1,3 +1,4 @@
+import { type BountyType } from '@prisma/client';
 import { z } from 'zod';
 
 import {
@@ -53,6 +54,7 @@ export const getListingDefaults = (
   isGod: boolean,
   editable: boolean,
   isST: boolean,
+  type: BountyType = 'bounty',
 ) => {
   const schema = createListingFormSchema(isGod, editable, isST);
 
@@ -99,5 +101,9 @@ export const getListingDefaults = (
     }
   }
 
+  defaults['type'] = type;
+  if (type === 'project') {
+    defaults['eligibility'] = [{ type: 'text', question: '', order: 1 }];
+  }
   return defaults as ListingFormData;
 };

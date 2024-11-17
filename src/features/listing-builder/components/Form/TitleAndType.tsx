@@ -69,7 +69,7 @@ function Type() {
           <FormItem className="w-fit">
             <FormControl>
               <Select
-                defaultValue={field.value}
+                value={field.value}
                 disabled={isEditing}
                 onValueChange={(e) => {
                   field.onChange(e);
@@ -95,7 +95,6 @@ function Type() {
                       form.setValue('rewardAmount', undefined);
                     }
                   }
-                  form.setFocus('title');
                 }}
               >
                 <SelectTrigger className="h-full w-32 rounded-none border-0 border-r focus:ring-0">
