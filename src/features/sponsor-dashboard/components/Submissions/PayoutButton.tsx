@@ -157,37 +157,26 @@ export const PayoutButton = ({ bounty }: Props) => {
 
       const signature = await sendTransaction(transaction, connection);
 
-      await connection.confirmTransaction({
-        blockhash: latestBlockHash.blockhash,
-        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-        signature,
-      });
-
-      await new Promise((resolve, reject) => {
-        connection.onSignature(
+      await connection.confirmTransaction(
+        {
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
           signature,
-          async (res) => {
-            if (res.err) {
-              reject(new Error('Transaction failed'));
-            } else {
-              addPayment({
-                id,
-                isPaid: true,
-                paymentDetails: {
-                  txId: signature,
-                },
-              });
-              resolve(res);
-            }
-          },
-          'confirmed',
-        );
-      });
+        },
+        'finalized',
+      );
 
-      setIsPaying(false);
+      await addPayment({
+        id,
+        isPaid: true,
+        paymentDetails: {
+          txId: signature,
+        },
+      });
     } catch (error) {
       console.log(error);
       log.error('Sponsor unable to pay');
+    } finally {
       setIsPaying(false);
     }
   };
@@ -250,18 +239,15 @@ export const PayoutButton = ({ bounty }: Props) => {
           size="md"
           variant="solid"
         >
-          Pay{' '}
-          {
-            (!!bounty?.rewards &&
-              formatNumberWithSuffix(
-                bounty?.rewards[
-                  selectedSubmission?.winnerPosition as keyof Rewards
-                ]!,
-              ),
-            2,
-            true)
-          }{' '}
-          {bounty?.token}
+          {`Pay ${
+            formatNumberWithSuffix(
+              bounty?.rewards?.[
+                selectedSubmission?.winnerPosition as keyof Rewards
+              ]!,
+              2,
+              true,
+            ) || '0'
+          } ${bounty?.token}`}
         </Button>
       )}
     </>
