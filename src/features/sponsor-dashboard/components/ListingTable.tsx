@@ -435,7 +435,8 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
 
                         {!!(
                           session?.user?.role === 'GOD' &&
-                          listing.type === 'bounty' &&
+                          (listing.type === 'bounty' ||
+                            listing.type === 'project') &&
                           listing.status === 'VERIFYING'
                         ) && (
                             <MenuItem
