@@ -40,21 +40,22 @@ export function DescriptionAndTemplate() {
             <div className="flex items-center justify-between">
               <FormLabel>Description</FormLabel>
               <div className="flex items-center">
-                <Link
-                  href="https://chat.openai.com/g/g-HS6eWTMku-st-earn-listings-bot"
-                  target="_blank"
-                  className="ph-no-capture"
+                <Button
+                  variant="link"
+                  className="px-0 pr-1 text-[0.7rem] text-slate-500"
+                  onClick={() => {
+                    posthog.capture('AI bot_sponsor');
+                  }}
+                  asChild
                 >
-                  <Button
-                    variant="link"
-                    className="px-0 pr-1 text-[0.7rem] text-slate-500"
-                    onClick={() => {
-                      posthog.capture('AI bot_sponsor');
-                    }}
+                  <Link
+                    href="https://chat.openai.com/g/g-HS6eWTMku-st-earn-listings-bot"
+                    target="_blank"
+                    className="ph-no-capture"
                   >
                     {'🤖 Go live in <1 min by using our drafting bot'}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
                 {type !== 'hackathon' && <Templates />}
               </div>
             </div>
