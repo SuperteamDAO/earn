@@ -200,7 +200,7 @@ export const Footer = () => {
               single profile.
             </Text>
             <Flex gap={4}>
-              <Twitter link="https://twitter.com/superteamearn" />
+              <Twitter link="https://x.com/Solana_zh" />
               <Telegram link="https://t.me/solanaZH_official" />
               <Telegram link="https://t.me/solanadevcamp" />
             </Flex>
