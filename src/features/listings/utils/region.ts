@@ -15,6 +15,11 @@ export const getCombinedRegion = (region: string) => {
       .map((c) => c.toLowerCase())
       .includes(region?.toLowerCase()),
   );
+  if (!regionObject) {
+    regionObject = CombinedRegions.find((superteam) =>
+      superteam.region.toLowerCase().includes(region?.toLowerCase()),
+    );
+  }
   if (regionObject?.displayValue) {
     regionObject.name = regionObject.displayValue;
   }

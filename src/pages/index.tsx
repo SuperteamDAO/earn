@@ -19,6 +19,7 @@ import {
   ListingTabs,
 } from '@/features/listings';
 import { Home } from '@/layouts/Home';
+import { prisma } from '@/prisma';
 
 import { authOptions } from './api/auth/[...nextauth]';
 import { getForYouListings } from './api/homepage/for-you';
@@ -29,7 +30,7 @@ interface Props {
   openForYouListings: Listing[];
   isAuth: boolean;
   userRegion: string[] | null;
-  userGrantsRegion: Regions[] | null;
+  userGrantsRegion: string[] | null;
 }
 
 const InstallPWAModal = dynamic(
@@ -166,24 +167,41 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 ) => {
   const session = await getServerSession(context.req, context.res, authOptions);
   let userRegion: string[] | null | undefined = null;
-  let userGrantsRegion: Regions[] | null | undefined = null;
+  let userGrantsRegion: string[] | null | undefined = null;
   let isAuth = false;
 
   if (session && session.user.id) {
-    isAuth = true;
-    const matchedRegion = getCombinedRegion(session.user.location);
-    if (matchedRegion?.name) {
-      userRegion = [matchedRegion.name, Regions.GLOBAL];
-    } else {
-      userRegion = [Regions.GLOBAL];
-    }
-    const matchedGrantsRegion = CombinedRegions.find((region) =>
-      region.country.includes(session.user.location!),
-    );
-    if (matchedGrantsRegion?.region) {
-      userGrantsRegion = [matchedGrantsRegion.region, Regions.GLOBAL];
-    } else {
-      userGrantsRegion = [Regions.GLOBAL];
+    const user = await prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+    });
+    if (user) {
+      isAuth = true;
+      const matchedRegion = user.location
+        ? getCombinedRegion(user.location)
+        : undefined;
+      if (matchedRegion?.name) {
+        userRegion = [
+          matchedRegion.name,
+          Regions.GLOBAL,
+          ...(matchedRegion.country || []),
+        ];
+      } else {
+        userRegion = [Regions.GLOBAL];
+      }
+      const matchedGrantsRegion = CombinedRegions.find((region) =>
+        region.country.includes(session.user.location!),
+      );
+      if (matchedGrantsRegion?.region) {
+        userGrantsRegion = [
+          matchedGrantsRegion.region,
+          Regions.GLOBAL,
+          ...(matchedGrantsRegion.country || []),
+        ];
+      } else {
+        userGrantsRegion = [Regions.GLOBAL];
+      }
     }
   }
 
