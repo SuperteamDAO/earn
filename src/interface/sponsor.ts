@@ -10,6 +10,7 @@ interface SponsorType {
   bio?: string;
   isActive: boolean;
   entityName?: string;
+  telegram?: string;
   isVerified?: boolean;
   isCaution?: boolean;
   st?: boolean;

@@ -178,6 +178,7 @@ const CreateSponsor = () => {
                   twitter: e.twitterHandle,
                   url: e.sponsorurl ?? '',
                   entityName: e.entityName,
+                  telegram: e.telegram,
                 });
               })}
               style={{ width: '100%' }}
@@ -362,7 +363,7 @@ const CreateSponsor = () => {
                       color={'brand.slate.500'}
                       fontSize={'15px'}
                       fontWeight={700}
-                      htmlFor={'twitterHandle'}
+                      htmlFor={'telegram'}
                     >
                       Telegram
                     </FormLabel>
@@ -383,16 +384,12 @@ const CreateSponsor = () => {
                     borderColor={'brand.slate.300'}
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
-                    id="twitterHandle"
+                    id="telegram"
                     placeholder="telegram Name"
-                    {...register('twitterHandle')}
+                    {...register('telegram')}
                   />
                   <FormErrorMessage>
-                    {errors.entityName ? (
-                      <>{errors.entityName.message}</>
-                    ) : (
-                      <></>
-                    )}
+                    {errors.telegram ? <>{errors.telegram.message}</> : <></>}
                   </FormErrorMessage>
                 </FormControl>
               </HStack>

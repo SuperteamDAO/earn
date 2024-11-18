@@ -21,8 +21,17 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.debug(`Request body: ${safeStringify(req.body)}`);
 
-    const { name, slug, logo, url, industry, twitter, bio, entityName } =
-      req.body;
+    const {
+      name,
+      slug,
+      logo,
+      url,
+      industry,
+      twitter,
+      bio,
+      entityName,
+      telegram,
+    } = req.body;
 
     if (!user.currentSponsorId || user.role === 'GOD') {
       logger.info(`Creating new sponsor for user: ${userId}`);
@@ -38,6 +47,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
           bio,
           entityName,
           isActive: user.role === 'GOD',
+          telegram,
         },
       });
 
