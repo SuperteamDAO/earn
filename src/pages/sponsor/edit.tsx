@@ -55,6 +55,8 @@ const UpdateSponsor = () => {
       bio: '',
       industry: '',
       entityName: '',
+      telegram: '',
+      wechat: '',
     },
   });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -83,8 +85,18 @@ const UpdateSponsor = () => {
 
   useEffect(() => {
     if (sponsorData) {
-      const { bio, industry, name, slug, logo, twitter, url, entityName } =
-        sponsorData;
+      const {
+        bio,
+        industry,
+        name,
+        slug,
+        logo,
+        twitter,
+        url,
+        entityName,
+        telegram,
+        wechat,
+      } = sponsorData;
       setSponsorName(name);
       setSlug(slug);
       reset({
@@ -94,6 +106,8 @@ const UpdateSponsor = () => {
         sponsorurl: url,
         twitterHandle: twitter,
         entityName,
+        telegram,
+        wechat,
       });
       if (logo) {
         setImageUrl(logo);
@@ -158,6 +172,8 @@ const UpdateSponsor = () => {
                 twitter: e.twitterHandle,
                 url: e.sponsorurl ?? '',
                 entityName: e.entityName,
+                telegram: e.telegram,
+                wechat: e.wechat,
               });
             })}
             style={{ width: '100%' }}
@@ -276,8 +292,7 @@ const UpdateSponsor = () => {
                 </FormErrorMessage>
               </FormControl>
             </HStack>
-
-            <HStack w="full">
+            <HStack w="full" my={6}>
               <FormControl w={'full'} isRequired>
                 <HStack mb={2}>
                   <FormLabel
@@ -315,7 +330,79 @@ const UpdateSponsor = () => {
                 </FormErrorMessage>
               </FormControl>
             </HStack>
-
+            <HStack w="full" my={6}>
+              <FormControl w={'full'} isRequired>
+                <HStack mb={2}>
+                  <FormLabel
+                    m={0}
+                    color={'brand.slate.500'}
+                    fontSize={'15px'}
+                    fontWeight={700}
+                    htmlFor={'telegram'}
+                  >
+                    Telegram
+                  </FormLabel>
+                  <Tooltip
+                    fontSize="xs"
+                    label="Please mention your official Telegram username."
+                  >
+                    <InfoOutlineIcon
+                      color="brand.slate.500"
+                      w={3}
+                      h={3}
+                      display={{ base: 'none', md: 'block' }}
+                    />
+                  </Tooltip>
+                </HStack>
+                <Input
+                  w={'full'}
+                  borderColor={'brand.slate.300'}
+                  _placeholder={{ color: 'brand.slate.300' }}
+                  focusBorderColor="brand.purple"
+                  id="telegram"
+                  placeholder="telegram Name"
+                  {...register('telegram')}
+                />
+                <FormErrorMessage>
+                  {errors.telegram ? <>{errors.telegram.message}</> : <></>}
+                </FormErrorMessage>
+              </FormControl>
+            </HStack>
+            <HStack w="full" my={6}>
+              <FormControl w={'full'}>
+                <HStack mb={2}>
+                  <FormLabel
+                    m={0}
+                    color={'brand.slate.500'}
+                    fontSize={'15px'}
+                    fontWeight={700}
+                    htmlFor={'wechat'}
+                  >
+                    Wechat
+                  </FormLabel>
+                  <Tooltip
+                    fontSize="xs"
+                    label="Please mention your official wechat id."
+                  >
+                    <InfoOutlineIcon
+                      color="brand.slate.500"
+                      w={3}
+                      h={3}
+                      display={{ base: 'none', md: 'block' }}
+                    />
+                  </Tooltip>
+                </HStack>
+                <Input
+                  w={'full'}
+                  borderColor={'brand.slate.300'}
+                  _placeholder={{ color: 'brand.slate.300' }}
+                  focusBorderColor="brand.purple"
+                  id="wechat"
+                  placeholder="wechat id"
+                  {...register('wechat')}
+                />
+              </FormControl>
+            </HStack>
             <VStack align={'start'} gap={2} my={3}>
               <Heading
                 color={'brand.slate.500'}

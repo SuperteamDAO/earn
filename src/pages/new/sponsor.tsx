@@ -178,6 +178,8 @@ const CreateSponsor = () => {
                   twitter: e.twitterHandle,
                   url: e.sponsorurl ?? '',
                   entityName: e.entityName,
+                  telegram: e.telegram,
+                  wechat: e.wechat,
                 });
               })}
               style={{ width: '100%' }}
@@ -312,7 +314,7 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </HStack>
-              <HStack w="full">
+              <HStack w="full" my={6}>
                 <FormControl w={'full'} isRequired>
                   <HStack mb={2}>
                     <FormLabel
@@ -352,6 +354,80 @@ const CreateSponsor = () => {
                       <></>
                     )}
                   </FormErrorMessage>
+                </FormControl>
+              </HStack>
+              <HStack w="full" my={6}>
+                <FormControl w={'full'} isRequired>
+                  <HStack mb={2}>
+                    <FormLabel
+                      m={0}
+                      color={'brand.slate.500'}
+                      fontSize={'15px'}
+                      fontWeight={700}
+                      htmlFor={'telegram'}
+                    >
+                      Telegram
+                    </FormLabel>
+                    <Tooltip
+                      fontSize="xs"
+                      label="Please mention your official Telegram username."
+                    >
+                      <InfoOutlineIcon
+                        color="brand.slate.500"
+                        w={3}
+                        h={3}
+                        display={{ base: 'none', md: 'block' }}
+                      />
+                    </Tooltip>
+                  </HStack>
+                  <Input
+                    w={'full'}
+                    borderColor={'brand.slate.300'}
+                    _placeholder={{ color: 'brand.slate.300' }}
+                    focusBorderColor="brand.purple"
+                    id="telegram"
+                    placeholder="telegram Name"
+                    {...register('telegram')}
+                  />
+                  <FormErrorMessage>
+                    {errors.telegram ? <>{errors.telegram.message}</> : <></>}
+                  </FormErrorMessage>
+                </FormControl>
+              </HStack>
+
+              <HStack w="full" my={6}>
+                <FormControl w={'full'}>
+                  <HStack mb={2}>
+                    <FormLabel
+                      m={0}
+                      color={'brand.slate.500'}
+                      fontSize={'15px'}
+                      fontWeight={700}
+                      htmlFor={'wechat'}
+                    >
+                      Wechat
+                    </FormLabel>
+                    <Tooltip
+                      fontSize="xs"
+                      label="Please mention your official Wechat Id."
+                    >
+                      <InfoOutlineIcon
+                        color="brand.slate.500"
+                        w={3}
+                        h={3}
+                        display={{ base: 'none', md: 'block' }}
+                      />
+                    </Tooltip>
+                  </HStack>
+                  <Input
+                    w={'full'}
+                    borderColor={'brand.slate.300'}
+                    _placeholder={{ color: 'brand.slate.300' }}
+                    focusBorderColor="brand.purple"
+                    id="wechat"
+                    placeholder="wechat id"
+                    {...register('wechat')}
+                  />
                 </FormControl>
               </HStack>
               {
@@ -462,14 +538,14 @@ const CreateSponsor = () => {
                 )}
                 {(validationErrorMessage ||
                   sponsorNameValidationErrorMessage) && (
-                    <Text align={'center'} color="yellow.500">
-                      If you want access to the existing account, contact us on
-                      Telegram at{' '}
-                      <Link href={PDTG} isExternal>
-                        @cryptosheep1
-                      </Link>
-                    </Text>
-                  )}
+                  <Text align={'center'} color="yellow.500">
+                    If you want access to the existing account, contact us on
+                    Telegram at{' '}
+                    <Link href={PDTG} isExternal>
+                      @cryptosheep1
+                    </Link>
+                  </Text>
+                )}
               </Box>
               <Button
                 className="ph-no-capture"

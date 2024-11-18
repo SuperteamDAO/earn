@@ -23,8 +23,18 @@ async function user(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug(`Request body: ${safeStringify(req.body)}`);
 
-    const { name, slug, logo, url, industry, twitter, bio, entityName } =
-      req.body;
+    const {
+      name,
+      slug,
+      logo,
+      url,
+      industry,
+      twitter,
+      bio,
+      entityName,
+      telegram,
+      wechat,
+    } = req.body;
 
     const result = await prisma.sponsors.update({
       where: {
@@ -39,6 +49,8 @@ async function user(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         twitter,
         bio,
         entityName,
+        telegram,
+        wechat,
       },
     });
 
