@@ -44,7 +44,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
                 fontWeight={600}
                 href="/"
               >
-                View All
+                查看全部
                 <ArrowForwardIcon ml={1} />
               </Text>
             </Flex>

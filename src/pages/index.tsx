@@ -131,23 +131,23 @@ export default function HomePage({
           forYou={combinedForYouListings}
           isListingsLoading={false}
           emoji="/assets/home/emojis/moneyman.webp"
-          title="Freelance Gigs"
+          title="自由职业机会"
           viewAllLink="/all"
           take={20}
           showViewAll
         />
         <ListingSection
           type="grants"
-          title="Grants"
-          sub="Equity-free funding opportunities for builders"
+          title="资助"
+          sub="为建设者提供资金支持"
           emoji="/assets/home/emojis/grants.webp"
           showViewAll
         >
           {!grants?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
-                title="No grants available!"
-                message="Subscribe to notifications to get notified about new grants."
+                title="暂无资助可申请！"
+                message="订阅通知以便接收关于新资助项目的通知。"
               />
             </Flex>
           )}

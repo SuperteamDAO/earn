@@ -121,7 +121,7 @@ export const RecentActivity = () => {
     <Box>
       <Flex align="center" justify={'space-between'}>
         <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-          RECENT ACTIVITY
+          最近的活动
         </Text>
         <Text
           className="ph-no-capture"
@@ -134,7 +134,7 @@ export const RecentActivity = () => {
             posthog.capture('recent winners_view all_homepage');
           }}
         >
-          View All
+          查看全部
           <ArrowForwardIcon ml={1} />
         </Text>
       </Flex>

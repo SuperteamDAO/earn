@@ -105,7 +105,7 @@ const generateTabContent = ({
             color="gray.900"
             fontWeight={600}
           >
-            <Text flex={1}>For You</Text>
+            <Text flex={1}>为您推荐</Text>
             <Box color="gray.500">
               <Tooltip
                 label={`List of top opportunities curated for you, based on your skills, listing subscriptions and location.`}
@@ -131,7 +131,7 @@ const generateTabContent = ({
       )}
       <Box>
         <Text mb={2} color="gray.900" fontWeight={600}>
-          All {title}
+          所有{title}
         </Text>
         <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
           {isListingsLoading ? (
@@ -174,11 +174,11 @@ export const ListingTabs = ({
   const tabs: TabProps[] = [
     {
       id: 'tab1',
-      title: 'Open',
+      title: '进行中',
       posthog: 'open_listings',
       content: generateTabContent({
         user,
-        title: 'Open',
+        title: '进行中',
         bounties: bounties,
         forYou: forYou,
         take,
@@ -187,19 +187,19 @@ export const ListingTabs = ({
           bounty.status === 'OPEN' &&
           !dayjs().isAfter(bounty.deadline) &&
           !bounty.isWinnersAnnounced,
-        emptyTitle: 'No listings available!',
+        emptyTitle: '暂无可用机会！',
         emptyMessage:
-          'Update your email preferences (from the user menu) to be notified about new work opportunities.',
+          '更新您的电子邮件偏好设置（从用户菜单）以接收新的工作机会通知。',
         showNotifSub,
       }),
     },
     {
       id: 'tab2',
-      title: 'In Review',
+      title: '审核中',
       posthog: 'in review_listing',
       content: generateTabContent({
         user,
-        title: 'In Review',
+        title: '审核中',
         bounties: bounties,
         forYou: forYou,
         take,
@@ -208,19 +208,19 @@ export const ListingTabs = ({
           !bounty.isWinnersAnnounced &&
           dayjs().isAfter(bounty.deadline) &&
           bounty.status === 'OPEN',
-        emptyTitle: 'No listings in review!',
+        emptyTitle: '暂无审核中的机会！',
         emptyMessage:
-          'Subscribe to notifications to get notified about updates.',
+          '订阅通知以获取更新信息。',
         showNotifSub,
       }),
     },
     {
       id: 'tab3',
-      title: 'Completed',
+      title: '已完成',
       posthog: 'completed_listing',
       content: generateTabContent({
         user,
-        title: 'Completed',
+        title: '已完成',
         bounties: bounties,
         forYou: forYou,
         take,
@@ -250,9 +250,9 @@ export const ListingTabs = ({
 
           return dateB.getTime() - dateA.getTime();
         },
-        emptyTitle: 'No completed listings!',
+        emptyTitle: '暂无已完成的机会！',
         emptyMessage:
-          'Subscribe to notifications to get notified about announcements.',
+          '订阅通知以获取公告信息。',
         showNotifSub,
       }),
     },
@@ -364,7 +364,7 @@ export const ListingTabs = ({
                 size={{ base: 'x-small', md: 'sm' }}
                 variant={'ghost'}
               >
-                View All
+                查看全部
               </Button>
             </Link>
           </Flex>
@@ -386,7 +386,7 @@ export const ListingTabs = ({
             size="sm"
             variant="outline"
           >
-            View All
+            查看全部
           </Button>
         </Link>
       )}
