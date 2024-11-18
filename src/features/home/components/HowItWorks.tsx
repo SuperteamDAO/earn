@@ -142,7 +142,7 @@ export const HowItWorks = () => {
     >
       <Box opacity={isLoading ? '0.2' : '1'}>
         <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
-          工作流
+          如何运作
         </Text>
         <Flex h={'12.5rem'}>
           <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
@@ -203,7 +203,7 @@ export const HowItWorks = () => {
                   router.push('/bounties');
                 }}
               >
-                参与悬赏和项目
+                参与赏金任务
               </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
                 建立工作证明
@@ -218,7 +218,7 @@ export const HowItWorks = () => {
                 获得工作报酬
               </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                全球标准
+                做任务，赢赏金!
               </Text>
             </Box>
           </VStack>

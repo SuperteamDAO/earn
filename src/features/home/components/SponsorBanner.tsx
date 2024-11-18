@@ -35,7 +35,7 @@ export const SponsorBanner = () => {
           fontWeight={600}
           _groupHover={{ textDecoration: 'underline' }}
         >
-          成为赞助商
+          发布任务
           <ArrowForwardIcon ml={1} color="#777777" w={6} />
         </Text>
         <Text
