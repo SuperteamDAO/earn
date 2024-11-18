@@ -37,6 +37,7 @@ model Bounties {
   totalPaymentsMade    Int?               @default(0)
   totalWinnersSelected Int?               @default(0)
   isWinnersAnnounced   Boolean            @default(false)
+  isLockedPayment      Boolean            @default(false)
   templateId           String?
   region               String             @default("GLOBAL")
   pocSocials           String?

@@ -53,6 +53,7 @@ export interface Listing {
     Comments?: number;
   };
   isFndnPaying?: boolean;
+  isLockedPayment?: boolean;
 }
 
 export interface ListingHackathon {

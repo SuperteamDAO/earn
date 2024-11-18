@@ -638,7 +638,7 @@ export const ListingPayments = ({
                 onKeyDown={handleKeyDown}
                 placeholder="Search token"
                 value={searchTerm || ''}
-                isDisabled={!editable}
+                isDisabled={!editable && type === 'bounty'}
               />
               <InputRightElement color="gray.700" fontSize="1rem">
                 <ChevronDownIcon mt="9px" />
