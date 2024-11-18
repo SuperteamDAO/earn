@@ -32,6 +32,7 @@ interface Props {
   region: string;
   slug: string;
   references: any;
+  isPublished: boolean;
 }
 export const GrantsHeader = ({
   sponsor,
@@ -40,6 +41,7 @@ export const GrantsHeader = ({
   region,
   slug,
   references,
+  isPublished,
 }: Props) => {
   const statusIconStyles = { w: 5, h: 5 };
   let statusBgColor = '';
@@ -52,28 +54,26 @@ export const GrantsHeader = ({
       text={statusTextColor}
     />
   );
-  switch (status) {
-    case 'OPEN':
-      statusIcon = (
-        <PulseIcon
-          isPulsing
-          {...statusIconStyles}
-          bg={'#9AE6B4'}
-          text="#16A34A"
-        />
-      );
-      statusBgColor = 'green.100';
-      statusTextColor = 'green.600';
-      statusText = 'Open';
-      break;
-    case 'CLOSED':
-      statusIcon = (
-        <Icon as={LuCheck} {...statusIconStyles} color={'brand.slate.400'} />
-      );
-      statusBgColor = '#ffecb3';
-      statusTextColor = '#F59E0B';
-      statusText = 'Closed';
-      break;
+
+  if (status === 'OPEN' && isPublished) {
+    statusIcon = (
+      <PulseIcon
+        isPulsing
+        {...statusIconStyles}
+        bg={'#9AE6B4'}
+        text="#16A34A"
+      />
+    );
+    statusBgColor = 'green.100';
+    statusTextColor = 'green.600';
+    statusText = 'Open';
+  } else {
+    statusIcon = (
+      <Icon as={LuCheck} {...statusIconStyles} color={'brand.slate.400'} />
+    );
+    statusBgColor = '#ffecb3';
+    statusTextColor = '#F59E0B';
+    statusText = 'Closed';
   }
 
   const router = useRouter();

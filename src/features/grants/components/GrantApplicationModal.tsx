@@ -195,7 +195,7 @@ export const GrantApplicationModal = ({
   const handleNext = (e: React.MouseEvent) => {
     e.preventDefault();
     const fieldsToValidate = {
-      0: ['projectTitle', 'projectOneLiner', 'walletAddress'],
+      0: ['projectTitle', 'projectOneLiner', 'walletAddress', 'ask'],
       1: [
         'projectDetails',
         'projectTimeline',
