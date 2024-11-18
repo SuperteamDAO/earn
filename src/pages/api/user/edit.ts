@@ -111,7 +111,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     return res.json(updatedUser);
   } catch (error: any) {
     logger.error(`Error updating user profile: ${safeStringify(error)}`);
-    console.log(`Error updating user profile: ${safeStringify(error)}`);
     return res.status(500).json({ error: 'Error updating user profile.' });
   }
 }
