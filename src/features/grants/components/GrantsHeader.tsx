@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { LuCheck } from 'react-icons/lu';
+import { BsFillCircleFill } from 'react-icons/bs';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import {
@@ -43,36 +43,26 @@ export const GrantsHeader = ({
   references,
   isPublished,
 }: Props) => {
-  const statusIconStyles = { w: 5, h: 5 };
   let statusBgColor = '';
   let statusTextColor = '';
   let statusText = '';
   let statusIcon = (
-    <PulseIcon
-      {...statusIconStyles}
-      bg={statusBgColor}
-      text={statusTextColor}
-    />
+    <PulseIcon w={5} h={5} bg={statusBgColor} text={statusTextColor} />
   );
 
   if (status === 'OPEN' && isPublished) {
     statusIcon = (
-      <PulseIcon
-        isPulsing
-        {...statusIconStyles}
-        bg={'#9AE6B4'}
-        text="#16A34A"
-      />
+      <PulseIcon isPulsing w={5} h={5} bg={'#9AE6B4'} text="#16A34A" />
     );
     statusBgColor = 'green.100';
     statusTextColor = 'green.600';
     statusText = 'Open';
   } else {
     statusIcon = (
-      <Icon as={LuCheck} {...statusIconStyles} color={'brand.slate.400'} />
+      <Icon as={BsFillCircleFill} w={3} h={3} color={'brand.slate.400'} />
     );
     statusBgColor = '#ffecb3';
-    statusTextColor = '#F59E0B';
+    statusTextColor = 'brand.slate.400';
     statusText = 'Closed';
   }
 

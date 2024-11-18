@@ -18,7 +18,6 @@ export const getCombinedRegion = (region: string) => {
   if (regionObject?.displayValue) {
     regionObject.name = regionObject.displayValue;
   }
-  console.log('superteam country', regionObject);
   if (!regionObject) {
     regionObject = countries.find(
       (country) => country.name.toLowerCase() === region?.toLowerCase(),

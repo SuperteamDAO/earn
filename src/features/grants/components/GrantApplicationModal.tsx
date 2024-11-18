@@ -214,10 +214,6 @@ export const GrantApplicationModal = ({
 
   const date = dayjs().format('YYYY-MM-DD');
 
-  useEffect(() => {
-    console.log(form.formState.errors);
-  }, [form.formState.errors]);
-
   return (
     <Modal
       closeOnOverlayClick={false}
