@@ -109,7 +109,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-xs font-medium"
+                  className="text-xs font-semibold"
                   onClick={() => {
                     posthog.capture('create a listing_navbar');
                     router.push('/sponsor');
@@ -121,7 +121,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-xs font-medium"
+                  className="text-xs font-semibold"
                   onClick={() => {
                     posthog.capture('login_navbar');
                     onLoginOpen();
@@ -133,7 +133,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               <Button
                 variant="default"
                 size="sm"
-                className="my-1 w-full px-4 text-xs font-medium"
+                className="my-1 w-full px-4 text-xs font-semibold"
                 onClick={() => {
                   posthog.capture('signup_navbar');
                   onLoginOpen();
