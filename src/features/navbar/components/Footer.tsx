@@ -17,7 +17,7 @@ import React, { useEffect, useState } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
-import { Discord, GitHub, Twitter } from '@/features/talent';
+import { Telegram, Twitter } from '@/features/talent';
 
 type Country = {
   name: string;
@@ -200,9 +200,9 @@ export const Footer = () => {
               single profile.
             </Text>
             <Flex gap={4}>
-              <GitHub link="https://github.com/SuperteamDAO/earn" />
-              <Twitter link="https://twitter.com/superteamearn" />
-              <Discord link="https://discord.com/invite/Mq3ReaekgG" />
+              <Twitter link="https://x.com/Solana_zh" />
+              <Telegram link="https://t.me/solanaZH_official" />
+              <Telegram link="https://t.me/solanadevcamp" />
             </Flex>
           </Flex>
           <Flex
@@ -227,17 +227,6 @@ export const Footer = () => {
             <Text mb={{ base: 4, md: 0 }} color="brand.slate.500" fontSize="sm">
               © {currentYear} Solar. All rights reserved.
             </Text>
-            <Flex align="center">
-              <Text
-                mr={2}
-                color="brand.slate.500"
-                fontSize="sm"
-                fontWeight="500"
-              >
-                REGION
-              </Text>
-              <CountrySelector />
-            </Flex>
           </Flex>
         </Container>
       </Box>
