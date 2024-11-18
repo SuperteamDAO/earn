@@ -396,8 +396,8 @@ export const ListingPayments = ({
       value === ''
         ? tokenList
         : tokenList.filter((token) =>
-            token.tokenName.toLowerCase().includes(value.toLowerCase()),
-          );
+          token.tokenName.toLowerCase().includes(value.toLowerCase()),
+        );
     setSearchResults(filteredResults);
     setSelectedTokenIndex(null);
     setIsOpen(true);
@@ -583,6 +583,7 @@ export const ListingPayments = ({
                         setValue('rewardAmount', undefined);
                       }}
                       value={value}
+                      isDisabled={!editable}
                     >
                       <option hidden disabled value="">
                         Select a Compensation Type
@@ -638,6 +639,7 @@ export const ListingPayments = ({
                 onKeyDown={handleKeyDown}
                 placeholder="Search token"
                 value={searchTerm || ''}
+                isDisabled={!editable}
               />
               <InputRightElement color="gray.700" fontSize="1rem">
                 <ChevronDownIcon mt="9px" />
@@ -708,6 +710,7 @@ export const ListingPayments = ({
                   border={'none'}
                   focusBorderColor="rgba(0,0,0,0)"
                   min={0}
+                  isDisabled={!editable}
                 >
                   <NumberInputField
                     color={'brand.slate.800'}
@@ -758,6 +761,7 @@ export const ListingPayments = ({
                     border={'none'}
                     focusBorderColor="rgba(0,0,0,0)"
                     min={0}
+                    isDisabled={!editable}
                   >
                     <NumberInputField
                       color={'brand.slate.800'}
@@ -799,6 +803,7 @@ export const ListingPayments = ({
                     border={'none'}
                     focusBorderColor="rgba(0,0,0,0)"
                     min={0}
+                    isDisabled={!editable}
                   >
                     <NumberInputField
                       color={'brand.slate.800'}
@@ -881,6 +886,7 @@ export const ListingPayments = ({
                         onChange={(valueString) =>
                           handleBonusChange(parseInt(valueString))
                         }
+                        isDisabled={!editable}
                       >
                         <NumberInputField
                           color={'brand.slate.800'}
@@ -917,11 +923,12 @@ export const ListingPayments = ({
                       }
                       value={
                         el.defaultValue !== null &&
-                        el.defaultValue !== undefined &&
-                        !isNaN(el.defaultValue)
+                          el.defaultValue !== undefined &&
+                          !isNaN(el.defaultValue)
                           ? el.defaultValue
                           : undefined
                       }
+                      isDisabled={!editable}
                     >
                       <NumberInputField
                         color={'brand.slate.800'}
@@ -945,7 +952,7 @@ export const ListingPayments = ({
                     </NumberInput>
 
                     <SelectedToken token={selectedToken} />
-                    {el.value > 1 && (
+                    {el.value > 1 && editable && (
                       <Button
                         pos="absolute"
                         right={-12}
@@ -1031,6 +1038,7 @@ export const ListingPayments = ({
                   borderColor="brand.slate.700"
                   borderRadius="sm"
                   isDisabled={
+                    !editable ||
                     prizes.filter((p) => p.value !== BONUS_REWARD_POSITION)
                       .length === MAX_PODIUMS && true
                   }
@@ -1054,6 +1062,7 @@ export const ListingPayments = ({
                     bg="brand.slate.100"
                     borderRadius="sm"
                     isDisabled={
+                      !editable ||
                       prizes.find((p) => p.value === BONUS_REWARD_POSITION) &&
                       true
                     }

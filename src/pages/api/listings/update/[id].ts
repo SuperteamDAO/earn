@@ -45,6 +45,7 @@ const allowedFields = [
   'maxRewardAsk',
   'isPublished',
   'isFndnPaying',
+  'isLockedPayment',
 ];
 
 async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
@@ -197,7 +198,8 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
 
     if (listing.maxBonusSpots > 0 && typeof maxBonusSpots === 'undefined') {
-      maxBonusSpots = 0;
+      // maxBonusSpots = 0;
+      maxBonusSpots = listing.maxBonusSpots;
     }
 
     let language = '';

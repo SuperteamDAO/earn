@@ -84,6 +84,7 @@ export function CreateListing({
     listing?.status,
     listing?.isPublished,
   );
+  const payAmountEditable = listing?.isLockedPayment === false || listing === undefined;
 
   const newListing = listing?.id === undefined;
   const [isDraftLoading, setIsDraftLoading] = useState<boolean>(false);
@@ -183,6 +184,7 @@ export function CreateListing({
         isPrivate: form?.isPrivate,
         isFndnPaying: form?.isFndnPaying,
         status: 'OPEN',
+        isLockedPayment: true,
       };
 
       let api = `/api/${basePath}/create`;
@@ -330,13 +332,13 @@ export function CreateListing({
               slug={slug}
               isOpen={isSuccessOpen}
               isVerified={user.currentSponsor?.isVerified || false}
-              onClose={() => {}}
+              onClose={() => { }}
             />
           )}
           {isVerifyingOpen && (
             <UnderVerificationModal
               isOpen={isVerifyingOpen}
-              onClose={() => {}}
+              onClose={() => { }}
             />
           )}
           {isSurveyOpen && (
@@ -396,7 +398,7 @@ export function CreateListing({
               createAndPublishListing={createAndPublishListing}
               createDraft={createDraft}
               isDraftLoading={isDraftLoading}
-              editable={editable}
+              editable={payAmountEditable}
               isListingPublishing={isListingPublishing}
               type={type}
               isDuplicating={isDuplicating}
