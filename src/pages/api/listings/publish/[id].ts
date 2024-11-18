@@ -7,7 +7,11 @@ import {
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
-import { createListingFormSchema } from '@/features/listing-builder';
+import {
+  backendListingRefinements,
+  createListingFormSchema,
+  createListingRefinements,
+} from '@/features/listing-builder';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -43,12 +47,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id: userId as string },
     });
 
-    const { error } = await checkListingSponsorAuth(
+    const { error, listing } = await checkListingSponsorAuth(
       userSponsorId,
       id as string,
     );
     if (error) {
       return res.status(error.status).json({ error: error.message });
+    }
+
+    if (listing.isPublished) {
+      return res.status(400).json({
+        message: `Listing is already published, hence cannot be published again`,
+      });
     }
 
     const listingSchema = createListingFormSchema(
@@ -57,7 +67,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       sponsor?.st,
     );
 
-    const validatedData = await listingSchema.parseAsync(req.body);
+    const innerSchema = listingSchema._def.schema;
+    const superValidator = innerSchema.superRefine(async (data, ctx) => {
+      await createListingRefinements(data as any, ctx, false);
+      await backendListingRefinements(data as any, ctx);
+    });
+    const validatedData = await superValidator.parseAsync(req.body);
 
     const {
       title,

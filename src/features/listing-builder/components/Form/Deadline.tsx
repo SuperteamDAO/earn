@@ -42,16 +42,16 @@ export function Deadline() {
   const [isCustomDate, setIsCustomDate] = useState(false);
   const [customDate, setCustomDate] = useState<string>('7');
 
-  const editable = useAtomValue(isEditingAtom);
+  const isEditing = useAtomValue(isEditingAtom);
   const isGod = useAtomValue(isGodAtom);
 
   useEffect(() => {
-    if (editable && deadline) {
+    if (isEditing && deadline) {
       const originalDeadline = dayjs(deadline);
       const twoWeeksLater = originalDeadline.add(2, 'weeks');
       setMaxDeadline(twoWeeksLater.toDate());
     }
-  }, [editable]);
+  }, [isEditing]);
 
   useEffect(() => {
     if (isGod) setMinDeadline(undefined);
@@ -105,7 +105,7 @@ export function Deadline() {
                     field.onChange(undefined);
                     setIsCustomDate(false);
                   }
-                  form.onChange();
+                  form.saveDraft();
                 }}
                 use12HourFormat
                 hideSeconds

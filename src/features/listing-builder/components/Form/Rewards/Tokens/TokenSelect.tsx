@@ -76,7 +76,7 @@ export function TokenSelect() {
                         key={token.tokenSymbol}
                         onSelect={() => {
                           field.onChange(token.tokenSymbol);
-                          form.onChange();
+                          form.saveDraft();
                         }}
                       >
                         <TokenLabel token={token} showIcon showName />

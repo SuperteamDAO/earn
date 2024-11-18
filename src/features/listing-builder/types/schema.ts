@@ -7,6 +7,7 @@ import {
   MAX_PODIUMS,
   tokenList,
 } from '@/constants';
+import { type Listing } from '@/features/listings';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
 import { skillsArraySchema } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
@@ -19,10 +20,11 @@ export const createListingFormSchema = (
   isGod: boolean,
   isEditing: boolean,
   isST?: boolean,
+  pastListing?: Listing,
 ) => {
   const eligibilityQuestionSchema = z.object({
     order: z.number(),
-    question: z.string().min(1),
+    question: z.string().min(1).max(256),
     type: z.enum(['text', 'link']),
   });
 
@@ -103,10 +105,11 @@ export const createListingFormSchema = (
   return z
     .object({
       id: z.string().optional(),
-      title: z.string().min(1, 'Required'),
+      title: z.string().min(1, 'Required').max(100),
       slug: z
         .string()
         .min(1, 'Required')
+        .max(120)
         .regex(
           /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
           'Slug should only contain lowercase alphabets, numbers, and hyphens',
@@ -121,6 +124,7 @@ export const createListingFormSchema = (
       pocSocials: z
         .string()
         .min(1, 'Required')
+        .max(256, 'Too long')
         .refine(
           (value) => {
             return (
@@ -135,7 +139,7 @@ export const createListingFormSchema = (
         ),
       description: z.string().min(1, 'Required'),
       type: z.nativeEnum(BountyType).default('bounty'),
-      region: z.string().default(Regions.GLOBAL),
+      region: z.string().max(256).default(Regions.GLOBAL),
       deadline: z
         .string()
         .datetime({
@@ -146,8 +150,16 @@ export const createListingFormSchema = (
         .refine(
           (date) => isGod || dayjs(date).isAfter(dayjs()),
           'Deadline cannot be in the past',
-        ),
-
+        )
+        .refine((date) => {
+          if (!isEditing || isGod || !pastListing?.deadline) return true;
+          const newDeadline = dayjs(date);
+          const pastDeadlineDate = dayjs(pastListing.deadline);
+          const maxDeadline = pastDeadlineDate.add(2, 'weeks');
+          return (
+            newDeadline.isBefore(maxDeadline) || newDeadline.isSame(maxDeadline)
+          );
+        }, 'Cannot extend deadline more than 2 weeks from original deadline'),
       templateId: z.string().optional().nullable(),
       eligibility: z.array(eligibilityQuestionSchema).optional(),
       skills: skillsArraySchema,
@@ -313,6 +325,63 @@ export const createListingRefinements = async (
         code: z.ZodIssueCode.custom,
         message: 'Maximum reward must be greater than minimum reward',
         path: ['maxRewardAsk'],
+      });
+    }
+  }
+};
+
+// use this for any logic that needs nullification (or shouldnt hinder frontend)
+export const backendListingRefinements = async (
+  data: ListingFormData,
+  ctx: z.RefinementCtx,
+) => {
+  if (data.type !== 'project' && data.compensationType !== 'fixed') {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message:
+        'Selected Type is not allowed to have compensation type other than fixed',
+      path: ['compensationType'],
+    });
+  }
+  // consdiers VARIABLE Compensation too
+  if (data.compensationType !== 'range') {
+    if (data.minRewardAsk) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Should be empty',
+        path: ['minRewardAsk'],
+      });
+    }
+    if (data.maxRewardAsk) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Should be empty',
+        path: ['maxRewardAsk'],
+      });
+    }
+  }
+
+  // consdiers VARIABLE Compensation too
+  if (data.compensationType !== 'fixed') {
+    if (data.rewards) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Should be empty',
+        path: ['rewards'],
+      });
+    }
+    if (data.rewardAmount) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Should be empty',
+        path: ['rewardAmount'],
+      });
+    }
+    if (data.maxBonusSpots) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Should be empty',
+        path: ['maxBonusSpots'],
       });
     }
   }

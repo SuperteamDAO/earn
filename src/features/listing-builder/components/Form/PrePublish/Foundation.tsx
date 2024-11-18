@@ -30,7 +30,7 @@ export function Foundation() {
                 checked={field.value}
                 onCheckedChange={(e) => {
                   field.onChange(e);
-                  form.onChange();
+                  form.saveDraft();
                 }}
               />
             </FormControl>

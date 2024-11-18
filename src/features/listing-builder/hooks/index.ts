@@ -8,7 +8,6 @@ import { z } from 'zod';
 
 import {
   draftQueueAtom,
-  formSchemaAtom,
   isDraftSavingAtom,
   isEditingAtom,
   isGodAtom,
@@ -16,11 +15,15 @@ import {
   saveDraftMutationAtom,
   submitListingMutationAtom,
 } from '../atoms';
-import { createListingRefinements, type ListingFormData } from '../types';
+import {
+  createListingFormSchema,
+  createListingRefinements,
+  type ListingFormData,
+} from '../types';
 import { refineReadyListing } from '../utils';
 
 interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
-  onChange: () => void;
+  saveDraft: () => void;
   submitListing: () => Promise<ListingFormData>;
   resetForm: () => void;
   validateRewards: () => Promise<boolean>;
@@ -42,7 +45,16 @@ export const useListingForm = (
     // No existing form context
   }
 
-  const formSchema = useAtomValue(formSchemaAtom);
+  const isGod = useAtomValue(isGodAtom);
+  const isEditing = useAtomValue(isEditingAtom);
+  const isST = useAtomValue(isSTAtom);
+
+  const formSchema = createListingFormSchema(
+    isGod,
+    isEditing,
+    isST,
+    defaultValues as any,
+  );
   if (!formMethods || !Object.keys(formMethods).length) {
     //eslint-disable-next-line
     formMethods = useForm<ListingFormData>({
@@ -140,10 +152,6 @@ export const useListingForm = (
     reset();
   }, [reset]);
 
-  const isGod = useAtomValue(isGodAtom);
-  const isEditing = useAtomValue(isEditingAtom);
-  const isST = useAtomValue(isSTAtom);
-
   type ValidationFields = Partial<Record<keyof ListingFormData, true>>;
 
   const validateFields = useCallback(
@@ -191,7 +199,6 @@ export const useListingForm = (
     [formMethods, formSchema, isGod, isEditing, isST],
   );
 
-  // Usage:
   const validateRewards = () =>
     validateFields({
       type: true,
@@ -232,7 +239,7 @@ export const useListingForm = (
 
   return {
     ...formMethods,
-    onChange,
+    saveDraft: onChange,
     submitListing,
     resetForm,
     validateRewards,

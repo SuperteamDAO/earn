@@ -43,7 +43,7 @@ export function Skills() {
                 defaultValue={field.value || []}
                 onChange={(e) => {
                   field.onChange(e);
-                  form.onChange();
+                  form.saveDraft();
                   form.trigger('skills');
                 }}
               />

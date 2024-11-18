@@ -105,7 +105,7 @@ export function GeoLock() {
                 value={field.value}
                 onChange={(e) => {
                   field.onChange(e);
-                  form.onChange();
+                  form.saveDraft();
                 }}
               />
             </FormControl>

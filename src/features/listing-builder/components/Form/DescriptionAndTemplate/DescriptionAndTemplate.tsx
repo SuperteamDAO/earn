@@ -69,7 +69,7 @@ export function DescriptionAndTemplate() {
                   value={field.value}
                   onChange={(e) => {
                     field.onChange(e);
-                    form.onChange();
+                    form.saveDraft();
                   }}
                   onBlur={field.onBlur}
                   ref={field.ref}

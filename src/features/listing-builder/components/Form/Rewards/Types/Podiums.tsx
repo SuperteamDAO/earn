@@ -70,7 +70,7 @@ export const Podiums = () => {
       );
 
       form.setValue('rewardAmount', totalRewards, { shouldValidate: true });
-      form.onChange();
+      form.saveDraft();
     },
     [form],
   );

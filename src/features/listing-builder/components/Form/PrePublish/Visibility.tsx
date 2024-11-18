@@ -45,7 +45,7 @@ export function Visibility() {
                 onValueChange={(e) => {
                   if (e === 'private') field.onChange(true);
                   else field.onChange(false);
-                  form.onChange();
+                  form.saveDraft();
                 }}
                 defaultValue={field.value ? 'private' : 'public'}
               >

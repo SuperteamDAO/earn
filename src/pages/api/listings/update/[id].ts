@@ -8,7 +8,11 @@ import {
   withSponsorAuth,
 } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
-import { createListingFormSchema } from '@/features/listing-builder';
+import {
+  backendListingRefinements,
+  createListingFormSchema,
+  createListingRefinements,
+} from '@/features/listing-builder';
 import { isDeadlineOver } from '@/features/listings';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
@@ -92,9 +96,15 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       user?.role === 'GOD',
       true,
       sponsor?.st,
+      listing as any,
     );
+    const innerSchema = listingSchema._def.schema;
+    const superValidator = innerSchema.superRefine(async (data, ctx) => {
+      await createListingRefinements(data as any, ctx, true);
+      await backendListingRefinements(data as any, ctx);
+    });
 
-    const validatedData = await listingSchema.parseAsync({
+    const validatedData = await superValidator.parseAsync({
       ...listing, // Existing data as base
       ...data, // Merge update data
     });

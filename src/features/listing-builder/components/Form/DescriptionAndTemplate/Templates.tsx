@@ -184,7 +184,7 @@ export function Templates() {
                               form.getValues(),
                             ) as any,
                           );
-                          form.onChange();
+                          form.saveDraft();
                         }}
                       >
                         Use
