@@ -179,6 +179,7 @@ const CreateSponsor = () => {
                   url: e.sponsorurl ?? '',
                   entityName: e.entityName,
                   telegram: e.telegram,
+                  wechat: e.wechat,
                 });
               })}
               style={{ width: '100%' }}
@@ -355,7 +356,7 @@ const CreateSponsor = () => {
                   </FormErrorMessage>
                 </FormControl>
               </HStack>
-              <HStack w="full">
+              <HStack w="full" my={6}>
                 <FormControl w={'full'} isRequired>
                   <HStack mb={2}>
                     <FormLabel
@@ -391,6 +392,42 @@ const CreateSponsor = () => {
                   <FormErrorMessage>
                     {errors.telegram ? <>{errors.telegram.message}</> : <></>}
                   </FormErrorMessage>
+                </FormControl>
+              </HStack>
+
+              <HStack w="full" my={6}>
+                <FormControl w={'full'}>
+                  <HStack mb={2}>
+                    <FormLabel
+                      m={0}
+                      color={'brand.slate.500'}
+                      fontSize={'15px'}
+                      fontWeight={700}
+                      htmlFor={'wechat'}
+                    >
+                      Wechat
+                    </FormLabel>
+                    <Tooltip
+                      fontSize="xs"
+                      label="Please mention your official Wechat Id."
+                    >
+                      <InfoOutlineIcon
+                        color="brand.slate.500"
+                        w={3}
+                        h={3}
+                        display={{ base: 'none', md: 'block' }}
+                      />
+                    </Tooltip>
+                  </HStack>
+                  <Input
+                    w={'full'}
+                    borderColor={'brand.slate.300'}
+                    _placeholder={{ color: 'brand.slate.300' }}
+                    focusBorderColor="brand.purple"
+                    id="wechat"
+                    placeholder="wechat id"
+                    {...register('wechat')}
+                  />
                 </FormControl>
               </HStack>
               {

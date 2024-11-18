@@ -11,6 +11,7 @@ interface SponsorType {
   isActive: boolean;
   entityName?: string;
   telegram?: string;
+  wechat?: string;
   isVerified?: boolean;
   isCaution?: boolean;
   st?: boolean;

@@ -33,6 +33,7 @@ async function user(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       bio,
       entityName,
       telegram,
+      wechat,
     } = req.body;
 
     const result = await prisma.sponsors.update({
@@ -49,6 +50,7 @@ async function user(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         bio,
         entityName,
         telegram,
+        wechat,
       },
     });
 

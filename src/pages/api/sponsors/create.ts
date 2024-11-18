@@ -31,6 +31,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
       bio,
       entityName,
       telegram,
+      wechat,
     } = req.body;
 
     if (!user.currentSponsorId || user.role === 'GOD') {
@@ -48,6 +49,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
           entityName,
           isActive: user.role === 'GOD',
           telegram,
+          wechat,
         },
       });
 

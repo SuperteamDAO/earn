@@ -277,6 +277,7 @@ model Sponsors {
   industry     String
   twitter      String?
   telegram     String?
+  wechat       String?
   bio          String?
   createdAt    DateTime            @default(now())
   updatedAt    DateTime            @updatedAt
