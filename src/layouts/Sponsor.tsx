@@ -1,5 +1,13 @@
 import { AddIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Icon,
+  Text,
+  Tooltip,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -21,9 +29,9 @@ import { RiUserSettingsLine } from 'react-icons/ri';
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { PDTG } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
+import { Login } from '@/features/auth';
 import { isCreateListingAllowedQuery } from '@/features/listing-builder';
 import {
   CreateListingModal,
@@ -123,8 +131,7 @@ export function SponsorLayout({
   }
 
   if (!session && status === 'unauthenticated') {
-    router.push('/');
-    return null;
+    return <Login isOpen={true} onClose={() => {}} />;
   }
 
   const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');

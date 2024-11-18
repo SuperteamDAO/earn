@@ -39,7 +39,7 @@ async function updateSubmission(
     link: validatedData.link || '',
     tweet: validatedData.tweet || '',
     otherInfo: validatedData.otherInfo || '',
-    eligibilityAnswers: validatedData.eligibilityAnswers || undefined,
+    eligibilityAnswers: validatedData.eligibilityAnswers || [],
     ask: validatedData.ask || 0,
   };
 

@@ -58,11 +58,13 @@ export async function sendEmailNotification({
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        timeout: 5000,
+        timeout: 15000,
       },
     );
   } catch (error) {
-    logger.error(`failed to send email for ${type} with ID ${id}: ${error}`);
+    logger.error(
+      `failed to send email for ${type} to ${userId} with ID ${id}: ${error}`,
+    );
     throw error;
   }
 }

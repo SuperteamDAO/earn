@@ -4,10 +4,8 @@ import {
   Button,
   Divider,
   Flex,
-  FormControl,
   Heading,
   HStack,
-  Input,
   Link,
   Text,
   Tooltip,
@@ -21,18 +19,20 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
 import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
+import { Input } from '@/components/ui/input';
+import { MultiSelect } from '@/components/ui/multi-select';
 import { IndustryList, PDTG } from '@/constants';
 import { SignIn } from '@/features/auth';
 import {
@@ -51,7 +51,6 @@ import { uploadToCloudinary } from '@/utils/upload';
 
 const CreateSponsor = () => {
   const router = useRouter();
-  const animatedComponents = makeAnimated();
   const { data: session, status } = useSession();
   const { user, refetchUser } = useUser();
   const posthog = usePostHog();
@@ -221,22 +220,17 @@ const CreateSponsor = () => {
         </>
       ) : (
         <VStack w="full" pt={8} pb={24}>
-          <VStack>
+          <VStack spacing={2}>
             <Heading
-              color={'gray.700'}
-              fontFamily={'var(--font-sans)'}
-              fontSize={'24px'}
-              fontWeight={700}
+              color="gray.900"
+              fontSize="3xl"
+              fontWeight="semibold"
+              letterSpacing="-0.02em"
             >
               Welcome to Superteam Earn
             </Heading>
-            <Text
-              color={'gray.400'}
-              fontFamily={'var(--font-sans)'}
-              fontSize={'20px'}
-              fontWeight={500}
-            >
-              {"Let's start with some basic information about your team"}
+            <Text color="gray.600" fontSize="lg" fontWeight="normal">
+              Let&apos;s start with some basic information about your team
             </Text>
           </VStack>
           <VStack w={'2xl'} pt={10}>
@@ -246,70 +240,54 @@ const CreateSponsor = () => {
                 style={{ width: '100%' }}
               >
                 <Text
-                  as="h3"
-                  mb={4}
-                  color="brand.slate.600"
-                  fontSize={'xl'}
-                  fontWeight={600}
+                  as="h2"
+                  mb={5}
+                  color="gray.900"
+                  fontSize="xl"
+                  fontWeight="semibold"
+                  letterSpacing="-0.01em"
                 >
                   About You
                 </Text>
 
                 <Flex justify={'space-between'} gap={2} w={'full'} mb={4}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="user.firstName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>First Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="First Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
+                    label="First Name"
+                    isRequired
+                  >
+                    <Input placeholder="First Name" />
+                  </FormFieldWrapper>
+                  <FormFieldWrapper
                     control={form.control}
                     name="user.lastName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Last Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Last Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Last Name"
+                    isRequired
+                  >
+                    <Input placeholder="Last Name" />
+                  </FormFieldWrapper>
                 </Flex>
                 <Flex mb={4}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="user.username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Username</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Username"
-                            {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              setUsername(e.target.value);
-                            }}
-                            value={username}
-                          />
-                        </FormControl>
-                        {isUsernameInvalid && (
-                          <p className="text-sm text-red-500">
-                            {validationUsernameErrorMessage}
-                          </p>
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Username"
+                    isRequired
+                  >
+                    <Input
+                      placeholder="Username"
+                      onChange={(e) => {
+                        setUsername(e.target.value);
+                      }}
+                      value={username}
+                    />
+                  </FormFieldWrapper>
+                  {isUsernameInvalid && (
+                    <p className="text-sm text-red-500">
+                      {validationUsernameErrorMessage}
+                    </p>
+                  )}
                 </Flex>
                 <>
                   <FormLabel isRequired>Profile Picture</FormLabel>
@@ -328,138 +306,105 @@ const CreateSponsor = () => {
                   />
                 </>
 
-                <Divider my={6} borderColor="brand.slate.400" />
+                <Divider my={12} borderColor="brand.slate.400" />
 
                 <Text
-                  as="h3"
-                  mb={4}
-                  color="brand.slate.600"
-                  fontSize={'xl'}
-                  fontWeight={600}
+                  as="h2"
+                  mb={5}
+                  color="gray.900"
+                  fontSize="xl"
+                  fontWeight="semibold"
+                  letterSpacing="-0.01em"
                 >
                   About Your Company
                 </Text>
                 <Flex justify={'space-between'} gap={2} w={'full'}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Company Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Stark Industries"
-                            {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              setSponsorName(e.target.value);
-                            }}
-                            value={sponsorName}
-                          />
-                        </FormControl>
-                        {isSponsorNameInvalid && (
-                          <p className="text-sm text-red-500">
-                            {sponsorNameValidationErrorMessage}
-                          </p>
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
+                    label="Company Name"
+                    isRequired
+                  >
+                    <Input
+                      placeholder="Stark Industries"
+                      onChange={(e) => {
+                        setSponsorName(e.target.value);
+                      }}
+                      value={sponsorName}
+                    />
+                  </FormFieldWrapper>
+                  {isSponsorNameInvalid && (
+                    <p className="text-sm text-red-500">
+                      {sponsorNameValidationErrorMessage}
+                    </p>
+                  )}
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.slug"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Company Username</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="starkindustries"
-                            {...field}
-                            onChange={(e) => {
-                              const lowercaseValue =
-                                e.target.value.toLowerCase();
-                              field.onChange(lowercaseValue);
-                              setSlug(lowercaseValue);
-                            }}
-                            value={slug}
-                          />
-                        </FormControl>
-                        {isSlugInvalid && (
-                          <p className="text-sm text-red-500">
-                            {validationSlugErrorMessage}
-                          </p>
-                        )}
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Company Username"
+                    isRequired
+                  >
+                    <Input
+                      placeholder="starkindustries"
+                      onChange={(e) => {
+                        const lowercaseValue = e.target.value.toLowerCase();
+                        setSlug(lowercaseValue);
+                      }}
+                      value={slug}
+                    />
+                  </FormFieldWrapper>
+                  {isSlugInvalid && (
+                    <p className="text-sm text-red-500">
+                      {validationSlugErrorMessage}
+                    </p>
+                  )}
                 </Flex>
                 <HStack justify={'space-between'} w={'full'} my={6}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.url"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Company URL</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="https://starkindustries.com"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Company URL"
+                  >
+                    <Input placeholder="https://starkindustries.com" />
+                  </FormFieldWrapper>
 
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.twitter"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Company Twitter</FormLabel>
-                        <FormControl>
-                          <Input placeholder="@StarkIndustries" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Company Twitter"
+                    isRequired
+                  >
+                    <Input placeholder="@StarkIndustries" />
+                  </FormFieldWrapper>
                 </HStack>
                 <HStack w="full">
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.entityName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel
-                          isRequired
-                          className="flex items-center gap-2"
+                    label={
+                      <>
+                        Entity Name
+                        <Tooltip
+                          fontSize="xs"
+                          label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
                         >
-                          Entity Name
-                          <Tooltip
-                            fontSize="xs"
-                            label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
-                          >
-                            <InfoOutlineIcon
-                              color="brand.slate.500"
-                              w={3}
-                              h={3}
-                              display={{ base: 'none', md: 'block' }}
-                            />
-                          </Tooltip>
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="Full Entity Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          <InfoOutlineIcon
+                            color="brand.slate.500"
+                            mt={1}
+                            ml={1}
+                            w={3}
+                            h={3}
+                            display={{ base: 'none', md: 'block' }}
+                          />
+                        </Tooltip>
+                      </>
+                    }
+                    isRequired
+                  >
+                    <Input placeholder="Full Entity Name" />
+                  </FormFieldWrapper>
                 </HStack>
-                <VStack align={'start'} gap={2} w="full" mt={6} mb={3}>
+                <Box w="full" mt={6} mb={3}>
                   <FormLabel isRequired>Company Logo</FormLabel>
                   <ImagePicker
                     onChange={async (e) => {
@@ -470,7 +415,7 @@ const CreateSponsor = () => {
                       setIsUploading(false);
                     }}
                   />
-                </VStack>
+                </Box>
 
                 <HStack justify={'space-between'} w={'full'} mt={6}>
                   <FormField
@@ -480,21 +425,17 @@ const CreateSponsor = () => {
                       <FormItem>
                         <FormLabel isRequired>Industry</FormLabel>
                         <FormControl>
-                          <Select
-                            closeMenuOnSelect={false}
-                            components={animatedComponents}
-                            isMulti
-                            options={IndustryList.map((elm: string) => ({
+                          <MultiSelect
+                            options={IndustryList.map((elm) => ({
                               label: elm,
                               value: elm,
                             }))}
-                            onChange={(selected) => {
-                              const values = selected.map(
-                                (item: any) => item.value,
-                              );
+                            onChange={(selected: any) => {
+                              const values =
+                                selected?.map((item: any) => item.value) || [];
                               field.onChange(values.join(', '));
                             }}
-                            className="w-full"
+                            className="mt-2"
                           />
                         </FormControl>
                         <FormMessage />
@@ -503,26 +444,21 @@ const CreateSponsor = () => {
                   />
                 </HStack>
                 <Box my={6}>
-                  <FormField
+                  <FormFieldWrapper
                     control={form.control}
                     name="sponsor.bio"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel isRequired>Company Short Bio</FormLabel>
-                        <FormControl>
-                          <Input
-                            maxLength={180}
-                            placeholder="What does your company do?"
-                            {...field}
-                          />
-                        </FormControl>
-                        <div className="text-right text-xs text-slate-400">
-                          {180 - (field.value?.length || 0)} characters left
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    label="Company Short Bio"
+                    isRequired
+                  >
+                    <Input
+                      maxLength={180}
+                      placeholder="What does your company do?"
+                    />
+                  </FormFieldWrapper>
+                  <div className="text-right text-xs text-slate-400">
+                    {180 - (form.watch('sponsor.bio')?.length || 0)} characters
+                    left
+                  </div>
                 </Box>
                 <Box my={8}>
                   {isError && (

@@ -26,7 +26,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { countries } from '@/constants';
-import { CombinedRegions, Superteams } from '@/constants/Superteam';
+import { Superteams } from '@/constants/Superteam';
 import { cn } from '@/utils';
 
 import { useListingForm } from '../../../hooks';
@@ -55,14 +55,12 @@ export function GeoLock() {
   }, [region]);
 
   const options: SelectOption[] = useMemo(() => {
-    if (!CombinedRegions || !Superteams || !countries) return [];
-
-    const superteamCountries = CombinedRegions.flatMap(
-      (region) => region.country,
+    const superteamCountries = Superteams.flatMap((region) =>
+      region.code.toLowerCase(),
     );
 
     const nonSuperteamCountries = countries.filter(
-      (country) => !superteamCountries.includes(country.name) && country.iso,
+      (country) => !superteamCountries.includes(country.code.toLowerCase()),
     );
 
     return [
@@ -85,10 +83,6 @@ export function GeoLock() {
       },
     ];
   }, []);
-
-  useEffect(() => {
-    console.log('options', options);
-  }, [options]);
 
   return (
     <FormField

@@ -2,7 +2,8 @@ import { Plus } from 'lucide-react';
 import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
-import MultipleSelector, {
+import {
+  MultiSelect,
   type MultiSelectRef,
   type Option,
 } from '@/components/ui/multi-select';
@@ -311,7 +312,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
 
     return (
       <div className="space-y-2">
-        <MultipleSelector
+        <MultiSelect
           ref={ref}
           options={getSelectableOptions}
           value={uiSkills}

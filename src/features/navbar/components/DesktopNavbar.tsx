@@ -133,7 +133,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   />
                 );
               })}
-              <Link
+              {/* <Link
                 as={NextLink}
                 alignItems="center"
                 display="flex"
@@ -145,21 +145,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   alt="Radar Nav Icon"
                   src="/assets/hackathon/radar/nav.png"
                 />
-              </Link>
-              {/* {HACKATHON_NAV_ITEMS?.map((navItem) => {
-                const isCurrent = `${navItem.href}` === router.asPath;
-                return (
-                  <NavLink
-                    onClick={() => {
-                      posthog.capture(navItem.posthog);
-                    }}
-                    key={navItem.label}
-                    href={navItem.href ?? '#'}
-                    label={renderLabel(navItem)}
-                    isActive={isCurrent}
-                  />
-                );
-              })} */}
+              </Link> */}
             </Stack>
           </Flex>
         </AbsoluteCenter>

@@ -209,7 +209,7 @@ model GrantApplication {
   twitter             String?
   milestones          String?                @db.Text
   kpi                 String?                @db.Text
-  answers             Json?
+  answers             Json?                  @default("[]")
   createdAt           DateTime               @default(now())
   updatedAt           DateTime               @updatedAt
   user                User                   @relation(fields: [userId], references: [id])
@@ -237,7 +237,7 @@ model Submission {
   link               String?          @db.VarChar(500)
   tweet              String?          @db.VarChar(500)
   status             SubmissionStatus @default(Pending)
-  eligibilityAnswers Json?
+  eligibilityAnswers Json?            @default("[]")
   userId             String
   listingId          String
   isWinner           Boolean          @default(false)

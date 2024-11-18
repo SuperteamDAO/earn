@@ -182,7 +182,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
     {
       value,
       onChange,
-      placeholder,
+      placeholder = 'Select...',
       defaultOptions: arrayDefaultOptions = [],
       options: arrayOptions,
       delay,
@@ -528,7 +528,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   : placeholder
               }
               className={cn(
-                'flex-1 bg-transparent outline-none placeholder:text-muted-foreground',
+                'flex-1 bg-transparent outline-none placeholder:text-slate-400',
                 {
                   'w-full': hidePlaceholderWhenSelected,
                   'px-3 py-2': selected.length === 0,
@@ -544,7 +544,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 onChange?.(selected.filter((s) => s.fixed));
               }}
               className={cn(
-                'absolute right-0 p-0',
+                'absolute right-0 top-2/4 -translate-y-2/4 p-0 text-slate-400',
                 (hideClearAllButton ||
                   disabled ||
                   selected.length < 1 ||
@@ -630,4 +630,5 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 );
 
 MultiSelect.displayName = 'MultiSelect';
-export default MultiSelect;
+
+export { MultiSelect };
