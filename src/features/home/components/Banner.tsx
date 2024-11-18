@@ -1,11 +1,11 @@
-import { Avatar, AvatarGroup, Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import Image from 'next/image';
+import { getImageProps } from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { AuthWrapper } from '@/features/auth';
 import DesktopBanner from '@/public/assets/home/display/banner.webp';
+import MobileBanner from '@/public/assets/home/display/banner-mobile.webp';
 
 import { userCountQuery } from '../queries/user-count';
 
@@ -26,112 +26,77 @@ const avatars = [
 
 export function HomeBanner() {
   const posthog = usePostHog();
+  const common = {
+    alt: 'Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight',
+    layout: 'fill',
+    objectFit: 'cover',
+    quality: 95,
+    priority: true,
+    loading: 'eager' as const,
+    style: {
+      width: '100%',
+      maxWidth: '100%',
+      borderRadius: '0.375rem',
+      pointerEvents: 'none' as const,
+    },
+  };
+
+  const {
+    props: { srcSet: desktop },
+  } = getImageProps({ ...common, src: DesktopBanner, sizes: '70vw' });
+
+  const {
+    props: { srcSet: mobile, ...rest },
+  } = getImageProps({ ...common, src: MobileBanner, sizes: '100vw' });
 
   const { data } = useQuery(userCountQuery);
 
   return (
-    <Box
-      pos="relative"
-      w={'100%'}
-      h={{ base: '260', md: '280' }}
-      maxH={'500px'}
-      mx={'auto'}
-      my={3}
-      p={{ base: '5', md: '10' }}
-      rounded={'md'}
-    >
-      <Image
-        src={DesktopBanner}
-        alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
-        layout="fill"
-        objectFit="cover"
-        quality={95}
-        priority
-        loading="eager"
-        sizes="70vw"
-        style={{
-          width: '100%',
-          maxWidth: '100%',
-          borderRadius: 'var(--chakra-radii-md)',
-          pointerEvents: 'none',
-        }}
-      />
-      <Text
-        pos="relative"
-        zIndex={1}
-        color="white"
-        fontSize={{ base: '2xl', md: '28px' }}
-        fontWeight={'700'}
-        lineHeight={'120%'}
-      >
+    <div className="relative mx-auto my-3 h-[260px] max-h-[500px] w-full rounded-md p-5 md:h-[280px] md:p-10">
+      <div className="absolute inset-0 overflow-hidden">
+        <picture>
+          <source media="(min-width: 1000px)" srcSet={desktop} />
+          <source media="(min-width: 500px)" srcSet={mobile} />
+          <img {...rest} className="h-full w-full" alt={common.alt} />
+        </picture>
+      </div>
+      <p className="relative z-10 text-2xl font-bold leading-[120%] text-white md:text-[28px]">
         Find Your Next High
         <br /> Paying Crypto Gig
-      </Text>
-      <Text
-        pos="relative"
-        zIndex={1}
-        maxW={{ base: '100%', md: '30rem' }}
-        mt={{ base: '2.5', md: '4' }}
-        color={'white'}
-        fontSize={{ base: '13px', md: 'lg' }}
-        lineHeight={'130%'}
-      >
+      </p>
+      <p className="relative z-10 mt-2.5 max-w-full text-sm leading-[130%] text-white md:mt-4 md:max-w-[30rem] md:text-lg">
         Participate in bounties or apply to freelance gigs of world-class crypto
         companies, all with a single profile.
-      </Text>
-      <Flex
-        zIndex={1}
-        align={'center'}
-        direction={{ base: 'column', md: 'row' }}
-        gap={{ base: '3', md: '4' }}
-        mt={'4'}
-      >
-        <AuthWrapper
-          style={{
-            w: { base: '100%', md: 'auto' },
-            cursor: 'pointer',
-          }}
-        >
-          <Button
-            className="ph-no-capture"
-            w={{ base: '100%', md: 'auto' }}
-            px={'2.25rem'}
-            py={'0.75rem'}
-            color={'#3223A0'}
-            fontSize={'0.875rem'}
-            bg={'white'}
+      </p>
+      <div className="relative z-10 mt-4 flex flex-col items-center gap-3 md:flex-row md:gap-4">
+        <AuthWrapper className="w-full md:w-auto">
+          <button
+            className="ph-no-capture w-full rounded-md bg-white px-9 py-3 text-sm text-[#3223A0] md:w-auto"
             onClick={() => {
               posthog.capture('signup_banner');
             }}
           >
             Sign Up
-          </Button>
+          </button>
         </AuthWrapper>
-        <Flex align="center">
-          <AvatarGroup max={3} size={{ base: 'xs', md: 'sm' }}>
+        <div className="flex items-center">
+          <div className="flex -space-x-2">
             {avatars.map((avatar, index) => (
-              <Avatar
+              <img
                 key={index}
-                pos="relative"
-                borderWidth={'1px'}
-                borderColor={'#49139c'}
-                name={avatar.name}
+                className="relative h-6 w-6 rounded-full border border-[#49139c] md:h-8 md:w-8"
                 src={avatar.src}
+                alt={avatar.name}
               />
             ))}
-          </AvatarGroup>
+          </div>
           {data?.totalUsers !== null && (
-            <Text
-              pos="relative"
-              ml={'0.6875rem'}
-              color="brand.slate.200"
-              fontSize={{ base: '0.8rem', md: '0.875rem' }}
-            >
+            <p className="relative ml-[0.6875rem] text-[0.8rem] text-slate-200 md:text-[0.875rem]">
               Join {data?.totalUsers?.toLocaleString('en-us')}+ others
-            </Text>
+            </p>
           )}
-        </Flex>
-      </Flex>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 }

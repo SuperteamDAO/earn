@@ -109,7 +109,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
             </Text>
           )}
           {!user && (
-            <AuthWrapper style={{ w: isLessThan768px ? '100%' : 'auto' }}>
+            <AuthWrapper className="w-full sm:w-auto">
               <Button
                 className="ph-no-capture"
                 w={isLessThan768px ? '100%' : 'auto'}

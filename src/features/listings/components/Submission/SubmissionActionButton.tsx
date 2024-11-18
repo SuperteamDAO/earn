@@ -227,7 +227,7 @@ export const SubmissionActionButton = ({
           completeProfileModalBodyText={
             'Please complete your profile before submitting to a listing.'
           }
-          style={{ w: 'full', cursor: 'pointer' }}
+          className="w-full"
         >
           <Tooltip
             isOpen={isLabelOpen}

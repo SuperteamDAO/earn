@@ -1,14 +1,15 @@
-import { Flex, type FlexProps, useDisclosure } from '@chakra-ui/react';
+import { useDisclosure } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import { type ReactNode, useEffect, useState } from 'react';
 
 import { Login } from '@/features/auth';
 import { CompleteProfileModal } from '@/features/listings';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 interface AuthWrapperProps {
   children: ReactNode;
-  style?: FlexProps;
+  className?: string;
   onClick?: () => void;
   showCompleteProfileModal?: boolean;
   completeProfileModalBodyText?: string;
@@ -16,7 +17,7 @@ interface AuthWrapperProps {
 
 export function AuthWrapper({
   children,
-  style,
+  className,
   onClick,
   showCompleteProfileModal = false,
   completeProfileModalBodyText = 'Please complete your profile before proceeding.',
@@ -79,18 +80,20 @@ export function AuthWrapper({
           isSponsor={isSponsor}
         />
       )}
-      <Flex onClick={handleLoginTrigger} {...style}>
+      <div
+        onClick={handleLoginTrigger}
+        className={cn('flex cursor-pointer', className)}
+      >
         <div
+          className="h-full w-full"
           style={{
             pointerEvents:
               isLoading || shouldAllowInteraction ? 'auto' : 'none',
-            width: '100%',
-            height: '100%',
           }}
         >
           {children}
         </div>
-      </Flex>
+      </div>
     </>
   );
 }

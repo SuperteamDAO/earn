@@ -7,6 +7,7 @@ import { LuCheck } from 'react-icons/lu';
 import { AuthWrapper } from '@/features/auth';
 import { userStatsQuery } from '@/features/home';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 const StepIcon = ({ step }: { step: number }) => {
   if (step === 1) {
@@ -135,7 +136,7 @@ export const HowItWorks = () => {
 
   return (
     <AuthWrapper
-      style={{ pointerEvents: isLoading ? 'none' : 'auto' }}
+      className={cn(isLoading ? 'pointer-events-none' : 'pointer-events-auto')}
       onClick={() => {
         posthog.capture('create account_getting started');
       }}

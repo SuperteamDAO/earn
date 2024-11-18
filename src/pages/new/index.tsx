@@ -148,7 +148,7 @@ export default function NewProfilePage({
                 </Text>
               </Flex>
 
-              <AuthWrapper style={{ width: '100%' }}>
+              <AuthWrapper className="w-full">
                 <Flex
                   direction={'column'}
                   gap={4}
@@ -237,7 +237,7 @@ export default function NewProfilePage({
                 next contributor
               </Text>
             </Flex>
-            <AuthWrapper style={{ width: '100%' }}>
+            <AuthWrapper className="w-full">
               <Flex
                 direction={'column'}
                 gap={4}

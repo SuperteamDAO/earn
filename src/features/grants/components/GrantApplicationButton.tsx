@@ -133,7 +133,7 @@ export const GrantApplicationButton = ({
             completeProfileModalBodyText={
               'Please complete your profile before applying for a grant.'
             }
-            style={{ w: 'full', direction: 'column' }}
+            className="w-full flex-col"
           >
             <Button
               gap={4}
