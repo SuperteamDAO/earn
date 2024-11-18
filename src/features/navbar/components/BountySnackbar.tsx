@@ -1,10 +1,10 @@
-import { EditIcon } from '@chakra-ui/icons';
-import { HStack, Text } from '@chakra-ui/react';
 import { type status } from '@prisma/client';
 import { atom, useAtom } from 'jotai';
+import { Pencil } from 'lucide-react';
 import { useRouter } from 'next/router';
 
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 
 type BountySnackbarType = {
@@ -53,11 +53,11 @@ export const BountySnackbar = () => {
     !isPublished && isPreview && user.user?.currentSponsorId === sponsorId;
 
   const getBackgroundColor = () => {
-    if (!isPublished && isPreview) return 'brand.slate.500';
-    if (!isPublished) return '#DC4830';
-    if (isExpired) return '#6A6A6A';
-    if (isCaution) return '#DC4830';
-    return '#B869D3';
+    if (!isPublished && isPreview) return 'bg-slate-500';
+    if (!isPublished) return 'bg-[#DC4830]';
+    if (isExpired) return 'bg-[#6A6A6A]';
+    if (isCaution) return 'bg-[#DC4830]';
+    return 'bg-[#B869D3]';
   };
 
   const getSnackbarMessage = (): string | null => {
@@ -104,32 +104,26 @@ export const BountySnackbar = () => {
   };
 
   const message = getSnackbarMessage();
-  const bgColor = getBackgroundColor();
+  const bgColorClass = getBackgroundColor();
 
   if (showSnackbar && bountySnackbar && message) {
     return (
-      <HStack
-        justify="center"
-        gap={1}
-        w="full"
-        color="white"
-        cursor={isPreviewSponsor ? 'pointer' : 'default'}
-        bgColor={bgColor}
+      <div
+        className={cn(
+          'flex w-full items-center justify-center gap-1 text-white',
+          bgColorClass,
+          isPreviewSponsor ? 'cursor-pointer' : 'cursor-default',
+        )}
         onClick={() => {
           if (!isPreviewSponsor) return;
           router.push(`/dashboard/listings/${slug}/edit`);
         }}
       >
-        {isPreviewSponsor && <EditIcon />}
-        <Text
-          p={3}
-          fontSize={{ base: 'xs', md: 'sm' }}
-          fontWeight={500}
-          textAlign="center"
-        >
+        {isPreviewSponsor && <Pencil className="h-4 w-4" />}
+        <p className="p-3 text-center text-xs font-medium md:text-sm">
           {message}
-        </Text>
-      </HStack>
+        </p>
+      </div>
     );
   }
   return null;

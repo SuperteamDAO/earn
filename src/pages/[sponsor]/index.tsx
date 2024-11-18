@@ -60,7 +60,7 @@ const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
 
   return (
     <Default
-      bg="white"
+      className="bg-white"
       hideFooter
       meta={
         <Head>
@@ -148,8 +148,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
               spacing={2}
             >
               <LinkTextParser
-                color={'brand.slate.600'}
-                mt={2}
+                className="mt-2 text-slate-600"
                 text={description}
               />
             </SkeletonText>

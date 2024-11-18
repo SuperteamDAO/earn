@@ -1,6 +1,7 @@
-import { HStack, Text } from '@chakra-ui/react';
 import { atom, useAtom } from 'jotai';
 import { useRouter } from 'next/router';
+
+import { cn } from '@/utils';
 
 type GrantSnackbarType = {
   isPublished: boolean;
@@ -22,8 +23,7 @@ export const GrantSnackbar = () => {
   const { isPublished } = grantSnackbar;
 
   const getBackgroundColor = () => {
-    if (!isPublished) return '#DC4830';
-    return '#B869D3';
+    return isPublished ? 'bg-[#B869D3]' : 'bg-[#DC4830]';
   };
 
   const getSnackbarMessage = (): string | null => {
@@ -34,20 +34,20 @@ export const GrantSnackbar = () => {
   };
 
   const message = getSnackbarMessage();
-  const bgColor = getBackgroundColor();
+  const bgColorClass = getBackgroundColor();
 
   if (showSnackbar && grantSnackbar && message) {
     return (
-      <HStack justify="center" gap={1} w="full" color="white" bgColor={bgColor}>
-        <Text
-          p={3}
-          fontSize={{ base: 'xs', md: 'sm' }}
-          fontWeight={500}
-          textAlign="center"
-        >
+      <div
+        className={cn(
+          'flex w-full items-center justify-center gap-1 text-white',
+          bgColorClass,
+        )}
+      >
+        <p className="p-3 text-center text-xs font-medium md:text-sm">
           {message}
-        </Text>
-      </HStack>
+        </p>
+      </div>
     );
   }
   return null;

@@ -1,10 +1,11 @@
-import { Box, Button, Flex, Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { LuHome, LuNewspaper, LuSearch, LuUser } from 'react-icons/lu';
 
+import { Button } from '@/components/ui/button';
 import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 interface Props {
   onSearchOpen: () => void;
@@ -15,90 +16,78 @@ export function BottomBar({ onSearchOpen }: Props) {
   const router = useRouter();
 
   function setColor(href: string, routerPath: string) {
-    if (routerPath === href) return 'brand.purple';
-    else return 'brand.slate.400';
+    return routerPath === href ? 'text-brand-purple' : 'text-slate-400';
   }
 
   const iconStyle = { width: '1.5rem', height: '1.5rem' };
 
+  const linkStyle = {
+    WebkitTapHighlightColor: 'transparent',
+  } as React.CSSProperties;
+
   return (
-    <Flex
-      justify="space-between"
-      display={{ base: 'flex', lg: 'none' }}
-      w="full"
-      px={4}
-      py={2}
-      bg="white"
-      borderTopWidth={1}
-      borderTopColor="brand.slate.200"
+    <div
+      className={cn(
+        'flex w-full justify-between border-t border-slate-200 bg-white px-4 py-2',
+        'lg:hidden',
+      )}
     >
-      <Link as={NextLink} href="/">
+      <NextLink href="/" style={linkStyle}>
         <Button
-          sx={{
-            WebkitTapHighlightColor: 'transparent',
-          }}
-          color={setColor('/', router.asPath)}
-          _hover={{ bg: 'none' }}
-          _active={{ bg: 'none' }}
           variant="ghost"
+          className={cn(
+            setColor('/', router.asPath),
+            'hover:bg-transparent active:bg-transparent',
+          )}
         >
           <LuHome style={iconStyle} />
         </Button>
-      </Link>
+      </NextLink>
+
       <Button
-        sx={{
-          WebkitTapHighlightColor: 'transparent',
-        }}
-        color={setColor('/search', router.pathname)}
-        _hover={{ bg: 'none' }}
-        _active={{ bg: 'none' }}
-        onClick={() => onSearchOpen()}
         variant="ghost"
+        onClick={onSearchOpen}
+        style={linkStyle}
+        className={cn(
+          setColor('/search', router.pathname),
+          'hover:bg-transparent active:bg-transparent',
+        )}
       >
         <LuSearch style={iconStyle} />
       </Button>
-      <Link as={NextLink} href="/feed/">
+
+      <NextLink href="/feed/" style={linkStyle}>
         <Button
-          sx={{
-            WebkitTapHighlightColor: 'transparent',
-          }}
-          pos="relative"
-          color={setColor('/feed/', router.asPath)}
-          _hover={{ bg: 'none' }}
-          _active={{ bg: 'none' }}
           variant="ghost"
+          className={cn(
+            setColor('/feed/', router.asPath),
+            'relative hover:bg-transparent active:bg-transparent',
+          )}
         >
           <LuNewspaper style={iconStyle} />
-          <Box
-            pos="absolute"
-            top={1}
-            right={3}
-            w={2.5}
-            h={2.5}
-            bg="red"
-            rounded="full"
-          />
+          <div className="absolute right-3 top-1 h-2.5 w-2.5 rounded-full bg-red-500" />
         </Button>
-      </Link>
+      </NextLink>
+
       <AuthWrapper>
-        <Link
-          as={NextLink}
-          pointerEvents={user ? 'auto' : 'none'}
+        <NextLink
           href={`/t/${user?.username}`}
+          style={{
+            ...linkStyle,
+            pointerEvents: user ? 'auto' : 'none',
+          }}
         >
           <Button
-            sx={{
-              WebkitTapHighlightColor: 'transparent',
-            }}
-            color={setColor(`/t/${user?.username}/`, router.asPath)}
-            _hover={{ bg: 'none' }}
-            _active={{ bg: 'none' }}
             variant="ghost"
+            className={cn(
+              setColor(`/t/${user?.username}/`, router.asPath),
+              'hover:bg-transparent active:bg-transparent',
+            )}
           >
             <LuUser style={iconStyle} />
           </Button>
-        </Link>
+        </NextLink>
       </AuthWrapper>
-    </Flex>
+    </div>
   );
 }

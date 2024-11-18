@@ -1,34 +1,33 @@
-import { Link, Text, type TextProps } from '@chakra-ui/react';
 import { Fragment } from 'react';
 
 const URL_REGEX =
   /(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 
-type Props = TextProps & {
+type Props = React.HTMLAttributes<HTMLParagraphElement> & {
   text: string;
 };
 
-export function LinkTextParser({ text, ...props }: Props) {
+export function LinkTextParser({ text, className, ...props }: Props) {
   const parts = text.split(URL_REGEX);
 
   return (
-    <Text {...props}>
+    <p className={className} {...props}>
       {parts.map((part, index) => {
         if (part.match(URL_REGEX)) {
           return (
-            <Link
+            <a
               key={index}
-              color="brand.purple"
-              _hover={{ textDecoration: 'underline' }}
+              className="text-brand-purple hover:underline"
               href={part}
-              isExternal
+              target="_blank"
+              rel="noopener noreferrer"
             >
               {part}
-            </Link>
+            </a>
           );
         }
         return <Fragment key={index}>{part}</Fragment>;
       })}
-    </Text>
+    </p>
   );
 }

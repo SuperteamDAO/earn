@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -27,7 +26,7 @@ export default function BountiesPage() {
         description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
         canonical="https://earn.superteam.fun/bounties/"
       />
-      <Box w={'100%'}>
+      <div className="w-full">
         <ListingTabs
           bounties={listings}
           isListingsLoading={isLoading}
@@ -37,7 +36,7 @@ export default function BountiesPage() {
           showViewAll
           viewAllLink="/bounties/all"
         />
-      </Box>
+      </div>
     </Home>
   );
 }

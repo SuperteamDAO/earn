@@ -1,4 +1,3 @@
-import { Box, Container, Flex, HStack } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -8,6 +7,7 @@ import { type Superteams } from '@/constants/Superteam';
 import { HomeBanner, NavTabs, UserStatsBanner } from '@/features/home';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { cn } from '@/utils';
 
 interface HomeProps {
   children: ReactNode;
@@ -65,22 +65,16 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
       {type === 'category' && currentCategory && (
         <CategoryBanner category={currentCategory} />
       )}
-      <Box w="100%" mx="auto" px={{ base: '2', lg: 6 }}>
-        <Container w="100%" maxW={'7xl'} mx="auto" p={0}>
-          <HStack align="start" justify="space-between">
-            <Flex
-              w="full"
-              py={4}
-              borderRight={{
-                base: 'none',
-                lg: type === 'niche' ? 'none' : '1px solid',
-              }}
-              borderRightColor={{
-                base: 'none',
-                lg: 'blackAlpha.200',
-              }}
+      <div className="mx-auto w-full px-2 lg:px-6">
+        <div className="mx-auto w-full max-w-7xl p-0">
+          <div className="flex items-start justify-between">
+            <div
+              className={cn(
+                'w-full py-4',
+                type !== 'niche' && 'lg:border-r lg:border-slate-100',
+              )}
             >
-              <Box w="full" pt={1} pr={{ base: 0, lg: 6 }}>
+              <div className="w-full pt-1 lg:pr-6">
                 {type === 'landing' && (
                   <>
                     <NavTabs />
@@ -98,24 +92,19 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                   </>
                 )}
                 {type === 'category' && <NavTabs />}
-                {type === 'region' && <NavTabs mt={1} />}
+                {type === 'region' && <NavTabs className="mt-1" />}
                 {children}
-              </Box>
-            </Flex>
+              </div>
+            </div>
 
             {type !== 'niche' && (
-              <Flex
-                display={{
-                  base: 'none',
-                  lg: 'flex',
-                }}
-              >
+              <div className="hidden lg:flex">
                 <HomeSideBar type={type} />
-              </Flex>
+              </div>
             )}
-          </HStack>
-        </Container>
-      </Box>
+          </div>
+        </div>
+      </div>
     </Default>
   );
 }

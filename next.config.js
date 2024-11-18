@@ -74,7 +74,7 @@ const nextConfig = {
 
 const combinedConfig = withAxiom(withPWA(nextConfig));
 
-module.exports = withSentryConfig(combinedConfig, {
+const sentryConfig = withSentryConfig(combinedConfig, {
   org: 'superteam-7o',
   project: 'earn',
   silent: true,
@@ -84,3 +84,9 @@ module.exports = withSentryConfig(combinedConfig, {
   autoInstrumentServerFunctions: false,
   autoInstrumentMiddleware: false,
 });
+
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+module.exports = withBundleAnalyzer(sentryConfig);

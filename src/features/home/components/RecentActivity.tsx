@@ -1,7 +1,6 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { Box, Flex, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
+import { MdArrowForward } from 'react-icons/md';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { type FeedPostType, useGetFeed } from '@/features/feed';
@@ -61,105 +60,76 @@ const ActivityCard = ({
   const actionText = getActionText();
 
   return (
-    <Flex
-      as={NextLink}
+    <NextLink
       href={!!id ? `/feed/?type=${type}&id=${id}` : '/feed/?filter=new'}
+      className="flex"
     >
       <OgImageViewer
         h={12}
         w={20}
-        objectFit={'cover'}
+        objectFit="cover"
         externalUrl={link}
         imageUrl={ogImage}
       />
-      <Box ml={3}>
-        <Flex align={'center'}>
-          <Text
-            overflow={'hidden'}
-            maxW={32}
-            mr={1.5}
-            color={'brand.slate.800'}
-            fontSize={'0.9rem'}
-            fontWeight={600}
-            whiteSpace={'nowrap'}
-            textOverflow={'ellipsis'}
-          >
+      <div className="ml-3">
+        <div className="flex items-center">
+          <span className="mr-1.5 max-w-32 overflow-hidden text-ellipsis whitespace-nowrap text-[0.9rem] font-semibold text-slate-800">
             {firstName} {lastName}
-          </Text>
-          <Text
-            overflow={'hidden'}
-            maxW={'5.7rem'}
-            color={'brand.slate.400'}
-            fontSize={'sm'}
-            fontWeight={500}
-            whiteSpace={'nowrap'}
-            textOverflow={'ellipsis'}
-          >
+          </span>
+          <span className="max-w-[5.7rem] overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-slate-400">
             @{username}
-          </Text>
-          <Text mx={1} color="brand.slate.400" fontSize={'xs'}>
-            •
-          </Text>
-          <Text color={'brand.slate.400'} fontSize={'xs'}>
+          </span>
+          <span className="mx-1 text-xs text-slate-400">•</span>
+          <span className="text-xs text-slate-400">
             {timeAgoShort(createdAt)}
-          </Text>
-        </Flex>
-        <Text color={'brand.slate.600'} fontSize={'sm'} fontWeight={500}>
-          {actionText}
-        </Text>
-      </Box>
-    </Flex>
+          </span>
+        </div>
+        <p className="text-sm font-medium text-slate-600">{actionText}</p>
+      </div>
+    </NextLink>
   );
 };
 
 export const RecentActivity = () => {
   const posthog = usePostHog();
-
   const { data } = useGetFeed({ take: 5 });
-
   const activity = data?.pages[0] ?? [];
 
   return (
-    <Box>
-      <Flex align="center" justify={'space-between'}>
-        <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+    <div>
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-gray-400">
           RECENT ACTIVITY
-        </Text>
-        <Text
-          className="ph-no-capture"
-          as={NextLink}
-          color="brand.purple"
-          fontSize="xs"
-          fontWeight={600}
+        </span>
+        <NextLink
           href="/feed"
+          className="ph-no-capture flex items-center text-xs font-semibold text-brand-purple"
           onClick={() => {
             posthog.capture('recent winners_view all_homepage');
           }}
         >
           View All
-          <ArrowForwardIcon ml={1} />
-        </Text>
-      </Flex>
-      <Flex direction={'column'} rowGap={'1rem'} w={'full'} mt={4}>
-        {activity.map((act, i) => {
-          return (
-            <ActivityCard
-              key={i}
-              id={act.id}
-              link={act.link}
-              firstName={act.firstName}
-              lastName={act.lastName}
-              username={act.username}
-              createdAt={act.createdAt}
-              listingType={act.listingType}
-              isWinner={act.isWinner}
-              isWinnersAnnounced={act.isWinnersAnnounced}
-              type={act.type}
-              ogImage={act.ogImage}
-            />
-          );
-        })}
-      </Flex>
-    </Box>
+          <MdArrowForward className="ml-1" />
+        </NextLink>
+      </div>
+      <div className="mt-4 flex w-full flex-col gap-4">
+        {activity.map((act, i) => (
+          <ActivityCard
+            key={i}
+            id={act.id}
+            link={act.link}
+            firstName={act.firstName}
+            lastName={act.lastName}
+            username={act.username}
+            createdAt={act.createdAt}
+            listingType={act.listingType}
+            isWinner={act.isWinner}
+            isWinnersAnnounced={act.isWinnersAnnounced}
+            type={act.type}
+            ogImage={act.ogImage}
+          />
+        ))}
+      </div>
+    </div>
   );
 };

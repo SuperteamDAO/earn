@@ -16,7 +16,6 @@ import {
   TabPanels,
   Tabs,
   Text,
-  useDisclosure,
 } from '@chakra-ui/react';
 import { GrantApplicationStatus, type SubmissionLabels } from '@prisma/client';
 import {
@@ -42,6 +41,7 @@ import {
   RejectAllGrantApplicationModal,
   sponsorGrantQuery,
 } from '@/features/sponsor-dashboard';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 

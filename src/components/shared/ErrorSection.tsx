@@ -1,4 +1,3 @@
-import { Flex, Text } from '@chakra-ui/react';
 import { AiOutlineWarning } from 'react-icons/ai';
 
 export function ErrorSection({
@@ -9,16 +8,16 @@ export function ErrorSection({
   message?: string;
 }) {
   return (
-    <Flex align={'center'} justify="center" w="full" minH={'92vh'}>
-      <Flex align={'center'} justify="center" direction={'column'}>
-        <AiOutlineWarning fontSize={96} color="brand.slate.500" />
-        <Text mt={2} color="brand.slate.500" fontSize="lg" fontWeight={700}>
+    <div className="flex min-h-[92vh] w-full items-center justify-center">
+      <div className="flex flex-col items-center justify-center">
+        <AiOutlineWarning size={96} className="text-slate-500" />
+        <span className="mt-2 text-lg font-bold text-slate-500">
           {title || 'Error Occurred!'}
-        </Text>
-        <Text mt={2} color="brand.slate.500">
+        </span>
+        <span className="mt-2 text-slate-500">
           {message || 'Something went wrong! Please try again!'}
-        </Text>
-      </Flex>
-    </Flex>
+        </span>
+      </div>
+    </div>
   );
 }

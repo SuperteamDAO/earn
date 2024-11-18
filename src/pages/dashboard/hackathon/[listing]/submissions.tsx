@@ -13,7 +13,6 @@ import {
   Tabs,
   Text,
   Tooltip,
-  useDisclosure,
 } from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
@@ -35,6 +34,7 @@ import {
   SubmissionPanel,
   submissionsQuery,
 } from '@/features/sponsor-dashboard';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';

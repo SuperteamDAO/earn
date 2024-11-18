@@ -1,4 +1,7 @@
-import { Alert, AlertIcon, Button } from '@chakra-ui/react';
+import { AlertTriangle } from 'lucide-react';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 
 export function SponsorButton({
   showMessage,
@@ -12,23 +15,23 @@ export function SponsorButton({
   return (
     <>
       {!!showMessage && (
-        <Alert mb={4} status="warning">
-          <AlertIcon />
-          Please log in to continue!
+        <Alert variant="default" className="mb-4">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>Please log in to continue!</AlertDescription>
         </Alert>
       )}
       <Button
-        w={'full'}
-        h={12}
-        color={'white'}
-        bg={'brand.slate.900'}
-        _hover={{ bg: 'brand.slate.700' }}
-        isLoading={!!isLoading}
-        loadingText="Redirecting..."
+        className="h-12 w-full rounded bg-slate-900 text-white hover:bg-slate-700"
         onClick={() => checkSponsor()}
-        rounded="4px"
+        disabled={isLoading}
       >
-        Continue as a sponsor {'->'}
+        {isLoading ? (
+          'Redirecting...'
+        ) : (
+          <>
+            Continue as a sponsor <span className="ml-1">-&gt;</span>
+          </>
+        )}
       </Button>
     </>
   );

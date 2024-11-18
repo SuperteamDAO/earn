@@ -1,35 +1,30 @@
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuGroup,
-  MenuItem,
-  MenuList,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { ChevronDown } from 'lucide-react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
 
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { EarnAvatar, EmailSettingsModal } from '@/features/talent';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
+import { cn } from '@/utils';
 
-export function UserMenu({}) {
+export function UserMenu() {
   const router = useRouter();
   const posthog = usePostHog();
-
   const { user } = useUser();
   const logout = useLogout();
-
   const { data: session } = useSession();
-
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   useEffect(() => {
@@ -61,171 +56,136 @@ export function UserMenu({}) {
       <EmailSettingsModal isOpen={isOpen} onClose={handleClose} />
       {user && !user.currentSponsorId && !user.isTalentFilled && (
         <Button
-          className="ph-no-capture"
-          display={{ base: 'none', md: 'flex' }}
-          fontSize="xs"
+          variant="ghost"
+          size="sm"
           onClick={() => {
             posthog.capture('complete profile_nav bar');
             router.push('/new');
           }}
-          size="sm"
-          variant={'ghost'}
+          className="ph-no-capture hidden text-xs md:flex"
         >
           Complete your Profile
         </Button>
       )}
-      <Menu>
-        <MenuButton
-          className="ph-no-capture"
-          as={Button}
-          px={{ base: 0.5, md: 2 }}
-          bg={'brand.slate.50'}
-          borderWidth={'1px'}
-          borderColor={'white'}
-          _hover={{ bg: 'brand.slate.100' }}
-          _active={{
-            bg: 'brand.slate.200',
-            borderColor: 'brand.slate.300',
-          }}
-          cursor={'pointer'}
-          id="user menu"
-          onClick={() => {
-            posthog.capture('clicked_user menu');
-          }}
-          rightIcon={
-            <ChevronDownIcon
-              color="brand.slate.400"
-              boxSize={{ base: 4, md: 5 }}
-            />
-          }
-        >
-          <Flex align="center">
-            <EarnAvatar id={user?.id} avatar={user?.photo} />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            className={cn(
+              'ph-no-capture border border-white bg-slate-50 px-0.5 md:px-2',
+              'hover:bg-slate-100 active:border-slate-300 active:bg-slate-200',
+            )}
+            id="user menu"
+            onClick={() => {
+              posthog.capture('clicked_user menu');
+            }}
+          >
+            <div className="flex items-center">
+              <EarnAvatar id={user?.id} avatar={user?.photo} />
+              <div className="ml-2 hidden items-center md:flex">
+                <p className="text-sm font-medium text-slate-600">
+                  {user?.firstName ?? 'New User'}
+                </p>
+              </div>
+            </div>
+            <ChevronDown className="ml-2 h-4 w-4 text-slate-400 md:h-5 md:w-5" />
+          </Button>
+        </DropdownMenuTrigger>
 
-            <Flex
-              align={'center'}
-              display={{ base: 'none', md: 'flex' }}
-              ml={2}
-            >
-              <Text color="brand.slate.600" fontSize="sm" fontWeight={500}>
-                {user?.firstName ?? 'New User'}
-              </Text>
-            </Flex>
-          </Flex>
-        </MenuButton>
-        <MenuList className="ph-no-capture">
+        <DropdownMenuContent className="ph-no-capture">
           {user?.isTalentFilled && (
             <>
-              <MenuItem
-                className="ph-no-capture"
-                as={NextLink}
-                color="brand.slate.500"
-                fontSize="sm"
-                fontWeight={600}
-                href={`/t/${user?.username}`}
-                onClick={() => {
-                  posthog.capture('profile_user menu');
-                }}
-              >
-                Profile
-              </MenuItem>
-              <MenuItem
-                className="ph-no-capture"
-                as={NextLink}
-                color="brand.slate.500"
-                fontSize="sm"
-                fontWeight={600}
-                href={`/t/${user?.username}/edit`}
-                onClick={() => {
-                  posthog.capture('edit profile_user menu');
-                }}
-              >
-                Edit Profile
-              </MenuItem>
+              <DropdownMenuItem asChild>
+                <NextLink
+                  href={`/t/${user?.username}`}
+                  onClick={() => {
+                    posthog.capture('profile_user menu');
+                  }}
+                  className="text-sm font-semibold text-slate-500"
+                >
+                  Profile
+                </NextLink>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <NextLink
+                  href={`/t/${user?.username}/edit`}
+                  onClick={() => {
+                    posthog.capture('edit profile_user menu');
+                  }}
+                  className="text-sm font-semibold text-slate-500"
+                >
+                  Edit Profile
+                </NextLink>
+              </DropdownMenuItem>
             </>
           )}
+
           {!!user?.currentSponsorId && (
-            <>
-              <MenuItem
-                className="ph-no-capture"
-                as={NextLink}
-                display={{ base: 'none', sm: 'block' }}
-                color="brand.slate.500"
-                fontSize="sm"
-                fontWeight={600}
-                href={'/dashboard/listings'}
+            <DropdownMenuItem asChild>
+              <NextLink
+                href="/dashboard/listings"
                 onClick={() => {
                   posthog.capture('sponsor dashboard_user menu');
                 }}
+                className="hidden text-sm font-semibold text-slate-500 sm:block"
               >
                 Sponsor Dashboard
-              </MenuItem>
-            </>
+              </NextLink>
+            </DropdownMenuItem>
           )}
-          <MenuDivider />
+
+          <DropdownMenuSeparator />
+
           {session?.user?.role === 'GOD' && (
-            <Box display={{ base: 'none', sm: 'block' }}>
-              <MenuGroup
-                mb={0}
-                ml={3}
-                color="brand.slate.400"
-                fontSize="xs"
-                fontWeight={500}
-                title="God Mode"
-              >
-                <MenuItem
-                  as={NextLink}
-                  color="brand.slate.500"
-                  fontSize="sm"
-                  fontWeight={600}
-                  href={'/new/sponsor'}
+            <div className="hidden sm:block">
+              <DropdownMenuLabel className="ml-3 text-xs font-medium text-slate-400">
+                God Mode
+              </DropdownMenuLabel>
+              <DropdownMenuItem asChild>
+                <NextLink
+                  href="/new/sponsor"
+                  className="text-sm font-semibold text-slate-500"
                 >
                   Create New Sponsor
-                </MenuItem>
-              </MenuGroup>
-              <MenuDivider />
-            </Box>
+                </NextLink>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </div>
           )}
+
           {(user?.isTalentFilled || !!user?.currentSponsorId) && (
-            <MenuItem
-              className="ph-no-capture"
-              color="brand.slate.500"
-              fontSize="sm"
-              fontWeight={600}
+            <DropdownMenuItem
               onClick={() => {
                 onOpen();
                 posthog.capture('email preferences_user menu');
               }}
+              className="text-sm font-semibold text-slate-500"
             >
               Email Preferences
-            </MenuItem>
+            </DropdownMenuItem>
           )}
-          <MenuItem
-            className="ph-no-capture"
-            color="brand.slate.500"
-            fontSize="sm"
-            fontWeight={600}
+
+          <DropdownMenuItem
             onClick={() => {
               window.open('mailto:support@superteamearn.com', '_blank');
               posthog.capture('get help_user menu');
             }}
+            className="text-sm font-semibold text-slate-500"
           >
             Get Help
-          </MenuItem>
-          <MenuItem
-            className="ph-no-capture"
-            color="red.500"
-            fontSize="sm"
-            fontWeight={600}
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
             onClick={() => {
               posthog.capture('logout_user menu');
               logout();
             }}
+            className="text-sm font-semibold text-red-500"
           >
             Logout
-          </MenuItem>
-        </MenuList>
-      </Menu>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 }

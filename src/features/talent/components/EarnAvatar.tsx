@@ -1,12 +1,24 @@
-import { Box, Image } from '@chakra-ui/react';
 import Avatar from 'boring-avatars';
 import React, { useState } from 'react';
+
+import { cn } from '@/utils';
+
+const sizeMap = {
+  '24px': 'h-6 w-6',
+  '28px': 'h-7 w-7',
+  '32px': 'h-8 w-8',
+  '36px': 'h-9 w-9',
+  '40px': 'h-10 w-10',
+  '44px': 'h-11 w-11',
+  '52px': 'h-[52px] w-[52px]',
+  '64px': 'h-16 w-16',
+} as const;
 
 export const EarnAvatar = ({
   id,
   avatar,
   size = '32px',
-  borderRadius = 'full',
+  borderRadius = 'rounded-full',
   onClick,
 }: {
   id: string | undefined;
@@ -22,16 +34,13 @@ export const EarnAvatar = ({
   };
 
   return (
-    <Box h="min-content" onClick={onClick}>
+    <div className="h-min" onClick={onClick}>
       {!hasError && avatar ? (
-        <Image
-          flexGrow={1}
-          boxSize={size}
-          borderRadius={borderRadius}
-          objectFit={'cover'}
-          alt={id}
-          onError={handleImageError}
+        <img
           src={avatar.replace('/upload/', '/upload/c_scale,f_auto/')}
+          alt={id || 'avatar'}
+          className={cn('flex-grow object-cover', sizeMap[size], borderRadius)}
+          onError={handleImageError}
         />
       ) : (
         <Avatar
@@ -50,6 +59,6 @@ export const EarnAvatar = ({
           ]}
         />
       )}
-    </Box>
+    </div>
   );
 };

@@ -10,7 +10,6 @@ import {
   Heading,
   Text,
   Textarea,
-  useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
@@ -41,6 +40,7 @@ import {
   SocialInput,
   useUsernameValidation,
 } from '@/features/talent';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { Default } from '@/layouts/Default';

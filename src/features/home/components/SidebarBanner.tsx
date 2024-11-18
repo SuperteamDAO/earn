@@ -1,24 +1,17 @@
-import { Button, Flex, HStack, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
+import { Button } from '@/components/ui/button';
 import { RadarLogo } from '@/svg/radar-logo';
 
 export const SidebarBanner = () => {
   return (
-    <Flex
-      direction={'column'}
-      gap={1}
-      w={'full'}
-      h={'max-content'}
-      px={6}
-      py={8}
-      bgImage={"url('/assets/hackathon/radar/sidebar-bg.webp')"}
-      bgSize="cover"
-      bgPosition="center"
-      bgRepeat="no-repeat"
-      rounded={'lg'}
+    <div
+      className="flex h-max w-full flex-col gap-1 rounded-lg bg-cover bg-center bg-no-repeat px-6 py-8"
+      style={{
+        backgroundImage: "url('/assets/hackathon/radar/sidebar-bg.webp')",
+      }}
     >
-      <HStack>
+      <div className="flex items-center">
         <RadarLogo
           styles={{
             width: '100%',
@@ -27,34 +20,22 @@ export const SidebarBanner = () => {
             marginBottom: '8px',
           }}
         />
-      </HStack>
-      <Text color={'white'} fontSize={'lg'} fontWeight={'600'} opacity={0.9}>
+      </div>
+      <p className="text-lg font-semibold text-white opacity-90">
         Build a project for the latest Solana global hackathon!
-      </Text>
-      <Text
-        mt={'0.5rem'}
-        color={'orange.100'}
-        fontSize={'1rem'}
-        lineHeight={'1.1875rem'}
-      >
+      </p>
+      <p className="mt-2 text-base leading-[1.1875rem] text-orange-100">
         Submit to any of the Radar Side Tracks on Earn, and stand to win from a
         pool of $250k+. Deadline for submissions is October 9, 2024 (UTC).
-      </Text>
-      <Button
-        as={NextLink}
-        mt={'1.5rem'}
-        py={'1.5rem'}
-        color={'black'}
-        fontSize="0.9rem"
-        fontWeight={600}
-        textAlign={'center'}
-        bg="#fff"
-        borderRadius={8}
-        _hover={{ bg: 'orange.100' }}
-        href="/hackathon/radar"
-      >
-        View Tracks
-      </Button>
-    </Flex>
+      </p>
+      <NextLink href="/hackathon/radar" className="mt-6">
+        <Button
+          className="w-full rounded-lg bg-white py-6 text-[0.9rem] font-semibold text-black hover:bg-orange-100"
+          variant="ghost"
+        >
+          View Tracks
+        </Button>
+      </NextLink>
+    </div>
   );
 };

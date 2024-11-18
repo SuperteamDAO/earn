@@ -1,4 +1,3 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 
@@ -10,24 +9,20 @@ import {
 } from '@/features/feed';
 import { Home } from '@/layouts/Home';
 
-const NavItem = ({
-  name,
-  icon: Icon,
-  href,
-}: {
+interface NavItemProps {
   name: string;
   icon: any;
   href: string;
-}) => {
+}
+
+const NavItem = ({ name, icon: Icon, href }: NavItemProps) => {
   return (
-    <Flex as={NextLink} align="center" href={href}>
-      <Flex align="center" justify="center" w={9}>
+    <NextLink href={href} className="flex items-center">
+      <div className="flex h-9 w-9 items-center justify-center">
         <Icon />
-      </Flex>
-      <Text mt={1} color="brand.slate.500" fontWeight={500}>
-        {name}
-      </Text>
-    </Flex>
+      </div>
+      <span className="mt-1 font-medium text-slate-500">{name}</span>
+    </NextLink>
   );
 };
 
@@ -42,29 +37,9 @@ export const FeedPageLayout = ({
 }: FeedPageProps) => {
   return (
     <Home type="feed">
-      <Box
-        mt={'-4'}
-        mr={{ base: '-10px', lg: '-25px' }}
-        ml={{ base: '-20px', lg: '0' }}
-        borderColor={'brand.slate.200'}
-        borderRightWidth={'1px'}
-      >
-        <Flex>
-          <Flex
-            pos="sticky"
-            top={14}
-            direction={'column'}
-            gap={3}
-            display={{
-              base: 'none',
-              lg: 'flex',
-            }}
-            w={48}
-            h={'100vh'}
-            pt={5}
-            pr={5}
-            borderRightWidth={'1px'}
-          >
+      <div className="-ml-5 -mr-[10px] -mt-4 border-r border-slate-200 lg:-mr-[25px] lg:ml-0">
+        <div className="flex">
+          <div className="sticky top-14 hidden h-screen w-48 flex-col gap-3 border-r pr-5 pt-5 lg:flex">
             <NavItem name="Homepage" icon={HomeIcon} href="/" />
             <NavItem
               name="Leaderboard"
@@ -75,12 +50,10 @@ export const FeedPageLayout = ({
             {!isHomePage && (
               <NavItem name="All Posts" icon={AllPostsIcon} href="/feed" />
             )}
-          </Flex>
-          <Flex direction={'column'} w="100%">
-            {children}
-          </Flex>
-        </Flex>
-      </Box>
+          </div>
+          <div className="flex w-full flex-col">{children}</div>
+        </div>
+      </div>
     </Home>
   );
 };

@@ -57,7 +57,7 @@ export function Banner({
               size="52px"
               id={sponsor?.name}
               avatar={sponsor?.logo}
-              borderRadius="6"
+              borderRadius="rounded-sm"
             />
             <Box>
               <Box alignItems={'center'} flexDir={'row'} display={'flex'}>

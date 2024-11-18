@@ -1,4 +1,3 @@
-import { Box, Flex } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
@@ -126,7 +125,7 @@ export default function HomePage({
   return (
     <Home type="landing" isAuth={isAuth}>
       <InstallPWAModal />
-      <Box w={'100%'}>
+      <div className="w-full">
         <ListingTabs
           bounties={combinedListings}
           forYou={combinedForYouListings}
@@ -145,19 +144,19 @@ export default function HomePage({
           showViewAll
         >
           {!grants?.length && (
-            <Flex align="center" justify="center" mt={8}>
+            <div className="mt-8 flex items-center justify-center">
               <EmptySection
                 title="No grants available!"
                 message="Subscribe to notifications to get notified about new grants."
               />
-            </Flex>
+            </div>
           )}
           {grants &&
             grants?.map((grant) => {
               return <GrantsCard grant={grant} key={grant.id} />;
             })}
         </ListingSection>
-      </Box>
+      </div>
     </Home>
   );
 }

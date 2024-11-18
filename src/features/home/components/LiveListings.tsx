@@ -1,4 +1,3 @@
-import { Box, Flex } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo } from 'react';
 
@@ -32,13 +31,13 @@ export const LiveListings = ({
     }),
   );
   return (
-    <Box>
+    <div>
       {children}
-      <Flex direction={'column'} w={'full'} mt={1}>
+      <div className="mt-1 flex w-full flex-col">
         {listings?.map((listing) => {
           return <ListingCardMobile bounty={listing} key={listing?.id} />;
         })}
-      </Flex>
-    </Box>
+      </div>
+    </div>
   );
 };
