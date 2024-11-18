@@ -119,7 +119,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
     <Box>
       <Flex align={'center'} justify={'space-between'} mb={4}>
         <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-          RECENT EARNERS
+          最近赚取者
         </Text>
         <Text
           className="ph-no-capture"
@@ -132,7 +132,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
             posthog.capture('view leaderboard_homepage');
           }}
         >
-          Leaderboard
+          排行榜
           <ArrowForwardIcon ml={1} />
         </Text>
       </Flex>
