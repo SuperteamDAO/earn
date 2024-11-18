@@ -100,7 +100,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     );
     const innerSchema = listingSchema._def.schema;
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
-      await createListingRefinements(data as any, ctx, true);
+      await createListingRefinements(data as any, ctx);
       await backendListingRefinements(data as any, ctx);
     });
 

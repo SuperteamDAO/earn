@@ -172,7 +172,7 @@ export const useListingForm = (
       const partialSchema = innerSchema
         .pick(fields)
         .superRefine((data, ctx) => {
-          createListingRefinements(data as any, ctx, isEditing);
+          createListingRefinements(data as any, ctx);
         });
 
       try {

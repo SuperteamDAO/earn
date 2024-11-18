@@ -117,7 +117,11 @@ interface Props {
 }
 
 // atom values wont be available here, will only exist in child of HydrateAtoms immeditealy
-function ListingBuilderProvider({ isEditing, isDuplicating, listing }: Props) {
+function ListingBuilderProvider({
+  isEditing = false,
+  isDuplicating,
+  listing,
+}: Props) {
   const { data: session, status } = useSession();
   const { user } = useUser();
   const isGod = session?.user.role === 'GOD';

@@ -1,5 +1,6 @@
 import { useAtomValue } from 'jotai';
 import Image from 'next/image';
+import { useEffect } from 'react';
 
 import {
   FormControl,
@@ -60,6 +61,9 @@ export function TitleAndType() {
 function Type() {
   const form = useListingForm();
   const isEditing = useAtomValue(isEditingAtom);
+  useEffect(() => {
+    console.log('isEditing type', isEditing);
+  }, [isEditing]);
   return (
     <FormField
       name="type"

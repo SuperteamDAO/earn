@@ -69,9 +69,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const innerSchema = listingSchema._def.schema;
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
-      await createListingRefinements(data as any, ctx, false);
+      await createListingRefinements(data as any, ctx);
       await backendListingRefinements(data as any, ctx);
     });
+    console.log('req.body', req.body);
     const validatedData = await superValidator.parseAsync(req.body);
 
     const {
@@ -239,6 +240,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     return res.status(200).json(result);
   } catch (error: any) {
+    console.log('error', error);
     logger.error(
       `User ${userId} unable to create a listing: ${safeStringify(error)}`,
     );

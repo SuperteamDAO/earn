@@ -217,27 +217,25 @@ export const createListingFormSchema = (
       hackathonId: z.string().optional().nullable(),
     })
     .superRefine((data, ctx) => {
-      createListingRefinements(data, ctx, isEditing);
+      createListingRefinements(data, ctx);
     });
 };
 
 export const createListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
-  isEditing: boolean,
 ) => {
   console.log('zod validating');
   const slugUniqueCheck = async (slug: string, id?: string) => {
     try {
-      const listingId = isEditing ? id : null;
       await fetchSlugCheck({
         slug,
-        id: listingId || undefined,
+        id: id || undefined,
         check: true,
       });
-      console.log('slug check?');
       return true;
     } catch (error) {
+      console.log('fetchSlugCheck error', error);
       return false;
     }
   };
