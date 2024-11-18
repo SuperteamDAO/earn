@@ -14,7 +14,6 @@ import {
   Link,
   Text,
   Tooltip,
-  useDisclosure,
 } from '@chakra-ui/react';
 import { GrantApplicationStatus } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -35,6 +34,7 @@ import {
   Telegram,
   Twitter,
 } from '@/features/talent';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 

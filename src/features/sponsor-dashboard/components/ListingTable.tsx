@@ -20,7 +20,6 @@ import {
   Thead,
   Tooltip,
   Tr,
-  useDisclosure,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -53,6 +52,7 @@ import {
   isDeadlineOver,
   type ListingWithSubmissions,
 } from '@/features/listings';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { getURL } from '@/utils/validUrl';
 
 import { DeleteDraftModal, UnpublishModal, VerifyPaymentModal } from './Modals';

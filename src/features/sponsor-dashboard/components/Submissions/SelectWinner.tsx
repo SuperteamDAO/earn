@@ -1,18 +1,12 @@
 import { CloseIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Circle,
-  Flex,
-  Select,
-  Tooltip,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Button, Circle, Flex, Select, Tooltip } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdArrowDropDown } from 'react-icons/md';
 
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { type Listing } from '@/features/listings';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { cleanRewards, getRankLabels, sortRank } from '@/utils/rank';
 

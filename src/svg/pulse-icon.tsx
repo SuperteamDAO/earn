@@ -1,54 +1,54 @@
-import { Center } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 import React from 'react';
 
-const createPulseKeyframes = (color: string) => keyframes`
-  0% {
-    transform: scale(0.75);
-    box-shadow: 0 0 0 0 ${color};
-  }
-  
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 8px ${color}00;
-  }
-`;
-
-export const PulseIcon = ({
-  bg,
-  w,
-  h,
-  text,
-  isPulsing = false, // PASS HEX COLOR for pulse animation
-}: {
+interface PulseIconProps {
   bg: string;
   text: string;
   w: number;
   h: number;
   isPulsing?: boolean;
-}) => {
-  const pulseKeyframes = createPulseKeyframes(bg);
+}
+
+export const PulseIcon = ({
+  bg,
+  text,
+  w,
+  h,
+  isPulsing = false,
+}: PulseIconProps) => {
+  const pulseKeyframes = React.useMemo(
+    () => keyframes`
+      0% {
+        transform: scale(0.75);
+        box-shadow: 0 0 0 0 ${bg};
+      }
+      
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 8px ${bg}00;
+      }
+    `,
+    [bg],
+  );
+
   const pulseAnimation = `${pulseKeyframes} 1250ms infinite`;
 
   return (
-    <Center pos="relative">
-      <Center
-        w={w - 1}
-        h={h - 1}
-        bg={bg}
-        opacity={0.8}
-        borderRadius="full"
-        animation={isPulsing ? pulseAnimation : undefined}
-      ></Center>
-      <Center
-        pos="absolute"
-        top="50%"
-        left="50%"
-        p={1}
-        bg={text}
-        borderRadius="full"
-        transform="translate(-50%, -50%)"
+    <div className="relative flex items-center justify-center">
+      <div
+        className="flex items-center justify-center rounded-full"
+        style={{
+          width: w - 1,
+          height: h - 1,
+          backgroundColor: bg,
+          opacity: 0.8,
+          animation: isPulsing ? pulseAnimation : undefined,
+        }}
       />
-    </Center>
+      <div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1"
+        style={{ backgroundColor: text }}
+      />
+    </div>
   );
 };

@@ -1,39 +1,34 @@
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Icon,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useDisclosure,
-  VStack,
-} from '@chakra-ui/react';
+import { X } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdIosShare, MdOutlineInstallMobile } from 'react-icons/md';
 
+import { Button } from '@/components/ui/button';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
+
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '../ui/drawer';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
 const ManualInstructions = () => (
-  <Box mb={8} py={2} borderRadius={4} bgColor="brand.slate.100">
-    <Text align="center">
+  <div className="mb-8 rounded-md bg-slate-100 py-2">
+    <p className="text-center">
       Tap these icons (
-      <Icon as={MdIosShare} mr={1} color="brand.purple" fontWeight={600} />
-      or <Icon as={BsThreeDotsVertical} color="brand.purple" />) and select the
-      “Add to home screen” option.
-    </Text>
-  </Box>
+      <MdIosShare className="mr-1 inline-block font-semibold text-brand-purple" />
+      or <BsThreeDotsVertical className="inline-block text-brand-purple" />) and
+      select the &quot;Add to home screen&quot; option.
+    </p>
+  </div>
 );
 
 export const InstallPWAModal = () => {
@@ -109,42 +104,47 @@ export const InstallPWAModal = () => {
   const isAutoInstallable = mobileOs !== 'iOS';
 
   return (
-    <Modal isOpen={isPWAModalOpen} onClose={onPWAModalClose}>
-      <ModalOverlay />
-      <ModalContent alignSelf="flex-end" mb={0}>
-        <ModalHeader borderBottom="1px" borderBottomColor="brand.slate.300">
-          <HStack>
-            <Icon as={MdOutlineInstallMobile} color={'brand.slate.500'} />
-            <Text fontSize={'lg'}>Install Earn</Text>
-          </HStack>
-        </ModalHeader>
-        <ModalCloseButton mt={{ base: 2, md: 3 }} />
-        <ModalBody>
-          <VStack alignItems={'center'} my={4}>
-            <Flex align={'center'} direction={'column'} mt={10}>
-              <Image
-                src={'/android-chrome-512x512.png'}
-                alt="Superteam Earn Icon"
-                height={63}
-                width={63}
-              />
-              <Flex align={'center'} direction={'column'} my={12}>
-                <Text fontWeight={700}>Never miss a listing again!</Text>
-                <Text w="75%" mt={1} color="brand.slate.500" textAlign="center">
-                  Add Earn to your homescreen and always stay updated.
-                </Text>
-              </Flex>
-              {isAutoInstallable ? (
-                <Button w={'full'} mt={4} onClick={installApp}>
-                  Add to Homescreen
-                </Button>
-              ) : (
-                <ManualInstructions />
-              )}
-            </Flex>
-          </VStack>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <Drawer open={isPWAModalOpen} onOpenChange={onPWAModalClose}>
+      <DrawerContent>
+        <div className="mx-auto w-full max-w-sm">
+          <DrawerHeader className="border-b border-slate-100">
+            <DrawerTitle className="flex items-center gap-2">
+              <MdOutlineInstallMobile className="text-slate-500" />
+              <span className="text-md text-slate-700">Install Earn</span>
+            </DrawerTitle>
+            <DrawerClose className="absolute right-2 top-7">
+              <Button variant="ghost" size="icon">
+                <X className="h-4 w-4" />
+              </Button>
+            </DrawerClose>
+          </DrawerHeader>
+          <div className="px-4">
+            <div className="my-4 flex flex-col items-center">
+              <div className="mt-4 flex flex-col items-center">
+                <Image
+                  src="/android-chrome-512x512.png"
+                  alt="Superteam Earn Icon"
+                  height={63}
+                  width={63}
+                />
+                <div className="my-12 flex flex-col items-center">
+                  <p className="font-bold">Never miss a listing again!</p>
+                  <p className="mt-1 w-3/4 text-center text-slate-500">
+                    Add Earn to your homescreen and always stay updated.
+                  </p>
+                </div>
+                {isAutoInstallable ? (
+                  <Button className="mt-4 h-12 w-full" onClick={installApp}>
+                    Add to Homescreen
+                  </Button>
+                ) : (
+                  <ManualInstructions />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 };

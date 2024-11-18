@@ -7,7 +7,7 @@ import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { SessionProvider } from 'next-auth/react';
-import NextTopLoader from 'nextjs-toploader';
+import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
@@ -84,7 +84,7 @@ function MyApp({ Component, pageProps }: any) {
 
   return (
     <>
-      <NextTopLoader color="#6366F1" showSpinner={false} />
+      <PagesTopLoader color="#6366F1" showSpinner={false} />
       {isDashboardRoute ? (
         <SolanaWalletProvider>
           <Component {...pageProps} key={router.asPath} />

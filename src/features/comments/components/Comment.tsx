@@ -20,7 +20,6 @@ import {
   MenuItem,
   MenuList,
   Text,
-  useDisclosure,
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
@@ -33,6 +32,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { AuthWrapper } from '@/features/auth';
 import { EarnAvatar } from '@/features/talent';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { type Comment as IComment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';

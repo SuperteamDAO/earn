@@ -1,8 +1,11 @@
-import { Button, FormControl, Input, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/utils';
 
 import { checkEmailValidity, validateEmailRegex } from '../utils/email';
 
@@ -68,42 +71,31 @@ export const EmailSignIn = () => {
 
   return (
     <>
-      <FormControl isInvalid={isError}>
+      <div
+        className={cn(
+          'relative',
+          isError && 'has-[input:invalid]:ring-red-500',
+        )}
+      >
         <Input
-          fontSize={'16px'}
-          borderColor="#CBD5E1"
-          _placeholder={{ fontSize: '16px' }}
+          className="h-12 border-slate-300 text-lg"
           onChange={handleEmailChange}
           onKeyDown={handleKeyDown}
           placeholder="Enter Your Email Address"
-          size="lg"
           value={email}
         />
-      </FormControl>
+      </div>
       <Button
-        className="ph-no-capture"
-        w="100%"
-        h="2.9rem"
-        mt={3}
-        fontSize="17px"
-        fontWeight={500}
-        isDisabled={isLoading}
-        isLoading={isLoading}
+        className="ph-no-capture mt-3 h-12 w-full font-medium"
+        disabled={isLoading}
         onClick={handleEmailSignIn}
-        size="lg"
       >
-        Continue with Email
+        {isLoading ? 'Loading...' : 'Continue with Email'}
       </Button>
       {emailError && (
-        <Text
-          align={'center'}
-          mt={2}
-          color="red.500"
-          fontSize={'xs'}
-          lineHeight={'0.9rem'}
-        >
+        <p className="mt-2 text-center text-xs leading-[0.9rem] text-red-500">
           {emailError}
-        </Text>
+        </p>
       )}
     </>
   );

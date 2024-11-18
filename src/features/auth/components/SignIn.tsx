@@ -1,12 +1,3 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Link,
-  SlideFade,
-  Text,
-} from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
@@ -14,6 +5,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
+import { Button } from '@/components/ui/button';
 import { TERMS_OF_USE } from '@/constants';
 import { GoogleIcon } from '@/svg/google';
 
@@ -36,112 +28,91 @@ export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
   };
 
   return (
-    <>
-      <Box>
-        <Box px={6}>
-          <Box>
-            <SlideFade in={loginStep === 0} offsetY="20px">
-              {loginStep === 0 && (
-                <Flex
-                  align="center"
-                  justify="center"
-                  direction={'column'}
-                  gap={2}
-                  color="brand.slate.500"
-                  fontSize="md"
-                  textAlign="center"
-                >
-                  <Button
-                    className="ph-no-capture"
-                    w="100%"
-                    fontSize="17px"
-                    fontWeight={500}
-                    leftIcon={<GoogleIcon />}
-                    onClick={handleGmailSignIn}
-                    size="lg"
-                  >
-                    Continue with Google
-                  </Button>
-                  <Flex align={'center'} gap={4} w="100%" my={3}>
-                    <Divider borderColor={'brand.slate.300'} />{' '}
-                    <Text color={'brand.slate.400'} fontSize="14px">
-                      OR
-                    </Text>{' '}
-                    <Divider borderColor={'brand.slate.300'} />
-                  </Flex>
-                  <Button
-                    w="100%"
-                    h="2.9rem"
-                    color="brand.slate.500"
-                    fontSize="17px"
-                    fontWeight={500}
-                    bg="#fff"
-                    borderWidth="1px"
-                    borderColor="#CBD5E1"
-                    _hover={{ bg: 'brand.slate.100' }}
-                    _active={{ bg: 'brand.slate.200' }}
-                    leftIcon={<MdOutlineEmail />}
-                    onClick={() => setLoginStep(1)}
-                    size="lg"
-                  >
-                    Continue with Email
-                  </Button>
-                </Flex>
-              )}
-            </SlideFade>
-            <SlideFade in={loginStep === 1} offsetY="20px">
-              {loginStep === 1 && <EmailSignIn />}
-            </SlideFade>
-          </Box>
-          <Text
-            mt={4}
-            mb={2}
-            color="brand.slate.500"
-            fontSize="xs"
-            textAlign="center"
+    <div>
+      <div className="px-6">
+        <div>
+          <div
+            className={`transform transition-all duration-200 ${
+              loginStep === 0
+                ? 'translate-y-0 opacity-100'
+                : 'translate-y-5 opacity-0'
+            }`}
           >
-            By using this website, you agree to our{' '}
-            <Link
-              as={NextLink}
-              fontWeight={600}
-              href={TERMS_OF_USE}
-              isExternal
-              rel="noopener noreferrer"
-            >
-              Terms of Use
-            </Link>{' '}
-            and our{' '}
-            <Link
-              as={NextLink}
-              fontWeight={600}
-              href={`${router.basePath}/privacy-policy.pdf`}
-              isExternal
-            >
-              Privacy Policy
-            </Link>
-            .
-          </Text>
-        </Box>
-        <Box
-          flexDir={'column'}
-          py={'7px'}
-          bg={'brand.slate.100'}
-          borderBottomRadius="6px"
-        >
-          <Text color="brand.slate.400" fontSize="xs" textAlign="center">
-            Need help? Reach out to us at{' '}
-            <Text as="u">
-              <Link
-                as={NextLink}
-                href={'mailto:support@superteamearn.com'}
-                isExternal
-              >
-                support@superteamearn.com
-              </Link>
-            </Text>
-          </Text>
-        </Box>
-      </Box>
-    </>
+            {loginStep === 0 && (
+              <div className="flex flex-col items-center justify-center gap-2 text-center text-slate-500">
+                <Button
+                  className="ph-no-capture h-12 w-full font-medium"
+                  size="lg"
+                  onClick={handleGmailSignIn}
+                >
+                  <GoogleIcon />
+                  Continue with Google
+                </Button>
+
+                <div className="my-3 flex w-full items-center gap-4">
+                  <div className="h-px flex-1 bg-slate-300" />
+                  <span className="text-sm text-slate-400">OR</span>
+                  <div className="h-px flex-1 bg-slate-300" />
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="h-12 w-full bg-white font-medium text-slate-500 hover:bg-slate-100 active:bg-slate-200"
+                  onClick={() => setLoginStep(1)}
+                >
+                  <MdOutlineEmail className="mr-2" />
+                  Continue with Email
+                </Button>
+              </div>
+            )}
+          </div>
+
+          <div
+            className={`transform transition-all duration-200 ${
+              loginStep === 1
+                ? 'translate-y-0 opacity-100'
+                : 'translate-y-5 opacity-0'
+            }`}
+          >
+            {loginStep === 1 && <EmailSignIn />}
+          </div>
+        </div>
+
+        <p className="mb-2 mt-4 text-center text-xs text-slate-500">
+          By using this website, you agree to our{' '}
+          <NextLink
+            href={TERMS_OF_USE}
+            className="font-semibold hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Terms of Use
+          </NextLink>{' '}
+          and our{' '}
+          <NextLink
+            href={`${router.basePath}/privacy-policy.pdf`}
+            className="font-semibold hover:underline"
+            target="_blank"
+          >
+            Privacy Policy
+          </NextLink>
+          .
+        </p>
+      </div>
+
+      <div className="rounded-b-md bg-slate-100 py-[7px]">
+        <p className="text-center text-xs text-slate-400">
+          Need help? Reach out to us at{' '}
+          <NextLink
+            href="mailto:support@superteamearn.com"
+            className="underline hover:text-slate-500"
+            target="_blank"
+          >
+            support@superteamearn.com
+          </NextLink>
+        </p>
+      </div>
+    </div>
   );
 };

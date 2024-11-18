@@ -1,5 +1,5 @@
 import { WarningIcon } from '@chakra-ui/icons';
-import { Button, Flex, Text, Tooltip, useDisclosure } from '@chakra-ui/react';
+import { Button, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { LuPencil } from 'react-icons/lu';
@@ -9,6 +9,7 @@ import {
   getRegionTooltipLabel,
   userRegionEligibilty,
 } from '@/features/listings';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 
 import { userApplicationQuery } from '../queries';

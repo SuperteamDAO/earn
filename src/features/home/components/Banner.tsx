@@ -30,7 +30,7 @@ export function HomeBanner() {
     alt: 'Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight',
     layout: 'fill',
     objectFit: 'cover',
-    quality: 95,
+    quality: 85,
     priority: true,
     loading: 'eager' as const,
     style: {
@@ -55,8 +55,8 @@ export function HomeBanner() {
     <div className="relative mx-auto my-3 h-[260px] max-h-[500px] w-full rounded-md p-5 md:h-[280px] md:p-10">
       <div className="absolute inset-0 overflow-hidden">
         <picture>
-          <source media="(min-width: 1000px)" srcSet={desktop} />
-          <source media="(min-width: 500px)" srcSet={mobile} />
+          <source media="(min-width: 40em)" srcSet={desktop} />
+          <source media="(max-width: 40em)" srcSet={mobile} />
           <img {...rest} className="h-full w-full" alt={common.alt} />
         </picture>
       </div>
@@ -71,7 +71,7 @@ export function HomeBanner() {
       <div className="relative z-10 mt-4 flex flex-col items-center gap-3 md:flex-row md:gap-4">
         <AuthWrapper className="w-full md:w-auto">
           <button
-            className="ph-no-capture w-full rounded-md bg-white px-9 py-3 text-sm text-[#3223A0] md:w-auto"
+            className="ph-no-capture w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] md:w-auto"
             onClick={() => {
               posthog.capture('signup_banner');
             }}

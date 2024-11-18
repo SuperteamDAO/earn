@@ -22,7 +22,6 @@ import {
   Link,
   Tag,
   Text,
-  useClipboard,
 } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
@@ -45,6 +44,7 @@ import {
   isDeadlineOver,
   type Listing,
 } from '@/features/listings';
+import { useClipboard } from '@/hooks/use-clipboard';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
 

@@ -24,7 +24,6 @@ import {
   Tag,
   TagLabel,
   Text,
-  useDisclosure,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
@@ -50,6 +49,7 @@ import {
   ListingTable,
   sponsorStatsQuery,
 } from '@/features/sponsor-dashboard';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 

@@ -1,4 +1,4 @@
-import { Button, Flex, useDisclosure } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import Image from 'next/image';
@@ -18,6 +18,7 @@ import {
   type Listing,
   userRegionEligibilty,
 } from '@/features/listings';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';

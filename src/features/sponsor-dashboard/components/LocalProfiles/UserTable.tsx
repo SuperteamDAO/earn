@@ -15,13 +15,13 @@ import {
   Th,
   Thead,
   Tr,
-  useDisclosure,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 
 import { skillMap } from '@/constants';
 import { EarnAvatar, Telegram, Twitter, Website } from '@/features/talent';
+import { useDisclosure } from '@/hooks/use-disclosure';
 
 import { type LocalProfile } from '../../queries';
 import { SortableTH, TH } from './TH';

@@ -1,34 +1,21 @@
-import { Box, Link, Text, useMediaQuery } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 
 export const AnnouncementBar = () => {
-  const [isSmallerThan800] = useMediaQuery('(max-width: 800px)');
-
   const href = '/hackathon/radar';
-  if (isSmallerThan800) {
-    return (
-      <Box
-        as={NextLink}
-        display={'block'}
-        w="full"
-        color="white"
-        bgColor={'brand.purple'}
-        href={href}
-      >
-        <Text
-          p={3}
-          fontSize={{ base: '11px', md: 'sm' }}
-          fontWeight={500}
-          textAlign="center"
-        >
-          <Link as={NextLink} textDecoration={'underline'} href={href}>
-            Click here
-          </Link>{' '}
-          to unlock $250k+ in prizes at Solana’s global hackathon, exclusively
-          on Earn
-        </Text>
-      </Box>
-    );
-  } else return null;
+
+  return (
+    <NextLink
+      href={href}
+      className="block w-full bg-brand-purple text-white md:hidden"
+    >
+      <p className="p-3 text-center text-[11px] font-medium md:text-sm">
+        <NextLink href={href} className="underline">
+          Click here
+        </NextLink>{' '}
+        to unlock $250k+ in prizes at Solana&apos;s global hackathon,
+        exclusively on Earn
+      </p>
+    </NextLink>
+  );
 };

@@ -94,7 +94,7 @@ export function SelectSponsor({
           <EarnAvatar
             id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
-            borderRadius="4"
+            borderRadius="rounded-sm"
             size={'24px'}
           />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
@@ -120,7 +120,7 @@ export function SelectSponsor({
           <EarnAvatar
             id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
-            borderRadius="4"
+            borderRadius="rounded-sm"
           />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
             <Flex align="center" wrap={'wrap'}>

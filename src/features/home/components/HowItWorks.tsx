@@ -1,4 +1,3 @@
-import { Box, Center, Flex, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -80,7 +79,7 @@ const StepIcon = ({ step }: { step: number }) => {
         />
       </svg>
     );
-  } else return <></>;
+  } else return null;
 };
 
 const Step = ({
@@ -91,32 +90,16 @@ const Step = ({
   isComplete: boolean;
 }) => {
   return (
-    <Center
-      pos="relative"
-      zIndex={'200'}
-      overflow={'visible'}
-      w={'2.375rem'}
-      h={'2.375rem'}
-      color={isComplete ? '#FFFFFF' : '#94A3B8'}
-      bg={isComplete ? '#6366F1' : '#F4F4FE'}
-      rounded={'full'}
-    >
+    <div className="relative z-10 flex h-[2.375rem] w-[2.375rem] items-center justify-center overflow-visible rounded-full bg-[#F4F4FE] text-[#94A3B8]">
       {isComplete ? (
-        <LuCheck size={'1.3rem'} strokeWidth={3} />
+        <LuCheck className="text-white" size="1.3rem" strokeWidth={3} />
       ) : (
         <StepIcon step={number} />
       )}
       {number < 3 && (
-        <Flex
-          pos={'absolute'}
-          top="110%"
-          w={'0.12rem'}
-          h={'90%'}
-          bg={isComplete ? 'brand.purple.dark' : 'brand.slate.400'}
-          opacity={0.6}
-        />
+        <div className="absolute top-[110%] h-[90%] w-[0.12rem] bg-slate-400 opacity-60" />
       )}
-    </Center>
+    </div>
   );
 };
 
@@ -141,107 +124,87 @@ export const HowItWorks = () => {
         posthog.capture('create account_getting started');
       }}
     >
-      <Box opacity={isLoading ? '0.2' : '1'}>
-        <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
-          HOW IT WORKS
-        </Text>
-        <Flex h={'12.5rem'}>
-          <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
+      <div className={cn('opacity-100', isLoading && 'opacity-20')}>
+        <p className="mb-6 font-medium text-gray-400">HOW IT WORKS</p>
+        <div className="flex h-[12.5rem]">
+          <div className="relative flex h-full flex-col justify-between">
             <Step
               number={1}
               isComplete={!isLoading && !!user?.isTalentFilled}
             />
             <Step number={2} isComplete={!isLoading && hasSubmissions} />
             <Step number={3} isComplete={!isLoading && hasWins} />
-          </VStack>
-          <VStack
-            pos={'relative'}
-            alignItems={'flex-start'}
-            justifyContent={'space-between'}
-            h={'100%'}
-          >
-            <Box ml={'0.8125rem'}>
-              <Text
-                as="button"
-                color={
+          </div>
+          <div className="relative flex h-full flex-col items-start justify-between">
+            <div className="ml-[0.8125rem]">
+              <button
+                className={cn(
+                  'text-md font-medium hover:text-brand-purple',
                   !isLoading && !!user?.isTalentFilled
-                    ? 'brand.slate.500'
-                    : 'brand.purple'
-                }
-                fontSize={'md'}
-                fontWeight={500}
-                _hover={{
-                  color: 'brand.purple',
-                }}
+                    ? 'text-slate-500'
+                    : 'text-brand-purple',
+                )}
                 onClick={() => {
                   if (!isLoading && !!user?.isTalentFilled) return;
-                  else if (user?.id) {
+                  if (user?.id) {
                     posthog.capture('create account_getting started');
                     router.push(`/new/talent`);
                   }
                 }}
               >
                 Create your profile
-              </Text>
-              <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
+              </button>
+              <p className="text-md font-medium text-gray-500">
                 by telling us about yourself
-              </Text>
-            </Box>
-            <Box ml={'0.8125rem'}>
-              <Text
-                as="button"
-                color={
+              </p>
+            </div>
+            <div className="ml-[0.8125rem]">
+              <button
+                className={cn(
+                  'text-md font-medium hover:text-brand-purple',
                   !isLoading && hasSubmissions
-                    ? 'brand.slate.500'
-                    : 'brand.purple'
-                }
-                fontSize={'md'}
-                fontWeight={500}
-                _hover={{
-                  color: 'brand.purple',
-                }}
+                    ? 'text-slate-500'
+                    : 'text-brand-purple',
+                )}
                 onClick={() => {
                   if (!isLoading && hasSubmissions) return;
-                  else if (user?.id) {
+                  if (user?.id) {
                     posthog.capture('complete profile_getting started');
                     router.push(`/all`);
                   }
                 }}
               >
                 {`Participate in Bounties & Projects`}
-              </Text>
-              <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
+              </button>
+              <p className="text-md font-medium text-gray-500">
                 to build proof of work
-              </Text>
-            </Box>
-            <Box ml={'0.8125rem'}>
-              <Text
-                as="button"
-                color={
-                  !isLoading && hasWins ? 'brand.slate.500' : 'brand.purple'
-                }
-                fontSize={'md'}
-                fontWeight={500}
-                _hover={{
-                  color: 'brand.purple',
-                }}
+              </p>
+            </div>
+            <div className="ml-[0.8125rem]">
+              <button
+                className={cn(
+                  'text-md font-medium hover:text-brand-purple',
+                  !isLoading && hasWins
+                    ? 'text-slate-500'
+                    : 'text-brand-purple',
+                )}
                 onClick={() => {
                   if (!isLoading && hasWins) return;
-                  else if (user?.id) {
+                  if (user?.id) {
                     posthog.capture('win_getting started');
                     router.push('/feed');
                   }
                 }}
               >
                 Get Paid for Your Work
-              </Text>
-              <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
+              </button>
+              <p className="text-md font-medium text-gray-500">
                 in global standards
-              </Text>
-            </Box>
-          </VStack>
-        </Flex>
-      </Box>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </AuthWrapper>
   );
 };

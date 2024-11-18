@@ -1,5 +1,7 @@
 import { CheckIcon } from '@chakra-ui/icons';
-import { Button, type ButtonProps, useDisclosure } from '@chakra-ui/react';
+import { Button, type ButtonProps } from '@chakra-ui/react';
+
+import { useDisclosure } from '@/hooks/use-disclosure';
 
 import { type GrantApplicationWithUser } from '../../types';
 import { MarkCompleteModal } from './Modals/MarkCompletedModal';

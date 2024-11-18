@@ -1,21 +1,18 @@
-import { ArrowForwardIcon, InfoOutlineIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Image,
-  Link,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
+import { ArrowRight, Info } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '../types';
@@ -74,7 +71,7 @@ const generateTabContent = ({
 }: ContentProps) => {
   if (!!(!user || !forYou || forYou.length === 0))
     return (
-      <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
+      <div className="ph-no-capture flex flex-col gap-1">
         {isListingsLoading ? (
           Array.from({ length: 8 }, (_, index) => (
             <ListingCardSkeleton key={index} />
@@ -86,43 +83,36 @@ const generateTabContent = ({
             .slice(0, take ? take + 1 : undefined)
             .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
         ) : (
-          <Flex align="center" justify="center" mt={8}>
+          <div className="mt-8 flex items-center justify-center">
             <EmptySection
               showNotifSub={showNotifSub}
               title={emptyTitle}
               message={emptyMessage}
             />
-          </Flex>
+          </div>
         )}
-      </Flex>
+      </div>
     );
+
   return (
-    <Box>
+    <div>
       {!!forYou?.filter(filterFunction).length && (
-        <Box
-          mb={4}
-          pb={4}
-          borderColor="brand.slate.200"
-          borderBottomWidth={'1px'}
-        >
-          <Flex
-            align="center"
-            gap={3}
-            w="fit-content"
-            mb={2}
-            color="gray.900"
-            fontWeight={600}
-          >
-            <Text flex={1}>For You</Text>
-            <Box color="gray.500">
-              <Tooltip
-                label={`List of top opportunities curated for you, based on your skills, listing subscriptions and location.`}
-              >
-                <InfoOutlineIcon w={3} h={3} />
+        <div className="mb-4 border-b border-slate-200 pb-4">
+          <div className="mb-2 flex w-fit items-center gap-3 font-semibold text-gray-900">
+            <p className="flex-1">For You</p>
+            <div className="text-gray-500">
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="h-3 w-3" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  List of top opportunities curated for you, based on your
+                  skills, listing subscriptions and location.
+                </TooltipContent>
               </Tooltip>
-            </Box>
-          </Flex>
-          <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
+            </div>
+          </div>
+          <div className="ph-no-capture flex flex-col gap-1">
             {isListingsLoading
               ? Array.from({ length: 8 }, (_, index) => (
                   <ListingCardSkeleton key={index} />
@@ -134,14 +124,12 @@ const generateTabContent = ({
                   .map((bounty) => (
                     <ListingCard key={bounty.id} bounty={bounty} />
                   ))}
-          </Flex>
-        </Box>
+          </div>
+        </div>
       )}
-      <Box>
-        <Text mb={2} color="gray.900" fontWeight={600}>
-          All {title}
-        </Text>
-        <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
+      <div>
+        <p className="mb-2 font-semibold text-gray-900">All {title}</p>
+        <div className="ph-no-capture flex flex-col gap-1">
           {isListingsLoading ? (
             Array.from({ length: 8 }, (_, index) => (
               <ListingCardSkeleton key={index} />
@@ -153,17 +141,17 @@ const generateTabContent = ({
               .slice(0, take ? take + 1 : undefined)
               .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
           ) : (
-            <Flex align="center" justify="center" mt={8}>
+            <div className="mt-8 flex items-center justify-center">
               <EmptySection
                 showNotifSub={showNotifSub}
                 title={emptyTitle}
                 message={emptyMessage}
               />
-            </Flex>
+            </div>
           )}
-        </Flex>
-      </Box>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -274,130 +262,77 @@ export const ListingTabs = ({
   }, []);
 
   return (
-    <Box mt={5} mb={10}>
-      <HStack
-        align="center"
-        justify="space-between"
-        mb={4}
-        pb={3}
-        borderBottom="2px solid"
-        borderBottomColor="#E2E8F0"
-      >
-        <Flex
-          align={'center'}
-          justify={{ base: 'space-between', sm: 'unset' }}
-          w="100%"
-        >
-          <Flex align={'center'}>
+    <div className="mb-10 mt-5">
+      <div className="mb-4 flex items-center justify-between border-b-2 border-[#E2E8F0] pb-3">
+        <div className="flex w-full items-center justify-between sm:justify-start">
+          <div className="flex items-center">
             {emoji && (
-              <Image
-                display={{ base: 'none', xs: 'flex' }}
-                w={5}
-                h={5}
-                mr={2}
+              <img
+                className="xs:flex mr-2 hidden h-5 w-5"
                 alt="emoji"
                 src={emoji}
               />
             )}
-            <Text
-              pr={2}
-              color={'#334155'}
-              fontSize={['14', '15', '16', '16']}
-              fontWeight={'600'}
-              whiteSpace={'nowrap'}
-            >
+            <p className="whitespace-nowrap pr-2 text-[14px] font-semibold text-[#334155] sm:text-[15px] md:text-[16px]">
               {title}
-            </Text>
-          </Flex>
-          <Flex align="center">
-            <Text
-              mx={{ base: 0, sm: 3 }}
-              mr={3}
-              color={'brand.slate.300'}
-              fontSize="xx-small"
-            >
+            </p>
+          </div>
+          <div className="flex items-center">
+            <span className="mx-0 mr-3 text-[0.625rem] text-slate-300 sm:mx-3">
               |
-            </Text>
+            </span>
             {tabs.map((tab) => (
-              <Box
-                className="ph-no-capture"
+              <div
+                className={cn(
+                  'ph-no-capture relative cursor-pointer p-1 sm:p-2',
+                  tab.id === activeTab ? 'text-slate-700' : 'text-slate-500',
+                  tab.id === activeTab &&
+                    "after:absolute after:bottom-[-13px] after:left-0 after:right-0 after:h-[2px] after:bg-[#6366f1] after:content-['']",
+                )}
                 key={tab.id}
-                sx={{
-                  ...(tab.id === activeTab && {
-                    '&::after': {
-                      content: '""',
-                      position: 'absolute',
-                      right: 0,
-                      bottom: '-13px',
-                      left: 0,
-                      height: '2px',
-                      backgroundColor: '#6366f1',
-                    },
-                  }),
-                }}
-                pos="relative"
-                p={{ base: 1, sm: 2 }}
-                color={
-                  tab.id === activeTab ? 'brand.slate.700' : 'brand.slate.500'
-                }
-                cursor="pointer"
                 onClick={() => {
                   posthog.capture(tab.posthog);
                   setActiveTab(tab.id);
                 }}
               >
-                <Text
-                  fontSize={['13', '13', '14', '14']}
-                  fontWeight={500}
-                  whiteSpace={'nowrap'}
-                >
+                <p className="whitespace-nowrap text-[13px] font-medium md:text-[14px]">
                   {tab.title}
-                </Text>
-              </Box>
+                </p>
+              </div>
             ))}
-          </Flex>
-        </Flex>
+          </div>
+        </div>
         {showViewAll && (
-          <Flex
-            className="ph-no-capture"
-            display={{ base: 'none', sm: 'flex' }}
-          >
-            <Link as={NextLink} href={viewAllLink}>
+          <div className="ph-no-capture hidden sm:flex">
+            <NextLink href={viewAllLink!}>
               <Button
-                px={2}
-                py={1}
-                color="brand.slate.400"
-                fontSize={['x-small', 'sm', 'sm', 'sm']}
+                className="px-2 py-1 text-xs text-slate-400 md:text-sm"
                 onClick={() => posthog.capture('viewall top_listngs')}
-                size={{ base: 'x-small', md: 'sm' }}
-                variant={'ghost'}
+                size="sm"
+                variant="ghost"
               >
                 View All
               </Button>
-            </Link>
-          </Flex>
+            </NextLink>
+          </div>
         )}
-      </HStack>
+      </div>
 
       {tabs.map((tab) => tab.id === activeTab && tab.content)}
 
       {showViewAll && (
-        <Link className="ph-no-capture" as={NextLink} href={viewAllLink}>
+        <NextLink className="ph-no-capture" href={viewAllLink!}>
           <Button
-            w="100%"
-            my={8}
-            py={5}
-            color="brand.slate.400"
-            borderColor="brand.slate.300"
+            className="my-8 w-full border-slate-300 py-5 text-slate-400"
             onClick={() => posthog.capture('viewall bottom_listings')}
-            rightIcon={<ArrowForwardIcon />}
             size="sm"
             variant="outline"
           >
             View All
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
-        </Link>
+        </NextLink>
       )}
-    </Box>
+    </div>
   );
 };

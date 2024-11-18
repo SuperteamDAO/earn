@@ -1,8 +1,8 @@
-import { Box, Button, Text, useMediaQuery, VStack } from '@chakra-ui/react';
-import NextImage from 'next/image';
+import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
 
@@ -16,6 +16,7 @@ type CategoryBanner = {
   heading: string;
   description: string;
 };
+
 const banners: CategoryBanner[] = [
   {
     type: 'content',
@@ -42,93 +43,55 @@ const banners: CategoryBanner[] = [
     img: bannerPrefix + 'Other.webp',
     heading: 'Find your next gig on Earn',
     description:
-      'If you have a unique skill set that doesn’t fit into the other categories, you might find your next gig here.',
+      "If you have a unique skill set that doesn't fit into the other categories, you might find your next gig here.",
   },
 ];
 
 export function CategoryBanner({ category }: { category: CategoryTypes }) {
-  const [isLessThan768px] = useMediaQuery('(max-width: 768px)');
   const [banner, setBanner] = useState<CategoryBanner | null>(null);
   const posthog = usePostHog();
   const { user } = useUser();
 
   useEffect(() => {
     setBanner(banners.find((b) => b.type === category) ?? null);
-  }, []);
+  }, [category]);
+
+  if (!banner) return null;
 
   return (
-    !!banner && (
-      <VStack pos="relative" w="full" h="18rem">
-        <NextImage
-          src={banner.img}
-          alt={banner.type}
-          width={1440}
-          height={290}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'center',
-          }}
-        />
-        <Box
-          pos="absolute"
-          top={0}
-          left={0}
-          display="block"
-          w="full"
-          h="full"
-          bg="rgba(0,0,0,0.5)"
-        />
-        <VStack
-          pos="absolute"
-          top="50%"
-          align="start"
-          w="full"
-          maxW={'7xl'}
-          px={{ base: 3, md: 4 }}
-          transform="translateY(-50%)"
-        >
-          {banner.heading && (
-            <Text
-              color="white"
-              fontSize={{ base: '2xl', md: '4xl' }}
-              fontWeight="bold"
+    <div className="relative flex h-72 w-full flex-col items-center">
+      <Image
+        src={banner.img}
+        alt={banner.type}
+        width={1440}
+        height={290}
+        className="h-full w-full object-cover object-center"
+      />
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute top-1/2 flex w-full max-w-7xl -translate-y-1/2 flex-col items-start px-3 md:px-4">
+        {banner.heading && (
+          <h2 className="text-2xl font-bold text-white md:text-4xl">
+            {banner.heading}
+          </h2>
+        )}
+        {banner.description && (
+          <p className="max-w-[37rem] text-sm font-medium text-white md:text-lg">
+            {banner.description}
+          </p>
+        )}
+        {!user && (
+          <AuthWrapper className="w-full sm:w-auto">
+            <Button
+              className="ph-no-capture my-2 w-full bg-white px-9 py-3 text-sm text-[#3223A0] sm:w-auto"
+              onClick={() => {
+                posthog.capture('signup_category banner');
+              }}
             >
-              {banner.heading}
-            </Text>
-          )}
-          {banner.description && (
-            <Text
-              maxW="37rem"
-              color="white"
-              fontSize={{ base: 'sm', md: 'lg' }}
-              fontWeight="medium"
-            >
-              {banner.description}
-            </Text>
-          )}
-          {!user && (
-            <AuthWrapper className="w-full sm:w-auto">
-              <Button
-                className="ph-no-capture"
-                w={isLessThan768px ? '100%' : 'auto'}
-                my={2}
-                px={'2.25rem'}
-                py={'0.75rem'}
-                color={'#3223A0'}
-                fontSize={'0.875rem'}
-                bg={'white'}
-                onClick={() => {
-                  posthog.capture('signup_category banner');
-                }}
-              >
-                Sign Up
-              </Button>
-            </AuthWrapper>
-          )}
-        </VStack>
-      </VStack>
-    )
+              Sign Up
+            </Button>
+          </AuthWrapper>
+        )}
+      </div>
+    </div>
   );
 }

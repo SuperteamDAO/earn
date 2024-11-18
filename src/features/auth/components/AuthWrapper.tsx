@@ -1,9 +1,9 @@
-import { useDisclosure } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import { type ReactNode, useEffect, useState } from 'react';
 
 import { Login } from '@/features/auth';
 import { CompleteProfileModal } from '@/features/listings';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils';
 

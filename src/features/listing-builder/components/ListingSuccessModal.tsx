@@ -14,7 +14,6 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
-  useClipboard,
   VStack,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
@@ -23,6 +22,7 @@ import React from 'react';
 import { FaXTwitter } from 'react-icons/fa6';
 import { LuCheck } from 'react-icons/lu';
 
+import { useClipboard } from '@/hooks/use-clipboard';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
 
