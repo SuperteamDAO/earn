@@ -84,6 +84,8 @@ export function CreateListing({
     listing?.status,
     listing?.isPublished,
   );
+  // 如果listing的updateAt不为空，isPublished = true, isPrivate=fasle 那么不允许修改金额,
+  const payAmountEditable = listing?.updatedAt === null || listing?.isPrivate || !listing?.isPublished;
 
   const newListing = listing?.id === undefined;
   const [isDraftLoading, setIsDraftLoading] = useState<boolean>(false);
@@ -330,13 +332,13 @@ export function CreateListing({
               slug={slug}
               isOpen={isSuccessOpen}
               isVerified={user.currentSponsor?.isVerified || false}
-              onClose={() => {}}
+              onClose={() => { }}
             />
           )}
           {isVerifyingOpen && (
             <UnderVerificationModal
               isOpen={isVerifyingOpen}
-              onClose={() => {}}
+              onClose={() => { }}
             />
           )}
           {isSurveyOpen && (
@@ -396,7 +398,7 @@ export function CreateListing({
               createAndPublishListing={createAndPublishListing}
               createDraft={createDraft}
               isDraftLoading={isDraftLoading}
-              editable={editable}
+              editable={payAmountEditable}
               isListingPublishing={isListingPublishing}
               type={type}
               isDuplicating={isDuplicating}
