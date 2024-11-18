@@ -96,6 +96,7 @@ export function GrantPageLayout({
                 region={grant?.region}
                 slug={grant?.slug}
                 references={grant.references}
+                isPublished={grant.isPublished || false}
               />
 
               <HStack
