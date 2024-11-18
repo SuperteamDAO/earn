@@ -3,6 +3,7 @@ const telegramUsernameRegex = /(@?[a-zA-Z0-9_]{5,90})/;
 const linkedinUsernameRegex = /([a-zA-Z0-9\-]{3,100})/;
 const githubUsernameRegex = /([a-zA-Z0-9\-]{1,90})/;
 const discordUsernameRegex = /([a-zA-Z0-9_.]{2,32})/;
+const wechatIdRegex = /^[a-zA-Z][a-zA-Z0-9_-]{5,19}$/;
 
 const twitterRegex = new RegExp(
   `^(?:https?:\\/\\/)?(?:www\\.)?(twitter\\.com|x\\.com)\\/${twitterUsernameRegex.source}\\/?$`,
@@ -40,4 +41,5 @@ export {
   twitterRegex,
   twitterUsernameRegex,
   websiteRegex,
+  wechatIdRegex,
 };

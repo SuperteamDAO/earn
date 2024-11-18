@@ -9,6 +9,7 @@ import {
   twitterRegex,
   twitterUsernameRegex,
   websiteRegex,
+  wechatIdRegex,
 } from './regex';
 
 export function isValidTwitterInput(input: string) {
@@ -49,4 +50,8 @@ export function isValidLinkedInUsername(value: string) {
 
 export function isValidTelegramUsername(value: string) {
   return telegramUsernameRegex.test(value);
+}
+
+export function isValidWechatIdInput(input: string) {
+  return wechatIdRegex.test(input);
 }

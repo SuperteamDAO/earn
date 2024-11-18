@@ -26,6 +26,7 @@ export const userSelectOptions = {
   linkedin: true,
   telegram: true,
   twitter: true,
+  wechat: true,
   website: true,
   workPrefernce: true,
   stLead: true,
