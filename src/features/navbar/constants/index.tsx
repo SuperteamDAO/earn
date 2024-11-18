@@ -8,12 +8,12 @@ interface NavItem {
 
 export const LISTING_NAV_ITEMS: Array<NavItem> = [
   {
-    label: '悬赏',
+    label: '赏金任务',
     href: '/bounties/',
     posthog: 'bounties_navbar',
   },
   {
-    label: '项目',
+    label: '定向任务',
     href: '/projects/',
     posthog: 'projects_navbar',
   },

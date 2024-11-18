@@ -142,7 +142,7 @@ export const HowItWorks = () => {
     >
       <Box opacity={isLoading ? '0.2' : '1'}>
         <Text mb={'1.5rem'} color={'gray.400'} fontWeight={500}>
-          HOW IT WORKS
+          如何运作
         </Text>
         <Flex h={'12.5rem'}>
           <VStack pos={'relative'} justifyContent={'space-between'} h={'100%'}>
@@ -180,10 +180,10 @@ export const HowItWorks = () => {
                   }
                 }}
               >
-                Create your profile
+                创建个人资料
               </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                by telling us about yourself
+                告诉我们您的基本信息
               </Text>
             </Box>
             <Box ml={'0.8125rem'}>
@@ -199,41 +199,26 @@ export const HowItWorks = () => {
                 }}
                 onClick={() => {
                   if (!isLoading && hasSubmissions) return;
-                  else if (user?.id) {
-                    posthog.capture('complete profile_getting started');
-                    router.push(`/all`);
-                  }
+                  posthog.capture('participate_getting started');
+                  router.push('/bounties');
                 }}
               >
-                {`Participate in Bounties & Projects`}
+                参与赏金任务
               </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                to build proof of work
+                建立工作证明
               </Text>
             </Box>
             <Box ml={'0.8125rem'}>
               <Text
-                as="button"
-                color={
-                  !isLoading && hasWins ? 'brand.slate.500' : 'brand.purple'
-                }
+                color={!isLoading && hasWins ? 'brand.slate.500' : '#9945FF'}
                 fontSize={'md'}
                 fontWeight={500}
-                _hover={{
-                  color: 'brand.purple',
-                }}
-                onClick={() => {
-                  if (!isLoading && hasWins) return;
-                  else if (user?.id) {
-                    posthog.capture('win_getting started');
-                    router.push('/feed');
-                  }
-                }}
               >
-                Get Paid for Your Work
+                获得工作报酬
               </Text>
               <Text color={'gray.500'} fontSize={'md'} fontWeight={500}>
-                in global standards
+                做任务，赢赏金!
               </Text>
             </Box>
           </VStack>

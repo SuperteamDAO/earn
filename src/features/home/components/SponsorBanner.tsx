@@ -35,7 +35,7 @@ export const SponsorBanner = () => {
           fontWeight={600}
           _groupHover={{ textDecoration: 'underline' }}
         >
-          Become a Sponsor
+          发布任务
           <ArrowForwardIcon ml={1} color="#777777" w={6} />
         </Text>
         <Text
@@ -45,11 +45,11 @@ export const SponsorBanner = () => {
           fontWeight={500}
           lineHeight={'1.1rem'}
         >
-          Reach{' '}
+          触达超过{' '}
           {(
             Math.floor((data?.totalUsers || 0) / 10000) * 10000
           ).toLocaleString()}
-          + crypto talent from one single dashboard
+          + 名加密货币人才
         </Text>
       </Box>
       <Image
