@@ -583,6 +583,7 @@ export const ListingPayments = ({
                         setValue('rewardAmount', undefined);
                       }}
                       value={value}
+                      isDisabled={!editable}
                     >
                       <option hidden disabled value="">
                         Select a Compensation Type
@@ -638,7 +639,7 @@ export const ListingPayments = ({
                 onKeyDown={handleKeyDown}
                 placeholder="Search token"
                 value={searchTerm || ''}
-                isDisabled={!editable && type === 'bounty'}
+                isDisabled={!editable}
               />
               <InputRightElement color="gray.700" fontSize="1rem">
                 <ChevronDownIcon mt="9px" />
@@ -709,6 +710,7 @@ export const ListingPayments = ({
                   border={'none'}
                   focusBorderColor="rgba(0,0,0,0)"
                   min={0}
+                  isDisabled={!editable}
                 >
                   <NumberInputField
                     color={'brand.slate.800'}
@@ -759,6 +761,7 @@ export const ListingPayments = ({
                     border={'none'}
                     focusBorderColor="rgba(0,0,0,0)"
                     min={0}
+                    isDisabled={!editable}
                   >
                     <NumberInputField
                       color={'brand.slate.800'}
@@ -800,6 +803,7 @@ export const ListingPayments = ({
                     border={'none'}
                     focusBorderColor="rgba(0,0,0,0)"
                     min={0}
+                    isDisabled={!editable}
                   >
                     <NumberInputField
                       color={'brand.slate.800'}

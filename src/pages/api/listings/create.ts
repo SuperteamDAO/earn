@@ -257,6 +257,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isPrivate,
       language,
       isFndnPaying,
+      isLockedPayment: isPublished,
     };
 
     logger.debug(`Creating bounty with data: ${safeStringify(finalData)}`);

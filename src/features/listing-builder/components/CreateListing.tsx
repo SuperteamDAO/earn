@@ -84,8 +84,7 @@ export function CreateListing({
     listing?.status,
     listing?.isPublished,
   );
-  // 如果listing的updateAt不为空，isPublished = true, isPrivate=fasle 那么不允许修改金额,
-  const payAmountEditable = listing?.isLockedPayment === false;
+  const payAmountEditable = listing?.isLockedPayment === false || listing === undefined;
 
   const newListing = listing?.id === undefined;
   const [isDraftLoading, setIsDraftLoading] = useState<boolean>(false);
@@ -185,11 +184,8 @@ export function CreateListing({
         isPrivate: form?.isPrivate,
         isFndnPaying: form?.isFndnPaying,
         status: 'OPEN',
+        isLockedPayment: true,
       };
-
-      if (type === 'bounty') {
-        newListing.isLockedPayment = true;
-      }
 
       let api = `/api/${basePath}/create`;
       if (editable && !isDuplicating) {
