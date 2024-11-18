@@ -17,7 +17,7 @@ export const WelcomeSponsorTemplate = () => {
         If you need any help related to setting up your listing on Earn,
         don&apos;t hesitate to get in touch with&nbsp;
         <a href={PDTG} style={styles.link}>
-          Pratik
+          Vesper
         </a>{' '}
         on Telegram.&nbsp;
       </p>

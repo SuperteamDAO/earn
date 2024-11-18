@@ -14,7 +14,7 @@ export const WelcomeTalentTemplate = () => {
       </p>
       <p style={styles.text}>
         I&apos;m Kash, and I&apos;m a Core Contributor over at{' '}
-        <a href="https://superteam.fun" style={styles.link}>
+        <a href={process?.env?.NEXT_PUBLIC_SITE_URL} style={styles.link}>
           Solar
         </a>
         . I might not know you personally yet, but I&apos;m pumped that
