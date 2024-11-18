@@ -38,6 +38,7 @@ interface User {
   linkedin?: string;
   website?: string;
   telegram?: string;
+  wechat?: string;
   currentSponsorId?: string;
   currentSponsor?: SponsorType;
   UserSponsors?: UserSponsor[];

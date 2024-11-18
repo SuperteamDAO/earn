@@ -28,6 +28,7 @@ const allowedFields = [
   'linkedin',
   'website',
   'telegram',
+  'wechat',
   'community',
   'experience',
   'location',
@@ -46,7 +47,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   );
 
   const { skills, ...data } = req.body;
-
   const updatedData = filterAllowedFields(data, allowedFields);
 
   if ('publicKey' in updatedData) {

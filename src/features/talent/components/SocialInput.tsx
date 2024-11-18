@@ -7,6 +7,7 @@ import {
   FaGlobe,
   FaLinkedin,
   FaTelegram,
+  FaWeixin,
   FaXTwitter,
 } from 'react-icons/fa6';
 import { toast } from 'sonner';
@@ -22,6 +23,7 @@ import {
   isValidTwitterInput,
   isValidTwitterUsername,
   isValidWebsiteUrl,
+  isValidWechatIdInput,
 } from '@/features/talent';
 
 type SocialInputProps = {
@@ -63,6 +65,12 @@ export const socials = [
     placeholder: 'tonystark',
     icon: FaTelegram,
     prefix: 'https://t.me/',
+    required: true,
+  },
+  {
+    name: 'wechat',
+    placeholder: 'wechat id',
+    icon: FaWeixin,
   },
   {
     name: 'website',
@@ -75,6 +83,10 @@ export const SocialInput = ({ register, watch }: SocialInputProps) => {
   const validateSocial = (value: string, name: string) => {
     if (name === 'discord' && !value) {
       toast.error('Discord is required');
+      return false;
+    }
+    if (name === 'telegram' && !value) {
+      toast.error('Telegram is required');
       return false;
     }
     if (value) {
@@ -112,6 +124,12 @@ export const SocialInput = ({ register, watch }: SocialInputProps) => {
         case 'website':
           if (!isValidWebsiteUrl(value)) {
             toast.error('Invalid website URL');
+            return false;
+          }
+          break;
+        case 'wechat':
+          if (!isValidWechatIdInput(value)) {
+            toast.error('Invalid wechat id');
             return false;
           }
           break;

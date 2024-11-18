@@ -46,6 +46,7 @@ export function YourLinks({ useFormStore }: Props) {
       linkedin: string;
       telegram: string;
       website: string;
+      wechat: string;
     },
     pow: PoW[],
   ) => {
@@ -80,6 +81,7 @@ export function YourLinks({ useFormStore }: Props) {
       'linkedin',
       'website',
       'telegram',
+      'wechat',
     ];
     const filledSocials = socialFields.filter((field) => data[field]);
 
@@ -99,6 +101,7 @@ export function YourLinks({ useFormStore }: Props) {
         linkedin: data.linkedin,
         telegram: data.telegram,
         website: data.website,
+        wechat: data.wechat,
       },
       pow,
     );
