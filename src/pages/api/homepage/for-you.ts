@@ -71,7 +71,7 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
       language: { in: ['eng', 'sco'] },
       region: {
         in: userRegion?.name
-          ? [Regions.GLOBAL, userRegion.name]
+          ? [Regions.GLOBAL, userRegion.name, ...(userRegion.country || [])]
           : [Regions.GLOBAL],
       },
       AND: [
