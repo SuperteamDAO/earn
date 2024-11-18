@@ -172,7 +172,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   if (session && session.user.id) {
     isAuth = true;
     const matchedRegion = getCombinedRegion(session.user.location);
-    if (matchedRegion) {
+    if (matchedRegion?.name) {
       userRegion = [matchedRegion.name, Regions.GLOBAL];
     } else {
       userRegion = [Regions.GLOBAL];
