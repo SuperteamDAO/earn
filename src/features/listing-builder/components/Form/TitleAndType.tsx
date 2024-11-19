@@ -50,7 +50,12 @@ export function TitleAndType() {
                 />
               </FormControl>
             </div>
-            <FormMessage />
+            <div className="flex justify-between">
+              <FormMessage />
+              <div className="ml-auto text-right text-xs text-slate-400">
+                {100 - (form.watch('title')?.length || 0)} characters left
+              </div>
+            </div>
           </FormItem>
         );
       }}
