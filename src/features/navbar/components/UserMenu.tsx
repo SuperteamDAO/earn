@@ -17,7 +17,6 @@ import {
 import { EarnAvatar, EmailSettingsModal } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
-import { cn } from '@/utils';
 
 export function UserMenu() {
   const router = useRouter();
@@ -68,28 +67,22 @@ export function UserMenu() {
         </Button>
       )}
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            className={cn(
-              'ph-no-capture border border-white bg-slate-50 px-0.5 md:px-2',
-              'hover:bg-slate-100 active:border-slate-300 active:bg-slate-200',
-            )}
-            id="user menu"
-            onClick={() => {
-              posthog.capture('clicked_user menu');
-            }}
-          >
-            <div className="flex items-center">
-              <EarnAvatar id={user?.id} avatar={user?.photo} />
-              <div className="ml-2 hidden items-center md:flex">
-                <p className="text-sm font-medium text-slate-600">
-                  {user?.firstName ?? 'New User'}
-                </p>
-              </div>
+        <DropdownMenuTrigger
+          id="user menu"
+          className="ph-no-capture rounded-md border border-white bg-white px-0.5 py-1 transition-all hover:bg-slate-100 active:border-slate-300 active:bg-slate-200 md:px-2"
+          onClick={() => {
+            posthog.capture('clicked_user menu');
+          }}
+        >
+          <div className="flex items-center">
+            <EarnAvatar id={user?.id} avatar={user?.photo} />
+            <div className="ml-2 hidden items-center md:flex">
+              <p className="text-sm font-medium text-slate-600">
+                {user?.firstName ?? 'New User'}
+              </p>
             </div>
             <ChevronDown className="ml-2 h-4 w-4 text-slate-400 md:h-5 md:w-5" />
-          </Button>
+          </div>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent className="ph-no-capture">
@@ -138,7 +131,7 @@ export function UserMenu() {
 
           {session?.user?.role === 'GOD' && (
             <div className="hidden sm:block">
-              <DropdownMenuLabel className="ml-3 text-xs font-medium text-slate-400">
+              <DropdownMenuLabel className="-mb-2 text-xs font-medium text-slate-400">
                 God Mode
               </DropdownMenuLabel>
               <DropdownMenuItem asChild>

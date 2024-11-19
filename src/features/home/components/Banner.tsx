@@ -28,8 +28,6 @@ export function HomeBanner() {
   const posthog = usePostHog();
   const common = {
     alt: 'Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight',
-    layout: 'fill',
-    objectFit: 'cover',
     quality: 85,
     priority: true,
     loading: 'eager' as const,
@@ -38,6 +36,8 @@ export function HomeBanner() {
       maxWidth: '100%',
       borderRadius: '0.375rem',
       pointerEvents: 'none' as const,
+      objectFit: 'cover' as const,
+      layout: 'fill' as const,
     },
   };
 
