@@ -1,10 +1,25 @@
+import { type GrantApplication } from '@prisma/client';
 import axios from 'axios';
 
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils';
 
 import { convertGrantApplicationToAirtable } from './convertGrantApplicationToAirtable';
 
-export async function handleAirtableSync(application: any) {
+interface GrantApplicationWithUserAndGrant extends GrantApplication {
+  grant: {
+    airtableId: string | null;
+  };
+  user: {
+    firstName: string | null;
+    lastName: string | null;
+    email: string;
+    discord: string | null;
+  };
+}
+
+export async function handleAirtableSync(
+  application: GrantApplicationWithUserAndGrant,
+) {
   const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
   const url = airtableUrl(
     process.env.AIRTABLE_GRANTS_BASE_ID!,
