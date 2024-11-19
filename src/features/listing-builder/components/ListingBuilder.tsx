@@ -1,5 +1,5 @@
 import { type BountyType } from '@prisma/client';
-import { Provider, useAtomValue } from 'jotai';
+import { Provider } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -44,18 +44,15 @@ function ListingBuilder({
   defaultListing: ListingFormData;
   isDuplicating?: boolean;
 }) {
-  const isEditing = useAtomValue(isEditingAtom);
-  useEffect(() => {
-    console.log('isEditing inside hydrate', isEditing);
-  }, [isEditing]);
-
   const form = useListingForm(defaultListing);
   useInitAtom(
     listingStatusAtom,
     defaultListing ? listingToStatus(defaultListing) : undefined,
   );
+  useInitAtom(isEditingAtom, !!defaultListing.isPublished);
   // useEffect(() => {
-  //   form.reset(defaultListing);
+  //   setIsEditing(!!defaultListing.isPublished)
+  //   // form.reset(defaultListing);
   // }, [defaultListing]);
 
   useEffect(() => {
@@ -74,6 +71,7 @@ function ListingBuilder({
   useEffect(() => {
     console.log('errors', form.formState.errors);
   }, [form.formState.errors]);
+
   return (
     <>
       <Form {...form}>
@@ -136,7 +134,7 @@ function ListingBuilderProvider({
       isST,
       (params.get('type') as BountyType) || 'bounty',
     );
-  console.log('isEditing', isEditing);
+  // console.log('defaultListing', defaultListing);
 
   const router = useRouter();
   if (!session && status === 'unauthenticated') {

@@ -147,10 +147,10 @@ export const createListingFormSchema = (
         })
         .min(1, 'Required')
         .default(dayjs().add(7, 'day').format(DEADLINE_FORMAT))
-        .refine(
-          (date) => isGod || dayjs(date).isAfter(dayjs()),
-          'Deadline cannot be in the past',
-        )
+        .refine((date) => {
+          if (isGod && isEditing) return true;
+          return isGod || dayjs(date).isAfter(dayjs());
+        }, 'Deadline cannot be in the past')
         .refine((date) => {
           if (!isEditing || isGod || !pastListing?.deadline) return true;
           const newDeadline = dayjs(date);

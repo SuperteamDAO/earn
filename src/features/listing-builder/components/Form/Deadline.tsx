@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { isEditingAtom, isGodAtom } from '../../atoms';
+import { isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 
 const deadlineOptions = [
@@ -37,13 +37,12 @@ export function Deadline() {
   });
 
   const [maxDeadline, setMaxDeadline] = useState<Date | undefined>(undefined);
-  const [minDeadline, setMinDeadline] = useState<Date | undefined>(new Date());
+  const [minDeadline] = useState<Date | undefined>(new Date());
 
   const [isCustomDate, setIsCustomDate] = useState(false);
-  const [customDate, setCustomDate] = useState<string>('7');
+  const [customDate, setCustomDate] = useState<string>('0');
 
   const isEditing = useAtomValue(isEditingAtom);
-  const isGod = useAtomValue(isGodAtom);
 
   useEffect(() => {
     if (isEditing && deadline) {
@@ -52,11 +51,6 @@ export function Deadline() {
       setMaxDeadline(twoWeeksLater.toDate());
     }
   }, [isEditing]);
-
-  useEffect(() => {
-    if (isGod) setMinDeadline(undefined);
-    else setMinDeadline(new Date());
-  }, [isGod]);
 
   const handleDeadlineSelection = (days: number) => {
     return dayjs().add(days, 'day').format(DEADLINE_FORMAT);
@@ -73,8 +67,9 @@ export function Deadline() {
   // TODO: Debug why zod default for deadline specifically is not working
   useEffect(() => {
     if (form) {
-      if (!deadline) {
+      if (typeof deadline !== 'string') {
         form.setValue('deadline', handleDeadlineSelection(7));
+        setCustomDate('7');
         setIsCustomDate(false);
       } else {
         setIsCustomDate(!isPresetDeadline(deadline));
@@ -96,7 +91,6 @@ export function Deadline() {
               <DateTimePicker
                 value={field.value ? new Date(field.value) : undefined}
                 onChange={(date) => {
-                  console.log('DateTimePicker date', date);
                   if (date) {
                     const formattedDate = dayjs(date).format(DEADLINE_FORMAT);
                     field.onChange(formattedDate);
@@ -120,7 +114,7 @@ export function Deadline() {
                   setCustomDate(data);
                   field.onChange(handleDeadlineSelection(Number(data)));
                 }}
-                value={isCustomDate ? '0' : customDate}
+                value={customDate}
               >
                 <SelectTrigger className="w-32 rounded-none border-0 border-l text-xs text-slate-500 focus:ring-0">
                   {isCustomDate ? 'Custom' : <SelectValue />}
