@@ -2,7 +2,7 @@ import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { CombinedRegions } from '@/constants/Superteam';
+import { getCombinedRegion } from '@/features/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -54,17 +54,23 @@ export default async function grants(
 
     const token = await getToken({ req });
     const userId = token?.sub;
-    let userRegion: Regions[] | null | undefined = null;
+    let userRegion: string[] | null | undefined = null;
     if (userId) {
       const user = await prisma.user.findFirst({
         where: { id: userId },
         select: { location: true },
       });
-      const matchedRegion = CombinedRegions.find(
-        (region) => user?.location && region.country.includes(user?.location),
-      );
-      if (matchedRegion?.region) {
-        userRegion = [matchedRegion.region, Regions.GLOBAL];
+
+      const matchedRegion = user?.location
+        ? getCombinedRegion(user?.location)
+        : undefined;
+
+      if (matchedRegion?.name) {
+        userRegion = [
+          matchedRegion.name,
+          Regions.GLOBAL,
+          ...(matchedRegion.country || []),
+        ];
       } else {
         userRegion = [Regions.GLOBAL];
       }

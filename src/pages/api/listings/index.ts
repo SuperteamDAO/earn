@@ -2,7 +2,7 @@ import { type BountyType, type Prisma, Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { CombinedRegions } from '@/constants/Superteam';
+import { getCombinedRegion } from '@/features/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -120,10 +120,7 @@ export default async function listings(
       where: { id: userId },
       select: { location: true },
     });
-    const matchedRegion = CombinedRegions.find(
-      (region) => user?.location && region.country.includes(user?.location),
-    );
-    userRegion = matchedRegion?.region;
+    userRegion = user?.location ? getCombinedRegion(user?.location) : undefined;
   }
 
   const listingQueryOptions: Prisma.BountiesFindManyArgs = {
@@ -142,7 +139,11 @@ export default async function listings(
       type: type || { in: ['bounty', 'project'] },
       ...skillsFilter,
       NOT: { id },
-      ...(userRegion ? { region: { in: [userRegion, Regions.GLOBAL] } } : {}),
+      region: {
+        in: userRegion?.name
+          ? [Regions.GLOBAL, userRegion.name, ...(userRegion.country || [])]
+          : [Regions.GLOBAL],
+      },
       ...(exclusiveSponsorId ? { sponsorId: exclusiveSponsorId } : {}),
     },
     select: {

@@ -1,16 +1,12 @@
-import { Flex, Text } from '@chakra-ui/react';
-
 import { Loading } from './Loading';
 
 export function LoadingSection() {
   return (
-    <Flex align={'center'} justify="center" w="full" minH={'92vh'}>
-      <Flex align={'center'} justify="center" direction={'column'}>
+    <div className="flex min-h-[92vh] w-full items-center justify-center">
+      <div className="flex flex-col items-center justify-center">
         <Loading />
-        <Text mt={2} color="brand.slate.300">
-          Loading...
-        </Text>
-      </Flex>
-    </Flex>
+        <span className="mt-2 text-slate-300">Loading...</span>
+      </div>
+    </div>
   );
 }

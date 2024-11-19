@@ -1,4 +1,3 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 
 import { tokenList } from '@/constants';
@@ -12,63 +11,38 @@ export const TrackBox = ({
   slug,
 }: TrackProps) => {
   return (
-    <Box
-      as={NextLink}
-      p={{ base: 3, md: 4 }}
-      borderWidth={'1px'}
-      borderColor="brand.slate.200"
-      borderRadius={8}
+    <NextLink
       href={`/listings/hackathon/${slug}`}
+      className="block rounded-lg border border-[#E2E8F0] p-3 md:p-4"
     >
-      <Flex align="center" gap={3}>
-        <Image
-          w={{ base: 12, md: 14 }}
-          h={{ base: 12, md: 14 }}
-          borderRadius={3}
-          objectFit={'cover'}
+      <div className="flex items-center gap-3">
+        <img
+          className="h-12 w-12 rounded object-cover md:h-14 md:w-14"
           alt={sponsor.name}
           src={sponsor.logo}
         />
-        <Flex direction={'column'}>
-          <Text
-            color={'brand.slate.900'}
-            fontSize={{ base: 'sm', md: 'md' }}
-            fontWeight={500}
-          >
+        <div className="flex flex-col">
+          <span className="text-sm font-medium text-slate-900 md:text-base">
             {title}
-          </Text>
-          <Text
-            color={'brand.slate.500'}
-            fontSize={{ base: 'sm', md: 'md' }}
-            fontWeight={400}
-          >
+          </span>
+          <span className="text-sm font-normal text-slate-500 md:text-base">
             {sponsor.name}
-          </Text>
-        </Flex>
-      </Flex>
-      <Flex align="center" justify={'end'} gap={1}>
-        <Image
-          w={{ base: 4, md: 6 }}
-          h={{ base: 4, md: 6 }}
+          </span>
+        </div>
+      </div>
+      <div className="flex items-center justify-end gap-1">
+        <img
+          className="h-4 w-4 rounded-full md:h-6 md:w-6"
           alt={token}
-          rounded={'full'}
           src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
         />
-        <Text
-          color={'brand.slate.700'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={600}
-        >
+        <span className="text-sm font-semibold text-slate-700 md:text-base">
           {rewardAmount?.toLocaleString('en-us')}
-        </Text>
-        <Text
-          color={'brand.slate.400'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={600}
-        >
+        </span>
+        <span className="text-sm font-semibold text-slate-400 md:text-base">
           {token}
-        </Text>
-      </Flex>
-    </Box>
+        </span>
+      </div>
+    </NextLink>
   );
 };

@@ -90,7 +90,7 @@ export function SelectHackathon({
       <components.SingleValue {...props}>
         <Flex align="center" py={1}>
           <EarnAvatar
-            borderRadius="4"
+            borderRadius="rounded-sm"
             id={data?.hackathon?.name}
             avatar={data?.hackathon?.logo}
             size={'24px'}
@@ -114,7 +114,7 @@ export function SelectHackathon({
       <components.Option {...props}>
         <Flex align="center">
           <EarnAvatar
-            borderRadius="4"
+            borderRadius="rounded-sm"
             id={data?.hackathon?.name}
             avatar={data?.hackathon?.logo}
           />

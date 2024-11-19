@@ -3,7 +3,14 @@ import * as React from 'react';
 
 import { cn } from '@/utils';
 
-const TooltipProvider = TooltipPrimitive.Provider;
+const TooltipProvider = ({
+  children,
+  ...props
+}: TooltipPrimitive.TooltipProviderProps) => (
+  <TooltipPrimitive.Provider delayDuration={0} {...props}>
+    {children}
+  </TooltipPrimitive.Provider>
+);
 
 const Tooltip = TooltipPrimitive.Root;
 

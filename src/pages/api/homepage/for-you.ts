@@ -70,7 +70,9 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
       isArchived: false,
       language: { in: ['eng', 'sco'] },
       region: {
-        in: userRegion ? [Regions.GLOBAL, userRegion.name] : [Regions.GLOBAL],
+        in: userRegion?.name
+          ? [Regions.GLOBAL, userRegion.name, ...(userRegion.country || [])]
+          : [Regions.GLOBAL],
       },
       AND: [
         {

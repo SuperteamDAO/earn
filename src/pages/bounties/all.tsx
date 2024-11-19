@@ -1,4 +1,3 @@
-import { Box, Flex } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -9,6 +8,7 @@ import {
   listingsQuery,
 } from '@/features/listings';
 import { Home } from '@/layouts/Home';
+import { cn } from '@/utils';
 
 export default function AllBountiesPage() {
   const { data: listings, isLoading } = useQuery(
@@ -20,7 +20,7 @@ export default function AllBountiesPage() {
 
   return (
     <Home type="listing">
-      <Box w={'100%'} pr={{ base: 0, lg: 6 }}>
+      <div className={cn('w-full', 'lg:pr-6')}>
         <ListingSection
           type="bounties"
           title="All Bounties"
@@ -32,19 +32,19 @@ export default function AllBountiesPage() {
               <ListingCardSkeleton key={index} />
             ))}
           {!isLoading && !listings?.length && (
-            <Flex align="center" justify="center" mt={8}>
+            <div className="mt-8 flex items-center justify-center">
               <EmptySection
                 title="No listings available!"
                 message="Update your email preferences (from the user menu) to be notified about new work opportunities."
               />
-            </Flex>
+            </div>
           )}
           {!isLoading &&
             listings?.map((bounty) => (
               <ListingCard key={bounty.id} bounty={bounty} />
             ))}
         </ListingSection>
-      </Box>
+      </div>
     </Home>
   );
 }

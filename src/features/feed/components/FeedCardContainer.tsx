@@ -9,7 +9,6 @@ import {
   SkeletonText,
   Text,
   useBreakpointValue,
-  useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
@@ -22,6 +21,7 @@ import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import { AuthWrapper } from '@/features/auth';
 import { Comments } from '@/features/comments';
 import { EarnAvatar } from '@/features/talent';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 

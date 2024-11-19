@@ -1,11 +1,10 @@
-import { type Regions } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { type GrantWithApplicationCount } from '@/features/grants';
 
 interface GrantsParams {
-  userRegion: Regions[] | null;
+  userRegion: string[] | null;
 }
 
 const fetchHomePageGrants = async (

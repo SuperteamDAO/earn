@@ -1,20 +1,4 @@
-import { HamburgerIcon } from '@chakra-ui/icons';
-import {
-  AbsoluteCenter,
-  Box,
-  Button,
-  CloseButton,
-  Divider,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerOverlay,
-  Flex,
-  IconButton,
-  Image,
-  Link,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Menu } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -22,7 +6,12 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 import {
   CATEGORY_NAV_ITEMS,
@@ -67,79 +56,61 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
 
   const MobileDrawer = () => {
     return (
-      <Drawer
-        finalFocusRef={btnRef}
-        isOpen={isDrawerOpen}
-        onClose={onDrawerClose}
-        placement="left"
-      >
-        <DrawerOverlay display={{ base: 'block', lg: 'none' }} />
-        <DrawerContent
-          className="ph-no-capture"
-          display={{ base: 'block', lg: 'none' }}
-        >
-          <Flex px={3} py={2}>
-            <CloseButton onClick={onDrawerClose} />
-          </Flex>
-          <DrawerBody>
+      <Sheet open={isDrawerOpen} onOpenChange={onDrawerClose}>
+        <SheetContent side="left" className="w-[300px] p-0 sm:w-[380px]">
+          <SheetClose />
+          <div className="px-4 pb-8">
             {status === 'unauthenticated' && !session && (
-              <Flex className="ph-no-capture" align="center" gap={3}>
+              <div className="ph-no-capture flex items-center gap-3">
                 <Button
-                  color="brand.slate.500"
-                  fontSize="md"
+                  variant="link"
+                  className="text-semibold mr-3 p-0 text-slate-500"
                   onClick={() => {
                     posthog.capture('login_navbar');
                     onDrawerClose();
                     onLoginOpen();
                   }}
-                  size="md"
-                  variant="unstyled"
                 >
                   Login
                 </Button>
-                <Divider
-                  h={5}
-                  borderWidth={'0.5px'}
-                  borderColor={'brand.slate.300'}
+                <Separator
                   orientation="vertical"
+                  className="h-5 bg-slate-300"
                 />
                 <Button
-                  color="brand.purple"
-                  fontSize="md"
+                  variant="ghost"
+                  className="text-semibold text-brand-purple"
                   onClick={() => {
                     posthog.capture('signup_navbar');
                     onDrawerClose();
                     onLoginOpen();
                   }}
-                  size="md"
-                  variant="unstyled"
                 >
                   Sign Up
                 </Button>
-              </Flex>
+              </div>
             )}
 
             {user && !user.currentSponsorId && !user.isTalentFilled && (
               <Button
-                color={'brand.purple'}
-                fontSize="md"
+                variant="ghost"
+                className="text-md text-brand-purple"
                 onClick={() => {
                   router.push('/new');
                 }}
-                size="md"
-                variant="unstyled"
               >
                 Complete your Profile
               </Button>
             )}
-            <Divider my={2} borderColor={'brand.slate.300'} />
-            <Flex className="ph-no-capture" direction={'column'}>
+            <Separator className="my-2 bg-slate-300" />
+            <div className="ph-no-capture flex flex-col">
               {LISTING_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
                   <NavLink
                     onClick={() => {
                       posthog.capture(navItem.posthog);
+                      onDrawerClose();
                     }}
                     key={navItem.label}
                     className="ph-no-capture"
@@ -149,9 +120,9 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                   />
                 );
               })}
-            </Flex>
-            <Divider my={2} borderColor={'brand.slate.300'} />
-            <Flex className="ph-no-capture" direction={'column'}>
+            </div>
+            <Separator className="my-2 bg-slate-300" />
+            <div className="ph-no-capture flex flex-col">
               {CATEGORY_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
@@ -159,6 +130,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                     className="ph-no-capture"
                     onClick={() => {
                       posthog.capture(navItem.posthog);
+                      onDrawerClose();
                     }}
                     key={navItem.label}
                     href={navItem.href ?? '#'}
@@ -167,116 +139,80 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                   />
                 );
               })}
-            </Flex>
-            <Divider my={2} borderColor={'brand.slate.300'} />
-            <NavLink href={'/feed'} label={'Activity Feed'} isActive={false} />
+            </div>
+            <Separator className="my-2 bg-slate-300" />
+            <NavLink
+              href={'/feed'}
+              label={'Activity Feed'}
+              isActive={false}
+              onClick={onDrawerClose}
+            />
             <NavLink
               href={'/leaderboard'}
               label={'Leaderboard'}
               isActive={false}
+              onClick={onDrawerClose}
             />
-            {/* <Divider my={2} borderColor={'brand.slate.300'} />
-            <Link
-              as={NextLink}
-              alignItems="center"
-              display="flex"
-              pt={2}
-              href="/hackathon/radar"
-            >
-              <Image
-                h={6}
-                objectFit={'contain'}
-                alt="Radar Nav Icon"
-                src="/assets/hackathon/radar/nav.png"
-              />
-            </Link> */}
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+          </div>
+        </SheetContent>
+      </Sheet>
     );
   };
 
   return (
     <>
       {/* {router.pathname === '/' && <AnnouncementBar />} */}
-      <Box pos="sticky" zIndex="sticky" top={0}>
-        <Flex
-          align="center"
-          justify="space-between"
-          display={{ base: 'flex', lg: 'none' }}
-          px={1}
-          py={2}
-          bg="white"
-          borderBottom="1px solid"
-          borderBottomColor="blackAlpha.200"
-        >
-          <Flex>
-            <IconButton
+      <div className="sticky top-0 z-50">
+        <div className="flex items-center justify-between border-b border-black/20 bg-white px-1 py-2 lg:hidden">
+          <div>
+            <Button
               ref={btnRef}
-              bg="transparent"
-              _hover={{ bg: 'transparent' }}
-              _active={{ bg: 'transparent' }}
-              aria-label="Open Drawer"
-              icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
+              variant="ghost"
+              size="sm"
+              className="hover:bg-transparent"
               onClick={onDrawerOpen}
-            />
-          </Flex>
+            >
+              <Menu className="h-6 w-6 text-slate-500" />
+            </Button>
+          </div>
 
           <MobileDrawer />
-          <AbsoluteCenter>
-            <Link
-              as={NextLink}
-              alignItems={'center'}
-              _hover={{ textDecoration: 'none' }}
+          <div className="absolute left-1/2 -translate-x-1/2">
+            <NextLink
               href="/"
+              className="flex items-center hover:no-underline"
               onClick={() => {
                 posthog.capture('homepage logo click_universal');
               }}
             >
-              <Image
-                h={5}
-                cursor="pointer"
-                objectFit={'contain'}
-                alt={'Superteam Earn'}
-                src={'/assets/logo/logo.svg'}
+              <img
+                className="h-5 cursor-pointer object-contain"
+                alt="Superteam Earn"
+                src="/assets/logo/logo.svg"
               />
-            </Link>
-          </AbsoluteCenter>
+            </NextLink>
+          </div>
           {status === 'authenticated' && session && <UserMenu />}
           {status === 'unauthenticated' && !session && (
             <Button
-              className="ph-no-capture"
-              mr={2}
-              color="brand.purple"
-              fontSize="md"
+              variant="ghost"
+              className="ph-no-capture text-md mr-2 text-brand-purple"
               onClick={() => {
                 posthog.capture('login_navbar');
                 onLoginOpen();
               }}
-              size="sm"
-              variant="unstyled"
             >
               Login
             </Button>
           )}
-        </Flex>
-      </Box>
-      <Flex
-        align={'center'}
-        justify={'space-between'}
-        display={{ base: 'flex', lg: 'none' }}
-        px={{ base: 3, sm: 4 }}
-        py={0}
-        bg={'#F8FAFC'}
-      >
-        <Flex
-          className="ph-no-capture"
-          justify="space-evenly"
-          gap={{ base: 8, sm: 8, md: 12 }}
-          display={hideListingTypes ? 'none' : 'flex'}
-          w="full"
-          mx="auto"
-          pl={1}
+        </div>
+      </div>
+      <div className="flex items-center justify-between bg-[#F8FAFC] px-3 py-0 sm:px-4 lg:hidden">
+        <div
+          className={cn(
+            'ph-no-capture mx-auto flex w-full justify-evenly gap-8 pl-1 sm:gap-8 md:gap-12',
+            hideListingTypes ? 'hidden' : 'flex',
+          )}
         >
           {LISTING_NAV_ITEMS?.map((navItem) => {
             const isCurrent = `${navItem.href}` === router.asPath;
@@ -285,21 +221,16 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 onClick={() => {
                   posthog.capture(navItem.posthog);
                 }}
-                className="ph-no-capture"
+                className="ph-no-capture h-auto border-b-0 py-2 text-sm font-medium lg:py-3"
                 key={navItem.label}
                 href={navItem.href ?? '#'}
                 label={renderLabel(navItem)}
                 isActive={isCurrent}
-                fontSize={'sm'}
-                fontWeight={500}
-                borderBottom={'none'}
-                h={'auto'}
-                py={{ base: 2, md: 3 }}
               />
             );
           })}
-        </Flex>
-      </Flex>
+        </div>
+      </div>
     </>
   );
 };

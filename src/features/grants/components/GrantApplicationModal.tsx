@@ -20,6 +20,7 @@ import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { type z } from 'zod';
 
 import { Form } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
@@ -39,24 +40,7 @@ const steps = [
   { title: 'Milestones' },
 ];
 
-interface EligibilityAnswer {
-  question: string;
-  answer: string;
-}
-
-interface GrantApplicationForm {
-  projectTitle: string;
-  projectOneLiner: string;
-  ask: number;
-  walletAddress: string;
-  projectDetails: string;
-  projectTimeline: string;
-  proofOfWork: string;
-  milestones: string;
-  kpi: string;
-  twitter: string;
-  [key: string]: string | number;
-}
+type FormData = z.infer<ReturnType<typeof grantApplicationSchema>>;
 
 interface Props {
   isOpen: boolean;
@@ -83,7 +67,7 @@ export const GrantApplicationModal = ({
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<GrantApplicationForm>({
+  const form = useForm<FormData>({
     resolver: zodResolver(
       grantApplicationSchema(
         minReward || 0,
@@ -109,13 +93,19 @@ export const GrantApplicationModal = ({
       twitter: grantApplication?.twitter
         ? extractTwitterUsername(grantApplication?.twitter) || ''
         : extractTwitterUsername(user?.twitter || '') || '',
-      ...(grantApplication?.answers
-        ? Object.fromEntries(
-            (grantApplication.answers as unknown as EligibilityAnswer[]).map(
-              (answer, index) => [`answer-${index + 1}`, answer.answer],
-            ),
-          )
-        : {}),
+      answers:
+        Array.isArray(questions) && questions.length > 0
+          ? questions.map((q) => ({
+              question: q.question,
+              answer:
+                (
+                  grantApplication?.answers as Array<{
+                    question: string;
+                    answer: string;
+                  }>
+                )?.find((a) => a.question === q.question)?.answer || '',
+            }))
+          : [],
     },
   });
 
@@ -124,10 +114,10 @@ export const GrantApplicationModal = ({
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (user?.publicKey) form.setValue('publicKey', user?.publicKey);
+    if (user?.publicKey) form.setValue('walletAddress', user?.publicKey);
   }, [user]);
 
-  const submitApplication = async (data: any) => {
+  const submitApplication = async (data: FormData) => {
     setIsLoading(true);
     try {
       const {
@@ -141,16 +131,10 @@ export const GrantApplicationModal = ({
         milestones,
         kpi,
         twitter,
-        ...answers
+        answers,
       } = data;
 
       await updateUser.mutateAsync({ publicKey: walletAddress });
-
-      const grantAnswers =
-        questions?.map((q: any) => ({
-          question: q.question,
-          answer: answers[`answer-${q.order}`],
-        })) ?? [];
 
       const apiAction = !!grantApplication ? 'update' : 'create';
 
@@ -166,7 +150,7 @@ export const GrantApplicationModal = ({
         walletAddress,
         ask: ask || null,
         twitter,
-        answers: grantAnswers.length ? grantAnswers : [],
+        answers: answers || [],
       });
 
       form.reset();
@@ -194,29 +178,33 @@ export const GrantApplicationModal = ({
 
   const handleNext = (e: React.MouseEvent) => {
     e.preventDefault();
-    const fieldsToValidate = {
-      0: ['projectTitle', 'projectOneLiner', 'walletAddress'],
+    const fieldsToValidate: Record<
+      number,
+      (keyof FormData | `answers.${number}.answer`)[]
+    > = {
+      0: ['projectTitle', 'projectOneLiner', 'walletAddress', 'ask'],
       1: [
         'projectDetails',
         'projectTimeline',
         'proofOfWork',
         'twitter',
-        ...(questions?.map((q: any) => `answer-${q.order}`) || []),
+        ...(questions?.map(
+          (_: any, index: number) => `answers.${index}.answer` as const,
+        ) || []),
       ],
       2: ['milestones', 'kpi'],
     };
 
-    form
-      .trigger(fieldsToValidate[activeStep as keyof typeof fieldsToValidate])
-      .then((isValid) => {
-        if (isValid) {
-          setActiveStep((prev) => prev + 1);
-          if (modalRef.current) {
-            modalRef.current.scrollTop = 0;
-          }
+    form.trigger(fieldsToValidate[activeStep]).then((isValid) => {
+      if (isValid) {
+        setActiveStep((prev) => prev + 1);
+        if (modalRef.current) {
+          modalRef.current.scrollTop = 0;
         }
-      });
+      }
+    });
   };
+
   const handleBack = () => {
     setActiveStep((prev) => prev - 1);
     if (modalRef.current) {
@@ -225,10 +213,6 @@ export const GrantApplicationModal = ({
   };
 
   const date = dayjs().format('YYYY-MM-DD');
-
-  useEffect(() => {
-    console.log(form.formState.errors);
-  }, [form.formState.errors]);
 
   return (
     <Modal
@@ -430,7 +414,7 @@ export const GrantApplicationModal = ({
                     description="Add your personal Twitter username"
                     isRequired
                   >
-                    <div className="mb-5 flex items-center">
+                    <div className="flex items-center">
                       <div className="relative flex items-center">
                         <Twitter className="mr-3 h-5 w-5 text-slate-600" />
                       </div>
@@ -450,11 +434,11 @@ export const GrantApplicationModal = ({
                     </div>
                   </FormFieldWrapper>
 
-                  {questions?.map((question: any) => (
+                  {questions?.map((question: any, index: number) => (
                     <FormFieldWrapper
                       key={question.order}
                       control={form.control}
-                      name={`answer-${question.order}`}
+                      name={`answers.${index}.answer`}
                       label={question.question}
                       isRequired
                       isRichEditor

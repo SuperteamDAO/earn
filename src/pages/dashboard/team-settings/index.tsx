@@ -30,7 +30,6 @@ import {
   Thead,
   Tooltip,
   Tr,
-  useDisclosure,
 } from '@chakra-ui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -49,6 +48,7 @@ import {
   sponsorStatsQuery,
 } from '@/features/sponsor-dashboard';
 import { EarnAvatar } from '@/features/talent';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';

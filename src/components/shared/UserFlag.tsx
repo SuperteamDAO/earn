@@ -1,29 +1,33 @@
 import '/node_modules/flag-icons/css/flag-icons.min.css';
 
-import { Center } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 import { countries } from '@/constants';
+import { cn } from '@/utils';
+
+type FlagSize =
+  | '12px'
+  | '14px'
+  | '16px'
+  | '20px'
+  | '24px'
+  | '28px'
+  | '32px'
+  | '36px'
+  | '40px'
+  | '44px'
+  | '52px'
+  | '64px';
 
 interface Props {
   location: string;
-  size?:
-    | '12px'
-    | '14px'
-    | '16px'
-    | '20px'
-    | '24px'
-    | '28px'
-    | '32px'
-    | '36px'
-    | '40px'
-    | '44px'
-    | '52px'
-    | '64px';
+  size?: FlagSize;
   isCode?: boolean;
 }
+
 export function UserFlag({ location, size = '16px', isCode = false }: Props) {
   const [code, setCode] = useState<string | null>(null);
+
   useEffect(() => {
     if (isCode) {
       setCode(location.toLowerCase());
@@ -35,25 +39,28 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
         setCode(country.code);
       }
     }
-  }, [location]);
+  }, [location, isCode]);
+
+  const flagStyles = {
+    width: size,
+    height: size,
+  };
+
   return code === 'balkan' ? (
-    <Center
-      bgImage={'/assets/superteams/logos/balkan.png'}
-      bgSize={'contain'}
-      borderWidth="1px"
-      borderStyle="solid"
-      borderColor="brand.slate.50"
-      rounded="full"
-      style={{ width: size, height: size }}
+    <div
+      className="flex items-center justify-center rounded-full border border-slate-50 bg-contain"
+      style={{
+        ...flagStyles,
+        backgroundImage: "url('/assets/superteams/logos/balkan.png')",
+      }}
     />
   ) : (
-    <Center
-      className={`fi fi-${code} fis`}
-      borderWidth="1px"
-      borderStyle="solid"
-      borderColor="brand.slate.50"
-      rounded="full"
-      style={{ width: size, height: size }}
+    <div
+      className={cn(
+        'flex items-center justify-center rounded-full border border-slate-50',
+        `fi fi-${code} fis`,
+      )}
+      style={flagStyles}
     />
   );
 }

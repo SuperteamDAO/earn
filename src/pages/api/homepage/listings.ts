@@ -1,4 +1,3 @@
-import { type Regions } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { getStatusFilterQuery, type StatusFilter } from '@/features/listings';
@@ -124,7 +123,7 @@ export default async function handler(
   const params = req.query;
   const order = (params.order as 'asc' | 'desc') ?? 'desc';
   const statusFilter = params.statusFilter as StatusFilter;
-  let userRegion = params['userRegion[]'] as Regions[];
+  let userRegion = params['userRegion[]'] as string[];
   if (typeof userRegion === 'string') {
     userRegion = [userRegion];
   }

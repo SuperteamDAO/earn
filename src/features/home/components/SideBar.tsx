@@ -1,8 +1,8 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { Flex, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { MdArrowForward } from 'react-icons/md';
 
 import { recentEarnersQuery } from '@/features/listings';
 import { useUser } from '@/store/user';
@@ -14,11 +14,14 @@ import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
-import { VibeCard } from './VibeCard';
 
 interface SideBarProps {
   type: 'landing' | 'listing' | 'category' | 'region' | 'niche' | 'feed';
 }
+
+const VibeCard = dynamic(() =>
+  import('@/features/home').then((mod) => mod.VibeCard),
+);
 
 export const HomeSideBar = ({ type }: SideBarProps) => {
   const router = useRouter();
@@ -28,26 +31,23 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   const { data: recentEarners } = useQuery(recentEarnersQuery);
 
   return (
-    <Flex direction={'column'} rowGap={'2.5rem'} w={'24rem'} py={6} pl={6}>
+    <div className="flex w-96 flex-col gap-10 py-6 pl-6">
       {type === 'feed' && (
         <>
           <VibeCard />
           <LiveListings>
-            <Flex align="center" justify={'space-between'}>
-              <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-gray-400">
                 LIVE LISTINGS
-              </Text>
-              <Text
-                as={NextLink}
-                color="brand.purple"
-                fontSize="xs"
-                fontWeight={600}
+              </span>
+              <NextLink
                 href="/"
+                className="flex items-center text-xs font-semibold text-brand-purple"
               >
                 View All
-                <ArrowForwardIcon ml={1} />
-              </Text>
-            </Flex>
+                <MdArrowForward className="ml-1" />
+              </NextLink>
+            </div>
           </LiveListings>
         </>
       )}
@@ -63,7 +63,6 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             TVE={totals?.totalInUSD}
           />
           <HowItWorks />
-          {/* <SidebarBanner /> */}
           <RecentEarners earners={recentEarners} />
           <RecentActivity />
         </>
@@ -73,6 +72,6 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
           <RecentEarners earners={recentEarners} />
         </>
       )}
-    </Flex>
+    </div>
   );
 };

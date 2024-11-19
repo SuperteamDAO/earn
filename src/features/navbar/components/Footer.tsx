@@ -1,22 +1,13 @@
-import {
-  Box,
-  Center,
-  Container,
-  Flex,
-  Image,
-  Link,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
-  Stack,
-  Text,
-} from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Superteams } from '@/constants/Superteam';
 import { Discord, GitHub, Twitter } from '@/features/talent';
 
@@ -37,39 +28,30 @@ const FooterColumn = ({
   title: string;
   links: { href: string; text: string }[];
 }) => (
-  <Stack align="flex-start">
-    <Text
-      color="brand.slate.400"
-      fontSize={{ base: 'xs', md: 'sm' }}
-      fontWeight="500"
-      textTransform="uppercase"
-    >
+  <div className="flex flex-col items-start">
+    <p className="text-xs font-medium uppercase text-slate-400 md:text-sm">
       {title}
-    </Text>
+    </p>
     {links.map((link) => (
-      <Link
+      <NextLink
         key={link.text}
-        as={NextLink}
-        color="brand.slate.500"
-        fontSize={{ base: 'sm', md: 'md' }}
-        _hover={{ color: 'brand.slate.600' }}
         href={link.href}
+        className="text-sm text-slate-500 hover:text-slate-600 md:text-base"
       >
         {link.text}
-      </Link>
+      </NextLink>
     ))}
-  </Stack>
+  </div>
 );
 
 const GlobalFlag = ({ size = '16px' }) => (
-  <Center
-    bgImage="/assets/superteams/globe.png"
-    bgSize="contain"
-    borderWidth="1px"
-    borderStyle="solid"
-    borderColor="brand.slate.50"
-    rounded="full"
-    style={{ width: size, height: size }}
+  <div
+    className="flex items-center justify-center rounded-full border border-slate-50 bg-contain"
+    style={{
+      width: size,
+      height: size,
+      backgroundImage: "url('/assets/superteams/globe.png')",
+    }}
   />
 );
 
@@ -105,49 +87,34 @@ const CountrySelector: React.FC = () => {
   ];
 
   return (
-    <Popover closeOnBlur={true} closeOnEsc={true}>
+    <Popover>
       <PopoverTrigger>
-        <Flex
-          align="center"
-          gap={2}
-          px={2}
-          py={1}
-          bg="white"
-          borderRadius="md"
-          cursor="pointer"
-        >
+        <div className="flex cursor-pointer items-center gap-2 rounded-md bg-white px-2 py-1">
           {selectedCountry.code === 'global' ? (
             <GlobalFlag />
           ) : (
             <UserFlag location={selectedCountry.code} isCode />
           )}
-          <Text userSelect="none">{selectedCountry.name}</Text>
-        </Flex>
+          <p className="select-none">{selectedCountry.name}</p>
+        </div>
       </PopoverTrigger>
-      <PopoverContent w="200px">
-        <PopoverBody p={0}>
-          <Stack gap={0}>
-            {dropdownCountries.map((country) => (
-              <Flex
-                key={country.name}
-                align="center"
-                gap={2}
-                px={4}
-                py={2}
-                _hover={{ bg: 'gray.100' }}
-                cursor="pointer"
-                onClick={() => handleCountrySelect(country)}
-              >
-                {country.code === 'global' ? (
-                  <GlobalFlag />
-                ) : (
-                  <UserFlag location={country.code} isCode />
-                )}
-                <Text>{country.name}</Text>
-              </Flex>
-            ))}
-          </Stack>
-        </PopoverBody>
+      <PopoverContent className="w-[200px] p-0">
+        <div className="flex flex-col gap-0">
+          {dropdownCountries.map((country) => (
+            <div
+              key={country.name}
+              className="flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-gray-100"
+              onClick={() => handleCountrySelect(country)}
+            >
+              {country.code === 'global' ? (
+                <GlobalFlag />
+              ) : (
+                <UserFlag location={country.code} isCode />
+              )}
+              <p>{country.name}</p>
+            </div>
+          ))}
+        </div>
       </PopoverContent>
     </Popover>
   );
@@ -187,73 +154,48 @@ export const Footer = () => {
   ];
 
   return (
-    <Box as="footer" bg="white" borderTop="1px" borderTopColor="blackAlpha.200">
-      <Container maxW="7xl" py={8}>
-        <Flex
-          align="flex-start"
-          justify="space-between"
-          direction={{ base: 'column', md: 'row' }}
-        >
-          <Flex direction="column" maxW="540px" mb={{ base: 8, md: 0 }}>
-            <Flex align="center" mb={4}>
-              <Image
-                h={6}
-                mr={4}
+    <footer className="border-t border-black/20 bg-white">
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        <div className="flex flex-col items-start justify-between md:flex-row">
+          <div className="mb-8 flex max-w-[540px] flex-col md:mb-0">
+            <div className="mb-4 flex items-center">
+              <img
+                className="mr-4 h-6"
                 alt="Superteam Earn"
                 src="/assets/logo/logo.svg"
               />
-            </Flex>
-            <Text
-              mb={6}
-              color="brand.slate.500"
-              fontSize={{ base: 'sm', md: 'md' }}
-            >
+            </div>
+            <p className="mb-6 text-sm text-slate-500 md:text-base">
               Discover high paying crypto bounties, projects and grants from the
               best Solana companies in one place and apply to them using a
               single profile.
-            </Text>
-            <Flex gap={4}>
+            </p>
+            <div className="flex gap-4">
               <GitHub link="https://github.com/SuperteamDAO/earn" />
               <Twitter link="https://twitter.com/superteamearn" />
               <Discord link="https://discord.com/invite/Mq3ReaekgG" />
-            </Flex>
-          </Flex>
-          <Flex
-            justify={{ base: 'flex-start', md: 'flex-end' }}
-            wrap="wrap"
-            gap={{ base: 6, md: 16 }}
-            w={{ base: '100%', md: 'auto' }}
-          >
+            </div>
+          </div>
+          <div className="flex w-full flex-wrap justify-start gap-6 md:w-auto md:justify-end md:gap-16">
             <FooterColumn title="Opportunities" links={opportunities} />
             <FooterColumn title="Categories" links={categories} />
             <FooterColumn title="About" links={about} />
-          </Flex>
-        </Flex>
-      </Container>
-      <Box py={4} pb={{ base: 20, md: 4 }} bg="gray.100">
-        <Container maxW="7xl">
-          <Flex
-            align={{ base: 'flex-start', md: 'center' }}
-            justify="space-between"
-            direction={{ base: 'column', md: 'row' }}
-          >
-            <Text mb={{ base: 4, md: 0 }} color="brand.slate.500" fontSize="sm">
+          </div>
+        </div>
+      </div>
+      <div className="bg-gray-100 py-4 pb-20 md:pb-4">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="flex flex-col items-start justify-between md:flex-row md:items-center">
+            <p className="mb-4 text-sm text-slate-500 md:mb-0">
               © {currentYear} Superteam. All rights reserved.
-            </Text>
-            <Flex align="center">
-              <Text
-                mr={2}
-                color="brand.slate.500"
-                fontSize="sm"
-                fontWeight="500"
-              >
-                REGION
-              </Text>
+            </p>
+            <div className="flex items-center">
+              <p className="mr-2 text-sm font-medium text-slate-500">REGION</p>
               <CountrySelector />
-            </Flex>
-          </Flex>
-        </Container>
-      </Box>
-    </Box>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
   );
 };

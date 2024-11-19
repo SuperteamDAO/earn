@@ -1,23 +1,12 @@
-import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Divider,
-  Flex,
-  Icon,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Text,
-  useClipboard,
-} from '@chakra-ui/react';
 import React from 'react';
 import { type IconType } from 'react-icons';
+import { FaCheck, FaCopy } from 'react-icons/fa';
 import { FaTelegram, FaWhatsapp, FaXTwitter } from 'react-icons/fa6';
 
+import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { getURL } from '@/utils/validUrl';
 
 interface Props {
@@ -34,7 +23,18 @@ interface SocialPlatform {
 }
 
 export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
-  const { hasCopied, onCopy } = useClipboard(`${getURL()}t/${username}`);
+  const [hasCopied, setHasCopied] = React.useState(false);
+  const profileUrl = `${getURL()}t/${username}`;
+
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(profileUrl);
+      setHasCopied(true);
+      setTimeout(() => setHasCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
 
   const { user } = useUser();
 
@@ -82,68 +82,51 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent h={'max'} py={5}>
-        <Box px={6} py={3}>
-          <Text color={'brand.slate.900'} fontSize="lg" fontWeight={500}>
-            Share Profile
-          </Text>
-          <Text mt={3} color={'brand.slate.500'} fontSize="lg" fontWeight={500}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogOverlay />
+      <DialogContent className="h-max py-5">
+        <div className="px-6 py-3">
+          <h2 className="text-lg font-medium text-slate-900">Share Profile</h2>
+          <p className="mt-3 text-lg font-medium text-slate-500">
             With your friends or on social media to showcase your proof of work,
             all in one place
-          </Text>
-        </Box>
-        <Divider mt={2} mb={4} borderColor={'brand.slate.200'} />
-        <Box px={6}>
-          <InputGroup>
+          </p>
+        </div>
+        <div className="my-4 border-t border-slate-200" />
+        <div className="px-6">
+          <div className="relative">
             <Input
-              overflow="hidden"
-              color="brand.slate.500"
-              fontSize="lg"
-              fontWeight={500}
-              whiteSpace="nowrap"
-              textOverflow="ellipsis"
-              focusBorderColor="#CFD2D7"
-              isReadOnly
-              value={`${getURL()}t/${username}`}
+              className={cn(
+                'pr-12 text-lg font-medium text-slate-500',
+                'overflow-hidden text-ellipsis whitespace-nowrap',
+                'focus-visible:ring-slate-300',
+              )}
+              readOnly
+              value={profileUrl}
             />
-            <InputRightElement h="100%" mr="1rem">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2">
               {hasCopied ? (
-                <CheckIcon h="1.3rem" w="1.3rem" color="brand.slate.500" />
+                <FaCheck className="h-5 w-5 text-slate-500" />
               ) : (
-                <CopyIcon
+                <FaCopy
                   onClick={onCopy}
-                  cursor="pointer"
-                  h="1.3rem"
-                  w="1.3rem"
-                  color="brand.slate.500"
+                  className="h-5 w-5 cursor-pointer text-slate-500"
                 />
               )}
-            </InputRightElement>
-          </InputGroup>
-          <Text
-            mt={6}
-            color={'brand.slate.400'}
-            fontSize={'sm'}
-            fontWeight={500}
-          >
-            SHARE TO
-          </Text>
-          <Flex gap={4} mt={3} mb={4}>
-            {socialPlatforms.map(({ name, icon, share }) => (
+            </div>
+          </div>
+          <p className="mt-6 text-sm font-medium text-slate-400">SHARE TO</p>
+          <div className="mb-4 mt-3 flex gap-4">
+            {socialPlatforms.map(({ name, icon: Icon, share }) => (
               <Icon
                 key={name}
-                as={icon}
-                boxSize={6}
-                color={'brand.slate.600'}
-                cursor="pointer"
-                onClick={() => share(`${getURL()}t/${username}`, shareMessage)}
+                className="h-6 w-6 cursor-pointer text-slate-600"
+                onClick={() => share(profileUrl, shareMessage)}
               />
             ))}
-          </Flex>
-        </Box>
-      </ModalContent>
-    </Modal>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

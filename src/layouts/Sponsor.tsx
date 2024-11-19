@@ -1,13 +1,5 @@
 import { AddIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  Icon,
-  Text,
-  Tooltip,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Text, Tooltip } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -40,6 +32,7 @@ import {
   SelectSponsor,
   SponsorInfoModal,
 } from '@/features/sponsor-dashboard';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';

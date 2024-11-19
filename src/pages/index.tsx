@@ -1,4 +1,3 @@
-import { Box, Flex } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
@@ -19,6 +18,7 @@ import {
   ListingTabs,
 } from '@/features/listings';
 import { Home } from '@/layouts/Home';
+import { prisma } from '@/prisma';
 
 import { authOptions } from './api/auth/[...nextauth]';
 import { getForYouListings } from './api/homepage/for-you';
@@ -29,7 +29,7 @@ interface Props {
   openForYouListings: Listing[];
   isAuth: boolean;
   userRegion: string[] | null;
-  userGrantsRegion: Regions[] | null;
+  userGrantsRegion: string[] | null;
 }
 
 const InstallPWAModal = dynamic(
@@ -125,7 +125,7 @@ export default function HomePage({
   return (
     <Home type="landing" isAuth={isAuth}>
       <InstallPWAModal />
-      <Box w={'100%'}>
+      <div className="w-full">
         <ListingTabs
           bounties={combinedListings}
           forYou={combinedForYouListings}
@@ -144,19 +144,19 @@ export default function HomePage({
           showViewAll
         >
           {!grants?.length && (
-            <Flex align="center" justify="center" mt={8}>
+            <div className="mt-8 flex items-center justify-center">
               <EmptySection
                 title="No grants available!"
                 message="Subscribe to notifications to get notified about new grants."
               />
-            </Flex>
+            </div>
           )}
           {grants &&
             grants?.map((grant) => {
               return <GrantsCard grant={grant} key={grant.id} />;
             })}
         </ListingSection>
-      </Box>
+      </div>
     </Home>
   );
 }
@@ -166,24 +166,41 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 ) => {
   const session = await getServerSession(context.req, context.res, authOptions);
   let userRegion: string[] | null | undefined = null;
-  let userGrantsRegion: Regions[] | null | undefined = null;
+  let userGrantsRegion: string[] | null | undefined = null;
   let isAuth = false;
 
   if (session && session.user.id) {
-    isAuth = true;
-    const matchedRegion = getCombinedRegion(session.user.location);
-    if (matchedRegion) {
-      userRegion = [matchedRegion.name, Regions.GLOBAL];
-    } else {
-      userRegion = [Regions.GLOBAL];
-    }
-    const matchedGrantsRegion = CombinedRegions.find((region) =>
-      region.country.includes(session.user.location!),
-    );
-    if (matchedGrantsRegion?.region) {
-      userGrantsRegion = [matchedGrantsRegion.region, Regions.GLOBAL];
-    } else {
-      userGrantsRegion = [Regions.GLOBAL];
+    const user = await prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+    });
+    if (user) {
+      isAuth = true;
+      const matchedRegion = user.location
+        ? getCombinedRegion(user.location)
+        : undefined;
+      if (matchedRegion?.name) {
+        userRegion = [
+          matchedRegion.name,
+          Regions.GLOBAL,
+          ...(matchedRegion.country || []),
+        ];
+      } else {
+        userRegion = [Regions.GLOBAL];
+      }
+      const matchedGrantsRegion = CombinedRegions.find((region) =>
+        region.country.includes(session.user.location!),
+      );
+      if (matchedGrantsRegion?.region) {
+        userGrantsRegion = [
+          matchedGrantsRegion.region,
+          Regions.GLOBAL,
+          ...(matchedGrantsRegion.country || []),
+        ];
+      } else {
+        userGrantsRegion = [Regions.GLOBAL];
+      }
     }
   }
 
