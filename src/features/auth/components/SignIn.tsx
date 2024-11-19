@@ -26,7 +26,7 @@ export const SignIn = () => {
             fontSize="xs"
             textAlign="center"
           >
-            By using this website, you agree to our{' '}
+            使用本网站，您已同意我们的{' '}
             <Link
               as={NextLink}
               fontWeight={600}
@@ -34,18 +34,18 @@ export const SignIn = () => {
               isExternal
               rel="noopener noreferrer"
             >
-              Terms of Use
+              使用条款
             </Link>{' '}
-            and our{' '}
+            和我们的{' '}
             <Link
               as={NextLink}
               fontWeight={600}
               href={`${router.basePath}/privacy-policy.pdf`}
               isExternal
             >
-              Privacy Policy
+              隐私政策
             </Link>
-            .
+            。
           </Text>
         </Box>
         <Box
@@ -55,7 +55,7 @@ export const SignIn = () => {
           borderBottomRadius="6px"
         >
           <Text color="brand.slate.400" fontSize="xs" textAlign="center">
-            Need help? Reach out to us at{' '}
+            需要帮助？请联系我们{' '}
             <Text as="u">
               <Link
                 as={NextLink}
