@@ -15,31 +15,36 @@ type CategoryBanner = {
   img: string;
   heading: string;
   description: string;
+  color: string;
 };
 const banners: CategoryBanner[] = [
   {
     type: 'content',
-    img: bannerPrefix + 'content.jpg',
+    img: bannerPrefix + 'content.png',
     heading: '投研学霸',
     description: '探索内容创作任务',
+    color: '#9945FF',
   },
   {
     type: 'development',
-    img: bannerPrefix + 'dev.jpg',
+    img: bannerPrefix + 'dev.png',
     heading: '技术极客',
     description: `探索开发赏金任务`,
+    color: '#FF1EC0',
   },
   {
     type: 'design',
-    img: bannerPrefix + 'design.jpg',
+    img: bannerPrefix + 'design.png',
     heading: '创意大咖',
     description: '探索艺术赏金任务',
+    color: '#F5A35E',
   },
   {
     type: 'other',
-    img: bannerPrefix + 'other.jpg',
+    img: bannerPrefix + 'other.png',
     heading: '自由发挥',
     description: '探索其他赏金任务',
+    color: '#42E3F8',
   },
 ];
 
@@ -65,7 +70,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            objectPosition: 'top center',
+            objectPosition: 'center center',
           }}
         />
         <Box
@@ -91,6 +96,16 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
               color="white"
               fontSize={{ base: '2xl', md: '4xl' }}
               fontWeight="bold"
+              style={{
+                textShadow: `
+                  0px 0px 8px ${banner.color},
+                  0px 0px 16px ${banner.color},
+                  0px 0px 56px ${banner.color},
+                  0px 0px 112px ${banner.color},
+                  0px 0px 192px ${banner.color},
+                  0px 0px 336px ${banner.color}
+                `,
+              }}
             >
               {banner.heading}
             </Text>
@@ -101,6 +116,16 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
               color="white"
               fontSize={{ base: 'sm', md: 'lg' }}
               fontWeight="medium"
+              style={{
+                textShadow: `
+                  0px 0px 8px ${banner.color},
+                  0px 0px 16px ${banner.color},
+                  0px 0px 56px ${banner.color},
+                  0px 0px 112px ${banner.color},
+                  0px 0px 192px ${banner.color},
+                  0px 0px 336px ${banner.color}
+                `,
+              }}
             >
               {banner.description}
             </Text>
