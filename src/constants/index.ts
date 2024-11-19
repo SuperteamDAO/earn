@@ -12,52 +12,36 @@ export interface MultiSelectOptions {
 
 export const skillMap: SkillMap[] = [
   {
-    mainskill: 'Growth',
-    color: '#16A368',
-  },
-  {
-    mainskill: 'Frontend',
+    mainskill: '前端',
     color: '#3E8BFF',
   },
   {
-    mainskill: 'Backend',
+    mainskill: '后端',
     color: '#FF833E',
   },
   {
-    mainskill: 'Blockchain',
+    mainskill: '区块链',
     color: '#FF3EC9',
   },
   {
-    mainskill: 'Design',
-    color: '#7E51FF',
+    mainskill: '设计',
+    color: '#16A368',
   },
   {
-    mainskill: 'Content',
-    color: '#5EA8BF',
-  },
-  {
-    mainskill: 'Community',
-    color: '#EA580C',
-  },
-  {
-    mainskill: 'Mobile',
-    color: '#7E51FF',
-  },
-  {
-    mainskill: 'Other',
-    color: '#64758B',
+    mainskill: '增长',
+    color: '#16A368',
   },
 ];
 
 export const IndustryList = [
-  'DAOs',
-  'DeFi',
-  'Infrastructure',
-  'DePIN',
-  'Consumer dApps',
-  'Wallets and Payments',
-  'NFTs',
-  'Gaming',
+  'DAO组织',
+  '去中心化金融',
+  '基础设施',
+  '去中心化物理基础设施网络',
+  '消费级应用',
+  '游戏',
+  '社交',
+  '其他',
 ];
 
 interface Token {

@@ -3,7 +3,6 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   DeleteIcon,
-  SearchIcon,
 } from '@chakra-ui/icons';
 import {
   Box,
@@ -16,10 +15,7 @@ import {
   Image,
   Input,
   InputGroup,
-  InputLeftElement,
   InputRightElement,
-  List,
-  ListItem,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -51,12 +47,7 @@ import {
   tokenList,
 } from '@/constants';
 import { type Rewards } from '@/features/listings';
-import {
-  cleanRewardPrizes,
-  cleanRewards,
-  getRankLabels,
-  sortRank,
-} from '@/utils/rank';
+import { cleanRewardPrizes, cleanRewards, sortRank } from '@/utils/rank';
 
 import { useListingFormStore } from '../../store';
 import { type ListingFormType } from '../../types';
@@ -82,6 +73,7 @@ interface PrizeListInterface {
   placeHolder: number;
   defaultValue?: number;
 }
+
 interface Props {
   isDraftLoading: boolean;
   createDraft: (data: ListingFormType, isPreview?: boolean) => Promise<void>;
@@ -93,19 +85,195 @@ interface Props {
   isDuplicating?: boolean;
 }
 
-const BONUS_REWARD_LABEL = '# of Bonus Prizes';
-const BONUS_REWARD_LABEL_2 = 'Bonus Per Prize';
+interface FormValues {
+  compensationType?: 'fixed' | 'range' | 'variable';
+  rewardAmount?: number;
+  minRewardAsk?: number;
+  maxRewardAsk?: number;
+  token?: string;
+  rewards?: Rewards;
+  maxBonusSpots?: number;
+}
 
-export const ListingPayments = ({
+interface MessageState {
+  type: 'warning' | 'error';
+  content: string;
+}
+
+const BONUS_REWARD_LABEL = '额外赏金名额';
+const BONUS_REWARD_LABEL_2 = '额外赏金/每人';
+
+const TokenSelector: React.FC<{
+  selectedToken: Token | undefined;
+  onTokenSelect: (token: Token) => void;
+  disabled?: boolean;
+}> = ({ selectedToken, onTokenSelect, disabled }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredTokens, setFilteredTokens] = useState(tokenList);
+
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = tokenList.filter(
+        (token) =>
+          token.tokenName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          token.tokenSymbol.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+      setFilteredTokens(filtered);
+    } else {
+      setFilteredTokens(tokenList);
+    }
+  }, [searchTerm]);
+
+  return (
+    <FormControl isDisabled={disabled}>
+      <Flex align="center" gap={2}>
+        <ListingFormLabel htmlFor="token">代币</ListingFormLabel>
+        <Box pos="relative" w="full">
+          <InputGroup>
+            <Input
+              borderColor="brand.slate.300"
+              _hover={{
+                borderColor: 'brand.purple',
+              }}
+              _focus={{
+                borderColor: 'brand.purple',
+                boxShadow: 'none',
+              }}
+              id="token"
+              onClick={() => !disabled && setIsOpen(true)}
+              placeholder="选择代币"
+              readOnly
+              value={selectedToken?.tokenSymbol || ''}
+            />
+            <InputRightElement>
+              <ChevronDownIcon color="brand.slate.500" />
+            </InputRightElement>
+          </InputGroup>
+          {isOpen && !disabled && (
+            <Box
+              pos="absolute"
+              zIndex={10}
+              top="100%"
+              left={0}
+              overflowY="auto"
+              w="full"
+              maxH="200px"
+              bg="white"
+              borderWidth={1}
+              borderColor="brand.slate.300"
+              borderRadius="sm"
+              shadow="sm"
+            >
+              <Input
+                borderWidth={0}
+                borderBottomWidth={1}
+                borderRadius={0}
+                _focus={{
+                  boxShadow: 'none',
+                  borderColor: 'brand.purple',
+                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="搜索代币..."
+                value={searchTerm}
+              />
+              {filteredTokens.map((token) => (
+                <Flex
+                  key={token.tokenSymbol}
+                  align="center"
+                  gap={2}
+                  px={3}
+                  py={2}
+                  _hover={{ bg: 'brand.slate.50' }}
+                  cursor="pointer"
+                  onClick={() => {
+                    onTokenSelect(token);
+                    setIsOpen(false);
+                    setSearchTerm('');
+                  }}
+                >
+                  <Image
+                    w={6}
+                    h={6}
+                    borderRadius="full"
+                    alt={token.tokenName}
+                    src={token.icon}
+                  />
+                  <Box>
+                    <Text fontWeight={500}>{token.tokenSymbol}</Text>
+                    <Text color="brand.slate.500" fontSize="sm">
+                      {token.tokenName}
+                    </Text>
+                  </Box>
+                </Flex>
+              ))}
+            </Box>
+          )}
+        </Box>
+      </Flex>
+    </FormControl>
+  );
+};
+
+const RewardInput: React.FC<{
+  type: 'fixed' | 'min' | 'max';
+  value: number;
+  onChange: (value: number) => void;
+  placeholder?: string;
+  error?: string;
+  disabled?: boolean;
+}> = ({ type, value, onChange, placeholder, error, disabled }) => {
+  const label =
+    type === 'fixed' ? '赏金金额' : type === 'min' ? '最小金额' : '最大金额';
+
+  return (
+    <FormControl isDisabled={disabled}>
+      <Flex align="center" gap={2}>
+        <ListingFormLabel htmlFor={`reward-${type}`}>{label}</ListingFormLabel>
+        <Box w="full">
+          <NumberInput
+            borderColor="brand.slate.300"
+            focusBorderColor="brand.purple"
+            id={`reward-${type}`}
+            min={0}
+            onChange={(_, value) => onChange(value)}
+            value={value}
+          >
+            <NumberInputField
+              color="brand.slate.800"
+              border={0}
+              _focusWithin={{
+                borderWidth: 0,
+              }}
+              _placeholder={{ color: 'brand.slate.300' }}
+              placeholder={placeholder}
+            />
+            <NumberInputStepper>
+              <NumberIncrementStepper h={1} border={0}>
+                <ChevronUpIcon w={4} h={4} />
+              </NumberIncrementStepper>
+              <NumberDecrementStepper h={1} border={0}>
+                <ChevronDownIcon w={4} h={4} />
+              </NumberDecrementStepper>
+            </NumberInputStepper>
+          </NumberInput>
+          {error && <FormHelperText color="red.500">{error}</FormHelperText>}
+        </Box>
+      </Flex>
+    </FormControl>
+  );
+};
+
+export const ListingPayments: React.FC<Props> = ({
   isListingPublishing,
-  createDraft,
   isDraftLoading,
+  createDraft,
   createAndPublishListing,
   editable,
   isNewOrDraft,
   type,
   isDuplicating,
-}: Props) => {
+}) => {
   const { form, updateState } = useListingFormStore();
   const {
     isOpen: confirmIsOpen,
@@ -113,26 +281,37 @@ export const ListingPayments = ({
     onClose: confirmOnClose,
   } = useDisclosure();
 
-  const [searchResults, setSearchResults] = useState<Token[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [warningMessage, setWarningMessage] = useState('');
+  const [, setIsOpen] = useState(false);
+  const [message, setMessage] = useState<MessageState | null>(null);
   const [selectedToken, setSelectedToken] = useState<Token | undefined>(
     tokenList.find((t) => t.tokenSymbol === form?.token),
   );
 
-  const { register, setValue, watch, control, handleSubmit, reset, getValues } =
-    useForm({
-      defaultValues: {
-        compensationType: form?.compensationType,
-        rewardAmount: form?.rewardAmount,
-        minRewardAsk: form?.minRewardAsk,
-        maxRewardAsk: form?.maxRewardAsk,
-        token: form?.token,
-        rewards: form?.rewards || { 1: NaN },
-        maxBonusSpots: form?.maxBonusSpots,
-      },
-    });
+  const clearMessage = () => {
+    setMessage(null);
+  };
+
+  const showMessage = (type: 'warning' | 'error', content: string) => {
+    setMessage({ type, content });
+    const timer = setTimeout(clearMessage, 5000);
+    return () => clearTimeout(timer);
+  };
+
+  const { setValue, watch, control, handleSubmit } = useForm<FormValues>({
+    defaultValues: {
+      compensationType: form?.compensationType as
+        | 'fixed'
+        | 'range'
+        | 'variable'
+        | undefined,
+      rewardAmount: form?.rewardAmount,
+      minRewardAsk: form?.minRewardAsk,
+      maxRewardAsk: form?.maxRewardAsk,
+      token: form?.token,
+      rewards: form?.rewards,
+      maxBonusSpots: form?.maxBonusSpots,
+    },
+  });
 
   const compensationType = watch('compensationType');
   const rewardAmount = watch('rewardAmount');
@@ -144,10 +323,10 @@ export const ListingPayments = ({
 
   useEffect(() => {
     if (form && maxBonusSpots !== undefined) {
-      if (maxBonusSpots > MAX_BONUS_SPOTS)
-        setWarningMessage('Maximum number of bonus prizes allowed is 50');
-      if (maxBonusSpots === 0) {
-        setWarningMessage("# of bonus prizes can't be 0");
+      if (maxBonusSpots > MAX_BONUS_SPOTS) {
+        showMessage('warning', '最大额外赏金名额为 50');
+      } else if (maxBonusSpots === 0) {
+        showMessage('warning', '额外赏金名额不能为 0');
       }
     }
   }, [maxBonusSpots, form]);
@@ -155,31 +334,17 @@ export const ListingPayments = ({
   useEffect(() => {
     if (form && rewards && rewards[BONUS_REWARD_POSITION] !== undefined) {
       if (rewards[BONUS_REWARD_POSITION] === 0) {
-        setWarningMessage(`Bonus per prize can't be 0`);
+        showMessage('warning', '额外赏金/每人不能为 0');
       } else if (rewards[BONUS_REWARD_POSITION] < 0.01) {
-        setWarningMessage(`Bonus per prize can't be less than 0.01`);
+        showMessage('warning', '额外赏金/每人不能小于 0.01');
       }
     }
   }, [rewards]);
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout | undefined;
-    if (warningMessage) {
-      timer = setTimeout(() => {
-        setWarningMessage('');
-      }, 5000);
-    }
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [warningMessage]);
-
-  const [searchTerm, setSearchTerm] = useState<string | undefined>(
+  const [, setSearchTerm] = useState<string | undefined>(
     tokenList.find((t) => t.tokenSymbol === token)?.tokenName,
   );
-  const [selectedTokenIndex, setSelectedTokenIndex] = useState<number | null>(
-    null,
-  );
+  const [] = useState<number | null>(null);
 
   const [debouncedRewardAmount, setDebouncedRewardAmount] =
     useState(rewardAmount);
@@ -191,7 +356,7 @@ export const ListingPayments = ({
       return [
         {
           value: 1,
-          label: `${getRankLabels(1)} prize`,
+          label: `第 1 名`,
           placeHolder: MAX_PODIUMS * 500,
         },
       ];
@@ -210,10 +375,7 @@ export const ListingPayments = ({
 
       return {
         value: r,
-        label:
-          r === BONUS_REWARD_POSITION
-            ? BONUS_REWARD_LABEL
-            : `${getRankLabels(r)} prize`,
+        label: r === BONUS_REWARD_POSITION ? BONUS_REWARD_LABEL : `第 ${r} 名`,
         placeHolder,
         defaultValue: rewards[r as keyof Rewards],
       };
@@ -255,27 +417,6 @@ export const ListingPayments = ({
     setPrizes(generatePrizeList(rewards));
   }, [rewards]);
 
-  useEffect(() => {
-    if (editable) {
-      reset({
-        compensationType: form?.compensationType,
-        rewardAmount: form?.rewardAmount || undefined,
-        minRewardAsk: form?.minRewardAsk || undefined,
-        maxRewardAsk: form?.maxRewardAsk || undefined,
-        rewards: form?.rewards || undefined,
-        maxBonusSpots: form?.maxBonusSpots || undefined,
-        token: form?.token || 'USDC',
-      });
-
-      const initialToken = form?.token || 'USDC';
-      const selectedToken = tokenList.find(
-        (t) => t.tokenSymbol === initialToken,
-      );
-      setSearchTerm(selectedToken?.tokenName);
-      setSelectedToken(selectedToken);
-    }
-  }, [form, reset, editable]);
-
   const handleTokenChange = (tokenSymbol: string | undefined) => {
     setValue('token', tokenSymbol);
     const selectedToken = tokenList.find((t) => t.tokenSymbol === tokenSymbol);
@@ -309,135 +450,39 @@ export const ListingPayments = ({
 
   const isProject = type === 'project';
 
-  const validateRewardsData = () => {
-    let errorMessage = '';
-
-    if (!selectedToken) {
-      errorMessage = 'Please select a valid token';
-    }
-
-    if (isProject) {
-      if (!compensationType) {
-        errorMessage = 'Please add a compensation type';
+  const validateForm = (data: FormValues) => {
+    if (data.compensationType === 'fixed') {
+      if (!data.rewardAmount || data.rewardAmount <= 0) {
+        return '请输入有效的固定赏金金额';
       }
-
-      if (compensationType === 'fixed' && !rewardAmount) {
-        errorMessage = 'Please specify the total reward amount to proceed';
-      } else if (compensationType === 'range') {
-        if (!minRewardAsk || !maxRewardAsk) {
-          errorMessage =
-            'Please specify your preferred minimum and maximum compensation range';
-        } else if (maxRewardAsk < minRewardAsk) {
-          errorMessage =
-            'The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it';
-        } else if (maxRewardAsk === minRewardAsk) {
-          errorMessage =
-            'The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it.';
-        }
+    } else if (data.compensationType === 'range') {
+      if (!data.minRewardAsk || data.minRewardAsk <= 0) {
+        return '请输入有效的最小赏金金额';
       }
-    } else {
-      if (
-        rewards &&
-        rewards[BONUS_REWARD_POSITION] &&
-        rewards[BONUS_REWARD_POSITION] === 0
-      ) {
-        errorMessage = "Bonus per prize can't be 0";
-      } else if (
-        maxBonusSpots &&
-        maxBonusSpots > 0 &&
-        (!rewards?.[BONUS_REWARD_POSITION] ||
-          isNaN(rewards?.[BONUS_REWARD_POSITION] || NaN))
-      ) {
-        errorMessage = 'Bonus Reward is not mentioned';
-      } else if (rewards?.[BONUS_REWARD_POSITION] === 0) {
-        errorMessage = `Bonus per prize can't be 0`;
-      } else if (cleanRewardPrizes(rewards).length !== prizes.length) {
-        errorMessage = 'Please fill all podium ranks or remove unused';
+      if (!data.maxRewardAsk || data.maxRewardAsk <= 0) {
+        return '请输入有效的最大赏金金额';
+      }
+      if (data.minRewardAsk >= data.maxRewardAsk) {
+        return '最小赏金金额必须小于最大赏金金额';
+      }
+    } else if (data.compensationType === 'variable') {
+      const rewardValues = Object.values(data.rewards || {}).filter(
+        (value): value is number => typeof value === 'number' && value > 0,
+      );
+      if (rewardValues.length === 0) {
+        return '请至少设置一个有效的奖励金额';
       }
     }
-
-    return errorMessage;
+    return '';
   };
 
-  const onDraftClick = async (isPreview: boolean = false) => {
-    const data = getValues();
-    const formData = { ...form, ...data };
-    if (isPreview) {
-      posthog.capture('preview listing_sponsor');
-    } else if (isNewOrDraft || isDuplicating) {
-      posthog.capture('save draft_sponsor');
-    } else {
-      posthog.capture('edit listing_sponsor');
-    }
-    createDraft(formData, isPreview);
-  };
-
-  const handleUpdateListing = async () => {
-    const errorMessage = validateRewardsData();
-    const data = getValues();
-    let formData = { ...form, ...data };
-    if (isProject) {
-      if (compensationType === 'fixed') {
-        formData = { ...formData, rewards: { 1: rewardAmount ?? 0 } };
-      } else {
-        formData = { ...formData, rewards: { 1: 0 } };
-      }
-    }
+  const onSubmit = async (data: FormValues) => {
+    const errorMessage = validateForm(data);
     if (errorMessage) {
-      setErrorMessage(errorMessage);
-    } else {
-      createDraft(formData);
+      showMessage('error', errorMessage);
+      return;
     }
-  };
 
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    const filteredResults =
-      value === ''
-        ? tokenList
-        : tokenList.filter((token) =>
-          token.tokenName.toLowerCase().includes(value.toLowerCase()),
-        );
-    setSearchResults(filteredResults);
-    setSelectedTokenIndex(null);
-    setIsOpen(true);
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!isOpen) return;
-
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      setSelectedTokenIndex((prevIndex) =>
-        prevIndex === null || prevIndex === searchResults.length - 1
-          ? 0
-          : prevIndex + 1,
-      );
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      setSelectedTokenIndex((prevIndex) =>
-        prevIndex === null || prevIndex === 0
-          ? searchResults.length - 1
-          : prevIndex - 1,
-      );
-    } else if (event.key === 'Enter') {
-      event.preventDefault();
-      if (selectedTokenIndex !== null) {
-        const selectedToken = searchResults[selectedTokenIndex];
-        handleTokenChange(selectedToken?.tokenSymbol);
-        selectedToken && handleSelectToken(selectedToken);
-      }
-    }
-  };
-
-  const handleSelectToken = (token: Token) => {
-    setSearchTerm(token.tokenSymbol);
-    setSelectedToken(token);
-    setIsOpen(false);
-  };
-
-  const onSubmit = async (data: any) => {
-    const errorMessage = validateRewardsData();
     let newState = { ...data };
     if (isProject) {
       if (compensationType === 'fixed') {
@@ -448,9 +493,9 @@ export const ListingPayments = ({
     }
     updateState(newState);
     if (errorMessage) {
-      setErrorMessage(errorMessage);
+      setMessage({ type: 'error', content: errorMessage });
     } else {
-      posthog.capture('publish listing_sponsor');
+      posthog.capture('发布赏金任务');
       confirmOnOpen();
     }
   };
@@ -459,15 +504,13 @@ export const ListingPayments = ({
 
   switch (compensationType) {
     case 'fixed':
-      compensationHelperText =
-        'Interested applicants will apply if the pay fits their expectations';
+      compensationHelperText = '感兴趣的申请者将根据赏金金额申请';
       break;
     case 'range':
-      compensationHelperText =
-        'Allow applicants to send quotes within a specific range';
+      compensationHelperText = '允许申请者在指定范围内提交报价';
       break;
     case 'variable':
-      compensationHelperText = 'Allow applicants to send quotes of any amount';
+      compensationHelperText = '允许申请者提交任意金额的报价';
       break;
   }
 
@@ -515,34 +558,60 @@ export const ListingPayments = ({
     };
   }, []);
 
+  const handleUpdateListing = async () => {
+    const data = {
+      compensationType,
+      rewardAmount,
+      minRewardAsk,
+      maxRewardAsk,
+      token,
+      rewards,
+      maxBonusSpots,
+    };
+    await createDraft(data);
+  };
+
+  const onDraftClick = async (isPreview?: boolean) => {
+    const data = {
+      compensationType,
+      rewardAmount,
+      minRewardAsk,
+      maxRewardAsk,
+      token,
+      rewards,
+      maxBonusSpots,
+    };
+    await createDraft(data, isPreview);
+  };
+
   return (
     <>
       <Modal isOpen={confirmIsOpen} onClose={confirmOnClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Confirm Publishing?</ModalHeader>
+          <ModalHeader>确认发布？</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text>
               {form?.isPrivate
-                ? 'This listing will only be accessible via the link — and will not show up anywhere else on the site — since it has been marked as a "Private Listing"'
-                : 'Publishing this listing means it will show up on the homepage for all visitors. Make sure the details in your listing are correct before you publish.'}
+                ? '由于该任务被标记为"非公开任务"，它只能通过链接访问，不会在网站其他地方显示。'
+                : '赏金任务发布后会公开展示在Solar Earn 主页，在发布前请检查确认赏金任务详情。'}
             </Text>
           </ModalBody>
 
           <ModalFooter>
             <Button mr={4} onClick={confirmOnClose} variant="ghost">
-              Close
+              关闭
             </Button>
             <Button
               mr={3}
               colorScheme="blue"
               disabled={isListingPublishing}
               isLoading={isListingPublishing}
-              loadingText="Publishing..."
+              loadingText="发布中..."
               onClick={() => createAndPublishListing(confirmOnClose)}
             >
-              Publish
+              发布
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -561,9 +630,9 @@ export const ListingPayments = ({
               <FormControl isRequired>
                 <Flex>
                   <ListingFormLabel htmlFor="compensationType">
-                    Compensation Type
+                    添加赏金数额
                   </ListingFormLabel>
-                  <ListingTooltip label="Would you like to keep a fixed compensation for this project, or let applicants send in their quotes?" />
+                  <ListingTooltip label="添加赏金任务的奖池分配方案" />
                 </Flex>
                 <Controller
                   control={control}
@@ -575,6 +644,7 @@ export const ListingPayments = ({
                       color="brand.slate.900"
                       borderColor="brand.slate.300"
                       borderRadius={'sm'}
+                      isDisabled={!editable}
                       onChange={(e) => {
                         onChange(e);
                         setValue('minRewardAsk', undefined);
@@ -583,14 +653,13 @@ export const ListingPayments = ({
                         setValue('rewardAmount', undefined);
                       }}
                       value={value}
-                      isDisabled={!editable}
                     >
                       <option hidden disabled value="">
-                        Select a Compensation Type
+                        选择代币
                       </option>
-                      <option value="fixed">Fixed Compensation</option>
-                      <option value="range">Pre-decided Range</option>
-                      <option value="variable">Variable Compensation</option>
+                      <option value="fixed">固定赏金</option>
+                      <option value="range">固定范围</option>
+                      <option value="variable">变动赏金</option>
                     </Select>
                   )}
                 />
@@ -600,230 +669,36 @@ export const ListingPayments = ({
               </Text>
             </Box>
           )}
-          <FormControl pos="relative">
-            <ListingFormLabel>Select Token</ListingFormLabel>
-            <InputGroup alignItems={'center'} display={'flex'}>
-              {token && (
-                <InputLeftElement
-                  alignItems={'center'}
-                  justifyContent={'start'}
-                  mt={1}
-                  ml={4}
-                >
-                  <SearchIcon color="gray.300" mr={2} />
-                  {selectedToken ? (
-                    <Image
-                      w={'1.6rem'}
-                      alt={searchTerm as string}
-                      rounded={'full'}
-                      src={selectedToken.icon}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </InputLeftElement>
-              )}
-              <Input
-                py={6}
-                pl={'4.5rem'}
-                color="gray.700"
-                fontSize="1rem"
-                fontWeight={500}
-                border={'1px solid #cbd5e1'}
-                borderRadius={'sm'}
-                focusBorderColor="brand.purple"
-                onChange={(e) => handleSearch(e.target.value)}
-                onFocus={() => {
-                  handleSearch('');
-                }}
-                onKeyDown={handleKeyDown}
-                placeholder="Search token"
-                value={searchTerm || ''}
-                isDisabled={!editable}
-              />
-              <InputRightElement color="gray.700" fontSize="1rem">
-                <ChevronDownIcon mt="9px" />
-              </InputRightElement>
-            </InputGroup>
-            {searchResults.length > 0 && isOpen && (
-              <List
-                pos={'absolute'}
-                zIndex={10}
-                overflowX="hidden"
-                w="full"
-                maxH="15rem"
-                pt={1}
-                color="gray.600"
-                bg={'white'}
-                border={'1px solid #cbd5e1'}
-                borderBottomRadius={'lg'}
-                id="search-input"
-              >
-                {searchResults.map((token, index) => (
-                  <ListItem
-                    key={token.tokenName}
-                    bg={
-                      selectedTokenIndex === index ? 'gray.200' : 'transparent'
-                    }
-                    _hover={{ background: 'gray.100' }}
-                    cursor="pointer"
-                    onClick={() => {
-                      handleTokenChange(token.tokenSymbol);
-                      handleSelectToken(token);
-                    }}
-                  >
-                    <HStack px={3} py={2}>
-                      <Image
-                        w={'1.6rem'}
-                        alt={token.tokenName}
-                        rounded={'full'}
-                        src={token.icon}
-                      />
-                      <Text>{token.tokenName}</Text>
-                    </HStack>
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </FormControl>
+          <TokenSelector
+            selectedToken={selectedToken}
+            onTokenSelect={handleTokenChange}
+            disabled={!editable}
+          />
           {compensationType === 'fixed' && isProject && (
-            <FormControl w="full" mt={5} isRequired>
-              <ListingFormLabel htmlFor="rewardAmount">
-                Total Compensation (in{' '}
-                {tokenList.find((t) => t.tokenSymbol === token)?.tokenSymbol})
-              </ListingFormLabel>
-
-              <Flex
-                pos="relative"
-                pr={4}
-                borderWidth={1}
-                borderStyle={'solid'}
-                borderColor="brand.slate.300"
-                borderRadius={'sm'}
-                _focusWithin={{
-                  borderColor: 'brand.purple',
-                }}
-              >
-                <NumberInput
-                  w="full"
-                  color="brand.slate.500"
-                  border={'none'}
-                  focusBorderColor="rgba(0,0,0,0)"
-                  min={0}
-                  isDisabled={!editable}
-                >
-                  <NumberInputField
-                    color={'brand.slate.800'}
-                    border={0}
-                    _focusWithin={{
-                      borderWidth: 0,
-                    }}
-                    _placeholder={{
-                      color: 'brand.slate.300',
-                    }}
-                    {...register('rewardAmount', {
-                      required: 'This field is required',
-                      setValueAs: (value) => parseFloat(value),
-                    })}
-                    placeholder={(MAX_PODIUMS * 500).toString()}
-                  />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper h={1} border={0}>
-                      <ChevronUpIcon w={4} h={4} />
-                    </NumberIncrementStepper>
-                    <NumberDecrementStepper h={1} border={0}>
-                      <ChevronDownIcon w={4} h={4} />
-                    </NumberDecrementStepper>
-                  </NumberInputStepper>
-                </NumberInput>
-                <SelectedToken token={selectedToken} />
-              </Flex>
-            </FormControl>
+            <RewardInput
+              type="fixed"
+              value={rewardAmount}
+              onChange={(value) => setValue('rewardAmount', value)}
+              placeholder={(MAX_PODIUMS * 500).toString()}
+              disabled={!editable}
+            />
           )}
           {compensationType === 'range' && (
             <Flex gap="3" w="100%">
-              <FormControl w="full" mt={5} isRequired>
-                <ListingFormLabel htmlFor="minRewardAsk">From</ListingFormLabel>
-                <Flex
-                  pos="relative"
-                  pr={5}
-                  borderWidth={1}
-                  borderStyle={'solid'}
-                  borderColor="brand.slate.300"
-                  borderRadius={'sm'}
-                  _focusWithin={{
-                    borderColor: 'brand.purple',
-                  }}
-                >
-                  <NumberInput
-                    w="full"
-                    color="brand.slate.500"
-                    border={'none'}
-                    focusBorderColor="rgba(0,0,0,0)"
-                    min={0}
-                    isDisabled={!editable}
-                  >
-                    <NumberInputField
-                      color={'brand.slate.800'}
-                      border={0}
-                      _focusWithin={{
-                        borderWidth: 0,
-                      }}
-                      _placeholder={{
-                        color: 'brand.slate.300',
-                      }}
-                      placeholder="Enter the lower range"
-                      {...register('minRewardAsk', {
-                        required: 'This field is required',
-                        setValueAs: (value) => parseFloat(value),
-                      })}
-                    />
-                  </NumberInput>
-                  <SelectedToken token={selectedToken} />
-                </Flex>
-              </FormControl>
-              <FormControl w="full" mt={5} isRequired>
-                <ListingFormLabel htmlFor="minRewardAsk">
-                  Up to
-                </ListingFormLabel>
-                <Flex
-                  pos="relative"
-                  pr={5}
-                  borderWidth={1}
-                  borderStyle={'solid'}
-                  borderColor="brand.slate.300"
-                  borderRadius={'sm'}
-                  _focusWithin={{
-                    borderColor: 'brand.purple',
-                  }}
-                >
-                  <NumberInput
-                    w="full"
-                    color="brand.slate.500"
-                    border={'none'}
-                    focusBorderColor="rgba(0,0,0,0)"
-                    min={0}
-                    isDisabled={!editable}
-                  >
-                    <NumberInputField
-                      color={'brand.slate.800'}
-                      border={0}
-                      _focusWithin={{
-                        borderWidth: 0,
-                      }}
-                      _placeholder={{
-                        color: 'brand.slate.300',
-                      }}
-                      placeholder="Enter the higher range"
-                      {...register('maxRewardAsk', {
-                        required: 'This field is required',
-                        setValueAs: (value) => parseFloat(value),
-                      })}
-                    />
-                  </NumberInput>
-                  <SelectedToken token={selectedToken} />
-                </Flex>
-              </FormControl>
+              <RewardInput
+                type="min"
+                value={minRewardAsk}
+                onChange={(value) => setValue('minRewardAsk', value)}
+                placeholder="输入最低赏金"
+                disabled={!editable}
+              />
+              <RewardInput
+                type="max"
+                value={maxRewardAsk}
+                onChange={(value) => setValue('maxRewardAsk', value)}
+                placeholder="输入最高赏金"
+                disabled={!editable}
+              />
             </Flex>
           )}
           {type !== 'project' && (
@@ -837,11 +712,11 @@ export const ListingPayments = ({
               >
                 <Text>
                   {calculateTotalPrizes()}{' '}
-                  {calculateTotalPrizes() > 1 ? 'Prizes' : 'Prize'}
+                  {calculateTotalPrizes() > 1 ? '个奖励' : '个奖励'}
                 </Text>
                 <Text>
                   {formatTotalPrice(calculateTotalReward())}{' '}
-                  {selectedToken?.tokenSymbol} Total
+                  {selectedToken?.tokenSymbol} 总赏金
                 </Text>
               </HStack>
               {prizes.map((el) => (
@@ -881,12 +756,12 @@ export const ListingPayments = ({
                         borderRightStyle={'solid'}
                         defaultValue={maxBonusSpots ?? 1}
                         focusBorderColor="rgba(0,0,0,0)"
+                        isDisabled={!editable}
                         max={MAX_BONUS_SPOTS}
                         min={1}
                         onChange={(valueString) =>
                           handleBonusChange(parseInt(valueString))
                         }
-                        isDisabled={!editable}
                       >
                         <NumberInputField
                           color={'brand.slate.800'}
@@ -913,7 +788,9 @@ export const ListingPayments = ({
                       w={el.value === BONUS_REWARD_POSITION ? '70%' : '100%'}
                       color="brand.slate.500"
                       border={'none'}
-                      focusBorderColor="rgba(0,0,0,0)"
+                      borderColor="brand.slate.300"
+                      focusBorderColor="brand.purple"
+                      isDisabled={!editable}
                       min={el.value === BONUS_REWARD_POSITION ? 0.01 : 0}
                       onChange={(valueString) =>
                         handlePrizeValueChange(
@@ -923,12 +800,11 @@ export const ListingPayments = ({
                       }
                       value={
                         el.defaultValue !== null &&
-                          el.defaultValue !== undefined &&
-                          !isNaN(el.defaultValue)
+                        el.defaultValue !== undefined &&
+                        !isNaN(el.defaultValue)
                           ? el.defaultValue
                           : undefined
                       }
-                      isDisabled={!editable}
                     >
                       <NumberInputField
                         color={'brand.slate.800'}
@@ -970,11 +846,13 @@ export const ListingPayments = ({
                       </Button>
                     )}
                   </Flex>
-                  {!!warningMessage && el.value === BONUS_REWARD_POSITION && (
-                    <Text pt={2} color="yellow.500" fontSize="sm">
-                      {warningMessage}
-                    </Text>
-                  )}
+                  {!!message &&
+                    message.type === 'warning' &&
+                    el.value === BONUS_REWARD_POSITION && (
+                      <Text pt={2} color="yellow.500" fontSize="sm">
+                        {message.content}
+                      </Text>
+                    )}
                   {el.value === BONUS_REWARD_POSITION &&
                     !!rewards?.[BONUS_REWARD_POSITION] &&
                     rewards?.[BONUS_REWARD_POSITION] > 0 &&
@@ -987,9 +865,9 @@ export const ListingPayments = ({
                         color="brand.slate.500"
                       >
                         <Text pr={1} fontWeight={700}>
-                          {maxBonusSpots} individuals
+                          {maxBonusSpots} 位参赛者
                         </Text>{' '}
-                        will be paid
+                        将各自获得
                         <Text px={1} fontWeight={700}>
                           {' '}
                           {formatTotalPrice(
@@ -997,7 +875,7 @@ export const ListingPayments = ({
                           )}{' '}
                           {selectedToken?.tokenSymbol}{' '}
                         </Text>
-                        each (total bonus of{' '}
+                        个额外赏金（总额外赏金为{' '}
                         <Text pl={1} fontWeight={700}>
                           {formatTotalPrice(
                             caculateBonus(
@@ -1007,7 +885,7 @@ export const ListingPayments = ({
                           )}{' '}
                           {selectedToken?.tokenSymbol}
                         </Text>
-                        )
+                        ）
                       </FormHelperText>
                     )}
                 </FormControl>
@@ -1026,7 +904,7 @@ export const ListingPayments = ({
               {!!debouncedRewardAmount &&
                 debouncedRewardAmount <= 100 &&
                 (token === 'USDT' || token === 'USDC') &&
-                "Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability."}
+                '注意：由于该任务赏金 ≤100 美元，它将不会显示在 Solar Earn 的首页。提高总赏金数额可以提升任务曝光度。'}
             </Text>
             {type !== 'project' && (
               <HStack w="full">
@@ -1039,8 +917,9 @@ export const ListingPayments = ({
                   borderRadius="sm"
                   isDisabled={
                     !editable ||
-                    prizes.filter((p) => p.value !== BONUS_REWARD_POSITION)
-                      .length === MAX_PODIUMS && true
+                    (prizes.filter((p) => p.value !== BONUS_REWARD_POSITION)
+                      .length === MAX_PODIUMS &&
+                      true)
                   }
                   leftIcon={<AddIcon />}
                   onClick={() => {
@@ -1051,7 +930,7 @@ export const ListingPayments = ({
                   }}
                   variant="outline"
                 >
-                  Add Individual Prize
+                  添加独立奖励
                 </Button>
                 {!prizes.find((p) => p.value === BONUS_REWARD_POSITION) && (
                   <Button
@@ -1063,8 +942,8 @@ export const ListingPayments = ({
                     borderRadius="sm"
                     isDisabled={
                       !editable ||
-                      prizes.find((p) => p.value === BONUS_REWARD_POSITION) &&
-                      true
+                      (prizes.find((p) => p.value === BONUS_REWARD_POSITION) &&
+                        true)
                     }
                     leftIcon={<AddIcon />}
                     onClick={() => {
@@ -1072,7 +951,7 @@ export const ListingPayments = ({
                       handlePrizeValueChange(BONUS_REWARD_POSITION, NaN);
                     }}
                   >
-                    Add Bonus Prize
+                    添加额外赏金
                   </Button>
                 )}
               </HStack>
@@ -1089,7 +968,7 @@ export const ListingPayments = ({
                 type="submit"
                 variant={'solid'}
               >
-                Publish Now
+                立即发布
               </Button>
             )}
             {isDraft && (
@@ -1106,7 +985,7 @@ export const ListingPayments = ({
                   onClick={() => onDraftClick()}
                   variant={'ghost'}
                 >
-                  Save Draft
+                  保存草稿
                 </Button>
                 <Button
                   className="ph-no-capture"
@@ -1120,7 +999,7 @@ export const ListingPayments = ({
                   onClick={() => onDraftClick(true)}
                   variant={'outline'}
                 >
-                  Preview
+                  预览
                 </Button>
               </HStack>
             )}
@@ -1133,15 +1012,17 @@ export const ListingPayments = ({
                 borderRadius="sm"
                 isLoading={isDraftLoading}
                 onClick={() => {
-                  posthog.capture('edit listing_sponsor');
+                  posthog.capture('编辑赏金任务');
                   handleUpdateListing();
                 }}
                 variant={'solid'}
               >
-                Update Listing
+                更新赏金任务
               </Button>
             )}
-            {errorMessage && <Text color="red.500">{errorMessage}</Text>}
+            {!!message && message.type === 'error' && (
+              <Text color="red.500">{message.content}</Text>
+            )}
           </VStack>
         </form>
       </VStack>
@@ -1149,20 +1030,32 @@ export const ListingPayments = ({
   );
 };
 
-function SelectedToken({ token }: { token: Token | undefined }) {
+const SelectedToken: React.FC<{
+  token: Token | undefined;
+}> = ({ token }) => {
+  if (!token) return null;
   return (
-    token && (
-      <>
-        <HStack p={2} borderColor="brand.slate.300" borderLeftWidth="1px">
-          <Image
-            w={'1.6rem'}
-            alt={token.tokenName as string}
-            rounded={'full'}
-            src={token?.icon}
-          />
-          <Text>{token?.tokenSymbol}</Text>
-        </HStack>
-      </>
-    )
+    <Flex
+      pos="absolute"
+      top="50%"
+      right={4}
+      align="center"
+      gap={1.5}
+      px={2}
+      bg="white"
+      borderRadius="sm"
+      transform="translateY(-50%)"
+    >
+      <Image
+        w={4}
+        h={4}
+        borderRadius="full"
+        alt={token.tokenName}
+        src={token.icon}
+      />
+      <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
+        {token.tokenSymbol}
+      </Text>
+    </Flex>
   );
-}
+};

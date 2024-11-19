@@ -101,7 +101,7 @@ export const Template = ({
           >
             <AddIcon mb="1rem" />
             <Text fontSize="1rem" fontWeight={500}>
-              Start from Scratch
+              从头开始
             </Text>
           </Button>
           {templates.map((template: any) => {
@@ -173,18 +173,18 @@ export const Template = ({
                           )}
                         </Flex>
                         <Text color="brand.slate.400" fontSize="xs">
-                          Used by{' '}
+                          使用者{' '}
                           {sponsors.length >= 1 && (
                             <Text as="span">{sponsors[0]?.name}</Text>
                           )}
                           {sponsors.length >= 2 && (
-                            <Text as="span"> & {sponsors[1]?.name}</Text>
+                            <Text as="span"> 和 {sponsors[1]?.name}</Text>
                           )}
                         </Text>
                       </Flex>
                     ) : (
                       <Text color="brand.slate.400" fontSize="sm">
-                        {`Pre-fill info with "${template?.title}" template`}
+                        {`使用"${template?.title}"模板预填信息`}
                       </Text>
                     )}
                   </Box>
@@ -206,7 +206,7 @@ export const Template = ({
                       size="sm"
                       variant="ghost"
                     >
-                      Preview
+                      预览
                     </Button>
                     <Button
                       className="ph-no-capture"
@@ -223,7 +223,7 @@ export const Template = ({
                       size="sm"
                       variant="solid"
                     >
-                      Use
+                      使用
                     </Button>
                   </Flex>
                 </Flex>

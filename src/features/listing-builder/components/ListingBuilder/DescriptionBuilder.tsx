@@ -88,15 +88,15 @@ const LinkModal = ({
           <ModalBody my={5}>
             <Input
               onChange={(e) => setLinkUrl(e.target.value)}
-              placeholder="add a link"
+              placeholder="添加链接"
               value={linkUrl}
             />
             <HStack justify={'end'} w={'full'} mt={5}>
               <Button mr={4} onClick={onClose} variant="ghost">
-                Cancel
+                取消
               </Button>
               <Button onClick={() => setLink(linkUrl)} variant="solid">
-                Submit
+                提交
               </Button>
             </HStack>
           </ModalBody>
@@ -126,7 +126,7 @@ const schema = z.object({
         link: z
           .string()
           .refine((val) => URL_REGEX.test(val), {
-            message: 'Please enter a valid URL',
+            message: '请填写有效的URL',
           })
           .optional(),
         title: z.string().optional(),
@@ -217,7 +217,7 @@ export const DescriptionBuilder = ({
         openOnClick: false,
       }),
       Placeholder.configure({
-        placeholder: 'Give more details about the Listing...',
+        placeholder: '告诉我们更多关于这个任务的信息...',
         showOnlyWhenEditable: false,
       }),
       StarterKit.configure({
@@ -382,9 +382,9 @@ export const DescriptionBuilder = ({
           <Flex justify="start" w="full">
             <Flex>
               <ListingFormLabel htmlFor="requirements">
-                Eligibility Requirements
+                任务要求
               </ListingFormLabel>
-              <ListingTooltip label="Add here if you have any specific eligibility requirements for the Listing." />
+              <ListingTooltip label="如果您对参与该赏金任务有任何具体的资格要求，请在此添加。" />
             </Flex>
           </Flex>
           <Input
@@ -398,24 +398,25 @@ export const DescriptionBuilder = ({
             id="requirements"
             maxLength={220}
             {...register('requirements')}
-            placeholder="Add Eligibility Requirements"
+            placeholder="添加任务要求"
             type={'text'}
           />
           <Text
+            mt={1}
             color={
-              (requirements?.length || 0) > 200 ? 'red' : 'brand.slate.400'
+              (requirements?.length || 0) > 200 ? 'red.500' : 'brand.slate.400'
             }
             fontSize={'xs'}
             textAlign="right"
           >
-            {220 - (requirements?.length || 0)} characters left
+            {requirements &&
+              requirements?.length > 0 &&
+              `${requirements.length || 0}/220 字`}
           </Text>
         </Box>
         <Flex justify="space-between" w="full">
           <Flex>
-            <ListingFormLabel htmlFor="description">
-              Listing Details
-            </ListingFormLabel>
+            <ListingFormLabel htmlFor="description">任务描述</ListingFormLabel>
             <Text
               as="sup"
               mt={3.5}
@@ -426,7 +427,7 @@ export const DescriptionBuilder = ({
             >
               *
             </Text>
-            <ListingTooltip label="Write details about the Listing - About, Requirements, Evaluation Criteria, Resources, Rewards, etc." />
+            <ListingTooltip label="描述赏金任务细节，包括任务目的、任务简介、项目方简介、任务要求、评估标准、项目方参考资料、奖励等等。" />
           </Flex>
         </Flex>
         <VStack w={'min-content'} mb={8}>
@@ -598,15 +599,14 @@ export const DescriptionBuilder = ({
                   fontSize={'15px'}
                   fontWeight={600}
                 >
-                  Deliverable References
+                  项目参考资料
                 </Text>
                 <Text
                   mt={'0px !important'}
                   color={'#94A3B8'}
                   fontSize={'0.88rem'}
                 >
-                  Add links of other projects/websites as references for the
-                  kind of deliverables you are looking for.
+                  添加其他项目或网站的链接作为参考资料。
                 </Text>
               </Flex>
               {fields.map((field, index) => (
@@ -642,7 +642,7 @@ export const DescriptionBuilder = ({
                     })
                   }
                 >
-                  + Add Reference
+                  + 添加参考资料
                 </Button>
               )}
             </>
@@ -651,7 +651,7 @@ export const DescriptionBuilder = ({
         <VStack gap={4} w={'full'} mt={16}>
           {editorError && (
             <Text align={'center'} color={'red'}>
-              Listing Details is a required field
+              任务详情是必填项
             </Text>
           )}
           <Button
@@ -664,7 +664,7 @@ export const DescriptionBuilder = ({
             type="submit"
             variant={!isDraft ? 'outline' : 'solid'}
           >
-            Continue
+            继续
           </Button>
           {isDraft && (
             <HStack w="full">
@@ -680,7 +680,7 @@ export const DescriptionBuilder = ({
                 onClick={() => onDraftClick()}
                 variant={'ghost'}
               >
-                Save Draft
+                保存草稿
               </Button>
             </HStack>
           )}
@@ -695,7 +695,7 @@ export const DescriptionBuilder = ({
               onClick={() => onDraftClick()}
               variant={'solid'}
             >
-              Update Listing
+              更新任务
             </Button>
           )}
         </VStack>
@@ -756,7 +756,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
               <VStack>
                 <Spinner color="brand.slate.500" size="xl" />
                 <Text fontSize="lg" fontWeight="bold">
-                  Uploading image...
+                  上传图片中...
                 </Text>
               </VStack>
             ) : (
@@ -779,10 +779,10 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
                   />
                 </Flex>
                 <Text color="black" fontSize="lg" fontWeight="500">
-                  Drag and drop your files here
+                  将文件拖放到此处
                 </Text>
                 <Text color="brand.slate.500" fontSize="md">
-                  Max File Upload Size: 5MB
+                  最大文件上传大小：5MB
                 </Text>
                 <Button
                   mt={8}
@@ -795,14 +795,14 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
                   borderColor="brand.slate.200"
                   shadow="sm"
                 >
-                  Upload File
+                  上传文件
                 </Button>
               </>
             )}
           </Box>
           {fileRejections.length > 0 && (
             <Text mt={2} color="red.500">
-              File is too large or of invalid type.
+              文件太大或类型无效。
             </Text>
           )}
           {uploadError && (

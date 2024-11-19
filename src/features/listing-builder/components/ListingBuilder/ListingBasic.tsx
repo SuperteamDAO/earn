@@ -97,29 +97,29 @@ export const ListingBasic = ({
   };
 
   const timeToCompleteOptions = [
-    { value: '<1 Week', label: '<1 Week' },
-    { value: '1-2 Weeks', label: '1-2 Weeks' },
-    { value: '2-4 Weeks', label: '2-4 Weeks' },
-    { value: '4-8 Weeks', label: '4-8 Weeks' },
-    { value: '>8 Weeks', label: '>8 Weeks' },
+    { value: '<1 周', label: '<1 周' },
+    { value: '1-2 周', label: '1-2 周' },
+    { value: '2-4 周', label: '2-4 周' },
+    { value: '4-8 周', label: '4-8 周' },
+    { value: '>8 周', label: '>8 周' },
   ];
 
   const formSchema = z
     .object({
-      title: z.string().min(1, 'Title is required'),
+      title: z.string().min(1, '标题是必填项'),
       slug: z
         .string()
-        .min(1, 'Slug is required')
+        .min(1, 'Slug 是必填项')
         .regex(
           /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-          'Slug should only contain lowercase alphabets, numbers, and hyphens',
+          'Slug 只能包含小写字母、数字和连字符',
         )
         .refine(slugUniqueCheck, {
-          message: 'Slug already exists. Please try another.',
+          message: 'Slug 已经存在，请尝试另一个。',
         }),
       pocSocials: z
         .string()
-        .min(1, 'Point of Contact is required')
+        .min(1, '联系方式是必填项')
         .refine(
           (value) => {
             return (
@@ -129,7 +129,7 @@ export const ListingBasic = ({
             );
           },
           {
-            message: 'Please enter a valid X / Telegram link, or email address',
+            message: '请输入有效的 X / Telegram 链接或电子邮件地址',
           },
         ),
       region: z.string().optional(),
@@ -148,7 +148,7 @@ export const ListingBasic = ({
       ) {
         ctx.addIssue({
           path: ['timeToComplete'],
-          message: 'Time to complete is required for projects',
+          message: '项目需要填写完成时间',
           code: 'custom',
         });
       }
@@ -182,9 +182,9 @@ export const ListingBasic = ({
   });
 
   const deadlineOptions = [
-    { label: '1 Week', value: 7 },
-    { label: '2 Weeks', value: 14 },
-    { label: '3 Weeks', value: 21 },
+    { label: '1 周', value: 7 },
+    { label: '2 周', value: 14 },
+    { label: '3 周', value: 21 },
   ];
 
   useEffect(() => {
@@ -331,10 +331,8 @@ export const ListingBasic = ({
           )}
           <FormControl w="full" mb={5} isInvalid={!!errors.title} isRequired>
             <Flex>
-              <ListingFormLabel htmlFor={'title'}>
-                Listing Title
-              </ListingFormLabel>
-              <ListingTooltip label="Use a short title to describe the Listing" />
+              <ListingFormLabel htmlFor={'title'}>任务标题</ListingFormLabel>
+              <ListingTooltip label="使用简短的标题来描述任务" />
             </Flex>
 
             <Input
@@ -357,7 +355,7 @@ export const ListingBasic = ({
                   }
                 },
               })}
-              placeholder="Develop a new landing page"
+              placeholder="开发一个新登陆页面"
             />
             <Text
               color={(title?.length || 0) > 70 ? 'red' : 'brand.slate.400'}
@@ -367,9 +365,9 @@ export const ListingBasic = ({
               {title &&
                 title?.length > 50 &&
                 (80 - title?.length === 0 ? (
-                  <p>Character limit reached</p>
+                  <p>字符限制已达到</p>
                 ) : (
-                  <p>{80 - (title.length || 0)} characters left</p>
+                  <p>{80 - (title.length || 0)} 个字符剩余</p>
                 ))}
             </Text>
             {suggestions.length > 0 && (
@@ -381,7 +379,7 @@ export const ListingBasic = ({
                 fontWeight={500}
                 fontStyle="italic"
               >
-                <Text w="max-content">Reference Listings:</Text>
+                <Text w="max-content">参考任务：</Text>
                 <Flex align="center" wrap="wrap" columnGap={1.5}>
                   {suggestions.map((suggestion, index) => (
                     <Flex key={suggestion.link} align="center" gap={2}>
@@ -413,8 +411,8 @@ export const ListingBasic = ({
           </FormControl>
           <FormControl w="full" mb={5} isInvalid={!!errors.slug} isRequired>
             <Flex>
-              <ListingFormLabel htmlFor={'slug'}>Listing Slug</ListingFormLabel>
-              <ListingTooltip label="Use a short slug to describe the Listing" />
+              <ListingFormLabel htmlFor={'slug'}>任务 Slug</ListingFormLabel>
+              <ListingTooltip label="使用简短的 Slug 来描述任务" />
             </Flex>
             <FormHelperText
               mt={-1.5}
@@ -423,7 +421,7 @@ export const ListingBasic = ({
               color="brand.slate.400"
               fontSize={'13px'}
             >
-              This field can&apos;t be edited after a listing has been published
+              任务发布后无法编辑此字段
             </FormHelperText>
 
             <InputGroup>
@@ -444,7 +442,7 @@ export const ListingBasic = ({
                     setValue('slug', newValue);
                   },
                 })}
-                placeholder="develop-a-new-landing-page"
+                placeholder="开发一个新登陆页面"
               />
               {isSlugGenerating && (
                 <InputRightElement>
@@ -473,9 +471,9 @@ export const ListingBasic = ({
           >
             <Flex>
               <ListingFormLabel htmlFor={'pocSocials'}>
-                Point of Contact (TG / X / Email)
+                联系方式（TG / X / 邮箱）
               </ListingFormLabel>
-              <ListingTooltip label="Please add a social link of the person people reach out to in case they have questions about this listing." />
+              <ListingTooltip label="请提供至少一种联系方式，以便申请者与您联系" />
             </Flex>
 
             <Input
@@ -488,7 +486,7 @@ export const ListingBasic = ({
               {...register('pocSocials', {
                 onChange: () => debouncedPocSocialsValidation(),
               })}
-              placeholder="https://x.com/elonmusk"
+              placeholder="例如：@solarearn"
             />
             <FormErrorMessage>
               {errors.pocSocials ? <>{errors.pocSocials.message}</> : <></>}
@@ -498,16 +496,15 @@ export const ListingBasic = ({
             <FormControl mb={5} isInvalid={!!errors.deadline} isRequired>
               <Flex align={'center'} justify={'start'}>
                 <ListingFormLabel htmlFor={'deadline'}>
-                  Deadline (in{' '}
-                  {Intl.DateTimeFormat().resolvedOptions().timeZone})
+                  截止日期（北京/香港/新加坡时间，UTC+8）
                 </ListingFormLabel>
-                <ListingTooltip label="Select the deadline date for accepting submissions" />
+                <ListingTooltip label="请选择任务的截止日期和时间" />
               </Flex>
               <Tooltip
                 isDisabled={!editable || !maxDeadline}
                 label={
                   editable && maxDeadline && session?.user.role !== 'GOD'
-                    ? 'Max two weeks extension allowed from the original deadline'
+                    ? '最多允许从原始截止日期延长两周'
                     : ''
                 }
                 placement="top"
@@ -547,7 +544,7 @@ export const ListingBasic = ({
                   min={
                     session?.user.role === 'GOD' ? undefined : `${date}T00:00`
                   }
-                  placeholder="deadline"
+                  placeholder="截止日期"
                   type={'datetime-local'}
                   {...register('deadline', { required: true })}
                 />
@@ -585,7 +582,7 @@ export const ListingBasic = ({
             >
               <Flex>
                 <ListingFormLabel htmlFor="timeToComplete">
-                  Estimated Time to Complete
+                  预计完成时间
                 </ListingFormLabel>
               </Flex>
 
@@ -593,7 +590,7 @@ export const ListingBasic = ({
                 _placeholder={{
                   color: 'brand.slate.300',
                 }}
-                placeholder="Select time to complete"
+                placeholder="选择完成时间"
                 {...register('timeToComplete', { required: true })}
               >
                 {timeToCompleteOptions.map((option) => (
@@ -615,9 +612,9 @@ export const ListingBasic = ({
             <FormControl alignItems="center" gap={3} display="flex">
               <Flex>
                 <ListingFormLabel htmlFor="isFndnPaying">
-                  Will the Solana Foundation pay for this listing?
+                  是否由 Solana Foundation 支付？
                 </ListingFormLabel>
-                <ListingTooltip label='If this toggle is set to "True", Earn will automatically send the Foundation-KYC form to the winners of this listing. The Foundation will directly pay the winners.' />
+                <ListingTooltip label='如果设置为"是"，Earn 将自动向该任务的获胜者发送 Foundation-KYC 表单。Foundation 将直接向获胜者付款。' />
               </Flex>
               <Switch
                 mb={2}
@@ -637,9 +634,9 @@ export const ListingBasic = ({
           <FormControl alignItems="center" gap={3} display="flex">
             <Flex>
               <ListingFormLabel htmlFor="isPrivate">
-                Private Listing
+                任务可见性
               </ListingFormLabel>
-              <ListingTooltip label="Private listings are only accessible through direct links and do not appear on the Solar Earn homepage or other public pages on the website." />
+              <ListingTooltip label="选择任务是否公开显示" />
             </Flex>
             <Switch
               mb={2}
@@ -647,6 +644,7 @@ export const ListingBasic = ({
               {...register('isPrivate')}
               isChecked={isPrivate}
             />
+            <FormHelperText>仅通过链接访问，不会在首页显示</FormHelperText>
             <FormErrorMessage>
               {errors.isPrivate ? <>{errors.isPrivate.message}</> : <></>}
             </FormErrorMessage>
@@ -661,7 +659,7 @@ export const ListingBasic = ({
               type="submit"
               variant={!isDraft ? 'outline' : 'solid'}
             >
-              Continue
+              继续
             </Button>
             {isDraft && (
               <HStack w="full">
@@ -677,7 +675,21 @@ export const ListingBasic = ({
                   onClick={() => onDraftClick()}
                   variant={'ghost'}
                 >
-                  Save Draft
+                  保存草稿
+                </Button>
+                <Button
+                  className="ph-no-capture"
+                  w="100%"
+                  py={6}
+                  color="brand.purple"
+                  fontWeight={500}
+                  bg="#EEF2FF"
+                  borderRadius="sm"
+                  isLoading={isDraftLoading}
+                  onClick={() => onDraftClick(true)}
+                  variant={'ghost'}
+                >
+                  预览
                 </Button>
               </HStack>
             )}
@@ -692,7 +704,7 @@ export const ListingBasic = ({
                 onClick={() => onDraftClick()}
                 variant={'solid'}
               >
-                Update Listing
+                更新任务
               </Button>
             )}
           </VStack>

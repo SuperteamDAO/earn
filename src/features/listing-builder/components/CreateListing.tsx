@@ -36,36 +36,36 @@ interface Props {
 
 const defaultStepList = [
   {
-    label: 'Template',
+    label: '模板',
     number: 1,
-    mainHead: 'List your Opportunity',
+    mainHead: '列出你的赏金任务',
     description:
-      'To save time, check out our ready made templates below. If you already have a listing elsewhere, use "Start from Scratch" and copy/paste your text.',
+      '如果您已经在其他渠道发布任务，请选择"从头开始"，然后复制/粘贴您的文本。',
   },
   {
-    label: 'Basics',
+    label: '信息',
     number: 2,
-    mainHead: 'Create a Listing',
-    description: "Now let's learn a bit more about the work you need completed",
+    mainHead: '创建赏金任务',
+    description: '让我们了解更多关于您需要完成的工作',
   },
   {
-    label: 'Description',
+    label: '描述',
     number: 3,
-    mainHead: 'Tell us some more',
+    mainHead: '告诉我们更多',
     description:
-      'Add more details about the opportunity, submission requirements, reward(s) details, and resources',
+      '添加更多关于机会、提交要求、奖励详情和资源的详细信息',
   },
   {
-    label: 'Questions',
+    label: '问题',
     number: 4,
-    mainHead: 'Enter your questions',
-    description: 'What would you like to know about your applicants?',
+    mainHead: '输入您的问题',
+    description: '您想了解申请人的哪些信息？',
   },
   {
-    label: 'Reward',
+    label: '奖励',
     number: 5,
-    mainHead: 'Add the reward amount',
-    description: 'Decide the compensation amount for your listing',
+    mainHead: '添加奖励金额',
+    description: '决定您的赏金任务的报酬金额',
   },
 ];
 

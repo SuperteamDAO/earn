@@ -44,8 +44,8 @@ export const SkillSelect = ({
   errorSubSkill,
   setSkills,
   setSubSkills,
-  skillLabel = 'Skills Needed',
-  subSkillLabel = 'Sub Skills Needed',
+  skillLabel = '所需技能',
+  subSkillLabel = '所需子技能',
   helperText,
 }: Props) => {
   const animatedComponents = makeAnimated();
@@ -89,7 +89,7 @@ export const SkillSelect = ({
             bg="brand.purple"
             borderRadius="0.5rem"
             hasArrow
-            label={`Select all that apply`}
+            label={`请选择所有适用项`}
             placement="right-end"
           >
             <Image
@@ -150,7 +150,7 @@ export const SkillSelect = ({
             bg="brand.purple"
             borderRadius="0.5rem"
             hasArrow
-            label={`Select all that apply`}
+            label={`请选择所有适用项`}
             placement="right-end"
           >
             <Image
