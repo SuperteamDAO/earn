@@ -66,7 +66,11 @@ export default async function grants(
         : undefined;
 
       if (matchedRegion?.name) {
-        userRegion = [matchedRegion.name, Regions.GLOBAL];
+        userRegion = [
+          matchedRegion.name,
+          Regions.GLOBAL,
+          ...(matchedRegion.country || []),
+        ];
       } else {
         userRegion = [Regions.GLOBAL];
       }

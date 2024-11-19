@@ -35,7 +35,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
         OR: [
           {
             region: {
-              in: [region.toUpperCase() as Regions],
+              in: [region.toUpperCase() as Regions, ...(st?.country || [])],
             },
           },
           {
