@@ -30,7 +30,7 @@ export const withSponsorAuth = (handler: Handler): NextApiHandler => {
       logger.debug(`Fetching user with ID: ${userId}`);
       const user = await prisma.user.findUnique({
         where: { id: userId as string },
-        select: { currentSponsorId: true, role: true },
+        select: { currentSponsorId: true, role: true, hackathonId: true },
       });
 
       if (!user || !user.currentSponsorId) {
@@ -42,6 +42,7 @@ export const withSponsorAuth = (handler: Handler): NextApiHandler => {
 
       req.userSponsorId = user.currentSponsorId;
       req.role = user.role;
+      req.hackathonId = user.hackathonId || undefined;
 
       return handler(req, res);
     } catch (error) {

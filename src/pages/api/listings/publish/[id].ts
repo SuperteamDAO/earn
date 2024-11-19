@@ -60,16 +60,26 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         message: `Listing is already published, hence cannot be published again`,
       });
     }
+    const hackathon = req.body.hackathonId
+      ? (await prisma.hackathon.findUnique({
+          where: {
+            id: req.body.hackathonId,
+          },
+        })) || undefined
+      : undefined;
 
-    const listingSchema = createListingFormSchema(
-      user?.role === 'GOD',
-      false,
-      sponsor?.st,
-    );
+    console.log('hackathon in publish', hackathon);
+
+    const listingSchema = createListingFormSchema({
+      isGod: user?.role === 'GOD',
+      isEditing: false,
+      isST: !!sponsor?.st,
+      hackathon,
+    });
 
     const innerSchema = listingSchema._def.schema;
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
-      await createListingRefinements(data as any, ctx);
+      await createListingRefinements(data as any, ctx, hackathon);
       await backendListingRefinements(data as any, ctx);
     });
     console.log('req.body', req.body);
@@ -95,6 +105,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       maxRewardAsk,
       isPrivate,
       isFndnPaying: rawIsFndnPaying,
+      hackathonId,
     } = validatedData;
 
     let isPublished = true;
@@ -201,6 +212,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       status: isVerifying ? 'VERIFYING' : 'OPEN',
       publishedAt,
       isPublished,
+      hackathonId,
     };
 
     logger.debug(`Publishing listing with data: ${safeStringify(data)}`);

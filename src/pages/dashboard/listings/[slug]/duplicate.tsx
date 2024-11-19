@@ -8,7 +8,10 @@ import {
   ListingBuilder,
   type ListingFormData,
 } from '@/features/listing-builder';
-import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard';
+import {
+  activeHackathonQuery,
+  sponsorDashboardListingQuery,
+} from '@/features/sponsor-dashboard';
 import { useUser } from '@/store/user';
 
 interface Props {
@@ -23,6 +26,9 @@ export default function DuplicateBounty({ slug }: Props) {
     ...sponsorDashboardListingQuery(slug),
     enabled: !!user?.currentSponsorId,
   });
+  const { data: hackathon, isLoading: hackathonLoading } = useQuery(
+    activeHackathonQuery(),
+  );
 
   useEffect(() => {
     if (listing && listing.sponsorId !== user?.currentSponsorId) {
@@ -32,7 +38,7 @@ export default function DuplicateBounty({ slug }: Props) {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || hackathonLoading ? (
         <LoadingSection />
       ) : listing ? (
         <>
@@ -47,6 +53,7 @@ export default function DuplicateBounty({ slug }: Props) {
                 id: undefined,
               } as unknown as ListingFormData
             }
+            hackathon={hackathon}
           />
         </>
       ) : (

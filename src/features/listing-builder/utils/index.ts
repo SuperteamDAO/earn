@@ -1,4 +1,4 @@
-import { type BountyType } from '@prisma/client';
+import { type BountyType, type Hackathon } from '@prisma/client';
 import { z } from 'zod';
 
 import { type Listing } from '@/features/listings';
@@ -52,13 +52,26 @@ export const listingToStatus = (listing: ListingFormData): ListingStatus => {
   return 'draft';
 };
 
-export const getListingDefaults = (
-  isGod: boolean,
-  editable: boolean,
-  isST: boolean,
-  type: BountyType = 'bounty',
-) => {
-  const schema = createListingFormSchema(isGod, editable, isST);
+interface ListingDefaults {
+  isGod: boolean;
+  isEditing: boolean;
+  isST: boolean;
+  type?: BountyType;
+  hackathon?: Hackathon;
+}
+export const getListingDefaults = ({
+  isGod,
+  isEditing,
+  isST,
+  type = 'bounty',
+  hackathon,
+}: ListingDefaults) => {
+  const schema = createListingFormSchema({
+    isGod,
+    isEditing,
+    isST,
+    hackathon: hackathon,
+  });
 
   // Get the inner schema by unwrapping the ZodEffects
   const getInnerSchema = (schema: z.ZodTypeAny): z.ZodObject<any> => {
@@ -104,6 +117,16 @@ export const getListingDefaults = (
   }
 
   defaults['type'] = type;
+  if (type === 'hackathon') {
+    if (!hackathon) defaults['type'] = 'bounty';
+    else {
+      defaults['type'] = type;
+      if (hackathon.eligibility)
+        defaults['eligibility'] = hackathon.eligibility;
+      if (hackathon.deadline) defaults['deadline'] = hackathon.deadline;
+      defaults['hackathonId'] = hackathon.id;
+    }
+  }
   if (type === 'project') {
     defaults['eligibility'] = [{ type: 'text', question: '', order: 1 }];
   }

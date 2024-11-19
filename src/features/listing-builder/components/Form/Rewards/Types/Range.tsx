@@ -24,6 +24,10 @@ export function Range() {
                 {...field}
                 placeholder="5,000"
                 className="relative rounded-r-none focus-within:z-10"
+                onChange={(e) => {
+                  field.onChange(e);
+                  form.saveDraft();
+                }}
               />
             </FormControl>
             <FormMessage />
@@ -41,6 +45,10 @@ export function Range() {
                 {...field}
                 placeholder="10,000"
                 className="relative rounded-l-none pr-6 focus-within:z-10"
+                onChange={(e) => {
+                  field.onChange(e);
+                  form.saveDraft();
+                }}
               />
             </FormControl>
             <FormMessage />

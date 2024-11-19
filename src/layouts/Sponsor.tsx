@@ -287,7 +287,7 @@ export function SponsorLayout({
                 w="full"
                 py={'22px'}
                 fontSize="md"
-                href={`/dashboard/hackathon/create-hackathon`}
+                href={`/dashboard/new/?type=hackathon`}
                 variant="solid"
               >
                 <AddIcon w={3} h={3} />

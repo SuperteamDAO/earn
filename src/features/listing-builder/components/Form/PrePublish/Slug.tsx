@@ -116,6 +116,10 @@ export function Slug() {
                   placeholder="write-a-twitter-thread-on-Solana"
                   disabled={!!publishedAt || generatedSlugFetching}
                   onBlur={() => null}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    form.saveDraft();
+                  }}
                 />
                 {slugCheckFetching || generatedSlugFetching ? (
                   <Loader2 className="absolute right-2 top-1.5 animate-spin text-slate-300" />

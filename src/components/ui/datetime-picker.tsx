@@ -252,7 +252,7 @@ export function DateTimePicker({
               'flex h-9 w-full cursor-pointer items-center rounded-md border border-input pe-1 ps-3 text-sm font-normal shadow-sm',
               !displayValue && 'text-muted-foreground',
               (!clearable || !value) && 'pe-3',
-              disabled && 'cursor-not-allowed opacity-50',
+              disabled && 'pointer-events-none cursor-not-allowed opacity-50',
               classNames?.trigger,
             )}
             tabIndex={0}

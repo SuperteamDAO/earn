@@ -44,6 +44,7 @@ export function Fixed() {
               onChange={(e) => {
                 field.onChange(e);
                 form.setValue(`rewards`, { 1: e || NaN });
+                form.saveDraft();
               }}
             />
           </FormControl>

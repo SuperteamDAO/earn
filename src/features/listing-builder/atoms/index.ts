@@ -1,9 +1,9 @@
+import { type Hackathon } from '@prisma/client';
 import axios from 'axios';
 import { atom, createStore } from 'jotai';
 import { atomWithMutation } from 'jotai-tanstack-query';
 
 import { type ListingFormData, type ListingStatus } from '../types';
-import { createListingFormSchema } from '../types/schema';
 
 const store: ReturnType<typeof createStore> = createStore();
 
@@ -12,6 +12,7 @@ const isSTAtom = atom<boolean>(false);
 const isEditingAtom = atom<boolean>(false);
 const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
 const isDraftSavingAtom = atom(false);
+const hackathonAtom = atom<Hackathon | undefined>(undefined);
 
 interface SaveQueueState {
   isProcessing: boolean;
@@ -27,10 +28,6 @@ const confirmModalAtom = atom<'SUCCESS' | 'VERIFICATION' | undefined>(
   undefined,
 );
 const previewAtom = atom(false);
-
-const formSchemaAtom = atom((get) =>
-  createListingFormSchema(get(isGodAtom), get(isEditingAtom), get(isSTAtom)),
-);
 
 const saveDraftMutationAtom = atomWithMutation(() => ({
   mutationKey: ['saveDraft'],
@@ -79,7 +76,7 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
 export {
   confirmModalAtom,
   draftQueueAtom,
-  formSchemaAtom,
+  hackathonAtom,
   isDraftSavingAtom,
   isEditingAtom,
   isGodAtom,

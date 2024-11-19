@@ -1,5 +1,5 @@
-import { type BountyType } from '@prisma/client';
-import { Provider } from 'jotai';
+import { type BountyType, type Hackathon } from '@prisma/client';
+import { Provider, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -7,8 +7,10 @@ import { useEffect } from 'react';
 
 import { Form } from '@/components/ui/form';
 import {
+  confirmModalAtom,
   draftQueueAtom,
   getListingDefaults,
+  hackathonAtom,
   isEditingAtom,
   isGodAtom,
   isSTAtom,
@@ -16,6 +18,7 @@ import {
   type ListingFormData,
   listingStatusAtom,
   listingToStatus,
+  previewAtom,
   store,
 } from '@/features/listing-builder';
 import { useUser } from '@/store/user';
@@ -40,15 +43,18 @@ import {
 function ListingBuilder({
   defaultListing,
   isDuplicating,
+  hackathon,
 }: {
   defaultListing: ListingFormData;
   isDuplicating?: boolean;
+  hackathon?: Hackathon;
 }) {
-  const form = useListingForm(defaultListing);
+  const form = useListingForm(defaultListing, hackathon);
   useInitAtom(
     listingStatusAtom,
     defaultListing ? listingToStatus(defaultListing) : undefined,
   );
+  useInitAtom(hackathonAtom, hackathon);
   useInitAtom(isEditingAtom, !!defaultListing.isPublished);
   // useEffect(() => {
   //   setIsEditing(!!defaultListing.isPublished)
@@ -72,6 +78,15 @@ function ListingBuilder({
     console.log('errors', form.formState.errors);
   }, [form.formState.errors]);
 
+  const setConfirmModal = useSetAtom(confirmModalAtom);
+  const setPreviewModal = useSetAtom(previewAtom);
+  useEffect(() => {
+    return () => {
+      setConfirmModal(undefined);
+      setPreviewModal(false);
+    };
+  }, []);
+
   return (
     <>
       <Form {...form}>
@@ -80,7 +95,6 @@ function ListingBuilder({
             e.preventDefault();
           }}
           onKeyDown={preventEnterKeySubmission}
-          onChange={form.saveDraft}
         >
           <ListingBuilderLayout>
             <div className="mx-auto w-full max-w-5xl space-y-8 py-10">
@@ -112,6 +126,7 @@ interface Props {
   isEditing?: boolean;
   isDuplicating?: boolean;
   listing?: ListingFormData;
+  hackathon?: Hackathon;
 }
 
 // atom values wont be available here, will only exist in child of HydrateAtoms immeditealy
@@ -119,6 +134,7 @@ function ListingBuilderProvider({
   isEditing = false,
   isDuplicating,
   listing,
+  hackathon,
 }: Props) {
   const { data: session, status } = useSession();
   const { user } = useUser();
@@ -128,12 +144,13 @@ function ListingBuilderProvider({
   const params = useSearchParams();
   const defaultListing =
     listing ||
-    getListingDefaults(
+    getListingDefaults({
       isGod,
-      !!isEditing,
-      isST,
-      (params.get('type') as BountyType) || 'bounty',
-    );
+      isEditing: !!isEditing,
+      isST: isST,
+      type: (params.get('type') as BountyType) || 'bounty',
+      hackathon: hackathon,
+    });
   // console.log('defaultListing', defaultListing);
 
   const router = useRouter();
@@ -149,6 +166,7 @@ function ListingBuilderProvider({
           [isEditingAtom, isEditing],
           [isGodAtom, isGod],
           [isSTAtom, isST],
+          [hackathonAtom, hackathon],
           [listingStatusAtom, listingToStatus(defaultListing)],
           [
             draftQueueAtom,
@@ -163,6 +181,7 @@ function ListingBuilderProvider({
         <ListingBuilder
           defaultListing={defaultListing}
           isDuplicating={isDuplicating}
+          hackathon={hackathon}
         />
       </HydrateAtoms>
     </Provider>

@@ -49,6 +49,7 @@ const allowedFields = [
   'maxRewardAsk',
   'isPublished',
   'isFndnPaying',
+  'hackathonId',
 ];
 
 async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
@@ -91,16 +92,27 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id: userId as string },
     });
 
+    console.log('req hackathon id', req.body.hackathonId);
+    const hackathon = req.body.hackathonId
+      ? (await prisma.hackathon.findUnique({
+          where: {
+            id: req.body.hackathonId,
+          },
+        })) || undefined
+      : undefined;
+
+    console.log('hackathon in update', hackathon);
     // Create schema instance with correct parameters
-    const listingSchema = createListingFormSchema(
-      user?.role === 'GOD',
-      true,
-      sponsor?.st,
-      listing as any,
-    );
+    const listingSchema = createListingFormSchema({
+      isGod: user?.role === 'GOD',
+      isEditing: true,
+      isST: !!sponsor?.st,
+      hackathon,
+      pastListing: listing as any,
+    });
     const innerSchema = listingSchema._def.schema;
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
-      await createListingRefinements(data as any, ctx);
+      await createListingRefinements(data as any, ctx, hackathon);
       await backendListingRefinements(data as any, ctx);
     });
 

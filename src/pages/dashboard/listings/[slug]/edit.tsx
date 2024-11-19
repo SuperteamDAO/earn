@@ -8,7 +8,10 @@ import {
   ListingBuilder,
   type ListingFormData,
 } from '@/features/listing-builder';
-import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard';
+import {
+  activeHackathonQuery,
+  sponsorDashboardListingQuery,
+} from '@/features/sponsor-dashboard';
 import { useUser } from '@/store/user';
 
 interface Props {
@@ -21,6 +24,9 @@ function EditBounty({ slug }: Props) {
 
   const { data: listing, isLoading } = useQuery(
     sponsorDashboardListingQuery(slug),
+  );
+  const { data: hackathon, isLoading: hackathonLoading } = useQuery(
+    activeHackathonQuery(),
   );
 
   useEffect(() => {
@@ -35,13 +41,14 @@ function EditBounty({ slug }: Props) {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || hackathonLoading ? (
         <LoadingSection />
       ) : listing ? (
         <>
           <ListingBuilder
             listing={listing as unknown as ListingFormData}
             isEditing={!!listing.publishedAt}
+            hackathon={hackathon}
           />
         </>
       ) : (

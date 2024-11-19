@@ -1,4 +1,10 @@
-import { BountyType, CompensationType, Regions, status } from '@prisma/client';
+import {
+  BountyType,
+  CompensationType,
+  type Hackathon,
+  Regions,
+  status,
+} from '@prisma/client';
 import { z } from 'zod';
 
 import {
@@ -16,15 +22,23 @@ import { DEADLINE_FORMAT } from '../components/Form';
 import { fetchSlugCheck } from '../queries/slug-check';
 import { type ListingFormData } from '.';
 
-export const createListingFormSchema = (
-  isGod: boolean,
-  isEditing: boolean,
-  isST?: boolean,
-  pastListing?: Listing,
-) => {
+interface ListingFormSchemaOptions {
+  isGod: boolean;
+  isEditing: boolean;
+  isST: boolean;
+  pastListing?: Listing;
+  hackathon?: Hackathon;
+}
+export const createListingFormSchema = ({
+  isGod,
+  isEditing,
+  isST,
+  pastListing,
+  hackathon,
+}: ListingFormSchemaOptions) => {
   const eligibilityQuestionSchema = z.object({
     order: z.number(),
-    question: z.string().min(1).max(256),
+    question: z.string().trim().min(1).max(256),
     type: z.enum(['text', 'link']),
   });
 
@@ -105,9 +119,10 @@ export const createListingFormSchema = (
   return z
     .object({
       id: z.string().optional(),
-      title: z.string().min(1, 'Required').max(100),
+      title: z.string().trim().min(1, 'Required').max(100),
       slug: z
         .string()
+        .trim()
         .min(1, 'Required')
         .max(120)
         .regex(
@@ -123,6 +138,7 @@ export const createListingFormSchema = (
       // ),
       pocSocials: z
         .string()
+        .trim()
         .min(1, 'Required')
         .max(256, 'Too long')
         .refine(
@@ -137,11 +153,21 @@ export const createListingFormSchema = (
             message: 'Please enter a valid X / Telegram link, or email address',
           },
         ),
-      description: z.string().min(1, 'Required'),
-      type: z.nativeEnum(BountyType).default('bounty'),
-      region: z.string().max(256).default(Regions.GLOBAL),
+      description: z.string().trim().min(1, 'Required'),
+      type: z
+        .nativeEnum(BountyType)
+        .default('bounty')
+        .refine((data) => {
+          console.log('hackathon at dead check', hackathon);
+          if (data === 'hackathon') {
+            return !!hackathon;
+          }
+          return true;
+        }, 'Hackathon is not allowed for now'),
+      region: z.string().trim().min(1).max(256).default(Regions.GLOBAL),
       deadline: z
         .string()
+        .trim()
         .datetime({
           message: 'Required',
         })
@@ -205,6 +231,7 @@ export const createListingFormSchema = (
           },
         ),
       isPrivate: z.boolean().default(false),
+      hackathonId: z.string().optional().nullable(),
 
       // values that will not be set on any API, but useful for response
       isPublished: z.boolean().optional().nullable(),
@@ -214,16 +241,16 @@ export const createListingFormSchema = (
         .optional()
         .nullable(),
       sponsorId: z.string().optional().nullable(),
-      hackathonId: z.string().optional().nullable(),
     })
     .superRefine((data, ctx) => {
-      createListingRefinements(data, ctx);
+      createListingRefinements(data, ctx, hackathon);
     });
 };
 
 export const createListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
+  hackathon?: Hackathon,
 ) => {
   console.log('zod validating');
   const slugUniqueCheck = async (slug: string, id?: string) => {
@@ -256,7 +283,7 @@ export const createListingRefinements = async (
       });
     }
     console.log('rewards validation', data.rewards);
-    if (data.type === 'bounty') {
+    if (data.type !== 'project') {
       if (!data.rewards || Object.keys(data.rewards).length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -323,6 +350,19 @@ export const createListingRefinements = async (
         code: z.ZodIssueCode.custom,
         message: 'Maximum reward must be greater than minimum reward',
         path: ['maxRewardAsk'],
+      });
+    }
+  }
+
+  if (data.type === 'hackathon') {
+    if (
+      !hackathon?.deadline ||
+      data.deadline !== new Date(hackathon?.deadline).toISOString()
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Hackathon deadline cannot be changed',
+        path: ['deadline'],
       });
     }
   }

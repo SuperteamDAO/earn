@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai';
 import Image from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useWatch } from 'react-hook-form';
 
 import {
   FormControl,
@@ -19,14 +20,13 @@ import {
 } from '@/components/ui/select';
 import { getListingIcon } from '@/features/listings';
 
-import { isEditingAtom } from '../../atoms';
+import { hackathonAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 import { calculateTotalRewardsForPodium } from '../../utils';
 
 const typeOptions = [
   { value: 'bounty', label: 'Bounty' },
   { value: 'project', label: 'Project' },
-  { value: 'hackathon', label: 'Hackathon' },
 ] as const;
 
 export function TitleAndType() {
@@ -47,6 +47,10 @@ export function TitleAndType() {
                   {...field}
                   className="mt-0 border-none focus-visible:ring-0"
                   defaultValue={''}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    form.saveDraft();
+                  }}
                 />
               </FormControl>
             </div>
@@ -66,9 +70,17 @@ export function TitleAndType() {
 function Type() {
   const form = useListingForm();
   const isEditing = useAtomValue(isEditingAtom);
+  const hackathon = useAtomValue(hackathonAtom);
   useEffect(() => {
     console.log('isEditing type', isEditing);
   }, [isEditing]);
+  const hackathonId = useWatch({
+    control: form.control,
+    name: 'hackathonId',
+  });
+  useMemo(() => {
+    console.log('hackathonId', hackathonId);
+  }, [hackathonId]);
   return (
     <FormField
       name="type"
@@ -82,6 +94,14 @@ function Type() {
                 disabled={isEditing}
                 onValueChange={(e) => {
                   field.onChange(e);
+                  if (e === 'hackathon') {
+                    if (hackathon) {
+                      console.log('set hackathon value - ', hackathon);
+                      form.setValue('hackathonId', hackathon.id);
+                    }
+                  } else {
+                    form.setValue('hackathonId', undefined);
+                  }
                   // form.setValue('rewards', undefined)
                   // form.setValue('rewardAmount', undefined)
                   // if(e !== 'project') {
@@ -126,6 +146,20 @@ function Type() {
                       </div>
                     </SelectItem>
                   ))}
+                  {hackathon && (
+                    <SelectItem key={'hackathon'} value={'hackathon'}>
+                      <div className="flex items-center gap-2 text-xs">
+                        <Image
+                          src={hackathon.logo}
+                          alt={hackathon.name}
+                          className="h-4 w-4 object-contain"
+                          width={16}
+                          height={16}
+                        />
+                        <span>{hackathon.name}</span>
+                      </div>
+                    </SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </FormControl>

@@ -1,5 +1,6 @@
+import { useAtomValue } from 'jotai';
 import { Baseline, Info, Link2, Plus, Trash2 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,7 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/utils';
 
+import { hackathonAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 
 const questionTypes = [
@@ -39,11 +41,15 @@ export function EligibilityQuestions() {
     control: form.control,
     name: 'type',
   });
+  const hackathon = useAtomValue(hackathonAtom);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'eligibility',
   });
+  useMemo(() => {
+    console.log('fields', fields);
+  }, [fields]);
 
   const handleAddQuestion = () => {
     append({
@@ -54,7 +60,9 @@ export function EligibilityQuestions() {
   };
 
   const handleRemoveQuestion = (index: number) => {
+    console.log('handleRemoveQuestion fields index', index);
     remove(index);
+    form.saveDraft();
   };
 
   useEffect(() => {
@@ -63,11 +71,16 @@ export function EligibilityQuestions() {
         handleAddQuestion();
       }
     } else {
-      if (fields.length === 1 && fields[0]?.question === '') {
+      if (type === 'hackathon' && hackathon?.eligibility) {
+        form.setValue('eligibility', hackathon?.eligibility as any);
+      } else if (fields.length === 1 && fields[0]?.question === '') {
         handleRemoveQuestion(0);
+      } else if (type === 'bounty' && fields.length > 2) {
+        console.log('before loop field length', fields.length);
+        form.setValue('eligibility', fields.slice(0, 2));
       }
     }
-  }, [type]);
+  }, [type, hackathon]);
 
   return (
     <FormField
@@ -161,6 +174,10 @@ export function EligibilityQuestions() {
                                   {...field}
                                   placeholder="Enter your question"
                                   className="border-none focus-visible:ring-0"
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    form.saveDraft();
+                                  }}
                                 />
                               </FormControl>
                             </FormItem>
@@ -194,7 +211,7 @@ export function EligibilityQuestions() {
               />
             ))}
 
-            {type === 'project' || fields.length < 2 ? (
+            {type !== 'bounty' || fields.length < 1 ? (
               <div className="flex justify-between">
                 <FormMessage />
                 <Button

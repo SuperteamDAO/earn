@@ -20,7 +20,14 @@ export function POC() {
           <FormItem className="gap-2">
             <FormLabel>Point of Contact</FormLabel>
             <FormControl>
-              <Input placeholder="yb@superteamearn.com" {...field} />
+              <Input
+                placeholder="yb@superteamearn.com"
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  form.saveDraft();
+                }}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

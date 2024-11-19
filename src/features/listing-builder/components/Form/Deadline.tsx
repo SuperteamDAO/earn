@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { isEditingAtom } from '../../atoms';
+import { hackathonAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 
 const deadlineOptions = [
@@ -35,6 +35,11 @@ export function Deadline() {
     name: 'deadline',
     control: form.control,
   });
+  const type = useWatch({
+    name: 'type',
+    control: form.control,
+  });
+  const hackathon = useAtomValue(hackathonAtom);
 
   const [maxDeadline, setMaxDeadline] = useState<Date | undefined>(undefined);
   const [minDeadline] = useState<Date | undefined>(new Date());
@@ -67,15 +72,22 @@ export function Deadline() {
   // TODO: Debug why zod default for deadline specifically is not working
   useEffect(() => {
     if (form) {
-      if (typeof deadline !== 'string') {
-        form.setValue('deadline', handleDeadlineSelection(7));
-        setCustomDate('7');
-        setIsCustomDate(false);
+      if (type !== 'hackathon') {
+        if (typeof deadline !== 'string') {
+          form.setValue('deadline', handleDeadlineSelection(7));
+          setCustomDate('7');
+          setIsCustomDate(false);
+        } else {
+          setIsCustomDate(!isPresetDeadline(deadline));
+        }
       } else {
-        setIsCustomDate(!isPresetDeadline(deadline));
+        if (hackathon) {
+          console.log('hackathon deadline', hackathon.deadline);
+          form.setValue('deadline', hackathon.deadline as any as string);
+        }
       }
     }
-  }, [form, deadline]);
+  }, [form, deadline, type, hackathon]);
 
   return (
     <FormField
@@ -99,6 +111,7 @@ export function Deadline() {
                     field.onChange(undefined);
                     setIsCustomDate(false);
                   }
+                  console.log('deadline was changed?');
                   form.saveDraft();
                 }}
                 use12HourFormat
@@ -108,13 +121,16 @@ export function Deadline() {
                 classNames={{
                   trigger: 'border-0',
                 }}
+                disabled={type === 'hackathon'}
               />
               <Select
                 onValueChange={(data) => {
                   setCustomDate(data);
+                  console.log('deadline option changed?');
                   field.onChange(handleDeadlineSelection(Number(data)));
                 }}
                 value={customDate}
+                disabled={type === 'hackathon'}
               >
                 <SelectTrigger className="w-32 rounded-none border-0 border-l text-xs text-slate-500 focus:ring-0">
                   {isCustomDate ? 'Custom' : <SelectValue />}

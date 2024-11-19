@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { type Hackathon } from '@prisma/client';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { useRouter } from 'next/router';
@@ -8,6 +9,7 @@ import { z } from 'zod';
 
 import {
   draftQueueAtom,
+  hackathonAtom,
   isDraftSavingAtom,
   isEditingAtom,
   isGodAtom,
@@ -32,6 +34,7 @@ interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
 
 export const useListingForm = (
   defaultValues?: ListingFormData,
+  hackathon?: Hackathon,
 ): UseListingFormReturn => {
   let formMethods: UseFormReturn<ListingFormData> | null = null;
   let isNewFormInitialized = false;
@@ -49,12 +52,15 @@ export const useListingForm = (
   const isEditing = useAtomValue(isEditingAtom);
   const isST = useAtomValue(isSTAtom);
 
-  const formSchema = createListingFormSchema(
+  const hackathonAtomed = useAtomValue(hackathonAtom);
+  hackathon = hackathon || hackathonAtomed;
+  const formSchema = createListingFormSchema({
     isGod,
     isEditing,
     isST,
-    defaultValues as any,
-  );
+    pastListing: defaultValues as any,
+    hackathon: hackathon,
+  });
   if (!formMethods || !Object.keys(formMethods).length) {
     //eslint-disable-next-line
     formMethods = useForm<ListingFormData>({
@@ -73,6 +79,7 @@ export const useListingForm = (
 
   const [queueRef, setQueueRef] = useAtom(draftQueueAtom);
   const processSaveQueue = async () => {
+    if (isEditing) return;
     setDraftSaving(true);
     if (queueRef.isProcessing) {
       // queueRef.shouldProcessNext = true;
@@ -139,6 +146,7 @@ export const useListingForm = (
   }, []); // Empty dependency array - only create once
 
   const onChange = useCallback(() => {
+    console.log('save draft was called');
     // setDraftSaving(true)
     if (!isEditing) debouncedSaveRef.current?.();
   }, []);
@@ -172,7 +180,7 @@ export const useListingForm = (
       const partialSchema = innerSchema
         .pick(fields)
         .superRefine((data, ctx) => {
-          createListingRefinements(data as any, ctx);
+          createListingRefinements(data as any, ctx, hackathon);
         });
 
       try {
@@ -209,6 +217,7 @@ export const useListingForm = (
       minRewardAsk: true,
       maxRewardAsk: true,
       maxBonusSpots: true,
+      deadline: true,
     });
 
   const validateBasics = () =>
