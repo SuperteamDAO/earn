@@ -48,9 +48,7 @@ export const EmailSignIn = () => {
       } catch (error) {
         setIsLoading(false);
         console.error('Error during email validation:', error);
-        setEmailError(
-          '验证您的电子邮件时发生错误。请稍后重试。'
-        );
+        setEmailError('验证您的电子邮件时发生错误。请稍后重试或联系我们。');
       }
     } else {
       setIsLoading(false);

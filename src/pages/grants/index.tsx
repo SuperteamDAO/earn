@@ -60,7 +60,7 @@ function Grants() {
             fontWeight={700}
             lineHeight="1.2"
           >
-            Need funds to build out your idea?
+            需要资金来实现您的想法吗？
           </Text>
           <Text
             maxW="2xl"
@@ -68,15 +68,14 @@ function Grants() {
             color="gray.600"
             fontSize={{ base: 'lg', md: 'xl' }}
           >
-            Discover the complete list of crypto grants available to support
-            your project. Fast, equity-free funding without the hassle.
+            发掘可能支持您项目的完整资助列表。快速、不融资，无套路。
           </Text>
           <Text
             mt={3}
             color={'brand.slate.400'}
             fontSize={{ base: 'sm', md: 'md' }}
           >
-            Equity-Free • No Bullshit • Fast AF
+            不融资 • 不废话 • 快得离谱
           </Text>
         </VStack>
         <Container maxW={'7xl'} mb={12}>
