@@ -90,14 +90,28 @@ const Step = ({
   isComplete: boolean;
 }) => {
   return (
-    <div className="relative z-10 flex h-[2.375rem] w-[2.375rem] items-center justify-center overflow-visible rounded-full bg-[#F4F4FE] text-[#94A3B8]">
+    <div
+      className={cn(
+        'relative z-10 flex items-center justify-center',
+        'h-[2.375rem] w-[2.375rem] overflow-visible rounded-full',
+        isComplete
+          ? 'bg-brand-purple text-white'
+          : 'bg-[#F4F4FE] text-[#94A3B8]',
+      )}
+    >
       {isComplete ? (
-        <LuCheck className="text-white" size="1.3rem" strokeWidth={3} />
+        <LuCheck className="h-[1.3rem] w-[1.3rem]" strokeWidth={3} />
       ) : (
         <StepIcon step={number} />
       )}
       {number < 3 && (
-        <div className="absolute top-[110%] h-[90%] w-[0.12rem] bg-slate-400 opacity-60" />
+        <div
+          className={cn(
+            'absolute top-[110%] h-[90%] w-[0.12rem]',
+            isComplete ? 'bg-purple-700' : 'bg-slate-400',
+            'opacity-60',
+          )}
+        />
       )}
     </div>
   );

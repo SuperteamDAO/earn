@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { X } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
@@ -81,12 +80,6 @@ export const EmailSettingsModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="p-2">
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 mt-2 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100"
-        >
-          <X className="h-4 w-4" />
-        </button>
         <div className="p-6">
           <h2 className="text-2xl font-semibold text-slate-700">
             Update Email Preferences
@@ -172,7 +165,7 @@ export const EmailSettingsModal = ({
         </div>
         <DialogFooter>
           <Button
-            className="ph-no-capture w-full"
+            className="ph-no-capture mx-5 mb-3 w-full"
             disabled={isUpdating}
             onClick={updateEmailSettings}
           >

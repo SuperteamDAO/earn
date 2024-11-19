@@ -1,19 +1,11 @@
-import {
-  Box,
-  Circle,
-  Flex,
-  Image,
-  Skeleton,
-  SkeletonCircle,
-  SkeletonText,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Circle, Flex, Image, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { IoIosStar } from 'react-icons/io';
 import { MdModeComment } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { tokenList } from '@/constants';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
@@ -24,43 +16,25 @@ import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardSkeleton = () => {
   return (
-    <Box px={{ base: 1, sm: 4 }} py={4} borderRadius={5}>
-      <Flex align={'center'} justify={'space-between'} w="100%">
-        <Flex w="100%" h={{ base: 14, sm: 16 }}>
-          <Skeleton
-            w={{ base: '4.2rem', sm: '4.6rem' }}
-            h={{ base: 14, sm: 16 }}
-            mr={{ base: 3, sm: 5 }}
-            rounded={5}
-          />
-          <Flex justify={'space-between'} direction={'column'} w={'full'}>
-            <Skeleton w="60%" h="3.5" />
-            <Skeleton
-              w="130px"
-              h="3"
-              fontSize={{ md: 'sm', base: 'xs' }}
-              noOfLines={1}
-            />
-            <Flex gap={2}>
-              <SkeletonText
-                w="56px"
-                fontSize={{ md: 'sm', base: 'xs' }}
-                noOfLines={1}
-              />
-              <Skeleton
-                w="48px"
-                fontSize={{ md: 'sm', base: 'xs' }}
-                noOfLines={1}
-              />
-            </Flex>
-          </Flex>
-        </Flex>
-        <Flex align={'center'} gap={2}>
-          <SkeletonCircle size={'4'} />
-          <Skeleton w="54px" h="14px" noOfLines={1} />
-        </Flex>
-      </Flex>
-    </Box>
+    <div className="rounded-md px-1 py-4 sm:px-4">
+      <div className="flex w-full items-center justify-between">
+        <div className="flex h-14 w-full sm:h-16">
+          <Skeleton className="mr-3 h-14 w-[4.2rem] rounded-md sm:mr-5 sm:h-16 sm:w-[4.6rem]" />
+          <div className="flex w-full flex-col justify-between">
+            <Skeleton className="h-3.5 w-[60%]" />
+            <Skeleton className="h-3 w-[130px]" />
+            <div className="flex gap-2">
+              <Skeleton className="h-3 w-[56px]" />
+              <Skeleton className="h-3 w-[48px]" />
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-4 w-4 rounded-full" />
+          <Skeleton className="h-[14px] w-[54px]" />
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -182,12 +156,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                       maxRewardAsk={maxRewardAsk}
                       minRewardAsk={minRewardAsk}
                       rewardAmount={rewardAmount}
-                      textStyle={{
-                        color: 'brand.slate.600',
-                        fontSize: ['xs', 'xs', 'md', 'md'],
-                        fontWeight: 600,
-                        whiteSpace: 'nowrap',
-                      }}
+                      className="whitespace-nowrap text-xs font-semibold text-slate-600 md:text-base"
                     />
                     {compensationType !== 'variable' && (
                       <Text color="gray.400" fontSize="xs" fontWeight={500}>
@@ -305,12 +274,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               maxRewardAsk={maxRewardAsk}
               minRewardAsk={minRewardAsk}
               rewardAmount={rewardAmount}
-              textStyle={{
-                color: 'brand.slate.600',
-                fontSize: ['xs', 'xs', 'md', 'md'],
-                fontWeight: 600,
-                whiteSpace: 'nowrap',
-              }}
+              className="whitespace-nowrap text-xs font-semibold text-slate-600 md:text-base"
             />
             {compensationType !== 'variable' && (
               <Text
@@ -434,12 +398,7 @@ export const ListingCardMobile = ({ bounty }: { bounty: Listing }) => {
                         maxRewardAsk={maxRewardAsk}
                         minRewardAsk={minRewardAsk}
                         rewardAmount={rewardAmount}
-                        textStyle={{
-                          color: 'brand.slate.600',
-                          fontSize: 'xs',
-                          fontWeight: 600,
-                          whiteSpace: 'nowrap',
-                        }}
+                        className="whitespace-nowrap text-xs font-semibold text-slate-600"
                       />
                       {compensationType !== 'variable' && (
                         <Text

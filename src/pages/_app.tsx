@@ -27,6 +27,11 @@ const extendThemeWithNextFonts = {
   },
 };
 
+// const ChakraProvider = dynamic(
+//   () => import('@chakra-ui/react').then((mod) => mod.ChakraProvider),
+//   { ssr: true },
+// );
+
 const SolanaWalletProvider = dynamic(
   () =>
     import('@/context/SolanaWallet').then((mod) => mod.SolanaWalletProvider),

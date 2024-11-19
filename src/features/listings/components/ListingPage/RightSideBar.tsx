@@ -20,6 +20,7 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { exclusiveSponsorData, tokenList } from '@/constants/index';
 import { RelatedListings } from '@/features/home';
 import { type ParentSkills } from '@/interface/skills';
+import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { cleanRewardPrizes } from '@/utils/rank';
@@ -162,12 +163,10 @@ export function RightSideBar({
                           maxRewardAsk={maxRewardAsk}
                           minRewardAsk={minRewardAsk}
                           token={token}
-                          textStyle={{
-                            fontWeight: 600,
-                            fontSize: { base: 'lg', md: 'xl' },
-                            color: 'brand.slate.700',
-                            w: widthOfPrize,
-                          }}
+                          className={cn(
+                            'text-lg font-semibold text-slate-700 md:text-xl',
+                            widthOfPrize && `w-[${widthOfPrize}]`,
+                          )}
                         />
                         <Text
                           color={'brand.slate.500'}
