@@ -99,7 +99,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
         </Container>
         <AbsoluteCenter
           bottom="0"
-          alignItems="flex-end"
+          alignItems="center"
           flexDir="column"
           display="flex"
           w={['150%', '100%', '100%', '50%']}
@@ -111,7 +111,6 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
           <Image
             src="/assets/memes/jiesuan.gif"
             alt="结算动画"
-            style={{ width: '100%', marginTop: 'auto', display: 'block' }}
             width="500"
             height="600"
             priority
