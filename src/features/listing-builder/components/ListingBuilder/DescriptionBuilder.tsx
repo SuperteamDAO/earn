@@ -126,7 +126,7 @@ const schema = z.object({
         link: z
           .string()
           .refine((val) => URL_REGEX.test(val), {
-            message: '请填写有效的URL',
+            message: '请填写有效的 URL',
           })
           .optional(),
         title: z.string().optional(),
@@ -404,14 +404,12 @@ export const DescriptionBuilder = ({
           <Text
             mt={1}
             color={
-              (requirements?.length || 0) > 200 ? 'red.500' : 'brand.slate.400'
+              (requirements?.length || 0) > 200 ? 'red' : 'brand.slate.400'
             }
             fontSize={'xs'}
             textAlign="right"
           >
-            {requirements &&
-              requirements?.length > 0 &&
-              `${requirements.length || 0}/220 字`}
+            {220 - (requirements?.length || 0)} 字
           </Text>
         </Box>
         <Flex justify="space-between" w="full">
@@ -569,7 +567,7 @@ export const DescriptionBuilder = ({
             >
               <CiRedo />
             </ToolbarButton>
-            <ToolbarButton onClick={() => {}}>
+            <ToolbarButton onClick={() => { }}>
               <BiFontColor />
             </ToolbarButton>
           </Flex>

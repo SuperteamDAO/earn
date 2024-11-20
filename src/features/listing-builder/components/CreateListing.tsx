@@ -40,10 +40,10 @@ const defaultStepList = [
     number: 1,
     mainHead: '列出你的赏金任务',
     description:
-      '如果您已经在其他渠道发布任务，请选择"从头开始"，然后复制/粘贴您的文本。',
+      '如果您已经在其他渠道发布任务，请选择"从 0 开始"，然后复制/粘贴您的文本。',
   },
   {
-    label: '信息',
+    label: '基础信息',
     number: 2,
     mainHead: '创建赏金任务',
     description: '让我们了解更多关于您需要完成的工作',
@@ -51,9 +51,8 @@ const defaultStepList = [
   {
     label: '描述',
     number: 3,
-    mainHead: '告诉我们更多',
-    description:
-      '添加更多关于机会、提交要求、奖励详情和资源的详细信息',
+    mainHead: '告诉我们更多信息',
+    description: '添加更多关于机会、提交要求、奖励详情和资源的详细信息',
   },
   {
     label: '问题',
@@ -84,7 +83,8 @@ export function CreateListing({
     listing?.status,
     listing?.isPublished,
   );
-  const payAmountEditable = listing?.isLockedPayment === false || listing === undefined;
+  const payAmountEditable =
+    listing?.isLockedPayment === false || listing === undefined;
 
   const newListing = listing?.id === undefined;
   const [isDraftLoading, setIsDraftLoading] = useState<boolean>(false);
