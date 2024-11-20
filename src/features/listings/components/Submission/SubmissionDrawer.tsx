@@ -80,9 +80,10 @@ export const SubmissionDrawer = ({
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
 
+  const { user, refetchUser } = useUser();
   const form = useForm<FormData>({
     resolver: zodResolver(
-      submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0),
+      submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0, user),
     ),
     defaultValues: {
       eligibilityAnswers:
@@ -94,7 +95,6 @@ export const SubmissionDrawer = ({
           : [],
     },
   });
-  const { user, refetchUser } = useUser();
   const posthog = usePostHog();
   const router = useRouter();
   const { query } = router;

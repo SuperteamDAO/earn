@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants';
+import { type User } from '@/interface/user';
 import { validateSolanaAddress } from '@/utils';
 
 import { type Listing } from '../types';
@@ -9,6 +10,7 @@ const submissionSchema = (
   listing: Listing,
   minRewardAsk: number,
   maxRewardAsk: number,
+  user: User | null,
 ) =>
   z
     .object({
@@ -29,6 +31,13 @@ const submissionSchema = (
       publicKey: z.string().optional(),
     })
     .superRefine((data, ctx) => {
+      if (user && !user?.publicKey && !data.publicKey) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['publicKey'],
+          message: 'Solana Wallet Address is required',
+        });
+      }
       if (data.publicKey) {
         const validate = validateSolanaAddress(data.publicKey);
         if (!validate.isValid) {
