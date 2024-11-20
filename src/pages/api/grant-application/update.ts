@@ -84,6 +84,21 @@ async function updateGrantApplication(
       id: prevApplication.id,
     },
     data: formattedData,
+    include: {
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          discord: true,
+        },
+      },
+      grant: {
+        select: {
+          airtableId: true,
+        },
+      },
+    },
   });
 }
 
@@ -126,7 +141,7 @@ async function grantApplication(
       }
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json('Success');
   } catch (error: any) {
     logger.error(
       `User ${userId} unable to update grant application: ${safeStringify(error)}`,
