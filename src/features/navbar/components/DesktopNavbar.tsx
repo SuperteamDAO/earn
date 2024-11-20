@@ -11,15 +11,12 @@ import { cn } from '@/utils';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
+import { UserMenu } from './UserMenu';
 
 interface Props {
   onLoginOpen: () => void;
   onSearchOpen: () => void;
 }
-
-const UserMenu = dynamic(() =>
-  import('./UserMenu').then((mod) => mod.UserMenu),
-);
 
 const LogoContextMenu = dynamic(() =>
   import('./LogoContextMenu').then((mod) => mod.LogoContextMenu),
