@@ -8,6 +8,7 @@ import {
   Tbody,
   Td,
   Text,
+  Tooltip,
   Tr,
   VStack,
 } from '@chakra-ui/react';
@@ -236,17 +237,23 @@ export function RightSideBar({
                       src={'/assets/icons/purple-timer.svg'}
                     />
                     <VStack align={'start'} gap={0}>
-                      <Text
-                        color={'#000000'}
-                        fontSize={{ base: 'lg', md: 'xl' }}
-                        fontWeight={500}
+                      <Tooltip
+                        aria-label="A tooltip"
+                        label={dayjs(deadline).format('DD MMM YYYY HH:mm')}
+                        placement="top"
                       >
-                        <Countdown
-                          date={deadline}
-                          renderer={CountDownRenderer}
-                          zeroPadDays={1}
-                        />
-                      </Text>
+                        <Text
+                          color={'#000000'}
+                          fontSize={{ base: 'lg', md: 'xl' }}
+                          fontWeight={500}
+                        >
+                          <Countdown
+                            date={deadline}
+                            renderer={CountDownRenderer}
+                            zeroPadDays={1}
+                          />
+                        </Text>
+                      </Tooltip>
                       <Text color={'#94A3B8'}>Remaining</Text>
                     </VStack>
                   </Flex>
