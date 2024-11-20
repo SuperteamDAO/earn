@@ -16,35 +16,40 @@ type CategoryBanner = {
   heading: string;
   description: string;
   color: string;
+  imgPosition: string;
 };
 const banners: CategoryBanner[] = [
   {
     type: 'content',
-    img: bannerPrefix + 'content.png',
+    img: bannerPrefix + 'content.jpg',
     heading: '投研学霸',
     description: '探索内容创作任务',
     color: '#9945FF',
+    imgPosition: 'bottom center',
   },
   {
     type: 'development',
-    img: bannerPrefix + 'dev.png',
+    img: bannerPrefix + 'dev.jpg',
     heading: '技术极客',
     description: `探索开发赏金任务`,
     color: '#FF1EC0',
+    imgPosition: 'top center',
   },
   {
     type: 'design',
-    img: bannerPrefix + 'design.png',
+    img: bannerPrefix + 'design.jpg',
     heading: '创意大咖',
     description: '探索艺术赏金任务',
     color: '#F5A35E',
+    imgPosition: 'center,center',
   },
   {
     type: 'other',
-    img: bannerPrefix + 'other.png',
+    img: bannerPrefix + 'other.jpg',
     heading: '自由发挥',
     description: '探索其他赏金任务',
     color: '#42E3F8',
+    imgPosition: 'bottom center',
   },
 ];
 
@@ -70,7 +75,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            objectPosition: 'center center',
+            objectPosition: banner.imgPosition,
           }}
         />
         <Box
