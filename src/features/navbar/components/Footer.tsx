@@ -141,34 +141,34 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const opportunities = [
-    { text: 'Bounties', href: '/bounties' },
-    { text: 'Projects', href: '/projects' },
-    { text: 'Grants', href: '/grants' },
+    { text: '赏金任务', href: '/bounties' },
+    { text: '定向任务', href: '/projects' },
+    { text: '资助', href: '/grants' },
   ];
 
   const categories = [
-    { text: 'Content', href: '/category/content' },
-    { text: 'Design', href: '/category/design' },
-    { text: 'Development', href: '/category/development' },
-    { text: 'Others', href: '/category/other' },
+    { text: '内容', href: '/category/content' },
+    { text: '设计', href: '/category/design' },
+    { text: '开发', href: '/category/development' },
+    { text: '其他', href: '/category/other' },
   ];
 
   const about = [
     {
-      text: 'FAQ',
+      text: '常见问题',
       href: '#',
     },
     {
-      text: 'Terms',
+      text: '条款',
       href: '#',
     },
-    { text: 'Privacy Policy', href: '/privacy-policy.pdf' },
+    { text: '隐私政策', href: '/privacy-policy.pdf' },
     {
-      text: 'Changelog',
+      text: '更新日志',
       href: '#',
     },
     {
-      text: 'Contact Us',
+      text: '联系我们',
       href: 'mailto:vesper.yang.blockchain@gmail.com',
     },
   ];
@@ -195,9 +195,7 @@ export const Footer = () => {
               color="brand.slate.500"
               fontSize={{ base: 'sm', md: 'md' }}
             >
-              Discover high paying crypto bounties, projects and grants from the
-              best Solana companies in one place and apply to them using a
-              single profile.
+              连接Solana华语区人才和项目方，一站式自助申请Solana生态项目的赏金任务，做任务，赢赏金！
             </Text>
             <Flex gap={4}>
               <Twitter link="https://x.com/Solana_zh" />
@@ -211,9 +209,9 @@ export const Footer = () => {
             gap={{ base: 6, md: 16 }}
             w={{ base: '100%', md: 'auto' }}
           >
-            <FooterColumn title="Opportunities" links={opportunities} />
-            <FooterColumn title="Categories" links={categories} />
-            <FooterColumn title="About" links={about} />
+            <FooterColumn title="项目机会" links={opportunities} />
+            <FooterColumn title="人才类型" links={categories} />
+            <FooterColumn title="关于" links={about} />
           </Flex>
         </Flex>
       </Container>
@@ -225,7 +223,7 @@ export const Footer = () => {
             direction={{ base: 'column', md: 'row' }}
           >
             <Text mb={{ base: 4, md: 0 }} color="brand.slate.500" fontSize="sm">
-              © {currentYear} Solar. All rights reserved.
+              {currentYear} Solar. All rights reserved.
             </Text>
           </Flex>
         </Container>

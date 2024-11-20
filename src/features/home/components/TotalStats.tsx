@@ -37,8 +37,8 @@ export const TotalStats = ({
               ${TVE?.toLocaleString()}
             </Text>
           )}
-          <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Total Value Earned
+          <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+            赚取的总额
           </Text>
         </Box>
       </Flex>
@@ -64,8 +64,8 @@ export const TotalStats = ({
               {bountyCount}
             </Text>
           )}
-          <Text color={'gray.500'} fontSize={'xs'} fontWeight={'400'}>
-            Opportunities Listed
+          <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
+            已发布任务
           </Text>
         </Box>
       </Flex>

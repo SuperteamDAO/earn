@@ -42,19 +42,17 @@ export const EmailSignIn = () => {
         } else {
           setIsLoading(false);
           setEmailError(
-            'This email address appears to be invalid or needs to be whitelisted. Please check and try again.',
+            '该电子邮件地址似乎是无效的或需要白名单。请检查并重试。',
           );
         }
       } catch (error) {
         setIsLoading(false);
         console.error('Error during email validation:', error);
-        setEmailError(
-          'An error occurred while validating your email. Please try again later.',
-        );
+        setEmailError('验证您的电子邮件时发生错误。请稍后重试或联系我们。');
       }
     } else {
       setIsLoading(false);
-      setEmailError('Please enter a valid email address.');
+      setEmailError('请输入有效的电子邮件地址。');
     }
   };
 
@@ -76,7 +74,7 @@ export const EmailSignIn = () => {
           _placeholder={{ fontSize: '16px' }}
           onChange={handleEmailChange}
           onKeyDown={handleKeyDown}
-          placeholder="Enter Your Email Address"
+          placeholder="输入您的电子邮件地址"
           size="lg"
           value={email}
         />
@@ -93,7 +91,7 @@ export const EmailSignIn = () => {
         onClick={handleEmailSignIn}
         size="lg"
       >
-        Continue with Email
+        邮箱登录
       </Button>
       {emailError && (
         <Text
