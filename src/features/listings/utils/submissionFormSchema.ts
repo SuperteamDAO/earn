@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants';
+import { validateSolanaAddress } from '@/utils';
 
 import { type Listing } from '../types';
 
@@ -25,8 +26,19 @@ const submissionSchema = (
       eligibilityAnswers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
+      publicKey: z.string().optional(),
     })
     .superRefine((data, ctx) => {
+      if (data.publicKey) {
+        const validate = validateSolanaAddress(data.publicKey);
+        if (!validate.isValid) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['publicKey'],
+            message: 'Invalid Solana Wallet Address',
+          });
+        }
+      }
       if (listing.type !== 'project' && !data.link) {
         ctx.addIssue({
           code: 'custom',

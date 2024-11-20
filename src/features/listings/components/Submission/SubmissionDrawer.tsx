@@ -21,10 +21,19 @@ import { toast } from 'sonner';
 import { type z } from 'zod';
 
 import { Checkbox } from '@/components/ui/checkbox';
-import { Form, FormDescription, FormLabel } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 import { submissionCountQuery } from '../../queries';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -133,6 +142,7 @@ export const SubmissionDrawer = ({
         otherInfo: data.otherInfo || '',
         ask: data.ask || null,
         eligibilityAnswers: data.eligibilityAnswers || [],
+        publicKey: data.publicKey,
       });
 
       const hideEasterEggFromSponsorIds = [
@@ -314,29 +324,42 @@ export const SubmissionDrawer = ({
                     isRichEditor
                     richEditorPlaceholder="Add info or link"
                   />
-                  <div className="flex w-full flex-col gap-2">
-                    <div>
-                      <FormLabel>Your Solana Wallet Address</FormLabel>
-                      <FormDescription>
-                        This is where you will receive your rewards if you win.
-                        If you want to edit it,{' '}
-                        <a
-                          href={`/t/${user?.username}/edit`}
-                          className="text-blue-600 underline hover:text-blue-700"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          click here
-                        </a>
-                      </FormDescription>
-                    </div>
-                    <Input
-                      className="cursor-not-allowed text-slate-600 opacity-80"
-                      placeholder="Add your Solana wallet address"
-                      readOnly
-                      value={user?.publicKey || ''}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="publicKey"
+                    render={({ field }) => (
+                      <FormItem className="flex w-full flex-col gap-2">
+                        <div>
+                          <FormLabel>Your Solana Wallet Address</FormLabel>
+                          <FormDescription>
+                            This is where you will receive your rewards if you
+                            win. If you want to edit it,{' '}
+                            <a
+                              href={`/t/${user?.username}/edit`}
+                              className="text-blue-600 underline hover:text-blue-700"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              click here
+                            </a>
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Input
+                            className={cn(
+                              !!user?.publicKey &&
+                                'cursor-not-allowed text-slate-600 opacity-80',
+                            )}
+                            placeholder="Add your Solana wallet address"
+                            readOnly={!!user?.publicKey}
+                            {...(!!user?.publicKey ? {} : field)}
+                            value={user?.publicKey || field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </VStack>
               </Flex>
               <Flex

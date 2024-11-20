@@ -27,6 +27,17 @@ async function updateSubmission(
 
   const validatedData = validationResult.data;
 
+  if (validatedData.publicKey) {
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        publicKey: validatedData.publicKey,
+      },
+    });
+  }
+
   const existingSubmission = await prisma.submission.findFirst({
     where: { userId, listingId },
   });
