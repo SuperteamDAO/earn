@@ -68,14 +68,14 @@ function Grants() {
             color="gray.600"
             fontSize={{ base: 'lg', md: 'xl' }}
           >
-            发掘可能支持您项目的完整资助列表。快速、不融资，无套路。
+            发掘可能支持您项目的完整资助列表。非股权、快捷、无套路。
           </Text>
           <Text
             mt={3}
             color={'brand.slate.400'}
             fontSize={{ base: 'sm', md: 'md' }}
           >
-            不融资 • 不废话 • 快得离谱
+            非股权 • 快捷 • 无套路
           </Text>
         </VStack>
         <Container maxW={'7xl'} mb={12}>
