@@ -66,7 +66,10 @@ export function Templates() {
     // defaultOpen={!(isEditing && !isDuplicating)}
     >
       <DialogTrigger asChild>
-        <Button variant="ghost" className="text-blue-600 hover:text-blue-600">
+        <Button
+          variant="ghost"
+          className="text-[0.9rem] text-blue-600 hover:text-blue-600"
+        >
           <LayoutGrid className="fill-blue-600" />
           Browse Templates
         </Button>

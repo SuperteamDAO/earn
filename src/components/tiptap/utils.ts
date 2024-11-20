@@ -159,6 +159,27 @@ const validateFileOrBase64 = <T extends FileInput>(
   }
 };
 
+export const reasonToText = (
+  reason: FileError['reason'],
+): { title: string; subTitle: string } => {
+  switch (reason) {
+    case 'type':
+      return {
+        title: 'Invalid Type',
+        subTitle: 'Please only upload PNG, JPG, JPEG or WEBP',
+      };
+    case 'size':
+      return {
+        title: 'File Too Big',
+        subTitle: 'Please upload a file under 5MB',
+      };
+    case 'invalidBase64':
+      return { title: 'Invalid Base64', subTitle: 'Please check the file' };
+    case 'base64NotAllowed':
+      return { title: 'Base64 not allowed', subTitle: 'Please upload a file' };
+  }
+};
+
 const checkTypeAndSize = (
   input: File | string,
   { allowedMimeTypes, maxFileSize }: FileValidationOptions,

@@ -82,7 +82,7 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({
       </Button>
       <input
         type="file"
-        accept="image/*"
+        accept="image/jpeg, image/png, image/webp, image/jpg"
         ref={fileInputRef}
         multiple
         className="hidden"

@@ -11,7 +11,12 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/utils';
 
-import { isDraftSavingAtom, isEditingAtom, previewAtom } from '../../atoms';
+import {
+  hideAutoSaveAtom,
+  isDraftSavingAtom,
+  isEditingAtom,
+  previewAtom,
+} from '../../atoms';
 import { useListingForm } from '../../hooks';
 import { PrePublish } from '../Form/PrePublish';
 import { StatusBadge } from './StatusBadge';
@@ -31,6 +36,7 @@ export function Header() {
     name: 'id',
   });
   const isEditing = useAtomValue(isEditingAtom);
+  const hideAutoSave = useAtomValue(hideAutoSaveAtom);
 
   return (
     <div className="hidden border-b bg-background lg:block">
@@ -65,16 +71,16 @@ export function Header() {
           )}
           {status === 'authenticated' && session && (
             <>
-              <StatusBadge />
               {!isEditing && (
                 <p className="w-20 text-sm font-medium text-slate-400">
                   {isDraftSaving ? (
                     <Loader2 className="mx-auto h-4 w-4 animate-spin" />
                   ) : (
-                    'auto saved'
+                    <>{hideAutoSave ? '' : 'auto saved'}</>
                   )}
                 </p>
               )}
+              <StatusBadge />
               <Button
                 variant="outline"
                 className="ph-no-capture text-slate-400"

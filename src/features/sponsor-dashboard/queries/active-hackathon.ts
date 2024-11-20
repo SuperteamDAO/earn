@@ -16,4 +16,7 @@ export const activeHackathonQuery = () =>
     queryKey: ['active-hackathon'],
     queryFn: () => fetchActiveHackathon(),
     retry: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });

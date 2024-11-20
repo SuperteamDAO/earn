@@ -73,12 +73,16 @@ export function DescriptionAndTemplate() {
                   }}
                   onBlur={field.onBlur}
                   ref={field.ref}
-                  className="min-h-[60vh] w-full border-0"
+                  className="min-h-[60vh] w-full border-0 text-sm"
                   editorContentClassName="p-4 px-2 h-full"
                   output="html"
                   placeholder="Type your description here..."
                   editable={true}
                   editorClassName="focus:outline-none"
+                  imageSetting={{
+                    folderName: 'listing-description',
+                    type: 'description',
+                  }}
                 />
               </FormControl>
             </div>

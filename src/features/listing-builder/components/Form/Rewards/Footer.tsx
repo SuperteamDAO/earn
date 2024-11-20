@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { calculateTotalPrizes } from '@/features/listing-builder';
@@ -57,6 +58,8 @@ function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
         onClick={async () => {
           if (await form.validateRewards()) {
             closeSheet();
+          } else {
+            toast.warning('Please Resolve all Errors in Rewards to Continue');
           }
         }}
       >

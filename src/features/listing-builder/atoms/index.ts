@@ -13,6 +13,7 @@ const isEditingAtom = atom<boolean>(false);
 const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
 const isDraftSavingAtom = atom(false);
 const hackathonAtom = atom<Hackathon | undefined>(undefined);
+const hideAutoSaveAtom = atom<boolean>(true);
 
 interface SaveQueueState {
   isProcessing: boolean;
@@ -77,6 +78,7 @@ export {
   confirmModalAtom,
   draftQueueAtom,
   hackathonAtom,
+  hideAutoSaveAtom,
   isDraftSavingAtom,
   isEditingAtom,
   isGodAtom,

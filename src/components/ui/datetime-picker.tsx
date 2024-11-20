@@ -163,7 +163,6 @@ export function DateTimePicker({
   );
 
   const [month, setMonth] = useState<Date>(initDate);
-  const [date, setDate] = useState<Date>(initDate);
 
   const endMonth = useMemo(() => {
     return setYear(month, getYear(month) + 1);
@@ -179,21 +178,31 @@ export function DateTimePicker({
 
   const onDayChanged = useCallback(
     (d: Date) => {
-      d.setHours(date.getHours(), date.getMinutes(), date.getSeconds());
-      if (min && d < min) {
-        d.setHours(min.getHours(), min.getMinutes(), min.getSeconds());
+      if (!d) return;
+      const newDate = new Date(d);
+      if (!value) {
+        newDate.setHours(
+          new Date().getHours(),
+          new Date().getMinutes(),
+          new Date().getSeconds(),
+        );
+      } else {
+        newDate.setHours(
+          value.getHours(),
+          value.getMinutes(),
+          value.getSeconds(),
+        );
       }
-      if (max && d > max) {
-        d.setHours(max.getHours(), max.getMinutes(), max.getSeconds());
+      if (min && newDate < min) {
+        newDate.setHours(min.getHours(), min.getMinutes(), min.getSeconds());
       }
-      setDate(d);
+      if (max && newDate > max) {
+        newDate.setHours(max.getHours(), max.getMinutes(), max.getSeconds());
+      }
+      onChange(newDate);
     },
-    [setDate, setMonth],
+    [value, onChange, min, max],
   );
-  const onSumbit = useCallback(() => {
-    onChange(new Date(date));
-    setOpen(false);
-  }, [date, onChange]);
 
   const onMonthYearChanged = useCallback(
     (d: Date, mode: 'month' | 'year') => {
@@ -215,16 +224,12 @@ export function DateTimePicker({
 
   useEffect(() => {
     if (open) {
-      setDate(initDate);
       setMonth(initDate);
       setMonthYearPicker(false);
     }
   }, [open, initDate]);
 
-  const displayValue = useMemo(() => {
-    if (!open && !value) return value;
-    return open ? date : initDate;
-  }, [date, value, open]);
+  const displayValue = value;
 
   const dislayFormat = useMemo(() => {
     if (!displayValue) return 'Pick a date';
@@ -331,7 +336,7 @@ export function DateTimePicker({
           <DayPicker
             timeZone={timezone}
             mode="single"
-            selected={date}
+            selected={value}
             onSelect={(d) => d && onDayChanged(d)}
             month={month}
             endMonth={endMonth}
@@ -391,29 +396,24 @@ export function DateTimePicker({
             )}
           />
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="mt-2 flex flex-col gap-2">
           {!hideTime && (
             <TimePicker
               hideSeconds={hideSeconds}
               timePicker={timePicker}
-              value={date}
-              onChange={setDate}
+              value={value || new Date()}
+              onChange={onChange}
               use12HourFormat={use12HourFormat}
               min={minDate}
               max={maxDate}
             />
           )}
-          <div className="flex flex-row-reverse items-center justify-between">
-            <Button className="ms-2 h-7 px-2" onClick={onSumbit}>
-              Done
-            </Button>
-            {timezone && (
-              <div className="text-sm">
-                <span>Timezone:</span>
-                <span className="ms-1 font-semibold">{timezone}</span>
-              </div>
-            )}
-          </div>
+          {timezone && (
+            <div className="text-sm">
+              <span>Timezone:</span>
+              <span className="ms-1 font-semibold">{timezone}</span>
+            </div>
+          )}
         </div>
       </PopoverContent>
     </Popover>

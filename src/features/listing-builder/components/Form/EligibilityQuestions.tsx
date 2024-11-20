@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { Baseline, Info, Link2, Plus, Trash2 } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -47,16 +47,18 @@ export function EligibilityQuestions() {
     control: form.control,
     name: 'eligibility',
   });
-  useMemo(() => {
-    console.log('fields', fields);
-  }, [fields]);
 
-  const handleAddQuestion = () => {
-    append({
-      order: fields.length + 1,
-      question: '',
-      type: 'text',
-    });
+  const handleAddQuestion = (focus = true) => {
+    append(
+      {
+        order: fields.length + 1,
+        question: '',
+        type: 'text',
+      },
+      {
+        shouldFocus: focus,
+      },
+    );
   };
 
   const handleRemoveQuestion = (index: number) => {
@@ -68,7 +70,7 @@ export function EligibilityQuestions() {
   useEffect(() => {
     if (type === 'project') {
       if (fields.length === 0) {
-        handleAddQuestion();
+        handleAddQuestion(false);
       }
     } else {
       if (type === 'hackathon' && hackathon?.eligibility) {
@@ -127,6 +129,7 @@ export function EligibilityQuestions() {
                                 onValueChange={(value) => {
                                   field.onChange(value);
                                   // solves a bug when we change type, but the prev type error is still there.
+                                  console.log('eligibility trigger');
                                   form.trigger(`eligibility.${index}.question`);
                                 }}
                               >
@@ -222,7 +225,7 @@ export function EligibilityQuestions() {
                     fields.length > 0 && 'ml-auto flex w-fit px-0',
                     fields.length === 0 && 'mt-2 w-full text-slate-500',
                   )}
-                  onClick={handleAddQuestion}
+                  onClick={() => handleAddQuestion()}
                 >
                   <Plus /> Add Question
                 </Button>

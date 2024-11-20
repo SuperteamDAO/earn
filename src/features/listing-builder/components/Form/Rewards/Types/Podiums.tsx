@@ -295,7 +295,7 @@ export const Podiums = () => {
                     type="button"
                     onClick={addReward}
                     variant="link"
-                    className="flex items-center gap-2 px-0"
+                    className="flex items-center gap-2 px-0 text-[0.9rem]"
                   >
                     <Plus className="h-4 w-4" />
                     Add Individual Position
@@ -308,7 +308,7 @@ export const Podiums = () => {
                     type="button"
                     onClick={addBonusReward}
                     variant="link"
-                    className="flex items-center gap-2 px-0 text-slate-500"
+                    className="flex items-center gap-2 px-0 text-[0.9rem] text-slate-500"
                   >
                     <Plus className="h-4 w-4" />
                     Add Bonus Prize

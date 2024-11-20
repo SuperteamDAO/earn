@@ -25,6 +25,9 @@ export default function DuplicateBounty({ slug }: Props) {
   const { data: listing, isLoading } = useQuery({
     ...sponsorDashboardListingQuery(slug),
     enabled: !!user?.currentSponsorId,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
   const { data: hackathon, isLoading: hackathonLoading } = useQuery(
     activeHackathonQuery(),

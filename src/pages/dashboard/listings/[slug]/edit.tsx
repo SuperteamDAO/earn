@@ -22,9 +22,12 @@ function EditBounty({ slug }: Props) {
   const router = useRouter();
   const { user } = useUser();
 
-  const { data: listing, isLoading } = useQuery(
-    sponsorDashboardListingQuery(slug),
-  );
+  const { data: listing, isLoading } = useQuery({
+    ...sponsorDashboardListingQuery(slug),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
   const { data: hackathon, isLoading: hackathonLoading } = useQuery(
     activeHackathonQuery(),
   );

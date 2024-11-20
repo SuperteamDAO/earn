@@ -12,7 +12,7 @@ import { StarterKit } from '@tiptap/starter-kit';
 import * as React from 'react';
 import { toast } from 'sonner';
 
-import { cn } from '@/utils';
+import { cn, type EARN_IMAGE_FOLDER, uploadToCloudinary } from '@/utils';
 
 import {
   CodeBlockLowlight,
@@ -25,9 +25,13 @@ import {
   Selection,
   UnsetAllMarks,
 } from '../extensions';
-import { fileToBase64, getOutput, randomId } from '../utils';
+import { fileToBase64, getOutput, reasonToText } from '../utils';
 import { useThrottle } from './use-throttle';
 
+interface ImageSetting {
+  folderName: EARN_IMAGE_FOLDER;
+  type: string;
+}
 export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
   value?: Content;
   output?: 'html' | 'json' | 'text';
@@ -36,9 +40,10 @@ export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
   throttleDelay?: number;
   onUpdate?: (content: Content) => void;
   onBlur?: (content: Content) => void;
+  imageSetting: ImageSetting;
 }
 
-const createExtensions = (placeholder: string) => [
+const createExtensions = (placeholder: string, imageSetting: ImageSetting) => [
   StarterKit.configure({
     horizontalRule: false,
     codeBlock: false,
@@ -59,24 +64,29 @@ const createExtensions = (placeholder: string) => [
     uploadFn: async (file) => {
       // NOTE: This is a fake upload function. Replace this with your own upload logic.
       // This function should return the uploaded image URL.
-
+      const src = await uploadToCloudinary(
+        file,
+        imageSetting.folderName,
+        imageSetting.type,
+      );
       // wait 3s to simulate upload
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      // await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      const src = await fileToBase64(file);
+      // const src = await fileToBase64(file);
 
       // either return { id: string | number, src: string } or just src
-      // return src;
-      return { id: randomId(), src };
+      return src;
+      // return { id: randomId(), src };
     },
     onImageRemoved({ id, src }) {
       console.log('Image removed', { id, src });
     },
     onValidationError(errors) {
       errors.forEach((error) => {
-        toast.error('Image validation error', {
+        const errorContent = reasonToText(error.reason);
+        toast.error(errorContent.title, {
           position: 'bottom-right',
-          description: error.reason,
+          description: errorContent.subTitle,
         });
       });
     },
@@ -127,9 +137,10 @@ const createExtensions = (placeholder: string) => [
     },
     onValidationError: (errors) => {
       errors.forEach((error) => {
-        toast.error('Image validation error', {
+        const errorContent = reasonToText(error.reason);
+        toast.error(errorContent.title, {
           position: 'bottom-right',
-          description: error.reason,
+          description: errorContent.subTitle,
         });
       });
     },
@@ -153,6 +164,7 @@ export const useMinimalTiptapEditor = ({
   throttleDelay = 0,
   onUpdate,
   onBlur,
+  imageSetting,
   ...props
 }: UseMinimalTiptapEditorProps) => {
   const throttledSetValue = useThrottle(
@@ -180,7 +192,7 @@ export const useMinimalTiptapEditor = ({
   );
 
   const editor = useEditor({
-    extensions: createExtensions(placeholder),
+    extensions: createExtensions(placeholder, imageSetting),
     editorProps: {
       attributes: {
         autocomplete: 'off',

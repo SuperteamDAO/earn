@@ -1,5 +1,6 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -51,7 +52,13 @@ export function RewardsSheet() {
   return (
     <Sheet
       open={open}
-      onOpenChange={(e) => {
+      onOpenChange={async (e) => {
+        console.log('reward sheet ', e);
+        if (!e) {
+          if (!(await form.validateRewards()))
+            toast.warning('Please Resolve all Errors in Rewards to Continue');
+          else setOpen(e);
+        }
         if (e && !hasRewardsErrors) setOpen(e);
       }}
     >

@@ -10,6 +10,7 @@ import { z } from 'zod';
 import {
   draftQueueAtom,
   hackathonAtom,
+  hideAutoSaveAtom,
   isDraftSavingAtom,
   isEditingAtom,
   isGodAtom,
@@ -78,6 +79,7 @@ export const useListingForm = (
   const setDraftSaving = useSetAtom(isDraftSavingAtom);
 
   const [queueRef, setQueueRef] = useAtom(draftQueueAtom);
+  const [, setHideAutoSave] = useAtom(hideAutoSaveAtom);
   const processSaveQueue = async () => {
     if (isEditing) return;
     setDraftSaving(true);
@@ -102,7 +104,7 @@ export const useListingForm = (
       const data = await saveDraftMutation.mutateAsync(dataToSave);
       console.log('before save', dataToSave);
       console.log('data', data);
-
+      setHideAutoSave(false);
       formMethods.setValue('id', data.id);
       if (!dataToSave.slug) formMethods.setValue('slug', data.slug);
       queueRef.id = data.id;
@@ -146,6 +148,7 @@ export const useListingForm = (
   }, []); // Empty dependency array - only create once
 
   const onChange = useCallback(() => {
+    setHideAutoSave(true);
     console.log('save draft was called');
     // setDraftSaving(true)
     if (!isEditing) debouncedSaveRef.current?.();
@@ -166,12 +169,18 @@ export const useListingForm = (
     async (fields: ValidationFields) => {
       const values = formMethods.getValues();
 
-      // Transform array rewards if present
+      // Transform array rewards if is array
       if ('rewards' in fields && Array.isArray(values.rewards)) {
-        const rewardsObject = values.rewards.reduce((acc, value, index) => {
-          acc[index + 1] = value;
-          return acc;
-        }, {});
+        console.log('rewards in validate', values.rewards);
+        const rewardsObject: Record<string, number> = {};
+        let index = 1;
+        for (const value of values.rewards.filter(Boolean)) {
+          rewardsObject[index] = value;
+          index += 1;
+        }
+        if (Object.keys(rewardsObject).length === 0) {
+          rewardsObject[1] = NaN;
+        }
         formMethods.setValue('rewards', rewardsObject);
         values.rewards = rewardsObject;
       }
