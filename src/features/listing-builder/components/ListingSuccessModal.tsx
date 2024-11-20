@@ -41,9 +41,9 @@ export const ListingSuccessModal = ({
   isVerified,
 }: Props) => {
   const listingLink = (medium?: 'twitter' | 'telegram') =>
-    `${getURL()}listings/${type}/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`;
+    `${getURL()}listings/${type}/${slug}/${medium ? `?utm_source=solarearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`;
 
-  const tweetShareContent = `Check out my newly added @SuperteamEarn opportunity!
+  const tweetShareContent = `Check out my newly added @solana_zh opportunity!
 
 ${listingLink('twitter')}
 `;
@@ -114,7 +114,7 @@ ${listingLink('twitter')}
                     cursor="pointer"
                     onClick={onCopy}
                   >
-                    earn.superteam.fun/listings/{type}/{slug}
+                    {getURL()}listings/{type}/{slug}
                   </Text>
                   <Box mr="0rem">
                     {hasCopied ? (

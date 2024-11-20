@@ -367,7 +367,7 @@ export const ListingBasic = ({
                 (80 - title?.length === 0 ? (
                   <p>字符限制已达到</p>
                 ) : (
-                  <p>{80 - (title.length || 0)} 个字符剩余</p>
+                  <p>剩余{80 - (title.length || 0)} 个字符</p>
                 ))}
             </Text>
             {suggestions.length > 0 && (
@@ -486,7 +486,7 @@ export const ListingBasic = ({
               {...register('pocSocials', {
                 onChange: () => debouncedPocSocialsValidation(),
               })}
-              placeholder="例如：@solarearn"
+              placeholder="例如：https://x.com/solana_zh"
             />
             <FormErrorMessage>
               {errors.pocSocials ? <>{errors.pocSocials.message}</> : <></>}
@@ -496,7 +496,8 @@ export const ListingBasic = ({
             <FormControl mb={5} isInvalid={!!errors.deadline} isRequired>
               <Flex align={'center'} justify={'start'}>
                 <ListingFormLabel htmlFor={'deadline'}>
-                  截止日期（北京/香港/新加坡时间，UTC+8）
+                  截止日期 (in{' '}
+                  {Intl.DateTimeFormat().resolvedOptions().timeZone})
                 </ListingFormLabel>
                 <ListingTooltip label="请选择任务的截止日期和时间" />
               </Flex>
@@ -633,9 +634,7 @@ export const ListingBasic = ({
           )}
           <FormControl alignItems="center" gap={3} display="flex">
             <Flex>
-              <ListingFormLabel htmlFor="isPrivate">
-                任务可见性
-              </ListingFormLabel>
+              <ListingFormLabel htmlFor="isPrivate">私有任务</ListingFormLabel>
               <ListingTooltip label="选择任务是否公开显示" />
             </Flex>
             <Switch

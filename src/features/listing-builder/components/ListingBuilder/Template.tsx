@@ -101,7 +101,7 @@ export const Template = ({
           >
             <AddIcon mb="1rem" />
             <Text fontSize="1rem" fontWeight={500}>
-              从头开始
+              从 0 开始
             </Text>
           </Button>
           {templates.map((template: any) => {

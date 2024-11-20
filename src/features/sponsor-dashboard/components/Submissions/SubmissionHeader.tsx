@@ -80,7 +80,7 @@ export const SubmissionHeader = ({
   const socialListingLink = (medium?: 'twitter' | 'telegram') =>
     `${listingLink}${medium ? `?utm_source=solarearn&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;
 
-  const tweetShareContent = `Check out my newly added @SuperteamEarn opportunity!
+  const tweetShareContent = `Check out my newly added @solana_zh opportunity!
 
 ${socialListingLink('twitter')}
 `;
