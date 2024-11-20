@@ -208,9 +208,8 @@ export const ListingTabs = ({
           !bounty.isWinnersAnnounced &&
           dayjs().isAfter(bounty.deadline) &&
           bounty.status === 'OPEN',
-        emptyTitle: '暂无审核中的机会！',
-        emptyMessage:
-          '订阅通知以获取更新信息。',
+        emptyTitle: '暂无审核中的任务！',
+        emptyMessage: '订阅通知以获取更新信息。',
         showNotifSub,
       }),
     },
@@ -250,9 +249,8 @@ export const ListingTabs = ({
 
           return dateB.getTime() - dateA.getTime();
         },
-        emptyTitle: '暂无已完成的机会！',
-        emptyMessage:
-          '订阅通知以获取公告信息。',
+        emptyTitle: '暂无已完成的任务！',
+        emptyMessage: '订阅通知以获取公告信息。',
         showNotifSub,
       }),
     },

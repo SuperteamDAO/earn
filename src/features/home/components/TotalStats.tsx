@@ -65,7 +65,7 @@ export const TotalStats = ({
             </Text>
           )}
           <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-            列出的机会
+            已发布任务
           </Text>
         </Box>
       </Flex>

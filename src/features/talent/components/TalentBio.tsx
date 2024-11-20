@@ -155,7 +155,7 @@ export function TalentBio({
           return <Component link={link} boxSize={6} key={i} />;
         })}
       </Flex>
-      <Text mt={4} color={'gray.400'} fontSize={'sm'} fontWeight={'400'}>
+      <Text mt={4} color={'gray.400'} fontSize={'xs'} fontWeight={'400'}>
         {talentUser?.bio}
       </Text>
       <Flex justify={'space-between'} mt={4}>
