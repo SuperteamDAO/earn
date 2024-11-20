@@ -5,14 +5,14 @@ import {
   FormErrorMessage,
   Text,
 } from '@chakra-ui/react';
-import { Regions } from '@prisma/client';
+// import { Regions } from '@prisma/client';
 import React, { useMemo } from 'react';
 import { type Control, Controller, type FieldErrors } from 'react-hook-form';
 import ReactSelect, { type GroupBase, type SingleValue } from 'react-select';
 
-import { countries } from '@/constants';
-import { CombinedRegions, Superteams } from '@/constants/Superteam';
+import { chinaArea } from '@/constants';
 
+// import { CombinedRegions, Superteams } from '@/constants/Superteam';
 import { ListingFormLabel, ListingTooltip } from '.';
 
 interface CountryOption {
@@ -43,36 +43,21 @@ export const RegionSelector: React.FC<RegionSelectorProps> = ({
   errors,
 }) => {
   const options: SelectOption[] = useMemo(() => {
-    const superteamCountries = CombinedRegions.flatMap(
-      (region) => region.country,
-    );
-    const nonSuperteamCountries = countries.filter(
-      (country) => !superteamCountries.includes(country.name) && country.iso,
-    );
-    return [
-      { value: Regions.GLOBAL, label: 'Global' },
-      {
-        label: 'Solar Regions',
-        options: Superteams.map((region) => ({
-          value: region.region,
-          label: region.displayValue,
-        })),
-      },
-      {
-        label: 'Other Countries',
-        options: nonSuperteamCountries.map((country) => ({
-          value: country.name,
-          label: country.name,
-        })),
-      },
-    ];
+    const list = chinaArea.map((area) => ({
+      label: area.name,
+      options: area.children.map((city) => ({
+        value: city.name,
+        label: city.name,
+      })),
+    }));
+    return [...list];
   }, []);
 
   return (
     <FormControl w="full" mb={5} isInvalid={!!errors.region}>
       <Flex>
         <ListingFormLabel htmlFor="region">Listing Geography</ListingFormLabel>
-        <ListingTooltip label="Select the Solar region or country this listing will be available and relevant to. Only users from the region you specify will be able to apply/submit to this listing." />
+        <ListingTooltip label="Select the Solar region,Only users from the region you specify will be able to apply/submit to this listing." />
       </Flex>
       <Box>
         <Controller
@@ -82,7 +67,7 @@ export const RegionSelector: React.FC<RegionSelectorProps> = ({
             <ReactSelect<CountryOption, false, GroupedOption>
               options={options}
               formatGroupLabel={formatGroupLabel}
-              placeholder="Select a region or country"
+              placeholder="Select a region "
               ref={ref}
               value={options
                 .flatMap((option) =>

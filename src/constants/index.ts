@@ -2,6 +2,7 @@ import { type SkillMap } from '@/interface/skills';
 
 import { Superteams } from './Superteam';
 
+export { chinaArea } from './chinaArea';
 export { countries } from './country';
 export * from './exclusiveSponsors';
 
