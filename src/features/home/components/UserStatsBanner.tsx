@@ -57,7 +57,7 @@ export const UserStatsBanner = () => {
       px={{ base: 6, md: 8 }}
       py={6}
       color="white"
-      bgGradient="linear(to-r, #4C52E2, #4338CA)"
+      bgGradient="linear(to-r, #FF1FC0, #9945FF)"
       rounded="md"
     >
       <Flex align="center" gap={4}>
