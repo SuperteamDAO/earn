@@ -76,10 +76,7 @@ export function PowCard({ pow, type, commentCount }: PowCardProps) {
       <OgImageViewer
         type="pow"
         externalUrl={pow?.link ?? ''}
-        w="full"
-        h={{ base: '200px', md: '350px' }}
-        objectFit="cover"
-        borderTopRadius={6}
+        className="h-[200px] w-full rounded-t-md object-cover md:h-[350px]"
         imageUrl={pow?.ogImage}
         id={pow?.id}
       />
