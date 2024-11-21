@@ -1,7 +1,10 @@
 import { countries } from '@/constants';
 import { CombinedRegions } from '@/constants/Superteam';
 
-export const getCombinedRegion = (region: string) => {
+export const getCombinedRegion = (
+  region: string,
+  lookupSTCountries: boolean = false,
+) => {
   let regionObject:
     | {
         name?: string;
@@ -10,11 +13,13 @@ export const getCombinedRegion = (region: string) => {
         displayValue?: string;
       }
     | undefined;
-  regionObject = CombinedRegions.find((superteam) =>
-    superteam.country
-      .map((c) => c.toLowerCase())
-      .includes(region?.toLowerCase()),
-  );
+  if (lookupSTCountries) {
+    regionObject = CombinedRegions.find((superteam) =>
+      superteam.country
+        .map((c) => c.toLowerCase())
+        .includes(region?.toLowerCase()),
+    );
+  }
   if (!regionObject) {
     regionObject = CombinedRegions.find((superteam) =>
       superteam.region.toLowerCase().includes(region?.toLowerCase()),
@@ -32,13 +37,44 @@ export const getCombinedRegion = (region: string) => {
   return regionObject;
 };
 
+export const filterRegionCountry = (
+  region: ReturnType<typeof getCombinedRegion>,
+  country: string,
+) => {
+  if (country === 'UK' || country === 'United Kingdom') {
+    return {
+      ...region,
+      country:
+        region?.country?.filter(
+          (c) =>
+            c.toLowerCase() === 'uk' || c.toLowerCase() === 'united kingdom',
+        ) || [],
+    };
+  } else if (country === 'US' || country === 'United States') {
+    return {
+      ...region,
+      country:
+        region?.country?.filter(
+          (c) =>
+            c.toLowerCase() === 'us' || c.toLowerCase() === 'united states',
+        ) || [],
+    };
+  } else {
+    return {
+      ...region,
+      country:
+        region?.country?.filter(
+          (c) => c.toLowerCase() === country.toLowerCase(),
+        ) || [],
+    };
+  }
+};
+
 export const getRegionTooltipLabel = (
   region: string | undefined,
   isGrant: boolean = false,
 ) => {
-  const country = countries.find(
-    (country) => country.name.toLowerCase() === region?.toLowerCase(),
-  )?.name;
+  const country = getCombinedRegion(region || '')?.name;
 
   switch (region) {
     case 'GLOBAL':
