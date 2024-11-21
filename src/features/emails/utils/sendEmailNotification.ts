@@ -45,8 +45,8 @@ export async function sendEmailNotification({
     expiresIn: '60s',
   });
 
-  try {
-    await axios.post(
+  axios
+    .post(
       process.env.EMAIL_BACKEND!,
       {
         type,
@@ -60,11 +60,10 @@ export async function sendEmailNotification({
         },
         timeout: 15000,
       },
-    );
-  } catch (error) {
-    logger.error(
-      `failed to send email for ${type} to ${userId} with ID ${id}: ${error}`,
-    );
-    throw error;
-  }
+    )
+    .catch((error) => {
+      logger.error(
+        `failed to send email for ${type} to ${userId} with ID ${id}: ${error}`,
+      );
+    });
 }
