@@ -67,8 +67,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
     const [uiSkills, setUiSkills] = React.useState<Option[]>(
       convertSkillsToOptions(defaultValue),
     );
-    const [backendSkills, setBackendSkills] =
-      React.useState<Skills>(defaultValue);
+    const [logicSkills, setLogicSkills] = React.useState<Skills>(defaultValue);
 
     const getSelectableOptions = React.useMemo(() => {
       const options: Option[] = [];
@@ -172,7 +171,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
     const handleChange = (options: Option[]) => {
       setUiSkills(options);
       const newBackendSkills = transformToBackendSkills(options);
-      setBackendSkills(newBackendSkills);
+      setLogicSkills(newBackendSkills);
       onChange(newBackendSkills);
     };
 
@@ -193,120 +192,92 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
         }
       };
 
-      if (backendSkills.length === 0) {
-        addSuggestion({
-          label: 'Frontend',
-          value: 'parent:Frontend',
-          group: 'Dev Skills',
-        });
-        addSuggestion({
-          label: 'Backend',
-          value: 'parent:Backend',
-          group: 'Dev Skills',
-        });
-        addSuggestion({
-          label: 'UI/UX Design',
-          value: 'Design:UI/UX Design',
-          group: 'Design',
-        });
-        addSuggestion({
-          label: 'Community Manager',
-          value: 'Community:Community Manager',
-          group: 'Community',
-        });
-        addSuggestion({
-          label: 'Digital Marketing',
-          value: 'Growth:Digital Marketing',
-          group: 'Growth',
-        });
-        addSuggestion({
-          label: 'Writing',
-          value: 'Content:Writing',
-          group: 'Content',
-        });
+      const selectedParentSkills = new Set(
+        logicSkills.map((skill) => skill.skills),
+      );
+      if (logicSkills.length === 0) {
+        // Default suggestions when no skills are selected
+        const defaultSuggestions: Option[] = [
+          { label: 'Frontend', value: 'parent:Frontend', group: 'Dev Skills' },
+          { label: 'Backend', value: 'parent:Backend', group: 'Dev Skills' },
+          {
+            label: 'UI/UX Design',
+            value: 'Design:UI/UX Design',
+            group: 'Design',
+          },
+          { label: 'Writing', value: 'Content:Writing', group: 'Content' },
+          {
+            label: 'Digital Marketing',
+            value: 'Growth:Digital Marketing',
+            group: 'Growth',
+          },
+          {
+            label: 'Community Manager',
+            value: 'Community:Community Manager',
+            group: 'Community',
+          },
+        ];
+
+        defaultSuggestions.forEach(addSuggestion);
         return suggestions;
       }
 
-      const categories = new Map<string, Set<string>>();
-      backendSkills.forEach(({ skills: parentSkill, subskills }) => {
-        categories.set(parentSkill, new Set(subskills));
+      // Suggest unselected subskills of selected parent skills
+      logicSkills.forEach(({ skills: parentSkill, subskills }) => {
+        const unselectedSubskills = skillSubSkillMap[parentSkill]
+          .filter(
+            ({ value }) =>
+              value !== 'Other' && !subskills.includes(value as SubSkillsType),
+          )
+          .slice(0, 4);
+
+        unselectedSubskills.forEach(({ label, value }) => {
+          addSuggestion({
+            label,
+            value: `${parentSkill}:${value}`,
+            group: parentSkill,
+          });
+        });
       });
 
-      backendSkills.forEach(({ skills: parentSkill, subskills }) => {
-        if (
-          ['Frontend', 'Backend', 'Blockchain', 'Mobile'].includes(parentSkill)
-        ) {
-          ['Frontend', 'Backend', 'Blockchain', 'Mobile'].forEach((skill) => {
-            if (!categories.has(skill)) {
-              addSuggestion({
-                label: skill,
-                value: `parent:${skill}`,
-                group: 'Dev Skills',
-              });
-            }
-          });
+      const complementarySkillsMap: Record<ParentSkills, ParentSkills[]> = {
+        Frontend: ['Backend', 'Design'],
+        Backend: ['Frontend', 'Blockchain'],
+        Design: ['Frontend', 'Content'],
+        Blockchain: ['Backend', 'Mobile'],
+        Mobile: ['Frontend', 'Backend'],
+        Content: ['Community', 'Growth'],
+        Growth: ['Content', 'Community'],
+        Community: ['Growth', 'Content'],
+        Other: [],
+      };
 
-          if (subskills.length < 2) {
-            skillSubSkillMap[parentSkill as ParentSkills]
-              .slice(0, 3)
-              .forEach(({ label, value }) => {
-                if (
+      selectedParentSkills.forEach((parentSkill) => {
+        const complementarySkills = complementarySkillsMap[parentSkill] || [];
+        complementarySkills.forEach((compSkill) => {
+          if (!selectedParentSkills.has(compSkill)) {
+            const subskills = skillSubSkillMap[compSkill] || [];
+            const unselectedSubskills = subskills
+              .filter(
+                ({ value }) =>
                   value !== 'Other' &&
-                  !subskills.includes(value as SubSkillsType)
-                ) {
-                  addSuggestion({
-                    label,
-                    value: `${parentSkill}:${value}`,
-                    group: parentSkill,
-                  });
-                }
-              });
-          }
-        }
+                  !selectedValues.has(`${compSkill}:${value}`),
+              )
+              .slice(0, MAX_SUGGESTIONS - suggestions.length);
 
-        if (['Design', 'Growth'].includes(parentSkill)) {
-          const partner = parentSkill === 'Design' ? 'Growth' : 'Design';
-          if (!categories.has(partner)) {
-            skillSubSkillMap[partner as ParentSkills]
-              .slice(0, 2)
-              .forEach(({ label, value }) => {
-                if (value !== 'Other') {
-                  addSuggestion({
-                    label,
-                    value: `${partner}:${value}`,
-                    group: partner,
-                  });
-                }
+            unselectedSubskills.forEach(({ label, value }) => {
+              addSuggestion({
+                label,
+                value: `${compSkill}:${value}`,
+                group: compSkill,
               });
+            });
           }
-        }
-
-        if (['Community', 'Content'].includes(parentSkill)) {
-          const partner = parentSkill === 'Community' ? 'Content' : 'Community';
-          if (!categories.has(partner)) {
-            skillSubSkillMap[partner as ParentSkills]
-              .slice(0, 2)
-              .forEach(({ label, value }) => {
-                if (value !== 'Other') {
-                  addSuggestion({
-                    label,
-                    value: `${partner}:${value}`,
-                    group: partner,
-                  });
-                }
-              });
-          }
-        }
-
-        if (parentSkill === 'Growth' && !categories.has('Other')) {
-          skillSubSkillMap.Other.slice(0, 2).forEach(({ label, value }) => {
-            addSuggestion({ label, value: `Other:${value}`, group: 'Other' });
-          });
-        }
+        });
       });
 
       return suggestions;
-    }, [backendSkills, uiSkills]);
+    }, [logicSkills, uiSkills]);
 
     const suggestions = React.useMemo(() => getSuggestions(), [getSuggestions]);
 
