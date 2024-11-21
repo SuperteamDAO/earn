@@ -193,25 +193,32 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         });
       });
     } else {
-      try {
-        const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
-        const url = airtableUrl(
-          process.env.AIRTABLE_GRANTS_BASE_ID!,
-          process.env.AIRTABLE_GRANTS_TABLE_NAME!,
-        );
-
-        const airtableData = result.map((r) =>
-          convertGrantApplicationToAirtable(r),
-        );
-        const airtablePayload = airtableUpsert(
-          'earnApplicationId',
-          airtableData.map((a) => ({ fields: a })),
-        );
-
-        await axios.patch(url, JSON.stringify(airtablePayload), config);
-      } catch (err) {
-        logger.error('Error syncing with Airtable', err);
-      }
+      const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
+      const url = airtableUrl(
+        process.env.AIRTABLE_GRANTS_BASE_ID!,
+        process.env.AIRTABLE_GRANTS_TABLE_NAME!,
+      );
+      const airtableData = result.map((r) =>
+        convertGrantApplicationToAirtable(r),
+      );
+      const airtablePayload = airtableUpsert(
+        'earnApplicationId',
+        airtableData.map((a) => ({ fields: a })),
+      );
+      logger.info('Starting Airtable sync...');
+      const syncPromise = axios.patch(
+        url,
+        JSON.stringify(airtablePayload),
+        config,
+      );
+      logger.info('Waiting for Airtable sync to complete...');
+      const response = await syncPromise;
+      logger.info('Airtable sync completed successfully');
+      logger.info('Airtable sync completed with response:', {
+        status: response.status,
+        data: response.data,
+        applicationIds: result.map((r) => r.id),
+      });
     }
 
     return res.status(200).json(result);
