@@ -11,6 +11,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
+import { getURL } from '@/utils/validUrl';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
@@ -65,7 +66,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
       return {
         'Sr no': i + 1,
-        'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
+        'Profile Link': `${getURL()}t/${user.username}`,
         Name: `${user.firstName} ${user.lastName}`,
         'Submission Link': submission.link || '',
         ...eligibility,

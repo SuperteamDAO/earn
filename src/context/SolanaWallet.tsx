@@ -15,7 +15,7 @@ export function SolanaWalletProvider({
 }) {
   const network = WalletAdapterNetwork.Mainnet;
 
-  const rpc = `https://${process.env.NEXT_PUBLIC_RPC_URL}`;
+  const rpc = process.env.NEXT_PUBLIC_RPC_URL as string;
 
   const endpoint = useMemo(() => rpc, [network]);
 
