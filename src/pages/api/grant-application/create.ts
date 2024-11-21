@@ -116,7 +116,7 @@ async function grantApplication(
 
     if (grant.isNative === true && !grant.airtableId) {
       try {
-        await sendEmailNotification({
+        sendEmailNotification({
           type: 'application',
           id: grant.id,
           userId: user.id,

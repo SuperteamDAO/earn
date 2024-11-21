@@ -185,7 +185,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (result[0]?.grant.isNative === true && !result[0]?.grant.airtableId) {
       result.forEach(async (r) => {
-        await sendEmailNotification({
+        sendEmailNotification({
           type: isApproved ? 'grantApproved' : 'grantRejected',
           id: r.id,
           userId: r.userId,
