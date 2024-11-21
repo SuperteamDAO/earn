@@ -41,7 +41,7 @@ export function DescriptionAndTemplate() {
         return (
           <FormItem className="gap-2">
             <div className="flex items-center justify-between">
-              <FormLabel>Description</FormLabel>
+              <FormLabel isRequired>Description</FormLabel>
               <div className="flex items-center">
                 <Button
                   variant="link"

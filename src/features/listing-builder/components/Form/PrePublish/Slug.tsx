@@ -55,8 +55,8 @@ export function Slug() {
 
   const { data: generatedSlugValidated, isFetching: generatedSlugFetching } =
     useQuery({
-      ...slugCheckQuery({ slug: slugifiedTitle, check: false }),
-      enabled: !!(!!title && !isEditing) && !slug,
+      ...slugCheckQuery({ slug: slugifiedTitle, check: false, id: listingId }),
+      enabled: !!(!!title && !isEditing),
       retry: false,
     });
 

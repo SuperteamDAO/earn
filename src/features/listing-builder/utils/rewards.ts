@@ -11,7 +11,7 @@ export const calculateTotalPrizes = (
 
 export const calculateTotalRewardsForPodium = (
   currentRewards: Record<string, number>,
-  maxBonusSpots?: number,
+  maxBonusSpots: number,
 ) => {
   return Object.entries(currentRewards).reduce((sum, [pos, value]) => {
     if (isNaN(value)) return sum;

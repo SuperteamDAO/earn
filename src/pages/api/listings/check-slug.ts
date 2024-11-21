@@ -5,25 +5,33 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export const checkSlug = async (slug: string): Promise<boolean> => {
+export const checkSlug = async (
+  slug: string,
+  id?: string,
+): Promise<boolean> => {
   try {
     const existingBounty = await prisma.bounties.findFirst({ where: { slug } });
-    return Boolean(existingBounty);
+    if (!existingBounty) return false;
+    if (existingBounty.id === id) return false;
+    else return true;
   } catch (error) {
     logger.error(`Error checking slug: ${slug}`, safeStringify(error));
     throw new Error('Error checking slug');
   }
 };
 
-export const generateUniqueSlug = async (title: string): Promise<string> => {
+export const generateUniqueSlug = async (
+  title: string,
+  id?: string,
+): Promise<string> => {
   let slug = slugify(title, { lower: true, strict: true });
-  let slugExists = await checkSlug(slug);
+  let slugExists = await checkSlug(slug, id);
   let i = 1;
 
   while (slugExists) {
     const newTitle = `${title}-${i}`;
     slug = slugify(newTitle, { lower: true, strict: true });
-    slugExists = await checkSlug(slug);
+    slugExists = await checkSlug(slug, id);
     i += 1;
   }
 
@@ -70,7 +78,7 @@ export default async function handler(
       }
     } else {
       logger.debug(`Generating unique slug for title: ${slug}`);
-      const newSlug = await generateUniqueSlug(slug);
+      const newSlug = await generateUniqueSlug(slug, id as string | undefined);
       logger.info(`Generated unique slug: ${newSlug}`);
       return res.status(200).json({ slug: newSlug });
     }

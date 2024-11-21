@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Hackathon } from '@prisma/client';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import debounce from 'lodash.debounce';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef } from 'react';
@@ -76,14 +76,24 @@ export const useListingForm = (
 
   const saveDraftMutation = useAtomValue(saveDraftMutationAtom);
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
-  const setDraftSaving = useSetAtom(isDraftSavingAtom);
+  const [, setDraftSaving] = useAtom(isDraftSavingAtom);
 
   const [queueRef, setQueueRef] = useAtom(draftQueueAtom);
+
+  useEffect(() => {
+    console.log('queueRef effect', queueRef);
+  }, [queueRef]);
   const [, setHideAutoSave] = useAtom(hideAutoSaveAtom);
-  const processSaveQueue = async () => {
+  const queueRefRef = useRef(queueRef);
+
+  useEffect(() => {
+    console.log('queueRef effect', queueRef);
+    queueRefRef.current = queueRef;
+  }, [queueRef]);
+  const processSaveQueue = useCallback(async () => {
     if (isEditing) return;
     setDraftSaving(true);
-    if (queueRef.isProcessing) {
+    if (queueRefRef.current.isProcessing) {
       // queueRef.shouldProcessNext = true;
       setQueueRef((q) => ({
         ...q,
@@ -101,14 +111,21 @@ export const useListingForm = (
     }));
     try {
       const dataToSave = getValues();
-      const data = await saveDraftMutation.mutateAsync(dataToSave);
+      console.log('queueRef', queueRef);
       console.log('before save', dataToSave);
+      const data = await saveDraftMutation.mutateAsync({
+        ...dataToSave,
+        id: queueRefRef.current.id,
+      });
       console.log('data', data);
       setHideAutoSave(false);
       formMethods.setValue('id', data.id);
       if (!dataToSave.slug) formMethods.setValue('slug', data.slug);
-      queueRef.id = data.id;
-
+      queueRefRef.current.id = data.id;
+      setQueueRef((q) => ({
+        ...q,
+        id: data.id,
+      }));
       console.log('asPath', router.asPath);
       console.log('data slug', data.slug);
       // if(router.asPath.split('/')[4] === 'edit') {
@@ -127,14 +144,14 @@ export const useListingForm = (
       }));
       setDraftSaving(false);
       // Check if we need to process another save
-      if (queueRef.shouldProcessNext) {
+      if (queueRefRef.current.shouldProcessNext) {
         // Use setTimeout to break the call stack and ensure queue state is updated
         setTimeout(() => {
           void processSaveQueue();
         }, 0);
       }
     }
-  };
+  }, [queueRefRef, isEditing]);
 
   // Create the debounced function ref that persists across renders
   const debouncedSaveRef = useRef<ReturnType<typeof debounce>>();
@@ -145,7 +162,7 @@ export const useListingForm = (
       console.log('debounce');
       void processSaveQueue();
     }, 1000);
-  }, []); // Empty dependency array - only create once
+  }, [processSaveQueue]); // Empty dependency array - only create once
 
   const onChange = useCallback(() => {
     setHideAutoSave(true);

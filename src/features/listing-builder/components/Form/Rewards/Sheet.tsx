@@ -69,7 +69,9 @@ export function RewardsSheet() {
           render={({}) => {
             return (
               <FormItem className="group items-start gap-1.5">
-                <FormLabel className="">Rewards</FormLabel>
+                <FormLabel isRequired className="">
+                  Rewards
+                </FormLabel>
                 <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-3">
                   <Label />
                   <Button

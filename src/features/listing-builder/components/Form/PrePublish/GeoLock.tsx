@@ -91,12 +91,17 @@ export function GeoLock() {
       render={({ field }) => {
         return (
           <FormItem className="flex flex-row items-center justify-between">
-            <div className="">
+            <div className="flex-grow">
               <FormLabel className="">Geo-locking</FormLabel>
-              <FormDescription>
-                {field.value === Regions.GLOBAL
-                  ? 'Anyone in the world can participate'
-                  : `Submissions restricted to ${field.value}`}
+              <FormDescription className="flex gap-1">
+                {field.value === Regions.GLOBAL ? (
+                  'Anyone in the world can participate'
+                ) : (
+                  <>
+                    Participation restricted to{' '}
+                    <p className="capitalize">{field.value.toLowerCase()}</p>
+                  </>
+                )}
               </FormDescription>
             </div>
             <FormControl className="flex items-center">

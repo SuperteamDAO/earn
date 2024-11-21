@@ -63,16 +63,16 @@ export const Podiums = () => {
   );
 
   const updateTotalReward = useCallback(
-    (currentRewards: Record<string, number>, maxBonusSpots?: number) => {
+    (currentRewards: Record<string, number>, newMaxBonusSpots?: number) => {
       const totalRewards = calculateTotalRewardsForPodium(
         currentRewards,
-        maxBonusSpots,
+        newMaxBonusSpots || maxBonusSpots,
       );
 
       form.setValue('rewardAmount', totalRewards, { shouldValidate: true });
       form.saveDraft();
     },
-    [form],
+    [form, maxBonusSpots],
   );
 
   const addReward = useCallback(() => {
@@ -141,7 +141,7 @@ export const Podiums = () => {
                   render={({ field }) => (
                     <FormItem className="group relative gap-2">
                       <div className="flex justify-between">
-                        <FormLabel className="w-24 capitalize">
+                        <FormLabel isRequired className="w-fit capitalize">
                           {getRankLabels(position)} Prize
                         </FormLabel>
                       </div>
@@ -197,7 +197,7 @@ export const Podiums = () => {
                         render={({ field }) => (
                           <FormItem className="gap-2">
                             <div className="flex justify-between">
-                              <FormLabel className="w-fit">
+                              <FormLabel isRequired className="w-fit">
                                 Bonus Per Prize
                               </FormLabel>
                             </div>
@@ -230,7 +230,7 @@ export const Podiums = () => {
                         name="maxBonusSpots"
                         render={({ field }) => (
                           <FormItem className="gap-2">
-                            <FormLabel># of Prizes</FormLabel>
+                            <FormLabel isRequired># of Prizes</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <TokenNumberInput

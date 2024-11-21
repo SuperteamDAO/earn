@@ -35,7 +35,7 @@ export function Fixed() {
       name={'rewardAmount'}
       render={({ field }) => (
         <FormItem className="gap-2">
-          <FormLabel>Fixed Prize</FormLabel>
+          <FormLabel isRequired>Fixed Prize</FormLabel>
           <FormControl>
             <TokenNumberInput
               {...field}

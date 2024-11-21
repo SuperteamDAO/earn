@@ -44,10 +44,14 @@ function ListingBuilder({
   defaultListing,
   isDuplicating,
   hackathon,
+  isST,
+  isGod,
 }: {
   defaultListing: ListingFormData;
   isDuplicating?: boolean;
   hackathon?: Hackathon;
+  isST: boolean;
+  isGod: boolean;
 }) {
   const form = useListingForm(defaultListing, hackathon);
   useInitAtom(
@@ -55,6 +59,8 @@ function ListingBuilder({
     defaultListing ? listingToStatus(defaultListing) : undefined,
   );
   useInitAtom(hackathonAtom, hackathon);
+  useInitAtom(isSTAtom, isST);
+  useInitAtom(isGodAtom, isGod);
   useInitAtom(isEditingAtom, !!defaultListing.isPublished);
   // useEffect(() => {
   //   setIsEditing(!!defaultListing.isPublished)
@@ -182,6 +188,8 @@ function ListingBuilderProvider({
           defaultListing={defaultListing}
           isDuplicating={isDuplicating}
           hackathon={hackathon}
+          isST={isST}
+          isGod={isGod}
         />
       </HydrateAtoms>
     </Provider>

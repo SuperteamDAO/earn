@@ -96,7 +96,7 @@ export function Deadline() {
       render={({ field }) => {
         return (
           <FormItem className="gap-2">
-            <FormLabel className="">
+            <FormLabel isRequired className="">
               Deadline (in {Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormLabel>
             <div className="flex rounded-md border ring-primary has-[:focus]:ring-1 has-[data-[state=open]]:ring-1">

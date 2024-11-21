@@ -137,7 +137,9 @@ export const cleanTemplate = (
   template: Listing,
   prevValues: ListingFormData,
 ) => {
-  const reTemplate: Partial<Listing> = { ...template } as any;
+  const reTemplate: Partial<
+    Listing & { color: string; emoji: string; Bounties: string }
+  > = { ...template } as any;
 
   reTemplate.templateId = reTemplate.id;
   reTemplate.id = prevValues.id;
@@ -165,6 +167,9 @@ export const cleanTemplate = (
   delete reTemplate.requirements;
   delete reTemplate.sponsorId;
   delete reTemplate.timeToComplete;
+  delete reTemplate.color;
+  delete reTemplate.emoji;
+  delete reTemplate.Bounties;
 
   return reTemplate;
 };

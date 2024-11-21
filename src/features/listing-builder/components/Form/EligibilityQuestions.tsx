@@ -116,7 +116,9 @@ export function EligibilityQuestions() {
                 render={() => (
                   <div key={field.id} className="group">
                     <FormItem className="gap-2">
-                      <FormLabel>Question {index + 1}</FormLabel>
+                      <FormLabel isRequired={type === 'project' && index === 0}>
+                        Question {index + 1}
+                      </FormLabel>
                       <div className="flex items-center rounded-md border ring-primary has-[:focus]:ring-1">
                         <FormField
                           control={form.control}

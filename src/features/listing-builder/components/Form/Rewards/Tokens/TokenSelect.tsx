@@ -51,7 +51,6 @@ export function TokenSelect() {
                     <TokenLabel
                       showIcon
                       showSymbol
-                      postfix="Coin"
                       classNames={{
                         symbol: 'text-slate-900',
                         postfix: 'text-slate-900',

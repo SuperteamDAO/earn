@@ -36,7 +36,7 @@ export const UnderVerificationModal = () => {
           </div>
         </DialogHeader>
 
-        <div className="flex flex-col gap-3 text-center">
+        <div className="flex flex-col gap-3 text-start">
           <h2 className="text-lg font-semibold">
             We need to verify your listing before it gets published
           </h2>

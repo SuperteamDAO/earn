@@ -26,11 +26,11 @@ const paymentTypes: { value: CompensationType; label: string }[] = [
 const descriptionByType = (type: CompensationType) => {
   switch (type) {
     case CompensationType.fixed:
-      return 'A fixed rate decided by you';
+      return 'Fixed compensation decided by you ';
     case CompensationType.range:
-      return 'Applicants will quote you within a range';
+      return 'Applicants will send you quotes within the range';
     case CompensationType.variable:
-      return 'Applicants will quote you any amount';
+      return 'Applicants can send you quotes of any amount';
   }
 };
 

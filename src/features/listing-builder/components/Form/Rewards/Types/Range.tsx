@@ -18,7 +18,7 @@ export function Range() {
         name="minRewardAsk"
         render={({ field }) => (
           <FormItem className="gap-2">
-            <FormLabel>From</FormLabel>
+            <FormLabel isRequired>From</FormLabel>
             <FormControl>
               <TokenNumberInput
                 {...field}
@@ -39,7 +39,7 @@ export function Range() {
         name="maxRewardAsk"
         render={({ field }) => (
           <FormItem className="gap-2">
-            <FormLabel>To</FormLabel>
+            <FormLabel isRequired>To</FormLabel>
             <FormControl>
               <TokenNumberInput
                 {...field}

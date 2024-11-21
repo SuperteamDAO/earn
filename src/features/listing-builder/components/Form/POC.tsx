@@ -18,7 +18,7 @@ export function POC() {
       render={({ field }) => {
         return (
           <FormItem className="gap-2">
-            <FormLabel>Point of Contact</FormLabel>
+            <FormLabel isRequired>Point of Contact (TG / X / Email)</FormLabel>
             <FormControl>
               <Input
                 placeholder="yb@superteamearn.com"

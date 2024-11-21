@@ -1,8 +1,8 @@
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,8 @@ import { Foundation } from './Foundation';
 import { Slug } from './Slug';
 
 export function PrePublish() {
-  const isST = useAtom(isSTAtom);
+  const isST = useAtomValue(isSTAtom);
+  useMemo(() => console.log('isST', isST), [isST]);
   const form = useListingForm();
   const [open, isOpen] = useState(false);
 

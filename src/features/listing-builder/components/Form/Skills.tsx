@@ -36,7 +36,7 @@ export function Skills() {
       render={({ field }) => {
         return (
           <FormItem className="gap-2">
-            <FormLabel>Skills Needed</FormLabel>
+            <FormLabel isRequired>Skills Needed</FormLabel>
             <FormControl>
               <SkillsSelect
                 key={skillsKey}

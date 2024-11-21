@@ -31,6 +31,11 @@ const typeOptions = [
 
 export function TitleAndType() {
   const form = useListingForm();
+  const type = useWatch({ name: 'type', control: form.control });
+  const placeholder = useMemo(() => {
+    if (type === 'project') return 'Frontend Development for Superteam';
+    else return 'Write a Deep Dive on IBRL';
+  }, [type]);
   return (
     <FormField
       name="title"
@@ -38,12 +43,12 @@ export function TitleAndType() {
       render={({ field }) => {
         return (
           <FormItem className="gap-2">
-            <FormLabel>Listing Title</FormLabel>
+            <FormLabel isRequired>Listing Title</FormLabel>
             <div className="flex w-full rounded-md border ring-primary has-[:focus]:ring-1">
               <Type />
               <FormControl>
                 <Input
-                  placeholder="Develop Something on solana"
+                  placeholder={placeholder}
                   {...field}
                   className="mt-0 border-none focus-visible:ring-0"
                   defaultValue={''}
@@ -114,7 +119,7 @@ function Type() {
                       'rewardAmount',
                       calculateTotalRewardsForPodium(
                         values.rewards || {},
-                        values.maxBonusSpots,
+                        values.maxBonusSpots || 0,
                       ),
                     );
                   } else {
