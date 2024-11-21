@@ -134,7 +134,7 @@ export const getColorStyles = (status: string) => {
 };
 
 export function tweetTemplate(url: string) {
-  return `The results of this latest @SuperteamEarn listing are out. Congratulations to the winners👏
+  return `The results of this latest @solana_zh listing are out. Congratulations to the winners👏
 
 ${url}
 `;

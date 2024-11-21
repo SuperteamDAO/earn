@@ -71,10 +71,10 @@ export const PayoutButton = ({ bounty }: Props) => {
           old?.map((submission) =>
             submission.id === variables.id
               ? {
-                  ...submission,
-                  isPaid: variables.isPaid,
-                  paymentDetails: variables.paymentDetails,
-                }
+                ...submission,
+                isPaid: variables.isPaid,
+                paymentDetails: variables.paymentDetails,
+              }
               : submission,
           ),
       );
@@ -82,10 +82,10 @@ export const PayoutButton = ({ bounty }: Props) => {
       setSelectedSubmission((prev) =>
         prev && prev.id === variables.id
           ? {
-              ...prev,
-              isPaid: variables.isPaid,
-              paymentDetails: variables.paymentDetails,
-            }
+            ...prev,
+            isPaid: variables.isPaid,
+            paymentDetails: variables.paymentDetails,
+          }
           : prev,
       );
     },
@@ -113,6 +113,7 @@ export const PayoutButton = ({ bounty }: Props) => {
       const power = tokenDetails?.decimals as number;
 
       const latestBlockHash = await connection.getLatestBlockhash();
+      console.log('latestBlockHash: ', latestBlockHash);
 
       const senderATA = await getAssociatedTokenAddressSync(
         new PublicKey(tokenAddress),
@@ -212,15 +213,14 @@ export const PayoutButton = ({ bounty }: Props) => {
         >
           {connected
             ? truncatePublicKey(publicKey?.toBase58(), 3)
-            : `Pay ${
-                formatNumberWithSuffix(
-                  bounty?.rewards?.[
-                    selectedSubmission?.winnerPosition as keyof Rewards
-                  ]!,
-                  2,
-                  true,
-                ) || '0'
-              } ${bounty?.token}`}
+            : `Pay ${formatNumberWithSuffix(
+              bounty?.rewards?.[
+              selectedSubmission?.winnerPosition as keyof Rewards
+              ]!,
+              2,
+              true,
+            ) || '0'
+            } ${bounty?.token}`}
         </DynamicWalletMultiButton>
       </div>
       {connected && (
@@ -255,11 +255,11 @@ export const PayoutButton = ({ bounty }: Props) => {
             (!!bounty?.rewards &&
               formatNumberWithSuffix(
                 bounty?.rewards[
-                  selectedSubmission?.winnerPosition as keyof Rewards
+                selectedSubmission?.winnerPosition as keyof Rewards
                 ]!,
               ),
-            2,
-            true)
+              2,
+              true)
           }{' '}
           {bounty?.token}
         </Button>
