@@ -144,20 +144,22 @@ export function userRegionEligibilty(
   region: string | undefined,
   userLocation: string | undefined,
 ) {
-  if (region === 'GLOBAL') {
-    return true;
-  }
+  return true;
 
-  const regionObject = region ? getCombinedRegion(region) : null;
+  // if (region === 'GLOBAL') {
+  //   return true;
+  // }
 
-  const isEligible =
-    !!(
-      userLocation &&
-      (regionObject?.name === userLocation ||
-        regionObject?.country?.includes(userLocation))
-    ) || false;
+  // const regionObject = region ? getCombinedRegion(region) : null;
 
-  return isEligible;
+  // const isEligible =
+  //   !!(
+  //     userLocation &&
+  //     (regionObject?.name === userLocation ||
+  //       regionObject?.country?.includes(userLocation))
+  //   ) || false;
+
+  // return isEligible;
 }
 
 export function isValidUrl(url: string): boolean {
