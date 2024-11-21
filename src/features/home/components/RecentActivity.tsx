@@ -65,9 +65,7 @@ const ActivityCard = ({
       className="flex"
     >
       <OgImageViewer
-        h={12}
-        w={20}
-        objectFit="cover"
+        className="h-12 w-20 object-cover"
         externalUrl={link}
         imageUrl={ogImage}
       />

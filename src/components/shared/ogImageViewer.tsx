@@ -1,29 +1,19 @@
-import {
-  Image,
-  type ImageProps,
-  type ResponsiveValue,
-  Skeleton,
-  Text,
-} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { Skeleton } from '@/components/ui/skeleton';
 import { ogImageQuery } from '@/queries/og';
+import { cn } from '@/utils';
 
 interface Props {
   title?: string;
   showTitle?: boolean;
   externalUrl?: string;
   imageUrl?: string;
-  w?: ResponsiveValue<string | number>;
-  h?: ResponsiveValue<string | number>;
-  objectFit?: ImageProps['objectFit'];
-  borderTopRadius?: string | number;
-  borderRadius?: string | number;
-  aspectRatio?: ResponsiveValue<string | number>;
   id?: string;
   type?: 'submission' | 'pow';
+  className?: string;
 }
 
 const getRandomFallbackImage = (): string => {
@@ -52,7 +42,7 @@ export const OgImageViewer = ({
   imageUrl,
   type,
   id,
-  ...props
+  className,
 }: Props) => {
   const fallbackImage = getRandomFallbackImage();
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
@@ -96,28 +86,21 @@ export const OgImageViewer = ({
   }, [fallbackImage]);
 
   if (isLoading) {
-    return <Skeleton {...props} />;
+    return <Skeleton className={className} />;
   }
 
   return (
     <div>
-      <Image
-        bgPosition={'center'}
+      <img
+        className={cn('bg-center', className)}
         alt="OG Image"
         onError={handleImageError}
         src={currentImageUrl || fallbackImage}
-        {...props}
       />
       {showTitle && (
-        <Text
-          pt={2}
-          color="brand.slate.500"
-          fontSize="sm"
-          textOverflow="ellipsis"
-          noOfLines={1}
-        >
+        <p className="truncate pt-2 text-sm text-slate-500">
           {title || ogData?.title || ''}
-        </Text>
+        </p>
       )}
     </div>
   );

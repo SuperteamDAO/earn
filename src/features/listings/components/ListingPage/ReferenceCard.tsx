@@ -1,5 +1,3 @@
-import { Box } from '@chakra-ui/react';
-
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 
 export const ReferenceCard = ({
@@ -11,21 +9,16 @@ export const ReferenceCard = ({
 }) => {
   if (!link) return <></>;
   return (
-    <Box
-      w="100%"
-      borderRadius={8}
-      cursor="pointer"
+    <div
+      className="w-full cursor-pointer rounded-lg"
       onClick={() => window.open(link, '_blank')}
     >
       <OgImageViewer
         showTitle
         title={title}
         externalUrl={link}
-        w={'100%'}
-        aspectRatio={1.91 / 1}
-        objectFit="cover"
-        borderRadius={6}
+        className="aspect-[1.91/1] w-full rounded-md object-cover"
       />
-    </Box>
+    </div>
   );
 };
