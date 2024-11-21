@@ -4,9 +4,14 @@ import { useMemo } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { ListingBuilder } from '@/features/listing-builder';
 import { activeHackathonQuery } from '@/features/sponsor-dashboard';
+import { useUser } from '@/store/user';
 
 function NewListing() {
-  const { data: hackathon, isLoading } = useQuery(activeHackathonQuery());
+  const user = useUser();
+  const { data: hackathon, isLoading } = useQuery({
+    ...activeHackathonQuery(),
+    enabled: !!user.user,
+  });
   useMemo(() => {
     console.log('hackathon', hackathon);
   }, [hackathon]);

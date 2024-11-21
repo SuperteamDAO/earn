@@ -26,6 +26,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         id: true,
         name: true,
         slug: true,
+        altLogo: true,
         logo: true,
         deadline: true,
         eligibility: true,

@@ -28,9 +28,10 @@ function EditBounty({ slug }: Props) {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
-  const { data: hackathon, isLoading: hackathonLoading } = useQuery(
-    activeHackathonQuery(),
-  );
+  const { data: hackathon, isLoading: hackathonLoading } = useQuery({
+    ...activeHackathonQuery(),
+    enabled: !!user,
+  });
 
   useEffect(() => {
     console.log('listing', listing);
@@ -51,7 +52,11 @@ function EditBounty({ slug }: Props) {
           <ListingBuilder
             listing={listing as unknown as ListingFormData}
             isEditing={!!listing.publishedAt}
-            hackathon={hackathon}
+            hackathon={
+              listing.type === 'hackathon'
+                ? (listing.Hackathon as any)
+                : hackathon
+            }
           />
         </>
       ) : (

@@ -29,9 +29,10 @@ export default function DuplicateBounty({ slug }: Props) {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
-  const { data: hackathon, isLoading: hackathonLoading } = useQuery(
-    activeHackathonQuery(),
-  );
+  const { data: hackathon, isLoading: hackathonLoading } = useQuery({
+    ...activeHackathonQuery(),
+    enabled: !!user,
+  });
 
   useEffect(() => {
     if (listing && listing.sponsorId !== user?.currentSponsorId) {

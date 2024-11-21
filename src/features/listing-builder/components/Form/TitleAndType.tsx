@@ -155,7 +155,7 @@ function Type() {
                     <SelectItem key={'hackathon'} value={'hackathon'}>
                       <div className="flex items-center gap-2 text-xs">
                         <Image
-                          src={hackathon.logo}
+                          src={hackathon.altLogo || ''}
                           alt={hackathon.name}
                           className="h-4 w-4 object-contain"
                           width={16}

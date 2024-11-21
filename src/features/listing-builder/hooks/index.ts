@@ -80,14 +80,10 @@ export const useListingForm = (
 
   const [queueRef, setQueueRef] = useAtom(draftQueueAtom);
 
-  useEffect(() => {
-    console.log('queueRef effect', queueRef);
-  }, [queueRef]);
   const [, setHideAutoSave] = useAtom(hideAutoSaveAtom);
   const queueRefRef = useRef(queueRef);
 
   useEffect(() => {
-    console.log('queueRef effect', queueRef);
     queueRefRef.current = queueRef;
   }, [queueRef]);
   const processSaveQueue = useCallback(async () => {
