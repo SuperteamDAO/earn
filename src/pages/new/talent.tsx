@@ -133,7 +133,7 @@ export default function Talent() {
         <Meta
           title="Create Your Profile to Access Bounties & Grants | Solar Earn"
           description="Become part of Solar's talent network, where you can present your skills and collaborate on various crypto bounties, grants, and projects."
-          canonical="https://earn.superteam.fun/new/talent/"
+          canonical=""
         />
       }
     >

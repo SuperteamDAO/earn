@@ -49,6 +49,7 @@ const queryClient = new QueryClient();
 
 if (typeof window !== 'undefined') {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+    // TODO posthog
     api_host: `${getURL()}ingest`,
     ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
     loaded: (posthog) => {

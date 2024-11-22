@@ -169,7 +169,7 @@ export const AddProject = ({
                   }}
                   focusBorderColor="brand.purple"
                   id="title"
-                  placeholder="Project Title"
+                  placeholder=""
                   {...register('title', { required: true })}
                 />
               </Box>
@@ -185,7 +185,7 @@ export const AddProject = ({
                   focusBorderColor="brand.purple"
                   id={'description'}
                   maxLength={180}
-                  placeholder="About the Project"
+                  placeholder=""
                   {...register('description', { required: true })}
                 />
                 <Text
@@ -224,7 +224,7 @@ export const AddProject = ({
                       color: 'brand.slate.300',
                     }}
                     focusBorderColor="brand.purple"
-                    placeholder="https://example.com"
+                    placeholder=""
                     {...register('link', { required: true })}
                   />
                 </InputGroup>

@@ -28,7 +28,6 @@ import { SelectBox } from '@/components/Form/SelectBox';
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { SkillSelect } from '@/components/shared/SkillSelect';
 import {
-  CommunityList,
   CountryList,
   IndustryList,
   type MultiSelectOptions,
@@ -219,11 +218,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       return;
     }
     const socialFields = [
+      'telegram',
       'twitter',
       'github',
       'linkedin',
       'website',
-      'telegram',
     ];
     const filledSocials = socialFields.filter(
       (field) => data[field as keyof FormData],
@@ -330,7 +329,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         <Box bg="#fff">
           <Box maxW="600px" mx="auto" p={{ base: 3, md: 5 }}>
             <Heading mt={3} mb={5}>
-              Edit Profile
+              修改配置
             </Heading>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Text
@@ -341,7 +340,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 fontWeight={600}
                 letterSpacing={0.4}
               >
-                PERSONAL INFO
+                个人信息
               </Text>
               <FormControl>
                 <Box mb={4}>
@@ -351,7 +350,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     color={'brand.slate.500'}
                     requiredIndicator={<></>}
                   >
-                    Profile Picture
+                    项目图片
                   </FormLabel>
                   {isPhotoLoading ? (
                     <></>
@@ -386,8 +385,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 </Box>
               </FormControl>
               <InputField
-                label="Username"
-                placeholder="Username"
+                label="用户名"
+                placeholder="用户名"
                 name="username"
                 register={register}
                 isRequired
@@ -398,8 +397,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               />
 
               <InputField
-                label="First Name"
-                placeholder="First Name"
+                label="名"
+                placeholder="名"
                 name="firstName"
                 register={register}
                 isRequired
@@ -407,8 +406,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               />
 
               <InputField
-                label="Last Name"
-                placeholder="Last Name"
+                label="姓"
+                placeholder="姓"
                 name="lastName"
                 register={register}
                 isRequired
@@ -416,9 +415,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               />
 
               <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>
-                  Your One-Line Bio
-                </FormLabel>
+                <FormLabel color={'brand.slate.500'}>个人简介</FormLabel>
                 <Textarea
                   borderColor="brand.slate.300"
                   _placeholder={{
@@ -427,7 +424,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   focusBorderColor="brand.purple"
                   id={'bio'}
                   maxLength={180}
-                  placeholder="Here is a sample placeholder"
+                  placeholder=""
                   {...register('bio', { required: false })}
                 />
                 <Text
@@ -439,12 +436,12 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   fontSize={'xs'}
                   textAlign="right"
                 >
-                  {180 - (watch('bio')?.length || 0)} characters left
+                  还剩 {180 - (watch('bio')?.length || 0)} 字
                 </Text>
               </Box>
               <InputField
-                label="Your Solana Wallet Address"
-                placeholder="Wallet Address"
+                label="你的 Solana 钱包地址"
+                placeholder="钱包地址"
                 name="publicKey"
                 register={register}
                 isRequired
@@ -463,7 +460,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 fontWeight={600}
                 letterSpacing={0.4}
               >
-                SOCIALS
+                社交信息
               </Text>
 
               <SocialInput register={register} watch={watch} />
@@ -476,12 +473,12 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 fontWeight={600}
                 letterSpacing={0.4}
               >
-                WORK
+                工作经历
               </Text>
 
               <FormControl w={'full'} mb={'1.25rem'}>
                 <FormLabel color={'brand.slate.500'}>
-                  What areas of Web3 are you most interested in?
+                  你对 Web3 的哪些领域感兴趣？
                 </FormLabel>
                 <ReactSelect
                   closeMenuOnSelect={false}
@@ -513,83 +510,51 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 />
               </FormControl>
 
-              <FormControl w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>
-                  Community Affiliations
-                </FormLabel>
-                <ReactSelect
-                  closeMenuOnSelect={false}
-                  components={animatedComponents}
-                  isMulti
-                  options={CommunityList.map((elm: string) => {
-                    return { label: elm, value: elm };
-                  })}
-                  value={DropDownValues.community}
-                  onChange={(e: any) => {
-                    const selectedCommunities = e
-                      ? e.map((elm: { label: string; value: string }) => elm)
-                      : [];
-                    setDropDownValues({
-                      ...DropDownValues,
-                      community: selectedCommunities,
-                    });
-                    setValue('community', selectedCommunities);
-                  }}
-                  styles={{
-                    control: (baseStyles) => ({
-                      ...baseStyles,
-                      backgroundColor: 'brand.slate.500',
-                      borderColor: 'brand.slate.300',
-                    }),
-                  }}
-                />
-              </FormControl>
-
               <SelectBox
-                label="Work Experience"
+                label="工作经验"
                 watchValue={watch('experience')}
                 options={workExp}
                 id="experience"
-                placeholder="Pick Your Experience"
+                placeholder="选择工作年限"
                 register={register}
               />
 
               <SelectBox
-                label="Location"
+                label="城市"
                 watchValue={watch('location')}
                 options={CountryList}
                 id="location"
-                placeholder="Select Your Country"
+                placeholder="选择城市"
                 register={register}
               />
 
               <SelectBox
-                label="How familiar are you with Web3?"
+                label="你对Web3有多熟悉？"
                 watchValue={watch('cryptoExperience')}
                 options={web3Exp}
                 id="cryptoExperience"
-                placeholder="Pick your Experience"
+                placeholder="请选择"
                 register={register}
               />
 
               <SelectBox
-                label="Work Preference"
+                label="工作性质"
                 watchValue={watch('workPrefernce')}
                 options={workType}
                 id="workPrefernce"
-                placeholder="Type of Work"
+                placeholder="请选择"
                 register={register}
               />
 
               <InputField
-                label="Current Employer"
-                placeholder="Employer"
+                label="当前公司"
+                placeholder="当前公司"
                 name="currentEmployer"
                 register={register}
                 errors={errors}
               />
 
-              <FormLabel color={'brand.slate.500'}>Proof of Work</FormLabel>
+              <FormLabel color={'brand.slate.500'}>工作经历</FormLabel>
               <Box>
                 {pow.map((data, idx) => {
                   return (
@@ -640,7 +605,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 }}
                 variant="outline"
               >
-                Add Project
+                添加项目
               </Button>
 
               <SkillSelect
@@ -648,9 +613,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 subSkills={subSkills}
                 setSkills={setSkills}
                 setSubSkills={setSubSkills}
-                skillLabel="Your Skills"
-                subSkillLabel="Sub Skills"
-                helperText="We will send email notifications of new listings for your selected skills"
+                skillLabel="技能"
+                subSkillLabel="子技能"
+                helperText="我们将发送新项目的电子邮件通知，针对您选择的技能。"
               />
 
               <Checkbox
@@ -671,7 +636,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 }}
                 size="md"
               >
-                Keep my info private
+                保密个人信息
               </Checkbox>
               <br />
 

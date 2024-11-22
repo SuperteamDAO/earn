@@ -152,20 +152,20 @@ const Index = () => {
                 (s) => s.sponsorId === user.currentSponsorId,
               )?.role === 'ADMIN'
             )) && (
-            <Button
-              className="ph-no-capture"
-              color="#6366F1"
-              bg="#E0E7FF"
-              leftIcon={<AddIcon />}
-              onClick={() => {
-                posthog.capture('invite member_sponsor');
-                onOpen();
-              }}
-              variant="solid"
-            >
-              Invite Members
-            </Button>
-          )}
+              <Button
+                className="ph-no-capture"
+                color="#6366F1"
+                bg="#E0E7FF"
+                leftIcon={<AddIcon />}
+                onClick={() => {
+                  posthog.capture('invite member_sponsor');
+                  onOpen();
+                }}
+                variant="solid"
+              >
+                Invite Members
+              </Button>
+            )}
           <InputGroup w={52}>
             <Input
               bg={'white'}
@@ -177,7 +177,7 @@ const Index = () => {
               }}
               focusBorderColor="brand.purple"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
-              placeholder="Search members..."
+              placeholder=""
               type="text"
             />
             <InputLeftElement pointerEvents="none">

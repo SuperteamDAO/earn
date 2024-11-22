@@ -29,7 +29,7 @@ export function QueryInput({ loading, query, setQuery }: Props) {
           borderColor="brand.slate.300"
           autoFocus
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for Solar Earn Listings"
+          placeholder=""
           value={query}
           variant="outline"
         />

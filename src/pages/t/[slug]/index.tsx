@@ -313,22 +313,22 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 >
                   {user?.id === talent?.id
                     ? renderButton(
-                        <EditIcon />,
-                        'Edit Profile',
-                        handleEditProfileClick,
-                      )
+                      <EditIcon />,
+                      '修改个人信息',
+                      handleEditProfileClick,
+                    )
                     : renderButton(<EmailIcon />, 'Reach Out', () => {
-                        posthog.capture('reach out_talent profile');
-                        const email = encodeURIComponent(talent?.email || '');
-                        const subject = encodeURIComponent(
-                          'Saw Your ST Earn Profile!',
-                        );
-                        const bcc = encodeURIComponent(
-                          'vesper.yang.blockchain@gmail.com',
-                        );
-                        window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
-                      })}
-                  {renderButton(<ShareIcon />, 'Share', onOpen, true)}
+                      posthog.capture('reach out_talent profile');
+                      const email = encodeURIComponent(talent?.email || '');
+                      const subject = encodeURIComponent(
+                        'Saw Your ST Earn Profile!',
+                      );
+                      const bcc = encodeURIComponent(
+                        'vesper.yang.blockchain@gmail.com',
+                      );
+                      window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
+                    })}
+                  {renderButton(<ShareIcon />, '分享', onOpen, true)}
                 </Flex>
               </Flex>
               <ShareProfile
@@ -344,7 +344,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
               >
                 <Box w={{ base: '100%', md: '50%' }}>
                   <Text mb={4} color={'brand.slate.900'} fontWeight={500}>
-                    Details
+                    详细信息
                   </Text>
                   {workPreferenceText && (
                     <Text mt={3} color={'brand.slate.400'}>
@@ -364,7 +364,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   )}
                   {talent?.location && (
                     <Text mt={3} color={'brand.slate.400'}>
-                      Based in{' '}
+                      定居{' '}
                       <Text as={'span'} color={'brand.slate.500'}>
                         {talent?.location}
                       </Text>
@@ -373,7 +373,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 </Box>
                 <Box w={{ base: '100%', md: '50%' }}>
                   <Text color={'brand.slate.900'} fontWeight={500}>
-                    Skills
+                    技能
                   </Text>
                   {Array.isArray(talent.skills) ? (
                     talent.skills.map((skillItem: any, index: number) => {
@@ -472,21 +472,19 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       }).format(Math.round(stats?.totalWinnings || 0))}
                     </Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
-                      Earned
+                      赚取
                     </Text>
                   </Flex>
                   <Flex direction={'column'}>
                     <Text fontWeight={600}>{stats?.participations}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
-                      {stats.participations === 1
-                        ? 'Submission'
-                        : 'Submissions'}
+                      提交
                     </Text>
                   </Flex>
                   <Flex direction={'column'}>
                     <Text fontWeight={600}>{stats?.wins}</Text>
                     <Text color={'brand.slate.500'} fontWeight={500}>
-                      Won
+                      赢得
                     </Text>
                   </Flex>
                 </Flex>
@@ -499,7 +497,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 >
                   <Flex align="center" gap={3}>
                     <Text color={'brand.slate.900'} fontWeight={500}>
-                      Proof of Work
+                      工作经历
                     </Text>
                     {user?.id === talent?.id && (
                       <Button
@@ -510,7 +508,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                         size="xs"
                         variant={'ghost'}
                       >
-                        +ADD
+                        +添加
                       </Button>
                     )}
                   </Flex>
@@ -529,7 +527,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       cursor="pointer"
                       onClick={() => setActiveTab('activity')}
                     >
-                      Activity Feed
+                      活跃信息流
                     </Text>
                     <Text
                       color={
@@ -541,7 +539,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       cursor="pointer"
                       onClick={() => setActiveTab('projects')}
                     >
-                      Personal Projects
+                      个人项目
                     </Text>
                   </Flex>
                 </Flex>
@@ -570,9 +568,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       fontWeight={500}
                       textAlign={'center'}
                     >
-                      {user?.id === talent?.id
-                        ? 'Add some proof of work to build your profile'
-                        : 'Nothing to see here yet ...'}
+                      {user?.id === talent?.id ? '添加工作经历' : '无'}
                     </Text>
                     {user?.id === talent?.id ? (
                       <Button
@@ -582,7 +578,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                         mt={5}
                         onClick={onOpenPow}
                       >
-                        Add
+                        添加
                       </Button>
                     ) : (
                       <Box mt={5} />
@@ -600,7 +596,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       onClick={() => router.push('/')}
                       variant={'outline'}
                     >
-                      Browse Bounties
+                      浏览赏金业务
                     </Button>
                   </>
                 </FeedLoop>

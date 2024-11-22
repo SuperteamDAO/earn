@@ -25,7 +25,7 @@ export default function BountiesPage() {
       <Meta
         title="Solar Earn | Discover Bounties and Grants in Crypto for Design, Development, and Content"
         description="Explore the latest bounties on Solar Earn, offering opportunities in the crypto space across Design, Development, and Content."
-        canonical="https://earn.superteam.fun/bounties/"
+        canonical=""
       />
       <Box w={'100%'}>
         <ListingTabs

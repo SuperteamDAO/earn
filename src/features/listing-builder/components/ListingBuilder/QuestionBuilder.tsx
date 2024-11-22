@@ -50,7 +50,7 @@ const QuestionCard = ({ register, index, remove }: QuestionCardProps) => {
         <Flex gap="4">
           <Input
             {...register(`eligibility.${index}.question`)}
-            placeholder="Enter your question here"
+            placeholder=""
           />
           {index > 0 && (
             <Button colorScheme="red" onClick={() => remove(index)}>

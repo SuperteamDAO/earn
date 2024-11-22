@@ -136,7 +136,7 @@ export function SelectHackathon({
       components={{ SingleValue, Option }}
       value={selectedHackathon}
       onChange={(e) => handleChange(e)}
-      placeholder="Select Hackathon"
+      placeholder=""
       loadOptions={loadHackathons}
       defaultOptions
       isClearable={false}

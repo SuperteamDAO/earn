@@ -35,7 +35,6 @@ import { PulseIcon } from '@/svg/pulse-icon';
 import { dayjs } from '@/utils/dayjs';
 
 import { ListingTabLink } from './ListingTabLink';
-import { RegionLabel } from './RegionLabel';
 import { ListingHeaderSeparator } from './Separator';
 import { StatusBadge } from './StatusBadge';
 import { SubscribeListing } from './SubscribeListing';
@@ -256,8 +255,8 @@ export function ListingHeader({
           <ListingStatus />
         </Flex>
         <PrivateLabel />
-        <ListingHeaderSeparator />
-        <RegionLabel region={region} />
+        {/* <ListingHeaderSeparator /> */}
+        {/* <RegionLabel region={region} /> */}
         <CommentCount />
       </Flex>
     );

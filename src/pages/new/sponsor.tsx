@@ -106,7 +106,7 @@ const CreateSponsor = () => {
         <Meta
           title="创建项目方 | Solar Earn"
           description="Solana生态的项目机会都在这里！"
-          canonical="https://earn.superteam.fun/new/sponsor/"
+          canonical=""
         />
       }
     >
@@ -200,7 +200,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="sponsorname"
-                    placeholder=" Stark Industries"
+                    placeholder=""
                     {...register('sponsorname')}
                     isInvalid={isSponsorNameInvalid}
                     onChange={(e) => setSponsorName(e.target.value)}
@@ -240,7 +240,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="slug"
-                    placeholder="starkindustries"
+                    placeholder=""
                     {...register('slug')}
                     isInvalid={isInvalid}
                     onChange={(e) => setSlug(e.target.value)}
@@ -277,7 +277,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="sponsorurl"
-                    placeholder="https://starkindustries.com"
+                    placeholder=""
                     {...register('sponsorurl')}
                   />
                   <FormErrorMessage>
@@ -302,7 +302,7 @@ const CreateSponsor = () => {
                     borderColor={'brand.slate.300'}
                     _placeholder={{ color: 'brand.slate.300' }}
                     id="twitterHandle"
-                    placeholder="@StarkIndustries"
+                    placeholder=""
                     {...register('twitterHandle')}
                   />
                   <FormErrorMessage>

@@ -512,7 +512,7 @@ export const VerifyPaymentModal = ({
                                 _placeholder={{
                                   color: 'brand.slate.400',
                                 }}
-                                placeholder="Paste your link here"
+                                placeholder=""
                               />
                             )}
                             <FormErrorMessage>

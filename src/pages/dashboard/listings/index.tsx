@@ -195,7 +195,7 @@ export default function SponsorListings() {
       <Flex justify="space-between" w="100%" mb={4}>
         <Flex align="center" gap={3}>
           <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
-            My Listings
+            我的列表
           </Text>
           <Divider
             h="60%"
@@ -307,7 +307,7 @@ export default function SponsorListings() {
               }}
               focusBorderColor="brand.purple"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
-              placeholder="Search listing..."
+              placeholder=""
               type="text"
             />
             <InputLeftElement pointerEvents="none">

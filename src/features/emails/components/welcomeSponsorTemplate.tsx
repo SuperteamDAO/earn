@@ -7,7 +7,7 @@ import { styles } from '../utils';
 export const WelcomeSponsorTemplate = () => {
   return (
     <div style={styles.container}>
-      <p style={styles.text}>Welcome to Solar Earn!</p>
+      <p style={styles.text}> 欢迎来到 Solar Earn !</p>
       <p style={styles.textWithMargin}>
         Thank you for signing up. Earn is the premier talent-matching platform
         in crypto, favoured by hundreds of leading companies and thousands of

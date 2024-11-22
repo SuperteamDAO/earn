@@ -174,7 +174,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               }}
               focusBorderColor="brand.purple"
               id="username"
-              placeholder="Username"
+              placeholder=""
               {...register('username', { required: true })}
               isInvalid={isInvalid}
               maxLength={40}
@@ -200,7 +200,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               }}
               focusBorderColor="brand.purple"
               id="firstName"
-              placeholder="First Name"
+              placeholder=""
               {...register('firstName', { required: true })}
               maxLength={100}
             />
@@ -215,7 +215,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               }}
               focusBorderColor="brand.purple"
               id="lastName"
-              placeholder="Last Name"
+              placeholder=""
               {...register('lastName', { required: true })}
               maxLength={100}
             />
@@ -233,7 +233,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               }}
               focusBorderColor="brand.purple"
               id={'location'}
-              placeholder="Select your Country"
+              placeholder=""
               {...register('location', { required: true })}
             >
               {CountryList.map((ct) => {
@@ -335,7 +335,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               autoComplete="off"
               focusBorderColor="brand.purple"
               id={'publicKey'}
-              placeholder="Enter your Solana wallet address"
+              placeholder=""
               required
               {...register('publicKey', {
                 validate: (value) => {
@@ -357,7 +357,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
           subSkills={subSkills}
           setSkills={setSkills}
           setSubSkills={setSubSkills}
-          helperText="We will send email notifications of new listings for your selected skills"
+          helperText="我们将发送新项目的电子邮件通知，针对您选择的技能。"
         />
         <Button
           className="ph-no-capture"
@@ -370,7 +370,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
           spinnerPlacement="start"
           type="submit"
         >
-          Continue
+          继续
         </Button>
       </form>
     </Box>

@@ -287,7 +287,7 @@ export default function Hackathon() {
             }}
             focusBorderColor="brand.purple"
             onChange={(e) => debouncedSetSearchText(e.target.value)}
-            placeholder="Search listing..."
+            placeholder=""
             type="text"
           />
           <InputLeftElement pointerEvents="none">

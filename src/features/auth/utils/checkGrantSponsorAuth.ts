@@ -21,6 +21,7 @@ export const checkGrantSponsorAuth = async (
     };
   }
 
+  // TODO GOD Mode
   if (grant.sponsorId !== userSponsorId) {
     logger.warn(
       `User's sponsor ID does not match grant's sponsor ID for grant ID: ${grantId}`,

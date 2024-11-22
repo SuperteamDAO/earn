@@ -50,7 +50,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
     slug.charAt(0).toUpperCase() + slug.slice(1).toLowerCase();
 
   const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on Solar Earn.`;
-  const canonicalURL = `https://earn.superteam.fun/category/${slug}/`;
+  const canonicalURL = `/category/${slug}/`;
 
   return (
     <Home type="category">
@@ -73,7 +73,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
         <ListingSection
           type="grants"
           title={`${formattedSlug} Grants`}
-          sub="Equity-free funding opportunities for builders"
+          sub="为建设者提供资金支持"
           emoji="/assets/home/emojis/grants.webp"
           showViewAll
         >
@@ -85,8 +85,8 @@ function ListingCategoryPage({ slug }: { slug: string }) {
           {!isGrantsLoading && !grants?.length && (
             <Flex align="center" justify="center" mt={8}>
               <EmptySection
-                title="No grants available!"
-                message="Subscribe to notifications to get notified about new grants."
+                title="暂无资助可申请！"
+                message="订阅通知以便接收关于新资助项目的通知。"
               />
             </Flex>
           )}

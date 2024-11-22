@@ -129,7 +129,7 @@ export const RecordPaymentModal = ({
                     required: 'This field is required',
                     setValueAs: (value) => parseFloat(value),
                   })}
-                  placeholder="Enter amount"
+                  placeholder=""
                 />
               </NumberInput>
               <FormErrorMessage>
@@ -140,11 +140,7 @@ export const RecordPaymentModal = ({
               <FormLabel color="brand.slate.500" fontSize={'0.95rem'}>
                 Transaction Link
               </FormLabel>
-              <Input
-                mt={-1}
-                {...register('transactionLink')}
-                placeholder="Enter transaction link"
-              />
+              <Input mt={-1} {...register('transactionLink')} placeholder="" />
               <FormErrorMessage>
                 {errors.transactionLink && (
                   <p>{errors.transactionLink.message}</p>

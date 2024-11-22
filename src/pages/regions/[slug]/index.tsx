@@ -39,7 +39,7 @@ const RegionsPage = ({
         <Meta
           title={`Welcome to Solar Earn ${displayName} | Discover Bounties and Grants`}
           description={`Welcome to Solar ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
-          canonical={`https://earn.superteam.fun/regions/${slug}/`}
+          canonical=""
           og={ogImage.toString()}
         />
         <Box w={'100%'}>
@@ -56,7 +56,7 @@ const RegionsPage = ({
           <ListingSection
             type="grants"
             title="Grants"
-            sub="Equity-free funding opportunities for builders"
+            sub="为建设者提供资金支持"
             emoji="/assets/home/emojis/grants.webp"
           >
             {isListingsLoading && (
@@ -72,8 +72,8 @@ const RegionsPage = ({
             {!isListingsLoading && !listings?.grants?.length && (
               <Flex align="center" justify="center" mt={8}>
                 <EmptySection
-                  title="No grants available!"
-                  message="Subscribe to notifications to get notified about new grants."
+                  title="暂无资助可申请！"
+                  message="订阅通知以便接收关于新资助项目的通知。"
                 />
               </Flex>
             )}

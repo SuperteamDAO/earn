@@ -33,58 +33,53 @@ type SocialInputProps = {
 
 export const socials = [
   {
-    name: 'discord',
-    placeholder: 'johncena',
-    icon: FaDiscord,
-    required: true,
-  },
-  {
-    name: 'twitter',
-    label: 'x.com/',
-    placeholder: 'johncena',
-    icon: FaXTwitter,
-    prefix: 'https://x.com/',
-  },
-  {
-    name: 'github',
-    label: 'github.com/',
-    placeholder: 'johncena',
-    icon: FaGithub,
-    prefix: 'https://github.com/',
-  },
-  {
-    name: 'linkedin',
-    label: 'linkedin.com/in/',
-    placeholder: 'johncena',
-    icon: FaLinkedin,
-    prefix: 'https://linkedin.com/in/',
-  },
-  {
     name: 'telegram',
     label: 't.me/',
-    placeholder: 'tonystark',
+    placeholder: '',
     icon: FaTelegram,
     prefix: 'https://t.me/',
     required: true,
   },
   {
     name: 'wechat',
-    placeholder: 'wechat id',
+    placeholder: '',
     icon: FaWeixin,
   },
   {
+    name: 'twitter',
+    label: 'x.com/',
+    placeholder: '',
+    icon: FaXTwitter,
+    prefix: 'https://x.com/',
+  },
+  {
+    name: 'github',
+    label: 'github.com/',
+    placeholder: '',
+    icon: FaGithub,
+    prefix: 'https://github.com/',
+  },
+  {
+    name: 'linkedin',
+    label: 'linkedin.com/in/',
+    placeholder: '',
+    icon: FaLinkedin,
+    prefix: 'https://linkedin.com/in/',
+  },
+  {
+    name: 'discord',
+    placeholder: '',
+    icon: FaDiscord,
+  },
+  {
     name: 'website',
-    placeholder: 'https://starkindustries.com',
+    placeholder: '',
     icon: FaGlobe,
   },
 ];
 
 export const SocialInput = ({ register, watch }: SocialInputProps) => {
   const validateSocial = (value: string, name: string) => {
-    if (name === 'discord' && !value) {
-      toast.error('Discord is required');
-      return false;
-    }
     if (name === 'telegram' && !value) {
       toast.error('Telegram is required');
       return false;
@@ -210,7 +205,7 @@ export const SocialInput = ({ register, watch }: SocialInputProps) => {
                   color: 'brand.slate.300',
                 }}
                 focusBorderColor="brand.purple"
-                placeholder={placeholder}
+                placeholder=""
                 value={displayValue}
                 {...register(name, {
                   validate: (value) => validateSocial(value, name),

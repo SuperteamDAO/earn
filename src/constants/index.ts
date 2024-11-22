@@ -35,7 +35,7 @@ export const skillMap: SkillMap[] = [
 ];
 
 export const IndustryList = [
-  'DAO组织',
+  'DAO 组织',
   '去中心化金融',
   '基础设施',
   '去中心化物理基础设施网络',
@@ -738,4 +738,4 @@ export const MAX_BONUS_SPOTS = 50;
 export const BONUS_REWARD_POSITION = 99;
 
 export const PDTG = 'https://t.me/cryptosheep1/';
-export const ABTG = 'https://t.me/abhwshek/';
+export const ABTG = 'https://t.me/cryptosheep1/';

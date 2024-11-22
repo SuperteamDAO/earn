@@ -27,7 +27,7 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
   const titleKey = slug as SlugKeys;
   const title = titlesForSlugs[titleKey] || 'Solar Earn';
   const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on Solar Earn.`;
-  const canonicalURL = `https://earn.superteam.fun/category/${slug}/all`;
+  const canonicalURL = `/category/${slug}/all`;
 
   return (
     <Home type="category">

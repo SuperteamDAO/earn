@@ -24,18 +24,19 @@ export const getRegionTooltipLabel = (
   region: string | undefined,
   isGrant: boolean = false,
 ) => {
-  const country = countries.find(
-    (country) => country.name.toLowerCase() === region?.toLowerCase(),
-  )?.name;
+  return 'This listing is open to everyone in the world!';
+  // const country = countries.find(
+  //   (country) => country.name.toLowerCase() === region?.toLowerCase(),
+  // )?.name;
 
-  switch (region) {
-    case 'GLOBAL':
-      return 'This listing is open to everyone in the world!';
-    case 'BALKAN':
-      return `You need to be a resident of one of the Balkan countries to be able to participate in this ${isGrant ? 'grant' : 'listing'}`;
-    default:
-      return `You need to be a resident of ${country} to participate in this ${isGrant ? 'grant' : 'listing'} `;
-  }
+  // switch (region) {
+  //   case 'GLOBAL':
+  //     return 'This listing is open to everyone in the world!';
+  //   case 'BALKAN':
+  //     return `You need to be a resident of one of the Balkan countries to be able to participate in this ${isGrant ? 'grant' : 'listing'}`;
+  //   default:
+  //     return `You need to be a resident of ${country} to participate in this ${isGrant ? 'grant' : 'listing'} `;
+  // }
 };
 
 export const getListingDraftStatus = (

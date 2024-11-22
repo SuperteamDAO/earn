@@ -356,7 +356,7 @@ export const Comment = ({
                     color: 'brand.slate.400',
                   }}
                   focusBorderColor="brand.purple"
-                  placeholder="Write a comment"
+                  placeholder=""
                   value={newReply}
                   setValue={setNewReply}
                   variant="flushed"

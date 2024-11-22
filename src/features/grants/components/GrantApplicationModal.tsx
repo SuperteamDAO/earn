@@ -116,8 +116,8 @@ export const GrantApplicationModal = ({
       projectDetails: grantApplication?.projectDetails || '',
       projectTimeline: grantApplication?.projectTimeline
         ? dayjs(grantApplication?.projectTimeline, 'D MMMM YYYY').format(
-            'YYYY-MM-DD',
-          )
+          'YYYY-MM-DD',
+        )
         : '',
       proofOfWork: grantApplication?.proofOfWork || '',
       milestones: grantApplication?.milestones || '',
@@ -127,10 +127,10 @@ export const GrantApplicationModal = ({
         : extractTwitterUsername(user?.twitter || '') || '',
       ...(grantApplication?.answers
         ? Object.fromEntries(
-            (grantApplication.answers as unknown as EligibilityAnswer[]).map(
-              (answer, index) => [`answer-${index + 1}`, answer.answer],
-            ),
-          )
+          (grantApplication.answers as unknown as EligibilityAnswer[]).map(
+            (answer, index) => [`answer-${index + 1}`, answer.answer],
+          ),
+        )
         : {}),
     },
   });
@@ -326,7 +326,7 @@ export const GrantApplicationModal = ({
                   id="projectTitle"
                   label="Project Title"
                   helperText="What should we call your project?"
-                  placeholder="Project Title"
+                  placeholder=""
                   register={register}
                   watch={watch}
                   errors={errors}
@@ -338,7 +338,7 @@ export const GrantApplicationModal = ({
                   label="One-Liner Description"
                   helperText="Describe your idea in one sentence."
                   maxLength={150}
-                  placeholder="Sum up your project in one sentence"
+                  placeholder=""
                   register={register}
                   watch={watch}
                   errors={errors}
@@ -378,7 +378,7 @@ export const GrantApplicationModal = ({
                       focusBorderColor="brand.purple"
                       id="ask"
                       onWheel={(e) => (e.target as HTMLElement).blur()}
-                      placeholder="Enter amount"
+                      placeholder=""
                       {...register('ask')}
                       type="number"
                     />
@@ -405,7 +405,7 @@ export const GrantApplicationModal = ({
                       </Text>{' '}
                     </>
                   }
-                  placeholder="Add your Solana wallet address"
+                  placeholder=""
                   register={register}
                   errors={errors}
                   defaultValue={user?.publicKey}
@@ -419,7 +419,7 @@ export const GrantApplicationModal = ({
                   id="projectDetails"
                   label="Project Details"
                   helperText="What is the problem you're trying to solve, and how you're going to solve it?"
-                  placeholder="Explain the problem you're solving and your solution"
+                  placeholder=""
                   control={control}
                   isRequired
                 />
@@ -464,7 +464,7 @@ export const GrantApplicationModal = ({
                     focusBorderColor="brand.purple"
                     id="projectTimeline"
                     min={date}
-                    placeholder="deadline"
+                    placeholder=""
                     type={'date'}
                     {...register('projectTimeline', { required: true })}
                   />
@@ -474,7 +474,7 @@ export const GrantApplicationModal = ({
                   id="proofOfWork"
                   label="Proof of Work"
                   helperText="Include links to your best work that will make the community trust you to execute on this project."
-                  placeholder="Provide links to your portfolio or previous work"
+                  placeholder=""
                   control={control}
                   isRequired
                 />
@@ -544,7 +544,7 @@ export const GrantApplicationModal = ({
                         }
                         focusBorderColor="brand.purple"
                         id="twitter"
-                        placeholder={'johncena'}
+                        placeholder=""
                         {...register('twitter', {
                           validate: (value) => {
                             if (
@@ -579,7 +579,7 @@ export const GrantApplicationModal = ({
                   id="milestones"
                   label="Goals and Milestones"
                   helperText="List down the things you hope to achieve by the end of project duration."
-                  placeholder="Outline your project goals and milestones"
+                  placeholder=""
                   control={control}
                   isRequired
                   h="8rem"
@@ -588,7 +588,7 @@ export const GrantApplicationModal = ({
                   id="kpi"
                   label="Primary Key Performance Indicator"
                   helperText="What metric will you track to indicate success/failure of the project? At what point will it be a success? Could be anything, e.g. installs, users, views, TVL, etc."
-                  placeholder="What's the key metric for success?"
+                  placeholder=""
                   control={control}
                   isRequired
                   h="8rem"

@@ -125,7 +125,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         Rank: user.rank,
         Name: `${user.firstName} ${user.lastName}`,
         'Email ID': user.email,
-        'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
+        'Profile Link': `/t/${user.username}`,
         Wins: user.wins,
         Submissions: user.totalSubmissions,
         'Total Earnings': `$${user.totalEarnings.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`,

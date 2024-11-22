@@ -16,7 +16,6 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import {
   ListingHeaderSeparator,
   ListingTabLink,
-  RegionLabel,
   StatusBadge,
 } from '@/features/listings';
 import { PulseIcon } from '@/svg/pulse-icon';
@@ -146,8 +145,8 @@ export const GrantsHeader = ({
                 textColor={statusTextColor}
                 text={statusText}
               />
-              <ListingHeaderSeparator />
-              <RegionLabel region={region} isGrant />
+              {/* <ListingHeaderSeparator /> */}
+              {/* <RegionLabel region={region} isGrant /> */}
             </Flex>
           </VStack>
         </HStack>

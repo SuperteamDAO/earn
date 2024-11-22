@@ -42,7 +42,7 @@ export const ReferenceCard = ({ register, index, errors }: Props) => {
               color: 'brand.slate.300',
             }}
             focusBorderColor="brand.purple"
-            placeholder="https://superteam.fun/"
+            placeholder=""
           />
           <FormErrorMessage>
             {errors.references?.[index]?.link?.message}
@@ -61,7 +61,7 @@ export const ReferenceCard = ({ register, index, errors }: Props) => {
               color: 'brand.slate.300',
             }}
             focusBorderColor="brand.purple"
-            placeholder="Solar Landing Page"
+            placeholder=""
           />
           <FormErrorMessage>
             {errors.references?.[index]?.title?.message}

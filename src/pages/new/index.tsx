@@ -111,7 +111,7 @@ export default function NewProfilePage({
         <Meta
           title="Make Your Profile | Earn on Solar | Connect with Crypto Talent"
           description="Join Solar to engage with top talent and discover bounties and grants for your crypto projects."
-          canonical="https://earn.superteam.fun/new/"
+          canonical=""
         />
       }
     >
