@@ -13,4 +13,6 @@ const fetchUserCount = async (): Promise<TotalType> => {
 export const userCountQuery = queryOptions({
   queryKey: ['user-count'],
   queryFn: fetchUserCount,
+  staleTime: 1000 * 60 * 60,
+  gcTime: 1000 * 60 * 60 * 2,
 });

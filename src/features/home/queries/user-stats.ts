@@ -16,4 +16,5 @@ export const userStatsQuery = queryOptions({
   queryKey: ['userStats'],
   queryFn: fetchUserStats,
   retry: false,
+  staleTime: 1000 * 60 * 60,
 });

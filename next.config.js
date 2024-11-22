@@ -31,6 +31,15 @@ const nextConfig = {
     ],
     formats: ['image/avif', 'image/webp'],
   },
+  experimental: {
+    optimizePackageImports: [
+      '@chakra-ui/react',
+      '@chakra-ui/icons',
+      '@radix-ui/react-icons',
+      'framer-motion',
+      'flag-icons',
+    ],
+  },
   async headers() {
     const headers = [];
 
