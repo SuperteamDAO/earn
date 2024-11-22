@@ -1,4 +1,8 @@
-import { Alert, AlertIcon, Button, Link } from '@chakra-ui/react';
+import { AlertTriangle } from 'lucide-react';
+import Link from 'next/link';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 
 export function TalentButton({
   showMessage,
@@ -12,24 +16,24 @@ export function TalentButton({
   return (
     <>
       {!!showMessage && (
-        <Alert mb={4} status="warning">
-          <AlertIcon />
-          Please log in to continue!
+        <Alert variant="default" className="mb-4">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>Please log in to continue!</AlertDescription>
         </Alert>
       )}
-      <Link>
+      <Link href="#" className="block">
         <Button
-          w={'full'}
-          h={12}
-          color={'white'}
-          bg={'brand.purple.dark'}
-          _hover={{ bg: 'brand.purple' }}
-          isLoading={!!isLoading}
-          loadingText="Redirecting..."
+          className="h-12 w-full rounded bg-brand-purple text-white hover:bg-brand-purple-dark"
           onClick={() => checkTalent()}
-          rounded="4px"
+          disabled={isLoading}
         >
-          Continue as talent {'->'}
+          {isLoading ? (
+            'Redirecting...'
+          ) : (
+            <>
+              Continue as talent <span className="ml-1">-&gt;</span>
+            </>
+          )}
         </Button>
       </Link>
     </>

@@ -1,4 +1,3 @@
-import { Flex, type FlexProps, Link } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -9,6 +8,7 @@ import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 import { regionLiveCountQuery } from '../queries/region-live-count';
 
@@ -22,38 +22,27 @@ interface PillTabProps {
 function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
   const router = useRouter();
   const posthog = usePostHog();
+  const isActive = router.asPath === href || altActive?.includes(router.asPath);
+
   return (
-    <Link
-      className="ph-no-capture"
-      as={NextLink}
-      alignItems="center"
-      gap={2}
-      display="flex"
-      px={3}
-      py={{ base: 0, sm: 0.5 }}
-      color={router.asPath === href ? 'black' : 'brand.slate.500'}
-      fontSize={'sm'}
-      bg={
-        router.asPath === href || altActive?.includes(router.asPath)
-          ? '#F5F3FF'
-          : 'white'
-      }
-      borderWidth={1}
-      borderColor="brand.slate.200"
-      _hover={{
-        textDecoration: 'none',
-        bg: '#F5F3FF',
-      }}
+    <NextLink
       href={href}
+      className={cn(
+        'ph-no-capture flex items-center gap-2 px-3 py-0 sm:py-0.5',
+        'rounded-full border border-slate-200 text-sm',
+        'hover:bg-[#F5F3FF] hover:no-underline',
+        isActive ? 'bg-[#F5F3FF] text-black' : 'bg-white text-slate-500',
+      )}
       onClick={() => posthog.capture(phEvent)}
-      rounded="full"
     >
       {children}
-    </Link>
+    </NextLink>
   );
 }
 
-export function NavTabs({ ...flexProps }: FlexProps) {
+interface NavTabsProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+export function NavTabs({ className, ...props }: NavTabsProps) {
   const { user } = useUser();
 
   const superteam = useMemo(() => {
@@ -77,22 +66,16 @@ export function NavTabs({ ...flexProps }: FlexProps) {
   const showRegionTab = region && (regionLiveCount?.count ?? 0) > 0;
 
   return (
-    <Flex
-      align="center"
-      wrap="wrap"
-      rowGap={2}
-      columnGap={3}
-      mb={6}
-      {...flexProps}
+    <div
+      className={cn(
+        'mb-6 flex flex-wrap items-center gap-x-3 gap-y-2',
+        className,
+      )}
+      {...props}
     >
       <PillTab href="/" altActive={['/all/']} phEvent="all_navpill">
         All Opportunities
       </PillTab>
-      {/* <Hide above="md">
-        <PillTab href="/hackathon/radar" phEvent="radar_navpill">
-          Radar 📡
-        </PillTab>
-      </Hide> */}
       {showRegionTab && (
         <PillTab
           href={`/regions/${region.toLowerCase()}/`}
@@ -105,15 +88,15 @@ export function NavTabs({ ...flexProps }: FlexProps) {
       {CATEGORY_NAV_ITEMS?.map((navItem) => {
         return (
           <PillTab
+            key={navItem.label}
             altActive={navItem.altActive}
             href={navItem.href}
             phEvent={navItem.pillPH}
-            key={navItem.label}
           >
             {navItem.label}
           </PillTab>
         );
       })}
-    </Flex>
+    </div>
   );
 }

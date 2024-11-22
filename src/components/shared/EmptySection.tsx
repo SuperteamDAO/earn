@@ -1,4 +1,3 @@
-import { Flex, Text } from '@chakra-ui/react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 
 export function EmptySection({
@@ -11,18 +10,18 @@ export function EmptySection({
   showNotifSub?: boolean;
 }) {
   return (
-    <Flex align={'center'} justify="center" w="full">
-      <Flex align={'center'} justify="center" direction={'column'}>
-        <AiOutlineInfoCircle fontSize={52} color="#94a3b8" />
-        <Text mt={2} color="brand.slate.400" fontSize="lg" fontWeight={700}>
+    <div className="flex w-full items-center justify-center">
+      <div className="flex flex-col items-center justify-center">
+        <AiOutlineInfoCircle size={52} className="text-slate-400" />
+        <span className="mt-2 text-lg font-bold text-slate-400">
           {title || 'Sorry! Nothing found'}
-        </Text>
+        </span>
         {showNotifSub && (
-          <Text mt={2} color="brand.slate.300">
+          <span className="mt-2 text-slate-300">
             {message || 'Something went wrong! Please try again!'}
-          </Text>
+          </span>
         )}
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   );
 }

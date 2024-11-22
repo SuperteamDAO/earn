@@ -34,7 +34,6 @@ import {
   NumberInputStepper,
   Select,
   Text,
-  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { produce } from 'immer';
@@ -51,6 +50,7 @@ import {
   tokenList,
 } from '@/constants';
 import { type Rewards } from '@/features/listings';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import {
   cleanRewardPrizes,
   cleanRewards,

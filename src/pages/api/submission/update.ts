@@ -15,10 +15,16 @@ async function updateSubmission(
   data: any,
   listing: any,
 ) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
   const validationResult = submissionSchema(
     listing,
     listing.minRewardAsk || 0,
     listing.maxRewardAsk || 0,
+    user as any,
   ).safeParse(data);
 
   if (!validationResult.success) {
@@ -26,6 +32,17 @@ async function updateSubmission(
   }
 
   const validatedData = validationResult.data;
+
+  if (validatedData.publicKey) {
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        publicKey: validatedData.publicKey,
+      },
+    });
+  }
 
   const existingSubmission = await prisma.submission.findFirst({
     where: { userId, listingId },

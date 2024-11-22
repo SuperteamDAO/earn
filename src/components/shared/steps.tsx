@@ -1,6 +1,7 @@
-import { CheckIcon } from '@chakra-ui/icons';
-import { Box, Flex, Text } from '@chakra-ui/react';
-import React, { type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
+import { AiOutlineCheck } from 'react-icons/ai';
+
+import { cn } from '@/utils';
 
 interface Props {
   currentStep: number;
@@ -9,60 +10,60 @@ interface Props {
   sublabel?: string;
   setStep?: Dispatch<SetStateAction<number>>;
 }
+
 export const Steps = ({ currentStep, thisStep, label, setStep }: Props) => {
   const handleChange = () => {
     if (currentStep > thisStep && setStep) {
       setStep(thisStep);
     }
   };
+
+  const isActive = currentStep === thisStep;
+  const isCompleted = currentStep > thisStep;
+
   return (
-    <Box
-      pos="relative"
-      alignItems={'center'}
-      justifyContent={'center'}
-      display={'flex'}
-      h={'6rem'}
-      cursor={currentStep > thisStep ? 'pointer' : 'default'}
+    <div
+      className={cn(
+        'relative flex h-24 items-center justify-center',
+        currentStep > thisStep ? 'cursor-pointer' : 'cursor-default',
+      )}
       onClick={handleChange}
     >
-      <Flex
-        align={'center'}
-        justify="center"
-        w="2.3rem"
-        h="2.3rem"
-        color="white"
-        bg={currentStep >= thisStep ? '#6562FF' : 'transparent'}
-        border={currentStep > thisStep - 1 ? 'none' : '1px solid #94A3B8'}
-        borderRadius="full"
+      <div
+        className={cn(
+          'flex h-[2.3rem] w-[2.3rem] items-center justify-center rounded-full',
+          currentStep >= thisStep
+            ? 'bg-[#6562FF] text-white'
+            : 'bg-transparent',
+          currentStep <= thisStep - 1 && 'border border-slate-400',
+        )}
       >
-        {currentStep > thisStep ? (
-          <CheckIcon color="white" />
+        {isCompleted ? (
+          <AiOutlineCheck className="text-white" size={16} />
         ) : (
-          <Flex>
-            <Text
-              h="100%"
-              color={currentStep === thisStep ? 'white' : 'brand.slate.500'}
-              fontSize="1rem"
-              textAlign="center"
+          <div className="flex">
+            <span
+              className={cn(
+                'h-full text-center text-base',
+                isActive ? 'text-white' : 'text-slate-500',
+              )}
             >
               {thisStep}
-            </Text>
-          </Flex>
+            </span>
+          </div>
         )}
-      </Flex>
-      <Text
-        pos="absolute"
-        bottom={0}
-        alignItems={'center'}
-        justifyContent={'center'}
-        display={'flex'}
-        w={'max-content'}
-        color={currentStep === thisStep ? 'brand.purple' : 'brand.slate.500'}
-        fontSize={{ base: '0.9rem', md: '1rem' }}
-        fontWeight={currentStep === thisStep ? 600 : 500}
+      </div>
+      <span
+        className={cn(
+          'absolute bottom-0 flex w-max items-center justify-center',
+          'text-[0.9rem] md:text-base',
+          isActive
+            ? 'font-semibold text-brand-purple'
+            : 'font-medium text-slate-500',
+        )}
       >
         {label}
-      </Text>
-    </Box>
+      </span>
+    </div>
   );
 };

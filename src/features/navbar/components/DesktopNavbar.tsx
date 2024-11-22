@@ -1,36 +1,22 @@
-import { SearchIcon } from '@chakra-ui/icons';
-import {
-  AbsoluteCenter,
-  Box,
-  Button,
-  Divider,
-  Flex,
-  HStack,
-  Image,
-  Link,
-  SkeletonCircle,
-  SkeletonText,
-  Stack,
-  Text,
-} from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React from 'react';
+import { IoSearchOutline } from 'react-icons/io5';
+
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/utils';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
+import { UserMenu } from './UserMenu';
 
 interface Props {
   onLoginOpen: () => void;
   onSearchOpen: () => void;
 }
-
-const UserMenu = dynamic(() =>
-  import('./UserMenu').then((mod) => mod.UserMenu),
-);
 
 const LogoContextMenu = dynamic(() =>
   import('./LogoContextMenu').then((mod) => mod.LogoContextMenu),
@@ -42,82 +28,49 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const posthog = usePostHog();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const maxWValue = isDashboardRoute ? '' : '7xl';
+  const maxWidth = isDashboardRoute ? 'max-w-full' : 'max-w-7xl';
 
   return (
-    <Flex
-      display={{ base: 'none', lg: 'flex' }}
-      px={{ base: '2', lg: 6 }}
-      color="brand.slate.500"
-      bg="white"
-      borderBottom="1px solid"
-      borderBottomColor="blackAlpha.200"
-    >
-      <Flex justify={'space-between'} w="100%" maxW={maxWValue} mx="auto">
-        <Flex align="center" gap={{ base: 3, lg: 6 }}>
+    <div className="hidden border-b border-slate-200 bg-white px-2 text-slate-500 lg:flex lg:px-6">
+      <div className={cn('mx-auto flex w-full justify-between', maxWidth)}>
+        <div className="flex items-center gap-3 lg:gap-6">
           <LogoContextMenu>
-            <Link
-              as={NextLink}
-              alignItems={'center'}
-              gap={3}
-              display={'flex'}
-              mr={5}
-              _hover={{ textDecoration: 'none' }}
+            <NextLink
               href="/"
+              className="mr-5 flex items-center gap-3 hover:no-underline"
               onClick={() => {
                 posthog.capture('homepage logo click_universal');
               }}
             >
-              <Image
-                h={5}
-                cursor="pointer"
-                objectFit={'contain'}
-                alt={'Superteam Earn'}
-                src={'/assets/logo/logo.svg'}
+              <img
+                className="h-5 cursor-pointer object-contain"
+                alt="Superteam Earn"
+                src="/assets/logo/logo.svg"
               />
 
               {isDashboardRoute && (
                 <>
-                  <Divider
-                    w={'3px'}
-                    h={'24px'}
-                    borderColor={'brand.slate.400'}
-                    orientation="vertical"
-                  />
-                  <Text fontSize="sm" letterSpacing={'1.5px'}>
-                    SPONSORS
-                  </Text>
+                  <div className="h-6 w-[3px] bg-slate-400" />
+                  <p className="text-sm tracking-[1.5px]">SPONSORS</p>
                 </>
               )}
-            </Link>
+            </NextLink>
           </LogoContextMenu>
 
           {router.pathname !== '/search' && (
             <Button
-              className="ph-no-capture"
-              gap={2}
-              color="brand.slate.400"
-              fontWeight={400}
-              border={'none'}
-              borderColor={'brand.slate.300'}
-              _hover={{
-                bg: 'brand.slate.100',
-              }}
-              onClick={onSearchOpen}
+              className="ph-no-capture gap-2 border-none font-normal text-slate-400 hover:bg-slate-100"
               variant="outline"
+              onClick={onSearchOpen}
             >
-              <SearchIcon />
+              <IoSearchOutline className="h-4 w-4" />
             </Button>
           )}
-        </Flex>
-        <AbsoluteCenter>
-          <Flex align="center" justify={'center'} flexGrow={1} h="full" ml={10}>
-            <Stack
-              className="ph-no-capture"
-              direction={'row'}
-              h="full"
-              spacing={7}
-            >
+        </div>
+
+        <div className="absolute left-1/2 -translate-x-1/2">
+          <div className="ml-10 flex h-full items-center justify-center">
+            <div className="ph-no-capture flex h-full flex-row gap-7">
               {LISTING_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
@@ -133,92 +86,62 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   />
                 );
               })}
-              {/* <Link
-                as={NextLink}
-                alignItems="center"
-                display="flex"
-                href="/hackathon/radar"
-              >
-                <Image
-                  h={'1.1rem'}
-                  objectFit={'contain'}
-                  alt="Radar Nav Icon"
-                  src="/assets/hackathon/radar/nav.png"
-                />
-              </Link> */}
-            </Stack>
-          </Flex>
-        </AbsoluteCenter>
+            </div>
+          </div>
+        </div>
 
-        <Stack
-          align="center"
-          justify={'flex-end'}
-          direction={'row'}
-          flex={1}
-          py={2}
-          spacing={4}
-        >
+        <div className="flex flex-1 items-center justify-end gap-4 py-1.5">
           {status === 'loading' && !session && (
-            <Flex align={'center'} gap={2}>
-              <SkeletonCircle size="10" />
-              <SkeletonText w={'80px'} noOfLines={1} />
-            </Flex>
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="h-4 w-20" />
+            </div>
           )}
 
           {status === 'authenticated' && session && <UserMenu />}
 
           {status === 'unauthenticated' && !session && (
-            <HStack className="ph-no-capture" gap={2}>
-              <HStack gap={0}>
+            <div className="ph-no-capture flex items-center gap-2">
+              <div className="flex items-center gap-0">
                 <Button
-                  fontSize="xs"
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs font-semibold"
                   onClick={() => {
                     posthog.capture('create a listing_navbar');
                     router.push('/sponsor');
                   }}
-                  size="sm"
-                  variant={'ghost'}
                 >
                   Become a Sponsor
-                  <Box
-                    display="block"
-                    w={1.5}
-                    h={1.5}
-                    ml={1.5}
-                    bg="#38BDF8"
-                    rounded="full"
-                  />
+                  <div className="ml-1.5 block h-1.5 w-1.5 rounded-full bg-[#38BDF8]" />
                 </Button>
                 <Button
-                  fontSize="xs"
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs font-semibold"
                   onClick={() => {
                     posthog.capture('login_navbar');
                     onLoginOpen();
                   }}
-                  size="sm"
-                  variant={'ghost'}
                 >
                   Login
                 </Button>
-              </HStack>
+              </div>
               <Button
-                w={'100%'}
-                my={1}
-                px={4}
-                fontSize="xs"
+                variant="default"
+                size="sm"
+                className="my-1 w-full px-4 text-xs font-semibold"
                 onClick={() => {
                   posthog.capture('signup_navbar');
                   onLoginOpen();
                 }}
-                size="sm"
-                variant="solid"
               >
                 Sign Up
               </Button>
-            </HStack>
+            </div>
           )}
-        </Stack>
-      </Flex>
-    </Flex>
+        </div>
+      </div>
+    </div>
   );
 };

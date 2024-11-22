@@ -1,34 +1,38 @@
-import { Link, type LinkProps, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 
-interface NavLinkProps extends LinkProps {
+import { cn } from '@/utils';
+
+interface NavLinkProps extends React.ComponentPropsWithoutRef<typeof NextLink> {
   href: string;
   label: string | JSX.Element;
   isActive: boolean;
+  className?: string;
 }
 
-export const NavLink = ({ href, label, isActive, ...props }: NavLinkProps) => {
-  const styles = {
-    color: isActive ? 'brand.slate.600' : 'brand.slate.500',
-    fontWeight: 500,
-    alignItems: 'center',
-    display: 'flex',
-    h: { base: '8', lg: 14 },
-    py: 2,
-    borderBottom: { base: 'none', lg: isActive ? '1px solid' : 'none' },
-    borderBottomColor: isActive ? 'brand.purple' : 'transparent',
-    _hover: {
-      textDecoration: 'none',
-      color: 'brand.slate.600',
-    },
-    fontSize: { base: 'lg', lg: 'sm' },
-    ...props,
-  };
-
+export const NavLink = ({
+  href,
+  label,
+  isActive,
+  className,
+  ...props
+}: NavLinkProps) => {
   return (
-    <Link as={NextLink} href={href} {...styles}>
-      <Text>{label}</Text>
-    </Link>
+    <NextLink
+      href={href}
+      className={cn(
+        'flex items-center py-2 font-medium',
+        'h-8 lg:h-14',
+        'text-lg lg:text-sm',
+        isActive ? 'text-slate-600' : 'text-slate-500',
+        'hover:text-slate-600 hover:no-underline',
+        'lg:border-b',
+        isActive ? 'lg:border-brand-purple' : 'lg:border-transparent',
+        className,
+      )}
+      {...props}
+    >
+      {label}
+    </NextLink>
   );
 };

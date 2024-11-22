@@ -59,6 +59,16 @@ export const filterRegionCountry = (
             c.toLowerCase() === 'us' || c.toLowerCase() === 'united states',
         ) || [],
     };
+  } else if (country === 'UAE' || country === 'United Arab Emirates') {
+    return {
+      ...region,
+      country:
+        region?.country?.filter(
+          (c) =>
+            c.toLowerCase() === 'uae' ||
+            c.toLowerCase() === 'united arab emirates',
+        ) || [],
+    };
   } else {
     return {
       ...region,

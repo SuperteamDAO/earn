@@ -1,4 +1,3 @@
-import { Box, Flex } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 import { useRouter } from 'next/router';
@@ -60,7 +59,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
         canonical={canonicalURL}
         og={`${router.basePath}/assets/og/categories/${slug}.png`}
       />
-      <Box w={'100%'}>
+      <div className="w-full">
         <ListingTabs
           bounties={listingsData ?? []}
           isListingsLoading={isListingsLoading}
@@ -78,22 +77,22 @@ function ListingCategoryPage({ slug }: { slug: string }) {
           showViewAll
         >
           {isGrantsLoading && (
-            <Flex align="center" justify="center" direction="column" minH={52}>
+            <div className="flex min-h-52 flex-col items-center justify-center">
               <Loading />
-            </Flex>
+            </div>
           )}
           {!isGrantsLoading && !grants?.length && (
-            <Flex align="center" justify="center" mt={8}>
+            <div className="mt-8 flex items-center justify-center">
               <EmptySection
                 title="No grants available!"
                 message="Subscribe to notifications to get notified about new grants."
               />
-            </Flex>
+            </div>
           )}
           {!isGrantsLoading &&
             grants?.map((grant) => <GrantsCard grant={grant} key={grant.id} />)}
         </ListingSection>
-      </Box>
+      </div>
     </Home>
   );
 }

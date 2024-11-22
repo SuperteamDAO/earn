@@ -1,19 +1,12 @@
 import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  FormControl,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Button, Center, Flex, FormControl, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';
 

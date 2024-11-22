@@ -39,7 +39,6 @@ import {
   Thead,
   Tooltip,
   Tr,
-  useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import NextLink from 'next/link';
@@ -64,6 +63,7 @@ import {
   CreateListingModal,
   type SponsorStats,
 } from '@/features/sponsor-dashboard';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';

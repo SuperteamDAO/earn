@@ -1,8 +1,9 @@
-import { Box, useDisclosure } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
+
+import { useDisclosure } from '@/hooks/use-disclosure';
 
 const Login = dynamic(() => import('@/features/auth').then((mod) => mod.Login));
 const SearchModal = dynamic(() =>
@@ -61,18 +62,18 @@ export const Header = () => {
       {!!isLoginOpen && <Login isOpen={isLoginOpen} onClose={onLoginClose} />}
       <BountySnackbar />
       <GrantSnackbar />
-      <Box pos="sticky" zIndex="sticky" top={0}>
+      <div className="sticky top-0 z-40">
         <DesktopNavbar
           onLoginOpen={onLoginOpen}
           onSearchOpen={searchOpenWithEvent}
         />
-      </Box>
+      </div>
 
       <MobileNavbar onLoginOpen={onLoginOpen} />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
-      <Box pos="fixed" zIndex="sticky" bottom={0} w="full">
+      <div className="fixed bottom-0 z-40 w-full">
         <BottomBar onSearchOpen={searchOpenWithEvent} />
-      </Box>
+      </div>
     </>
   );
 };

@@ -1,22 +1,35 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalOverlay,
-  Switch,
-  Text,
-} from '@chakra-ui/react';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogFooter } from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
 import { useUser } from '@/store/user';
+
+interface AlertOptionProps {
+  title: string;
+  category: string;
+  selectedCategories: string[];
+  onCategoryChange: (category: string) => void;
+}
+
+const AlertOption = ({
+  title,
+  category,
+  selectedCategories,
+  onCategoryChange,
+}: AlertOptionProps) => (
+  <div className="flex items-center justify-between">
+    <p className="mt-1 font-medium text-slate-500">{title}</p>
+    <Switch
+      className="mt-0.5"
+      checked={selectedCategories.includes(category)}
+      onCheckedChange={() => onCategoryChange(category)}
+    />
+  </div>
+);
 
 export const EmailSettingsModal = ({
   isOpen,
@@ -26,15 +39,12 @@ export const EmailSettingsModal = ({
   onClose: () => void;
 }) => {
   const { user, refetchUser } = useUser();
-
   const posthog = usePostHog();
 
   const emailSettings = user?.emailSettings || [];
-
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     emailSettings.map((setting) => setting.category),
   );
-
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleCategoryChange = (category: string) => {
@@ -54,7 +64,6 @@ export const EmailSettingsModal = ({
       });
 
       await refetchUser();
-
       setIsUpdating(false);
       onClose();
       toast.success('Email preferences updated');
@@ -68,128 +77,102 @@ export const EmailSettingsModal = ({
   const showSponsorAlerts = user?.currentSponsorId;
   const showTalentAlerts = user?.isTalentFilled;
 
-  const AlertOption = ({
-    title,
-    category,
-  }: {
-    title: string;
-    category: string;
-  }) => (
-    <Flex align="center" justify="space-between">
-      <Text mt={1} color="brand.slate.500" fontWeight={500}>
-        {title}
-      </Text>
-      <Switch
-        mt={0.5}
-        isChecked={selectedCategories.includes(category)}
-        onChange={() => handleCategoryChange(category)}
-      />
-    </Flex>
-  );
-
   return (
-    <>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent p={2}>
-          <ModalCloseButton mt={2} />
-          <ModalBody>
-            <Text color="brand.slate.700" fontSize="2xl" fontWeight={600}>
-              Update Email Preferences
-            </Text>
-            <Text mt={1} color="brand.slate.400" fontWeight={500}>
-              Tell us which emails you would like to receive!
-            </Text>
-            {showSponsorAlerts && (
-              <Box mt={6}>
-                <Text
-                  mt={6}
-                  mb={1}
-                  color="brand.slate.400"
-                  fontSize="sm"
-                  letterSpacing={0.8}
-                >
-                  SPONSOR ALERTS
-                </Text>
-                <AlertOption
-                  title="New submissions received for your listing"
-                  category="submissionSponsor"
-                />
-                <AlertOption
-                  title="Comments Received on your listing"
-                  category="commentSponsor"
-                />
-                <AlertOption
-                  title="Deadline related reminders"
-                  category="deadlineSponsor"
-                />
-              </Box>
-            )}
-            {showTalentAlerts && (
-              <Box mt={6}>
-                <Text
-                  mt={6}
-                  mb={1}
-                  color="brand.slate.400"
-                  fontSize="sm"
-                  letterSpacing={0.8}
-                >
-                  TALENT ALERTS
-                </Text>
-                <AlertOption
-                  title="Weekly Roundup of new listings"
-                  category="weeklyListingRoundup"
-                />
-                <AlertOption
-                  title="New listings added for my skills"
-                  category="createListing"
-                />
-                <AlertOption
-                  title="Likes and comments on my submissions"
-                  category="commentOrLikeSubmission"
-                />
-                <AlertOption
-                  title="Sponsor Invitation Emails (Scout)"
-                  category="scoutInvite"
-                />
-              </Box>
-            )}
-            {(showTalentAlerts || showSponsorAlerts) && (
-              <Box mt={6}>
-                <Text
-                  mt={6}
-                  mb={1}
-                  color="brand.slate.400"
-                  fontSize="sm"
-                  letterSpacing={0.8}
-                >
-                  GENERAL ALERTS
-                </Text>
-                <AlertOption
-                  title="Comment replies and tags"
-                  category="replyOrTagComment"
-                />
-                <AlertOption
-                  title="Product updates and newsletters"
-                  category="productAndNewsletter"
-                />
-              </Box>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              className="ph-no-capture"
-              w="100%"
-              colorScheme="blue"
-              isLoading={isUpdating}
-              loadingText="Updating Preferences.."
-              onClick={updateEmailSettings}
-            >
-              Update Preferences
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="p-2">
+        <div className="p-6">
+          <h2 className="text-2xl font-semibold text-slate-700">
+            Update Email Preferences
+          </h2>
+          <p className="mt-1 font-medium text-slate-400">
+            Tell us which emails you would like to receive!
+          </p>
+          {showSponsorAlerts && (
+            <div className="mt-6">
+              <p className="mb-1 mt-6 text-sm tracking-[0.8px] text-slate-400">
+                SPONSOR ALERTS
+              </p>
+              <AlertOption
+                title="New submissions received for your listing"
+                category="submissionSponsor"
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+              />
+              <AlertOption
+                title="Comments Received on your listing"
+                category="commentSponsor"
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+              />
+              <AlertOption
+                title="Deadline related reminders"
+                category="deadlineSponsor"
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+              />
+            </div>
+          )}
+          {showTalentAlerts && (
+            <div className="mt-6">
+              <p className="mb-1 mt-6 text-sm tracking-[0.8px] text-slate-400">
+                TALENT ALERTS
+              </p>
+              <AlertOption
+                title="Weekly Roundup of new listings"
+                category="weeklyListingRoundup"
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+              />
+              <AlertOption
+                title="New listings added for my skills"
+                category="createListing"
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+              />
+              <AlertOption
+                title="Likes and comments on my submissions"
+                category="commentOrLikeSubmission"
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+              />
+              <AlertOption
+                title="Sponsor Invitation Emails (Scout)"
+                category="scoutInvite"
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+              />
+            </div>
+          )}
+          {(showTalentAlerts || showSponsorAlerts) && (
+            <div className="mt-6">
+              <p className="mb-1 mt-6 text-sm tracking-[0.8px] text-slate-400">
+                GENERAL ALERTS
+              </p>
+              <AlertOption
+                title="Comment replies and tags"
+                category="replyOrTagComment"
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+              />
+              <AlertOption
+                title="Product updates and newsletters"
+                category="productAndNewsletter"
+                selectedCategories={selectedCategories}
+                onCategoryChange={handleCategoryChange}
+              />
+            </div>
+          )}
+        </div>
+        <DialogFooter>
+          <Button
+            className="ph-no-capture mx-5 mb-3 w-full"
+            disabled={isUpdating}
+            onClick={updateEmailSettings}
+          >
+            {isUpdating ? 'Updating Preferences..' : 'Update Preferences'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

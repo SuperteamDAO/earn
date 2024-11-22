@@ -20,7 +20,6 @@ import {
   Link,
   Tag,
   Text,
-  useClipboard,
 } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
@@ -32,6 +31,7 @@ import { toast } from 'sonner';
 import { tokenList } from '@/constants';
 import { type Grant } from '@/features/grants';
 import { getColorStyles, getListingStatus } from '@/features/listings';
+import { useClipboard } from '@/hooks/use-clipboard';
 import { getURL } from '@/utils/validUrl';
 
 import { SponsorPrize } from '../SponsorPrize';

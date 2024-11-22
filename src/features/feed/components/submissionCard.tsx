@@ -133,10 +133,7 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
       ) : (
         <OgImageViewer
           externalUrl={sub?.link ?? ''}
-          w="full"
-          h={{ base: '200px', md: '350px' }}
-          objectFit="cover"
-          borderTopRadius={6}
+          className="h-[200px] w-full rounded-t-md object-cover md:h-[350px]"
           imageUrl={sub?.ogImage}
           type="submission"
           id={sub?.id}

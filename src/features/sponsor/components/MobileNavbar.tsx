@@ -13,7 +13,6 @@ import {
   Image,
   Link,
   Text,
-  useDisclosure,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -21,6 +20,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { useRef } from 'react';
 
 import { UserMenu } from '@/features/navbar';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 
 import { NAV_LINKS } from '../utils';

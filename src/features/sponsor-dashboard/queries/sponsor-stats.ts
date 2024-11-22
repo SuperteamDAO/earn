@@ -13,4 +13,5 @@ export const sponsorStatsQuery = (sponsorId: string | undefined) =>
     queryKey: ['sponsorStats', sponsorId],
     queryFn: fetchSponsorStats,
     enabled: !!sponsorId,
+    staleTime: 1000 * 60 * 60,
   });

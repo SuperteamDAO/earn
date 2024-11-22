@@ -1,8 +1,10 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, HStack, Image, Link, Text } from '@chakra-ui/react';
+import { ArrowRight } from 'lucide-react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
+
+import { Button } from '@/components/ui/button';
+import { cn } from '@/utils';
 
 type ListingSectionProps = {
   children?: React.ReactNode;
@@ -26,128 +28,88 @@ export const ListingSection = ({
   const router = useRouter();
   const posthog = usePostHog();
 
+  const shouldDisplay = router.query.category
+    ? router.query.category === type || router.query.category === 'all'
+    : true;
+
+  const viewAllHref =
+    viewAllLink ||
+    (router?.query?.filter
+      ? `/${type}/${router?.query?.filter}/`
+      : `/${type}/`);
+
+  const showViewAllButton = showViewAll && router?.query?.category !== type;
+
   return (
-    <Box
-      display={
-        router.query.category
-          ? router.query.category === (type as string) ||
-            router.query.category === 'all'
-            ? 'block'
-            : 'none'
-          : 'block'
-      }
-      w={{ md: '100%', base: '98%' }}
-      mx={'auto'}
-      my={10}
+    <div
+      className={cn(
+        'mx-auto my-10 w-[98%] md:w-full',
+        shouldDisplay ? 'block' : 'hidden',
+      )}
     >
-      <HStack
-        align="center"
-        justify="space-between"
-        mb={4}
-        pb={3}
-        borderBottom="2px solid"
-        borderBottomColor="#E2E8F0"
-      >
-        <Flex align={'center'}>
+      <div className="mb-4 flex items-center justify-between border-b-2 border-[#E2E8F0] pb-3">
+        <div className="flex items-center">
           {emoji && (
-            <Image
-              w={'1.4375rem'}
-              h={'1.4375rem'}
-              mr={'0.75rem'}
+            <img
+              className="mr-3 h-[1.4375rem] w-[1.4375rem]"
               alt="emoji"
               src={emoji}
             />
           )}
-          <Text
-            color={'#334155'}
-            fontSize={{ base: 14, md: 16 }}
-            fontWeight={'600'}
-          >
+          <p className="text-sm font-semibold text-[#334155] md:text-base">
             {title}
-          </Text>
-          <Text
-            display={['none', 'none', 'block', 'block']}
-            mx={3}
-            color={'brand.slate.300'}
-            fontSize="xx-small"
-          >
+          </p>
+          <span className="mx-3 hidden text-[0.625rem] text-slate-300 md:block">
             |
-          </Text>
-          <Text
-            display={['none', 'none', 'block', 'block']}
-            color={'brand.slate.400'}
-            fontSize={{ base: 12, md: 14 }}
-          >
+          </span>
+          <p className="hidden text-xs text-slate-400 md:block md:text-sm">
             {sub}
-          </Text>
-        </Flex>
-        <Flex
-          className="ph-no-capture"
-          display={
-            showViewAll && router?.query?.category !== type ? 'block' : 'none'
-          }
+          </p>
+        </div>
+        <div
+          className={cn(
+            'ph-no-capture',
+            showViewAllButton ? 'block' : 'hidden',
+          )}
         >
-          <Link
-            as={NextLink}
-            href={
-              viewAllLink ||
-              (router?.query?.filter
-                ? `/${type}/${router?.query?.filter}/`
-                : `/${type}/`)
-            }
-          >
+          <NextLink href={viewAllHref}>
             <Button
-              color="brand.slate.400"
+              variant="ghost"
+              size="sm"
+              className="text-slate-400"
               onClick={() => {
                 if (type === 'grants') {
                   posthog.capture('grants_viewall_top');
                 }
               }}
-              size="sm"
-              variant="ghost"
             >
               View All
             </Button>
-          </Link>
-        </Flex>
-      </HStack>
-      <Flex direction={'column'} rowGap={'1'}>
-        {children}
-      </Flex>
-      <Flex
-        className="ph-no-capture"
-        display={
-          showViewAll && router?.query?.category !== type ? 'block' : 'none'
-        }
+          </NextLink>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-1">{children}</div>
+
+      <div
+        className={cn('ph-no-capture', showViewAllButton ? 'block' : 'hidden')}
       >
-        <Link
-          as={NextLink}
-          href={
-            viewAllLink ||
-            (router?.query?.filter
-              ? `/${type}/${router?.query?.filter}/`
-              : `/${type}/`)
-          }
-        >
+        <NextLink href={viewAllHref}>
           <Button
-            w="100%"
-            my={8}
-            py={5}
-            color="brand.slate.400"
-            borderColor="brand.slate.300"
+            variant="outline"
+            size="sm"
+            className="my-8 w-full border-slate-300 py-5 text-slate-400"
             onClick={() => {
               if (type === 'grants') {
                 posthog.capture('grants_viewall_bottom');
               }
             }}
-            rightIcon={<ArrowForwardIcon />}
-            size="sm"
-            variant="outline"
           >
             View All
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
-        </Link>
-      </Flex>
-    </Box>
+        </NextLink>
+      </div>
+    </div>
   );
 };

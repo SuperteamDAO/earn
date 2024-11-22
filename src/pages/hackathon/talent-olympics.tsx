@@ -24,7 +24,6 @@ import {
   Text,
   Tooltip,
   useBreakpointValue,
-  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
@@ -45,6 +44,7 @@ import { UserFlag } from '@/components/shared/UserFlag';
 import { tokenList } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import { AuthWrapper } from '@/features/auth';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';

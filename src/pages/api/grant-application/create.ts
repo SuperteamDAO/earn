@@ -12,7 +12,6 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
 async function createGrantApplication(
   userId: string,
@@ -33,11 +32,17 @@ async function createGrantApplication(
 
   const validatedData = validationResult.data;
 
-  const walletValidation = validateSolanaAddress(validatedData.walletAddress);
-  if (!walletValidation.isValid) {
-    throw new Error(
-      walletValidation.error || 'Invalid Solana wallet address provided',
-    );
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { publicKey: true },
+  });
+  if (!user?.publicKey && validatedData.walletAddress) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        publicKey: validatedData.walletAddress,
+      },
+    });
   }
 
   const formattedData = {

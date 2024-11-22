@@ -1,4 +1,3 @@
-import { Box, Flex } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { type ReactNode, useMemo } from 'react';
@@ -18,6 +17,7 @@ interface LiveListingProps {
 }
 
 const SHOW_LIMIT = 5;
+
 export const RelatedListings = ({
   children,
   listingId,
@@ -31,6 +31,7 @@ export const RelatedListings = ({
       listingId,
     }),
   );
+
   const deadline = useMemo(() => dayjs().add(1, 'day').toISOString(), []);
 
   const { data: liveListings } = useQuery({
@@ -47,16 +48,16 @@ export const RelatedListings = ({
   });
 
   return (
-    <Box>
+    <div>
       {children}
-      <Flex direction={'column'} w={'full'} mt={1}>
+      <div className="mt-1 flex w-full flex-col">
         {[
           ...(relatedListings ? relatedListings : []),
           ...(liveListings ? liveListings : []),
-        ]?.map((listing) => {
-          return <ListingCardMobile bounty={listing} key={listing?.id} />;
-        })}
-      </Flex>
-    </Box>
+        ]?.map((listing) => (
+          <ListingCardMobile bounty={listing} key={listing?.id} />
+        ))}
+      </div>
+    </div>
   );
 };

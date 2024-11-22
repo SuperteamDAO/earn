@@ -1,7 +1,7 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { Flex, Text, type TextProps } from '@chakra-ui/react';
+import { ArrowRight } from 'lucide-react';
 import React from 'react';
 
+import { cn } from '@/utils';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 interface CompensationAmountType {
@@ -10,7 +10,7 @@ interface CompensationAmountType {
   minRewardAsk?: number;
   maxRewardAsk?: number;
   token?: string;
-  textStyle?: TextProps;
+  className?: string;
 }
 
 export const CompensationAmount = ({
@@ -18,15 +18,11 @@ export const CompensationAmount = ({
   rewardAmount,
   minRewardAsk,
   maxRewardAsk,
-  textStyle,
   token,
+  className,
 }: CompensationAmountType) => {
   const Token = () => {
-    return (
-      <Text as="span" ml={1} color="brand.slate.400">
-        {token}
-      </Text>
-    );
+    return <span className="ml-1 text-slate-400">{token}</span>;
   };
 
   const renderCompensation = () => {
@@ -34,9 +30,9 @@ export const CompensationAmount = ({
       case 'fixed':
         return (
           <>
-            <Text ml="auto">
+            <span className="ml-auto">
               {formatNumberWithSuffix(rewardAmount!, 2, true)}
-            </Text>
+            </span>
             <Token />
           </>
         );
@@ -59,12 +55,12 @@ export const CompensationAmount = ({
 
   return (
     <>
-      <Flex {...textStyle}>{renderCompensation()}</Flex>
+      <div className={cn('flex', className)}>{renderCompensation()}</div>
       {compensationType === 'variable' && !token && (
-        <Flex align={'center'} gap={1}>
-          <Text {...textStyle}>Send Quote</Text>
-          <ArrowForwardIcon />
-        </Flex>
+        <div className="flex items-center gap-1">
+          <span className={className}>Send Quote</span>
+          <ArrowRight className="h-4 w-4" />
+        </div>
       )}
     </>
   );

@@ -1,13 +1,14 @@
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
+import { GoogleTagManager } from '@next/third-parties/google';
 import { setUser } from '@sentry/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { SessionProvider } from 'next-auth/react';
-import NextTopLoader from 'nextjs-toploader';
+import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
@@ -84,7 +85,7 @@ function MyApp({ Component, pageProps }: any) {
 
   return (
     <>
-      <NextTopLoader color="#6366F1" showSpinner={false} />
+      <PagesTopLoader color="#6366F1" showSpinner={false} />
       {isDashboardRoute ? (
         <SolanaWalletProvider>
           <Component {...pageProps} key={router.asPath} />
@@ -113,6 +114,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             <MyApp Component={Component} pageProps={pageProps} />
           </ChakraProvider>
         </SessionProvider>
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
       </PostHogProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
