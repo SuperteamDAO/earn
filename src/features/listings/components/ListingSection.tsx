@@ -104,7 +104,7 @@ export const ListingSection = ({
               size="sm"
               variant="ghost"
             >
-              View All
+              查看全部
             </Button>
           </Link>
         </Flex>
@@ -142,7 +142,7 @@ export const ListingSection = ({
             size="sm"
             variant="outline"
           >
-            View All
+            查看全部
           </Button>
         </Link>
       </Flex>

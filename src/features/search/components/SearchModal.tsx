@@ -136,7 +136,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                 rounded="none"
                 variant="ghost"
               >
-                View All Results <ArrowForwardIcon />{' '}
+                查看全部 <ArrowForwardIcon />{' '}
               </Button>
             </Link>
           </VStack>
