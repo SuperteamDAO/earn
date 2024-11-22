@@ -119,7 +119,7 @@ const UpdateSponsor = () => {
 
   const updateSponsor = async (sponsor: SponsorType) => {
     if (getValues('bio').length > 180) {
-      setErrorMessage('Company short bio length exceeded the limit');
+      setErrorMessage('公司简介长度超过限制');
       return;
     }
     setIsLoading(true);
@@ -133,7 +133,7 @@ const UpdateSponsor = () => {
       router.push('/dashboard/listings');
     } catch (e: any) {
       if (e?.response?.data?.error?.code === 'P2002') {
-        setErrorMessage('Sorry! Sponsor name or username already exists.');
+        setErrorMessage('抱歉！公司名称或用户名已经存在。');
       }
       setHasError(true);
     } finally {
@@ -149,15 +149,15 @@ const UpdateSponsor = () => {
     <Default
       meta={
         <Meta
-          title="Edit Sponsor Profile | Solar Earn"
-          description="Every Solana opportunity in one place!"
+          title="编辑项目方资料 | Solar Earn"
+          description="每个Solana机会都在这里！"
         />
       }
     >
       <VStack w="full" pt={12} pb={24}>
         <VStack>
           <Text color={'gray.700'} fontSize={'3xl'} fontWeight={700}>
-            Edit Sponsor Profile
+            编辑项目方资料
           </Text>
         </VStack>
         <VStack w={'2xl'} pt={10}>
@@ -186,7 +186,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'sponsorname'}
                 >
-                  Company Name
+                  公司名称
                 </FormLabel>
                 <Input
                   w={'full'}
@@ -220,7 +220,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'slug'}
                 >
-                  Company Username
+                  公司用户名
                 </FormLabel>
                 <Input
                   w={'full'}
@@ -252,7 +252,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'sponsorname'}
                 >
-                  Company URL
+                  公司网址
                 </FormLabel>
                 <Input
                   borderColor={'brand.slate.300'}
@@ -273,7 +273,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'twitterHandle'}
                 >
-                  Company Twitter
+                  公司推特
                 </FormLabel>
                 <Input
                   w={'full'}
@@ -302,11 +302,11 @@ const UpdateSponsor = () => {
                     fontWeight={600}
                     htmlFor={'entityName'}
                   >
-                    Entity Name
+                    实体名称
                   </FormLabel>
                   <Tooltip
                     fontSize="xs"
-                    label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                    label="请填写您的项目的官方实体名称。如果您是DAO，请填写DAO的名称。如果您既不是实体也不是DAO，请填写您的全名。"
                   >
                     <InfoOutlineIcon
                       color="brand.slate.500"
@@ -322,7 +322,7 @@ const UpdateSponsor = () => {
                   _placeholder={{ color: 'brand.slate.300' }}
                   focusBorderColor="brand.purple"
                   id="entityName"
-                  placeholder=""
+                  placeholder="实体全称"
                   {...register('entityName')}
                 />
                 <FormErrorMessage>
@@ -340,12 +340,9 @@ const UpdateSponsor = () => {
                     fontWeight={700}
                     htmlFor={'telegram'}
                   >
-                    Telegram
+                    电报
                   </FormLabel>
-                  <Tooltip
-                    fontSize="xs"
-                    label="Please mention your official Telegram username."
-                  >
+                  <Tooltip fontSize="xs" label="请填写您的官方电报用户名。">
                     <InfoOutlineIcon
                       color="brand.slate.500"
                       w={3}
@@ -360,7 +357,7 @@ const UpdateSponsor = () => {
                   _placeholder={{ color: 'brand.slate.300' }}
                   focusBorderColor="brand.purple"
                   id="telegram"
-                  placeholder=""
+                  placeholder="电报用户名"
                   {...register('telegram')}
                 />
                 <FormErrorMessage>
@@ -378,12 +375,9 @@ const UpdateSponsor = () => {
                     fontWeight={700}
                     htmlFor={'wechat'}
                   >
-                    Wechat
+                    微信
                   </FormLabel>
-                  <Tooltip
-                    fontSize="xs"
-                    label="Please mention your official wechat id."
-                  >
+                  <Tooltip fontSize="xs" label="请填写您的官方微信ID。">
                     <InfoOutlineIcon
                       color="brand.slate.500"
                       w={3}
@@ -398,7 +392,7 @@ const UpdateSponsor = () => {
                   _placeholder={{ color: 'brand.slate.300' }}
                   focusBorderColor="brand.purple"
                   id="wechat"
-                  placeholder=""
+                  placeholder="微信ID"
                   {...register('wechat')}
                 />
               </FormControl>
@@ -409,7 +403,7 @@ const UpdateSponsor = () => {
                 fontSize={'15px'}
                 fontWeight={600}
               >
-                Company Logo{' '}
+                公司Logo{' '}
                 <span
                   style={{
                     color: 'red',
@@ -458,7 +452,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'industry'}
                 >
-                  Industry
+                  行业
                 </FormLabel>
 
                 <Select
@@ -499,7 +493,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'bio'}
                 >
-                  Company Short Bio
+                  公司简介
                 </FormLabel>
                 <Input
                   w={'full'}
@@ -509,7 +503,7 @@ const UpdateSponsor = () => {
                   id="bio"
                   maxLength={180}
                   {...register('bio')}
-                  placeholder=""
+                  placeholder="您的公司做什么？"
                 />
                 <Text
                   color={
@@ -520,7 +514,7 @@ const UpdateSponsor = () => {
                   fontSize={'xs'}
                   textAlign="right"
                 >
-                  {180 - (watch('bio')?.length || 0)} characters left
+                  {180 - (watch('bio')?.length || 0)} 个字符
                 </Text>
                 <FormErrorMessage>
                   {errors.bio ? <>{errors.bio.message}</> : <></>}
@@ -530,10 +524,9 @@ const UpdateSponsor = () => {
             <Box mt={8}>
               {hasError && (
                 <Text align="center" mb={4} color="red">
-                  {errorMessage ||
-                    'Sorry! An error occurred while editing your company profile!'}
+                  {errorMessage || '抱歉！编辑公司资料时发生错误！'}
                   <br />
-                  Please update the details & try again or contact support!
+                  请更新资料并重试或联系我们询求支持！
                 </Text>
               )}
               <Button
@@ -544,7 +537,7 @@ const UpdateSponsor = () => {
                 type="submit"
                 variant="solid"
               >
-                Update Profile
+                更新资料
               </Button>
             </Box>
           </form>
