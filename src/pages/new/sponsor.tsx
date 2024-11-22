@@ -9,7 +9,6 @@ import {
   Heading,
   HStack,
   Input,
-  Link,
   Text,
   Tooltip,
   VStack,
@@ -24,7 +23,7 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
-import { IndustryList, PDTG } from '@/constants';
+import { IndustryList } from '@/constants';
 import { SignIn } from '@/features/auth';
 import {
   useSlugValidation,
@@ -52,7 +51,7 @@ const CreateSponsor = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loginStep, setLoginStep] = useState(0);
+  const [loginStep, setLoginStep] = useState<number>(0);
 
   const { user } = useUser();
   const posthog = usePostHog();
@@ -74,7 +73,7 @@ const CreateSponsor = () => {
 
   const createNewSponsor = async (sponsor: SponsorType) => {
     if (getValues('bio').length > 180) {
-      setErrorMessage('Company short bio length exceeded the limit');
+      setErrorMessage('公司简介长度超过限制');
       return;
     }
     setIsLoading(true);
@@ -87,10 +86,10 @@ const CreateSponsor = () => {
       router.push('/dashboard/listings?open=1');
     } catch (e: any) {
       if (e?.response?.status === 403) {
-        setErrorMessage('Sorry! You are not authorized to create a sponsor.');
+        setErrorMessage('抱歉，您没有创建项目方的权限。');
       }
       if (e?.response?.data?.error?.code === 'P2002') {
-        setErrorMessage('Sorry! Sponsor name or username already exists.');
+        setErrorMessage('抱歉，项目方名称或用户名已经存在。');
       }
       setIsLoading(false);
       setHasError(true);
@@ -105,8 +104,8 @@ const CreateSponsor = () => {
     <Default
       meta={
         <Meta
-          title="Create Sponsor | Solar Earn"
-          description="Every Solana opportunity in one place!"
+          title="创建项目方 | Solar Earn"
+          description="每个 Solana 机会都在这里！"
           canonical="https://earn.superteam.fun/new/sponsor/"
         />
       }
@@ -130,7 +129,7 @@ const CreateSponsor = () => {
                 fontWeight={600}
                 textAlign={'center'}
               >
-                You&apos;re one step away
+                您只差一步
               </Text>
               <Text
                 pb={4}
@@ -139,7 +138,7 @@ const CreateSponsor = () => {
                 fontWeight={400}
                 textAlign={'center'}
               >
-                from joining Solar Earn
+                就可以加入 Solar Earn
               </Text>
               <SignIn />
             </Box>
@@ -154,7 +153,7 @@ const CreateSponsor = () => {
               fontSize={'24px'}
               fontWeight={700}
             >
-              Welcome to Solar Earn
+              欢迎来到 Solar Earn
             </Heading>
             <Text
               color={'gray.400'}
@@ -162,7 +161,7 @@ const CreateSponsor = () => {
               fontSize={'20px'}
               fontWeight={500}
             >
-              {"Let's start with some basic information about your team"}
+              让我们从您团队的基本信息开始
             </Text>
           </VStack>
           <VStack w={'2xl'} pt={10}>
@@ -180,6 +179,7 @@ const CreateSponsor = () => {
                   entityName: e.entityName,
                   telegram: e.telegram,
                   wechat: e.wechat,
+                  isActive: false,
                 });
               })}
               style={{ width: '100%' }}
@@ -192,7 +192,7 @@ const CreateSponsor = () => {
                     fontWeight={600}
                     htmlFor={'sponsorname'}
                   >
-                    Company Name
+                    公司名称
                   </FormLabel>
                   <Input
                     w={'full'}
@@ -200,7 +200,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="sponsorname"
-                    placeholder="Stark Industries"
+                    placeholder=" Stark Industries"
                     {...register('sponsorname')}
                     isInvalid={isSponsorNameInvalid}
                     onChange={(e) => setSponsorName(e.target.value)}
@@ -232,7 +232,7 @@ const CreateSponsor = () => {
                     fontWeight={600}
                     htmlFor={'slug'}
                   >
-                    Company Username
+                    公司用户名
                   </FormLabel>
                   <Input
                     w={'full'}
@@ -270,7 +270,7 @@ const CreateSponsor = () => {
                     fontWeight={600}
                     htmlFor={'sponsorname'}
                   >
-                    Company URL
+                    公司网址
                   </FormLabel>
                   <Input
                     borderColor={'brand.slate.300'}
@@ -295,7 +295,7 @@ const CreateSponsor = () => {
                     fontWeight={600}
                     htmlFor={'twitterHandle'}
                   >
-                    Company Twitter
+                    公司 Twitter
                   </FormLabel>
                   <Input
                     w={'full'}
@@ -324,11 +324,11 @@ const CreateSponsor = () => {
                       fontWeight={600}
                       htmlFor={'entityName'}
                     >
-                      Entity Name
+                      实体名称
                     </FormLabel>
                     <Tooltip
                       fontSize="xs"
-                      label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                      label="请填写您的项目的官方实体名称。如果您是 DAO，请填写 DAO 的名称。如果您既不是实体也不是 DAO，请填写您的全名。"
                     >
                       <InfoOutlineIcon
                         color="brand.slate.500"
@@ -344,7 +344,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="entityName"
-                    placeholder="Full Entity Name"
+                    placeholder="全实体名称"
                     {...register('entityName')}
                   />
                   <FormErrorMessage>
@@ -370,7 +370,7 @@ const CreateSponsor = () => {
                     </FormLabel>
                     <Tooltip
                       fontSize="xs"
-                      label="Please mention your official Telegram username."
+                      label="请填写您的官方 Telegram 用户名。"
                     >
                       <InfoOutlineIcon
                         color="brand.slate.500"
@@ -386,7 +386,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="telegram"
-                    placeholder="telegram Name"
+                    placeholder="Telegram 名称"
                     {...register('telegram')}
                   />
                   <FormErrorMessage>
@@ -405,12 +405,9 @@ const CreateSponsor = () => {
                       fontWeight={700}
                       htmlFor={'wechat'}
                     >
-                      Wechat
+                      微信
                     </FormLabel>
-                    <Tooltip
-                      fontSize="xs"
-                      label="Please mention your official Wechat Id."
-                    >
+                    <Tooltip fontSize="xs" label="请填写您的官方微信 ID。">
                       <InfoOutlineIcon
                         color="brand.slate.500"
                         w={3}
@@ -425,7 +422,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="wechat"
-                    placeholder="wechat id"
+                    placeholder="微信 ID"
                     {...register('wechat')}
                   />
                 </FormControl>
@@ -437,7 +434,7 @@ const CreateSponsor = () => {
                     fontSize={'15px'}
                     fontWeight={600}
                   >
-                    Company Logo{' '}
+                    公司 logo{' '}
                     <span
                       style={{
                         color: 'red',
@@ -463,10 +460,8 @@ const CreateSponsor = () => {
                     color={'brand.slate.500'}
                     fontSize={'15px'}
                     fontWeight={600}
-                    htmlFor={'industry'}
-                  >
-                    Industry
-                  </FormLabel>
+                    htmlFor={'行业'}
+                  ></FormLabel>
 
                   <Select
                     closeMenuOnSelect={false}
@@ -499,7 +494,7 @@ const CreateSponsor = () => {
                     fontWeight={600}
                     htmlFor={'bio'}
                   >
-                    Company Short Bio
+                    公司简介
                   </FormLabel>
                   <Input
                     w={'full'}
@@ -509,7 +504,7 @@ const CreateSponsor = () => {
                     id="bio"
                     maxLength={180}
                     {...register('bio')}
-                    placeholder="What does your company do?"
+                    placeholder="您的公司做什么？"
                   />
                   <Text
                     color={
@@ -520,7 +515,7 @@ const CreateSponsor = () => {
                     fontSize={'xs'}
                     textAlign="right"
                   >
-                    {180 - (watch('bio')?.length || 0)} characters left
+                    {180 - (watch('bio')?.length || 0)} 个字符
                   </Text>
                   <FormErrorMessage>
                     {errors.bio ? <>{errors.bio.message}</> : <></>}
@@ -533,17 +528,14 @@ const CreateSponsor = () => {
                     {errorMessage}
                     {(validationErrorMessage ||
                       sponsorNameValidationErrorMessage) &&
-                      'Company name/username already exists.'}
+                      '公司名称或用户名已经存在。'}
                   </Text>
                 )}
                 {(validationErrorMessage ||
                   sponsorNameValidationErrorMessage) && (
                   <Text align={'center'} color="yellow.500">
-                    If you want access to the existing account, contact us on
-                    Telegram at{' '}
-                    <Link href={PDTG} isExternal>
-                      @cryptosheep1
-                    </Link>
+                    如果您想访问现有的帐户，请在 Telegram 上联系我们
+                    @cryptosheep1
                   </Text>
                 )}
               </Box>
@@ -552,12 +544,12 @@ const CreateSponsor = () => {
                 w="full"
                 isDisabled={imageUrl === ''}
                 isLoading={!!isLoading}
-                loadingText="Creating..."
+                loadingText="创建中..."
                 size="lg"
                 type="submit"
                 variant="solid"
               >
-                Create Sponsor
+                创建项目方
               </Button>
             </form>
           </VStack>

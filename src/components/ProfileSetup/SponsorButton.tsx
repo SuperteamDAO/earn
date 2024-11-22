@@ -28,7 +28,7 @@ export function SponsorButton({
         onClick={() => checkSponsor()}
         rounded="4px"
       >
-        Continue as a sponsor {'->'}
+        以项目方身份贡献 {'->'}
       </Button>
     </>
   );
