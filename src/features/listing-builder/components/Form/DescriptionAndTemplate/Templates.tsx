@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { useAtomValue } from 'jotai';
 import { Eye, LayoutGrid, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,6 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils';
 import { getURL } from '@/utils/validUrl';
 
-import { isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
 import {
   isCreateListingAllowedQuery,
@@ -40,6 +39,7 @@ export function Templates() {
   const posthog = usePostHog();
   const { data: session } = useSession();
   const { user } = useUser();
+  const router = useRouter();
 
   const form = useListingForm();
   const type = useWatch({
@@ -64,10 +64,13 @@ export function Templates() {
     isCreateListingAllowed === false &&
     session?.user.role !== 'GOD';
 
-  const isEditing = useAtomValue(isEditingAtom);
+  const [open, setOpen] = useState(router.asPath === '/dashboard/new/');
+  useEffect(() => {
+    setOpen(router.asPath === '/dashboard/new/');
+  }, [router.asPath]);
 
   return (
-    <Dialog defaultOpen={!isEditing}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="ghost"
