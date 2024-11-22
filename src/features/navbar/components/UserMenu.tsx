@@ -127,7 +127,7 @@ export function UserMenu({ }) {
                   posthog.capture('profile_user menu');
                 }}
               >
-                Profile
+                我的
               </MenuItem>
               <MenuItem
                 className="ph-no-capture"
@@ -140,7 +140,7 @@ export function UserMenu({ }) {
                   posthog.capture('edit profile_user menu');
                 }}
               >
-                Edit Profile
+                编辑个人设置
               </MenuItem>
             </>
           )}
@@ -158,7 +158,7 @@ export function UserMenu({ }) {
                   posthog.capture('sponsor dashboard_user menu');
                 }}
               >
-                Sponsor Dashboard
+                项目方仪表盘
               </MenuItem>
             </>
           )}
@@ -170,7 +170,7 @@ export function UserMenu({ }) {
                 color="brand.slate.400"
                 fontSize="xs"
                 fontWeight={500}
-                title="God Mode"
+                title="超级管理员模式"
               >
                 <MenuItem
                   as={NextLink}
@@ -179,7 +179,7 @@ export function UserMenu({ }) {
                   fontWeight={600}
                   href={'/new/sponsor'}
                 >
-                  Create New Sponsor
+                  创建项目方
                 </MenuItem>
                 {/* <MenuItem
                   as={NextLink}
@@ -205,7 +205,7 @@ export function UserMenu({ }) {
                 posthog.capture('email preferences_user menu');
               }}
             >
-              Email Preferences
+              Email 设置
             </MenuItem>
           )}
           <MenuItem
@@ -218,7 +218,7 @@ export function UserMenu({ }) {
               posthog.capture('get help_user menu');
             }}
           >
-            Get Help
+            获取帮助
           </MenuItem>
           <MenuItem
             className="ph-no-capture"
@@ -230,7 +230,7 @@ export function UserMenu({ }) {
               logout();
             }}
           >
-            Logout
+            登出
           </MenuItem>
         </MenuList>
       </Menu>

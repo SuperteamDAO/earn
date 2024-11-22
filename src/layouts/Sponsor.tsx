@@ -179,16 +179,16 @@ export function SponsorLayout({
     ? [
       { name: 'All Tracks', link: `/hackathon`, icon: MdList },
       {
-        name: 'Get Help',
+        name: '获取帮助',
         link: PDTG,
         icon: MdOutlineChatBubbleOutline,
         posthog: 'get help_sponsor',
       },
     ]
     : [
-      { name: 'My Listings', link: '/listings', icon: BiListUl },
+      { name: '我的列表', link: '/listings', icon: BiListUl },
       {
-        name: 'Team Settings',
+        name: '团队设置',
         link: '/team-settings',
         icon: RiUserSettingsLine,
       },
@@ -202,7 +202,7 @@ export function SponsorLayout({
         ]
         : []),
       {
-        name: 'Get Help',
+        name: '获取帮助',
         link: PDTG,
         icon: LuMessageSquare,
         posthog: 'get help_sponsor',
@@ -216,6 +216,7 @@ export function SponsorLayout({
   const showContent = isHackathonRoute
     ? user?.hackathonId || session?.user?.role === 'GOD'
     : user?.currentSponsor?.id;
+
   // 从环境变量 EARN_GOD_EMAIL 获取管理员邮件地址
   const godEmail = process.env.NEXT_PUBLIC_EARN_GOD_EMAIL;
   const godTelegram = process.env.NEXT_PUBLIC_EARN_GOD_TELEGRAM;
@@ -250,7 +251,7 @@ export function SponsorLayout({
         <Meta
           title="Solar Earn | Work to Earn in Crypto"
           description="Explore the latest bounties on Solar Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
+          canonical=""
         />
       }
     >
@@ -343,7 +344,7 @@ export function SponsorLayout({
                     opacity={isExpanded ? 1 : 0}
                     transition="all 0.2s ease-in-out"
                   >
-                    Create New Listing
+                    创建新列表
                   </Text>
                   {cannotCreateNewListing && <Icon as={LuLock} />}
                 </Button>
@@ -366,7 +367,7 @@ export function SponsorLayout({
                   opacity={isExpanded ? 1 : 0}
                   transition="opacity 0.2s ease-in-out"
                 >
-                  Create New Track
+                  创建新 Track
                 </Text>
               </Button>
             )}
@@ -393,7 +394,7 @@ export function SponsorLayout({
                   opacity={isExpanded ? 1 : 0}
                   transition="all 0.2s ease-in-out"
                 >
-                  Activate Sponsor
+                  激活项目方
                 </Text>
               </Button>
             </Flex>

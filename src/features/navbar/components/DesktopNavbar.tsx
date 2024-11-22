@@ -180,7 +180,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   size="sm"
                   variant={'ghost'}
                 >
-                  成为赞助商
+                  成为项目方
                   <Box
                     display="block"
                     w={1.5}
