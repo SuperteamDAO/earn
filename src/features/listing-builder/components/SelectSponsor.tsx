@@ -145,7 +145,7 @@ export function SelectSponsor({
       components={{ SingleValue, Option }}
       value={selectedSponsor}
       onChange={(e) => handleChange(e)}
-      placeholder="Select Sponsor"
+      placeholder=""
       loadOptions={loadSponsors}
       defaultOptions
       isClearable={false}

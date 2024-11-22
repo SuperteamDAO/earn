@@ -102,7 +102,7 @@ export const SponsorInfoModal = ({
                 }}
                 focusBorderColor="brand.purple"
                 id="username"
-                placeholder="Username"
+                placeholder=""
                 {...register('username', { required: true })}
                 isInvalid={isInvalid}
                 onChange={(e) => setUsername(e.target.value)}
@@ -126,7 +126,7 @@ export const SponsorInfoModal = ({
                   }}
                   focusBorderColor="brand.purple"
                   id="firstName"
-                  placeholder="First Name"
+                  placeholder=""
                   {...register('firstName', { required: true })}
                 />
               </Box>
@@ -140,7 +140,7 @@ export const SponsorInfoModal = ({
                   }}
                   focusBorderColor="brand.purple"
                   id="lastName"
-                  placeholder="Last Name"
+                  placeholder=""
                   {...register('lastName', { required: true })}
                 />
               </Box>

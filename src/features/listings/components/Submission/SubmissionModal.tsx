@@ -285,7 +285,7 @@ export const SubmissionModal = ({
                     id="applicationLink"
                     label="Link to Your Submission"
                     helperText="Make sure this link is accessible by everyone!"
-                    placeholder="Add a link"
+                    placeholder=""
                     register={register}
                     watch={watch}
                     maxLength={500}
@@ -296,7 +296,7 @@ export const SubmissionModal = ({
                     id="tweetLink"
                     label="Tweet Link"
                     helperText="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
-                    placeholder="Add a tweet's link"
+                    placeholder=""
                     register={register}
                     watch={watch}
                     maxLength={500}
@@ -380,7 +380,7 @@ export const SubmissionModal = ({
                 label="Anything Else?"
                 id={`otherInfo`}
                 helperText="If you have any other links or information you'd like to share with us, please add them here!"
-                placeholder="Add info or link"
+                placeholder=""
               />
 
               <TextInputWithHelper
@@ -401,7 +401,7 @@ export const SubmissionModal = ({
                     </Text>{' '}
                   </>
                 }
-                placeholder="Add your Solana wallet address"
+                placeholder=""
                 register={register}
                 errors={errors}
                 defaultValue={user?.publicKey}

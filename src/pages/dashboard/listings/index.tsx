@@ -307,7 +307,7 @@ export default function SponsorListings() {
               }}
               focusBorderColor="brand.purple"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
-              placeholder="Search listing..."
+              placeholder=""
               type="text"
             />
             <InputLeftElement pointerEvents="none">

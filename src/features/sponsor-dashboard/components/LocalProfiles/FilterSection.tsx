@@ -128,7 +128,7 @@ export const FilterSection = ({
             debouncedSetSearchText(e.target.value);
             setCurrentPage(1);
           }}
-          placeholder="Search users..."
+          placeholder=""
           type="text"
         />
         <InputLeftElement pointerEvents="none">

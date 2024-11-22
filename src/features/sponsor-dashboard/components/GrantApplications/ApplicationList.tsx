@@ -127,7 +127,7 @@ export const ApplicationList = ({
                 }}
                 focusBorderColor="brand.purple"
                 onChange={(e) => debouncedSetSearchText(e.target.value)}
-                placeholder="Search Applications"
+                placeholder=""
                 type="text"
               />
               <InputLeftElement pointerEvents="none">

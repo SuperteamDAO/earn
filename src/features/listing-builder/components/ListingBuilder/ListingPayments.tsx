@@ -638,7 +638,7 @@ export const ListingPayments = ({
                   handleSearch('');
                 }}
                 onKeyDown={handleKeyDown}
-                placeholder="Search token"
+                placeholder=""
                 value={searchTerm || ''}
               />
               <InputRightElement color="gray.700" fontSize="1rem">
@@ -772,7 +772,7 @@ export const ListingPayments = ({
                       _placeholder={{
                         color: 'brand.slate.300',
                       }}
-                      placeholder="Enter the lower range"
+                      placeholder=""
                       {...register('minRewardAsk', {
                         required: 'This field is required',
                         setValueAs: (value) => parseFloat(value),
@@ -814,7 +814,7 @@ export const ListingPayments = ({
                       _placeholder={{
                         color: 'brand.slate.300',
                       }}
-                      placeholder="Enter the higher range"
+                      placeholder=""
                       {...register('maxRewardAsk', {
                         required: 'This field is required',
                         setValueAs: (value) => parseFloat(value),

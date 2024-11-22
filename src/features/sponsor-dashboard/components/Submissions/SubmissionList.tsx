@@ -163,7 +163,7 @@ export const SubmissionList = ({
                 }}
                 focusBorderColor="brand.purple"
                 onChange={(e) => debouncedSetSearchText(e.target.value)}
-                placeholder="Search Submissions"
+                placeholder=""
                 type="text"
               />
               <InputLeftElement pointerEvents="none">

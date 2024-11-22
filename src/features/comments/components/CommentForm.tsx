@@ -88,7 +88,7 @@ export const CommentForm = ({
               color: 'brand.slate.400',
             }}
             focusBorderColor="brand.purple"
-            placeholder="Write a comment"
+            placeholder=""
             value={newComment}
             setValue={setNewComment}
             variant="flushed"

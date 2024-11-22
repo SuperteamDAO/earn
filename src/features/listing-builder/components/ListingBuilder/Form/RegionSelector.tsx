@@ -67,7 +67,7 @@ export const RegionSelector: React.FC<RegionSelectorProps> = ({
             <ReactSelect<CountryOption, false, GroupedOption>
               options={options}
               formatGroupLabel={formatGroupLabel}
-              placeholder="Select a region "
+              placeholder=""
               ref={ref}
               value={options
                 .flatMap((option) =>

@@ -200,7 +200,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="sponsorname"
-                    placeholder="Stark Industries"
+                    placeholder=""
                     {...register('sponsorname')}
                     isInvalid={isSponsorNameInvalid}
                     onChange={(e) => setSponsorName(e.target.value)}
@@ -240,7 +240,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="slug"
-                    placeholder="starkindustries"
+                    placeholder=""
                     {...register('slug')}
                     isInvalid={isInvalid}
                     onChange={(e) => setSlug(e.target.value)}
@@ -277,7 +277,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="sponsorurl"
-                    placeholder="https://starkindustries.com"
+                    placeholder=""
                     {...register('sponsorurl')}
                   />
                   <FormErrorMessage>
@@ -302,7 +302,7 @@ const CreateSponsor = () => {
                     borderColor={'brand.slate.300'}
                     _placeholder={{ color: 'brand.slate.300' }}
                     id="twitterHandle"
-                    placeholder="@StarkIndustries"
+                    placeholder=""
                     {...register('twitterHandle')}
                   />
                   <FormErrorMessage>
@@ -344,7 +344,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="entityName"
-                    placeholder="Full Entity Name"
+                    placeholder=""
                     {...register('entityName')}
                   />
                   <FormErrorMessage>
@@ -386,7 +386,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="telegram"
-                    placeholder="telegram Name"
+                    placeholder=""
                     {...register('telegram')}
                   />
                   <FormErrorMessage>
@@ -425,7 +425,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="wechat"
-                    placeholder="wechat id"
+                    placeholder=""
                     {...register('wechat')}
                   />
                 </FormControl>
@@ -509,7 +509,7 @@ const CreateSponsor = () => {
                     id="bio"
                     maxLength={180}
                     {...register('bio')}
-                    placeholder="What does your company do?"
+                    placeholder=""
                   />
                   <Text
                     color={
