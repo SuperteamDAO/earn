@@ -319,26 +319,6 @@ export default function NewProfilePage({
                 src={Tensor as unknown as string}
               />
             </Flex>
-            <Flex align="center" gap={6} mx="auto" mt={-3}>
-              <AvatarGroup max={3} size={'xs'}>
-                {avatars.map((avatar, index) => (
-                  <Avatar
-                    key={index}
-                    pos="relative"
-                    borderWidth={'0px'}
-                    name={avatar.name}
-                    src={avatar.src}
-                  />
-                ))}
-              </AvatarGroup>
-              {totals?.totalUsers !== null && (
-                //如果 totals 对象中的 totalUsers 属性不为 null，则显示以下文本
-                <Text pos="relative" color="brand.slate.500" fontSize="sm">
-                  {/* 显示当前加入平台的总用户数，格式化为本地字符串形式 */}
-                  加入 {totals?.totalUsers?.toLocaleString()}+人行列
-                </Text>
-              )}
-            </Flex>
           </Flex>
         </Flex>
       </Box>
