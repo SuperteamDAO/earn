@@ -146,7 +146,7 @@ export function TalentBio({
             size={'sm'}
             variant={'ghost'}
           >
-            Edit Profile
+            编辑个人信息
           </Button>
         )}
       </Flex>
@@ -185,13 +185,13 @@ export function TalentBio({
             color={'white'}
             bg={'#6562FF'}
           >
-            View Your Profile
+            查看个人信息
           </Button>
         </a>
       ) : (
         <a style={{ textDecoration: 'none' }} href={createMailtoLink()}>
           <Button w={'full'} mt={'1.575rem'} color={'white'} bg={'#6562FF'}>
-            Get in Touch
+            取得联系
           </Button>
         </a>
       )}
