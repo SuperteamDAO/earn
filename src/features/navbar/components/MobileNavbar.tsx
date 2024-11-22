@@ -1,5 +1,4 @@
 import { Menu } from 'lucide-react';
-import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -19,6 +18,7 @@ import {
   renderLabel,
 } from '../constants';
 import { NavLink } from './NavLink';
+import { UserMenu } from './UserMenu';
 
 interface Props {
   onLoginOpen: () => void;
@@ -27,10 +27,6 @@ interface Props {
 // const AnnouncementBar = dynamic(() =>
 //   import('@/features/navbar').then((mod) => mod.AnnouncementBar),
 // );
-
-const UserMenu = dynamic(() =>
-  import('./UserMenu').then((mod) => mod.UserMenu),
-);
 
 export const MobileNavbar = ({ onLoginOpen }: Props) => {
   const {

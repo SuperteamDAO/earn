@@ -1,6 +1,7 @@
 import '../styles/globals.scss';
 
 import { ChakraProvider } from '@chakra-ui/react';
+import { GoogleTagManager } from '@next/third-parties/google';
 import { setUser } from '@sentry/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
@@ -26,11 +27,6 @@ const extendThemeWithNextFonts = {
     body: fontSans.style.fontFamily,
   },
 };
-
-// const ChakraProvider = dynamic(
-//   () => import('@chakra-ui/react').then((mod) => mod.ChakraProvider),
-//   { ssr: true },
-// );
 
 const SolanaWalletProvider = dynamic(
   () =>
@@ -118,6 +114,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             <MyApp Component={Component} pageProps={pageProps} />
           </ChakraProvider>
         </SessionProvider>
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
       </PostHogProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
