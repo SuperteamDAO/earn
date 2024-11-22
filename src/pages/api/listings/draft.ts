@@ -7,6 +7,7 @@ import {
   withSponsorAuth,
 } from '@/features/auth';
 import { type ListingFormData } from '@/features/listing-builder';
+import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
@@ -110,6 +111,17 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       : await prisma.bounties.create({
           data,
         });
+
+    try {
+      if (!id && result.id) {
+        await earncognitoClient.post(`/discord/listing-update`, {
+          listingId: result.id,
+          status: 'Draft Added',
+        });
+      }
+    } catch (err) {
+      logger.error('Discord Listing Unpublish Message Error', err);
+    }
 
     logger.debug(`Draft saved successfully: ${result.id}`);
 

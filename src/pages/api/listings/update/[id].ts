@@ -269,18 +269,10 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     // Handle discord notifications
     try {
-      if (listing.isPublished === true && result.isPublished === false) {
-        await earncognitoClient.post(`/discord/listing-update`, {
-          listingId: result.id,
-          status: 'Unpublished',
-        });
-      }
-      if (listing.isPublished === false && result.isPublished === true) {
-        await earncognitoClient.post(`/discord/listing-update`, {
-          listingId: result.id,
-          status: 'Published',
-        });
-      }
+      await earncognitoClient.post(`/discord/listing-update`, {
+        listingId: result.id,
+        status: 'Updated',
+      });
     } catch (err) {
       logger.error('Discord Listing Update Message Error', err);
     }
