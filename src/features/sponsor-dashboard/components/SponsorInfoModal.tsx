@@ -57,12 +57,12 @@ export const SponsorInfoModal = ({
     },
     onSuccess: async () => {
       await refetchUser();
-      toast.success('Profile updated successfully');
+      toast.success('个人资料更新成功');
       onClose();
     },
     onError: (error) => {
       console.error('Error updating user details:', error);
-      toast.error('Failed to update profile. Please try again.');
+      toast.error('更新个人资料失败，请重试。');
     },
   });
 
@@ -88,12 +88,12 @@ export const SponsorInfoModal = ({
       <ModalOverlay />
       <ModalContent px={6} py={5}>
         <Text mb={3} color="brand.slate.600" fontSize={'2xl'} fontWeight={600}>
-          Complete Your Profile
+          完成您的个人资料
         </Text>
         <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
           <FormControl w="full" isRequired>
             <Box w={'full'} mb={'1.25rem'}>
-              <FormLabel color={'brand.slate.500'}>Username</FormLabel>
+              <FormLabel color={'brand.slate.500'}>用户名</FormLabel>
               <Input
                 color={'gray.800'}
                 borderColor="brand.slate.300"
@@ -117,7 +117,7 @@ export const SponsorInfoModal = ({
 
             <Flex justify="space-between" gap={8} w={'full'} mb={'1.25rem'}>
               <Box w="full">
-                <FormLabel color={'brand.slate.500'}>First Name</FormLabel>
+                <FormLabel color={'brand.slate.500'}>名字</FormLabel>
                 <Input
                   color={'gray.800'}
                   borderColor="brand.slate.300"
@@ -131,7 +131,7 @@ export const SponsorInfoModal = ({
                 />
               </Box>
               <Box w="full">
-                <FormLabel color={'brand.slate.500'}>Last Name</FormLabel>
+                <FormLabel color={'brand.slate.500'}>姓氏</FormLabel>
                 <Input
                   color={'gray.800'}
                   borderColor="brand.slate.300"
@@ -155,7 +155,7 @@ export const SponsorInfoModal = ({
                     color={'brand.slate.500'}
                     requiredIndicator={<></>}
                   >
-                    Profile Picture
+                    个人头像
                   </FormLabel>
                   <Box w="full" mt={1}>
                     <ImagePicker
@@ -182,7 +182,7 @@ export const SponsorInfoModal = ({
                     color={'brand.slate.500'}
                     requiredIndicator={<></>}
                   >
-                    Profile Picture
+                    个人头像
                   </FormLabel>
                   <ImagePicker
                     onChange={async (e) => {
@@ -203,11 +203,11 @@ export const SponsorInfoModal = ({
             <Button
               w={'full'}
               isLoading={uploading || updateUserMutation.isPending}
-              loadingText="Submitting"
+              loadingText="提交中"
               spinnerPlacement="start"
               type="submit"
             >
-              Submit
+              提交
             </Button>
           </FormControl>
         </form>
