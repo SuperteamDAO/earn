@@ -30,7 +30,7 @@ export default function AllRegionListingsPage({
       <Meta
         title={`Welcome to Solar Earn ${displayName} | Discover Bounties and Grants`}
         description={`Welcome to Solar ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
-        canonical={`https://earn.superteam.fun/regions/${slug}/`}
+        canonical=""
         og={ogImage.toString()}
       />
       <Box w={'100%'}>

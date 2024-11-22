@@ -107,7 +107,7 @@ const CreateSponsor = () => {
         <Meta
           title="Create Sponsor | Solar Earn"
           description="Every Solana opportunity in one place!"
-          canonical="https://earn.superteam.fun/new/sponsor/"
+          canonical=""
         />
       }
     >
@@ -538,14 +538,14 @@ const CreateSponsor = () => {
                 )}
                 {(validationErrorMessage ||
                   sponsorNameValidationErrorMessage) && (
-                  <Text align={'center'} color="yellow.500">
-                    If you want access to the existing account, contact us on
-                    Telegram at{' '}
-                    <Link href={PDTG} isExternal>
-                      @cryptosheep1
-                    </Link>
-                  </Text>
-                )}
+                    <Text align={'center'} color="yellow.500">
+                      If you want access to the existing account, contact us on
+                      Telegram at{' '}
+                      <Link href={PDTG} isExternal>
+                        @cryptosheep1
+                      </Link>
+                    </Text>
+                  )}
               </Box>
               <Button
                 className="ph-no-capture"

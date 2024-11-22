@@ -23,7 +23,7 @@ export default function Scribes() {
         <Meta
           title="Solana Scribes | Solar Earn"
           description="Explore the latest bounties on Solar Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
+          canonical=""
         />
       }
     >

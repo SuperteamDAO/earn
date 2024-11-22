@@ -57,7 +57,7 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
         <Meta
           title="Solar Earn | Work to Earn in Crypto"
           description="Explore the latest bounties on Solar Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
+          canonical=""
         />
       }
     >
