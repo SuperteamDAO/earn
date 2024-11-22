@@ -90,7 +90,7 @@ export default function SignupPage() {
             fontWeight={500}
             textAlign="center"
           >
-            Welcome to Solar Earn
+            欢迎来到 Solar Earn
           </Text>
           <Text color="brand.slate.600" fontSize="lg" textAlign="center">
             Start your journey to access top global talent!

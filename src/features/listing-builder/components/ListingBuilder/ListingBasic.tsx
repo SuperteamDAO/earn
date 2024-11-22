@@ -331,7 +331,9 @@ export const ListingBasic = ({
           )}
           <FormControl w="full" mb={5} isInvalid={!!errors.title} isRequired>
             <Flex>
-              <ListingFormLabel htmlFor={'title'}>任务标题</ListingFormLabel>
+              <ListingFormLabel htmlFor={'title'}>
+                赏金任务标题
+              </ListingFormLabel>
               <ListingTooltip label="使用简短的标题来描述任务" />
             </Flex>
 
@@ -411,8 +413,8 @@ export const ListingBasic = ({
           </FormControl>
           <FormControl w="full" mb={5} isInvalid={!!errors.slug} isRequired>
             <Flex>
-              <ListingFormLabel htmlFor={'slug'}>任务 Slug</ListingFormLabel>
-              <ListingTooltip label="使用简短的 Slug 来描述任务" />
+              <ListingFormLabel htmlFor={'slug'}>发布链接后缀</ListingFormLabel>
+              <ListingTooltip label="使用简洁清晰的字段后缀描述赏金任务" />
             </Flex>
             <FormHelperText
               mt={-1.5}
@@ -442,7 +444,7 @@ export const ListingBasic = ({
                     setValue('slug', newValue);
                   },
                 })}
-                placeholder="开发一个新登陆页面"
+                placeholder=""
               />
               {isSlugGenerating && (
                 <InputRightElement>
@@ -634,7 +636,9 @@ export const ListingBasic = ({
           )}
           <FormControl alignItems="center" gap={3} display="flex">
             <Flex>
-              <ListingFormLabel htmlFor="isPrivate">私有任务</ListingFormLabel>
+              <ListingFormLabel htmlFor="isPrivate">
+                非公开任务
+              </ListingFormLabel>
               <ListingTooltip label="选择任务是否公开显示" />
             </Flex>
             <Switch

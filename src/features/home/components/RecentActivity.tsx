@@ -36,23 +36,23 @@ const ActivityCard = ({
 }: ActivityCardProps) => {
   const getActionText = () => {
     const defaultActionText = {
-      bounty: 'just submitted a bounty',
-      hackathon: 'just submitted to a hackathon',
-      project: 'just applied to a project',
+      bounty: '刚刚提交了任务',
+      hackathon: '刚刚参加了黑客马拉松',
+      project: '刚刚申请了一个项目',
     };
 
     const winnerActionText = {
-      bounty: 'just won a bounty',
-      hackathon: 'just won a hackathon track',
-      project: 'just got selected for a project',
+      bounty: '刚刚赢得了赏金',
+      hackathon: '刚刚赢得了黑客马拉松',
+      project: '刚被选中参加一个项目',
     };
 
     if (type === 'pow') {
-      return 'just added a personal project';
+      return '刚刚添加了一个 个人项目';
     } else if (isWinner && isWinnersAnnounced) {
-      return winnerActionText[listingType] || 'just achieved something great';
+      return winnerActionText[listingType] || '刚刚大功告成';
     } else {
-      return defaultActionText[listingType] || 'just took an action';
+      return defaultActionText[listingType] || '刚刚出手';
     }
   };
 
@@ -121,7 +121,7 @@ export const RecentActivity = () => {
     <Box>
       <Flex align="center" justify={'space-between'}>
         <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-          最近的活动
+          最近活动
         </Text>
         <Text
           className="ph-no-capture"
