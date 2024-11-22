@@ -222,7 +222,7 @@ export default function NewProfilePage({
           <Flex direction={'column'} gap={9} w="full">
             <Flex direction={'column'} gap={1.5}>
               <Text color="brand.slate.900" fontSize={'2xl'} fontWeight={600}>
-                以赞助商身份贡献
+                以项目方身份贡献
               </Text>
               <Text
                 color="brand.slate.500"
@@ -332,7 +332,9 @@ export default function NewProfilePage({
                 ))}
               </AvatarGroup>
               {totals?.totalUsers !== null && (
+                //如果 totals 对象中的 totalUsers 属性不为 null，则显示以下文本
                 <Text pos="relative" color="brand.slate.500" fontSize="sm">
+                  {/* 显示当前加入平台的总用户数，格式化为本地字符串形式 */}
                   加入 {totals?.totalUsers?.toLocaleString()}+人行列
                 </Text>
               )}
