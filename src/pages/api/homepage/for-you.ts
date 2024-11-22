@@ -3,6 +3,7 @@ import { type NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import {
+  filterRegionCountry,
   getCombinedRegion,
   getStatusFilterQuery,
   type StatusFilter,
@@ -36,7 +37,7 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
     ) || [];
 
   const userRegion = user?.location
-    ? getCombinedRegion(user?.location)
+    ? getCombinedRegion(user?.location, true)
     : undefined;
 
   const statusFilterQuery = getStatusFilterQuery(statusFilter);
@@ -71,7 +72,12 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
       language: { in: ['eng', 'sco'] },
       region: {
         in: userRegion?.name
-          ? [Regions.GLOBAL, userRegion.name, ...(userRegion.country || [])]
+          ? [
+              Regions.GLOBAL,
+              userRegion.name,
+              ...(filterRegionCountry(userRegion, user.location || '')
+                .country || []),
+            ]
           : [Regions.GLOBAL],
       },
       AND: [
