@@ -349,7 +349,9 @@ export const GrantApplicationModal = ({
                     render={({ field }) => (
                       <FormItem className="flex w-full flex-col gap-2">
                         <div>
-                          <FormLabel>Your Solana Wallet Address</FormLabel>
+                          <FormLabel isRequired={!user?.publicKey}>
+                            Your Solana Wallet Address
+                          </FormLabel>
                           <FormDescription>
                             {!!user?.publicKey ? (
                               <>
