@@ -59,7 +59,7 @@ export const CreateListingModal = ({
               <Image
                 w="100%"
                 h="auto"
-                alt="Bounty Illustration"
+                alt=""
                 src="/assets/dashboard/bounty_illustration.svg"
               />
               <Flex
@@ -83,17 +83,18 @@ export const CreateListingModal = ({
                   }}
                 />
                 <Text fontSize="sm" fontWeight="bold">
-                  Bounty
+                  赏金任务
                 </Text>
               </Flex>
             </Center>
             <Box p={8}>
               <Heading as="h3" mb={4} fontWeight={600} size="md">
-                Host a Work Competition
+                举办一场社区竞赛
               </Heading>
               <Text mb={4} color="brand.slate.500">
-                All participants complete your scope of work, and the best
-                submission(s) are rewarded. Get multiple options to choose from.
+                多人完成同一个给定任务，争夺奖金池，完成任务后优胜者获得奖励。
+                <br />
+                您可以从多个选项中评选出优胜者。
               </Text>
               <Button
                 w="full"
@@ -102,7 +103,7 @@ export const CreateListingModal = ({
                 onClick={handleCreateBounty}
                 size="lg"
               >
-                Create a Bounty
+                创建赏金任务
               </Button>
             </Box>
           </Box>
@@ -140,18 +141,18 @@ export const CreateListingModal = ({
                   }}
                 />
                 <Text fontSize="sm" fontWeight="bold">
-                  Project
+                  创建定向任务
                 </Text>
               </Flex>
             </Center>
             <Box p={8}>
               <Heading as="h3" mb={4} fontWeight={600} size="md">
-                Hire a Freelancer
+                雇佣一个自由职业者
               </Heading>
               <Text mb={4} color="brand.slate.500">
-                Get applications based on a questionnaire set by you, and select
-                one applicant to work with. Give a fixed budget, or ask for
-                quotes.
+                根据您设置的条件收取多份申请，并选择一位申请者合作。
+                <br />
+                您可以设置固定预算，或要求报价。
               </Text>
               <Button
                 w="full"
@@ -160,7 +161,7 @@ export const CreateListingModal = ({
                 onClick={handleCreateProject}
                 size="lg"
               >
-                Create a Project
+                创建定向任务
               </Button>
             </Box>
           </Box>

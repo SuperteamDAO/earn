@@ -186,7 +186,7 @@ export function SponsorLayout({
       },
     ]
     : [
-      { name: '我的列表', link: '/listings', icon: BiListUl },
+      { name: '我的任务列表', link: '/listings', icon: BiListUl },
       {
         name: '团队设置',
         link: '/team-settings',
@@ -344,7 +344,7 @@ export function SponsorLayout({
                     opacity={isExpanded ? 1 : 0}
                     transition="all 0.2s ease-in-out"
                   >
-                    创建新列表
+                    创建新任务
                   </Text>
                   {cannotCreateNewListing && <Icon as={LuLock} />}
                 </Button>

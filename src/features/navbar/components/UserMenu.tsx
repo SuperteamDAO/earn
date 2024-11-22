@@ -140,7 +140,7 @@ export function UserMenu({ }) {
                   posthog.capture('edit profile_user menu');
                 }}
               >
-                编辑个人设置
+                编辑个人信息
               </MenuItem>
             </>
           )}

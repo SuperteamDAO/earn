@@ -56,8 +56,8 @@ export const RegionSelector: React.FC<RegionSelectorProps> = ({
   return (
     <FormControl w="full" mb={5} isInvalid={!!errors.region}>
       <Flex>
-        <ListingFormLabel htmlFor="region">Listing Geography</ListingFormLabel>
-        <ListingTooltip label="Select the Solar region,Only users from the region you specify will be able to apply/submit to this listing." />
+        <ListingFormLabel htmlFor="region">城市</ListingFormLabel>
+        <ListingTooltip label="" />
       </Flex>
       <Box>
         <Controller

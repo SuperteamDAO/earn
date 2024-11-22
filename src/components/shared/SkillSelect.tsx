@@ -92,11 +92,7 @@ export const SkillSelect = ({
             label={`请选择所有适用项`}
             placement="right-end"
           >
-            <Image
-              mt={-2}
-              alt={'Info Icon'}
-              src={'/assets/icons/info-icon.svg'}
-            />
+            <Image mt={-2} alt="" src={'/assets/icons/info-icon.svg'} />
           </Tooltip>
         </Flex>
         {helperText && (
@@ -153,11 +149,7 @@ export const SkillSelect = ({
             label={`请选择所有适用项`}
             placement="right-end"
           >
-            <Image
-              mt={-2}
-              alt={'Info Icon'}
-              src={'/assets/icons/info-icon.svg'}
-            />
+            <Image mt={-2} alt="" src={'/assets/icons/info-icon.svg'} />
           </Tooltip>
         </Flex>
         <ReactSelect
