@@ -24,18 +24,19 @@ export const getRegionTooltipLabel = (
   region: string | undefined,
   isGrant: boolean = false,
 ) => {
-  const country = countries.find(
-    (country) => country.name.toLowerCase() === region?.toLowerCase(),
-  )?.name;
+  return 'This listing is open to everyone in the world!';
+  // const country = countries.find(
+  //   (country) => country.name.toLowerCase() === region?.toLowerCase(),
+  // )?.name;
 
-  switch (region) {
-    case 'GLOBAL':
-      return 'This listing is open to everyone in the world!';
-    case 'BALKAN':
-      return `You need to be a resident of one of the Balkan countries to be able to participate in this ${isGrant ? 'grant' : 'listing'}`;
-    default:
-      return `You need to be a resident of ${country} to participate in this ${isGrant ? 'grant' : 'listing'} `;
-  }
+  // switch (region) {
+  //   case 'GLOBAL':
+  //     return 'This listing is open to everyone in the world!';
+  //   case 'BALKAN':
+  //     return `You need to be a resident of one of the Balkan countries to be able to participate in this ${isGrant ? 'grant' : 'listing'}`;
+  //   default:
+  //     return `You need to be a resident of ${country} to participate in this ${isGrant ? 'grant' : 'listing'} `;
+  // }
 };
 
 export const getListingDraftStatus = (
@@ -144,20 +145,22 @@ export function userRegionEligibilty(
   region: string | undefined,
   userLocation: string | undefined,
 ) {
-  if (region === 'GLOBAL') {
-    return true;
-  }
+  return true;
 
-  const regionObject = region ? getCombinedRegion(region) : null;
+  // if (region === 'GLOBAL') {
+  //   return true;
+  // }
 
-  const isEligible =
-    !!(
-      userLocation &&
-      (regionObject?.name === userLocation ||
-        regionObject?.country?.includes(userLocation))
-    ) || false;
+  // const regionObject = region ? getCombinedRegion(region) : null;
 
-  return isEligible;
+  // const isEligible =
+  //   !!(
+  //     userLocation &&
+  //     (regionObject?.name === userLocation ||
+  //       regionObject?.country?.includes(userLocation))
+  //   ) || false;
+
+  // return isEligible;
 }
 
 export function isValidUrl(url: string): boolean {
