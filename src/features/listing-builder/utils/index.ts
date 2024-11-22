@@ -38,6 +38,16 @@ export const timeToCompleteOptions = [
 export const listingToStatus = (listing: ListingFormData): ListingStatus => {
   if (listing.status === 'OPEN') {
     if (listing.isPublished) {
+      if (listing.isWinnersAnnounced) {
+        if (
+          listing.totalWinnersSelected &&
+          listing.totalWinnersSelected !== listing.totalPaymentsMade
+        ) {
+          return 'payment pending';
+        } else {
+          return 'completed';
+        }
+      }
       return 'published';
     } else {
       if (!!listing.publishedAt) {

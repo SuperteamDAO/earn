@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
@@ -21,6 +21,18 @@ interface Props {
 export default function DuplicateBounty({ slug }: Props) {
   const router = useRouter();
   const { user } = useUser();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const handleRouteComplete = () => {
+      queryClient.invalidateQueries({
+        queryKey: ['sponsor-dashboard-listing', slug],
+      });
+    };
+
+    router.events.on('routeChangeComplete', handleRouteComplete);
+    return () => router.events.off('routeChangeComplete', handleRouteComplete);
+  }, [router.events, queryClient, slug]);
 
   const { data: listing, isLoading } = useQuery({
     ...sponsorDashboardListingQuery(slug),

@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils';
 
 import { listingStatusAtom } from '../../atoms';
+import { type ListingStatus } from '../../types';
 
 interface StatusBadgeProps {
   className?: string;
@@ -11,7 +12,10 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ className }: StatusBadgeProps) {
   const status = useAtomValue(listingStatusAtom);
-  const statusConfig = {
+  const statusConfig: Record<
+    ListingStatus,
+    { label: string; className: string }
+  > = {
     draft: {
       label: 'Draft',
       className: 'bg-slate-100 text-slate-500 hover:bg-slate-100',
@@ -26,7 +30,15 @@ export function StatusBadge({ className }: StatusBadgeProps) {
     },
     verifying: {
       label: 'Verifying',
+      className: 'bg-pink-50 text-pink-600 hover:bg-pink-50',
+    },
+    'payment pending': {
+      label: 'Payment Pending',
       className: 'bg-yellow-50 text-yellow-600 hover:bg-yellow-50',
+    },
+    completed: {
+      label: 'Completed',
+      className: 'bg-green-50 text-green-600 hover:bg-green-50',
     },
   };
 

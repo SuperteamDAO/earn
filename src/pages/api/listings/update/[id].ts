@@ -110,7 +110,15 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       hackathon,
       pastListing: listing as any,
     });
-    const innerSchema = listingSchema._def.schema;
+    const innerSchema = listingSchema._def.schema.omit({
+      isPublished: true,
+      isWinnersAnnounced: true,
+      totalWinnersSelected: true,
+      totalPaymentsMade: true,
+      status: true,
+      publishedAt: true,
+      sponsorId: true,
+    });
     const superValidator = innerSchema.superRefine(async (data, ctx) => {
       await createListingRefinements(data as any, ctx, hackathon);
       await backendListingRefinements(data as any, ctx);
@@ -263,7 +271,6 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         isFndnPaying,
         totalWinnersSelected,
         ...(skillsToUpdate !== undefined && { skills: skillsToUpdate }),
-        sponsorId: userSponsorId,
       },
     });
 

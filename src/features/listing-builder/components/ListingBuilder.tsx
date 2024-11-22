@@ -62,10 +62,6 @@ function ListingBuilder({
   useInitAtom(isSTAtom, isST);
   useInitAtom(isGodAtom, isGod);
   useInitAtom(isEditingAtom, !!defaultListing.isPublished);
-  // useEffect(() => {
-  //   setIsEditing(!!defaultListing.isPublished)
-  //   // form.reset(defaultListing);
-  // }, [defaultListing]);
 
   useEffect(() => {
     if (isDuplicating) form.saveDraft();

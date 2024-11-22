@@ -8,4 +8,10 @@ export * from './SuperteamName';
 export type ListingFormSchema = ReturnType<typeof createListingFormSchema>;
 export type ListingFormData = z.infer<ListingFormSchema>;
 
-export type ListingStatus = 'draft' | 'published' | 'unpublished' | 'verifying';
+export type ListingStatus =
+  | 'draft'
+  | 'published'
+  | 'unpublished'
+  | 'verifying'
+  | 'payment pending'
+  | 'completed';

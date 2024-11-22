@@ -69,7 +69,20 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
     const result = await prisma.bounties.update({
       where: { id },
-      data: { isPublished: false },
+      data: {
+        isPublished: false,
+        totalWinnersSelected: 0,
+      },
+    });
+    await prisma.submission.updateMany({
+      where: {
+        listingId: id,
+        isWinner: true,
+      },
+      data: {
+        isWinner: false,
+        winnerPosition: null,
+      },
     });
     try {
       await earncognitoClient.post(`/discord/listing-update`, {

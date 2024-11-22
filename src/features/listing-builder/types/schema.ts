@@ -235,6 +235,9 @@ export const createListingFormSchema = ({
 
       // values that will not be set on any API, but useful for response
       isPublished: z.boolean().optional().nullable(),
+      isWinnersAnnounced: z.boolean().optional().nullable(),
+      totalWinnersSelected: z.number().optional().nullable(),
+      totalPaymentsMade: z.number().optional().nullable(),
       status: z.nativeEnum(status).optional().nullable(),
       publishedAt: z
         .union([z.string().datetime(), z.date(), z.null()])
