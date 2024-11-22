@@ -149,7 +149,7 @@ const UpdateSponsor = () => {
     <Default
       meta={
         <Meta
-          title="编辑赞助商资料 | Solar Earn"
+          title="编辑项目方资料 | Solar Earn"
           description="每个Solana机会都在这里！"
         />
       }
@@ -157,7 +157,7 @@ const UpdateSponsor = () => {
       <VStack w="full" pt={12} pb={24}>
         <VStack>
           <Text color={'gray.700'} fontSize={'3xl'} fontWeight={700}>
-            编辑赞助商资料
+            编辑项目方资料
           </Text>
         </VStack>
         <VStack w={'2xl'} pt={10}>
@@ -322,7 +322,7 @@ const UpdateSponsor = () => {
                   _placeholder={{ color: 'brand.slate.300' }}
                   focusBorderColor="brand.purple"
                   id="entityName"
-                  placeholder="全实体名称"
+                  placeholder="实体全称"
                   {...register('entityName')}
                 />
                 <FormErrorMessage>
@@ -342,10 +342,7 @@ const UpdateSponsor = () => {
                   >
                     电报
                   </FormLabel>
-                  <Tooltip
-                    fontSize="xs"
-                    label="请填写您的官方电报用户名。"
-                  >
+                  <Tooltip fontSize="xs" label="请填写您的官方电报用户名。">
                     <InfoOutlineIcon
                       color="brand.slate.500"
                       w={3}
@@ -380,10 +377,7 @@ const UpdateSponsor = () => {
                   >
                     微信
                   </FormLabel>
-                  <Tooltip
-                    fontSize="xs"
-                    label="请填写您的官方微信ID。"
-                  >
+                  <Tooltip fontSize="xs" label="请填写您的官方微信ID。">
                     <InfoOutlineIcon
                       color="brand.slate.500"
                       w={3}
@@ -530,10 +524,9 @@ const UpdateSponsor = () => {
             <Box mt={8}>
               {hasError && (
                 <Text align="center" mb={4} color="red">
-                  {errorMessage ||
-                    '抱歉！编辑公司资料时发生错误！'}
+                  {errorMessage || '抱歉！编辑公司资料时发生错误！'}
                   <br />
-                  请更新资料并重试或联系支持！
+                  请更新资料并重试或联系我们询求支持！
                 </Text>
               )}
               <Button

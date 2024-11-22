@@ -51,7 +51,7 @@ const CreateSponsor = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loginStep, setLoginStep] = useState<number>(0);
+  const [loginStep, setLoginStep] = useState<number>(1);
 
   const { user } = useUser();
   const posthog = usePostHog();
@@ -105,7 +105,7 @@ const CreateSponsor = () => {
       meta={
         <Meta
           title="创建项目方 | Solar Earn"
-          description="每个 Solana 机会都在这里！"
+          description="Solana生态的项目机会都在这里！"
           canonical="https://earn.superteam.fun/new/sponsor/"
         />
       }
@@ -344,7 +344,7 @@ const CreateSponsor = () => {
                     _placeholder={{ color: 'brand.slate.300' }}
                     focusBorderColor="brand.purple"
                     id="entityName"
-                    placeholder="全实体名称"
+                    placeholder="实体全称"
                     {...register('entityName')}
                   />
                   <FormErrorMessage>
