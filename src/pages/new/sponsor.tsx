@@ -51,7 +51,7 @@ const CreateSponsor = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loginStep, setLoginStep] = useState<number>(1);
+  const [loginStep, setLoginStep] = useState(0);
 
   const { user } = useUser();
   const posthog = usePostHog();
