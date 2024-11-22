@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
 import { Eye, LayoutGrid, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
@@ -22,10 +23,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils';
 import { getURL } from '@/utils/validUrl';
 
+import { isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
 import {
   isCreateListingAllowedQuery,
@@ -43,7 +46,7 @@ export function Templates() {
     control: form.control,
     name: 'type',
   });
-  const { data: templates = [] } = useQuery(
+  const { data: templates = [], isLoading: templatesLoading } = useQuery(
     listingTemplatesQuery(type || 'bounty'),
   );
 
@@ -61,10 +64,10 @@ export function Templates() {
     isCreateListingAllowed === false &&
     session?.user.role !== 'GOD';
 
+  const isEditing = useAtomValue(isEditingAtom);
+
   return (
-    <Dialog
-    // defaultOpen={!(isEditing && !isDuplicating)}
-    >
+    <Dialog defaultOpen={!isEditing}>
       <DialogTrigger asChild>
         <Button
           variant="ghost"
@@ -99,6 +102,29 @@ export function Templates() {
                 </span>
               </Button>
             </DialogClose>
+
+            {templatesLoading &&
+              Array(7)
+                .fill(1)
+                .map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex h-64 w-60 flex-col rounded-lg border"
+                  >
+                    <Skeleton className="h-2/4" />
+                    <div className="flex h-2/4 w-full flex-col gap-2 p-4">
+                      <Skeleton className="h-2/6 w-2/4" />
+                      <div className="flex h-2/5 gap-2">
+                        <Skeleton className="h-full w-1/4" />
+                        <Skeleton className="h-full w-3/4" />
+                      </div>
+                      <div className="flex h-2/4 gap-2">
+                        <Skeleton className="h-full w-2/4" />
+                        <Skeleton className="h-full w-2/4" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
 
             {templates.map((template) => {
               const sponsors = [
