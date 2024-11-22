@@ -51,7 +51,7 @@ export function ExtraInfoSection({
             href={`/hackathon/${Hackathon.name?.toLowerCase()}`}
             isExternal
           >
-            View All Challenges
+            查看全部
             <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
           </Link>
         </VStack>
