@@ -129,7 +129,7 @@ export function CreateListing({
   const [hackathonSponsor, setHackathonSponsor] = useAtom(hackathonSponsorAtom);
 
   const basePath = type === 'hackathon' ? 'hackathon' : 'listings';
-  const surveyId = '018c674f-7e49-0000-5097-f2affbdddb0d';
+  const surveyId = ''; // TODO what is that?
   const isNewOrDraft =
     listingDraftStatus === 'DRAFT' ||
     listingDraftStatus === 'PREVIEW' ||

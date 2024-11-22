@@ -128,11 +128,11 @@ export const SubmissionActionButton = ({
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
         pastDeadline ||
-          (user?.id &&
-            user?.isTalentFilled &&
-            ((bountyDraftStatus !== 'PUBLISHED' && status !== 'PREVIEW') ||
-              !hasHackathonStarted ||
-              !isUserEligibleByRegion)),
+        (user?.id &&
+          user?.isTalentFilled &&
+          ((bountyDraftStatus !== 'PUBLISHED' && status !== 'PREVIEW') ||
+            !hasHackathonStarted ||
+            !isUserEligibleByRegion)),
       );
       btnLoadingText = 'Checking Submission..';
   }
@@ -150,7 +150,7 @@ export const SubmissionActionButton = ({
     onClose: onSurveyClose,
   } = useDisclosure();
 
-  const surveyId = '018c6743-c893-0000-a90e-f35d31c16692';
+  const surveyId = ''; // TODO what is this
 
   return (
     <>
