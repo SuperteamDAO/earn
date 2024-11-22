@@ -228,7 +228,7 @@ export const UserDrawer = ({
 
             <Box>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Sub Skills
+                子技能
               </Text>
               <Flex wrap="wrap" gap={2}>
                 {subSkills.length > 0 ? (

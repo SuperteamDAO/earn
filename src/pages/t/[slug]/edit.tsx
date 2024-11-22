@@ -646,7 +646,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 isLoading={uploading || isLoading}
                 type="submit"
               >
-                Update Profile
+                更新
               </Button>
             </form>
           </Box>

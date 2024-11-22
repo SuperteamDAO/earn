@@ -56,6 +56,14 @@ interface Token {
 
 export const tokenList: Token[] = [
   {
+    tokenName: 'USDT',
+    tokenSymbol: 'USDT',
+    mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
+    decimals: 6,
+    coingeckoSymbol: 'tether',
+  },
+  {
     tokenName: 'USDC',
     tokenSymbol: 'USDC',
     mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
@@ -206,14 +214,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/32782.png',
     decimals: 9,
     coingeckoSymbol: 'ore',
-  },
-  {
-    tokenName: 'USDT',
-    tokenSymbol: 'USDT',
-    mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
-    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
-    decimals: 6,
-    coingeckoSymbol: 'tether',
   },
   {
     tokenName: 'mSOL',

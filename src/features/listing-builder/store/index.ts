@@ -8,11 +8,11 @@ import { type Listing } from '@/features/listings';
 import { type ListingFormType, type ListingStoreType } from '../types';
 
 const listingDescriptionHeadings = [
-  'About the Listing & Scope',
-  'Rewards',
-  'Judging Criteria',
-  'Submission Requirements',
-  'Resources',
+  '任务描述',
+  '奖励',
+  '评判标准',
+  '提交要求',
+  '项目参考资料',
 ]
   .map((heading) => `<h1 key=${heading}>${heading}</h1>`)
   .join('');

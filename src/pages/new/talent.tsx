@@ -40,24 +40,23 @@ const StepsCon = () => {
   const [currentStep, setSteps] = useState<number>(1);
   const stepList = [
     {
-      label: 'About You',
+      label: '个人',
       number: 1,
     },
     {
-      label: 'Links',
+      label: '链接',
       number: 2,
     },
   ];
 
   const TitleArray = [
     {
-      title: 'Create Your Profile',
-      subTitle:
-        "If you're ready to start contributing to crypto projects, you're in the right place.",
+      title: '创建个人档案',
+      subTitle: '如果您已准备好参与 Solana 生态加密项目，那么这就是对的地方。',
     },
     {
-      title: 'Socials & Proof of Work',
-      subTitle: 'Where can people learn more about your work?',
+      title: '社交 & 工作经历',
+      subTitle: '人们从哪里可以了解更多关于您的工作的信息？',
     },
   ];
 

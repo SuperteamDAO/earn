@@ -51,7 +51,7 @@ export const SkillSelect = ({
       <FormControl my={6} isRequired>
         <Flex align={'center'} justify={'start'}>
           <FormLabel color={'brand.slate.500'} htmlFor={'skills'}>
-            Your Skills
+            你的技能
           </FormLabel>
           <Tooltip
             w="max"
@@ -62,14 +62,10 @@ export const SkillSelect = ({
             bg="#6562FF"
             borderRadius="0.5rem"
             hasArrow
-            label={`Select all that apply`}
+            label=""
             placement="right-end"
           >
-            <Image
-              mt={-2}
-              alt={'Info Icon'}
-              src={'/assets/icons/info-icon.svg'}
-            />
+            <Image mt={-2} alt="" src="/assets/icons/info-icon.svg" />
           </Tooltip>
         </Flex>
         {helperText && (
@@ -107,7 +103,7 @@ export const SkillSelect = ({
       <FormControl my={6} isRequired>
         <Flex align={'center'} justify={'start'}>
           <FormLabel color={'brand.slate.500'} htmlFor={'skills'}>
-            Sub Skills
+            子技能
           </FormLabel>
           <Tooltip
             w="max"
@@ -118,14 +114,10 @@ export const SkillSelect = ({
             bg="#6562FF"
             borderRadius="0.5rem"
             hasArrow
-            label={`Select all that apply`}
+            label=""
             placement="right-end"
           >
-            <Image
-              mt={-2}
-              alt={'Info Icon'}
-              src={'/assets/icons/info-icon.svg'}
-            />
+            <Image mt={-2} alt="" src="/assets/icons/info-icon.svg" />
           </Tooltip>
         </Flex>
         <ReactSelect

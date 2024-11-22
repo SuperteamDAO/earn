@@ -165,7 +165,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
       <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
         <FormControl isRequired>
           <Box w={'full'} mb={'1.25rem'}>
-            <FormLabel color={'brand.slate.500'}>Username</FormLabel>
+            <FormLabel color={'brand.slate.500'}>用户名</FormLabel>
             <Input
               color={'gray.800'}
               borderColor="brand.slate.300"
@@ -191,7 +191,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
 
         <Flex justify="space-between" gap={8} w={'full'} mb={'1.25rem'}>
           <FormControl w="full" isRequired>
-            <FormLabel color={'brand.slate.500'}>First Name</FormLabel>
+            <FormLabel color={'brand.slate.500'}>名</FormLabel>
             <Input
               color={'gray.800'}
               borderColor="brand.slate.300"
@@ -206,7 +206,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
             />
           </FormControl>
           <FormControl w="full" isRequired>
-            <FormLabel color={'brand.slate.500'}>Last Name</FormLabel>
+            <FormLabel color={'brand.slate.500'}>姓</FormLabel>
             <Input
               color={'gray.800'}
               borderColor="brand.slate.300"
@@ -224,7 +224,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
 
         <FormControl isRequired>
           <Box w={'full'} mb={'1.25rem'}>
-            <FormLabel color={'brand.slate.500'}>Location</FormLabel>
+            <FormLabel color={'brand.slate.500'}>城市</FormLabel>
             <Select
               color={watch().location.length === 0 ? 'brand.slate.300' : ''}
               borderColor="brand.slate.300"
@@ -256,7 +256,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                   color={'brand.slate.500'}
                   requiredIndicator={<></>}
                 >
-                  Profile Picture
+                  头像
                 </FormLabel>
                 <ImagePicker
                   defaultValue={{ url: user.photo }}
@@ -281,7 +281,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                   color={'brand.slate.500'}
                   requiredIndicator={<></>}
                 >
-                  Profile Picture
+                  头像
                 </FormLabel>
                 <ImagePicker
                   onChange={async (e) => {
@@ -307,11 +307,17 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
         >
           <Box w={'full'} mb={'1.25rem'}>
             <FormLabel color={'brand.slate.500'} aria-autocomplete="none">
-              Your Solana Wallet Address
+              您的 solana 钱包地址
             </FormLabel>
             <FormHelperText mt={0} mb={4} color="brand.slate.500">
               <>
-                This is where you will receive your rewards if you win. Download{' '}
+                这是您收取奖励的钱包地址。如果您还没有 Solana 钱包，请下载{' '}
+                <Text as="u">
+                  <Link href="https://phantom.app/" isExternal>
+                    Phantom
+                  </Link>
+                </Text>{' '}
+                /
                 <Text as="u">
                   <Link href="https://backpack.app" isExternal>
                     Backpack
@@ -323,7 +329,6 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                     Solflare
                   </Link>
                 </Text>{' '}
-                if you don&apos;t have a Solana wallet
               </>
             </FormHelperText>
             <Input
