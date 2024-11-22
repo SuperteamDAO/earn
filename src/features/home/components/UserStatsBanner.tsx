@@ -70,10 +70,10 @@ export const UserStatsBanner = () => {
             textOverflow={'ellipsis'}
             noOfLines={1}
           >
-            Welcome back, {user.firstName}
+            欢迎, {user.firstName}
           </Text>
           <Text color="#c4c2ef" fontSize={'sm'}>
-            We’re so glad to have you on Earn
+            很高兴加入Solar Earn
           </Text>
         </VStack>
       </Flex>

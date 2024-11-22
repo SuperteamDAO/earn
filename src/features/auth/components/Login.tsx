@@ -19,7 +19,7 @@ export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
             fontWeight={600}
             textAlign={'center'}
           >
-            You&apos;re one step away
+            只需一步
           </Text>
           <Text
             color="brand.slate.600"
@@ -27,9 +27,7 @@ export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
             fontWeight={400}
             textAlign={'center'}
           >
-            {isSponsor
-              ? 'from joining Solar Earn'
-              : 'From earning in global standards'}
+            {isSponsor ? '加入Solar Earn' : '立即注册'}
           </Text>
         </Box>
         <SignIn />

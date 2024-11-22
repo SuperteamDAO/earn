@@ -184,7 +184,7 @@ export default function NewProfilePage({
                   </Box>
                   <Box flexDir={'column'} gap={5} display={'flex'} px={4}>
                     <BulletPoint type="TALENT">
-                      为Solana 项目贡献力量
+                      为Solana项目贡献力量
                     </BulletPoint>
                     <BulletPoint type="TALENT"> 构建您的 Web3 简历</BulletPoint>
                     <BulletPoint type="TALENT">赢取赏金奖励</BulletPoint>
@@ -273,7 +273,7 @@ export default function NewProfilePage({
                     每周吸引 10,000 位访问
                   </BulletPoint>
                   <BulletPoint type="SPONSOR">
-                    提供 20+多个任务模板选择
+                    连接Solana华语区人才和项目方
                   </BulletPoint>
                   <BulletPoint type="SPONSOR">完全免费</BulletPoint>
                 </Box>
