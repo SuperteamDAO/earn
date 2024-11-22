@@ -214,7 +214,7 @@ export const SubmissionActionButton = ({
       <Flex
         className="ph-no-capture"
         pos={{ base: 'fixed', md: 'static' }}
-        zIndex={999}
+        zIndex={30}
         bottom={0}
         left="50%"
         w="full"
