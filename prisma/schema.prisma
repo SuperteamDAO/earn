@@ -177,7 +177,7 @@ model Grants {
   updatedAt              DateTime           @updatedAt
   skills                 Json?
   logo                   String?
-  region                 String            @default("GLOBAL")
+  region                 String             @default("GLOBAL")
   sponsor                Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                    User               @relation(fields: [pocId], references: [id])
   questions              Json?
@@ -487,6 +487,7 @@ model emailLogs {
   email     String?
   type      EmailType
   bountyId  String?
+  userId    String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
@@ -587,6 +588,7 @@ enum EmailType {
   ROLLING_30_DAYS
   NEW_LISTING
   ROLLING_UNPUBLISH
+  UNFILLED_PROFILE
 }
 
 enum Role {

@@ -351,16 +351,26 @@ export const GrantApplicationModal = ({
                         <div>
                           <FormLabel>Your Solana Wallet Address</FormLabel>
                           <FormDescription>
-                            This is where you will receive your rewards if you
-                            win. If you want to edit it,{' '}
-                            <a
-                              href={`/t/${user?.username}/edit`}
-                              className="text-blue-600 underline hover:text-blue-700"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              click here
-                            </a>
+                            {!!user?.publicKey ? (
+                              <>
+                                This is where you will receive your rewards if
+                                you win. If you want to edit it,{' '}
+                                <a
+                                  href={`/t/${user?.username}/edit`}
+                                  className="text-blue-600 underline hover:text-blue-700"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  click here
+                                </a>
+                              </>
+                            ) : (
+                              <>
+                                This wallet address will be linked to your
+                                profile and you will receive your rewards here
+                                if you win.
+                              </>
+                            )}
                           </FormDescription>
                         </div>
                         <FormControl>
