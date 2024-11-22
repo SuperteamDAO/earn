@@ -135,7 +135,7 @@ export default function NewProfilePage({
             <Flex direction={'column'} gap={9} w="full">
               <Flex direction={'column'} gap={1.5}>
                 <Text color="brand.slate.900" fontSize={'2xl'} fontWeight={600}>
-                  Continue as talent
+                  以人才身份贡献
                 </Text>
                 <Text
                   color="brand.slate.500"
@@ -143,8 +143,7 @@ export default function NewProfilePage({
                   lineHeight={'21.78px'}
                   letterSpacing="-0.2px"
                 >
-                  Create a profile to start submitting, and get notified on new
-                  work opportunities
+                  创建个人资料以开始提交作品，并获取新的工作机会通知
                 </Text>
               </Flex>
 
@@ -185,12 +184,10 @@ export default function NewProfilePage({
                   </Box>
                   <Box flexDir={'column'} gap={5} display={'flex'} px={4}>
                     <BulletPoint type="TALENT">
-                      Contribute to top Solana projects
+                      为Solana 项目贡献力量
                     </BulletPoint>
-                    <BulletPoint type="TALENT">
-                      Build your web3 resume
-                    </BulletPoint>
-                    <BulletPoint type="TALENT">Get paid in crypto</BulletPoint>
+                    <BulletPoint type="TALENT"> 构建您的 Web3 简历</BulletPoint>
+                    <BulletPoint type="TALENT">赢取赏金奖励</BulletPoint>
                   </Box>
                   <Divider borderColor="brand.slate.300" />
                   <Box px={4} pb={4}>
@@ -216,7 +213,7 @@ export default function NewProfilePage({
                 </AvatarGroup>
                 {totals?.totalUsers !== null && (
                   <Text pos="relative" color="brand.slate.500" fontSize="sm">
-                    Join {totals?.totalUsers?.toLocaleString()}+ others
+                    加入 {totals?.totalUsers?.toLocaleString()}+ 其他用户
                   </Text>
                 )}
               </Flex>
@@ -225,7 +222,7 @@ export default function NewProfilePage({
           <Flex direction={'column'} gap={9} w="full">
             <Flex direction={'column'} gap={1.5}>
               <Text color="brand.slate.900" fontSize={'2xl'} fontWeight={600}>
-                Continue as a sponsor
+                以项目方身份贡献
               </Text>
               <Text
                 color="brand.slate.500"
@@ -233,8 +230,7 @@ export default function NewProfilePage({
                 lineHeight={'21.78px'}
                 letterSpacing="-0.2px"
               >
-                List a bounty or freelance gig for your project and find your
-                next contributor
+                为您的项目列出一个赏金或自由职业任务，并找到贡献者
               </Text>
             </Flex>
             <AuthWrapper style={{ width: '100%' }}>
@@ -274,12 +270,12 @@ export default function NewProfilePage({
                 </Box>
                 <Box flexDir={'column'} gap={5} display={'flex'} px={4}>
                   <BulletPoint type="SPONSOR">
-                    Get in front of 10,000 weekly visitors
+                    每周吸引 10,000 位访问
                   </BulletPoint>
                   <BulletPoint type="SPONSOR">
-                    20+ templates to choose from
+                    提供 20+多个任务模板选择
                   </BulletPoint>
-                  <BulletPoint type="SPONSOR">100% free</BulletPoint>
+                  <BulletPoint type="SPONSOR">完全免费</BulletPoint>
                 </Box>
                 <Divider borderColor="brand.slate.300" />
                 <Box px={4} pb={4}>
