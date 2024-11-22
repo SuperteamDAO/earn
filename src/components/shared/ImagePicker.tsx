@@ -147,10 +147,10 @@ export const ImagePicker = ({
 
         <Flex justify={'center'} direction={'column'} px={5}>
           <Text mb={1} color={'brand.slate.500'} fontWeight={600}>
-            Choose or drag and drop media
+            选择或拖拽图片
           </Text>
           <Text color="brand.slate.400" fontSize="sm">
-            Maximum size 5 MB
+            图片最大容量 5 MB
           </Text>
         </Flex>
       </Flex>
