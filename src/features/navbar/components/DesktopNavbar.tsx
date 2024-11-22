@@ -90,7 +90,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
           </div>
         </div>
 
-        <div className="flex flex-1 items-center justify-end gap-4 py-2">
+        <div className="flex flex-1 items-center justify-end gap-4 py-1.5">
           {status === 'loading' && !session && (
             <div className="flex items-center gap-2">
               <Skeleton className="h-10 w-10 rounded-full" />
