@@ -1,8 +1,9 @@
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
+import { Button } from '@/components/ui/button';
 import { DateTimePicker } from '@/components/ui/datetime-picker';
 import {
   FormField,
@@ -10,13 +11,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 import { hackathonAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
@@ -35,6 +29,7 @@ export function Deadline() {
     name: 'deadline',
     control: form.control,
   });
+  useMemo(() => console.log('deadline', deadline), [deadline]);
   const type = useWatch({
     name: 'type',
     control: form.control,
@@ -43,9 +38,6 @@ export function Deadline() {
 
   const [maxDeadline, setMaxDeadline] = useState<Date | undefined>(undefined);
   const [minDeadline] = useState<Date | undefined>(new Date());
-
-  const [isCustomDate, setIsCustomDate] = useState(false);
-  const [customDate, setCustomDate] = useState<string>('0');
 
   const isEditing = useAtomValue(isEditingAtom);
 
@@ -61,24 +53,12 @@ export function Deadline() {
     return dayjs().add(days, 'day').format(DEADLINE_FORMAT);
   };
 
-  const isPresetDeadline = (currentDeadline: string) => {
-    const current = dayjs(currentDeadline);
-    return deadlineOptions.some(({ value }) => {
-      const preset = dayjs().add(value, 'day').format(DEADLINE_FORMAT);
-      return dayjs(preset).isSame(current, 'minute');
-    });
-  };
-
   // TODO: Debug why zod default for deadline specifically is not working
   useEffect(() => {
     if (form) {
       if (type !== 'hackathon') {
         if (typeof deadline !== 'string') {
           form.setValue('deadline', handleDeadlineSelection(7));
-          setCustomDate('7');
-          setIsCustomDate(false);
-        } else {
-          setIsCustomDate(!isPresetDeadline(deadline));
         }
       } else {
         if (hackathon) {
@@ -105,13 +85,11 @@ export function Deadline() {
                 onChange={(date) => {
                   if (date) {
                     const formattedDate = dayjs(date).format(DEADLINE_FORMAT);
-                    field.onChange(formattedDate);
-                    setIsCustomDate(!isPresetDeadline(formattedDate));
+                    const localFormat = formattedDate.replace('Z', '');
+                    field.onChange(localFormat);
                   } else {
                     field.onChange(undefined);
-                    setIsCustomDate(false);
                   }
-                  console.log('deadline was changed?');
                   form.saveDraft();
                 }}
                 use12HourFormat
@@ -123,28 +101,24 @@ export function Deadline() {
                 }}
                 disabled={type === 'hackathon'}
               />
-              <Select
-                onValueChange={(data) => {
-                  setCustomDate(data);
-                  console.log('deadline option changed?');
-                  field.onChange(handleDeadlineSelection(Number(data)));
-                }}
-                value={customDate}
-                disabled={type === 'hackathon'}
-              >
-                <SelectTrigger className="w-32 rounded-none border-0 border-l text-xs text-slate-500 focus:ring-0">
-                  {isCustomDate ? 'Custom' : <SelectValue />}
-                </SelectTrigger>
-                <SelectContent>
-                  {deadlineOptions.map(({ value, label }) => (
-                    <SelectItem key={value} value={value + ''}>
-                      <div className="flex items-center gap-2 pl-2 text-xs text-slate-500">
-                        <span>{label}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {deadlineOptions.map((option) => (
+                <Button
+                  key={option.value}
+                  variant="outline"
+                  size="sm"
+                  className="h-fit w-fit px-2 py-1"
+                  onClick={() => {
+                    form.setValue(
+                      'deadline',
+                      handleDeadlineSelection(option.value),
+                    );
+                  }}
+                >
+                  {option.label}
+                </Button>
+              ))}
             </div>
             <FormMessage />
           </FormItem>
