@@ -64,10 +64,10 @@ export function Templates() {
     isCreateListingAllowed === false &&
     session?.user.role !== 'GOD';
 
-  const [open, setOpen] = useState(router.asPath === '/dashboard/new/');
+  const [open, setOpen] = useState(router.pathname === '/dashboard/new');
   useEffect(() => {
-    setOpen(router.asPath === '/dashboard/new/');
-  }, [router.asPath]);
+    setOpen(router.pathname === '/dashboard/new');
+  }, [router.pathname]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
