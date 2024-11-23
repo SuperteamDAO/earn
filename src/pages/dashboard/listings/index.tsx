@@ -401,7 +401,7 @@ export default function SponsorListings() {
                 size="sm"
                 variant="outline"
               >
-                Previous
+                上一页
               </Button>
               <Button
                 isDisabled={
@@ -412,7 +412,7 @@ export default function SponsorListings() {
                 size="sm"
                 variant="outline"
               >
-                Next
+                下一页
               </Button>
             </Flex>
           )}

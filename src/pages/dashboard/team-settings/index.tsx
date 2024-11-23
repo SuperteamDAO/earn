@@ -328,7 +328,7 @@ const Index = () => {
           size="sm"
           variant="outline"
         >
-          Previous
+          上一页
         </Button>
         <Button
           isDisabled={
@@ -339,7 +339,7 @@ const Index = () => {
           size="sm"
           variant="outline"
         >
-          Next
+          下一页
         </Button>
       </Flex>
     </SponsorLayout>

@@ -586,7 +586,7 @@ export default function BountySubmissions({ slug }: Props) {
                           size="sm"
                           variant="outline"
                         >
-                          Previous
+                          上一页
                         </Button>
                         <Text color="brand.slate.400" fontSize="sm">
                           <Text as="span" fontWeight={700}>
@@ -616,7 +616,7 @@ export default function BountySubmissions({ slug }: Props) {
                           size="sm"
                           variant="outline"
                         >
-                          Next
+                          下一页
                         </Button>
                       </>
                     )}
