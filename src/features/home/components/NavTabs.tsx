@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo } from 'react';
 
-import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar';
 import { useUser } from '@/store/user';
@@ -93,7 +92,7 @@ export function NavTabs({ ...flexProps }: FlexProps) {
           href={`/regions/${region.toLowerCase()}/`}
           phEvent={`${region.toLowerCase()}_navpill`}
         >
-          {superteam.code && <UserFlag location={superteam.code} isCode />}
+          {/* {superteam.code && <UserFlag location={superteam.code} isCode />} */}
           {superteam.displayValue}
         </PillTab>
       )}

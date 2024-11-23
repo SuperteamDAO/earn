@@ -4,32 +4,13 @@ import {
   Flex,
   Image,
   Link,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
   Stack,
   Text,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import { UserFlag } from '@/components/shared/UserFlag';
-import { Superteams } from '@/constants/Superteam';
 import { Telegram, Twitter } from '@/features/talent';
-
-type Country = {
-  name: string;
-  flag: string;
-  code: string;
-};
-
-const countries: Country[] = Superteams.map((superteam) => ({
-  name: superteam.displayValue,
-  flag: superteam.icons,
-  code: superteam.code ?? 'GLOBAL',
-}));
 
 const FooterColumn = ({
   title,
@@ -62,81 +43,6 @@ const FooterColumn = ({
   </Stack>
 );
 
-const CountrySelector: React.FC = () => {
-  const router = useRouter();
-  const [selectedCountry, setSelectedCountry] = useState<Country>({
-    name: 'Global',
-    flag: '🌍',
-    code: 'global',
-  });
-
-  useEffect(() => {
-    const path = router.asPath.toLowerCase();
-    const matchedCountry = countries.find((country) =>
-      path.includes(`/regions/${country.name.toLowerCase()}`),
-    );
-    if (matchedCountry) {
-      setSelectedCountry(matchedCountry);
-    } else {
-      setSelectedCountry({ name: 'Global', flag: '🌍', code: 'global' });
-    }
-  }, [router.asPath]);
-
-  const handleCountrySelect = (country: Country) => {
-    if (country.name === 'Global') {
-      router.push('/');
-    } else {
-      const regionUrl = `/regions/${country.name.toLowerCase()}`;
-      router.push(regionUrl);
-    }
-  };
-
-  return (
-    <Popover closeOnBlur={true} closeOnEsc={true}>
-      <PopoverTrigger>
-        <Flex
-          align="center"
-          gap={2}
-          px={2}
-          py={1}
-          bg="white"
-          borderRadius="md"
-          cursor="pointer"
-        >
-          {selectedCountry?.flag &&
-            (selectedCountry.code === 'global' ? (
-              <Text>🌍</Text>
-            ) : (
-              <UserFlag location={selectedCountry.code} isCode />
-            ))}
-          <Text userSelect={'none'}>{selectedCountry.name}</Text>
-        </Flex>
-      </PopoverTrigger>
-      <PopoverContent w="200px">
-        <PopoverBody p={0}>
-          <Stack gap={0}>
-            {countries.map((country) => (
-              <Flex
-                key={country.name}
-                align="center"
-                gap={2}
-                px={4}
-                py={2}
-                _hover={{ bg: 'gray.100' }}
-                cursor="pointer"
-                onClick={() => handleCountrySelect(country)}
-              >
-                <UserFlag location={country.code} isCode />
-                <Text>{country.name}</Text>
-              </Flex>
-            ))}
-          </Stack>
-        </PopoverBody>
-      </PopoverContent>
-    </Popover>
-  );
-};
-
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
@@ -162,7 +68,7 @@ export const Footer = () => {
       text: '条款',
       href: '#',
     },
-    { text: '隐私政策', href: '/privacy-policy.pdf' },
+    { text: '隐私政策', href: '#' },
     {
       text: '联系我们',
       href: 'mailto:vesper.yang.blockchain@gmail.com',

@@ -166,11 +166,11 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
             </Flex>
             <Divider my={2} borderColor={'brand.slate.300'} />
             <NavLink href={'/feed'} label={'动态'} isActive={false} />
-            <NavLink
+            {/* <NavLink
               href={'/leaderboard'}
-              label={'排行榜'}
+              label='排行榜'
               isActive={false}
-            />
+            /> */}
           </DrawerBody>
         </DrawerContent>
       </Drawer>

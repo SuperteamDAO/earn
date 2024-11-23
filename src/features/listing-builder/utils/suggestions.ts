@@ -11,11 +11,11 @@ const bountySuggestions: Suggestions[] = [
     suggestions: [
       {
         label: 'Twitter Thread on Rome Protocol',
-        link: 'https://earn.superteam.fun/listings/bounty/write-a-twitter-thread-on-rome-protocol/',
+        link: '',
       },
       {
         label: 'History of Bonk [Twitter Thread]',
-        link: 'https://earn.superteam.fun/listings/bounty/history-of-bonk-twitter-thread/',
+        link: '',
       },
     ],
   },
@@ -24,11 +24,11 @@ const bountySuggestions: Suggestions[] = [
     suggestions: [
       {
         label: 'Deep Dive on ONDC Network',
-        link: 'https://earn.superteam.fun/listings/bounty/deep-dive-on-the-state-of-the-ondc-network/',
+        link: '',
       },
       {
         label: 'Deep Dive on Monaco Protocol',
-        link: 'https://earn.superteam.fun/listings/bounty/deep-dive-on-monaco-protocol-article/',
+        link: '',
       },
     ],
   },
@@ -37,11 +37,11 @@ const bountySuggestions: Suggestions[] = [
     suggestions: [
       {
         label: 'Design y00ts Dashboard',
-        link: 'https://earn.superteam.fun/listings/bounty/y00ts-royalty-dashboard-design/',
+        link: '',
       },
       {
         label: 'Redesign Symmetry App',
-        link: 'https://earn.superteam.fun/listings/bounty/redesign-symmetry-app/',
+        link: '',
       },
     ],
   },
