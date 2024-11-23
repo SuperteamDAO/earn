@@ -185,7 +185,7 @@ ${listingLink('twitter')}
                     </Link>
                   ) : (
                     <Link as={NextLink} href={`/dashboard/listings/`}>
-                      Sponsor Dashboard <ArrowForwardIcon />
+                      项目方仪表盘 <ArrowForwardIcon />
                     </Link>
                   )}
                 </Flex>

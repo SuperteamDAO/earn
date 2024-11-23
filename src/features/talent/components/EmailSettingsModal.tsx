@@ -134,22 +134,22 @@ export const EmailSettingsModal = ({
                   fontSize="sm"
                   letterSpacing={0.8}
                 >
-                  TALENT ALERTS
+                  社区成员推送
                 </Text>
                 <AlertOption
-                  title="Weekly Roundup of new listings"
+                  title="新任务周报"
                   category="weeklyListingRoundup"
                 />
                 <AlertOption
-                  title="New listings added for my skills"
+                  title="新上线适合我技能的任务"
                   category="createListing"
                 />
                 <AlertOption
-                  title="Likes and comments on my submissions"
+                  title="我提交作品的点赞和评论"
                   category="commentOrLikeSubmission"
                 />
                 <AlertOption
-                  title="Sponsor Invitation Emails (Scout)"
+                  title="来自项目方的邀请邮件"
                   category="scoutInvite"
                 />
               </Box>

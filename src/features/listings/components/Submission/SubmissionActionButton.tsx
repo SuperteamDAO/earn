@@ -104,7 +104,7 @@ export const SubmissionActionButton = ({
 
   switch (buttonState) {
     case 'edit':
-      buttonText = isProject ? 'Edit Application' : 'Edit Submission';
+      buttonText = isProject ? '修改' : '修改';
       isBtnDisabled = false;
       btnLoadingText = null;
       break;
@@ -119,25 +119,25 @@ export const SubmissionActionButton = ({
       break;
 
     default:
-      buttonText = isProject ? 'Apply Now' : 'Submit Now';
+      buttonText = isProject ? '立即申请' : '现在提交';
       if (
         listing.compensationType === 'variable' ||
         listing.compensationType === 'range'
       )
-        buttonText = 'Send Quote';
+        buttonText = '发送报价';
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
         pastDeadline ||
-        (user?.id &&
-          user?.isTalentFilled &&
-          ((bountyDraftStatus !== 'PUBLISHED' && status !== 'PREVIEW') ||
-            !hasHackathonStarted ||
-            !isUserEligibleByRegion)),
+          (user?.id &&
+            user?.isTalentFilled &&
+            ((bountyDraftStatus !== 'PUBLISHED' && status !== 'PREVIEW') ||
+              !hasHackathonStarted ||
+              !isUserEligibleByRegion)),
       );
       btnLoadingText = 'Checking Submission..';
   }
   if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
-    buttonText = 'Submissions in Review';
+    buttonText = '提交正在审核中';
     buttonBG = 'gray.500';
   } else if (isWinnersAnnounced) {
     buttonText = 'Winners Announced';

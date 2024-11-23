@@ -206,14 +206,12 @@ export const SubmissionModal = ({
   let subheadingText: JSX.Element | string = '';
   switch (type) {
     case 'project':
-      headerText = 'Submit Your Application';
+      headerText = '提交申请';
       subheadingText = (
         <>
-          Don&apos;t start working just yet! Apply first, and then begin working
-          only once you&apos;ve been hired for the project by the sponsor.
+          先不要开始工作！请先申请，只有在您被聘用后再开始工作
           <Text mt={1}>
-            Please note that the sponsor might contact you to assess fit before
-            picking the winner.
+            请注意项目方可能会在决定最终人选之前先联系您，了解更多情况。
           </Text>
         </>
       );
