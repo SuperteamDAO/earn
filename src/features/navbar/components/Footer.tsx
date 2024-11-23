@@ -164,10 +164,6 @@ export const Footer = () => {
     },
     { text: '隐私政策', href: '/privacy-policy.pdf' },
     {
-      text: '更新日志',
-      href: '#',
-    },
-    {
       text: '联系我们',
       href: 'mailto:vesper.yang.blockchain@gmail.com',
     },
@@ -195,7 +191,8 @@ export const Footer = () => {
               color="brand.slate.500"
               fontSize={{ base: 'sm', md: 'md' }}
             >
-              连接Solana华语区人才和项目方，一站式自助申请Solana生态项目的赏金任务，做任务，赢赏金！
+              连接 Solana 华语区人才和项目方，一站式自助申请 Solana
+              生态项目的赏金任务，做任务，赢赏金！
             </Text>
             <Flex gap={4}>
               <Twitter link="https://x.com/Solana_zh" />

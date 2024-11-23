@@ -1,7 +1,6 @@
 import { Box, Text, VStack } from '@chakra-ui/react';
 import NextImage from 'next/image';
 
-import { UserFlag } from '@/components/shared/UserFlag';
 import { type Superteams } from '@/constants/Superteam';
 
 export function RegionBanner({ st }: { st: (typeof Superteams)[0] }) {
@@ -29,7 +28,7 @@ export function RegionBanner({ st }: { st: (typeof Superteams)[0] }) {
         bg="rgba(64,65,108,0.8)"
       />
       <VStack pos="absolute" top="50%" px={4} transform="translateY(-50%)">
-        {st.code && <UserFlag location={st.code} isCode size="44px" />}
+        {/* {st.code && <UserFlag location={st.code} isCode size="44px" />} */}
         {st.hello && (
           <>
             <Text
