@@ -121,7 +121,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
         <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
           最近赚取者
         </Text>
-        <Text
+        {/* <Text
           className="ph-no-capture"
           as={NextLink}
           color="brand.purple"
@@ -134,7 +134,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
         >
           排行榜
           <ArrowForwardIcon ml={1} />
-        </Text>
+        </Text> */}
       </Flex>
       <VStack>
         <Box

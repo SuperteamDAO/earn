@@ -95,11 +95,11 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   let deadlineText;
 
   if (isBeforeDeadline) {
-    deadlineText = `Due in ${formattedDeadline}`;
+    deadlineText = `到期于 ${formattedDeadline}`;
   } else {
     deadlineText = isWinnersAnnounced
-      ? `Completed ${formattedDeadline} ago`
-      : `Expired ${formattedDeadline} ago`;
+      ? `${formattedDeadline} 前完成`
+      : `${formattedDeadline} 前过期`;
   }
 
   const sponsorLogo = sponsor?.logo
@@ -376,9 +376,9 @@ export const ListingCardMobile = ({ bounty }: { bounty: Listing }) => {
               src={
                 sponsor?.logo
                   ? sponsor.logo.replace(
-                      '/upload/',
-                      '/upload/c_scale,w_128,h_128,f_auto/',
-                    )
+                    '/upload/',
+                    '/upload/c_scale,w_128,h_128,f_auto/',
+                  )
                   : `${router.basePath}/assets/logo/sponsor-logo.png`
               }
             />
@@ -482,8 +482,8 @@ export const ListingCardMobile = ({ bounty }: { bounty: Listing }) => {
                     whiteSpace={'nowrap'}
                   >
                     {dayjs().isBefore(dayjs(deadline))
-                      ? `Due ${dayjs(deadline).fromNow()}`
-                      : `Closed ${dayjs(deadline).fromNow()}`}
+                      ? `到期于 ${dayjs(deadline).fromNow()}`
+                      : `关闭于 ${dayjs(deadline).fromNow()}`}
                   </Text>
                 </Flex>
               </Flex>
