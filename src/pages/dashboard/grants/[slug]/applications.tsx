@@ -28,7 +28,7 @@ import {
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -195,9 +195,9 @@ function GrantApplications({ slug }: Props) {
           return old.map((application: GrantApplicationWithUser) =>
             applicationIds.includes(application.id)
               ? {
-                ...application,
-                applicationStatus: GrantApplicationStatus.Rejected,
-              }
+                  ...application,
+                  applicationStatus: GrantApplicationStatus.Rejected,
+                }
               : application,
           );
         },
@@ -214,9 +214,9 @@ function GrantApplications({ slug }: Props) {
           return old.map((application: GrantApplicationWithUser) =>
             applicationIds.includes(application.id)
               ? {
-                ...application,
-                applicationStatus: GrantApplicationStatus.Rejected,
-              }
+                  ...application,
+                  applicationStatus: GrantApplicationStatus.Rejected,
+                }
               : application,
           );
         },
@@ -430,8 +430,8 @@ function GrantApplications({ slug }: Props) {
                         roundedRight={'xl'}
                       >
                         {!applications?.length &&
-                          !searchText &&
-                          !isApplicationsLoading ? (
+                        !searchText &&
+                        !isApplicationsLoading ? (
                           <>
                             <Image
                               w={32}
