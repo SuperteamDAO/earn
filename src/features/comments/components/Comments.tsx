@@ -129,7 +129,7 @@ export const Comments = ({
             {count}
           </Text>
           <Text color="brand.slate.900" fontSize={'medium'} fontWeight={400}>
-            {comments?.length === 1 ? 'Comment' : 'Comments'}
+            评论
           </Text>
         </HStack>
       </HStack>

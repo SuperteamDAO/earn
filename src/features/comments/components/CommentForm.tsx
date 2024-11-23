@@ -97,7 +97,7 @@ export const CommentForm = ({
       </Flex>
       {!!newCommentError && (
         <Text mt={4} color="red">
-          Error in adding your comment! Please try again!
+          添加评论时出错！请重试！
         </Text>
       )}
       <Collapse
@@ -124,7 +124,7 @@ export const CommentForm = ({
           <AuthWrapper
             showCompleteProfileModal
             completeProfileModalBodyText={
-              'Please complete your profile before commenting on the listing.'
+              '在对列表发表评论前，请填写您的个人资料。'
             }
           >
             <Button
@@ -138,11 +138,11 @@ export const CommentForm = ({
               fontWeight={500}
               isDisabled={!!newCommentLoading || !newComment || isTemplate}
               isLoading={!!newCommentLoading}
-              loadingText="Adding..."
+              loadingText="添加..."
               onClick={() => handleSubmit()}
               variant="solid"
             >
-              Comment
+              评论
             </Button>
           </AuthWrapper>
         </Flex>

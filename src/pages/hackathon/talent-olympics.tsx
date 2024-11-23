@@ -1097,11 +1097,11 @@ const SubscribeHackathon = () => {
       });
       setUpdate((prev) => !prev);
       toast.success(
-        sub.find((e) => e.userId === user?.id) ? 'Unsubscribed' : 'Subscribed',
+        sub.find((e) => e.userId === user?.id) ? '取消订阅' : '已订阅',
       );
     } catch (error) {
       console.log(error);
-      toast.error('Error occurred while toggling subscription');
+      toast.error('订阅时发生错误');
     } finally {
       setIsSubscribeLoading(false);
     }
@@ -1334,7 +1334,7 @@ interface CountryLeader {
   location: string;
   submission_count: number;
 }
-export const getServerSideProps: GetServerSideProps = async ({}) => {
+export const getServerSideProps: GetServerSideProps = async ({ }) => {
   const countryLeaders = await prisma.$queryRaw<CountryLeader[]>`
 SELECT
     u.location,

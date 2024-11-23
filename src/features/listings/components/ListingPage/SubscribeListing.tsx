@@ -42,8 +42,8 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
         });
         toast.success(
           sub.find((e) => e.userId === user?.id)
-            ? 'Unsubscribed'
-            : 'Subscribed',
+            ? '取消订阅'
+            : '已订阅',
         );
       },
       onError: () => {
@@ -79,7 +79,7 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
         <AuthWrapper
           showCompleteProfileModal
           completeProfileModalBodyText={
-            'Please complete your profile before subscribing to a listing.'
+            '请在订阅前填写您的个人资料'
           }
         >
           <Button
@@ -112,10 +112,10 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
             )}
             <Text display={{ base: 'none', md: 'inline' }}>
               {isSubscribeLoading
-                ? 'Subscribing'
+                ? '订阅中'
                 : sub.find((e) => e.userId === user?.id)
-                  ? 'Subscribed'
-                  : 'Subscribe'}
+                  ? '已订阅'
+                  : '订阅'}
             </Text>
           </Button>
         </AuthWrapper>

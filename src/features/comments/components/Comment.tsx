@@ -245,11 +245,10 @@ export const Comment = ({
                   <Image
                     width={13}
                     height={13}
-                    alt="Sponsor Verified Icon"
                     src="/assets/icons/verified-tick.svg"
                   />
                 )}
-                Sponsor
+                项目方
               </Text>
             )}
             <Text
@@ -317,7 +316,7 @@ export const Comment = ({
                     fill="#4F46E5"
                   />
                 </svg>
-                {replies?.length} {replies?.length === 1 ? 'Reply' : 'Replies'}
+                {replies?.length} 回复
               </Button>
             )}
             <Button
@@ -332,7 +331,7 @@ export const Comment = ({
               onClick={() => setShowReplyInput((prev) => !prev)}
               variant="link"
             >
-              Reply
+              回复
             </Button>
           </HStack>
           <Collapse
@@ -364,7 +363,7 @@ export const Comment = ({
               </Flex>
               {!!newReplyError && (
                 <Text my={0} mt={4} color="red" fontSize="xs">
-                  Error in adding your comment! Please try again!
+                  添加评论时出错！请重试！
                 </Text>
               )}
               <Collapse
@@ -482,18 +481,18 @@ export const Comment = ({
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete Comment
+              删除评论
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Are you sure? You {"can't"} undo this action.
+              确定么？
               {deleteError && (
                 <Alert mt={3} rounded="md" status="error">
                   <AlertIcon />
                   <VStack>
-                    <AlertTitle>Failed to delete comment</AlertTitle>
+                    <AlertTitle>删除评论失败</AlertTitle>
                     <AlertDescription alignSelf="start">
-                      Please try again later.
+                      请重试！
                     </AlertDescription>
                   </VStack>
                 </Alert>
@@ -502,7 +501,7 @@ export const Comment = ({
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={deleteOnClose} variant="ghost">
-                Cancel
+                取消
               </Button>
               <Button
                 className="ph-no-capture"
@@ -511,7 +510,7 @@ export const Comment = ({
                 isLoading={deleteLoading}
                 onClick={handleDelete}
               >
-                Delete
+                删除
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

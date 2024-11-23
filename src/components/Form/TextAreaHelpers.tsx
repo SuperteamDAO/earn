@@ -77,9 +77,9 @@ export const TextAreaWithCounter = ({
     >
       {watch(id)?.length > maxLength - 80 &&
         (maxLength - (watch(id)?.length || 0) === 0 ? (
-          <p>Character limit reached</p>
+          <p>字符数已达上限</p>
         ) : (
-          <p>{maxLength - (watch(id)?.length || 0)} characters left</p>
+          <p>还剩 {maxLength - (watch(id)?.length || 0)}</p>
         ))}
     </Text>
     <FormErrorMessage>

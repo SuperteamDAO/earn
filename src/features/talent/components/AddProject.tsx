@@ -175,7 +175,7 @@ export const AddProject = ({
               </Box>
               <Box w={'full'} mb={'1.25rem'}>
                 <FormLabel color={'brand.slate.500'}>
-                  Describe Your Work
+                  描述你的工作
                 </FormLabel>
                 <Textarea
                   borderColor="brand.slate.300"
@@ -197,7 +197,7 @@ export const AddProject = ({
                   fontSize={'xs'}
                   textAlign="right"
                 >
-                  {180 - (watch('description')?.length || 0)} characters left
+                  还剩 {180 - (watch('description')?.length || 0)}
                 </Text>
               </Box>
               <SkillSelect
@@ -231,7 +231,7 @@ export const AddProject = ({
               </Box>
               <Box w={'full'} mb={'1.25rem'}>
                 {skillsError && (
-                  <Text color={'red'}>Please add Skills and Sub Skills</Text>
+                  <Text color={'red'}>请添加技能与子技能</Text>
                 )}
               </Box>
               <Button
@@ -241,7 +241,7 @@ export const AddProject = ({
                 bg={'rgb(101, 98, 255)'}
                 type="submit"
               >
-                Add Project
+                添加定向项目
               </Button>
             </FormControl>
           </form>

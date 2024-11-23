@@ -102,7 +102,7 @@ export const UserSuggestionTextarea = ({
           fontSize={'xs'}
           textAlign={'right'}
         >
-          {MAX_LENGTH - value.length} characters left
+          还剩 {MAX_LENGTH - value.length}
         </Text>
       )}
       {showSuggestions && (

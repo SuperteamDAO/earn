@@ -236,29 +236,30 @@ export function ListingPageLayout({
                         fontWeight={600}
                         textAlign="center"
                       >
-                        CONTACT
+                        联系我们
                       </Text>
                       <Text>
-                        <Link
-                          className="ph-no-capture"
-                          color={'#64768b'}
-                          fontWeight={500}
-                          href={getURLSanitized(initialBounty.pocSocials)}
-                          isExternal
-                          onClick={() => posthog.capture('reach out_listing')}
-                        >
-                          Reach out
-                          <ExternalLinkIcon
-                            color={'#64768b'}
-                            mb={1}
-                            as="span"
-                            mx={1}
-                          />
-                        </Link>
+
                         <Text as="span" color={'brand.slate.500'}>
-                          if you have any questions about this listing
+                          如果您对这个任务有疑问，
                         </Text>
                       </Text>
+                      <Link
+                        className="ph-no-capture"
+                        color={'#64768b'}
+                        fontWeight={500}
+                        href={getURLSanitized(initialBounty.pocSocials)}
+                        isExternal
+                        onClick={() => posthog.capture('reach out_listing')}
+                      >
+                        请联系我们
+                        <ExternalLinkIcon
+                          color={'#64768b'}
+                          mb={1}
+                          as="span"
+                          mx={1}
+                        />
+                      </Link>
                     </VStack>
                   )}
 
