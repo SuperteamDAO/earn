@@ -65,38 +65,39 @@ export const BountySnackbar = () => {
       : null;
     if (status === 'PREVIEW') {
       if (user.user?.currentSponsorId === sponsorId) {
-        return 'Note: This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community';
-      } else
-        return 'This Listing Is In Preview Mode. Check Out Other Listings on Our Homepage!';
+        return '注意：此链接仅用于预览，仅供拥有该链接的人访问。这并不是你与社区分享的最终链接。';
+      } else {
+        return '此列表处于预览模式。在主页上查看其他任务';
+      }
     }
-    if (!isPublished)
-      return 'This Listing Is Inactive Right Now. Check Out Other Listings on Our Homepage!';
+    if (!isPublished) return `这个任务不活跃。在主页上查看其他任务`;
     if (isExpired)
-      return 'The Deadline for This Listing Has Passed. Check Out Other Listings on the Homepage!';
+      return `这个上市的截止日期已经过去了。在主页上查看其他任务`;
+
     if (isCaution)
-      return 'Proceed with caution! Some users have flagged this listing as potentially misleading.';
+      return `小心！一些用户认为这个任务可能具有误导性`
+
     if (daysToDeadline && daysToDeadline < 3)
-      return `🕛 Expiring Soon: ${
-        type === 'bounty' ? 'Submit' : 'Apply'
-      } while you still have the chance!`;
+      return `🕛 马上到期了:  趁你还有机会，快快${type === 'bounty' ? '提交' : '申请'}`;
     if (
       rewardAmount &&
       ((type === 'bounty' && rewardAmount > 1000) ||
         (type === 'project' && rewardAmount > 1500))
     )
-      return `🤑 Mo' Money, Fewer Problems: Higher than average total ${type} reward`;
+      return `🤑 钱少，问题少：高于平均${type}总奖励`;
+
     if (
       (type === 'bounty' && submissionCount <= 1) ||
       (type === 'project' && submissionCount < 10)
     ) {
       if (submissionCount === 0) {
         return type === 'bounty'
-          ? '🔥 High chance of winning: No submissions have been made for this bounty yet!'
-          : '🔥 The Odds Are in Your Favour! No applications yet';
+          ? '🔥 获胜几率高：还没有人提交任务'
+          : '🔥 你胜算很大！还没有人申请';
       }
       return type === 'bounty'
-        ? `🔥 High chance of winning: Only ${submissionCount} submission(s) have been made for this bounty yet!`
-        : '🔥 The Odds Are in Your Favour! Not too many applications yet';
+        ? `🔥 获胜几率高: 目前仅有 ${submissionCount}人提交了任务`
+        : '🔥 你胜算很大！还没有太多人申请';
     }
 
     return null;

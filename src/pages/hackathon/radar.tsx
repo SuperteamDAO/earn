@@ -171,7 +171,7 @@ export default function Radar() {
           >
             <Flex direction={'column'}>
               <Text color="orange.100" fontSize={'sm'} fontWeight={500}>
-                Total Prizes
+                总奖金
               </Text>
               <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight={600}>
                 $

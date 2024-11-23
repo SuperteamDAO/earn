@@ -59,7 +59,7 @@ export function ExtraInfoSection({
       {requirements && (
         <VStack align={'start'} w={'full'} fontSize="sm">
           <Text h="100%" color={'brand.slate.600'} fontWeight={600}>
-            ELIGIBILITY
+            要求条件
           </Text>
           <Text color={'brand.slate.500'}>{requirements}</Text>
         </VStack>
@@ -72,7 +72,7 @@ export function ExtraInfoSection({
           fontWeight={600}
           textAlign="center"
         >
-          SKILLS NEEDED
+          所需技能
         </Text>
         <HStack flexWrap={'wrap'} gap={3}>
           {skills?.map((skill) => (
@@ -105,9 +105,12 @@ export function ExtraInfoSection({
             fontWeight={600}
             textAlign="center"
           >
-            CONTACT
+            联系
           </Text>
           <Text>
+            <Text as="span" color={'brand.slate.500'}>
+              如果您对这个赏金任务有疑问，
+            </Text>
             <Link
               className="ph-no-capture"
               color={'#64768b'}
@@ -116,12 +119,9 @@ export function ExtraInfoSection({
               isExternal
               onClick={() => posthog.capture('reach out_listing')}
             >
-              Reach out
+              请联系我们
               <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
             </Link>
-            <Text as="span" color={'brand.slate.500'}>
-              if you have any questions about this listing
-            </Text>
           </Text>
         </VStack>
       )}

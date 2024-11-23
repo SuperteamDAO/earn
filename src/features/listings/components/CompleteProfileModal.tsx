@@ -27,15 +27,13 @@ export function CompleteProfileModal({
 }: Props) {
   const posthog = usePostHog();
 
-  const header = isSponsor
-    ? 'Add your talent profile'
-    : 'Complete your profile';
+  const header = isSponsor ? '添加你的社区成员档案' : '补充完整档案';
 
   const body = isSponsor
-    ? 'You already have a sponsor profile, but we need other details from you before proceeding with this action. Doing this will not impact your sponsor profile.'
+    ? '您已拥有任务发布方档案，但在继续此操作之前，我们需要您提供其他详细信息。此操作不会影响您的任务发布方档案'
     : bodyText;
 
-  const CTA = isSponsor ? 'Add Talent Profile' : 'Complete Profile';
+  const CTA = isSponsor ? '添加社区成员档案' : '补充完整档案';
 
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose} size="md">

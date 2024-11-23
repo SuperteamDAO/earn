@@ -58,14 +58,14 @@ export default function Scribes() {
               }
               rounded="full"
             >
-              Join Solana Collective&apos;s Discord
+              加入 Solana &apos; Discord
             </Button>
           </Flex>
         </Flex>
         <Flex justify="center" gap={{ base: 4, md: 12 }} px={6} py={6}>
           <Flex direction={'column'}>
             <Text fontSize={'sm'} fontWeight={500}>
-              Total Prizes
+              总奖金
             </Text>
             <Text
               color={'brand.slate.800'}

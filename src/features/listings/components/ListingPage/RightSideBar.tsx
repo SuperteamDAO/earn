@@ -160,7 +160,7 @@ export function RightSideBar({
                           fontSize={'lg'}
                           fontWeight={400}
                         >
-                          {isProject ? 'Payment' : 'Total Prizes'}
+                          {isProject ? '支付' : '总奖金'}
                         </Text>
                       </Flex>
                     </Td>
@@ -214,13 +214,7 @@ export function RightSideBar({
                           : submissionRange}
                     </Text>
                   </Flex>
-                  <Text color={'#94A3B8'}>
-                    {isProject
-                      ? 'Applications'
-                      : submissionNumber === 1
-                        ? 'Submission'
-                        : 'Submissions'}
-                  </Text>
+                  <Text color={'#94A3B8'}>{isProject ? '申请' : '提交'}</Text>
                 </Flex>
 
                 <Flex
@@ -254,7 +248,7 @@ export function RightSideBar({
                           />
                         </Text>
                       </Tooltip>
-                      <Text color={'#94A3B8'}>Remaining</Text>
+                      <Text color={'#94A3B8'}>剩余时间</Text>
                     </VStack>
                   </Flex>
                 </Flex>
@@ -350,9 +344,7 @@ export function RightSideBar({
                     fontSize={'sm'}
                     fontWeight={600}
                   >
-                    {!Hackathon
-                      ? 'RELATED LIVE LISTINGS'
-                      : 'RELATED LIVE TRACKS'}
+                    {!Hackathon ? '相关进行中的任务' : '相关进行中的活动'}
                   </Text>
                 </Flex>
               </RelatedListings>

@@ -203,7 +203,7 @@ export function ListingPageLayout({
                       fontWeight={600}
                       textAlign="center"
                     >
-                      SKILLS NEEDED
+                      所需技能
                     </Text>
                     <HStack flexWrap={'wrap'} gap={3}>
                       {iterableSkills?.map((skill) => (

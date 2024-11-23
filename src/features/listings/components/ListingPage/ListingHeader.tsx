@@ -55,7 +55,6 @@ export function ListingHeader({
     title,
     sponsor,
     slug,
-    region,
     isWinnersAnnounced,
     references,
     publishedAt,
@@ -90,38 +89,38 @@ export function ListingHeader({
     statusIcon = (
       <Icon as={LuEye} {...statusIconStyles} color="brand.slate.400" />
     );
-    statusText = 'Preview';
+    statusText = '预览';
     statusBgColor = 'brand.slate.200';
     statusTextColor = 'brand.slate.500';
   } else if (!isPublished && !publishedAt) {
     statusIcon = (
       <Icon as={LuFile} {...statusIconStyles} color="brand.slate.400" />
     );
-    statusText = 'Draft';
+    statusText = '草稿';
     statusBgColor = 'brand.slate.200';
     statusTextColor = 'brand.slate.500';
   } else if (!isPublished && publishedAt) {
     statusIcon = <Icon as={LuPause} {...statusIconStyles} color="#ffecb3" />;
-    statusText = isMD ? 'Submissions Paused' : 'Paused';
+    statusText = isMD ? '提案暂停' : '暂停';
     statusBgColor = '#ffecb3';
     statusTextColor = '#F59E0B';
   } else if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
     statusIcon = <Icon as={LuClock} {...statusIconStyles} color="#F3E8FF" />;
-    statusText = 'Opens Soon';
+    statusText = '很快开启';
     statusBgColor = '#F3E8FF';
     statusTextColor = '#8B5CF6';
   } else if (status === 'OPEN' && isWinnersAnnounced) {
     statusIcon = (
       <Icon as={LuCheck} {...statusIconStyles} color={'brand.slate.400'} />
     );
-    statusText = 'Completed';
+    statusText = '已完成';
     statusBgColor = 'brand.slate.200';
     statusTextColor = 'brand.slate.400';
   } else if (!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN') {
     statusIcon = (
       <PulseIcon {...statusIconStyles} bg={'orange.100'} text={'orange.600'} />
     );
-    statusText = 'In Review';
+    statusText = '审核中';
     statusBgColor = 'orange.100';
     statusTextColor = 'orange.600';
   } else if (!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN') {
@@ -133,7 +132,7 @@ export function ListingHeader({
         text="#16A34A"
       />
     );
-    statusText = isMD ? 'Submissions Open' : 'Open';
+    statusText = isMD ? '开放提交' : '开放';
     statusBgColor = 'green.100';
     statusTextColor = 'green.600';
   }
@@ -227,8 +226,8 @@ export function ListingHeader({
               borderRadius={'lg'}
               label={
                 isProject
-                  ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
-                  : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
+                  ? `定向项目是一项短期工作，发起人向多人征求申请，并选择最优秀的人参与本项目。`
+                  : `任何人都可以参加并提交他们的作品，只要他们符合以下提到的资格要求。最佳作品获的奖励`
               }
             >
               <Flex>
@@ -244,7 +243,7 @@ export function ListingHeader({
                   fontSize={{ base: 'xs', sm: 'md' }}
                   fontWeight={500}
                 >
-                  {isProject ? 'Project' : 'Bounty'}
+                  {isProject ? '定向任务' : '赏金任务'}
                 </Text>
               </Flex>
             </Tooltip>
@@ -331,7 +330,7 @@ export function ListingHeader({
             <ListingTabLink
               w={{ md: '22rem' }}
               href={`/listings/${type}/${slug}/`}
-              text={type === 'project' ? 'Inviting Proposals' : 'Prizes'}
+              text={type === 'project' ? '邀请提案' : '总奖金'}
               isActive={false}
               styles={{
                 pointerEvents: 'none',
@@ -344,7 +343,7 @@ export function ListingHeader({
                   ? `/listings/${type}/${slug}/`
                   : `/templates/listings/${slug}/`
               }
-              text="Details"
+              text="详情"
               isActive={
                 !router.asPath.split('/')[4]?.includes('submission') &&
                 !router.asPath.split('/')[4]?.includes('references')
@@ -355,7 +354,7 @@ export function ListingHeader({
               <ListingTabLink
                 onClick={() => posthog.capture('submissions tab_listing')}
                 href={`/listings/${type}/${slug}/submission`}
-                text="Submissions"
+                text="提交"
                 isActive={!!router.asPath.split('/')[4]?.includes('submission')}
                 subText={
                   isSubmissionNumberLoading ? '...' : submissionNumber + ''

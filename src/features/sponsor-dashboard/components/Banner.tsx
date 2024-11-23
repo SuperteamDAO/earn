@@ -120,7 +120,7 @@ export function Banner({
                   fontWeight={400}
                   whiteSpace={'nowrap'}
                 >
-                  {!isHackathon ? '已奖励' : 'Total Prizes'}
+                  {!isHackathon ? '已奖励' : '总奖金'}
                 </Text>
                 <MdInfoOutline color="#94a3b8" size={16} />
               </Flex>

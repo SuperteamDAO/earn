@@ -72,7 +72,7 @@ export default function Renaissance() {
           <Flex justify="center" gap={{ base: 4, md: 12 }} px={6} pb={6}>
             <Flex direction={'column'}>
               <Text fontSize={'sm'} fontWeight={500}>
-                Total Prizes
+                总奖金
               </Text>
               <Text
                 color={'brand.slate.800'}
