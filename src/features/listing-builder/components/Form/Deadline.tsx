@@ -102,24 +102,26 @@ export function Deadline() {
                 disabled={type === 'hackathon'}
               />
             </div>
-            <div className="flex flex-wrap gap-2">
-              {deadlineOptions.map((option) => (
-                <Button
-                  key={option.value}
-                  variant="outline"
-                  size="sm"
-                  className="h-fit w-fit px-2 py-1"
-                  onClick={() => {
-                    form.setValue(
-                      'deadline',
-                      handleDeadlineSelection(option.value),
-                    );
-                  }}
-                >
-                  {option.label}
-                </Button>
-              ))}
-            </div>
+            {type !== 'hackathon' && (
+              <div className="flex flex-wrap gap-2">
+                {deadlineOptions.map((option) => (
+                  <Button
+                    key={option.value}
+                    variant="outline"
+                    size="sm"
+                    className="h-fit w-fit px-2 py-1"
+                    onClick={() => {
+                      form.setValue(
+                        'deadline',
+                        handleDeadlineSelection(option.value),
+                      );
+                    }}
+                  >
+                    {option.label}
+                  </Button>
+                ))}
+              </div>
+            )}
             <FormMessage />
           </FormItem>
         );
