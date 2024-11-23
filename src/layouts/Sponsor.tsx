@@ -217,11 +217,6 @@ export function SponsorLayout({
     ? user?.hackathonId || session?.user?.role === 'GOD'
     : user?.currentSponsor?.id;
 
-  // 从环境变量 EARN_GOD_EMAIL 获取管理员邮件地址
-  const godEmail = process.env.NEXT_PUBLIC_EARN_GOD_EMAIL;
-  const godTelegram = process.env.NEXT_PUBLIC_EARN_GOD_TELEGRAM;
-  const godTelegramLink = `https://t.me/${godTelegram}`;
-
   // activate sponsor
   const activateSponsor = async () => {
     setIsLoading(true);

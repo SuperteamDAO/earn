@@ -115,7 +115,10 @@ export const EmailSettingsModal = ({
                   title="已发布任务的新提交"
                   category="submissionSponsor"
                 />
-                <AlertOption title="已发布任务的新评论" category="commentSponsor" />
+                <AlertOption
+                  title="已发布任务的新评论"
+                  category="commentSponsor"
+                />
                 <AlertOption
                   title="截止日期相关提醒"
                   category="deadlineSponsor"
@@ -161,6 +164,7 @@ export const EmailSettingsModal = ({
                   letterSpacing={0.8}
                 >
                   日常推送
+                </Text>
                 <AlertOption
                   title="评论回复和艾特"
                   category="replyOrTagComment"

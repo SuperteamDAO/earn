@@ -178,21 +178,13 @@ export default function SponsorListings() {
 
   const handleTabChange = useCallback(
     (index: number) => {
-      const tabTypes = [
-        '全部',
-        '赏金任务',
-        '定向任务',
-        hasGrants ? 'grant' : '',
-      ];
+      const tabTypes = ['all', 'bounty', 'project', hasGrants ? 'grant' : ''];
       const tabType = tabTypes[index] || 'all';
       setSelectedTab(tabType);
       setCurrentPage(0);
     },
     [hasGrants],
   );
-  const godEmail = process.env.NEXT_PUBLIC_EARN_GOD_EMAIL;
-  const godTelegram = process.env.NEXT_PUBLIC_EARN_GOD_TELEGRAM;
-  const godTelegramLink = `https://t.me/${godTelegram}`;
 
   return (
     <SponsorLayout>

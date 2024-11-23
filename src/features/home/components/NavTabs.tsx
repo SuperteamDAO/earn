@@ -86,7 +86,7 @@ export function NavTabs({ ...flexProps }: FlexProps) {
       {...flexProps}
     >
       <PillTab href="/" altActive={['/all/']} phEvent="all_navpill">
-        All Opportunities
+        所有
       </PillTab>
       {showRegionTab && (
         <PillTab
