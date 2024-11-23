@@ -212,7 +212,7 @@ export function Banner({
           _hover={{ textDecoration: 'none' }}
           href="https://t.me/cryptosheep1/"
           isExternal
-          onClick={() => posthog.capture('message pratik_sponsor')}
+          onClick={() => posthog.capture('message shooter_sponsor')}
         >
           <Flex align={'center'} justify={'space-between'}>
             <Flex align={'center'}>

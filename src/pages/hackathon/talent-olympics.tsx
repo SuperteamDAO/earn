@@ -1101,7 +1101,7 @@ const SubscribeHackathon = () => {
       );
     } catch (error) {
       console.log(error);
-      toast.error('订阅时发生错误');
+      toast.error('错误');
     } finally {
       setIsSubscribeLoading(false);
     }
@@ -1289,43 +1289,43 @@ const TextStyler: React.FC<TextStylerProps> = ({ text }) => {
 
 const rankedUsers: { email: string; rating: number }[] = [
   {
-    email: 'pratik.dholani1@gmail.com',
+    email: 'test@gmail.com',
     rating: 69,
   },
   {
-    email: 'pratik.dholani1@gmail.com',
+    email: 'test@gmail.com',
     rating: 69,
   },
   {
-    email: 'pratik.dholani1@gmail.com',
+    email: 'test@gmail.com',
     rating: 69,
   },
   {
-    email: 'pratik.dholani1@gmail.com',
+    email: 'test@gmail.com',
     rating: 69,
   },
   {
-    email: 'pratik.dholani1@gmail.com',
+    email: 'test@gmail.com',
     rating: 69,
   },
   {
-    email: 'pratik.dholani1@gmail.com',
+    email: 'test@gmail.com',
     rating: 69,
   },
   {
-    email: 'pratik.dholani1@gmail.com',
+    email: 'test@gmail.com',
     rating: 69,
   },
   {
-    email: 'pratik.dholani1@gmail.com',
+    email: 'test@gmail.com',
     rating: 69,
   },
   {
-    email: 'pratik.dholani1@gmail.com',
+    email: 'test@gmail.com',
     rating: 69,
   },
   {
-    email: 'pratik.dholani1@gmail.com',
+    email: 'test@gmail.com',
     rating: 69,
   },
 ];

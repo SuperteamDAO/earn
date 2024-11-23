@@ -37,15 +37,15 @@ export default function NewProfilePage({
 }) {
   const avatars = [
     {
-      name: 'Abhishkek',
+      name: 'Satoshi',
       src: '/assets/pfps/t1.webp',
     },
     {
-      name: 'Pratik',
+      name: 'Nakamoto',
       src: '/assets/pfps/md2.webp',
     },
     {
-      name: 'Yash',
+      name: 'vesper',
       src: '/assets/pfps/fff1.webp',
     },
   ];
@@ -184,7 +184,7 @@ export default function NewProfilePage({
                   </Box>
                   <Box flexDir={'column'} gap={5} display={'flex'} px={4}>
                     <BulletPoint type="TALENT">
-                      为Solana项目贡献力量
+                      为 Solana 项目贡献力量
                     </BulletPoint>
                     <BulletPoint type="TALENT"> 构建您的 Web3 简历</BulletPoint>
                     <BulletPoint type="TALENT">赢取赏金奖励</BulletPoint>
@@ -273,7 +273,7 @@ export default function NewProfilePage({
                     每周吸引 10,000 位访问
                   </BulletPoint>
                   <BulletPoint type="SPONSOR">
-                    连接Solana华语区人才和项目方
+                    连接 Solana 华语区人才和项目方
                   </BulletPoint>
                   <BulletPoint type="SPONSOR">完全免费</BulletPoint>
                 </Box>
