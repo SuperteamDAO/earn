@@ -133,16 +133,14 @@ const Index = () => {
       <Flex justify="space-between" mb={4}>
         <Flex align="center" gap={3}>
           <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
-            Team Members
+            团队成员
           </Text>
           <Divider
             h="60%"
             borderColor="brand.slate.200"
             orientation="vertical"
           />
-          <Text color="brand.slate.500">
-            Manage who gets access to your sponsor profile
-          </Text>
+          <Text color="brand.slate.500">管理项目方成员</Text>
         </Flex>
         <Flex align="center" gap={3}>
           {(session?.user?.role === 'GOD' ||
@@ -152,20 +150,20 @@ const Index = () => {
                 (s) => s.sponsorId === user.currentSponsorId,
               )?.role === 'ADMIN'
             )) && (
-              <Button
-                className="ph-no-capture"
-                color="#6366F1"
-                bg="#E0E7FF"
-                leftIcon={<AddIcon />}
-                onClick={() => {
-                  posthog.capture('invite member_sponsor');
-                  onOpen();
-                }}
-                variant="solid"
-              >
-                Invite Members
-              </Button>
-            )}
+            <Button
+              className="ph-no-capture"
+              color="#6366F1"
+              bg="#E0E7FF"
+              leftIcon={<AddIcon />}
+              onClick={() => {
+                posthog.capture('invite member_sponsor');
+                onOpen();
+              }}
+              variant="solid"
+            >
+              邀请成员
+            </Button>
+          )}
           <InputGroup w={52}>
             <Input
               bg={'white'}
@@ -210,7 +208,7 @@ const Index = () => {
                   letterSpacing={'-2%'}
                   textTransform={'capitalize'}
                 >
-                  Member
+                  成员
                 </Th>
                 <Th
                   color="brand.slate.400"
@@ -219,7 +217,7 @@ const Index = () => {
                   letterSpacing={'-2%'}
                   textTransform={'capitalize'}
                 >
-                  Role
+                  角色
                 </Th>
                 <Th
                   color="brand.slate.400"
@@ -228,7 +226,7 @@ const Index = () => {
                   letterSpacing={'-2%'}
                   textTransform={'capitalize'}
                 >
-                  Email
+                  邮箱
                 </Th>
                 <Th
                   color="brand.slate.400"
@@ -320,7 +318,7 @@ const Index = () => {
           <Text as="span" fontWeight={700}>
             {totalMembers}
           </Text>{' '}
-          Members
+          成员
         </Text>
         <Button
           mr={4}

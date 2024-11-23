@@ -30,9 +30,9 @@ export function Banner({
   const posthog = usePostHog();
   const sponsorId = isHackathon ? user?.hackathonId : user?.currentSponsorId;
 
-  const tooltipTextReward = `Total compensation (in USD) of listings where the winners have been announced`;
-  const tooltipTextListings = `Total number of listings added to Earn`;
-  const tooltipTextSubmissions = `Total number of submissions/applications received on all listings`;
+  const tooltipTextReward = `已公布获奖者的赏金任务总报酬（美元）`;
+  const tooltipTextListings = `已发布任务`;
+  const tooltipTextSubmissions = `所有任务已收到的提交/申请`;
 
   const sponsor = isHackathon ? stats : user?.currentSponsor;
 
@@ -93,7 +93,7 @@ export function Banner({
                   whiteSpace={'nowrap'}
                 >
                   {!isHackathon
-                    ? `Sponsor since ${stats?.yearOnPlatform}`
+                    ? `以项目方身份贡献始于 ${stats?.yearOnPlatform}`
                     : 'Hackathon'}
                 </Text>
               )}
@@ -120,7 +120,7 @@ export function Banner({
                   fontWeight={400}
                   whiteSpace={'nowrap'}
                 >
-                  {!isHackathon ? 'Rewarded' : 'Total Prizes'}
+                  {!isHackathon ? '已奖励' : 'Total Prizes'}
                 </Text>
                 <MdInfoOutline color="#94a3b8" size={16} />
               </Flex>
@@ -151,7 +151,7 @@ export function Banner({
                   fontWeight={400}
                   whiteSpace={'nowrap'}
                 >
-                  {!isHackathon ? 'Listings' : 'Tracks'}
+                  {!isHackathon ? '任务列表' : 'Tracks'}
                 </Text>
                 <MdInfoOutline color="#94a3b8" size={16} />
               </Flex>
@@ -179,7 +179,7 @@ export function Banner({
                   fontWeight={400}
                   whiteSpace={'nowrap'}
                 >
-                  Submissions
+                  提交
                 </Text>
                 <MdInfoOutline color="#94a3b8" size={16} />
               </Flex>
@@ -229,14 +229,14 @@ export function Banner({
                   fontWeight={600}
                   whiteSpace={'nowrap'}
                 >
-                  Stuck somewhere?
+                  遇到什么问题？
                 </Text>
                 <Text
                   color="brand.slate.500"
                   fontWeight={600}
                   whiteSpace={'nowrap'}
                 >
-                  Message Us
+                  联系我们
                 </Text>
               </Box>
             </Flex>

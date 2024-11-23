@@ -178,7 +178,12 @@ export default function SponsorListings() {
 
   const handleTabChange = useCallback(
     (index: number) => {
-      const tabTypes = ['all', 'bounty', 'project', hasGrants ? 'grant' : ''];
+      const tabTypes = [
+        '全部',
+        '赏金任务',
+        '定向任务',
+        hasGrants ? 'grant' : '',
+      ];
       const tabType = tabTypes[index] || 'all';
       setSelectedTab(tabType);
       setCurrentPage(0);
@@ -202,13 +207,11 @@ export default function SponsorListings() {
             borderColor="brand.slate.200"
             orientation="vertical"
           />
-          <Text color="brand.slate.500">
-            The one place to manage your listings
-          </Text>
+          <Text color="brand.slate.500">一站式管理您的任务列表</Text>
         </Flex>
         <Flex align="center" gap={2}>
           <Text color="brand.slate.500" fontSize={'sm'} letterSpacing={'-1%'}>
-            Filter by status
+            按状态筛选
           </Text>
           <Menu>
             <MenuButton
@@ -455,7 +458,7 @@ export default function SponsorListings() {
               cannotCreateNewListing
                 ? isSponsorActive
                   ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
-                  : '发送邮件至 abc@solar.com 或者Telegrem @abc，联系管理员，开启相关权限'
+                  : '发送邮件至vesper.yang.blockchain@gmail.com 或者Telegrem @cryptosheep1，联系管理员，开启相关权限'
                 : ''
             }
           >

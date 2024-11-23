@@ -93,8 +93,8 @@ interface Props {
   isDuplicating?: boolean;
 }
 
-const BONUS_REWARD_LABEL = '# of Bonus Prizes';
-const BONUS_REWARD_LABEL_2 = 'Bonus Per Prize';
+const BONUS_REWARD_LABEL = '# 额外赏金名额';
+const BONUS_REWARD_LABEL_2 = '额外赏金/每人';
 
 export const ListingPayments = ({
   isListingPublishing,
@@ -396,8 +396,8 @@ export const ListingPayments = ({
       value === ''
         ? tokenList
         : tokenList.filter((token) =>
-          token.tokenName.toLowerCase().includes(value.toLowerCase()),
-        );
+            token.tokenName.toLowerCase().includes(value.toLowerCase()),
+          );
     setSearchResults(filteredResults);
     setSelectedTokenIndex(null);
     setIsOpen(true);
@@ -520,19 +520,19 @@ export const ListingPayments = ({
       <Modal isOpen={confirmIsOpen} onClose={confirmOnClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Confirm Publishing?</ModalHeader>
+          <ModalHeader>确认发布?</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text>
               {form?.isPrivate
-                ? 'This listing will only be accessible via the link — and will not show up anywhere else on the site — since it has been marked as a "Private Listing"'
-                : 'Publishing this listing means it will show up on the homepage for all visitors. Make sure the details in your listing are correct before you publish.'}
+                ? '该列出任务将仅通过链接访问——不会在网站其他任何地方显示——因为它已被标记为“私人”'
+                : '赏金任务发布后会公开展示在Solar Earn 主页，在发布前请检查确认赏金任务详情'}
             </Text>
           </ModalBody>
 
           <ModalFooter>
             <Button mr={4} onClick={confirmOnClose} variant="ghost">
-              Close
+              关闭
             </Button>
             <Button
               mr={3}
@@ -542,7 +542,7 @@ export const ListingPayments = ({
               loadingText="Publishing..."
               onClick={() => createAndPublishListing(confirmOnClose)}
             >
-              Publish
+              发布
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -601,7 +601,7 @@ export const ListingPayments = ({
             </Box>
           )}
           <FormControl pos="relative">
-            <ListingFormLabel>Select Token</ListingFormLabel>
+            <ListingFormLabel>选择代币</ListingFormLabel>
             <InputGroup alignItems={'center'} display={'flex'}>
               {token && (
                 <InputLeftElement
@@ -924,8 +924,8 @@ export const ListingPayments = ({
                       }
                       value={
                         el.defaultValue !== null &&
-                          el.defaultValue !== undefined &&
-                          !isNaN(el.defaultValue)
+                        el.defaultValue !== undefined &&
+                        !isNaN(el.defaultValue)
                           ? el.defaultValue
                           : undefined
                       }
@@ -987,9 +987,9 @@ export const ListingPayments = ({
                         color="brand.slate.500"
                       >
                         <Text pr={1} fontWeight={700}>
-                          {maxBonusSpots} individuals
+                          {maxBonusSpots} 位参赛者
                         </Text>{' '}
-                        will be paid
+                        将各自获得
                         <Text px={1} fontWeight={700}>
                           {' '}
                           {formatTotalPrice(
@@ -997,7 +997,7 @@ export const ListingPayments = ({
                           )}{' '}
                           {selectedToken?.tokenSymbol}{' '}
                         </Text>
-                        each (total bonus of{' '}
+                        每位获得 (total bonus of{' '}
                         <Text pl={1} fontWeight={700}>
                           {formatTotalPrice(
                             caculateBonus(
@@ -1052,7 +1052,7 @@ export const ListingPayments = ({
                   }}
                   variant="outline"
                 >
-                  Add Individual Prize
+                  添加独立赏金
                 </Button>
                 {!prizes.find((p) => p.value === BONUS_REWARD_POSITION) && (
                   <Button
@@ -1073,7 +1073,7 @@ export const ListingPayments = ({
                       handlePrizeValueChange(BONUS_REWARD_POSITION, NaN);
                     }}
                   >
-                    Add Bonus Prize
+                    添加额外赏金
                   </Button>
                 )}
               </HStack>
@@ -1090,7 +1090,7 @@ export const ListingPayments = ({
                 type="submit"
                 variant={'solid'}
               >
-                Publish Now
+                现在发布
               </Button>
             )}
             {isDraft && (
@@ -1107,7 +1107,7 @@ export const ListingPayments = ({
                   onClick={() => onDraftClick()}
                   variant={'ghost'}
                 >
-                  Save Draft
+                  保存草稿
                 </Button>
                 <Button
                   className="ph-no-capture"
@@ -1121,7 +1121,7 @@ export const ListingPayments = ({
                   onClick={() => onDraftClick(true)}
                   variant={'outline'}
                 >
-                  Preview
+                  预览
                 </Button>
               </HStack>
             )}

@@ -87,10 +87,10 @@ export const UserStatsBanner = () => {
         >
           <Stat
             value={'$' + formatNumberWithSuffix(stats.totalWinnings ?? 0, 1)}
-            label="Total Earned"
+            label="总赚取"
           />
-          <Stat value={stats.participations} label="Participated" />
-          <Stat value={stats.wins} label="Won" />
+          <Stat value={stats.participations} label="已参与" />
+          <Stat value={stats.wins} label="获奖" />
         </Flex>
       )}
     </Flex>

@@ -78,7 +78,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Invite Member</ModalHeader>
+        <ModalHeader>邀请团队成员</ModalHeader>
         <ModalCloseButton />
         {inviteMutation.isSuccess ? (
           <>
@@ -95,17 +95,16 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               >
                 <AlertIcon boxSize="40px" mr={4} />
                 <Box>
-                  <AlertTitle>Sent Invite!</AlertTitle>
+                  <AlertTitle>邀请已发送!</AlertTitle>
                   <AlertDescription>
-                    Your team member will receive an email with a link to join
-                    Solar Earn.
+                    你的团队成员将收到电子邮件，包含加入Solar Earn的邀请链接。
                   </AlertDescription>
                 </Box>
               </Alert>
             </ModalBody>
             <ModalFooter>
               <Button onClick={onClose} variant="solid">
-                Close
+                关闭
               </Button>
             </ModalFooter>
           </>
@@ -113,7 +112,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
           <>
             <ModalBody>
               <FormControl isInvalid={inviteMutation.isError}>
-                <FormLabel mb={0}>Add Email Address</FormLabel>
+                <FormLabel mb={0}>添加邮箱</FormLabel>
                 <Input
                   color="brand.slate.500"
                   borderColor="brand.slate.300"
@@ -129,7 +128,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                 </FormErrorMessage>
               </FormControl>
               <Stack pt={4}>
-                <FormLabel mb={0}>Member Type</FormLabel>
+                <FormLabel mb={0}>成员类型</FormLabel>
                 <RadioGroup
                   defaultValue={memberType}
                   onChange={(value) => setMemberType(value)}
@@ -143,11 +142,10 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                   >
                     <Box ml={2}>
                       <Text fontSize="sm" fontWeight={700}>
-                        Member
+                        成员
                       </Text>
                       <Text fontSize="sm">
-                        Members can manage bounties & projects, can assign
-                        winners and make payments.
+                        成员可以管理赏金任务和项目任务，决定获胜者和支付奖励。
                       </Text>
                     </Box>
                   </Radio>
@@ -161,11 +159,10 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                   >
                     <Box ml={2}>
                       <Text fontSize="sm" fontWeight={700}>
-                        Admin
+                        管理员
                       </Text>
                       <Text fontSize="sm">
-                        Admin have all Member privileges, and they can manage
-                        all members.
+                        管理员有所有成员权限，并且可以管理所有成员。
                       </Text>
                     </Box>
                   </Radio>
@@ -174,7 +171,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
             </ModalBody>
             <ModalFooter>
               <Button mr={4} onClick={onClose} variant="ghost">
-                Close
+                关闭
               </Button>
               <Button
                 colorScheme="blue"
@@ -184,7 +181,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                 loadingText="Inviting..."
                 onClick={sendInvites}
               >
-                Send Invite
+                发送邀请
               </Button>
             </ModalFooter>
           </>

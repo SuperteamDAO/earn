@@ -187,18 +187,18 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
         <Table variant="simple">
           <Thead>
             <Tr bg="brand.slate.100">
-              <ListingTh>Listing Name</ListingTh>
+              <ListingTh>任务</ListingTh>
               <ListingTh
                 style={{
                   textAlign: 'center',
                 }}
               >
-                Submissions
+                提交数
               </ListingTh>
-              <ListingTh>Deadline</ListingTh>
-              <ListingTh>Prize</ListingTh>
-              <ListingTh>Status</ListingTh>
-              <ListingTh>Actions</ListingTh>
+              <ListingTh>截止日期</ListingTh>
+              <ListingTh>赏金</ListingTh>
+              <ListingTh>状态</ListingTh>
+              <ListingTh>行动</ListingTh>
               <Th pl={0} />
             </Tr>
           </Thead>
@@ -371,8 +371,8 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           : 'Submissions'}
                       </Button>
                     ) : (session?.user?.role === 'GOD' &&
-                      listing.type !== 'grant' &&
-                      !listing.isPublished) ||
+                        listing.type !== 'grant' &&
+                        !listing.isPublished) ||
                       (!pastDeadline &&
                         listing.type !== 'grant' &&
                         (listing.status === 'OPEN' ||
@@ -439,16 +439,16 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                             listing.type === 'project') &&
                           listing.status === 'VERIFYING'
                         ) && (
-                            <MenuItem
-                              color={'brand.slate.500'}
-                              fontSize={'sm'}
-                              fontWeight={500}
-                              icon={<Icon as={TiInputChecked} w={4} h={4} />}
-                              onClick={() => handleReviewBounty(listing.id)}
-                            >
-                              Review {listingLabel}
-                            </MenuItem>
-                          )}
+                          <MenuItem
+                            color={'brand.slate.500'}
+                            fontSize={'sm'}
+                            fontWeight={500}
+                            icon={<Icon as={TiInputChecked} w={4} h={4} />}
+                            onClick={() => handleReviewBounty(listing.id)}
+                          >
+                            Review {listingLabel}
+                          </MenuItem>
+                        )}
 
                         {!!(
                           (session?.user?.role === 'GOD' &&
@@ -458,43 +458,43 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                             (listing.status === 'OPEN' ||
                               listing.status === 'PREVIEW'))
                         ) && (
-                            <>
-                              <Link
-                                as={NextLink}
-                                _hover={{ textDecoration: 'none' }}
-                                href={`/dashboard/listings/${listing.slug}/edit`}
-                                onClick={resetForm}
+                          <>
+                            <Link
+                              as={NextLink}
+                              _hover={{ textDecoration: 'none' }}
+                              href={`/dashboard/listings/${listing.slug}/edit`}
+                              onClick={resetForm}
+                            >
+                              <MenuItem
+                                color={'brand.slate.500'}
+                                fontSize={'sm'}
+                                fontWeight={500}
+                                icon={<Icon as={PiNotePencil} w={4} h={4} />}
                               >
-                                <MenuItem
-                                  color={'brand.slate.500'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  icon={<Icon as={PiNotePencil} w={4} h={4} />}
-                                >
-                                  Edit {listingLabel}
-                                </MenuItem>
-                              </Link>
-                            </>
-                          )}
+                                Edit {listingLabel}
+                              </MenuItem>
+                            </Link>
+                          </>
+                        )}
                         {(listing.type === 'bounty' ||
                           listing.type === 'project') && (
-                            <MenuItem
-                              className="ph-no-capture"
-                              color={'brand.slate.500'}
-                              fontSize={'sm'}
-                              fontWeight={500}
-                              icon={<Icon as={IoDuplicateOutline} w={4} h={4} />}
-                              onClick={() => {
-                                posthog.capture('duplicate listing_sponsor');
-                                window.open(
-                                  `${router.basePath}/dashboard/listings/${listing.slug}/duplicate`,
-                                  '_blank',
-                                );
-                              }}
-                            >
-                              Duplicate
-                            </MenuItem>
-                          )}
+                          <MenuItem
+                            className="ph-no-capture"
+                            color={'brand.slate.500'}
+                            fontSize={'sm'}
+                            fontWeight={500}
+                            icon={<Icon as={IoDuplicateOutline} w={4} h={4} />}
+                            onClick={() => {
+                              posthog.capture('duplicate listing_sponsor');
+                              window.open(
+                                `${router.basePath}/dashboard/listings/${listing.slug}/duplicate`,
+                                '_blank',
+                              );
+                            }}
+                          >
+                            Duplicate
+                          </MenuItem>
+                        )}
                         {listingStatus === 'Draft' &&
                           listing?.type !== 'grant' && (
                             <>

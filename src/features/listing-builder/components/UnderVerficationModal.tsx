@@ -43,13 +43,13 @@ export function UnderVerificationModal({ onClose, isOpen }: Props) {
         <ModalBody>
           <VStack gap={3}>
             <Text fontSize="lg" fontWeight={600}>
-              We need to verify your listing before it gets published
+              我们需要在您的任务发布之前进行审核。
             </Text>
             <Text color="brand.slate.500">
-              {`It's important for us to verify certain work opportunities to maintain trust, and keep the platform free of any bad actors. We will try our best to verify your listing within 24 hours. `}
+              {`我们需要审核项目方资质，以构建信任并确保平台免受不良行为者的影响。我们会尽力在 48 小时内完成审核。 `}
             </Text>
             <Text color="brand.slate.500">
-              {`Once verified, your listing will be published automatically. If we need any information, we will get in touch with you. `}
+              {`一旦通过审核，您的列表将自动发布。如果我们需要任何信息，我们将与您联系。 `}
             </Text>
           </VStack>
         </ModalBody>

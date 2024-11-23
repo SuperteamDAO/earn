@@ -318,7 +318,7 @@ export default function Hackathon() {
             fontWeight={600}
             textAlign={'center'}
           >
-            Create your first listing
+            创建您第一个任务
           </Text>
           <Text
             mx="auto"
@@ -326,7 +326,7 @@ export default function Hackathon() {
             fontWeight={500}
             textAlign={'center'}
           >
-            and start getting contributions
+            从这里开始贡献
           </Text>
           <Button
             display="block"
@@ -654,21 +654,21 @@ export default function Hackathon() {
                               currentBounty.status === 'OPEN' &&
                               !currentBounty.isPublished
                             ) && (
-                                <>
-                                  <MenuItem
-                                    py={2}
-                                    color={'brand.slate.500'}
-                                    fontSize={'sm'}
-                                    fontWeight={500}
-                                    icon={
-                                      <Icon as={IoEyeOffOutline} boxSize={4} />
-                                    }
-                                    onClick={() => handleUnpublish(currentBounty)}
-                                  >
-                                    Unpublish
-                                  </MenuItem>
-                                </>
-                              )}
+                              <>
+                                <MenuItem
+                                  py={2}
+                                  color={'brand.slate.500'}
+                                  fontSize={'sm'}
+                                  fontWeight={500}
+                                  icon={
+                                    <Icon as={IoEyeOffOutline} boxSize={4} />
+                                  }
+                                  onClick={() => handleUnpublish(currentBounty)}
+                                >
+                                  Unpublish
+                                </MenuItem>
+                              </>
+                            )}
                           </MenuList>
                         </Menu>
                       </Td>

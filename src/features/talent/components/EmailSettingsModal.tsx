@@ -57,7 +57,7 @@ export const EmailSettingsModal = ({
 
       setIsUpdating(false);
       onClose();
-      toast.success('Email preferences updated');
+      toast.success('邮件偏好已更新');
     } catch (error) {
       console.error('Error updating email preferences:', error);
       toast.error('Failed to update email preferences.');
@@ -95,10 +95,10 @@ export const EmailSettingsModal = ({
           <ModalCloseButton mt={2} />
           <ModalBody>
             <Text color="brand.slate.700" fontSize="2xl" fontWeight={600}>
-              Update Email Preferences
+              更新邮件偏好
             </Text>
             <Text mt={1} color="brand.slate.400" fontWeight={500}>
-              Tell us which emails you would like to receive!
+              告诉我们您希望接收哪种邮件！
             </Text>
             {showSponsorAlerts && (
               <Box mt={6}>
@@ -109,18 +109,15 @@ export const EmailSettingsModal = ({
                   fontSize="sm"
                   letterSpacing={0.8}
                 >
-                  SPONSOR ALERTS
+                  项目方推送
                 </Text>
                 <AlertOption
-                  title="New submissions received for your listing"
+                  title="已发布任务的新提交"
                   category="submissionSponsor"
                 />
+                <AlertOption title="已发布任务的新评论" category="commentSponsor" />
                 <AlertOption
-                  title="Comments Received on your listing"
-                  category="commentSponsor"
-                />
-                <AlertOption
-                  title="Deadline related reminders"
+                  title="截止日期相关提醒"
                   category="deadlineSponsor"
                 />
               </Box>
@@ -163,14 +160,13 @@ export const EmailSettingsModal = ({
                   fontSize="sm"
                   letterSpacing={0.8}
                 >
-                  GENERAL ALERTS
-                </Text>
+                  日常推送
                 <AlertOption
-                  title="Comment replies and tags"
+                  title="评论回复和艾特"
                   category="replyOrTagComment"
                 />
                 <AlertOption
-                  title="Product updates and newsletters"
+                  title="产品更新和通知"
                   category="productAndNewsletter"
                 />
               </Box>
@@ -185,7 +181,7 @@ export const EmailSettingsModal = ({
               loadingText="Updating Preferences.."
               onClick={updateEmailSettings}
             >
-              Update Preferences
+              更新偏好
             </Button>
           </ModalFooter>
         </ModalContent>
