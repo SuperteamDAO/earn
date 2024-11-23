@@ -88,7 +88,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
           fontSize={{ base: 'lg', lg: 'xl' }}
           fontWeight={600}
         >
-          Activity Feed
+          任务广场
         </Text>
         <Box
           display={{ base: 'none', md: 'flex', lg: 'none' }}
@@ -105,7 +105,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
           mt={2}
         >
           <Text color="brand.slate.600" fontSize={{ base: 'sm', lg: 'md' }}>
-            Discover the best work on Earn
+            发现 Solar Earn 上的最佳作品
           </Text>
           <Box display={{ base: 'flex', md: 'none' }} w="full" pt={4} pr={4}>
             <VibeCard />
@@ -163,7 +163,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
               fontWeight={500}
               textAlign={'center'}
             >
-              No Activity Found
+              未找到任务
             </Text>
             <Text
               mx="auto"
@@ -173,7 +173,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
               fontWeight={400}
               textAlign={'center'}
             >
-              We couldn’t find any activity for your time filter
+              根据您的筛选条件，我们没有找到任何任务
             </Text>
           </Box>
         </FeedLoop>

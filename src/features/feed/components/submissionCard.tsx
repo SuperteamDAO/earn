@@ -39,16 +39,16 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
 
   switch (sub?.listingType) {
     case 'bounty':
-      winningText = 'won a bounty';
-      submissionText = 'submitted to a bounty';
+      winningText = '赢得一个赏金任务';
+      submissionText = '提交一个赏金任务';
       break;
     case 'hackathon':
       winningText = 'won a hackathon track';
-      submissionText = 'submitted to a hackathon';
+      submissionText = '提交了一个hackathon';
       break;
     case 'project':
-      winningText = 'got selected for a project';
-      submissionText = 'applied to a project';
+      winningText = '选择一个定向任务';
+      submissionText = '申请了一个定向任务';
       break;
   }
 
@@ -86,9 +86,7 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
         bg="white"
         borderRadius={'lg'}
         isDisabled={!!sub?.id || isProject}
-        label={
-          'This submission will be accessible once winners for the listing have been announced.'
-        }
+        label={'此提交会在宣布任务获胜者后可见'}
         shouldWrapChildren
       >
         <FeedCardLink

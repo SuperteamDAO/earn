@@ -219,8 +219,8 @@ export const SubmissionModal = ({
       );
       break;
     case 'bounty':
-      headerText = 'Bounty Submission';
-      subheadingText = "We can't wait to see what you've created!";
+      headerText = '提交赏金任务';
+      subheadingText = '非常期待您的创作';
       break;
     case 'hackathon':
       headerText = 'Solana Radar Track Submission';
@@ -283,8 +283,8 @@ export const SubmissionModal = ({
                 <>
                   <TextAreaWithCounter
                     id="applicationLink"
-                    label="Link to Your Submission"
-                    helperText="Make sure this link is accessible by everyone!"
+                    label="提交链接"
+                    helperText="请确保此链接对所有人可访问!"
                     placeholder=""
                     register={register}
                     watch={watch}
@@ -294,8 +294,9 @@ export const SubmissionModal = ({
                   />
                   <TextAreaWithCounter
                     id="tweetLink"
-                    label="Tweet Link"
-                    helperText="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
+                    label="推文链接"
+                    helperText="这有助于项目方在 X 上发现和转发您的作品。如果此提交本身便是针对 X 赏金任务，
+添加推文链接，您可以忽略此条。"
                     placeholder=""
                     register={register}
                     watch={watch}
@@ -377,26 +378,25 @@ export const SubmissionModal = ({
               )}
               <RichTextInputWithHelper
                 control={control}
-                label="Anything Else?"
+                label="其他?"
                 id={`otherInfo`}
-                helperText="If you have any other links or information you'd like to share with us, please add them here!"
+                helperText="如果您有其他链接或信息与我们分享，请在此处添加"
                 placeholder=""
               />
 
               <TextInputWithHelper
                 id="publicKey"
-                label="Your Solana Wallet Address"
+                label="你的 Solana 钱包地址"
                 helperText={
                   <>
-                    This is where you will receive your rewards if you win. If
-                    you want to edit it,{' '}
+                    这是您收取奖励的钱包地址。如果您想编辑，请点击这里。{' '}
                     <Text as="u">
                       <Link
                         color="blue.600"
                         href={`/t/${user?.username}/edit`}
                         isExternal
                       >
-                        click here
+                        点击这里
                       </Link>
                     </Text>{' '}
                   </>
@@ -451,7 +451,7 @@ export const SubmissionModal = ({
               type="submit"
               variant="solid"
             >
-              {!isProject ? 'Submit' : 'Apply'}
+              {!isProject ? '提交' : '申请'}
             </Button>
             <Text
               mt={2}
@@ -459,7 +459,7 @@ export const SubmissionModal = ({
               fontSize="sm"
               textAlign="center"
             >
-              By submitting/applying to this listing, you agree to our{' '}
+              提交/申请此任务，即表示您同意我们的{' '}
               <Link
                 textDecoration={'underline'}
                 onClick={() => setIsTOSModalOpen(true)}
@@ -467,7 +467,7 @@ export const SubmissionModal = ({
                 target="_blank"
                 textUnderlineOffset={2}
               >
-                Terms of Use
+                使用条款
               </Link>
               .
             </Text>

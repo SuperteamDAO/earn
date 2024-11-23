@@ -145,7 +145,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                         成员
                       </Text>
                       <Text fontSize="sm">
-                        成员可以管理赏金任务和项目任务，决定获胜者和支付奖励。
+                        成员可以管理赏金任务和定向任务，决定获胜者和支付奖励。
                       </Text>
                     </Box>
                   </Radio>

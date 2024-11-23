@@ -80,7 +80,7 @@ ${listingLink('twitter')}
                 fontSize={'lg'}
                 fontWeight={600}
               >
-                Your Listing is Live
+                您的任务已上线
               </Text>
               <Text
                 mt={-2}
@@ -89,8 +89,8 @@ ${listingLink('twitter')}
                 fontWeight={400}
               >
                 {isVerified
-                  ? 'Share the love on your socials and invite Earn’s best talent!'
-                  : 'Share the love on your socials!'}
+                  ? '在社交媒体上分享喜悦，并邀请最合适的人才！'
+                  : '在社交媒体上分享喜悦!'}
               </Text>
               <VStack gap={4} w={'full'} mt={3}>
                 <Button
@@ -158,7 +158,7 @@ ${listingLink('twitter')}
                     }}
                     variant="solid"
                   >
-                    View Listing <ArrowForwardIcon h="0.8em" w="0.8em" />
+                    查看任务 <ArrowForwardIcon h="0.8em" w="0.8em" />
                   </Button>
                 )}
                 <Flex
@@ -176,7 +176,7 @@ ${listingLink('twitter')}
                     href={twitterShareLink}
                     target="_blank"
                   >
-                    Share on
+                    分享到
                     <FaXTwitter style={{ width: '1em', height: '1em' }} />
                   </Link>
                   {isVerified ? (

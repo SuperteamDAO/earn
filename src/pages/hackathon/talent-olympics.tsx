@@ -1334,7 +1334,7 @@ interface CountryLeader {
   location: string;
   submission_count: number;
 }
-export const getServerSideProps: GetServerSideProps = async ({ }) => {
+export const getServerSideProps: GetServerSideProps = async ({}) => {
   const countryLeaders = await prisma.$queryRaw<CountryLeader[]>`
 SELECT
     u.location,

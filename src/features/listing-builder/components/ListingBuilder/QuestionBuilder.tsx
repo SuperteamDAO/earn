@@ -136,12 +136,11 @@ export const QuestionBuilder = ({
           <Image alt={'hands'} src={'/assets/icons/hands.svg'} />
           <VStack align={'start'} justify={'start'}>
             <Text color={'#334254'} fontSize={'0.88rem'} fontWeight={600}>
-              Note
+              注意
             </Text>
             <Text mt={'0px !important'} color={'#94A3B8'} fontSize={'0.88rem'}>
-              Names, Emails, Discord / Twitter IDs, SOL wallet and Profile Links
-              are collected by default. Please use this space to ask about
-              anything else!
+              默认会收集姓名、邮箱、Telegram/Twitter、SOL 钱包地址和档案链
+              接，请在此处询问其他您想了解的信息！
             </Text>
           </VStack>
         </HStack>
@@ -170,7 +169,7 @@ export const QuestionBuilder = ({
             })
           }
         >
-          + Add Question
+          添加问题
         </Button>
         <VStack gap={6} w={'full'} pt={10}>
           <Button
@@ -182,7 +181,7 @@ export const QuestionBuilder = ({
             type="submit"
             variant={!isDraft ? 'outline' : 'solid'}
           >
-            Continue
+            继续
           </Button>
           {isDraft && (
             <HStack w="full">
@@ -198,7 +197,7 @@ export const QuestionBuilder = ({
                 onClick={() => onDraftClick()}
                 variant={'ghost'}
               >
-                Save Draft
+                保存草稿
               </Button>
             </HStack>
           )}

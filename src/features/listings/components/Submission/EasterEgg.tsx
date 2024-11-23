@@ -84,7 +84,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
             lineHeight="1"
             textAlign="center"
           >
-            {isProject ? 'Application' : 'Submission'} Received!
+            {isProject ? 'Application' : 'Submission'} 成功提交!
           </Text>
           <Text
             mt={[8, 5]}
@@ -94,7 +94,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
             textAlign="center"
             opacity="0.6"
           >
-            Sending some vibes your way 💃 💃
+            海绵宝宝发来贺电💃 💃
           </Text>
         </Container>
         <AbsoluteCenter

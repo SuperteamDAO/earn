@@ -177,37 +177,37 @@ export function SponsorLayout({
 
   const LinkItems: Array<LinkItemProps> = isHackathonRoute
     ? [
-      { name: 'All Tracks', link: `/hackathon`, icon: MdList },
-      {
-        name: '获取帮助',
-        link: PDTG,
-        icon: MdOutlineChatBubbleOutline,
-        posthog: 'get help_sponsor',
-      },
-    ]
+        { name: 'All Tracks', link: `/hackathon`, icon: MdList },
+        {
+          name: '获取帮助',
+          link: PDTG,
+          icon: MdOutlineChatBubbleOutline,
+          posthog: 'get help_sponsor',
+        },
+      ]
     : [
-      { name: '我的任务列表', link: '/listings', icon: BiListUl },
-      {
-        name: '团队设置',
-        link: '/team-settings',
-        icon: RiUserSettingsLine,
-      },
-      ...(isLocalProfileVisible
-        ? [
-          {
-            name: 'Local Profiles',
-            link: '/local-profiles',
-            icon: LuUsers,
-          },
-        ]
-        : []),
-      {
-        name: '获取帮助',
-        link: PDTG,
-        icon: LuMessageSquare,
-        posthog: 'get help_sponsor',
-      },
-    ];
+        { name: '我的任务列表', link: '/listings', icon: BiListUl },
+        {
+          name: '团队设置',
+          link: '/team-settings',
+          icon: RiUserSettingsLine,
+        },
+        ...(isLocalProfileVisible
+          ? [
+              {
+                name: 'Local Profiles',
+                link: '/local-profiles',
+                icon: LuUsers,
+              },
+            ]
+          : []),
+        {
+          name: '获取帮助',
+          link: PDTG,
+          icon: LuMessageSquare,
+          posthog: 'get help_sponsor',
+        },
+      ];
 
   const showLoading = !isHackathonRoute
     ? !user?.currentSponsor?.id
@@ -314,7 +314,7 @@ export function SponsorLayout({
                   cannotCreateNewListing
                     ? isSponsorActive
                       ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
-                      : '发送邮件至 abc@solar.com 或者Telegrem @abc，联系管理员，开启相关权限'
+                      : '发送邮件至vesper.yang.blockchain@gmail.com 或者Telegrem @cryptosheep1，联系管理员，开启相关权限'
                     : ''
                 }
               >

@@ -117,7 +117,7 @@ export const VibeCard = () => {
           <Text as="span" color="brand.slate.900">
             {vibeCount}{' '}
           </Text>
-          people vibing rn
+          人已参与其中
         </Text>
         <Flex align={'center'}>
           {displayUsers.map((user, i) => (
@@ -147,7 +147,7 @@ export const VibeCard = () => {
           onClick={handleVibeClick}
           variant={'outline'}
         >
-          click to vibeeeee
+          点击一起贡献
         </Button>
       </AuthWrapper>
       <Fireworks onInit={onInit} />

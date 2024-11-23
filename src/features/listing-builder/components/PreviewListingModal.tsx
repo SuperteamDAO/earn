@@ -42,7 +42,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
         <ModalHeader px="6" py="4">
           <Grid alignItems="center" gap={4} templateColumns="1fr auto 1fr">
             <Text color="brand.slate.500" fontSize="lg" fontWeight="600">
-              Preview Listing
+              预览赏金任务
             </Text>
 
             <Tabs
@@ -60,7 +60,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                     borderColor: 'brand.purple',
                   }}
                 >
-                  Desktop
+                  电脑端
                 </Tab>
                 <Tab
                   color="brand.slate.400"
@@ -71,7 +71,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                     borderColor: 'brand.purple',
                   }}
                 >
-                  Mobile
+                  移动端
                 </Tab>
               </TabList>
             </Tabs>
@@ -107,7 +107,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                   rightIcon={<ExternalLinkIcon />}
                   variant="outlineSecondary"
                 >
-                  Secret Draft Link
+                  保存草稿链接
                 </Button>
               </Flex>
 
@@ -119,7 +119,7 @@ export const PreviewListingModal = ({ isOpen, onClose, previewUrl }: Props) => {
                 }}
                 variant="solid"
               >
-                Continue Editing
+                继续编辑
               </Button>
             </Flex>
           </Grid>
