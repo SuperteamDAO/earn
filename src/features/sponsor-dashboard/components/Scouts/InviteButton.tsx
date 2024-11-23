@@ -38,13 +38,12 @@ export function InviteButton({
         invitedUser: userId,
       });
       const invites = invitesLeft - 1;
-      toast.success(
-        `Invite sent. ${invites} Invite${invites === 1 ? '' : 's'} Remaining`,
+      toast.success(`邀请已发送。还剩余${invites}邀请`,
       );
     },
     onError: (error) => {
       console.error('Invite error:', error);
-      toast.error('Invite failed, please try again later');
+      toast.error('失败，请重试');
     },
   });
 

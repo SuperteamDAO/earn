@@ -231,7 +231,7 @@ export const PayoutButton = ({ bounty }: Props) => {
           mr={4}
           isDisabled={!bounty?.isWinnersAnnounced}
           isLoading={isPaying}
-          loadingText={'Paying...'}
+          loadingText='正在支付中'
           onClick={async () => {
             if (!selectedSubmission?.user.publicKey) {
               console.error('Public key is null, cannot proceed with payment');

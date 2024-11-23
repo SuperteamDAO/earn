@@ -102,14 +102,14 @@ ${socialListingLink('twitter')}
       const url = data?.url || '';
       if (url) {
         window.open(url, '_blank');
-        toast.success('CSV exported successfully');
+        toast.success('成功');
       } else {
-        toast.error('Export URL is empty');
+        toast.error('导出链接是空的');
       }
     },
     onError: (error) => {
       console.error('Export error:', error);
-      toast.error('Failed to export CSV. Please try again.');
+      toast.error('失败，请重试');
     },
   });
 
@@ -160,11 +160,11 @@ ${socialListingLink('twitter')}
             _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
             isLoading={exportMutation.isPending}
             leftIcon={<DownloadIcon />}
-            loadingText={'Exporting...'}
+            loadingText='导出中'
             onClick={() => exportSubmissionsCsv()}
             variant={'ghost'}
           >
-            Export CSV
+            导出 CSV
           </Button>
           <Button
             color={'brand.slate.400'}
@@ -175,7 +175,7 @@ ${socialListingLink('twitter')}
             }
             variant={'ghost'}
           >
-            View Listing
+            查看列表
           </Button>
           {!!(
             (session?.user?.role === 'GOD' && bounty?.type !== 'grant') ||
@@ -197,7 +197,7 @@ ${socialListingLink('twitter')}
                   leftIcon={<LuPencil />}
                   variant={'ghost'}
                 >
-                  Edit
+                  修改
                 </Button>
               </Link>
             )}

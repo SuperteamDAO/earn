@@ -28,7 +28,7 @@ import {
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -195,18 +195,16 @@ function GrantApplications({ slug }: Props) {
           return old.map((application: GrantApplicationWithUser) =>
             applicationIds.includes(application.id)
               ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Rejected,
-                }
+                ...application,
+                applicationStatus: GrantApplicationStatus.Rejected,
+              }
               : application,
           );
         },
       );
     },
     onError: () => {
-      toast.error(
-        'An error occurred while rejecting applications. Please try again.',
-      );
+      toast.error('发生错误，请重试');
     },
     onSuccess: (_, applicationIds) => {
       queryClient.setQueryData(
@@ -216,9 +214,9 @@ function GrantApplications({ slug }: Props) {
           return old.map((application: GrantApplicationWithUser) =>
             applicationIds.includes(application.id)
               ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Rejected,
-                }
+                ...application,
+                applicationStatus: GrantApplicationStatus.Rejected,
+              }
               : application,
           );
         },
@@ -232,7 +230,7 @@ function GrantApplications({ slug }: Props) {
 
       setSelectedApplication(updatedApplication);
       setSelectedApplicationIds(new Set());
-      toast.success('Applications rejected successfully');
+      toast.success('成功');
     },
   });
 
@@ -432,8 +430,8 @@ function GrantApplications({ slug }: Props) {
                         roundedRight={'xl'}
                       >
                         {!applications?.length &&
-                        !searchText &&
-                        !isApplicationsLoading ? (
+                          !searchText &&
+                          !isApplicationsLoading ? (
                           <>
                             <Image
                               w={32}

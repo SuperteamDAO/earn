@@ -220,11 +220,11 @@ export default function Hackathon() {
             <Button
               isLoading={isChangingStatus}
               leftIcon={<ViewOffIcon />}
-              loadingText="Unpublishing..."
+              loadingText=""
               onClick={() => changeBountyStatus(false)}
               variant="solid"
             >
-              Unpublish
+              取消发布
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -252,11 +252,11 @@ export default function Hackathon() {
             <Button
               isLoading={isChangingStatus}
               leftIcon={<AiOutlineDelete />}
-              loadingText="Deleting..."
+              loadingText="正在删除"
               onClick={deleteSelectedDraft}
               variant="solid"
             >
-              Confirm
+              确认
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -654,21 +654,21 @@ export default function Hackathon() {
                               currentBounty.status === 'OPEN' &&
                               !currentBounty.isPublished
                             ) && (
-                              <>
-                                <MenuItem
-                                  py={2}
-                                  color={'brand.slate.500'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  icon={
-                                    <Icon as={IoEyeOffOutline} boxSize={4} />
-                                  }
-                                  onClick={() => handleUnpublish(currentBounty)}
-                                >
-                                  Unpublish
-                                </MenuItem>
-                              </>
-                            )}
+                                <>
+                                  <MenuItem
+                                    py={2}
+                                    color={'brand.slate.500'}
+                                    fontSize={'sm'}
+                                    fontWeight={500}
+                                    icon={
+                                      <Icon as={IoEyeOffOutline} boxSize={4} />
+                                    }
+                                    onClick={() => handleUnpublish(currentBounty)}
+                                  >
+                                    Unpublish
+                                  </MenuItem>
+                                </>
+                              )}
                           </MenuList>
                         </Menu>
                       </Td>

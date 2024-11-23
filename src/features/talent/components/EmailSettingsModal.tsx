@@ -60,7 +60,7 @@ export const EmailSettingsModal = ({
       toast.success('邮件偏好已更新');
     } catch (error) {
       console.error('Error updating email preferences:', error);
-      toast.error('Failed to update email preferences.');
+      toast.error('更新失败，请重试');
       setIsUpdating(false);
     }
   };
@@ -166,7 +166,7 @@ export const EmailSettingsModal = ({
                   日常推送
                 </Text>
                 <AlertOption
-                  title="评论回复和艾特"
+                  title="评论回复"
                   category="replyOrTagComment"
                 />
                 <AlertOption
@@ -182,7 +182,7 @@ export const EmailSettingsModal = ({
               w="100%"
               colorScheme="blue"
               isLoading={isUpdating}
-              loadingText="Updating Preferences.."
+              loadingText="正在更新"
               onClick={updateEmailSettings}
             >
               更新偏好

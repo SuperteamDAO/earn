@@ -120,7 +120,7 @@ export const useToggleWinner = (
     },
     onError: (error) => {
       console.error('Failed to toggle winner:', error);
-      toast.error('Failed to toggle winner, please try again later');
+      toast.error('失败，请重试');
     },
   });
 };

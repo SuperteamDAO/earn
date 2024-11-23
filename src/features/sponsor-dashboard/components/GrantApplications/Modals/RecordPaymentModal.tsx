@@ -92,13 +92,13 @@ export const RecordPaymentModal = ({
     },
     onSuccess: (updatedApplication) => {
       onPaymentRecorded(updatedApplication);
-      toast.success('Payment recorded successfully');
+      toast.success('支付成功');
       reset();
       recordPaymentOnClose();
     },
     onError: (error) => {
       console.error(error);
-      toast.error('Error recording payment. Please try again.');
+      toast.error('支付失败，请重试。');
     },
   });
 
@@ -111,7 +111,7 @@ export const RecordPaymentModal = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader color={'brand.slate.500'} fontSize={'md'} fontWeight={600}>
-          Add Grant Payment
+          添加付款
         </ModalHeader>
         <ModalCloseButton />
         <Divider />
@@ -119,7 +119,7 @@ export const RecordPaymentModal = ({
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl isInvalid={!!errors.amount}>
               <FormLabel color="brand.slate.500" fontSize={'0.95rem'}>
-                Amount
+                总计
               </FormLabel>
               <NumberInput focusBorderColor="brand.purple">
                 <NumberInputField
@@ -138,7 +138,7 @@ export const RecordPaymentModal = ({
             </FormControl>
             <FormControl mt={4} isInvalid={!!errors.transactionLink}>
               <FormLabel color="brand.slate.500" fontSize={'0.95rem'}>
-                Transaction Link
+                交易链接
               </FormLabel>
               <Input mt={-1} {...register('transactionLink')} placeholder="" />
               <FormErrorMessage>
@@ -158,10 +158,10 @@ export const RecordPaymentModal = ({
                   <BiPlus color="white" size="18px" />
                 )
               }
-              loadingText="Adding Payment"
+              loadingText="正在支付"
               type="submit"
             >
-              Add Payment
+              添加支付
             </Button>
           </form>
         </ModalBody>

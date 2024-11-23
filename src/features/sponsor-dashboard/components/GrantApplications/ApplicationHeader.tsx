@@ -62,11 +62,11 @@ export const ApplicationHeader = ({ grant }: Props) => {
     onSuccess: (data) => {
       const url = data?.url || '';
       window.open(url, '_blank');
-      toast.success('CSV exported successfully');
+      toast.success('导出成功');
     },
     onError: (error) => {
       console.error(error);
-      toast.error('Failed to export CSV. Please try again.');
+      toast.error('导出失败');
     },
   });
 
@@ -83,7 +83,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
               <BreadcrumbLink color="brand.slate.400">
                 <Flex align="center">
                   <ChevronLeftIcon mr={1} w={6} h={6} />
-                  All Listings
+                  所有
                 </Flex>
               </BreadcrumbLink>
             </Link>
@@ -106,11 +106,11 @@ export const ApplicationHeader = ({ grant }: Props) => {
             _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
             isLoading={exportMutation.isPending}
             leftIcon={<DownloadIcon />}
-            loadingText={'Exporting...'}
+            loadingText={'导出中'}
             onClick={handleExport}
             variant={'ghost'}
           >
-            Export CSV
+            导出 CSV
           </Button>
           <Button
             color={'brand.slate.400'}
@@ -121,7 +121,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
             }
             variant={'ghost'}
           >
-            View Grant
+            查看
           </Button>
         </Flex>
       </Flex>

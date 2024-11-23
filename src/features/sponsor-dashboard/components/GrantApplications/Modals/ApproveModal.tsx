@@ -185,10 +185,10 @@ export const ApproveModal = ({
                 </Circle>
               )
             }
-            loadingText="Approving"
+            loadingText="通过中"
             onClick={approveGrant}
           >
-            Approve Grant
+            同意 Grant
           </Button>
         </ModalBody>
       </ModalContent>

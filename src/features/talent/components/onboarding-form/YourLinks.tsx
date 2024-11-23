@@ -86,9 +86,7 @@ export function YourLinks({ useFormStore }: Props) {
     const filledSocials = socialFields.filter((field) => data[field]);
 
     if (filledSocials.length === 0) {
-      toast.error(
-        'At least one additional social link (apart from Discord) is required',
-      );
+      toast.error('请至少提供一个社交链接');
       return;
     }
 

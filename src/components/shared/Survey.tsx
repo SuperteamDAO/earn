@@ -157,10 +157,10 @@ export const SurveyModal = ({
               mt={4}
               isDisabled={!response}
               isLoading={isSubmitting}
-              loadingText="Submitting..."
+              loadingText="正在提交"
               onClick={handleSubmit}
             >
-              Submit
+              提交
             </Button>
           </>
         )}

@@ -156,10 +156,10 @@ export const ApplicationDetails = ({
           const updatedApplications = oldData.map((application) =>
             application.id === applicationId
               ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Approved,
-                  approvedAmount: approvedAmount,
-                }
+                ...application,
+                applicationStatus: GrantApplicationStatus.Approved,
+                approvedAmount: approvedAmount,
+              }
               : application,
           );
           const updatedApplication = updatedApplications.find(
@@ -178,7 +178,7 @@ export const ApplicationDetails = ({
         ['sponsor-applications', grant?.slug, params],
         context?.previousApplications,
       );
-      toast.error('Failed to approve grant. Please try again.');
+      toast.error('失败，请重试');
     },
   });
 
@@ -205,9 +205,9 @@ export const ApplicationDetails = ({
           const updatedApplications = oldData.map((application) =>
             application.id === applicationId
               ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Rejected,
-                }
+                ...application,
+                applicationStatus: GrantApplicationStatus.Rejected,
+              }
               : application,
           );
           const updatedApplication = updatedApplications.find(
@@ -226,7 +226,7 @@ export const ApplicationDetails = ({
         ['sponsor-applications', grant?.slug, params],
         context?.previousApplications,
       );
-      toast.error('Failed to reject grant. Please try again.');
+      toast.error('失败，请重试');
     },
   });
 
@@ -404,7 +404,7 @@ export const ApplicationDetails = ({
                     />
                     {isNativeAndNonST &&
                       selectedApplication.totalPaid !==
-                        selectedApplication.approvedAmount && (
+                      selectedApplication.approvedAmount && (
                         <RecordPaymentButton
                           applicationId={selectedApplication.id}
                           approvedAmount={selectedApplication.approvedAmount}

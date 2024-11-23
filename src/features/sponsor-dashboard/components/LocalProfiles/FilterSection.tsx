@@ -53,14 +53,14 @@ export const FilterSection = ({
       const url = data?.url || '';
       if (url) {
         window.open(url, '_blank');
-        toast.success('CSV exported successfully');
+        toast.success('导出成功');
       } else {
-        toast.error('Export URL is empty');
+        toast.error('导出链接是空的');
       }
     },
     onError: (error) => {
       console.error('Export error:', error);
-      toast.error('Failed to export CSV. Please try again.');
+      toast.error('导出失败');
     },
   });
 
@@ -82,7 +82,7 @@ export const FilterSection = ({
           size={'sm'}
           variant={'outline'}
         >
-          Filter By Skills
+          筛选技能
           {selectedSkillsCount > 0 ? ` (${selectedSkillsCount})` : ''}
         </MenuButton>
         <MenuList>
@@ -143,12 +143,12 @@ export const FilterSection = ({
         borderColor={'brand.slate.300'}
         isLoading={exportMutation.isPending}
         leftIcon={<DownloadIcon />}
-        loadingText={'Exporting...'}
+        loadingText='导出中'
         onClick={() => exportUserCsv()}
         size={'sm'}
         variant={'ghost'}
       >
-        Export CSV
+        导出 CSV
       </Button>
     </Flex>
   );

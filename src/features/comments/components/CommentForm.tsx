@@ -138,7 +138,7 @@ export const CommentForm = ({
               fontWeight={500}
               isDisabled={!!newCommentLoading || !newComment || isTemplate}
               isLoading={!!newCommentLoading}
-              loadingText="添加..."
+              loadingText="添加中"
               onClick={() => handleSubmit()}
               variant="solid"
             >

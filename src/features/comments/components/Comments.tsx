@@ -121,7 +121,6 @@ export const Comments = ({
         <Image
           width={21}
           height={18}
-          alt="Comments Icon"
           src="/assets/icons/comments.svg"
         />
         <HStack>
@@ -174,13 +173,13 @@ export const Comments = ({
             border="none"
             isDisabled={!!isLoading}
             isLoading={!!isLoading}
-            loadingText="Fetching Comments..."
+            loadingText="正在获取更多评论"
             onClick={() => getComments(comments.length)}
             rightIcon={<LuArrowRight />}
             rounded="md"
             variant="outlineSecondary"
           >
-            Show More Comments
+            显示更多评论
           </Button>
         </Flex>
       )}

@@ -397,7 +397,7 @@ export const Comment = ({
                       }}
                       isDisabled={!!newReplyLoading || !newReply || isTemplate}
                       isLoading={!!newReplyLoading}
-                      loadingText="Adding..."
+                      loadingText="添加中"
                       onClick={() => handleSubmit()}
                     >
                       Reply

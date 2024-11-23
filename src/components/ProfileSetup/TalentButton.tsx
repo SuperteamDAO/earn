@@ -25,7 +25,6 @@ export function TalentButton({
           bg={'brand.purple.dark'}
           _hover={{ bg: 'brand.purple' }}
           isLoading={!!isLoading}
-          loadingText="Redirecting..."
           onClick={() => checkTalent()}
           rounded="4px"
         >

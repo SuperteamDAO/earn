@@ -81,50 +81,50 @@ export const socials = [
 export const SocialInput = ({ register, watch }: SocialInputProps) => {
   const validateSocial = (value: string, name: string) => {
     if (name === 'telegram' && !value) {
-      toast.error('Telegram is required');
+      toast.error('必须添加 Telegram');
       return false;
     }
     if (value) {
       switch (name) {
         case 'discord':
           if (!isValidDiscordInput(value)) {
-            toast.error('Invalid Discord username');
+            toast.error('Discord 用户名无效');
             return false;
           }
           break;
         case 'twitter':
           if (!isValidTwitterInput(value) && !isValidTwitterUsername(value)) {
-            toast.error('Invalid Twitter username or URL');
+            toast.error('Twitter 无效');
             return false;
           }
           break;
         case 'github':
           if (!isValidGitHubInput(value) && !isValidGitHubUsername(value)) {
-            toast.error('Invalid GitHub username or URL');
+            toast.error('GitHub 无效');
             return false;
           }
           break;
         case 'linkedin':
           if (!isValidLinkedInInput(value) && !isValidLinkedInUsername(value)) {
-            toast.error('Invalid LinkedIn username or URL');
+            toast.error('LinkedIn 无效');
             return false;
           }
           break;
         case 'telegram':
           if (!isValidTelegramInput(value) && !isValidTelegramUsername(value)) {
-            toast.error('Invalid Telegram username or URL');
+            toast.error('Telegram 无效');
             return false;
           }
           break;
         case 'website':
           if (!isValidWebsiteUrl(value)) {
-            toast.error('Invalid website URL');
+            toast.error('website 无效');
             return false;
           }
           break;
         case 'wechat':
           if (!isValidWechatIdInput(value)) {
-            toast.error('Invalid wechat id');
+            toast.error('wechat Id 无效');
             return false;
           }
           break;

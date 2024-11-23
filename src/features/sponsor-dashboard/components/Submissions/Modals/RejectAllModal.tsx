@@ -80,7 +80,7 @@ export const RejectAllSubmissionModal = ({
                 </Circle>
               )
             }
-            loadingText="Rejecting"
+            loadingText=""
             onClick={rejectSubmission}
           >
             Reject Application

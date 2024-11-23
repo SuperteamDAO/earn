@@ -229,8 +229,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     );
 
     if (filledSocials.length === 0) {
-      toast.error(
-        'At least one additional social link (apart from Discord) is required',
+      toast.error('至少提供一个社交链接'
       );
       return;
     }
@@ -296,13 +295,13 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           }, 500);
         },
         {
-          loading: 'Updating your profile...',
-          success: 'Your profile has been updated successfully!',
-          error: 'Failed to update profile.',
+          loading: '正在更新',
+          success: '更新成功',
+          error: '更新失败',
         },
       );
     } catch (error: any) {
-      toast.error('Failed to update profile.');
+      toast.error('更新失败');
     }
   };
 

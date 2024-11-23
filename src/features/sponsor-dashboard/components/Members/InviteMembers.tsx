@@ -53,11 +53,11 @@ export function InviteMembers({ isOpen, onClose }: Props) {
       return response.data;
     },
     onSuccess: () => {
-      toast.success('Invite sent successfully');
+      toast.success('邀请发送成功');
     },
     onError: (error) => {
       console.error('Invite error:', error);
-      toast.error('Failed to send invite. Please try again.');
+      toast.error('邀请发送失败，请重试');
     },
   });
 
@@ -95,9 +95,9 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               >
                 <AlertIcon boxSize="40px" mr={4} />
                 <Box>
-                  <AlertTitle>邀请已发送!</AlertTitle>
+                  <AlertTitle>邀请已发送！</AlertTitle>
                   <AlertDescription>
-                    你的团队成员将收到电子邮件，包含加入Solar Earn的邀请链接。
+                    你的团队成员将收到电子邮件，包含加入 Solar Earn 的邀请链接。
                   </AlertDescription>
                 </Box>
               </Alert>
@@ -178,7 +178,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                 isDisabled={!email}
                 isLoading={inviteMutation.isPending}
                 leftIcon={<AiOutlineSend />}
-                loadingText="Inviting..."
+                loadingText=""
                 onClick={sendInvites}
               >
                 发送邀请

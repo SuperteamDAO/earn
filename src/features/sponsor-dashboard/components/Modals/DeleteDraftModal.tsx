@@ -47,12 +47,12 @@ export const DeleteDraftModal = ({
         ['dashboard', user?.currentSponsorId],
         (oldData) => (oldData ? oldData.filter((x) => x.id !== listingId) : []),
       );
-      toast.success('Draft deleted successfully');
+      toast.success('成功');
       deleteDraftOnClose();
     },
     onError: (error) => {
       console.error('Delete error:', error);
-      toast.error('Failed to delete draft. Please try again.');
+      toast.error('失败，请重试');
     },
   });
 
@@ -84,11 +84,11 @@ export const DeleteDraftModal = ({
           <Button
             isLoading={deleteMutation.isPending}
             leftIcon={<AiOutlineDelete />}
-            loadingText="Deleting..."
+            loadingText="正在删除"
             onClick={deleteSelectedDraft}
             variant="solid"
           >
-            Confirm
+            确认
           </Button>
         </ModalFooter>
       </ModalContent>

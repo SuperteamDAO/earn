@@ -54,18 +54,18 @@ export const UnpublishModal = ({
         (oldData) =>
           oldData
             ? oldData.map((listing) =>
-                listing.id === data.id
-                  ? { ...listing, isPublished: data.isPublished }
-                  : listing,
-              )
+              listing.id === data.id
+                ? { ...listing, isPublished: data.isPublished }
+                : listing,
+            )
             : [],
       );
-      toast.success('Listing unpublished successfully');
+      toast.success('成功');
       unpublishOnClose();
     },
     onError: (error) => {
       console.error('Unpublish error:', error);
-      toast.error('Failed to unpublish listing. Please try again.');
+      toast.error('失败，请重试');
     },
   });
 
@@ -87,16 +87,16 @@ export const UnpublishModal = ({
         </ModalBody>
         <ModalFooter>
           <Button mr={4} onClick={unpublishOnClose} variant="ghost">
-            Close
+            关闭
           </Button>
           <Button
             isLoading={updateMutation.isPending}
             leftIcon={<ViewOffIcon />}
-            loadingText="Unpublishing..."
+            loadingText="取消发布中"
             onClick={() => changeBountyStatus(false)}
             variant="solid"
           >
-            Unpublish
+            取消发布
           </Button>
         </ModalFooter>
       </ModalContent>

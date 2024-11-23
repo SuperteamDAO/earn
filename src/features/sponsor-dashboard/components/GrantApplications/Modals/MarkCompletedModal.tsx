@@ -41,7 +41,7 @@ export function MarkCompleteModal({
       },
       onSuccess: (updatedApplication) => {
         onMarkCompleted(updatedApplication);
-        toast.success('Application Marked as Completed');
+        toast.success('成功');
         onClose();
       },
       onError: (error) => {
@@ -52,13 +52,11 @@ export function MarkCompleteModal({
               .toLowerCase()
               .includes('airtable recipient')
           ) {
-            toast.error('User has not filled the Grant Onboarding form');
+            toast.error('用户未填写表格');
             return;
           }
         }
-        toast.error(
-          'Error marking application as completed. Please try again.',
-        );
+        toast.error('失败，请重试');
       },
     });
 
@@ -99,7 +97,6 @@ export function MarkCompleteModal({
                   bg: 'red.400',
                 }}
                 isLoading={markCompletePending}
-                loadingText="Marking..."
                 onClick={handleMarkAsCompleted}
               >
                 Mark as Completed

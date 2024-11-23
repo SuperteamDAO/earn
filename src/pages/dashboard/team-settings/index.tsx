@@ -113,11 +113,11 @@ const Index = () => {
       queryClient.invalidateQueries({
         queryKey: ['members', user?.currentSponsorId],
       });
-      toast.success('Member removed successfully');
+      toast.success('成功');
     },
     onError: (error) => {
       console.error('Error removing member:', error);
-      toast.error('Failed to remove member. Please try again.');
+      toast.error('失败。请重试');
     },
   });
 
@@ -150,20 +150,20 @@ const Index = () => {
                 (s) => s.sponsorId === user.currentSponsorId,
               )?.role === 'ADMIN'
             )) && (
-            <Button
-              className="ph-no-capture"
-              color="#6366F1"
-              bg="#E0E7FF"
-              leftIcon={<AddIcon />}
-              onClick={() => {
-                posthog.capture('invite member_sponsor');
-                onOpen();
-              }}
-              variant="solid"
-            >
-              邀请成员
-            </Button>
-          )}
+              <Button
+                className="ph-no-capture"
+                color="#6366F1"
+                bg="#E0E7FF"
+                leftIcon={<AddIcon />}
+                onClick={() => {
+                  posthog.capture('invite member_sponsor');
+                  onOpen();
+                }}
+                variant="solid"
+              >
+                邀请成员
+              </Button>
+            )}
           <InputGroup w={52}>
             <Input
               bg={'white'}
@@ -362,7 +362,7 @@ const RemoveMemberModal = ({
   const removeMember = async (userId: string | undefined) => {
     await onRemoveMember(userId);
     setIsOpen(false);
-    toast.success('Member removed successfully');
+    toast.success('成功');
   };
 
   const isAdmin = member?.role === 'ADMIN' || session?.user?.role === 'GOD';
@@ -379,7 +379,7 @@ const RemoveMemberModal = ({
             size="sm"
             variant="solid"
           >
-            Remove
+            删除
           </Button>
         )}
       <Modal
@@ -391,17 +391,16 @@ const RemoveMemberModal = ({
         <ModalOverlay />
         <ModalContent py={2}>
           <ModalHeader color={'brand.slate.900'} fontSize="xl">
-            Remove Member?
+            删除成员？
           </ModalHeader>
           <ModalCloseButton mt={4} onClick={() => setIsOpen(false)} />
           <ModalBody>
             <Text>
-              Are you sure you want to remove{' '}
+              您确定要删除
+              {' '}
               <Text as="span" fontWeight={600}>
                 {member.user?.email}
               </Text>{' '}
-              from accessing your sponsor dashboard? You can invite them back
-              again later if needed.
             </Text>
           </ModalBody>
           <ModalFooter justifyContent="flex-end" display="flex" mt={2}>
@@ -411,7 +410,7 @@ const RemoveMemberModal = ({
                 removeMember(member.userId);
               }}
             >
-              Remove Member
+              删除成员
             </Button>
           </ModalFooter>
         </ModalContent>

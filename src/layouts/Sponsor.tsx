@@ -177,37 +177,37 @@ export function SponsorLayout({
 
   const LinkItems: Array<LinkItemProps> = isHackathonRoute
     ? [
-        { name: 'All Tracks', link: `/hackathon`, icon: MdList },
-        {
-          name: '获取帮助',
-          link: PDTG,
-          icon: MdOutlineChatBubbleOutline,
-          posthog: 'get help_sponsor',
-        },
-      ]
+      { name: 'All Tracks', link: `/hackathon`, icon: MdList },
+      {
+        name: '获取帮助',
+        link: PDTG,
+        icon: MdOutlineChatBubbleOutline,
+        posthog: 'get help_sponsor',
+      },
+    ]
     : [
-        { name: '我的任务列表', link: '/listings', icon: BiListUl },
-        {
-          name: '团队设置',
-          link: '/team-settings',
-          icon: RiUserSettingsLine,
-        },
-        ...(isLocalProfileVisible
-          ? [
-              {
-                name: 'Local Profiles',
-                link: '/local-profiles',
-                icon: LuUsers,
-              },
-            ]
-          : []),
-        {
-          name: '获取帮助',
-          link: PDTG,
-          icon: LuMessageSquare,
-          posthog: 'get help_sponsor',
-        },
-      ];
+      { name: '我的任务列表', link: '/listings', icon: BiListUl },
+      {
+        name: '团队设置',
+        link: '/team-settings',
+        icon: RiUserSettingsLine,
+      },
+      ...(isLocalProfileVisible
+        ? [
+          {
+            name: 'Local Profiles',
+            link: '/local-profiles',
+            icon: LuUsers,
+          },
+        ]
+        : []),
+      {
+        name: '获取帮助',
+        link: PDTG,
+        icon: LuMessageSquare,
+        posthog: 'get help_sponsor',
+      },
+    ];
 
   const showLoading = !isHackathonRoute
     ? !user?.currentSponsor?.id
@@ -377,7 +377,7 @@ export function SponsorLayout({
                 fontSize="md"
                 isDisabled={isSponsorActive === true || isLoading}
                 isLoading={isLoading}
-                loadingText="Activating..."
+                loadingText="正在激活"
                 onClick={activateSponsor}
                 variant="solid"
               >

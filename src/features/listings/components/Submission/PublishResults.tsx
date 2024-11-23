@@ -86,16 +86,14 @@ export function PublishResults({
     const remainingWinners = (rewards || 0) - totalWinners;
     alertType = 'error';
     alertTitle = 'Select All Winners!';
-    alertDescription = `You still have to select ${remainingWinners} more ${
-      remainingWinners === 1 ? 'winner' : 'winners'
-    } before you can publish the results publicly.`;
+    alertDescription = `You still have to select ${remainingWinners} more ${remainingWinners === 1 ? 'winner' : 'winners'
+      } before you can publish the results publicly.`;
   } else if (rewards && totalPaymentsMade !== rewards) {
     const remainingPayments = (rewards || 0) - totalPaymentsMade;
     alertType = 'warning';
     alertTitle = 'Pay All Winners!';
-    alertDescription = `Don't forget to pay your winners after publishing results. You have to pay to ${remainingPayments} ${
-      remainingPayments === 1 ? 'winner' : 'winners'
-    }.`;
+    alertDescription = `Don't forget to pay your winners after publishing results. You have to pay to ${remainingPayments} ${remainingPayments === 1 ? 'winner' : 'winners'
+      }.`;
   }
 
   const selectedSubmission = useAtomValue(selectedSubmissionAtom);
@@ -218,21 +216,21 @@ export function PublishResults({
           {!isWinnersAnnounced && (
             <>
               <Button onClick={onClose} variant="ghost">
-                Close
+                关闭
               </Button>
               <Button
                 className="ph-no-capture"
                 ml={4}
                 isDisabled={!isWinnersAllSelected || alertType === 'error'}
                 isLoading={isPublishingResults}
-                loadingText={'Publishing...'}
+                loadingText='正在发布'
                 onClick={() => {
                   posthog.capture('announce winners_sponsor');
                   publishResults();
                 }}
                 variant="solid"
               >
-                Publish
+                发布
               </Button>
             </>
           )}

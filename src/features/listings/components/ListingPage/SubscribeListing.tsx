@@ -47,14 +47,14 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
         );
       },
       onError: () => {
-        toast.error('Error occurred while toggling subscription');
+        toast.error('发生错误');
       },
     });
 
   const avatars = [
-    { name: 'Abhishkek', src: '/assets/pfps/t1.webp' },
-    { name: 'Pratik', src: '/assets/pfps/md2.webp' },
-    { name: 'Yash', src: '/assets/pfps/fff1.webp' },
+    { name: 'Satoshi ', src: '/assets/pfps/t1.webp' },
+    { name: 'Nakamoto', src: '/assets/pfps/md2.webp' },
+    { name: 'Vesper', src: '/assets/pfps/fff1.webp' },
   ];
 
   const handleToggleSubscribe = () => {

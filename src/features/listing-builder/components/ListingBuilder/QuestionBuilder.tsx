@@ -102,12 +102,12 @@ export const QuestionBuilder = ({
 
   const onSubmit = (data: any) => {
     if (data.eligibility.length === 0) {
-      toast.error('Add a minimum of one question');
+      toast.error('至少添加一个问题');
       return;
     }
     const hasEmptyQuestions = data.eligibility.some((q: Ques) => !q.question);
     if (hasEmptyQuestions) {
-      toast.error('All questions must be filled out');
+      toast.error('必须填写所有问题');
       return;
     }
 

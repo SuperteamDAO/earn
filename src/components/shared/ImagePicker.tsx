@@ -37,15 +37,13 @@ export const ImagePicker = ({
   const handleFileChange = (file: File | null | undefined) => {
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('The image size must be smaller than 5MB');
+        toast.error('图片大小必须小于 5MB');
         return;
       }
 
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
-        toast.error(
-          'Unsupported file format. Please use JPEG, PNG, or WebP Images.',
-        );
+        toast.error('不支持的文件格式。请使用 JPEG、PNG 或 WebP');
         return;
       }
 

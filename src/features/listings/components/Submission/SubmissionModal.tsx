@@ -445,7 +445,7 @@ export const SubmissionModal = ({
               w={'full'}
               isDisabled={isTemplate || listing.status === 'PREVIEW'}
               isLoading={!!isLoading}
-              loadingText="Submitting..."
+              loadingText="提交中"
               type="submit"
               variant="solid"
             >

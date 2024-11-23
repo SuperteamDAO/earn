@@ -24,7 +24,7 @@ export function SponsorButton({
         bg={'brand.slate.900'}
         _hover={{ bg: 'brand.slate.700' }}
         isLoading={!!isLoading}
-        loadingText="Redirecting..."
+        loadingText=""
         onClick={() => checkSponsor()}
         rounded="4px"
       >

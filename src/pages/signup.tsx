@@ -32,7 +32,7 @@ export default function SignupPage() {
   const acceptInviteMutation = useMutation({
     mutationFn: acceptInvite,
     onSuccess: () => {
-      toast.success("You've successfully joined the sponsor's dashboard.");
+      toast.success("您已成功加入");
       setIsNavigating(true);
       router.push('/dashboard/listings');
     },
@@ -50,7 +50,7 @@ export default function SignupPage() {
       toast.error(
         error instanceof Error
           ? error.message
-          : 'An error occurred while verifying the invitation',
+          : '验证邀请时发生错误',
       );
     }
   }, [error]);
@@ -59,11 +59,11 @@ export default function SignupPage() {
     return (
       <Container centerContent>
         <VStack mt={10} spacing={4}>
-          <Heading>Invitation Error</Heading>
+          <Heading>邀请错误</Heading>
           <Text>
             {error instanceof Error ? error.message : 'An error occurred'}
           </Text>
-          <Button onClick={() => router.push('/')}>Go to Homepage</Button>
+          <Button onClick={() => router.push('/')}>回到首页</Button>
         </VStack>
       </Container>
     );
@@ -93,7 +93,7 @@ export default function SignupPage() {
             欢迎来到 Solar Earn
           </Text>
           <Text color="brand.slate.600" fontSize="lg" textAlign="center">
-            Start your journey to access top global talent!
+            开始您获取全球顶尖人才的旅程！
           </Text>
           <Image
             w={20}
@@ -111,7 +111,7 @@ export default function SignupPage() {
             lineHeight="24px"
             textAlign="center"
           >
-            {inviteDetails?.senderName} has invited you to join <br />
+            {inviteDetails?.senderName} 邀请你加入 <br />
             {inviteDetails?.sponsorName}
           </Text>
           {!session ? (
@@ -122,7 +122,7 @@ export default function SignupPage() {
                 fontWeight={500}
                 textAlign="center"
               >
-                Please sign in to accept the invitation:
+                登录接受邀请：
               </Text>
               <SignIn />
             </Box>
@@ -135,7 +135,7 @@ export default function SignupPage() {
               size="lg"
               variant={'outline'}
             >
-              Accept Invite
+              接受邀请
             </Button>
           )}
         </VStack>

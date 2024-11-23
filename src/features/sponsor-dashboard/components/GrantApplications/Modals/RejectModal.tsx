@@ -98,7 +98,7 @@ export const RejectGrantApplicationModal = ({
                 </Circle>
               )
             }
-            loadingText="Rejecting"
+            loadingText=""
             onClick={rejectGrant}
           >
             Reject Grant

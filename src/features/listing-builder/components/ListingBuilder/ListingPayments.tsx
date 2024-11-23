@@ -396,8 +396,8 @@ export const ListingPayments = ({
       value === ''
         ? tokenList
         : tokenList.filter((token) =>
-            token.tokenName.toLowerCase().includes(value.toLowerCase()),
-          );
+          token.tokenName.toLowerCase().includes(value.toLowerCase()),
+        );
     setSearchResults(filteredResults);
     setSelectedTokenIndex(null);
     setIsOpen(true);
@@ -520,13 +520,13 @@ export const ListingPayments = ({
       <Modal isOpen={confirmIsOpen} onClose={confirmOnClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>确认发布?</ModalHeader>
+          <ModalHeader>确认发布？</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text>
               {form?.isPrivate
                 ? '该列出任务将仅通过链接访问——不会在网站其他任何地方显示——因为它已被标记为“私人”'
-                : '赏金任务发布后会公开展示在Solar Earn 主页，在发布前请检查确认赏金任务详情'}
+                : '赏金任务发布后会公开展示在 Solar Earn 主页，在发布前请检查确认赏金任务详情'}
             </Text>
           </ModalBody>
 
@@ -539,7 +539,7 @@ export const ListingPayments = ({
               colorScheme="blue"
               disabled={isListingPublishing}
               isLoading={isListingPublishing}
-              loadingText="Publishing..."
+              loadingText="正在发布"
               onClick={() => createAndPublishListing(confirmOnClose)}
             >
               发布
@@ -924,8 +924,8 @@ export const ListingPayments = ({
                       }
                       value={
                         el.defaultValue !== null &&
-                        el.defaultValue !== undefined &&
-                        !isNaN(el.defaultValue)
+                          el.defaultValue !== undefined &&
+                          !isNaN(el.defaultValue)
                           ? el.defaultValue
                           : undefined
                       }

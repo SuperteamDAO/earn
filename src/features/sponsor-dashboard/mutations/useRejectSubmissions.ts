@@ -44,9 +44,7 @@ export const useRejectSubmissions = (slug: string) => {
       setSelectedSubmissionIds(new Set());
     },
     onError: () => {
-      toast.error(
-        'An error occurred while rejecting submissions. Please try again.',
-      );
+      toast.error('失败，请重试');
     },
     onSuccess: (_, submissionIds) => {
       queryClient.setQueryData(['sponsor-submissions', slug], (old: any) => {
@@ -67,7 +65,7 @@ export const useRejectSubmissions = (slug: string) => {
 
       setSelectedSubmission(updatedSubmission);
       setSelectedSubmissionIds(new Set());
-      toast.success('Submissions rejected successfully');
+      toast.success('成功');
     },
   });
 };
