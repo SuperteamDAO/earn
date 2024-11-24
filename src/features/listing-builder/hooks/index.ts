@@ -109,10 +109,7 @@ export const useListingForm = (
       const dataToSave = getValues();
       console.log('queueRef', queueRef);
       console.log('before save', dataToSave);
-      const data = await saveDraftMutation.mutateAsync({
-        ...dataToSave,
-        id: queueRefRef.current.id,
-      });
+      const data = await saveDraftMutation.mutateAsync(dataToSave);
       console.log('data', data);
       setHideAutoSave(false);
       formMethods.setValue('id', data.id);
