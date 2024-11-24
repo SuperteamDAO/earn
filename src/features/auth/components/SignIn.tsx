@@ -2,6 +2,7 @@ import { Box, Link, SlideFade, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { SolarMail } from '@/constants';
 
 import { TERMS_OF_USE } from '@/constants';
 
@@ -59,10 +60,10 @@ export const SignIn = () => {
             <Text as="u">
               <Link
                 as={NextLink}
-                href={'mailto:vesper.yang.blockchain@gmail.com'}
+                href={`mailto:${SolarMail}`}
                 isExternal
               >
-                vesper.yang.blockchain@gmail.com
+                {SolarMail}
               </Link>
             </Text>
           </Text>

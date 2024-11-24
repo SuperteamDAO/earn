@@ -10,6 +10,8 @@ import {
 import NextLink from 'next/link';
 import React from 'react';
 
+import { SolarMail } from '@/constants';
+
 import { Telegram, Twitter } from '@/features/talent';
 
 const FooterColumn = ({
@@ -71,7 +73,7 @@ export const Footer = () => {
     { text: '隐私政策', href: '#' },
     {
       text: '联系我们',
-      href: 'mailto:vesper.yang.blockchain@gmail.com',
+      href: `mailto:${SolarMail}`,
     },
   ];
 

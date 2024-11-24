@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { SolarMail } from '@/constants';
 
 export default function Blocked() {
   return (
@@ -25,9 +26,9 @@ export default function Blocked() {
           Your access to Earn has been restricted. Please get in touch with{' '}
           <Link
             color={'brand.purple'}
-            href="mailto:vesper.yang.blockchain@gmail.com"
+            href={`mailto:${SolarMail}`}
           >
-            vesper.yang.blockchain@gmail.com
+            {SolarMail}
           </Link>{' '}
           if you have any questions for more information.
         </Text>

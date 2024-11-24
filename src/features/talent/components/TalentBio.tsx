@@ -14,6 +14,7 @@ import { getURL } from '@/utils/validUrl';
 
 import { EarnAvatar } from './EarnAvatar';
 import { GitHub, Linkedin, Twitter, Website } from './Socials';
+import { SolarMail } from '@/constants';
 
 type ChipType = {
   icon: string;
@@ -87,7 +88,7 @@ export function TalentBio({
   const createMailtoLink = () => {
     const email = encodeURIComponent(talentUser?.email || '');
     const subject = encodeURIComponent('Saw Your ST Earn Profile!');
-    const bcc = encodeURIComponent('vesper.yang.blockchain@gmail.com');
+    const bcc = encodeURIComponent(SolarMail);
     return `mailto:${email}?subject=${subject}&bcc=${bcc}`;
   };
 

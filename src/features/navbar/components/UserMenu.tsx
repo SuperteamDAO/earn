@@ -20,6 +20,7 @@ import { useEffect } from 'react';
 
 import { EarnAvatar, EmailSettingsModal } from '@/features/talent';
 import { useLogout, useUser } from '@/store/user';
+import { SolarMail } from '@/constants';
 
 export function UserMenu({ }) {
   const router = useRouter();
@@ -214,7 +215,7 @@ export function UserMenu({ }) {
             fontSize="sm"
             fontWeight={600}
             onClick={() => {
-              window.open('mailto:vesper.yang.blockchain@gmail.com', '_blank');
+              window.open(`mailto:${SolarMail}`, '_blank');
               posthog.capture('get help_user menu');
             }}
           >

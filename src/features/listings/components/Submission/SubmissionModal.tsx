@@ -23,6 +23,7 @@ import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { SolarMail } from '@/constants';
 
 import RichTextInputWithHelper from '@/components/Form/RichTextInput';
 import {
@@ -435,9 +436,8 @@ export const SubmissionModal = ({
             </VStack>
             {!!error && (
               <Text align="center" mb={2} color="red">
-                Sorry! An error occurred while submitting. <br />
-                Please try again or contact us at
-                vesper.yang.blockchain@gmail.com
+                提交时出现错误。<br />
+                请联系{SolarMail}
               </Text>
             )}
             <Button

@@ -55,6 +55,7 @@ import {
 } from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
+import { SolarMail } from '@/constants';
 
 const MemoizedListingTable = React.memo(ListingTable);
 
@@ -450,7 +451,7 @@ export default function SponsorListings() {
               cannotCreateNewListing
                 ? isSponsorActive
                   ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “Rolling” or “In Review”. Please announce the winners for such listings to create new listings.'
-                  : '发送邮件至vesper.yang.blockchain@gmail.com 或者Telegrem @cryptosheep1，联系管理员，开启相关权限'
+                  : `发送邮件至 ${SolarMail} 或者Telegrem @cryptosheep1，联系管理员，开启相关权限`
                 : ''
             }
           >

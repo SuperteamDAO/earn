@@ -40,6 +40,7 @@ import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
+import { SolarMail } from '@/constants';
 
 type UserWithFeed = User & {
   feed: FeedDataProps[];
@@ -323,9 +324,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       const subject = encodeURIComponent(
                         'Saw Your ST Earn Profile!',
                       );
-                      const bcc = encodeURIComponent(
-                        'vesper.yang.blockchain@gmail.com',
-                      );
+                      const bcc = encodeURIComponent(SolarMail);
                       window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
                     })}
                   {renderButton(<ShareIcon />, '分享', onOpen, true)}
