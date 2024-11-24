@@ -59,7 +59,7 @@ export const Template = ({
   };
 
   return (
-    <VStack align={'start'} gap={8} w="full">
+    <VStack align={'start'} gap={6} w="full">
       <VStack align="start" w={'full'}>
         <Flex align="center" justify="center" gap="2rem" w="full" mb="2rem">
           <Text color="gray.600" fontSize="1.3rem" fontWeight={600}>
@@ -67,7 +67,7 @@ export const Template = ({
           </Text>
           <hr
             style={{
-              width: '100%',
+              width: '85%',
               outline: '1px solid #CBD5E1',
               border: 'none',
             }}
@@ -184,7 +184,7 @@ export const Template = ({
                       </Flex>
                     ) : (
                       <Text color="brand.slate.400" fontSize="sm">
-                        {`使用"${template?.title}"模板预填信息`}
+                        {`使用${template?.title}模板预填信息`}
                       </Text>
                     )}
                   </Box>

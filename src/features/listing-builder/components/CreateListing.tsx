@@ -316,8 +316,8 @@ export function CreateListing({
     <>
       {!user?.id || !user?.currentSponsorId ? (
         <ErrorSection
-          title="Access is Forbidden!"
-          message="Please contact support to access this section."
+          title="禁止访问"
+          message="请联系技术支持"
         />
       ) : (
         <FormLayout setStep={setSteps} currentStep={steps} stepList={stepList}>

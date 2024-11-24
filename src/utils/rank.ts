@@ -1,7 +1,7 @@
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { type Rewards } from '@/features/listings';
 
-const rankLabels = [
+const _rankLabels = [
   'zeroth',
   'first',
   'second',
@@ -55,6 +55,8 @@ const rankLabels = [
   'fiftieth',
 ];
 
+const rankLabels = Array.from({ length: 51 }, (_, inx) => `第 ${inx} 阶段`);
+
 export const getRankLabels = (rank: number) => {
   if (rank === 99) return 'bonus';
   else return rankLabels[rank];
@@ -79,11 +81,11 @@ export const cleanRewardPrizes = (rewards?: Rewards, skipBonus = false) => {
 };
 
 export const nthLabelGenerator = (key: number) => {
-  if (key === 1) return '1st';
-  if (key === 2) return '2nd';
-  if (key === 3) return '3rd';
+  // if (key === 1) return '1st';
+  // if (key === 2) return '2nd';
+  // if (key === 3) return '3rd';
   if (key === BONUS_REWARD_POSITION) return 'bonus';
-  return `${key}th`;
+  return `第${key}阶段`;
 };
 
 export const sortRank = (rankArray: number[]) => {

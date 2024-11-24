@@ -167,7 +167,7 @@ export const GrantsHeader = ({
           <ListingTabLink
             w={{ md: '22rem' }}
             href={`/grants/${slug}/`}
-            text="Prizes"
+            text="奖金"
             isActive={false}
             styles={{
               pointerEvents: 'none',
@@ -176,7 +176,7 @@ export const GrantsHeader = ({
           />
           <ListingTabLink
             href={`/grants/${slug}/`}
-            text="Details"
+            text="详情"
             isActive={!router.asPath.split('/')[3]?.includes('references')}
           />
 

@@ -129,7 +129,7 @@ export function PrizesList({
                 borderStyle:
                   visibleRewards[index + 1]?.[0] ===
                     BONUS_REWARD_POSITION + '' &&
-                  visibleRewards.length - 2 === index
+                    visibleRewards.length - 2 === index
                     ? 'dashed'
                     : 'solid',
               }}
@@ -176,7 +176,7 @@ function LabelOrAction({
           }
           variant="link"
         >
-          View More
+          查看更多
         </Button>
       );
     } else

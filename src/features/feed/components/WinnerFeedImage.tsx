@@ -72,9 +72,9 @@ export const WinnerFeedImage = ({
         borderRadius={'full'}
       >
         {!!grantApplicationAmount ? (
-          'GRANT'
+          '赞助'
         ) : (
-          <>{getRankLabels(Number(winnerPosition))?.toUpperCase()} PRIZE</>
+          <>{getRankLabels(Number(winnerPosition))?.toUpperCase()} 奖励</>
         )}
       </Text>
     </Flex>

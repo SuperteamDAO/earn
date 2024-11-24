@@ -160,7 +160,7 @@ export function RightSideBar({
                           fontSize={'lg'}
                           fontWeight={400}
                         >
-                          {isProject ? '支付' : '总奖金'}
+                          {isProject ? '总奖金' : '总奖金'}
                         </Text>
                       </Flex>
                     </Td>

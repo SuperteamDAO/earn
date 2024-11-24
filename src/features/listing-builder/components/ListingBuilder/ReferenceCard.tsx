@@ -32,7 +32,7 @@ export const ReferenceCard = ({ register, index, errors }: Props) => {
         <FormControl w={'full'} isInvalid={!!errors.references?.[index]?.link}>
           <FormLabel color={'gray.500'}>
             <Text color={'gray.500'} fontSize={'0.88rem'} fontWeight={600}>
-              Link
+              链接
             </Text>
           </FormLabel>
           <Input
@@ -51,7 +51,7 @@ export const ReferenceCard = ({ register, index, errors }: Props) => {
         <FormControl w={'full'} isInvalid={!!errors.references?.[index]?.title}>
           <FormLabel color={'gray.500'}>
             <Text color={'gray.500'} fontSize={'0.88rem'} fontWeight={600}>
-              Title
+              题目
             </Text>
           </FormLabel>
           <Input

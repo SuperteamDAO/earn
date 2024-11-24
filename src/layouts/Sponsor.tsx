@@ -269,8 +269,7 @@ export function SponsorLayout({
           fontSize={'xl'}
           fontWeight={500}
         >
-          The Sponsor Dashboard on Earn is not optimized for mobile yet. Please
-          use a desktop to check out the Sponsor Dashboard
+          项目方仪表板还没有针对移动设备进行优化，请使用桌面端。
         </Text>
       </Flex>
       <Flex justify="start" display={{ base: 'none', md: 'flex' }} minH="100vh">

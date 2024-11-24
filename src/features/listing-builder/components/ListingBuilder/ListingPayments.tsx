@@ -145,7 +145,7 @@ export const ListingPayments = ({
   useEffect(() => {
     if (form && maxBonusSpots !== undefined) {
       if (maxBonusSpots > MAX_BONUS_SPOTS)
-        setWarningMessage('Maximum number of bonus prizes allowed is 50');
+        setWarningMessage('允许的最高奖励阶段为 50 次');
       if (maxBonusSpots === 0) {
         setWarningMessage("# of bonus prizes can't be 0");
       }
@@ -155,9 +155,9 @@ export const ListingPayments = ({
   useEffect(() => {
     if (form && rewards && rewards[BONUS_REWARD_POSITION] !== undefined) {
       if (rewards[BONUS_REWARD_POSITION] === 0) {
-        setWarningMessage(`Bonus per prize can't be 0`);
+        setWarningMessage(`每个赏金任务的奖金不能为 0`);
       } else if (rewards[BONUS_REWARD_POSITION] < 0.01) {
-        setWarningMessage(`Bonus per prize can't be less than 0.01`);
+        setWarningMessage(`每个赏金任务的奖金最小为 0.01`);
       }
     }
   }, [rewards]);
@@ -167,7 +167,7 @@ export const ListingPayments = ({
     if (warningMessage) {
       timer = setTimeout(() => {
         setWarningMessage('');
-      }, 5000);
+      }, 5000); // sleep 5
     }
     return () => {
       if (timer) clearTimeout(timer);
@@ -191,7 +191,7 @@ export const ListingPayments = ({
       return [
         {
           value: 1,
-          label: `${getRankLabels(1)} prize`,
+          label: `${getRankLabels(1)} 奖励`,
           placeHolder: MAX_PODIUMS * 500,
         },
       ];
@@ -213,7 +213,7 @@ export const ListingPayments = ({
         label:
           r === BONUS_REWARD_POSITION
             ? BONUS_REWARD_LABEL
-            : `${getRankLabels(r)} prize`,
+            : `${getRankLabels(r)} 奖金`,
         placeHolder,
         defaultValue: rewards[r as keyof Rewards],
       };
@@ -313,26 +313,26 @@ export const ListingPayments = ({
     let errorMessage = '';
 
     if (!selectedToken) {
-      errorMessage = 'Please select a valid token';
+      errorMessage = '请选择一个有效的代币';
     }
 
     if (isProject) {
       if (!compensationType) {
-        errorMessage = 'Please add a compensation type';
+        errorMessage = '请添加支付类型';
       }
 
       if (compensationType === 'fixed' && !rewardAmount) {
-        errorMessage = 'Please specify the total reward amount to proceed';
+        errorMessage = '请注明奖励总金额';
       } else if (compensationType === 'range') {
         if (!minRewardAsk || !maxRewardAsk) {
           errorMessage =
-            'Please specify your preferred minimum and maximum compensation range';
+            '请说明最低和最高补偿范围';
         } else if (maxRewardAsk < minRewardAsk) {
           errorMessage =
-            'The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it';
+            '“补偿范围不正确，最大值必须大于最小值';
         } else if (maxRewardAsk === minRewardAsk) {
           errorMessage =
-            'The compensation range is incorrect; the maximum must be higher than the minimum. Please adjust it.';
+            '补偿范围不正确，最大值必须大于最小值';
         }
       }
     } else {
@@ -341,18 +341,18 @@ export const ListingPayments = ({
         rewards[BONUS_REWARD_POSITION] &&
         rewards[BONUS_REWARD_POSITION] === 0
       ) {
-        errorMessage = "Bonus per prize can't be 0";
+        errorMessage = "奖金不能为 0";
       } else if (
         maxBonusSpots &&
         maxBonusSpots > 0 &&
         (!rewards?.[BONUS_REWARD_POSITION] ||
           isNaN(rewards?.[BONUS_REWARD_POSITION] || NaN))
       ) {
-        errorMessage = 'Bonus Reward is not mentioned';
+        errorMessage = '没有奖金奖励';
       } else if (rewards?.[BONUS_REWARD_POSITION] === 0) {
-        errorMessage = `Bonus per prize can't be 0`;
+        errorMessage = `奖金不能为 0`;
       } else if (cleanRewardPrizes(rewards).length !== prizes.length) {
-        errorMessage = 'Please fill all podium ranks or remove unused';
+        errorMessage = '请填满所有的奖金或删除未使用的';
       }
     }
 
@@ -460,14 +460,14 @@ export const ListingPayments = ({
   switch (compensationType) {
     case 'fixed':
       compensationHelperText =
-        'Interested applicants will apply if the pay fits their expectations';
+        '如果薪酬符合他们的期望，感兴趣的人就会申请"；';
       break;
     case 'range':
       compensationHelperText =
-        'Allow applicants to send quotes within a specific range';
+        '允许申请人在特定范围内发送报价';
       break;
     case 'variable':
-      compensationHelperText = 'Allow applicants to send quotes of any amount';
+      compensationHelperText = '允许申请人发送任意金额的报价';
       break;
   }
 
@@ -525,7 +525,7 @@ export const ListingPayments = ({
           <ModalBody>
             <Text>
               {form?.isPrivate
-                ? '该列出任务将仅通过链接访问——不会在网站其他任何地方显示——因为它已被标记为“私人”'
+                ? '该列出任务将仅通过链接访问——不会在网站其他任何地方显示——因为它已被标记为“不公开”'
                 : '赏金任务发布后会公开展示在 Solar Earn 主页，在发布前请检查确认赏金任务详情'}
             </Text>
           </ModalBody>
@@ -586,7 +586,7 @@ export const ListingPayments = ({
                       value={value}
                     >
                       <option hidden disabled value="">
-                        Select a Compensation Type
+                        选择报酬类型
                       </option>
                       <option value="fixed">固定报酬</option>
                       <option value="range">预先决定范围</option>
@@ -689,7 +689,7 @@ export const ListingPayments = ({
           {compensationType === 'fixed' && isProject && (
             <FormControl w="full" mt={5} isRequired>
               <ListingFormLabel htmlFor="rewardAmount">
-                总报酬 (in{' '}
+                总报酬 ({' '}
                 {tokenList.find((t) => t.tokenSymbol === token)?.tokenSymbol})
               </ListingFormLabel>
 
@@ -743,7 +743,7 @@ export const ListingPayments = ({
           {compensationType === 'range' && (
             <Flex gap="3" w="100%">
               <FormControl w="full" mt={5} isRequired>
-                <ListingFormLabel htmlFor="minRewardAsk">From</ListingFormLabel>
+                <ListingFormLabel htmlFor="minRewardAsk">从</ListingFormLabel>
                 <Flex
                   pos="relative"
                   pr={5}
@@ -784,7 +784,7 @@ export const ListingPayments = ({
               </FormControl>
               <FormControl w="full" mt={5} isRequired>
                 <ListingFormLabel htmlFor="minRewardAsk">
-                  Up to
+                  到
                 </ListingFormLabel>
                 <Flex
                   pos="relative"
@@ -836,12 +836,13 @@ export const ListingPayments = ({
                 borderBottomWidth="1px"
               >
                 <Text>
-                  {calculateTotalPrizes()}{' '}
-                  {calculateTotalPrizes() > 1 ? 'Prizes' : 'Prize'}
+                  一共{calculateTotalPrizes()}阶段
+                  {/* {calculateTotalPrizes() > 1 ? 'Prizes' : 'Prize'} */}
+                  奖励
                 </Text>
                 <Text>
                   {formatTotalPrice(calculateTotalReward())}{' '}
-                  {selectedToken?.tokenSymbol} Total
+                  总计 {selectedToken?.tokenSymbol}
                 </Text>
               </HStack>
               {prizes.map((el) => (
@@ -997,7 +998,7 @@ export const ListingPayments = ({
                           )}{' '}
                           {selectedToken?.tokenSymbol}{' '}
                         </Text>
-                        每位获得 (total bonus of{' '}
+                        xxx 每位获得 (total bonus of{' '}
                         <Text pl={1} fontWeight={700}>
                           {formatTotalPrice(
                             caculateBonus(
@@ -1139,7 +1140,7 @@ export const ListingPayments = ({
                 }}
                 variant={'solid'}
               >
-                Update Listing
+                更新
               </Button>
             )}
             {errorMessage && <Text color="red.500">{errorMessage}</Text>}

@@ -146,7 +146,7 @@ ${listingLink('twitter')}
                     }}
                     variant="solid"
                   >
-                    Invite Talent <AddIcon h="0.8em" w="0.8em" />
+                    邀请大佬<AddIcon h="0.8em" w="0.8em" />
                   </Button>
                 ) : (
                   <Button
@@ -181,7 +181,7 @@ ${listingLink('twitter')}
                   </Link>
                   {isVerified ? (
                     <Link as={NextLink} href={`/listings/${type}/${slug}`}>
-                      View Listing <ArrowForwardIcon />
+                      查看 <ArrowForwardIcon />
                     </Link>
                   ) : (
                     <Link as={NextLink} href={`/dashboard/listings/`}>
