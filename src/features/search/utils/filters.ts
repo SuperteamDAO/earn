@@ -2,17 +2,17 @@ import { type CheckboxFilter } from '../types';
 
 export const preStatusFilters: CheckboxFilter[] = [
   {
-    label: 'Open Now',
+    label: '正在进行',
     value: 'OPEN',
     checked: false,
   },
   {
-    label: 'In Review',
+    label: '审核中',
     value: 'REVIEW',
     checked: false,
   },
   {
-    label: 'Completed',
+    label: '已完成',
     value: 'CLOSED',
     checked: false,
   },
@@ -20,22 +20,22 @@ export const preStatusFilters: CheckboxFilter[] = [
 
 export const preSkillFilters: CheckboxFilter[] = [
   {
-    label: 'Content',
+    label: '内容',
     value: 'CONTENT',
     checked: false,
   },
   {
-    label: 'Design',
+    label: '设计',
     value: 'DESIGN',
     checked: false,
   },
   {
-    label: 'Development',
+    label: '开发',
     value: 'DEVELOPMENT',
     checked: false,
   },
   {
-    label: 'Others',
+    label: '其他',
     value: 'OTHER',
     checked: false,
   },

@@ -84,7 +84,7 @@ export function Filters({
     >
       <VStack align="start">
         <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
-          STATUS
+          状态
         </Text>
         <Stack
           flexWrap="wrap"
@@ -118,7 +118,7 @@ export function Filters({
       </VStack>
       <VStack align="start">
         <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
-          SKILLS
+          所需技能
         </Text>
         <Stack
           flexWrap="wrap"

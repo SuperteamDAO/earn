@@ -12,14 +12,14 @@ export function Info({ count, query, loading }: Props) {
       <HStack>
         <Text fontSize="sm" fontWeight={600}>
           {query.length === 0
-            ? 'Enter a keyword to find what you need.'
-            : `Found ${count} search results`}
+            ? '请输入关键字'
+            : `发现 ${count} 条`}
         </Text>
         {loading && <Spinner size={'sm'} />}
       </HStack>
       {query.length > 0 && (
         <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
-          for {`"${query.trim()}"`}
+          关于{`"${query.trim()}"`} 的搜索结果
         </Text>
       )}
     </Box>

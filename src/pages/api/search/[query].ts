@@ -35,7 +35,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const bountiesOffset = (req.query.bountiesOffset as string) || null;
   const grantsOffset = (req.query.grantsOffset as string) || null;
 
-  let userRegion = params.userRegion as Regions | undefined;
+  // let userRegion = params.userRegion as Regions | undefined;
 
   const status = req.query.status as string;
   let statusList: string[] = [];
@@ -63,10 +63,11 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       where: { id: userId },
       select: { location: true },
     });
-    const matchedRegion = CombinedRegions.find(
-      (region) => user?.location && region.country.includes(user?.location),
-    );
-    userRegion = matchedRegion?.region;
+
+    // const matchedRegion = CombinedRegions.find(
+    //   (region) => user?.location && region.country.includes(user?.location),
+    // );
+    // userRegion = matchedRegion?.region;
   }
 
   const skills = req.query.skills as string;
@@ -95,9 +96,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     .join(' OR ');
 
   let regionFilter = '';
-  if (userRegion) {
-    regionFilter = `AND (b.region = ? OR b.region = '${Regions.GLOBAL}')`;
-  }
+  // if (userRegion) {
+  //   regionFilter = `AND (b.region = ? OR b.region = '${Regions.GLOBAL}')`;
+  // }
 
   const words = query
     .split(/\s+/)
@@ -107,7 +108,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   words.forEach(() => {
     const multiWordCondition = `(
-b.title LIKE CONCAT('%', ?, '%') OR 
+b.title LIKE CONCAT('%', ?, '%') OR
 s.name LIKE CONCAT('%', ?, '%')
 )`;
     wordClauses.push(multiWordCondition);
@@ -144,10 +145,10 @@ s.name LIKE CONCAT('%', ?, '%')
     b.isPublished = 1 AND
     b.isPrivate = 0 AND
     (
-      ${combinedWordClause} 
+      ${combinedWordClause}
       ${hackathonId ? `OR ${hackathonIdQuery}` : ''}
     )
-      ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
+      ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''}
     ) ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}
     ) as subquery;
@@ -171,25 +172,25 @@ s.name LIKE CONCAT('%', ?, '%')
   `;
 
   const bountiesQuery = `
-    SELECT DISTINCT b.id, 
+    SELECT DISTINCT b.id,
     b.status,
-    b.rewardAmount, 
-    b.deadline, 
-    b.type, 
+    b.rewardAmount,
+    b.deadline,
+    b.type,
     JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified) as sponsor,
-    b.title, 
-    b.token, 
-    b.slug, 
-    b.isWinnersAnnounced, 
-    b.description, 
-    b.compensationType, 
-    b.minRewardAsk, 
+    b.title,
+    b.token,
+    b.slug,
+    b.isWinnersAnnounced,
+    b.description,
+    b.compensationType,
+    b.minRewardAsk,
     b.maxRewardAsk,
     b.updatedAt,
     b.winnersAnnouncedAt,
     b.isFeatured,
             JSON_OBJECT(
-                'Comments', 
+                'Comments',
                 (
                     SELECT COUNT(*)
                     FROM Comment c
@@ -209,20 +210,20 @@ s.name LIKE CONCAT('%', ?, '%')
       ${combinedWordClause}
       ${hackathonId ? `OR ${hackathonIdQuery}` : ''}
     )
-      ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''} 
+      ${statusQuery.length > 0 ? ` AND ( ${statusQuery.join(' OR ')} )` : ''}
     ) ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}
-    ORDER BY 
+    ORDER BY
     b.isFeatured DESC,
-      CASE 
+      CASE
         WHEN b.deadline >= CURRENT_TIMESTAMP THEN 1
         ELSE 2
       END,
-      CASE 
+      CASE
         WHEN b.deadline >= CURRENT_TIMESTAMP THEN b.deadline
         ELSE NULL
       END ASC,
-      CASE 
+      CASE
         WHEN b.deadline < CURRENT_TIMESTAMP THEN b.deadline
         ELSE NULL
       END DESC,
@@ -231,9 +232,9 @@ s.name LIKE CONCAT('%', ?, '%')
     `;
 
   const grantsQuery = `
-    SELECT DISTINCT b.id, 
-    b.title, 
-    b.slug, 
+    SELECT DISTINCT b.id,
+    b.title,
+    b.slug,
     b.description,
     b.minReward,
     b.maxReward,
@@ -263,11 +264,11 @@ s.name LIKE CONCAT('%', ?, '%')
   let bountiesValues: (string | number)[] = duplicateElements(words, 2);
   if (hackathonId) bountiesValues.push(hackathonId);
   if (skills) bountiesValues = bountiesValues.concat(skillsFlattened);
-  if (userRegion) bountiesValues.push(userRegion);
+  // if (userRegion) bountiesValues.push(userRegion);
 
   let grantsValues: (string | number)[] = duplicateElements(words, 2);
   if (skills) grantsValues = grantsValues.concat(skillsFlattened);
-  if (userRegion) grantsValues.push(userRegion);
+  // if (userRegion) grantsValues.push(userRegion);
 
   try {
     let grantsCount: [{ totalCount: bigint }] = [{ totalCount: BigInt(0) }];

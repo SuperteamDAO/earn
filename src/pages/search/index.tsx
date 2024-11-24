@@ -176,25 +176,25 @@ const Search = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
+  // const session = await getServerSession(context.req, context.res, authOptions);
   let userRegion: Regions[] | null | undefined = null;
 
-  if (session?.user?.id) {
-    const user = await prisma.user.findFirst({
-      where: { id: session.user.id },
-      select: { location: true },
-    });
+  // if (session?.user?.id) {
+  //   const user = await prisma.user.findFirst({
+  //     where: { id: session.user.id },
+  //     select: { location: true },
+  //   });
 
-    const matchedRegion = CombinedRegions.find((region) =>
-      region.country.includes(user?.location!),
-    );
+  //   const matchedRegion = CombinedRegions.find((region) =>
+  //     region.country.includes(user?.location!),
+  //   );
 
-    if (matchedRegion?.region) {
-      userRegion = [matchedRegion.region, Regions.GLOBAL];
-    } else {
-      userRegion = [Regions.GLOBAL];
-    }
-  }
+  //   if (matchedRegion?.region) {
+  //     userRegion = [matchedRegion.region, Regions.GLOBAL];
+  //   } else {
+  //     userRegion = [Regions.GLOBAL];
+  //   }
+  // }
 
   const fullUrl = getURL();
   const queryTerm = (context.query.q as string).trim();
@@ -208,7 +208,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   try {
     const response = await fetch(
-      `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}?${queryString}&bountiesLimit=10&grantsLimit=3${userRegion ? `&userRegion=${userRegion}` : ''}`,
+      `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}?${queryString}&bountiesLimit=10&grantsLimit=3}`,
     );
     const results = await response.json();
 

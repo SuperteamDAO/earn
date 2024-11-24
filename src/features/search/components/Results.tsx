@@ -52,8 +52,8 @@ export function Results({
           <VStack gap={0}>
             <Text fontSize="sm" fontWeight="600" textAlign="center">
               {query.length > 0
-                ? 'We couldn’t find anything for that keyword'
-                : 'The search field is empty'}
+                ? '没有搜索到关键词相关的信息'
+                : '搜索栏内容为空'}
             </Text>
             <Text
               color="brand.slate.400"
@@ -62,8 +62,8 @@ export function Results({
               textAlign="center"
             >
               {query.length > 0
-                ? 'Try searching for something else'
-                : 'Please enter a keyword to search'}
+                ? '尝试搜索其他内容'
+                : '请输入关键字进行搜索'}
             </Text>
           </VStack>
         </VStack>
@@ -110,7 +110,8 @@ export function Results({
               rounded="none"
               variant="ghost"
             >
-              View More <ArrowForwardIcon />
+              查看更多
+              <ArrowForwardIcon />
             </Button>
           )}
         </>
