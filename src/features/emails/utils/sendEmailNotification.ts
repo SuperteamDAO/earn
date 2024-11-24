@@ -34,7 +34,7 @@ interface EmailNotificationParams {
   triggeredBy: any;
 }
 
-export async function sendEmailNotification({
+export function sendEmailNotification({
   type,
   id,
   userId, // pass userId of the person you are sending the email to
