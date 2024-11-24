@@ -11,7 +11,7 @@ import { sendEmailNotification } from '@/features/emails';
 import { convertGrantApplicationToAirtable } from '@/features/grants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
+import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -198,7 +198,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           triggeredBy: userId,
         });
       });
-    } else {
+    }
+
+    if (result[0]?.grant.airtableId) {
       try {
         const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
         const url = airtableUrl(
