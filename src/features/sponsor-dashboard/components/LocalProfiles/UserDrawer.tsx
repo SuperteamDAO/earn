@@ -188,21 +188,21 @@ export const UserDrawer = ({
 
             <Box>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Bio
+                简介
               </Text>
               <Text color="brand.slate.500">{user.bio || '-'}</Text>
             </Box>
 
             <Box>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Discord Username
+                Discord
               </Text>
               <Text color="brand.slate.500">{user.discord || '-'}</Text>
             </Box>
 
             <Box>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Skills
+                技能
               </Text>
               <Flex wrap="wrap" gap={2}>
                 {parentSkills.length > 0 ? (
@@ -243,7 +243,7 @@ export const UserDrawer = ({
 
             <Box>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Interests
+                爱好
               </Text>
               <Flex wrap="wrap" gap={2}>
                 <Text color="brand.slate.500">
@@ -257,7 +257,7 @@ export const UserDrawer = ({
 
             <Box>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Communities
+                社区
               </Text>
               <Text color="brand.slate.500">
                 {(() => {
@@ -268,7 +268,7 @@ export const UserDrawer = ({
             </Box>
             <Box>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Profile Creation Date
+                创建日期
               </Text>
               <Text color="brand.slate.500">{formattedCreatedAt}</Text>
             </Box>

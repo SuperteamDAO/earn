@@ -94,8 +94,7 @@ export const ApproveModal = ({
         <Divider />
         <ModalBody fontSize={'0.95rem'} fontWeight={500}>
           <Text mt={3} color="brand.slate.500">
-            You are about to approve {granteeName}’s grant request. They will be
-            notified via email.
+            您即将批准{granteeName}的授权请求。他们将通过电子邮件收到通知。
           </Text>
           <br />
           <Flex align={'center'} justify="space-between" mb={6}>
@@ -118,7 +117,7 @@ export const ApproveModal = ({
 
           <Flex align={'center'} justify="space-between" w="100%" mb={6}>
             <Text w="100%" color="brand.slate.500" whiteSpace={'nowrap'}>
-              Approved Amount
+              批准数量
             </Text>
             <InputGroup>
               <NumberInput

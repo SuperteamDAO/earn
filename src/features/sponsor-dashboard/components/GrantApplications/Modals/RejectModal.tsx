@@ -64,8 +64,7 @@ export const RejectGrantApplicationModal = ({
         <Divider />
         <ModalBody fontSize={'0.95rem'} fontWeight={500}>
           <Text mt={3} color="brand.slate.500">
-            You are about to reject {granteeName}’s grant request. They will be
-            notified via email.
+            您即将拒绝{granteeName}的授权请求。他们会通过电子邮件通知。
           </Text>
           <br />
           <Flex align={'center'} justify="space-between" mb={8}>

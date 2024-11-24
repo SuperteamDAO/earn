@@ -73,7 +73,7 @@ const PaymentDetailsRow = ({
         {paymentDetails.map((payment, index) => (
           <Flex key={index} align="center" justify="space-between" my={2}>
             <Text color="brand.slate.500" fontSize={'sm'} fontWeight={500}>
-              Milestone {payment.tranche}
+              里程碑 {payment.tranche}
             </Text>
           </Flex>
         ))}

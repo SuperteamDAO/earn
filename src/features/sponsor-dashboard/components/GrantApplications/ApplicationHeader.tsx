@@ -145,7 +145,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
           </Text>
         </Box>
         <Box>
-          <Text color="brand.slate.500">Status</Text>
+          <Text color="brand.slate.500">状态</Text>
           <Tag
             mt={3}
             px={3}

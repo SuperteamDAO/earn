@@ -268,7 +268,7 @@ const MemberRow = ({ user }: { user: LocalProfile }) => {
           rel="noopener noreferrer"
           target="_blank"
         >
-          View Profile <ArrowForwardIcon />
+          查看 <ArrowForwardIcon />
         </Link>
       </Td>
     </Tr>

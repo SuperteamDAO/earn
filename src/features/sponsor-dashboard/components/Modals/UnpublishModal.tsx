@@ -81,8 +81,7 @@ export const UnpublishModal = ({
         <ModalCloseButton />
         <ModalBody>
           <Text color="brand.slate.500">
-            This listing will be hidden from the homepage once unpublished. Are
-            you sure you want to unpublish this listing?
+            一旦未发布，此任务将从主页隐藏。你确定要取消发布吗？
           </Text>
         </ModalBody>
         <ModalFooter>

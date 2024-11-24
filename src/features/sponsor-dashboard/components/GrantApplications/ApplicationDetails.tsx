@@ -464,7 +464,7 @@ export const ApplicationDetails = ({
                     fontWeight={600}
                     whiteSpace={'nowrap'}
                   >
-                    APPROVED
+                    批准
                   </Text>
 
                   <Image
@@ -516,7 +516,7 @@ export const ApplicationDetails = ({
                         )}
                         %{' '}
                         <Text as="span" color="brand.slate.400">
-                          Paid
+                          已支付
                         </Text>
                       </Text>
                     </Flex>
@@ -593,7 +593,7 @@ export const ApplicationDetails = ({
                   fontWeight={600}
                   textTransform={'uppercase'}
                 >
-                  ASK
+                  提问
                 </Text>
                 <Flex align={'center'} gap={0.5}>
                   <Image
@@ -626,7 +626,7 @@ export const ApplicationDetails = ({
                   fontWeight={600}
                   textTransform={'uppercase'}
                 >
-                  APPLICATION DATE
+                  申请日期
                 </Text>
 
                 <Text
@@ -689,10 +689,10 @@ export const ApplicationDetails = ({
       ) : (
         <Box p={3}>
           <Text color={'brand.slate.500'} fontSize={'xl'} fontWeight={500}>
-            No applications found
+            没找到
           </Text>
           <Text color={'brand.slate.400'} fontSize={'sm'}>
-            Try a different search query
+            尝试搜索不同的关键词
           </Text>
         </Box>
       )}
