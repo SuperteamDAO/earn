@@ -20,10 +20,10 @@ export function Banner() {
         }}
       >
         <Text color="white" fontSize={'lg'} fontWeight={600}>
-          Talent Leaderboard
+          人才排行榜
         </Text>
         <Text mt={1} color="brand.slate.400" lineHeight={1.2}>
-          See where you stand amongst the {"Solana's"} top contributors
+          看看您在{"Solana's"} 贡献者排名
         </Text>
       </VStack>
       <Flex display={{ base: 'flex', md: 'none' }} h={'100%'}>

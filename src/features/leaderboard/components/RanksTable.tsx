@@ -176,10 +176,8 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               </svg>
             </Center>
             <VStack fontSize="xs" fontWeight={500}>
-              <Text>The Leaderboard is empty for your filters</Text>
-              <Text color="brand.slate.500">
-                Please change your filters or try again later
-              </Text>
+              <Text>您的筛选条件中的数据是空的</Text>
+              <Text color="brand.slate.500">请更改您的过滤条件或稍后再试</Text>
             </VStack>
           </VStack>
         )}

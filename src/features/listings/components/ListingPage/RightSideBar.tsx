@@ -304,8 +304,7 @@ export function RightSideBar({
               <Flex gap="2" w="full" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />
                 <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
-                  先不要开始工作！请先申请，只有在您被聘用后再开始工作。
-                  请注意项目方可能会在决定最终人选之前先联系您，了解更多情况。
+                  先不要开始工作！请先申请，项目方聘用后再开始工作！
                 </Text>
               </Flex>
             )}

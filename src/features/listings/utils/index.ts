@@ -24,14 +24,14 @@ export const getRegionTooltipLabel = (
   region: string | undefined,
   isGrant: boolean = false,
 ) => {
-  return 'This listing is open to everyone in the world!';
+  return '这个任务对所有人开放';
   // const country = countries.find(
   //   (country) => country.name.toLowerCase() === region?.toLowerCase(),
   // )?.name;
 
   // switch (region) {
   //   case 'GLOBAL':
-  //     return 'This listing is open to everyone in the world!';
+  //     return '这个任务对所有人开放';
   //   case 'BALKAN':
   //     return `You need to be a resident of one of the Balkan countries to be able to participate in this ${isGrant ? 'grant' : 'listing'}`;
   //   default:

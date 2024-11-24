@@ -26,7 +26,6 @@ export function ExtraInfoSection({
   const posthog = usePostHog();
   return (
     <VStack gap={8} w={{ base: 'full', md: '22rem' }} pt={2}>
-
       {Hackathon && (
         <VStack align={'start'} w="full" fontSize="sm">
           <Text color={'brand.slate.600'} fontWeight={600}>

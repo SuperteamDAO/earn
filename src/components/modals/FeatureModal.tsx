@@ -83,13 +83,12 @@ export const FeatureModal = ({
         </Box>
         <VStack align="start" gap={3} p={6}>
           <Text fontSize="lg" fontWeight={600}>
-            Introducing Scout
+            介绍 Scout功能
           </Text>
           <Text color="brand.slate.500">
-            A curated list of the best talent on Solar Earn that you can invite
-            to participate in your listings to get high quality submissions! Add
-            a new listing, or check out any of your currently live listings to
-            try Scout.
+            Solar Earn
+            上最优秀人才的精选列表，您可以邀请他们参与您的任务，从而获得高质量的提交！添加新的任务，或查看您当前的任何列表来试用
+            Scout。
           </Text>
           <Link
             as={latestActiveSlug ? NextLink : 'div'}
@@ -107,7 +106,7 @@ export const FeatureModal = ({
                   Check it out <ArrowForwardIcon />
                 </>
               ) : (
-                'Good to know!'
+                '了解更多!'
               )}
             </Button>
           </Link>

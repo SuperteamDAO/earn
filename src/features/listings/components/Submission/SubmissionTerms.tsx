@@ -68,13 +68,12 @@ export const SubmissionTerms = ({
         >
           <UnorderedList>
             <ListItem>
-              You acknowledge that you are submitting your work or application
-              to {entityName ? `${entityName} ("${sponsorName}")` : sponsorName}
-              .
+              承诺您将作品或申请提交给
+              {entityName ? `${entityName} ("${sponsorName}")` : sponsorName}.
             </ListItem>
             <ListItem>
-              Solar Earn acts solely as a platform for the Partner to list
-              contests, bounties, projects or similar engagements{' '}
+              Solar Earn
+              仅作为合作伙伴发布资助、悬赏任务、定向任务或类似活动的平台。{' '}
               {`("Activities")`} on its platform {`(“ST Earn Platform”)`}.
             </ListItem>
             <ListItem>
@@ -83,36 +82,33 @@ export const SubmissionTerms = ({
               for the content, rules, scope and execution of their Activities.
             </ListItem>
             <ListItem>
-              Users participating in Activities listed by Partners do so at
-              their own risk and discretion. Solar Earn disclaims all
-              liabilities related to user participation in such Activities.
+              任何与合作伙伴在 Solar Earn
+              平台上列出的活动相关的争议或问题都将直接负责。Solar Earn
+              不负责解决此类争议。
             </ListItem>
             <ListItem>
-              Any disputes or issues arising between users and partners
-              regarding Activities shall be resolved directly between the
-              parties involved. Solar Earn shall not be responsible for
-              mediating or resolving such disputes.
+              任何与合作伙伴在 Solar Earn
+              平台上列出的活动相关的争议或问题都将直接负责。合作伙伴对其活动的内容、规则、范围和执行负全部责任。
             </ListItem>
             <ListItem>
-              By using the platform and participating in any Activities, users
-              agree to release Solar Earn from any claims, liabilities, or
-              damages arising from their participation in Activities listed by
-              Partners.
+              任何与合作伙伴在 Solar Earn
+              平台上列出的活动相关的争议或问题都将直接负责。合作伙伴对其活动的内容、规则、范围和执行负全部责任。
             </ListItem>
             <ListItem>
-              Solar Earn does not guarantee the accuracy or legality of
-              Activities listed by Partners. Users are advised to exercise
-              caution and conduct their own due diligence before participating
-              in any Activities.
+              通过使用平台和参加任何活动，用户同意放弃对合作伙伴在 Solar Earn
+              平台上列出的任何活动的任何索赔、责任或损失。
             </ListItem>
             <ListItem>
-              Partners listing Activities on the Platform agree to indemnify and
-              hold Solar Earn harmless from any claims, damages, or liabilities
-              arising from their Activities.
+              Solar Earn
+              不保证合作伙伴所列活动的准确性和合法性。建议用户在参加任何活动之前谨慎行事，并进行尽职调查。
+            </ListItem>
+            <ListItem>
+              在平台上列出活动的合作伙伴同意赔偿 Solar Earn
+              因其活动引起的任何索赔、损害或责任，并使其免受损害。
             </ListItem>
           </UnorderedList>
           <Text as={'p'} lineHeight={1.25}>
-            These terms are in addition to our{' '}
+            这些条款是对我们的{' '}
             <Link
               textDecoration={'underline'}
               href={TERMS_OF_USE}
@@ -125,7 +121,7 @@ export const SubmissionTerms = ({
             .
           </Text>
           <Button ml="auto" px={10} fontSize="lg" onClick={onClose}>
-            Done
+            的补充
           </Button>
         </VStack>
       </ModalContent>
