@@ -87,11 +87,10 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
       <ModalContent h={'max'} py={5}>
         <Box px={6} py={3}>
           <Text color={'brand.slate.900'} fontSize="lg" fontWeight={500}>
-            Share Profile
+            分享
           </Text>
           <Text mt={3} color={'brand.slate.500'} fontSize="lg" fontWeight={500}>
-            With your friends or on social media to showcase your proof of work,
-            all in one place
+            社交媒体上展示您的作品
           </Text>
         </Box>
         <Divider mt={2} mb={4} borderColor={'brand.slate.200'} />

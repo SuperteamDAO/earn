@@ -400,7 +400,7 @@ export const Comment = ({
                       loadingText="添加中"
                       onClick={() => handleSubmit()}
                     >
-                      Reply
+                      回复
                     </Button>
                   </AuthWrapper>
                 </Flex>

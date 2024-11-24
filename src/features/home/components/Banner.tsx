@@ -2,7 +2,7 @@ import { Box, Show, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import React from 'react';
 
-import MobileBanner from '@/public/assets/home/display/sign-banner.jpg';
+import MobileBanner from '@/public/assets/home/display/sign-banner-mobile.jpg';
 import DesktopBanner from '@/public/assets/home/display/sign-banner.jpg';
 
 export function HomeBanner() {

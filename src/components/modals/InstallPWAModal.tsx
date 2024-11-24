@@ -28,10 +28,10 @@ interface BeforeInstallPromptEvent extends Event {
 const ManualInstructions = () => (
   <Box mb={8} py={2} borderRadius={4} bgColor="brand.slate.100">
     <Text align="center">
-      Tap these icons (
+      点击图标(
       <Icon as={MdIosShare} mr={1} color="brand.purple" fontWeight={600} />
-      or <Icon as={BsThreeDotsVertical} color="brand.purple" />) and select the
-      “Add to home screen” option.
+      or <Icon as={BsThreeDotsVertical} color="brand.purple" />)
+      然后选择“添加到主屏幕”选项。
     </Text>
   </Box>
 );
@@ -115,7 +115,7 @@ export const InstallPWAModal = () => {
         <ModalHeader borderBottom="1px" borderBottomColor="brand.slate.300">
           <HStack>
             <Icon as={MdOutlineInstallMobile} color={'brand.slate.500'} />
-            <Text fontSize={'lg'}>Install Earn</Text>
+            <Text fontSize={'lg'}>安装 Solar Earn</Text>
           </HStack>
         </ModalHeader>
         <ModalCloseButton mt={{ base: 2, md: 3 }} />
@@ -131,12 +131,12 @@ export const InstallPWAModal = () => {
               <Flex align={'center'} direction={'column'} my={12}>
                 <Text fontWeight={700}>Never miss a listing again!</Text>
                 <Text w="75%" mt={1} color="brand.slate.500" textAlign="center">
-                  Add Earn to your homescreen and always stay updated.
+                  将 Solar Earn 添加到主屏幕，并随时更新。
                 </Text>
               </Flex>
               {isAutoInstallable ? (
                 <Button w={'full'} mt={4} onClick={installApp}>
-                  Add to Homescreen
+                  添加到主屏幕
                 </Button>
               ) : (
                 <ManualInstructions />

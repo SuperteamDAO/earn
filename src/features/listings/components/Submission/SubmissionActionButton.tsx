@@ -128,19 +128,19 @@ export const SubmissionActionButton = ({
       buttonBG = 'brand.purple';
       isBtnDisabled = Boolean(
         pastDeadline ||
-          (user?.id &&
-            user?.isTalentFilled &&
-            ((bountyDraftStatus !== 'PUBLISHED' && status !== 'PREVIEW') ||
-              !hasHackathonStarted ||
-              !isUserEligibleByRegion)),
+        (user?.id &&
+          user?.isTalentFilled &&
+          ((bountyDraftStatus !== 'PUBLISHED' && status !== 'PREVIEW') ||
+            !hasHackathonStarted ||
+            !isUserEligibleByRegion)),
       );
-      btnLoadingText = 'Checking Submission..';
+      btnLoadingText = '正在检查中';
   }
   if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
     buttonText = '提交正在审核中';
     buttonBG = 'gray.500';
   } else if (isWinnersAnnounced) {
-    buttonText = 'Winners Announced';
+    buttonText = '获胜者已公布';
     buttonBG = 'gray.500';
   }
 
@@ -184,7 +184,6 @@ export const SubmissionActionButton = ({
       <Image
         // Hack to show GIF Immediately when Easter Egg is visible
         src="/assets/memes/jiesuan.gif"
-        alt="John Cena Vibing to Cupid"
         style={{
           width: '100%',
           marginTop: 'auto',
@@ -217,7 +216,7 @@ export const SubmissionActionButton = ({
         <AuthWrapper
           showCompleteProfileModal
           completeProfileModalBodyText={
-            'Please complete your profile before submitting to a listing.'
+            '请在提交前填写个人资料'
           }
           style={{ w: 'full', cursor: 'pointer' }}
         >

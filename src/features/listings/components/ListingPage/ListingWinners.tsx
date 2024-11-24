@@ -116,7 +116,7 @@ export function ListingWinners({ bounty }: Props) {
                 />
               </svg>
             </Center>
-            Share
+            分享
           </Button>
         </NextLink>
       </HStack>
@@ -194,7 +194,7 @@ export function ListingWinners({ bounty }: Props) {
                       {bounty?.rewards &&
                         formatTotalPrice(
                           bounty?.rewards[
-                            Number(submission?.winnerPosition) as keyof Rewards
+                          Number(submission?.winnerPosition) as keyof Rewards
                           ] ?? 0,
                         )}{' '}
                       {bounty?.token}
@@ -207,41 +207,41 @@ export function ListingWinners({ bounty }: Props) {
       </Box>
       {(getOrRemoveBonuses(submissions, true).length > 3 ||
         getOrRemoveBonuses(submissions, false).length > 0) && (
-        <HStack
-          justify="center"
-          flexWrap="wrap"
-          px={2}
-          py={3}
-          borderColor="#DDD6FE"
-          borderTopWidth="1px"
-        >
-          {[
-            ...getOrRemoveBonuses(submissions, true).slice(3),
-            ...getOrRemoveBonuses(submissions, false),
-          ].map((submission) => (
-            <Box key={submission.id}>
-              <Tooltip label={submission?.user?.firstName}>
-                <Link
-                  key={submission.id}
-                  as={NextLink}
-                  href={
-                    !isProject
-                      ? `/feed/submission/${submission?.id}`
-                      : `/t/${submission?.user?.username}`
-                  }
-                  passHref
-                >
-                  <EarnAvatar
-                    size={isMD ? '44px' : '36px'}
-                    id={submission?.user?.id}
-                    avatar={submission?.user?.photo as string}
-                  />
-                </Link>
-              </Tooltip>
-            </Box>
-          ))}
-        </HStack>
-      )}
+          <HStack
+            justify="center"
+            flexWrap="wrap"
+            px={2}
+            py={3}
+            borderColor="#DDD6FE"
+            borderTopWidth="1px"
+          >
+            {[
+              ...getOrRemoveBonuses(submissions, true).slice(3),
+              ...getOrRemoveBonuses(submissions, false),
+            ].map((submission) => (
+              <Box key={submission.id}>
+                <Tooltip label={submission?.user?.firstName}>
+                  <Link
+                    key={submission.id}
+                    as={NextLink}
+                    href={
+                      !isProject
+                        ? `/feed/submission/${submission?.id}`
+                        : `/t/${submission?.user?.username}`
+                    }
+                    passHref
+                  >
+                    <EarnAvatar
+                      size={isMD ? '44px' : '36px'}
+                      id={submission?.user?.id}
+                      avatar={submission?.user?.photo as string}
+                    />
+                  </Link>
+                </Tooltip>
+              </Box>
+            ))}
+          </HStack>
+        )}
     </Box>
   );
 }

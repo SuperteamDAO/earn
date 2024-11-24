@@ -124,7 +124,7 @@ export const CommentForm = ({
           <AuthWrapper
             showCompleteProfileModal
             completeProfileModalBodyText={
-              '在对列表发表评论前，请填写您的个人资料。'
+              '在发表评论前，请填写您的个人资料。'
             }
           >
             <Button

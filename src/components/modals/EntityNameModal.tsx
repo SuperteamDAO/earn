@@ -59,10 +59,11 @@ export const EntityNameModal = ({
       <ModalContent gap={6} overflow="hidden" p={6} rounded="lg">
         <VStack align="start">
           <Text fontSize="lg" fontWeight={500}>
-            Update Your Entity Name
+            更新实体名称
           </Text>
           <Text color="brand.slate.400" fontSize="sm">
-            In accordance with our updated{' '}
+            根据我们更新后的
+            {' '}
             <Link
               textDecoration={'underline'}
               href={TERMS_OF_USE}
@@ -70,9 +71,9 @@ export const EntityNameModal = ({
               target="_blank"
               textUnderlineOffset={2}
             >
-              Terms of Use
+              使用条款，
             </Link>
-            , we need to know the name of the entity that controls your project.
+            we need to know the name of the entity that controls your project.
             If you are a DAO, please mention the name of your DAO. If you{' '}
             {"don't "}
             have an entity, please mention your full name.
@@ -80,7 +81,7 @@ export const EntityNameModal = ({
         </VStack>
         <Input
           onChange={(e) => setEntityName(e.target.value)}
-          placeholder="Entity Name"
+          placeholder=""
           value={entityName}
         />
         <HStack>
@@ -92,16 +93,16 @@ export const EntityNameModal = ({
             target="_blank"
           >
             <Button w="full" variant="outline">
-              Need Help?
+              需要帮助？
             </Button>
           </Link>
           <Button w="full" isLoading={loading} onClick={setDBEntityName}>
-            Update
+            更新
           </Button>
         </HStack>
         {error && (
           <Text color="red" textAlign="center">
-            Some Error occurred, please try again later
+            发生错误，请稍后重试
           </Text>
         )}
       </ModalContent>

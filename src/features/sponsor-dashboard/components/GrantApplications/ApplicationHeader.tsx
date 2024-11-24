@@ -188,7 +188,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
           </Flex>
         </Box>
         <Box>
-          <Text color="brand.slate.500">Share</Text>
+          <Text color="brand.slate.500">分享</Text>
           <InputGroup mt={1} mb={-2}>
             <Input
               overflow="hidden"

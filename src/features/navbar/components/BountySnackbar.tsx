@@ -84,7 +84,7 @@ export const BountySnackbar = () => {
       ((type === 'bounty' && rewardAmount > 1000) ||
         (type === 'project' && rewardAmount > 1500))
     )
-      return `🤑 钱少，问题少：高于平均${type}总奖励`;
+      return `🤑 钱多，问题少：高于平均${type}总奖励`;
 
     if (
       (type === 'bounty' && submissionCount <= 1) ||

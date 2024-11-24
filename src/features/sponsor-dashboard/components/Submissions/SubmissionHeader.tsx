@@ -267,7 +267,7 @@ ${socialListingLink('twitter')}
           </Flex>
         </Box>
         <Box ml="auto">
-          <Text color="brand.slate.500">Share</Text>
+          <Text color="brand.slate.500">分享</Text>
           <Flex align="center" gap={4} mt={2}>
             <InputGroup bg="#F8FAFC" borderColor={'brand.slate.100'}>
               <InputLeftElement>
