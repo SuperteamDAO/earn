@@ -170,9 +170,10 @@ export const createListingFormSchema = ({
         .trim()
         .datetime({
           message: 'Required',
+          local: true,
         })
         .min(1, 'Required')
-        .default(dayjs().add(7, 'day').format(DEADLINE_FORMAT))
+        .default(dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''))
         .refine((date) => {
           if (isGod && isEditing) return true;
           return isGod || dayjs(date).isAfter(dayjs());

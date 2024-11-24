@@ -50,7 +50,7 @@ export function Deadline() {
   }, [isEditing]);
 
   const handleDeadlineSelection = (days: number) => {
-    return dayjs().add(days, 'day').format(DEADLINE_FORMAT);
+    return dayjs().add(days, 'day').format(DEADLINE_FORMAT).replace('Z', '');
   };
 
   // TODO: Debug why zod default for deadline specifically is not working
@@ -86,6 +86,8 @@ export function Deadline() {
                   if (date) {
                     const formattedDate = dayjs(date).format(DEADLINE_FORMAT);
                     const localFormat = formattedDate.replace('Z', '');
+                    console.log('formattedDate', formattedDate);
+                    console.log('localFormat', localFormat);
                     field.onChange(localFormat);
                   } else {
                     field.onChange(undefined);

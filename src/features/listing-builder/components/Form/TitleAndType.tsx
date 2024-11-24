@@ -1,6 +1,7 @@
+import { type CompensationType } from '@prisma/client';
 import { useAtomValue } from 'jotai';
 import Image from 'next/image';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import {
@@ -76,6 +77,7 @@ function Type() {
   const form = useListingForm();
   const isEditing = useAtomValue(isEditingAtom);
   const hackathon = useAtomValue(hackathonAtom);
+  const [prevCompType, setPrevCompType] = useState<CompensationType>('fixed');
   useEffect(() => {
     console.log('isEditing type', isEditing);
   }, [isEditing]);
@@ -107,14 +109,10 @@ function Type() {
                   } else {
                     form.setValue('hackathonId', undefined);
                   }
-                  // form.setValue('rewards', undefined)
-                  // form.setValue('rewardAmount', undefined)
-                  // if(e !== 'project') {
-                  //   form.setValue('compensationType','fixed')
-                  // }
-                  //
                   const values = form.getValues();
+                  setPrevCompType(values.compensationType);
                   if (e !== 'project') {
+                    form.setValue('compensationType', 'fixed');
                     form.setValue(
                       'rewardAmount',
                       calculateTotalRewardsForPodium(
@@ -123,14 +121,15 @@ function Type() {
                       ),
                     );
                   } else {
-                    if (values.compensationType === 'fixed') {
+                    form.setValue('compensationType', prevCompType);
+                    if (prevCompType === 'fixed') {
                       form.setValue('rewardAmount', values.rewards?.[1]);
                     } else {
                       form.setValue('rewardAmount', undefined);
                     }
                   }
 
-                  if (form.getValues().id) form.saveDraft();
+                  if (!!form.getValues().id) form.saveDraft();
                 }}
               >
                 <SelectTrigger className="h-full w-32 rounded-none border-0 border-r focus:ring-0">

@@ -90,7 +90,7 @@ export function GeoLock() {
       control={form?.control}
       render={({ field }) => {
         return (
-          <FormItem className="flex flex-row items-center justify-between">
+          <FormItem className="flex flex-row items-center justify-between gap-4">
             <div className="flex-grow">
               <FormLabel className="">Geo-locking</FormLabel>
               <FormDescription className="flex gap-1">
@@ -99,7 +99,8 @@ export function GeoLock() {
                 ) : (
                   <>
                     Participation restricted to{' '}
-                    <p className="capitalize">{field.value.toLowerCase()}</p>
+                    {field.value?.charAt(0).toUpperCase() +
+                      field.value?.slice(1).toLowerCase()}
                   </>
                 )}
               </FormDescription>
@@ -175,15 +176,21 @@ function RegionCombobox({
           aria-expanded={open}
           className="w-32 justify-start px-3 text-xs text-slate-600"
         >
-          {value === Regions.GLOBAL ? (
-            <Earth className="text-slate-500" />
-          ) : (
-            <UserFlag
-              location={findOptionByValue(value || '')?.code ?? ''}
-              isCode
-            />
-          )}
-          {value ? findOptionByValue(value)?.label || placeholder : placeholder}
+          <span className="min-h-4 min-w-4">
+            {value === Regions.GLOBAL ? (
+              <Earth className="text-slate-500" />
+            ) : (
+              <UserFlag
+                location={findOptionByValue(value || '')?.code ?? ''}
+                isCode
+              />
+            )}
+          </span>
+          <p className="truncate">
+            {value
+              ? findOptionByValue(value)?.label || placeholder
+              : placeholder}
+          </p>
           <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -214,12 +221,14 @@ function RegionCombobox({
                             value === item.value ? 'opacity-100' : 'opacity-0',
                           )}
                         />
-                        {item.value === Regions.GLOBAL ? (
-                          <Earth className="text-slate-500" />
-                        ) : (
-                          <UserFlag location={item.code} isCode />
-                        )}
-                        {item.label}
+                        <span className="min-h-4 min-w-4">
+                          {item.value === Regions.GLOBAL ? (
+                            <Earth className="text-slate-500" />
+                          ) : (
+                            <UserFlag location={item.code} isCode />
+                          )}
+                        </span>
+                        <p>{item.label}</p>
                       </CommandItem>
                     ))}
                   </CommandGroup>

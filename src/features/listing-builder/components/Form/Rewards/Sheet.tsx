@@ -98,13 +98,16 @@ export function RewardsSheet() {
         side="right"
         className="flex h-[100vh] flex-col p-0 sm:max-w-xl"
       >
-        <SheetHeader className="shrink-0 p-6 pb-0">
+        <SheetHeader className="shrink-0 space-y-6 p-6 pb-0">
           <SheetTitle>Add Rewards</SheetTitle>
           <TokenSelect />
           {type === 'project' && <PaymentType />}
         </SheetHeader>
 
-        <div className="flex min-h-0 flex-1 flex-col p-6" id="main-content">
+        <div
+          className="flex min-h-0 flex-1 flex-col p-6 pt-4"
+          id="main-content"
+        >
           <Type />
         </div>
 

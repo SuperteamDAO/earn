@@ -234,7 +234,7 @@ export const useListingForm = (
       minRewardAsk: true,
       maxRewardAsk: true,
       maxBonusSpots: true,
-      deadline: true,
+      // deadline: true,
     });
 
   const validateBasics = () =>
