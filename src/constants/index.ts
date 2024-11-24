@@ -13,24 +13,40 @@ export interface MultiSelectOptions {
 
 export const skillMap: SkillMap[] = [
   {
-    mainskill: '前端',
+    mainskill: 'Growth',
+    color: '#16A368',
+  },
+  {
+    mainskill: 'Frontend',
     color: '#3E8BFF',
   },
   {
-    mainskill: '后端',
+    mainskill: 'Backend',
     color: '#FF833E',
   },
   {
-    mainskill: '区块链',
+    mainskill: 'Blockchain',
     color: '#FF3EC9',
   },
   {
-    mainskill: '设计',
-    color: '#16A368',
+    mainskill: 'Design',
+    color: '#7E51FF',
   },
   {
-    mainskill: '增长',
-    color: '#16A368',
+    mainskill: 'Content',
+    color: '#5EA8BF',
+  },
+  {
+    mainskill: 'Community',
+    color: '#EA580C',
+  },
+  {
+    mainskill: 'Mobile',
+    color: '#7E51FF',
+  },
+  {
+    mainskill: 'Other',
+    color: '#64758B',
   },
 ];
 
@@ -38,7 +54,7 @@ export const IndustryList = [
   'DAO 组织',
   '去中心化金融',
   '基础设施',
-  '去中心化物理基础设施网络',
+  'DePIN',
   '消费级应用',
   '游戏',
   '社交',
