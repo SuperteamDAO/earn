@@ -35,7 +35,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
           <LiveListings>
             <Flex align="center" justify={'space-between'}>
               <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-                LIVE LISTINGS
+                进行中的任务
               </Text>
               <Text
                 as={NextLink}

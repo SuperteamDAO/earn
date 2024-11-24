@@ -8,32 +8,29 @@ export const WelcomeTalentTemplate = () => {
       <p style={styles.textWithMargin}>
         OK let&apos;s get this out of the way.
       </p>
-      <p style={styles.text}>Even though this is an automated email...</p>
+      <p style={styles.text}>这是一封自动发送的邮件...</p>
       <p style={styles.text}>
-        I just wanted to say hey and let you know that I&apos;m a real person.
+        我只是想打个招呼并让你知道我&apos;是一个真实的人
       </p>
       <p style={styles.text}>
-        I&apos;m Kash, and I&apos;m a Core Contributor over at{' '}
+        我&apos;是Vesper, 我&apos;是Solar社区成员，一直贡献{' '}
         <a href={process?.env?.NEXT_PUBLIC_SITE_URL} style={styles.link}>
           Solar
         </a>
-        . I might not know you personally yet, but I&apos;m pumped that
-        you&apos;re here.
+        . 我可能还不认识你个人，但我&apos;很开心&apos;你的加入。
       </p>
       <p style={styles.text}>
-        You have my word that we&apos;ll be respectful of your inbox and only
-        email you when we have some fresh new opportunities or a big
-        announcement that we want to tell you about.
+        我向你保证，我很开心&apos;收到你的邮件，只有在有新的机会或重大公告我都会给你发邮件
       </p>
       <p style={styles.text}>
-        <strong>One favor before I go: </strong> reply to this email and let me
-        know why you joined Solar Earn?
+        <strong>结束对话之前 </strong>{' '}
+        有一个请求：请回复邮件，告诉我你为什么加入 Solar Earn？
       </p>
-      <p style={styles.text}>Would love to learn more about you.</p>
+      <p style={styles.text}>很高兴能更多地了解你</p>
 
       <p style={styles.salutation}>
-        Talk soon, <br />
-        Kash
+        保持联系, <br />
+        Vesper
       </p>
     </div>
   );

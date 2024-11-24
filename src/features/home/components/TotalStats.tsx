@@ -38,7 +38,7 @@ export const TotalStats = ({
             </Text>
           )}
           <Text color={'gray.400'} fontSize={'sm'} fontWeight={500}>
-            赚取的总额
+            已赚取的总额
           </Text>
         </Box>
       </Flex>

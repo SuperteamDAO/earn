@@ -49,7 +49,7 @@ export const SponsorBanner = () => {
           {(
             Math.floor((data?.totalUsers || 0) / 10000) * 10000
           ).toLocaleString()}
-          + 名加密货币人才
+          名加密货币人才
         </Text>
       </Box>
       <Image

@@ -17,15 +17,15 @@ export const InviteMemberTemplate = ({
     <div style={styles.container}>
       <p style={styles.greetings}>Hello,</p>
       <p style={styles.textWithMargin}>
-        You have been invited by {senderName} to join{' '}
-        <strong>{sponsorName}</strong> {''} on Solar Earn!{' '}
+        您已被邀请 {senderName} 加 <strong>{sponsorName}</strong> {''} 入 Solar
+        Earn!{' '}
         <a href={link} style={styles.link}>
-          Click here
+          点击此处
         </a>{' '}
-        to accept the invite.
+        接受邀请
       </p>
       <p style={styles.salutation}>
-        Best,
+        祝好,
         <br />
         Solar Earn
       </p>
