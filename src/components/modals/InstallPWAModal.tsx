@@ -30,7 +30,7 @@ const ManualInstructions = () => (
     <Text align="center">
       点击图标(
       <Icon as={MdIosShare} mr={1} color="brand.purple" fontWeight={600} />
-      or <Icon as={BsThreeDotsVertical} color="brand.purple" />)
+      或 <Icon as={BsThreeDotsVertical} color="brand.purple" />)
       然后选择“添加到主屏幕”选项。
     </Text>
   </Box>
@@ -129,7 +129,7 @@ export const InstallPWAModal = () => {
                 width={63}
               />
               <Flex align={'center'} direction={'column'} my={12}>
-                <Text fontWeight={700}>Never miss a listing again!</Text>
+                <Text fontWeight={700}>不错过任何新的赏金任务</Text>
                 <Text w="75%" mt={1} color="brand.slate.500" textAlign="center">
                   将 Solar Earn 添加到主屏幕，并随时更新。
                 </Text>

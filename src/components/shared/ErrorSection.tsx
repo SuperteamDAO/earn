@@ -13,10 +13,10 @@ export function ErrorSection({
       <Flex align={'center'} justify="center" direction={'column'}>
         <AiOutlineWarning fontSize={96} color="brand.slate.500" />
         <Text mt={2} color="brand.slate.500" fontSize="lg" fontWeight={700}>
-          {title || 'Error Occurred!'}
+          {title || '发生错误'}
         </Text>
         <Text mt={2} color="brand.slate.500">
-          {message || 'Something went wrong! Please try again!'}
+          {message || '发生错误，请重试'}
         </Text>
       </Flex>
     </Flex>

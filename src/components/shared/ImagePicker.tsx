@@ -148,7 +148,7 @@ export const ImagePicker = ({
             选择或拖拽图片
           </Text>
           <Text color="brand.slate.400" fontSize="sm">
-            图片最大容量 5 MB
+            图片最大体积不超过 5 MB
           </Text>
         </Flex>
       </Flex>

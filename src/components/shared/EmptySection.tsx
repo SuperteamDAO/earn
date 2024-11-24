@@ -15,11 +15,11 @@ export function EmptySection({
       <Flex align={'center'} justify="center" direction={'column'}>
         <AiOutlineInfoCircle fontSize={52} color="#94a3b8" />
         <Text mt={2} color="brand.slate.400" fontSize="lg" fontWeight={700}>
-          {title || 'Sorry! Nothing found'}
+          {title || '没有发现'}
         </Text>
         {showNotifSub && (
           <Text mt={2} color="brand.slate.300">
-            {message || 'Something went wrong! Please try again!'}
+            {message || '发错误，请重试!'}
           </Text>
         )}
       </Flex>
