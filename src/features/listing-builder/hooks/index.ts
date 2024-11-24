@@ -114,10 +114,8 @@ export const useListingForm = (
       setHideAutoSave(false);
       formMethods.setValue('id', data.id);
       if (!dataToSave.slug) formMethods.setValue('slug', data.slug);
-      queueRefRef.current.id = data.id;
       setQueueRef((q) => ({
         ...q,
-        id: data.id,
       }));
       console.log('asPath', router.asPath);
       console.log('data slug', data.slug);

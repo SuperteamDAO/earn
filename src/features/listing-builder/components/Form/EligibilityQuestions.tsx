@@ -49,6 +49,7 @@ export function EligibilityQuestions() {
   });
 
   const handleAddQuestion = (focus = true) => {
+    console.log('handle add question');
     append(
       {
         order: fields.length + 1,
@@ -130,9 +131,6 @@ export function EligibilityQuestions() {
                                 defaultValue="text"
                                 onValueChange={(value) => {
                                   field.onChange(value);
-                                  // solves a bug when we change type, but the prev type error is still there.
-                                  console.log('eligibility trigger');
-                                  form.trigger(`eligibility.${index}.question`);
                                 }}
                               >
                                 <FormControl>
@@ -183,6 +181,7 @@ export function EligibilityQuestions() {
                                     field.onChange(e);
                                     form.saveDraft();
                                   }}
+                                  onBlur={() => null}
                                 />
                               </FormControl>
                             </FormItem>
@@ -216,7 +215,7 @@ export function EligibilityQuestions() {
               />
             ))}
 
-            {type !== 'bounty' || fields.length < 1 ? (
+            {type !== 'bounty' || fields.length < 2 ? (
               <div className="flex justify-between">
                 <FormMessage />
                 <Button

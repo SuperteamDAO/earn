@@ -29,7 +29,7 @@ function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
 
   const totalPrize = useMemo(
     () => calculateTotalPrizes(rewards, maxBonusSpots || 0),
-    [type, maxBonusSpots],
+    [type, maxBonusSpots, rewards],
   );
 
   return (

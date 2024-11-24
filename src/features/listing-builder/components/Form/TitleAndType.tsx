@@ -129,6 +129,8 @@ function Type() {
                       form.setValue('rewardAmount', undefined);
                     }
                   }
+
+                  if (form.getValues().id) form.saveDraft();
                 }}
               >
                 <SelectTrigger className="h-full w-32 rounded-none border-0 border-r focus:ring-0">

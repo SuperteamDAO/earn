@@ -96,19 +96,21 @@ export function RewardsSheet() {
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="flex flex-col overflow-hidden sm:max-w-lg"
+        className="flex h-[100vh] flex-col p-0 sm:max-w-xl"
       >
-        <SheetHeader>
+        <SheetHeader className="shrink-0 p-6 pb-0">
           <SheetTitle>Add Rewards</SheetTitle>
-        </SheetHeader>
-        <div className="flex flex-col gap-y-4 py-2">
           <TokenSelect />
           {type === 'project' && <PaymentType />}
+        </SheetHeader>
+
+        <div className="flex min-h-0 flex-1 flex-col p-6" id="main-content">
           <Type />
         </div>
-        <div className="mt-auto">
-          <Separator className="relative -left-20 my-4 w-[150%]" />
-          <SheetFooter>
+
+        <div className="shrink-0">
+          <Separator className="mb-4" />
+          <SheetFooter className="p-6 pt-0">
             <Footer closeSheet={() => setOpen(false)} />
           </SheetFooter>
         </div>

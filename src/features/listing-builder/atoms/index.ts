@@ -18,7 +18,6 @@ const hideAutoSaveAtom = atom<boolean>(true);
 interface SaveQueueState {
   isProcessing: boolean;
   shouldProcessNext: boolean;
-  id?: string;
 }
 const draftQueueAtom = atom<SaveQueueState>({
   isProcessing: false,
