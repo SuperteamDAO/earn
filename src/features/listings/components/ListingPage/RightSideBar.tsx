@@ -279,7 +279,7 @@ export function RightSideBar({
                         zeroPadDays={1}
                       />
                     </Text>
-                    <Text color={'#94A3B8'}>Until Submissions Open</Text>
+                    <Text color={'#94A3B8'}>直至开始提交</Text>
                   </VStack>
                 </Flex>
               </Flex>
@@ -296,7 +296,7 @@ export function RightSideBar({
                 >
                   {timeToComplete}
                 </Text>
-                <Text color={'#94A3B8'}>Time to Complete</Text>
+                <Text color={'#94A3B8'}>完成时间</Text>
               </Flex>
             )}
             <SubmissionActionButton listing={listing} isTemplate={isTemplate} />
@@ -304,8 +304,8 @@ export function RightSideBar({
               <Flex gap="2" w="full" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
                 <WarningIcon color="#1A7F86" />
                 <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
-                  Don&apos;t start working just yet! Apply first, and then begin
-                  working only once you&apos;ve been hired for the project.
+                  先不要开始工作！请先申请，只有在您被聘用后再开始工作。
+                  请注意项目方可能会在决定最终人选之前先联系您，了解更多情况。
                 </Text>
               </Flex>
             )}

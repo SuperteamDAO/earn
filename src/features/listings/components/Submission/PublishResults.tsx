@@ -85,15 +85,13 @@ export function PublishResults({
   if (!isWinnersAllSelected) {
     const remainingWinners = (rewards || 0) - totalWinners;
     alertType = 'error';
-    alertTitle = 'Select All Winners!';
-    alertDescription = `You still have to select ${remainingWinners} more ${remainingWinners === 1 ? 'winner' : 'winners'
-      } before you can publish the results publicly.`;
+    alertTitle = '选择所有获胜者！';
+    alertDescription = `您还需选出 ${remainingWinners} 名获胜者才能公开结果。`;
   } else if (rewards && totalPaymentsMade !== rewards) {
     const remainingPayments = (rewards || 0) - totalPaymentsMade;
     alertType = 'warning';
-    alertTitle = 'Pay All Winners!';
-    alertDescription = `Don't forget to pay your winners after publishing results. You have to pay to ${remainingPayments} ${remainingPayments === 1 ? 'winner' : 'winners'
-      }.`;
+    alertTitle = '向所有获胜者支付奖励';
+    alertDescription = `公布结果后不要忘了向获奖者付款。您必须向 ${remainingPayments} 名获奖者付款`;
   }
 
   const selectedSubmission = useAtomValue(selectedSubmissionAtom);
@@ -161,16 +159,15 @@ export function PublishResults({
             >
               <AlertIcon boxSize="40px" mr={0} />
               <AlertTitle mt={4} mb={1} fontSize="lg">
-                Results Announced Successfully!
+                结果公布！
               </AlertTitle>
               <AlertDescription maxW="sm">
-                The results have been announced publicly. Everyone can view the
-                results on the Bounty&apos;s page.
+                结果已公开公布。每个人都可以在赏金任务页面查看结果。
                 <br />
                 <br />
                 {!bounty?.isWinnersAnnounced && (
                   <Text as="span" color="brand.slate.500" fontSize="sm">
-                    Refreshing...
+                    正在刷新
                   </Text>
                 )}
               </AlertDescription>
@@ -181,10 +178,9 @@ export function PublishResults({
             totalWinners === rewards &&
             alertType !== 'error' && (
               <Text mb={4}>
-                Publishing the results of this listing will make the results
-                public for everyone to see!
+                公布本次任务的结果，供所有人查看！
                 <br />
-                YOU CAN&apos;T GO BACK ONCE YOU PUBLISH THE RESULTS!
+                一旦发布结果，您将无法撤销！
               </Text>
             )}
           {!isWinnersAnnounced && alertTitle && alertDescription && (
@@ -203,10 +199,9 @@ export function PublishResults({
               <Alert mt={4} status="error">
                 <AlertIcon boxSize={8} />
                 <Box>
-                  <AlertTitle>Listing still in progress!</AlertTitle>
+                  <AlertTitle>任务仍在进行中</AlertTitle>
                   <AlertDescription>
-                    If you publish the results before the deadline, the listing
-                    will close since the winner(s) will have been announced.
+                    如果您在截止日期之前公布结果，则任务将会关闭，因为获胜者已经公布。
                   </AlertDescription>
                 </Box>
               </Alert>

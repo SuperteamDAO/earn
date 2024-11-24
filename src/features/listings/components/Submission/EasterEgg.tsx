@@ -84,7 +84,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
             lineHeight="1"
             textAlign="center"
           >
-            {isProject ? 'Application' : 'Submission'} 成功提交!
+            {isProject ? '项目' : '提案'} 成功提交！
           </Text>
           <Text
             mt={[8, 5]}

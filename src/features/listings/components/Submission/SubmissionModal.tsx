@@ -222,22 +222,20 @@ export const SubmissionModal = ({
       subheadingText = '非常期待您的创作';
       break;
     case 'hackathon':
-      headerText = 'Solana Radar Track Submission';
+      headerText = 'Solana Hackathon';
       subheadingText = (
         <>
-          Note:
+          注意：
           <Text>
-            1. In the “Link to your Submission” field, submit your hackathon
-            project’s most useful link (could be a loom video, GitHub link,
-            website, etc)
+            1. 在“作品链接”栏中，提交您的黑客马拉松
+            项目最有用的链接（可以是视频、GitHub 链接、网站等）、
+            网站等）
           </Text>
           <Text>
-            2. To be eligible for different challenges, you need to submit to
-            each challenge separately
+            2. 要有资格参加不同的挑战赛，您需要分别向每个挑战赛提交申请
           </Text>
           <Text>
-            3. {`There's no`} restriction on the number of challenges you can
-            submit to
+            3.您可以提交的挑战数量不受限制
           </Text>
         </>
       );
@@ -388,14 +386,14 @@ export const SubmissionModal = ({
                 label="你的 Solana 钱包地址"
                 helperText={
                   <>
-                    这是您收取奖励的钱包地址。如果您想编辑，请点击这里。{' '}
+                    这是您收取奖励的钱包地址。如果您想编辑，{' '}
                     <Text as="u">
                       <Link
                         color="blue.600"
                         href={`/t/${user?.username}/edit`}
                         isExternal
                       >
-                        点击这里
+                        请点击这里
                       </Link>
                     </Text>{' '}
                   </>
@@ -424,11 +422,8 @@ export const SubmissionModal = ({
                       color={'brand.slate.600'}
                       fontSize={'sm'}
                     >
-                      I confirm that I have reviewed the scope of this track and
-                      that my submission adheres to the specified requirements.
-                      Submitting a project that does not meet the submission
-                      requirements, including potential spam, may result in
-                      restrictions on future submissions.
+                      我确认我已查看了此项目的范围，并且我的提交符合指定的要求。
+                      提交不符合提交要求的项目（包括在垃圾邮件中），可能会导致未来提交受到限制。
                     </Text>
                   </Flex>
                 </FormControl>
@@ -436,7 +431,7 @@ export const SubmissionModal = ({
             </VStack>
             {!!error && (
               <Text align="center" mb={2} color="red">
-                提交时出现错误。<br />
+                提交时出现错误<br />
                 请联系{SolarMail}
               </Text>
             )}
