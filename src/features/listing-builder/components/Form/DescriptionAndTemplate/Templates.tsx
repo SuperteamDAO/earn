@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
 import { Eye, LayoutGrid, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -28,6 +29,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils';
 import { getURL } from '@/utils/validUrl';
 
+import { isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
 import {
   isCreateListingAllowedQuery,
@@ -59,10 +61,12 @@ export function Templates() {
     isCreateListingAllowedRefetch();
   }, [user]);
 
+  const isEditing = useAtomValue(isEditingAtom);
   const isDisabled =
     isCreateListingAllowed !== undefined &&
     isCreateListingAllowed === false &&
-    session?.user.role !== 'GOD';
+    session?.user.role !== 'GOD' &&
+    !isEditing;
 
   const [open, setOpen] = useState(router.pathname === '/dashboard/new');
   useEffect(() => {
@@ -70,11 +74,17 @@ export function Templates() {
   }, [router.pathname]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(e) => {
+        if (!isDisabled) setOpen(e);
+      }}
+    >
       <DialogTrigger asChild>
         <Button
           variant="ghost"
-          className="text-[0.9rem] text-blue-600 hover:text-blue-600"
+          className="text-blue-600 hover:text-blue-600"
+          size="sm"
         >
           <LayoutGrid className="fill-blue-600" />
           Browse Templates
@@ -82,10 +92,27 @@ export function Templates() {
       </DialogTrigger>
       <DialogContent className="w-max max-w-none p-8">
         <DialogHeader>
-          <DialogTitle>Start with Templates</DialogTitle>
-          <DialogDescription>
-            Save hours of work writing a description, use existing tried &
-            tested templates
+          <DialogTitle>
+            {isDisabled ? (
+              <>You Cannot create listing</>
+            ) : (
+              <>Start with Templates</>
+            )}
+          </DialogTitle>
+          <DialogDescription className="max-w-2xl">
+            {isDisabled ? (
+              <p className="text-red-500">
+                Creating a new listing has been temporarily locked for you since
+                you have 5 listings which are {`“In Review”`}. Please announce
+                the winners for such listings to create new listings.
+              </p>
+            ) : (
+              <>
+                Save hours of work writing a description, use existing tried{' '}
+                {'&'}
+                tested templates
+              </>
+            )}
           </DialogDescription>
         </DialogHeader>
         <div className="mt-4">

@@ -126,7 +126,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (isPublished) {
       publishedAt = new Date();
 
-      if (sponsor) {
+      if (sponsor && !sponsor.isVerified && user?.role !== 'GOD') {
         // sponsor is sus, be caution
         isVerifying = sponsor.isCaution;
 
@@ -144,7 +144,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         }
 
         // sponsor is unverified and latest listing is in review for more than 2 weeks
-        if (!isVerifying && !sponsor.isVerified) {
+        if (!isVerifying) {
           const twoWeeksAgo = dayjs().subtract(2, 'weeks');
 
           const overdueBounty = await prisma.bounties.findFirst({

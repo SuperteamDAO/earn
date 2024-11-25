@@ -181,14 +181,15 @@ export const Podiums = () => {
                             };
                             updateTotalReward(updatedRewards);
                           }}
-                          onBlur={(event) => {
-                            // react form hook has a bug where onblur error is not set when only one podium reward is available before adding any value
-                            if (!event.target.value) {
-                              form.setError(`rewards.${position}`, {
-                                message: 'Reward amount is required',
-                              });
-                            }
-                          }}
+                          onBlur={() => null}
+                          // onBlur={(event) => {
+                          //   // react form hook has a bug where onblur error is not set when only one podium reward is available before adding any value
+                          //   if (!event.target.value) {
+                          //     form.setError(`rewards.${position}`, {
+                          //       message: 'Reward amount is required',
+                          //     });
+                          //   }
+                          // }}
                         />
                         {rewardPositions.length > 1 && (
                           <Button

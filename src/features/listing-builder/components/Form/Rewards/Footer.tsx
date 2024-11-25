@@ -59,7 +59,7 @@ function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
           if (await form.validateRewards()) {
             closeSheet();
           } else {
-            toast.warning('Please Resolve all Errors in Rewards to Continue');
+            toast.warning('Please resolve all errors in Rewards to Continue');
           }
         }}
       >

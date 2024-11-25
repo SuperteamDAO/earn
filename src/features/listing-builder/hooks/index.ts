@@ -201,11 +201,10 @@ export const useListingForm = (
         });
 
       try {
-        await partialSchema.parseAsync(values);
-        // Only clear errors for the fields we validated
         formMethods.clearErrors(
           Object.keys(fields) as Array<keyof ListingFormData>,
         );
+        await partialSchema.parseAsync(values);
         return true;
       } catch (error) {
         console.log('validation error', error);
