@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
-import { Eye, LayoutGrid, Plus } from 'lucide-react';
+import { ChevronRight, Eye, LayoutGrid, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -90,30 +90,45 @@ export function Templates() {
           Browse Templates
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-max max-w-none p-8">
-        <DialogHeader>
-          <DialogTitle>
-            {isDisabled ? (
-              <>You Cannot create listing</>
-            ) : (
-              <>Start with Templates</>
-            )}
-          </DialogTitle>
-          <DialogDescription className="max-w-2xl">
-            {isDisabled ? (
-              <p className="text-red-500">
-                Creating a new listing has been temporarily locked for you since
-                you have 5 listings which are {`“In Review”`}. Please announce
-                the winners for such listings to create new listings.
-              </p>
-            ) : (
-              <>
-                Save hours of work writing a description, use existing tried{' '}
-                {'&'}
-                tested templates
-              </>
-            )}
-          </DialogDescription>
+      <DialogContent
+        className="w-max max-w-none p-8"
+        hideCloseIcon={isDisabled}
+      >
+        <DialogHeader className="flex flex-row justify-between">
+          <div className="space-y-2">
+            <DialogTitle>
+              {isDisabled ? (
+                <>You cannot create a listing</>
+              ) : (
+                <>Start with Templates</>
+              )}
+            </DialogTitle>
+
+            <DialogDescription className="max-w-2xl">
+              {isDisabled ? (
+                <p className="text-red-500">
+                  Creating a new listing has been temporarily locked for you
+                  since you have 5 listings which are {`“In Review”`}. Please
+                  announce the winners for such listings to create new listings.
+                </p>
+              ) : (
+                <>
+                  Save hours of work writing a description, use existing tried{' '}
+                  {'&'}
+                  tested templates
+                </>
+              )}
+            </DialogDescription>
+          </div>
+          {isDisabled && (
+            <div>
+              <Link href="/dashboard/listings">
+                <Button variant="default" className="text-sm">
+                  Go to Dashboard <ChevronRight />
+                </Button>
+              </Link>
+            </div>
+          )}
         </DialogHeader>
         <div className="mt-4">
           <div className="grid grid-cols-4 gap-6">
@@ -132,7 +147,6 @@ export function Templates() {
                 </span>
               </Button>
             </DialogClose>
-
             {templatesLoading &&
               Array(7)
                 .fill(1)
