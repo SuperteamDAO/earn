@@ -1,15 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { CheckIcon, Loader2 } from 'lucide-react';
-import {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
-import slugify from 'slugify';
 
 import {
   FormControl,
@@ -35,10 +28,6 @@ export function Slug({
 
   const [isValidated, setIsValidated] = useState(false);
 
-  const title = useWatch({
-    control: form.control,
-    name: 'title',
-  });
   const slug = useWatch({
     control: form.control,
     name: 'slug',
@@ -55,31 +44,7 @@ export function Slug({
     console.log('listingId', listingId);
   }, [listingId]);
 
-  const debouncedTitle = useDebounce(title);
-  const slugifiedTitle = useMemo(() => {
-    return slugify(title, {
-      lower: true,
-      strict: true,
-    });
-  }, [debouncedTitle]);
-
-  const { data: generatedSlugValidated, isFetching: generatedSlugFetching } =
-    useQuery({
-      ...slugCheckQuery({ slug: slugifiedTitle, check: false, id: listingId }),
-      enabled: !!(!!title && !isEditing),
-      retry: false,
-    });
-
-  useEffect(() => {
-    if (generatedSlugValidated?.data.slug) {
-      console.log('is this running?');
-      form.setValue('slug', generatedSlugValidated.data.slug, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-    }
-  }, [generatedSlugValidated]);
-
+  const generatedSlugFetching = useIsFetching({ queryKey: ['slug'] }) > 0;
   const debouncedSlug = useDebounce(slug);
   const { isError: isSlugCheckError, isFetching: slugCheckFetching } = useQuery(
     {

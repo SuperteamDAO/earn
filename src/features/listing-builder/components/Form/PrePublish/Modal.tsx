@@ -75,19 +75,36 @@ export function PrePublish() {
     [isCreateListingAllowed, session, isEditing],
   );
 
-  const isDisabledSoft = useMemo(
-    () =>
+  const [isDisabledSoft, setIsDisabledSoft] = useState(true);
+
+  useEffect(() => {
+    const shouldBeDisabled =
       isDraftSaving ||
       submitListingMutation.isPending ||
       isDisabledHard ||
       submitListingMutation.isSuccess ||
-      isSlugLoading,
-    [
-      submitListingMutation.isPending,
-      submitListingMutation.isSuccess,
-      isDisabledHard,
-      isSlugLoading,
-    ],
+      isSlugLoading;
+
+    if (shouldBeDisabled) {
+      setIsDisabledSoft(true);
+    } else {
+      const timer = setTimeout(() => {
+        setIsDisabledSoft(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+    return () => null;
+  }, [
+    isDraftSaving,
+    submitListingMutation.isPending,
+    submitListingMutation.isSuccess,
+    isDisabledHard,
+    isSlugLoading,
+  ]);
+
+  const isDisabledSoftForButtons = useMemo(
+    () => !!form.formState.errors.slug || isDisabledSoft,
+    [form.formState.errors.slug, isDisabledSoft],
   );
 
   useEffect(() => {
@@ -132,10 +149,11 @@ export function PrePublish() {
         )}
       </Tooltip>
       <DialogContent className="py-4 sm:max-w-[500px]">
-        <DialogHeader className="">
-          <DialogTitle className="text-md">
-            Few more things to consider:
-          </DialogTitle>
+        <DialogHeader className="flex flex-row gap-4">
+          <DialogTitle className="text-md">Publish Listing</DialogTitle>
+          {isDisabledSoft && (
+            <Loader2 className="h-4 w-4 animate-spin text-slate-500" />
+          )}
         </DialogHeader>
         <Separator className="relativerl w-[100%]" />
         <div className="space-y-4">
@@ -148,7 +166,7 @@ export function PrePublish() {
           <Button
             variant="outline"
             className="ph-no-capture gap-8"
-            disabled={isDisabledSoft}
+            disabled={isDisabledSoftForButtons}
             onClick={() => {
               posthog.capture('preview_listing');
               setShowPreview(true);
@@ -187,7 +205,7 @@ export function PrePublish() {
                 }
               }
             }}
-            disabled={isDisabledSoft}
+            disabled={isDisabledSoftForButtons}
           >
             {submitListingMutation.isPending ||
             submitListingMutation.isSuccess ? (

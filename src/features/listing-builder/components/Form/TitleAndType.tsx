@@ -1,8 +1,10 @@
 import { type CompensationType } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
+import slugify from 'slugify';
 
 import {
   FormControl,
@@ -12,6 +14,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useDebounce } from '@/components/ui/multi-select';
 import {
   Select,
   SelectContent,
@@ -23,6 +26,7 @@ import { getListingIcon } from '@/features/listings';
 
 import { hackathonAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
+import { slugCheckQuery } from '../../queries';
 import { calculateTotalRewardsForPodium } from '../../utils';
 
 const typeOptions = [
@@ -33,10 +37,40 @@ const typeOptions = [
 export function TitleAndType() {
   const form = useListingForm();
   const type = useWatch({ name: 'type', control: form.control });
+  const title = useWatch({ control: form.control, name: 'title' });
+  const listingId = useWatch({ control: form.control, name: 'id' });
+
+  const isEditing = useAtomValue(isEditingAtom);
   const placeholder = useMemo(() => {
     if (type === 'project') return 'Frontend Development for Superteam';
     else return 'Write a Deep Dive on IBRL';
   }, [type]);
+
+  const debouncedTitle = useDebounce(title);
+  const slugifiedTitle = useMemo(() => {
+    return slugify(title, {
+      lower: true,
+      strict: true,
+    });
+  }, [debouncedTitle]);
+
+  const { data: generatedSlugValidated } = useQuery({
+    ...slugCheckQuery({ slug: slugifiedTitle, check: false, id: listingId }),
+    enabled: !!(!!title && !isEditing),
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (generatedSlugValidated?.data.slug) {
+      console.log('is this running?');
+      form.setValue('slug', generatedSlugValidated.data.slug, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      form.saveDraft();
+    }
+  }, [generatedSlugValidated]);
+
   return (
     <FormField
       name="title"
