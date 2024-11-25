@@ -461,7 +461,9 @@ const CreateSponsor = () => {
                     fontSize={'15px'}
                     fontWeight={600}
                     htmlFor={'行业'}
-                  ></FormLabel>
+                  >
+                    行业
+                  </FormLabel>
 
                   <Select
                     closeMenuOnSelect={false}
@@ -533,11 +535,11 @@ const CreateSponsor = () => {
                 )}
                 {(validationErrorMessage ||
                   sponsorNameValidationErrorMessage) && (
-                  <Text align={'center'} color="yellow.500">
-                    如果您想访问现有的帐户，请在 Telegram 上联系我们
-                    @cryptosheep1
-                  </Text>
-                )}
+                    <Text align={'center'} color="yellow.500">
+                      如果您想访问现有的帐户，请在 Telegram 上联系我们
+                      @cryptosheep1
+                    </Text>
+                  )}
               </Box>
               <Button
                 className="ph-no-capture"

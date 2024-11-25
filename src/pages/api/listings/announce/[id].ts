@@ -134,20 +134,17 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       })
       .join(sortedWinners.length > 2 ? ', ' : ' ');
 
-    let comment: string = 'Winners have been announced. ';
+    let comment: string = '获奖名单已经公布。';
     const random = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
     switch (random) {
       case 1:
-        comment =
-          sortedWinners.length === 1
-            ? `Congratulations! ${extractedTags} has been announced as the winner!`
-            : `Congratulations! ${extractedTags} have been announced as the winners!`;
+        comment = `恭喜！${extractedTags} 是获胜者`;
         break;
       case 2:
         if (listing.type === 'bounty')
-          comment = `Applaud ${extractedTags} for winning this Bounty`;
+          comment = `恭喜！${extractedTags} 获得奖金`;
         if (listing.type === 'project')
-          comment = `Applaud ${extractedTags} for winning this Project`;
+          comment = `恭喜！${extractedTags} 获得奖金`;
         break;
     }
 

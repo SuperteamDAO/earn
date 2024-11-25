@@ -16,7 +16,7 @@ import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { dayjs } from '@/utils/dayjs';
 
-type SlugKeys = '设计' | '内容' | '开发' | '其他';
+type SlugKeys = 'design' | 'content' | 'development' | 'other';
 
 function ListingCategoryPage({ slug }: { slug: string }) {
   const router = useRouter();
@@ -38,10 +38,10 @@ function ListingCategoryPage({ slug }: { slug: string }) {
   );
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
-    设计: '设计 赏金和任务 | Solar Earn',
-    内容: '内容 赏金和任务 | Solar Earn',
-    开发: '开发 赏金和任务 | Solar Earn',
-    其他: '其他 赏金和任务 | Solar Earn',
+    design: '设计 赏金和任务 | Solar Earn',
+    content: '内容 赏金和任务 | Solar Earn',
+    development: '开发 赏金和任务 | Solar Earn',
+    other: '其他 赏金和任务 | Solar Earn',
   };
 
   const titleKey = slug as SlugKeys;

@@ -371,8 +371,8 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           : 'Submissions'}
                       </Button>
                     ) : (session?.user?.role === 'GOD' &&
-                        listing.type !== 'grant' &&
-                        !listing.isPublished) ||
+                      listing.type !== 'grant' &&
+                      !listing.isPublished) ||
                       (!pastDeadline &&
                         listing.type !== 'grant' &&
                         (listing.status === 'OPEN' ||
@@ -418,7 +418,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           icon={<Icon as={IoOpenOutline} w={4} h={4} />}
                           onClick={() => window.open(listingLink, '_blank')}
                         >
-                          View {listingLabel}
+                          查看 {listingLabel}
                         </MenuItem>
 
                         {!!listing.isPublished && (
@@ -429,7 +429,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                             icon={<Icon as={IoCopyOutline} w={4} h={4} />}
                             onClick={() => copyToClipboard(listingLink)}
                           >
-                            Copy Link
+                            复制链接
                           </MenuItem>
                         )}
 
@@ -439,16 +439,16 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                             listing.type === 'project') &&
                           listing.status === 'VERIFYING'
                         ) && (
-                          <MenuItem
-                            color={'brand.slate.500'}
-                            fontSize={'sm'}
-                            fontWeight={500}
-                            icon={<Icon as={TiInputChecked} w={4} h={4} />}
-                            onClick={() => handleReviewBounty(listing.id)}
-                          >
-                            Review {listingLabel}
-                          </MenuItem>
-                        )}
+                            <MenuItem
+                              color={'brand.slate.500'}
+                              fontSize={'sm'}
+                              fontWeight={500}
+                              icon={<Icon as={TiInputChecked} w={4} h={4} />}
+                              onClick={() => handleReviewBounty(listing.id)}
+                            >
+                              审核 {listingLabel}
+                            </MenuItem>
+                          )}
 
                         {!!(
                           (session?.user?.role === 'GOD' &&
@@ -458,43 +458,43 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                             (listing.status === 'OPEN' ||
                               listing.status === 'PREVIEW'))
                         ) && (
-                          <>
-                            <Link
-                              as={NextLink}
-                              _hover={{ textDecoration: 'none' }}
-                              href={`/dashboard/listings/${listing.slug}/edit`}
-                              onClick={resetForm}
-                            >
-                              <MenuItem
-                                color={'brand.slate.500'}
-                                fontSize={'sm'}
-                                fontWeight={500}
-                                icon={<Icon as={PiNotePencil} w={4} h={4} />}
+                            <>
+                              <Link
+                                as={NextLink}
+                                _hover={{ textDecoration: 'none' }}
+                                href={`/dashboard/listings/${listing.slug}/edit`}
+                                onClick={resetForm}
                               >
-                                Edit {listingLabel}
-                              </MenuItem>
-                            </Link>
-                          </>
-                        )}
+                                <MenuItem
+                                  color={'brand.slate.500'}
+                                  fontSize={'sm'}
+                                  fontWeight={500}
+                                  icon={<Icon as={PiNotePencil} w={4} h={4} />}
+                                >
+                                  修改 {listingLabel}
+                                </MenuItem>
+                              </Link>
+                            </>
+                          )}
                         {(listing.type === 'bounty' ||
                           listing.type === 'project') && (
-                          <MenuItem
-                            className="ph-no-capture"
-                            color={'brand.slate.500'}
-                            fontSize={'sm'}
-                            fontWeight={500}
-                            icon={<Icon as={IoDuplicateOutline} w={4} h={4} />}
-                            onClick={() => {
-                              posthog.capture('duplicate listing_sponsor');
-                              window.open(
-                                `${router.basePath}/dashboard/listings/${listing.slug}/duplicate`,
-                                '_blank',
-                              );
-                            }}
-                          >
-                            Duplicate
-                          </MenuItem>
-                        )}
+                            <MenuItem
+                              className="ph-no-capture"
+                              color={'brand.slate.500'}
+                              fontSize={'sm'}
+                              fontWeight={500}
+                              icon={<Icon as={IoDuplicateOutline} w={4} h={4} />}
+                              onClick={() => {
+                                posthog.capture('duplicate listing_sponsor');
+                                window.open(
+                                  `${router.basePath}/dashboard/listings/${listing.slug}/duplicate`,
+                                  '_blank',
+                                );
+                              }}
+                            >
+                              复制
+                            </MenuItem>
+                          )}
                         {listingStatus === 'Draft' &&
                           listing?.type !== 'grant' && (
                             <>
@@ -505,7 +505,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                                 icon={<Icon as={IoTrashOutline} w={4} h={4} />}
                                 onClick={() => handleDeleteDraft(listing)}
                               >
-                                Delete Draft
+                                删除草稿
                               </MenuItem>
                             </>
                           )}
@@ -526,7 +526,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                                 }
                                 onClick={() => handleVerifyPayment(listing)}
                               >
-                                Update Payment Status
+                                更新支付状态
                               </MenuItem>
                             </>
                           )}
@@ -540,7 +540,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                               icon={<Icon as={IoEyeOffOutline} boxSize={4} />}
                               onClick={() => handleUnpublish(listing)}
                             >
-                              Unpublish
+                              取消发布
                             </MenuItem>
                           )}
                       </MenuList>

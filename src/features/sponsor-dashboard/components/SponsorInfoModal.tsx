@@ -131,7 +131,7 @@ export const SponsorInfoModal = ({
                 />
               </Box>
               <Box w="full">
-                <FormLabel color={'brand.slate.500'}>姓氏</FormLabel>
+                <FormLabel color={'brand.slate.500'}>姓</FormLabel>
                 <Input
                   color={'gray.800'}
                   borderColor="brand.slate.300"
