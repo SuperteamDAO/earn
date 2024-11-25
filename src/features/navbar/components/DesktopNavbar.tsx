@@ -85,7 +85,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                     orientation="vertical"
                   />
                   <Text fontSize="sm" letterSpacing={'1.5px'}>
-                    SPONSORS
+                    项目方
                   </Text>
                 </>
               )}

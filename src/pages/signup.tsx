@@ -32,7 +32,7 @@ export default function SignupPage() {
   const acceptInviteMutation = useMutation({
     mutationFn: acceptInvite,
     onSuccess: () => {
-      toast.success("您已成功加入");
+      toast.success('您已成功加入');
       setIsNavigating(true);
       router.push('/dashboard/listings');
     },
@@ -48,9 +48,7 @@ export default function SignupPage() {
   useEffect(() => {
     if (error) {
       toast.error(
-        error instanceof Error
-          ? error.message
-          : '验证邀请时发生错误',
+        error instanceof Error ? error.message : '验证邀请时发生错误',
       );
     }
   }, [error]);
@@ -93,7 +91,7 @@ export default function SignupPage() {
             欢迎来到 Solar Earn
           </Text>
           <Text color="brand.slate.600" fontSize="lg" textAlign="center">
-            开始您获取全球顶尖人才的旅程！
+            开始您获取顶尖人才的旅程！
           </Text>
           <Image
             w={20}

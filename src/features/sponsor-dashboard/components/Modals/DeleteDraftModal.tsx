@@ -67,13 +67,10 @@ export const DeleteDraftModal = ({
         <ModalHeader>Delete Draft?</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text color="brand.slate.500">
-            Are you sure you want to delete this draft listing?
-          </Text>
+          <Text color="brand.slate.500">你确定要删除这份草稿吗？</Text>
           <br />
           <Text color="brand.slate.500">
-            Note: If this was previously a published listing, all submissions or
-            applications received for this listing will also be deleted.
+            注意：如果此职位信息之前曾发布，则为此职位信息收到的所有提交或申请也将被删除。
           </Text>
         </ModalBody>
 

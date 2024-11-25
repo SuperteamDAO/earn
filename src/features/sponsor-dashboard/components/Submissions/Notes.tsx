@@ -93,11 +93,11 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
   return (
     <Flex align="start" direction="column" w="full">
       <HStack justify="space-between" w="full" mb={2} color="brand.slate.400">
-        <Text fontWeight={800}>Review Notes</Text>
+        <Text fontWeight={800}>回顾记录</Text>
         {isSaving ? (
           <Spinner size="xs" />
         ) : (
-          <Text fontSize="xx-small">Auto-saved</Text>
+          <Text fontSize="xx-small">自动保存</Text>
         )}
       </HStack>
       <Textarea
@@ -122,7 +122,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         value={notes}
       />
       <Text mt={1} color="brand.slate.400" fontSize="xs">
-        {MAX_CHARACTERS - notes.length} characters remaining
+        {MAX_CHARACTERS - notes.length} 剩余字数
       </Text>
     </Flex>
   );

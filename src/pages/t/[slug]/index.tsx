@@ -26,6 +26,7 @@ import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ShareIcon } from '@/components/shared/shareIcon';
+import { SolarMail } from '@/constants';
 import { type FeedDataProps, FeedLoop, useGetFeed } from '@/features/feed';
 import {
   AddProject,
@@ -40,7 +41,6 @@ import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
-import { SolarMail } from '@/constants';
 
 type UserWithFeed = User & {
   feed: FeedDataProps[];
@@ -314,19 +314,19 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 >
                   {user?.id === talent?.id
                     ? renderButton(
-                      <EditIcon />,
-                      '修改个人信息',
-                      handleEditProfileClick,
-                    )
+                        <EditIcon />,
+                        '修改个人信息',
+                        handleEditProfileClick,
+                      )
                     : renderButton(<EmailIcon />, 'Reach Out', () => {
-                      posthog.capture('reach out_talent profile');
-                      const email = encodeURIComponent(talent?.email || '');
-                      const subject = encodeURIComponent(
-                        'Saw Your ST Earn Profile!',
-                      );
-                      const bcc = encodeURIComponent(SolarMail);
-                      window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
-                    })}
+                        posthog.capture('reach out_talent profile');
+                        const email = encodeURIComponent(talent?.email || '');
+                        const subject = encodeURIComponent(
+                          'Saw Your ST Earn Profile!',
+                        );
+                        const bcc = encodeURIComponent(SolarMail);
+                        window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
+                      })}
                   {renderButton(<ShareIcon />, '分享', onOpen, true)}
                 </Flex>
               </Flex>
@@ -347,7 +347,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   </Text>
                   {workPreferenceText && (
                     <Text mt={3} color={'brand.slate.400'}>
-                      Looking for{' '}
+                      寻找{' '}
                       <Text as={'span'} color={'brand.slate.500'}>
                         {workPreferenceText}
                       </Text>
@@ -355,7 +355,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   )}
                   {talent?.currentEmployer && (
                     <Text mt={3} color={'brand.slate.400'}>
-                      Works at{' '}
+                      工作于{' '}
                       <Text as={'span'} color={'brand.slate.500'}>
                         {talent?.currentEmployer}
                       </Text>

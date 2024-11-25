@@ -497,7 +497,7 @@ function GrantApplications({ slug }: Props) {
                           size="sm"
                           variant="outline"
                         >
-                          Previous
+                          上一页
                         </Button>
                         <Text color="brand.slate.400" fontSize="sm">
                           <Text as="span" fontWeight={700}>
@@ -511,7 +511,7 @@ function GrantApplications({ slug }: Props) {
                           <Text as="span" fontWeight={700}>
                             {grant?.totalApplications}
                           </Text>{' '}
-                          Applications
+                          应用程序
                         </Text>
                         <Button
                           isDisabled={
@@ -523,7 +523,7 @@ function GrantApplications({ slug }: Props) {
                           size="sm"
                           variant="outline"
                         >
-                          Next
+                          下一页
                         </Button>
                       </>
                     )}
@@ -563,13 +563,13 @@ function GrantApplications({ slug }: Props) {
               >
                 {selectedApplicationIds.size > 100 && (
                   <Text pb={2} color="red" textAlign="center">
-                    Cannot select more than 100 applications
+                    不能选择超过100个申请
                   </Text>
                 )}
                 <HStack gap={4} fontSize={'lg'}>
                   <HStack fontWeight={500}>
                     <Text>{selectedApplicationIds.size}</Text>
-                    <Text color="brand.slate.500">Selected</Text>
+                    <Text color="brand.slate.500">已选择</Text>
                   </HStack>
                   <Box w="1px" h={4} bg="brand.slate.300" />
                   <Button

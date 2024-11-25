@@ -116,8 +116,8 @@ export const GrantApplicationModal = ({
       projectDetails: grantApplication?.projectDetails || '',
       projectTimeline: grantApplication?.projectTimeline
         ? dayjs(grantApplication?.projectTimeline, 'D MMMM YYYY').format(
-          'YYYY-MM-DD',
-        )
+            'YYYY-MM-DD',
+          )
         : '',
       proofOfWork: grantApplication?.proofOfWork || '',
       milestones: grantApplication?.milestones || '',
@@ -127,10 +127,10 @@ export const GrantApplicationModal = ({
         : extractTwitterUsername(user?.twitter || '') || '',
       ...(grantApplication?.answers
         ? Object.fromEntries(
-          (grantApplication.answers as unknown as EligibilityAnswer[]).map(
-            (answer, index) => [`answer-${index + 1}`, answer.answer],
-          ),
-        )
+            (grantApplication.answers as unknown as EligibilityAnswer[]).map(
+              (answer, index) => [`answer-${index + 1}`, answer.answer],
+            ),
+          )
         : {}),
     },
   });
@@ -240,11 +240,9 @@ export const GrantApplicationModal = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader px={{ base: 4, md: 10 }} pt={8} color="brand.slate.800">
-          Grant Application
+          资助申请
           <Text mt={1} color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
-            If you&apos;re working on a project that will help the
-            sponsor&apos;s ecosystem grow, apply with your proposal here and
-            we&apos;ll respond soon!
+            如果你正在做一个项目，这将有助于资助者生态系统成长，在此提交您的提案，我们将尽快回复！
           </Text>
           <Progress
             h={'1.5px'}
@@ -351,10 +349,10 @@ export const GrantApplicationModal = ({
                     fontWeight={600}
                     htmlFor={'ask'}
                   >
-                    Grant Amount
+                    资助金额
                   </FormLabel>
                   <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                    How much funding do you require to complete this project?
+                    您需要多少资金来完成这个项目？
                   </FormHelperText>
                   <InputGroup>
                     <InputLeftAddon>
@@ -392,15 +390,14 @@ export const GrantApplicationModal = ({
                   label="Your Solana Wallet Address"
                   helperText={
                     <>
-                      This is where you will receive your rewards if you win. If
-                      you want to edit it,{' '}
+                      此处是你获胜后领取奖励的地方。若需修改，请在此操作{' '}
                       <Text as="u">
                         <Link
                           color="blue.600"
                           href={`/t/${user?.username}/edit`}
                           isExternal
                         >
-                          click here
+                          点击此处
                         </Link>
                       </Text>{' '}
                     </>
@@ -434,7 +431,7 @@ export const GrantApplicationModal = ({
                     {Intl.DateTimeFormat().resolvedOptions().timeZone})
                   </FormLabel>
                   <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                    What is the expected completion date for the project?
+                    项目预计的完成日期是什么时候？
                   </FormHelperText>
                   <Input
                     w={'full'}
@@ -597,8 +594,9 @@ export const GrantApplicationModal = ({
             )}
             {!!error && (
               <Text align="center" mb={2} color="red">
-                Sorry! An error occurred while submitting. <br />
-                Please try again or contact us at hello@superteamearn.com
+                抱歉！提交时发生错误。
+                <br />
+                请重试或联系我们：info@solar.team
               </Text>
             )}
             <Flex gap={2} mt={8}>
@@ -610,7 +608,7 @@ export const GrantApplicationModal = ({
                   onClick={handleBack}
                   variant="unstyled"
                 >
-                  Back
+                  返回
                 </Button>
               )}
               <Button

@@ -40,6 +40,7 @@ import React, {
 import { MdArrowDropDown } from 'react-icons/md';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { SolarMail } from '@/constants';
 import { isCreateListingAllowedQuery } from '@/features/listing-builder';
 import {
   getColorStyles,
@@ -55,7 +56,6 @@ import {
 } from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
-import { SolarMail } from '@/constants';
 
 const MemoizedListingTable = React.memo(ListingTable);
 
@@ -392,7 +392,7 @@ export default function SponsorListings() {
                 <Text as="span" fontWeight={700}>
                   {filteredListings.length}
                 </Text>{' '}
-                Listings
+                任务
               </Text>
               <Button
                 mr={4}
@@ -436,7 +436,7 @@ export default function SponsorListings() {
             fontWeight={600}
             textAlign={'center'}
           >
-            Create your first listing
+            创建第一个新任务
           </Text>
           <Text
             mx="auto"
@@ -444,7 +444,7 @@ export default function SponsorListings() {
             fontWeight={500}
             textAlign={'center'}
           >
-            and start getting contributions
+            开始获取贡献
           </Text>
           <Tooltip
             label={
@@ -491,7 +491,7 @@ export default function SponsorListings() {
               fontWeight={600}
               textAlign={'center'}
             >
-              Zero Results
+              无结果
             </Text>
             <Text
               mx="auto"
@@ -499,7 +499,7 @@ export default function SponsorListings() {
               fontWeight={500}
               textAlign={'center'}
             >
-              No results matching the current filter
+              当前筛选条件下无匹配结果
             </Text>
           </>
         )}

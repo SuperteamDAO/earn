@@ -78,9 +78,9 @@ export const SubmissionList = ({
                 fontWeight={600}
                 textAlign="center"
               >
-                Submissions are not public until the submission deadline
+                提交内容在提交截止日期前不会公开
                 <br />
-                has closed. Check back soon!
+                已关闭。敬请稍后再来查看！
               </Text>
             </VStack>
           </>

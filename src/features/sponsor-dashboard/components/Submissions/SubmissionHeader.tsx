@@ -160,7 +160,7 @@ ${socialListingLink('twitter')}
             _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
             isLoading={exportMutation.isPending}
             leftIcon={<DownloadIcon />}
-            loadingText='导出中'
+            loadingText="导出中"
             onClick={() => exportSubmissionsCsv()}
             variant={'ghost'}
           >
@@ -181,26 +181,26 @@ ${socialListingLink('twitter')}
             (session?.user?.role === 'GOD' && bounty?.type !== 'grant') ||
             (bounty?.isPublished && !pastDeadline && bounty.type !== 'grant')
           ) && (
-              <Link
-                as={NextLink}
-                _hover={{ textDecoration: 'none' }}
-                href={
-                  bounty
-                    ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
-                    : ''
-                }
-                onClick={resetForm}
+            <Link
+              as={NextLink}
+              _hover={{ textDecoration: 'none' }}
+              href={
+                bounty
+                  ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
+                  : ''
+              }
+              onClick={resetForm}
+            >
+              <Button
+                color={'brand.slate.400'}
+                _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
+                leftIcon={<LuPencil />}
+                variant={'ghost'}
               >
-                <Button
-                  color={'brand.slate.400'}
-                  _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
-                  leftIcon={<LuPencil />}
-                  variant={'ghost'}
-                >
-                  修改
-                </Button>
-              </Link>
-            )}
+                修改
+              </Button>
+            </Link>
+          )}
         </Flex>
       </Flex>
       <Divider />
@@ -212,7 +212,7 @@ ${socialListingLink('twitter')}
           </Text>
         </Box>
         <Box>
-          <Text color="brand.slate.500">Deadline</Text>
+          <Text color="brand.slate.500">截止日期</Text>
           <Text
             mt={3}
             color="brand.slate.600"

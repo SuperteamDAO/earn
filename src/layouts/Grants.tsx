@@ -204,15 +204,15 @@ export function GrantPageLayout({
                               >
                                 {grant.totalApproved
                                   ? new Intl.NumberFormat('en-US', {
-                                    maximumFractionDigits: 0,
-                                    currency: 'USD',
-                                    style: 'currency',
-                                  }).format(
-                                    Math.round(
-                                      grant?.totalApproved /
-                                      grant?.totalApplications,
-                                    ),
-                                  )
+                                      maximumFractionDigits: 0,
+                                      currency: 'USD',
+                                      style: 'currency',
+                                    }).format(
+                                      Math.round(
+                                        grant?.totalApproved /
+                                          grant?.totalApplications,
+                                      ),
+                                    )
                                   : '—'}
                               </Text>
                             </Flex>
@@ -275,7 +275,7 @@ export function GrantPageLayout({
                               fontWeight={500}
                               textTransform={'uppercase'}
                             >
-                              Recipients
+                              收件人
                             </Text>
                           </Flex>
                         </Flex>
@@ -305,7 +305,7 @@ export function GrantPageLayout({
                             fontWeight={600}
                             textAlign="start"
                           >
-                            LIVE GRANTS
+                            实时资助任务
                           </Text>
                         </LiveGrants>
                       </Box>
@@ -365,7 +365,7 @@ export function GrantPageLayout({
                         fontWeight={600}
                         textAlign="center"
                       >
-                        CONTACT
+                        联系
                       </Text>
                       <Text>
                         <Link
@@ -376,7 +376,7 @@ export function GrantPageLayout({
                           isExternal
                           onClick={() => posthog.capture('reach out_listing')}
                         >
-                          Reach out
+                          求助
                           <ExternalLinkIcon
                             color={'#64768b'}
                             mb={1}
@@ -385,7 +385,7 @@ export function GrantPageLayout({
                           />
                         </Link>
                         <Text as="span" color={'brand.slate.500'}>
-                          if you have any questions about this listing
+                          如有关于此任务的任何疑问
                         </Text>
                       </Text>
                     </VStack>

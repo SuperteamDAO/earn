@@ -111,10 +111,10 @@ export function YourLinks({ useFormStore }: Props) {
           <FormControl w="full" mb={5}>
             <SocialInput watch={watch} register={register} />
             <Text color={'brand.slate.500'} fontWeight={'500'}>
-              Other Proof of Work
+              其他证明
             </Text>
             <Text mb={3} color={'brand.slate.400'} fontWeight={400}>
-              Adding more PoW increases your chance of getting work
+              添加更多贡献证明，提高您找工作机会的概率
             </Text>
             <Box>
               {pow.map((data, idx) => (
@@ -177,7 +177,7 @@ export function YourLinks({ useFormStore }: Props) {
               spinnerPlacement="start"
               type="submit"
             >
-              Finish Profile
+              完成个人资料
             </Button>
           </FormControl>
         </form>

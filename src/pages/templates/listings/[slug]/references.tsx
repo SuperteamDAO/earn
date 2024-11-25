@@ -26,7 +26,7 @@ function BountyDetails({ bounty }: BountyDetailsProps) {
         >
           <Box w="full">
             <Text mt={2} mb={6} color="gray.500" fontSize="xl" fontWeight={600}>
-              References
+              参考
             </Text>
             <Grid
               gap={6}

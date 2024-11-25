@@ -208,8 +208,7 @@ export default function Hackathon() {
           <ModalCloseButton />
           <ModalBody>
             <Text color="brand.slate.500">
-              This listing will be hidden from the homepage once unpublished.
-              Are you sure you want to unpublish this listing?
+              取消发布后，此任务将从主页隐藏。您确定要取消发布此任务吗？
             </Text>
           </ModalBody>
 
@@ -235,13 +234,10 @@ export default function Hackathon() {
           <ModalHeader>Delete Draft?</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text color="brand.slate.500">
-              Are you sure you want to delete this draft listing?
-            </Text>
+            <Text color="brand.slate.500">你确定要删除这份草稿吗？</Text>
             <br />
             <Text color="brand.slate.500">
-              Note: If this was previously a published listing, all submissions
-              or applications received for this listing will also be deleted.
+              注意：如果此职位信息之前曾发布，则为此职位信息收到的所有提交或申请也将被删除。
             </Text>
           </ModalBody>
 
@@ -265,16 +261,14 @@ export default function Hackathon() {
       <Flex justify="space-between" w="100%" mb={4}>
         <Flex align="center" gap={3}>
           <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
-            All Tracks
+            所有赛道
           </Text>
           <Divider
             h="60%"
             borderColor="brand.slate.200"
             orientation="vertical"
           />
-          <Text color="brand.slate.500">
-            Review hackathon tracks and submissions here
-          </Text>
+          <Text color="brand.slate.500">查看黑客马拉松赛道的评审与提交</Text>
         </Flex>
         <InputGroup w={64}>
           <Input
@@ -654,21 +648,21 @@ export default function Hackathon() {
                               currentBounty.status === 'OPEN' &&
                               !currentBounty.isPublished
                             ) && (
-                                <>
-                                  <MenuItem
-                                    py={2}
-                                    color={'brand.slate.500'}
-                                    fontSize={'sm'}
-                                    fontWeight={500}
-                                    icon={
-                                      <Icon as={IoEyeOffOutline} boxSize={4} />
-                                    }
-                                    onClick={() => handleUnpublish(currentBounty)}
-                                  >
-                                    Unpublish
-                                  </MenuItem>
-                                </>
-                              )}
+                              <>
+                                <MenuItem
+                                  py={2}
+                                  color={'brand.slate.500'}
+                                  fontSize={'sm'}
+                                  fontWeight={500}
+                                  icon={
+                                    <Icon as={IoEyeOffOutline} boxSize={4} />
+                                  }
+                                  onClick={() => handleUnpublish(currentBounty)}
+                                >
+                                  Unpublish
+                                </MenuItem>
+                              </>
+                            )}
                           </MenuList>
                         </Menu>
                       </Td>

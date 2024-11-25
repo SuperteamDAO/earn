@@ -1,9 +1,9 @@
 import { Box, Link, Text } from '@chakra-ui/react';
 import React from 'react';
 
+import { SolarMail } from '@/constants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { SolarMail } from '@/constants';
 
 export default function Blocked() {
   return (
@@ -23,14 +23,11 @@ export default function Blocked() {
           fontWeight={500}
           textAlign={'center'}
         >
-          Your access to Earn has been restricted. Please get in touch with{' '}
-          <Link
-            color={'brand.purple'}
-            href={`mailto:${SolarMail}`}
-          >
+          您的 Solar Earn 访问权限已受限。请联系相关人员获取帮助。{' '}
+          <Link color={'brand.purple'} href={`mailto:${SolarMail}`}>
             {SolarMail}
           </Link>{' '}
-          if you have any questions for more information.
+          如需更多信息或有问题，请随时联系。
         </Text>
       </Box>
     </Default>

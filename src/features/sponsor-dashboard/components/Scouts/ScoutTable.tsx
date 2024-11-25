@@ -194,9 +194,9 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
               </svg>
             </Center>
             <VStack gap={0} fontSize="base" fontWeight={600}>
-              <Text>No Profiles Found</Text>
+              <Text>未找到匹配</Text>
               <Text color="brand.slate.500" fontWeight={400}>
-                We couldn’t find any suitable matches for your listing
+                未能为您发布的任务找到合适的匹配项
               </Text>
             </VStack>
           </VStack>

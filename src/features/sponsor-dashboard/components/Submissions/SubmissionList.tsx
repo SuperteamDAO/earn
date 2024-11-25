@@ -178,7 +178,7 @@ export const SubmissionList = ({
             cursor="default"
           >
             <Text color="brand.slate.500" fontSize="xs">
-              Filter By
+              过滤条件
             </Text>
             <Menu>
               <MenuButton

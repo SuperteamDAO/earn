@@ -158,7 +158,7 @@ export default function LocalProfiles() {
             <Text as="span" fontWeight={700}>
               {filteredUsers?.length || 0}
             </Text>{' '}
-            Members
+            成员
           </Text>
           <Button
             mr={4}
@@ -168,7 +168,7 @@ export default function LocalProfiles() {
             size="sm"
             variant="outline"
           >
-            Previous
+            上一页
           </Button>
           <Button
             isDisabled={currentPage === totalPages}
@@ -177,7 +177,7 @@ export default function LocalProfiles() {
             size="sm"
             variant="outline"
           >
-            Next
+            下一页
           </Button>
         </Flex>
       )}

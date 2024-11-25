@@ -190,7 +190,7 @@ export const SubmissionPanel = ({
                             onClick={onWinnersAnnounceOpen}
                             variant={'solid'}
                           >
-                            Announce Winners
+                            公布获奖者
                           </Button>
                         </Tooltip>
                       )}
@@ -221,10 +221,10 @@ export const SubmissionPanel = ({
                           {remainings.bonus === 1 ? 'Bonus' : 'Bonus'}{' '}
                         </>
                       )}
-                      Remaining
+                      剩余
                     </Text>
                   ) : (
-                    <Text color="#48CB6D">All winners selected</Text>
+                    <Text color="#48CB6D">所有获奖者已选出</Text>
                   )}
                 </Flex>
               )}
@@ -291,10 +291,10 @@ export const SubmissionPanel = ({
         ) : (
           <Box p={3}>
             <Text color={'brand.slate.500'} fontSize={'xl'} fontWeight={500}>
-              No submissions found
+              未找到提交
             </Text>
             <Text color={'brand.slate.400'} fontSize={'sm'}>
-              Try a different search query
+              尝试其他搜索查询
             </Text>
           </Box>
         )}

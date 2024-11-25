@@ -57,14 +57,14 @@ export default function VerifyRequest() {
           fontSize={{ base: '2xl', md: '28' }}
           textAlign={'center'}
         >
-          We just sent an OTP
+          我们刚发送了一个一次性密码
         </Heading>
         <Text
           color="#475569"
           fontSize={{ base: 'lg', md: '20' }}
           textAlign={'center'}
         >
-          On your email {email}
+          到您的电子邮箱{email}
         </Text>
         <Circle mx="auto" my={16} bg="#EEF2FF" size={32}>
           <EmailIcon />

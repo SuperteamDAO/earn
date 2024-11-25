@@ -244,11 +244,7 @@ export const VerifyPaymentModal = ({
     }
 
     if (error) {
-      return (
-        <Text color="red.500">
-          Error loading submissions. Please try again.
-        </Text>
-      );
+      return <Text color="red.500">提交加载错误。请再试一次。</Text>;
     }
 
     switch (status) {
@@ -265,11 +261,11 @@ export const VerifyPaymentModal = ({
               />
               <VStack maxW="20rem">
                 <Text color="brand.slate.900" fontWeight={500}>
-                  Verifying Payment
+                  验证付款
                 </Text>
                 <Text align="center" color="brand.slate.500" fontSize="sm">
-                  {`We're`} verifying all your links, hang tight! <br /> This
-                  should take less than a minute
+                  我们正在验证您所有的链接，请稍候！
+                  <br /> 应该不会超过一分钟
                 </Text>
               </VStack>
             </VStack>
@@ -306,10 +302,10 @@ export const VerifyPaymentModal = ({
             </Center>
             <VStack maxW="20rem">
               <Text color="brand.slate.900" fontWeight={500}>
-                External Payment(s) Added
+                外部支付方式已添加
               </Text>
               <Text align="center" color="brand.slate.500" fontSize="sm">
-                We have successfully added an external payment to your listing.
+                我们已成功为您任务添加了外部支付方式。
               </Text>
             </VStack>
             {listing?.totalPaymentsMade !== listing?.totalWinnersSelected && (
@@ -346,11 +342,10 @@ export const VerifyPaymentModal = ({
             </Center>
             <VStack maxW="20rem">
               <Text color="brand.slate.900" fontWeight={500}>
-                Oh-Uh Verification Failed
+                外部支付方式验证失败
               </Text>
               <Text align="center" color="brand.slate.500" fontSize="sm">
-                We {`couldn’t`} verify your payment status. <br /> Please check
-                your links again and make sure {`it’s`} the exact amount
+                我们验证您的付款状态 <br /> 请再次检查您的链接 并确保金额正确
               </Text>
             </VStack>
             <VStack>
@@ -386,7 +381,7 @@ export const VerifyPaymentModal = ({
           <form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
             <VStack align="start">
               <Text color="brand.slate.900" fontSize="medium" fontWeight={500}>
-                Add Reward Payment Link
+                添加奖励支付链接
               </Text>
               <Text
                 mt={2}
@@ -394,9 +389,8 @@ export const VerifyPaymentModal = ({
                 fontSize="sm"
                 fontWeight={400}
               >
-                If you have paid the winners outside of Earn and want to update
-                the status of this listing as {`"Completed"`}, please add the
-                transaction links of the payments made to the winners.
+                如果您已在 Earn 之外向获奖者支付了奖金，并想将此列表的状态更新为
+                {`"已完成"`}，请添加支付给获奖者的交易链接。
               </Text>
             </VStack>
             <VStack gap={6} my={6}>
@@ -428,24 +422,24 @@ export const VerifyPaymentModal = ({
                             >
                               <Text>
                                 {getRankLabels(submission.winnerPosition || 0)}{' '}
-                                PRIZE
+                                奖项
                               </Text>
                               {submission.winnerPosition ===
                                 BONUS_REWARD_POSITION && (
-                                  <HStack gap={0}>
-                                    <Text>(</Text>
-                                    <Text
-                                      overflow="hidden"
-                                      maxW="5rem"
-                                      textTransform="none"
-                                      textOverflow="ellipsis"
-                                      noOfLines={1}
-                                    >
-                                      @{submission.user.username}
-                                    </Text>
-                                    <Text>)</Text>
-                                  </HStack>
-                                )}
+                                <HStack gap={0}>
+                                  <Text>(</Text>
+                                  <Text
+                                    overflow="hidden"
+                                    maxW="5rem"
+                                    textTransform="none"
+                                    textOverflow="ellipsis"
+                                    noOfLines={1}
+                                  >
+                                    @{submission.user.username}
+                                  </Text>
+                                  <Text>)</Text>
+                                </HStack>
+                              )}
                             </HStack>
                             <HStack>
                               <Image
@@ -457,7 +451,7 @@ export const VerifyPaymentModal = ({
                               <Text color="brand.slate.800" fontWeight={600}>
                                 {formatNumberWithSuffix(
                                   listing?.rewards?.[
-                                  submission.winnerPosition || 0
+                                    submission.winnerPosition || 0
                                   ] || 0,
                                 )}
                               </Text>
@@ -487,9 +481,7 @@ export const VerifyPaymentModal = ({
                                     }}
                                     variant="outline"
                                   >
-                                    <Text mr={2}>
-                                      Payment Verified. View Tx
-                                    </Text>
+                                    <Text mr={2}>支付已验证。查看交易</Text>
                                     <Icon as={ExternalLinkIcon} />
                                   </Button>
                                 </Link>

@@ -353,7 +353,7 @@ export default function BountySubmissions({ listing }: Props) {
                           <Text as="span" fontWeight={700}>
                             {filteredSubmissions.length}
                           </Text>{' '}
-                          Submissions
+                          提交
                         </Text>
                         <Button
                           isDisabled={currentPage >= totalPages}

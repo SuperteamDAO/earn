@@ -35,7 +35,7 @@ export const FeedPost = ({ type, id }: Props) => {
         >
           <Image alt="404 page" src="/assets/bg/404.svg" />
           <Text color="black" fontSize={'xl'} fontWeight={500}>
-            No post found
+            未找到内容
           </Text>
           <Text
             maxW={'2xl'}

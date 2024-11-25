@@ -23,7 +23,7 @@ import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tooltip } from '@/components/shared/responsive-tooltip';
-import { PDTG } from '@/constants';
+import { PDTG, SolarMail } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import {
   isCreateListingAllowedQuery,
@@ -38,7 +38,6 @@ import {
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUpdateUser, useUser } from '@/store/user';
-import { SolarMail } from '@/constants';
 
 interface LinkItemProps {
   name: string;
@@ -178,37 +177,37 @@ export function SponsorLayout({
 
   const LinkItems: Array<LinkItemProps> = isHackathonRoute
     ? [
-      { name: 'All Tracks', link: `/hackathon`, icon: MdList },
-      {
-        name: '获取帮助',
-        link: PDTG,
-        icon: MdOutlineChatBubbleOutline,
-        posthog: 'get help_sponsor',
-      },
-    ]
+        { name: 'All Tracks', link: `/hackathon`, icon: MdList },
+        {
+          name: '获取帮助',
+          link: PDTG,
+          icon: MdOutlineChatBubbleOutline,
+          posthog: 'get help_sponsor',
+        },
+      ]
     : [
-      { name: '我的任务列表', link: '/listings', icon: BiListUl },
-      {
-        name: '团队设置',
-        link: '/team-settings',
-        icon: RiUserSettingsLine,
-      },
-      ...(isLocalProfileVisible
-        ? [
-          {
-            name: 'Local Profiles',
-            link: '/local-profiles',
-            icon: LuUsers,
-          },
-        ]
-        : []),
-      {
-        name: '获取帮助',
-        link: PDTG,
-        icon: LuMessageSquare,
-        posthog: 'get help_sponsor',
-      },
-    ];
+        { name: '我的任务列表', link: '/listings', icon: BiListUl },
+        {
+          name: '团队设置',
+          link: '/team-settings',
+          icon: RiUserSettingsLine,
+        },
+        ...(isLocalProfileVisible
+          ? [
+              {
+                name: 'Local Profiles',
+                link: '/local-profiles',
+                icon: LuUsers,
+              },
+            ]
+          : []),
+        {
+          name: '获取帮助',
+          link: PDTG,
+          icon: LuMessageSquare,
+          posthog: 'get help_sponsor',
+        },
+      ];
 
   const showLoading = !isHackathonRoute
     ? !user?.currentSponsor?.id
@@ -362,7 +361,7 @@ export function SponsorLayout({
                   opacity={isExpanded ? 1 : 0}
                   transition="opacity 0.2s ease-in-out"
                 >
-                  创建新 Track
+                  创建新Track
                 </Text>
               </Button>
             )}

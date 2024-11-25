@@ -159,8 +159,7 @@ export const GrantApplicationButton = ({
         <Flex gap="2" w="full" mb={4} p="3" bg={'#62F6FF10'}>
           <WarningIcon color="#1A7F86" />
           <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
-            You will be notified via email if your grant has been approved or
-            rejected.
+            如果你的资助申请已获批准或被拒绝，你将会通过电子邮件收到通知。
           </Text>
         </Flex>
       )}

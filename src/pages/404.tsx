@@ -39,7 +39,7 @@ export default function Custom404() {
         >
           <Image alt="404 page" src="/assets/bg/404.svg" />
           <Text color="black" fontSize={'xl'} fontWeight={500}>
-            Nothing Found
+            未找到
           </Text>
           <Text
             maxW={'2xl'}
@@ -48,9 +48,7 @@ export default function Custom404() {
             fontWeight={400}
             textAlign={'center'}
           >
-            Sorry, we couldn&apos;t find what you were looking for. It’s
-            probably your own fault, please check your spelling or meanwhile
-            have a look at this cat
+            抱歉，我们未能找到您所寻找的内容. 请检查您的拼写或者寻求管理员的帮助
           </Text>
           <Image
             w={['20rem', '20rem', '30rem', '30rem']}

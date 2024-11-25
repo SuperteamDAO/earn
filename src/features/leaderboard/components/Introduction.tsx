@@ -22,15 +22,15 @@ export function Introduction() {
         <Image alt="Medal" src={Medal} height={26} width={26} />
         <Text fontWeight={600}>Introducing Leaderboards</Text>
         <Text color="brand.slate.600">
-          Get Inspired: Check out Earn profiles of the leading contributors of
-          the Solana ecosystem!
+          欢迎来到 Solar Earn Leaderboards查看Solar
+          生态系统顶级贡献者的赏金资料！获取激励。
         </Text>
       </VStack>
       <Divider />
       <VStack align="start">
         <Flex gap={2}>
           <Image width={20} src={Progress} alt="progress icon" />
-          <Text color="brand.slate.600">Track your progress as you earn</Text>
+          <Text color="brand.slate.600">边赚钱，边成长</Text>
         </Flex>
         <Flex gap={2}>
           <Image
@@ -39,9 +39,7 @@ export function Introduction() {
             alt="progress icon"
             style={{ paddingRight: '0.4rem' }}
           />
-          <Text color="brand.slate.600">
-            Discover top profiles {'&'} their submissions
-          </Text>
+          <Text color="brand.slate.600">发掘顶尖人才及其作品</Text>
         </Flex>
         <Flex gap={2}>
           <Image
@@ -50,9 +48,7 @@ export function Introduction() {
             alt="progress icon"
             style={{ paddingRight: '0.6rem' }}
           />
-          <Text color="brand.slate.600">
-            Improve your skills {'&'} rise through the ranks
-          </Text>
+          <Text color="brand.slate.600">提升你的技能，逐级晋升</Text>
         </Flex>
       </VStack>
     </VStack>

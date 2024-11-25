@@ -127,7 +127,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
             fontSize={'sm'}
             fontWeight={500}
           >
-            SHARE TO
+            分享给
           </Text>
           <Flex gap={4} mt={3} mb={4}>
             {socialPlatforms.map(({ name, icon, share }) => (

@@ -191,7 +191,7 @@ export const SubmissionCard = ({
           variant="outline"
         >
           <Text ml={24} fontSize={'17px'}>
-            View
+            浏览
           </Text>
         </Button>
       </Link>

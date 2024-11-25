@@ -96,7 +96,7 @@ export const UserDrawer = ({
                     {user?.wins}
                   </Text>
                   <Text color="brand.slate.500" fontSize={'0.92rem'}>
-                    Wins
+                    获奖
                   </Text>
                 </Flex>
                 <Flex
@@ -114,7 +114,7 @@ export const UserDrawer = ({
                     {user?.totalSubmissions}
                   </Text>
                   <Text color="brand.slate.500" fontSize={'0.92rem'}>
-                    Submissions
+                    提交
                   </Text>
                 </Flex>
                 <Flex
@@ -132,7 +132,7 @@ export const UserDrawer = ({
                     ${user.totalEarnings.toLocaleString()}
                   </Text>
                   <Text color="brand.slate.500" fontSize={'0.92rem'}>
-                    $ Earned
+                    $ 赚取
                   </Text>
                 </Flex>
                 <Flex
