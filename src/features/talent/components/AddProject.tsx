@@ -161,7 +161,7 @@ export const AddProject = ({
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl isRequired>
               <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>Project Title</FormLabel>
+                <FormLabel color={'brand.slate.500'}>项目名称</FormLabel>
                 <Input
                   borderColor="brand.slate.300"
                   _placeholder={{
@@ -174,9 +174,7 @@ export const AddProject = ({
                 />
               </Box>
               <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>
-                  描述你的工作
-                </FormLabel>
+                <FormLabel color={'brand.slate.500'}>描述你的工作</FormLabel>
                 <Textarea
                   borderColor="brand.slate.300"
                   _placeholder={{
@@ -205,12 +203,12 @@ export const AddProject = ({
                 subSkills={subSkills}
                 setSkills={setSkills}
                 setSubSkills={setSubSkills}
-                skillLabel="Skills Used"
-                subSkillLabel="Sub Skills Used"
+                skillLabel="主技能"
+                subSkillLabel="子技能"
               />
 
               <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>Link</FormLabel>
+                <FormLabel color={'brand.slate.500'}>项目链接</FormLabel>
                 <InputGroup _placeholder={{ color: 'gray.500' }}>
                   <InputLeftElement
                     _placeholder={{ color: 'gray.500' }}
@@ -230,9 +228,7 @@ export const AddProject = ({
                 </InputGroup>
               </Box>
               <Box w={'full'} mb={'1.25rem'}>
-                {skillsError && (
-                  <Text color={'red'}>请添加技能与子技能</Text>
-                )}
+                {skillsError && <Text color={'red'}>请添加技能与子技能</Text>}
               </Box>
               <Button
                 w={'full'}
