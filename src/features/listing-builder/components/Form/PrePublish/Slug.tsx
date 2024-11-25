@@ -1,7 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { CheckIcon, Loader2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useWatch } from 'react-hook-form';
 import slugify from 'slugify';
 
@@ -19,7 +25,11 @@ import { slugCheckQuery } from '@/features/listing-builder';
 import { isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
 
-export function Slug() {
+export function Slug({
+  setSlugLoading,
+}: {
+  setSlugLoading: Dispatch<SetStateAction<boolean>>;
+}) {
   const form = useListingForm();
   const isEditing = useAtomValue(isEditingAtom);
 
@@ -101,6 +111,13 @@ export function Slug() {
     }
     validateSlug();
   }, [slug]);
+
+  useEffect(() => {
+    console.log('slug slugCheckFetching', slugCheckFetching);
+    console.log('slug generatedSlugFetching', generatedSlugFetching);
+    setSlugLoading(slugCheckFetching || generatedSlugFetching);
+  }, [slugCheckFetching, generatedSlugFetching]);
+
   return (
     <FormField
       control={form.control}

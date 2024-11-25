@@ -42,6 +42,7 @@ export function PrePublish() {
   useMemo(() => console.log('isST', isST), [isST]);
   const form = useListingForm();
   const [open, isOpen] = useState(false);
+  const [isSlugLoading, setIsSlugLoading] = useState(false);
 
   const isDraftSaving = useAtomValue(isDraftSavingAtom);
   const setConfirmModal = useSetAtom(confirmModalAtom);
@@ -65,11 +66,36 @@ export function PrePublish() {
     isCreateListingAllowedRefetch();
   }, [user]);
 
-  const isDisabled =
-    isCreateListingAllowed !== undefined &&
-    isCreateListingAllowed === false &&
-    session?.user.role !== 'GOD' &&
-    !isEditing;
+  const isDisabledHard = useMemo(
+    () =>
+      isCreateListingAllowed !== undefined &&
+      isCreateListingAllowed === false &&
+      session?.user.role !== 'GOD' &&
+      !isEditing,
+    [isCreateListingAllowed, session, isEditing],
+  );
+
+  const isDisabledSoft = useMemo(
+    () =>
+      isDraftSaving ||
+      submitListingMutation.isPending ||
+      isDisabledHard ||
+      submitListingMutation.isSuccess ||
+      isSlugLoading,
+    [
+      submitListingMutation.isPending,
+      submitListingMutation.isSuccess,
+      isDisabledHard,
+      isSlugLoading,
+    ],
+  );
+
+  useEffect(() => {
+    console.log('slug isSlugLoading', isSlugLoading);
+  }, [isSlugLoading]);
+  useEffect(() => {
+    console.log('isDisabledSoft', isDisabledSoft);
+  }, [isDisabledSoft]);
 
   return (
     <Dialog
@@ -83,7 +109,7 @@ export function PrePublish() {
         <TooltipTrigger>
           <Button
             className="ph-no-capture"
-            disabled={isDraftSaving || isDisabled}
+            disabled={isDraftSaving || isDisabledHard}
             onClick={async () => {
               posthog.capture('basics_sponsor');
               if (await form.validateBasics()) isOpen(true);
@@ -95,7 +121,7 @@ export function PrePublish() {
             Continue
           </Button>
         </TooltipTrigger>
-        {isDisabled && (
+        {isDisabledHard && (
           <TooltipContent>
             <p>
               Creating a new listing has been temporarily locked for you since
@@ -115,73 +141,63 @@ export function PrePublish() {
         <div className="space-y-4">
           <Visibility />
           <GeoLock />
-          <Slug />
+          <Slug setSlugLoading={setIsSlugLoading} />
           {isST && <Foundation />}
         </div>
-        <DialogFooter className="w-full pt-4 sm:flex-col">
-          <div className="flex w-full sm:justify-between">
-            <Button
-              variant="outline"
-              className="ph-no-capture gap-8"
-              disabled={isDraftSaving || submitListingMutation.isPending}
-              onClick={() => {
-                posthog.capture('preview_listing');
-                setShowPreview(true);
-              }}
-            >
-              Preview <ExternalLink />{' '}
-            </Button>
-            <Button
-              className="px-12"
-              onClick={async () => {
-                console.log('values ', form.getValues());
-                if (await form.trigger()) {
-                  try {
-                    const data = await form.submitListing();
+        <DialogFooter className="flex w-full pt-4 sm:justify-between">
+          <Button
+            variant="outline"
+            className="ph-no-capture gap-8"
+            disabled={isDisabledSoft}
+            onClick={() => {
+              posthog.capture('preview_listing');
+              setShowPreview(true);
+            }}
+          >
+            Preview <ExternalLink />{' '}
+          </Button>
+          <Button
+            className="px-12"
+            onClick={async () => {
+              console.log('values ', form.getValues());
+              if (await form.trigger()) {
+                try {
+                  const data = await form.submitListing();
+                  if (isEditing) {
+                    posthog.capture('update listing_sponsor');
+                    router.push('/dashboard/listings');
+                    toast.success('Listing Updated Successfully', {
+                      description: 'Redirecting to dashboard',
+                    });
+                  } else {
                     isOpen(false);
-                    if (isEditing) {
-                      posthog.capture('update listing_sponsor');
-                      router.push('/dashboard/listings');
-                      toast.success('Listing Updated Successfully', {
-                        description: 'Redirecting to dashboard',
-                      });
+                    posthog.capture('publish listing_sponsor');
+                    if (data.status === 'VERIFYING') {
+                      setConfirmModal('VERIFICATION');
                     } else {
-                      posthog.capture('publish listing_sponsor');
-                      if (data.status === 'VERIFYING') {
-                        setConfirmModal('VERIFICATION');
-                      } else {
-                        setConfirmModal('SUCCESS');
-                      }
+                      setConfirmModal('SUCCESS');
                     }
-                  } catch (error) {
-                    console.log(error);
-                    toast.error(
-                      'Failed to create listing, please try again later',
-                      {},
-                    );
                   }
+                } catch (error) {
+                  console.log(error);
+                  toast.error(
+                    'Failed to create listing, please try again later',
+                    {},
+                  );
                 }
-              }}
-              disabled={
-                isDraftSaving || submitListingMutation.isPending || isDisabled
               }
-            >
-              {submitListingMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : !!isEditing ? (
-                'Update'
-              ) : (
-                'Publish'
-              )}
-            </Button>
-          </div>
-          <div className="w-full">
-            {submitListingMutation.isSuccess && isEditing && (
-              <p className="text-center text-sm text-green-600">
-                Listing Updated Successfully, redirecting to dashboard...
-              </p>
+            }}
+            disabled={isDisabledSoft}
+          >
+            {submitListingMutation.isPending ||
+            submitListingMutation.isSuccess ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : !!isEditing ? (
+              'Update'
+            ) : (
+              'Publish'
             )}
-          </div>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
