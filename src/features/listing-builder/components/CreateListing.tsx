@@ -38,7 +38,7 @@ const defaultStepList = [
   {
     label: '模板',
     number: 1,
-    mainHead: '列出你的赏金任务',
+    mainHead: '列出你的任务',
     description:
       '如果您已经在其他渠道发布任务，请选择"从 0 开始"，然后复制/粘贴您的文本。',
   },

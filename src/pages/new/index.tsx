@@ -186,7 +186,7 @@ export default function NewProfilePage({
                     <BulletPoint type="TALENT">
                       为 Solana 项目贡献力量
                     </BulletPoint>
-                    <BulletPoint type="TALENT"> 构建您的 Web3 简历</BulletPoint>
+                    <BulletPoint type="TALENT">构建您的 Web3 简历</BulletPoint>
                     <BulletPoint type="TALENT">赢取赏金奖励</BulletPoint>
                   </Box>
                   <Divider borderColor="brand.slate.300" />
