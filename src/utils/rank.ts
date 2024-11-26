@@ -55,7 +55,7 @@ const _rankLabels = [
   'fiftieth',
 ];
 
-const rankLabels = Array.from({ length: 51 }, (_, inx) => `第 ${inx} 阶段`);
+const rankLabels = Array.from({ length: 51 }, (_, inx) => `${inx} 等奖`);
 
 export const getRankLabels = (rank: number) => {
   if (rank === 99) return 'bonus';
@@ -85,7 +85,7 @@ export const nthLabelGenerator = (key: number) => {
   // if (key === 2) return '2nd';
   // if (key === 3) return '3rd';
   if (key === BONUS_REWARD_POSITION) return 'bonus';
-  return `第${key}阶段`;
+  return `${key}等奖`;
 };
 
 export const sortRank = (rankArray: number[]) => {

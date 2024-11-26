@@ -33,7 +33,7 @@ export const InputField = ({
   isRequired = false,
 }: InputFieldProps) => {
   const validateNonEmpty = (value: string) => {
-    return value.trim() !== '' || 'This field is required';
+    return value.trim() !== '' || '必填字段';
   };
 
   const combinedValidate = (value: string) => {
@@ -63,7 +63,7 @@ export const InputField = ({
         id={name}
         placeholder={placeholder}
         {...register(name, {
-          required: isRequired ? 'This field is required' : false,
+          required: isRequired ? '必填字段' : false,
           validate: combinedValidate,
         })}
         isInvalid={isInvalid || !!errors?.[name]}

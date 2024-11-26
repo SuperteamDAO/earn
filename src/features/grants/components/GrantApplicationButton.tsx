@@ -127,9 +127,7 @@ export const GrantApplicationButton = ({
         >
           <AuthWrapper
             showCompleteProfileModal
-            completeProfileModalBodyText={
-              'Please complete your profile before applying for a grant.'
-            }
+            completeProfileModalBodyText={'申请资助请先完善您的个人资料.'}
             style={{ w: 'full', direction: 'column' }}
           >
             <Button

@@ -325,14 +325,11 @@ export const ListingPayments = ({
         errorMessage = '请注明奖励总金额';
       } else if (compensationType === 'range') {
         if (!minRewardAsk || !maxRewardAsk) {
-          errorMessage =
-            '请说明最低和最高补偿范围';
+          errorMessage = '请说明最低和最高补偿范围';
         } else if (maxRewardAsk < minRewardAsk) {
-          errorMessage =
-            '“补偿范围不正确，最大值必须大于最小值';
+          errorMessage = '补偿范围不正确，最大值必须大于最小值';
         } else if (maxRewardAsk === minRewardAsk) {
-          errorMessage =
-            '补偿范围不正确，最大值必须大于最小值';
+          errorMessage = '补偿范围不正确，最大值必须大于最小值';
         }
       }
     } else {
@@ -341,7 +338,7 @@ export const ListingPayments = ({
         rewards[BONUS_REWARD_POSITION] &&
         rewards[BONUS_REWARD_POSITION] === 0
       ) {
-        errorMessage = "奖金不能为 0";
+        errorMessage = '奖金不能为 0';
       } else if (
         maxBonusSpots &&
         maxBonusSpots > 0 &&
@@ -350,7 +347,7 @@ export const ListingPayments = ({
       ) {
         errorMessage = '没有奖金奖励';
       } else if (rewards?.[BONUS_REWARD_POSITION] === 0) {
-        errorMessage = `奖金不能为 0`;
+        errorMessage = '奖金不能为 0';
       } else if (cleanRewardPrizes(rewards).length !== prizes.length) {
         errorMessage = '请填满所有的奖金或删除未使用的';
       }
@@ -396,8 +393,8 @@ export const ListingPayments = ({
       value === ''
         ? tokenList
         : tokenList.filter((token) =>
-          token.tokenName.toLowerCase().includes(value.toLowerCase()),
-        );
+            token.tokenName.toLowerCase().includes(value.toLowerCase()),
+          );
     setSearchResults(filteredResults);
     setSelectedTokenIndex(null);
     setIsOpen(true);
@@ -459,12 +456,10 @@ export const ListingPayments = ({
 
   switch (compensationType) {
     case 'fixed':
-      compensationHelperText =
-        '如果薪酬符合他们的期望，感兴趣的人就会申请"；';
+      compensationHelperText = '如果薪酬符合他们的期望，感兴趣的人就会申请"；';
       break;
     case 'range':
-      compensationHelperText =
-        '允许申请人在特定范围内发送报价';
+      compensationHelperText = '允许申请人在特定范围内发送报价';
       break;
     case 'variable':
       compensationHelperText = '允许申请人发送任意金额的报价';
@@ -722,7 +717,7 @@ export const ListingPayments = ({
                       color: 'brand.slate.300',
                     }}
                     {...register('rewardAmount', {
-                      required: 'This field is required',
+                      required: '必填字段',
                       setValueAs: (value) => parseFloat(value),
                     })}
                     placeholder={(MAX_PODIUMS * 500).toString()}
@@ -774,7 +769,7 @@ export const ListingPayments = ({
                       }}
                       placeholder=""
                       {...register('minRewardAsk', {
-                        required: 'This field is required',
+                        required: '必填字段',
                         setValueAs: (value) => parseFloat(value),
                       })}
                     />
@@ -783,9 +778,7 @@ export const ListingPayments = ({
                 </Flex>
               </FormControl>
               <FormControl w="full" mt={5} isRequired>
-                <ListingFormLabel htmlFor="minRewardAsk">
-                  到
-                </ListingFormLabel>
+                <ListingFormLabel htmlFor="minRewardAsk">到</ListingFormLabel>
                 <Flex
                   pos="relative"
                   pr={5}
@@ -816,7 +809,7 @@ export const ListingPayments = ({
                       }}
                       placeholder=""
                       {...register('maxRewardAsk', {
-                        required: 'This field is required',
+                        required: '必填字段',
                         setValueAs: (value) => parseFloat(value),
                       })}
                     />
@@ -841,8 +834,8 @@ export const ListingPayments = ({
                   奖励
                 </Text>
                 <Text>
-                  {formatTotalPrice(calculateTotalReward())}{' '}
-                  总计 {selectedToken?.tokenSymbol}
+                  {formatTotalPrice(calculateTotalReward())} 总计{' '}
+                  {selectedToken?.tokenSymbol}
                 </Text>
               </HStack>
               {prizes.map((el) => (
@@ -925,8 +918,8 @@ export const ListingPayments = ({
                       }
                       value={
                         el.defaultValue !== null &&
-                          el.defaultValue !== undefined &&
-                          !isNaN(el.defaultValue)
+                        el.defaultValue !== undefined &&
+                        !isNaN(el.defaultValue)
                           ? el.defaultValue
                           : undefined
                       }

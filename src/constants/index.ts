@@ -744,8 +744,7 @@ export const workType = [
 
 export const MAX_COMMENT_SUGGESTIONS = 5;
 
-export const TERMS_OF_USE =
-  'https://drive.google.com/file/d/1ybbO_UOTaIiyKb4Mbm3sNMbjTf5qj5mT/view?usp=sharing';
+export const TERMS_OF_USE = '#';
 
 export const URL_REGEX = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
 

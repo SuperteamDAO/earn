@@ -375,9 +375,7 @@ export const Comment = ({
                 <Flex justify={'end'} gap={4} w="full">
                   <AuthWrapper
                     showCompleteProfileModal
-                    completeProfileModalBodyText={
-                      'Please complete your profile before commenting on the listing.'
-                    }
+                    completeProfileModalBodyText={'参与任务前请先完善个人信息.'}
                   >
                     <Button
                       h="auto"

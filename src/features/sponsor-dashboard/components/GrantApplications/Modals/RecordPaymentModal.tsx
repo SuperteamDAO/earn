@@ -53,7 +53,7 @@ const paymentSchema = (maxAmount: number, token: string) =>
         const solanaFmRegex =
           /^https:\/\/solana\.fm\/tx\/[A-Za-z0-9]{44,}(\?cluster=[a-zA-Z-]+)?$/;
         return solscanRegex.test(link) || solanaFmRegex.test(link);
-      }, 'Invalid transaction link. Must be a solscan.io or solana.fm link with a valid transaction ID.'),
+      }, '无效的交易链接,必须是solscan.io 或 solana.fm 交易链接，且必须包含有效的交易ID。'),
   });
 
 type PaymentFormInputs = z.infer<ReturnType<typeof paymentSchema>>;
@@ -126,7 +126,7 @@ export const RecordPaymentModal = ({
                   color={'brand.slate.800'}
                   borderColor="brand.slate.300"
                   {...register('amount', {
-                    required: 'This field is required',
+                    required: '必填字段',
                     setValueAs: (value) => parseFloat(value),
                   })}
                   placeholder=""

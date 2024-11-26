@@ -1126,9 +1126,7 @@ const SubscribeHackathon = () => {
       <HStack align="start">
         <AuthWrapper
           showCompleteProfileModal
-          completeProfileModalBodyText={
-            'Please complete your profile before subscribing to a hackathon.'
-          }
+          completeProfileModalBodyText={'参加黑客松前请先完善个人资料'}
         >
           <IconButton
             className="ph-no-capture"
@@ -1334,7 +1332,7 @@ interface CountryLeader {
   location: string;
   submission_count: number;
 }
-export const getServerSideProps: GetServerSideProps = async ({ }) => {
+export const getServerSideProps: GetServerSideProps = async ({}) => {
   const countryLeaders = await prisma.$queryRaw<CountryLeader[]>`
 SELECT
     u.location,

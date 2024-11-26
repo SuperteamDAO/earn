@@ -53,7 +53,7 @@ export const verifyPaymentsSchema = z.object({
             );
           },
           {
-            message: `Please add a valid transaction link (${ALLOWED_URL_PREFIXES.join(' or ')})`,
+            message: `请添加有效的交易链接 (${ALLOWED_URL_PREFIXES.join(' 或 ')})`,
           },
         )
         .transform((data) => ({
@@ -62,7 +62,7 @@ export const verifyPaymentsSchema = z.object({
         })),
     )
     .refine((links) => links.some((link) => link.link || link.isVerified), {
-      message: 'At least one payment link or verified payment is required',
+      message: '至少有一个支付交易链接或已验证的支付',
     }),
 });
 

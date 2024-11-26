@@ -18,11 +18,11 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
 
+import { SolarMail } from '@/constants';
 import { EarnAvatar, EmailSettingsModal } from '@/features/talent';
 import { useLogout, useUser } from '@/store/user';
-import { SolarMail } from '@/constants';
 
-export function UserMenu({ }) {
+export function UserMenu({}) {
   const router = useRouter();
   const posthog = usePostHog();
 
@@ -72,7 +72,7 @@ export function UserMenu({ }) {
           size="sm"
           variant={'ghost'}
         >
-          Please complete your profile before commenting on the listing.
+          请先完善个人信息
         </Button>
       )}
       <Menu>

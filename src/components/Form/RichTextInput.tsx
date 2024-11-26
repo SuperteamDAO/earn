@@ -45,7 +45,7 @@ const RichTextInputWithHelper: React.FC<RichTextInputWithHelperProps> = ({
           isRequired &&
           (!value || value.trim() === '' || value.trim() === '<p></p>')
         ) {
-          return 'This field is required';
+          return '必填字段';
         }
         return validate ? validate(value) : true;
       },
