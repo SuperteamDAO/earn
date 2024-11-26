@@ -483,10 +483,10 @@ export const GrantApplicationModal = ({
                     fontWeight={600}
                     htmlFor={id}
                   >
-                    Personal Twitter Profile
+                    个人推特资料
                   </FormLabel>
                   <FormHelperText mt={0} mb={2} color="brand.slate.500">
-                    Add your personal Twitter username
+                    添加个人推特用户名
                   </FormHelperText>
                   <Box mb={'1.25rem'}>
                     <Flex align="center" justify="center" direction="row">
