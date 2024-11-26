@@ -115,6 +115,8 @@ export const getListingDefaults = ({
         defaults[key] = [];
       } else if (zodValue._def.innerType instanceof z.ZodString) {
         defaults[key] = '';
+      } else if (zodValue._def.innerType instanceof z.ZodBoolean) {
+        defaults[key] = false;
       } else {
         defaults[key] = undefined;
       }
@@ -147,6 +149,8 @@ export const getListingDefaults = ({
   if (type === 'project') {
     defaults['eligibility'] = [{ type: 'text', question: '', order: 1 }];
   }
+
+  defaults['isFndnPaying'] = false;
   return defaults as ListingFormData;
 };
 
@@ -171,6 +175,10 @@ export const cleanTemplate = (
   reTemplate.rewardAmount = prevValues.rewardAmount || undefined;
   reTemplate.rewards = prevValues.rewards || undefined;
   reTemplate.region = prevValues.region;
+  reTemplate.isPrivate = prevValues.isPrivate;
+  reTemplate.isFndnPaying = prevValues.isFndnPaying;
+  reTemplate.hackathonId = prevValues.hackathonId || undefined;
+  reTemplate.eligibility = (prevValues.eligibility as any) || undefined;
 
   delete reTemplate.isFeatured;
   delete reTemplate.isActive;

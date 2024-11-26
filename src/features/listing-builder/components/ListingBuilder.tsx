@@ -2,7 +2,7 @@ import { type BountyType, type Hackathon } from '@prisma/client';
 import { Provider, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Form } from '@/components/ui/form';
 import {
@@ -90,6 +90,8 @@ function ListingBuilder({
     };
   }, []);
 
+  useMemo(() => console.log('form values', form.getValues()), [form]);
+
   return (
     <>
       <Form {...form}>
@@ -154,6 +156,7 @@ function ListingBuilderProvider({
         type: (params.get('type') as BountyType) || 'bounty',
         hackathon: hackathon,
       });
+  console.log('defaultListing', defaultListing);
 
   return (
     <Provider store={store}>

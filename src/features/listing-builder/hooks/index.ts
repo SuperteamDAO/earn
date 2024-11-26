@@ -7,6 +7,8 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useForm, useFormContext, type UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
+import { convertUndefinedToNull } from '@/utils/undefinedToNull';
+
 import {
   draftQueueAtom,
   hackathonAtom,
@@ -62,6 +64,7 @@ export const useListingForm = (
     pastListing: defaultValues as any,
     hackathon: hackathon,
   });
+  console.log('default values in hook', defaultValues);
   if (!formMethods || !Object.keys(formMethods).length) {
     //eslint-disable-next-line
     formMethods = useForm<ListingFormData>({
@@ -164,7 +167,11 @@ export const useListingForm = (
 
   const submitListing = useCallback(async () => {
     const formData = refineReadyListing(getValues());
-    console.log('submitListing', formData);
+    console.log('submitListing', getValues());
+    console.log(
+      'submitListing convertUndefinedToNull',
+      convertUndefinedToNull(formData),
+    );
     return await submitListingMutation.mutateAsync(formData);
   }, [getValues, submitListingMutation]);
 
