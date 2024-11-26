@@ -1,5 +1,12 @@
 import { type MultiSelectOptions } from '@/constants';
 
+const titlesForCN = {
+  Design: '设计',
+  Content: '内容',
+  Development: '开发',
+  Other: '其他',
+};
+
 const skillSubSkillMap = {
   Frontend: [
     { label: 'React', value: 'React' },
@@ -30,7 +37,7 @@ const skillSubSkillMap = {
     { label: 'MySQL', value: 'MySQL' },
     { label: 'Postgres', value: 'Postgres' },
     { label: 'MongoDB', value: 'MongoDB' },
-    { label: 'Pearl', value: 'Pearl' },
+    { label: 'Perl', value: 'Perl' },
     { label: 'Scala', value: 'Scala' },
     { label: 'Elixir', value: 'Elixir' },
     { label: 'Haskell', value: 'Haskell' },
@@ -56,7 +63,7 @@ const skillSubSkillMap = {
   Design: [
     { label: 'UI/UX 设计', value: 'UI/UX Design' },
     { label: '平面设计', value: 'Graphic Design' },
-    { label: '插画', value: 'Illustration' },
+    { label: '插图', value: 'Illustration' },
     { label: '游戏设计', value: 'Game Design' },
     { label: '演示设计', value: 'Presentation Design' },
     { label: '其他', value: 'Other' },
@@ -89,9 +96,21 @@ const skillSubSkillMap = {
   ],
 } as const;
 
+const skillSubSkillMapCN = {
+  Frontend: '前端',
+  Backend: '后端',
+  Blockchain: '区块链',
+  Mobile: '移动',
+  Design: '设计',
+  Community: '社区',
+  Growth: '增长',
+  Content: '内容',
+  Other: '其他',
+};
+
 const MainSkills: MultiSelectOptions[] = Object.keys(skillSubSkillMap).map(
   (skill) => ({
-    label: skill,
+    label: skillSubSkillMapCN[skill],
     value: skill,
   }),
 );
@@ -110,4 +129,4 @@ type SkillMap = {
 };
 
 export type { ParentSkills, SkillMap, Skills, SubSkillsType };
-export { MainSkills, skillSubSkillMap };
+export { MainSkills, skillSubSkillMap, titlesForCN };

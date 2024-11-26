@@ -12,6 +12,7 @@ import {
   listingsQuery,
   ListingTabs,
 } from '@/features/listings';
+import { titlesForCN } from '@/interface/skills';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { dayjs } from '@/utils/dayjs';
@@ -65,14 +66,14 @@ function ListingCategoryPage({ slug }: { slug: string }) {
           bounties={listingsData ?? []}
           isListingsLoading={isListingsLoading}
           emoji="/assets/home/emojis/moneyman.webp"
-          title={`${formattedSlug} `}
+          title={`${titlesForCN[formattedSlug]} 机会`}
           viewAllLink={`/category/${slug}/all`}
           showViewAll
           take={10}
         />
         <ListingSection
           type="grants"
-          title={`${formattedSlug} 资助`}
+          title={`${titlesForCN[formattedSlug]} 资助`}
           sub="为建设者提供资金支持"
           emoji="/assets/home/emojis/grants.webp"
           showViewAll
