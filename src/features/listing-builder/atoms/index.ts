@@ -3,6 +3,8 @@ import axios from 'axios';
 import { atom, createStore } from 'jotai';
 import { atomWithMutation } from 'jotai-tanstack-query';
 
+import { convertUndefinedToNull } from '@/utils/undefinedToNull';
+
 import { type ListingFormData, type ListingStatus } from '../types';
 
 const store: ReturnType<typeof createStore> = createStore();
@@ -50,7 +52,7 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
     const response = await axios.post<ListingFormData>(
       `${endpoint}/${data.id}`,
       {
-        ...data,
+        ...convertUndefinedToNull(data),
       },
     );
     return response.data;

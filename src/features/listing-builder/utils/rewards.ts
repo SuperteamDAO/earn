@@ -5,7 +5,7 @@ import { cleanRewards } from '@/utils/rank';
 import { type ListingFormData } from '../types';
 
 export const calculateTotalPrizes = (
-  rewards: Rewards | undefined,
+  rewards: Rewards | undefined | null,
   maxBonusSpots: number,
 ) => cleanRewards(rewards, true).length + (maxBonusSpots ?? 0);
 

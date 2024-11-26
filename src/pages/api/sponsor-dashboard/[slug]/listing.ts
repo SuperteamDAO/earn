@@ -59,6 +59,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             description: true,
             slug: true,
             announceDate: true,
+            deadline: true,
+            id: true,
           },
         },
       },

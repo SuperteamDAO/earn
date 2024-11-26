@@ -54,6 +54,7 @@ const allowedFields = [
 
 async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const { id } = req.query;
+  console.log('req body', req.body);
   const data = filterAllowedFields(req.body, allowedFields);
   const userId = req.userId;
   const userSponsorId = req.userSponsorId;
@@ -124,6 +125,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       await backendListingRefinements(data as any, ctx);
     });
 
+    console.log('api data', data);
     const validatedData = await superValidator.parseAsync({
       ...listing, // Existing data as base
       ...data, // Merge update data
@@ -270,6 +272,11 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         language,
         isFndnPaying,
         totalWinnersSelected,
+        templateId: validatedData.templateId || null,
+        id: validatedData.id || undefined,
+        eligibility: validatedData.eligibility || undefined,
+        rewards: rewards || undefined,
+        maxBonusSpots: maxBonusSpots || undefined,
         ...(skillsToUpdate !== undefined && { skills: skillsToUpdate }),
       },
     });

@@ -60,7 +60,7 @@ export const getRankLabels = (rank: number) => {
   else return rankLabels[rank];
 };
 
-export const cleanRewards = (rewards?: Rewards, skipBonus = false) =>
+export const cleanRewards = (rewards?: Rewards | null, skipBonus = false) =>
   Object.keys(rewards || [])
     .filter((key) => key !== null && key !== undefined)
     .map(Number)

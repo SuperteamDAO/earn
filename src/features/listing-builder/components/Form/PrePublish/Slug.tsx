@@ -76,6 +76,7 @@ export function Slug() {
         message: 'Slug already exists. Please try another.',
         type: 'manual',
       });
+      form.setFocus('slug');
     }
   }, [isSlugCheckError]);
 
@@ -86,6 +87,7 @@ export function Slug() {
   useEffect(() => {
     async function validateSlug() {
       const validated = await form.trigger('slug');
+      form.setFocus('slug');
       console.log('slug error validated', validated);
       console.log(
         'slug error form.formState.errors.slug',

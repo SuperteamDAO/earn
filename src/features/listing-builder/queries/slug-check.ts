@@ -6,7 +6,7 @@ import { getURL } from '@/utils';
 interface SlugCheckParams {
   slug: string;
   check: boolean;
-  id?: string;
+  id?: string | null;
 }
 
 export const fetchSlugCheck = async (params: SlugCheckParams) => {

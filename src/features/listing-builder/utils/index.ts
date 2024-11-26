@@ -1,8 +1,15 @@
-import { type BountyType, type Hackathon } from '@prisma/client';
+import {
+  type BountyType,
+  type CompensationType,
+  type Hackathon,
+  Regions,
+} from '@prisma/client';
 import { z } from 'zod';
 
 import { type Listing } from '@/features/listings';
+import { dayjs } from '@/utils/dayjs';
 
+import { DEADLINE_FORMAT } from '../components/Form';
 import {
   createListingFormSchema,
   type ListingFormData,
@@ -152,17 +159,17 @@ export const cleanTemplate = (
   > = { ...template } as any;
 
   reTemplate.templateId = reTemplate.id;
-  reTemplate.id = prevValues.id;
+  reTemplate.id = prevValues.id || undefined;
   reTemplate.slug = prevValues.slug;
   reTemplate.compensationType = prevValues.compensationType;
-  reTemplate.rewards = prevValues.rewards;
+  reTemplate.rewards = prevValues.rewards || undefined;
   reTemplate.deadline = prevValues.deadline;
-  reTemplate.maxBonusSpots = prevValues.maxBonusSpots;
+  reTemplate.maxBonusSpots = prevValues.maxBonusSpots || undefined;
   reTemplate.minRewardAsk = prevValues.minRewardAsk || undefined;
   reTemplate.maxRewardAsk = prevValues.maxRewardAsk || undefined;
   reTemplate.pocSocials = prevValues.pocSocials;
-  reTemplate.rewardAmount = prevValues.rewardAmount;
-  reTemplate.rewards = prevValues.rewards;
+  reTemplate.rewardAmount = prevValues.rewardAmount || undefined;
+  reTemplate.rewards = prevValues.rewards || undefined;
   reTemplate.region = prevValues.region;
 
   delete reTemplate.isFeatured;
@@ -183,3 +190,40 @@ export const cleanTemplate = (
 
   return reTemplate;
 };
+
+export function transformListingToFormListing(
+  listing: Listing,
+): ListingFormData {
+  return {
+    id: listing.id,
+    deadline:
+      listing.deadline ||
+      dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''),
+    slug: listing.slug || '',
+    type: (listing.type as BountyType) || 'bounty',
+    title: listing.title || '',
+    description: listing.description || '',
+    eligibility: listing.eligibility as any,
+    region: listing.region || Regions.GLOBAL,
+    rewards: listing.rewards as any,
+    compensationType: listing.compensationType as CompensationType,
+    rewardAmount: listing.rewardAmount,
+    maxBonusSpots: listing.maxBonusSpots,
+    maxRewardAsk: listing.maxRewardAsk,
+    minRewardAsk: listing.minRewardAsk,
+    pocSocials: listing.pocSocials || '',
+    token: listing.token || 'USDC',
+    isFndnPaying: listing.isFndnPaying || false,
+    skills: listing.skills || [],
+    hackathonId: listing.hackathonId,
+    status: listing.status,
+    isPrivate: listing.isPrivate || false,
+    templateId: listing.templateId,
+    sponsorId: listing.sponsorId,
+    isPublished: listing.isPublished,
+    publishedAt: listing.publishedAt,
+    totalPaymentsMade: listing.totalPaymentsMade,
+    isWinnersAnnounced: listing.isWinnersAnnounced,
+    totalWinnersSelected: listing.totalWinnersSelected,
+  };
+}

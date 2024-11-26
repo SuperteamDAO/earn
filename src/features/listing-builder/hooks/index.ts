@@ -164,6 +164,7 @@ export const useListingForm = (
 
   const submitListing = useCallback(async () => {
     const formData = refineReadyListing(getValues());
+    console.log('submitListing', formData);
     return await submitListingMutation.mutateAsync(formData);
   }, [getValues, submitListingMutation]);
 

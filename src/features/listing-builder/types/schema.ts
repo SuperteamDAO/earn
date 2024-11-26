@@ -118,7 +118,7 @@ export const createListingFormSchema = ({
 
   return z
     .object({
-      id: z.string().optional(),
+      id: z.string().optional().nullish(),
       title: z.string().trim().min(1, 'Required').max(100),
       slug: z
         .string()
@@ -188,7 +188,7 @@ export const createListingFormSchema = ({
           );
         }, 'Cannot extend deadline more than 2 weeks from original deadline'),
       templateId: z.string().optional().nullable(),
-      eligibility: z.array(eligibilityQuestionSchema).optional(),
+      eligibility: z.array(eligibilityQuestionSchema).optional().nullable(),
       skills: skillsArraySchema,
 
       token: z
@@ -204,8 +204,9 @@ export const createListingFormSchema = ({
           message: 'Required',
         })
         .min(0)
-        .optional(),
-      rewards: rewardsSchema.optional(),
+        .optional()
+        .nullable(),
+      rewards: rewardsSchema.optional().nullable(),
       compensationType: z.nativeEnum(CompensationType).default('fixed'),
       minRewardAsk: z.number().min(0).optional().nullable(),
       maxRewardAsk: z.number().min(0).optional().nullable(),
@@ -215,7 +216,8 @@ export const createListingFormSchema = ({
         })
         .min(0)
         .max(50)
-        .optional(),
+        .optional()
+        .nullable(),
       isFndnPaying: z
         .boolean()
         .default(false)
@@ -338,7 +340,10 @@ export const createListingRefinements = async (
     }
   }
 
-  if (data.type === 'hackathon') {
+  if (data.type === 'hackathon' && data.deadline) {
+    console.log('hackathon');
+    console.log('hackathon deadline', hackathon?.deadline);
+    console.log('hackathon data deadline', data.deadline);
     if (
       !hackathon?.deadline ||
       data.deadline !== new Date(hackathon?.deadline).toISOString()
@@ -357,7 +362,7 @@ export const backendListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
 ) => {
-  const slugUniqueCheck = async (slug: string, id?: string) => {
+  const slugUniqueCheck = async (slug: string, id?: string | null) => {
     try {
       await fetchSlugCheck({
         slug,

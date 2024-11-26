@@ -85,32 +85,34 @@ export function Header() {
                 </p>
               )}
               <StatusBadge />
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    variant="outline"
-                    className="ph-no-capture text-slate-400"
-                    disabled={
-                      isDraftSaving ||
-                      !id ||
-                      !!form.formState.errors.slug ||
-                      isSlugLoading
-                    }
-                    onClick={() => {
-                      posthog.capture('preview_listing');
-                      setShowPreview(true);
-                    }}
-                  >
-                    <Eye />
-                    Preview
-                  </Button>
-                </TooltipTrigger>
-                {!!form.formState.errors.slug && (
-                  <TooltipContent>
-                    Please fix slug to visit preview
-                  </TooltipContent>
-                )}
-              </Tooltip>
+              {!isEditing && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      variant="outline"
+                      className="ph-no-capture text-slate-400"
+                      disabled={
+                        isDraftSaving ||
+                        !id ||
+                        !!form.formState.errors.slug ||
+                        isSlugLoading
+                      }
+                      onClick={() => {
+                        posthog.capture('preview_listing');
+                        setShowPreview(true);
+                      }}
+                    >
+                      <Eye />
+                      Preview
+                    </Button>
+                  </TooltipTrigger>
+                  {!!form.formState.errors.slug && (
+                    <TooltipContent>
+                      Please fix slug to visit preview
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              )}
               <PrePublish />
               <UserMenu />
             </>

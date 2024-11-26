@@ -164,19 +164,21 @@ export function PrePublish() {
           {isST && <Foundation />}
         </div>
         <DialogFooter className="flex w-full pt-4 sm:justify-between">
+          {!isEditing && (
+            <Button
+              variant="outline"
+              className="ph-no-capture gap-8"
+              disabled={isDisabledSoftForButtons}
+              onClick={() => {
+                posthog.capture('preview_listing');
+                setShowPreview(true);
+              }}
+            >
+              Preview <ExternalLink />{' '}
+            </Button>
+          )}
           <Button
-            variant="outline"
-            className="ph-no-capture gap-8"
-            disabled={isDisabledSoftForButtons}
-            onClick={() => {
-              posthog.capture('preview_listing');
-              setShowPreview(true);
-            }}
-          >
-            Preview <ExternalLink />{' '}
-          </Button>
-          <Button
-            className="px-12"
+            className="ml-auto px-12"
             onClick={async () => {
               console.log('values ', form.getValues());
               if (await form.trigger()) {

@@ -13,7 +13,7 @@ interface Props {
   showSymbol?: boolean;
   showName?: boolean;
   postfix?: string;
-  amount?: number;
+  amount?: number | null;
   token?: (typeof tokenList)[0];
   classNames?: {
     icon?: ClassValue;

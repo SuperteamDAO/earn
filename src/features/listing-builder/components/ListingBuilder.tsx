@@ -1,7 +1,6 @@
 import { type BountyType, type Hackathon } from '@prisma/client';
 import { Provider, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
@@ -14,13 +13,14 @@ import {
   isEditingAtom,
   isGodAtom,
   isSTAtom,
-  ListingBuilderLayout,
   type ListingFormData,
   listingStatusAtom,
   listingToStatus,
   previewAtom,
   store,
+  transformListingToFormListing,
 } from '@/features/listing-builder';
+import { type Listing } from '@/features/listings';
 import { useUser } from '@/store/user';
 import { HydrateAtoms, useInitAtom } from '@/utils/atoms';
 
@@ -34,6 +34,7 @@ import {
   Skills,
   TitleAndType,
 } from './Form';
+import { ListingBuilderLayout } from './layout';
 import {
   ListingSuccessModal,
   PreviewListingModal,
@@ -127,7 +128,7 @@ function ListingBuilder({
 interface Props {
   isEditing?: boolean;
   isDuplicating?: boolean;
-  listing?: ListingFormData;
+  listing?: Listing;
   hackathon?: Hackathon;
 }
 
@@ -138,28 +139,21 @@ function ListingBuilderProvider({
   listing,
   hackathon,
 }: Props) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const { user } = useUser();
   const isGod = session?.user.role === 'GOD';
   const isST = !!user?.currentSponsor?.st;
 
   const params = useSearchParams();
-  const defaultListing =
-    listing ||
-    getListingDefaults({
-      isGod,
-      isEditing: !!isEditing,
-      isST: isST,
-      type: (params.get('type') as BountyType) || 'bounty',
-      hackathon: hackathon,
-    });
-  // console.log('defaultListing', defaultListing);
-
-  const router = useRouter();
-  if (!session && status === 'unauthenticated') {
-    router.push('/');
-    return null;
-  }
+  const defaultListing = listing
+    ? transformListingToFormListing(listing)
+    : getListingDefaults({
+        isGod,
+        isEditing: !!isEditing,
+        isST: isST,
+        type: (params.get('type') as BountyType) || 'bounty',
+        hackathon: hackathon,
+      });
 
   return (
     <Provider store={store}>

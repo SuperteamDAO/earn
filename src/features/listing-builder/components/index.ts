@@ -1,2 +1,3 @@
-export * from './layout';
-export * from './ListingBuilder';
+import { ListingBuilderLayout } from './ListingBuilderLayout';
+
+export { ListingBuilderLayout as ListingBuilder };

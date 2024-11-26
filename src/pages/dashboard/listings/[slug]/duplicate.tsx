@@ -1,82 +1,14 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import React from 'react';
 
-import { LoadingSection } from '@/components/shared/LoadingSection';
-import {
-  ListingBuilder,
-  type ListingFormData,
-} from '@/features/listing-builder';
-import {
-  activeHackathonQuery,
-  sponsorDashboardListingQuery,
-} from '@/features/sponsor-dashboard';
-import { useUser } from '@/store/user';
+import { ListingBuilder } from '@/features/listing-builder';
 
 interface Props {
   slug: string;
 }
 
-export default function DuplicateBounty({ slug }: Props) {
-  const router = useRouter();
-  const { user } = useUser();
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    const handleRouteComplete = () => {
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-dashboard-listing', slug],
-      });
-    };
-
-    router.events.on('routeChangeComplete', handleRouteComplete);
-    return () => router.events.off('routeChangeComplete', handleRouteComplete);
-  }, [router.events, queryClient, slug]);
-
-  const { data: listing, isLoading } = useQuery({
-    ...sponsorDashboardListingQuery(slug),
-    enabled: !!user?.currentSponsorId,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-  const { data: hackathon, isLoading: hackathonLoading } = useQuery({
-    ...activeHackathonQuery(),
-    enabled: !!user,
-  });
-
-  useEffect(() => {
-    if (listing && listing.sponsorId !== user?.currentSponsorId) {
-      router.push('/dashboard/listings');
-    }
-  }, [listing, user?.currentSponsorId, router]);
-
-  return (
-    <>
-      {isLoading || hackathonLoading ? (
-        <LoadingSection />
-      ) : listing ? (
-        <>
-          <ListingBuilder
-            listing={
-              {
-                ...listing,
-                title: listing.title + ' (copy)',
-                slug: '',
-                isPublished: false,
-                publishedAt: null,
-                id: undefined,
-              } as unknown as ListingFormData
-            }
-            hackathon={hackathon}
-          />
-        </>
-      ) : (
-        <div>Error loading bounty details.</div>
-      )}
-    </>
-  );
+function EditBounty({ slug }: Props) {
+  return <ListingBuilder route="duplicate" slug={slug} />;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -85,3 +17,5 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: { slug },
   };
 };
+
+export default EditBounty;

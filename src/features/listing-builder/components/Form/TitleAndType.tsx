@@ -62,7 +62,7 @@ export function TitleAndType() {
     return slugCheckQuery({
       slug: slugifiedTitle,
       check: false,
-      id: listingId,
+      id: listingId || undefined,
     });
   }, [slugifiedTitle, listingId]);
   const { data: generatedSlugValidated } = useQuery({
@@ -108,7 +108,7 @@ export function TitleAndType() {
                   defaultValue={''}
                   onChange={(e) => {
                     field.onChange(e);
-                    // form.saveDraft();
+                    form.saveDraft();
                   }}
                 />
               </FormControl>
