@@ -45,7 +45,7 @@ const defaultStepList = [
   {
     label: '基础信息',
     number: 2,
-    mainHead: '创建赏金任务',
+    mainHead: '创建任务',
     description: '让我们了解更多关于您需要完成的工作',
   },
   {
@@ -315,10 +315,7 @@ export function CreateListing({
   return (
     <>
       {!user?.id || !user?.currentSponsorId ? (
-        <ErrorSection
-          title="禁止访问"
-          message="请联系技术支持"
-        />
+        <ErrorSection title="禁止访问" message="请联系技术支持" />
       ) : (
         <FormLayout setStep={setSteps} currentStep={steps} stepList={stepList}>
           <PreviewListingModal

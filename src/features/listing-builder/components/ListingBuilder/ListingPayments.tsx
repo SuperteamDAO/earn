@@ -393,8 +393,8 @@ export const ListingPayments = ({
       value === ''
         ? tokenList
         : tokenList.filter((token) =>
-            token.tokenName.toLowerCase().includes(value.toLowerCase()),
-          );
+          token.tokenName.toLowerCase().includes(value.toLowerCase()),
+        );
     setSearchResults(filteredResults);
     setSelectedTokenIndex(null);
     setIsOpen(true);
@@ -828,11 +828,7 @@ export const ListingPayments = ({
                 borderColor="brand.slate.200"
                 borderBottomWidth="1px"
               >
-                <Text>
-                  一共{calculateTotalPrizes()}阶段
-                  {/* {calculateTotalPrizes() > 1 ? 'Prizes' : 'Prize'} */}
-                  奖励
-                </Text>
+                <Text>一共{calculateTotalPrizes()}个奖励</Text>
                 <Text>
                   {formatTotalPrice(calculateTotalReward())} 总计{' '}
                   {selectedToken?.tokenSymbol}
@@ -918,8 +914,8 @@ export const ListingPayments = ({
                       }
                       value={
                         el.defaultValue !== null &&
-                        el.defaultValue !== undefined &&
-                        !isNaN(el.defaultValue)
+                          el.defaultValue !== undefined &&
+                          !isNaN(el.defaultValue)
                           ? el.defaultValue
                           : undefined
                       }

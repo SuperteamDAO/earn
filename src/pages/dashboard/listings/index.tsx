@@ -436,7 +436,7 @@ export default function SponsorListings() {
             fontWeight={600}
             textAlign={'center'}
           >
-            创建第一个新任务
+            创建第一个任务
           </Text>
           <Text
             mx="auto"
@@ -467,7 +467,7 @@ export default function SponsorListings() {
               onClick={onOpenCreateListing}
               variant="solid"
             >
-              Create New Listing
+              创建新任务
             </Button>
           </Tooltip>
         </>

@@ -88,7 +88,7 @@ export function MarkCompleteModal({
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose} variant="ghost">
-                Cancel
+                取消
               </Button>
               <Button
                 ml={3}

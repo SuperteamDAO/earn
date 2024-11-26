@@ -40,8 +40,8 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
 
   const shareMessage =
     id === user?.id
-      ? 'Check out my profile on Solar Earn!'
-      : 'Check out this profile on Solar Earn!';
+      ? '欢迎查看我在 Solar Earn 上的个人信息'
+      : '欢迎在 Solar Earn 查看这个项目！';
 
   const socialPlatforms: SocialPlatform[] = [
     {

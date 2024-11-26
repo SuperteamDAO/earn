@@ -11,7 +11,6 @@ import NextLink from 'next/link';
 import React from 'react';
 
 import { SolarMail } from '@/constants';
-
 import { Telegram, Twitter } from '@/features/talent';
 
 const FooterColumn = ({
@@ -64,7 +63,7 @@ export const Footer = () => {
   const about = [
     {
       text: '常见问题',
-      href: '#',
+      href: 'https://docs.google.com/document/d/1T0QRBZfBTKE_gGoxG-F60Mgp17P4-9sd/edit?usp=sharing&ouid=116724141969138041786&rtpof=true&sd=true',
     },
     {
       text: '条款',
@@ -128,7 +127,7 @@ export const Footer = () => {
             direction={{ base: 'column', md: 'row' }}
           >
             <Text mb={{ base: 4, md: 0 }} color="brand.slate.500" fontSize="sm">
-              {currentYear} Solar. All rights reserved.
+              {currentYear} Solar. 保留最终解释权
             </Text>
           </Flex>
         </Container>

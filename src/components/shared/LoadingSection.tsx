@@ -8,7 +8,7 @@ export function LoadingSection() {
       <Flex align={'center'} justify="center" direction={'column'}>
         <Loading />
         <Text mt={2} color="brand.slate.300">
-          Loading...
+          ...
         </Text>
       </Flex>
     </Flex>

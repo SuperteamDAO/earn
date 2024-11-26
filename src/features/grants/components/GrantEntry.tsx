@@ -93,7 +93,7 @@ export const GrantEntry = ({
             size={'sm'}
             variant="outline"
           >
-            Apply Now
+            立即申请
           </Button>
         </Link>
       </VStack>

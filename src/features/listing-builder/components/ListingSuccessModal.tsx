@@ -43,7 +43,7 @@ export const ListingSuccessModal = ({
   const listingLink = (medium?: 'twitter' | 'telegram') =>
     `${getURL()}listings/${type}/${slug}/${medium ? `?utm_source=solarearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`;
 
-  const tweetShareContent = `Check out my newly added @solana_zh opportunity!
+  const tweetShareContent = `看看我新增的任务 @solana_zh !
 
 ${listingLink('twitter')}
 `;
@@ -146,7 +146,8 @@ ${listingLink('twitter')}
                     }}
                     variant="solid"
                   >
-                    邀请大佬<AddIcon h="0.8em" w="0.8em" />
+                    邀请大佬
+                    <AddIcon h="0.8em" w="0.8em" />
                   </Button>
                 ) : (
                   <Button

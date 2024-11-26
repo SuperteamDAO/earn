@@ -103,7 +103,7 @@ export const CreateListingModal = ({
                 onClick={handleCreateBounty}
                 size="lg"
               >
-                创建赏金任务
+                创建任务
               </Button>
             </Box>
           </Box>

@@ -119,13 +119,11 @@ export const CommentForm = ({
             onClick={() => setNewComment('')}
             variant="ghost"
           >
-            Cancel
+            取消
           </Button>
           <AuthWrapper
             showCompleteProfileModal
-            completeProfileModalBodyText={
-              '在发表评论前，请填写您的个人资料。'
-            }
+            completeProfileModalBodyText={'在发表评论前，请填写您的个人资料。'}
           >
             <Button
               h="auto"

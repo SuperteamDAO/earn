@@ -333,7 +333,7 @@ export default function Hackathon() {
             onClick={() => onOpenCreateListing()}
             variant="solid"
           >
-            Create New Listing
+            创建新任务
           </Button>
         </>
       )}

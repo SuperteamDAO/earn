@@ -80,7 +80,7 @@ export const SubmissionHeader = ({
   const socialListingLink = (medium?: 'twitter' | 'telegram') =>
     `${listingLink}${medium ? `?utm_source=solarearn&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;
 
-  const tweetShareContent = `Check out my newly added @solana_zh opportunity!
+  const tweetShareContent = `看看我新增的任务 @solana_zh !
 
 ${socialListingLink('twitter')}
 `;
@@ -181,26 +181,26 @@ ${socialListingLink('twitter')}
             (session?.user?.role === 'GOD' && bounty?.type !== 'grant') ||
             (bounty?.isPublished && !pastDeadline && bounty.type !== 'grant')
           ) && (
-            <Link
-              as={NextLink}
-              _hover={{ textDecoration: 'none' }}
-              href={
-                bounty
-                  ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
-                  : ''
-              }
-              onClick={resetForm}
-            >
-              <Button
-                color={'brand.slate.400'}
-                _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
-                leftIcon={<LuPencil />}
-                variant={'ghost'}
+              <Link
+                as={NextLink}
+                _hover={{ textDecoration: 'none' }}
+                href={
+                  bounty
+                    ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
+                    : ''
+                }
+                onClick={resetForm}
               >
-                修改
-              </Button>
-            </Link>
-          )}
+                <Button
+                  color={'brand.slate.400'}
+                  _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
+                  leftIcon={<LuPencil />}
+                  variant={'ghost'}
+                >
+                  修改
+                </Button>
+              </Link>
+            )}
         </Flex>
       </Flex>
       <Divider />

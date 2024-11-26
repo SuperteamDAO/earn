@@ -46,7 +46,7 @@ const QuestionCard = ({ register, index, remove }: QuestionCardProps) => {
   return (
     <VStack align={'start'} w={'full'}>
       <FormControl isRequired>
-        <ListingFormLabel>Question {index + 1}</ListingFormLabel>
+        <ListingFormLabel>问题 {index + 1}</ListingFormLabel>
         <Flex gap="4">
           <Input
             {...register(`eligibility.${index}.question`)}
