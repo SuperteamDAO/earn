@@ -23,14 +23,13 @@ import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { SolarMail } from '@/constants';
 
 import RichTextInputWithHelper from '@/components/Form/RichTextInput';
 import {
   TextAreaWithCounter,
   TextInputWithHelper,
 } from '@/components/Form/TextAreaHelpers';
-import { tokenList } from '@/constants';
+import { SolarMail, tokenList } from '@/constants';
 import { useUser } from '@/store/user';
 
 import { submissionCountQuery } from '../../queries';
@@ -228,15 +227,12 @@ export const SubmissionModal = ({
           注意：
           <Text>
             1. 在“作品链接”栏中，提交您的黑客马拉松
-            项目最有用的链接（可以是视频、GitHub 链接、网站等）、
-            网站等）
+            项目最有用的链接（可以是视频、GitHub 链接、网站等）、 网站等）
           </Text>
           <Text>
             2. 要有资格参加不同的挑战赛，您需要分别向每个挑战赛提交申请
           </Text>
-          <Text>
-            3.您可以提交的挑战数量不受限制
-          </Text>
+          <Text>3.您可以提交的挑战数量不受限制</Text>
         </>
       );
       break;
@@ -324,8 +320,7 @@ export const SubmissionModal = ({
                     fontWeight={600}
                     htmlFor={'ask'}
                   >
-                    What&apos;s the compensation you require to complete this
-                    fully?
+                    你完成这项工作需要多少报酬？
                   </FormLabel>
                   <InputGroup>
                     <InputLeftAddon>
@@ -431,7 +426,8 @@ export const SubmissionModal = ({
             </VStack>
             {!!error && (
               <Text align="center" mb={2} color="red">
-                提交时出现错误<br />
+                提交时出现错误
+                <br />
                 请联系{SolarMail}
               </Text>
             )}
