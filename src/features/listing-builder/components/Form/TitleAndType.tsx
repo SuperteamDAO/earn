@@ -48,21 +48,34 @@ export function TitleAndType() {
 
   const debouncedTitle = useDebounce(title);
   const slugifiedTitle = useMemo(() => {
-    return slugify(title, {
+    return slugify(debouncedTitle, {
       lower: true,
       strict: true,
     });
   }, [debouncedTitle]);
 
+  const queryEnabled = useMemo(
+    () => !!(!!slugifiedTitle && !isEditing),
+    [slugifiedTitle, isEditing],
+  );
+  const slugCheckQueryResult = useMemo(() => {
+    return slugCheckQuery({
+      slug: slugifiedTitle,
+      check: false,
+      id: listingId,
+    });
+  }, [slugifiedTitle, listingId]);
   const { data: generatedSlugValidated } = useQuery({
-    ...slugCheckQuery({ slug: slugifiedTitle, check: false, id: listingId }),
-    enabled: !!(!!title && !isEditing),
+    ...slugCheckQueryResult,
+    enabled: queryEnabled,
     retry: false,
+    retryOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
     if (generatedSlugValidated?.data.slug) {
-      console.log('is this running?');
+      console.log('generatedSlugValidated running?');
       form.setValue('slug', generatedSlugValidated.data.slug, {
         shouldValidate: true,
         shouldDirty: true,
@@ -70,6 +83,12 @@ export function TitleAndType() {
       form.saveDraft();
     }
   }, [generatedSlugValidated]);
+  useEffect(() => {
+    console.log('debouncedTitle', debouncedTitle);
+  }, [debouncedTitle]);
+  useEffect(() => {
+    console.log('slugifiedTitle', slugifiedTitle);
+  }, [slugifiedTitle]);
 
   return (
     <FormField
@@ -89,7 +108,7 @@ export function TitleAndType() {
                   defaultValue={''}
                   onChange={(e) => {
                     field.onChange(e);
-                    form.saveDraft();
+                    // form.saveDraft();
                   }}
                 />
               </FormControl>
@@ -97,7 +116,7 @@ export function TitleAndType() {
             <div className="flex justify-between">
               <FormMessage />
               <div className="ml-auto text-right text-xs text-slate-400">
-                {100 - (form.watch('title')?.length || 0)} characters left
+                {100 - (title?.length || 0)} characters left
               </div>
             </div>
           </FormItem>

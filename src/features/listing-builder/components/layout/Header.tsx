@@ -1,3 +1,5 @@
+import { TooltipTrigger } from '@radix-ui/react-tooltip';
+import { useIsFetching } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronLeft, Eye, Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -9,6 +11,7 @@ import { useWatch } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent } from '@/components/ui/tooltip';
 import { cn } from '@/utils';
 
 import {
@@ -37,6 +40,7 @@ export function Header() {
   });
   const isEditing = useAtomValue(isEditingAtom);
   const hideAutoSave = useAtomValue(hideAutoSaveAtom);
+  const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
 
   return (
     <div className="hidden border-b bg-background lg:block">
@@ -81,18 +85,32 @@ export function Header() {
                 </p>
               )}
               <StatusBadge />
-              <Button
-                variant="outline"
-                className="ph-no-capture text-slate-400"
-                disabled={isDraftSaving || !id}
-                onClick={() => {
-                  posthog.capture('preview_listing');
-                  setShowPreview(true);
-                }}
-              >
-                <Eye />
-                Preview
-              </Button>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="outline"
+                    className="ph-no-capture text-slate-400"
+                    disabled={
+                      isDraftSaving ||
+                      !id ||
+                      !!form.formState.errors.slug ||
+                      isSlugLoading
+                    }
+                    onClick={() => {
+                      posthog.capture('preview_listing');
+                      setShowPreview(true);
+                    }}
+                  >
+                    <Eye />
+                    Preview
+                  </Button>
+                </TooltipTrigger>
+                {!!form.formState.errors.slug && (
+                  <TooltipContent>
+                    Please fix slug to visit preview
+                  </TooltipContent>
+                )}
+              </Tooltip>
               <PrePublish />
               <UserMenu />
             </>

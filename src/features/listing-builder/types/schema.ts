@@ -257,26 +257,6 @@ export const createListingRefinements = async (
   hackathon?: Hackathon,
 ) => {
   console.log('zod validating');
-  const slugUniqueCheck = async (slug: string, id?: string) => {
-    try {
-      await fetchSlugCheck({
-        slug,
-        id: id || undefined,
-        check: true,
-      });
-      return true;
-    } catch (error) {
-      console.log('fetchSlugCheck error', error);
-      return false;
-    }
-  };
-  if (data.slug && !(await slugUniqueCheck(data.slug, data.id))) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Slug already exists. Please try another.',
-      path: ['slug'],
-    });
-  }
 
   if (data.compensationType === 'fixed') {
     if (!data.rewardAmount) {
@@ -377,6 +357,27 @@ export const backendListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
 ) => {
+  const slugUniqueCheck = async (slug: string, id?: string) => {
+    try {
+      await fetchSlugCheck({
+        slug,
+        id: id || undefined,
+        check: true,
+      });
+      return true;
+    } catch (error) {
+      console.log('fetchSlugCheck error', error);
+      return false;
+    }
+  };
+
+  if (data.slug && !(await slugUniqueCheck(data.slug, data.id))) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Slug already exists. Please try another.',
+      path: ['slug'],
+    });
+  }
   if (data.type !== 'project' && data.compensationType !== 'fixed') {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,

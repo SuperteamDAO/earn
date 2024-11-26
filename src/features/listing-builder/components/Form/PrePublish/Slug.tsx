@@ -1,7 +1,7 @@
 import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { CheckIcon, Loader2 } from 'lucide-react';
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import {
@@ -18,15 +18,12 @@ import { slugCheckQuery } from '@/features/listing-builder';
 import { isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
 
-export function Slug({
-  setSlugLoading,
-}: {
-  setSlugLoading: Dispatch<SetStateAction<boolean>>;
-}) {
+export function Slug() {
   const form = useListingForm();
   const isEditing = useAtomValue(isEditingAtom);
 
-  const [isValidated, setIsValidated] = useState(false);
+  // const [isValidated, setIsValidated] = useState(false);
+  const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
 
   const slug = useWatch({
     control: form.control,
@@ -44,17 +41,35 @@ export function Slug({
     console.log('listingId', listingId);
   }, [listingId]);
 
-  const generatedSlugFetching = useIsFetching({ queryKey: ['slug'] }) > 0;
   const debouncedSlug = useDebounce(slug);
+  useEffect(() => {
+    console.log('slug', slug);
+  }, [slug]);
+  useEffect(() => {
+    console.log('debouncedSlug', debouncedSlug);
+  }, [debouncedSlug]);
+
+  const queryEnabled = useMemo(
+    () =>
+      form.formState.errors.slug === undefined && !isEditing && !!debouncedSlug,
+    [form.formState.errors.slug, isEditing, debouncedSlug],
+  );
+
+  const slugCheckQueryResult = useMemo(() => {
+    return slugCheckQuery({ slug: debouncedSlug, check: true, id: listingId });
+  }, [debouncedSlug, listingId]);
   const { isError: isSlugCheckError, isFetching: slugCheckFetching } = useQuery(
     {
-      ...slugCheckQuery({ slug: debouncedSlug, check: true, id: listingId }),
-      enabled: isValidated && !!!isEditing && !!debouncedSlug,
+      ...slugCheckQueryResult,
+      enabled: queryEnabled,
       retry: false,
+      retryOnMount: false,
+      refetchOnWindowFocus: false,
     },
   );
 
   useEffect(() => {
+    console.log('slug error isSlugCheckError', isSlugCheckError);
     if (isSlugCheckError) {
       if (slug === '') return;
       form.setError('slug', {
@@ -62,7 +77,7 @@ export function Slug({
         type: 'manual',
       });
     }
-  }, [isSlugCheckError, debouncedSlug]);
+  }, [isSlugCheckError]);
 
   useEffect(() => {
     console.log('slugCheckFetching', slugCheckFetching);
@@ -70,18 +85,23 @@ export function Slug({
 
   useEffect(() => {
     async function validateSlug() {
-      setIsValidated(false);
       const validated = await form.trigger('slug');
-      setIsValidated(validated);
+      console.log('slug error validated', validated);
+      console.log(
+        'slug error form.formState.errors.slug',
+        form.formState.errors.slug,
+      );
+      form.saveDraft();
     }
     validateSlug();
-  }, [slug]);
+  }, [debouncedSlug]);
 
-  useEffect(() => {
-    console.log('slug slugCheckFetching', slugCheckFetching);
-    console.log('slug generatedSlugFetching', generatedSlugFetching);
-    setSlugLoading(slugCheckFetching || generatedSlugFetching);
-  }, [slugCheckFetching, generatedSlugFetching]);
+  // useEffect(() => {
+  //   if(!form.formState.errors.slug) form.saveDraft()
+  // },[form.formState.errors.slug, debouncedSlug])
+  // useEffect(() => {
+  //   if(isValidated) form.saveDraft();
+  // },[isValidated])
 
   return (
     <FormField
@@ -96,14 +116,10 @@ export function Slug({
                 <Input
                   {...field}
                   placeholder="write-a-twitter-thread-on-Solana"
-                  disabled={!!publishedAt || generatedSlugFetching}
+                  disabled={!!publishedAt || isSlugLoading}
                   onBlur={() => null}
-                  onChange={(e) => {
-                    field.onChange(e);
-                    form.saveDraft();
-                  }}
                 />
-                {slugCheckFetching || generatedSlugFetching ? (
+                {slugCheckFetching || isSlugLoading ? (
                   <Loader2 className="absolute right-2 top-1.5 animate-spin text-slate-300" />
                 ) : (
                   <span className="absolute right-2 top-1.5 flex h-5 w-5 scale-75 items-center rounded-full bg-slate-400 p-1 text-background">

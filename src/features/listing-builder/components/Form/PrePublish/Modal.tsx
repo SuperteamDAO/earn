@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -42,7 +42,8 @@ export function PrePublish() {
   useMemo(() => console.log('isST', isST), [isST]);
   const form = useListingForm();
   const [open, isOpen] = useState(false);
-  const [isSlugLoading, setIsSlugLoading] = useState(false);
+
+  const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
 
   const isDraftSaving = useAtomValue(isDraftSavingAtom);
   const setConfirmModal = useSetAtom(confirmModalAtom);
@@ -159,7 +160,7 @@ export function PrePublish() {
         <div className="space-y-4">
           <Visibility />
           <GeoLock />
-          <Slug setSlugLoading={setIsSlugLoading} />
+          <Slug />
           {isST && <Foundation />}
         </div>
         <DialogFooter className="flex w-full pt-4 sm:justify-between">

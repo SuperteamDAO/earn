@@ -3,10 +3,14 @@ import { franc } from 'franc';
 import { type NextApiResponse } from 'next';
 
 import {
+  checkListingSponsorAuth,
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
-import { type ListingFormData } from '@/features/listing-builder';
+import {
+  fetchSlugCheck,
+  type ListingFormData,
+} from '@/features/listing-builder';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
@@ -53,6 +57,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       skills,
     } = req.body as Partial<ListingFormData>;
 
+    const { error, listing } = id
+      ? await checkListingSponsorAuth(userSponsorId, id as string)
+      : { error: undefined };
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
+    }
+
     const isBountyPublishedAlready = id
       ? await prisma.bounties.findUnique({
           where: {
@@ -73,10 +84,27 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const cleanedSkills = skills ? cleanSkills(skills) : undefined;
 
     const reTitle = title || 'Untitled Draft';
+    let reSlug = slug;
+    if (reSlug && id) {
+      try {
+        await fetchSlugCheck({
+          slug: reSlug,
+          id: id || undefined,
+          check: true,
+        });
+      } catch (error) {
+        console.log('Already used slug passed, using prev slug', error);
+        logger.warn(
+          'Save draft - already used slug passed, using prev slug',
+          error,
+        );
+        reSlug = listing?.slug;
+      }
+    }
     const uniqueSlug = id
-      ? slug
-      : slug
-        ? await generateUniqueSlug(slug)
+      ? reSlug
+      : reSlug
+        ? await generateUniqueSlug(reSlug)
         : await generateUniqueSlug(reTitle);
     const data: Prisma.BountiesUncheckedCreateInput = {
       title: reTitle,
