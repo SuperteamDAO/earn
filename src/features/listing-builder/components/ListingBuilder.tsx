@@ -94,15 +94,22 @@ function ListingBuilder({
 
   return (
     <>
+      <div className="flex min-h-[80vh] px-3 md:hidden">
+        <p className="pt-20 text-center text-xl font-medium text-slate-500">
+          The Sponsor Dashboard on Earn is not optimized for mobile yet. Please
+          use a desktop to check out the Sponsor Dashboard
+        </p>
+      </div>
       <Form {...form}>
         <form
           onSubmit={(e) => {
             e.preventDefault();
           }}
           onKeyDown={preventEnterKeySubmission}
+          className="invisible md:visible"
         >
           <ListingBuilderLayout>
-            <div className="mx-auto w-full max-w-5xl space-y-8 py-10">
+            <div className="mx-auto w-full max-w-5xl space-y-8 px-8 py-10">
               <div className="grid grid-cols-9 gap-4">
                 <div className="col-span-6 space-y-4">
                   <TitleAndType />

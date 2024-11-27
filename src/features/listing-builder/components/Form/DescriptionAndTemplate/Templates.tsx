@@ -91,8 +91,11 @@ export function Templates() {
         </Button>
       </DialogTrigger>
       <DialogContent
-        className="w-max max-w-none p-8"
+        className="invisible w-max max-w-none p-8 md:visible"
         hideCloseIcon={isDisabled}
+        classNames={{
+          overlay: 'invisible md:visible',
+        }}
       >
         <DialogHeader className="flex flex-row justify-between">
           <div className="space-y-2">
@@ -131,7 +134,7 @@ export function Templates() {
           )}
         </DialogHeader>
         <div className="mt-4">
-          <div className="grid grid-cols-4 gap-6">
+          <div className="grid max-h-[80vh] gap-6 overflow-y-auto md:grid-cols-3 xl:grid-cols-4">
             <DialogClose>
               <Button
                 className="ph-no-capture flex h-full w-60 flex-col items-center justify-center gap-4 bg-white text-slate-500 hover:text-slate-700"

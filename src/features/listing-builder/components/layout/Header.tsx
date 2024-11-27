@@ -43,7 +43,7 @@ export function Header() {
   const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
 
   return (
-    <div className="hidden border-b bg-background lg:block">
+    <div className="hidden border-b bg-background md:block">
       <div className={cn('mx-auto flex w-full justify-between px-6 py-2')}>
         <div className="flex items-center gap-6">
           <NextLink
