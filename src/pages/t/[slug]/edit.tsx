@@ -23,12 +23,12 @@ import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { toast } from 'sonner';
 
+import { AreaSelectBox } from '@/components/Form/AreaSelectBox';
 import { InputField } from '@/components/Form/InputField';
 import { SelectBox } from '@/components/Form/SelectBox';
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { SkillSelect } from '@/components/shared/SkillSelect';
 import {
-  CountryList,
   IndustryList,
   type MultiSelectOptions,
   web3Exp,
@@ -229,8 +229,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     );
 
     if (filledSocials.length === 0) {
-      toast.error('至少提供一个社交链接'
-      );
+      toast.error('至少提供一个社交链接');
       return;
     }
 
@@ -490,8 +489,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   onChange={(selectedOptions: any) => {
                     const selectedInterests = selectedOptions
                       ? selectedOptions.map(
-                        (elm: { label: string; value: string }) => elm,
-                      )
+                          (elm: { label: string; value: string }) => elm,
+                        )
                       : [];
                     setDropDownValues({
                       ...DropDownValues,
@@ -518,10 +517,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 register={register}
               />
 
-              <SelectBox
+              <AreaSelectBox
                 label="城市"
                 watchValue={watch('location')}
-                options={CountryList}
                 id="location"
                 placeholder="选择城市"
                 register={register}
