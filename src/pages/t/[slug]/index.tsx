@@ -595,7 +595,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       onClick={() => router.push('/')}
                       variant={'outline'}
                     >
-                      浏览赏金业务
+                      浏览任务
                     </Button>
                   </>
                 </FeedLoop>

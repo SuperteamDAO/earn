@@ -232,7 +232,6 @@ export function RightSideBar({
                     />
                     <VStack align={'start'} gap={0}>
                       <Tooltip
-                        aria-label="A tooltip"
                         label={dayjs(deadline).format('DD MMM YYYY HH:mm')}
                         placement="top"
                       >

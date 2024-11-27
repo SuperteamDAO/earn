@@ -417,7 +417,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                           icon={<Icon as={IoOpenOutline} w={4} h={4} />}
                           onClick={() => window.open(listingLink, '_blank')}
                         >
-                          查看 {listingLabel}
+                          查看
                         </MenuItem>
 
                         {!!listing.isPublished && (
@@ -470,7 +470,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                                   fontWeight={500}
                                   icon={<Icon as={PiNotePencil} w={4} h={4} />}
                                 >
-                                  修改 {listingLabel}
+                                  修改
                                 </MenuItem>
                               </Link>
                             </>

@@ -53,7 +53,7 @@ export const SubmissionTerms = ({
             </svg>
           </Center>
           <Text align="start" fontSize="xl" fontWeight={600} lineHeight={1}>
-            Terms of Use
+            使用条款
           </Text>
         </HStack>
         <Divider borderBottomWidth={2} />
@@ -73,13 +73,11 @@ export const SubmissionTerms = ({
             </ListItem>
             <ListItem>
               Solar Earn
-              仅作为合作伙伴发布资助、悬赏任务、定向任务或类似活动的平台。{' '}
-              {`("Activities")`} on its platform {`(“ST Earn Platform”)`}.
+              仅作为合作伙伴发布资助、悬赏任务、定向任务或类似活动的平台。
             </ListItem>
             <ListItem>
-              Solar Earn shall not be liable for any Activities listed by the
-              Partner on the ST Earn Platform. The Partner is solely responsible
-              for the content, rules, scope and execution of their Activities.
+              对于合作伙伴在 Solar Earn 平台上列出的任何活动，Solar Earn
+              概不负责。合作伙伴对其活动的内容、规则、范围和执行全权负责。
             </ListItem>
             <ListItem>
               任何与合作伙伴在 Solar Earn
@@ -116,12 +114,12 @@ export const SubmissionTerms = ({
               target="_blank"
               textUnderlineOffset={2}
             >
-              Terms of Use
+              使用条款
             </Link>
-            .
+            的补充。
           </Text>
           <Button ml="auto" px={10} fontSize="lg" onClick={onClose}>
-            的补充
+            关闭
           </Button>
         </VStack>
       </ModalContent>

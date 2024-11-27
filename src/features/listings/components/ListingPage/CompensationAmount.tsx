@@ -62,7 +62,7 @@ export const CompensationAmount = ({
       <Flex {...textStyle}>{renderCompensation()}</Flex>
       {compensationType === 'variable' && !token && (
         <Flex align={'center'} gap={1}>
-          <Text {...textStyle}>Send Quote</Text>
+          <Text {...textStyle}>发送报价</Text>
           <ArrowForwardIcon />
         </Flex>
       )}

@@ -227,7 +227,7 @@ export const SubmissionModal = ({
           注意：
           <Text>
             1. 在“作品链接”栏中，提交您的黑客马拉松
-            项目最有用的链接（可以是视频、GitHub 链接、网站等）、 网站等）
+            项目最有用的链接（可以是视频、GitHub 链接、网站等）、网站等）
           </Text>
           <Text>
             2. 要有资格参加不同的挑战赛，您需要分别向每个挑战赛提交申请
@@ -458,7 +458,7 @@ export const SubmissionModal = ({
               >
                 使用条款
               </Link>
-              .
+              。
             </Text>
           </form>
         </VStack>

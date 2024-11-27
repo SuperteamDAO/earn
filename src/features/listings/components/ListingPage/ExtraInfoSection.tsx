@@ -2,7 +2,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Box, HStack, Link, Text, VStack } from '@chakra-ui/react';
 import { usePostHog } from 'posthog-js/react';
 
-import { type ParentSkills } from '@/interface/skills';
+import { type ParentSkills, skillMapCN } from '@/interface/skills';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import type { ListingHackathon } from '../../types';
@@ -74,7 +74,7 @@ export function ExtraInfoSection({
               bg={'#F1F5F9'}
               rounded={'sm'}
             >
-              <Text fontSize={'xs'}>{skill}</Text>
+              <Text fontSize={'xs'}>{skillMapCN[skill]}</Text>
             </Box>
           ))}
         </HStack>
