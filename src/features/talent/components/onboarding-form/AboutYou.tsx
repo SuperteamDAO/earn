@@ -8,7 +8,6 @@ import {
   FormLabel,
   Input,
   Link,
-  Select,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -18,8 +17,9 @@ import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { AreaSelectBox } from '@/components/Form/AreaSelectBox';
 import { ImagePicker } from '@/components/shared/ImagePicker';
-import { countries, CountryList, type MultiSelectOptions } from '@/constants';
+import { countries, type MultiSelectOptions } from '@/constants';
 import { SkillSelect } from '@/features/talent';
 import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { useUser } from '@/store/user';
@@ -224,26 +224,13 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
 
         <FormControl isRequired>
           <Box w={'full'} mb={'1.25rem'}>
-            <FormLabel color={'brand.slate.500'}>城市</FormLabel>
-            <Select
-              color={watch().location.length === 0 ? 'brand.slate.300' : ''}
-              borderColor="brand.slate.300"
-              _placeholder={{
-                color: 'brand.slate.400',
-              }}
-              focusBorderColor="brand.purple"
-              id={'location'}
-              placeholder=""
-              {...register('location', { required: true })}
-            >
-              {CountryList.map((ct) => {
-                return (
-                  <option key={ct} value={ct}>
-                    {ct}
-                  </option>
-                );
-              })}
-            </Select>
+            <AreaSelectBox
+              label="城市"
+              watchValue={watch('location')}
+              id="location"
+              placeholder="选择城市"
+              register={register}
+            />
           </Box>
         </FormControl>
         <FormControl>
