@@ -43,19 +43,9 @@ export function TitleAndType() {
   const title = useWatch({ control: form.control, name: 'title' });
   const listingId = useWatch({ control: form.control, name: 'id' });
 
-  const [suggestions, setSuggestions] = useState<
-    {
-      label: string;
-      link: string;
-    }[]
-  >([]);
-
-  useEffect(() => {
-    const suggestedListings = getSuggestions(title, type);
-    if (suggestedListings) {
-      setSuggestions(suggestedListings);
-    }
-  }, [title]);
+  const suggestions = useMemo(() => {
+    return getSuggestions(title, type);
+  }, [title, type]);
 
   const isEditing = useAtomValue(isEditingAtom);
   const placeholder = useMemo(() => {
@@ -92,7 +82,6 @@ export function TitleAndType() {
 
   useEffect(() => {
     if (generatedSlugValidated?.data.slug) {
-      console.log('generatedSlugValidated running?');
       form.setValue('slug', generatedSlugValidated.data.slug, {
         shouldValidate: true,
         shouldDirty: true,
@@ -100,12 +89,6 @@ export function TitleAndType() {
       form.saveDraft();
     }
   }, [generatedSlugValidated]);
-  useEffect(() => {
-    console.log('debouncedTitle', debouncedTitle);
-  }, [debouncedTitle]);
-  useEffect(() => {
-    console.log('slugifiedTitle', slugifiedTitle);
-  }, [slugifiedTitle]);
 
   return (
     <FormField
@@ -183,16 +166,6 @@ function Type() {
   const isEditing = useAtomValue(isEditingAtom);
   const hackathon = useAtomValue(hackathonAtom);
   const [prevCompType, setPrevCompType] = useState<CompensationType>('fixed');
-  useEffect(() => {
-    console.log('isEditing type', isEditing);
-  }, [isEditing]);
-  const hackathonId = useWatch({
-    control: form.control,
-    name: 'hackathonId',
-  });
-  useMemo(() => {
-    console.log('hackathonId', hackathonId);
-  }, [hackathonId]);
   return (
     <FormField
       name="type"
@@ -208,7 +181,6 @@ function Type() {
                   field.onChange(e);
                   if (e === 'hackathon') {
                     if (hackathon) {
-                      console.log('set hackathon value - ', hackathon);
                       form.setValue('hackathonId', hackathon.id);
                     }
                   } else {

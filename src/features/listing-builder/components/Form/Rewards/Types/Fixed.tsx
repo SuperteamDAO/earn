@@ -24,9 +24,6 @@ export function Fixed() {
     name: 'type',
   });
   useEffect(() => {
-    console.log('rewards', rewards);
-  }, [rewards]);
-  useEffect(() => {
     if (type === 'project') form.setValue('rewardAmount', rewards?.[1]);
   }, [type]);
   return (

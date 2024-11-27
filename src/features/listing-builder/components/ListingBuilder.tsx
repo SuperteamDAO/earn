@@ -2,7 +2,7 @@ import { type BountyType, type Hackathon } from '@prisma/client';
 import { Provider, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 import { Form } from '@/components/ui/form';
 import { type Listing } from '@/features/listings';
@@ -80,6 +80,7 @@ function ListingBuilder({
   };
 
   useEffect(() => {
+    // keep this log, for error purposes
     console.log('errors', form.formState.errors);
   }, [form.formState.errors]);
 
@@ -91,8 +92,6 @@ function ListingBuilder({
       setPreviewModal(false);
     };
   }, []);
-
-  useMemo(() => console.log('form values', form.getValues()), [form]);
 
   return (
     <>
@@ -165,7 +164,6 @@ function ListingBuilderProvider({
         type: (params.get('type') as BountyType) || 'bounty',
         hackathon: hackathon,
       });
-  console.log('defaultListing', defaultListing);
 
   return (
     <Provider store={store}>
@@ -181,7 +179,6 @@ function ListingBuilderProvider({
             {
               isProcessing: false,
               shouldProcessNext: false,
-              id: defaultListing.id,
             },
           ],
         ]}

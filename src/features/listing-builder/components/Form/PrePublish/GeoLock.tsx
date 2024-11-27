@@ -1,7 +1,6 @@
 import { Regions } from '@prisma/client';
 import { Check, ChevronsUpDown, Earth } from 'lucide-react';
-import React, { useEffect, useMemo } from 'react';
-import { useWatch } from 'react-hook-form';
+import React, { useMemo } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';
@@ -46,13 +45,6 @@ type SelectOption = CountryOption | GroupedOption;
 
 export function GeoLock() {
   const form = useListingForm();
-  const region = useWatch({
-    control: form.control,
-    name: 'region',
-  });
-  useEffect(() => {
-    console.log('region', region);
-  }, [region]);
 
   const options: SelectOption[] = useMemo(() => {
     const superteamCountries = Superteams.flatMap((region) =>

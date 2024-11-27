@@ -178,3 +178,23 @@ export function transformListingToFormListing(
     totalWinnersSelected: listing.totalWinnersSelected,
   };
 }
+
+export const refineReadyListing = (listing: ListingFormData) => {
+  if (listing.type !== 'project') {
+    listing.compensationType = 'fixed';
+    listing.maxRewardAsk = null;
+    listing.minRewardAsk = null;
+  } else {
+    if (listing.compensationType !== 'fixed') {
+      listing.rewards = undefined;
+      listing.rewardAmount = undefined;
+    } else {
+      listing.rewards = { 1: listing.rewardAmount || 0 };
+    }
+    if (listing.compensationType !== 'range') {
+      listing.minRewardAsk = undefined;
+      listing.maxRewardAsk = undefined;
+    }
+  }
+  return listing;
+};

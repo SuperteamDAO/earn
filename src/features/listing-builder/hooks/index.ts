@@ -2,12 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type Hackathon } from '@prisma/client';
 import { useAtom, useAtomValue } from 'jotai';
 import debounce from 'lodash.debounce';
-import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef } from 'react';
 import { useForm, useFormContext, type UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
-
-import { convertUndefinedToNull } from '@/utils/undefinedToNull';
 
 import {
   draftQueueAtom,
@@ -42,8 +39,6 @@ export const useListingForm = (
   let formMethods: UseFormReturn<ListingFormData> | null = null;
   let isNewFormInitialized = false;
 
-  const router = useRouter();
-
   try {
     //eslint-disable-next-line
     formMethods = useFormContext<ListingFormData>();
@@ -64,7 +59,6 @@ export const useListingForm = (
     pastListing: defaultValues as any,
     hackathon: hackathon,
   });
-  console.log('default values in hook', defaultValues);
   if (!formMethods || !Object.keys(formMethods).length) {
     //eslint-disable-next-line
     formMethods = useForm<ListingFormData>({
@@ -89,11 +83,12 @@ export const useListingForm = (
   useEffect(() => {
     queueRefRef.current = queueRef;
   }, [queueRef]);
+
+  // queue ensures eeach call for auto save is sent synchronously
   const processSaveQueue = useCallback(async () => {
     if (isEditing) return;
     setDraftSaving(true);
     if (queueRefRef.current.isProcessing) {
-      // queueRef.shouldProcessNext = true;
       setQueueRef((q) => ({
         ...q,
         shouldProcessNext: true,
@@ -101,8 +96,6 @@ export const useListingForm = (
       return;
     }
 
-    // queueRef.isProcessing = true;
-    // queueRef.shouldProcessNext = false;
     setQueueRef((q) => ({
       ...q,
       shouldProcessNext: false,
@@ -110,28 +103,15 @@ export const useListingForm = (
     }));
     try {
       const dataToSave = getValues();
-      console.log('queueRef', queueRef);
-      console.log('before save', dataToSave);
       const data = await saveDraftMutation.mutateAsync(dataToSave);
-      console.log('data', data);
       setHideAutoSave(false);
       formMethods.setValue('id', data.id);
       if (!dataToSave.slug) formMethods.setValue('slug', data.slug);
       setQueueRef((q) => ({
         ...q,
       }));
-      console.log('asPath', router.asPath);
-      console.log('data slug', data.slug);
-      // if(router.asPath.split('/')[4] === 'edit') {
-      //   console.log('replacee')
-      //   router.replace(`/dashboard/listings/${data.slug}/edit/`,{},{
-      //     shallow: true,
-      //   } )
-      // }
     } catch (error) {
-      console.error('Error saving draft:', error);
     } finally {
-      // queueRef.isProcessing = false;
       setQueueRef((q) => ({
         ...q,
         isProcessing: false,
@@ -147,31 +127,21 @@ export const useListingForm = (
     }
   }, [queueRefRef, isEditing]);
 
-  // Create the debounced function ref that persists across renders
   const debouncedSaveRef = useRef<ReturnType<typeof debounce>>();
 
-  // Initialize the debounced function once
   useEffect(() => {
     debouncedSaveRef.current = debounce(() => {
-      console.log('debounce');
       void processSaveQueue();
     }, 1000);
-  }, [processSaveQueue]); // Empty dependency array - only create once
+  }, [processSaveQueue]);
 
   const onChange = useCallback(() => {
     setHideAutoSave(true);
-    console.log('save draft was called');
-    // setDraftSaving(true)
     if (!isEditing) debouncedSaveRef.current?.();
   }, []);
 
   const submitListing = useCallback(async () => {
     const formData = refineReadyListing(getValues());
-    console.log('submitListing', getValues());
-    console.log(
-      'submitListing convertUndefinedToNull',
-      convertUndefinedToNull(formData),
-    );
     return await submitListingMutation.mutateAsync(formData);
   }, [getValues, submitListingMutation]);
 
@@ -187,7 +157,6 @@ export const useListingForm = (
 
       // Transform array rewards if is array
       if ('rewards' in fields && Array.isArray(values.rewards)) {
-        console.log('rewards in validate', values.rewards);
         const rewardsObject: Record<string, number> = {};
         let index = 1;
         for (const value of values.rewards.filter(Boolean)) {
@@ -215,7 +184,6 @@ export const useListingForm = (
         await partialSchema.parseAsync(values);
         return true;
       } catch (error) {
-        console.log('validation error', error);
         if (error instanceof z.ZodError) {
           error.errors.forEach((err) => {
             const fieldName = err.path.join('.') as keyof ListingFormData;
@@ -241,7 +209,6 @@ export const useListingForm = (
       minRewardAsk: true,
       maxRewardAsk: true,
       maxBonusSpots: true,
-      // deadline: true,
     });
 
   const validateBasics = () =>

@@ -253,7 +253,6 @@ export function Templates() {
                         disabled={isDisabled}
                         onClick={() => {
                           posthog.capture('template_sponsor');
-                          console.log('template', template);
                           form.reset(
                             cleanTemplate(
                               template as any,

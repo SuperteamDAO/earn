@@ -30,18 +30,11 @@ export const Podiums = () => {
     name: 'rewards',
   }) || { '1': NaN };
 
-  useEffect(() => {
-    console.log('rewards', rewards);
-  }, [rewards]);
-
   const maxBonusSpots =
     useWatch({
       control: form.control,
       name: 'maxBonusSpots',
     }) || NaN;
-  useEffect(() => {
-    console.log('maxBonusSpots', maxBonusSpots);
-  }, [maxBonusSpots]);
 
   const podiumsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -182,14 +175,6 @@ export const Podiums = () => {
                             updateTotalReward(updatedRewards);
                           }}
                           onBlur={() => null}
-                          // onBlur={(event) => {
-                          //   // react form hook has a bug where onblur error is not set when only one podium reward is available before adding any value
-                          //   if (!event.target.value) {
-                          //     form.setError(`rewards.${position}`, {
-                          //       message: 'Reward amount is required',
-                          //     });
-                          //   }
-                          // }}
                         />
                         {rewardPositions.length > 1 && (
                           <Button

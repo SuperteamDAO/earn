@@ -129,13 +129,8 @@ export const createListingFormSchema = ({
           /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
           'Slug should only contain lowercase alphabets, numbers, and hyphens',
         ),
-      // we cannot do this here, coz once slug is dirty, any field change will trigger this
-      // .refine(
-      //   async (slug) => await slugUniqueCheck(slug),
-      //   {
-      //     message: 'Slug already exists. Please try another.',
-      //   },
-      // ),
+      // we cannot call slug check api here,
+      // coz once slug is dirty, any field other change will also trigger this
       pocSocials: z
         .string()
         .trim()
@@ -357,7 +352,8 @@ export const createListingRefinements = async (
   }
 };
 
-// use this for any logic that needs nullification (or shouldnt hinder frontend)
+// used in backend APIs only, not on frontend,
+// meant to not hinder UX (like cache rewards while switching between listing type or compensation type)
 export const backendListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,

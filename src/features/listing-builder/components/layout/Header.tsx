@@ -2,7 +2,6 @@ import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { useIsFetching } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronLeft, Eye, Loader2 } from 'lucide-react';
-import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -12,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent } from '@/components/ui/tooltip';
+import { UserMenu } from '@/features/navbar';
 import { cn } from '@/utils';
 
 import {
@@ -23,10 +23,6 @@ import {
 import { useListingForm } from '../../hooks';
 import { PrePublish } from '../Form/PrePublish';
 import { StatusBadge } from './StatusBadge';
-
-const UserMenu = dynamic(() =>
-  import('@/features/navbar').then((mod) => mod.UserMenu),
-);
 
 export function Header() {
   const { data: session, status } = useSession();
@@ -95,7 +91,8 @@ export function Header() {
                         isDraftSaving ||
                         !id ||
                         !!form.formState.errors.slug ||
-                        isSlugLoading
+                        isSlugLoading ||
+                        hideAutoSave
                       }
                       onClick={() => {
                         posthog.capture('preview_listing');

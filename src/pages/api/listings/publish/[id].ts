@@ -68,8 +68,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         })) || undefined
       : undefined;
 
-    console.log('hackathon in publish', hackathon);
-
     const listingSchema = createListingFormSchema({
       isGod: user?.role === 'GOD',
       isEditing: false,
@@ -90,7 +88,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       await createListingRefinements(data as any, ctx, hackathon);
       await backendListingRefinements(data as any, ctx);
     });
-    console.log('req.body', req.body);
     const validatedData = await superValidator.parseAsync(req.body);
 
     const {

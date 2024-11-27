@@ -59,22 +59,6 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
   },
 }));
 
-// type ListingResponse = ListingFormData | null;
-// const fetchListingAtom = atomWithQuery<ListingResponse>((get) => ({
-//   queryKey: ['listing', get(listingSlugAtom)],
-//   queryFn: async ({ queryKey: [_, slug] }): Promise<ListingResponse> => {
-//     if (!slug) return null;
-//     try {
-//       const response = await axios.get<ListingFormData>(`/api/sponsor-dashboard/${slug}/listing`);
-//       return response.data;
-//     } catch (error) {
-//       console.error('Error fetching listing:', error);
-//       return null;
-//     }
-//   },
-//   enabled: Boolean(get(listingSlugAtom)),
-// }));
-
 export {
   confirmModalAtom,
   draftQueueAtom,

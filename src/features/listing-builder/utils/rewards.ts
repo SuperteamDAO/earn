@@ -2,8 +2,6 @@ import { BONUS_REWARD_POSITION } from '@/constants';
 import { type Rewards } from '@/features/listings';
 import { cleanRewards } from '@/utils/rank';
 
-import { type ListingFormData } from '../types';
-
 export const calculateTotalPrizes = (
   rewards: Rewards | undefined | null,
   maxBonusSpots: number,
@@ -22,24 +20,4 @@ export const calculateTotalRewardsForPodium = (
     }
     return sum + value;
   }, 0);
-};
-
-export const refineReadyListing = (listing: ListingFormData) => {
-  if (listing.type !== 'project') {
-    listing.compensationType = 'fixed';
-    listing.maxRewardAsk = null;
-    listing.minRewardAsk = null;
-  } else {
-    if (listing.compensationType !== 'fixed') {
-      listing.rewards = undefined;
-      listing.rewardAmount = undefined;
-    } else {
-      listing.rewards = { 1: listing.rewardAmount || 0 };
-    }
-    if (listing.compensationType !== 'range') {
-      listing.minRewardAsk = undefined;
-      listing.maxRewardAsk = undefined;
-    }
-  }
-  return listing;
 };

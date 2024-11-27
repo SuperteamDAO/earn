@@ -39,7 +39,6 @@ import { Slug } from './Slug';
 
 export function PrePublish() {
   const isST = useAtomValue(isSTAtom);
-  useMemo(() => console.log('isST', isST), [isST]);
   const form = useListingForm();
   const [open, isOpen] = useState(false);
 
@@ -108,13 +107,6 @@ export function PrePublish() {
     [form.formState.errors.slug, isDisabledSoft],
   );
 
-  useEffect(() => {
-    console.log('slug isSlugLoading', isSlugLoading);
-  }, [isSlugLoading]);
-  useEffect(() => {
-    console.log('isDisabledSoft', isDisabledSoft);
-  }, [isDisabledSoft]);
-
   return (
     <Dialog
       open={open}
@@ -180,7 +172,6 @@ export function PrePublish() {
           <Button
             className="ml-auto px-12"
             onClick={async () => {
-              console.log('values ', form.getValues());
               if (await form.trigger()) {
                 try {
                   const data = await form.submitListing();

@@ -49,7 +49,6 @@ export function EligibilityQuestions() {
   });
 
   const handleAddQuestion = (focus = true) => {
-    console.log('handle add question');
     append(
       {
         order: fields.length + 1,
@@ -63,7 +62,6 @@ export function EligibilityQuestions() {
   };
 
   const handleRemoveQuestion = (index: number) => {
-    console.log('handleRemoveQuestion fields index', index);
     remove(index);
     form.saveDraft();
   };
@@ -79,7 +77,6 @@ export function EligibilityQuestions() {
       } else if (fields.length === 1 && fields[0]?.question === '') {
         handleRemoveQuestion(0);
       } else if (type === 'bounty' && fields.length > 2) {
-        console.log('before loop field length', fields.length);
         form.setValue('eligibility', fields.slice(0, 2));
       }
     }

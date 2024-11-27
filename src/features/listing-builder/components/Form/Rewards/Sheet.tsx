@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -53,13 +53,6 @@ export function RewardsSheet() {
       open={open}
       onOpenChange={async (e) => {
         setOpen(e);
-        // console.log('reward sheet ', e);
-        // if (!e) {
-        //   if (!(await form.validateRewards()))
-        //     toast.warning('Please Resolve all Errors in Rewards to Continue');
-        //   else setOpen(e);
-        // }
-        // if (e && !hasRewardsErrors) setOpen(e);
       }}
     >
       <SheetTrigger className="w-full">
@@ -184,14 +177,6 @@ const Label = memo(() => {
     () => calculateTotalPrizes(rewards, maxBonusSpots || 0),
     [rewards, maxBonusSpots],
   );
-
-  useEffect(() => {
-    console.log('compensationType', compensationType);
-  }, [compensationType]);
-
-  useEffect(() => {
-    console.log('type', type);
-  }, [type]);
 
   if (type !== 'project') {
     return (

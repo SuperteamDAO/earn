@@ -2,7 +2,6 @@ import { type ListingFormData, type ListingStatus } from '../types';
 
 export * from './form';
 export * from './rewards';
-export * from './skills';
 export * from './suggestions';
 
 export const calculateTotalOfArray = (values: number[]) =>

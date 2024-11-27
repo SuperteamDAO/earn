@@ -54,7 +54,6 @@ const allowedFields = [
 
 async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const { id } = req.query;
-  console.log('req body', req.body);
   const data = filterAllowedFields(req.body, allowedFields);
   const userId = req.userId;
   const userSponsorId = req.userSponsorId;
@@ -93,7 +92,6 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id: userId as string },
     });
 
-    console.log('req hackathon id', req.body.hackathonId);
     const hackathon = req.body.hackathonId
       ? (await prisma.hackathon.findUnique({
           where: {
@@ -102,8 +100,6 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         })) || undefined
       : undefined;
 
-    console.log('hackathon in update', hackathon);
-    // Create schema instance with correct parameters
     const listingSchema = createListingFormSchema({
       isGod: user?.role === 'GOD',
       isEditing: true,
@@ -125,7 +121,6 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       await backendListingRefinements(data as any, ctx);
     });
 
-    console.log('api data', data);
     const validatedData = await superValidator.parseAsync({
       ...listing, // Existing data as base
       ...data, // Merge update data
@@ -165,7 +160,6 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       maxBonusSpots = 0;
     }
 
-    // Handle skills update
     const skillsToUpdate =
       'skills' in validatedData
         ? skills
@@ -180,6 +174,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       : 0;
 
     let totalWinnersSelected = 0;
+    // handle selected winners update
     if (newRewardsCount < currentTotalWinners) {
       totalWinnersSelected = newRewardsCount;
 
@@ -232,10 +227,8 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    // Handle verification status
     const isVerifying = listing.status === 'VERIFYING';
 
-    // Calculate USD value
     let usdValue = 0;
     if (isPublished && listing.publishedAt && !isVerifying) {
       try {
@@ -261,7 +254,6 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const isFndnPaying =
       sponsor?.st && type !== 'project' ? data.isFndnPaying : false;
 
-    // Update listing
     const result = await prisma.bounties.update({
       where: { id: id as string },
       data: {
@@ -281,7 +273,6 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
 
-    // Handle discord notifications
     try {
       await earncognitoClient.post(`/discord/listing-update`, {
         listingId: result.id,
@@ -291,7 +282,6 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       logger.error('Discord Listing Update Message Error', err);
     }
 
-    // Handle deadline change notification
     const deadlineChanged =
       listing.deadline?.toString() !== result.deadline?.toString();
     if (deadlineChanged && result.isPublished && userId) {

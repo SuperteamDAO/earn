@@ -85,7 +85,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const reTitle = title || 'Untitled Draft';
     let reSlug = slug;
-    if (reSlug && id) {
+    if (reSlug && id && reSlug !== listing?.slug) {
       try {
         await fetchSlugCheck({
           slug: reSlug,
@@ -93,7 +93,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           check: true,
         });
       } catch (error) {
-        console.log('Already used slug passed, using prev slug', error);
         logger.warn(
           'Save draft - already used slug passed, using prev slug',
           error,
@@ -108,7 +107,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         : await generateUniqueSlug(reTitle);
     const data: Prisma.BountiesUncheckedCreateInput = {
       title: reTitle,
-      slug: uniqueSlug || `untitled-draft-${Date.now()}`, // by frontend logic, should never reach untitle slug
+      slug: uniqueSlug || `untitled-draft-${Date.now()}`,
       description,
       deadline: deadline ? new Date(deadline) : undefined,
       pocSocials,

@@ -42,17 +42,8 @@ export function Slug() {
     control: form.control,
     name: 'publishedAt',
   });
-  useEffect(() => {
-    console.log('listingId', listingId);
-  }, [listingId]);
 
   const debouncedSlug = useDebounce(slug);
-  useEffect(() => {
-    console.log('slug', slug);
-  }, [slug]);
-  useEffect(() => {
-    console.log('debouncedSlug', debouncedSlug);
-  }, [debouncedSlug]);
 
   const queryEnabled = useMemo(
     () =>
@@ -74,7 +65,6 @@ export function Slug() {
   );
 
   useEffect(() => {
-    console.log('slug error isSlugCheckError', isSlugCheckError);
     if (isSlugCheckError) {
       if (slug === '') return;
       form.setError('slug', {
@@ -86,29 +76,13 @@ export function Slug() {
   }, [isSlugCheckError]);
 
   useEffect(() => {
-    console.log('slugCheckFetching', slugCheckFetching);
-  }, [slugCheckFetching]);
-
-  useEffect(() => {
     async function validateSlug() {
-      const validated = await form.trigger('slug');
+      await form.trigger('slug');
       form.setFocus('slug');
-      console.log('slug error validated', validated);
-      console.log(
-        'slug error form.formState.errors.slug',
-        form.formState.errors.slug,
-      );
       form.saveDraft();
     }
     validateSlug();
   }, [debouncedSlug]);
-
-  // useEffect(() => {
-  //   if(!form.formState.errors.slug) form.saveDraft()
-  // },[form.formState.errors.slug, debouncedSlug])
-  // useEffect(() => {
-  //   if(isValidated) form.saveDraft();
-  // },[isValidated])
 
   return (
     <FormField
@@ -135,7 +109,7 @@ export function Slug() {
                 {slugCheckFetching || isSlugLoading ? (
                   <Loader2 className="absolute right-2 top-1.5 animate-spin text-slate-300" />
                 ) : (
-                  <span className="absolute right-2 top-1.5 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1 text-background">
+                  <span className="absolute right-2 top-2 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1 text-background">
                     <CheckIcon className="h-full w-full stroke-[3px]" />
                   </span>
                 )}

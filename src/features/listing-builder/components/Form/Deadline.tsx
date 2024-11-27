@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,6 @@ export function Deadline() {
     name: 'deadline',
     control: form.control,
   });
-  useMemo(() => console.log('deadline', deadline), [deadline]);
   const type = useWatch({
     name: 'type',
     control: form.control,
@@ -62,7 +61,6 @@ export function Deadline() {
         }
       } else {
         if (hackathon) {
-          console.log('hackathon deadline', hackathon.deadline);
           form.setValue('deadline', hackathon.deadline as any as string);
         }
       }
@@ -86,8 +84,6 @@ export function Deadline() {
                   if (date) {
                     const formattedDate = dayjs(date).format(DEADLINE_FORMAT);
                     const localFormat = formattedDate.replace('Z', '');
-                    console.log('formattedDate', formattedDate);
-                    console.log('localFormat', localFormat);
                     field.onChange(localFormat);
                   } else {
                     field.onChange(undefined);
