@@ -151,7 +151,7 @@ export function Templates() {
               </Button>
             </DialogClose>
             {templatesLoading &&
-              Array(7)
+              Array(5)
                 .fill(1)
                 .map((_, i) => (
                   <div

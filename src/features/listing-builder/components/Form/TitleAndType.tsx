@@ -1,7 +1,9 @@
 import { type CompensationType } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
+import { Link } from 'lucide-react';
 import Image from 'next/image';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import slugify from 'slugify';
@@ -27,7 +29,7 @@ import { getListingIcon } from '@/features/listings';
 import { hackathonAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 import { slugCheckQuery } from '../../queries';
-import { calculateTotalRewardsForPodium } from '../../utils';
+import { calculateTotalRewardsForPodium, getSuggestions } from '../../utils';
 
 const typeOptions = [
   { value: 'bounty', label: 'Bounty' },
@@ -36,9 +38,24 @@ const typeOptions = [
 
 export function TitleAndType() {
   const form = useListingForm();
+  const posthog = usePostHog();
   const type = useWatch({ name: 'type', control: form.control });
   const title = useWatch({ control: form.control, name: 'title' });
   const listingId = useWatch({ control: form.control, name: 'id' });
+
+  const [suggestions, setSuggestions] = useState<
+    {
+      label: string;
+      link: string;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    const suggestedListings = getSuggestions(title, type);
+    if (suggestedListings) {
+      setSuggestions(suggestedListings);
+    }
+  }, [title]);
 
   const isEditing = useAtomValue(isEditingAtom);
   const placeholder = useMemo(() => {
@@ -113,9 +130,44 @@ export function TitleAndType() {
                 />
               </FormControl>
             </div>
-            <div className="flex justify-between">
-              <FormMessage />
-              <div className="ml-auto text-right text-xs text-slate-400">
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                {form.formState.errors.title ? (
+                  <FormMessage />
+                ) : (
+                  !isEditing &&
+                  suggestions.length > 0 && (
+                    <div className="flex flex-shrink gap-1 text-[0.7rem] font-medium italic text-emerald-600">
+                      <p className="w-max">Reference Listings:</p>
+                      <div className="flex flex-wrap items-center gap-x-1.5">
+                        {suggestions.map((suggestion, index) => (
+                          <div
+                            key={suggestion.link}
+                            className="flex items-center gap-2"
+                          >
+                            <a
+                              className="ph-no-capture underline"
+                              href={suggestion.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => {
+                                posthog.capture('similar listings_sponsor');
+                              }}
+                            >
+                              {suggestion.label}
+                              {suggestions.length - 1 !== index && ';'}
+                            </a>
+                            {suggestions.length - 1 === index && (
+                              <Link className="text-slate-400" size={13} />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+              <div className="shrink-0 whitespace-nowrap text-right text-xs text-slate-400">
                 {100 - (title?.length || 0)} characters left
               </div>
             </div>
