@@ -87,16 +87,13 @@ async function grantApplication(
   req: NextApiRequestWithUser,
   res: NextApiResponse,
 ) {
-  const { userId } = req;
+  const userId = req.userId;
   const { grantId, ...applicationData } = req.body;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   try {
-    const { grant, user } = await validateGrantRequest(
-      userId as string,
-      grantId,
-    );
+    const { grant } = await validateGrantRequest(userId as string, grantId);
 
     const existingApplication = await prisma.grantApplication.findFirst({
       where: {
@@ -123,8 +120,8 @@ async function grantApplication(
       try {
         sendEmailNotification({
           type: 'application',
-          id: grant.id,
-          userId: user.id,
+          id: result.id,
+          userId: userId,
           triggeredBy: userId,
         });
       } catch (err) {
