@@ -50,9 +50,7 @@ export const RejectAllSubmissionModal = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader color={'brand.slate.500'} fontSize={'md'} fontWeight={600}>
-          {rejectingAll
-            ? 'Reject All Remaining Applications?'
-            : 'Reject Application'}
+          {rejectingAll ? '拒绝所有剩余的申请？' : '拒绝申请'}
         </ModalHeader>
         <ModalCloseButton />
         <Divider />

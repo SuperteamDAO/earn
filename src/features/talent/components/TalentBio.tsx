@@ -8,13 +8,13 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
+import { SolarMail } from '@/constants';
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
 import { EarnAvatar } from './EarnAvatar';
 import { GitHub, Linkedin, Twitter, Website } from './Socials';
-import { SolarMail } from '@/constants';
 
 type ChipType = {
   icon: string;
@@ -87,7 +87,7 @@ export function TalentBio({
 
   const createMailtoLink = () => {
     const email = encodeURIComponent(talentUser?.email || '');
-    const subject = encodeURIComponent('Saw Your ST Earn Profile!');
+    const subject = encodeURIComponent('看到了您的 Solar Earn 个人资料！');
     const bcc = encodeURIComponent(SolarMail);
     return `mailto:${email}?subject=${subject}&bcc=${bcc}`;
   };

@@ -117,7 +117,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         resize="vertical"
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        placeholder="• Start typing notes here"
+        placeholder="• 在这里输入笔记"
         rows={20}
         value={notes}
       />

@@ -31,7 +31,7 @@ interface PowCardProps {
 
 export function PowCard({ pow, type, commentCount }: PowCardProps) {
   const content = {
-    actionText: 'added a personal project',
+    actionText: '添加了个人项目',
     createdAt: pow?.createdAt || '',
     description: pow?.description,
   };
@@ -52,7 +52,7 @@ export function PowCard({ pow, type, commentCount }: PowCardProps) {
           {pow?.title}
         </Text>
       </Flex>
-      <FeedCardLink href={pow?.link}>View Project</FeedCardLink>
+      <FeedCardLink href={pow?.link}>查看</FeedCardLink>
     </>
   );
 

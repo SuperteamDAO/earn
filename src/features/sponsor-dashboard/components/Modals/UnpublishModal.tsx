@@ -77,7 +77,7 @@ export const UnpublishModal = ({
     <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Unpublish Listing?</ModalHeader>
+        <ModalHeader>取消发布？</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Text color="brand.slate.500">

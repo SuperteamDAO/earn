@@ -361,7 +361,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                       target="_blank"
                     >
                       <Button h="full" fontSize="xs" variant="ghost">
-                        View Profile
+                        查看个人档案
                       </Button>
                     </Link>
                     <InviteButton

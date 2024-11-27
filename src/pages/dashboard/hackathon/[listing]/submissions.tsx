@@ -203,7 +203,7 @@ export default function BountySubmissions({ listing }: Props) {
               borderBottomWidth={'1px'}
             >
               <Tab px={1} fontSize="sm" _selected={selectedStyles}>
-                Submissions
+                提案
               </Tab>
               {bounty?.isPublished &&
                 !bounty?.isWinnersAnnounced &&
@@ -216,7 +216,7 @@ export default function BountySubmissions({ listing }: Props) {
                     bg="white"
                     borderRadius={'lg'}
                     isDisabled={isSponsorVerified === true}
-                    label="Scout is an invite-only feature right now"
+                    label="人才库现在是一个只有邀请才能使用的功能"
                   >
                     <Tab
                       className="ph-no-capture"
@@ -228,7 +228,7 @@ export default function BountySubmissions({ listing }: Props) {
                       isDisabled={!isSponsorVerified}
                       onClick={() => posthog.capture('scout tab_scout')}
                     >
-                      Scout Talent
+                      人才库
                       {!!isSponsorVerified && (
                         <Box w={1.5} h={1.5} ml={1.5} bg="red" rounded="full" />
                       )}
@@ -267,8 +267,8 @@ export default function BountySubmissions({ listing }: Props) {
                         roundedRight={'xl'}
                       >
                         {!paginatedSubmissions?.length &&
-                        !searchText &&
-                        !isSubmissionsLoading ? (
+                          !searchText &&
+                          !isSubmissionsLoading ? (
                           <>
                             <Image
                               w={32}
@@ -285,9 +285,7 @@ export default function BountySubmissions({ listing }: Props) {
                               fontWeight={600}
                               textAlign={'center'}
                             >
-                              {filterLabel
-                                ? `Zero Results`
-                                : 'People are working!'}
+                              {filterLabel ? `没有结果` : '大家正在工作!'}
                             </Text>
                             <Text
                               mx="auto"
@@ -297,8 +295,8 @@ export default function BountySubmissions({ listing }: Props) {
                               textAlign={'center'}
                             >
                               {filterLabel
-                                ? `For the filters you have selected`
-                                : 'Submissions will start appearing here'}
+                                ? '对于您所选择的过滤器'
+                                : '提交将在这里出现”'}
                             </Text>
                           </>
                         ) : (

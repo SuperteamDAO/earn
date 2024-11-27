@@ -46,17 +46,18 @@ export function UnderVerificationModal({ onClose, isOpen }: Props) {
               我们需要在您的任务发布之前进行审核。
             </Text>
             <Text color="brand.slate.500">
-              {`我们需要审核项目方资质，以构建信任并确保平台免受不良行为者的影响。我们会尽力在 48 小时内完成审核。`}
+              我们需要审核项目方资质，以构建信任并确保平台免受不良行为者的影响。我们会尽力在
+              48 小时内完成审核。
             </Text>
             <Text color="brand.slate.500">
-              {`一旦通过审核，您的列表将自动发布。如果我们需要任何信息，我们将与您联系。`}
+              一旦通过审核，您的列表将自动发布。如果我们需要其他信息，将会与您联系。
             </Text>
           </VStack>
         </ModalBody>
         <ModalFooter>
           <Link as={NextLink} w="full" href="/dashboard/listings">
             <Button w="full" py={5}>
-              明白
+              关闭
             </Button>
           </Link>
         </ModalFooter>

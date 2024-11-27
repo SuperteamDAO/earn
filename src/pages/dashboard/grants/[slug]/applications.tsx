@@ -195,9 +195,9 @@ function GrantApplications({ slug }: Props) {
           return old.map((application: GrantApplicationWithUser) =>
             applicationIds.includes(application.id)
               ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Rejected,
-                }
+                ...application,
+                applicationStatus: GrantApplicationStatus.Rejected,
+              }
               : application,
           );
         },
@@ -214,9 +214,9 @@ function GrantApplications({ slug }: Props) {
           return old.map((application: GrantApplicationWithUser) =>
             applicationIds.includes(application.id)
               ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Rejected,
-                }
+                ...application,
+                applicationStatus: GrantApplicationStatus.Rejected,
+              }
               : application,
           );
         },
@@ -430,8 +430,8 @@ function GrantApplications({ slug }: Props) {
                         roundedRight={'xl'}
                       >
                         {!applications?.length &&
-                        !searchText &&
-                        !isApplicationsLoading ? (
+                          !searchText &&
+                          !isApplicationsLoading ? (
                           <>
                             <Image
                               w={32}
@@ -448,9 +448,7 @@ function GrantApplications({ slug }: Props) {
                               fontWeight={600}
                               textAlign={'center'}
                             >
-                              {filterLabel
-                                ? `Zero Results`
-                                : 'People are working!'}
+                              {filterLabel ? `没有结果` : '大家正在工作!'}
                             </Text>
                             <Text
                               mx="auto"
@@ -460,8 +458,8 @@ function GrantApplications({ slug }: Props) {
                               textAlign={'center'}
                             >
                               {filterLabel
-                                ? `For the filters you have selected`
-                                : 'Submissions will start appearing here'}
+                                ? '对于您所选择的过滤器'
+                                : '提交将在这里出现”'}
                             </Text>
                           </>
                         ) : (
@@ -563,7 +561,7 @@ function GrantApplications({ slug }: Props) {
               >
                 {selectedApplicationIds.size > 100 && (
                   <Text pb={2} color="red" textAlign="center">
-                    不能选择超过100个申请
+                    不能选择超过 100 个申请
                   </Text>
                 )}
                 <HStack gap={4} fontSize={'lg'}>

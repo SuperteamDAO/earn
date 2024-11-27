@@ -28,7 +28,7 @@ export function TalentButton({
           onClick={() => checkTalent()}
           rounded="4px"
         >
-          以人才贡献身份 {'->'}
+          以人才身份贡献 {'->'}
         </Button>
       </Link>
     </>

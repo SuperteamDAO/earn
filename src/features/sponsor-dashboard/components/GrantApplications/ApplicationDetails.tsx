@@ -350,7 +350,8 @@ export const ApplicationDetails = ({
                     href={`/t/${selectedApplication?.user?.username}`}
                     isExternal
                   >
-                    View Profile <ArrowForwardIcon mb="0.5" />
+                    查看个人档案
+                    <ArrowForwardIcon mb="0.5" />
                   </Link>
                 </Box>
               </Flex>

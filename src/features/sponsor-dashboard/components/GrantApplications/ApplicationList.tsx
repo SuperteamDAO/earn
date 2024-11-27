@@ -173,7 +173,7 @@ export const ApplicationList = ({
                     textTransform={'capitalize'}
                     whiteSpace={'nowrap'}
                   >
-                    {filterLabel || 'Select Option'}
+                    {filterLabel || '选择'}
                   </TagLabel>
                 </Tag>
               </MenuButton>

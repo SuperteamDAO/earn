@@ -144,7 +144,7 @@ export function PublishResults({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Publish Results</ModalHeader>
+        <ModalHeader>公布结果</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {isWinnersAnnounced && (
@@ -218,7 +218,7 @@ export function PublishResults({
                 ml={4}
                 isDisabled={!isWinnersAllSelected || alertType === 'error'}
                 isLoading={isPublishingResults}
-                loadingText='正在发布'
+                loadingText="正在发布"
                 onClick={() => {
                   posthog.capture('announce winners_sponsor');
                   publishResults();

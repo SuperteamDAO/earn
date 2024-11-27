@@ -76,7 +76,7 @@ function EditBounty({ slug }: Props) {
           type={bounty.type as 'bounty' | 'project' | 'hackathon'}
         />
       ) : (
-        <div>Error loading bounty details.</div>
+        <div>出错</div>
       )}
     </SponsorLayout>
   );

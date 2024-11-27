@@ -164,7 +164,7 @@ export function YourLinks({ useFormStore }: Props) {
               }}
               variant="outline"
             >
-              Add Project
+              添加项目
             </Button>
 
             <Button

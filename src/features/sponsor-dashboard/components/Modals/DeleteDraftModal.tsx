@@ -64,7 +64,7 @@ export const DeleteDraftModal = ({
     <Modal isOpen={deleteDraftIsOpen} onClose={deleteDraftOnClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Delete Draft?</ModalHeader>
+        <ModalHeader>删除草稿？</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Text color="brand.slate.500">你确定要删除这份草稿吗？</Text>

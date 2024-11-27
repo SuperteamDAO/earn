@@ -161,7 +161,7 @@ const CreateSponsor = () => {
               fontSize={'20px'}
               fontWeight={500}
             >
-              让我们从您团队的基本信息开始
+              从您的团队基本信息开始
             </Text>
           </VStack>
           <VStack w={'2xl'} pt={10}>
@@ -232,7 +232,7 @@ const CreateSponsor = () => {
                     fontWeight={600}
                     htmlFor={'slug'}
                   >
-                    公司用户名
+                    公司 Slug
                   </FormLabel>
                   <Input
                     w={'full'}

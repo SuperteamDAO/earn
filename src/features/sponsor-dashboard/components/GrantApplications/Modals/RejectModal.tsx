@@ -58,7 +58,7 @@ export const RejectGrantApplicationModal = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader color={'brand.slate.500'} fontSize={'md'} fontWeight={600}>
-          Reject Grant Payment
+          拒绝拨款
         </ModalHeader>
         <ModalCloseButton />
         <Divider />

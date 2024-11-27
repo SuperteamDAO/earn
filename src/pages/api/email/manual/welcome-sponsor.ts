@@ -42,7 +42,7 @@ export default async function handler(
     await resend.emails.send({
       from: kashEmail,
       to: [userEmail],
-      subject: 'Welcome!',
+      subject: '欢迎！',
       react: WelcomeSponsorTemplate(),
       replyTo: replyToEmail,
     });

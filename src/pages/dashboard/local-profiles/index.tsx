@@ -117,7 +117,7 @@ export default function LocalProfiles() {
         <Flex align="center" gap={2}>
           {superteam?.code && <UserFlag location={superteam.code} isCode />}
           <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
-            Local Earn Profiles
+            本地配置文件
           </Text>
           <Divider
             h="60%"
@@ -126,7 +126,7 @@ export default function LocalProfiles() {
             orientation="vertical"
           />
           <Text color="brand.slate.500">
-            All profiles that are based in {superteam?.displayValue}
+            所有关于 {superteam?.displayValue} 的配置文件
           </Text>
         </Flex>
         <FilterSection

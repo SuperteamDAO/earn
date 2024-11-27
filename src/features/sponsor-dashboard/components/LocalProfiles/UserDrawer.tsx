@@ -164,7 +164,8 @@ export const UserDrawer = ({
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  View Profile <ArrowForwardIcon />
+                  查看个人档案
+                  <ArrowForwardIcon />
                 </Link>
               </Flex>
             </Flex>

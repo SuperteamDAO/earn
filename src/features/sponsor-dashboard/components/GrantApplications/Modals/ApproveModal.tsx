@@ -88,7 +88,7 @@ export const ApproveModal = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader color={'brand.slate.500'} fontSize={'md'} fontWeight={600}>
-          Approve Grant Payment
+          批准拨款
         </ModalHeader>
         <ModalCloseButton />
         <Divider />

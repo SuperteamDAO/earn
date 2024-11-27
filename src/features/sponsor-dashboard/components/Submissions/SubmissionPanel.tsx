@@ -83,7 +83,7 @@ export const SubmissionPanel = ({
                       fontWeight={500}
                       whiteSpace={'nowrap'}
                     >
-                      {`${selectedSubmission?.user?.firstName}'s Submission`}
+                      {`${selectedSubmission?.user?.firstName} 的提案`}
                     </Text>
                     <Link
                       as={NextLink}
@@ -94,7 +94,8 @@ export const SubmissionPanel = ({
                       whiteSpace={'nowrap'}
                       href={`/t/${selectedSubmission?.user?.username}`}
                     >
-                      View Profile <ArrowForwardIcon mb="0.5" />
+                      查看个人档案
+                      <ArrowForwardIcon mb="0.5" />
                     </Link>
                   </Box>
                 </Flex>
@@ -116,7 +117,7 @@ export const SubmissionPanel = ({
                           bg={'brand.purple'}
                           hasArrow={true}
                           isDisabled={!!bounty?.isWinnersAnnounced}
-                          label="Please announce the winners before you paying out the winners"
+                          label="请在发奖励前宣布获奖者名单"
                           placement="top"
                         >
                           <Button
@@ -125,10 +126,10 @@ export const SubmissionPanel = ({
                             size="sm"
                             variant="solid"
                           >
-                            Pay {bounty?.token}{' '}
+                            支付 {bounty?.token}{' '}
                             {!!bounty?.rewards &&
                               bounty?.rewards[
-                                selectedSubmission?.winnerPosition as keyof Rewards
+                              selectedSubmission?.winnerPosition as keyof Rewards
                               ]}
                           </Button>
                         </Tooltip>
@@ -150,7 +151,7 @@ export const SubmissionPanel = ({
                         size="md"
                         variant="ghost"
                       >
-                        View Payment Tx
+                        查看支付链接
                       </Button>
                     )}
                   {!bounty?.isWinnersAnnounced && (
@@ -169,7 +170,7 @@ export const SubmissionPanel = ({
                           bg={'brand.purple'}
                           hasArrow={true}
                           isDisabled={!bounty?.isWinnersAnnounced}
-                          label="You cannot change the winners once the results are published!"
+                          label="一旦结果公布，您就不能更改获奖者！"
                           placement="top"
                         >
                           <Button
@@ -210,10 +211,7 @@ export const SubmissionPanel = ({
                   {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
                     <Text color="#F55151">
                       {remainings.podiums > 0 && (
-                        <>
-                          {remainings.podiums}{' '}
-                          {remainings.podiums === 1 ? 'Winner' : 'Winners'}{' '}
-                        </>
+                        <>{remainings.podiums} 获胜者 </>
                       )}
                       {remainings.bonus > 0 && (
                         <>
@@ -224,7 +222,7 @@ export const SubmissionPanel = ({
                       剩余
                     </Text>
                   ) : (
-                    <Text color="#48CB6D">所有获奖者已选出</Text>
+                    <Text color="#48CB6D">所有获胜者已选出</Text>
                   )}
                 </Flex>
               )}

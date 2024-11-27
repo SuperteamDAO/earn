@@ -237,7 +237,7 @@ export const AddProject = ({
                 bg={'rgb(101, 98, 255)'}
                 type="submit"
               >
-                添加定向项目
+                添加项目
               </Button>
             </FormControl>
           </form>

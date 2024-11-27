@@ -383,8 +383,8 @@ export default function BountySubmissions({ slug }: Props) {
           if (currentPage > 1) {
             const savedSelectionIndex = pageSelections[currentPage - 1]
               ? paginatedSubmissions.findIndex(
-                  (sub) => sub.id === pageSelections[currentPage - 1],
-                )
+                (sub) => sub.id === pageSelections[currentPage - 1],
+              )
               : 0;
             await changePage(currentPage - 1, savedSelectionIndex);
           }
@@ -394,8 +394,8 @@ export default function BountySubmissions({ slug }: Props) {
           if (currentPage < totalPages) {
             const savedSelectionIndex = pageSelections[currentPage + 1]
               ? paginatedSubmissions.findIndex(
-                  (sub) => sub.id === pageSelections[currentPage + 1],
-                )
+                (sub) => sub.id === pageSelections[currentPage + 1],
+              )
               : 0;
             await changePage(currentPage + 1, savedSelectionIndex);
           }
@@ -448,7 +448,7 @@ export default function BountySubmissions({ slug }: Props) {
               borderBottomWidth={'1px'}
             >
               <Tab px={1} fontSize="sm" _selected={selectedStyles}>
-                Submissions
+                提案
               </Tab>
               {bounty?.isPublished &&
                 !bounty?.isWinnersAnnounced &&
@@ -461,7 +461,7 @@ export default function BountySubmissions({ slug }: Props) {
                     bg="white"
                     borderRadius={'lg'}
                     isDisabled={isSponsorVerified === true}
-                    label="Scout is an invite-only feature right now"
+                    label="人才库现在是一个只有邀请才能使用的功能"
                   >
                     <Tab
                       className="ph-no-capture"
@@ -473,7 +473,7 @@ export default function BountySubmissions({ slug }: Props) {
                       isDisabled={!isSponsorVerified}
                       onClick={() => posthog.capture('scout tab_scout')}
                     >
-                      Scout Talent
+                      人才库
                       {!!isSponsorVerified && (
                         <Box w={1.5} h={1.5} ml={1.5} bg="red" rounded="full" />
                       )}
@@ -516,8 +516,8 @@ export default function BountySubmissions({ slug }: Props) {
                         roundedRight={'xl'}
                       >
                         {!paginatedSubmissions?.length &&
-                        !searchText &&
-                        !isSubmissionsLoading ? (
+                          !searchText &&
+                          !isSubmissionsLoading ? (
                           <>
                             <Image
                               w={32}
@@ -534,9 +534,7 @@ export default function BountySubmissions({ slug }: Props) {
                               fontWeight={600}
                               textAlign={'center'}
                             >
-                              {filterLabel
-                                ? `Zero Results`
-                                : 'People are working!'}
+                              {filterLabel ? '没有结果' : '大家在工作!'}
                             </Text>
                             <Text
                               mx="auto"
@@ -546,8 +544,8 @@ export default function BountySubmissions({ slug }: Props) {
                               textAlign={'center'}
                             >
                               {filterLabel
-                                ? `For the filters you have selected`
-                                : 'Submissions will start appearing here'}
+                                ? '对于您所选择的过滤器'
+                                : '提案出现在这里'}
                             </Text>
                           </>
                         ) : (
@@ -571,9 +569,7 @@ export default function BountySubmissions({ slug }: Props) {
                         <Text as="span" fontWeight={700}>
                           {filteredSubmissions.length}
                         </Text>{' '}
-                        {filteredSubmissions.length === 1
-                          ? 'result'
-                          : 'results'}
+                        结果
                       </Text>
                     ) : (
                       <>
@@ -603,7 +599,7 @@ export default function BountySubmissions({ slug }: Props) {
                           <Text as="span" fontWeight={700}>
                             {filteredSubmissions.length}
                           </Text>{' '}
-                          Submissions
+                          提交
                         </Text>
                         <Button
                           isDisabled={currentPage >= totalPages}
@@ -678,7 +674,7 @@ export default function BountySubmissions({ slug }: Props) {
               >
                 {selectedSubmissionIds.size > 100 && (
                   <Text pb={2} color="red" textAlign="center">
-                    不能选择超过100个申请
+                    不能选择超过 100 个申请
                   </Text>
                 )}
                 <HStack gap={4} fontSize={'lg'}>
@@ -695,7 +691,7 @@ export default function BountySubmissions({ slug }: Props) {
                     }}
                     variant="link"
                   >
-                    取消选择
+                    取消
                   </Button>
                   <Button
                     gap={2}
@@ -720,7 +716,7 @@ export default function BountySubmissions({ slug }: Props) {
                         fill="#E11D48"
                       />
                     </svg>
-                    Reject {selectedSubmissionIds.size} Applications
+                    拒绝 {selectedSubmissionIds.size} 申请
                   </Button>
                 </HStack>
               </PopoverBody>

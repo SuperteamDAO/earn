@@ -204,7 +204,7 @@ export default function Hackathon() {
       <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Unpublish Listing?</ModalHeader>
+          <ModalHeader>取消发布？</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text color="brand.slate.500">
@@ -214,7 +214,7 @@ export default function Hackathon() {
 
           <ModalFooter>
             <Button mr={4} onClick={unpublishOnClose} variant="ghost">
-              Close
+              关闭
             </Button>
             <Button
               isLoading={isChangingStatus}
@@ -231,7 +231,7 @@ export default function Hackathon() {
       <Modal isOpen={deleteDraftIsOpen} onClose={deleteDraftOnClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Delete Draft?</ModalHeader>
+          <ModalHeader>删除草稿？</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text color="brand.slate.500">你确定要删除这份草稿吗？</Text>
@@ -243,7 +243,7 @@ export default function Hackathon() {
 
           <ModalFooter>
             <Button mr={4} onClick={deleteDraftOnClose} variant="ghost">
-              Close
+              关闭
             </Button>
             <Button
               isLoading={isChangingStatus}
@@ -365,7 +365,7 @@ export default function Hackathon() {
                     textAlign="center"
                     textTransform={'capitalize'}
                   >
-                    Submissions
+                    提案
                   </Th>
                   <Th
                     color="brand.slate.400"
@@ -374,7 +374,7 @@ export default function Hackathon() {
                     letterSpacing={'-2%'}
                     textTransform={'capitalize'}
                   >
-                    Deadline
+                    截止日期
                   </Th>
                   <Th
                     color="brand.slate.400"
@@ -383,7 +383,7 @@ export default function Hackathon() {
                     letterSpacing={'-2%'}
                     textTransform={'capitalize'}
                   >
-                    Prize
+                    奖励
                   </Th>
                   <Th
                     color="brand.slate.400"
@@ -392,7 +392,7 @@ export default function Hackathon() {
                     letterSpacing={'-2%'}
                     textTransform={'capitalize'}
                   >
-                    Status
+                    状态
                   </Th>
                   <Th
                     color="brand.slate.400"
@@ -401,7 +401,7 @@ export default function Hackathon() {
                     letterSpacing={'-2%'}
                     textTransform={'capitalize'}
                   >
-                    Actions
+                    操作
                   </Th>
                   <Th pl={0} />
                 </Tr>
@@ -538,7 +538,7 @@ export default function Hackathon() {
                                 size="sm"
                                 variant="ghost"
                               >
-                                Submissions
+                                提案
                               </Button>
                             </Tooltip>
                           )}
@@ -557,7 +557,7 @@ export default function Hackathon() {
                                 size="sm"
                                 variant="ghost"
                               >
-                                Edit
+                                修改
                               </Button>
                             </Link>
                           )}
@@ -587,7 +587,7 @@ export default function Hackathon() {
                                 )
                               }
                             >
-                              View Listing
+                              查看
                             </MenuItem>
                             {currentBounty.isPublished && (
                               <Link
@@ -602,7 +602,7 @@ export default function Hackathon() {
                                   fontWeight={500}
                                   icon={<Icon as={PiNotePencil} w={4} h={4} />}
                                 >
-                                  Edit Listing
+                                  修改
                                 </MenuItem>
                               </Link>
                             )}
@@ -640,7 +640,7 @@ export default function Hackathon() {
                                     handleDeleteDraft(currentBounty)
                                   }
                                 >
-                                  Delete Draft
+                                  删除草稿
                                 </MenuItem>
                               </>
                             )}
@@ -648,21 +648,21 @@ export default function Hackathon() {
                               currentBounty.status === 'OPEN' &&
                               !currentBounty.isPublished
                             ) && (
-                              <>
-                                <MenuItem
-                                  py={2}
-                                  color={'brand.slate.500'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  icon={
-                                    <Icon as={IoEyeOffOutline} boxSize={4} />
-                                  }
-                                  onClick={() => handleUnpublish(currentBounty)}
-                                >
-                                  Unpublish
-                                </MenuItem>
-                              </>
-                            )}
+                                <>
+                                  <MenuItem
+                                    py={2}
+                                    color={'brand.slate.500'}
+                                    fontSize={'sm'}
+                                    fontWeight={500}
+                                    icon={
+                                      <Icon as={IoEyeOffOutline} boxSize={4} />
+                                    }
+                                    onClick={() => handleUnpublish(currentBounty)}
+                                  >
+                                    取消发布
+                                  </MenuItem>
+                                </>
+                              )}
                           </MenuList>
                         </Menu>
                       </Td>
@@ -685,7 +685,7 @@ export default function Hackathon() {
               <Text as="span" fontWeight={700}>
                 {totalBounties}
               </Text>{' '}
-              Listings
+              任务
             </Text>
             <Button
               mr={4}
@@ -697,7 +697,7 @@ export default function Hackathon() {
               size="sm"
               variant="outline"
             >
-              Previous
+              上一页
             </Button>
             <Button
               isDisabled={
@@ -709,7 +709,7 @@ export default function Hackathon() {
               size="sm"
               variant="outline"
             >
-              Next
+              下一页
             </Button>
           </Flex>
         </>

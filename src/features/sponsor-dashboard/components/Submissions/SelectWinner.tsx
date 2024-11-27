@@ -140,7 +140,7 @@ export const SelectWinner = ({
                 : ''
             }
           >
-            <option>Select Winner</option>
+            <option>选择获奖者</option>
             {rewards.map((reward) => {
               let isRewardUsed = usedPositions.includes(reward);
               if (reward === BONUS_REWARD_POSITION) {
@@ -156,7 +156,7 @@ export const SelectWinner = ({
               return (
                 (!isRewardUsed || isCurrentSubmissionReward) && (
                   <option key={reward} value={reward}>
-                    {isProject ? 'Winner' : getRankLabels(reward)}
+                    {isProject ? '获奖者' : getRankLabels(reward)}
                   </option>
                 )
               );

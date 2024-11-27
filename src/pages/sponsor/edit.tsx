@@ -220,7 +220,7 @@ const UpdateSponsor = () => {
                   fontWeight={600}
                   htmlFor={'slug'}
                 >
-                  公司用户名
+                  公司 Slug
                 </FormLabel>
                 <Input
                   w={'full'}
@@ -403,7 +403,7 @@ const UpdateSponsor = () => {
                 fontSize={'15px'}
                 fontWeight={600}
               >
-                公司Logo{' '}
+                公司 Logo{' '}
                 <span
                   style={{
                     color: 'red',

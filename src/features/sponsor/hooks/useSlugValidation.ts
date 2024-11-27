@@ -17,9 +17,7 @@ export const useSlugValidation = (initialValue = '') => {
   const checkSlugAvailability = async (slug: string) => {
     if (!slugPattern.test(slug)) {
       setIsInvalid(true);
-      setValidationErrorMessage(
-        "Slug can only contain lowercase letters, numbers, '_', and '-'",
-      );
+      setValidationErrorMessage("Slug 只能包含小写字母、数字、 '_'和'-'");
       return;
     }
 
@@ -27,15 +25,11 @@ export const useSlugValidation = (initialValue = '') => {
       const response = await axios.get(`/api/sponsors/check-slug?slug=${slug}`);
       const available = response.data.available;
       setIsInvalid(!available);
-      setValidationErrorMessage(
-        available ? '' : 'Company username already exists',
-      );
+      setValidationErrorMessage(available ? '' : '公司 Slug 已存在');
     } catch (error) {
       logger.error(error);
       setIsInvalid(true);
-      setValidationErrorMessage(
-        'An error occurred while checking slug availability.',
-      );
+      setValidationErrorMessage('发生错误，请稍后重试');
     }
   };
 

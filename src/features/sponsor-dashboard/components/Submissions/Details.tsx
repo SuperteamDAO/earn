@@ -46,7 +46,7 @@ export const Details = ({ bounty }: Props) => {
         {!isProject && (
           <>
             <InfoBox
-              label="Main Submission"
+              label="主提案"
               content={
                 selectedSubmission?.link
                   ? getURLSanitized(selectedSubmission?.link)
@@ -54,7 +54,7 @@ export const Details = ({ bounty }: Props) => {
               }
             />
             <InfoBox
-              label="Tweet Link"
+              label="Tweet 链接"
               content={
                 selectedSubmission?.tweet
                   ? getURLSanitized(selectedSubmission?.tweet)
@@ -79,11 +79,7 @@ export const Details = ({ bounty }: Props) => {
               isHtml
             />
           ))}
-        <InfoBox
-          label="Anything Else"
-          content={selectedSubmission?.otherInfo}
-          isHtml
-        />
+        <InfoBox label="其他" content={selectedSubmission?.otherInfo} isHtml />
       </Flex>
       <Flex w="25%" p={4}>
         {selectedSubmission && (
