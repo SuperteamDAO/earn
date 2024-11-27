@@ -47,7 +47,8 @@ export const SponsorBanner = () => {
         >
           触达超过{' '}
           {(
-            Math.floor((data?.totalUsers || 0) / 10000) * 10000
+            Math.floor((data?.totalUsers || 0) / 10000) * 10000 +
+            500
           ).toLocaleString()}
           名加密货币人才
         </Text>

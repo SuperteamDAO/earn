@@ -42,13 +42,13 @@ export default async function handler(
     const endDate: Date = new Date();
 
     switch (timePeriod) {
-      case 'this week':
+      case 'this_week':
         startDate = dayjs().subtract(7, 'day').toDate();
         break;
-      case 'this month':
+      case 'this_month':
         startDate = dayjs().subtract(30, 'day').toDate();
         break;
-      case 'this year':
+      case 'this_year':
         startDate = dayjs().subtract(365, 'day').toDate();
         break;
       default:

@@ -22,7 +22,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
   const [activeMenu, setActiveMenu] = useState<'new' | 'popular'>(
     (query.filter as 'new' | 'popular') || 'popular',
   );
-  const [timePeriod, setTimePeriod] = useState('This Month');
+  const [timePeriod, setTimePeriod] = useState('this_month');
 
   const { ref, inView } = useInView();
 
@@ -61,19 +61,24 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
   };
 
   const MenuOption = ({ option }: { option: 'new' | 'popular' }) => {
+    const MenuToCN = {
+      new: '最新',
+      popular: '最喜欢',
+    };
+
     return (
       <Text
         color={activeMenu === option ? 'brand.slate.700' : 'brand.slate.500'}
         fontSize={{ base: '15px', lg: 'md' }}
         fontWeight={activeMenu === option ? 600 : 400}
-        textTransform={'capitalize'}
+        textTransform="capitalize"
         cursor="pointer"
         onClick={() => {
           setActiveMenu(option);
           updateQuery('filter', option);
         }}
       >
-        {option}
+        {MenuToCN[option]}
       </Text>
     );
   };
@@ -132,9 +137,9 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
                 value={timePeriod}
                 variant={'unstyled'}
               >
-                <option>This Week</option>
-                <option>This Month</option>
-                <option>This Year</option>
+                <option value="this_week">本周</option>
+                <option value="this_month">本月</option>
+                <option value="this_year">最近 1 年 </option>
               </Select>
             )}
           </Flex>
@@ -173,7 +178,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
               fontWeight={400}
               textAlign={'center'}
             >
-              根据您的筛选条件，我们没有找到任何任务
+              根据您的筛选条件，没有找到相关任务
             </Text>
           </Box>
         </FeedLoop>
