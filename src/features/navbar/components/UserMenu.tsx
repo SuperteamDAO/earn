@@ -22,7 +22,7 @@ import { SolarMail } from '@/constants';
 import { EarnAvatar, EmailSettingsModal } from '@/features/talent';
 import { useLogout, useUser } from '@/store/user';
 
-export function UserMenu({}) {
+export function UserMenu({ }) {
   const router = useRouter();
   const posthog = usePostHog();
 
@@ -109,7 +109,7 @@ export function UserMenu({}) {
               ml={2}
             >
               <Text color="brand.slate.600" fontSize="sm" fontWeight={500}>
-                {user?.firstName ?? 'New User'}
+                {user?.firstName ?? '新用户'}
               </Text>
             </Flex>
           </Flex>
@@ -145,7 +145,7 @@ export function UserMenu({}) {
               </MenuItem>
             </>
           )}
-          {!!user?.currentSponsorId && (
+          {(!!user?.currentSponsorId || session?.user?.role === 'GOD') && (
             <>
               <MenuItem
                 className="ph-no-capture"
@@ -182,15 +182,6 @@ export function UserMenu({}) {
                 >
                   创建项目方
                 </MenuItem>
-                {/* <MenuItem
-                  as={NextLink}
-                  color="brand.slate.500"
-                  fontSize="sm"
-                  fontWeight={600}
-                  href={'/admin/sponsors'}
-                >
-                  {t('userMenu.bountyDashboard')}
-                </MenuItem> */}
               </MenuGroup>
               <MenuDivider />
             </Box>

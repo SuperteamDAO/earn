@@ -33,8 +33,7 @@ export const withSponsorAuth = (handler: Handler): NextApiHandler => {
         select: { currentSponsorId: true, role: true },
       });
 
-      if (!user || !user.currentSponsorId) {
-        /// ///
+      if (!user && (!user.currentSponsorId || user.role !== 'GOD')) {
         logger.warn('User does not have a current sponsor or is unauthorized');
         return res
           .status(403)
