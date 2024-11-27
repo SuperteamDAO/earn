@@ -49,7 +49,7 @@ export const ListingSuccessModal = () => {
     return isVerified
       ? `/dashboard/listings/${slug}/submissions?scout`
       : `/listings/${type}/${slug}`;
-  }, [isVerified]);
+  }, [isVerified, slug, type]);
 
   return (
     <Dialog open={confirmModal === 'SUCCESS'} onOpenChange={() => null}>
