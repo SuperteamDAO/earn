@@ -83,7 +83,7 @@ export const FeatureModal = ({
         </Box>
         <VStack align="start" gap={3} p={6}>
           <Text fontSize="lg" fontWeight={600}>
-            介绍 Scout功能
+            介绍 Scout 功能
           </Text>
           <Text color="brand.slate.500">
             Solar Earn
@@ -106,7 +106,7 @@ export const FeatureModal = ({
                   Check it out <ArrowForwardIcon />
                 </>
               ) : (
-                '了解更多!'
+                '了解更多！'
               )}
             </Button>
           </Link>

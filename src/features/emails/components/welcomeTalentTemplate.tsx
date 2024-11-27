@@ -6,31 +6,28 @@ export const WelcomeTalentTemplate = () => {
   return (
     <div style={styles.container}>
       <p style={styles.textWithMargin}>
-        OK let&apos;s get this out of the way.
+        欢迎加入一站式悬赏任务平台 Solar
+        Earn！如果您是人才，在这里您可以找到适合自己技能的赏金任务，做任务，赚赏金；如果您是项目方，在这里您可以发布赏金任务，招募华语区人才献谋划策，做出贡献。
       </p>
-      <p style={styles.text}>这是一封自动发送的邮件...</p>
+
       <p style={styles.text}>
-        我只是想打个招呼并让你知道我&apos;是一个真实的人
+        关注 Solar 更多渠道，捕获最全 Solana 华语信息不迷路：
       </p>
+
       <p style={styles.text}>
-        我&apos;是Vesper, 我&apos;是Solar社区成员，一直贡献{' '}
-        <a href={process?.env?.NEXT_PUBLIC_SITE_URL} style={styles.link}>
-          Solar
-        </a>
-        . 我可能还不认识你个人，但我&apos;很开心&apos;你的加入。
+        官网：https://www.solar.team/
+        <br />
+        X：https://x.com/Solana_zh
+        <br />
+        Telegram 社区：https://t.me/solanaZH_official
+        <br />
+        Telegram 技术社区：https://t.me/solanadevcamp
       </p>
-      <p style={styles.text}>
-        我向你保证，我很开心&apos;收到你的邮件，只有在有新的机会或重大公告我都会给你发邮件
-      </p>
-      <p style={styles.text}>
-        <strong>结束对话之前 </strong>{' '}
-        有一个请求：请回复邮件，告诉我你为什么加入 Solar Earn？
-      </p>
-      <p style={styles.text}>很高兴能更多地了解你</p>
 
       <p style={styles.salutation}>
-        保持联系, <br />
-        Vesper
+        期待你加入 Solar 社区
+        <br />
+        Solar 团队
       </p>
     </div>
   );

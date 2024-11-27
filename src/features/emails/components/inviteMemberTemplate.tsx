@@ -25,7 +25,7 @@ export const InviteMemberTemplate = ({
         接受邀请
       </p>
       <p style={styles.salutation}>
-        祝好,
+        祝好，
         <br />
         Solar Earn
       </p>

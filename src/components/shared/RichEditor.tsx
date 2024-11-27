@@ -38,7 +38,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   onChange,
   height = '10rem',
   maxHeight = '10rem',
-  placeholder = 'Write something...',
+  placeholder = '',
   isError = false,
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
