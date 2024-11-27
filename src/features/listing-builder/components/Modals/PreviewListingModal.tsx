@@ -15,7 +15,6 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
@@ -63,24 +62,22 @@ export const PreviewListingModal = () => {
 
             <div className="flex items-center justify-end gap-4">
               <div className="flex items-center gap-2">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-slate-300 hover:text-slate-400"
-                      >
-                        <Info className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      This link is for preview purposes only and is accessible
-                      only to those who have it. It is not your final link for
-                      sharing with your community
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-slate-300 hover:text-slate-400"
+                    >
+                      <Info className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    This link is for preview purposes only and is accessible
+                    only to those who have it. It is not your final link for
+                    sharing with your community
+                  </TooltipContent>
+                </Tooltip>
 
                 <Button
                   variant="outline"
