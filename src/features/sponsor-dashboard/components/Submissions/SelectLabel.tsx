@@ -18,7 +18,7 @@ import { type SubmissionWithUser } from '@/interface/submission';
 
 import { selectedSubmissionAtom } from '../..';
 import { labelMenuOptions } from '../../constants';
-import { colorMap } from '../../utils';
+import { colorMap, talentMapCN } from '../../utils';
 
 interface Props {
   listingSlug: string;
@@ -99,7 +99,7 @@ export const SelectLabel = ({ listingSlug }: Props) => {
             textTransform={'capitalize'}
             whiteSpace={'nowrap'}
           >
-            {selectedSubmission?.label || 'Select Option'}
+            {talentMapCN[selectedSubmission?.label] || '选择'}
           </TagLabel>
         </Tag>
       </MenuButton>
@@ -124,7 +124,7 @@ export const SelectLabel = ({ listingSlug }: Props) => {
                 textTransform={'capitalize'}
                 whiteSpace={'nowrap'}
               >
-                {option.label}
+                {talentMapCN[option.label]}
               </TagLabel>
             </Tag>
           </MenuItem>

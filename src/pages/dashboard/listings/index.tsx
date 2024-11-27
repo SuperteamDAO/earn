@@ -45,6 +45,7 @@ import { isCreateListingAllowedQuery } from '@/features/listing-builder';
 import {
   getColorStyles,
   getListingStatus,
+  listingStatusCN,
   type ListingWithSubmissions,
 } from '@/features/listings';
 import {
@@ -237,7 +238,7 @@ export default function SponsorListings() {
                   textTransform={'capitalize'}
                   whiteSpace={'nowrap'}
                 >
-                  {selectedStatus || 'Everything'}
+                  {listingStatusCN[selectedStatus] || '所有'}
                 </TagLabel>
               </Tag>
             </MenuButton>
@@ -261,7 +262,7 @@ export default function SponsorListings() {
                     textTransform={'capitalize'}
                     whiteSpace={'nowrap'}
                   >
-                    Everything
+                    所有
                   </TagLabel>
                 </Tag>
               </MenuItem>
@@ -285,7 +286,7 @@ export default function SponsorListings() {
                       textTransform={'capitalize'}
                       whiteSpace={'nowrap'}
                     >
-                      {status}
+                      {listingStatusCN[status]}
                     </TagLabel>
                   </Tag>
                 </MenuItem>
@@ -324,7 +325,7 @@ export default function SponsorListings() {
                 fontWeight={500}
                 _selected={selectedStyles}
               >
-                All
+                所有
               </Tab>
               <Tab
                 color="brand.slate.400"
@@ -332,7 +333,7 @@ export default function SponsorListings() {
                 fontWeight={500}
                 _selected={selectedStyles}
               >
-                Bounties
+                赏金任务
               </Tab>
               <Tab
                 color="brand.slate.400"
@@ -340,7 +341,7 @@ export default function SponsorListings() {
                 fontWeight={500}
                 _selected={selectedStyles}
               >
-                Projects
+                定向任务
               </Tab>
               {hasGrants && (
                 <Tab
@@ -349,7 +350,7 @@ export default function SponsorListings() {
                   fontWeight={500}
                   _selected={selectedStyles}
                 >
-                  Grants
+                  资助
                 </Tab>
               )}
             </TabList>

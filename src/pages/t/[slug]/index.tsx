@@ -37,6 +37,7 @@ import {
   Twitter,
   Website,
 } from '@/features/talent';
+import { skillMapCN } from '@/interface/skills';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { useUser } from '@/store/user';
@@ -314,19 +315,18 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 >
                   {user?.id === talent?.id
                     ? renderButton(
-                        <EditIcon />,
-                        '修改个人信息',
-                        handleEditProfileClick,
-                      )
-                    : renderButton(<EmailIcon />, 'Reach Out', () => {
-                        posthog.capture('reach out_talent profile');
-                        const email = encodeURIComponent(talent?.email || '');
-                        const subject = encodeURIComponent(
-                          'Saw Your ST Earn Profile!',
-                        );
-                        const bcc = encodeURIComponent(SolarMail);
-                        window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
-                      })}
+                      <EditIcon />,
+                      '修改个人信息',
+                      handleEditProfileClick,
+                    )
+                    : renderButton(<EmailIcon />, '联系', () => {
+                      posthog.capture('reach out_talent profile');
+                      const email = encodeURIComponent(talent?.email || '');
+                      const subject =
+                        encodeURIComponent('看到了您的个人资料');
+                      const bcc = encodeURIComponent(SolarMail);
+                      window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
+                    })}
                   {renderButton(<ShareIcon />, '分享', onOpen, true)}
                 </Flex>
               </Flex>
@@ -363,7 +363,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   )}
                   {talent?.location && (
                     <Text mt={3} color={'brand.slate.400'}>
-                      定居{' '}
+                      城市{' '}
                       <Text as={'span'} color={'brand.slate.500'}>
                         {talent?.location}
                       </Text>
@@ -383,7 +383,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                             fontSize="xs"
                             fontWeight={500}
                           >
-                            {skillItem.skills.toUpperCase()}
+                            {skillMapCN[skillItem.skills]}
                           </Text>
                           <Flex align="center">
                             <Flex wrap={'wrap'} gap={2} mt={2}>

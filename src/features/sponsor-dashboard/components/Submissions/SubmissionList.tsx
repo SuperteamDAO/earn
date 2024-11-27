@@ -33,7 +33,7 @@ import { getRankLabels } from '@/utils/rank';
 
 import { selectedSubmissionAtom } from '../..';
 import { labelMenuOptions } from '../../constants';
-import { colorMap } from '../../utils';
+import { colorMap, talentMapCN } from '../../utils';
 
 interface Props {
   listing?: Listing;
@@ -209,7 +209,7 @@ export const SubmissionList = ({
                     textTransform={'capitalize'}
                     whiteSpace={'nowrap'}
                   >
-                    {filterLabel || 'Select Option'}
+                    {talentMapCN[filterLabel] || '选择'}
                   </TagLabel>
                 </Tag>
               </MenuButton>
@@ -226,7 +226,7 @@ export const SubmissionList = ({
                       textTransform={'capitalize'}
                       whiteSpace={'nowrap'}
                     >
-                      Select Option
+                      选择
                     </TagLabel>
                   </Tag>
                 </MenuItem>
@@ -249,7 +249,7 @@ export const SubmissionList = ({
                       textTransform={'capitalize'}
                       whiteSpace={'nowrap'}
                     >
-                      Winner
+                      {talentMapCN['Winner']}
                     </TagLabel>
                   </Tag>
                 </MenuItem>
@@ -273,7 +273,7 @@ export const SubmissionList = ({
                         textTransform={'capitalize'}
                         whiteSpace={'nowrap'}
                       >
-                        Rejected
+                        {talentMapCN['Rejected']}
                       </TagLabel>
                     </Tag>
                   </MenuItem>
@@ -301,7 +301,7 @@ export const SubmissionList = ({
                         textTransform={'capitalize'}
                         whiteSpace={'nowrap'}
                       >
-                        {option.label}
+                        {talentMapCN[option.label]}
                       </TagLabel>
                     </Tag>
                   </MenuItem>
@@ -391,7 +391,7 @@ export const SubmissionList = ({
                   textTransform={'capitalize'}
                   whiteSpace={'nowrap'}
                 >
-                  {getSubmissionLabel(submission)}
+                  {talentMapCN[getSubmissionLabel(submission)]}
                 </TagLabel>
               </Tag>
             </Flex>

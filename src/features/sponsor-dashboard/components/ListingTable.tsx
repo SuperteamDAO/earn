@@ -53,6 +53,7 @@ import {
   getListingStatus,
   getListingTypeLabel,
   isDeadlineOver,
+  listingStatusCN,
   type ListingWithSubmissions,
 } from '@/features/listings';
 import { getURL } from '@/utils/validUrl';
@@ -198,7 +199,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
               <ListingTh>截止日期</ListingTh>
               <ListingTh>赏金</ListingTh>
               <ListingTh>状态</ListingTh>
-              <ListingTh>行动</ListingTh>
+              <ListingTh>操作</ListingTh>
               <Th pl={0} />
             </Tr>
           </Thead>
@@ -347,7 +348,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                       borderRadius={'full'}
                       variant="solid"
                     >
-                      {listingStatus}
+                      {listingStatusCN[listingStatus]}
                     </Tag>
                   </Td>
                   <Td px={3} py={2}>
@@ -366,9 +367,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         size="sm"
                         variant="ghost"
                       >
-                        {listing?.type === 'grant'
-                          ? 'Applications'
-                          : 'Submissions'}
+                        {listing?.type === 'grant' ? '申请' : '提交'}
                       </Button>
                     ) : (session?.user?.role === 'GOD' &&
                       listing.type !== 'grant' &&

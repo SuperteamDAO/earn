@@ -96,7 +96,7 @@ const skillSubSkillMap = {
   ],
 } as const;
 
-const skillSubSkillMapCN = {
+const skillMapCN = {
   Frontend: '前端',
   Backend: '后端',
   Blockchain: '区块链',
@@ -110,7 +110,7 @@ const skillSubSkillMapCN = {
 
 const MainSkills: MultiSelectOptions[] = Object.keys(skillSubSkillMap).map(
   (skill) => ({
-    label: skillSubSkillMapCN[skill],
+    label: skillMapCN[skill],
     value: skill,
   }),
 );
@@ -129,4 +129,4 @@ type SkillMap = {
 };
 
 export type { ParentSkills, SkillMap, Skills, SubSkillsType };
-export { MainSkills, skillSubSkillMap, titlesForCN };
+export { MainSkills, skillMapCN, skillSubSkillMap, titlesForCN };

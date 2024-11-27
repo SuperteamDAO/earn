@@ -44,6 +44,7 @@ import {
   getListingStatus,
   isDeadlineOver,
   type Listing,
+  listingStatusCN,
 } from '@/features/listings';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
@@ -136,7 +137,7 @@ ${socialListingLink('twitter')}
               <BreadcrumbLink color="brand.slate.400">
                 <Flex align="center">
                   <ChevronLeftIcon mr={1} w={6} h={6} />
-                  All Listings
+                  所有任务
                 </Flex>
               </BreadcrumbLink>
             </Link>
@@ -206,7 +207,7 @@ ${socialListingLink('twitter')}
       <Divider />
       <Flex align="center" gap={12} mt={4} mb={8}>
         <Box>
-          <Text color="brand.slate.500">Submissions</Text>
+          <Text color="brand.slate.500">提案</Text>
           <Text mt={3} color="brand.slate.600" fontWeight={600}>
             {totalSubmissions}
           </Text>
@@ -223,7 +224,7 @@ ${socialListingLink('twitter')}
           </Text>
         </Box>
         <Box>
-          <Text color="brand.slate.500">Status</Text>
+          <Text color="brand.slate.500">状态</Text>
           <Tag
             mt={3}
             px={3}
@@ -235,11 +236,11 @@ ${socialListingLink('twitter')}
             whiteSpace={'nowrap'}
             variant="solid"
           >
-            {bountyStatus}
+            {listingStatusCN[bountyStatus]}
           </Tag>
         </Box>
         <Box>
-          <Text color="brand.slate.500">Prize</Text>
+          <Text color="brand.slate.500">奖励</Text>
           <Flex align={'center'} justify={'start'} gap={1} mt={3}>
             <Image
               w={5}

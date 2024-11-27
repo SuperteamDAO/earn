@@ -13,6 +13,19 @@ export const colorMap = {
   Completed: { bg: 'blue.100', color: 'blue.600' },
 };
 
+export const talentMapCN = {
+  Spam: '无效',
+  Reviewed: '已审核',
+  Unreviewed: '未审核',
+  Shortlisted: '候选人',
+  winner: '获胜者',
+  Approved: '同意',
+  Reject: '拒绝',
+  Pending: '待定',
+  Winner: '获胜者',
+  Completed: '已完成',
+};
+
 export async function createSponsorEmailSettings(userId: string) {
   const categories = new Set([
     'commentSponsor',

@@ -60,6 +60,19 @@ export const getListingTypeLabel = (type: string) => {
   return;
 };
 
+export const listingStatusCN = {
+  Draft: '草稿',
+  'Under Verification': '验证中',
+  'Verification Failed': '验证失败',
+  Ongoing: '进行中',
+  Closed: '关闭',
+  'In Progress': '进行中',
+  'Fndn to Pay': 'Fndn to Pay',
+  'Payment Pending': '等待支付',
+  Completed: '完成',
+  'In Review': '检查中',
+};
+
 export const getListingStatus = (
   listing: Listing | ListingWithSubmissions | any,
   isGrant?: boolean,
