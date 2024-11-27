@@ -83,6 +83,7 @@ export function DescriptionAndTemplate() {
                     folderName: 'listing-description',
                     type: 'description',
                   }}
+                  toolbarClassName="sticky top-0 bg-white z-10"
                 />
               </FormControl>
             </div>

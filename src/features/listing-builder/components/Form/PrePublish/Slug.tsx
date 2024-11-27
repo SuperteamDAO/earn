@@ -6,6 +6,7 @@ import { useWatch } from 'react-hook-form';
 
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -28,6 +29,10 @@ export function Slug() {
   const slug = useWatch({
     control: form.control,
     name: 'slug',
+  });
+  const type = useWatch({
+    control: form.control,
+    name: 'type',
   });
   const listingId = useWatch({
     control: form.control,
@@ -112,7 +117,13 @@ export function Slug() {
       render={({ field }) => {
         return (
           <FormItem className="gap-2">
-            <FormLabel className="">Customise URL (Slug)</FormLabel>
+            <div>
+              <FormLabel className="">Customise URL (Slug)</FormLabel>
+              <FormDescription className="max-w-[28rem] truncate">
+                https://earn.superteam.fun/{type}/
+                <span className="underline underline-offset-2">{slug}</span>
+              </FormDescription>
+            </div>
             <FormControl>
               <div className="relative">
                 <Input
@@ -124,7 +135,7 @@ export function Slug() {
                 {slugCheckFetching || isSlugLoading ? (
                   <Loader2 className="absolute right-2 top-1.5 animate-spin text-slate-300" />
                 ) : (
-                  <span className="absolute right-2 top-1.5 flex h-5 w-5 scale-75 items-center rounded-full bg-slate-400 p-1 text-background">
+                  <span className="absolute right-2 top-1.5 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1 text-background">
                     <CheckIcon className="h-full w-full stroke-[3px]" />
                   </span>
                 )}
