@@ -23,7 +23,7 @@ export default function AllBountiesPage() {
       <Box w={'100%'} pr={{ base: 0, lg: 6 }}>
         <ListingSection
           type="bounties"
-          title="All Bounties"
+          title="赏金任务"
           sub="Bite sized tasks for freelancers"
           emoji="/assets/home/emojis/moneyman.webp"
         >

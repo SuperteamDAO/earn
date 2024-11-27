@@ -23,8 +23,8 @@ export default function AllProjectsPage() {
       <Box w={'100%'}>
         <ListingSection
           type="bounties"
-          title="All Projects"
-          sub="Bite sized tasks for freelancers"
+          title="定向任务"
+          sub="开启您的定向任务之旅"
           emoji="/assets/home/emojis/moneyman.webp"
         >
           {isLoading &&
