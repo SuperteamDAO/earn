@@ -166,6 +166,7 @@ export const createListingFormSchema = ({
         .datetime({
           message: 'Required',
           local: true,
+          offset: true,
         })
         .min(1, 'Required')
         .default(dayjs().add(7, 'day').format(DEADLINE_FORMAT).replace('Z', ''))

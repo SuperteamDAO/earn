@@ -196,5 +196,10 @@ export const refineReadyListing = (listing: ListingFormData) => {
       listing.maxRewardAsk = undefined;
     }
   }
+  if (listing.deadline) {
+    console.log('listing deadline', listing.deadline);
+    if (!listing.deadline.endsWith('Z'))
+      listing.deadline += dayjs().format('Z');
+  }
   return listing;
 };

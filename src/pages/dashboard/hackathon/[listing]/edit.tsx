@@ -16,9 +16,7 @@ function EditBounty({ listing }: Props) {
   const { user } = useUser();
   const router = useRouter();
 
-  const { data: bounty } = useQuery(
-    sponsorDashboardListingQuery(listing, true),
-  );
+  const { data: bounty } = useQuery(sponsorDashboardListingQuery(listing));
 
   useEffect(() => {
     if (bounty && bounty.hackathonId !== user?.hackathonId) {

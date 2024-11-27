@@ -254,6 +254,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const isFndnPaying =
       sponsor?.st && type !== 'project' ? data.isFndnPaying : false;
 
+    console.log('validatedData', validatedData);
     const result = await prisma.bounties.update({
       where: { id: id as string },
       data: {
@@ -266,9 +267,9 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         totalWinnersSelected,
         templateId: validatedData.templateId || null,
         id: validatedData.id || undefined,
-        eligibility: validatedData.eligibility || undefined,
-        rewards: rewards || undefined,
-        maxBonusSpots: maxBonusSpots || undefined,
+        eligibility: validatedData.eligibility || [],
+        rewards: rewards || {},
+        maxBonusSpots: maxBonusSpots || 0,
         ...(skillsToUpdate !== undefined && { skills: skillsToUpdate }),
       },
     });

@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Hackathon } from '@prisma/client';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAtom, useAtomValue } from 'jotai';
 import debounce from 'lodash.debounce';
 import { useCallback, useEffect, useRef } from 'react';
@@ -71,6 +72,7 @@ export const useListingForm = (
 
   const { getValues, reset } = formMethods;
 
+  const queryClient = useQueryClient();
   const saveDraftMutation = useAtomValue(saveDraftMutationAtom);
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
   const [, setDraftSaving] = useAtom(isDraftSavingAtom);
@@ -142,7 +144,12 @@ export const useListingForm = (
 
   const submitListing = useCallback(async () => {
     const formData = refineReadyListing(getValues());
-    return await submitListingMutation.mutateAsync(formData);
+    console.log('submitListing ', formData);
+    const data = await submitListingMutation.mutateAsync(formData);
+    queryClient.invalidateQueries({
+      queryKey: ['sponsor-dashboard-listing', data.slug],
+    });
+    return data;
   }, [getValues, submitListingMutation]);
 
   const resetForm = useCallback(() => {

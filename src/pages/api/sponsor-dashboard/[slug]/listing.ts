@@ -14,7 +14,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
   const slug = params.slug as string;
   const type = params.type as 'bounty' | 'project' | 'hackathon';
-  const isHackathon = params.isHackathon === 'true';
 
   logger.debug(`Request query: ${safeStringify(params)}`);
 
@@ -35,9 +34,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         slug,
         type,
         isActive: true,
-        ...(isHackathon
-          ? { hackathonId: user.hackathonId }
-          : { sponsor: { id: req.userSponsorId } }),
       },
       include: {
         sponsor: {
@@ -65,6 +61,30 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       },
     });
+    if (
+      req.role !== 'GOD' &&
+      result?.hackathonId &&
+      result.hackathonId !== user.hackathonId
+    ) {
+      logger.warn(
+        `Listing with slug=${slug} does not belong to user ${userId}`,
+      );
+      return res.status(403).json({
+        message: `Listing with slug=${slug} does not belong to user ${userId}`,
+      });
+    }
+    if (
+      req.role !== 'GOD' &&
+      result?.sponsorId &&
+      result.sponsorId !== user.currentSponsorId
+    ) {
+      logger.warn(
+        `Listing with slug=${slug} does not belong to user ${userId}`,
+      );
+      return res.status(403).json({
+        message: `Listing with slug=${slug} does not belong to user ${userId}`,
+      });
+    }
 
     if (!result) {
       logger.warn(`Bounty with slug=${slug} not found for user ${userId}`);
