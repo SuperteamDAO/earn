@@ -12,7 +12,6 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
 async function createGrantApplication(
   userId: string,
@@ -33,11 +32,17 @@ async function createGrantApplication(
 
   const validatedData = validationResult.data;
 
-  const walletValidation = validateSolanaAddress(validatedData.walletAddress);
-  if (!walletValidation.isValid) {
-    throw new Error(
-      walletValidation.error || 'Invalid Solana wallet address provided',
-    );
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { publicKey: true },
+  });
+  if (!user?.publicKey && validatedData.walletAddress) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        publicKey: validatedData.walletAddress,
+      },
+    });
   }
 
   const formattedData = {
@@ -60,6 +65,21 @@ async function createGrantApplication(
 
   return prisma.grantApplication.create({
     data: formattedData,
+    include: {
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          discord: true,
+        },
+      },
+      grant: {
+        select: {
+          airtableId: true,
+        },
+      },
+    },
   });
 }
 
@@ -67,16 +87,13 @@ async function grantApplication(
   req: NextApiRequestWithUser,
   res: NextApiResponse,
 ) {
-  const { userId } = req;
+  const userId = req.userId;
   const { grantId, ...applicationData } = req.body;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
   try {
-    const { grant, user } = await validateGrantRequest(
-      userId as string,
-      grantId,
-    );
+    const { grant } = await validateGrantRequest(userId as string, grantId);
 
     const existingApplication = await prisma.grantApplication.findFirst({
       where: {
@@ -101,10 +118,10 @@ async function grantApplication(
 
     if (grant.isNative === true && !grant.airtableId) {
       try {
-        await sendEmailNotification({
+        sendEmailNotification({
           type: 'application',
-          id: grant.id,
-          userId: user.id,
+          id: result.id,
+          userId: userId,
           triggeredBy: userId,
         });
       } catch (err) {
@@ -120,7 +137,7 @@ async function grantApplication(
       }
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json('Success');
   } catch (error: any) {
     logger.error(
       `User ${userId} unable to apply for grant: ${safeStringify(error)}`,

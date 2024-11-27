@@ -11,15 +11,12 @@ import { cn } from '@/utils';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
+import { UserMenu } from './UserMenu';
 
 interface Props {
   onLoginOpen: () => void;
   onSearchOpen: () => void;
 }
-
-const UserMenu = dynamic(() =>
-  import('./UserMenu').then((mod) => mod.UserMenu),
-);
 
 const LogoContextMenu = dynamic(() =>
   import('./LogoContextMenu').then((mod) => mod.LogoContextMenu),
@@ -93,7 +90,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
           </div>
         </div>
 
-        <div className="flex flex-1 items-center justify-end gap-4 py-2">
+        <div className="flex flex-1 items-center justify-end gap-4 py-1.5">
           {status === 'loading' && !session && (
             <div className="flex items-center gap-2">
               <Skeleton className="h-10 w-10 rounded-full" />

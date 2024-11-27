@@ -12,6 +12,7 @@ import {
   homepageListingsQuery,
 } from '@/features/home';
 import {
+  filterRegionCountry,
   getCombinedRegion,
   type Listing,
   ListingSection,
@@ -178,13 +179,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
     if (user) {
       isAuth = true;
       const matchedRegion = user.location
-        ? getCombinedRegion(user.location)
+        ? getCombinedRegion(user.location, true)
         : undefined;
+      console.log('matchedRegion', matchedRegion);
       if (matchedRegion?.name) {
         userRegion = [
           matchedRegion.name,
           Regions.GLOBAL,
-          ...(matchedRegion.country || []),
+          ...(filterRegionCountry(matchedRegion, user.location || '').country ||
+            []),
         ];
       } else {
         userRegion = [Regions.GLOBAL];

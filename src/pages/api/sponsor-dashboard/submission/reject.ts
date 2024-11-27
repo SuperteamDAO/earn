@@ -92,7 +92,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     for (const submission of currentSubmissions) {
       try {
-        await sendEmailNotification({
+        sendEmailNotification({
           type: 'submissionRejected',
           id: submission.id,
           userId: submission.userId,

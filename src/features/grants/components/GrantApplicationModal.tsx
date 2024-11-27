@@ -2,6 +2,7 @@ import { CheckIcon } from '@chakra-ui/icons';
 import {
   Button,
   Flex,
+  FormControl,
   Modal,
   ModalCloseButton,
   ModalContent,
@@ -22,7 +23,14 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
 
-import { Form } from '@/components/ui/form';
+import {
+  Form,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { extractTwitterUsername, Twitter } from '@/features/talent';
@@ -335,31 +343,54 @@ export const GrantApplicationModal = ({
                     token={token}
                   />
 
-                  <FormFieldWrapper
+                  <FormField
                     control={form.control}
                     name="walletAddress"
-                    label="Your Solana Wallet Address"
-                    description={
-                      <>
-                        This is where you will receive your rewards if you win.
-                        If you want to edit it,{' '}
-                        <a
-                          href={`/t/${user?.username}/edit`}
-                          className="text-blue-600 underline hover:text-blue-700"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          click here
-                        </a>
-                      </>
-                    }
-                  >
-                    <Input
-                      className="cursor-not-allowed text-slate-600 opacity-80"
-                      placeholder="Add your Solana wallet address"
-                      readOnly
-                    />
-                  </FormFieldWrapper>
+                    render={({ field }) => (
+                      <FormItem className="flex w-full flex-col gap-2">
+                        <div>
+                          <FormLabel isRequired={!user?.publicKey}>
+                            Your Solana Wallet Address
+                          </FormLabel>
+                          <FormDescription>
+                            {!!user?.publicKey ? (
+                              <>
+                                This is where you will receive your rewards if
+                                you win. If you want to edit it,{' '}
+                                <a
+                                  href={`/t/${user?.username}/edit`}
+                                  className="text-blue-600 underline hover:text-blue-700"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  click here
+                                </a>
+                              </>
+                            ) : (
+                              <>
+                                This wallet address will be linked to your
+                                profile and you will receive your rewards here
+                                if you win.
+                              </>
+                            )}
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Input
+                            className={cn(
+                              !!user?.publicKey &&
+                                'cursor-not-allowed text-slate-600 opacity-80',
+                            )}
+                            placeholder="Add your Solana wallet address"
+                            readOnly={!!user?.publicKey}
+                            {...(!!user?.publicKey ? {} : field)}
+                            value={user?.publicKey || field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </VStack>
               )}
               {activeStep === 1 && (

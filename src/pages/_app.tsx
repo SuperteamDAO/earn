@@ -2,6 +2,7 @@ import '../styles/globals.scss';
 import '@/components/tiptap/styles/index.css';
 
 import { ChakraProvider } from '@chakra-ui/react';
+import { GoogleTagManager } from '@next/third-parties/google';
 import { setUser } from '@sentry/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
@@ -117,6 +118,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             </TooltipProvider>
           </ChakraProvider>
         </SessionProvider>
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
       </PostHogProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

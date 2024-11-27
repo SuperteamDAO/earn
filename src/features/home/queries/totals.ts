@@ -14,4 +14,6 @@ const fetchTotals = async (): Promise<TotalType> => {
 export const totalsQuery = queryOptions({
   queryKey: ['totals'],
   queryFn: fetchTotals,
+  staleTime: 1000 * 60 * 60,
+  gcTime: 1000 * 60 * 60 * 2,
 });

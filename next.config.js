@@ -31,6 +31,25 @@ const nextConfig = {
     ],
     formats: ['image/avif', 'image/webp'],
   },
+  experimental: {
+    optimizePackageImports: [
+      '@chakra-ui/react',
+      '@chakra-ui/icons',
+      '@radix-ui/react-icons',
+      'framer-motion',
+      'flag-icons',
+      '@/features/auth',
+      '@/features/comments',
+      '@/features/home',
+      '@/features/leaderboard',
+      '@/features/listing-builder',
+      '@/features/listings',
+      '@/features/navbar',
+      '@/features/search',
+      '@/features/sponsor-dashboard',
+      '@/features/talent',
+    ],
+  },
   async headers() {
     const headers = [];
 

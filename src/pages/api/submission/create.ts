@@ -16,10 +16,16 @@ async function createSubmission(
   data: any,
   listing: any,
 ) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
   const validationResult = submissionSchema(
     listing,
     listing.minRewardAsk || 0,
     listing.maxRewardAsk || 0,
+    user as any,
   ).safeParse(data);
 
   if (!validationResult.success) {
@@ -27,6 +33,17 @@ async function createSubmission(
   }
 
   const validatedData = validationResult.data;
+
+  if (validatedData.publicKey) {
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        publicKey: validatedData.publicKey,
+      },
+    });
+  }
 
   const existingSubmission = await prisma.submission.findFirst({
     where: { userId, listingId },
@@ -54,8 +71,15 @@ async function createSubmission(
 
 async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { userId } = req;
-  const { listingId, link, tweet, otherInfo, eligibilityAnswers, ask } =
-    req.body;
+  const {
+    listingId,
+    link,
+    tweet,
+    otherInfo,
+    eligibilityAnswers,
+    ask,
+    publicKey,
+  } = req.body;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
   logger.debug(`User: ${safeStringify(userId)}`);
@@ -69,7 +93,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     const result = await createSubmission(
       userId as string,
       listingId,
-      { link, tweet, otherInfo, eligibilityAnswers, ask },
+      { link, tweet, otherInfo, eligibilityAnswers, ask, publicKey },
       listing,
     );
 

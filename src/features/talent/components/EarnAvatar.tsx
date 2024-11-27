@@ -34,7 +34,7 @@ export const EarnAvatar = ({
   };
 
   return (
-    <div className="h-min" onClick={onClick}>
+    <div className="flex-shrink-0" onClick={onClick}>
       {!hasError && avatar ? (
         <img
           src={avatar.replace('/upload/', '/upload/c_scale,f_auto/')}

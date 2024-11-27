@@ -11,7 +11,6 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
 async function updateGrantApplication(
   userId: string,
@@ -32,13 +31,6 @@ async function updateGrantApplication(
 
   const validatedData = validationResult.data;
 
-  const walletValidation = validateSolanaAddress(validatedData.walletAddress);
-  if (!walletValidation.isValid) {
-    throw new Error(
-      walletValidation.error || 'Invalid Solana wallet address provided',
-    );
-  }
-
   const prevApplication = await prisma.grantApplication.findFirst({
     where: {
       userId,
@@ -54,6 +46,19 @@ async function updateGrantApplication(
 
   if (!prevApplication) {
     throw new Error('Application not found');
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { publicKey: true },
+  });
+  if (!user?.publicKey && validatedData.walletAddress) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        publicKey: validatedData.walletAddress,
+      },
+    });
   }
 
   const formattedData = {
@@ -79,6 +84,21 @@ async function updateGrantApplication(
       id: prevApplication.id,
     },
     data: formattedData,
+    include: {
+      user: {
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          discord: true,
+        },
+      },
+      grant: {
+        select: {
+          airtableId: true,
+        },
+      },
+    },
   });
 }
 
@@ -121,7 +141,7 @@ async function grantApplication(
       }
     }
 
-    return res.status(200).json(result);
+    return res.status(200).json('Success');
   } catch (error: any) {
     logger.error(
       `User ${userId} unable to update grant application: ${safeStringify(error)}`,

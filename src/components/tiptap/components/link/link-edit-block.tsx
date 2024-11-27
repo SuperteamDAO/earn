@@ -52,7 +52,6 @@ export const LinkEditBlock = React.forwardRef<HTMLDivElement, LinkEditorProps>(
     React.useImperativeHandle(ref, () => formRef.current as HTMLDivElement);
 
     const handleSubmit = async (data: z.infer<typeof formSchema>) => {
-      console.log('handle submit');
       onSave(data.url, data.text, data.isNewTab);
     };
 

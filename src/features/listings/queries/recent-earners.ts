@@ -11,4 +11,6 @@ const fetchRecentEarners = async (): Promise<User[]> => {
 export const recentEarnersQuery = queryOptions({
   queryKey: ['recentEarners'],
   queryFn: fetchRecentEarners,
+  staleTime: 1000 * 60 * 60,
+  gcTime: 1000 * 60 * 60 * 2,
 });

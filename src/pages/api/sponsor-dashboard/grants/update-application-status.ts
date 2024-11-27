@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { NextApiResponse } from 'next';
+import { z } from 'zod';
 
 import {
   checkGrantSponsorAuth,
@@ -10,39 +11,44 @@ import { sendEmailNotification } from '@/features/emails';
 import { convertGrantApplicationToAirtable } from '@/features/grants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
+import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
 const MAX_RECORDS = 10;
+
+const UpdateGrantApplicationSchema = z.object({
+  data: z
+    .array(
+      z.object({
+        id: z.string(),
+        approvedAmount: z.union([z.number().int().min(0), z.null()]).optional(),
+      }),
+    )
+    .min(1, 'Data array cannot be empty')
+    .max(MAX_RECORDS, `Only max ${MAX_RECORDS} records allowed in data`),
+  applicationStatus: z.string(),
+});
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
-  const { data, applicationStatus } = req.body as {
-    data: {
-      id: string;
-      approvedAmount?: number;
-    }[];
-    applicationStatus: string;
-  };
+  const validationResult = UpdateGrantApplicationSchema.safeParse(req.body);
 
-  if (!data || !applicationStatus) {
-    logger.warn('Missing required fields: data or applicationStatus');
-    return res.status(400).json({ error: 'Missing required fields' });
+  if (!validationResult.success) {
+    const errorMessage = validationResult.error.errors
+      .map((err) => `${err.path.join('.')}: ${err.message}`)
+      .join(', ');
+    logger.warn('Invalid request body:', errorMessage);
+    return res.status(400).json({
+      error: 'Invalid request body',
+      details: errorMessage,
+    });
   }
-  if (data.length === 0) {
-    logger.warn('Data asked to update is empty');
-    return res.status(400).json({ error: 'Data asked to update is empty' });
-  }
-  if (data.length > MAX_RECORDS) {
-    logger.warn('Only max 10 records allowed in data');
-    return res
-      .status(400)
-      .json({ error: 'Only max 10 records allowed in data' });
-  }
+
+  const { data, applicationStatus } = validationResult.data;
 
   try {
     const currentApplications = await prisma.grantApplication.findMany({
@@ -185,21 +191,22 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (result[0]?.grant.isNative === true && !result[0]?.grant.airtableId) {
       result.forEach(async (r) => {
-        await sendEmailNotification({
+        sendEmailNotification({
           type: isApproved ? 'grantApproved' : 'grantRejected',
           id: r.id,
           userId: r.userId,
           triggeredBy: userId,
         });
       });
-    } else {
+    }
+
+    if (result[0]?.grant.airtableId) {
       try {
         const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
         const url = airtableUrl(
           process.env.AIRTABLE_GRANTS_BASE_ID!,
           process.env.AIRTABLE_GRANTS_TABLE_NAME!,
         );
-
         const airtableData = result.map((r) =>
           convertGrantApplicationToAirtable(r),
         );
@@ -207,7 +214,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           'earnApplicationId',
           airtableData.map((a) => ({ fields: a })),
         );
-
         await axios.patch(url, JSON.stringify(airtablePayload), config);
       } catch (err) {
         logger.error('Error syncing with Airtable', err);

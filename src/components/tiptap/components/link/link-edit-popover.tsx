@@ -25,7 +25,6 @@ const LinkEditPopover = ({ editor, size, variant }: LinkEditPopoverProps) => {
 
   const onSetLink = React.useCallback(
     (url: string, text?: string, openInNewTab?: boolean) => {
-      console.log('set link');
       editor
         .chain()
         .focus()
