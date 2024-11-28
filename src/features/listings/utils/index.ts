@@ -239,6 +239,21 @@ export const getListingIcon = (type: string) => {
   }
 };
 
+export const getListingTypeCN = (type: string) => {
+  switch (type) {
+    case 'bounty':
+      return '赏金任务';
+    case 'project':
+      return '定向任务';
+    case 'hackathon':
+      return '黑客松';
+    case 'grant':
+      return '资助';
+    default:
+      return '赏金任务';
+  }
+};
+
 export const getCombinedRegion = (region: string) => {
   let regionObject:
     | {

@@ -19,7 +19,7 @@ import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { type Listing } from '../types';
-import { getListingIcon } from '../utils';
+import { getListingIcon, getListingTypeCN } from '../utils';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardSkeleton = () => {
@@ -95,7 +95,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   let deadlineText;
 
   if (isBeforeDeadline) {
-    deadlineText = `到期于 ${formattedDeadline}`;
+    deadlineText = `${formattedDeadline}后 到期`;
   } else {
     deadlineText = isWinnersAnnounced
       ? `${formattedDeadline} 前完成`
@@ -213,7 +213,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                   fontSize={['x-small', 'xs', 'xs', 'xs']}
                   fontWeight={500}
                 >
-                  {type && type.charAt(0).toUpperCase() + type.slice(1)}
+                  {getListingTypeCN(type!)}
                 </Text>
               </>
               <Text
@@ -482,8 +482,8 @@ export const ListingCardMobile = ({ bounty }: { bounty: Listing }) => {
                     whiteSpace={'nowrap'}
                   >
                     {dayjs().isBefore(dayjs(deadline))
-                      ? `到期于 ${dayjs(deadline).fromNow()}`
-                      : `关闭于 ${dayjs(deadline).fromNow()}`}
+                      ? `${dayjs(deadline).fromNow()} 到期`
+                      : `${dayjs(deadline).fromNow()} 结束`}
                   </Text>
                 </Flex>
               </Flex>

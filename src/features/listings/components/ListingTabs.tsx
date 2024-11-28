@@ -117,15 +117,15 @@ const generateTabContent = ({
           <Flex className="ph-no-capture" direction={'column'} rowGap={1}>
             {isListingsLoading
               ? Array.from({ length: 8 }, (_, index) => (
-                  <ListingCardSkeleton key={index} />
-                ))
+                <ListingCardSkeleton key={index} />
+              ))
               : forYou
-                  .filter(filterFunction)
-                  .sort(sortCompareFunction ? sortCompareFunction : () => 0)
-                  .slice(0, take ? take + 1 : undefined)
-                  .map((bounty) => (
-                    <ListingCard key={bounty.id} bounty={bounty} />
-                  ))}
+                .filter(filterFunction)
+                .sort(sortCompareFunction ? sortCompareFunction : () => 0)
+                .slice(0, take ? take + 1 : undefined)
+                .map((bounty) => (
+                  <ListingCard key={bounty.id} bounty={bounty} />
+                ))}
           </Flex>
         </Box>
       )}
@@ -250,7 +250,7 @@ export const ListingTabs = ({
           return dateB.getTime() - dateA.getTime();
         },
         emptyTitle: '暂无已完成的任务！',
-        emptyMessage: '订阅通知以获取公告信息。',
+        emptyMessage: '订阅通知以获取信息。',
         showNotifSub,
       }),
     },
