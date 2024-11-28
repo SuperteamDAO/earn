@@ -16,10 +16,13 @@
   h3,
   h4,
   h5,
-  h6,
-  li::marker {
+  h6 {
     color: #475569 !important;
     font-weight: bold !important;
+  }
+
+  li::marker {
+    color: #475569 !important;
   }
 
   b, strong {
