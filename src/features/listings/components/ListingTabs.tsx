@@ -70,34 +70,23 @@ const generateTabContent = ({
   user,
   showNotifSub,
 }: ContentProps) => {
-  if (!!(!user || !forYou || forYou.length === 0))
+  if (isListingsLoading) {
     return (
       <div className="ph-no-capture flex flex-col gap-1">
-        {isListingsLoading ? (
-          Array.from({ length: 8 }, (_, index) => (
-            <ListingCardSkeleton key={index} />
-          ))
-        ) : !!bounties?.filter(filterFunction).length ? (
-          bounties
-            .filter(filterFunction)
-            .sort(sortCompareFunction ? sortCompareFunction : () => 0)
-            .slice(0, take ? take + 1 : undefined)
-            .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)
-        ) : (
-          <div className="mt-8 flex items-center justify-center">
-            <EmptySection
-              showNotifSub={showNotifSub}
-              title={emptyTitle}
-              message={emptyMessage}
-            />
-          </div>
-        )}
+        {Array.from({ length: 8 }, (_, index) => (
+          <ListingCardSkeleton key={index} />
+        ))}
       </div>
     );
+  }
+
+  const filteredForYou = forYou?.filter(filterFunction) ?? [];
+  const filteredBounties = bounties?.filter(filterFunction) ?? [];
+  const showForYouSection = user && forYou && filteredForYou.length > 0;
 
   return (
     <div>
-      {!!forYou?.filter(filterFunction).length && (
+      {showForYouSection && (
         <div className="mb-4 border-b border-slate-200 pb-4">
           <div className="mb-2 flex w-fit items-center gap-3 font-semibold text-gray-900">
             <p className="flex-1">For You</p>
@@ -116,30 +105,21 @@ const generateTabContent = ({
             </div>
           </div>
           <div className="ph-no-capture flex flex-col gap-1">
-            {isListingsLoading
-              ? Array.from({ length: 8 }, (_, index) => (
-                  <ListingCardSkeleton key={index} />
-                ))
-              : forYou
-                  .filter(filterFunction)
-                  .sort(sortCompareFunction ? sortCompareFunction : () => 0)
-                  .slice(0, take ? take + 1 : undefined)
-                  .map((bounty) => (
-                    <ListingCard key={bounty.id} bounty={bounty} />
-                  ))}
+            {filteredForYou
+              .sort(sortCompareFunction ? sortCompareFunction : () => 0)
+              .slice(0, take ? take + 1 : undefined)
+              .map((bounty) => (
+                <ListingCard key={bounty.id} bounty={bounty} />
+              ))}
           </div>
         </div>
       )}
+
       <div>
         <p className="mb-2 font-semibold text-gray-900">All {title}</p>
         <div className="ph-no-capture flex flex-col gap-1">
-          {isListingsLoading ? (
-            Array.from({ length: 8 }, (_, index) => (
-              <ListingCardSkeleton key={index} />
-            ))
-          ) : !!bounties?.filter(filterFunction).length ? (
-            bounties
-              .filter(filterFunction)
+          {filteredBounties.length > 0 ? (
+            filteredBounties
               .sort(sortCompareFunction ? sortCompareFunction : () => 0)
               .slice(0, take ? take + 1 : undefined)
               .map((bounty) => <ListingCard key={bounty.id} bounty={bounty} />)

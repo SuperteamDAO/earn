@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { getServerSession } from 'next-auth';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 import { CombinedRegions } from '@/constants/Superteam';
 import {
@@ -59,10 +59,6 @@ export default function HomePage({
   openForYouListings,
   userGrantsRegion,
 }: Props) {
-  const [combinedListings, setCombinedListings] = useState(listings);
-  const [combinedForYouListings, setCombinedForYouListings] =
-    useState(listings);
-
   const { data: reviewForYouListings } = useQuery({
     ...homepageForYouListingsQuery({
       statusFilter: 'review',
@@ -103,25 +99,21 @@ export default function HomePage({
     }),
   );
 
-  useEffect(() => {
-    if (reviewListings && completeListings) {
-      setCombinedListings([
-        ...listings,
-        ...reviewListings,
-        ...completeListings,
-      ]);
-    }
-  }, [reviewListings, completeListings, listings]);
+  const combinedListings = useMemo(() => {
+    return [
+      ...listings,
+      ...(reviewListings ?? []),
+      ...(completeListings ?? []),
+    ];
+  }, [listings, reviewListings, completeListings]);
 
-  useEffect(() => {
-    if (reviewForYouListings && completeForYouListings) {
-      setCombinedForYouListings([
-        ...openForYouListings,
-        ...reviewForYouListings,
-        ...completeForYouListings,
-      ]);
-    }
-  }, [reviewForYouListings, completeForYouListings, openForYouListings]);
+  const combinedForYouListings = useMemo(() => {
+    return [
+      ...openForYouListings,
+      ...(reviewForYouListings ?? []),
+      ...(completeForYouListings ?? []),
+    ];
+  }, [openForYouListings, reviewForYouListings, completeForYouListings]);
 
   return (
     <Home type="landing" isAuth={isAuth}>
@@ -225,8 +217,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
   return {
     props: {
-      listings: JSON.parse(JSON.stringify(openListings)),
       openForYouListings: JSON.parse(JSON.stringify(openForYouListings)),
+      listings: JSON.parse(JSON.stringify(openListings)),
       isAuth,
       userRegion,
       userGrantsRegion,
