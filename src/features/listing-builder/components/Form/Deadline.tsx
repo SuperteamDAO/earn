@@ -46,6 +46,9 @@ export function Deadline() {
       const twoWeeksLater = originalDeadline.add(2, 'weeks');
       setMaxDeadline(twoWeeksLater.toDate());
     }
+    return () => {
+      setMaxDeadline(undefined);
+    };
   }, [isEditing]);
 
   const handleDeadlineSelection = (days: number) => {
@@ -98,6 +101,8 @@ export function Deadline() {
                   trigger: 'border-0',
                 }}
                 disabled={type === 'hackathon'}
+                minDateTooltipContent="Deadline cannot be in the past"
+                maxDateTooltipContent="Cannot extend deadline more than 2 weeks from original deadline"
               />
             </div>
             {type !== 'hackathon' && (

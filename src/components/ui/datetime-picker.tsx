@@ -49,6 +49,8 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/utils';
 
+import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip';
+
 export type CalendarProps = Omit<
   React.ComponentProps<typeof DayPicker>,
   'mode'
@@ -125,6 +127,15 @@ export type DateTimePickerProps = {
    * Custom render function for the trigger.
    */
   renderTrigger?: (props: DateTimeRenderTriggerProps) => React.ReactNode;
+  /**
+   * Content to show in tooltip for dates before minDate
+   */
+  minDateTooltipContent?: string;
+
+  /**
+   * Content to show in tooltip for dates after maxDate
+   */
+  maxDateTooltipContent?: string;
 };
 
 export type DateTimeRenderTriggerProps = {
@@ -151,6 +162,8 @@ export function DateTimePicker({
   classNames,
   timePicker,
   hideSeconds,
+  minDateTooltipContent,
+  maxDateTooltipContent,
   ...props
 }: DateTimePickerProps & CalendarProps) {
   const [open, setOpen] = useState(false);
@@ -347,6 +360,32 @@ export function DateTimePicker({
               ].filter(Boolean) as Matcher[]
             }
             onMonthChange={setMonth}
+            components={{
+              Day: (props) => {
+                const date = props.day.date;
+                const isDisabledBefore = min && date < min;
+                const isDisabledAfter = max && date > max;
+
+                if (
+                  (isDisabledBefore && minDateTooltipContent) ||
+                  (isDisabledAfter && maxDateTooltipContent)
+                ) {
+                  return (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div {...props} />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-56 text-center">
+                        {isDisabledBefore
+                          ? minDateTooltipContent
+                          : maxDateTooltipContent}
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                }
+                return <div {...props} />;
+              },
+            }}
             classNames={{
               dropdowns: 'flex w-full gap-2',
               months: 'flex w-full h-fit',
