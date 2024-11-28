@@ -141,12 +141,12 @@
 }
 
 .minimal-tiptap-editor .ProseMirror blockquote {
-  @apply relative pl-3.5;
+  @apply relative pl-3.5 py-1;
 }
 
 .minimal-tiptap-editor .ProseMirror blockquote::before,
 .minimal-tiptap-editor .ProseMirror blockquote.is-empty::before {
-  @apply absolute bottom-0 left-0 top-0 h-full w-1 rounded-sm bg-accent-foreground/15 content-[''];
+  @apply absolute bottom-0 left-0 top-0 h-full w-full rounded-sm bg-accent-foreground/15 content-[''];
 }
 
 .minimal-tiptap-editor .ProseMirror hr {

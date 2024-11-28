@@ -128,6 +128,7 @@ export function EligibilityQuestions() {
                                 defaultValue="text"
                                 onValueChange={(value) => {
                                   field.onChange(value);
+                                  if (form.getValues().id) form.saveDraft();
                                 }}
                               >
                                 <FormControl>

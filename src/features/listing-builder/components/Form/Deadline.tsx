@@ -113,6 +113,7 @@ export function Deadline() {
                         'deadline',
                         handleDeadlineSelection(option.value),
                       );
+                      form.saveDraft();
                     }}
                   >
                     {option.label}
