@@ -71,7 +71,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
           showViewAll
           take={10}
         />
-        <ListingSection
+        {/* <ListingSection
           type="grants"
           title={`${titlesForCN[formattedSlug]} 资助`}
           sub="为建设者提供资金支持"
@@ -93,7 +93,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
           )}
           {!isGrantsLoading &&
             grants?.map((grant) => <GrantsCard grant={grant} key={grant.id} />)}
-        </ListingSection>
+        </ListingSection> */}
       </Box>
     </Home>
   );
