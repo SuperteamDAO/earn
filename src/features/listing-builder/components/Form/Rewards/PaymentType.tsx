@@ -56,6 +56,7 @@ export function PaymentType() {
                   if (e !== 'fixed') {
                     form.setValue('rewardAmount', undefined);
                   }
+                  form.saveDraft();
                 }}
                 value={field.value}
               >

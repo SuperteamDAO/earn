@@ -1,5 +1,7 @@
 import type { Editor } from '@tiptap/react';
+import { Upload } from 'lucide-react';
 import * as React from 'react';
+import { useDropzone } from 'react-dropzone';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,34 +16,7 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({
   editor,
   close,
 }) => {
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [link, setLink] = React.useState('');
-
-  const handleClick = React.useCallback(() => {
-    fileInputRef.current?.click();
-  }, []);
-
-  const handleFile = React.useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
-      if (!files?.length) return;
-
-      const insertImages = async () => {
-        const contentBucket = [];
-        const filesArray = Array.from(files);
-
-        for (const file of filesArray) {
-          contentBucket.push({ src: file });
-        }
-
-        editor.commands.setImages(contentBucket);
-      };
-
-      await insertImages();
-      close();
-    },
-    [editor, close],
-  );
 
   const handleSubmit = React.useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -55,6 +30,33 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({
     },
     [editor, link, close],
   );
+
+  const onDrop = React.useCallback(
+    async (acceptedFiles: File[]) => {
+      if (!acceptedFiles.length) return;
+
+      const insertImages = async () => {
+        const contentBucket = acceptedFiles.map((file) => ({
+          src: file,
+        }));
+        editor.commands.setImages(contentBucket);
+      };
+
+      await insertImages();
+      close();
+    },
+    [editor, close],
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: {
+      'image/jpeg': [],
+      'image/png': [],
+      'image/webp': [],
+      'image/jpg': [],
+    },
+    onDrop,
+  });
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -77,17 +79,23 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({
           </Button>
         </div>
       </div>
-      <Button type="button" className="w-full" onClick={handleClick}>
-        Upload from your computer
-      </Button>
-      <input
-        type="file"
-        accept="image/jpeg, image/png, image/webp, image/jpg"
-        ref={fileInputRef}
-        multiple
-        className="hidden"
-        onChange={handleFile}
-      />
+      <span className="block w-full text-center italic text-slate-500">OR</span>
+      <div
+        {...getRootProps()}
+        className={`rounded-md border-2 border-dashed bg-slate-50 p-8 text-center transition-colors ${isDragActive ? 'border-primary bg-primary/5' : 'border-slate-200 hover:border-slate-300'} `}
+      >
+        <input {...getInputProps()} />
+        <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-slate-100">
+          <Upload className="h-10 w-10 text-slate-500" />
+        </div>
+        <p className="text-lg font-medium">
+          {isDragActive ? 'Drop images here' : 'Drag and drop your images here'}
+        </p>
+        <p className="mt-1 text-sm text-slate-500">Maximum file size: 5MB</p>
+        <Button type="button" variant="outline" className="mt-6 px-8">
+          Upload Files
+        </Button>
+      </div>
     </form>
   );
 };

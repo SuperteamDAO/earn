@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { calculateTotalPrizes } from '@/features/listing-builder';
 
 import { useListingForm } from '../../../hooks';
-import { TokenLabel } from './Tokens';
+import { RewardsLabel } from './Sheet';
 
 function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
   const form = useListingForm();
@@ -50,7 +50,9 @@ function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
         ) : (
           <p className="text-slate-400">Total Prize</p>
         )}
-        <TokenLabel showIcon showSymbol amount={rewardAmount} />
+        <div className="flex">
+          <RewardsLabel hideCompensationType />
+        </div>
       </div>
       <Button
         type="submit"

@@ -66,7 +66,7 @@ export function RewardsSheet() {
                   Rewards
                 </FormLabel>
                 <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-3">
-                  <Label />
+                  <RewardsLabel />
                   <Button
                     variant="link"
                     size="sm"
@@ -142,60 +142,47 @@ const Type = memo(() => {
 });
 Type.displayName = 'CompensationType';
 
-const Label = memo(() => {
-  const form = useListingForm();
-  const type = useWatch({
-    control: form.control,
-    name: 'type',
-  });
-  const compensationType = useWatch({
-    control: form.control,
-    name: 'compensationType',
-  });
-  const rewards = useWatch({
-    control: form.control,
-    name: 'rewards',
-  });
-  const maxBonusSpots = useWatch({
-    control: form.control,
-    name: 'maxBonusSpots',
-  });
-  const totalReward = useWatch({
-    control: form.control,
-    name: 'rewardAmount',
-  });
-  const minRewardAsk = useWatch({
-    control: form.control,
-    name: 'minRewardAsk',
-  });
-  const maxRewardAsk = useWatch({
-    control: form.control,
-    name: 'maxRewardAsk',
-  });
+interface RewardsLabelProps {
+  hideCompensationType?: boolean;
+}
+export const RewardsLabel = memo(
+  ({ hideCompensationType = false }: RewardsLabelProps) => {
+    const form = useListingForm();
+    const type = useWatch({
+      control: form.control,
+      name: 'type',
+    });
+    const compensationType = useWatch({
+      control: form.control,
+      name: 'compensationType',
+    });
+    const rewards = useWatch({
+      control: form.control,
+      name: 'rewards',
+    });
+    const maxBonusSpots = useWatch({
+      control: form.control,
+      name: 'maxBonusSpots',
+    });
+    const totalReward = useWatch({
+      control: form.control,
+      name: 'rewardAmount',
+    });
+    const minRewardAsk = useWatch({
+      control: form.control,
+      name: 'minRewardAsk',
+    });
+    const maxRewardAsk = useWatch({
+      control: form.control,
+      name: 'maxRewardAsk',
+    });
 
-  const totalPrizes = useMemo(
-    () => calculateTotalPrizes(rewards, maxBonusSpots || 0),
-    [rewards, maxBonusSpots],
-  );
-
-  if (type !== 'project') {
-    return (
-      <>
-        <TokenLabel
-          showIcon
-          showSymbol
-          amount={totalReward || 0}
-          classNames={{
-            amount: 'font-medium text-sm',
-          }}
-        />
-        <TypeLabelText>
-          | {totalPrizes} {totalPrizes === 1 ? 'Prize' : 'Prizes'}
-        </TypeLabelText>
-      </>
+    const totalPrizes = useMemo(
+      () => calculateTotalPrizes(rewards, maxBonusSpots || 0),
+      [rewards, maxBonusSpots],
     );
-  } else {
-    if (compensationType === 'fixed') {
+
+    if (type !== 'project') {
       return (
         <>
           <TokenLabel
@@ -205,51 +192,81 @@ const Label = memo(() => {
             classNames={{
               amount: 'font-medium text-sm',
             }}
+            formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
           />
-          <TypeLabelText>| Fixed Prize</TypeLabelText>
+          {!hideCompensationType && (
+            <TypeLabelText>
+              | {totalPrizes} {totalPrizes === 1 ? 'Prize' : 'Prizes'}
+            </TypeLabelText>
+          )}
         </>
       );
-    } else if (compensationType === 'range') {
-      return (
+    } else {
+      if (compensationType === 'fixed') {
+        return (
+          <>
+            <TokenLabel
+              showIcon
+              showSymbol
+              amount={totalReward || 0}
+              classNames={{
+                amount: 'font-medium text-sm',
+              }}
+              formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
+            />
+            {!hideCompensationType && (
+              <TypeLabelText>| Fixed Prize</TypeLabelText>
+            )}
+          </>
+        );
+      } else if (compensationType === 'range') {
+        return (
+          <>
+            <TokenLabel
+              showIcon
+              amount={minRewardAsk || 0}
+              classNames={{
+                amount: 'font-medium text-sm mr-0',
+              }}
+              formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
+              className="mr-1"
+            />
+            <p>-</p>
+            <TokenLabel
+              showIcon={false}
+              showSymbol
+              className="ml-1"
+              amount={maxRewardAsk || 0}
+              classNames={{
+                amount: 'font-medium text-sm ml-0',
+              }}
+              formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
+            />
+            {!hideCompensationType && (
+              <TypeLabelText>| Range Prize</TypeLabelText>
+            )}
+          </>
+        );
+      } else if (compensationType === 'variable') {
         <>
-          <TokenLabel
-            showIcon
-            amount={minRewardAsk || 0}
-            classNames={{
-              amount: 'font-medium text-sm mr-0',
-            }}
-            formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
-            className="mr-1"
-          />
-          <p>-</p>
-          <TokenLabel
-            showIcon={false}
-            showSymbol
-            className="ml-1"
-            amount={maxRewardAsk || 0}
-            classNames={{
-              amount: 'font-medium text-sm ml-0',
-            }}
-            formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
-          />
-          <TypeLabelText>| Range Prize</TypeLabelText>
-        </>
-      );
-    } else if (compensationType === 'variable') {
+          <TokenLabel showIcon showSymbol />
+          {!hideCompensationType && (
+            <TypeLabelText>| Variable Prize</TypeLabelText>
+          )}
+        </>;
+      }
+    }
+    return (
       <>
         <TokenLabel showIcon showSymbol />
-        <TypeLabelText>| Variable Prize</TypeLabelText>
-      </>;
-    }
-  }
-  return (
-    <>
-      <TokenLabel showIcon showSymbol />
-      <TypeLabelText>| Variable Prize</TypeLabelText>
-    </>
-  );
-});
-Label.displayName = 'CompensationTypeLabel';
+        {!hideCompensationType && (
+          <TypeLabelText>| Variable Prize</TypeLabelText>
+        )}
+      </>
+    );
+  },
+);
+RewardsLabel.displayName = 'CompensationTypeLabel';
 
 function TypeLabelText({ children }: { children: React.ReactNode }) {
   return (
