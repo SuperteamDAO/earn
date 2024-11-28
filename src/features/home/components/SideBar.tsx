@@ -9,7 +9,6 @@ import { useUser } from '@/store/user';
 
 import { totalsQuery } from '../queries';
 import { HowItWorks } from './HowItWorks';
-import { LiveListings } from './LiveListings';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
 import { SponsorBanner } from './SponsorBanner';
@@ -21,6 +20,10 @@ interface SideBarProps {
 
 const VibeCard = dynamic(() =>
   import('@/features/home').then((mod) => mod.VibeCard),
+);
+
+const LiveListings = dynamic(() =>
+  import('@/features/home').then((mod) => mod.LiveListings),
 );
 
 export const HomeSideBar = ({ type }: SideBarProps) => {

@@ -2,7 +2,6 @@ import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { MdArrowForward } from 'react-icons/md';
 
-import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { type FeedPostType, useGetFeed } from '@/features/feed';
 import { timeAgoShort } from '@/utils/timeAgo';
 
@@ -12,13 +11,30 @@ interface ActivityCardProps {
   lastName: string;
   username: string;
   createdAt: string;
-  link: string;
   listingType: 'bounty' | 'hackathon' | 'project';
   isWinner: boolean;
   isWinnersAnnounced: boolean;
   type: FeedPostType;
-  ogImage: string;
 }
+
+const getRandomFallbackImage = (): string => {
+  const fallbackImages = [
+    '/assets/fallback/resized-og/1.webp',
+    '/assets/fallback/resized-og/2.webp',
+    '/assets/fallback/resized-og/3.webp',
+    '/assets/fallback/resized-og/4.webp',
+    '/assets/fallback/resized-og/5.webp',
+    '/assets/fallback/resized-og/6.webp',
+    '/assets/fallback/resized-og/7.webp',
+    '/assets/fallback/resized-og/8.webp',
+    '/assets/fallback/resized-og/9.webp',
+    '/assets/fallback/resized-og/10.webp',
+    '/assets/fallback/resized-og/11.webp',
+  ];
+
+  const randomIndex = Math.floor(Math.random() * fallbackImages.length);
+  return fallbackImages[randomIndex]!;
+};
 
 const ActivityCard = ({
   id,
@@ -26,12 +42,10 @@ const ActivityCard = ({
   lastName,
   username,
   createdAt,
-  link,
   listingType,
   isWinner,
   isWinnersAnnounced,
   type,
-  ogImage,
 }: ActivityCardProps) => {
   const getActionText = () => {
     const defaultActionText = {
@@ -58,16 +72,17 @@ const ActivityCard = ({
   };
 
   const actionText = getActionText();
+  const ogImage = getRandomFallbackImage();
 
   return (
     <NextLink
       href={!!id ? `/feed/?type=${type}&id=${id}` : '/feed/?filter=new'}
       className="flex"
     >
-      <OgImageViewer
-        className="h-12 w-20 object-cover"
-        externalUrl={link}
-        imageUrl={ogImage}
+      <img
+        className="h-12 w-20 bg-center object-cover"
+        alt="OG Image"
+        src={ogImage}
       />
       <div className="ml-3">
         <div className="flex items-center">
@@ -115,7 +130,6 @@ export const RecentActivity = () => {
           <ActivityCard
             key={i}
             id={act.id}
-            link={act.link}
             firstName={act.firstName}
             lastName={act.lastName}
             username={act.username}
@@ -124,7 +138,6 @@ export const RecentActivity = () => {
             isWinner={act.isWinner}
             isWinnersAnnounced={act.isWinnersAnnounced}
             type={act.type}
-            ogImage={act.ogImage}
           />
         ))}
       </div>
