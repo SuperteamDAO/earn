@@ -1,4 +1,3 @@
-import { Box, Flex } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 
 import { EmptySection } from '@/components/shared/EmptySection';
@@ -20,7 +19,7 @@ export default function AllProjectsPage() {
 
   return (
     <Home type="listing">
-      <Box w={'100%'}>
+      <div className="w-full">
         <ListingSection
           type="bounties"
           title="All Projects"
@@ -32,19 +31,19 @@ export default function AllProjectsPage() {
               <ListingCardSkeleton key={index} />
             ))}
           {!isLoading && !listings?.length && (
-            <Flex align="center" justify="center" mt={8}>
+            <div className="mt-8 flex items-center justify-center">
               <EmptySection
                 title="No listings available!"
                 message="Update your email preferences (from the user menu) to be notified about new work opportunities."
               />
-            </Flex>
+            </div>
           )}
           {!isLoading &&
             listings?.map((bounty) => (
               <ListingCard key={bounty.id} bounty={bounty} />
             ))}
         </ListingSection>
-      </Box>
+      </div>
     </Home>
   );
 }

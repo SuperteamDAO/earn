@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 
@@ -18,9 +17,9 @@ function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
   return (
     <ListingPageLayout isTemplate bounty={bounty}>
       {bounty?.isWinnersAnnounced && (
-        <Box display={{ base: 'none', md: 'block' }} w="full" mt={6}>
+        <div className="mt-6 hidden w-full md:block">
           <ListingWinners bounty={bounty} />
-        </Box>
+        </div>
       )}
       <DescriptionUI description={bounty?.description} />
     </ListingPageLayout>

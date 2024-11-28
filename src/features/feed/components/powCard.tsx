@@ -1,4 +1,3 @@
-import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
@@ -43,15 +42,11 @@ export function PowCard({ pow, type, commentCount }: PowCardProps) {
 
   const actionLinks = (
     <>
-      <Flex>
-        <Text
-          color={'brand.slate.500'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={600}
-        >
+      <div className="flex">
+        <p className="text-sm font-semibold text-gray-500 md:text-base">
           {pow?.title}
-        </Text>
-      </Flex>
+        </p>
+      </div>
       <FeedCardLink href={pow?.link}>View Project</FeedCardLink>
     </>
   );

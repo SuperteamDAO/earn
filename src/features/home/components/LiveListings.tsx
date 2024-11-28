@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode, useMemo } from 'react';
 
-import { ListingCardMobile, listingsQuery } from '@/features/listings';
+import { ListingCardMini, listingsQuery } from '@/features/listings';
 import { dayjs } from '@/utils/dayjs';
 
 interface LiveListingProps {
@@ -35,7 +35,7 @@ export const LiveListings = ({
       {children}
       <div className="mt-1 flex w-full flex-col">
         {listings?.map((listing) => {
-          return <ListingCardMobile bounty={listing} key={listing?.id} />;
+          return <ListingCardMini bounty={listing} key={listing?.id} />;
         })}
       </div>
     </div>

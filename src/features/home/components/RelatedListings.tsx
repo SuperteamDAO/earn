@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { type ReactNode, useMemo } from 'react';
 
 import {
-  ListingCardMobile,
+  ListingCardMini,
   listingsQuery,
   relatedlistingsQuery,
 } from '@/features/listings';
@@ -55,7 +55,7 @@ export const RelatedListings = ({
           ...(relatedListings ? relatedListings : []),
           ...(liveListings ? liveListings : []),
         ]?.map((listing) => (
-          <ListingCardMobile bounty={listing} key={listing?.id} />
+          <ListingCardMini bounty={listing} key={listing?.id} />
         ))}
       </div>
     </div>

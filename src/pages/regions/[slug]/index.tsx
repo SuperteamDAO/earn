@@ -1,4 +1,3 @@
-import { Box, Flex } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 import React from 'react';
@@ -42,7 +41,7 @@ const RegionsPage = ({
           canonical={`https://earn.superteam.fun/regions/${slug}/`}
           og={ogImage.toString()}
         />
-        <Box w={'100%'}>
+        <div className="w-full">
           <ListingTabs
             bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}
@@ -60,29 +59,24 @@ const RegionsPage = ({
             emoji="/assets/home/emojis/grants.webp"
           >
             {isListingsLoading && (
-              <Flex
-                align="center"
-                justify="center"
-                direction="column"
-                minH={52}
-              >
+              <div className="flex min-h-52 flex-col items-center justify-center">
                 <Loading />
-              </Flex>
+              </div>
             )}
             {!isListingsLoading && !listings?.grants?.length && (
-              <Flex align="center" justify="center" mt={8}>
+              <div className="mt-8 flex items-center justify-center">
                 <EmptySection
                   title="No grants available!"
                   message="Subscribe to notifications to get notified about new grants."
                 />
-              </Flex>
+              </div>
             )}
             {!isListingsLoading &&
               listings?.grants?.map((grant) => {
                 return <GrantsCard grant={grant} key={grant.id} />;
               })}
           </ListingSection>
-        </Box>
+        </div>
       </Home>
     </>
   );
