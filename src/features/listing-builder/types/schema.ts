@@ -11,6 +11,7 @@ import {
   BONUS_REWARD_POSITION,
   MAX_BONUS_SPOTS,
   MAX_PODIUMS,
+  MAX_REWARD,
   tokenList,
 } from '@/constants';
 import { type Listing } from '@/features/listings';
@@ -49,7 +50,8 @@ export const createListingFormSchema = ({
         .number({
           message: 'Required',
         })
-        .min(0.01, 'Reward'),
+        .min(0.01, 'Reward')
+        .max(MAX_REWARD),
       {
         message: 'Required',
       },
@@ -200,12 +202,13 @@ export const createListingFormSchema = ({
           message: 'Required',
         })
         .min(0)
+        .max(MAX_REWARD)
         .optional()
         .nullable(),
       rewards: rewardsSchema.optional().nullable(),
       compensationType: z.nativeEnum(CompensationType).default('fixed'),
-      minRewardAsk: z.number().min(0).optional().nullable(),
-      maxRewardAsk: z.number().min(0).optional().nullable(),
+      minRewardAsk: z.number().min(0).max(MAX_REWARD).optional().nullable(),
+      maxRewardAsk: z.number().min(0).max(MAX_REWARD).optional().nullable(),
       maxBonusSpots: z
         .number({
           message: 'Required',

@@ -8,6 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { MAX_REWARD } from '@/constants';
 
 import { useListingForm } from '../../../../hooks';
 import { TokenNumberInput } from '../Tokens';
@@ -38,6 +39,7 @@ export function Fixed() {
               {...field}
               placeholder="10,000"
               className="pr-6"
+              max={MAX_REWARD}
               onChange={(e) => {
                 field.onChange(e);
                 form.setValue(`rewards`, { 1: e || NaN });

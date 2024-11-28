@@ -14,6 +14,7 @@ import {
   BONUS_REWARD_POSITION,
   MAX_BONUS_SPOTS,
   MAX_PODIUMS,
+  MAX_REWARD,
 } from '@/constants';
 import { calculateTotalRewardsForPodium } from '@/features/listing-builder';
 import { cn } from '@/utils';
@@ -166,6 +167,7 @@ export const Podiums = () => {
                           placeholder={`${5000 - index * 500}`}
                           className="pr-6"
                           value={rewards[position]}
+                          max={MAX_REWARD}
                           onChange={(value) => {
                             field.onChange(value);
                             const updatedRewards = {
@@ -212,6 +214,7 @@ export const Podiums = () => {
                             <TokenNumberInput
                               {...field}
                               placeholder="10"
+                              max={MAX_REWARD}
                               className="relative rounded-r-none focus-within:z-10"
                               value={rewards[BONUS_REWARD_POSITION]}
                               onChange={(value) => {

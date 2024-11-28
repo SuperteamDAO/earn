@@ -5,6 +5,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { MAX_REWARD } from '@/constants';
 
 import { useListingForm } from '../../../../hooks';
 import { TokenNumberInput } from '../Tokens';
@@ -22,6 +23,7 @@ export function Range() {
             <FormControl>
               <TokenNumberInput
                 {...field}
+                max={MAX_REWARD}
                 placeholder="5,000"
                 className="relative rounded-r-none focus-within:z-10"
                 onChange={(e) => {
@@ -45,6 +47,7 @@ export function Range() {
                 {...field}
                 placeholder="10,000"
                 className="relative rounded-l-none pr-6 focus-within:z-10"
+                max={MAX_REWARD}
                 onChange={(e) => {
                   field.onChange(e);
                   form.saveDraft();
