@@ -2,9 +2,8 @@ import { Box, Link, SlideFade, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { SolarMail } from '@/constants';
 
-import { TERMS_OF_USE } from '@/constants';
+import { SolarMail, TERMS_OF_USE } from '@/constants';
 
 import { EmailSignIn } from './EmailSignIn';
 
@@ -38,12 +37,7 @@ export const SignIn = () => {
               使用条款
             </Link>{' '}
             和我们的{' '}
-            <Link
-              as={NextLink}
-              fontWeight={600}
-              href={`${router.basePath}/privacy-policy.pdf`}
-              isExternal
-            >
+            <Link as={NextLink} fontWeight={600} href="/policy.pdf" isExternal>
               隐私政策
             </Link>
             。
@@ -58,11 +52,7 @@ export const SignIn = () => {
           <Text color="brand.slate.400" fontSize="xs" textAlign="center">
             需要帮助？请联系我们{' '}
             <Text as="u">
-              <Link
-                as={NextLink}
-                href={`mailto:${SolarMail}`}
-                isExternal
-              >
+              <Link as={NextLink} href={`mailto:${SolarMail}`} isExternal>
                 {SolarMail}
               </Link>
             </Text>

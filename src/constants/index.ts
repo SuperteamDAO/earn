@@ -1107,7 +1107,7 @@ export const workType = [
 
 export const MAX_COMMENT_SUGGESTIONS = 5;
 
-export const TERMS_OF_USE = '#';
+export const TERMS_OF_USE = '/terms.pdf';
 
 export const URL_REGEX = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
 

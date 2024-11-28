@@ -63,13 +63,13 @@ export const Footer = () => {
   const about = [
     {
       text: '常见问题',
-      href: 'https://docs.google.com/document/d/1T0QRBZfBTKE_gGoxG-F60Mgp17P4-9sd/edit?usp=sharing&ouid=116724141969138041786&rtpof=true&sd=true',
+      href: '/guide.pdf',
     },
     {
       text: '条款',
-      href: '#',
+      href: '/terms.pdf',
     },
-    { text: '隐私政策', href: '#' },
+    { text: '隐私政策', href: '/policy.pdf' },
     {
       text: '联系我们',
       href: `mailto:${SolarMail}`,
