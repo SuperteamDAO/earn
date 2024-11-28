@@ -1,5 +1,4 @@
-import { Box, Circle, Flex, Image, Text } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { IoIosStar } from 'react-icons/io';
 import { MdModeComment } from 'react-icons/md';
@@ -7,6 +6,7 @@ import { MdModeComment } from 'react-icons/md';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { tokenList } from '@/constants';
+import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
 
@@ -83,139 +83,87 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
 
   return (
-    <Box
-      as={NextLink}
-      w="full"
-      px={{ base: 2, sm: 4 }}
-      py={4}
-      bg={isFeatured && isBeforeDeadline ? '#FAF5FF' : 'white'}
-      borderRadius={5}
-      _hover={{ textDecoration: 'none', bg: 'gray.100' }}
+    <Link
       href={`/listings/${type}/${slug}`}
+      className={`block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4 ${
+        isFeatured && isBeforeDeadline ? 'bg-[#FAF5FF]' : 'bg-white'
+      }`}
     >
-      <Flex
-        align="center"
-        justify="space-between"
-        w={{ base: '100%', md: 'brand.120' }}
-      >
-        <Flex w="100%">
-          <Image
-            w={{ base: 14, sm: 16 }}
-            h={{ base: 14, sm: 16 }}
-            mr={{ base: 3, sm: 5 }}
+      <div className="flex w-full items-center justify-between">
+        <div className="flex w-full">
+          <img
+            className="mr-3 h-14 w-14 rounded-md sm:mr-5 sm:h-16 sm:w-16"
             alt={sponsor?.name}
-            rounded={5}
             src={sponsorLogo}
           />
-          <Flex justify="space-between" direction="column" w="full">
-            <Text
-              color="brand.slate.700"
-              fontSize={['sm', 'sm', 'md', 'md']}
-              fontWeight={600}
-              _hover={{ textDecoration: 'underline' }}
-              style={{
-                display: '-webkit-box',
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }}
-            >
+          <div className="flex w-full flex-col justify-between">
+            <p className="line-clamp-1 text-sm font-semibold text-slate-700 hover:underline sm:text-base">
               {title}
-            </Text>
-            <Flex align={'center'} gap={1} w="min-content">
-              <Text
-                w="full"
-                color="brand.slate.500"
-                fontSize={{ md: 'sm', base: 'xs' }}
-                whiteSpace={'nowrap'}
-              >
+            </p>
+            <div className="flex w-min items-center gap-1">
+              <p className="w-full whitespace-nowrap text-xs text-slate-500 md:text-sm">
                 {sponsor?.name}
-              </Text>
+              </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </Flex>
-            <Flex align="center" gap={{ base: 1, sm: 3 }} mt="1px">
+            </div>
+            <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
               <>
-                <Flex
-                  align="center"
-                  justify="start"
-                  display={{ base: 'flex', sm: 'none' }}
-                >
+                <div className="flex items-center justify-start sm:hidden">
                   {compensationType !== 'variable' && (
-                    <Image
-                      w={3.5}
-                      h={3.5}
-                      mr={0.5}
+                    <img
+                      className="mr-0.5 h-3.5 w-3.5 rounded-full"
                       alt={token}
-                      rounded="full"
                       src={tokenIcon}
                     />
                   )}
-                  <Flex align="baseline">
+                  <div className="flex items-baseline">
                     <CompensationAmount
                       compensationType={compensationType}
                       maxRewardAsk={maxRewardAsk}
                       minRewardAsk={minRewardAsk}
                       rewardAmount={rewardAmount}
-                      className="whitespace-nowrap text-xs font-semibold text-slate-600 md:text-base"
+                      className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base"
                     />
                     {compensationType !== 'variable' && (
-                      <Text color="gray.400" fontSize="xs" fontWeight={500}>
+                      <p className="text-xs font-medium text-gray-400">
                         {token}
-                      </Text>
+                      </p>
                     )}
-                  </Flex>
-                  <Text ml={1} color="brand.slate.300" fontSize="xx-small">
-                    |
-                  </Text>
-                </Flex>
-                <Image
-                  display="flex"
-                  h={{ base: 3, sm: 4 }}
-                  ml={isBounty ? -0.5 : 0}
+                  </div>
+                  <p className="ml-1 text-[10px] text-slate-300">|</p>
+                </div>
+                <img
+                  className={`flex h-3 sm:h-4 ${isBounty ? '-ml-0.5' : ''}`}
                   alt={type}
                   src={getListingIcon(type!)}
                 />
-                <Text
-                  display={{ base: 'none', sm: 'flex' }}
-                  ml={{ base: -1, sm: isBounty ? '-3' : '-2.5' }}
-                  color="gray.500"
-                  fontSize={['x-small', 'xs', 'xs', 'xs']}
-                  fontWeight={500}
+                <p
+                  className={cn(
+                    '-ml-1 hidden text-xs font-medium text-gray-500 sm:flex',
+                    isBounty ? 'sm:-ml-3' : 'sm:-ml-2.5',
+                  )}
                 >
                   {type && type.charAt(0).toUpperCase() + type.slice(1)}
-                </Text>
+                </p>
               </>
-              <Text
-                display="flex"
-                color="brand.slate.300"
-                fontSize={['xx-small', 'xs', 'sm', 'sm']}
-              >
+              <p className="flex text-[10px] text-slate-300 sm:text-xs md:text-sm">
                 |
-              </Text>
-              <Flex align="center" gap={1}>
-                <Text
-                  color="gray.500"
-                  fontSize={['x-small', 'xs', 'xs', 'xs']}
-                  whiteSpace="nowrap"
-                >
+              </p>
+              <div className="flex items-center gap-1">
+                <p className="whitespace-nowrap text-[10px] text-gray-500 sm:text-xs">
                   {deadlineText}
-                </Text>
-              </Flex>
-              <Text
-                display={{ base: 'none', sm: 'flex' }}
-                color="brand.slate.300"
-                fontSize={['xx-small', 'xs', 'sm', 'sm']}
-              >
+                </p>
+              </div>
+              <p className="hidden text-[10px] text-slate-300 sm:flex sm:text-xs md:text-sm">
                 |
-              </Text>
+              </p>
               {!!_count?.Comments && _count?.Comments > 0 && (
-                <Flex
-                  align="center"
-                  gap={0.5}
-                  display={{ base: 'none', sm: 'flex' }}
-                  mx={{ base: 1, sm: 0 }}
-                  color="gray.500"
-                  fontSize={['x-small', 'xs', 'xs', 'xs']}
+                <div
+                  className={cn(
+                    'hidden items-center gap-0.5 sm:flex',
+                    'text-xs text-gray-500',
+                    'mx-1 sm:mx-0',
+                  )}
                 >
                   <MdModeComment
                     style={{
@@ -223,52 +171,44 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                       width: '0.8rem',
                     }}
                   />
-                  <Text>{_count?.Comments}</Text>
-                </Flex>
+                  <p>{_count?.Comments}</p>
+                </div>
               )}
               {!!isFeatured && isBeforeDeadline && (
-                <Flex
-                  align="center"
-                  gap={1}
-                  mx={{ base: 1, sm: 0 }}
-                  color="#7C3AED"
-                  fontSize={['x-small', 'xs', 'xs', 'xs']}
+                <div
+                  className={cn(
+                    'flex items-center gap-1',
+                    'text-xs text-[#7C3AED]',
+                    'mx-1 sm:mx-0',
+                  )}
                 >
                   <IoIosStar />
-                  <Text
-                    display={{ base: 'none', sm: 'flex' }}
-                    pt={0.5}
-                    fontWeight={600}
-                  >
+                  <p className="hidden pt-0.5 font-semibold sm:flex">
                     FEATURED
-                  </Text>
-                </Flex>
+                  </p>
+                </div>
               )}
 
               {dayjs().isBefore(dayjs(deadline)) && !isWinnersAnnounced && (
-                <Circle mx={{ base: 1, sm: 0 }} bg="#16A35F" size="8px" />
+                <div className="mx-1 h-2 w-2 rounded-full bg-[#16A35F] sm:mx-0" />
               )}
-            </Flex>
-          </Flex>
-        </Flex>
-        <Flex
-          align="center"
-          justify="start"
-          display={{ base: 'none', sm: 'flex' }}
-          mr={compensationType !== 'variable' ? 3 : 0}
+            </div>
+          </div>
+        </div>
+        <div
+          className={cn(
+            'hidden items-center justify-start sm:flex',
+            compensationType !== 'variable' ? 'mr-3' : 'mr-0',
+          )}
         >
           {compensationType !== 'variable' && (
-            <Image
-              w={4}
-              h={4}
-              mt={[1, 1, 0.5, 0.5]}
-              mr={1}
+            <img
+              className="mr-1 mt-1 h-4 w-4 rounded-full sm:mt-0.5"
               alt={token}
-              rounded="full"
               src={tokenIcon}
             />
           )}
-          <Flex align="baseline" gap={1}>
+          <div className="flex items-baseline gap-1">
             <CompensationAmount
               compensationType={compensationType}
               maxRewardAsk={maxRewardAsk}
@@ -277,179 +217,13 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               className="whitespace-nowrap text-xs font-semibold text-slate-600 md:text-base"
             />
             {compensationType !== 'variable' && (
-              <Text
-                color="gray.400"
-                fontSize={['xs', 'xs', 'md', 'md']}
-                fontWeight={500}
-              >
+              <p className="text-xs font-medium text-gray-400 sm:text-base">
                 {token}
-              </Text>
+              </p>
             )}
-          </Flex>
-        </Flex>
-      </Flex>
-    </Box>
-  );
-};
-
-export const ListingCardMobile = ({ bounty }: { bounty: Listing }) => {
-  const {
-    rewardAmount,
-    deadline,
-    type,
-    sponsor,
-    title,
-    token,
-    slug,
-    compensationType,
-    minRewardAsk,
-    maxRewardAsk,
-  } = bounty;
-  const router = useRouter();
-
-  const isBounty = type === 'bounty';
-
-  return (
-    <>
-      <Box
-        className="ph-no-capture"
-        as={NextLink}
-        w="full"
-        px={2}
-        py={4}
-        borderRadius={5}
-        _hover={{
-          textDecoration: 'none',
-          bg: 'gray.100',
-        }}
-        href={`/listings/${type}/${slug}`}
-      >
-        <Flex
-          className="ph-no-capture"
-          align="center"
-          justify="space-between"
-          w={'100%'}
-        >
-          <Flex w="100%">
-            <Image
-              w={14}
-              h={14}
-              mr={3}
-              alt={sponsor?.name}
-              rounded={5}
-              src={
-                sponsor?.logo
-                  ? sponsor.logo.replace(
-                      '/upload/',
-                      '/upload/c_scale,w_128,h_128,f_auto/',
-                    )
-                  : `${router.basePath}/assets/logo/sponsor-logo.png`
-              }
-            />
-            <Flex justify={'space-between'} direction={'column'} w={'full'}>
-              <Text
-                className="ph-no-capture"
-                color="brand.slate.700"
-                fontSize={'sm'}
-                fontWeight={600}
-                _hover={{
-                  textDecoration: 'underline',
-                }}
-                style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 1,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                }}
-              >
-                {title}
-              </Text>
-              <Flex align={'center'} gap={1} w="min-content">
-                <Text
-                  w="full"
-                  color="brand.slate.500"
-                  fontSize={{ base: 'xs' }}
-                  whiteSpace={'nowrap'}
-                >
-                  {sponsor?.name}
-                </Text>
-                <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-              </Flex>
-              <Flex align={'center'} wrap={'wrap'} gap={1} mt={'1px'}>
-                <>
-                  <Flex align={'center'} justify="start" display={'flex'}>
-                    {compensationType !== 'variable' && (
-                      <Image
-                        w={3.5}
-                        h={3.5}
-                        mr={0.5}
-                        alt={token}
-                        rounded="full"
-                        src={
-                          tokenList.find((ele) => {
-                            return ele.tokenSymbol === token;
-                          })?.icon
-                        }
-                      />
-                    )}
-                    <Flex align="baseline">
-                      <CompensationAmount
-                        compensationType={compensationType}
-                        maxRewardAsk={maxRewardAsk}
-                        minRewardAsk={minRewardAsk}
-                        rewardAmount={rewardAmount}
-                        className="whitespace-nowrap text-xs font-semibold text-slate-600"
-                      />
-                      {compensationType !== 'variable' && (
-                        <Text
-                          color={'gray.400'}
-                          fontSize={'xs'}
-                          fontWeight={500}
-                        >
-                          {token}
-                        </Text>
-                      )}
-                    </Flex>
-                    <Text
-                      ml={1}
-                      color={'brand.slate.300'}
-                      fontSize={['xx-small', 'xs', 'sm', 'sm']}
-                    >
-                      |
-                    </Text>
-                  </Flex>
-                  <Image
-                    display={'flex'}
-                    h={3}
-                    ml={isBounty ? -0.5 : 0}
-                    alt={type}
-                    src={getListingIcon(type!)}
-                  />
-                </>
-                <Text
-                  display={'flex'}
-                  color={'brand.slate.300'}
-                  fontSize={['xx-small', 'xs', 'sm', 'sm']}
-                >
-                  |
-                </Text>
-
-                <Flex align={'center'} gap={1}>
-                  <Text
-                    color={'gray.500'}
-                    fontSize={'x-small'}
-                    whiteSpace={'nowrap'}
-                  >
-                    {dayjs().isBefore(dayjs(deadline))
-                      ? `Due ${dayjs(deadline).fromNow()}`
-                      : `Closed ${dayjs(deadline).fromNow()}`}
-                  </Text>
-                </Flex>
-              </Flex>
-            </Flex>
-          </Flex>
-        </Flex>
-      </Box>
-    </>
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 };
