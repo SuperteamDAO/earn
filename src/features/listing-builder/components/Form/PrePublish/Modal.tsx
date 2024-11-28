@@ -90,7 +90,7 @@ export function PrePublish() {
     } else {
       const timer = setTimeout(() => {
         setIsDisabledSoft(false);
-      }, 1000);
+      }, 500);
       return () => clearTimeout(timer);
     }
     return () => null;

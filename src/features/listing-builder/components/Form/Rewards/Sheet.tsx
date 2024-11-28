@@ -77,7 +77,7 @@ export function RewardsSheet() {
                 </div>
                 {hasRewardsErrors ? (
                   <p className={'text-xs font-medium text-destructive'}>
-                    Please Resolve all errors in rewards
+                    Please resolve all errors in rewards
                   </p>
                 ) : (
                   <FormMessage />

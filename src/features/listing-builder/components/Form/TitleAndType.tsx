@@ -239,7 +239,9 @@ function Type() {
                           width={16}
                           height={16}
                         />
-                        <span>{hackathon.name}</span>
+                        <span className="max-w-20 truncate">
+                          {hackathon.name}
+                        </span>
                       </div>
                     </SelectItem>
                   )}

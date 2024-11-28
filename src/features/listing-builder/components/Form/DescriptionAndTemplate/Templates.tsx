@@ -68,9 +68,11 @@ export function Templates() {
     session?.user.role !== 'GOD' &&
     !isEditing;
 
-  const [open, setOpen] = useState(router.pathname === '/dashboard/new');
+  const [open, setOpen] = useState(
+    router.pathname === '/dashboard/new' && type !== 'hackathon',
+  );
   useEffect(() => {
-    setOpen(router.pathname === '/dashboard/new');
+    setOpen(router.pathname === '/dashboard/new' && type !== 'hackathon');
   }, [router.pathname]);
 
   return (
@@ -80,16 +82,18 @@ export function Templates() {
         if (!isDisabled) setOpen(e);
       }}
     >
-      <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          className="text-blue-600 hover:text-blue-600"
-          size="sm"
-        >
-          <LayoutGrid className="fill-blue-600" />
-          Browse Templates
-        </Button>
-      </DialogTrigger>
+      {type !== 'hackathon' && !isEditing && (
+        <DialogTrigger asChild>
+          <Button
+            variant="ghost"
+            className="text-blue-600 hover:text-blue-600"
+            size="sm"
+          >
+            <LayoutGrid className="fill-blue-600" />
+            Browse Templates
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent
         className="invisible w-max max-w-none p-8 md:visible"
         hideCloseIcon={isDisabled}
@@ -115,11 +119,7 @@ export function Templates() {
                   announce the winners for such listings to create new listings.
                 </p>
               ) : (
-                <>
-                  Save hours of work writing a description, use existing tried{' '}
-                  {'&'}
-                  tested templates
-                </>
+                <>Go live in ~2 minutes by using our existing template.</>
               )}
             </DialogDescription>
           </div>
@@ -142,6 +142,7 @@ export function Templates() {
                 disabled={isDisabled}
                 onClick={() => {
                   posthog.capture('start from scratch_sponsor');
+                  form.resetForm();
                 }}
               >
                 <Plus className="h-6 w-6" />

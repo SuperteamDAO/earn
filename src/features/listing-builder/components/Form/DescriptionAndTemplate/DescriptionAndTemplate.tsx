@@ -18,10 +18,6 @@ import { Templates } from './Templates';
 
 export function DescriptionAndTemplate() {
   const form = useListingForm();
-  const type = useWatch({
-    control: form.control,
-    name: 'type',
-  });
   const templateId = useWatch({
     control: form.control,
     name: 'templateId',
@@ -59,7 +55,7 @@ export function DescriptionAndTemplate() {
                     {'🤖 Go live in <1 min by using our drafting bot'}
                   </Link>
                 </Button>
-                {type !== 'hackathon' && <Templates />}
+                <Templates />
               </div>
             </div>
             <div className="flex rounded-md border ring-primary has-[:focus]:ring-1">

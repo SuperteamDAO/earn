@@ -74,10 +74,8 @@ export function EligibilityQuestions() {
     } else {
       if (type === 'hackathon' && hackathon?.eligibility) {
         form.setValue('eligibility', hackathon?.eligibility as any);
-      } else if (fields.length === 1 && fields[0]?.question === '') {
-        handleRemoveQuestion(0);
-      } else if (type === 'bounty' && fields.length > 2) {
-        form.setValue('eligibility', fields.slice(0, 2));
+      } else {
+        form.setValue('eligibility', []);
       }
     }
   }, [type, hackathon]);

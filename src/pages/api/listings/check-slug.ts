@@ -10,10 +10,14 @@ export const checkSlug = async (
   id?: string,
 ): Promise<boolean> => {
   try {
-    const existingBounty = await prisma.bounties.findFirst({ where: { slug } });
-    if (!existingBounty) return false;
-    if (existingBounty.id === id) return false;
-    else return true;
+    const existingBounty = await prisma.bounties.findFirst({
+      where: {
+        slug,
+        NOT: id ? { id } : undefined,
+      },
+      select: { id: true },
+    });
+    return !!existingBounty;
   } catch (error) {
     logger.error(`Error checking slug: ${slug}`, safeStringify(error));
     throw new Error('Error checking slug');
@@ -24,18 +28,33 @@ export const generateUniqueSlug = async (
   title: string,
   id?: string,
 ): Promise<string> => {
-  let slug = slugify(title, { lower: true, strict: true });
-  let slugExists = await checkSlug(slug, id);
-  let i = 1;
+  const baseSlug = slugify(title, { lower: true, strict: true });
 
-  while (slugExists) {
-    const newTitle = `${title}-${i}`;
-    slug = slugify(newTitle, { lower: true, strict: true });
-    slugExists = await checkSlug(slug, id);
-    i += 1;
+  const existingSlugs = await prisma.bounties
+    .findMany({
+      where: {
+        slug: {
+          startsWith: baseSlug,
+        },
+        NOT: id ? { id } : undefined,
+      },
+      select: { slug: true },
+    })
+    .then((bounties) => bounties.map((bounty) => bounty.slug));
+
+  if (!existingSlugs.includes(baseSlug)) {
+    return baseSlug;
   }
 
-  return slug;
+  let i = 1;
+  let newSlug = '';
+
+  do {
+    newSlug = `${baseSlug}-${i}`;
+    i++;
+  } while (existingSlugs.includes(newSlug));
+
+  return newSlug;
 };
 
 export default async function handler(
@@ -56,17 +75,7 @@ export default async function handler(
   try {
     if (check === 'true') {
       logger.debug(`Checking if slug exists: ${slug}`);
-      if (id) {
-        const bounty = await prisma.bounties.findFirst({
-          where: { id: id as string },
-          select: { slug: true },
-        });
-        if (bounty?.slug === slug) {
-          logger.info(`Slug ${slug} belongs to the same bounty with ID ${id}`);
-          return res.status(200).json({ slugExists: false });
-        }
-      }
-      const slugExists = await checkSlug(slug);
+      const slugExists = await checkSlug(slug, id as string | undefined);
       if (slugExists) {
         logger.warn(`Slug ${slug} already exists`);
         return res
@@ -74,7 +83,7 @@ export default async function handler(
           .json({ slugExists: true, error: 'Slug already exists' });
       } else {
         logger.info(`Slug ${slug} is available`);
-        return res.status(200).json({ slugExists });
+        return res.status(200).json({ slugExists: false });
       }
     } else {
       logger.debug(`Generating unique slug for title: ${slug}`);

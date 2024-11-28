@@ -134,6 +134,9 @@ export const skillsArraySchema = z
     message: 'Required',
   })
   .refine((skills) => {
+    return skills.length > 0;
+  }, 'Required')
+  .refine((skills) => {
     const parentSkills = skills.map((s) => s.skills);
     return new Set(parentSkills).size === parentSkills.length;
   }, 'Duplicate parent skills are not allowed');

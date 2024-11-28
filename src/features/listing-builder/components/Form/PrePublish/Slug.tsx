@@ -105,13 +105,23 @@ export function Slug() {
                   placeholder="write-a-twitter-thread-on-Solana"
                   disabled={!!publishedAt || isSlugLoading}
                   onBlur={() => null}
+                  onChange={(e) => {
+                    const value = e.target.value
+                      .toLowerCase()
+                      .replace(/\s+/g, '-'); // Replace spaces with dashes
+                    field.onChange(value);
+                  }}
                 />
                 {slugCheckFetching || isSlugLoading ? (
                   <Loader2 className="absolute right-2 top-1.5 animate-spin text-slate-300" />
                 ) : (
-                  <span className="absolute right-2 top-2 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1 text-background">
-                    <CheckIcon className="h-full w-full stroke-[3px]" />
-                  </span>
+                  form.formState.errors.slug === undefined &&
+                  !isSlugCheckError &&
+                  !isEditing && (
+                    <span className="absolute right-2 top-2 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1 text-background">
+                      <CheckIcon className="h-full w-full stroke-[3px]" />
+                    </span>
+                  )
                 )}
               </div>
             </FormControl>

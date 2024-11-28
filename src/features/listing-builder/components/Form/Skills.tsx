@@ -21,6 +21,7 @@ export function Skills() {
   });
 
   const skillsKey = useMemo(() => `editor-${templateId}`, [templateId]);
+
   return (
     <FormField
       name="skills"

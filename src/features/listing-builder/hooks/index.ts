@@ -23,7 +23,7 @@ import {
   createListingRefinements,
   type ListingFormData,
 } from '../types';
-import { refineReadyListing } from '../utils';
+import { getListingDefaults, refineReadyListing } from '../utils';
 
 interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
   saveDraft: () => void;
@@ -153,7 +153,17 @@ export const useListingForm = (
   }, [getValues, submitListingMutation]);
 
   const resetForm = useCallback(() => {
-    reset();
+    const defaultValues = getListingDefaults({
+      isGod,
+      isEditing,
+      isST,
+      hackathon,
+      type: getValues().type,
+    });
+    reset({
+      ...getValues(),
+      ...defaultValues,
+    });
   }, [reset]);
 
   type ValidationFields = Partial<Record<keyof ListingFormData, true>>;
