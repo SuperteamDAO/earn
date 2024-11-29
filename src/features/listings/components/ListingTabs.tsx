@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { type User } from '@/interface/user';
@@ -101,15 +102,17 @@ const generateTabContent = ({
           <div className="mb-2 flex w-fit items-center gap-3 font-semibold text-gray-900">
             <p className="flex-1">For You</p>
             <div className="text-gray-500">
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className="h-3 w-3" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-80">
-                  List of top opportunities curated for you, based on your
-                  skills, listing subscriptions and location.
-                </TooltipContent>
-              </Tooltip>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="h-3 w-3" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-80">
+                    List of top opportunities curated for you, based on your
+                    skills, listing subscriptions and location.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
           <div className="ph-no-capture flex flex-col gap-1">

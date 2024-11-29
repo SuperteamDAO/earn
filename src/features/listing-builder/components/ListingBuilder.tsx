@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 import { Form } from '@/components/ui/form';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { type Listing } from '@/features/listings';
 import { useUser } from '@/store/user';
 import { HydrateAtoms, useInitAtom } from '@/utils/atoms';
@@ -183,13 +184,15 @@ function ListingBuilderProvider({
           ],
         ]}
       >
-        <ListingBuilder
-          defaultListing={defaultListing}
-          isDuplicating={isDuplicating}
-          hackathon={hackathon}
-          isST={isST}
-          isGod={isGod}
-        />
+        <TooltipProvider>
+          <ListingBuilder
+            defaultListing={defaultListing}
+            isDuplicating={isDuplicating}
+            hackathon={hackathon}
+            isST={isST}
+            isGod={isGod}
+          />
+        </TooltipProvider>
       </HydrateAtoms>
     </Provider>
   );

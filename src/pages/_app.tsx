@@ -14,7 +14,6 @@ import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
 
-import { TooltipProvider } from '@/components/ui/tooltip';
 import { useUser } from '@/store/user';
 import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
@@ -113,9 +112,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       <PostHogProvider client={posthog}>
         <SessionProvider session={session}>
           <ChakraProvider theme={extendThemeWithNextFonts}>
-            <TooltipProvider>
-              <MyApp Component={Component} pageProps={pageProps} />
-            </TooltipProvider>
+            <MyApp Component={Component} pageProps={pageProps} />
           </ChakraProvider>
         </SessionProvider>
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
