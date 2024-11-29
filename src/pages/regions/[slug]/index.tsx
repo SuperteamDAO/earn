@@ -53,7 +53,7 @@ const RegionsPage = ({
             take={10}
           />
 
-          <ListingSection
+          {/* <ListingSection
             type="grants"
             title="Grants"
             sub="为建设者提供资金支持"
@@ -81,7 +81,7 @@ const RegionsPage = ({
               listings?.grants?.map((grant) => {
                 return <GrantsCard grant={grant} key={grant.id} />;
               })}
-          </ListingSection>
+          </ListingSection> */}
         </Box>
       </Home>
     </>

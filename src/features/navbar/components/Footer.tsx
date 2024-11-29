@@ -50,7 +50,7 @@ export const Footer = () => {
   const opportunities = [
     { text: '赏金任务', href: '/bounties' },
     { text: '定向任务', href: '/projects' },
-    { text: '资助', href: '/grants' },
+    // { text: '资助', href: '/grants' },
   ];
 
   const categories = [

@@ -136,7 +136,7 @@ export default function HomePage({
           take={20}
           showViewAll
         />
-        <ListingSection
+        {/* <ListingSection
           type="grants"
           title="资助"
           sub="为建设者提供资金支持"
@@ -155,7 +155,7 @@ export default function HomePage({
             grants?.map((grant) => {
               return <GrantsCard grant={grant} key={grant.id} />;
             })}
-        </ListingSection>
+        </ListingSection> */}
       </Box>
     </Home>
   );

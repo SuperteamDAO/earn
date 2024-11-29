@@ -17,11 +17,11 @@ export const LISTING_NAV_ITEMS: Array<NavItem> = [
     href: '/projects/',
     posthog: 'projects_navbar',
   },
-  {
-    label: '资助',
-    href: '/grants/',
-    posthog: 'grants_navbar',
-  },
+  // {
+  //   label: '资助',
+  //   href: '/grants/',
+  //   posthog: 'grants_navbar',
+  // },
 ];
 
 export const CATEGORY_NAV_ITEMS: Array<NavItem & { pillPH: string }> = [

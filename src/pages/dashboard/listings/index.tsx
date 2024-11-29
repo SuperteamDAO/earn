@@ -343,7 +343,7 @@ export default function SponsorListings() {
               >
                 定向任务
               </Tab>
-              {hasGrants && (
+              {/* {hasGrants && (
                 <Tab
                   color="brand.slate.400"
                   fontSize={'sm'}
@@ -352,7 +352,7 @@ export default function SponsorListings() {
                 >
                   资助
                 </Tab>
-              )}
+              )} */}
             </TabList>
             <TabPanels>
               <TabPanel px={0}>
