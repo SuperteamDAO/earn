@@ -1,0 +1,62 @@
+.minimal-tiptap-editor .ProseMirror .heading-node {
+  @apply relative font-semibold;
+}
+
+.minimal-tiptap-editor .ProseMirror .heading-node:first-child {
+  @apply mt-0;
+}
+
+.minimal-tiptap-editor {
+  * {
+    color: #334155;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #475569 !important;
+    font-weight: bold !important;
+  }
+
+  li::marker {
+    color: #475569 !important;
+  }
+
+  b, strong {
+    font-weight: bold !important;
+  }
+}
+.minimal-tiptap-editor .ProseMirror h1 {
+  @apply mb-4 mt-[46px] text-[1.5rem] leading-7 tracking-[-0.004375rem];
+}
+
+.minimal-tiptap-editor .ProseMirror h2 {
+  @apply mb-3.5 mt-8 text-[1.25rem] leading-7 tracking-[0.003125rem];
+}
+
+.minimal-tiptap-editor .ProseMirror h3 {
+  @apply mb-3 mt-6 text-[1.125rem] leading-6 tracking-[0.00625rem];
+}
+
+.minimal-tiptap-editor .ProseMirror h4 {
+  @apply mb-2 mt-4 text-[1rem] leading-6 tracking-[0.00425rem];
+}
+
+.minimal-tiptap-editor .ProseMirror h5 {
+  @apply mb-2 mt-4 text-[0.875rem] leading-6 tracking-[0.00425rem];
+}
+
+.minimal-tiptap-editor .ProseMirror h6 {
+  @apply mb-2 mt-4 text-[0.75rem] leading-6 tracking-[0.00425rem];
+}
+
+.minimal-tiptap-editor .ProseMirror a.link {
+  @apply cursor-pointer text-primary;
+}
+
+.minimal-tiptap-editor .ProseMirror a.link:hover {
+  @apply underline;
+}

@@ -77,7 +77,7 @@ export interface ListingWithSubmissions extends Listing {
 interface Eligibility {
   order: number;
   question: string;
-  type?: 'text';
+  type?: 'text' | 'link';
   optional?: boolean;
   isLink?: boolean;
 }

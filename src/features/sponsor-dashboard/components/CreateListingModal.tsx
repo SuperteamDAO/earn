@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
-import { useListingFormStore } from '@/features/listing-builder';
+// import { useListingFormStore } from '@/features/listing-builder';
 import { BountyIcon } from '@/svg/bounty-icon';
 import { ProjectIcon } from '@/svg/project-icon';
 
@@ -28,22 +28,22 @@ export const CreateListingModal = ({
 }) => {
   const posthog = usePostHog();
   const router = useRouter();
-  const { resetForm } = useListingFormStore();
-
-  const resetListingForm = () => {
-    resetForm();
-  };
+  // const { resetForm } = useListingFormStore();
+  //
+  // const resetListingForm = () => {
+  //   resetForm();
+  // };
 
   const handleCreateBounty = () => {
-    resetListingForm();
+    // resetListingForm();
     posthog.capture('create new bounty_sponsor');
-    router.push('/dashboard/create-bounty');
+    router.push('/dashboard/new?type=bounty');
   };
 
   const handleCreateProject = () => {
-    resetListingForm();
+    // resetListingForm();
     posthog.capture('create new project_sponsor');
-    router.push('/dashboard/create-project');
+    router.push('/dashboard/new?type=project');
   };
 
   return (

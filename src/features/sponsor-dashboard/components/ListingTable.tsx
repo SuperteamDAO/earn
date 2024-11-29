@@ -42,7 +42,6 @@ import { toast } from 'sonner';
 
 import { tokenList } from '@/constants';
 import { grantAmount } from '@/features/grants';
-import { useListingFormStore } from '@/features/listing-builder';
 import {
   formatDeadline,
   getColorStyles,
@@ -69,7 +68,6 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
   const router = useRouter();
   const posthog = usePostHog();
   const { data: session } = useSession();
-  const { resetForm } = useListingFormStore();
 
   const {
     isOpen: unpublishIsOpen,
@@ -425,7 +423,6 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                             as={NextLink}
                             _hover={{ textDecoration: 'none' }}
                             href={`/dashboard/listings/${listing.slug}/edit`}
-                            onClick={resetForm}
                           >
                             <MenuItem
                               color={'brand.slate.500'}

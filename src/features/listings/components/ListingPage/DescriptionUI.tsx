@@ -78,19 +78,20 @@ export function DescriptionUI({ description }: Props) {
           style={{ width: '100%' }}
         >
           <Box
-            className="listing-description"
+            className="minimal-tiptap-editor tiptap ProseMirror !px-0"
             overflow={'visible'}
             w={'full'}
             h={'full'}
             pb={7}
-            id="reset-des"
           >
-            {parse(
-              description?.startsWith('"')
-                ? JSON.parse(description || '')
-                : (description ?? ''),
-              options,
-            )}
+            <div className="tiptap ProseMirror listing-description !mt-0 !px-0">
+              {parse(
+                description?.startsWith('"')
+                  ? JSON.parse(description || '')
+                  : (description ?? ''),
+                options,
+              )}
+            </div>
           </Box>
         </Collapse>
         {showCollapser && (

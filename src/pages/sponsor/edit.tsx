@@ -266,8 +266,6 @@ export default function UpdateSponsor() {
                       <FormLabel isRequired>Industry</FormLabel>
                       <FormControl>
                         <MultiSelect
-                          closeMenuOnSelect={false}
-                          isMulti
                           options={IndustryList.map((elm) => ({
                             label: elm,
                             value: elm,

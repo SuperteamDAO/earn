@@ -78,7 +78,7 @@ export default function BountySubmissions({ listing }: Props) {
   );
 
   const { data: bounty, isLoading: isBountyLoading } = useQuery(
-    sponsorDashboardListingQuery(listing, true),
+    sponsorDashboardListingQuery(listing),
   );
 
   const filteredSubmissions = useMemo(() => {
