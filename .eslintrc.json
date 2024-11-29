@@ -20,8 +20,7 @@
     ],
     "@tanstack/query/exhaustive-deps": "error",
     "@tanstack/query/no-rest-destructuring": "error",
-    "@tanstack/query/stable-query-client": "error",
-    "prettier/prettier": "error"
+    "@tanstack/query/stable-query-client": "error"
   },
   "overrides": [
     // Configuration for TypeScript files

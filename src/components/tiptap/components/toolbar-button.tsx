@@ -53,5 +53,3 @@ export const ToolbarButton = React.forwardRef<
 );
 
 ToolbarButton.displayName = 'ToolbarButton';
-
-export default ToolbarButton;

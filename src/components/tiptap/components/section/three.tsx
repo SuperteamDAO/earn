@@ -212,7 +212,3 @@ export const SectionThree: React.FC<SectionThreeProps> = ({
     </Popover>
   );
 };
-
-SectionThree.displayName = 'SectionThree';
-
-export default SectionThree;

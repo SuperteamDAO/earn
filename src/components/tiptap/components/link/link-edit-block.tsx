@@ -132,5 +132,3 @@ export const LinkEditBlock = React.forwardRef<HTMLDivElement, LinkEditorProps>(
 );
 
 LinkEditBlock.displayName = 'LinkEditBlock';
-
-export default LinkEditBlock;

@@ -79,5 +79,3 @@ export const SectionFour: React.FC<SectionFourProps> = ({
 };
 
 SectionFour.displayName = 'SectionFour';
-
-export default SectionFour;

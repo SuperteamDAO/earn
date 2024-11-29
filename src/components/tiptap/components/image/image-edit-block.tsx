@@ -99,5 +99,3 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({
     </form>
   );
 };
-
-export default ImageEditBlock;

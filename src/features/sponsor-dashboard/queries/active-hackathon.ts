@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import { getURL } from '@/utils';
 
-export const fetchActiveHackathon = async (): Promise<Hackathon> => {
+const fetchActiveHackathon = async (): Promise<Hackathon> => {
   const { data } = await axios.get(
     `${getURL()}api/sponsor-dashboard/active-hackathon/`,
   );

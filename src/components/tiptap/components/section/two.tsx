@@ -126,5 +126,3 @@ export const SectionTwo: React.FC<SectionTwoProps> = ({
 };
 
 SectionTwo.displayName = 'SectionTwo';
-
-export default SectionTwo;

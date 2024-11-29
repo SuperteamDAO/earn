@@ -20,9 +20,8 @@ export type FileValidationOptions = {
 
 type FileInput = File | { src: string | File; alt?: string; title?: string };
 
-export const isClient = (): boolean => typeof window !== 'undefined';
-export const isServer = (): boolean => !isClient();
-export const isMacOS = (): boolean =>
+const isClient = (): boolean => typeof window !== 'undefined';
+const isMacOS = (): boolean =>
   isClient() && window.navigator.platform === 'MacIntel';
 
 const shortcutKeyMap: Record<string, ShortcutKeyResult> = {
@@ -37,9 +36,6 @@ const shortcutKeyMap: Record<string, ShortcutKeyResult> = {
 
 export const getShortcutKey = (key: string): ShortcutKeyResult =>
   shortcutKeyMap[key.toLowerCase()] || { symbol: key, readable: key };
-
-export const getShortcutKeys = (keys: string[]): ShortcutKeyResult[] =>
-  keys.map(getShortcutKey);
 
 export const getOutput = (
   editor: Editor,
@@ -87,7 +83,7 @@ export const isUrl = (
   }
 };
 
-export const sanitizeUrl = (
+const sanitizeUrl = (
   url: string | null | undefined,
   options: { allowBase64?: boolean } = {},
 ): string | undefined => {

@@ -4,9 +4,6 @@ export * from './form';
 export * from './rewards';
 export * from './suggestions';
 
-export const calculateTotalOfArray = (values: number[]) =>
-  values.reduce((a, b) => (a ?? 0) + (b ?? 0), 0);
-
 export const formatTotalPrice = (total: number) =>
   new Intl.NumberFormat('en-US', {
     currency: 'USD',
