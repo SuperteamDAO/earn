@@ -6,6 +6,7 @@ import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { ONBOARDING_KEY } from '@/constants';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';
@@ -66,7 +67,7 @@ export function YourLinks({ useFormStore }: Props) {
 
   const { register, handleSubmit, watch } = useForm();
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     const socialFields = [
       'twitter',
       'github',
@@ -84,7 +85,7 @@ export function YourLinks({ useFormStore }: Props) {
     }
 
     posthog.capture('finish profile_talent');
-    uploadProfile(
+    await uploadProfile(
       {
         discord: data.discord,
         twitter: data.twitter,
@@ -95,6 +96,7 @@ export function YourLinks({ useFormStore }: Props) {
       },
       pow,
     );
+    localStorage.removeItem(ONBOARDING_KEY);
   };
   return (
     <>
