@@ -173,7 +173,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
       const matchedRegion = user.location
         ? getCombinedRegion(user.location, true)
         : undefined;
-      console.log('matchedRegion', matchedRegion);
       if (matchedRegion?.name) {
         userRegion = [
           matchedRegion.name,

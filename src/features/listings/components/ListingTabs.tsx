@@ -246,7 +246,7 @@ export const ListingTabs = ({
 
   return (
     <div className="mb-10 mt-5">
-      <div className="mb-4 flex items-center justify-between border-b-2 border-[#E2E8F0] pb-3">
+      <div className="mb-4 flex items-center justify-between border-b border-[#E2E8F0] pb-3">
         <div className="flex w-full items-center justify-between sm:justify-start">
           <div className="flex items-center">
             {emoji && (

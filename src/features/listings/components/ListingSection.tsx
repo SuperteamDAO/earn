@@ -47,7 +47,7 @@ export const ListingSection = ({
         shouldDisplay ? 'block' : 'hidden',
       )}
     >
-      <div className="mb-4 flex items-center justify-between border-b-2 border-[#E2E8F0] pb-3">
+      <div className="mb-4 flex items-center justify-between border-b border-[#E2E8F0] pb-3">
         <div className="flex items-center">
           {emoji && (
             <img

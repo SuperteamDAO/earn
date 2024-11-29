@@ -1,9 +1,41 @@
-import type { BountyType } from '@prisma/client';
+import type { BountyType, Prisma } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+export type BountyTemplateWithSponsor = Prisma.BountiesTemplatesGetPayload<{
+  select: {
+    id: true;
+    title: true;
+    description: true;
+    skills: true;
+    rewards: true;
+    rewardAmount: true;
+    minRewardAsk: true;
+    maxRewardAsk: true;
+    maxBonusSpots: true;
+    emoji: true;
+    compensationType: true;
+    type: true;
+    token: true;
+    color: true;
+    language: true;
+    region: true;
+    slug: true;
+    Bounties: {
+      select: {
+        sponsor: {
+          select: {
+            name: true;
+            logo: true;
+          };
+        };
+      };
+    };
+  };
+}>;
 
 export default async function bounties(
   req: NextApiRequest,
@@ -22,8 +54,30 @@ export default async function bounties(
         type,
       },
       take: 20,
-      include: {
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        skills: true,
+        rewards: true,
+        rewardAmount: true,
+        minRewardAsk: true,
+        maxRewardAsk: true,
+        maxBonusSpots: true,
+        emoji: true,
+        compensationType: true,
+        type: true,
+        token: true,
+        color: true,
+        language: true,
+        region: true,
+        slug: true,
         Bounties: {
+          distinct: ['sponsorId'],
+          take: 3,
+          orderBy: {
+            createdAt: 'desc',
+          },
           select: {
             sponsor: {
               select: {

@@ -214,7 +214,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               maxRewardAsk={maxRewardAsk}
               minRewardAsk={minRewardAsk}
               rewardAmount={rewardAmount}
-              className="whitespace-nowrap text-xs font-semibold text-slate-600 md:text-base"
+              className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base"
             />
             {compensationType !== 'variable' && (
               <p className="text-xs font-medium text-gray-400 sm:text-base">

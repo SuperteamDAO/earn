@@ -1,48 +1,17 @@
-import {
-  type Listing,
-  type References,
-  type Rewards,
-} from '@/features/listings';
+import { type z } from 'zod';
 
-import { type Ques } from '../components/ListingBuilder';
+import { type createListingFormSchema } from './schema';
 
+export * from './schema';
 export * from './SuperteamName';
 
-export interface ListingFormType {
-  id?: string;
-  title?: string;
-  slug?: string;
-  deadline?: string;
-  templateId?: string;
-  pocSocials?: string;
-  timeToComplete?: string;
-  type?: 'bounty' | 'hackathon' | 'project';
-  region?: string;
-  referredBy?: string;
-  requirements?: string;
-  eligibility?: Ques[];
-  references?: References[];
-  isPrivate?: boolean;
-  skills?: any;
-  description?: any;
-  publishedAt?: string;
-  rewardAmount?: number;
-  rewards?: Rewards;
-  token?: string;
-  compensationType?: 'fixed' | 'range' | 'variable' | undefined;
-  minRewardAsk?: number;
-  maxRewardAsk?: number;
-  maxBonusSpots?: number;
-  isFndnPaying?: boolean;
-}
+export type ListingFormSchema = ReturnType<typeof createListingFormSchema>;
+export type ListingFormData = z.infer<ListingFormSchema>;
 
-export interface ListingStoreType {
-  form: ListingFormType;
-  updateState: (data: Partial<ListingFormType>) => void;
-  resetForm: () => void;
-  initializeForm: (
-    listing: Listing,
-    isDuplicating: boolean,
-    type: 'bounty' | 'project' | 'hackathon',
-  ) => void;
-}
+export type ListingStatus =
+  | 'draft'
+  | 'published'
+  | 'unpublished'
+  | 'verifying'
+  | 'payment pending'
+  | 'completed';

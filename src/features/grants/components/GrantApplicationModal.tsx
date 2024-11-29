@@ -205,7 +205,8 @@ export const GrantApplicationModal = ({
 
     form.trigger(fieldsToValidate[activeStep]).then((isValid) => {
       if (isValid) {
-        setActiveStep((prev) => prev + 1);
+        const nextStep = activeStep + 1;
+        setActiveStep(nextStep);
         if (modalRef.current) {
           modalRef.current.scrollTop = 0;
         }
@@ -214,7 +215,8 @@ export const GrantApplicationModal = ({
   };
 
   const handleBack = () => {
-    setActiveStep((prev) => prev - 1);
+    const nextStep = activeStep - 1;
+    setActiveStep(nextStep);
     if (modalRef.current) {
       modalRef.current.scrollTop = 0;
     }
