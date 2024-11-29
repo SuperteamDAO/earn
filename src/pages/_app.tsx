@@ -11,7 +11,7 @@ import { SessionProvider } from 'next-auth/react';
 import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ONBOARDING_KEY } from '@/constants';
 import { useUser } from '@/store/user';
@@ -63,6 +63,7 @@ function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
   const { user } = useUser();
   const posthog = usePostHog();
+  const [forcedRedirected, setForcedRedirected] = useState(false);
 
   useEffect(() => {
     const handleRouteChange = () => posthog?.capture('$pageview');
@@ -73,20 +74,19 @@ function MyApp({ Component, pageProps }: any) {
   }, [router.events, posthog]);
 
   const forcedProfileRedirect = useCallback(() => {
+    console.log('forcedProfileRedirect called');
     if (router.pathname.startsWith('/new') || !user) return;
     if (user.isTalentFilled || user.currentSponsorId) return;
 
     const onboarding = localStorage.getItem(ONBOARDING_KEY);
     if (onboarding === 'talent') {
       router.push('/new/talent/?type=forced');
-      return;
     } else if (onboarding === 'sponsor') {
       router.push('/new/sponsor/?type=forced');
-      return;
     } else {
       router.push('/new/?type=forced');
-      return;
     }
+    setForcedRedirected(true);
   }, [user, router.pathname]);
 
   useEffect(() => {
@@ -103,17 +103,16 @@ function MyApp({ Component, pageProps }: any) {
   // forced profile redirection
   useEffect(() => {
     const handleRouteComplete = () => {
-      setTimeout(() => {
+      if (!forcedRedirected) {
         setTimeout(() => {
-          forcedProfileRedirect(); // wait 5 seconds if session is already on
-        }, 5000);
-      }, 0);
+          setTimeout(() => {
+            forcedProfileRedirect(); // wait 5 seconds if session is already on
+          }, 5000);
+        }, 0);
+      }
     };
-    router.events.on('routeChangeComplete', handleRouteComplete);
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteComplete);
-    };
-  }, [router, user]);
+    handleRouteComplete();
+  }, [user?.id]);
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
 
