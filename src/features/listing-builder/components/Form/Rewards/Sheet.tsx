@@ -88,6 +88,7 @@ export function RewardsSheet() {
         />
       </SheetTrigger>
       <SheetContent
+        showCloseIcon={false}
         side="right"
         className="flex h-[100vh] flex-col p-0 sm:max-w-xl"
       >

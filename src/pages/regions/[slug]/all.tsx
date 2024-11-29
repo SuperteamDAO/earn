@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 
@@ -33,7 +32,7 @@ export default function AllRegionListingsPage({
         canonical={`https://earn.superteam.fun/regions/${slug}/`}
         og={ogImage.toString()}
       />
-      <Box w={'100%'}>
+      <div className="w-full">
         <ListingTabs
           bounties={listings?.bounties}
           isListingsLoading={isListingsLoading}
@@ -41,7 +40,7 @@ export default function AllRegionListingsPage({
           title="Freelance Gigs"
           viewAllLink="/all"
         />
-      </Box>
+      </div>
     </Home>
   );
 }

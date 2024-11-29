@@ -55,7 +55,7 @@ export default function Custom404() {
           <Image
             w={['20rem', '20rem', '30rem', '30rem']}
             alt="cat image"
-            src="/assets/bg/cat.svg"
+            src="/assets/bg/cat.png"
           />
         </VStack>
       </Default>

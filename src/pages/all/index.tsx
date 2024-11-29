@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 
 import { listingsQuery, ListingTabs } from '@/features/listings';
@@ -13,7 +12,7 @@ function AllListingsPage() {
 
   return (
     <Home type="listing">
-      <Box w={'100%'}>
+      <div className="w-full">
         <ListingTabs
           bounties={listings}
           isListingsLoading={isLoading}
@@ -21,7 +20,7 @@ function AllListingsPage() {
           title="Freelance Gigs"
           viewAllLink="/all"
         />
-      </Box>
+      </div>
     </Home>
   );
 }
