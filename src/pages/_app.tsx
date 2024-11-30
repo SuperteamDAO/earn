@@ -12,7 +12,7 @@ import { SessionProvider } from 'next-auth/react';
 import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { useUser } from '@/store/user';
 import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
@@ -81,6 +81,30 @@ function MyApp({ Component, pageProps }: any) {
       window.history.replaceState(null, '', url.href);
     }
   }, [router.query.loginState, user, posthog]);
+
+  const blockedRedirection = useCallback(() => {
+    console.log('pathname', router.pathname);
+    console.log('user blocked', user?.isBlocked);
+    if (user?.isBlocked && !router.pathname.includes('/blocked')) {
+      router.push('/blocked');
+    }
+  }, [router.pathname, user?.isBlocked]);
+  useEffect(() => {
+    blockedRedirection(); // first render
+  }, [user?.isBlocked]);
+  useEffect(() => {
+    if (!user?.isBlocked) return; // dont add event is not blocked
+
+    const handleRouteComplete = () => {
+      setTimeout(() => {
+        blockedRedirection();
+      }, 0);
+    };
+    router.events.on('routeChangeComplete', handleRouteComplete);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteComplete);
+    };
+  }, [router.events, user?.isBlocked, blockedRedirection]);
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
 

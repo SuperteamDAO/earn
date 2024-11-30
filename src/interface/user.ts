@@ -63,5 +63,6 @@ interface User {
   acceptedTOS?: boolean;
   emailSettings?: EmailSettings[];
   stLead?: string;
+  isBlocked?: boolean;
 }
 export type { User };
