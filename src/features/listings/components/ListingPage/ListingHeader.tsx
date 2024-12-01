@@ -1,17 +1,5 @@
-import {
-  Flex,
-  Heading,
-  HStack,
-  Icon,
-  Image,
-  Link,
-  Text,
-  Tooltip,
-  useBreakpointValue,
-  VStack,
-} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
@@ -26,11 +14,19 @@ import { MdLock } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
   getListingIcon,
   type Listing,
   submissionCountQuery,
 } from '@/features/listings';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { PulseIcon } from '@/svg/pulse-icon';
+import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 
 import { ListingTabLink } from './ListingTabLink';
@@ -65,7 +61,7 @@ export function ListingHeader({
   } = listing;
   const router = useRouter();
   const posthog = usePostHog();
-  const isMD = useBreakpointValue({ base: false, md: true });
+  const isMD = useMediaQuery('(min-width: 768px)');
   const hasDeadlineEnded = dayjs().isAfter(deadline);
   const hasHackathonStarted = dayjs().isAfter(Hackathon?.startDate);
   const isProject = type === 'project';
@@ -74,74 +70,46 @@ export function ListingHeader({
   const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
     useQuery(submissionCountQuery(listing.id!));
 
-  const statusIconStyles = { w: 5, h: 5 };
+  const statusIconStyles = 'w-5 h-5';
   let statusText = '';
-  let statusBgColor = '';
   let statusTextColor = '';
-  let statusIcon = (
-    <PulseIcon
-      {...statusIconStyles}
-      bg={statusBgColor}
-      text={statusTextColor}
-    />
-  );
+  let statusIcon: React.JSX.Element = <></>;
 
   if (!isPublished && !publishedAt) {
-    statusIcon = (
-      <Icon as={LuFile} {...statusIconStyles} color="brand.slate.400" />
-    );
+    statusIcon = <LuFile className={cn(statusIconStyles, 'text-slate-400')} />;
     statusText = 'Draft';
-    statusBgColor = 'brand.slate.200';
-    statusTextColor = 'brand.slate.500';
+    statusTextColor = 'slate-500';
   } else if (!isPublished && publishedAt) {
-    statusIcon = <Icon as={LuPause} {...statusIconStyles} color="#ffecb3" />;
+    statusIcon = <LuPause className={cn(statusIconStyles, 'text-[#ffecb3]')} />;
     statusText = isMD ? 'Submissions Paused' : 'Paused';
-    statusBgColor = '#ffecb3';
-    statusTextColor = '#F59E0B';
+    statusTextColor = '[#F59E0B]';
   } else if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
-    statusIcon = <Icon as={LuClock} {...statusIconStyles} color="#F3E8FF" />;
+    statusIcon = <LuClock className={cn(statusIconStyles, 'text-[#F3E8FF]')} />;
     statusText = 'Opens Soon';
-    statusBgColor = '#F3E8FF';
-    statusTextColor = '#8B5CF6';
+    statusTextColor = '[#8B5CF6]';
   } else if (status === 'OPEN' && isWinnersAnnounced) {
-    statusIcon = (
-      <Icon as={LuCheck} {...statusIconStyles} color={'brand.slate.400'} />
-    );
+    statusIcon = <LuCheck className={cn(statusIconStyles, 'text-slate-400')} />;
     statusText = 'Completed';
-    statusBgColor = 'brand.slate.200';
-    statusTextColor = 'brand.slate.400';
+    statusTextColor = 'slate-400';
   } else if (!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN') {
     statusIcon = (
-      <PulseIcon {...statusIconStyles} bg={'orange.100'} text={'orange.600'} />
+      <PulseIcon w={5} h={5} bg="bg-orange-100" text="text-orange-600" />
     );
     statusText = 'In Review';
-    statusBgColor = 'orange.100';
-    statusTextColor = 'orange.600';
+    statusTextColor = 'orange-600';
   } else if (!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN') {
     statusIcon = (
-      <PulseIcon
-        isPulsing
-        {...statusIconStyles}
-        bg={'#9AE6B4'}
-        text="#16A34A"
-      />
+      <PulseIcon isPulsing w={4} h={4} bg={'#9AE6B4'} text="#16A34A" />
     );
     statusText = isMD ? 'Submissions Open' : 'Open';
-    statusBgColor = 'green.100';
-    statusTextColor = 'green.600';
+    statusTextColor = 'green-600';
   }
 
   const ListingTitle = () => {
     return (
-      <Heading
-        color={'brand.slate.700'}
-        fontFamily={'var(--font-sans)'}
-        fontSize={'xl'}
-        fontWeight={700}
-        letterSpacing={'-0.5px'}
-      >
+      <h1 className="text-xl font-bold tracking-[-0.5px] text-brand-slate-700">
         {title}
-      </Heading>
+      </h1>
     );
   };
 
@@ -158,19 +126,11 @@ export function ListingHeader({
   const CommentCount = () => {
     return (
       !!commentCount && (
-        <Link
-          as={NextLink}
-          display={{ base: 'none', md: 'block' }}
-          href="#comments"
-        >
-          <HStack ml={4}>
-            <Icon
-              as={LuMessageSquare}
-              color="brand.slate.500"
-              fill="brand.slate.600"
-            />
-            <Text fontSize={'sm'}>{commentCount}</Text>
-          </HStack>
+        <Link className="hidden md:block" href="#comments">
+          <div className="ml-4 flex gap-2">
+            <LuMessageSquare className="h-4 w-4 fill-slate-600 text-slate-500" />
+            <p className="text-sm">{commentCount}</p>
+          </div>
         </Link>
       )
     );
@@ -181,155 +141,108 @@ export function ListingHeader({
     return (
       <>
         <ListingHeaderSeparator />
-        <HStack>
-          <Icon as={MdLock} color="brand.slate.500" />
-          <Text color="brand.slate.400">Private</Text>
-        </HStack>
+        <div className="flex gap-1">
+          <MdLock className="h-4 w-4 text-slate-500" />
+          <p className="text-slate-400">Private</p>
+        </div>
       </>
     );
   };
 
   const HeaderSub = () => {
     return (
-      <Flex align={'center'} wrap={'wrap'} gap={{ base: 1, md: 3 }}>
-        <Flex align={'center'} gap={1}>
-          <Text
-            color={'#94A3B8'}
-            fontSize={{ base: 'xs', sm: 'md' }}
-            fontWeight={500}
-            whiteSpace={'nowrap'}
-          >
+      <div className="flex flex-wrap items-center gap-1 md:gap-3">
+        <div className="flex items-center gap-1">
+          <p className="whitespace-nowrap text-sm font-medium text-[#94A3B8]">
             by {sponsor?.name}
-          </Text>
+          </p>
           {!!sponsor?.isVerified && <VerifiedBadge />}
-        </Flex>
+        </div>
         <ListingHeaderSeparator />
         {isHackathon ? (
-          <Flex align={'center'}>
-            <Image h="1rem" alt={type} src={Hackathon?.altLogo} />
-          </Flex>
+          <div className="flex items-center">
+            <img className="h-[1rem]" alt={type} src={Hackathon?.altLogo} />
+          </div>
         ) : (
-          <Flex>
-            <Tooltip
-              px={4}
-              py={2}
-              color="brand.slate.400"
-              fontFamily={'var(--font-sans)'}
-              fontSize="sm"
-              bg="white"
-              borderRadius={'lg'}
-              label={
-                isProject
-                  ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
-                  : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
-              }
-            >
-              <Flex>
-                <Image
-                  h="4"
-                  mt={{ base: '1px', sm: 1 }}
-                  mr={{ base: '1px', sm: 1 }}
-                  alt={type}
-                  src={getListingIcon(type!)}
-                />
-                <Text
-                  color={'gray.400'}
-                  fontSize={{ base: 'xs', sm: 'md' }}
-                  fontWeight={500}
-                >
-                  {isProject ? 'Project' : 'Bounty'}
-                </Text>
-              </Flex>
-            </Tooltip>
-          </Flex>
+          <div className="flex">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <div className="flex items-center">
+                    <img alt={type} src={getListingIcon(type!)} />
+                    <p className="text-xs font-medium text-gray-400 md:text-sm">
+                      {isProject ? 'Project' : 'Bounty'}
+                    </p>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-80">
+                  {isProject
+                    ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
+                    : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         )}
         <ListingHeaderSeparator />
-        <Flex display={'flex'}>
+        <div className="flex">
           <ListingStatus />
-        </Flex>
+        </div>
         <PrivateLabel />
         <ListingHeaderSeparator />
         <RegionLabel region={region} />
         <CommentCount />
-      </Flex>
+      </div>
     );
   };
 
   const SponsorLogo = () => {
     return (
-      <Image
-        w={{ base: 12, md: 16 }}
-        h={{ base: 12, md: 16 }}
-        mr={2}
-        objectFit={'cover'}
+      <img
+        className="mr-2 h-12 w-12 rounded-md object-cover md:h-16 md:w-16"
         alt={sponsor?.name}
-        rounded={'md'}
         src={sponsor?.logo || `${router.basePath}/assets/logo/sponsor-logo.png`}
       />
     );
   };
 
   return (
-    <VStack bg={'white'}>
-      <VStack
-        justify={'space-between'}
-        flexDir={'row'}
-        gap={5}
-        w={'full'}
-        maxW={'7xl'}
-        mx={'auto'}
-        py={{ base: 4, md: 10 }}
-      >
-        <HStack align="center">
+    <div className="flex flex-col gap-1 bg-white">
+      <div className="mx-auto flex w-full max-w-7xl justify-between gap-5 py-4 md:py-10">
+        <div className="flex items-center">
           <SponsorLogo />
-          <VStack align={'start'} gap={isHackathon ? 0 : 1}>
-            <HStack>
-              <Flex display={{ base: 'none', md: 'flex' }}>
+          <div
+            className={cn(
+              'flex flex-col items-start',
+              isHackathon ? 'gap-0' : 'gap-1',
+            )}
+          >
+            <div className="flex gap-1">
+              <div className="hidden md:flex">
                 <ListingTitle />
-              </Flex>
-            </HStack>
-            <Flex display={{ base: 'none', md: 'flex' }}>
+              </div>
+            </div>
+            <div className="hidden md:flex">
               <HeaderSub />
-            </Flex>
-          </VStack>
-        </HStack>
+            </div>
+          </div>
+        </div>
         {listing.id && (
           <SubscribeListing isTemplate={isTemplate} id={listing.id} />
         )}
-      </VStack>
-      <Flex
-        direction={'column'}
-        gap={1}
-        display={{ base: 'flex', md: 'none' }}
-        w="full"
-        mb={5}
-      >
+      </div>
+      <div className="mb-5 flex w-full flex-col gap-1 md:hidden">
         <ListingTitle />
         <HeaderSub />
-      </Flex>
+      </div>
       {
-        <Flex align={'center'} w={'full'} maxW="7xl" h={10}>
-          <HStack
-            align="center"
-            justifyContent="start"
-            gap={10}
-            w={'full'}
-            maxW={'7xl'}
-            h={'full'}
-            mx={'auto'}
-            my={'auto'}
-            borderColor="brand.slate.200"
-            borderBottomWidth={'1px'}
-          >
+        <div className="flex h-10 w-full max-w-7xl items-center">
+          <div className="mx-auto my-auto flex h-full w-full max-w-7xl items-center justify-start gap-10 border-b border-slate-200">
             <ListingTabLink
-              w={{ md: '22rem' }}
+              className="pointer-events-none hidden md:flex md:w-[22rem]"
               href={`/listings/${type}/${slug}/`}
               text={type === 'project' ? 'Inviting Proposals' : 'Prizes'}
               isActive={false}
-              styles={{
-                pointerEvents: 'none',
-                display: { base: 'none', md: 'flex' },
-              }}
             />
             <ListingTabLink
               href={
@@ -371,9 +284,9 @@ export function ListingHeader({
                 />
               </>
             )}
-          </HStack>
-        </Flex>
+          </div>
+        </div>
       }
-    </VStack>
+    </div>
   );
 }

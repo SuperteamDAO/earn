@@ -1,4 +1,4 @@
-import { Box, Link, Text } from '@chakra-ui/react';
+import Link from 'next/link';
 import React from 'react';
 
 import { Default } from '@/layouts/Default';
@@ -15,20 +15,18 @@ export default function Blocked() {
         />
       }
     >
-      <Box maxW={'800px'} mx="auto" mt={10} px={4}>
-        <Text
-          color={'brand.slate.600'}
-          fontSize="3xl"
-          fontWeight={500}
-          textAlign={'center'}
-        >
+      <div className="mx-auto mt-10 max-w-[800px] px-4">
+        <p className="text-center text-3xl font-medium text-slate-600">
           Your access to Earn has been restricted. Please get in touch with{' '}
-          <Link color={'brand.purple'} href="mailto:support@superteamearn.com">
+          <Link
+            className="text-brand-purple"
+            href="mailto:support@superteamearn.com"
+          >
             support@superteamearn.com
           </Link>{' '}
           if you have any questions for more information.
-        </Text>
-      </Box>
+        </p>
+      </div>
     </Default>
   );
 }

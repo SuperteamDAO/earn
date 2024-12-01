@@ -1,27 +1,17 @@
-import { ArrowForwardIcon, SearchIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Container,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-  Link,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Spinner,
-  VStack,
-} from '@chakra-ui/react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
-import NextLink from 'next/link';
+import { ArrowRight, Search } from 'lucide-react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { GrantsCard } from '@/features/grants';
 import { ListingCard } from '@/features/listings';
+import { cn } from '@/utils';
 
 import { type SearchResult } from '../types';
 
@@ -61,6 +51,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
       return;
     }
   }
+
   useEffect(() => {
     debouncedSearch(query);
     return () => {
@@ -69,48 +60,52 @@ export function SearchModal({ isOpen, onClose }: Props) {
   }, [query]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={{ base: 'sm', sm: 'xl' }}>
-      <ModalOverlay backdropFilter="blur(6px)" />
-      <ModalContent p={0} border="none">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent
+        hideCloseIcon
+        className={cn(
+          'border-none p-0 backdrop-blur-md sm:max-w-xl',
+          'fixed left-1/2 top-20 -translate-x-1/2',
+          '!block !translate-y-0',
+        )}
+      >
         <form
           onSubmit={(e) => {
             e.preventDefault();
             router.push(`/search?q=${encodeURIComponent(query)}`);
           }}
+          className="relative"
         >
-          <InputGroup border="none">
-            <InputLeftElement color="brand.slate.400" pointerEvents="none">
-              <SearchIcon />
-            </InputLeftElement>
-            <Input
-              fontSize={{ base: 'sm', md: 'md' }}
-              border="none"
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for Superteam Earn Listings"
-              value={query}
-              variant="filled"
-            />
-            <InputRightElement color="brand.slate.400">
-              {loading ? (
-                <Spinner size={'sm'} />
-              ) : (
-                <button type="submit">
-                  <ArrowForwardIcon />
-                </button>
-              )}
-            </InputRightElement>
-          </InputGroup>
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Input
+            className={cn(
+              'border-none bg-slate-100 pl-10 pr-10',
+              'text-sm md:text-base',
+              'focus-visible:ring-0 focus-visible:ring-offset-0',
+            )}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search for Superteam Earn Listings"
+            value={query}
+          />
+          <button
+            type="submit"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+          >
+            {loading ? (
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-400 border-t-transparent" />
+            ) : (
+              <ArrowRight className="h-4 w-4" />
+            )}
+          </button>
         </form>
+
         {query.length > 0 && results.length > 0 && (
-          <VStack w="full">
-            <VStack w="full" py={0}>
+          <div className="flex w-full flex-col">
+            <div className="flex w-full flex-col py-0">
               {results.map((listing) => (
-                <Container
+                <div
                   key={listing.id}
-                  justifyContent="space-between"
-                  display="flex"
-                  w="full"
-                  p={0}
+                  className="flex w-full justify-between p-0"
                 >
                   {listing.searchType === 'listing' && (
                     <ListingCard bounty={listing} />
@@ -118,30 +113,26 @@ export function SearchModal({ isOpen, onClose }: Props) {
                   {listing.searchType === 'grants' && (
                     <GrantsCard grant={listing} />
                   )}
-                </Container>
+                </div>
               ))}
-            </VStack>
+            </div>
             <Link
-              as={NextLink}
               href={`/search?q=${encodeURIComponent(query)}`}
-              style={{ width: '100%' }}
+              className="w-full"
             >
               <Button
-                gap={2}
-                w="full"
-                fontSize="sm"
-                fontWeight="normal"
-                borderTopWidth={1}
-                borderTopColor="brand.slate.100"
-                rounded="none"
                 variant="ghost"
+                className={cn(
+                  'w-full gap-2 text-sm font-normal',
+                  'rounded-none border-t border-slate-100',
+                )}
               >
-                View All Results <ArrowForwardIcon />{' '}
+                View All Results <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-          </VStack>
+          </div>
         )}
-      </ModalContent>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 }

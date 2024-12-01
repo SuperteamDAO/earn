@@ -1,18 +1,10 @@
-import {
-  Box,
-  Button,
-  Container,
-  Heading,
-  Image,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
 import { SignIn } from '@/features/auth';
 import { acceptInvite, verifyInviteQuery } from '@/features/sponsor-dashboard';
 
@@ -58,89 +50,59 @@ export default function SignupPage() {
 
   if (error) {
     return (
-      <Container centerContent>
-        <VStack mt={10} spacing={4}>
-          <Heading>Invitation Error</Heading>
-          <Text>
-            {error instanceof Error ? error.message : 'An error occurred'}
-          </Text>
-          <Button onClick={() => router.push('/')}>Go to Homepage</Button>
-        </VStack>
-      </Container>
+      <div className="container flex justify-center">
+        <div className="mt-10 flex flex-col items-center gap-4">
+          <h1 className="text-2xl font-bold">Invitation Error</h1>
+          <p>{error instanceof Error ? error.message : 'An error occurred'}</p>
+          <Button onClick={() => router.push('/')} variant="default">
+            Go to Homepage
+          </Button>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Container maxW="xl" centerContent>
-      <Box
-        w="full"
-        mt={10}
-        px={20}
-        pt={20}
-        pb={40}
-        bg="white"
-        borderWidth={1}
-        borderColor="gray.200"
-        borderRadius="lg"
-        shadow="lg"
-      >
-        <VStack align="center" spacing={0}>
-          <Text
-            color="brand.slate.600"
-            fontSize="2xl"
-            fontWeight={500}
-            textAlign="center"
-          >
+    <div className="container mx-auto flex max-w-xl justify-center">
+      <div className="mt-10 w-full rounded-lg border border-gray-200 bg-white px-20 pb-40 pt-20 shadow-lg">
+        <div className="flex flex-col items-center space-y-0">
+          <p className="text-center text-2xl font-medium text-slate-600">
             Welcome to Superteam Earn
-          </Text>
-          <Text color="brand.slate.600" fontSize="lg" textAlign="center">
+          </p>
+          <p className="text-center text-lg text-slate-600">
             Start your journey to access top global talent!
-          </Text>
-          <Image
-            w={20}
-            h={20}
-            mt={12}
-            mr={{ base: 3, sm: 5 }}
+          </p>
+
+          <img
+            className="mt-12 h-20 w-20 rounded sm:mr-5"
             alt={inviteDetails?.sponsorName}
-            rounded={5}
             src={inviteDetails?.sponsorLogo}
           />
-          <Text
-            mt={5}
-            color="brand.slate.500"
-            fontWeight={500}
-            lineHeight="24px"
-            textAlign="center"
-          >
+
+          <p className="my-5 text-center font-medium leading-6 text-slate-500">
             {inviteDetails?.senderName} has invited you to join <br />
             {inviteDetails?.sponsorName}
-          </Text>
+          </p>
+
           {!session ? (
-            <Box w="full" mt={12}>
-              <Text
-                mb={4}
-                color="brand.slate.500"
-                fontWeight={500}
-                textAlign="center"
-              >
+            <div className="mt-12 w-full">
+              <p className="mb-4 text-center font-medium text-slate-500">
                 Please sign in to accept the invitation:
-              </Text>
+              </p>
               <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
-            </Box>
+            </div>
           ) : (
             <Button
-              mt={4}
-              colorScheme="blue"
-              isLoading={acceptInviteMutation.isPending || isNavigating}
+              className="mt-4"
+              disabled={acceptInviteMutation.isPending || isNavigating}
               onClick={handleAcceptInvite}
               size="lg"
-              variant={'outline'}
             >
               Accept Invite
             </Button>
           )}
-        </VStack>
-      </Box>
-    </Container>
+        </div>
+      </div>
+    </div>
   );
 }

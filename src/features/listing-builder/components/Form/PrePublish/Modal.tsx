@@ -143,7 +143,7 @@ export function PrePublish() {
       </Tooltip>
       <DialogContent className="py-4 sm:max-w-[500px]">
         <DialogHeader className="flex flex-row gap-4">
-          <DialogTitle className="text-md">Publish Listing</DialogTitle>
+          <DialogTitle className="text-base">Publish Listing</DialogTitle>
           {isDisabledSoft && (
             <Loader2 className="h-4 w-4 animate-spin text-slate-500" />
           )}

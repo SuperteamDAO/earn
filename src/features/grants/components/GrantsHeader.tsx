@@ -156,14 +156,10 @@ export const GrantsHeader = ({
           borderBottomWidth={'1px'}
         >
           <ListingTabLink
-            w={{ md: '22rem' }}
+            className="pointer-events-none hidden md:flex md:w-[22rem]"
             href={`/grants/${slug}/`}
             text="Prizes"
             isActive={false}
-            styles={{
-              pointerEvents: 'none',
-              display: { base: 'none', md: 'flex' },
-            }}
           />
           <ListingTabLink
             href={`/grants/${slug}/`}
