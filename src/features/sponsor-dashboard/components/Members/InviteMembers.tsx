@@ -146,8 +146,8 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                         Member
                       </Text>
                       <Text fontSize="sm">
-                        Members can manage bounties & projects, can assign
-                        winners and make payments.
+                        Members can manage listings, submissions, winner
+                        announcements and payments.
                       </Text>
                     </Box>
                   </Radio>
@@ -164,8 +164,8 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                         Admin
                       </Text>
                       <Text fontSize="sm">
-                        Admin have all Member privileges, and they can manage
-                        all members.
+                        Admins can add or remove anyone from the team, in
+                        addition to having all Member privileges.
                       </Text>
                     </Box>
                   </Radio>
