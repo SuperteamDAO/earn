@@ -13,8 +13,8 @@ import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-import { ONBOARDING_KEY } from '@/constants';
 import { useUser } from '@/store/user';
 import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
@@ -74,21 +74,30 @@ function MyApp({ Component, pageProps }: any) {
     };
   }, [router.events, posthog]);
 
-  const forcedProfileRedirect = useCallback(() => {
-    console.log('forcedProfileRedirect called');
-    if (router.pathname.startsWith('/new') || !user) return;
-    if (user.isTalentFilled || user.currentSponsorId) return;
-
-    const onboarding = localStorage.getItem(ONBOARDING_KEY);
-    if (onboarding === 'talent') {
-      router.push('/new/talent/?type=forced');
-    } else if (onboarding === 'sponsor') {
-      router.push('/new/sponsor/?type=forced');
-    } else {
-      router.push('/new/?type=forced');
-    }
-    setForcedRedirected(true);
-  }, [user, router.pathname]);
+  const forcedProfileRedirect = useCallback(
+    (wait?: number) => {
+      if (
+        router.pathname.startsWith('/new') ||
+        router.pathname.startsWith('/sponsor') ||
+        !user
+      )
+        return;
+      if (user.isTalentFilled || user.currentSponsorId) return;
+      setTimeout(() => {
+        if (wait) {
+          toast.info('Finish your profile to continue browsing.', {
+            description: `You will be redirected in ~${Math.floor(wait / 1000).toFixed(0)} seconds.`,
+            duration: 5000,
+          });
+        }
+        setTimeout(() => {
+          router.push('/new/?type=forced');
+        }, wait || 0);
+      }, 0);
+      setForcedRedirected(true);
+    },
+    [user, router.pathname],
+  );
 
   useEffect(() => {
     if (router.query.loginState === 'signedIn' && user) {
@@ -105,11 +114,7 @@ function MyApp({ Component, pageProps }: any) {
   useEffect(() => {
     const handleRouteComplete = () => {
       if (!forcedRedirected) {
-        setTimeout(() => {
-          setTimeout(() => {
-            forcedProfileRedirect(); // wait 5 seconds if session is already on
-          }, 5000);
-        }, 0);
+        forcedProfileRedirect(5000);
       }
     };
     handleRouteComplete();
