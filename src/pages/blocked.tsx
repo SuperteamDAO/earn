@@ -1,10 +1,21 @@
 import Link from 'next/link';
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
 
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { useUser } from '@/store/user';
 
 export default function Blocked() {
+  const { user } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user && !user?.isBlocked) {
+      router.push('/');
+    }
+  }, [user]);
+
   return (
     <Default
       meta={
