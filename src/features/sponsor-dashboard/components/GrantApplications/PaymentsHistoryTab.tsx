@@ -18,7 +18,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { type Grant } from '@/features/grants';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';

@@ -25,7 +25,7 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
-import { skillMap } from '@/constants';
+import { skillMap } from '@/constants/skillMap';
 
 import SparkleIcon from '../../icons/sparkle.svg';
 import { type ScoutRowType } from '../../types';

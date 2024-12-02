@@ -5,7 +5,7 @@ import { MdModeComment } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';

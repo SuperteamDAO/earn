@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 
 interface RejectModalProps {
   rejectIsOpen: boolean;

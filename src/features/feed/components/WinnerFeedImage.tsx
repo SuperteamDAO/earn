@@ -1,4 +1,4 @@
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { type Rewards } from '@/features/listings';
 import { getRankLabels } from '@/utils/rank';
 

@@ -27,14 +27,14 @@ import { SelectBox } from '@/components/Form/SelectBox';
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { SkillSelect } from '@/components/shared/SkillSelect';
 import {
-  CommunityList,
-  CountryList,
   IndustryList,
   type MultiSelectOptions,
   web3Exp,
   workExp,
   workType,
 } from '@/constants';
+import { CommunityList } from '@/constants/communityList';
+import { CountryList } from '@/constants/countryList';
 import {
   AddProject,
   SocialInput,

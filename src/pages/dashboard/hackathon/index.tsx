@@ -51,7 +51,7 @@ import { IoEyeOffOutline, IoOpenOutline, IoTrash } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { tokenList } from '@/constants/index';
+import { tokenList } from '@/constants/tokenList';
 import {
   formatDeadline,
   getColorStyles,

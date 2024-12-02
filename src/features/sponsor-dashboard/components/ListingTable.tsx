@@ -40,7 +40,7 @@ import { RiEditFill } from 'react-icons/ri';
 import { TbFileDollar } from 'react-icons/tb';
 import { toast } from 'sonner';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { grantAmount } from '@/features/grants';
 import {
   formatDeadline,

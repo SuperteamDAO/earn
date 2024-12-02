@@ -19,7 +19,7 @@ import {
 import NextLink from 'next/link';
 import React from 'react';
 
-import { skillMap } from '@/constants';
+import { skillMap } from '@/constants/skillMap';
 import { EarnAvatar, Telegram, Twitter, Website } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
 

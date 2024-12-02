@@ -24,7 +24,7 @@ import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { type Grant } from '@/features/grants';
 import {
   Discord,

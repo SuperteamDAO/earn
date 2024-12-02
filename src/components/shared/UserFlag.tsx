@@ -2,7 +2,7 @@ import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 import { useEffect, useState } from 'react';
 
-import { countries } from '@/constants';
+import { countries } from '@/constants/country';
 import { cn } from '@/utils';
 
 type FlagSize =

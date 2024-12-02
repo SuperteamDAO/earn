@@ -1,7 +1,7 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 
 const CG_BASE_URL = 'https://api.coingecko.com/api/v3';

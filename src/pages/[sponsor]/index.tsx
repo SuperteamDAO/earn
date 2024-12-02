@@ -9,7 +9,7 @@ import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { Loading } from '@/components/shared/Loading';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { exclusiveSponsorData } from '@/constants';
+import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { GrantsCard } from '@/features/grants';
 import { ListingSection, ListingTabs } from '@/features/listings';
 import {

@@ -41,8 +41,8 @@ import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { tokenList } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
+import { tokenList } from '@/constants/tokenList';
 import { AuthWrapper } from '@/features/auth';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { User } from '@/interface/user';

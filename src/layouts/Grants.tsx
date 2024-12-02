@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import {
   DollarIcon,
   grantAmount,

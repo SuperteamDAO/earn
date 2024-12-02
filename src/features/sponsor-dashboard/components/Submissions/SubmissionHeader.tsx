@@ -34,7 +34,7 @@ import { LuPencil } from 'react-icons/lu';
 import { MdInsertLink } from 'react-icons/md';
 import { toast } from 'sonner';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import {
   formatDeadline,
   getColorStyles,

@@ -28,7 +28,7 @@ import router from 'next/router';
 import React from 'react';
 import { toast } from 'sonner';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { type Grant } from '@/features/grants';
 import { getColorStyles, getListingStatus } from '@/features/listings';
 import { useClipboard } from '@/hooks/use-clipboard';

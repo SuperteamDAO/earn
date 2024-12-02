@@ -1,7 +1,7 @@
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { fetchAsset, formatNumber, formatString } from '@/utils/ogHelpers';
 
 export const config = {

@@ -21,7 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { cn } from '@/utils';
 
 import { useListingForm } from '../../../../hooks';

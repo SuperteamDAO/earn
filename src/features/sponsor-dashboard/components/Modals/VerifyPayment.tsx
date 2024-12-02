@@ -26,7 +26,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { LuCheck, LuX } from 'react-icons/lu';
 import { toast } from 'sonner';
 
-import { BONUS_REWARD_POSITION, tokenList } from '@/constants';
+import { BONUS_REWARD_POSITION } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import {
   listingSubmissionsQuery,
   type ListingWithSubmissions,

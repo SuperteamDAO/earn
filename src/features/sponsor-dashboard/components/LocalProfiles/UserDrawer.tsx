@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { type ReactNode } from 'react';
 
-import { skillMap } from '@/constants';
+import { skillMap } from '@/constants/skillMap';
 import { EarnAvatar, Telegram, Twitter, Website } from '@/features/talent';
 
 import { type LocalProfile } from '../../queries';
