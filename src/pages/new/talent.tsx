@@ -1,8 +1,8 @@
 import { Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
-import router from 'next/router';
-import React, { Fragment, useEffect, useState } from 'react';
+import router, { useRouter } from 'next/router';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { create } from 'zustand';
 
 import { Steps } from '@/components/shared/steps';
@@ -49,11 +49,18 @@ const StepsCon = () => {
     },
   ];
 
+  const router = useRouter();
+  const { user } = useUser();
+  const isForcedRedirect = useMemo(() => {
+    return router.query.type === 'forced';
+  }, [router, user]);
+
   const TitleArray = [
     {
-      title: 'Create Your Profile',
-      subTitle:
-        "If you're ready to start contributing to crypto projects, you're in the right place.",
+      title: isForcedRedirect ? 'Finish Your Profile' : 'Create Your Profile',
+      subTitle: isForcedRedirect
+        ? 'It takes less than a minute to start earning in global standards. '
+        : "If you're ready to start contributing to crypto projects, you're in the right place.",
     },
     {
       title: 'Socials & Proof of Work',
