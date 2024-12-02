@@ -86,9 +86,9 @@ Check out all of ${title}’s latest earning opportunities on a single page.
           {isListingsLoading ? (
             <Skeleton className="h-28 w-28 rounded-full" />
           ) : (
-            <div className="flex items-center justify-center rounded-full">
+            <div className="justify-center rounded-full">
               <img
-                className="h-full rounded-full"
+                className="h-28 w-28 rounded-full"
                 alt="Category icon"
                 src={logo}
               />
