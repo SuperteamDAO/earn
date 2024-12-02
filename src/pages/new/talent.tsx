@@ -1,7 +1,7 @@
 import { Heading, HStack, Text, VStack } from '@chakra-ui/react';
-import axios from 'axios';
-import { type GetServerSideProps } from 'next';
-import router from 'next/router';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import React, { Fragment, useEffect, useState } from 'react';
 import { create } from 'zustand';
 
@@ -10,7 +10,6 @@ import { AboutYou, type UserStoreType, YourLinks } from '@/features/talent';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
-import { getURL } from '@/utils/validUrl';
 
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {
@@ -120,10 +119,19 @@ const StepsCon = () => {
 
 export default function Talent() {
   const { user } = useUser();
+  const { status } = useSession();
+
+  const params = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
-    if (user && user?.isTalentFilled) {
-      router.push('/');
+    if (status === 'authenticated' && user && user?.isTalentFilled) {
+      const originUrl = params.get('originUrl');
+      if (!!originUrl && typeof originUrl === 'string') {
+        router.push(originUrl);
+      } else {
+        router.push('/');
+      }
     }
   }, [user, router]);
 
@@ -143,35 +151,3 @@ export default function Talent() {
     </Default>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req } = context;
-
-  try {
-    const res = await axios.get(`${getURL()}api/user`, {
-      headers: {
-        Cookie: req.headers.cookie,
-      },
-    });
-
-    if (res.data.isTalentFilled === true) {
-      return {
-        redirect: {
-          destination: '/',
-          permanent: false,
-        },
-      };
-    }
-
-    return {
-      props: {},
-    };
-  } catch (error: any) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-};

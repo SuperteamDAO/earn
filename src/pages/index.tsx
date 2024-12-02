@@ -6,6 +6,7 @@ import { getServerSession } from 'next-auth';
 import { useMemo } from 'react';
 
 import { CombinedRegions } from '@/constants/Superteam';
+import { HomepagePop } from '@/features/conversion-popups';
 import {
   homepageForYouListingsQuery,
   homepageGrantsQuery,
@@ -118,6 +119,7 @@ export default function HomePage({
   return (
     <Home type="landing" isAuth={isAuth}>
       <InstallPWAModal />
+      <HomepagePop />
       <div className="w-full">
         <ListingTabs
           bounties={combinedListings}
