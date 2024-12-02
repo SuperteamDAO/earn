@@ -17,7 +17,8 @@ import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import { exclusiveSponsorData, tokenList } from '@/constants/index';
+import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
+import { tokenList } from '@/constants/tokenList';
 import { RelatedListings } from '@/features/home';
 import { type ParentSkills } from '@/interface/skills';
 import { cn } from '@/utils';

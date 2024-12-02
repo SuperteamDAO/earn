@@ -110,7 +110,7 @@ export function YourLinks({ useFormStore }: Props) {
             <Text mb={3} color={'brand.slate.400'} fontWeight={400}>
               Adding more PoW increases your chance of getting work
             </Text>
-            <Box>
+            <div>
               {pow.map((data, idx) => (
                 <Flex
                   key={data.id}
@@ -148,7 +148,7 @@ export function YourLinks({ useFormStore }: Props) {
                   </Center>
                 </Flex>
               ))}
-            </Box>
+            </div>
             <Button
               w={'full'}
               mb={8}

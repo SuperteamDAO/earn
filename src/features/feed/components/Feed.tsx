@@ -1,4 +1,3 @@
-import { Box, Flex, Image, Select, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -6,6 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import { type FeedPostType, useGetFeed } from '@/features/feed';
 import { VibeCard } from '@/features/home';
 import { FeedPageLayout } from '@/layouts/Feed';
+import { cn } from '@/utils';
 
 import { FeedLoop } from './FeedLoop';
 
@@ -62,19 +62,21 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
 
   const MenuOption = ({ option }: { option: 'new' | 'popular' }) => {
     return (
-      <Text
-        color={activeMenu === option ? 'brand.slate.700' : 'brand.slate.500'}
-        fontSize={{ base: '15px', lg: 'md' }}
-        fontWeight={activeMenu === option ? 600 : 400}
-        textTransform={'capitalize'}
-        cursor="pointer"
+      <button
+        className={cn(
+          'cursor-pointer capitalize',
+          'text-[15px] lg:text-base',
+          activeMenu === option
+            ? 'font-semibold text-slate-700'
+            : 'font-normal text-slate-500',
+        )}
         onClick={() => {
           setActiveMenu(option);
           updateQuery('filter', option);
         }}
       >
         {option}
-      </Text>
+      </button>
     );
   };
 
@@ -82,102 +84,64 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
 
   return (
     <FeedPageLayout isHomePage>
-      <Box py={5} pl={{ base: 6, md: 5 }} borderBottomWidth={'1px'}>
-        <Text
-          color="brand.slate.900"
-          fontSize={{ base: 'lg', lg: 'xl' }}
-          fontWeight={600}
-        >
+      <div className="border-b py-5 pl-6 md:pl-5">
+        <p className="text-lg font-medium text-brand-slate-900 lg:text-xl">
           Activity Feed
-        </Text>
-        <Box
-          display={{ base: 'none', md: 'flex', lg: 'none' }}
-          w="full"
-          pt={4}
-          pr={4}
-        >
+        </p>
+        <div className="hidden w-full pt-4 md:flex lg:hidden">
           <VibeCard />
-        </Box>
-        <Flex
-          align={{ base: 'right', md: 'center' }}
-          justify={'space-between'}
-          direction={{ base: 'column', md: 'row' }}
-          mt={2}
-        >
-          <Text color="brand.slate.600" fontSize={{ base: 'sm', lg: 'md' }}>
+        </div>
+        <div className="mt-2 flex flex-col items-end justify-between md:flex-row md:items-center">
+          <p className="text-sm text-slate-600 lg:text-base">
             Discover the best work on Earn
-          </Text>
-          <Box display={{ base: 'flex', md: 'none' }} w="full" pt={4} pr={4}>
+          </p>
+          <div className="flex w-full pr-4 pt-4 md:hidden">
             <VibeCard />
-          </Box>
-          <Flex
-            align="center"
-            justify={'space-between'}
-            mt={{ base: 4, md: 0 }}
-          >
-            <Flex gap={3} mr={3}>
+          </div>
+          <div className="mt-4 flex items-center justify-between md:mt-0">
+            <div className="mr-3 flex gap-3">
               <MenuOption option="new" />
               <MenuOption option="popular" />
-            </Flex>
+            </div>
 
             {activeMenu === 'popular' && (
-              <Select
-                w={28}
-                color={'brand.slate.500'}
-                textAlign={'right'}
+              <select
+                className="mr-1 w-28 text-right text-sm text-brand-slate-500"
                 onChange={(e) => {
                   setTimePeriod(e.target.value);
                 }}
-                size={'sm'}
                 value={timePeriod}
-                variant={'unstyled'}
               >
                 <option>This Week</option>
                 <option>This Month</option>
                 <option>This Year</option>
-              </Select>
+              </select>
             )}
-          </Flex>
-        </Flex>
-      </Box>
-      <Box pl={{ base: 1, md: 0 }}>
+          </div>
+        </div>
+      </div>
+      <div className="pl-1 md:pl-0">
         <FeedLoop
           feed={feedItems}
           ref={ref}
           isFetchingNextPage={isFetchingNextPage}
           isLoading={isLoading}
         >
-          <Box my={32}>
-            <Image
-              w={32}
-              mx="auto"
-              alt={'talent empty'}
+          <div className="my-32">
+            <img
+              className="mx-auto w-32"
               src="/assets/bg/talent-empty.svg"
+              alt="talent empty"
             />
-            <Text
-              w="200px"
-              mx="auto"
-              mt={5}
-              color={'brand.slate.500'}
-              fontSize={{ base: 'md', md: 'lg' }}
-              fontWeight={500}
-              textAlign={'center'}
-            >
+            <p className="mx-auto mt-5 w-[200px] text-center text-base font-medium text-brand-slate-500 md:text-lg">
               No Activity Found
-            </Text>
-            <Text
-              mx="auto"
-              mt={1}
-              color={'brand.slate.400'}
-              fontSize={{ base: 'sm', md: 'md' }}
-              fontWeight={400}
-              textAlign={'center'}
-            >
+            </p>
+            <p className="mx-auto mt-1 text-center text-sm text-brand-slate-400 md:text-base">
               We couldn’t find any activity for your time filter
-            </Text>
-          </Box>
+            </p>
+          </div>
         </FeedLoop>
-      </Box>
+      </div>
     </FeedPageLayout>
   );
 };

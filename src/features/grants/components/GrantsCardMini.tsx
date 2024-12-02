@@ -3,7 +3,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils';
 
 import { type GrantWithApplicationCount } from '../types';

@@ -3,7 +3,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { MdArrowForward } from 'react-icons/md';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';

@@ -90,17 +90,18 @@ const Index = () => {
   const members = membersData?.data || [];
 
   const isAdminLoggedIn = () => {
+    const userSponsor = user?.UserSponsors?.find(
+      (s) => s.sponsorId === user.currentSponsorId,
+    );
     if (
       user === undefined ||
       user?.UserSponsors === undefined ||
-      user?.UserSponsors[0] === undefined
+      userSponsor === undefined
     ) {
       return false;
     }
 
-    return (
-      session?.user?.role === 'GOD' || user?.UserSponsors[0]?.role === 'ADMIN'
-    );
+    return session?.user?.role === 'GOD' || userSponsor.role === 'ADMIN';
   };
 
   const removeMemberMutation = useMutation({
@@ -367,23 +368,19 @@ const RemoveMemberModal = ({
     toast.success('Member removed successfully');
   };
 
-  const isAdmin = member?.role === 'ADMIN' || session?.user?.role === 'GOD';
-
   return (
     <Flex align="center" justify="end">
-      {isAdminLoggedIn() &&
-        isAdmin &&
-        member?.user?.email !== session?.user?.email && (
-          <Button
-            color="#6366F1"
-            bg="#E0E7FF"
-            onClick={() => setIsOpen(true)}
-            size="sm"
-            variant="solid"
-          >
-            Remove
-          </Button>
-        )}
+      {isAdminLoggedIn() && member?.user?.email !== session?.user?.email && (
+        <Button
+          color="#6366F1"
+          bg="#E0E7FF"
+          onClick={() => setIsOpen(true)}
+          size="sm"
+          variant="solid"
+        >
+          Remove
+        </Button>
+      )}
       <Modal
         key={member.userId}
         closeOnOverlayClick={false}
@@ -397,14 +394,14 @@ const RemoveMemberModal = ({
           </ModalHeader>
           <ModalCloseButton mt={4} onClick={() => setIsOpen(false)} />
           <ModalBody>
-            <Text>
+            <p>
               Are you sure you want to remove{' '}
               <Text as="span" fontWeight={600}>
                 {member.user?.email}
               </Text>{' '}
               from accessing your sponsor dashboard? You can invite them back
               again later if needed.
-            </Text>
+            </p>
           </ModalBody>
           <ModalFooter justifyContent="flex-end" display="flex" mt={2}>
             <Button

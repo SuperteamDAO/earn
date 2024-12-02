@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import {
   DollarIcon,
   grantAmount,
@@ -196,7 +196,7 @@ export function GrantPageLayout({
                             </Text>
                           </Flex>
                           <Flex direction={'column'} w="fit-content">
-                            <Flex>
+                            <div className="flex">
                               <PayoutIcon />
                               <Text
                                 color="brand.slate.700"
@@ -216,7 +216,7 @@ export function GrantPageLayout({
                                     )
                                   : '—'}
                               </Text>
-                            </Flex>
+                            </div>
                             <Text
                               w="max-content"
                               pl={2}
@@ -231,7 +231,7 @@ export function GrantPageLayout({
                         </Flex>
                         <Flex direction="column" gap={4} w="fit-content">
                           <Flex direction={'column'}>
-                            <Flex>
+                            <div className="flex">
                               <DollarIcon />
                               <Text
                                 color="brand.slate.700"
@@ -245,7 +245,7 @@ export function GrantPageLayout({
                                   true,
                                 )}
                               </Text>
-                            </Flex>
+                            </div>
                             <Text
                               w="max-content"
                               pl={2}
@@ -258,7 +258,7 @@ export function GrantPageLayout({
                             </Text>
                           </Flex>
                           <Flex direction={'column'}>
-                            <Flex>
+                            <div className="flex">
                               <TimeToPayIcon />
                               <Text
                                 color="brand.slate.700"
@@ -267,7 +267,7 @@ export function GrantPageLayout({
                               >
                                 {grant?.totalApplications}
                               </Text>
-                            </Flex>
+                            </div>
                             <Text
                               w="max-content"
                               pl={2}
@@ -282,7 +282,7 @@ export function GrantPageLayout({
                         </Flex>
                       </Flex>
                       <GrantApplicationButton grant={grant} />
-                      <Box>
+                      <div>
                         <ExtraInfoSection
                           skills={iterableSkills}
                           region={grant.region}
@@ -290,7 +290,7 @@ export function GrantPageLayout({
                           pocSocials={grant.pocSocials}
                           isGrant
                         />
-                      </Box>
+                      </div>
                       <Box
                         display={{ base: 'none', md: 'block' }}
                         w="full"
@@ -368,7 +368,7 @@ export function GrantPageLayout({
                       >
                         CONTACT
                       </Text>
-                      <Text>
+                      <p>
                         <Link
                           className="ph-no-capture"
                           color={'#64768b'}
@@ -388,7 +388,7 @@ export function GrantPageLayout({
                         <Text as="span" color={'brand.slate.500'}>
                           if you have any questions about this listing
                         </Text>
-                      </Text>
+                      </p>
                     </VStack>
                   )}
                 </VStack>

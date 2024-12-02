@@ -176,7 +176,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               </svg>
             </Center>
             <VStack fontSize="xs" fontWeight={500}>
-              <Text>The Leaderboard is empty for your filters</Text>
+              <p>The Leaderboard is empty for your filters</p>
               <Text color="brand.slate.500">
                 Please change your filters or try again later
               </Text>

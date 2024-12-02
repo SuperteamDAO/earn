@@ -1,13 +1,10 @@
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Collapse,
-  useBreakpointValue,
-  VStack,
-} from '@chakra-ui/react';
 import parse, { type HTMLReactParserOptions } from 'html-react-parser';
+import { ChevronDown } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { cn } from '@/utils';
 
 interface Props {
   description?: string;
@@ -28,7 +25,7 @@ export function DescriptionUI({ description }: Props) {
   const [showMore, setShowMore] = useState(true);
   const [showCollapser, setShowCollapser] = useState(false);
   const descriptionRef = useRef<HTMLDivElement>(null);
-  const isNotMD = useBreakpointValue({ base: true, md: false });
+  const isNotMD = useMediaQuery('(max-width: 767px)');
 
   useEffect(() => {
     setIsMounted(true);
@@ -58,32 +55,18 @@ export function DescriptionUI({ description }: Props) {
   }
 
   return (
-    <Box
-      overflow="visible"
-      w="full"
-      borderBottomWidth={{ base: '1px', md: '0px' }}
-    >
-      <VStack
+    <div className="w-full overflow-visible border-b border-slate-100 md:border-0">
+      <div
         ref={descriptionRef}
-        pos="relative"
-        overflow={'visible'}
-        w="full"
-        px={{ base: 0 }}
-        bg={'white'}
-        rounded={'xl'}
+        className="relative w-full overflow-visible rounded-xl bg-white"
       >
-        <Collapse
-          in={showMore}
-          startingHeight={'50vh'}
-          style={{ width: '100%' }}
+        <div
+          className={cn(
+            'transition-all duration-200',
+            !showMore && 'h-[50vh] overflow-hidden',
+          )}
         >
-          <Box
-            className="minimal-tiptap-editor tiptap ProseMirror !px-0"
-            overflow={'visible'}
-            w={'full'}
-            h={'full'}
-            pb={7}
-          >
+          <div className="minimal-tiptap-editor tiptap ProseMirror h-full w-full overflow-visible !px-0 pb-7">
             <div className="tiptap ProseMirror listing-description !mt-0 !px-0">
               {parse(
                 description?.startsWith('"')
@@ -92,34 +75,24 @@ export function DescriptionUI({ description }: Props) {
                 options,
               )}
             </div>
-          </Box>
-        </Collapse>
+          </div>
+        </div>
         {showCollapser && (
           <Button
-            pos="absolute"
-            zIndex={2}
-            bottom={-4}
-            left={'50%'}
-            color="brand.slate.500"
-            bg="white"
-            borderColor={'brand.slate.300'}
-            transform={'translateX(-50%)'}
+            className="absolute -bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-md border-slate-300 bg-white font-medium text-slate-500"
             onClick={() => setShowMore(!showMore)}
-            rightIcon={
-              <ChevronDownIcon
-                w={5}
-                h={5}
-                color="brand.slate.300"
-                transform={showMore ? 'rotate(180deg)' : ''}
-              />
-            }
             size="sm"
             variant="outline"
           >
             Read {showMore ? 'Less' : 'More'}
+            <ChevronDown
+              className={`ml-2 h-5 w-5 text-slate-300 transition-transform duration-200 ${
+                showMore ? 'rotate-180' : ''
+              }`}
+            />
           </Button>
         )}
-      </VStack>
-    </Box>
+      </div>
+    </div>
   );
 }

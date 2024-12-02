@@ -98,7 +98,7 @@ export function ListingCard({
           <Text color="brand.slate.400" fontWeight={500}>
             Skills
           </Text>
-          <HStack>
+          <div className="flex gap-2">
             {skills.map((s) => (
               <Text
                 key={s}
@@ -113,12 +113,12 @@ export function ListingCard({
                 {s}
               </Text>
             ))}
-          </HStack>
+          </div>
         </HStack>
       </VStack>
       <Divider />
       <HStack justify={'space-between'} w="full" px={4} pt={2} pb={4}>
-        <HStack>
+        <div className="flex gap-2">
           <HighQualityImage
             height={18}
             width={18}
@@ -128,15 +128,15 @@ export function ListingCard({
           <Text color="brand.slate.800" fontWeight={600}>
             {amount}
           </Text>
-        </HStack>
-        <HStack>
+        </div>
+        <div className="flex gap-2">
           <Text color="brand.slate.800" fontWeight={600}>
             {submissionCount}
           </Text>
           <Text color="brand.slate.500" fontWeight={600}>
             Submissions
           </Text>
-        </HStack>
+        </div>
       </HStack>
     </VStack>
   );

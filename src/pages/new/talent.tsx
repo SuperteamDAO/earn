@@ -144,9 +144,9 @@ export default function Talent() {
         />
       }
     >
-      <VStack>
+      <div className="flex flex-col gap-2">
         <StepsCon />
-      </VStack>
+      </div>
     </Default>
   );
 }

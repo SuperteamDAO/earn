@@ -4,7 +4,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 
 import { type Listing } from '../types';
 import { getListingIcon } from '../utils';

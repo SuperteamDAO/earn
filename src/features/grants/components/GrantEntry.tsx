@@ -1,8 +1,8 @@
-import { Box, Button, Flex, Image, Link, Text, VStack } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import React from 'react';
 
-import { tokenList } from '@/constants';
+import { Button } from '@/components/ui/button';
+import { tokenList } from '@/constants/tokenList';
 
 import { grantAmount } from '../utils';
 
@@ -26,77 +26,54 @@ export const GrantEntry = ({
 
   const GrantAmount = () => {
     return (
-      <Flex align={'center'} mt={-2}>
-        <Image w={4} h={4} mr={1} alt={token} rounded="full" src={tokenIcon} />
-        <Flex align="baseline" gap={1}>
-          <Text
-            color="brand.slate.600"
-            fontSize="sm"
-            fontWeight="600"
-            whiteSpace="nowrap"
-          >
+      <div className="-mt-2 flex items-center">
+        <img
+          className="mr-1 h-4 w-4 rounded-full"
+          alt={token}
+          src={tokenIcon}
+        />
+        <div className="flex items-baseline gap-1">
+          <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
             {grantAmount({
               maxReward: maxReward!,
               minReward: minReward!,
             })}
-          </Text>
-          <Text color="gray.600" fontSize="sm" fontWeight={500}>
-            {token}
-          </Text>
-        </Flex>
-      </Flex>
+          </p>
+          <p className="text-sm font-medium text-gray-600">{token}</p>
+        </div>
+      </div>
     );
   };
 
   return (
-    <Box
-      as={NextLink}
-      overflow="hidden"
-      w={{ base: '100%', sm: 80 }}
-      borderWidth="1px"
-      borderRadius="lg"
-      shadow="md"
-      _hover={{ boxShadow: 'lg', transform: 'translateY(-4px)' }}
-      transition="all 0.3s"
+    <Link
+      className="w-full overflow-hidden rounded-lg border shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:w-80"
       href={`/grants/${slug}`}
     >
-      <Box pos="relative">
-        <Image
-          w={'100%'}
-          h={{ base: '240px', sm: '180px' }}
-          objectFit="cover"
+      <div className="relative">
+        <img
+          className="h-[240px] w-full object-cover sm:h-[180px]"
           alt={title}
           src={logo || '/api/placeholder/400/240'}
         />
-      </Box>
-      <VStack align="stretch" px={4} pt={1.5} pb={4} spacing={2}>
-        <Text
-          overflow="hidden"
-          maxW="full"
-          color="brand.slate.700"
-          fontSize="lg"
-          fontWeight={600}
-          textOverflow="ellipsis"
-          noOfLines={1}
+      </div>
+      <div className="flex flex-col gap-2 px-4 pb-4 pt-1.5">
+        <p
+          className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold text-slate-700"
           title={title}
         >
           {title}
-        </Text>
+        </p>
         <GrantAmount />
-        <Link as={NextLink} href={`/grants/${slug}`}>
+        <Link href={`/grants/${slug}`}>
           <Button
-            w={'full'}
-            color="brand.slate.400"
-            fontSize={'sm'}
-            fontWeight={500}
-            borderColor={'brand.slate.300'}
-            size={'sm'}
             variant="outline"
+            className="w-full border-slate-300 text-sm font-medium text-slate-400"
           >
             Apply Now
           </Button>
         </Link>
-      </VStack>
-    </Box>
+      </div>
+    </Link>
   );
 };

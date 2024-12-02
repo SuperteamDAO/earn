@@ -1,7 +1,7 @@
 import { type ClassValue } from 'clsx';
 import { useWatch } from 'react-hook-form';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { cn } from '@/utils';
 
 import { useListingForm } from '../../../../hooks';

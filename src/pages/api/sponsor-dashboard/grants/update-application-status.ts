@@ -201,6 +201,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     if (result[0]?.grant.airtableId) {
+      console.log('is an airtable grant');
       try {
         const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
         const url = airtableUrl(
@@ -214,7 +215,20 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           'earnApplicationId',
           airtableData.map((a) => ({ fields: a })),
         );
-        await axios.patch(url, JSON.stringify(airtablePayload), config);
+        logger.info('Starting Airtable sync...');
+        const syncPromise = axios.patch(
+          url,
+          JSON.stringify(airtablePayload),
+          config,
+        );
+        logger.info('Waiting for Airtable sync to complete...');
+        const response = await syncPromise;
+        logger.info('Airtable sync completed successfully');
+        logger.info('Airtable sync completed with response:', {
+          status: response.status,
+          data: response.data,
+          applicationIds: result.map((r) => r.id),
+        });
       } catch (err) {
         logger.error('Error syncing with Airtable', err);
       }

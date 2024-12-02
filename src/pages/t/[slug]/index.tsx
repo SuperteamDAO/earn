@@ -278,7 +278,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
               borderRadius={'20px'}
             >
               <Flex justify={'space-between'}>
-                <Box>
+                <div>
                   <EarnAvatar
                     size={isMD ? '64px' : '52px'}
                     id={talent?.id}
@@ -305,7 +305,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                         ? `${talent?.username.slice(0, 24)}...`
                         : talent?.username}
                   </Text>
-                </Box>
+                </div>
                 <Flex
                   direction={{ base: 'row', md: 'column' }}
                   gap={3}
@@ -446,7 +446,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       ) : null;
                     })
                   ) : (
-                    <Text>No skills available</Text>
+                    <p>No skills available</p>
                   )}
                 </Box>
               </Flex>
@@ -547,7 +547,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 </Flex>
               </Box>
               <Divider my={4} />
-              <Box>
+              <div>
                 <FeedLoop
                   feed={feedItems}
                   ref={ref}
@@ -604,7 +604,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                     </Button>
                   </>
                 </FeedLoop>
-              </Box>
+              </div>
             </Box>
           </Box>
         )}

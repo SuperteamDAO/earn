@@ -114,7 +114,7 @@ export const GrantsHeader = ({
                 {!!sponsor?.isVerified && <VerifiedBadge />}
               </Flex>
               <ListingHeaderSeparator />
-              <Flex>
+              <div className="flex">
                 <Image
                   h="4"
                   mt={{ base: '1px', sm: 1 }}
@@ -129,7 +129,7 @@ export const GrantsHeader = ({
                 >
                   Grant
                 </Text>
-              </Flex>
+              </div>
               <ListingHeaderSeparator />
               <StatusBadge
                 Icon={statusIcon}
@@ -156,14 +156,10 @@ export const GrantsHeader = ({
           borderBottomWidth={'1px'}
         >
           <ListingTabLink
-            w={{ md: '22rem' }}
+            className="pointer-events-none hidden md:flex md:w-[22rem]"
             href={`/grants/${slug}/`}
             text="Prizes"
             isActive={false}
-            styles={{
-              pointerEvents: 'none',
-              display: { base: 'none', md: 'flex' },
-            }}
           />
           <ListingTabLink
             href={`/grants/${slug}/`}

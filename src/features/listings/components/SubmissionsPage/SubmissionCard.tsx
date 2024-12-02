@@ -87,7 +87,7 @@ export const SubmissionCard = ({
     >
       <HStack justify={'space-between'} w="full" mb={2}>
         <Link as={NextLink} href={`/t/${talent?.username}`}>
-          <HStack>
+          <div className="flex gap-2">
             <EarnAvatar
               size="24px"
               id={talent?.id}
@@ -104,7 +104,7 @@ export const SubmissionCard = ({
             >
               {talent?.firstName} {talent?.lastName}
             </Text>
-          </HStack>
+          </div>
         </Link>
         {winner && (
           <Box flexGrow={1} pr={1}>

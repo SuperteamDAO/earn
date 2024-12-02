@@ -12,8 +12,8 @@ import {
   MAX_BONUS_SPOTS,
   MAX_PODIUMS,
   MAX_REWARD,
-  tokenList,
 } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { type Listing } from '@/features/listings';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
 import { skillsArraySchema } from '@/interface/skills';

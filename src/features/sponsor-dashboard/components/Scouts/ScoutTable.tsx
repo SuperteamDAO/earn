@@ -25,7 +25,7 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
-import { skillMap } from '@/constants';
+import { skillMap } from '@/constants/skillMap';
 
 import SparkleIcon from '../../icons/sparkle.svg';
 import { type ScoutRowType } from '../../types';
@@ -194,7 +194,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
               </svg>
             </Center>
             <VStack gap={0} fontSize="base" fontWeight={600}>
-              <Text>No Profiles Found</Text>
+              <p>No Profiles Found</p>
               <Text color="brand.slate.500" fontWeight={400}>
                 We couldn’t find any suitable matches for your listing
               </Text>

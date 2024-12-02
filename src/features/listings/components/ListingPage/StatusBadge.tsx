@@ -1,5 +1,6 @@
-import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
+
+import { cn } from '@/utils';
 
 interface StatusBadgeProps {
   textColor: string;
@@ -9,18 +10,15 @@ interface StatusBadgeProps {
 
 export const StatusBadge = ({ textColor, text, Icon }: StatusBadgeProps) => {
   return (
-    <Flex
-      align="center"
-      gap={2}
-      py={1}
+    <div
+      className={cn(
+        'flex items-center gap-2 whitespace-nowrap rounded-full py-1 text-xs font-medium sm:text-sm',
+        `text-${textColor}`,
+      )}
       color={textColor}
-      fontSize={{ base: 'xs', sm: 'sm' }}
-      fontWeight={500}
-      whiteSpace={'nowrap'}
-      rounded={'full'}
     >
       {Icon}
-      <Text>{text}</Text>
-    </Flex>
+      <p>{text}</p>
+    </div>
   );
 };

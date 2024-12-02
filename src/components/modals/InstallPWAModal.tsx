@@ -110,7 +110,7 @@ export const InstallPWAModal = () => {
           <DrawerHeader className="border-b border-slate-100">
             <DrawerTitle className="flex items-center gap-2">
               <MdOutlineInstallMobile className="text-slate-500" />
-              <span className="text-md text-slate-700">Install Earn</span>
+              <span className="text-base text-slate-700">Install Earn</span>
             </DrawerTitle>
             <DrawerClose className="absolute right-2 top-7">
               <Button variant="ghost" size="icon">

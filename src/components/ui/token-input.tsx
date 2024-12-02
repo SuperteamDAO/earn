@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 
 import { Input } from './input';
 

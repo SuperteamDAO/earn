@@ -1,6 +1,6 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
-import { exclusiveSponsorData } from '@/constants';
+import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 import { create } from 'zustand';
@@ -28,11 +29,15 @@ const useUserStore = create<UserState>()(
 export const useUser = () => {
   const { user, setUser } = useUserStore();
   const { status } = useSession();
+  const router = useRouter();
 
   const { data, error, refetch, isLoading } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
       const { data } = await axios.get<User>('/api/user/');
+      if (data?.isBlocked && !router.pathname.includes('/blocked')) {
+        router.push('/blocked');
+      }
       return data;
     },
     enabled: status === 'authenticated',

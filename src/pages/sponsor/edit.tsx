@@ -137,7 +137,7 @@ export default function UpdateSponsor() {
       }
     >
       <VStack w="full" pt={12} pb={24}>
-        <VStack>
+        <div className="flex flex-col gap-2">
           <Text
             mb={8}
             color="gray.900"
@@ -147,7 +147,7 @@ export default function UpdateSponsor() {
           >
             Edit Sponsor Profile
           </Text>
-        </VStack>
+        </div>
         <VStack w={'2xl'}>
           <Form {...form}>
             <form
