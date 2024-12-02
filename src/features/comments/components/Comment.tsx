@@ -490,12 +490,12 @@ export const Comment = ({
               {deleteError && (
                 <Alert mt={3} rounded="md" status="error">
                   <AlertIcon />
-                  <VStack>
+                  <div className="flex flex-col gap-2">
                     <AlertTitle>Failed to delete comment</AlertTitle>
                     <AlertDescription alignSelf="start">
                       Please try again later.
                     </AlertDescription>
-                  </VStack>
+                  </div>
                 </Alert>
               )}
             </AlertDialogBody>

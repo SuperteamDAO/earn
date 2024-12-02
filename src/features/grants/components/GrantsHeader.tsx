@@ -114,7 +114,7 @@ export const GrantsHeader = ({
                 {!!sponsor?.isVerified && <VerifiedBadge />}
               </Flex>
               <ListingHeaderSeparator />
-              <Flex>
+              <div className="flex">
                 <Image
                   h="4"
                   mt={{ base: '1px', sm: 1 }}
@@ -129,7 +129,7 @@ export const GrantsHeader = ({
                 >
                   Grant
                 </Text>
-              </Flex>
+              </div>
               <ListingHeaderSeparator />
               <StatusBadge
                 Icon={statusIcon}

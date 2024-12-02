@@ -166,7 +166,7 @@ export const PaymentsHistoryTab = ({
   };
 
   return (
-    <Box>
+    <div>
       <TableContainer
         mb={8}
         borderWidth={'1px'}
@@ -328,6 +328,6 @@ export const PaymentsHistoryTab = ({
           </Tbody>
         </Table>
       </TableContainer>
-    </Box>
+    </div>
   );
 };

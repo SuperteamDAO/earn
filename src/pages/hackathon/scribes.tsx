@@ -27,7 +27,7 @@ export default function Scribes() {
         />
       }
     >
-      <Box>
+      <div>
         <Flex
           align="center"
           direction={'column'}
@@ -129,7 +129,7 @@ export default function Scribes() {
             </SimpleGrid>
           </Box>
         </Box>
-      </Box>
+      </div>
     </Default>
   );
 }

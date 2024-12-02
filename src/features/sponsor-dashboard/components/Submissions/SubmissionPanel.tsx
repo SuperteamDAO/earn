@@ -75,7 +75,7 @@ export const SubmissionPanel = ({
                     id={selectedSubmission?.user?.id}
                     avatar={selectedSubmission?.user?.photo || undefined}
                   />
-                  <Box>
+                  <div>
                     <Text
                       w="100%"
                       color="brand.slate.900"
@@ -96,7 +96,7 @@ export const SubmissionPanel = ({
                     >
                       View Profile <ArrowForwardIcon mb="0.5" />
                     </Link>
-                  </Box>
+                  </div>
                 </Flex>
                 <Flex
                   className="ph-no-capture"

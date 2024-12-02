@@ -128,14 +128,14 @@ export const Comments = ({
           alt="Comments Icon"
           src="/assets/icons/comments.svg"
         />
-        <HStack>
+        <div className="flex gap-2">
           <Text color="brand.slate.900" fontSize={'medium'} fontWeight={600}>
             {count}
           </Text>
           <Text color="brand.slate.900" fontSize={'medium'} fontWeight={400}>
             {comments?.length === 1 ? 'Comment' : 'Comments'}
           </Text>
-        </HStack>
+        </div>
       </HStack>
       <CommentForm
         defaultSuggestions={defaultSuggestions}

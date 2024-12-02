@@ -1,4 +1,3 @@
-import { Flex, Grid } from '@chakra-ui/react';
 import localFont from 'next/font/local';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -15,6 +14,7 @@ import {
   Testimonials,
 } from '@/features/sponsor';
 import { Meta } from '@/layouts/Meta';
+import { cn } from '@/utils';
 
 const font = localFont({
   src: '../../../public/assets/landingsponsor/fonts/OverusedGrotesk-VF.woff2',
@@ -27,38 +27,19 @@ const Sponsor = () => {
 
   const VideoPlayback = () => {
     return (
-      <Grid
-        pos="fixed"
-        zIndex="100"
-        w="100vw"
-        h="100vh"
-        fontFamily="var(--font-sans)"
-        bg="rgba(191, 203, 220, 0.67)"
+      <div
+        className="fixed z-50 grid h-screen w-screen place-content-center bg-[rgba(191,203,220,0.67)] font-sans"
         onClick={() => setVideoPopup(false)}
-        placeContent="center"
       >
-        <Flex
-          pos="relative"
-          gap="1.25rem"
-          overflow="hidden"
-          w={{ base: '95vw', lg: '60vw' }}
-          pt="56.25%"
-          flexFlow="column"
-        >
+        <div className="relative flex w-[95vw] flex-col gap-5 overflow-hidden pt-[56.25%] lg:w-[60vw]">
           <iframe
             width="100%"
             height="100%"
-            style={{
-              position: 'absolute',
-              top: '0',
-              bottom: '0',
-              left: '0',
-              right: '0',
-            }}
+            className="absolute inset-0"
             src="https://www.youtube.com/embed/tHdS-JNwsgg?autoplay=1&mute=1"
-          ></iframe>
-        </Flex>
-      </Grid>
+          />
+        </div>
+      </div>
     );
   };
 
@@ -74,22 +55,14 @@ const Sponsor = () => {
 
       <Header />
 
-      <Flex
-        className={`${font.className}`}
-        overflow="hidden"
-        bg="white"
-        flexFlow="column"
-        placeItems="center"
+      <div
+        className={cn(
+          'flex flex-col items-center overflow-hidden bg-white',
+          font.className,
+        )}
         style={font.style}
       >
-        <Flex
-          pos="relative"
-          align="center"
-          justify="center"
-          overflow="hidden"
-          w="100%"
-          flexFlow="column"
-        >
+        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <Hero />
           <ListingTypes />
           <Features showVideo={() => setVideoPopup(true)} />
@@ -98,8 +71,8 @@ const Sponsor = () => {
           <Testimonials />
           <FAQs />
           <Footer />
-        </Flex>
-      </Flex>
+        </div>
+      </div>
     </>
   );
 };

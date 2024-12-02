@@ -98,11 +98,11 @@ export function SelectSponsor({
             size={'24px'}
           />
           <Box display={{ base: 'none', md: 'block' }} ml={2}>
-            <Flex>
+            <div className="flex">
               <Text color="brand.slate.800" fontSize="sm">
                 {data?.sponsor?.name}
               </Text>
-            </Flex>
+            </div>
             <Text color="brand.slate.400" fontSize="xs">
               {data?.sponsor?.role}
             </Text>

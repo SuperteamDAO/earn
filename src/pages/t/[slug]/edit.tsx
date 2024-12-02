@@ -590,7 +590,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               />
 
               <FormLabel color={'brand.slate.500'}>Proof of Work</FormLabel>
-              <Box>
+              <div>
                 {pow.map((data, idx) => {
                   return (
                     <Flex
@@ -630,7 +630,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     </Flex>
                   );
                 })}
-              </Box>
+              </div>
               <Button
                 w={'full'}
                 mb={8}

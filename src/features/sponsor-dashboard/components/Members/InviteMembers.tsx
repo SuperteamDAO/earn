@@ -94,13 +94,13 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                 variant="subtle"
               >
                 <AlertIcon boxSize="40px" mr={4} />
-                <Box>
+                <div>
                   <AlertTitle>Sent Invite!</AlertTitle>
                   <AlertDescription>
                     Your team member will receive an email with a link to join
                     Superteam Earn.
                   </AlertDescription>
-                </Box>
+                </div>
               </Alert>
             </ModalBody>
             <ModalFooter>

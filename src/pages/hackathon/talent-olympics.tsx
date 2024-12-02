@@ -207,7 +207,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
         />
       }
     >
-      <Box>
+      <div>
         <Hero START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
         <Box overflowX="hidden" maxW="7xl" mx="auto" px={PADX}>
           <GetHiredBy />
@@ -256,7 +256,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
           <Rankings rankings={rankings} />
           <FAQs />
         </Box>
-      </Box>
+      </div>
     </Default>
   );
 }
@@ -977,7 +977,7 @@ function Rankings({
               </Link>
             </HStack>
             <Flex gap={2} ml="auto" fontSize="sm" fontWeight={500}>
-              <Text>{r.rating}</Text>
+              <p>{r.rating}</p>
               <Text color="brand.slate.500">Points</Text>
             </Flex>
           </HStack>
@@ -1122,7 +1122,7 @@ const SubscribeHackathon = () => {
   }, [update]);
 
   return (
-    <HStack>
+    <div className="flex gap-2">
       <HStack align="start">
         <AuthWrapper
           showCompleteProfileModal
@@ -1179,7 +1179,7 @@ const SubscribeHackathon = () => {
           </Text>
         </VStack>
       </HStack>
-    </HStack>
+    </div>
   );
 };
 

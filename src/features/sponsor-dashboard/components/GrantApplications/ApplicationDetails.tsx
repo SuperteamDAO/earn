@@ -330,7 +330,7 @@ export const ApplicationDetails = ({
                   id={selectedApplication?.user?.id}
                   avatar={selectedApplication?.user?.photo || undefined}
                 />
-                <Box>
+                <div>
                   <Text
                     w="100%"
                     color="brand.slate.900"
@@ -352,7 +352,7 @@ export const ApplicationDetails = ({
                   >
                     View Profile <ArrowForwardIcon mb="0.5" />
                   </Link>
-                </Box>
+                </div>
               </Flex>
               <Flex
                 className="ph-no-capture"

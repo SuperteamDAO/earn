@@ -51,7 +51,7 @@ export const CreateListingModal = ({
       <ModalOverlay backdropFilter="blur(2px)" />
       <ModalContent overflow="hidden" bg="white" borderRadius="lg">
         <ModalCloseButton color="brand.slate.300" />
-        <Flex>
+        <div className="flex">
           <Box pos="relative" flex={1}>
             <Center pos="relative" mb={6} px={32} py={12} bg="#F5F3FF">
               <Image
@@ -150,7 +150,7 @@ export const CreateListingModal = ({
               </Button>
             </Box>
           </Box>
-        </Flex>
+        </div>
       </ModalContent>
     </Modal>
   );

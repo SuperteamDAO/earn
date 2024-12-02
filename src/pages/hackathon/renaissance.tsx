@@ -27,7 +27,7 @@ export default function Renaissance() {
         />
       }
     >
-      <Box>
+      <div>
         <Flex
           align="center"
           direction={'column'}
@@ -137,7 +137,7 @@ export default function Renaissance() {
             </SimpleGrid>
           </Box>
         </Box>
-      </Box>
+      </div>
     </Default>
   );
 }

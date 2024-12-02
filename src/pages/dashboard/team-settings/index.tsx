@@ -394,14 +394,14 @@ const RemoveMemberModal = ({
           </ModalHeader>
           <ModalCloseButton mt={4} onClick={() => setIsOpen(false)} />
           <ModalBody>
-            <Text>
+            <p>
               Are you sure you want to remove{' '}
               <Text as="span" fontWeight={600}>
                 {member.user?.email}
               </Text>{' '}
               from accessing your sponsor dashboard? You can invite them back
               again later if needed.
-            </Text>
+            </p>
           </ModalBody>
           <ModalFooter justifyContent="flex-end" display="flex" mt={2}>
             <Button

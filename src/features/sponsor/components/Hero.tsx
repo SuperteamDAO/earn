@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Link,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Text, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -125,14 +117,14 @@ export function Hero() {
         >
           <VStack align="start">
             <StepOne />
-            <HStack>
+            <div className="flex gap-2">
               <Text color="brand.slate.800" fontWeight={600}>
                 STEP 1
               </Text>
               <Text color="brand.slate.500" fontWeight={600}>
                 Create a profile
               </Text>
-            </HStack>
+            </div>
           </VStack>
           <Box
             pos="relative"
@@ -151,14 +143,14 @@ export function Hero() {
           </Box>
           <VStack align="start">
             <StepTwo />
-            <HStack>
+            <div className="flex gap-2">
               <Text color="brand.slate.800" fontWeight={600}>
                 STEP 2
               </Text>
               <Text color="brand.slate.500" fontWeight={600}>
                 Post your listing
               </Text>
-            </HStack>
+            </div>
           </VStack>
 
           <Box
@@ -181,14 +173,14 @@ export function Hero() {
           </Box>
           <VStack align="start">
             <StepThree />
-            <HStack>
+            <div className="flex gap-2">
               <Text color="brand.slate.800" fontWeight={600}>
                 STEP 3
               </Text>
               <Text color="brand.slate.500" fontWeight={600}>
                 Get submissions
               </Text>
-            </HStack>
+            </div>
           </VStack>
         </Flex>
         <Flex

@@ -52,7 +52,7 @@ export function StepTwo() {
           <Text color="brand.slate.400" fontWeight={500}>
             Skills
           </Text>
-          <HStack>
+          <div className="flex gap-2">
             <Text
               px={2}
               py={1}
@@ -83,17 +83,17 @@ export function StepTwo() {
             >
               Community
             </Text>
-          </HStack>
+          </div>
         </HStack>
       </VStack>
       <Divider />
       <HStack justify={'space-between'} w="full" px={4}>
-        <HStack>
+        <div className="flex gap-2">
           <Image src={USDC} alt="usdc icon" />
           <Text color="brand.slate.800" fontWeight={600}>
             $1,000
           </Text>
-        </HStack>
+        </div>
         <Text
           alignSelf="end"
           px={4}

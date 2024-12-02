@@ -1,6 +1,5 @@
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
-  Box,
   Divider,
   Flex,
   Select,
@@ -135,7 +134,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
             >
               Others
             </Tab>
-            <Box>
+            <div>
               <Tooltip
                 isOpen={isLabelOpen}
                 setIsOpen={setIsLabelOpen}
@@ -150,7 +149,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
                   h={3}
                 />
               </Tooltip>
-            </Box>
+            </div>
           </TabList>
         </Tabs>
         <Flex align="center" display={{ base: 'none', md: 'flex' }}>
@@ -165,9 +164,9 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
         fontSize={{ base: 'xs', sm: 'sm' }}
       >
         <Text color="brand.slate.400">Timeframe</Text>
-        <Flex>
+        <div className="flex">
           <Timeframe value={timeframe} setValue={setTimeframe} />
-        </Flex>
+        </div>
       </Flex>
     </VStack>
   );
