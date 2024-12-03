@@ -30,7 +30,7 @@ interface ListingTabsProps {
   bounties: Listing[] | undefined;
   forYou?: Listing[] | undefined;
   take?: number;
-  emoji?: string;
+  showEmoji?: boolean;
   title: string;
   viewAllLink?: string;
   showViewAll?: boolean;
@@ -143,7 +143,7 @@ export const ListingTabs = ({
   bounties,
   forYou,
   take,
-  emoji,
+  showEmoji = false,
   title,
   viewAllLink,
   showViewAll = false,
@@ -240,6 +240,8 @@ export const ListingTabs = ({
   const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
   const posthog = usePostHog();
 
+  const emoji = '/assets/home/emojis/moneyman.webp';
+
   useEffect(() => {
     posthog.capture('open_listings');
   }, []);
@@ -249,11 +251,12 @@ export const ListingTabs = ({
       <div className="mb-4 flex items-center justify-between border-b border-[#E2E8F0] pb-3">
         <div className="flex w-full items-center justify-between sm:justify-start">
           <div className="flex items-center">
-            {emoji && (
+            {showEmoji && (
               <img
                 className="xs:flex xs:hidden mr-2 h-5 w-5"
                 alt="emoji"
                 src={emoji}
+                loading="lazy"
               />
             )}
             <p className="whitespace-nowrap pr-2 text-[14px] font-semibold text-[#334155] sm:text-[15px] md:text-[16px]">

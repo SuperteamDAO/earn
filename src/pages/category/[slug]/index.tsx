@@ -63,7 +63,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
         <ListingTabs
           bounties={listingsData ?? []}
           isListingsLoading={isListingsLoading}
-          emoji="/assets/home/emojis/moneyman.webp"
+          showEmoji
           title={`${formattedSlug} Gigs`}
           viewAllLink={`/category/${slug}/all`}
           showViewAll
@@ -73,7 +73,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
           type="grants"
           title={`${formattedSlug} Grants`}
           sub="Equity-free funding opportunities for builders"
-          emoji="/assets/home/emojis/grants.webp"
+          showEmoji
           showViewAll
         >
           {isGrantsLoading && (

@@ -8,6 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Superteams } from '@/constants/Superteam';
 import { Discord, GitHub, Twitter } from '@/features/talent';
 
@@ -50,7 +51,7 @@ const GlobalFlag = ({ size = '16px' }) => (
     style={{
       width: size,
       height: size,
-      backgroundImage: "url('/assets/superteams/globe.png')",
+      backgroundImage: `url('${ASSET_URL}/icons/globe.png')`,
     }}
   />
 );
