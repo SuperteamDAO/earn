@@ -19,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import {
   getListingIcon,
   type Listing,
@@ -201,7 +202,7 @@ export function ListingHeader({
       <img
         className="mr-2 h-12 w-12 rounded-md object-cover md:h-16 md:w-16"
         alt={sponsor?.name}
-        src={sponsor?.logo || `${router.basePath}/assets/logo/sponsor-logo.png`}
+        src={sponsor?.logo || `${ASSET_URL}/logo/sponsor-logo.png`}
       />
     );
   };

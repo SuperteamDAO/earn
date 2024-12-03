@@ -17,7 +17,6 @@ const allowedFields = [
   'templateId',
   'pocSocials',
   'applicationType',
-  'timeToComplete',
   'description',
   'type',
   'region',

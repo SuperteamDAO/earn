@@ -41,9 +41,7 @@ export const ListingSection = ({
   const showViewAllButton = showViewAll && router?.query?.category !== type;
 
   const emoji =
-    type === 'bounties'
-      ? '/assets/home/emojis/moneyman.webp'
-      : '/assets/home/emojis/grants.webp';
+    type === 'bounties' ? '/assets/listing-tab.webp' : '/assets/grant-tab.webp';
 
   return (
     <div

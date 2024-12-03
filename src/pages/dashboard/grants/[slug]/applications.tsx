@@ -31,6 +31,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import {
   ApplicationDetails,
   ApplicationHeader,
@@ -446,7 +447,7 @@ function GrantApplications({ slug }: Props) {
                               mx="auto"
                               mt={32}
                               alt={'talent empty'}
-                              src="/assets/bg/talent-empty.svg"
+                              src={ASSET_URL + '/bg/talent-empty.svg'}
                             />
                             <Text
                               mx="auto"

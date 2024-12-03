@@ -137,7 +137,7 @@ export function GrantPageLayout({
                             src={
                               tokenList.filter(
                                 (e) => e?.tokenSymbol === grant.token,
-                              )[0]?.icon ?? '/assets/icons/green-dollar.svg'
+                              )[0]?.icon ?? '/assets/dollar.svg'
                             }
                           />
                           <Text

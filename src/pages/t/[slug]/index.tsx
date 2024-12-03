@@ -26,6 +26,7 @@ import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ShareIcon } from '@/components/shared/shareIcon';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type FeedDataProps, FeedLoop, useGetFeed } from '@/features/feed';
 import {
   AddProject,
@@ -75,7 +76,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
     timePeriod: '',
     isWinner: false,
     take: 15,
-    userId: talent.id,
+    userId: talent?.id,
     takeOnlyType: activeTab === 'activity' ? undefined : 'pow',
   });
 
@@ -262,7 +263,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
             <Box
               w="100%"
               h={{ base: '100px', md: '30vh' }}
-              bgImage={`/assets/bg/profile-cover/${bgImages[randomIndex]}`}
+              bgImage={ASSET_URL + `/bg/profile-cover/${bgImages[randomIndex]}`}
               bgSize={'cover'}
               bgRepeat={'no-repeat'}
               objectFit={'cover'}
@@ -560,7 +561,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       mx="auto"
                       mt={32}
                       alt={'talent empty'}
-                      src="/assets/bg/talent-empty.svg"
+                      src={ASSET_URL + '/bg/talent-empty.svg'}
                     />
                     <Text
                       w="200px"

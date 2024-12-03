@@ -482,7 +482,7 @@ export default function SponsorListings() {
               mx="auto"
               mt={32}
               alt={'talent empty'}
-              src="/assets/bg/talent-empty.svg"
+              src={ASSET_URL + '/bg/talent-empty.svg'}
             />
             <Text
               mx="auto"

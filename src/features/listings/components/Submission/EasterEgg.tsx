@@ -12,6 +12,8 @@ import Image from 'next/image';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
 import { type TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -70,11 +72,10 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
         </ModalCloseButton>
         <Container mt={[28, 6]} px={4}>
           <Box w="112px" mx="auto" mt="24px" mb="44px">
-            <Image
-              src="/assets/icons/celebration.png"
+            <img
+              src={ASSET_URL + '/icons/celebration.png'}
               alt="celebration icon"
-              width="100"
-              height="100"
+              className="h-100 w-100"
             />
           </Box>
           <Text
@@ -109,18 +110,19 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
           transform="translate(-50%,0%)"
         >
           <Image
-            src="/assets/memes/JohnCenaVibingToCupid.gif"
+            src={ASSET_URL + '/memes/JohnCenaVibingToCupid.gif'}
             alt="John Cena Vibing to Cupid"
             style={{ width: '100%', marginTop: 'auto', display: 'block' }}
-            width="500"
-            height="600"
+            width="1000"
+            height="1200"
             priority
             loading="eager"
             quality={80}
+            className="scale-125"
           />
         </AbsoluteCenter>
         <audio
-          src="/assets/memes/JohnCenaVibingToCupid.mp3"
+          src={'/assets/JohnCenaVibingToCupid.mp3'}
           style={{ display: 'none' }}
           autoPlay
           loop

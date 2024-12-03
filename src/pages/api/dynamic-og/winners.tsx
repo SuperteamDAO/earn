@@ -1,6 +1,7 @@
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { fetchAsset, formatString } from '@/utils/ogHelpers';
@@ -39,12 +40,6 @@ export default async function handler(request: NextRequest) {
     const submissions = getParam('submissions', (x) =>
       JSON.parse(decodeURIComponent(x)),
     ) as SubmissionWithUser[];
-
-    const logo = getParam('logo', (x) => decodeURIComponent(x)) as string;
-
-    const fallback = getParam('fallback', (x) =>
-      decodeURIComponent(x),
-    ) as string;
 
     if (!id) throw new Error('ID IS MISSING');
     if (!rewards) throw new Error('REWARDS IS MISSING');
@@ -120,7 +115,7 @@ export default async function handler(request: NextRequest) {
                       display: 'flex',
                     }}
                     alt={`${winner?.user?.firstName} ${winner?.user?.lastName}`}
-                    src={fallback}
+                    src={ASSET_URL + '/fallback/avatar.png'}
                   />
                 )}
                 <div
@@ -223,7 +218,7 @@ export default async function handler(request: NextRequest) {
                   display: 'flex',
                 }}
                 alt="ST Earn Logo"
-                src={logo}
+                src={ASSET_URL + '/logo/st-earn-white.svg'}
               />
             </div>
           </div>

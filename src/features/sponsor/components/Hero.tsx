@@ -3,15 +3,7 @@ import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 
-import Bonk from '@/public/assets/landingsponsor/sponsors/bonk.webp';
-import De from '@/public/assets/landingsponsor/sponsors/de.webp';
-import Jupiter from '@/public/assets/landingsponsor/sponsors/jupiter.webp';
-import MadLads from '@/public/assets/landingsponsor/sponsors/madlads.webp';
-import Meteora from '@/public/assets/landingsponsor/sponsors/meteora.webp';
-import MonkeDao from '@/public/assets/landingsponsor/sponsors/monkedao.webp';
-import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.webp';
-import Squads from '@/public/assets/landingsponsor/sponsors/squads.webp';
-import Tensor from '@/public/assets/landingsponsor/sponsors/tensor.webp';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useUser } from '@/store/user';
 
 import { fontSize, maxW, padding } from '../utils';
@@ -26,6 +18,8 @@ export function Hero() {
   const { user } = useUser();
 
   const posthog = usePostHog();
+
+  const base = ASSET_URL + '/landingsponsor/sponsors/';
 
   function getStartedWhere(authenticated: boolean, isSponsor: boolean) {
     if (!authenticated) return '/new/sponsor';
@@ -197,76 +191,49 @@ export function Hero() {
           px={padding}
         >
           <HighQualityImage
-            height={22}
-            src={Squads}
+            src={base + 'squads.webp'}
             alt="Squads Logo"
-            unoptimized={true}
-            priority={true}
-            loading="eager"
+            className="h-6"
           />
           <HighQualityImage
-            height={26}
-            src={Tensor}
+            src={base + 'tensor.webp'}
             alt="Tensor Logo"
-            unoptimized={true}
-            priority={true}
-            loading="eager"
+            className="h-8"
           />
           <HighQualityImage
-            src={Jupiter}
+            src={base + 'jupiter.webp'}
             alt="Jupiter Logo"
-            height={21}
-            unoptimized={true}
-            priority={true}
-            loading="eager"
+            className="h-6"
           />
           <HighQualityImage
-            src={De}
+            src={base + 'de.webp'}
             alt="De Logo"
-            height={48}
-            unoptimized={true}
-            priority={true}
-            loading="eager"
+            className="h-12"
           />
           <HighQualityImage
-            src={MadLads}
+            src={base + 'madlads.webp'}
             alt="Madlads  Logo"
-            height={38}
-            unoptimized={true}
-            priority={true}
-            loading="eager"
+            className="h-10"
           />
           <HighQualityImage
-            src={Solflare}
+            src={base + 'solflare.webp'}
             alt="Solflare Logo"
-            height={41}
-            unoptimized={true}
-            priority={true}
-            loading="eager"
+            className="h-10"
           />
           <HighQualityImage
-            src={Meteora}
+            src={base + 'meteora.webp'}
             alt="Meteroa Logo"
-            height={28}
-            unoptimized={true}
-            priority={true}
-            loading="eager"
+            className="h-8"
           />
           <HighQualityImage
-            src={MonkeDao}
+            src={base + 'monkedao.webp'}
             alt="MonkeDao Logo"
-            height={25}
-            unoptimized={true}
-            priority={true}
-            loading="eager"
+            className="h-6"
           />
           <HighQualityImage
-            src={Bonk}
+            src={base + 'bonk.webp'}
             alt="Bonk Logo"
-            height={42}
-            unoptimized={true}
-            priority={true}
-            loading="eager"
+            className="h-8"
           />
         </Flex>
       </VStack>

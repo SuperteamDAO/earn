@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
-import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { GrantsCard, grantsQuery } from '@/features/grants';
 import {
   ListingSection,
@@ -18,7 +18,6 @@ import { dayjs } from '@/utils/dayjs';
 type SlugKeys = 'design' | 'content' | 'development' | 'other';
 
 function ListingCategoryPage({ slug }: { slug: string }) {
-  const router = useRouter();
   const deadline = useMemo(
     () => dayjs().subtract(1, 'month').toISOString(),
     [],
@@ -57,7 +56,7 @@ function ListingCategoryPage({ slug }: { slug: string }) {
         title={title}
         description={metaDescription}
         canonical={canonicalURL}
-        og={`${router.basePath}/assets/og/categories/${slug}.png`}
+        og={ASSET_URL + `/og/categories/${slug}.png`}
       />
       <div className="w-full">
         <ListingTabs

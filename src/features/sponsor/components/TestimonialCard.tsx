@@ -1,5 +1,4 @@
 import { Box, Center, HStack, Text, VStack } from '@chakra-ui/react';
-import { type StaticImageData } from 'next/image';
 
 import { HighQualityImage } from './HighQualityImage';
 import { Stars } from './Stars';
@@ -7,10 +6,10 @@ import { Stars } from './Stars';
 export interface TestimonialProps {
   stars: number;
   message: string;
-  pfp: StaticImageData;
+  pfp: string;
   name: string;
   position: string;
-  logo: StaticImageData;
+  logo: string;
 }
 export function TestimonialCard({
   stars,
@@ -30,7 +29,7 @@ export function TestimonialCard({
       rounded={4}
     >
       <Center w={'100%'} h={'14.754rem'} bg="black" rounded={4}>
-        <HighQualityImage src={logo} alt={position} width={75} />
+        <HighQualityImage src={logo} alt={position} />
       </Center>
       <VStack align="start" flex={1} gap={4} h="100%" mt="auto" p={'1rem'}>
         <Stars count={5} filled={stars} />
@@ -42,13 +41,7 @@ export function TestimonialCard({
         ></Text>
         <HStack gap={2} mt="auto" pt="1rem">
           <Box gap={6} w={'2.1rem'} h={'2.1rem'}>
-            <HighQualityImage
-              src={pfp}
-              alt={name}
-              width={50}
-              height={50}
-              style={{ width: '100%', height: '100%' }}
-            />
+            <HighQualityImage src={pfp} alt={name} className="h-full w-full" />
           </Box>
           <VStack align="start" gap={0}>
             <Text color="black" fontSize={'1rem'}>

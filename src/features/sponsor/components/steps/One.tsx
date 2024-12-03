@@ -1,6 +1,6 @@
 import { HStack, Text, VStack } from '@chakra-ui/react';
 
-import PiedPiper from '@/public/assets/landingsponsor/sponsors/piedPiper.webp';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 
 import { HighQualityImage } from '../HighQualityImage';
 
@@ -19,7 +19,11 @@ export function StepOne() {
       rounded={6}
     >
       <HStack gap={4} w="100%">
-        <HighQualityImage alt="Pied Piper Logo" width={49} src={PiedPiper} />
+        <HighQualityImage
+          alt="Pied Piper Logo"
+          className="h-12 w-12"
+          src={ASSET_URL + '/landingsponsor/sponsors/piedPiper.webp'}
+        />
         <VStack align="start" flexGrow={1} w="100%">
           <Text color="brand.slate.400" fontSize="sm" fontWeight="500">
             Company name

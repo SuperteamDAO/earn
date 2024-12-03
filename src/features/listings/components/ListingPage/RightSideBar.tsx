@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { tokenList } from '@/constants/tokenList';
 import { RelatedListings } from '@/features/home';
@@ -70,7 +71,6 @@ export function RightSideBar({
     maxRewardAsk,
     minRewardAsk,
     Hackathon,
-    timeToComplete,
     maxBonusSpots,
   } = listing;
 
@@ -155,7 +155,7 @@ export function RightSideBar({
                           rounded={'full'}
                           src={
                             tokenList.filter((e) => e?.tokenSymbol === token)[0]
-                              ?.icon ?? '/assets/icons/green-dollar.svg'
+                              ?.icon ?? '/assets/dollar.svg'
                           }
                         />
                         <CompensationAmount
@@ -214,7 +214,7 @@ export function RightSideBar({
                       w={'1.4rem'}
                       mt={-1}
                       alt={'suit case'}
-                      src={'/assets/icons/purple-suitcase.svg'}
+                      src={ASSET_URL + '/icons/purple-suitcase.svg'}
                     />
                     <Text
                       color={'#000000'}
@@ -248,7 +248,7 @@ export function RightSideBar({
                       w={'1.4rem'}
                       mt={1}
                       alt={'suit case'}
-                      src={'/assets/icons/purple-timer.svg'}
+                      src={ASSET_URL + '/icons/purple-timer.svg'}
                     />
                     <VStack align={'start'} gap={0}>
                       <Text
@@ -279,7 +279,7 @@ export function RightSideBar({
                     w={'1.4rem'}
                     mt={1}
                     alt={'suit case'}
-                    src={'/assets/icons/purple-timer.svg'}
+                    src={ASSET_URL + '/icons/purple-timer.svg'}
                   />
                   <VStack align={'start'} gap={0}>
                     <Text
@@ -301,18 +301,6 @@ export function RightSideBar({
           </Flex>
 
           <Box w="full">
-            {isProject && (
-              <Flex align={'start'} direction={'column'} my={4}>
-                <Text
-                  color={'#000000'}
-                  fontSize={{ base: 'lg', md: 'xl' }}
-                  fontWeight={500}
-                >
-                  {timeToComplete}
-                </Text>
-                <Text color={'#94A3B8'}>Time to Complete</Text>
-              </Flex>
-            )}
             <SubmissionActionButton listing={listing} isTemplate={isTemplate} />
             {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
               <Flex gap="2" w="full" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>

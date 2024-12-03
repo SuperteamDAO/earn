@@ -1,10 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { MdArrowForward } from 'react-icons/md';
 
-import Briefcase from '@/public/assets/home/display/briefcase.webp';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 
 import { userCountQuery } from '../queries';
 
@@ -31,9 +30,9 @@ export const SponsorBanner = () => {
           + crypto talent from one single dashboard
         </p>
       </div>
-      <Image
+      <img
         alt="Sponsor Briefcase"
-        src={Briefcase}
+        src={ASSET_URL + '/home/display/briefcase.webp'}
         className="mr-4 w-16 flex-1 object-contain"
       />
     </NextLink>

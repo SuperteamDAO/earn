@@ -1,6 +1,7 @@
 import { Image, SimpleGrid, Text, VStack } from '@chakra-ui/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { dayjs } from '@/utils/dayjs';
 
@@ -70,7 +71,10 @@ export const SubmissionList = ({
               w={'full'}
               h={'25rem'}
             >
-              <Image alt={'submission'} src={'/assets/icons/submission.svg'} />
+              <Image
+                alt={'submission'}
+                src={ASSET_URL + '/icons/submission.svg'}
+              />
               <Text
                 color={'gray.800'}
                 fontFamily={'var(--font-sans)'}

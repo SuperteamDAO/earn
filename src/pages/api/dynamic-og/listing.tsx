@@ -1,6 +1,7 @@
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 import { fetchAsset, formatNumber, formatString } from '@/utils/ogHelpers';
 
@@ -18,19 +19,14 @@ const boldFontP = fetchAsset(
   new URL('../../../../public/Inter-Bold.woff', import.meta.url),
 );
 
-const sponsorImageP = fetchAsset(
-  new URL('../../../../public/assets/logo/sponsor-logo.png', import.meta.url),
-);
-
 export default async function handler(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const [mediumFont, semiBoldFont, boldFont, sponsorImg] = await Promise.all([
+    const [mediumFont, semiBoldFont, boldFont] = await Promise.all([
       mediumFontP,
       semiBoldFontP,
       boldFontP,
-      sponsorImageP,
     ]);
 
     const bgColors = ['#FFFBEB', '#FAFAF9', '#ECFDF5', '#EFF6FF', '#EEF2FF'];
@@ -44,7 +40,9 @@ export default async function handler(request: NextRequest) {
       formatString(decodeURIComponent(x), 100),
     );
     const type = getParam('type');
-    const logo = getParam('logo', (x) => formatString(x, 100)) || sponsorImg;
+    const logo =
+      getParam('logo', (x) => formatString(x, 100)) ||
+      ASSET_URL + '/logo/sponsor-logo.png';
     const reward = getParam('reward', formatNumber);
     const minRewardAsk = getParam('minRewardAsk', formatNumber);
     const maxRewardAsk = getParam('maxRewardAsk', formatNumber);
@@ -78,15 +76,15 @@ export default async function handler(request: NextRequest) {
     const listingIcon = (() => {
       switch (type) {
         case 'bounty':
-          return 'bolt.svg';
+          return 'bounty-icon.svg';
         case 'project':
-          return 'briefcase.svg';
+          return 'project-icon.svg';
         case 'hackathon':
-          return 'laptop.svg';
+          return 'hackathon-icon.svg';
         case 'grant':
-          return 'bank.svg';
+          return 'grant-icon.svg';
         default:
-          return 'bolt.svg';
+          return 'bounty-icon.svg';
       }
     })();
 
@@ -150,7 +148,7 @@ export default async function handler(request: NextRequest) {
                     objectFit: 'contain',
                   }}
                   alt="logo"
-                  src={`https://earn.superteam.fun/assets/icons/${listingIcon}`}
+                  src={`https://earn.superteam.fun/assets/${listingIcon}`}
                   width="64px"
                   height="64px"
                 />

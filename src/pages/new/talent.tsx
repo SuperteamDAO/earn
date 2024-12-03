@@ -137,7 +137,7 @@ export default function Talent() {
         />
       }
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col items-center justify-center gap-2">
         <StepsCon />
       </div>
     </Default>

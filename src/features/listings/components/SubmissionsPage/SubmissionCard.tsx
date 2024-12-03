@@ -18,6 +18,7 @@ import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { LuHeart, LuMessageCircle } from 'react-icons/lu';
 import { toast } from 'sonner';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
 import { ogImageQuery } from '@/queries/og';
@@ -121,7 +122,7 @@ export const SubmissionCard = ({
           objectFit={'contain'}
           alt={'card'}
           rounded={'sm'}
-          src={ogData?.images?.[0]?.url || '/assets/bg/og.svg'}
+          src={ogData?.images?.[0]?.url || ASSET_URL + '/bg/og.svg'}
         />
       </LinkOverlay>
       <HStack align={'center'} gap={4} w={'full'}>

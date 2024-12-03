@@ -95,7 +95,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
       </Box>
       <Flex align="center" justify={'space-between'} mb={4}>
         <Flex align="center" gap={2}>
-          <Image h={6} alt="" src={`/assets/icons/bank.svg`} />
+          <Image h={6} alt="" src={`/assets/grant-icon.svg`} />
           <Text color="brand.slate.800" fontSize="xl" fontWeight="700">
             {grant?.title}
           </Text>
@@ -170,7 +170,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
               rounded={'full'}
               src={
                 tokenList.filter((e) => e?.tokenSymbol === grant?.token)[0]
-                  ?.icon ?? '/assets/icons/green-dollar.svg'
+                  ?.icon ?? '/assets/dollar.svg'
               }
             />
             <SponsorPrize

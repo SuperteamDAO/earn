@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 // import { useListingFormStore } from '@/features/listing-builder';
 import { BountyIcon } from '@/svg/bounty-icon';
 import { ProjectIcon } from '@/svg/project-icon';
@@ -58,7 +59,7 @@ export const CreateListingModal = ({
                 w="100%"
                 h="auto"
                 alt="Bounty Illustration"
-                src="/assets/dashboard/bounty_illustration.svg"
+                src={ASSET_URL + '/dashboard/bounty_illustration.svg'}
               />
               <Flex
                 pos="absolute"
@@ -109,7 +110,7 @@ export const CreateListingModal = ({
                 w="100%"
                 h="auto"
                 alt="Project Illustration"
-                src="/assets/dashboard/project_illustration.svg"
+                src={ASSET_URL + '/dashboard/project_illustration.svg'}
               />
               <Flex
                 pos="absolute"

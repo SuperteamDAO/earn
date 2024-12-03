@@ -20,7 +20,7 @@ export const TokenInput = React.forwardRef<
           alt="token"
           src={
             tokenList.filter((e) => e?.tokenSymbol === token)[0]?.icon ??
-            '/assets/icons/green-dollar.svg'
+            '/assets/dollar.svg'
           }
         />
         <p className="font-medium text-slate-500">{token}</p>

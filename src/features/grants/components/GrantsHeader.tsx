@@ -120,7 +120,7 @@ export const GrantsHeader = ({
                   mt={{ base: '1px', sm: 1 }}
                   mr={{ base: '1px', sm: 1 }}
                   alt={'grant'}
-                  src={'/assets/icons/bank.svg'}
+                  src={'/assets/grant-icon.svg'}
                 />
                 <Text
                   color={'brand.slate.400'}

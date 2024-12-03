@@ -7,18 +7,16 @@ import {
   WrapItem,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
 import React from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { GrantEntry, grantsQuery } from '@/features/grants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
 function Grants() {
-  const router = useRouter();
-
   const {
     data: grants,
     isLoading,
@@ -32,7 +30,7 @@ function Grants() {
           title="Grants | Superteam Earn"
           description="Discover Solana Grants for Development, Art, Content, and more to fund your ideas"
           canonical="https://earn.superteam.fun/grants/"
-          og={`${router.basePath}/assets/og/grants.png`}
+          og={ASSET_URL + `/og/grants.png`}
         />
       }
     >
@@ -51,7 +49,7 @@ function Grants() {
           left={'0'}
           w={'100%'}
           alt=""
-          src="/assets/home/bg_grad.svg"
+          src={ASSET_URL + '/home/bg_grad.svg'}
         />
         <VStack my={16} textAlign="center" spacing={4}>
           <Text

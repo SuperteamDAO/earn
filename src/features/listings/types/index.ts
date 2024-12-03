@@ -38,7 +38,6 @@ export interface Listing {
   totalPaymentsMade?: number;
   isWinnersAnnounced?: boolean;
   templateId?: string;
-  timeToComplete?: string;
   hackathonprize?: boolean;
   referredBy?: SuperteamName;
   publishedAt?: string;

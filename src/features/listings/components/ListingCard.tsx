@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { IoIosStar } from 'react-icons/io';
 import { MdModeComment } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
@@ -56,7 +56,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     _count,
   } = bounty;
 
-  const router = useRouter();
   const isBounty = type === 'bounty';
 
   const isBeforeDeadline = dayjs().isBefore(dayjs(deadline));
@@ -78,7 +77,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
 
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
-    : `${router.basePath}/assets/logo/sponsor-logo.png`;
+    : `${ASSET_URL}/logo/sponsor-logo.png`;
 
   const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
 

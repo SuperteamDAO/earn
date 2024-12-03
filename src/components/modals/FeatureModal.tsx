@@ -10,7 +10,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import NextImage from 'next/image';
 import NextLink from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -74,11 +73,9 @@ export const FeatureModal = ({
       <ModalOverlay />
       <ModalContent overflow="hidden" rounded="lg">
         <Box w="full" p={8} bg="#FAF5FF">
-          <NextImage
+          <img
             src={ASSET_URL + '/ScoutAnnouncement.png'}
             alt="Scouts Announcement Illustration"
-            width={300}
-            height={300}
             style={{ width: '92%', height: '100%' }}
           />
         </Box>

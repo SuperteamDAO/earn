@@ -6,27 +6,22 @@ import {
   Divider,
   Flex,
   Icon,
-  Image,
   Text,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
-import NextImage from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { MdCheck } from 'react-icons/md';
 
 import { SponsorButton } from '@/components/ProfileSetup/SponsorButton';
 import { TalentButton } from '@/components/ProfileSetup/TalentButton';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AuthWrapper } from '@/features/auth';
 import { userCountQuery } from '@/features/home';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import Tensor from '@/public/assets/company-logos/tensor.svg';
-import Jupiter from '@/public/assets/landingsponsor/sponsors/jupiter.webp';
-import Solflare from '@/public/assets/landingsponsor/sponsors/solflare.webp';
-import Squads from '@/public/assets/landingsponsor/sponsors/squads.webp';
 import { useUser } from '@/store/user';
 import { getURL } from '@/utils/validUrl';
 
@@ -36,18 +31,9 @@ export default function NewProfilePage({
   showTalentProfile: boolean;
 }) {
   const avatars = [
-    {
-      name: 'Abhishkek',
-      src: '/assets/pfps/t1.webp',
-    },
-    {
-      name: 'Pratik',
-      src: '/assets/pfps/md2.webp',
-    },
-    {
-      name: 'Yash',
-      src: '/assets/pfps/fff1.webp',
-    },
+    { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
+    { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
+    { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
   ];
 
   const { data: totals } = useQuery(userCountQuery);
@@ -166,12 +152,10 @@ export default function NewProfilePage({
                     display={'flex'}
                     w={'full'}
                   >
-                    <NextImage
-                      width={704}
-                      height={328}
+                    <img
                       style={{ width: '100%' }}
                       alt={'user icon'}
-                      src={'/assets/onboarding/talent-banner.webp'}
+                      src={ASSET_URL + '/onboarding/talent-banner.webp'}
                     />
                     <Box
                       pos="absolute"
@@ -255,12 +239,10 @@ export default function NewProfilePage({
                   display={'flex'}
                   w={'full'}
                 >
-                  <NextImage
-                    width={704}
-                    height={328}
+                  <img
                     style={{ width: '100%' }}
                     alt={'user icon'}
-                    src={'/assets/onboarding/sponsor-banner.webp'}
+                    src={ASSET_URL + '/onboarding/sponsor-banner.webp'}
                   />
                   <Box
                     pos="absolute"
@@ -292,35 +274,25 @@ export default function NewProfilePage({
               </Flex>
             </AuthWrapper>
             <Flex align="center" justify="space-between" gap={3} mt={-3} px={3}>
-              <Image
-                as={NextImage}
-                h={'20px'}
-                objectFit={'contain'}
+              <img
+                className="h-5 object-contain"
                 alt="Jupiter Icon"
-                src={Jupiter as unknown as string}
+                src={ASSET_URL + '/landingsponsor/sponsors/jupiter.webp'}
               />
-              <Image
-                as={NextImage}
-                h={'34px'}
-                objectFit={'contain'}
+              <img
+                className="h-8 object-contain"
                 alt="Solflare Icon"
-                src={Solflare as unknown as string}
+                src={ASSET_URL + '/company-logos/solflare.webp'}
               />
-              <Image
-                as={NextImage}
-                display={{ base: 'none', md: 'block' }}
-                h={'18px'}
-                objectFit={'contain'}
+              <img
+                className="hidden h-4 object-contain md:block"
                 alt="Squads Icon"
-                src={Squads as unknown as string}
+                src={ASSET_URL + '/company-logos/squads.webp'}
               />
-              <Image
-                as={NextImage}
-                w={'28px'}
-                h={'28px'}
-                objectFit={'contain'}
+              <img
+                className="h-7 w-7 object-contain"
                 alt="Tensor Icon"
-                src={Tensor as unknown as string}
+                src={ASSET_URL + '/company-logos/tensor.svg'}
               />
             </Flex>
           </Flex>

@@ -1,3 +1,4 @@
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 import { type Rewards } from '@/features/listings';
 import { getRankLabels } from '@/utils/rank';
@@ -18,7 +19,7 @@ export const WinnerFeedImage = ({
       <img
         className="mx-auto h-9 w-9 md:h-20 md:w-20"
         alt="winner"
-        src={'/assets/icons/celebration.png'}
+        src={ASSET_URL + '/icons/celebration.png'}
       />
       <div className="mt-4 flex w-full flex-col items-center justify-center gap-1 md:gap-4">
         <img

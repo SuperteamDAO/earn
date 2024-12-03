@@ -240,7 +240,7 @@ export const ListingTabs = ({
   const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
   const posthog = usePostHog();
 
-  const emoji = '/assets/home/emojis/moneyman.webp';
+  const emoji = '/assets/listing-tab.webp';
 
   useEffect(() => {
     posthog.capture('open_listings');

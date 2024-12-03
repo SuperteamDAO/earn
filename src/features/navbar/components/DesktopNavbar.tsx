@@ -45,7 +45,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               <img
                 className="h-5 cursor-pointer object-contain"
                 alt="Superteam Earn"
-                src="/assets/logo/logo.svg"
+                src="/assets/logo.svg"
               />
 
               {isDashboardRoute && (

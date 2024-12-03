@@ -31,7 +31,7 @@ const FooterColumn = ({
 }) => (
   <div className="flex flex-col items-start">
     <p className="text-xs font-medium uppercase text-slate-400 md:text-sm">
-      {title}
+      {title}``
     </p>
     {links.map((link) => (
       <NextLink
@@ -51,7 +51,7 @@ const GlobalFlag = ({ size = '16px' }) => (
     style={{
       width: size,
       height: size,
-      backgroundImage: `url('${ASSET_URL}/icons/globe.png')`,
+      backgroundImage: `url('${ASSET_URL}/superteams/globe.png')`,
     }}
   />
 );
@@ -163,7 +163,7 @@ export const Footer = () => {
               <img
                 className="mr-4 h-6"
                 alt="Superteam Earn"
-                src="/assets/logo/logo.svg"
+                src="/assets/logo.svg"
               />
             </div>
             <p className="mb-6 text-sm text-slate-500 md:text-base">
