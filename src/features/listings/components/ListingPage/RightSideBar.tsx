@@ -135,7 +135,6 @@ export function RightSideBar({
           rounded={'xl'}
         >
           {!router.asPath.split('/')[4]?.includes('submission') &&
-            !router.asPath.split('/')[4]?.includes('references') &&
             listing.isWinnersAnnounced && (
               <Box display={{ base: 'block', md: 'none' }} w="full" pb={6}>
                 <ListingWinners bounty={listing} />

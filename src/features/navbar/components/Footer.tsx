@@ -31,7 +31,7 @@ const FooterColumn = ({
 }) => (
   <div className="flex flex-col items-start">
     <p className="text-xs font-medium uppercase text-slate-400 md:text-sm">
-      {title}``
+      {title}
     </p>
     {links.map((link) => (
       <NextLink

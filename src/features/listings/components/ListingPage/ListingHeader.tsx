@@ -54,7 +54,6 @@ export function ListingHeader({
     slug,
     region,
     isWinnersAnnounced,
-    references,
     publishedAt,
     isPublished,
     Hackathon,
@@ -252,10 +251,7 @@ export function ListingHeader({
                   : `/templates/listings/${slug}/`
               }
               text="Details"
-              isActive={
-                !router.asPath.split('/')[4]?.includes('submission') &&
-                !router.asPath.split('/')[4]?.includes('references')
-              }
+              isActive={!router.asPath.split('/')[4]?.includes('submission')}
             />
 
             {!isProject && isWinnersAnnounced && (
@@ -268,22 +264,6 @@ export function ListingHeader({
                   isSubmissionNumberLoading ? '...' : submissionNumber + ''
                 }
               />
-            )}
-
-            {isProject && references && references?.length > 0 && (
-              <>
-                <ListingTabLink
-                  href={
-                    !isTemplate
-                      ? `/listings/${type}/${slug}/references`
-                      : `/templates/listings/${slug}/references`
-                  }
-                  text="References"
-                  isActive={
-                    !!router.asPath.split('/')[4]?.includes('references')
-                  }
-                />
-              </>
             )}
           </div>
         </div>
