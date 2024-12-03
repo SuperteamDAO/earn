@@ -10,18 +10,9 @@ import MobileBanner from '@/public/assets/home/display/banner-mobile.webp';
 import { userCountQuery } from '../queries/user-count';
 
 const avatars = [
-  {
-    name: 'Abhishkek',
-    src: '/assets/pfps/t1.webp',
-  },
-  {
-    name: 'Pratik',
-    src: '/assets/pfps/md2.webp',
-  },
-  {
-    name: 'Yash',
-    src: '/assets/pfps/fff1.webp',
-  },
+  { name: 'Abhishkek', src: '/assets/pfps/t1.webp' },
+  { name: 'Pratik', src: '/assets/pfps/md2.webp' },
+  { name: 'Yash', src: '/assets/pfps/fff1.webp' },
 ];
 
 export function HomeBanner() {

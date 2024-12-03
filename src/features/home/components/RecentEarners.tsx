@@ -3,6 +3,7 @@ import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { MdArrowForward } from 'react-icons/md';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
@@ -31,7 +32,7 @@ const Earner = ({
   const tokenObj = tokenList.find((t) => t.tokenSymbol === token);
   const tokenIcon = tokenObj
     ? tokenObj.icon
-    : '/assets/landingsponsor/icons/usdc.svg';
+    : ASSET_URL + '/landingsponsor/icons/usdc.svg';
 
   return (
     <NextLink href={`${getURL()}t/${username}`} className="block">

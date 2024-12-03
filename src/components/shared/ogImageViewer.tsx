@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { ogImageQuery } from '@/queries/og';
 import { cn } from '@/utils';
 
@@ -17,19 +18,11 @@ interface Props {
 }
 
 const getRandomFallbackImage = (): string => {
-  const fallbackImages = [
-    '/assets/fallback/og/1.webp',
-    '/assets/fallback/og/2.webp',
-    '/assets/fallback/og/3.webp',
-    '/assets/fallback/og/4.webp',
-    '/assets/fallback/og/5.webp',
-    '/assets/fallback/og/6.webp',
-    '/assets/fallback/og/7.webp',
-    '/assets/fallback/og/8.webp',
-    '/assets/fallback/og/9.webp',
-    '/assets/fallback/og/10.webp',
-    '/assets/fallback/og/11.webp',
-  ];
+  const basePath = ASSET_URL + '/fallback/og';
+  const fallbackImages = Array.from(
+    { length: 11 },
+    (_, i) => `${basePath}/${i + 1}.webp`,
+  );
 
   const randomIndex = Math.floor(Math.random() * fallbackImages.length);
   return fallbackImages[randomIndex]!;

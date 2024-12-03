@@ -11,6 +11,7 @@ import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 
 import { type MultiSelectOptions } from '@/constants';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { MainSkills, skillSubSkillMap } from '@/interface/skills';
 
 function removeDuplicates(arr: MultiSelectOptions[]): MultiSelectOptions[] {
@@ -95,7 +96,7 @@ export const SkillSelect = ({
             <Image
               mt={-2}
               alt={'Info Icon'}
-              src={'/assets/icons/info-icon.svg'}
+              src={ASSET_URL + '/icons/info-icon.svg'}
             />
           </Tooltip>
         </Flex>
@@ -156,7 +157,7 @@ export const SkillSelect = ({
             <Image
               mt={-2}
               alt={'Info Icon'}
-              src={'/assets/icons/info-icon.svg'}
+              src={ASSET_URL + '/icons/info-icon.svg'}
             />
           </Tooltip>
         </Flex>

@@ -37,6 +37,7 @@ import React, {
 import { MdArrowDropDown } from 'react-icons/md';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import {
   getColorStyles,
   getListingStatus,
@@ -437,7 +438,7 @@ export default function SponsorListings() {
             mx="auto"
             mt={32}
             alt={'talent empty'}
-            src="/assets/bg/talent-empty.svg"
+            src={ASSET_URL + '/bg/talent-empty.svg'}
           />
           <Text
             mx="auto"
