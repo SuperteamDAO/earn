@@ -7,6 +7,7 @@ import {
   type Dispatch,
   type SetStateAction,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -35,6 +36,7 @@ import {
 } from '@/components/ui/drawer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { userCountQuery } from '@/features/home';
+import { liveOpportunitiesQuery } from '@/features/listings';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { formatNumberWithSuffix } from '@/utils';
@@ -61,14 +63,25 @@ const avatars = [
 ];
 
 export const HomepagePop = () => {
-  const liveOpportunityWorth = 350000;
-  const { data: stat } = useQuery(userCountQuery);
-
   const [showAnyPopup, setShowAnyPopup] = useAtom(showAnyPopupAtom);
 
   const [variant, setVariant] = useState<number>(1);
   const [open, setOpen] = useState(false);
   const { status } = useSession();
+
+  const activateQuery = useMemo(
+    () => status === 'unauthenticated' && showAnyPopup,
+    [status, showAnyPopup],
+  );
+
+  const { data: stat } = useQuery({
+    ...userCountQuery,
+    enabled: activateQuery,
+  });
+  const { data: liveOpportunities } = useQuery({
+    ...liveOpportunitiesQuery,
+    enabled: activateQuery,
+  });
 
   const isMD = useBreakpoint('md');
 
@@ -108,7 +121,7 @@ export const HomepagePop = () => {
       open={open}
       setOpen={setOpen}
       totalUsers={stat?.totalUsers}
-      liveOpportunityWorth={liveOpportunityWorth}
+      liveOpportunityWorth={liveOpportunities?.totalUsdValue}
       variant={variant}
     />
   );
@@ -172,7 +185,7 @@ const Desktop = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   totalUsers: number | undefined;
-  liveOpportunityWorth: number;
+  liveOpportunityWorth: number | undefined;
   variant: number;
 }) => {
   return (
@@ -229,7 +242,7 @@ const DesktopVariantOne = ({
 const DesktopVariantTwo = ({
   liveOpportunityWorth,
 }: {
-  liveOpportunityWorth: number;
+  liveOpportunityWorth: number | undefined;
 }) => {
   return (
     <>
@@ -239,13 +252,19 @@ const DesktopVariantTwo = ({
           <p>Live Opportunities</p>
         </span>
         <p className="text-4xl font-semibold">
-          ${liveOpportunityWorth.toLocaleString('en-us')}
+          {liveOpportunityWorth ? (
+            <>${liveOpportunityWorth?.toLocaleString('en-us')}</>
+          ) : (
+            <>
+              <Skeleton className="h-12 w-3/4" />
+            </>
+          )}
         </p>
       </div>
       <DialogHeader className="px-6">
         <DialogTitle className="text-base font-semibold">
           Get access to oppurtunities worth $
-          {formatNumberWithSuffix(liveOpportunityWorth)}!
+          {formatNumberWithSuffix(liveOpportunityWorth || 0)}!
         </DialogTitle>
         <DialogDescription className="text-sm text-slate-500">
           {`Apply to hundreds of bounties & gigs with a single profile.`}
