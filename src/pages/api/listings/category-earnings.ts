@@ -1,10 +1,12 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { setCacheHeaders } from '@/utils/cacheControl';
 
-const CategoryEnum = z.enum(['design', 'content', 'development', 'other']);
-type CategoryKeys = z.infer<typeof CategoryEnum>;
+const CategoryEnum = z.enum(['design', 'content', 'development']);
+export type CategoryKeys = z.infer<typeof CategoryEnum>;
 
 const querySchema = z.object({
   filter: CategoryEnum,
@@ -21,14 +23,13 @@ export default async function categoryEarnings(
       development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
       design: ['Design'],
       content: ['Content'],
-      other: ['Other', 'Growth', 'Community'],
     };
 
     const skillsToFilter = filterToSkillsMap[filter] || [];
     let skillsFilter = {};
 
     if (skillsToFilter.length > 0) {
-      if (filter === 'development' || filter === 'other') {
+      if (filter === 'development') {
         skillsFilter = {
           OR: skillsToFilter.map((skill) => ({
             skills: {
@@ -59,11 +60,19 @@ export default async function categoryEarnings(
       },
     });
 
+    setCacheHeaders(res, {
+      public: true,
+      // 1 day
+      maxAge: 24 * 60 * 60,
+      sMaxAge: 24 * 60 * 60,
+      staleWhileRevalidate: 60 * 60, // 1 hour
+    });
+
     return res.status(200).json({
-      totalEarnings: result._sum.usdValue || 0,
+      totalEarnings: Math.round(result._sum.usdValue || 0),
     });
   } catch (error) {
-    console.error('Error in categoryEarnings:', error);
+    logger.error('Error in categoryEarnings:', error);
     return res.status(400).json({ error: 'Invalid request' });
   }
 }

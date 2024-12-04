@@ -11,6 +11,7 @@ const fetchLiveOpportunities = async () => {
 export const liveOpportunitiesQuery = queryOptions({
   queryKey: ['liveOpportunities'],
   queryFn: fetchLiveOpportunities,
-  staleTime: 1000 * 60 * 60,
-  gcTime: 1000 * 60 * 60 * 2,
+  // 1 day
+  staleTime: 24 * 60 * 60 * 1000,
+  gcTime: 24 * 60 * 60 * 1000,
 });

@@ -1,3 +1,4 @@
+export * from './category-earnings';
 export * from './listings';
 export * from './live-opportunities';
 export * from './recent-earners';

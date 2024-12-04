@@ -1,6 +1,24 @@
 import { Regions } from '@prisma/client';
 
-export const Superteams = [
+interface People {
+  name: string;
+  pfp: string;
+  role?: string;
+}
+
+export interface Superteam {
+  name: string;
+  icons: string;
+  banner: string;
+  region: Regions;
+  displayValue: string;
+  country: string[];
+  code: string;
+  hello: string;
+  people?: People[];
+}
+
+export const Superteams: Superteam[] = [
   {
     name: 'Superteam India',
     icons: '/assets/superteams/logosindia.jpg',

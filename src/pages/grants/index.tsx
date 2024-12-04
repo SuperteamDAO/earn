@@ -12,6 +12,7 @@ import React from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
+import { GrantsPop } from '@/features/conversion-popups';
 import { GrantEntry, grantsQuery } from '@/features/grants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -36,6 +37,7 @@ function Grants() {
         />
       }
     >
+      <GrantsPop />
       <VStack
         pos={'relative'}
         justify={'center'}
