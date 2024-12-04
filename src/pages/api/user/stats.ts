@@ -3,7 +3,6 @@ import { getToken } from 'next-auth/jwt';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { setCacheHeaders } from '@/utils/cacheControl';
 import { safeStringify } from '@/utils/safeStringify';
 
 export default async function handler(
@@ -83,11 +82,6 @@ export default async function handler(
       `User data retrieved successfully: participations=${participations}, wins=${wins}, totalWinnings=${wins}`,
     );
 
-    setCacheHeaders(res, {
-      public: true,
-      // 1 day
-      maxAge: 24 * 60 * 60,
-    });
     return res.status(200).json({
       participations,
       wins,
