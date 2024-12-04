@@ -11,6 +11,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
+import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { MdCheck } from 'react-icons/md';
@@ -40,6 +41,7 @@ export default function NewProfilePage({
   const { data: totals } = useQuery(userCountQuery);
 
   const router = useRouter();
+  const params = useSearchParams();
   const { user } = useUser();
   const [isTalentLoading, setIsTalentLoading] = useState(false);
   const [isSponsorLoading, setIsSponsorLoading] = useState(false);
@@ -52,7 +54,11 @@ export default function NewProfilePage({
     try {
       // localStorage.removeItem(ONBOARDING_KEY);
       if (!user?.isTalentFilled) {
-        router.push('/new/talent');
+        const originUrl = params.get('originUrl');
+        router.push({
+          pathname: '/new/talent',
+          query: originUrl ? { originUrl } : undefined,
+        });
       } else {
         router.push(`/t/${user.username}`);
       }
@@ -70,7 +76,11 @@ export default function NewProfilePage({
       if (sponsors?.data?.length && user.currentSponsorId) {
         router.push('/dashboard/listings?open=1');
       } else {
-        router.push('/new/sponsor');
+        const originUrl = params.get('originUrl');
+        router.push({
+          pathname: '/new/talent',
+          query: originUrl ? { originUrl } : undefined,
+        });
       }
     } catch (error) {
       setIsSponsorLoading(false);

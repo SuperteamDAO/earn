@@ -91,7 +91,13 @@ function MyApp({ Component, pageProps }: any) {
           });
         }
         setTimeout(() => {
-          router.push('/new/?type=forced');
+          router.push({
+            pathname: '/new',
+            query: {
+              type: 'forced',
+              originUrl: router.asPath,
+            },
+          });
         }, wait || 0);
       }, 0);
       forcedRedirected.current = true;

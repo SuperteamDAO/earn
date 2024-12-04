@@ -1,7 +1,9 @@
 import { Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
-import router, { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { create } from 'zustand';
 
@@ -127,10 +129,19 @@ const StepsCon = () => {
 
 export default function Talent() {
   const { user } = useUser();
+  const { status } = useSession();
+
+  const params = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
-    if (user && user?.isTalentFilled) {
-      router.push('/');
+    if (status === 'authenticated' && user && user?.isTalentFilled) {
+      const originUrl = params.get('originUrl');
+      if (!!originUrl && typeof originUrl === 'string') {
+        router.push(originUrl);
+      } else {
+        router.push('/');
+      }
     }
   }, [user, router]);
 
