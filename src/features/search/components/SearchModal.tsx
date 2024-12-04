@@ -123,7 +123,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
               <Button
                 variant="ghost"
                 className={cn(
-                  'w-full gap-2 text-sm font-normal',
+                  'w-full gap-2 text-sm font-normal hover:bg-brand-purple hover:text-white',
                   'rounded-none border-t border-slate-100',
                 )}
               >

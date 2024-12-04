@@ -84,7 +84,7 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
         >
           <Button
             className={cn(
-              'ph-no-capture gap-2 border-slate-300 font-medium text-slate-500',
+              'ph-no-capture gap-2 border-slate-300 font-medium text-slate-500 hover:bg-brand-purple hover:text-white',
               'w-8 p-0 md:w-auto md:px-4',
             )}
             variant="outline"
