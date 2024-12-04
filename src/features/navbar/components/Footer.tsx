@@ -8,6 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Superteams } from '@/constants/Superteam';
 import { Discord, GitHub, Twitter } from '@/features/talent';
 
@@ -50,7 +51,7 @@ const GlobalFlag = ({ size = '16px' }) => (
     style={{
       width: size,
       height: size,
-      backgroundImage: "url('/assets/superteams/globe.png')",
+      backgroundImage: `url('${ASSET_URL}/superteams/globe.png')`,
     }}
   />
 );
@@ -162,7 +163,7 @@ export const Footer = () => {
               <img
                 className="mr-4 h-6"
                 alt="Superteam Earn"
-                src="/assets/logo/logo.svg"
+                src="/assets/logo.svg"
               />
             </div>
             <p className="mb-6 text-sm text-slate-500 md:text-base">

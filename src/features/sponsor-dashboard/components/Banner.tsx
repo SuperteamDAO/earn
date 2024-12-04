@@ -15,6 +15,7 @@ import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { PDTG } from '@/constants';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
 
@@ -222,7 +223,7 @@ export function Banner({
                 h={14}
                 mr={3}
                 alt="message pratik"
-                src="/assets/sponsor/pratik.webp"
+                src={ASSET_URL + '/sponsor/pratik.webp'}
               />
               <div>
                 <Text

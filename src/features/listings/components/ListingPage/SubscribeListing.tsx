@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils';
@@ -49,9 +50,9 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
     });
 
   const avatars = [
-    { name: 'Abhishkek', src: '/assets/pfps/t1.webp' },
-    { name: 'Pratik', src: '/assets/pfps/md2.webp' },
-    { name: 'Yash', src: '/assets/pfps/fff1.webp' },
+    { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
+    { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
+    { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
   ];
 
   const handleToggleSubscribe = () => {
@@ -83,7 +84,7 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
         >
           <Button
             className={cn(
-              'ph-no-capture gap-2 border-slate-300 font-medium text-slate-500',
+              'ph-no-capture gap-2 border-slate-300 font-medium text-slate-500 hover:bg-brand-purple hover:text-white',
               'w-8 p-0 md:w-auto md:px-4',
             )}
             variant="outline"

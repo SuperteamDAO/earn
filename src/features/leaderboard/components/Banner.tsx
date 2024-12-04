@@ -1,15 +1,12 @@
-import { Flex, Text, VStack } from '@chakra-ui/react';
-import Image from 'next/image';
+import { Flex, Image, Text, VStack } from '@chakra-ui/react';
 
-import BannerDesktop from '@/public/assets/leaderboard/banner-desktop.webp';
-import BannerMobile from '@/public/assets/leaderboard/banner-mobile.webp';
-import Ranks3d from '@/public/assets/leaderboard/ranks3d.webp';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 
 export function Banner() {
   return (
     <Flex align="center" overflow="hidden" h="8rem" bg="#020617" rounded={6}>
       <Flex w={{ md: 100 }}>
-        <Image alt="Ranks 3d" src={Ranks3d} />
+        <img alt="Ranks 3d" src={ASSET_URL + '/leaderboard/ranks3d.webp'} />
       </Flex>
       <VStack
         align="start"
@@ -28,11 +25,9 @@ export function Banner() {
       </VStack>
       <Flex display={{ base: 'flex', md: 'none' }} h={'100%'}>
         <Image
-          style={{
-            marginLeft: '2rem',
-          }}
+          className="w-full"
           alt="Illustration"
-          src={BannerMobile}
+          src={ASSET_URL + '/leaderboard/banner-mobile.webp'}
         />
       </Flex>
       <Flex
@@ -42,11 +37,9 @@ export function Banner() {
         ml="auto"
       >
         <Image
-          style={{
-            marginLeft: '2rem',
-          }}
+          className="ml-8 h-full w-full"
           alt="Illustration"
-          src={BannerDesktop}
+          src={ASSET_URL + '/leaderboard/banner-desktop.webp'}
         />
       </Flex>
     </Flex>

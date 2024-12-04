@@ -30,7 +30,7 @@ export default function BountiesPage() {
         <ListingTabs
           bounties={listings}
           isListingsLoading={isLoading}
-          emoji="/assets/home/emojis/moneyman.webp"
+          showEmoji
           title="Bounties"
           take={20}
           showViewAll

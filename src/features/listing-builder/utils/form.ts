@@ -130,11 +130,8 @@ export const cleanTemplate = (
   delete reTemplate.isPublished;
   delete reTemplate.pocId;
   delete reTemplate.publishedAt;
-  delete reTemplate.references;
-  delete reTemplate.referredBy;
   delete reTemplate.requirements;
   delete reTemplate.sponsorId;
-  delete reTemplate.timeToComplete;
   delete reTemplate.color;
   delete reTemplate.emoji;
   delete reTemplate.Bounties;

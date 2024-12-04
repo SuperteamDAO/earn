@@ -21,7 +21,6 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
@@ -243,7 +242,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                         </Text>
                         {scout.recommended && (
                           <Tooltip fontSize="xs" label="Superteam Recommended">
-                            <Image src={SparkleIcon} alt="sparkle" />
+                            <img src={SparkleIcon} alt="sparkle" />
                           </Tooltip>
                         )}
                       </Flex>

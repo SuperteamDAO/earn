@@ -18,19 +18,11 @@ interface ActivityCardProps {
 }
 
 const getRandomFallbackImage = (): string => {
-  const fallbackImages = [
-    '/assets/fallback/resized-og/1.webp',
-    '/assets/fallback/resized-og/2.webp',
-    '/assets/fallback/resized-og/3.webp',
-    '/assets/fallback/resized-og/4.webp',
-    '/assets/fallback/resized-og/5.webp',
-    '/assets/fallback/resized-og/6.webp',
-    '/assets/fallback/resized-og/7.webp',
-    '/assets/fallback/resized-og/8.webp',
-    '/assets/fallback/resized-og/9.webp',
-    '/assets/fallback/resized-og/10.webp',
-    '/assets/fallback/resized-og/11.webp',
-  ];
+  const basePath = '/assets/fallback/resized-og';
+  const fallbackImages = Array.from(
+    { length: 11 },
+    (_, i) => `${basePath}/${i + 1}.webp`,
+  );
 
   const randomIndex = Math.floor(Math.random() * fallbackImages.length);
   return fallbackImages[randomIndex]!;

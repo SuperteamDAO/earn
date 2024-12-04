@@ -1,8 +1,8 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { useRouter } from 'next/router';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils';
 
@@ -24,13 +24,12 @@ export const GrantsCardMini = ({
     totalApproved,
     totalApplications,
   } = grant;
-  const router = useRouter();
 
   const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
 
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
-    : `${router.basePath}/assets/logo/sponsor-logo.png`;
+    : ASSET_URL + '/logo/sponsor-logo.png';
   return (
     <>
       <Box

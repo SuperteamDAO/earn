@@ -10,7 +10,7 @@ type ListingSectionProps = {
   children?: React.ReactNode;
   title: string;
   sub: string;
-  emoji?: string;
+  showEmoji?: boolean;
   type: 'bounties' | 'grants';
   showViewAll?: boolean;
   viewAllLink?: string;
@@ -20,7 +20,7 @@ export const ListingSection = ({
   children,
   title,
   sub,
-  emoji,
+  showEmoji = false,
   type,
   showViewAll,
   viewAllLink,
@@ -40,6 +40,9 @@ export const ListingSection = ({
 
   const showViewAllButton = showViewAll && router?.query?.category !== type;
 
+  const emoji =
+    type === 'bounties' ? '/assets/listing-tab.webp' : '/assets/grant-tab.webp';
+
   return (
     <div
       className={cn(
@@ -49,11 +52,12 @@ export const ListingSection = ({
     >
       <div className="mb-4 flex items-center justify-between border-b border-[#E2E8F0] pb-3">
         <div className="flex items-center">
-          {emoji && (
+          {showEmoji && (
             <img
               className="mr-3 h-[1.4375rem] w-[1.4375rem]"
               alt="emoji"
               src={emoji}
+              loading="lazy"
             />
           )}
           <p className="text-sm font-semibold text-[#334155] md:text-base">

@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
@@ -10,8 +10,6 @@ import type { GrantWithApplicationCount } from '../types';
 import { grantAmount } from '../utils';
 
 export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
-  const router = useRouter();
-
   const {
     sponsor,
     slug,
@@ -25,7 +23,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
 
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
-    : `${router.basePath}/assets/logo/sponsor-logo.png`;
+    : ASSET_URL + '/logo/sponsor-logo.png';
 
   const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
 
@@ -76,7 +74,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                   <img
                     className="-ml-0.5 flex h-3 sm:h-4"
                     alt={'grant'}
-                    src={'/assets/icons/bank.svg'}
+                    src={'/assets/grant-icon.svg'}
                   />
                   <p className="font-xs flex text-xs font-medium text-gray-500">
                     Grant

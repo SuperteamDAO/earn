@@ -245,7 +245,7 @@ ${socialListingLink('twitter')}
               rounded={'full'}
               src={
                 tokenList.filter((e) => e?.tokenSymbol === bounty?.token)[0]
-                  ?.icon ?? '/assets/icons/green-dollar.svg'
+                  ?.icon ?? '/assets/dollar.svg'
               }
             />
             <SponsorPrize

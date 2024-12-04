@@ -1,3 +1,5 @@
+import { ASSET_URL } from './ASSET_URL';
+
 interface Token {
   tokenName: string;
   tokenSymbol: string;
@@ -68,7 +70,7 @@ export const tokenList: Token[] = [
     tokenName: 'Kamino (KMNO)',
     tokenSymbol: 'KMNO',
     mintAddress: 'KMNo3nJsBXfcpJTVhZcXLW7RmTwTt4GVFE7suUBo9sS',
-    icon: '/assets/coins/kamino.png',
+    icon: ASSET_URL + '/coins/kamino.png',
     decimals: 6,
     coingeckoSymbol: 'kamino',
   },
@@ -348,7 +350,7 @@ export const tokenList: Token[] = [
     tokenName: 'Degod (DEGOD)',
     tokenSymbol: 'DEGOD',
     mintAddress: 'degod39zqQWzpG6h4b7SJLLTCFE6FeZnZD8BwHBFxaN',
-    icon: '/assets/coins/degods.png',
+    icon: ASSET_URL + '/coins/degods.png',
     decimals: 6,
     coingeckoSymbol: 'degod',
   },
@@ -356,7 +358,7 @@ export const tokenList: Token[] = [
     tokenName: 'DevWifHat (DWH)',
     tokenSymbol: 'DWH',
     mintAddress: 'DEVwHJ57QMPPArD2CyjboMbdWvjEMjXRigYpaUNDTD7o',
-    icon: '/assets/coins/dwh.png',
+    icon: ASSET_URL + '/coins/dwh.png',
     decimals: 6,
     coingeckoSymbol: '',
   },
@@ -364,7 +366,7 @@ export const tokenList: Token[] = [
     tokenName: 'ChiitanCoin (CTAN)',
     tokenSymbol: 'CTAN',
     mintAddress: 'A3gMddXMAhmc3P9dLjHv2n6ywWWzpGZbRCH6y8sta8ug',
-    icon: '/assets/coins/ctan.png',
+    icon: ASSET_URL + '/coins/ctan.png',
     decimals: 9,
     coingeckoSymbol: '',
   },
@@ -372,7 +374,7 @@ export const tokenList: Token[] = [
     tokenName: 'Utgard (UTG)',
     tokenSymbol: 'UTG',
     mintAddress: 'FPZsqAgtwf58GmJMctZGSu9RaXiGAmQLL6ZtKUUewm7k',
-    icon: '/assets/coins/utg.png',
+    icon: ASSET_URL + '/coins/utg.png',
     decimals: 9,
     coingeckoSymbol: '',
   },
@@ -380,7 +382,7 @@ export const tokenList: Token[] = [
     tokenName: 'Vin (VIN)',
     tokenSymbol: 'VIN',
     mintAddress: '6B2X4NmSsmkiT8ytFEVt15igRSgsKNGZ3j3WWeidupE8',
-    icon: '/assets/coins/vin.png',
+    icon: ASSET_URL + '/coins/vin.png',
     decimals: 9,
     coingeckoSymbol: '',
   },

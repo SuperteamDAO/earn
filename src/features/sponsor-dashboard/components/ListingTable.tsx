@@ -282,7 +282,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         src={
                           tokenList.filter(
                             (e) => e?.tokenSymbol === listing.token,
-                          )[0]?.icon ?? '/assets/icons/green-dollar.svg'
+                          )[0]?.icon ?? '/assets/dollar.svg'
                         }
                       />
                       {listing?.type === 'grant' && (
