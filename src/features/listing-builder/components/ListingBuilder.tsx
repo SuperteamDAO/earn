@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import { Form } from '@/components/ui/form';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { type Listing } from '@/features/listings';
+import { Header } from '@/features/navbar';
+import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { HydrateAtoms, useInitAtom } from '@/utils/atoms';
 
@@ -96,8 +98,14 @@ function ListingBuilder({
 
   return (
     <>
-      <div className="flex min-h-[80vh] px-3 md:hidden">
-        <p className="pt-20 text-center text-xl font-medium text-slate-500">
+      <Meta
+        title="Superteam Earn | Work to Earn in Crypto"
+        description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+        canonical="https://earn.superteam.fun"
+      />
+      <div className="flex min-h-[10vh] flex-col px-3 md:hidden">
+        <Header />
+        <p className="w-full pt-20 text-center text-xl font-medium text-slate-500">
           The Sponsor Dashboard on Earn is not optimized for mobile yet. Please
           use a desktop to check out the Sponsor Dashboard
         </p>
@@ -108,7 +116,7 @@ function ListingBuilder({
             e.preventDefault();
           }}
           onKeyDown={preventEnterKeySubmission}
-          className="invisible md:visible"
+          className="hidden md:block"
         >
           <ListingBuilderLayout>
             <div className="mx-auto w-full max-w-5xl space-y-8 px-8 py-10">

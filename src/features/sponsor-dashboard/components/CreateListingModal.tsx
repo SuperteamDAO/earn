@@ -10,6 +10,7 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -47,6 +48,9 @@ export const CreateListingModal = ({
     router.push('/dashboard/new?type=project');
   };
 
+  const isMD = useBreakpointValue({ base: false, md: true });
+
+  if (!isMD) return null;
   return (
     <Modal isCentered isOpen={isOpen} onClose={onClose} size="4xl">
       <ModalOverlay backdropFilter="blur(2px)" />
