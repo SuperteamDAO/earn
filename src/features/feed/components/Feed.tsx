@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type FeedPostType, useGetFeed } from '@/features/feed';
 import { VibeCard } from '@/features/home';
 import { FeedPageLayout } from '@/layouts/Feed';
@@ -130,7 +131,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
           <div className="my-32">
             <img
               className="mx-auto w-32"
-              src="/assets/bg/talent-empty.svg"
+              src={ASSET_URL + '/bg/talent-empty.svg'}
               alt="talent empty"
             />
             <p className="mx-auto mt-5 w-[200px] text-center text-base font-medium text-brand-slate-500 md:text-lg">

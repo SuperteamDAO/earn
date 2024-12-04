@@ -3,10 +3,11 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
 
-const bannerPrefix = '/assets/category_assets/banners/';
+const bannerPrefix = ASSET_URL + '/category_assets/banners/';
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other';
 

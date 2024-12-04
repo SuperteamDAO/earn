@@ -2,13 +2,13 @@ import { Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { type CommentRefType } from '@prisma/client';
 import axios from 'axios';
 import { useSetAtom } from 'jotai';
-import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { LuArrowRight } from 'react-icons/lu';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 
@@ -122,20 +122,19 @@ export const Comments = ({
       rounded={'xl'}
     >
       <HStack w={'full'} pt={4}>
-        <Image
-          width={21}
-          height={18}
+        <img
+          className="h-5 w-5"
           alt="Comments Icon"
-          src="/assets/icons/comments.svg"
+          src={ASSET_URL + '/icons/comments.svg'}
         />
-        <HStack>
+        <div className="flex gap-2">
           <Text color="brand.slate.900" fontSize={'medium'} fontWeight={600}>
             {count}
           </Text>
           <Text color="brand.slate.900" fontSize={'medium'} fontWeight={400}>
             {comments?.length === 1 ? 'Comment' : 'Comments'}
           </Text>
-        </HStack>
+        </div>
       </HStack>
       <CommentForm
         defaultSuggestions={defaultSuggestions}

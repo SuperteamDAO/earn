@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
-import { useRouter } from 'next/router';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { listingsQuery, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
@@ -9,7 +9,6 @@ import { Meta } from '@/layouts/Meta';
 type SlugKeys = 'design' | 'content' | 'development' | 'other';
 
 function AllCategoryListingsPage({ slug }: { slug: string }) {
-  const router = useRouter();
   const { data: listings, isLoading } = useQuery(
     listingsQuery({
       filter: slug,
@@ -34,13 +33,13 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
         title={title}
         description={metaDescription}
         canonical={canonicalURL}
-        og={`${router.basePath}/assets/og/categories/${slug}.png`}
+        og={ASSET_URL + `/og/categories/${slug}.png`}
       />
       <div className="w-full">
         <ListingTabs
           bounties={listings}
           isListingsLoading={isLoading}
-          emoji="/assets/home/emojis/moneyman.webp"
+          showEmoji
           title="Freelance Gigs"
           viewAllLink="/all"
         />

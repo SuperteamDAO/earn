@@ -24,7 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { countries } from '@/constants';
+import { countries } from '@/constants/country';
 import { Superteams } from '@/constants/Superteam';
 import { cn } from '@/utils';
 

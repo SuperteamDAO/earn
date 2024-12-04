@@ -40,7 +40,7 @@ import { RiEditFill } from 'react-icons/ri';
 import { TbFileDollar } from 'react-icons/tb';
 import { toast } from 'sonner';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { grantAmount } from '@/features/grants';
 import {
   formatDeadline,
@@ -282,7 +282,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         src={
                           tokenList.filter(
                             (e) => e?.tokenSymbol === listing.token,
-                          )[0]?.icon ?? '/assets/icons/green-dollar.svg'
+                          )[0]?.icon ?? '/assets/dollar.svg'
                         }
                       />
                       {listing?.type === 'grant' && (

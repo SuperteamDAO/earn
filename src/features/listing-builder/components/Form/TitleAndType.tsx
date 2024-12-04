@@ -2,7 +2,6 @@ import { type CompensationType } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { Link } from 'lucide-react';
-import Image from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
@@ -218,12 +217,10 @@ function Type() {
                   {typeOptions.map(({ value, label }) => (
                     <SelectItem key={value} value={value}>
                       <div className="flex items-center gap-2 text-xs">
-                        <Image
+                        <img
                           src={getListingIcon(value)}
                           alt={value}
                           className="h-4 w-4"
-                          width={16}
-                          height={16}
                         />
                         <span>{label}</span>
                       </div>
@@ -232,12 +229,10 @@ function Type() {
                   {hackathon && (
                     <SelectItem key={'hackathon'} value={'hackathon'}>
                       <div className="flex items-center gap-2 text-xs">
-                        <Image
+                        <img
                           src={hackathon.altLogo || ''}
                           alt={hackathon.name}
                           className="h-4 w-4 object-contain"
-                          width={16}
-                          height={16}
                         />
                         <span className="max-w-20 truncate">
                           {hackathon.name}

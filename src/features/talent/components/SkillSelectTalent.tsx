@@ -3,9 +3,9 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
-  Image,
   Tooltip,
 } from '@chakra-ui/react';
+import { Info } from 'lucide-react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -65,11 +65,7 @@ export const SkillSelect = ({
             label={`Select all that apply`}
             placement="right-end"
           >
-            <Image
-              mt={-2}
-              alt={'Info Icon'}
-              src={'/assets/icons/info-icon.svg'}
-            />
+            <Info />
           </Tooltip>
         </Flex>
         {helperText && (
@@ -121,11 +117,7 @@ export const SkillSelect = ({
             label={`Select all that apply`}
             placement="right-end"
           >
-            <Image
-              mt={-2}
-              alt={'Info Icon'}
-              src={'/assets/icons/info-icon.svg'}
-            />
+            <Info />
           </Tooltip>
         </Flex>
         <ReactSelect

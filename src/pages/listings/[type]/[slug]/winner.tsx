@@ -36,8 +36,6 @@ function WinnerBounty({
   image.searchParams.set('id', bounty?.id || '');
   image.searchParams.set('rewards', JSON.stringify(bounty?.rewards));
   image.searchParams.set('token', bounty?.token || '');
-  image.searchParams.set('logo', url + 'assets/logo/st-earn-white.svg');
-  image.searchParams.set('fallback', url + 'assets/fallback/avatar.png');
   image.searchParams.set('submissions', JSON.stringify(submissions));
 
   return (

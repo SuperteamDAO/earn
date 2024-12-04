@@ -25,7 +25,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { type Superteams } from '@/constants/Superteam';
+import { type Superteam } from '@/constants/Superteam';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 import { showAnyPopupAtom } from '../atoms';
@@ -43,7 +43,7 @@ const grantInfo: GrantInfo = {
   icon: '/assets/icons/bank.png',
 };
 
-export const RegionPop = ({ st }: { st: (typeof Superteams)[0] }) => {
+export const RegionPop = ({ st }: { st: Superteam }) => {
   const [showAnyPopup, setShowAnyPopup] = useAtom(showAnyPopupAtom);
   console.log('st', st);
 

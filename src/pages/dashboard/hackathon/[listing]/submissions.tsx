@@ -25,6 +25,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { BONUS_REWARD_POSITION } from '@/constants';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { PublishResults } from '@/features/listings';
 import {
   selectedSubmissionAtom,
@@ -275,7 +276,7 @@ export default function BountySubmissions({ listing }: Props) {
                               mx="auto"
                               mt={32}
                               alt={'talent empty'}
-                              src="/assets/bg/talent-empty.svg"
+                              src={ASSET_URL + '/bg/talent-empty.svg'}
                             />
                             <Text
                               mx="auto"

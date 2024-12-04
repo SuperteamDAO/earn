@@ -1,9 +1,8 @@
 import { Box, Divider, Flex, Grid, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { userCountQuery } from '@/features/home';
-import GlobalEarn from '@/public/assets/landingsponsor/displays/global-earn.webp';
-import EarnIcon from '@/public/assets/landingsponsor/icons/earn.svg';
 
 import { fontSize, maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
@@ -71,12 +70,9 @@ export function Stats() {
     >
       <Box w="full" maxW={{ base: '20rem', xl: '30rem' }}>
         <HighQualityImage
-          src={GlobalEarn}
+          src={ASSET_URL + '/landingsponsor/displays/global-earn.webp'}
           alt="Superteam Earn Global"
-          style={{
-            width: '100%',
-            maxWidth: '30rem',
-          }}
+          className="w-full max-w-[30rem]"
         />
       </Box>
       <VStack gap={{ base: 8 }}>
@@ -128,12 +124,9 @@ export function Stats() {
                     w={{ base: '0.6rem', lg: '0.9rem' }}
                   >
                     <HighQualityImage
-                      src={EarnIcon}
+                      src={ASSET_URL + '/landingsponsor/icons/earn.svg'}
                       alt="Earn Icon"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                      }}
+                      className="h-full w-full"
                     />
                   </Box>
                 )}

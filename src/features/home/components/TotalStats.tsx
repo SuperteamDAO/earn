@@ -1,4 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 
 export const TotalStats = ({
   bountyCount,
@@ -15,7 +16,7 @@ export const TotalStats = ({
         <img
           className="mb-auto mr-2 h-[1.5625rem]"
           alt=""
-          src="/assets/icons/lite-purple-dollar.svg"
+          src={ASSET_URL + '/icons/lite-purple-dollar.svg'}
         />
         <div>
           {isTotalLoading ? (
@@ -35,7 +36,7 @@ export const TotalStats = ({
         <img
           className="mb-auto mr-2 h-[25px]"
           alt="suitcase"
-          src="/assets/icons/lite-purple-suitcase.svg"
+          src={ASSET_URL + '/icons/lite-purple-suitcase.svg'}
         />
         <div>
           {isTotalLoading ? (

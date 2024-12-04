@@ -28,7 +28,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const posthog = usePostHog();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const maxWidth = isDashboardRoute ? 'max-w-full' : 'max-w-7xl';
+  const maxWidth = isDashboardRoute ? 'max-w-full pr-2' : 'max-w-7xl';
 
   return (
     <div className="hidden border-b border-slate-200 bg-white px-2 text-slate-500 lg:flex lg:px-6">
@@ -45,7 +45,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               <img
                 className="h-5 cursor-pointer object-contain"
                 alt="Superteam Earn"
-                src="/assets/logo/logo.svg"
+                src="/assets/logo.svg"
               />
 
               {isDashboardRoute && (

@@ -1,11 +1,6 @@
 import { Divider, Flex, Text, VStack } from '@chakra-ui/react';
-import Image from 'next/image';
 
-import Medal from '@/public/assets/leaderboard/medal.webp';
-
-import Progress from '../icons/progress.svg';
-import Rank from '../icons/rank.svg';
-import Semistar from '../icons/semistart.svg';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 
 export function Introduction() {
   return (
@@ -19,7 +14,11 @@ export function Introduction() {
       rounded={12}
     >
       <VStack align="start">
-        <Image alt="Medal" src={Medal} height={26} width={26} />
+        <img
+          className="h-26 w-26"
+          alt="Medal"
+          src={ASSET_URL + '/leaderboard/medal.webp'}
+        />
         <Text fontWeight={600}>Introducing Leaderboards</Text>
         <Text color="brand.slate.600">
           Get Inspired: Check out Earn profiles of the leading contributors of
@@ -29,13 +28,17 @@ export function Introduction() {
       <Divider />
       <VStack align="start">
         <Flex gap={2}>
-          <Image width={20} src={Progress} alt="progress icon" />
+          <img
+            className="w-5"
+            src={ASSET_URL + '/leaderboard/progress'}
+            alt="progress icon"
+          />
           <Text color="brand.slate.600">Track your progress as you earn</Text>
         </Flex>
         <Flex gap={2}>
-          <Image
-            width={20}
-            src={Rank}
+          <img
+            className="w-5"
+            src={ASSET_URL + '/leaderboard/rank'}
             alt="progress icon"
             style={{ paddingRight: '0.4rem' }}
           />
@@ -44,9 +47,9 @@ export function Introduction() {
           </Text>
         </Flex>
         <Flex gap={2}>
-          <Image
-            width={20}
-            src={Semistar}
+          <img
+            className="w-5"
+            src={ASSET_URL + '/leaderboard/semistart'}
             alt="progress icon"
             style={{ paddingRight: '0.6rem' }}
           />

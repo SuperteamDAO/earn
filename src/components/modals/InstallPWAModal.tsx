@@ -1,5 +1,4 @@
 import { X } from 'lucide-react';
-import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdIosShare, MdOutlineInstallMobile } from 'react-icons/md';
@@ -121,11 +120,10 @@ export const InstallPWAModal = () => {
           <div className="px-4">
             <div className="my-4 flex flex-col items-center">
               <div className="mt-4 flex flex-col items-center">
-                <Image
+                <img
                   src="/android-chrome-512x512.png"
                   alt="Superteam Earn Icon"
-                  height={63}
-                  width={63}
+                  className="h-16 w-16"
                 />
                 <div className="my-12 flex flex-col items-center">
                   <p className="font-bold">Never miss a listing again!</p>

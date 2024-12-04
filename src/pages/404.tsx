@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
@@ -29,8 +30,8 @@ export default function Custom404() {
           />
         }
       >
-        <div className="mt-20 flex min-h-screen flex-col items-center justify-center gap-4">
-          <img alt="404 page" src="/assets/bg/404.svg" />
+        <div className="flex flex-col items-center justify-center gap-4">
+          <img alt="404 page" src={ASSET_URL + '/bg/404.svg'} />
           <p className="text-xl font-medium text-black">Nothing Found</p>
           <p className="max-w-2xl text-center text-base text-gray-500 lg:text-lg">
             Sorry, we couldn&apos;t find what you were looking for. It’s
@@ -38,9 +39,9 @@ export default function Custom404() {
             have a look at this cat
           </p>
           <img
-            className="w-[20rem] lg:w-[30rem]"
+            className="mb-72 w-[20rem] lg:w-[30rem]"
             alt="cat image"
-            src="/assets/bg/cat.png"
+            src={ASSET_URL + '/bg/cat.png'}
           />
         </div>
       </Default>

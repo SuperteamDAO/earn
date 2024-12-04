@@ -1,5 +1,7 @@
 import { Regions } from '@prisma/client';
 
+import { ASSET_URL } from './ASSET_URL';
+
 interface People {
   name: string;
   pfp: string;
@@ -18,11 +20,13 @@ export interface Superteam {
   people?: People[];
 }
 
-export const Superteams: Superteam[] = [
+const basePath = ASSET_URL + '/superteams/';
+
+export const Superteams = [
   {
     name: 'Superteam India',
-    icons: '/assets/superteams/logosindia.jpg',
-    banner: '/assets/superteams/banners/India.png',
+    icons: basePath + 'logosindia.jpg',
+    banner: basePath + 'banners/India.png',
     region: Regions.INDIA,
     displayValue: 'India',
     country: ['India'],
@@ -31,8 +35,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Germany',
-    icons: '/assets/superteams/logosgermany.jpg',
-    banner: '/assets/superteams/banners/Germany.png',
+    icons: basePath + 'logosgermany.jpg',
+    banner: basePath + 'banners/Germany.png',
     region: Regions.GERMANY,
     displayValue: 'Germany',
     country: ['Germany'],
@@ -41,8 +45,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam UK',
-    icons: '/assets/superteams/logosuk.png',
-    banner: '/assets/superteams/banners/UK.png',
+    icons: basePath + 'logosuk.png',
+    banner: basePath + 'banners/UK.png',
     region: Regions.UK,
     displayValue: 'UK',
     country: ['United Kingdom'],
@@ -51,8 +55,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Turkey',
-    icons: '/assets/superteams/logosturkey.jpg',
-    banner: '/assets/superteams/banners/Turkey.png',
+    icons: basePath + 'logosturkey.jpg',
+    banner: basePath + 'banners/Turkey.png',
     region: Regions.TURKEY,
     displayValue: 'Turkey',
     country: ['Turkey'],
@@ -61,8 +65,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Vietnam',
-    icons: '/assets/superteams/logosvietnam.png',
-    banner: '/assets/superteams/banners/Vietnam.png',
+    icons: basePath + 'logosvietnam.png',
+    banner: basePath + 'banners/Vietnam.png',
     region: Regions.VIETNAM,
     displayValue: 'Vietnam',
     country: ['Vietnam'],
@@ -71,8 +75,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam UAE',
-    icons: '/assets/superteams/logosuae.png',
-    banner: '/assets/superteams/banners/UAE.png',
+    icons: basePath + 'logosuae.png',
+    banner: basePath + 'banners/UAE.png',
     region: Regions.UAE,
     displayValue: 'UAE',
     country: ['United Arab Emirates'],
@@ -81,8 +85,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Nigeria',
-    icons: '/assets/superteams/logosnigeria.png',
-    banner: '/assets/superteams/banners/Nigeria.png',
+    icons: basePath + 'logosnigeria.png',
+    banner: basePath + 'banners/Nigeria.png',
     region: Regions.NIGERIA,
     displayValue: 'Nigeria',
     country: ['Nigeria'],
@@ -91,8 +95,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Brazil',
-    icons: '/assets/superteams/logosbrazil.png',
-    banner: '/assets/superteams/banners/Brazil.png',
+    icons: basePath + 'logosbrazil.png',
+    banner: basePath + 'banners/Brazil.png',
     region: Regions.BRAZIL,
     displayValue: 'Brazil',
     country: ['Brazil'],
@@ -101,8 +105,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Malaysia',
-    icons: '/assets/superteams/logosmalaysia.jpg',
-    banner: '/assets/superteams/banners/Malaysia.png',
+    icons: basePath + 'logosmalaysia.jpg',
+    banner: basePath + 'banners/Malaysia.png',
     region: Regions.MALAYSIA,
     displayValue: 'Malaysia',
     country: ['Malaysia'],
@@ -111,8 +115,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Balkan',
-    icons: '/assets/superteams/logosbalkan.png',
-    banner: '/assets/superteams/banners/Balkan.png',
+    icons: basePath + 'logosbalkan.png',
+    banner: basePath + 'banners/Balkan.png',
     region: Regions.BALKAN,
     displayValue: 'Balkan',
     country: [
@@ -133,8 +137,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Philippines',
-    icons: '/assets/superteams/logosphilippines.png',
-    banner: '/assets/superteams/banners/Philippines.png',
+    icons: basePath + 'logosphilippines.png',
+    banner: basePath + 'banners/Philippines.png',
     region: Regions.PHILIPPINES,
     displayValue: 'Philippines',
     country: ['Philippines'],
@@ -143,8 +147,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Japan',
-    icons: '/assets/superteams/logosjapan.png',
-    banner: '/assets/superteams/banners/Japan.png',
+    icons: basePath + 'logosjapan.png',
+    banner: basePath + 'banners/Japan.png',
     region: Regions.JAPAN,
     displayValue: 'Japan',
     country: ['Japan'],
@@ -153,8 +157,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam France',
-    icons: '/assets/superteams/logosfrance.png',
-    banner: '/assets/superteams/banners/France.png',
+    icons: basePath + 'logosfrance.png',
+    banner: basePath + 'banners/France.png',
     region: Regions.FRANCE,
     displayValue: 'France',
     country: ['France'],
@@ -163,8 +167,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Mexico',
-    icons: '/assets/superteams/logosmexico.jpg',
-    banner: '/assets/superteams/banners/Mexico.png',
+    icons: basePath + 'logosmexico.jpg',
+    banner: basePath + 'banners/Mexico.png',
     region: Regions.MEXICO,
     displayValue: 'Mexico',
     country: ['Mexico'],
@@ -173,8 +177,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Canada',
-    icons: '/assets/superteams/logoscanada.png',
-    banner: '/assets/superteams/banners/Canada.png',
+    icons: basePath + 'logoscanada.png',
+    banner: basePath + 'banners/Canada.png',
     region: Regions.CANADA,
     displayValue: 'Canada',
     country: ['Canada'],
@@ -183,8 +187,8 @@ export const Superteams: Superteam[] = [
   },
   {
     name: 'Superteam Singapore',
-    icons: '/assets/superteams/logossingapore.png',
-    banner: '/assets/superteams/banners/Singapore.png',
+    icons: basePath + 'logossingapore.png',
+    banner: basePath + 'banners/Singapore.png',
     region: Regions.SINGAPORE,
     displayValue: 'Singapore',
     country: ['Singapore'],

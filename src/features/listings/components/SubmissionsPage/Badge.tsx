@@ -1,5 +1,5 @@
 import { StarIcon } from '@chakra-ui/icons';
-import { HStack, Text } from '@chakra-ui/react';
+import { HStack } from '@chakra-ui/react';
 import React from 'react';
 
 import { BONUS_REWARD_POSITION } from '@/constants';
@@ -25,7 +25,7 @@ export const Badge = ({
     >
       <StarIcon h={3} w={3} />
       {position !== BONUS_REWARD_POSITION && (
-        <Text>{nthLabelGenerator(position ?? 0)}</Text>
+        <p>{nthLabelGenerator(position ?? 0)}</p>
       )}
     </HStack>
   );

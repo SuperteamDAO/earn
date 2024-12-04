@@ -1,5 +1,5 @@
-import { Link } from '@chakra-ui/react';
 import { useAtomValue } from 'jotai';
+import Link from 'next/link';
 
 import { type CommentType } from '@/interface/comments';
 import { isLink } from '@/utils/isLink';
@@ -43,18 +43,21 @@ export const CommentParser = ({
   }
 
   const parsedComment = parseComment(value);
-  if (type === 'SUBMISSION' && submissionId && isAnnounced)
+
+  if (type === 'SUBMISSION' && submissionId && isAnnounced) {
     return (
       <>
         {value} -{' '}
         <Link
-          color="brand.purple"
           href={`/listings/${listingType}/${listingSlug}/submission/${submissionId}`}
+          className="text-brand-purple hover:underline"
         >
           check it out!
         </Link>
       </>
     );
+  }
+
   return (
     <>
       {parsedComment.map((part, index) => {
@@ -62,8 +65,8 @@ export const CommentParser = ({
           return (
             <Link
               key={index}
-              color="brand.purple"
               href={`/t/${part.value.substring(1)}`}
+              className="text-brand-purple hover:underline"
             >
               {truncateString(part.value, 12)}
             </Link>
@@ -74,15 +77,15 @@ export const CommentParser = ({
             href = 'https://' + href;
           }
           return (
-            <Link
+            <a
               key={index}
-              color="blue.600"
               href={href}
-              isExternal
+              className="text-blue-600 hover:text-blue-700 hover:underline"
+              target="_blank"
               rel="nofollow noreferrer"
             >
               {truncateString(part.value, 30)}
-            </Link>
+            </a>
           );
         } else {
           return <span key={index}>{part.value}</span>;

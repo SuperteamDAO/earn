@@ -18,6 +18,7 @@ import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { LuHeart, LuMessageCircle } from 'react-icons/lu';
 import { toast } from 'sonner';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
 import { ogImageQuery } from '@/queries/og';
@@ -87,7 +88,7 @@ export const SubmissionCard = ({
     >
       <HStack justify={'space-between'} w="full" mb={2}>
         <Link as={NextLink} href={`/t/${talent?.username}`}>
-          <HStack>
+          <div className="flex gap-2">
             <EarnAvatar
               size="24px"
               id={talent?.id}
@@ -104,7 +105,7 @@ export const SubmissionCard = ({
             >
               {talent?.firstName} {talent?.lastName}
             </Text>
-          </HStack>
+          </div>
         </Link>
         {winner && (
           <Box flexGrow={1} pr={1}>
@@ -121,7 +122,7 @@ export const SubmissionCard = ({
           objectFit={'contain'}
           alt={'card'}
           rounded={'sm'}
-          src={ogData?.images?.[0]?.url || '/assets/bg/og.svg'}
+          src={ogData?.images?.[0]?.url || ASSET_URL + '/bg/og.svg'}
         />
       </LinkOverlay>
       <HStack align={'center'} gap={4} w={'full'}>

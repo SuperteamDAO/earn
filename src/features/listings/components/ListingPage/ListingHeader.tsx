@@ -19,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import {
   getListingIcon,
   type Listing,
@@ -53,7 +54,6 @@ export function ListingHeader({
     slug,
     region,
     isWinnersAnnounced,
-    references,
     publishedAt,
     isPublished,
     Hackathon,
@@ -201,7 +201,7 @@ export function ListingHeader({
       <img
         className="mr-2 h-12 w-12 rounded-md object-cover md:h-16 md:w-16"
         alt={sponsor?.name}
-        src={sponsor?.logo || `${router.basePath}/assets/logo/sponsor-logo.png`}
+        src={sponsor?.logo || `${ASSET_URL}/logo/sponsor-logo.png`}
       />
     );
   };
@@ -251,10 +251,7 @@ export function ListingHeader({
                   : `/templates/listings/${slug}/`
               }
               text="Details"
-              isActive={
-                !router.asPath.split('/')[4]?.includes('submission') &&
-                !router.asPath.split('/')[4]?.includes('references')
-              }
+              isActive={!router.asPath.split('/')[4]?.includes('submission')}
             />
 
             {!isProject && isWinnersAnnounced && (
@@ -267,22 +264,6 @@ export function ListingHeader({
                   isSubmissionNumberLoading ? '...' : submissionNumber + ''
                 }
               />
-            )}
-
-            {isProject && references && references?.length > 0 && (
-              <>
-                <ListingTabLink
-                  href={
-                    !isTemplate
-                      ? `/listings/${type}/${slug}/references`
-                      : `/templates/listings/${slug}/references`
-                  }
-                  text="References"
-                  isActive={
-                    !!router.asPath.split('/')[4]?.includes('references')
-                  }
-                />
-              </>
             )}
           </div>
         </div>

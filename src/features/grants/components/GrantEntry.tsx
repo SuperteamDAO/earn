@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 
 import { grantAmount } from '../utils';
 

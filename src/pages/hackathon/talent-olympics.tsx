@@ -30,7 +30,6 @@ import { keyframes } from '@emotion/react';
 import { type SubscribeHackathon } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
-import NextImage, { type StaticImageData } from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
@@ -41,28 +40,22 @@ import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { tokenList } from '@/constants';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Superteams } from '@/constants/Superteam';
+import { tokenList } from '@/constants/tokenList';
 import { AuthWrapper } from '@/features/auth';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
-import RiseIn from '@/public/assets/company-logos/rise-in.svg';
-import Superteam from '@/public/assets/company-logos/superteam.svg';
-import Turbine from '@/public/assets/company-logos/turbine.svg';
-import CashBag from '@/public/assets/hackathon/talent-olympics/cashbag.png';
-import Coder from '@/public/assets/hackathon/talent-olympics/coder.png';
-import Trophy from '@/public/assets/hackathon/talent-olympics/trophy.png';
-import WinFlag from '@/public/assets/hackathon/talent-olympics/winflag.png';
 import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
 import { dayjs } from '@/utils/dayjs';
 
 const SLUG = 'talent-olympics';
 
-const base = '/assets/hackathon/talent-olympics/';
+const base = `${ASSET_URL}/hackathon/talent-olympics/`;
 const baseAsset = (filename: string) => base + filename;
 
 const slugLink = (slug: string) => `/listings/hackathon/${slug}`;
@@ -207,7 +200,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
         />
       }
     >
-      <Box>
+      <div>
         <Hero START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
         <Box overflowX="hidden" maxW="7xl" mx="auto" px={PADX}>
           <GetHiredBy />
@@ -256,7 +249,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
           <Rankings rankings={rankings} />
           <FAQs />
         </Box>
-      </Box>
+      </div>
     </Default>
   );
 }
@@ -300,7 +293,7 @@ function Hero({
       direction={'column'}
       pt={'3rem'}
       pb={'1rem'}
-      bgImage={"url('/assets/hackathon/talent-olympics/bg.png')"}
+      bgImage={`url('${base}bg.png')`}
       bgSize="cover"
       bgPosition="center"
       bgRepeat="no-repeat"
@@ -380,25 +373,22 @@ function Hero({
       </Text>
       <Flex align="center" gap={8} my={4}>
         <Image
-          as={NextImage}
           w={{ base: '5rem', sm: '7rem' }}
           h={PoweredByHeight}
           alt="Web3 Builders Alliance"
-          src={Turbine}
+          src={ASSET_URL + '/company-logos/turbine.svg'}
         />
         <Image
-          as={NextImage}
           w={{ base: '5rem', sm: '7rem' }}
           h={PoweredByHeight}
           alt="Superteam"
-          src={Superteam}
+          src={ASSET_URL + '/company-logos/superteam.svg'}
         />
         <Image
-          as={NextImage}
           w={{ base: '5rem', sm: '7rem' }}
           h={PoweredByHeight}
           alt="Rise In"
-          src={RiseIn}
+          src={ASSET_URL + '/company-logos/rise-in.svg'}
         />
       </Flex>
     </Flex>
@@ -406,7 +396,7 @@ function Hero({
 }
 
 function GetHiredBy() {
-  const base = '/assets/company-logos/';
+  const base = ASSET_URL + '/company-logos/';
   const baseAsset = (filename: string) => base + filename;
 
   const hiredBy: { name: string; src: string }[] = [
@@ -673,7 +663,7 @@ function About() {
           >
             <Image
               alt="kash"
-              src="/assets/hackathon/talent-olympics/kash.png"
+              src={base + 'kash.png'}
               style={{ width: '1.5rem', height: '1.5rem' }}
             />
             <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
@@ -693,28 +683,28 @@ function About() {
         >
           <GridItem>
             <FeatureCard
-              image={Trophy}
+              image={base + 'trophy.png'}
               title="45 Companies Hiring"
               description="at the Talent Olympics"
             />
           </GridItem>
           <GridItem>
             <FeatureCard
-              image={CashBag}
+              image={base + 'cashbag.png'}
               title="$20,000 USDC"
               description="as cash prizes for the best submissions"
             />
           </GridItem>
           <GridItem>
             <FeatureCard
-              image={Coder}
+              image={base + 'coder.png'}
               title="Front End & Rust Tracks"
               description="with multiple challenges"
             />
           </GridItem>
           <GridItem>
             <FeatureCard
-              image={WinFlag}
+              image={base + 'winflag.png'}
               title="Ten Challenges"
               description="to prove you're the best candidate"
             />
@@ -730,7 +720,7 @@ function FeatureCard({
   title,
   description,
 }: {
-  image: StaticImageData;
+  image: string;
   title: string;
   description: string;
 }) {
@@ -742,7 +732,7 @@ function FeatureCard({
       borderColor="brand.slate.200"
       rounded="lg"
     >
-      <Image as={NextImage} alt={title} src={image as any} />
+      <Image alt={title} src={image} />
       <VStack align={'start'} gap={0}>
         <Text fontWeight={600}>{title}</Text>
         <Text color="brand.slate.500" fontSize="xs" fontWeight={500}>
@@ -977,7 +967,7 @@ function Rankings({
               </Link>
             </HStack>
             <Flex gap={2} ml="auto" fontSize="sm" fontWeight={500}>
-              <Text>{r.rating}</Text>
+              <p>{r.rating}</p>
               <Text color="brand.slate.500">Points</Text>
             </Flex>
           </HStack>
@@ -1122,7 +1112,7 @@ const SubscribeHackathon = () => {
   }, [update]);
 
   return (
-    <HStack>
+    <div className="flex gap-2">
       <HStack align="start">
         <AuthWrapper
           showCompleteProfileModal
@@ -1179,7 +1169,7 @@ const SubscribeHackathon = () => {
           </Text>
         </VStack>
       </HStack>
-    </HStack>
+    </div>
   );
 };
 

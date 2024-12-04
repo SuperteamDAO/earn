@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
-import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { CategoryPop } from '@/features/conversion-popups';
 import { GrantsCard, grantsQuery } from '@/features/grants';
 import {
@@ -19,7 +19,6 @@ import { dayjs } from '@/utils/dayjs';
 type SlugKeys = 'design' | 'content' | 'development' | 'other';
 
 function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
-  const router = useRouter();
   const deadline = useMemo(
     () => dayjs().subtract(1, 'month').toISOString(),
     [],
@@ -58,14 +57,14 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
         title={title}
         description={metaDescription}
         canonical={canonicalURL}
-        og={`${router.basePath}/assets/og/categories/${slug}.png`}
+        og={ASSET_URL + `/og/categories/${slug}.png`}
       />
       <div className="w-full">
         {slug !== 'other' && <CategoryPop category={slug} />}
         <ListingTabs
           bounties={listingsData ?? []}
           isListingsLoading={isListingsLoading}
-          emoji="/assets/home/emojis/moneyman.webp"
+          showEmoji
           title={`${formattedSlug} Gigs`}
           viewAllLink={`/category/${slug}/all`}
           showViewAll
@@ -75,7 +74,7 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
           type="grants"
           title={`${formattedSlug} Grants`}
           sub="Equity-free funding opportunities for builders"
-          emoji="/assets/home/emojis/grants.webp"
+          showEmoji
           showViewAll
         >
           {isGrantsLoading && (

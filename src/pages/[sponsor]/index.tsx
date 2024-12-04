@@ -9,7 +9,7 @@ import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { Loading } from '@/components/shared/Loading';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { exclusiveSponsorData } from '@/constants';
+import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { GrantsCard } from '@/features/grants';
 import { ListingSection, ListingTabs } from '@/features/listings';
 import {
@@ -86,9 +86,9 @@ Check out all of ${title}’s latest earning opportunities on a single page.
           {isListingsLoading ? (
             <Skeleton className="h-28 w-28 rounded-full" />
           ) : (
-            <div className="flex items-center justify-center rounded-full">
+            <div className="justify-center rounded-full">
               <img
-                className="h-full rounded-full"
+                className="h-28 w-28 rounded-full"
                 alt="Category icon"
                 src={logo}
               />

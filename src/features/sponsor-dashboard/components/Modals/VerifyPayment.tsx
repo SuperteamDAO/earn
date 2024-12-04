@@ -26,7 +26,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { LuCheck, LuX } from 'react-icons/lu';
 import { toast } from 'sonner';
 
-import { BONUS_REWARD_POSITION, tokenList } from '@/constants';
+import { BONUS_REWARD_POSITION } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import {
   listingSubmissionsQuery,
   type ListingWithSubmissions,
@@ -237,9 +238,9 @@ export const VerifyPaymentModal = ({
   const renderContent = () => {
     if (isLoading) {
       return (
-        <HStack>
+        <div className="flex gap-2">
           <CircularProgress mx="auto" color="brand.purple" isIndeterminate />
-        </HStack>
+        </div>
       );
     }
 
@@ -353,7 +354,7 @@ export const VerifyPaymentModal = ({
                 your links again and make sure {`it’s`} the exact amount
               </Text>
             </VStack>
-            <VStack>
+            <div className="flex flex-col gap-2">
               <Link
                 href="https://t.me/pratikdholani/"
                 isExternal
@@ -378,7 +379,7 @@ export const VerifyPaymentModal = ({
               >
                 Try Again?
               </Button>
-            </VStack>
+            </div>
           </VStack>
         );
       default:
@@ -426,14 +427,14 @@ export const VerifyPaymentModal = ({
                               fontWeight={600}
                               textTransform="uppercase"
                             >
-                              <Text>
+                              <p>
                                 {getRankLabels(submission.winnerPosition || 0)}{' '}
                                 PRIZE
-                              </Text>
+                              </p>
                               {submission.winnerPosition ===
                                 BONUS_REWARD_POSITION && (
                                 <HStack gap={0}>
-                                  <Text>(</Text>
+                                  <p>(</p>
                                   <Text
                                     overflow="hidden"
                                     maxW="5rem"
@@ -443,11 +444,11 @@ export const VerifyPaymentModal = ({
                                   >
                                     @{submission.user.username}
                                   </Text>
-                                  <Text>)</Text>
+                                  <p>)</p>
                                 </HStack>
                               )}
                             </HStack>
-                            <HStack>
+                            <div className="flex gap-2">
                               <Image
                                 w={'1.2rem'}
                                 alt={selectedToken?.tokenName}
@@ -464,7 +465,7 @@ export const VerifyPaymentModal = ({
                               <Text color="brand.slate.400" fontWeight={600}>
                                 {selectedToken?.tokenSymbol}
                               </Text>
-                            </HStack>
+                            </div>
                           </VStack>
                           <VStack align="start" gap={0} w="full">
                             {paymentLinks?.[index]?.isVerified ? (
@@ -526,7 +527,7 @@ export const VerifyPaymentModal = ({
                   />
                 ))}
             </VStack>
-            <VStack>
+            <div className="flex flex-col gap-2">
               <Button
                 w="full"
                 isDisabled={data?.submission.every((sub) => sub.isPaid)}
@@ -551,7 +552,7 @@ export const VerifyPaymentModal = ({
                   </Button>
                 </Link>
               )}
-            </VStack>
+            </div>
           </form>
         );
     }

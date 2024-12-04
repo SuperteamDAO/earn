@@ -125,7 +125,7 @@ export default function HomePage({
           bounties={combinedListings}
           forYou={combinedForYouListings}
           isListingsLoading={false}
-          emoji="/assets/home/emojis/moneyman.webp"
+          showEmoji
           title="Freelance Gigs"
           viewAllLink="/all"
           take={20}
@@ -135,7 +135,7 @@ export default function HomePage({
           type="grants"
           title="Grants"
           sub="Equity-free funding opportunities for builders"
-          emoji="/assets/home/emojis/grants.webp"
+          showEmoji
           showViewAll
         >
           {!grants?.length && (

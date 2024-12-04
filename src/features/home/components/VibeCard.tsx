@@ -4,6 +4,7 @@ import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import { type TConductorInstance } from 'react-canvas-confetti/dist/types';
 
 import { Button } from '@/components/ui/button';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AuthWrapper } from '@/features/auth';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
@@ -12,12 +13,12 @@ import { cn } from '@/utils';
 import { pfpsQuery } from '../queries/vibe-pfps';
 
 const dummyUsers = [
-  { id: '1', photo: '/assets/pfps/t1.webp' },
-  { id: '2', photo: '/assets/pfps/md2.webp' },
-  { id: '3', photo: '/assets/pfps/fff1.webp' },
+  { id: '1', photo: ASSET_URL + '/pfps/t1.webp' },
+  { id: '2', photo: ASSET_URL + '/pfps/md2.webp' },
+  { id: '3', photo: ASSET_URL + '/pfps/fff1.webp' },
   { id: '55', photo: '' },
-  { id: '5', photo: '/assets/pfps/md1.webp' },
-  { id: '6', photo: '/assets/pfps/t2.webp' },
+  { id: '5', photo: ASSET_URL + '/pfps/md1.webp' },
+  { id: '6', photo: ASSET_URL + '/pfps/t2.webp' },
   { id: '7', photo: '' },
   { id: '8', photo: '' },
   { id: '9', photo: '' },
@@ -40,7 +41,7 @@ export const VibeCard = () => {
   const { data: fetchedUsers = [] } = useQuery(pfpsQuery(userIds));
 
   useEffect(() => {
-    audioRef.current = new Audio('/assets/memes/chipichapa.mp3');
+    audioRef.current = new Audio('/assets/chipichapa.mp3');
     audioRef.current.onended = () => setIsAudioPlaying(false);
     return () => {
       if (audioRef.current) {

@@ -31,6 +31,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import {
   ApplicationDetails,
   ApplicationHeader,
@@ -446,7 +447,7 @@ function GrantApplications({ slug }: Props) {
                               mx="auto"
                               mt={32}
                               alt={'talent empty'}
-                              src="/assets/bg/talent-empty.svg"
+                              src={ASSET_URL + '/bg/talent-empty.svg'}
                             />
                             <Text
                               mx="auto"
@@ -576,7 +577,7 @@ function GrantApplications({ slug }: Props) {
                 )}
                 <HStack gap={4} fontSize={'lg'}>
                   <HStack fontWeight={500}>
-                    <Text>{selectedApplicationIds.size}</Text>
+                    <p>{selectedApplicationIds.size}</p>
                     <Text color="brand.slate.500">Selected</Text>
                   </HStack>
                   <Box w="1px" h={4} bg="brand.slate.300" />
