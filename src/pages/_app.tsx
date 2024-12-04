@@ -12,7 +12,7 @@ import { SessionProvider } from 'next-auth/react';
 import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
 import { useUser } from '@/store/user';
@@ -64,7 +64,7 @@ function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
   const { user } = useUser();
   const posthog = usePostHog();
-  const [forcedRedirected, setForcedRedirected] = useState(false);
+  const forcedRedirected = useRef(false);
 
   useEffect(() => {
     const handleRouteChange = () => posthog?.capture('$pageview');
@@ -87,14 +87,14 @@ function MyApp({ Component, pageProps }: any) {
         if (wait) {
           toast.info('Finish your profile to continue browsing.', {
             description: `You will be redirected in ~${Math.floor(wait / 1000).toFixed(0)} seconds.`,
-            duration: 5000,
+            duration: wait || 0,
           });
         }
         setTimeout(() => {
           router.push('/new/?type=forced');
         }, wait || 0);
       }, 0);
-      setForcedRedirected(true);
+      forcedRedirected.current = true;
     },
     [user, router.pathname],
   );
@@ -113,7 +113,7 @@ function MyApp({ Component, pageProps }: any) {
   // forced profile redirection
   useEffect(() => {
     const handleRouteComplete = () => {
-      if (!forcedRedirected) {
+      if (!forcedRedirected.current) {
         forcedProfileRedirect(5000);
       }
     };
