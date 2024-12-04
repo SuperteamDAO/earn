@@ -3,14 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { usePostHog } from 'posthog-js/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   Avatar,
@@ -84,6 +78,7 @@ export const HomepagePop = () => {
   });
 
   const isMD = useBreakpoint('md');
+  const posthog = usePostHog();
 
   const initated = useRef(false); // only run use effect once
   useEffect(() => {
@@ -105,21 +100,37 @@ export const HomepagePop = () => {
           );
           setOpen(true);
           setShowAnyPopup(false);
+          posthog.capture('conversion pop up_initiated', {
+            'Popup Source': 'Homepage Pop-up',
+          });
         }, 10_000);
       }, 0);
     }
   }, [status]);
 
+  const setPopupOpen = (e: boolean) => {
+    if (e === false) {
+      posthog.capture('conversion pop up_closed', {
+        'Popup Source': 'Homepage Pop-up',
+      });
+    }
+    setOpen(e);
+  };
+
   if (!isMD) {
     return (
-      <Mobile open={open} setOpen={setOpen} totalUsers={stat?.totalUsers} />
+      <Mobile
+        open={open}
+        setOpen={setPopupOpen}
+        totalUsers={stat?.totalUsers}
+      />
     );
   }
 
   return (
     <Desktop
       open={open}
-      setOpen={setOpen}
+      setOpen={setPopupOpen}
       totalUsers={stat?.totalUsers}
       liveOpportunityWorth={liveOpportunities?.totalUsdValue}
       variant={variant}
@@ -133,7 +144,7 @@ const Mobile = ({
   totalUsers,
 }: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (e: boolean) => void;
   totalUsers: number | undefined;
 }) => {
   return (
@@ -183,7 +194,7 @@ const Desktop = ({
   variant,
 }: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (e: boolean) => void;
   totalUsers: number | undefined;
   liveOpportunityWorth: number | undefined;
   variant: number;

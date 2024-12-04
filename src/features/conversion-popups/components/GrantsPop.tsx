@@ -1,13 +1,8 @@
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { usePostHog } from 'posthog-js/react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   Dialog,
@@ -49,6 +44,7 @@ export const GrantsPop = () => {
   const { status } = useSession();
 
   const isMD = useBreakpoint('md');
+  const posthog = usePostHog();
 
   const initated = useRef(false); // only run use effect once
   useEffect(() => {
@@ -63,16 +59,28 @@ export const GrantsPop = () => {
         setTimeout(() => {
           setOpen(true);
           setShowAnyPopup(false);
+          posthog.capture('conversion pop up_initiated', {
+            'Popup Source': 'Grants Pop-up',
+          });
         }, 5_000);
       }, 0);
     }
   }, [status]);
 
+  const setPopupOpen = (e: boolean) => {
+    if (e === false) {
+      posthog.capture('conversion pop up_closed', {
+        'Popup Source': 'Grants Pop-up',
+      });
+    }
+    setOpen(e);
+  };
+
   if (!isMD) {
-    return <Mobile open={open} setOpen={setOpen} variant={grantInfo} />;
+    return <Mobile open={open} setOpen={setPopupOpen} variant={grantInfo} />;
   }
 
-  return <Desktop open={open} setOpen={setOpen} variant={grantInfo} />;
+  return <Desktop open={open} setOpen={setPopupOpen} variant={grantInfo} />;
 };
 
 const Mobile = ({
@@ -81,7 +89,7 @@ const Mobile = ({
   variant,
 }: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (e: boolean) => void;
   variant: GrantInfo;
 }) => {
   return (
@@ -116,7 +124,7 @@ const Desktop = ({
   variant,
 }: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (e: boolean) => void;
   variant: GrantInfo;
 }) => {
   return (

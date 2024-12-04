@@ -1,14 +1,8 @@
 import { useAtom } from 'jotai';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { usePostHog } from 'posthog-js/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   Dialog,
@@ -71,6 +65,7 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
   const { status } = useSession();
 
   const isMD = useBreakpoint('md');
+  const posthog = usePostHog();
   const [bountySnackbar] = useAtom(bountySnackbarAtom);
 
   const initated = useRef(false); // only run use effect once
@@ -88,6 +83,9 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
         setTimeout(() => {
           setOpen(true);
           setShowAnyPopup(false);
+          posthog.capture('conversion pop up_initiated', {
+            'Popup Source': 'Listing Pop-up',
+          });
         }, 5_000);
       }, 0);
     }
@@ -106,8 +104,18 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
     }
   }, [bountySnackbar?.submissionCount, listing]);
 
-  if (!isMD) return <Mobile open={open} setOpen={setOpen} variant={variant} />;
-  return <Desktop open={open} setOpen={setOpen} variant={variant} />;
+  const setPopupOpen = (e: boolean) => {
+    if (e === false) {
+      posthog.capture('conversion pop up_closed', {
+        'Popup Source': 'Listing Pop-up',
+      });
+    }
+    setOpen(e);
+  };
+
+  if (!isMD)
+    return <Mobile open={open} setOpen={setPopupOpen} variant={variant} />;
+  return <Desktop open={open} setOpen={setPopupOpen} variant={variant} />;
 };
 
 const Desktop = ({
@@ -116,7 +124,7 @@ const Desktop = ({
   variant,
 }: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (e: boolean) => void;
   variant: VariantInfo | undefined;
 }) => {
   return (
@@ -160,7 +168,7 @@ const Mobile = ({
   variant,
 }: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (e: boolean) => void;
   variant: VariantInfo | undefined;
 }) => {
   return (

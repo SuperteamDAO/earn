@@ -1,14 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { useSession } from 'next-auth/react';
-import {
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { usePostHog } from 'posthog-js/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import {
@@ -59,6 +53,7 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
   });
 
   const isMD = useBreakpoint('md');
+  const posthog = usePostHog();
 
   const initated = useRef(false); // only run use effect once
   useEffect(() => {
@@ -73,16 +68,28 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
         setTimeout(() => {
           setOpen(true);
           setShowAnyPopup(false);
+          posthog.capture('conversion pop up_initiated', {
+            'Popup Source': 'Region Pop-up',
+          });
         }, 5_000);
       }, 0);
     }
   }, [status]);
 
+  const setPopupOpen = (e: boolean) => {
+    if (e === false) {
+      posthog.capture('conversion pop up_closed', {
+        'Popup Source': 'Region Pop-up',
+      });
+    }
+    setOpen(e);
+  };
+
   if (!isMD) {
     return (
       <Mobile
         open={open}
-        setOpen={setOpen}
+        setOpen={setPopupOpen}
         st={st}
         totalUsers={stat?.totalUsers}
       />
@@ -92,7 +99,7 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
   return (
     <Desktop
       open={open}
-      setOpen={setOpen}
+      setOpen={setPopupOpen}
       st={st}
       totalUsers={stat?.totalUsers}
     />
@@ -106,7 +113,7 @@ const Mobile = ({
   totalUsers,
 }: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (e: boolean) => void;
   st: Superteam;
   totalUsers: number | undefined;
 }) => {
@@ -139,7 +146,7 @@ const Desktop = ({
   totalUsers,
 }: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (e: boolean) => void;
   st: Superteam;
   totalUsers: number | undefined;
 }) => {
