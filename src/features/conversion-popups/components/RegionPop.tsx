@@ -1,14 +1,23 @@
+import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import {
   type Dispatch,
   type SetStateAction,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 
+import { UserFlag } from '@/components/shared/UserFlag';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupList,
+  AvatarImage,
+} from '@/components/ui/avatar';
 import {
   Dialog,
   DialogContent,
@@ -25,30 +34,29 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type Superteam } from '@/constants/Superteam';
+import { userCountQuery } from '@/features/home';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 import { showAnyPopupAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
-interface GrantInfo {
-  title: string;
-  description: string;
-  icon: string;
-}
-const grantInfo: GrantInfo = {
-  title: 'Ready to build out your next idea?',
-  description:
-    'Apply to grants worth thousands of dollars with a single profile.',
-  icon: '/assets/icons/bank.png',
-};
-
 export const RegionPop = ({ st }: { st: Superteam }) => {
   const [showAnyPopup, setShowAnyPopup] = useAtom(showAnyPopupAtom);
-  console.log('st', st);
 
   const [open, setOpen] = useState(false);
   const { status } = useSession();
+
+  const activateQuery = useMemo(
+    () => status === 'unauthenticated' && showAnyPopup,
+    [status, showAnyPopup],
+  );
+
+  const { data: stat } = useQuery({
+    ...userCountQuery,
+    enabled: activateQuery,
+  });
 
   const isMD = useBreakpoint('md');
 
@@ -71,41 +79,53 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
   }, [status]);
 
   if (!isMD) {
-    return <Mobile open={open} setOpen={setOpen} variant={grantInfo} />;
+    return (
+      <Mobile
+        open={open}
+        setOpen={setOpen}
+        st={st}
+        totalUsers={stat?.totalUsers}
+      />
+    );
   }
 
-  return <Desktop open={open} setOpen={setOpen} variant={grantInfo} />;
+  return (
+    <Desktop
+      open={open}
+      setOpen={setOpen}
+      st={st}
+      totalUsers={stat?.totalUsers}
+    />
+  );
 };
 
 const Mobile = ({
   open,
   setOpen,
-  variant,
+  st,
+  totalUsers,
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  variant: GrantInfo;
+  st: Superteam;
+  totalUsers: number | undefined;
 }) => {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <Image
-            src={variant?.icon || ''}
-            alt={`${variant?.title}`}
-            width={100}
-            height={100}
-            className="w-12 rounded-md object-contain"
-          />
+          <UserFlag isCode location={st.code} size="44px" />
           <DrawerTitle className="pt-2 text-base font-semibold">
-            {variant?.title}
+            Exclusive opportunities for {st.nationality}
           </DrawerTitle>
           <DrawerDescription className="text-sm text-slate-500">
-            {variant?.description}
+            Sign up and receive exclusive opportunities available only to{' '}
+            {st.nationality}.
           </DrawerDescription>
         </DrawerHeader>
-        <DrawerFooter className="pt-0">
+        <DrawerFooter className="flex-col gap-4 pt-0 sm:flex-col">
           <GetStarted />
+          <People st={st} totalUsers={totalUsers} />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
@@ -115,34 +135,71 @@ const Mobile = ({
 const Desktop = ({
   open,
   setOpen,
-  variant,
+  st,
+  totalUsers,
 }: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  variant: GrantInfo;
+  st: Superteam;
+  totalUsers: number | undefined;
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-md bg-white" hideCloseIcon>
         <DialogHeader className="">
-          <Image
-            src={variant?.icon || ''}
-            alt={`${variant?.title}`}
-            width={100}
-            height={100}
-            className="w-12 rounded-md object-contain"
-          />
+          <UserFlag location={st.code} size="44px" />
           <DialogTitle className="pt-2 text-base font-semibold">
-            {variant?.title}
+            Exclusive opportunities for {st.nationality}
           </DialogTitle>
           <DialogDescription className="text-sm text-slate-500">
-            {variant?.description}
+            Sign up and receive exclusive opportunities available only to{' '}
+            {st.nationality}.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="">
+        <DialogFooter className="flex-col gap-4 sm:flex-col">
           <GetStarted />
+          <People st={st} totalUsers={totalUsers} />
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+};
+
+const dummyUsers = [
+  { name: 'Kash', pfp: ASSET_URL + '/pfps/t1.webp' },
+  { name: 'Neil', pfp: ASSET_URL + '/pfps/md2.webp' },
+  { name: 'Pratik', pfp: ASSET_URL + '/pfps/fff1.webp' },
+];
+
+const People = ({
+  st,
+  totalUsers,
+}: {
+  st: Superteam;
+  totalUsers: number | undefined;
+}) => {
+  const people = useMemo(
+    () => [...(st.people || []), ...dummyUsers].slice(0, 3),
+    [st.people],
+  );
+  return (
+    <div className="flex items-center gap-5">
+      <AvatarGroup className="-space-x-2">
+        <AvatarGroupList>
+          {people.map((p) => (
+            <Avatar key={p.name} className="h-7 w-7">
+              <AvatarImage src={p.pfp} />
+              <AvatarFallback>
+                {p.name.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          ))}
+        </AvatarGroupList>
+      </AvatarGroup>
+      <p className="text-sm text-slate-500">
+        Join {people[0]?.name.split(' ')[0]}, {people[1]?.name.split(' ')[0]} &{' '}
+        {totalUsers?.toLocaleString('en-us')} others
+      </p>
+    </div>
   );
 };

@@ -5,6 +5,7 @@ import React from 'react';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { type Superteam, Superteams } from '@/constants/Superteam';
+import { RegionPop } from '@/features/conversion-popups';
 import { GrantsCard } from '@/features/grants';
 import {
   ListingSection,
@@ -42,6 +43,7 @@ const RegionsPage = ({
           og={ogImage.toString()}
         />
         <div className="w-full">
+          <RegionPop st={st} />
           <ListingTabs
             bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}
