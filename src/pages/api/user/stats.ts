@@ -87,8 +87,6 @@ export default async function handler(
       public: true,
       // 1 day
       maxAge: 24 * 60 * 60,
-      sMaxAge: 0, // will not work since authorized request
-      staleWhileRevalidate: 60 * 60, // 1 hour
     });
     return res.status(200).json({
       participations,
