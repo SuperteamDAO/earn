@@ -92,7 +92,7 @@ export const SkillSelect = ({
             label={`Select all that apply`}
             placement="right-end"
           >
-            <Info />
+            <Info className="-ml-2 mb-3 h-3 w-3 text-slate-500" />
           </Tooltip>
         </Flex>
         {helperText && (
@@ -149,7 +149,7 @@ export const SkillSelect = ({
             label={`Select all that apply`}
             placement="right-end"
           >
-            <Info />
+            <Info className="-ml-2 mb-3 h-3 w-3 text-slate-500" />
           </Tooltip>
         </Flex>
         <ReactSelect
