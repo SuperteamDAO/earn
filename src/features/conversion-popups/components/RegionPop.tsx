@@ -154,7 +154,7 @@ const Desktop = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-md bg-white" hideCloseIcon>
         <DialogHeader className="">
-          <UserFlag location={st.code} size="44px" />
+          <UserFlag location={st.code} isCode size="44px" />
           <DialogTitle className="pt-2 text-base font-semibold">
             Exclusive opportunities for {st.nationality}
           </DialogTitle>

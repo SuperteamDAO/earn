@@ -1,69 +1,71 @@
-import { type NextApiRequest, type NextApiResponse } from 'next';
-import { z } from 'zod';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
-const CategoryEnum = z.enum(['design', 'content', 'development', 'other']);
-type CategoryKeys = z.infer<typeof CategoryEnum>;
-
-const querySchema = z.object({
-  filter: CategoryEnum,
-});
-
-export default async function categoryEarnings(
-  req: NextApiRequest,
+export default async function handler(
+  _req: NextApiRequest,
   res: NextApiResponse,
 ) {
   try {
-    const { filter } = querySchema.parse(req.query);
+    const bountiesCount = await prisma.bounties.count({
+      where: {
+        isPublished: true,
+      },
+    });
 
-    const filterToSkillsMap: Record<CategoryKeys, string[]> = {
-      development: ['Frontend', 'Backend', 'Blockchain', 'Mobile'],
-      design: ['Design'],
-      content: ['Content'],
-      other: ['Other', 'Growth', 'Community'],
-    };
-
-    const skillsToFilter = filterToSkillsMap[filter] || [];
-    let skillsFilter = {};
-
-    if (skillsToFilter.length > 0) {
-      if (filter === 'development' || filter === 'other') {
-        skillsFilter = {
-          OR: skillsToFilter.map((skill) => ({
-            skills: {
-              path: '$[*].skills',
-              array_contains: [skill],
-            },
-          })),
-        };
-      } else {
-        skillsFilter = {
-          skills: {
-            path: '$[*].skills',
-            array_contains: skillsToFilter,
-          },
-        };
-      }
-    }
-
-    const result = await prisma.bounties.aggregate({
+    const totalRewardAmountResult = await prisma.bounties.aggregate({
+      _sum: {
+        usdValue: true,
+      },
       where: {
         isWinnersAnnounced: true,
         isPublished: true,
         status: 'OPEN',
-        ...skillsFilter,
-      },
-      _sum: {
-        usdValue: true,
       },
     });
 
-    return res.status(200).json({
-      totalEarnings: result._sum.usdValue || 0,
+    const totalApprovedGrantAmountResult =
+      await prisma.grantApplication.aggregate({
+        _sum: {
+          approvedAmountInUSD: true,
+        },
+        where: {
+          OR: [
+            {
+              applicationStatus: 'Approved',
+            },
+            {
+              applicationStatus: 'Completed',
+            },
+          ],
+        },
+      });
+
+    const totalListingRewardAmount = totalRewardAmountResult._sum.usdValue || 0;
+    const totalApprovedGrantAmount =
+      totalApprovedGrantAmountResult._sum.approvedAmountInUSD || 0;
+
+    const roundedTotalRewardAmount =
+      Math.ceil((totalListingRewardAmount + totalApprovedGrantAmount) / 10) *
+      10;
+
+    logger.info('Successfully fetched counts and totals', {
+      totalInUSD: roundedTotalRewardAmount,
+      count: bountiesCount,
     });
-  } catch (error) {
-    console.error('Error in categoryEarnings:', error);
-    return res.status(400).json({ error: 'Invalid request' });
+
+    return res.status(200).json({
+      totalInUSD: roundedTotalRewardAmount,
+      count: bountiesCount,
+    });
+  } catch (error: any) {
+    logger.error('Error occurred while fetching totals and counts', {
+      error: error.message,
+    });
+
+    return res.status(500).json({
+      error: 'An error occurred while fetching the total reward amount',
+    });
   }
 }

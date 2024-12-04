@@ -75,7 +75,7 @@ export const Superteams = [
     country: ['United Kingdom'],
     code: 'GB',
     hello: 'Hello',
-    nationality: 'British',
+    nationality: 'the British',
     people: [
       {
         name: 'Cap',
@@ -212,7 +212,7 @@ export const Superteams = [
     ],
     code: 'BALKAN',
     hello: 'Pozdrav',
-    nationality: 'Balkan nationals',
+    nationality: 'Balkans',
     people: [
       {
         name: 'Primordial',

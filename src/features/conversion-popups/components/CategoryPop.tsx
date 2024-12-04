@@ -21,6 +21,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { categoryEarningsQuery } from '@/features/listings';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { type CategoryKeys } from '@/pages/api/listings/category-earnings';
@@ -145,7 +146,7 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
           setVariant({
             title: '',
             description: '',
-            icon: `/assets/category_assets/icons/${category}.png`,
+            icon: ASSET_URL + `/category_assets/icons/${category}.png`,
             ...currentCategoryInfo[newVariant],
           });
 

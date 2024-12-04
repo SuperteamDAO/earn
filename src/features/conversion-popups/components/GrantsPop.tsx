@@ -1,5 +1,4 @@
 import { useAtom } from 'jotai';
-import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
@@ -20,6 +19,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 import { showAnyPopupAtom } from '../atoms';
@@ -34,7 +34,7 @@ const grantInfo: GrantInfo = {
   title: 'Ready to build out your next idea?',
   description:
     'Apply to grants worth thousands of dollars with a single profile.',
-  icon: '/assets/icons/bank.png',
+  icon: ASSET_URL + '/icons/bank-2.png',
 };
 
 export const GrantsPop = () => {
@@ -96,11 +96,11 @@ const Mobile = ({
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <Image
+          <img
             src={variant?.icon || ''}
             alt={`${variant?.title}`}
-            width={100}
-            height={100}
+            width={48}
+            height={48}
             className="w-12 rounded-md object-contain"
           />
           <DrawerTitle className="pt-2 text-base font-semibold">
@@ -131,11 +131,11 @@ const Desktop = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-md bg-white" hideCloseIcon>
         <DialogHeader className="">
-          <Image
+          <img
             src={variant?.icon || ''}
             alt={`${variant?.title}`}
-            width={100}
-            height={100}
+            width={48}
+            height={48}
             className="w-12 rounded-md object-contain"
           />
           <DialogTitle className="pt-2 text-base font-semibold">

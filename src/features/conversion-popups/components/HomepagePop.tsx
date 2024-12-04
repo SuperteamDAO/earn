@@ -1,7 +1,6 @@
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -29,30 +28,28 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { userCountQuery } from '@/features/home';
 import { liveOpportunitiesQuery } from '@/features/listings';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { formatNumberWithSuffix } from '@/utils';
 
-import Female1 from '../../../../public/assets/conversion-popups/female_1.png';
-import Male1 from '../../../../public/assets/conversion-popups/male_1.png';
-import Male2 from '../../../../public/assets/conversion-popups/male_2.png';
 import { showAnyPopupAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 const avatars = [
   {
     name: 'Abhishkek',
-    src: '/assets/pfps/t1.webp',
+    src: ASSET_URL + '/pfps/t1.webp',
   },
   {
     name: 'Pratik',
-    src: '/assets/pfps/md2.webp',
+    src: ASSET_URL + '/pfps/md2.webp',
   },
   {
     name: 'Yash',
-    src: '/assets/pfps/fff1.webp',
+    src: ASSET_URL + '/pfps/fff1.webp',
   },
 ];
 
@@ -215,6 +212,10 @@ const Desktop = ({
   );
 };
 
+const Female1 = ASSET_URL + '/avatars/female_1';
+const Male1 = ASSET_URL + '/avatars/male_1';
+const Male2 = ASSET_URL + '/avatars/male_2';
+
 const DesktopVariantOne = ({
   totalUsers,
 }: {
@@ -223,9 +224,9 @@ const DesktopVariantOne = ({
   return (
     <>
       <div className="flex h-44 items-center justify-center bg-slate-50 p-0">
-        <Image src={Female1} alt="female 2" />
-        <Image src={Male1} alt="male 1" />
-        <Image src={Male2} alt="male 2" />
+        <img src={Female1} alt="female 2" width={68} height={68} />
+        <img src={Male1} alt="male 1" width={59} height={59} />
+        <img src={Male2} alt="male 2" width={63} height={63} />
       </div>
       <DialogHeader className="px-6">
         <DialogTitle className="text-base font-semibold">
