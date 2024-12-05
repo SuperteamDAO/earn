@@ -1,6 +1,5 @@
 import { WarningIcon } from '@chakra-ui/icons';
 import {
-  Box,
   Flex,
   Image,
   Table,
@@ -125,7 +124,7 @@ export function RightSideBar({
   }
 
   return (
-    <Box w={{ base: 'full', md: 'auto' }} h="full">
+    <div className="h-full w-full md:w-auto">
       <VStack gap={2} w="full" pt={4}>
         <VStack
           justify={'center'}
@@ -136,9 +135,9 @@ export function RightSideBar({
         >
           {!router.asPath.split('/')[4]?.includes('submission') &&
             listing.isWinnersAnnounced && (
-              <Box display={{ base: 'block', md: 'none' }} w="full" pb={6}>
+              <div className="block w-full pb-6 md:hidden">
                 <ListingWinners bounty={listing} />
-              </Box>
+              </div>
             )}
           <VStack justify={'space-between'} w={'full'} px={1} pb={4}>
             <TableContainer w={'full'}>
@@ -199,11 +198,7 @@ export function RightSideBar({
               </Table>
             </TableContainer>
           </VStack>
-          <Box
-            w="100%"
-            borderColor={'brand.slate.100'}
-            borderBottomWidth={'1px'}
-          />
+          <div className="w-full border-b border-slate-100" />
           <Flex justify={'space-between'} w={'full'} py={!rewards ? 3 : 0}>
             {hasHackathonStarted ? (
               <>
@@ -299,7 +294,7 @@ export function RightSideBar({
             )}
           </Flex>
 
-          <Box w="full">
+          <div className="w-full">
             <SubmissionActionButton listing={listing} isTemplate={isTemplate} />
             {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
               <Flex gap="2" w="full" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
@@ -310,8 +305,8 @@ export function RightSideBar({
                 </Text>
               </Flex>
             )}
-          </Box>
-          <Box w="full">
+          </div>
+          <div className="w-full">
             <ExtraInfoSection
               skills={skills}
               region={listing.region}
@@ -319,13 +314,8 @@ export function RightSideBar({
               pocSocials={listing.pocSocials}
               Hackathon={listing.Hackathon}
             />
-          </Box>
-          <Box
-            display={{ base: 'none', md: 'block' }}
-            w={'full'}
-            py={8}
-            fontSize="sm"
-          >
+          </div>
+          <div className="font-sm hidden w-full py-8 md:block">
             {listing.id && (
               <RelatedListings
                 isHackathon={!!listing.hackathonId}
@@ -352,9 +342,9 @@ export function RightSideBar({
                 </Flex>
               </RelatedListings>
             )}
-          </Box>
+          </div>
         </VStack>
       </VStack>
-    </Box>
+    </div>
   );
 }

@@ -234,7 +234,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                           ' ' +
                           row.name.split(' ')[1]?.slice(0, 1).toUpperCase()}
                       </Text>
-                      <Flex align={'center'} gap={2}>
+                      <div className="flex items-center gap-2">
                         <Text
                           display={{ base: 'none', md: 'block' }}
                           overflowX="hidden"
@@ -247,7 +247,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                         {row.location && (
                           <UserFlag size="12px" location={row.location} />
                         )}
-                      </Flex>
+                      </div>
                       <Text
                         display={{ base: 'none', md: 'block' }}
                         overflowX="hidden"
@@ -413,7 +413,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                           ' ' +
                           user.lastName?.slice(0, 1).toUpperCase()}
                       </Text>
-                      <Flex align={'center'} gap={2}>
+                      <div className="flex items-center gap-2">
                         <Text
                           display={{ base: 'none', md: 'block' }}
                           overflowX="hidden"
@@ -426,7 +426,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                         {user.location && (
                           <UserFlag size="12px" location={user.location} />
                         )}
-                      </Flex>
+                      </div>
                       <Text
                         display={{ base: 'none', md: 'block' }}
                         overflowX="hidden"

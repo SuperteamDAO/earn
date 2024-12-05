@@ -1,19 +1,21 @@
-import {
-  Box,
-  Circle,
-  Flex,
-  Heading,
-  Image,
-  Link,
-  PinInput,
-  PinInputField,
-  Text,
-} from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { Mail } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { EmailIcon } from '@/svg/email';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
 
 export default function VerifyRequest() {
   const [email, setEmail] = useState('');
@@ -35,58 +37,51 @@ export default function VerifyRequest() {
 
   return (
     <>
-      <Box py={3} borderBottomWidth={2}>
-        <Link as={NextLink} mx="auto" href="/">
+      <div className="border-b-2 py-3">
+        <Link href="/" className="mx-auto block w-fit">
           <Image
-            h={6}
-            mx="auto"
-            cursor="pointer"
-            objectFit={'contain'}
-            alt={'Superteam Earn'}
-            onClick={() => {
-              router.push('/');
-            }}
-            src={'/assets/logo.svg'}
+            height={24}
+            width={100}
+            className="mx-auto cursor-pointer object-contain"
+            alt="Superteam Earn"
+            src="/assets/logo.svg"
           />
         </Link>
-      </Box>
-      <Flex align="center" justify="center" direction="column" h="60vh" px={3}>
-        <Heading
-          mt={16}
-          color="#1E293B"
-          fontSize={{ base: '2xl', md: '28' }}
-          textAlign={'center'}
-        >
+      </div>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center px-3">
+        <h1 className="mt-16 text-center text-2xl text-[#1E293B] md:text-[28px]">
           We just sent an OTP
-        </Heading>
-        <Text
-          color="#475569"
-          fontSize={{ base: 'lg', md: '20' }}
-          textAlign={'center'}
-        >
+        </h1>
+        <p className="text-center text-lg text-[#475569] md:text-xl">
           On your email {email}
-        </Text>
-        <Circle mx="auto" my={16} bg="#EEF2FF" size={32}>
-          <EmailIcon />
-        </Circle>
-        <Flex gap={1.5}>
-          <PinInput
-            autoFocus
-            colorScheme="purple"
-            focusBorderColor="brand.purple"
-            onComplete={verifyOTP}
-            otp
-            size={'lg'}
-          >
-            <PinInputField borderColor={'gray.400'} />
-            <PinInputField borderColor={'gray.400'} />
-            <PinInputField borderColor={'gray.400'} />
-            <PinInputField borderColor={'gray.400'} />
-            <PinInputField borderColor={'gray.400'} />
-            <PinInputField borderColor={'gray.400'} />
-          </PinInput>
-        </Flex>
-      </Flex>
+        </p>
+        <div className="mx-auto my-16 flex h-32 w-32 items-center justify-center rounded-full bg-[#EEF2FF]">
+          <Mail size={32} />
+        </div>
+        <FormField
+          name="otp"
+          render={() => (
+            <FormItem>
+              <FormControl>
+                <InputOTP maxLength={6} onComplete={verifyOTP}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} className="border-gray-400" />
+                    <InputOTPSlot index={1} className="border-gray-400" />
+                    <InputOTPSlot index={2} className="border-gray-400" />
+                  </InputOTPGroup>
+                  <InputOTPSeparator />
+                  <InputOTPGroup>
+                    <InputOTPSlot index={3} className="border-gray-400" />
+                    <InputOTPSlot index={4} className="border-gray-400" />
+                    <InputOTPSlot index={5} className="border-gray-400" />
+                  </InputOTPGroup>
+                </InputOTP>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
     </>
   );
 }

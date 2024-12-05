@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Center,
   Flex,
@@ -65,25 +64,11 @@ export function ListingWinners({ bounty }: Props) {
   }
 
   return (
-    <Box
-      pos="relative"
-      w="full"
-      maxW={'7xl'}
-      mx={'auto'}
-      px={4}
-      pt={4}
-      bg="#F5F3FF"
-      rounded="lg"
-    >
+    <div className="relative mx-auto w-full max-w-7xl rounded-lg bg-gray-50 px-4 pt-4">
       <div className="flex justify-between gap-2">
-        <Text
-          mx={3}
-          color="brand.slate.500"
-          fontSize={{ md: 'xl' }}
-          fontWeight={600}
-        >
+        <p className="mx-3 font-semibold text-slate-500 md:text-xl">
           🎉 Winners
-        </Text>
+        </p>
         <NextLink href={openWinnerLink() ?? '#'} target="_blank">
           <Button
             className="ph-no-capture"
@@ -120,15 +105,9 @@ export function ListingWinners({ bounty }: Props) {
           </Button>
         </NextLink>
       </div>
-      <Box mx={3} mt={{ base: 2, md: 0 }}>
-        <Box
-          w="full"
-          px={{ base: 3, md: 4 }}
-          py={{ base: 4, md: 4 }}
-          color="white"
-          rounded="md"
-        >
-          <Flex align="center" justify="center" wrap="wrap" gap={10}>
+      <div className="mx-3 mt-2 md:mt-0">
+        <div className="w-full rounded-md bg-white px-3 py-4 md:px-4">
+          <div className="flex flex-wrap items-center justify-center gap-10">
             {getOrRemoveBonuses(submissions, true)
               .slice(0, 3)
               .map((submission) => (
@@ -202,9 +181,9 @@ export function ListingWinners({ bounty }: Props) {
                   </Flex>
                 </NextLink>
               ))}
-          </Flex>
-        </Box>
-      </Box>
+          </div>
+        </div>
+      </div>
       {(getOrRemoveBonuses(submissions, true).length > 3 ||
         getOrRemoveBonuses(submissions, false).length > 0) && (
         <HStack
@@ -219,7 +198,7 @@ export function ListingWinners({ bounty }: Props) {
             ...getOrRemoveBonuses(submissions, true).slice(3),
             ...getOrRemoveBonuses(submissions, false),
           ].map((submission) => (
-            <Box key={submission.id}>
+            <div key={submission.id}>
               <Tooltip label={submission?.user?.firstName}>
                 <Link
                   key={submission.id}
@@ -238,10 +217,10 @@ export function ListingWinners({ bounty }: Props) {
                   />
                 </Link>
               </Tooltip>
-            </Box>
+            </div>
           ))}
         </HStack>
       )}
-    </Box>
+    </div>
   );
 }

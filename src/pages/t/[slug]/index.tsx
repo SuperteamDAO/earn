@@ -259,7 +259,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
           <EmptySection message="Sorry! The profile you are looking for is not available." />
         )}
         {!!talent?.id && (
-          <Box bg="white">
+          <div className="bg-white">
             <Box
               w="100%"
               h={{ base: '100px', md: '30vh' }}
@@ -278,7 +278,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
               bg="white"
               borderRadius={'20px'}
             >
-              <Flex justify={'space-between'}>
+              <div className="flex justify-between">
                 <div>
                   <EarnAvatar
                     size={isMD ? '64px' : '52px'}
@@ -331,7 +331,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       })}
                   {renderButton(<ShareIcon />, 'Share', onOpen, true)}
                 </Flex>
-              </Flex>
+              </div>
               <ShareProfile
                 username={talent?.username as string}
                 isOpen={isOpen}
@@ -607,7 +607,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 </FeedLoop>
               </div>
             </Box>
-          </Box>
+          </div>
         )}
         <AddProject
           isOpen={isOpenPow}

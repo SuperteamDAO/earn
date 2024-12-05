@@ -120,10 +120,10 @@ export const DesktopNavbar = () => {
           spacing={4}
         >
           {status === 'loading' && !session && (
-            <Flex align={'center'} gap={2}>
+            <div className="flex items-center gap-2">
               <SkeletonCircle size="10" />
               <SkeletonText w={'80px'} noOfLines={1} />
-            </Flex>
+            </div>
           )}
 
           <HStack gap={2}>

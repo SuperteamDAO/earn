@@ -1,6 +1,5 @@
 import { ArrowUpIcon } from '@chakra-ui/icons';
 import {
-  Box,
   Button,
   HStack,
   Icon,
@@ -8,7 +7,6 @@ import {
   Link,
   LinkBox,
   LinkOverlay,
-  Text,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -92,25 +90,17 @@ export const SubmissionCard = ({
               id={talent?.id}
               avatar={talent?.photo || undefined}
             />
-            <Text
-              overflow={'hidden'}
-              maxW="8rem"
-              color={'gray.900'}
-              fontSize={'md'}
-              fontWeight={500}
-              whiteSpace={'nowrap'}
-              textOverflow={'ellipsis'}
-            >
+            <p className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium text-gray-900">
               {talent?.firstName} {talent?.lastName}
-            </Text>
+            </p>
           </div>
         </Link>
         {winner && (
-          <Box flexGrow={1} pr={1}>
-            <Box w="fit-content" ml="auto">
+          <div className="flex-grow pr-1">
+            <div className="ml-auto w-fit">
               <Badge position={winnerPosition} />
-            </Box>
-          </Box>
+            </div>
+          </div>
         )}
       </HStack>
       <LinkOverlay as={NextLink} w="full" href={`/feed/submission/${id}`}>
@@ -185,9 +175,7 @@ export const SubmissionCard = ({
           }
           variant="outline"
         >
-          <Text ml={24} fontSize={'17px'}>
-            View
-          </Text>
+          <p className="ml-24 text-base">View</p>
         </Button>
       </Link>
     </LinkBox>

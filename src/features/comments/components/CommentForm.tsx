@@ -1,14 +1,15 @@
-import { Box, Button, Collapse, Flex, Text, VStack } from '@chakra-ui/react';
 import { type CommentRefType } from '@prisma/client';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { AuthWrapper } from '@/features/auth';
 import { EarnAvatar } from '@/features/talent';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 import { UserSuggestionTextarea } from './UserSuggestionTextarea';
 
@@ -20,6 +21,7 @@ interface Props {
   poc?: User | undefined;
   onSuccess?: (newComment: Comment) => void;
 }
+
 export const CommentForm = ({
   defaultSuggestions,
   refId,
@@ -34,6 +36,7 @@ export const CommentForm = ({
   const [newComment, setNewComment] = useState('');
   const [newCommentLoading, setNewCommentLoading] = useState(false);
   const [newCommentError, setNewCommentError] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const addNewComment = async () => {
     posthog.capture('publish_comment');
@@ -71,53 +74,41 @@ export const CommentForm = ({
     localStorage.setItem(`comment-${refId}`, newComment);
   }, [newComment]);
 
+  useEffect(() => {
+    setIsCollapsed(!newComment);
+  }, [newComment]);
+
   return (
-    <VStack gap={4} w={'full'} mb={4} cursor="default">
-      <Flex gap={3} w="full">
+    <div className="mb-4 flex w-full flex-col gap-4">
+      <div className="flex w-full gap-3">
         <EarnAvatar size={'36px'} id={user?.id} avatar={user?.photo} />
-        <Box pos={'relative'} w="full" mt={0.5}>
+        <div className="relative mt-0.5 w-full">
           <UserSuggestionTextarea
             defaultSuggestions={defaultSuggestions}
-            pt={0}
-            fontSize={{
-              base: 'sm',
-              md: 'md',
-            }}
-            borderColor="brand.slate.200"
-            _placeholder={{
-              color: 'brand.slate.400',
-            }}
-            focusBorderColor="brand.purple"
             placeholder="Write a comment"
             value={newComment}
             setValue={setNewComment}
             variant="flushed"
           />
-        </Box>
-      </Flex>
+        </div>
+      </div>
       {!!newCommentError && (
-        <Text mt={4} color="red">
+        <p className="mt-4 text-red-500">
           Error in adding your comment! Please try again!
-        </Text>
+        </p>
       )}
-      <Collapse
-        in={!!newComment}
-        style={{ width: '100%' }}
-        unmountOnExit={true}
+      <div
+        className={cn(
+          'transform transition-all duration-200 ease-in-out',
+          isCollapsed ? 'h-0 opacity-0' : 'h-auto opacity-100',
+        )}
       >
-        <Flex justify={'end'} gap={4} w="full">
+        <div className="flex w-full justify-end gap-4">
           <Button
-            h="auto"
-            px={5}
-            py={2}
-            fontSize={{
-              base: 'xx-small',
-              md: 'sm',
-            }}
-            fontWeight={500}
-            isDisabled={!!newCommentLoading || !newComment}
-            onClick={() => setNewComment('')}
             variant="ghost"
+            className="h-auto px-5 py-2 text-[10px] font-medium md:text-sm"
+            disabled={newCommentLoading || !newComment}
+            onClick={() => setNewComment('')}
           >
             Cancel
           </Button>
@@ -128,25 +119,16 @@ export const CommentForm = ({
             }
           >
             <Button
-              h="auto"
-              px={5}
-              py={2}
-              fontSize={{
-                base: 'xx-small',
-                md: 'sm',
-              }}
-              fontWeight={500}
-              isDisabled={!!newCommentLoading || !newComment || isTemplate}
-              isLoading={!!newCommentLoading}
-              loadingText="Adding..."
-              onClick={() => handleSubmit()}
-              variant="solid"
+              variant="default"
+              className="h-auto px-5 py-2 text-[10px] font-medium md:text-sm"
+              disabled={newCommentLoading || !newComment || isTemplate}
+              onClick={handleSubmit}
             >
-              Comment
+              {newCommentLoading ? 'Adding...' : 'Comment'}
             </Button>
           </AuthWrapper>
-        </Flex>
-      </Collapse>
-    </VStack>
+        </div>
+      </div>
+    </div>
   );
 };

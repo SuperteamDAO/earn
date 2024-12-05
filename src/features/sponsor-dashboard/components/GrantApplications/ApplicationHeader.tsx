@@ -6,7 +6,6 @@ import {
   ExternalLinkIcon,
 } from '@chakra-ui/icons';
 import {
-  Box,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -76,7 +75,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
 
   return (
     <>
-      <Box mb={2}>
+      <div className="mb-2">
         <Breadcrumb color="brand.slate.400">
           <BreadcrumbItem>
             <Link as={NextLink} href={'/dashboard/listings'} passHref>
@@ -92,13 +91,11 @@ export const ApplicationHeader = ({ grant }: Props) => {
             <Text color="brand.slate.400"> {grant?.title}</Text>
           </BreadcrumbItem>
         </Breadcrumb>
-      </Box>
+      </div>
       <Flex align="center" justify={'space-between'} mb={4}>
         <Flex align="center" gap={2}>
           <Image h={6} alt="" src={`/assets/grant-icon.svg`} />
-          <Text color="brand.slate.800" fontSize="xl" fontWeight="700">
-            {grant?.title}
-          </Text>
+          <p className="text-slate text-xl font-bold">{grant?.title}</p>
         </Flex>
         <Flex align="center" gap={2}>
           <Button

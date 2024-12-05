@@ -787,7 +787,7 @@ function TrackBox({
 }: TrackProps) {
   return (
     <Tooltip label={hackathonIsOn ? '' : 'Details to be revealed on July 11.'}>
-      <Box w="full">
+      <div className="w-full">
         <Link
           as={NextLink}
           w="full"
@@ -863,7 +863,7 @@ function TrackBox({
             </Flex>
           </Box>
         </Link>
-      </Box>
+      </div>
     </Tooltip>
   );
 }
@@ -944,7 +944,7 @@ function Rankings({
                   gap={1}
                   lineHeight={{ base: 'normal', md: 1.15 }}
                 >
-                  <Flex align={'center'} gap={2}>
+                  <div className="flex items-center gap-2">
                     <Text
                       overflowX="hidden"
                       maxW={'7rem'}
@@ -954,7 +954,7 @@ function Rankings({
                     >
                       {r.user.firstName} {r.user.lastName}
                     </Text>
-                  </Flex>
+                  </div>
                   <Text
                     overflowX="hidden"
                     maxW={'7rem'}

@@ -1,4 +1,4 @@
-import { Box, FormLabel, Select } from '@chakra-ui/react';
+import { FormLabel, Select } from '@chakra-ui/react';
 
 interface SelectBoxProps {
   label: string;
@@ -20,7 +20,7 @@ export const SelectBox = ({
   required = false,
 }: SelectBoxProps) => {
   return (
-    <Box w={'full'} mb={'1.25rem'}>
+    <div className="mb-[1.25rem] w-full">
       <FormLabel color={'brand.slate.500'}>{label}</FormLabel>
       <Select
         color={watchValue?.length === 0 ? 'brand.slate.300' : ''}
@@ -39,6 +39,6 @@ export const SelectBox = ({
           );
         })}
       </Select>
-    </Box>
+    </div>
   );
 };

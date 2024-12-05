@@ -1,12 +1,10 @@
 import {
   Button,
-  HStack,
   Input,
   Link,
   Modal,
   ModalContent,
   ModalOverlay,
-  Text,
   VStack,
 } from '@chakra-ui/react';
 import axios from 'axios';
@@ -58,10 +56,8 @@ export const EntityNameModal = ({
       <ModalOverlay />
       <ModalContent gap={6} overflow="hidden" p={6} rounded="lg">
         <VStack align="start">
-          <Text fontSize="lg" fontWeight={500}>
-            Update Your Entity Name
-          </Text>
-          <Text color="brand.slate.400" fontSize="sm">
+          <p className="text-lg font-medium">Update Your Entity Name</p>
+          <p className="text-sm text-slate-400">
             In accordance with our updated{' '}
             <Link
               textDecoration={'underline'}
@@ -76,14 +72,14 @@ export const EntityNameModal = ({
             If you are a DAO, please mention the name of your DAO. If you{' '}
             {"don't "}
             have an entity, please mention your full name.
-          </Text>
+          </p>
         </VStack>
         <Input
           onChange={(e) => setEntityName(e.target.value)}
           placeholder="Entity Name"
           value={entityName}
         />
-        <HStack>
+        <div className="flex gap-2">
           <Link
             as={NextLink}
             w="full"
@@ -98,11 +94,11 @@ export const EntityNameModal = ({
           <Button w="full" isLoading={loading} onClick={setDBEntityName}>
             Update
           </Button>
-        </HStack>
+        </div>
         {error && (
-          <Text color="red" textAlign="center">
+          <p className="text-center text-red-500">
             Some Error occurred, please try again later
-          </Text>
+          </p>
         )}
       </ModalContent>
     </Modal>

@@ -1,6 +1,5 @@
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import {
-  Box,
   Button,
   Link,
   Modal,
@@ -72,13 +71,13 @@ export const FeatureModal = ({
     <Modal autoFocus={false} isOpen={isOpen} onClose={handleClose} size="sm">
       <ModalOverlay />
       <ModalContent overflow="hidden" rounded="lg">
-        <Box w="full" p={8} bg="#FAF5FF">
+        <div className="w-full bg-[#faf5ff] p-8">
           <img
             src={ASSET_URL + '/ScoutAnnouncement.png'}
             alt="Scouts Announcement Illustration"
             style={{ width: '92%', height: '100%' }}
           />
-        </Box>
+        </div>
         <VStack align="start" gap={3} p={6}>
           <Text fontSize="lg" fontWeight={600}>
             Introducing Scout
