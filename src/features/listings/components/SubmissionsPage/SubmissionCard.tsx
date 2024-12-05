@@ -13,7 +13,6 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import NextLink from 'next/link';
-import { useRouter } from 'next/router';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { LuHeart, LuMessageCircle } from 'react-icons/lu';
 import { toast } from 'sonner';
@@ -50,7 +49,6 @@ export const SubmissionCard = ({
   link,
 }: Props) => {
   const { user } = useUser();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { data: ogData } = useQuery(ogImageQuery(link));
   const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -176,10 +174,6 @@ export const SubmissionCard = ({
           color={'gray.400'}
           fontWeight={500}
           borderColor={'gray.300'}
-          onClick={(e) => {
-            e.stopPropagation();
-            router.push(link);
-          }}
           rightIcon={
             <ArrowUpIcon
               h={5}
