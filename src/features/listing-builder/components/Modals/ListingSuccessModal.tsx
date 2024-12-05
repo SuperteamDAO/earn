@@ -6,7 +6,7 @@ import { useWatch } from 'react-hook-form';
 import { FaXTwitter } from 'react-icons/fa6';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { useUser } from '@/store/user';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
@@ -53,7 +53,6 @@ export const ListingSuccessModal = () => {
 
   return (
     <Dialog open={confirmModal === 'SUCCESS'} onOpenChange={() => null}>
-      <DialogOverlay />
       <DialogContent
         hideCloseIcon
         className="flex max-w-sm flex-col items-start gap-4 overflow-hidden p-0"
@@ -119,7 +118,7 @@ export const ListingSuccessModal = () => {
               <Link
                 href={
                   isVerified
-                    ? `/listings/${type}/${slug}`
+                    ? `/listings/${type}/${slug?.replace(/^[-\s]+|[-\s]+$/g, '')}`
                     : '/dashboard/listings/'
                 }
                 className="flex items-center gap-1 hover:text-slate-700"
