@@ -33,18 +33,18 @@ import { type Superteam } from '@/constants/Superteam';
 import { userCountQuery } from '@/features/home';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 
-import { showAnyPopupAtom } from '../atoms';
+import { popupsShowedAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 export const RegionPop = ({ st }: { st: Superteam }) => {
-  const [showAnyPopup, setShowAnyPopup] = useAtom(showAnyPopupAtom);
+  const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
 
   const [open, setOpen] = useState(false);
   const { status } = useSession();
 
   const activateQuery = useMemo(
-    () => status === 'unauthenticated' && showAnyPopup,
-    [status, showAnyPopup],
+    () => status === 'unauthenticated' && popupsShowed < 2,
+    [status, popupsShowed],
   );
 
   const { data: stat } = useQuery({
@@ -60,14 +60,14 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
     if (
       !initated.current &&
       status === 'unauthenticated' &&
-      showAnyPopup &&
+      popupsShowed < 2 &&
       !open
     ) {
       initated.current = true;
       setTimeout(() => {
         setTimeout(() => {
           setOpen(true);
-          setShowAnyPopup(false);
+          setPopupsShowed((s) => s + 1);
           posthog.capture('conversion pop up_initiated', {
             'Popup Source': 'Region Pop-up',
           });
@@ -152,7 +152,7 @@ const Desktop = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-md bg-white" hideCloseIcon>
+      <DialogContent className="max-w-[22.5rem] bg-white p-5" hideCloseIcon>
         <DialogHeader className="">
           <UserFlag location={st.code} isCode size="44px" />
           <DialogTitle className="pt-2 text-base font-semibold">

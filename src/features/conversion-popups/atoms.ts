@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
 
-const showAnyPopupAtom = atom(true);
+const popupsShowedAtom = atom(0);
 
-export { showAnyPopupAtom };
+export { popupsShowedAtom };

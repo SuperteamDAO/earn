@@ -35,7 +35,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { formatNumberWithSuffix } from '@/utils';
 
-import { showAnyPopupAtom } from '../atoms';
+import { popupsShowedAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 const avatars = [
@@ -54,15 +54,15 @@ const avatars = [
 ];
 
 export const HomepagePop = () => {
-  const [showAnyPopup, setShowAnyPopup] = useAtom(showAnyPopupAtom);
+  const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
 
   const [variant, setVariant] = useState<number>(1);
   const [open, setOpen] = useState(false);
   const { status } = useSession();
 
   const activateQuery = useMemo(
-    () => status === 'unauthenticated' && showAnyPopup,
-    [status, showAnyPopup],
+    () => status === 'unauthenticated' && popupsShowed < 2,
+    [status, popupsShowed],
   );
 
   const { data: stat } = useQuery({
@@ -82,7 +82,7 @@ export const HomepagePop = () => {
     if (
       !initated.current &&
       status === 'unauthenticated' &&
-      showAnyPopup &&
+      popupsShowed < 2 &&
       !open
     ) {
       initated.current = true;
@@ -96,7 +96,7 @@ export const HomepagePop = () => {
             String(variant + 1),
           );
           setOpen(true);
-          setShowAnyPopup(false);
+          setPopupsShowed((s) => s + 1);
           posthog.capture('conversion pop up_initiated', {
             'Popup Source': 'Homepage Pop-up',
           });
@@ -198,13 +198,13 @@ const Desktop = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-md bg-white p-0" hideCloseIcon>
+      <DialogContent className="max-w-[22.5rem] bg-white p-0" hideCloseIcon>
         {variant % 2 === 0 ? (
           <DesktopVariantOne totalUsers={totalUsers} />
         ) : (
           <DesktopVariantTwo liveOpportunityWorth={liveOpportunityWorth} />
         )}
-        <DialogFooter className="p-6 pt-0">
+        <DialogFooter className="p-5 pt-0">
           <GetStarted />
         </DialogFooter>
       </DialogContent>
@@ -228,7 +228,7 @@ const DesktopVariantOne = ({
         <img src={Male1} alt="male 1" width={59} height={59} />
         <img src={Male2} alt="male 2" width={63} height={63} />
       </div>
-      <DialogHeader className="px-6">
+      <DialogHeader className="px-5">
         <DialogTitle className="text-base font-semibold">
           {!totalUsers ? (
             <>
@@ -273,7 +273,7 @@ const DesktopVariantTwo = ({
           )}
         </p>
       </div>
-      <DialogHeader className="px-6">
+      <DialogHeader className="px-5">
         <DialogTitle className="text-base font-semibold">
           Get access to oppurtunities worth $
           {formatNumberWithSuffix(liveOpportunityWorth || 0)}!

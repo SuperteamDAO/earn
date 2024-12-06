@@ -24,7 +24,7 @@ import { isDeadlineOver, type Listing } from '@/features/listings';
 import { bountySnackbarAtom } from '@/features/navbar';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 
-import { showAnyPopupAtom } from '../atoms';
+import { popupsShowedAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 interface VariantInfo {
@@ -58,7 +58,7 @@ const VariantInfo = (
 };
 
 export const ListingPop = ({ listing }: { listing: Listing | null }) => {
-  const [showAnyPopup, setShowAnyPopup] = useAtom(showAnyPopupAtom);
+  const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
 
   const [variant, setVariant] = useState<VariantInfo>();
   const [open, setOpen] = useState(false);
@@ -75,14 +75,14 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
       status === 'unauthenticated' &&
       listing?.status === 'OPEN' &&
       !isDeadlineOver(listing.deadline) &&
-      showAnyPopup &&
+      popupsShowed < 2 &&
       !open
     ) {
       initated.current = true;
       setTimeout(() => {
         setTimeout(() => {
           setOpen(true);
-          setShowAnyPopup(false);
+          setPopupsShowed((s) => s + 1);
           posthog.capture('conversion pop up_initiated', {
             'Popup Source': 'Listing Pop-up',
           });
@@ -137,7 +137,7 @@ const Desktop = ({
         }}
         unsetDefaultPosition
         unsetDefaultTransition
-        className="bottom-4 right-4 max-w-sm translate-x-0 translate-y-0 duration-500 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full"
+        className="bottom-4 right-4 max-w-[22.5rem] translate-x-0 translate-y-0 duration-500 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full"
       >
         <DialogHeader className="">
           <Image

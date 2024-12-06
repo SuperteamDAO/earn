@@ -27,7 +27,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { type CategoryKeys } from '@/pages/api/listings/category-earnings';
 import { formatNumberWithSuffix } from '@/utils';
 
-import { showAnyPopupAtom } from '../atoms';
+import { popupsShowedAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 type CategoryVariant = {
@@ -103,15 +103,15 @@ const getCategoryInfo = (
 type CategoryVariantInfo = CategoryVariant & { icon: string };
 
 export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
-  const [showAnyPopup, setShowAnyPopup] = useAtom(showAnyPopupAtom);
+  const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
 
   const [variant, setVariant] = useState<CategoryVariantInfo>();
   const [open, setOpen] = useState(false);
   const { status } = useSession();
 
   const activateQuery = useMemo(
-    () => status === 'unauthenticated' && showAnyPopup,
-    [status, showAnyPopup],
+    () => status === 'unauthenticated' && popupsShowed < 2,
+    [status, popupsShowed],
   );
 
   const { data: totalEarnings } = useQuery({
@@ -128,7 +128,7 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
     if (
       !initated.current &&
       status === 'unauthenticated' &&
-      showAnyPopup &&
+      popupsShowed < 2 &&
       totalEarnings?.totalEarnings &&
       !open
     ) {
@@ -152,7 +152,7 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
 
           localStorage.setItem('category-pop-variant', String(newVariant));
           setOpen(true);
-          setShowAnyPopup(false);
+          setPopupsShowed((s) => s + 1);
           posthog.capture('conversion pop up_initiated', {
             'Popup Source': 'Category Pop-up',
           });
@@ -223,7 +223,7 @@ const Desktop = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-md bg-white" hideCloseIcon>
+      <DialogContent className="max-w-[22.5rem] bg-white p-5" hideCloseIcon>
         <DialogHeader className="">
           <Image
             src={variant?.icon || ''}
