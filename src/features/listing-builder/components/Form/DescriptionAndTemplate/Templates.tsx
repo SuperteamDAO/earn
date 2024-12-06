@@ -194,8 +194,8 @@ export function Templates() {
                   </CardHeader>
 
                   <CardContent className="mt-4 space-y-4">
-                    <div>
-                      <h3 className="font-medium text-slate-700">
+                    <div className="">
+                      <h3 className="line-clamp-2 h-12 font-medium text-slate-700">
                         {template.title}
                       </h3>
                       {uniqueSponsors.length > 0 ? (
@@ -217,7 +217,7 @@ export function Templates() {
                               </div>
                             ))}
                           </div>
-                          <span className="text-xs text-slate-400">
+                          <span className="line-clamp-2 text-xs text-slate-400">
                             Used by {uniqueSponsors[0]?.name}
                             {uniqueSponsors[1] &&
                               ` & ${uniqueSponsors[1].name}`}

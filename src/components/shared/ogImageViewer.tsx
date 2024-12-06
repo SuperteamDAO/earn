@@ -16,15 +16,17 @@ interface Props {
   className?: string;
 }
 
-const getRandomFallbackImage = (): string => {
-  const basePath = '/assets/fallback/og';
-  const fallbackImages = Array.from(
-    { length: 11 },
-    (_, i) => `${basePath}/${i + 1}.webp`,
-  );
+const fallbackImageCache = new Map<number, string>();
 
-  const randomIndex = Math.floor(Math.random() * fallbackImages.length);
-  return fallbackImages[randomIndex]!;
+const getRandomFallbackImage = (): string => {
+  const randomNumber = Math.floor(Math.random() * 11) + 1;
+  if (!fallbackImageCache.has(randomNumber)) {
+    fallbackImageCache.set(
+      randomNumber,
+      `/assets/fallback/og/${randomNumber}.webp`,
+    );
+  }
+  return fallbackImageCache.get(randomNumber)!;
 };
 
 export const OgImageViewer = ({
@@ -36,7 +38,7 @@ export const OgImageViewer = ({
   id,
   className,
 }: Props) => {
-  const fallbackImage = getRandomFallbackImage();
+  const [fallbackImage] = useState(getRandomFallbackImage());
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
     imageUrl || null,
   );

@@ -74,7 +74,7 @@ const generateTabContent = ({
     return (
       <div className="ph-no-capture flex flex-col gap-1">
         {Array.from({ length: 8 }, (_, index) => (
-          <ListingCardSkeleton key={index} />
+          <ListingCardSkeleton key={`skeleton-${index}`} />
         ))}
       </div>
     );

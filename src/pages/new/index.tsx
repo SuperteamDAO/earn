@@ -282,7 +282,7 @@ export default function NewProfilePage({
               <img
                 className="h-8 object-contain"
                 alt="Solflare Icon"
-                src={ASSET_URL + '/company-logos/solflare.webp'}
+                src={ASSET_URL + '/landingsponsor/sponsors/solflare.webp'}
               />
               <img
                 className="hidden h-4 object-contain md:block"
