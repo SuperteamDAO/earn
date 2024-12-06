@@ -21,7 +21,7 @@ export const WinnerFeedImage = ({
         alt="winner"
         src={ASSET_URL + '/icons/celebration.png'}
       />
-      <div className="mt-4 flex w-full flex-col items-center justify-center gap-1 md:gap-4">
+      <div className="mt-4 flex w-full items-center justify-center gap-1 md:gap-4">
         <img
           className="h-8 w-8 md:h-16 md:w-16"
           alt={`${token} icon`}
