@@ -11,6 +11,8 @@ import {
   activeHackathonQuery,
   sponsorDashboardListingQuery,
 } from '@/features/sponsor-dashboard';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 
 import { ListingBuilder } from './ListingBuilder';
@@ -80,8 +82,18 @@ export function ListingBuilderLayout({ route, slug }: ListingBuilderLayout) {
   if (route !== 'new' && (!slug || !listing)) {
     return (
       <>
-        <Header />
-        <ErrorSection message="Sorry! The bounty you are looking for is not available." />
+        <Default
+          meta={
+            <Meta
+              title="Superteam Earn | Work to Earn in Crypto"
+              description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+              canonical="https://earn.superteam.fun"
+            />
+          }
+        >
+          <Header />
+          <ErrorSection message="Sorry! The bounty you are looking for is not available." />
+        </Default>
       </>
     );
   }

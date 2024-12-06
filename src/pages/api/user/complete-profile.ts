@@ -130,6 +130,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     ]);
 
     for (const category of categories) {
+      await prisma.emailSettings.deleteMany({
+        where: {
+          userId,
+          category,
+        },
+      });
       await prisma.emailSettings.create({
         data: {
           user: { connect: { id: userId as string } },
