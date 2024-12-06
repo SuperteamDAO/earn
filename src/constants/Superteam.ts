@@ -33,7 +33,7 @@ export const Superteams = [
     country: ['India'],
     code: 'IN',
     hello: 'Namaste',
-    nationality: 'Indian',
+    nationality: 'Indians',
     people: [
       {
         name: 'Aditya Shetty',
@@ -54,7 +54,7 @@ export const Superteams = [
     country: ['Germany'],
     code: 'DE',
     hello: 'Hallo',
-    nationality: 'German',
+    nationality: 'Germans',
     people: [
       {
         name: 'Carlo',

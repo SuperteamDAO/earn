@@ -128,9 +128,10 @@ export const createListingFormSchema = ({
         .min(1, 'Required')
         .max(120)
         .regex(
-          /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+          /^-*[a-z0-9]+(?:-[a-z0-9]+)*-*$/,
           'Slug should only contain lowercase alphabets, numbers, and hyphens',
-        ),
+        )
+        .transform((val) => val.replace(/^[-\s]+|[-\s]+$/g, '')),
       // we cannot call slug check api here,
       // coz once slug is dirty, any field other change will also trigger this
       pocSocials: z
@@ -263,7 +264,7 @@ export const createListingRefinements = async (
     if (!data.rewardAmount) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Please add rewards',
+        message: 'Please fill in the rewards',
         path: ['rewards'],
       });
     }
@@ -272,7 +273,7 @@ export const createListingRefinements = async (
       if (!data.rewards || Object.keys(data.rewards).length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Rewards is required for fixed compensation type',
+          message: 'Please fill in the rewards',
           path: ['rewards'],
         });
       }
