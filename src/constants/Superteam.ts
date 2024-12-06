@@ -173,6 +173,12 @@ export const Superteams = [
     code: 'BR',
     hello: 'Olá',
     nationality: 'Brazilians',
+    people: [
+      {
+        name: 'Diego Dias',
+        pfp: 'https://res.cloudinary.com/dgvnuwspr/image/upload/diego-dias.jpg',
+      },
+    ],
   },
   {
     name: 'Superteam Malaysia',
