@@ -92,7 +92,7 @@ const frontendTrack: TrackProps[] = [
     title: 'Oracle Aggregator',
 
     description:
-      'Display Orcale data using multiple sources for a DeFi application.',
+      'Display Oracle data using multiple sources for a DeFi application.',
     amount: 1000,
     token: 'USDC',
     link: slugLink('oracle-aggregator-st-talent-olympics'),
