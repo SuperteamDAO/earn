@@ -1,6 +1,6 @@
 import React, { type Dispatch, type SetStateAction } from 'react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { dayjs } from '@/utils/dayjs';
 
@@ -52,7 +52,7 @@ export const SubmissionList = ({
           </>
         ) : (
           <div className="flex h-[25rem] w-full flex-col items-center justify-center gap-5">
-            <img alt={'submission'} src={ASSET_URL + '/icons/submission.svg'} />
+            <ExternalImage alt={'submission'} src={'/icons/submission.svg'} />
             <p className="text-center text-2xl font-semibold text-gray-800">
               Submissions are not public until the submission deadline
               <br />

@@ -1,4 +1,3 @@
-import { Separator } from '@radix-ui/react-separator';
 import axios from 'axios';
 import { ChevronDown, ChevronUp, Edit2 } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
@@ -12,6 +11,8 @@ import { useInView } from 'react-intersection-observer';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ShareIcon } from '@/components/shared/shareIcon';
 import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type FeedDataProps, FeedLoop, useGetFeed } from '@/features/feed';
 import {
@@ -483,10 +484,10 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   isLoading={isLoading}
                 >
                   <>
-                    <img
+                    <ExternalImage
                       className="mx-auto mt-32 w-32"
                       alt={'talent empty'}
-                      src={ASSET_URL + '/bg/talent-empty.svg'}
+                      src={'/bg/talent-empty.svg'}
                     />
                     <p className="mx-auto mt-5 w-52 text-center font-medium text-slate-400">
                       {user?.id === talent?.id

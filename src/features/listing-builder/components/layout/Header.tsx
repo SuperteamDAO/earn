@@ -1,4 +1,3 @@
-import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { useIsFetching } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronLeft, Eye, Loader2 } from 'lucide-react';
@@ -10,7 +9,11 @@ import { useWatch } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tooltip, TooltipContent } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { UserMenu } from '@/features/navbar';
 import { cn } from '@/utils';
 

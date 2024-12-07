@@ -3,7 +3,6 @@ import NextLink from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useUser } from '@/store/user';
 
 import { fontSize, maxW, padding } from '../utils';
@@ -19,7 +18,7 @@ export function Hero() {
 
   const posthog = usePostHog();
 
-  const base = ASSET_URL + '/landingsponsor/sponsors/';
+  const base = '/landingsponsor/sponsors/';
 
   function getStartedWhere(authenticated: boolean, isSponsor: boolean) {
     if (!authenticated) return '/new/sponsor';

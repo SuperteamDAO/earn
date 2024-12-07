@@ -1,13 +1,13 @@
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 export function Introduction() {
   return (
     <div className="items-star flex w-full flex-col gap-4 rounded-xl bg-[#FAF5FF] p-6 text-sm">
       <div className="flex flex-col items-start">
-        <img
+        <ExternalImage
           className="h-7 w-7"
           alt="Medal"
-          src={ASSET_URL + '/leaderboard/medal.webp'}
+          src={'/leaderboard/medal.webp'}
         />
         <p className="my-2 font-semibold">Introducing Leaderboards</p>
         <p className="text-slate-600">
@@ -18,17 +18,17 @@ export function Introduction() {
       <div className="h-px w-full bg-slate-200" />
       <div className="flex flex-col items-start gap-2">
         <div className="flex gap-2">
-          <img
+          <ExternalImage
             className="w-5"
-            src={ASSET_URL + '/leaderboard/progress'}
+            src={'/leaderboard/progress'}
             alt="progress icon"
           />
           <p className="text-slate-600">Track your progress as you earn</p>
         </div>
         <div className="flex gap-2">
-          <img
+          <ExternalImage
             className="w-5"
-            src={ASSET_URL + '/leaderboard/rank'}
+            src={'/leaderboard/rank'}
             alt="progress icon"
             style={{ paddingRight: '0.4rem' }}
           />
@@ -37,9 +37,9 @@ export function Introduction() {
           </p>
         </div>
         <div className="flex gap-2">
-          <img
+          <ExternalImage
             className="w-5"
-            src={ASSET_URL + '/leaderboard/semistart'}
+            src={'/leaderboard/semistart'}
             alt="progress icon"
             style={{ paddingRight: '0.6rem' }}
           />

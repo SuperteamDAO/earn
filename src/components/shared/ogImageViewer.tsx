@@ -6,6 +6,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ogImageQuery } from '@/queries/og';
 import { cn } from '@/utils';
 
+import { LocalImage } from '../ui/local-image';
+
 interface Props {
   title?: string;
   showTitle?: boolean;
@@ -85,7 +87,7 @@ export const OgImageViewer = ({
 
   return (
     <div>
-      <img
+      <LocalImage
         className={cn('bg-center', className)}
         alt="OG Image"
         onError={handleImageError}

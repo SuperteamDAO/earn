@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
 import { type TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
 
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 
@@ -59,8 +60,8 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
         </button>
         <div className="container mt-28 px-4 md:mt-6">
           <div className="mx-auto mb-11 mt-6 w-28">
-            <img
-              src={ASSET_URL + '/icons/celebration.png'}
+            <ExternalImage
+              src={'/icons/celebration.png'}
               alt="celebration icon"
               className="h-100 w-100"
             />

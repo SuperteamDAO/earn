@@ -8,7 +8,7 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { Button } from '@/components/ui/button';
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { cn } from '@/utils';
@@ -119,10 +119,10 @@ export const Comments = ({
       id="comments"
     >
       <div className="flex w-full gap-2 pt-4">
-        <img
+        <ExternalImage
           className="h-5 w-5"
           alt="Comments Icon"
-          src={ASSET_URL + '/icons/comments.svg'}
+          src={'/icons/comments.svg'}
         />
         <div className="flex gap-2">
           <p className="text-base font-medium text-slate-900">{count}</p>

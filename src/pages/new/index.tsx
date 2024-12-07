@@ -1,4 +1,3 @@
-import { Separator } from '@radix-ui/react-separator';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
@@ -9,6 +8,8 @@ import { MdCheck } from 'react-icons/md';
 import { SponsorButton } from '@/components/ProfileSetup/SponsorButton';
 import { TalentButton } from '@/components/ProfileSetup/TalentButton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AuthWrapper } from '@/features/auth';
 import { userCountQuery } from '@/features/home';
@@ -114,10 +115,10 @@ export default function NewProfilePage({
                   onClick={checkTalent}
                 >
                   <div className="relative flex w-full items-center justify-center">
-                    <img
+                    <ExternalImage
                       style={{ width: '100%' }}
                       alt={'user icon'}
-                      src={ASSET_URL + '/onboarding/talent-banner.webp'}
+                      src={'/onboarding/talent-banner.webp'}
                     />
                     <div className="absolute left-0 top-0 h-full w-full bg-[#A78BFA] mix-blend-overlay" />
                   </div>
@@ -178,10 +179,10 @@ export default function NewProfilePage({
                 onClick={checkSponsor}
               >
                 <div className="relative flex w-full items-center justify-center">
-                  <img
+                  <ExternalImage
                     style={{ width: '100%' }}
                     alt={'user icon'}
-                    src={ASSET_URL + '/onboarding/sponsor-banner.webp'}
+                    src={'/onboarding/sponsor-banner.webp'}
                   />
                   <div className="absolute left-0 top-0 h-full w-full bg-[#10B981] mix-blend-overlay" />
                 </div>
@@ -205,25 +206,25 @@ export default function NewProfilePage({
               </div>
             </AuthWrapper>
             <div className="-mt-3 flex items-center justify-between gap-3 px-3">
-              <img
+              <ExternalImage
                 className="h-5 object-contain"
                 alt="Jupiter Icon"
-                src={ASSET_URL + '/landingsponsor/sponsors/jupiter.webp'}
+                src={'/landingsponsor/sponsors/jupiter.webp'}
               />
-              <img
+              <ExternalImage
                 className="h-8 object-contain"
                 alt="Solflare Icon"
-                src={ASSET_URL + '/landingsponsor/sponsors/solflare.webp'}
+                src={'/landingsponsor/sponsors/solflare.webp'}
               />
-              <img
+              <ExternalImage
                 className="hidden h-4 object-contain md:block"
                 alt="Squads Icon"
-                src={ASSET_URL + '/company-logos/squads.webp'}
+                src={'/company-logos/squads.webp'}
               />
-              <img
+              <ExternalImage
                 className="h-7 w-7 object-contain"
                 alt="Tensor Icon"
-                src={ASSET_URL + '/company-logos/tensor.svg'}
+                src={'/company-logos/tensor.svg'}
               />
             </div>
           </div>

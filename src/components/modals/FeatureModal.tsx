@@ -7,9 +7,10 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
-import { ASSET_URL } from '@/constants/ASSET_URL';
 import { latestActiveSlugQuery } from '@/features/sponsor-dashboard';
 import { useUpdateUser, useUser } from '@/store/user';
+
+import { ExternalImage } from '../ui/cloudinary-image';
 
 export const FeatureModal = ({
   isSponsorsRoute = false,
@@ -65,8 +66,8 @@ export const FeatureModal = ({
       <DialogOverlay />
       <DialogContent className="w-[480px] overflow-hidden rounded-lg">
         <div className="w-full bg-[#faf5ff] p-8">
-          <img
-            src={ASSET_URL + '/ScoutAnnouncement.png'}
+          <ExternalImage
+            src="/ScoutAnnouncement.png"
             alt="Scouts Announcement Illustration"
             className="h-full w-[92%]"
           />

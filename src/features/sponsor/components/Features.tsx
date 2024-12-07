@@ -8,8 +8,6 @@ import {
 } from '@chakra-ui/react';
 import { usePostHog } from 'posthog-js/react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
-
 import { fontSize, maxW2, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
@@ -129,7 +127,7 @@ export function Features({ showVideo }: Props) {
         </AbsoluteCenter>
         <HighQualityImage
           className="h-full w-full cursor-pointer rounded-md border-2 border-[#E2E8F0] shadow-md"
-          src={ASSET_URL + '/landingsponsor/displays/sponsor-dashboard.webp'}
+          src={'/landingsponsor/displays/sponsor-dashboard.webp'}
           alt="Sponsord dashboard screenshot"
         />
       </Center>
@@ -154,11 +152,7 @@ export function Features({ showVideo }: Props) {
 function Feature({ icon, title, description }: FeatureProps) {
   return (
     <VStack align="start" gap={4}>
-      <HighQualityImage
-        src={ASSET_URL + icon}
-        alt={title}
-        className="h-[1.8rem] w-8"
-      />
+      <HighQualityImage src={icon} alt={title} className="h-[1.8rem] w-8" />
       <VStack align="start" gap={0}>
         <Text color="brand.slate.700" fontSize={'1.25rem'} fontWeight={600}>
           {title}

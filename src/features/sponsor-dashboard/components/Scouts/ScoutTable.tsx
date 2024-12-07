@@ -24,6 +24,7 @@ import {
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
+import { LocalImage } from '@/components/ui/local-image';
 import { skillMap } from '@/constants/skillMap';
 
 import SparkleIcon from '../../icons/sparkle.svg';
@@ -242,7 +243,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                         </Text>
                         {scout.recommended && (
                           <Tooltip fontSize="xs" label="Superteam Recommended">
-                            <img src={SparkleIcon} alt="sparkle" />
+                            <LocalImage src={SparkleIcon} alt="sparkle" />
                           </Tooltip>
                         )}
                       </Flex>

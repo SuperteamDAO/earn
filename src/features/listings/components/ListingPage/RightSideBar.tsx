@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { tokenList } from '@/constants/tokenList';
 import { RelatedListings } from '@/features/home';
@@ -183,10 +183,10 @@ export function RightSideBar({
               <>
                 <div className="flex flex-col items-start justify-center">
                   <div className="flex items-center justify-center gap-2">
-                    <img
+                    <ExternalImage
                       className="-mt-1 w-[1.4rem]"
                       alt={'suit case'}
-                      src={ASSET_URL + '/icons/purple-suitcase.svg'}
+                      src={'/icons/purple-suitcase.svg'}
                     />
                     <p className="text-lg font-medium text-black md:text-xl">
                       {isSubmissionNumberLoading
@@ -207,10 +207,10 @@ export function RightSideBar({
 
                 <div className="flex flex-col items-start justify-center py-3">
                   <div className="flex items-start justify-center gap-1">
-                    <img
+                    <ExternalImage
                       className="mt-1 w-[1.4rem]"
                       alt={'suit case'}
-                      src={ASSET_URL + '/icons/purple-timer.svg'}
+                      src={'/icons/purple-timer.svg'}
                     />
                     <div className="flex flex-col items-start">
                       <p className="text-lg font-medium text-black md:text-xl">
@@ -228,10 +228,10 @@ export function RightSideBar({
             ) : (
               <div className="flex flex-col items-start justify-center py-3">
                 <div className="flex items-start justify-center gap-1">
-                  <img
+                  <ExternalImage
                     className="mt-1 w-[1.4rem]"
                     alt={'suit case'}
-                    src={ASSET_URL + '/icons/purple-timer.svg'}
+                    src={'/icons/purple-timer.svg'}
                   />
                   <div className="flex flex-col items-start">
                     <p className="text-lg font-medium text-black md:text-xl">

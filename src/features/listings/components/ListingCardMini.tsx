@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import Link from 'next/link';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 
@@ -32,9 +33,9 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
     >
       <div className="ph-no-capture flex w-full items-center justify-between">
         <div className="flex w-full">
-          <img
+          <LocalImage
             className="mr-3 h-14 w-14 rounded-md"
-            alt={sponsor?.name}
+            alt={sponsor?.name!}
             src={
               sponsor?.logo
                 ? sponsor.logo.replace(

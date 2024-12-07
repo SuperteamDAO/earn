@@ -2,6 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -34,9 +35,9 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
     >
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full">
-          <img
+          <LocalImage
             className="mr-3 h-14 w-14 rounded-md sm:mr-5 sm:h-16 sm:w-16"
-            alt={sponsor?.name}
+            alt={sponsor?.name!}
             src={sponsorLogo}
           />
           <div className="flex w-full flex-col justify-between">
@@ -52,10 +53,10 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
             <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
               <>
                 <div className="flex items-center justify-start sm:hidden">
-                  <img
+                  <LocalImage
                     className="mr-0.5 h-3.5 w-3.5 rounded-full"
-                    alt={token}
-                    src={tokenIcon}
+                    alt={token!}
+                    src={tokenIcon!}
                   />
                   <div className="flex items-baseline">
                     <p className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base">
@@ -71,7 +72,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                   <p className="ml-1 text-[10px] text-slate-300">|</p>
                 </div>
                 <div className="flex items-center gap-1">
-                  <img
+                  <LocalImage
                     className="-ml-0.5 flex h-3 sm:h-4"
                     alt={'grant'}
                     src={'/assets/grant-icon.svg'}
@@ -104,10 +105,10 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
           </div>
         </div>
         <div className="mr-3 hidden items-center justify-start sm:flex">
-          <img
+          <LocalImage
             className="mr-1 h-4 w-4 rounded-full"
-            alt={token}
-            src={tokenIcon}
+            alt={token!}
+            src={tokenIcon!}
           />
           <div className="flex items-baseline gap-1">
             <p className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base">
