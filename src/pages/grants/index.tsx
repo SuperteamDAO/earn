@@ -1,11 +1,3 @@
-import {
-  Container,
-  Image,
-  Text,
-  VStack,
-  Wrap,
-  WrapItem,
-} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 
@@ -34,56 +26,31 @@ function Grants() {
         />
       }
     >
-      <VStack
-        pos={'relative'}
-        justify={'center'}
-        direction={'column'}
-        w={'100%'}
-        minH={'100vh'}
-        bg={'#F5F5F5'}
-      >
-        <Image
-          pos={'absolute'}
-          top={'0'}
-          right={'0'}
-          left={'0'}
-          w={'100%'}
+      <div className="relative flex min-h-screen w-full flex-col justify-center bg-[#F5F5F5]">
+        <img
+          className="absolute left-0 right-0 top-0 w-full"
           alt=""
           src={ASSET_URL + '/home/bg_grad.svg'}
         />
-        <VStack my={16} textAlign="center" spacing={4}>
-          <Text
-            px={2}
-            fontSize={{ base: '4xl', md: '5xl' }}
-            fontWeight={700}
-            lineHeight="1.2"
-          >
+        <div className="my-16 flex gap-4 text-center">
+          <p className="px-2 text-4xl font-bold leading-5 md:text-5xl">
             Need funds to build out your idea?
-          </Text>
-          <Text
-            maxW="2xl"
-            mx={2}
-            color="gray.600"
-            fontSize={{ base: 'lg', md: 'xl' }}
-          >
+          </p>
+          <p className="mx-2 max-w-2xl text-lg text-gray-600 md:text-xl">
             Discover the complete list of crypto grants available to support
             your project. Fast, equity-free funding without the hassle.
-          </Text>
-          <Text
-            mt={3}
-            color={'brand.slate.400'}
-            fontSize={{ base: 'sm', md: 'md' }}
-          >
+          </p>
+          <p className="mt-3 text-sm text-slate-400 md:text-base">
             Equity-Free • No Bullshit • Fast AF
-          </Text>
-        </VStack>
-        <Container maxW={'7xl'} mb={12}>
+          </p>
+        </div>
+        <div className="container mx-auto mb-12 max-w-7xl px-4">
           {isLoading && <Loading />}
           {isError && <ErrorInfo />}
           {!isLoading && !isError && (
-            <Wrap justify={'center'} mx="auto" spacing={10}>
+            <div className="flex flex-wrap justify-center gap-10">
               {grants?.map((grant) => (
-                <WrapItem key={grant?.id}>
+                <div key={grant?.id} className="flex-shrink-0">
                   <GrantEntry
                     title={grant?.title}
                     slug={grant.slug}
@@ -92,12 +59,12 @@ function Grants() {
                     token={grant?.token}
                     logo={grant?.logo}
                   />
-                </WrapItem>
+                </div>
               ))}
-            </Wrap>
+            </div>
           )}
-        </Container>
-      </VStack>
+        </div>
+      </div>
     </Default>
   );
 }

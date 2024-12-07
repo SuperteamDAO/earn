@@ -1,21 +1,20 @@
-import {
-  Button,
-  Center,
-  Flex,
-  HStack,
-  Link,
-  Text,
-  Tooltip,
-  useBreakpointValue,
-} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { formatTotalPrice } from '@/features/listing-builder';
 import { EarnAvatar } from '@/features/talent';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { cn } from '@/utils';
 import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
@@ -45,7 +44,7 @@ export function ListingWinners({ bounty }: Props) {
   const isProject = bounty?.type === 'project';
 
   const posthog = usePostHog();
-  const isMD = useBreakpointValue({ base: false, md: true });
+  const isMD = useMediaQuery('(min-width: 768px)');
 
   const { data: submissions = [], isLoading } = useQuery(
     listingWinnersQuery(bounty?.id),
@@ -69,28 +68,22 @@ export function ListingWinners({ bounty }: Props) {
         <p className="mx-3 font-semibold text-slate-500 md:text-xl">
           🎉 Winners
         </p>
-        <NextLink href={openWinnerLink() ?? '#'} target="_blank">
+        <Link href={openWinnerLink() ?? '#'} target="_blank">
           <Button
-            className="ph-no-capture"
-            gap={2}
-            display="flex"
-            w={'auto'}
-            h="min-content"
-            px={{ base: 2, md: 3 }}
-            py={{ base: 1.5, md: 2 }}
-            color="rgba(0, 0, 0, 0.65)"
-            fontSize={{ base: 'sm', md: 'medium' }}
-            fontWeight={500}
-            bg="white"
-            border="1px solid"
-            borderColor="brand.slate.300"
-            _hover={{ background: 'rgba(255, 255, 255, 0.8)' }}
-            _active={{ background: 'rgba(255, 255, 255, 0.5)' }}
+            className={cn(
+              'ph-no-capture flex h-min gap-2',
+              'px-2 py-1.5 md:px-3 md:py-2',
+              'text-sm font-medium md:text-base',
+              'text-[rgba(0,0,0,0.65)]',
+              'border-slate-300 bg-white',
+              'hover:bg-white/80 active:bg-white/50',
+            )}
             onClick={() => posthog.capture('click to tweet_listing')}
+            variant="outline"
           >
-            <Center w={{ base: '0.9rem', md: '1.1rem' }} h="min-content">
+            <div className="flex h-min w-[0.9rem] items-center md:w-[1.1rem]">
               <svg
-                width="33px"
+                width="33"
                 viewBox="0 0 33 33"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -100,10 +93,10 @@ export function ListingWinners({ bounty }: Props) {
                   fill="black"
                 />
               </svg>
-            </Center>
+            </div>
             Share
           </Button>
-        </NextLink>
+        </Link>
       </div>
       <div className="mx-3 mt-2 md:mt-0">
         <div className="w-full rounded-md bg-white px-3 py-4 md:px-4">
@@ -111,7 +104,7 @@ export function ListingWinners({ bounty }: Props) {
             {getOrRemoveBonuses(submissions, true)
               .slice(0, 3)
               .map((submission) => (
-                <NextLink
+                <Link
                   key={submission.id}
                   href={
                     !isProject
@@ -119,107 +112,78 @@ export function ListingWinners({ bounty }: Props) {
                       : `/t/${submission?.user?.username}`
                   }
                   passHref
+                  className="flex cursor-pointer flex-col items-center justify-center"
                 >
-                  <Flex
-                    as="a"
-                    align="center"
-                    justify="center"
-                    direction={'column'}
-                    cursor="pointer"
-                  >
-                    <div className="relative">
-                      {!isProject && (
-                        <Center
-                          pos="absolute"
-                          bottom={-3}
-                          left="50%"
-                          w={6}
-                          h={6}
-                          px={1}
-                          color="brand.slate.500"
-                          fontSize={'xx-small'}
-                          fontWeight={600}
-                          textAlign="center"
-                          textTransform="capitalize"
-                          bg="#fff"
-                          transform="translateX(-50%)"
-                          rounded={'full'}
-                        >
-                          {nthLabelGenerator(submission?.winnerPosition ?? 0)}
-                        </Center>
-                      )}
-                      <EarnAvatar
-                        size={isMD ? '64px' : '52px'}
-                        id={submission?.user?.id}
-                        avatar={submission?.user?.photo as string}
-                      />
-                    </div>
-                    <Text
-                      w={{ base: 'min-content', md: 'auto' }}
-                      pt={4}
-                      color="brand.slate.700"
-                      fontSize={{ base: 'xs', md: 'sm' }}
-                      fontWeight={600}
-                      textAlign={'center'}
-                      noOfLines={2}
-                    >{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</Text>
-                    <Text
-                      color="brand.slate.500"
-                      fontSize={'xs'}
-                      fontWeight={400}
-                      textAlign="center"
-                      opacity={0.6}
-                    >
-                      {bounty?.rewards &&
-                        formatTotalPrice(
-                          bounty?.rewards[
-                            Number(submission?.winnerPosition) as keyof Rewards
-                          ] ?? 0,
-                        )}{' '}
-                      {bounty?.token}
-                    </Text>
-                  </Flex>
-                </NextLink>
+                  <div className="relative">
+                    {!isProject && (
+                      <div
+                        className={cn(
+                          'absolute bottom-[-12px] left-1/2 -translate-x-1/2',
+                          'flex items-center justify-center',
+                          'h-6 w-6 px-1',
+                          'text-center text-[10px] font-semibold capitalize',
+                          'rounded-full bg-white text-slate-500',
+                        )}
+                      >
+                        {nthLabelGenerator(submission?.winnerPosition ?? 0)}
+                      </div>
+                    )}
+                    <EarnAvatar
+                      size={isMD ? '64px' : '52px'}
+                      id={submission?.user?.id}
+                      avatar={submission?.user?.photo as string}
+                    />
+                  </div>
+                  <p className="line-clamp-2 w-min pt-4 text-center text-xs font-semibold text-slate-700 md:w-auto md:text-sm">{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</p>
+                  <p className="text-center text-xs font-normal text-slate-500 opacity-60">
+                    {bounty?.rewards &&
+                      formatTotalPrice(
+                        bounty?.rewards[
+                          Number(submission?.winnerPosition) as keyof Rewards
+                        ] ?? 0,
+                      )}{' '}
+                    {bounty?.token}
+                  </p>
+                </Link>
               ))}
           </div>
         </div>
       </div>
       {(getOrRemoveBonuses(submissions, true).length > 3 ||
         getOrRemoveBonuses(submissions, false).length > 0) && (
-        <HStack
-          justify="center"
-          flexWrap="wrap"
-          px={2}
-          py={3}
-          borderColor="#DDD6FE"
-          borderTopWidth="1px"
-        >
+        <div className="wrap flex justify-center gap-2 border-t border-[#DDD6FE] px-2 py-3">
           {[
             ...getOrRemoveBonuses(submissions, true).slice(3),
             ...getOrRemoveBonuses(submissions, false),
           ].map((submission) => (
             <div key={submission.id}>
-              <Tooltip label={submission?.user?.firstName}>
-                <Link
-                  key={submission.id}
-                  as={NextLink}
-                  href={
-                    !isProject
-                      ? `/feed/submission/${submission?.id}`
-                      : `/t/${submission?.user?.username}`
-                  }
-                  passHref
-                >
-                  <EarnAvatar
-                    size={isMD ? '44px' : '36px'}
-                    id={submission?.user?.id}
-                    avatar={submission?.user?.photo as string}
-                  />
-                </Link>
-              </Tooltip>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link
+                      key={submission.id}
+                      href={
+                        !isProject
+                          ? `/feed/submission/${submission?.id}`
+                          : `/t/${submission?.user?.username}`
+                      }
+                      className="inline-block"
+                    >
+                      <EarnAvatar
+                        size={isMD ? '44px' : '36px'}
+                        id={submission?.user?.id}
+                        avatar={submission?.user?.photo as string}
+                      />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{submission?.user?.firstName}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           ))}
-        </HStack>
+        </div>
       )}
     </div>
   );

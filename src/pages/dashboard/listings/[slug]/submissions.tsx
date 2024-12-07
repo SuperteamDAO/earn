@@ -30,8 +30,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { PublishResults } from '@/features/listings';
 import {
+  PublishResults,
   RejectAllSubmissionModal,
   type ScoutRowType,
   scoutsQuery,

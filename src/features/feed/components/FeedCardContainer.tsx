@@ -6,7 +6,7 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AuthWrapper } from '@/features/auth';
@@ -203,13 +203,10 @@ export const FeedCardContainer = ({
                       key={index}
                       className="h-6 w-6 border-2 border-white"
                     >
-                      <AvatarImage
-                        src={comment.author.photo || ''}
-                        alt={comment.author.name || ''}
+                      <EarnAvatar
+                        avatar={comment.author.photo!}
+                        id={comment.author.name!}
                       />
-                      <AvatarFallback>
-                        {comment.author.name?.[0]}
-                      </AvatarFallback>
                     </Avatar>
                   ))}
                 </div>

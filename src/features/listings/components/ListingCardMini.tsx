@@ -59,7 +59,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                 <div className="flex items-center justify-start">
                   {compensationType !== 'variable' && (
                     <img
-                      className="mr-0.5 h-[3.5rem] w-[3.5rem] rounded-full"
+                      className="mr-0.5 h-4 w-4 rounded-full"
                       alt={token}
                       src={
                         tokenList.find((ele) => {
@@ -77,12 +77,12 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                       className="whitespace-nowrap text-xs font-semibold text-slate-600"
                     />
                     {compensationType !== 'variable' && (
-                      <p className="font-xs font-medium text-gray-400">
+                      <p className="text-xs font-medium text-gray-400">
                         {token}
                       </p>
                     )}
                   </div>
-                  <p className="font-xs ml-1 text-slate-300 md:text-sm">|</p>
+                  <p className="ml-1 text-xs text-slate-300 md:text-sm">|</p>
                 </div>
                 <img
                   className={`flex h-3 ${isBounty ? '-ml-0.5' : 'ml-0'}`}
@@ -90,10 +90,10 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                   src={getListingIcon(type!)}
                 />
               </>
-              <p className="font-xs flex text-slate-300 md:text-sm">|</p>
+              <p className="flex text-xs text-slate-300 md:text-sm">|</p>
 
               <div className="flex items-center gap-1">
-                <p className="font-xs whitespace-nowrap text-gray-500">
+                <p className="whitespace-nowrap text-xs text-gray-500">
                   {dayjs().isBefore(dayjs(deadline))
                     ? `Due ${dayjs(deadline).fromNow()}`
                     : `Closed ${dayjs(deadline).fromNow()}`}

@@ -2,21 +2,21 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 
 export function Introduction() {
   return (
-    <div className="items-star font-sm flex w-full flex-col gap-4 rounded-xl bg-[#FAF5FF] p-6">
+    <div className="items-star flex w-full flex-col gap-4 rounded-xl bg-[#FAF5FF] p-6 text-sm">
       <div className="flex flex-col items-start">
         <img
-          className="h-26 w-26"
+          className="h-7 w-7"
           alt="Medal"
           src={ASSET_URL + '/leaderboard/medal.webp'}
         />
-        <p className="font-semibold">Introducing Leaderboards</p>
+        <p className="my-2 font-semibold">Introducing Leaderboards</p>
         <p className="text-slate-600">
           Get Inspired: Check out Earn profiles of the leading contributors of
           the Solana ecosystem!
         </p>
       </div>
-      <div className="h-px w-full bg-slate-400" />
-      <div className="flex flex-col items-start">
+      <div className="h-px w-full bg-slate-200" />
+      <div className="flex flex-col items-start gap-2">
         <div className="flex gap-2">
           <img
             className="w-5"

@@ -1,17 +1,9 @@
-import { CloseIcon } from '@chakra-ui/icons';
-import {
-  AbsoluteCenter,
-  Box,
-  Container,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  Text,
-} from '@chakra-ui/react';
+import { X } from 'lucide-react';
 import Image from 'next/image';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
 import { type TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
 
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 
 interface Props {
@@ -53,62 +45,34 @@ const decorateOptions: TDecorateOptionsFn = (options) => {
 
 export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalContent
-        pos="fixed"
-        top="0"
-        left="0"
-        w="100vw"
-        maxW="none"
-        h="100vh"
-        mt="0"
-        mb="0"
-        bg="#5243FF"
-        borderRadius={0}
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent
+        className="fixed inset-0 m-0 h-screen w-screen max-w-none rounded-none bg-[#5243FF]"
+        onInteractOutside={(e) => e.preventDefault()}
       >
         <Pride autorun={{ speed: 10 }} decorateOptions={decorateOptions} />
-        <ModalCloseButton w={6} h={6} m={4} color="white">
-          <CloseIcon width={4} height={4} />
-        </ModalCloseButton>
-        <Container mt={[28, 6]} px={4}>
-          <Box w="112px" mx="auto" mt="24px" mb="44px">
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 h-6 w-6 text-white"
+        >
+          <X className="h-4 w-4" />
+        </button>
+        <div className="container mt-28 px-4 md:mt-6">
+          <div className="mx-auto mb-11 mt-6 w-28">
             <img
               src={ASSET_URL + '/icons/celebration.png'}
               alt="celebration icon"
               className="h-100 w-100"
             />
-          </Box>
-          <Text
-            color="white"
-            fontSize={[42, 58]}
-            fontWeight={500}
-            lineHeight="1"
-            textAlign="center"
-          >
+          </div>
+          <p className="text-center text-3xl font-medium text-white md:text-4xl">
             {isProject ? 'Application' : 'Submission'} Received!
-          </Text>
-          <Text
-            mt={[8, 5]}
-            color="white"
-            fontSize={[38, 48]}
-            lineHeight="1"
-            textAlign="center"
-            opacity="0.6"
-          >
+          </p>
+          <p className="mt-5 text-center text-2xl text-white opacity-60 md:text-3xl">
             Sending some vibes your way 💃 💃
-          </Text>
-        </Container>
-        <AbsoluteCenter
-          bottom="0"
-          alignItems="flex-end"
-          flexDir="column"
-          display="flex"
-          w={['150%', '100%', '100%', '50%']}
-          h="auto"
-          mx="auto"
-          mt="auto"
-          transform="translate(-50%,0%)"
-        >
+          </p>
+        </div>
+        <div className="absolute bottom-0 left-1/2 mx-auto mt-auto flex h-auto w-[150%] -translate-x-1/2 flex-col items-end md:w-full lg:w-1/2">
           <Image
             src={ASSET_URL + '/memes/JohnCenaVibingToCupid.gif'}
             alt="John Cena Vibing to Cupid"
@@ -120,14 +84,14 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
             quality={80}
             className="scale-125"
           />
-        </AbsoluteCenter>
+        </div>
         <audio
           src={'/assets/JohnCenaVibingToCupid.mp3'}
           style={{ display: 'none' }}
           autoPlay
           loop
         />
-      </ModalContent>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 };

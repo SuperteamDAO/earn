@@ -1,4 +1,12 @@
-import { FormLabel, Select } from '@chakra-ui/react';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { cn } from '@/utils';
 
 interface SelectBoxProps {
   label: string;
@@ -20,24 +28,25 @@ export const SelectBox = ({
   required = false,
 }: SelectBoxProps) => {
   return (
-    <div className="mb-[1.25rem] w-full">
-      <FormLabel color={'brand.slate.500'}>{label}</FormLabel>
-      <Select
-        color={watchValue?.length === 0 ? 'brand.slate.300' : ''}
-        borderColor="brand.slate.300"
-        _placeholder={{ color: 'brand.slate.300' }}
-        focusBorderColor="brand.purple"
-        id={id}
-        placeholder={placeholder}
-        {...register(id, { required })}
-      >
-        {options.map((option) => {
-          return (
-            <option key={option} value={option}>
+    <div className="mb-5 w-full">
+      <Label className="text-slate-500">{label}</Label>
+      <Select {...register(id, { required })}>
+        <SelectTrigger
+          className={cn(
+            'mt-1.5 border-slate-300',
+            'focus:border-purple-600 focus:ring-purple-600',
+            watchValue?.length === 0 ? 'text-slate-300' : 'text-slate-900',
+          )}
+        >
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option} value={option}>
               {option}
-            </option>
-          );
-        })}
+            </SelectItem>
+          ))}
+        </SelectContent>
       </Select>
     </div>
   );

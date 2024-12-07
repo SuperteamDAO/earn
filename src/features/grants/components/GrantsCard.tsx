@@ -76,7 +76,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                     alt={'grant'}
                     src={'/assets/grant-icon.svg'}
                   />
-                  <p className="font-xs flex text-xs font-medium text-gray-500">
+                  <p className="flex text-xs font-medium text-gray-500">
                     Grant
                   </p>
                 </div>

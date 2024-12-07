@@ -1,15 +1,20 @@
-import {
-  Flex,
-  FormControl,
-  FormHelperText,
-  FormLabel,
-  Tooltip,
-} from '@chakra-ui/react';
 import { Info } from 'lucide-react';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import ReactSelect from 'react-select';
 import makeAnimated from 'react-select/animated';
 
+import {
+  FormControl,
+  FormDescription,
+  FormItem,
+  FormLabel,
+} from '@/components/ui/form';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { type MultiSelectOptions } from '@/constants';
 import { MainSkills, skillSubSkillMap } from '@/interface/skills';
 
@@ -37,6 +42,7 @@ interface Props {
   subSkillLabel?: string;
   helperText?: string;
 }
+
 export const SkillSelect = ({
   skills,
   subSkills,
@@ -50,6 +56,7 @@ export const SkillSelect = ({
 }: Props) => {
   const animatedComponents = makeAnimated();
   const tempSubSkills: MultiSelectOptions[] = [];
+
   skills.forEach((s) => {
     const subSkillsForSkill =
       skillSubSkillMap[s.value as keyof typeof skillSubSkillMap];
@@ -58,8 +65,10 @@ export const SkillSelect = ({
       tempSubSkills.push(...subSkillsForSkill);
     }
   });
+
   const [subSkillOptions, setSubSkillOptions] =
     useState<MultiSelectOptions[]>(tempSubSkills);
+
   const handleChange = (e: MultiSelectOptions[]) => {
     const sub: MultiSelectOptions[] = [];
     e.forEach((op) => {
@@ -69,109 +78,102 @@ export const SkillSelect = ({
     });
     setSubSkillOptions(sub);
   };
+
+  const selectStyles = {
+    control: (baseStyles: any, state: { isFocused: boolean }) => ({
+      ...baseStyles,
+      border: state.isFocused
+        ? '2px solid rgb(147 51 234)'
+        : errorSkill
+          ? '2px solid red'
+          : '1px solid rgb(203 213 225)',
+      backgroundColor: 'white',
+      '&:hover': {
+        borderColor: state.isFocused ? 'rgb(147 51 234)' : 'rgb(203 213 225)',
+      },
+    }),
+  };
+
   return (
     <>
-      <FormControl mb={5} isRequired>
-        <Flex align={'center'} justify={'start'}>
-          <FormLabel
-            color={'brand.slate.500'}
-            fontWeight={500}
-            htmlFor={'skills'}
-          >
+      <FormItem className="mb-5">
+        <div className="flex items-center justify-start">
+          <FormLabel className="font-medium text-slate-500" htmlFor="skills">
             {skillLabel}
           </FormLabel>
-          <Tooltip
-            w="max"
-            p="0.7rem"
-            color="white"
-            fontSize="sm"
-            fontWeight={500}
-            bg="brand.purple"
-            borderRadius="0.5rem"
-            hasArrow
-            label={`Select all that apply`}
-            placement="right-end"
-          >
-            <Info className="-ml-2 mb-3 h-3 w-3 text-slate-500" />
-          </Tooltip>
-        </Flex>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="-ml-2 mb-3 h-3 w-3 text-slate-500" />
+              </TooltipTrigger>
+              <TooltipContent className="rounded-lg bg-brand-purple px-3 py-2 text-sm font-medium text-white">
+                Select all that apply
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+
         {helperText && (
-          <FormHelperText
-            mt={-2}
-            mb={3}
-            ml={0.5}
-            color="brand.slate.400"
-            fontSize={'13px'}
-          >
+          <FormDescription className="mb-3 ml-0.5 mt-[-8px] text-[13px] text-slate-400">
             {helperText}
-          </FormHelperText>
+          </FormDescription>
         )}
 
-        <ReactSelect
-          styles={{
-            control: (baseStyles, state) => ({
-              ...baseStyles,
-              border: errorSkill ? '2px solid red' : baseStyles.border,
-              backgroundColor: 'brand.slate.500',
-              borderColor: state.isFocused ? 'brand.purple' : 'brand.slate.300',
-            }),
-          }}
-          closeMenuOnSelect={false}
-          components={animatedComponents}
-          isMulti
-          value={skills}
-          required={true}
-          options={MainSkills}
-          onChange={(e) => {
-            handleChange(e as any);
-            setSkills(e as any);
-          }}
-        />
-      </FormControl>
-      <FormControl mb={5} isRequired>
-        <Flex align={'center'} justify={'start'}>
-          <FormLabel
-            color={'brand.slate.500'}
-            fontWeight={500}
-            htmlFor={'subskills'}
-          >
+        <FormControl>
+          <ReactSelect
+            styles={selectStyles}
+            closeMenuOnSelect={false}
+            components={animatedComponents}
+            isMulti
+            value={skills}
+            required
+            options={MainSkills}
+            onChange={(e) => {
+              handleChange(e as any);
+              setSkills(e as any);
+            }}
+          />
+        </FormControl>
+      </FormItem>
+
+      <FormItem className="mb-5">
+        <div className="flex items-center justify-start">
+          <FormLabel className="font-medium text-slate-500" htmlFor="subskills">
             {subSkillLabel}
           </FormLabel>
-          <Tooltip
-            w="max"
-            p="0.7rem"
-            color="white"
-            fontSize="sm"
-            fontWeight={500}
-            bg="brand.purple"
-            borderRadius="0.5rem"
-            hasArrow
-            label={`Select all that apply`}
-            placement="right-end"
-          >
-            <Info className="-ml-2 mb-3 h-3 w-3 text-slate-500" />
-          </Tooltip>
-        </Flex>
-        <ReactSelect
-          styles={{
-            control: (baseStyles, state) => ({
-              ...baseStyles,
-              border: errorSubSkill ? '2px solid red' : baseStyles.border,
-              backgroundColor: 'brand.slate.500',
-              borderColor: state.isFocused ? 'brand.purple' : 'brand.slate.300',
-            }),
-          }}
-          closeMenuOnSelect={false}
-          components={animatedComponents}
-          isMulti
-          value={subSkills}
-          required={true}
-          options={removeDuplicates(subSkillOptions)}
-          onChange={(e) => {
-            setSubSkills(e as any);
-          }}
-        />
-      </FormControl>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="-ml-2 mb-3 h-3 w-3 text-slate-500" />
+              </TooltipTrigger>
+              <TooltipContent className="rounded-lg bg-brand-purple px-3 py-2 text-sm font-medium text-white">
+                Select all that apply
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+
+        <FormControl>
+          <ReactSelect
+            styles={{
+              ...selectStyles,
+              control: (baseStyles) => ({
+                ...baseStyles,
+                border: errorSubSkill ? '2px solid red' : baseStyles.border,
+              }),
+            }}
+            closeMenuOnSelect={false}
+            components={animatedComponents}
+            isMulti
+            value={subSkills}
+            required
+            options={removeDuplicates(subSkillOptions)}
+            onChange={(e) => {
+              setSubSkills(e as any);
+            }}
+          />
+        </FormControl>
+      </FormItem>
     </>
   );
 };

@@ -1,4 +1,3 @@
-import { Image, SimpleGrid, Text, VStack } from '@chakra-ui/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -22,22 +21,11 @@ export const SubmissionList = ({
 }: Props) => {
   return (
     <>
-      <VStack
-        align={['center', 'center', 'start', 'start']}
-        justify={'start'}
-        w={'full'}
-        minH={'100vh'}
-        mt={10}
-      >
+      <div className="mt-10 flex min-h-screen w-full flex-col items-center md:items-start">
         {dayjs(endTime).valueOf() < Date.now() ? (
           <>
-            <VStack align={'start'} w={'full'} maxW={'7xl'} mx="auto">
-              <SimpleGrid
-                w="full"
-                px={{ base: 3, md: 6 }}
-                columns={{ base: 1, md: 2, lg: 2, xl: 3 }}
-                spacing={{ base: 5, md: 20 }}
-              >
+            <div className="mx-auto flex w-full max-w-7xl flex-col items-start gap-2">
+              <div className="grid w-full grid-cols-1 gap-5 px-3 md:grid-cols-2 md:gap-20 md:px-6 xl:grid-cols-3">
                 {submissions?.map((submission) => {
                   return (
                     <SubmissionCard
@@ -59,37 +47,20 @@ export const SubmissionList = ({
                     />
                   );
                 })}
-              </SimpleGrid>
-            </VStack>
+              </div>
+            </div>
           </>
         ) : (
-          <>
-            <VStack
-              align={'center'}
-              justify={'center'}
-              gap={5}
-              w={'full'}
-              h={'25rem'}
-            >
-              <Image
-                alt={'submission'}
-                src={ASSET_URL + '/icons/submission.svg'}
-              />
-              <Text
-                color={'gray.800'}
-                fontFamily={'var(--font-sans)'}
-                fontSize={'1.5rem'}
-                fontWeight={600}
-                textAlign="center"
-              >
-                Submissions are not public until the submission deadline
-                <br />
-                has closed. Check back soon!
-              </Text>
-            </VStack>
-          </>
+          <div className="flex h-[25rem] w-full flex-col items-center justify-center gap-5">
+            <img alt={'submission'} src={ASSET_URL + '/icons/submission.svg'} />
+            <p className="text-center text-2xl font-semibold text-gray-800">
+              Submissions are not public until the submission deadline
+              <br />
+              has closed. Check back soon!
+            </p>
+          </div>
         )}
-      </VStack>
+      </div>
     </>
   );
 };
