@@ -20,7 +20,7 @@ export const approvedGranteesQuery = (
   currentSponsorId: string | undefined,
 ) =>
   queryOptions({
-    queryKey: ['approved-grantees', grantId],
+    queryKey: ['approved-grantees', grantId, grantId!],
     queryFn: () => fetchApprovedGrantees(grantId!),
     enabled: !!currentSponsorId && !!grantId,
   });

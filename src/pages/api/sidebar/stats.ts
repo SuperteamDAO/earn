@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { setCacheHeaders } from '@/utils/cacheControl';
 
 export default async function handler(
   _req: NextApiRequest,
@@ -53,6 +54,14 @@ export default async function handler(
     logger.info('Successfully fetched counts and totals', {
       totalInUSD: roundedTotalRewardAmount,
       count: bountiesCount,
+    });
+
+    setCacheHeaders(res, {
+      public: true,
+      // 1 day
+      maxAge: 24 * 60 * 60,
+      sMaxAge: 24 * 60 * 60,
+      staleWhileRevalidate: 60 * 60, // 1 hour
     });
 
     return res.status(200).json({

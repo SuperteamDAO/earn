@@ -3,6 +3,7 @@ import '/node_modules/flag-icons/css/flag-icons.min.css';
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { fetchAsset } from '@/utils/ogHelpers';
 
 export const config = {
@@ -145,7 +146,7 @@ export default async function handler(request: NextRequest) {
                 objectFit: 'cover',
               }}
               alt="logo"
-              src={`https://earn.superteam.fun/assets/superteams/banners/${region}.png`}
+              src={ASSET_URL + `/superteams/banners/${region}.png`}
             />
           </div>
         </div>

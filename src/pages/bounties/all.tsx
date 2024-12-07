@@ -25,7 +25,7 @@ export default function AllBountiesPage() {
           type="bounties"
           title="All Bounties"
           sub="Bite sized tasks for freelancers"
-          emoji="/assets/home/emojis/moneyman.webp"
+          showEmoji
         >
           {isLoading &&
             Array.from({ length: 8 }, (_, index) => (

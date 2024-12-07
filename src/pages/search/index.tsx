@@ -1,4 +1,3 @@
-import { Box, Divider, Flex, VStack } from '@chakra-ui/react';
 import { Regions } from '@prisma/client';
 import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
@@ -120,27 +119,20 @@ const Search = ({
         />
       }
     >
-      <Box w="full" minH="100vh" bg="white">
-        <Flex
-          gap={8}
-          w="full"
-          maxW={'7xl'}
-          mx="auto"
-          px={{ base: 3, md: 4 }}
-          py={{ base: 4 }}
-        >
-          <VStack align="start" w={{ base: 'full', md: '70%' }}>
+      <div className="min-h-screen w-full bg-white">
+        <div className="mx-auto flex w-full max-w-7xl gap-8 px-3 py-4 md:px-4">
+          <div className="flex w-full flex-col items-start md:w-[70%]">
             <QueryInput loading={loading} query={query} setQuery={setQuery} />
             <Info loading={loading} count={count} query={query} />
-            <Box display={{ md: 'none' }} w="full">
+            <div className="w-full md:hidden">
               <Filters
                 loading={loading}
                 query={query}
                 statusFilters={statusFilters}
                 skillsFilters={skillsFilters}
               />
-            </Box>
-            <Divider mx={{ base: 3, md: 4 }} />
+            </div>
+            <div className="mx-3 h-[1px] bg-slate-200 md:mx-4" />
             <Results
               query={query}
               results={results}
@@ -157,20 +149,17 @@ const Search = ({
                 .map((s) => s.value)
                 .join(',')}
             />
-          </VStack>
-          <Box
-            display={{ base: 'none', md: 'block' }}
-            w={{ base: 'full', md: '30%' }}
-          >
+          </div>
+          <div className="hidden w-full md:block md:w-[30%]">
             <Filters
               query={query}
               loading={loading}
               statusFilters={statusFilters}
               skillsFilters={skillsFilters}
             />
-          </Box>
-        </Flex>
-      </Box>
+          </div>
+        </div>
+      </div>
     </Default>
   );
 };

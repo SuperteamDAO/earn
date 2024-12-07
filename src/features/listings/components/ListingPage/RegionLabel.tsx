@@ -1,20 +1,19 @@
-import { InfoOutlineIcon } from '@chakra-ui/icons';
-import {
-  HStack,
-  Icon,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverTrigger,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Info } from 'lucide-react';
 import React from 'react';
 import { LuGlobe } from 'react-icons/lu';
 
 import { UserFlag } from '@/components/shared/UserFlag';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 import { getCombinedRegion, getRegionTooltipLabel } from '../../utils';
 
@@ -30,54 +29,37 @@ export const RegionLabel = ({
   const code = regionObject?.code;
 
   const regionTooltipLabel = getRegionTooltipLabel(region, isGrant);
+
   return (
-    <>
-      <Tooltip
-        px={4}
-        py={2}
-        color="brand.slate.500"
-        fontFamily={'var(--font-sans)'}
-        fontSize={'small'}
-        bg="white"
-        borderRadius={'lg'}
-        label={regionTooltipLabel}
-      >
-        <HStack>
-          {region === 'GLOBAL' ? (
-            <Icon as={LuGlobe} strokeWidth={1} />
-          ) : (
-            <UserFlag location={code || ''} isCode />
-          )}
-          <Text
-            color={'brand.slate.500'}
-            fontSize={{ base: 'xs', sm: 'sm' }}
-            fontWeight={500}
-            whiteSpace={'nowrap'}
-            rounded={'full'}
-          >
-            {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
-          </Text>
-        </HStack>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <div className="flex items-center gap-2">
+            {region === 'GLOBAL' ? (
+              <LuGlobe className="h-4 w-4" strokeWidth={1} />
+            ) : (
+              <UserFlag location={code || ''} isCode />
+            )}
+            <span className="whitespace-nowrap rounded-full text-xs font-medium text-slate-500 sm:text-sm">
+              {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
+            </span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>{regionTooltipLabel}</TooltipContent>
       </Tooltip>
+
       <Popover>
-        <PopoverTrigger>
-          <InfoOutlineIcon
-            display={{ base: 'flex', sm: 'none' }}
-            boxSize={'12px'}
-          />
+        <PopoverTrigger asChild>
+          <button className="flex sm:hidden">
+            <Info className="h-3 w-3" />
+          </button>
         </PopoverTrigger>
-        <PopoverContent>
-          <PopoverArrow />
-          <PopoverCloseButton color="brand.slate.300" />
-          <PopoverBody
-            color={'brand.slate.500'}
-            fontSize={'xs'}
-            fontWeight={500}
-          >
+        <PopoverContent className="w-auto p-2">
+          <div className="text-xs font-medium text-slate-500">
             {regionTooltipLabel}
-          </PopoverBody>
+          </div>
         </PopoverContent>
       </Popover>
-    </>
+    </TooltipProvider>
   );
 };

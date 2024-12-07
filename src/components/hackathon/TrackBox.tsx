@@ -1,6 +1,6 @@
 import NextLink from 'next/link';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { type TrackProps } from '@/interface/hackathon';
 
 export const TrackBox = ({

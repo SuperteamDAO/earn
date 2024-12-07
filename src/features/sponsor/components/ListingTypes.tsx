@@ -1,7 +1,5 @@
 import { Center, Flex, Text, VStack } from '@chakra-ui/react';
 
-import PurpleTick from '@/public/assets/landingsponsor/icons/purple-tick.svg';
-
 import { fontSize, maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
@@ -119,10 +117,9 @@ function Feature({ description }: FeatureProps) {
   return (
     <Flex align="start" direction={'row'} gap={4}>
       <HighQualityImage
-        src={PurpleTick}
+        src={'/landingsponsor/icons/purple-tick.svg'}
         alt="Purple Tick"
-        width={24}
-        height={24}
+        className="h-4 w-4"
       />
       <Text
         pos={'relative'}

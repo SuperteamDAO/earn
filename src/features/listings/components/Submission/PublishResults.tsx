@@ -3,7 +3,6 @@ import {
   AlertDescription,
   AlertIcon,
   AlertTitle,
-  Box,
   Button,
   Modal,
   ModalBody,
@@ -192,10 +191,10 @@ export function PublishResults({
           {!isWinnersAnnounced && alertTitle && alertDescription && (
             <Alert status={alertType}>
               <AlertIcon boxSize={8} />
-              <Box>
+              <div>
                 <AlertTitle>{alertTitle}</AlertTitle>
                 <AlertDescription>{alertDescription}</AlertDescription>
-              </Box>
+              </div>
             </Alert>
           )}
           {!isWinnersAnnounced &&
@@ -204,13 +203,13 @@ export function PublishResults({
             !isDeadlinePassed && (
               <Alert mt={4} status="error">
                 <AlertIcon boxSize={8} />
-                <Box>
+                <div>
                   <AlertTitle>Listing still in progress!</AlertTitle>
                   <AlertDescription>
                     If you publish the results before the deadline, the listing
                     will close since the winner(s) will have been announced.
                   </AlertDescription>
-                </Box>
+                </div>
               </Alert>
             )}
         </ModalBody>

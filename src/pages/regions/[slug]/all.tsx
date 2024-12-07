@@ -36,7 +36,7 @@ export default function AllRegionListingsPage({
         <ListingTabs
           bounties={listings?.bounties}
           isListingsLoading={isListingsLoading}
-          emoji="/assets/home/emojis/moneyman.webp"
+          showEmoji
           title="Freelance Gigs"
           viewAllLink="/all"
         />

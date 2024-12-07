@@ -23,7 +23,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 
 interface ApproveModalProps {
   approveIsOpen: boolean;

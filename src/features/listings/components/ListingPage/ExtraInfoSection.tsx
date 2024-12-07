@@ -1,5 +1,4 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, HStack, Link, Text, VStack } from '@chakra-ui/react';
+import { ExternalLink } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 
 import { type ParentSkills } from '@/interface/skills';
@@ -15,6 +14,7 @@ interface ExtraInfoSectionProps {
   Hackathon?: ListingHackathon;
   isGrant?: boolean;
 }
+
 export function ExtraInfoSection({
   skills,
   Hackathon,
@@ -25,106 +25,82 @@ export function ExtraInfoSection({
 }: ExtraInfoSectionProps) {
   const posthog = usePostHog();
   return (
-    <VStack gap={8} w={{ base: 'full', md: '22rem' }} pt={2}>
+    <div className="flex w-full flex-col gap-8 pt-2 md:w-[22rem]">
       {region && region !== 'GLOBAL' && (
-        <VStack align={'start'} w="full" fontSize={'sm'}>
-          <Text color={'brand.slate.600'} fontWeight={600}>
+        <div className="flex w-full flex-col items-start gap-2 text-sm">
+          <p className="font-semibold text-slate-600">
             REGIONAL {isGrant ? 'GRANT' : 'LISTING'}
-          </Text>
-          <Text h="100%" color={'brand.slate.500'}>
-            <>
-              This {isGrant ? 'grant' : 'listing'} is only open for people in{' '}
-              <Text fontWeight={600}>{region}</Text>
-            </>
-          </Text>
-        </VStack>
+          </p>
+          <p className="h-full text-slate-500">
+            This {isGrant ? 'grant' : 'listing'} is only open for people in{' '}
+            <span className="font-semibold">{region}</span>
+          </p>
+        </div>
       )}
+
       {Hackathon && (
-        <VStack align={'start'} w="full" fontSize="sm">
-          <Text color={'brand.slate.600'} fontWeight={600}>
+        <div className="flex w-full flex-col items-start gap-2 text-sm">
+          <p className="font-semibold text-slate-600">
             {Hackathon.name?.toUpperCase()} TRACK
-          </Text>
-          <Text color={'brand.slate.500'}>{Hackathon.description}</Text>
-          <Link
-            color={'brand.slate.500'}
-            fontWeight={500}
+          </p>
+          <p className="text-slate-500">{Hackathon.description}</p>
+          <a
+            className="flex items-center font-medium text-slate-500"
             href={`/hackathon/${Hackathon.name?.toLowerCase()}`}
-            isExternal
+            target="_blank"
+            rel="noopener noreferrer"
           >
             View All Challenges
-            <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
-          </Link>
-        </VStack>
+            <ExternalLink className="mx-1 mb-1 h-4 w-4 text-[#64768b]" />
+          </a>
+        </div>
       )}
+
       {requirements && (
-        <VStack align={'start'} w={'full'} fontSize="sm">
-          <Text h="100%" color={'brand.slate.600'} fontWeight={600}>
-            ELIGIBILITY
-          </Text>
-          <Text color={'brand.slate.500'}>{requirements}</Text>
-        </VStack>
+        <div className="flex w-full flex-col items-start gap-2 text-sm">
+          <p className="h-full font-semibold text-slate-600">ELIGIBILITY</p>
+          <p className="text-slate-500">{requirements}</p>
+        </div>
       )}
-      <VStack align={'start'} display={{ base: 'none', md: 'flex' }} w="full">
-        <Text
-          h="100%"
-          color={'brand.slate.600'}
-          fontSize={'sm'}
-          fontWeight={600}
-          textAlign="center"
-        >
+
+      <div className="hidden w-full flex-col items-start gap-2 text-sm md:flex">
+        <p className="h-full text-center font-semibold text-slate-600">
           SKILLS NEEDED
-        </Text>
-        <HStack flexWrap={'wrap'} gap={3}>
+        </p>
+        <div className="flex flex-wrap gap-3">
           {skills?.map((skill) => (
-            <Box
+            <div
               key={skill}
-              m={'0px !important'}
-              px={4}
-              py={1}
-              color="#475569"
-              fontSize="sm"
-              fontWeight={500}
-              bg={'#F1F5F9'}
-              rounded={'sm'}
+              className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-xs font-medium text-slate-600"
             >
-              <Text fontSize={'xs'}>{skill}</Text>
-            </Box>
+              {skill}
+            </div>
           ))}
-        </HStack>
-      </VStack>
+        </div>
+      </div>
+
       {pocSocials && (
-        <VStack
-          align={'start'}
-          display={{ base: 'none', md: 'flex' }}
-          w={'full'}
-          fontSize="sm"
-        >
-          <Text
-            h="100%"
-            color={'brand.slate.600'}
-            fontWeight={600}
-            textAlign="center"
-          >
+        <div className="hidden w-full flex-col items-start gap-2 text-sm md:flex">
+          <p className="h-full text-center font-semibold text-slate-600">
             CONTACT
-          </Text>
-          <Text>
-            <Link
-              className="ph-no-capture"
-              color={'#64768b'}
-              fontWeight={500}
+          </p>
+          <div>
+            <a
+              className="ph-no-capture inline items-center font-medium text-[#64768b]"
               href={getURLSanitized(pocSocials)}
-              isExternal
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => posthog.capture('reach out_listing')}
             >
               Reach out
-              <ExternalLinkIcon color={'#64768b'} mb={1} as="span" mx={1} />
-            </Link>
-            <Text as="span" color={'brand.slate.500'}>
+              <ExternalLink className="mx-1 mb-1 inline h-4 w-4 text-[#64768b]" />
+            </a>
+            <span className="inline text-slate-500">
               if you have any questions about this listing
-            </Text>
-          </Text>
-        </VStack>
+            </span>
+          </div>
+        </div>
       )}
-    </VStack>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode } from 'react';
 
-import { GrantCardMobile, grantsQuery } from '@/features/grants';
+import { GrantsCardMini, grantsQuery } from '@/features/grants';
 
 export const LiveGrants = ({
   children,
@@ -22,7 +22,7 @@ export const LiveGrants = ({
       {children}
       <div className="mt-1 flex w-full flex-col">
         {grants?.slice(0, 5).map((grant) => {
-          return <GrantCardMobile grant={grant} key={grant?.id} />;
+          return <GrantsCardMini grant={grant} key={grant?.id} />;
         })}
       </div>
     </div>

@@ -3,25 +3,17 @@ import { getImageProps } from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AuthWrapper } from '@/features/auth';
-import DesktopBanner from '@/public/assets/home/display/banner.webp';
-import MobileBanner from '@/public/assets/home/display/banner-mobile.webp';
+import DesktopBanner from '@/public/assets/banner.webp';
+import MobileBanner from '@/public/assets/banner-mobile.webp';
 
 import { userCountQuery } from '../queries/user-count';
 
 const avatars = [
-  {
-    name: 'Abhishkek',
-    src: '/assets/pfps/t1.webp',
-  },
-  {
-    name: 'Pratik',
-    src: '/assets/pfps/md2.webp',
-  },
-  {
-    name: 'Yash',
-    src: '/assets/pfps/fff1.webp',
-  },
+  { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
+  { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
+  { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
 ];
 
 export function HomeBanner() {

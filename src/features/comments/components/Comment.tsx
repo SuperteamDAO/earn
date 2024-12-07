@@ -25,11 +25,11 @@ import {
 } from '@chakra-ui/react';
 import { type CommentRefType } from '@prisma/client';
 import axios from 'axios';
-import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 
+import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { AuthWrapper } from '@/features/auth';
 import { EarnAvatar } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -241,14 +241,7 @@ export const Comment = ({
                 }}
                 fontWeight={500}
               >
-                {isVerified && (
-                  <Image
-                    width={13}
-                    height={13}
-                    alt="Sponsor Verified Icon"
-                    src="/assets/icons/verified-tick.svg"
-                  />
-                )}
+                {isVerified && <VerifiedBadge />}
                 Sponsor
               </Text>
             )}
@@ -490,12 +483,12 @@ export const Comment = ({
               {deleteError && (
                 <Alert mt={3} rounded="md" status="error">
                   <AlertIcon />
-                  <VStack>
+                  <div className="flex flex-col gap-2">
                     <AlertTitle>Failed to delete comment</AlertTitle>
                     <AlertDescription alignSelf="start">
                       Please try again later.
                     </AlertDescription>
-                  </VStack>
+                  </div>
                 </Alert>
               )}
             </AlertDialogBody>

@@ -40,9 +40,8 @@ import { RiEditFill } from 'react-icons/ri';
 import { TbFileDollar } from 'react-icons/tb';
 import { toast } from 'sonner';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { grantAmount } from '@/features/grants';
-import { useListingFormStore } from '@/features/listing-builder';
 import {
   formatDeadline,
   getColorStyles,
@@ -69,7 +68,6 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
   const router = useRouter();
   const posthog = usePostHog();
   const { data: session } = useSession();
-  const { resetForm } = useListingFormStore();
 
   const {
     isOpen: unpublishIsOpen,
@@ -284,7 +282,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         src={
                           tokenList.filter(
                             (e) => e?.tokenSymbol === listing.token,
-                          )[0]?.icon ?? '/assets/icons/green-dollar.svg'
+                          )[0]?.icon ?? '/assets/dollar.svg'
                         }
                       />
                       {listing?.type === 'grant' && (
@@ -425,7 +423,6 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                             as={NextLink}
                             _hover={{ textDecoration: 'none' }}
                             href={`/dashboard/listings/${listing.slug}/edit`}
-                            onClick={resetForm}
                           >
                             <MenuItem
                               color={'brand.slate.500'}

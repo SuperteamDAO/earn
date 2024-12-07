@@ -153,7 +153,7 @@ export const HowItWorks = () => {
             <div className="ml-[0.8125rem]">
               <button
                 className={cn(
-                  'text-md font-medium hover:text-brand-purple',
+                  'text-base font-medium hover:text-brand-purple',
                   !isLoading && !!user?.isTalentFilled
                     ? 'text-slate-500'
                     : 'text-brand-purple',
@@ -168,14 +168,14 @@ export const HowItWorks = () => {
               >
                 Create your profile
               </button>
-              <p className="text-md font-medium text-gray-500">
+              <p className="text-base font-medium text-gray-500">
                 by telling us about yourself
               </p>
             </div>
             <div className="ml-[0.8125rem]">
               <button
                 className={cn(
-                  'text-md font-medium hover:text-brand-purple',
+                  'text-base font-medium hover:text-brand-purple',
                   !isLoading && hasSubmissions
                     ? 'text-slate-500'
                     : 'text-brand-purple',
@@ -190,14 +190,14 @@ export const HowItWorks = () => {
               >
                 {`Participate in Bounties & Projects`}
               </button>
-              <p className="text-md font-medium text-gray-500">
+              <p className="text-base font-medium text-gray-500">
                 to build proof of work
               </p>
             </div>
             <div className="ml-[0.8125rem]">
               <button
                 className={cn(
-                  'text-md font-medium hover:text-brand-purple',
+                  'text-base font-medium hover:text-brand-purple',
                   !isLoading && hasWins
                     ? 'text-slate-500'
                     : 'text-brand-purple',
@@ -212,7 +212,7 @@ export const HowItWorks = () => {
               >
                 Get Paid for Your Work
               </button>
-              <p className="text-md font-medium text-gray-500">
+              <p className="text-base font-medium text-gray-500">
                 in global standards
               </p>
             </div>

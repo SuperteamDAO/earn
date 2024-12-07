@@ -1,8 +1,14 @@
-import { Avatar, Flex, Text, Tooltip } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import React from 'react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { getURL } from '@/utils/validUrl';
 
 import { type FeedDataProps } from '../types';
@@ -62,47 +68,38 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
 
   const actionLinks = (
     <>
-      <Flex align={'center'} gap={3}>
-        <Avatar size={'xs'} src={sub?.sponsorLogo} />
-        <Text
-          as={NextLink}
-          overflow={'hidden'}
-          color={'brand.slate.500'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={600}
-          _hover={{ textDecoration: 'underline' }}
-          textOverflow={'ellipsis'}
+      <div className="flex items-center gap-3">
+        <Avatar className="h-3 w-3">
+          <AvatarImage src={sub?.sponsorLogo} alt="Sponsor Logo" />
+        </Avatar>
+        <Link
+          className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-slate-500 hover:underline md:text-base"
           href={listingLink}
-          noOfLines={1}
           rel="noopener noreferrer"
           target="_blank"
         >
           {sub?.listingTitle}
-        </Text>
-      </Flex>
-      <Tooltip
-        px={4}
-        py={2}
-        color="brand.slate.500"
-        fontFamily={'var(--font-sans)'}
-        bg="white"
-        borderRadius={'lg'}
-        isDisabled={!!sub?.id || isProject}
-        label={
-          'This submission will be accessible once winners for the listing have been announced.'
-        }
-        shouldWrapChildren
-      >
-        <FeedCardLink
-          href={link}
-          style={{
-            opacity: sub?.id || isProject ? '100%' : '50%',
-            pointerEvents: sub?.id || isProject ? 'all' : 'none',
-          }}
-        >
-          {isProject ? 'View Listing' : 'View Submission'}
-        </FeedCardLink>
-      </Tooltip>
+        </Link>
+      </div>
+      <TooltipProvider>
+        {!sub?.id && !isProject ? (
+          <Tooltip>
+            <TooltipTrigger>
+              <FeedCardLink href={link} style="opacity-50 pointer-events-none">
+                {isProject ? 'View Listing' : 'View Submission'}
+              </FeedCardLink>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-80">
+              This submission will be accessible once winners for the listing
+              have been announced.
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <FeedCardLink href={link} style="opacity-100 pointer-events-auto">
+            {isProject ? 'View Listing' : 'View Submission'}
+          </FeedCardLink>
+        )}
+      </TooltipProvider>
     </>
   );
 

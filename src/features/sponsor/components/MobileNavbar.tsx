@@ -201,7 +201,7 @@ export const MobileNavbar = () => {
             cursor="pointer"
             objectFit={'contain'}
             alt={'Superteam Earn'}
-            src={'/assets/logo/logo.svg'}
+            src={'/assets/logo.svg'}
           />
           <>
             <Divider

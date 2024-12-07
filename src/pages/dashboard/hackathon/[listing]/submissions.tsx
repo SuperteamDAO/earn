@@ -5,7 +5,6 @@ import {
   Flex,
   Grid,
   GridItem,
-  Image,
   Tab,
   TabList,
   TabPanel,
@@ -24,6 +23,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { PublishResults } from '@/features/listings';
 import {
@@ -78,7 +78,7 @@ export default function BountySubmissions({ listing }: Props) {
   );
 
   const { data: bounty, isLoading: isBountyLoading } = useQuery(
-    sponsorDashboardListingQuery(listing, true),
+    sponsorDashboardListingQuery(listing),
   );
 
   const filteredSubmissions = useMemo(() => {
@@ -270,12 +270,10 @@ export default function BountySubmissions({ listing }: Props) {
                         !searchText &&
                         !isSubmissionsLoading ? (
                           <>
-                            <Image
-                              w={32}
-                              mx="auto"
-                              mt={32}
+                            <ExternalImage
+                              className="mx-auto mt-32 w-32"
                               alt={'talent empty'}
-                              src="/assets/bg/talent-empty.svg"
+                              src={'/bg/talent-empty.svg'}
                             />
                             <Text
                               mx="auto"

@@ -4,13 +4,14 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import { cn } from '@/utils';
 
 type ListingSectionProps = {
   children?: React.ReactNode;
   title: string;
   sub: string;
-  emoji?: string;
+  showEmoji?: boolean;
   type: 'bounties' | 'grants';
   showViewAll?: boolean;
   viewAllLink?: string;
@@ -20,7 +21,7 @@ export const ListingSection = ({
   children,
   title,
   sub,
-  emoji,
+  showEmoji = false,
   type,
   showViewAll,
   viewAllLink,
@@ -40,6 +41,9 @@ export const ListingSection = ({
 
   const showViewAllButton = showViewAll && router?.query?.category !== type;
 
+  const emoji =
+    type === 'bounties' ? '/assets/listing-tab.webp' : '/assets/grant-tab.webp';
+
   return (
     <div
       className={cn(
@@ -47,10 +51,10 @@ export const ListingSection = ({
         shouldDisplay ? 'block' : 'hidden',
       )}
     >
-      <div className="mb-4 flex items-center justify-between border-b-2 border-[#E2E8F0] pb-3">
+      <div className="mb-4 flex items-center justify-between border-b border-[#E2E8F0] pb-3">
         <div className="flex items-center">
-          {emoji && (
-            <img
+          {showEmoji && (
+            <LocalImage
               className="mr-3 h-[1.4375rem] w-[1.4375rem]"
               alt="emoji"
               src={emoji}

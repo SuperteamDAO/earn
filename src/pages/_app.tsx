@@ -1,4 +1,5 @@
 import '../styles/globals.scss';
+import '@/components/tiptap/styles/index.css';
 
 import { ChakraProvider } from '@chakra-ui/react';
 import { GoogleTagManager } from '@next/third-parties/google';

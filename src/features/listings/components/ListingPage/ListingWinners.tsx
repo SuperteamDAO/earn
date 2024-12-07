@@ -75,7 +75,7 @@ export function ListingWinners({ bounty }: Props) {
       bg="#F5F3FF"
       rounded="lg"
     >
-      <HStack justify="space-between">
+      <div className="flex justify-between gap-2">
         <Text
           mx={3}
           color="brand.slate.500"
@@ -119,7 +119,7 @@ export function ListingWinners({ bounty }: Props) {
             Share
           </Button>
         </NextLink>
-      </HStack>
+      </div>
       <Box mx={3} mt={{ base: 2, md: 0 }}>
         <Box
           w="full"
@@ -148,7 +148,7 @@ export function ListingWinners({ bounty }: Props) {
                     direction={'column'}
                     cursor="pointer"
                   >
-                    <Box pos="relative">
+                    <div className="relative">
                       {!isProject && (
                         <Center
                           pos="absolute"
@@ -174,7 +174,7 @@ export function ListingWinners({ bounty }: Props) {
                         id={submission?.user?.id}
                         avatar={submission?.user?.photo as string}
                       />
-                    </Box>
+                    </div>
                     <Text
                       w={{ base: 'min-content', md: 'auto' }}
                       pt={4}

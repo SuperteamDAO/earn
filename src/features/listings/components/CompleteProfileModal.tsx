@@ -1,16 +1,14 @@
-import {
-  Button,
-  Link,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
+
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface Props {
   isOpen: boolean;
@@ -38,36 +36,28 @@ export function CompleteProfileModal({
   const CTA = isSponsor ? 'Add Talent Profile' : 'Complete Profile';
 
   return (
-    <Modal isCentered isOpen={isOpen} onClose={onClose} size="md">
-      <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(3px)" />
-      <ModalContent px={6} py={3} bg="white" borderRadius="xl" shadow="xl">
-        <ModalHeader px={0} pb={4} fontSize="xl" fontWeight={500}>
-          {header}
-        </ModalHeader>
-        <ModalCloseButton top={6} right={6} />
-        <ModalBody px={0} py={2}>
-          <Text fontSize="md" lineHeight="tall">
-            {body}
-          </Text>
-        </ModalBody>
-        <ModalFooter px={0} pt={2}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="rounded-xl bg-white px-6 py-3 shadow-xl sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="px-0 py-4 text-xl font-medium text-slate-700">
+            {header}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="px-0">
+          <p className="text-base leading-relaxed text-slate-500">{body}</p>
+        </div>
+
+        <DialogFooter className="px-0 pt-2">
           <Button
-            className="ph-no-capture"
-            as={Link}
-            fontWeight="medium"
-            _hover={{
-              transform: 'translateY(-2px)',
-              boxShadow: 'md',
-            }}
-            transition="all 0.2s"
-            colorScheme="blue"
-            href="/new/talent"
+            className="ph-no-capture h-11 font-medium"
+            asChild
             onClick={() => posthog.capture('complete profile_CTA pop up')}
           >
-            {CTA}
+            <Link href="/new/talent">{CTA}</Link>
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

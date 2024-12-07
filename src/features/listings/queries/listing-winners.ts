@@ -14,7 +14,7 @@ const fetchWinners = async (id: string): Promise<SubmissionWithUser[]> => {
 
 export const listingWinnersQuery = (bountyId: string | undefined) =>
   queryOptions({
-    queryKey: ['winners', bountyId],
+    queryKey: ['winners', bountyId, bountyId!],
     queryFn: () => fetchWinners(bountyId!),
     enabled: !!bountyId,
   });

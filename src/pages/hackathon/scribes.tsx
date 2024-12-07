@@ -5,6 +5,7 @@ import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
@@ -27,12 +28,12 @@ export default function Scribes() {
         />
       }
     >
-      <Box>
+      <div>
         <Flex
           align="center"
           direction={'column'}
           pt={12}
-          bgImage={"url('/assets/hackathon/scribes/scribes-bg.png')"}
+          bgImage={`url('${ASSET_URL}/hackathon/scribes/scribes-bg.png')`}
           bgSize="cover"
           bgPosition="center"
           bgRepeat="no-repeat"
@@ -129,7 +130,7 @@ export default function Scribes() {
             </SimpleGrid>
           </Box>
         </Box>
-      </Box>
+      </div>
     </Default>
   );
 }

@@ -51,7 +51,9 @@ export const FeedPageLayout = ({
               <NavItem name="All Posts" icon={AllPostsIcon} href="/feed" />
             )}
           </div>
-          <div className="flex w-full flex-col">{children}</div>
+          <div className="flex w-full flex-col lg:max-w-[44rem]">
+            {children}
+          </div>
         </div>
       </div>
     </Home>

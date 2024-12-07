@@ -1,4 +1,3 @@
-import { Box, Flex, VStack } from '@chakra-ui/react';
 import {
   type TalentRankingSkills,
   type TalentRankingTimeframe,
@@ -113,28 +112,14 @@ function TalentLeaderboard({
         />
       }
     >
-      <Box overflow="hidden" pb={20} bg="white">
-        <Flex
-          gap={{ base: 4, md: 8 }}
-          maxW={'7xl'}
-          mx="auto"
-          px={{ base: 3, md: 4 }}
-          py={{ base: 4 }}
-        >
-          <VStack
-            align="start"
-            gap={{ base: 4, md: 8 }}
-            w={{ base: '100%', md: '70%' }}
-          >
+      <div className="overflow-hidden bg-white pb-20">
+        <div className="mx-auto flex max-w-7xl gap-4 px-3 py-4 md:gap-8">
+          <div className="flex w-full flex-col items-start gap-4 md:w-[70%] md:gap-8">
             <Banner />
-            <VStack
-              gap={{ base: 4, md: 8 }}
-              display={{ base: 'flex', md: 'none' }}
-              w="full"
-            >
+            <div className="flex w-full flex-col gap-4 md:hidden md:gap-8">
               <Introduction />
-            </VStack>
-            <VStack align="start" w={'100%'}>
+            </div>
+            <div className="flex w-full flex-col items-start gap-3">
               <FilterRow
                 skill={skill}
                 setSkill={(value: SKILL) => setSkill(value)}
@@ -152,22 +137,18 @@ function TalentLeaderboard({
                 page={page}
                 setPage={(v: number) => setPage(v)}
               />
-            </VStack>
-          </VStack>
-          <VStack
-            gap={6}
-            display={{ base: 'none', md: 'flex' }}
-            w={{ md: '30%' }}
-          >
+            </div>
+          </div>
+          <div className="hidden flex-col gap-6 md:flex md:w-[30%]">
             <TotalStats
               TVE={totals?.totalInUSD ?? 0}
               bountyCount={totals?.count ?? 0}
               isTotalLoading={isTotalsLoading}
             />
             <Introduction />
-          </VStack>
-        </Flex>
-      </Box>
+          </div>
+        </div>
+      </div>
     </Default>
   );
 }

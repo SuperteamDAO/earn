@@ -19,7 +19,7 @@ import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { type Listing, type Rewards } from '@/features/listings';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';

@@ -18,7 +18,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { type Grant } from '@/features/grants';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
@@ -166,7 +166,7 @@ export const PaymentsHistoryTab = ({
   };
 
   return (
-    <Box>
+    <div>
       <TableContainer
         mb={8}
         borderWidth={'1px'}
@@ -328,6 +328,6 @@ export const PaymentsHistoryTab = ({
           </Tbody>
         </Table>
       </TableContainer>
-    </Box>
+    </div>
   );
 };

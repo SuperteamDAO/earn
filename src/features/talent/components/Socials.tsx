@@ -1,4 +1,4 @@
-import { Flex, Icon, type IconProps, Link } from '@chakra-ui/react';
+import { Icon, type IconProps, Link } from '@chakra-ui/react';
 import React from 'react';
 import { type IconType } from 'react-icons';
 import {
@@ -17,7 +17,7 @@ interface SocialHOCIconProps extends Omit<IconProps, 'as'> {
 const SocialIcon = ({ link, as, ...props }: SocialHOCIconProps) => {
   return (
     <Link href={link} rel="noopener noreferrer" target="_blank">
-      <Flex>
+      <div className="flex">
         <Icon
           as={as}
           opacity={link ? '1' : '0.3'}
@@ -25,7 +25,7 @@ const SocialIcon = ({ link, as, ...props }: SocialHOCIconProps) => {
           filter={link ? '' : 'grayscale(80%)'}
           {...props}
         />
-      </Flex>
+      </div>
     </Link>
   );
 };

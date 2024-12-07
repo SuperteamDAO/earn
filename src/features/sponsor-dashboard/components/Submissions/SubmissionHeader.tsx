@@ -34,8 +34,7 @@ import { LuPencil } from 'react-icons/lu';
 import { MdInsertLink } from 'react-icons/md';
 import { toast } from 'sonner';
 
-import { tokenList } from '@/constants';
-import { useListingFormStore } from '@/features/listing-builder';
+import { tokenList } from '@/constants/tokenList';
 import {
   formatDeadline,
   getColorStyles,
@@ -62,7 +61,6 @@ export const SubmissionHeader = ({
   isHackathonPage = false,
 }: Props) => {
   const { data: session } = useSession();
-  const { resetForm } = useListingFormStore();
   const router = useRouter();
 
   const deadline = formatDeadline(bounty?.deadline, bounty?.type);
@@ -189,7 +187,6 @@ ${socialListingLink('twitter')}
                   ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
                   : ''
               }
-              onClick={resetForm}
             >
               <Button
                 color={'brand.slate.400'}
@@ -205,13 +202,13 @@ ${socialListingLink('twitter')}
       </Flex>
       <Divider />
       <Flex align="center" gap={12} mt={4} mb={8}>
-        <Box>
+        <div>
           <Text color="brand.slate.500">Submissions</Text>
           <Text mt={3} color="brand.slate.600" fontWeight={600}>
             {totalSubmissions}
           </Text>
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Text color="brand.slate.500">Deadline</Text>
           <Text
             mt={3}
@@ -221,8 +218,8 @@ ${socialListingLink('twitter')}
           >
             {deadline}
           </Text>
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Text color="brand.slate.500">Status</Text>
           <Tag
             mt={3}
@@ -237,8 +234,8 @@ ${socialListingLink('twitter')}
           >
             {bountyStatus}
           </Tag>
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Text color="brand.slate.500">Prize</Text>
           <Flex align={'center'} justify={'start'} gap={1} mt={3}>
             <Image
@@ -248,7 +245,7 @@ ${socialListingLink('twitter')}
               rounded={'full'}
               src={
                 tokenList.filter((e) => e?.tokenSymbol === bounty?.token)[0]
-                  ?.icon ?? '/assets/icons/green-dollar.svg'
+                  ?.icon ?? '/assets/dollar.svg'
               }
             />
             <SponsorPrize
@@ -265,7 +262,7 @@ ${socialListingLink('twitter')}
               {bounty?.token}
             </Text>
           </Flex>
-        </Box>
+        </div>
         <Box ml="auto">
           <Text color="brand.slate.500">Share</Text>
           <Flex align="center" gap={4} mt={2}>

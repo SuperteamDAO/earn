@@ -1,6 +1,7 @@
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { fetchAsset, formatString } from '@/utils/ogHelpers';
 
 export const config = {
@@ -14,19 +15,11 @@ const boldFontP = fetchAsset(
   new URL('../../../../public/Inter-Bold.woff', import.meta.url),
 );
 
-const logoP = fetchAsset(
-  new URL('../../../../public/assets/logo/logo-grayed.png', import.meta.url),
-);
-
 export default async function handler(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const [mediumFont, boldFont, logo] = await Promise.all([
-      mediumFontP,
-      boldFontP,
-      logoP,
-    ]);
+    const [mediumFont, boldFont] = await Promise.all([mediumFontP, boldFontP]);
 
     const getParam = (name: any, processFn = (x: any) => x) =>
       searchParams.has(name) ? processFn(searchParams.get(name)) : null;
@@ -66,7 +59,7 @@ export default async function handler(request: NextRequest) {
               marginLeft: 'auto',
             }}
             alt="pfp"
-            src={logo as any}
+            src={ASSET_URL + '/logo/logo-grayed.png'}
           />
           <div
             style={{

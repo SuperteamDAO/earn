@@ -1,6 +1,7 @@
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { fetchAsset, formatNumber, formatString } from '@/utils/ogHelpers';
 
 export const config = {
@@ -44,8 +45,7 @@ export default async function handler(request: NextRequest) {
       (
         <div
           style={{
-            backgroundImage:
-              'url(https://earn.superteam.fun/assets/og/talent/bg.png)',
+            backgroundImage: `url(${ASSET_URL}/og/talent/bg.png)`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',

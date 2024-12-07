@@ -310,14 +310,27 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     }
   }
 
-  const LinkToolbar = useCallback(() => {
+  const LinkToolbar = () => {
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+      inputRef.current?.focus();
+    }, []);
+
+    const handleInputClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+    };
     return (
       <>
         <Input
+          ref={inputRef}
           className="h-8 rounded-none border-0 text-sm focus-visible:ring-0"
           placeholder="https://..."
           value={linkUrl}
           onChange={(e) => setLinkUrl(e.target.value)}
+          onClick={handleInputClick}
+          onMouseDown={(e) => e.preventDefault()}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
@@ -335,7 +348,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
           <Button
             variant="ghost"
             type="button"
-            className="h-11 rounded-none border-l px-2"
+            className="h-7 rounded-none border-l px-2"
             onClick={() => {
               const { href } = editor.getAttributes('link');
               if (href) {
@@ -349,7 +362,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
         <Button
           variant="ghost"
           type="button"
-          className="h-11 rounded-none border-l px-2"
+          className="h-7 rounded-none border-l px-2"
           onClick={() => {
             editor.chain().focus().unsetLink().run();
             setToolbarState('default');
@@ -360,7 +373,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
         <Button
           variant="ghost"
           type="button"
-          className="h-11 rounded-none border-l px-2 lg:hidden"
+          className="h-7. rounded-none border-l px-2 lg:hidden"
           onClick={() => {
             addLinkToEditor();
           }}
@@ -369,7 +382,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
         </Button>
       </>
     );
-  }, [editor, linkUrl]);
+  };
 
   if (!editor || toolbarState === 'hidden') {
     return null;

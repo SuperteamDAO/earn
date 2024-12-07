@@ -24,14 +24,12 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { PDTG } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import { Login } from '@/features/auth';
-import {
-  isCreateListingAllowedQuery,
-  SelectHackathon,
-  SelectSponsor,
-} from '@/features/listing-builder';
+import { isCreateListingAllowedQuery } from '@/features/listing-builder';
 import {
   CreateListingModal,
   NavItem,
+  SelectHackathon,
+  SelectSponsor,
   SponsorInfoModal,
 } from '@/features/sponsor-dashboard';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -289,7 +287,7 @@ export function SponsorLayout({
                 w="full"
                 py={'22px'}
                 fontSize="md"
-                href={`/dashboard/hackathon/create-hackathon`}
+                href={`/dashboard/new/?type=hackathon`}
                 variant="solid"
               >
                 <AddIcon w={3} h={3} />

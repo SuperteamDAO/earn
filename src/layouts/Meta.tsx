@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 import { useEffect, useState } from 'react';
 
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AppConfig } from '@/utils/AppConfig';
 
 type IMetaProps = {
@@ -67,7 +68,7 @@ const Meta = (props: IMetaProps) => {
           site_name: AppConfig.site_name,
           images: [
             {
-              url: props.og ?? `${router.basePath}/assets/og/og.png`,
+              url: props.og ?? `${ASSET_URL}/og/og.png`,
               alt: props.title,
             },
           ],

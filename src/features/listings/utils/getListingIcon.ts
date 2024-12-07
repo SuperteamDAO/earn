@@ -1,14 +1,14 @@
 export const getListingIcon = (type: string) => {
   switch (type) {
     case 'bounty':
-      return '/assets/icons/bolt.svg';
+      return '/assets/bounty-icon.svg';
     case 'project':
-      return '/assets/icons/briefcase.svg';
+      return '/assets/project-icon.svg';
     case 'hackathon':
-      return '/assets/icons/laptop.svg';
+      return '/assets/hackathon-icon.svg';
     case 'grant':
-      return '/assets/icons/bank.svg';
+      return '/assets/grant-icon.svg';
     default:
-      return '/assets/icons/bolt.svg';
+      return '/assets/bounty-icon.svg';
   }
 };

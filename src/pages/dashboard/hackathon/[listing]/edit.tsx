@@ -3,7 +3,7 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-import { CreateListing } from '@/features/listing-builder';
+// import { CreateListing } from '@/features/listing-builder';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
@@ -16,9 +16,7 @@ function EditBounty({ listing }: Props) {
   const { user } = useUser();
   const router = useRouter();
 
-  const { data: bounty } = useQuery(
-    sponsorDashboardListingQuery(listing, true),
-  );
+  const { data: bounty } = useQuery(sponsorDashboardListingQuery(listing));
 
   useEffect(() => {
     if (bounty && bounty.hackathonId !== user?.hackathonId) {
@@ -28,7 +26,8 @@ function EditBounty({ listing }: Props) {
 
   return (
     <SponsorLayout>
-      <CreateListing listing={bounty} editable type={'hackathon'} />
+      {/* <CreateListing listing={bounty} editable type={'hackathon'} /> */}
+      <></>
     </SponsorLayout>
   );
 }

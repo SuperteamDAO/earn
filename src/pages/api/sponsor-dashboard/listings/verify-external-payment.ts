@@ -1,6 +1,6 @@
 import { type NextApiResponse } from 'next';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import {
   checkListingSponsorAuth,
   type NextApiRequestWithSponsor,

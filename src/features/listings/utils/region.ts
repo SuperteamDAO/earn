@@ -1,4 +1,4 @@
-import { countries } from '@/constants';
+import { countries } from '@/constants/country';
 import { CombinedRegions } from '@/constants/Superteam';
 
 export const getCombinedRegion = (

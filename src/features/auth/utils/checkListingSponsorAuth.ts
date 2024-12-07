@@ -16,15 +16,18 @@ export const checkListingSponsorAuth = async (
   });
 
   if (!listing) {
-    logger.warn(`Bounty with ID: ${listingId} not found`);
+    logger.warn(`Listing with ID: ${listingId} not found`);
     return {
-      error: { status: 404, message: `Bounty with id=${listingId} not found.` },
+      error: {
+        status: 404,
+        message: `Listing with id=${listingId} not found.`,
+      },
     };
   }
 
   if (listing.sponsorId !== userSponsorId) {
     logger.warn(
-      `User's sponsor ID does not match bounty's sponsor ID for bounty ID: ${listingId}`,
+      `User's sponsor ID does not match listings's sponsor ID for listing ID: ${listingId}`,
     );
     return {
       error: {

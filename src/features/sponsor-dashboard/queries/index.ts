@@ -1,4 +1,5 @@
 export * from './accept-invite';
+export * from './active-hackathon';
 export * from './applications';
 export * from './approved-grantees';
 export * from './dashboard';

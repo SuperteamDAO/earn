@@ -1,12 +1,15 @@
-import Image, { type ImageProps } from 'next/image';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 
-interface HighQualityImageProps extends ImageProps {
-  alt: string; // Making 'alt' explicitly required
+interface HighQualityImageProps {
+  alt: string;
+  src: string;
+  className?: string;
 }
 
 export const HighQualityImage: React.FC<HighQualityImageProps> = ({
   alt,
-  ...props
+  src,
+  className,
 }) => {
-  return <Image alt={alt} {...props} quality={90} />;
+  return <ExternalImage alt={alt} src={src} className={className} />;
 };

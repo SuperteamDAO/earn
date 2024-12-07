@@ -1,11 +1,8 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
-import {
-  LinkBox,
-  type LinkBoxProps,
-  LinkOverlay,
-  Text,
-} from '@chakra-ui/react';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import { type ReactNode } from 'react';
+
+import { cn } from '@/utils';
 
 export const FeedCardLink = ({
   href,
@@ -13,33 +10,27 @@ export const FeedCardLink = ({
   children,
 }: {
   href: string | undefined;
-  style?: LinkBoxProps;
+  style?: React.HTMLAttributes<HTMLDivElement>['className'];
   children: ReactNode;
 }) => {
   return (
-    <LinkBox
-      alignItems={'center'}
-      gap={2}
-      whiteSpace={'nowrap'}
-      {...style}
-      display={{ base: 'none', md: 'flex' }}
-      _hover={{
-        textDecoration: 'underline',
-        textDecorationColor: '#6366F1',
-        textUnderlineOffset: 2,
-      }}
+    <div
+      className={cn(
+        'hidden items-center gap-2 whitespace-nowrap md:flex',
+        style,
+      )}
     >
-      <LinkOverlay href={href} rel="noopener noreferrer" target="_blank">
-        <Text
-          as="span"
-          color={'#6366F1'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={600}
-        >
+      <Link
+        href={href ?? '#'}
+        rel="noopener noreferrer"
+        target="_blank"
+        className="flex items-center gap-3 group-hover:underline group-hover:decoration-[#6366F1] group-hover:underline-offset-2"
+      >
+        <span className="text-sm font-medium text-[#6366F1] md:text-base">
           {children}
-        </Text>
-      </LinkOverlay>
-      <ArrowForwardIcon color={'#6366F1'} />
-    </LinkBox>
+        </span>
+        <ArrowRight className="h-4 w-4 text-[#6366F1]" />
+      </Link>
+    </div>
   );
 };

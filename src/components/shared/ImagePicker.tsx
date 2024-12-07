@@ -1,16 +1,11 @@
-import { CloseIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Flex,
-  Icon,
-  IconButton,
-  Image,
-  Input,
-  Text,
-} from '@chakra-ui/react';
+import { X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { RxUpload } from 'react-icons/rx';
 import { toast } from 'sonner';
+
+import { cn } from '@/utils';
+
+import { Input } from '../ui/input';
 
 interface ImagePickerProps {
   onChange?: (file: File) => void;
@@ -96,70 +91,46 @@ export const ImagePicker = ({
   };
 
   return (
-    <Box
-      pos={'relative'}
-      mt={2}
-      p={4}
-      border="1px dashed"
-      borderColor={isDragging ? 'brand.primary' : 'brand.slate.300'}
-      borderRadius="md"
+    <div
+      className={cn(
+        'relative mt-2 rounded-md border border-dashed p-4',
+        isDragging ? 'border-brand-primary' : 'border-slate-300',
+      )}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      <Flex>
+      <div className="flex">
         {preview ? (
-          <Image
-            w={20}
-            h={20}
-            borderRadius={'xl'}
-            objectFit={'cover'}
-            alt="Preview"
+          <img
+            className="h-20 w-20 rounded-xl object-cover"
             src={preview}
+            alt="Preview"
           />
         ) : (
-          <Flex
-            align={'center'}
-            justify={'center'}
-            w={20}
-            h={20}
-            bg="brand.slate.100"
-            borderRadius={'xl'}
-          >
-            <Icon as={RxUpload} boxSize={6} color="brand.slate.500" />
-          </Flex>
+          <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-slate-100">
+            <RxUpload className="size-6 text-slate-500" />
+          </div>
         )}
         {preview && (
-          <IconButton
-            pos="absolute"
-            zIndex={1}
-            top={3}
-            right={3}
-            color={'brand.slate.400'}
-            bg={'transparent'}
-            _hover={{ bg: 'brand.slate.100' }}
-            aria-label="Remove image"
-            icon={<CloseIcon />}
+          <X
+            className="absolute right-3 top-3 z-10 h-5 w-5 cursor-pointer bg-transparent text-slate-400"
             onClick={handleReset}
-            size="sm"
           />
         )}
 
-        <Flex justify={'center'} direction={'column'} px={5}>
-          <Text mb={1} color={'brand.slate.500'} fontWeight={600}>
+        <div className="flex flex-col justify-center px-5">
+          <p className="mb-1 font-semibold text-slate-500">
             Choose or drag and drop media
-          </Text>
-          <Text color="brand.slate.400" fontSize="sm">
-            Maximum size 5 MB
-          </Text>
-        </Flex>
-      </Flex>
+          </p>
+          <p className="text-sm text-slate-400">Maximum size 5 MB</p>
+        </div>
+      </div>
       <Input
         ref={fileInputRef}
+        className="hidden"
         accept="image/jpeg, image/png, image/webp"
-        hidden
-        isRequired={false}
         onChange={(e) => {
           const file = e.target.files ? e.target.files[0] : null;
           handleFileChange(file);
@@ -167,18 +138,13 @@ export const ImagePicker = ({
         }}
         type="file"
       />
-      <Box
-        pos="absolute"
-        top={0}
-        right={0}
-        bottom={0}
-        left={0}
-        cursor="pointer"
+      <div
+        className="absolute bottom-0 left-0 right-0 top-0 cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
           fileInputRef.current?.click();
         }}
       />
-    </Box>
+    </div>
   );
 };

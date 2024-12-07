@@ -1,12 +1,13 @@
+import { useQuery } from '@tanstack/react-query';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { MdArrowForward } from 'react-icons/md';
 
-import { type FeedPostType, useGetFeed } from '@/features/feed';
+import { LocalImage } from '@/components/ui/local-image';
+import { type FeedPostType, homeFeedQuery } from '@/features/feed';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 interface ActivityCardProps {
-  id: string;
   firstName: string;
   lastName: string;
   username: string;
@@ -18,26 +19,17 @@ interface ActivityCardProps {
 }
 
 const getRandomFallbackImage = (): string => {
-  const fallbackImages = [
-    '/assets/fallback/resized-og/1.webp',
-    '/assets/fallback/resized-og/2.webp',
-    '/assets/fallback/resized-og/3.webp',
-    '/assets/fallback/resized-og/4.webp',
-    '/assets/fallback/resized-og/5.webp',
-    '/assets/fallback/resized-og/6.webp',
-    '/assets/fallback/resized-og/7.webp',
-    '/assets/fallback/resized-og/8.webp',
-    '/assets/fallback/resized-og/9.webp',
-    '/assets/fallback/resized-og/10.webp',
-    '/assets/fallback/resized-og/11.webp',
-  ];
+  const basePath = '/assets/fallback/resized-og';
+  const fallbackImages = Array.from(
+    { length: 11 },
+    (_, i) => `${basePath}/${i + 1}.webp`,
+  );
 
   const randomIndex = Math.floor(Math.random() * fallbackImages.length);
   return fallbackImages[randomIndex]!;
 };
 
 const ActivityCard = ({
-  id,
   firstName,
   lastName,
   username,
@@ -75,11 +67,8 @@ const ActivityCard = ({
   const ogImage = getRandomFallbackImage();
 
   return (
-    <NextLink
-      href={!!id ? `/feed/?type=${type}&id=${id}` : '/feed/?filter=new'}
-      className="flex"
-    >
-      <img
+    <NextLink href={'/feed/?filter=new'} className="flex">
+      <LocalImage
         className="h-12 w-20 bg-center object-cover"
         alt="OG Image"
         src={ogImage}
@@ -105,8 +94,9 @@ const ActivityCard = ({
 
 export const RecentActivity = () => {
   const posthog = usePostHog();
-  const { data } = useGetFeed({ take: 5 });
-  const activity = data?.pages[0] ?? [];
+  const { data, isLoading } = useQuery(homeFeedQuery);
+
+  if (isLoading) return null;
 
   return (
     <div>
@@ -126,18 +116,17 @@ export const RecentActivity = () => {
         </NextLink>
       </div>
       <div className="mt-4 flex w-full flex-col gap-4">
-        {activity.map((act, i) => (
+        {data?.map((act, i) => (
           <ActivityCard
             key={i}
-            id={act.id}
-            firstName={act.firstName}
-            lastName={act.lastName}
-            username={act.username}
+            firstName={act.user.firstName}
+            lastName={act.user.lastName}
+            username={act.user.username}
             createdAt={act.createdAt}
-            listingType={act.listingType}
+            listingType={act.listing.type as 'bounty' | 'hackathon' | 'project'}
             isWinner={act.isWinner}
-            isWinnersAnnounced={act.isWinnersAnnounced}
-            type={act.type}
+            isWinnersAnnounced={act.listing.isWinnersAnnounced}
+            type={'submission'}
           />
         ))}
       </div>

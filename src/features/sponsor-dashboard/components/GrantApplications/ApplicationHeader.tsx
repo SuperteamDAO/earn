@@ -28,7 +28,7 @@ import router from 'next/router';
 import React from 'react';
 import { toast } from 'sonner';
 
-import { tokenList } from '@/constants';
+import { tokenList } from '@/constants/tokenList';
 import { type Grant } from '@/features/grants';
 import { getColorStyles, getListingStatus } from '@/features/listings';
 import { useClipboard } from '@/hooks/use-clipboard';
@@ -95,7 +95,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
       </Box>
       <Flex align="center" justify={'space-between'} mb={4}>
         <Flex align="center" gap={2}>
-          <Image h={6} alt="" src={`/assets/icons/bank.svg`} />
+          <Image h={6} alt="" src={`/assets/grant-icon.svg`} />
           <Text color="brand.slate.800" fontSize="xl" fontWeight="700">
             {grant?.title}
           </Text>
@@ -127,13 +127,13 @@ export const ApplicationHeader = ({ grant }: Props) => {
       </Flex>
       <Divider />
       <Flex align="center" gap={12} mt={4} mb={8}>
-        <Box>
+        <div>
           <Text color="brand.slate.500">Applications</Text>
           <Text mt={3} color="brand.slate.600" fontWeight={600}>
             {grant?.totalApplications}
           </Text>
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Text color="brand.slate.500">Deadline</Text>
           <Text
             mt={3}
@@ -143,8 +143,8 @@ export const ApplicationHeader = ({ grant }: Props) => {
           >
             Rolling
           </Text>
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Text color="brand.slate.500">Status</Text>
           <Tag
             mt={3}
@@ -159,8 +159,8 @@ export const ApplicationHeader = ({ grant }: Props) => {
           >
             {grantStatus}
           </Tag>
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Text color="brand.slate.500">Grant Size</Text>
           <Flex align={'center'} justify={'start'} gap={1} mt={3}>
             <Image
@@ -170,7 +170,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
               rounded={'full'}
               src={
                 tokenList.filter((e) => e?.tokenSymbol === grant?.token)[0]
-                  ?.icon ?? '/assets/icons/green-dollar.svg'
+                  ?.icon ?? '/assets/dollar.svg'
               }
             />
             <SponsorPrize
@@ -186,8 +186,8 @@ export const ApplicationHeader = ({ grant }: Props) => {
               {grant?.token}
             </Text>
           </Flex>
-        </Box>
-        <Box>
+        </div>
+        <div>
           <Text color="brand.slate.500">Share</Text>
           <InputGroup mt={1} mb={-2}>
             <Input
@@ -215,7 +215,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
               )}
             </InputRightElement>
           </InputGroup>
-        </Box>
+        </div>
       </Flex>
     </>
   );

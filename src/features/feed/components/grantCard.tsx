@@ -1,7 +1,7 @@
-import { Avatar, Flex, Text } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import React from 'react';
 
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { getURL } from '@/utils/validUrl';
 
 import { type FeedDataProps } from '../types';
@@ -30,24 +30,19 @@ export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
 
   const actionLinks = (
     <>
-      <Flex align={'center'} gap={3}>
-        <Avatar size={'xs'} src={grant?.sponsorLogo} />
-        <Text
-          as={NextLink}
-          overflow={'hidden'}
-          color={'brand.slate.500'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={600}
-          _hover={{ textDecoration: 'underline' }}
-          textOverflow={'ellipsis'}
+      <div className="flex items-center gap-3">
+        <Avatar className="h-6 w-6">
+          <AvatarImage src={grant?.sponsorLogo} alt="Sponsor Logo" />
+        </Avatar>
+        <Link
+          className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-slate-500 hover:underline md:text-base"
           href={listingLink}
-          noOfLines={1}
           rel="noopener noreferrer"
           target="_blank"
         >
           {grant?.listingTitle}
-        </Text>
-      </Flex>
+        </Link>
+      </div>
       <FeedCardLink href={listingLink}>View Grant</FeedCardLink>
     </>
   );

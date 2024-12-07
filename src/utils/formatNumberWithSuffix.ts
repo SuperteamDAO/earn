@@ -7,7 +7,7 @@ export const formatNumberWithSuffix = (
 
   if (amount < 1000) return amount;
 
-  const suffixes = ['', 'k', 'M', 'B'];
+  const suffixes = ['', 'k', 'M', 'B', 'T', 'Q'];
   let tier = (Math.log10(amount) / 3) | 0;
 
   // adjust tier if skipping thousands

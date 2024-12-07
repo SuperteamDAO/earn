@@ -15,7 +15,7 @@ const fetchOgImage = async (url: string): Promise<OpenGraph> => {
 
 export const ogImageQuery = (url: string) =>
   queryOptions({
-    queryKey: ['ogImage', url],
+    queryKey: ['ogImage', url, url!],
     queryFn: () => fetchOgImage(url!),
     enabled: !!url,
     retry: false,
