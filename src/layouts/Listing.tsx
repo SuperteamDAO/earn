@@ -170,7 +170,7 @@ export function ListingPageLayout({
                 <div className="flex h-full w-full flex-grow flex-col gap-8 border-slate-100 pb-10 md:border-l md:pl-5">
                   <div className="w-full">{children}</div>
                   <div className="flex w-full flex-col items-start md:hidden">
-                    <p className="h-full text-center text-sm font-semibold text-slate-600">
+                    <p className="mb-1 h-full text-center text-xs font-semibold text-slate-600">
                       SKILLS NEEDED
                     </p>
                     <div className="flex flex-wrap gap-3">
@@ -185,21 +185,21 @@ export function ListingPageLayout({
                     </div>
                   </div>
                   {initialBounty.pocSocials && (
-                    <div className="flex w-full flex-col items-start gap-2 text-xs md:hidden">
-                      <p className="h-full text-center font-semibold text-slate-600">
+                    <div className="flex w-full flex-col items-start md:hidden">
+                      <p className="h-full text-center text-xs font-semibold text-slate-600">
                         CONTACT
                       </p>
                       <p>
                         <Link
-                          className="ph-no-capture font-medium text-[#64768b]"
+                          className="ph-no-capture text-xs font-medium text-[#64768b]"
                           href={getURLSanitized(initialBounty.pocSocials)}
                           onClick={() => posthog.capture('reach out_listing')}
                         >
                           Reach out
-                          <ExternalLink className="mx-1 mb-1 inline text-[#64768b]" />
+                          <ExternalLink className="mx-1 mb-1 inline h-3 w-3 text-[#64768b]" />
                         </Link>
                         <span
-                          className="text-slate-500"
+                          className="text-xs text-slate-500"
                           color={'brand.slate.500'}
                         >
                           if you have any questions about this listing

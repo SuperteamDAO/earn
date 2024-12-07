@@ -153,7 +153,7 @@ export default function Hackathon() {
   const changeBountyStatus = async (status: boolean) => {
     setIsChangingStatus(true);
     try {
-      const result = await axios.post(`/api/hackathon/update/${bounty.id}/`, {
+      const result = await axios.post(`/api/listings/unpublish/${bounty.id}/`, {
         isPublished: status,
       });
 

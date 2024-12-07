@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Rewards } from '@/features/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { setCacheHeaders } from '@/utils/cacheControl';
 
 export default async function user(_req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -56,6 +57,14 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         rewardToken: submission.listing.token,
         photo: submission.user.photo,
       };
+    });
+
+    setCacheHeaders(res, {
+      public: true,
+      // 1 day
+      maxAge: 24 * 60 * 60,
+      sMaxAge: 24 * 60 * 60,
+      staleWhileRevalidate: 60 * 60, // 1 hour
     });
 
     logger.info('Successfully fetched winning submissions');

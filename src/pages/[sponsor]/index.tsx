@@ -99,7 +99,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             {isListingsLoading ? (
               <Skeleton className="mt-4 h-4 w-48 md:mt-0" />
             ) : (
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
                 <p className="text-xl font-semibold">{title}</p>
                 {!!isVerified && (
                   <VerifiedBadge
