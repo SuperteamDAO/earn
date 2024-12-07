@@ -1,7 +1,6 @@
 import { Box, Divider, Flex, Grid, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
 import { userCountQuery } from '@/features/home';
 
 import { fontSize, maxW, padding } from '../utils';
@@ -70,7 +69,7 @@ export function Stats() {
     >
       <Box w="full" maxW={{ base: '20rem', xl: '30rem' }}>
         <HighQualityImage
-          src={ASSET_URL + '/landingsponsor/displays/global-earn.webp'}
+          src={'/landingsponsor/displays/global-earn.webp'}
           alt="Superteam Earn Global"
           className="w-full max-w-[30rem]"
         />
@@ -124,7 +123,7 @@ export function Stats() {
                     w={{ base: '0.6rem', lg: '0.9rem' }}
                   >
                     <HighQualityImage
-                      src={ASSET_URL + '/landingsponsor/icons/earn.svg'}
+                      src={'/landingsponsor/icons/earn.svg'}
                       alt="Earn Icon"
                       className="h-full w-full"
                     />

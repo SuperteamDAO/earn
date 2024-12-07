@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
@@ -31,17 +31,17 @@ export default function Custom404() {
         }
       >
         <div className="flex flex-col items-center justify-center gap-4">
-          <img alt="404 page" src={ASSET_URL + '/bg/404.svg'} />
+          <ExternalImage alt="404 page" src={'/bg/404.svg'} />
           <p className="text-xl font-medium text-black">Nothing Found</p>
           <p className="max-w-2xl text-center text-base text-gray-500 lg:text-lg">
             Sorry, we couldn&apos;t find what you were looking for. It’s
             probably your own fault, please check your spelling or meanwhile
             have a look at this cat
           </p>
-          <img
+          <ExternalImage
             className="mb-72 w-[20rem] lg:w-[30rem]"
             alt="cat image"
-            src={ASSET_URL + '/bg/cat.png'}
+            src={'/bg/cat.png'}
           />
         </div>
       </Default>

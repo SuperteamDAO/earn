@@ -11,7 +11,6 @@ import {
   Divider,
   Flex,
   IconButton,
-  Image,
   Text,
   useBreakpointValue,
   useDisclosure,
@@ -26,6 +25,7 @@ import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ShareIcon } from '@/components/shared/shareIcon';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type FeedDataProps, FeedLoop, useGetFeed } from '@/features/feed';
 import {
@@ -556,12 +556,10 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   isLoading={isLoading}
                 >
                   <>
-                    <Image
-                      w={32}
-                      mx="auto"
-                      mt={32}
+                    <ExternalImage
+                      className="mx-auto mt-32 w-32"
                       alt={'talent empty'}
-                      src={ASSET_URL + '/bg/talent-empty.svg'}
+                      src={'/bg/talent-empty.svg'}
                     />
                     <Text
                       w="200px"

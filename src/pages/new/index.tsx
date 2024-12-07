@@ -17,6 +17,7 @@ import { MdCheck } from 'react-icons/md';
 
 import { SponsorButton } from '@/components/ProfileSetup/SponsorButton';
 import { TalentButton } from '@/components/ProfileSetup/TalentButton';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AuthWrapper } from '@/features/auth';
 import { userCountQuery } from '@/features/home';
@@ -152,10 +153,10 @@ export default function NewProfilePage({
                     display={'flex'}
                     w={'full'}
                   >
-                    <img
+                    <ExternalImage
                       style={{ width: '100%' }}
                       alt={'user icon'}
-                      src={ASSET_URL + '/onboarding/talent-banner.webp'}
+                      src={'/onboarding/talent-banner.webp'}
                     />
                     <Box
                       pos="absolute"
@@ -239,10 +240,10 @@ export default function NewProfilePage({
                   display={'flex'}
                   w={'full'}
                 >
-                  <img
+                  <ExternalImage
                     style={{ width: '100%' }}
                     alt={'user icon'}
-                    src={ASSET_URL + '/onboarding/sponsor-banner.webp'}
+                    src={'/onboarding/sponsor-banner.webp'}
                   />
                   <Box
                     pos="absolute"
@@ -274,25 +275,25 @@ export default function NewProfilePage({
               </Flex>
             </AuthWrapper>
             <Flex align="center" justify="space-between" gap={3} mt={-3} px={3}>
-              <img
+              <ExternalImage
                 className="h-5 object-contain"
                 alt="Jupiter Icon"
-                src={ASSET_URL + '/landingsponsor/sponsors/jupiter.webp'}
+                src={'/landingsponsor/sponsors/jupiter.webp'}
               />
-              <img
+              <ExternalImage
                 className="h-8 object-contain"
                 alt="Solflare Icon"
-                src={ASSET_URL + '/landingsponsor/sponsors/solflare.webp'}
+                src={'/landingsponsor/sponsors/solflare.webp'}
               />
-              <img
+              <ExternalImage
                 className="hidden h-4 object-contain md:block"
                 alt="Squads Icon"
-                src={ASSET_URL + '/company-logos/squads.webp'}
+                src={'/company-logos/squads.webp'}
               />
-              <img
+              <ExternalImage
                 className="h-7 w-7 object-contain"
                 alt="Tensor Icon"
-                src={ASSET_URL + '/company-logos/tensor.svg'}
+                src={'/company-logos/tensor.svg'}
               />
             </Flex>
           </Flex>

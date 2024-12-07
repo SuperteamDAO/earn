@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { tokenList } from '@/constants/tokenList';
 import { RelatedListings } from '@/features/home';
@@ -209,11 +209,10 @@ export function RightSideBar({
               <>
                 <Flex align={'start'} justify={'center'} direction={'column'}>
                   <Flex align={'center'} justify={'center'} gap={2}>
-                    <Image
-                      w={'1.4rem'}
-                      mt={-1}
+                    <ExternalImage
+                      className="-mt-1 w-[1.4rem]"
                       alt={'suit case'}
-                      src={ASSET_URL + '/icons/purple-suitcase.svg'}
+                      src={'/icons/purple-suitcase.svg'}
                     />
                     <Text
                       color={'#000000'}
@@ -243,11 +242,10 @@ export function RightSideBar({
                   py={3}
                 >
                   <Flex align={'start'} justify={'center'} gap={1}>
-                    <Image
-                      w={'1.4rem'}
-                      mt={1}
+                    <ExternalImage
+                      className="mt-1 w-[1.4rem]"
                       alt={'suit case'}
-                      src={ASSET_URL + '/icons/purple-timer.svg'}
+                      src={'/icons/purple-timer.svg'}
                     />
                     <VStack align={'start'} gap={0}>
                       <Text
@@ -274,11 +272,10 @@ export function RightSideBar({
                 py={3}
               >
                 <Flex align={'start'} justify={'center'} gap={1}>
-                  <Image
-                    w={'1.4rem'}
-                    mt={1}
+                  <ExternalImage
+                    className="mt-1 w-[1.4rem]"
                     alt={'suit case'}
-                    src={ASSET_URL + '/icons/purple-timer.svg'}
+                    src={'/icons/purple-timer.svg'}
                   />
                   <VStack align={'start'} gap={0}>
                     <Text

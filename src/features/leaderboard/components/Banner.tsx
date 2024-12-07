@@ -1,12 +1,12 @@
-import { Flex, Image, Text, VStack } from '@chakra-ui/react';
+import { Flex, Text, VStack } from '@chakra-ui/react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 export function Banner() {
   return (
     <Flex align="center" overflow="hidden" h="8rem" bg="#020617" rounded={6}>
       <Flex w={{ md: 100 }}>
-        <img alt="Ranks 3d" src={ASSET_URL + '/leaderboard/ranks3d.webp'} />
+        <ExternalImage alt="Ranks 3d" src={'/leaderboard/ranks3d.webp'} />
       </Flex>
       <VStack
         align="start"
@@ -24,10 +24,10 @@ export function Banner() {
         </Text>
       </VStack>
       <Flex display={{ base: 'flex', md: 'none' }} h={'100%'}>
-        <Image
+        <ExternalImage
           className="w-full"
           alt="Illustration"
-          src={ASSET_URL + '/leaderboard/banner-mobile.webp'}
+          src={'/leaderboard/banner-mobile.webp'}
         />
       </Flex>
       <Flex
@@ -36,10 +36,10 @@ export function Banner() {
         h={'100%'}
         ml="auto"
       >
-        <Image
+        <ExternalImage
           className="ml-8 h-full w-full"
           alt="Illustration"
-          src={ASSET_URL + '/leaderboard/banner-desktop.webp'}
+          src={'/leaderboard/banner-desktop.webp'}
         />
       </Flex>
     </Flex>

@@ -14,7 +14,6 @@ import {
   GridItem,
   HStack,
   IconButton,
-  Image,
   Link,
   Modal,
   ModalBody,
@@ -40,7 +39,8 @@ import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { LocalImage } from '@/components/ui/local-image';
 import { Superteams } from '@/constants/Superteam';
 import { tokenList } from '@/constants/tokenList';
 import { AuthWrapper } from '@/features/auth';
@@ -55,7 +55,7 @@ import { dayjs } from '@/utils/dayjs';
 
 const SLUG = 'talent-olympics';
 
-const base = `${ASSET_URL}/hackathon/talent-olympics/`;
+const base = `/hackathon/talent-olympics/`;
 const baseAsset = (filename: string) => base + filename;
 
 const slugLink = (slug: string) => `/listings/hackathon/${slug}`;
@@ -372,23 +372,23 @@ function Hero({
         POWERED BY
       </Text>
       <Flex align="center" gap={8} my={4}>
-        <Image
-          w={{ base: '5rem', sm: '7rem' }}
-          h={PoweredByHeight}
+        <ExternalImage
+          style={{ height: PoweredByHeight }}
           alt="Web3 Builders Alliance"
-          src={ASSET_URL + '/company-logos/turbine.svg'}
+          src={'/company-logos/turbine.svg'}
+          className="w-[5rem] sm:w-[7rem]"
         />
-        <Image
-          w={{ base: '5rem', sm: '7rem' }}
-          h={PoweredByHeight}
+        <ExternalImage
+          className="w-[5rem] sm:w-[7rem]"
           alt="Superteam"
-          src={ASSET_URL + '/company-logos/superteam.svg'}
+          src={'/company-logos/superteam.svg'}
+          style={{ height: PoweredByHeight }}
         />
-        <Image
-          w={{ base: '5rem', sm: '7rem' }}
-          h={PoweredByHeight}
+        <ExternalImage
+          className="w-[5rem] sm:w-[7rem]"
           alt="Rise In"
-          src={ASSET_URL + '/company-logos/rise-in.svg'}
+          src={'/company-logos/rise-in.svg'}
+          style={{ height: PoweredByHeight }}
         />
       </Flex>
     </Flex>
@@ -396,7 +396,7 @@ function Hero({
 }
 
 function GetHiredBy() {
-  const base = ASSET_URL + '/company-logos/';
+  const base = '/company-logos/';
   const baseAsset = (filename: string) => base + filename;
 
   const hiredBy: { name: string; src: string }[] = [
@@ -614,11 +614,9 @@ function GetHiredBy() {
       <Box minW={0}>
         <Marquee speed={100}>
           {multipliedHiredBy.map((h, index) => (
-            <Image
+            <ExternalImage
+              className="mx-4 inline-block h-8"
               key={`${h.name}-${index}`}
-              display="inline-block"
-              h="2rem"
-              mx={4}
               alt={h.name}
               src={h.src}
             />
@@ -661,7 +659,7 @@ function About() {
             onClick={onOpen}
             rounded="full"
           >
-            <Image
+            <ExternalImage
               alt="kash"
               src={base + 'kash.png'}
               style={{ width: '1.5rem', height: '1.5rem' }}
@@ -732,7 +730,7 @@ function FeatureCard({
       borderColor="brand.slate.200"
       rounded="lg"
     >
-      <Image alt={title} src={image} />
+      <ExternalImage alt={title} src={image} />
       <VStack align={'start'} gap={0}>
         <Text fontWeight={600}>{title}</Text>
         <Text color="brand.slate.500" fontSize="xs" fontWeight={500}>
@@ -810,11 +808,8 @@ function TrackBox({
               gap={5}
               _hover={{ textDecoration: 'underline' }}
             >
-              <Image
-                w={{ base: 12, md: '4.5rem' }}
-                h={{ base: 12, md: '4.5rem' }}
-                borderRadius={3}
-                objectFit={'cover'}
+              <ExternalImage
+                className="h-12 w-12 rounded-md object-cover md:h-[4.5rem] md:w-[4.5rem]"
                 alt={title}
                 src={icon}
               />
@@ -837,11 +832,9 @@ function TrackBox({
               </Flex>
             </Flex>
             <Flex align="center" justify={'end'} gap={1} mt={3}>
-              <Image
-                w={{ base: 4, md: 6 }}
-                h={{ base: 4, md: 6 }}
+              <LocalImage
+                className="h-4 w-4 rounded-full md:h-6 md:w-6"
                 alt={token}
-                rounded={'full'}
                 src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
               />
               <Text

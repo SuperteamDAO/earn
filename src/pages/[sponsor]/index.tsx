@@ -8,6 +8,7 @@ import { MdOutlineInsertLink } from 'react-icons/md';
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { Loading } from '@/components/shared/Loading';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { GrantsCard } from '@/features/grants';
@@ -87,10 +88,10 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             <Skeleton className="h-28 w-28 rounded-full" />
           ) : (
             <div className="justify-center rounded-full">
-              <img
+              <LocalImage
                 className="h-28 w-28 rounded-full"
                 alt="Category icon"
-                src={logo}
+                src={logo!}
               />
             </div>
           )}

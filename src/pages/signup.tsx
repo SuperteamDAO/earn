@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import { SignIn } from '@/features/auth';
 import { acceptInvite, verifyInviteQuery } from '@/features/sponsor-dashboard';
 
@@ -73,10 +74,10 @@ export default function SignupPage() {
             Start your journey to access top global talent!
           </p>
 
-          <img
+          <LocalImage
             className="mt-12 h-20 w-20 rounded sm:mr-5"
-            alt={inviteDetails?.sponsorName}
-            src={inviteDetails?.sponsorLogo}
+            alt={inviteDetails?.sponsorName!}
+            src={inviteDetails?.sponsorLogo!}
           />
 
           <p className="my-5 text-center font-medium leading-6 text-slate-500">

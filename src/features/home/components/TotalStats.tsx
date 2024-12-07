@@ -1,5 +1,5 @@
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ASSET_URL } from '@/constants/ASSET_URL';
 
 export const TotalStats = ({
   bountyCount,
@@ -13,10 +13,10 @@ export const TotalStats = ({
   return (
     <div className="flex w-full flex-wrap items-center justify-between gap-2 rounded-md bg-[#F8FAFC] px-2 py-4">
       <div className="flex">
-        <img
+        <ExternalImage
           className="mb-auto mr-2 h-[1.5625rem]"
           alt=""
-          src={ASSET_URL + '/icons/lite-purple-dollar.svg'}
+          src={'/icons/lite-purple-dollar.svg'}
         />
         <div>
           {isTotalLoading ? (
@@ -33,10 +33,10 @@ export const TotalStats = ({
       </div>
       <div className="hidden h-[80%] w-[0.0625rem] bg-[#CBD5E1] xl:block" />
       <div className="flex">
-        <img
+        <ExternalImage
           className="mb-auto mr-2 h-[25px]"
           alt="suitcase"
-          src={ASSET_URL + '/icons/lite-purple-suitcase.svg'}
+          src={'/icons/lite-purple-suitcase.svg'}
         />
         <div>
           {isTotalLoading ? (

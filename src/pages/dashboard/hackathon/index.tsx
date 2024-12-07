@@ -51,7 +51,7 @@ import { IoEyeOffOutline, IoOpenOutline, IoTrash } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { tokenList } from '@/constants/tokenList';
 import {
   formatDeadline,
@@ -303,12 +303,10 @@ export default function Hackathon() {
             isOpen={isOpenCreateListing}
             onClose={onCloseCreateListing}
           />
-          <Image
-            w={32}
-            mx="auto"
-            mt={32}
+          <ExternalImage
+            className="mx-auto mt-32 w-32"
             alt={'talent empty'}
-            src={ASSET_URL + '/bg/talent-empty.svg'}
+            src={'/bg/talent-empty.svg'}
           />
           <Text
             mx="auto"

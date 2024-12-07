@@ -1,16 +1,10 @@
-import {
-  Container,
-  Image,
-  Text,
-  VStack,
-  Wrap,
-  WrapItem,
-} from '@chakra-ui/react';
+import { Container, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { GrantEntry, grantsQuery } from '@/features/grants';
 import { Default } from '@/layouts/Default';
@@ -42,14 +36,10 @@ function Grants() {
         minH={'100vh'}
         bg={'#F5F5F5'}
       >
-        <Image
-          pos={'absolute'}
-          top={'0'}
-          right={'0'}
-          left={'0'}
-          w={'100%'}
+        <ExternalImage
+          className="absolute left-0 right-0 top-0 h-full w-full"
           alt=""
-          src={ASSET_URL + '/home/bg_grad.svg'}
+          src={'/home/bg_grad.svg'}
         />
         <VStack my={16} textAlign="center" spacing={4}>
           <Text

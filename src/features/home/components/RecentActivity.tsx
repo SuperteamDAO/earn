@@ -3,6 +3,7 @@ import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { MdArrowForward } from 'react-icons/md';
 
+import { LocalImage } from '@/components/ui/local-image';
 import { type FeedPostType, homeFeedQuery } from '@/features/feed';
 import { timeAgoShort } from '@/utils/timeAgo';
 
@@ -67,7 +68,7 @@ const ActivityCard = ({
 
   return (
     <NextLink href={'/feed/?filter=new'} className="flex">
-      <img
+      <LocalImage
         className="h-12 w-20 bg-center object-cover"
         alt="OG Image"
         src={ogImage}
