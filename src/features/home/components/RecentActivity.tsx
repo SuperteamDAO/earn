@@ -36,23 +36,23 @@ const ActivityCard = ({
 }: ActivityCardProps) => {
   const getActionText = () => {
     const defaultActionText = {
-      bounty: '刚刚提交了任务',
-      hackathon: '刚刚参加了黑客马拉松',
-      project: '刚刚申请了一个项目',
+      bounty: '提交了任务',
+      hackathon: '参加了黑客马拉松',
+      project: '申请了一个项目',
     };
 
     const winnerActionText = {
-      bounty: '刚刚赢得了赏金',
-      hackathon: '刚刚赢得了黑客马拉松',
-      project: '刚被选中参加一个项目',
+      bounty: '赢得了赏金',
+      hackathon: '赢得了黑客马拉松',
+      project: '被选中参加一个项目',
     };
 
     if (type === 'pow') {
-      return '刚刚添加了一个 个人项目';
+      return '添加了个人项目';
     } else if (isWinner && isWinnersAnnounced) {
-      return winnerActionText[listingType] || '刚刚大功告成';
+      return winnerActionText[listingType] || '大功告成';
     } else {
-      return defaultActionText[listingType] || '刚刚出手';
+      return defaultActionText[listingType] || '出手';
     }
   };
 
