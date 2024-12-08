@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 
+import { ListingPop } from '@/features/conversion-popups';
 import {
   DescriptionUI,
   type Listing,
@@ -16,6 +17,7 @@ interface BountyDetailsProps {
 function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
   return (
     <ListingPageLayout bounty={bounty}>
+      <ListingPop listing={bounty} />
       {bounty?.isWinnersAnnounced && (
         <div className="mt-6 hidden w-full md:block">
           <ListingWinners bounty={bounty} />

@@ -9,7 +9,10 @@ import { cn } from '@/utils';
 
 import { checkEmailValidity, validateEmailRegex } from '../utils/email';
 
-export const EmailSignIn = () => {
+interface LoginProps {
+  redirectTo?: string;
+}
+export const EmailSignIn = ({ redirectTo }: LoginProps) => {
   const [email, setEmail] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
@@ -36,10 +39,17 @@ export const EmailSignIn = () => {
         const isValidEmail = await checkEmailValidity(email);
         if (isValidEmail) {
           posthog.capture('email OTP_auth');
+          const callbackUrl = new URL(
+            redirectTo || router.asPath,
+            window.location.origin,
+          );
+          callbackUrl.searchParams.set('loginState', 'signedIn');
+          if (redirectTo)
+            callbackUrl.searchParams.set('originUrl', router.asPath);
           localStorage.setItem('emailForSignIn', email);
           signIn('email', {
             email,
-            callbackUrl: `${router.asPath}?loginState=signedIn`,
+            callbackUrl: callbackUrl.toString(),
           });
         } else {
           setIsLoading(false);

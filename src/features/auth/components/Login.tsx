@@ -9,9 +9,15 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   isSponsor?: boolean;
+  redirectTo?: string;
 }
 
-export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
+export const Login = ({
+  isOpen,
+  onClose,
+  isSponsor = false,
+  redirectTo,
+}: Props) => {
   const [loginStep, setLoginStep] = useState(0);
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -32,7 +38,11 @@ export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
               : 'From earning in global standards'}
           </p>
         </div>
-        <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
+        <SignIn
+          redirectTo={redirectTo}
+          loginStep={loginStep}
+          setLoginStep={setLoginStep}
+        />
       </DialogContent>
     </Dialog>
   );
