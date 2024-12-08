@@ -43,7 +43,7 @@ export function extractLinkedInUsername(input: string): string | null {
   if (urlMatch && urlMatch[1]) {
     return urlMatch[1];
   }
-  const usernameRegex = /^[a-zA-Z0-9\-]{5,90}$/;
+  const usernameRegex = /^[a-zA-Z0-9\-]{3,90}$/;
   const usernameMatch = input.match(usernameRegex);
   if (usernameMatch && usernameMatch[0]) {
     return usernameMatch[0];
