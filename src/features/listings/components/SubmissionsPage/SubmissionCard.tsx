@@ -1,15 +1,5 @@
 import { ArrowUpIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  HStack,
-  Icon,
-  Image,
-  Link,
-  LinkBox,
-  LinkOverlay,
-  Text,
-} from '@chakra-ui/react';
+import { Button, Icon, Link, LinkBox, LinkOverlay } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import NextLink from 'next/link';
@@ -84,7 +74,7 @@ export const SubmissionCard = ({
       cursor={'pointer'}
       rounded={'md'}
     >
-      <HStack justify={'space-between'} w="full" mb={2}>
+      <div className="mb-2 flex w-full justify-between gap-2">
         <Link as={NextLink} href={`/t/${talent?.username}`}>
           <div className="flex gap-2">
             <EarnAvatar
@@ -92,38 +82,27 @@ export const SubmissionCard = ({
               id={talent?.id}
               avatar={talent?.photo || undefined}
             />
-            <Text
-              overflow={'hidden'}
-              maxW="8rem"
-              color={'gray.900'}
-              fontSize={'md'}
-              fontWeight={500}
-              whiteSpace={'nowrap'}
-              textOverflow={'ellipsis'}
-            >
+            <p className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium text-gray-900">
               {talent?.firstName} {talent?.lastName}
-            </Text>
+            </p>
           </div>
         </Link>
         {winner && (
-          <Box flexGrow={1} pr={1}>
-            <Box w="fit-content" ml="auto">
+          <div className="flex-grow pr-1">
+            <div className="ml-auto w-fit">
               <Badge position={winnerPosition} />
-            </Box>
-          </Box>
+            </div>
+          </div>
         )}
-      </HStack>
+      </div>
       <LinkOverlay as={NextLink} w="full" href={`/feed/submission/${id}`}>
-        <Image
-          w={'full'}
-          h={48}
-          objectFit={'contain'}
+        <img
+          className="h-48 w-full rounded-sm object-contain"
           alt={'card'}
-          rounded={'sm'}
           src={ogData?.images?.[0]?.url || ASSET_URL + '/bg/og.svg'}
         />
       </LinkOverlay>
-      <HStack align={'center'} gap={4} w={'full'}>
+      <div className="flex w-full items-center gap-4">
         <Button
           zIndex={10}
           alignItems={'center'}
@@ -164,7 +143,7 @@ export const SubmissionCard = ({
             }}
           />
         </LinkOverlay>
-      </HStack>
+      </div>
 
       <Link as={NextLink} href={getURLSanitized(link)} isExternal>
         <Button
@@ -185,9 +164,7 @@ export const SubmissionCard = ({
           }
           variant="outline"
         >
-          <Text ml={24} fontSize={'17px'}>
-            View
-          </Text>
+          <p className="ml-24 text-base">View</p>
         </Button>
       </Link>
     </LinkBox>

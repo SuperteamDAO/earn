@@ -108,7 +108,7 @@ const Step = ({
         <div
           className={cn(
             'absolute top-[110%] h-[90%] w-[0.12rem]',
-            isComplete ? 'bg-purple-700' : 'bg-slate-400',
+            isComplete ? 'bg-brand-purple' : 'bg-slate-400',
             'opacity-60',
           )}
         />

@@ -4,6 +4,9 @@ module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
+      fontSize: {
+        xxs: ['0.625rem', { lineHeight: '0.875rem' }],
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -86,6 +89,15 @@ module.exports = {
             lightYellow: '#FDBA74',
           },
         },
+      },
+      keyframes: {
+        'caret-blink': {
+          '0%,70%,100%': { opacity: '1' },
+          '20%,50%': { opacity: '0' },
+        },
+      },
+      animation: {
+        'caret-blink': 'caret-blink 1.2s ease-out infinite',
       },
     },
   },

@@ -1,11 +1,12 @@
-import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
-import { Box, Button, Center, Flex, FormControl, Text } from '@chakra-ui/react';
 import axios from 'axios';
+import { Loader2, Pencil, Plus, Trash } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
+import { FormControl } from '@/components/ui/form';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';
@@ -98,82 +99,69 @@ export function YourLinks({ useFormStore }: Props) {
   };
   return (
     <>
-      <Box w={'full'} mb={'4rem'}>
+      <div className="mb-[4rem] w-full">
         <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
-          <FormControl w="full" mb={5}>
+          <FormControl className="mb-5 w-full">
             <SocialInput watch={watch} register={register} />
-            <Text color={'brand.slate.500'} fontWeight={'500'}>
-              Other Proof of Work
-            </Text>
-            <Text mb={3} color={'brand.slate.400'} fontWeight={400}>
+            <p className="font-medium text-slate-500">Other Proof of Work</p>
+            <p className="mb-3 text-slate-400">
               Adding more PoW increases your chance of getting work
-            </Text>
+            </p>
             <div>
               {pow.map((data, idx) => (
-                <Flex
+                <div
+                  className="mb-1.5 mt-2 flex items-center rounded-md border border-gray-300 px-[1rem] py-[0.5rem] text-slate-500"
                   key={data.id}
-                  align={'center'}
-                  mt="2"
-                  mb={'1.5'}
-                  px={'1rem'}
-                  py={'0.5rem'}
-                  color={'brand.slate.500'}
-                  border={'1px solid gray'}
-                  borderColor="brand.slate.300"
-                  rounded={'md'}
                 >
-                  <Text w={'full'} color={'gray.800'} fontSize={'0.8rem'}>
-                    {data.title}
-                  </Text>
-                  <Center columnGap={'0.8rem'}>
-                    <EditIcon
+                  <p className="w-full text-xs text-gray-800">{data.title}</p>
+                  <div className="flex items-center justify-center gap-3.5">
+                    <Pencil
                       onClick={() => {
                         setSelectedProject(idx);
                         onOpen();
                       }}
-                      cursor={'pointer'}
-                      fontSize={'0.8rem'}
+                      className="h-3.5 w-3.5 cursor-pointer"
                     />
-                    <DeleteIcon
+                    <Trash
                       onClick={() => {
                         setPow((prevPow) =>
                           prevPow.filter((_ele, id) => idx !== id),
                         );
                       }}
-                      cursor={'pointer'}
-                      fontSize={'0.8rem'}
+                      className="h-3.5 w-3.5 cursor-pointer"
                     />
-                  </Center>
-                </Flex>
+                  </div>
+                </div>
               ))}
             </div>
             <Button
-              w={'full'}
-              mb={8}
-              leftIcon={<AddIcon />}
+              className="mb-8 w-full"
               onClick={() => {
                 onOpen();
               }}
               variant="outline"
             >
+              <Plus className="mr-2 h-4 w-4" />
               Add Project
             </Button>
 
             <Button
-              className="ph-no-capture"
-              w={'full'}
-              h="50px"
-              color={'white'}
-              bg={'rgb(101, 98, 255)'}
-              isLoading={isLoading}
-              spinnerPlacement="start"
+              className="ph-no-capture h-[50px] w-full bg-[rgb(101,98,255)] text-white"
+              disabled={isLoading}
               type="submit"
             >
-              Finish Profile
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                'Finish Profile'
+              )}
             </Button>
           </FormControl>
         </form>
-      </Box>
+      </div>
       <AddProject
         key={`${pow.length}project`}
         {...{

@@ -26,7 +26,7 @@ import { type SubmissionWithUser } from '@/interface/submission';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 
-import { type Listing } from '../../types';
+import { type Listing } from '../../listings/types';
 
 interface Props {
   onClose: () => void;

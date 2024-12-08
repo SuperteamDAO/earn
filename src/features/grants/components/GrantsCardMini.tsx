@@ -1,5 +1,4 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -31,131 +30,65 @@ export const GrantsCardMini = ({
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
     : ASSET_URL + '/logo/sponsor-logo.png';
   return (
-    <>
-      <Box
-        className="ph-no-capture"
-        as={NextLink}
-        w="full"
-        px={2}
-        py={4}
-        borderRadius={5}
-        _hover={{
-          textDecoration: 'none',
-          bg: 'gray.100',
-        }}
-        href={`/grants/${slug}`}
-      >
-        <Flex
-          className="ph-no-capture"
-          align="center"
-          justify="space-between"
-          w={'100%'}
-        >
-          <Flex w="100%">
-            <Image
-              w={14}
-              h={14}
-              mr={3}
-              alt={sponsor?.name}
-              rounded={5}
-              src={sponsorLogo}
-            />
-            <Flex justify={'space-between'} direction={'column'} w={'full'}>
-              <Text
-                className="ph-no-capture"
-                color="brand.slate.700"
-                fontSize={'sm'}
-                fontWeight={600}
-                _hover={{
-                  textDecoration: 'underline',
-                }}
-                style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 1,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                }}
-              >
-                {title}
-              </Text>
-              <Flex align={'center'} gap={1} w="min-content">
-                <Text
-                  w="full"
-                  color="brand.slate.500"
-                  fontSize={{ base: 'xs' }}
-                  whiteSpace={'nowrap'}
-                >
-                  {sponsor?.name}
-                </Text>
-                <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-              </Flex>
-              <Flex align="center" gap={{ base: 1, sm: 3 }} mt="1px">
-                <>
-                  <Flex align="center" justify="start" gap={1}>
-                    <Image
-                      display="flex"
-                      h={{ base: 3, sm: 4 }}
-                      alt={token}
-                      rounded={'full'}
-                      src={tokenIcon}
-                    />
-                    <Flex align="baseline" gap={0.5}>
-                      <Text
-                        color="brand.slate.600"
-                        fontSize="xs"
-                        fontWeight="600"
-                        whiteSpace="nowrap"
-                      >
-                        {grantAmount({
-                          maxReward: maxReward!,
-                          minReward: minReward!,
-                        })}
-                      </Text>
-                      <Text color="gray.400" fontSize="xs" fontWeight={500}>
-                        {token}
-                      </Text>
-                    </Flex>
-                  </Flex>
-                </>
-                {!!totalApproved && (
-                  <Flex align="center" gap={3}>
-                    <Text
-                      display="flex"
-                      color="brand.slate.300"
-                      fontSize={['xx-small', 'xs', 'sm', 'sm']}
-                    >
-                      |
-                    </Text>
-                    <Text
-                      color="gray.500"
-                      fontSize={['x-small', '0.71875rem']}
-                      fontWeight={500}
-                      whiteSpace="nowrap"
-                    >
-                      $
-                      {formatNumberWithSuffix(
-                        Number((totalApproved / totalApplications).toFixed(2)),
-                      )}
-                      <Text
-                        as="span"
-                        sx={{
-                          wordSpacing: '-0.09rem',
-                        }}
-                        ml={0.3}
-                        color="gray.400"
-                        fontSize={['x-small', '0.6875rem']}
-                      >
-                        {' '}
-                        Avg. Grant
-                      </Text>
-                    </Text>
-                  </Flex>
-                )}
-              </Flex>
-            </Flex>
-          </Flex>
-        </Flex>
-      </Box>
-    </>
+    <Link
+      className="block w-full rounded-md bg-white px-2 py-4 hover:bg-gray-100 hover:no-underline"
+      href={`/grants/${slug}`}
+    >
+      <div className="ph-no-capture flex w-full items-center justify-between">
+        <div className="flex w-full">
+          <img
+            className="mr-3 h-14 w-14 rounded-md"
+            src={sponsorLogo}
+            alt={sponsor?.name}
+          />
+          <div className="flex w-full flex-col justify-between">
+            <p className="ph-no-capture line-clamp-1 text-sm font-semibold text-slate-700 hover:underline">
+              {title}
+            </p>
+            <div className="flex w-min items-center gap-1">
+              <p className="w-full whitespace-normal text-xs text-slate-500">
+                {sponsor?.name}
+              </p>
+              <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
+            </div>
+            <div className="mt-px flex items-center gap-1 sm:gap-3">
+              <>
+                <div className="flex items-center justify-start gap-1">
+                  <img
+                    className="flex h-3 rounded-full sm:h-4"
+                    alt={token}
+                    src={tokenIcon}
+                  />
+                  <div className="flex items-baseline gap-0.5">
+                    <p className="whitespace-nowrap text-xs font-semibold text-slate-600">
+                      {grantAmount({
+                        maxReward: maxReward!,
+                        minReward: minReward!,
+                      })}
+                    </p>
+                    <p className="text-xs font-medium text-gray-400">{token}</p>
+                  </div>
+                </div>
+              </>
+              {!!totalApproved && (
+                <div className="flex items-center gap-3">
+                  <p className="flex text-xs text-slate-300 lg:text-sm">|</p>
+                  <p className="whitespace-nowrap text-xs font-medium text-gray-500 md:text-[0.71875rem]">
+                    $
+                    {formatNumberWithSuffix(
+                      Number((totalApproved / totalApplications).toFixed(2)),
+                    )}
+                    <span className="ml-[0.3] text-xs font-medium text-gray-400 [word-spacing:-0.09rem] md:text-[0.6875rem]">
+                      {' '}
+                      Avg. Grant
+                    </span>
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 };

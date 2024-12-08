@@ -1,11 +1,13 @@
+import { type FieldErrors, type UseFormRegister } from 'react-hook-form';
+
 import {
   FormControl,
-  FormErrorMessage,
+  FormItem,
   FormLabel,
-  Input,
-  Text,
-} from '@chakra-ui/react';
-import { type FieldErrors, type UseFormRegister } from 'react-hook-form';
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/utils';
 
 type InputFieldProps = {
   label: string;
@@ -47,37 +49,32 @@ export const InputField = ({
   };
 
   return (
-    <FormControl
-      w={'full'}
-      mb={'1.25rem'}
-      isInvalid={isInvalid || !!errors?.[name]}
-    >
-      <FormLabel color={'brand.slate.500'}>{label}</FormLabel>
-      <Input
-        color={'gray.800'}
-        borderColor="brand.slate.300"
-        _placeholder={{
-          color: 'brand.slate.300',
-        }}
-        focusBorderColor="brand.purple"
-        id={name}
-        placeholder={placeholder}
-        {...register(name, {
-          required: isRequired ? 'This field is required' : false,
-          validate: combinedValidate,
-        })}
-        isInvalid={isInvalid || !!errors?.[name]}
-        onChange={onChange}
-      />
+    <FormItem className="mb-5 w-full">
+      <FormLabel className="text-slate-500">{label}</FormLabel>
+      <FormControl>
+        <Input
+          className={cn(
+            'border-slate-300 text-gray-800',
+            'placeholder:text-slate-300',
+            'focus:border-brand-purple focus:ring-brand-purple',
+            isInvalid || !!errors?.[name] ? 'border-red-500' : '',
+          )}
+          id={name}
+          placeholder={placeholder}
+          {...register(name, {
+            required: isRequired ? 'This field is required' : false,
+            validate: combinedValidate,
+          })}
+          onChange={onChange}
+        />
+      </FormControl>
       {isInvalid && validationErrorMessage && (
-        <Text color={'red'} fontSize={'sm'}>
-          {validationErrorMessage}
-        </Text>
+        <p className="text-sm text-red-500">{validationErrorMessage}</p>
       )}
-      <FormErrorMessage>
+      <FormMessage>
         {errors && errors[name] && errors[name]?.message?.toString()}
-        {validationErrorMessage ? <>{validationErrorMessage}</> : <></>}
-      </FormErrorMessage>
-    </FormControl>
+        {validationErrorMessage}
+      </FormMessage>
+    </FormItem>
   );
 };

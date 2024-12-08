@@ -1,26 +1,24 @@
-import { InfoOutlineIcon } from '@chakra-ui/icons';
-import {
-  Divider,
-  Flex,
-  Select,
-  Tab,
-  TabList,
-  Tabs,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
+import { Info } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
-import { Tooltip } from '@/components/shared/responsive-tooltip';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { cn } from '@/utils';
 
 import { type SKILL, type TIMEFRAME } from '../types';
-
-const selectedStyles = {
-  borderColor: 'brand.purple',
-  fontWeight: 500,
-  color: 'black',
-};
 
 const tabfontsize = {
   base: 'xs',
@@ -76,99 +74,99 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
   }
 
   return (
-    <VStack w="full">
-      <Flex
-        className="hide-scrollbar"
-        justify="space-between"
-        overflowX="auto"
-        overflowY="hidden"
-        w="full"
-        borderBottom="2px solid"
-        borderBottomColor={'brand.slate.200'}
-      >
+    <div className="flex w-full flex-col border-b pb-2">
+      <div className="hide-scrollbar flex w-full justify-between overflow-x-auto overflow-y-hidden border-slate-200">
         <Tabs
-          color="brand.slate.400"
-          defaultIndex={skillIndexOf(skill)}
-          onChange={(value) => debouncedSetSkill(value)}
+          defaultValue={String(skillIndexOf(skill))}
+          onValueChange={(value) => debouncedSetSkill(Number(value))}
+          className="text-slate-400"
         >
-          <TabList alignItems="center" borderBottomWidth={0}>
-            <Tab
-              w="max-content"
-              my={0}
-              px={2}
-              fontSize={tabfontsize}
-              _selected={selectedStyles}
+          <TabsList className="flex h-auto items-center border-b-0 bg-transparent">
+            <TabsTrigger
+              value="0"
+              className={cn(
+                'my-0 w-max px-2',
+                'data-[state=active]:bg-brand-purple data-[state=active]:text-white',
+                tabfontsize,
+              )}
             >
               Overall Rankings
-            </Tab>
-            <Divider h="1.5rem" mr={1} ml={2} orientation="vertical" />
-            <Tab
-              my={0}
-              px={2}
-              fontSize={tabfontsize}
-              _selected={selectedStyles}
+            </TabsTrigger>
+            <div className="mx-2 h-6 w-px bg-slate-200" />
+            <TabsTrigger
+              value="1"
+              className={cn(
+                'my-0 px-2',
+                'data-[state=active]:bg-brand-purple data-[state=active]:text-white',
+                tabfontsize,
+              )}
             >
               Content
-            </Tab>
-            <Tab
-              my={0}
-              px={2}
-              fontSize={tabfontsize}
-              _selected={selectedStyles}
+            </TabsTrigger>
+            <TabsTrigger
+              value="2"
+              className={cn(
+                'my-0 px-2',
+                'data-[state=active]:bg-brand-purple data-[state=active]:text-white',
+                tabfontsize,
+              )}
             >
               Design
-            </Tab>
-            <Tab
-              my={0}
-              px={2}
-              fontSize={tabfontsize}
-              _selected={selectedStyles}
+            </TabsTrigger>
+            <TabsTrigger
+              value="3"
+              className={cn(
+                'my-0 px-2',
+                'data-[state=active]:bg-brand-purple data-[state=active]:text-white',
+                tabfontsize,
+              )}
             >
               Development
-            </Tab>
-            <Tab
-              my={0}
-              px={2}
-              fontSize={tabfontsize}
-              _selected={selectedStyles}
+            </TabsTrigger>
+            <TabsTrigger
+              value="4"
+              className={cn(
+                'my-0 px-2',
+                'data-[state=active]:bg-brand-purple data-[state=active]:text-white',
+                tabfontsize,
+              )}
             >
               Others
-            </Tab>
-            <div>
-              <Tooltip
-                isOpen={isLabelOpen}
-                setIsOpen={setIsLabelOpen}
-                label={`The skill filters showcase users based on the skills requested in the listings they've successfully won, not the skills listed in their talent profiles.`}
-              >
-                <InfoOutlineIcon
-                  onMouseEnter={() => setIsLabelOpen(true)}
-                  onMouseLeave={() => setIsLabelOpen(false)}
-                  onClick={() => setIsLabelOpen(true)}
-                  ml={2}
-                  w={3}
-                  h={3}
-                />
-              </Tooltip>
+            </TabsTrigger>
+            <div className="relative">
+              <TooltipProvider>
+                <Tooltip open={isLabelOpen}>
+                  <TooltipTrigger asChild>
+                    <Info
+                      className="ml-2 h-3 w-3 cursor-pointer"
+                      onMouseEnter={() => setIsLabelOpen(true)}
+                      onMouseLeave={() => setIsLabelOpen(false)}
+                      onClick={() => setIsLabelOpen(true)}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      The skill filters showcase users based on the skills
+                      requested in the listings they&apos;ve successfully won,
+                      not the skills listed in their talent profiles.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
-          </TabList>
+          </TabsList>
         </Tabs>
-        <Flex align="center" display={{ base: 'none', md: 'flex' }}>
+        <div className="hidden items-center md:flex">
           <Timeframe value={timeframe} setValue={setTimeframe} />
-        </Flex>
-      </Flex>
-      <Flex
-        justify="space-between"
-        display={{ base: 'flex', md: 'none' }}
-        w="full"
-        pl={2}
-        fontSize={{ base: 'xs', sm: 'sm' }}
-      >
-        <Text color="brand.slate.400">Timeframe</Text>
+        </div>
+      </div>
+      <div className="flex w-full justify-between pl-2 text-xs sm:text-sm md:hidden">
+        <p className="text-slate-400">Timeframe</p>
         <div className="flex">
           <Timeframe value={timeframe} setValue={setTimeframe} />
         </div>
-      </Flex>
-    </VStack>
+      </div>
+    </div>
   );
 }
 
@@ -183,16 +181,18 @@ function Timeframe({
 
   return (
     <Select
-      color="brand.slate.400"
-      fontSize={{ base: 'xs', sm: 'sm' }}
-      onChange={(e) => debouncedSetTimeframe(e.target.value as TIMEFRAME)}
+      onValueChange={(value) => debouncedSetTimeframe(value as TIMEFRAME)}
       value={value}
-      variant="unstyled"
     >
-      <option value="ALL_TIME">All Time</option>
-      <option value="THIS_YEAR">This Year</option>
-      <option value="LAST_30_DAYS">Last 30 Days</option>
-      <option value="LAST_7_DAYS">Last 7 Days</option>
+      <SelectTrigger className="h-auto border-0 p-0 text-xs font-medium text-slate-600 focus:ring-0 focus:ring-offset-0 sm:text-sm">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="ALL_TIME">All Time</SelectItem>
+        <SelectItem value="THIS_YEAR">This Year</SelectItem>
+        <SelectItem value="LAST_30_DAYS">Last 30 Days</SelectItem>
+        <SelectItem value="LAST_7_DAYS">Last 7 Days</SelectItem>
+      </SelectContent>
     </Select>
   );
 }
