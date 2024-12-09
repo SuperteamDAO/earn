@@ -1,4 +1,3 @@
-import { Box, Flex, Icon, Input, Text } from '@chakra-ui/react';
 import React from 'react';
 import { type UseFormRegister, type UseFormWatch } from 'react-hook-form';
 import {
@@ -11,6 +10,7 @@ import {
 } from 'react-icons/fa6';
 import { toast } from 'sonner';
 
+import { Input } from '@/components/ui/input';
 import {
   isValidDiscordInput,
   isValidGitHubInput,
@@ -23,6 +23,7 @@ import {
   isValidTwitterUsername,
   isValidWebsiteUrl,
 } from '@/features/talent';
+import { cn } from '@/utils';
 
 type SocialInputProps = {
   register: UseFormRegister<any>;
@@ -130,76 +131,46 @@ export const SocialInput = ({ register, watch }: SocialInputProps) => {
 
   return (
     <>
-      {socials.map(({ name, label, placeholder, icon, required }) => {
+      {socials.map(({ name, label, placeholder, icon: Icon, required }) => {
         const value = watch(name);
         const displayValue = getDisplayValue(name, value);
 
         return (
-          <Box key={name} mb={'1.25rem'}>
-            <Flex align="center" justify="center" direction="row">
-              <Box pos="relative">
-                <Icon as={icon} boxSize={5} mr={3} color={'brand.slate.600'} />
+          <div className="mb-5" key={name}>
+            <div className="flex items-center justify-center">
+              <div className="relative">
+                <Icon className="mr-3 h-5 w-5 text-slate-600" />
                 {required && (
-                  <Text
-                    as="span"
-                    pos="absolute"
-                    top="-5px"
-                    right="4px"
-                    color="red"
-                    fontWeight={500}
-                  >
+                  <span className="absolute -top-1 right-1 font-medium text-red-500">
                     *
-                  </Text>
+                  </span>
                 )}
-              </Box>
+              </div>
+
               {label && (
-                <Box
-                  h="2.6875rem"
-                  px={3}
-                  border="1px solid"
-                  borderColor={'brand.slate.300'}
-                  borderRight="none"
-                  borderLeftRadius={'md'}
-                >
-                  <Flex
-                    align="center"
-                    justify={{ base: 'center', md: 'start' }}
-                    w={'100%'}
-                    h={'100%'}
-                  >
-                    <Text
-                      h="4.3rem"
-                      color={'brand.slate.600'}
-                      fontSize={{ base: '0.7rem', md: '0.875rem' }}
-                      fontWeight={500}
-                      lineHeight="4.3rem"
-                      textAlign="left"
-                    >
-                      {label}
-                    </Text>
-                  </Flex>
-                </Box>
+                <div className="flex h-[2.6875rem] items-center justify-center rounded-l-md border border-r-0 border-slate-300 px-3 md:justify-start">
+                  <p className="h-[4.3rem] text-left text-xs font-medium text-slate-600 md:text-sm">
+                    {label}
+                  </p>
+                </div>
               )}
+
               <Input
-                w="full"
-                h="2.6875rem"
-                color={'gray.800'}
-                fontSize="0.875rem"
-                fontWeight={500}
-                borderColor={'brand.slate.300'}
-                borderLeftRadius={label ? 0 : 6}
-                _placeholder={{
-                  color: 'brand.slate.300',
-                }}
-                focusBorderColor="brand.purple"
+                className={cn(
+                  'h-[2.6875rem] w-full text-sm font-medium text-gray-800',
+                  'border-slate-300',
+                  'placeholder:text-slate-300',
+                  'focus:border-purple-600 focus:ring-purple-600',
+                  label ? 'rounded-l-none' : 'rounded-md',
+                )}
                 placeholder={placeholder}
                 value={displayValue}
                 {...register(name, {
                   validate: (value) => validateSocial(value, name),
                 })}
               />
-            </Flex>
-          </Box>
+            </div>
+          </div>
         );
       })}
     </>

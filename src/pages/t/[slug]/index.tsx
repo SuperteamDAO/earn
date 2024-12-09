@@ -1,31 +1,18 @@
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  EditIcon,
-  EmailIcon,
-} from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Collapse,
-  Divider,
-  Flex,
-  IconButton,
-  Text,
-  useBreakpointValue,
-  useDisclosure,
-} from '@chakra-ui/react';
 import axios from 'axios';
+import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
+import { MdEmail } from 'react-icons/md';
 import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ShareIcon } from '@/components/shared/shareIcon';
+import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type FeedDataProps, FeedLoop, useGetFeed } from '@/features/feed';
 import {
@@ -37,9 +24,12 @@ import {
   Twitter,
   Website,
 } from '@/features/talent';
+import { useDisclosure } from '@/hooks/use-disclosure';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { getURL } from '@/utils/validUrl';
 
 type UserWithFeed = User & {
@@ -135,7 +125,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
     router.replace(router.asPath);
   };
 
-  const isMD = useBreakpointValue({ base: false, md: true });
+  const isMD = useMediaQuery('(min-width: 768px)');
 
   const getWorkPreferenceText = (workPrefernce?: string): string | null => {
     if (!workPrefernce || workPrefernce === 'Not looking for Work') {
@@ -180,33 +170,34 @@ function TalentProfile({ talent, stats }: TalentProps) {
     if (isMD) {
       return (
         <Button
-          className="ph-no-capture"
-          color={outline ? 'brand.slate.500' : '#6366F1'}
-          fontSize="sm"
-          fontWeight={500}
-          bg={outline ? 'white' : '#EDE9FE'}
-          borderColor={outline ? 'brand.slate.400' : '#EDE9FE'}
-          leftIcon={icon}
+          className={cn(
+            'ph-no-capture text-sm font-medium',
+            outline
+              ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+              : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
+          )}
           onClick={onClickHandler}
-          variant={outline ? 'outline' : 'solid'}
+          variant={outline ? 'outline' : 'default'}
         >
+          {icon}
           {text}
         </Button>
       );
     }
 
     return (
-      <IconButton
-        color={outline ? 'brand.slate.500' : '#6366F1'}
-        fontSize="sm"
-        fontWeight={500}
-        bg={outline ? 'white' : '#EDE9FE'}
-        borderColor={outline ? 'brand.slate.400' : '#EDE9FE'}
+      <Button
         aria-label={text}
-        icon={icon}
         onClick={onClickHandler}
-        variant={outline ? 'outline' : 'solid'}
-      />
+        className={cn(
+          'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
+          outline
+            ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+            : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
+        )}
+      >
+        {icon}
+      </Button>
     );
   };
 
@@ -259,26 +250,15 @@ function TalentProfile({ talent, stats }: TalentProps) {
           <EmptySection message="Sorry! The profile you are looking for is not available." />
         )}
         {!!talent?.id && (
-          <Box bg="white">
-            <Box
-              w="100%"
-              h={{ base: '100px', md: '30vh' }}
-              bgImage={ASSET_URL + `/bg/profile-cover/${bgImages[randomIndex]}`}
-              bgSize={'cover'}
-              bgRepeat={'no-repeat'}
-              objectFit={'cover'}
+          <div className="bg-white">
+            <div
+              className="h-[100px] w-full bg-cover bg-no-repeat md:h-[30vh]"
+              style={{
+                backgroundImage: `url(${ASSET_URL}/bg/profile-cover/${bgImages[randomIndex]})`,
+              }}
             />
-            <Box
-              pos={'relative'}
-              top={{ base: '0', md: '-40' }}
-              maxW={'700px'}
-              mx="auto"
-              px={{ base: '4', md: '7' }}
-              py={7}
-              bg="white"
-              borderRadius={'20px'}
-            >
-              <Flex justify={'space-between'}>
+            <div className="relative top-0 mx-auto max-w-[700px] rounded-[20px] bg-white px-4 py-7 md:-top-40 md:px-7">
+              <div className="flex justify-between">
                 <div>
                   <EarnAvatar
                     size={isMD ? '64px' : '52px'}
@@ -286,39 +266,26 @@ function TalentProfile({ talent, stats }: TalentProps) {
                     avatar={talent?.photo}
                   />
 
-                  <Text
-                    mt={6}
-                    color={'brand.slate.900'}
-                    fontSize={{ base: 'lg', md: 'xl' }}
-                    fontWeight={'600'}
-                  >
+                  <p className="mt-6 text-lg font-semibold text-slate-900 md:text-xl">
                     {talent?.firstName} {talent?.lastName}
-                  </Text>
-                  <Text
-                    color={'brand.slate.500'}
-                    fontSize={{ base: 'md', md: 'md' }}
-                    fontWeight={'600'}
-                  >
+                  </p>
+                  <p className="text-base font-semibold text-slate-500">
                     @
                     {isMD
                       ? talent?.username
                       : talent?.username?.length && talent?.username.length > 24
                         ? `${talent?.username.slice(0, 24)}...`
                         : talent?.username}
-                  </Text>
+                  </p>
                 </div>
-                <Flex
-                  direction={{ base: 'row', md: 'column' }}
-                  gap={3}
-                  w={{ base: 'auto', md: '160px' }}
-                >
+                <div className="flex w-auto gap-3 md:w-[160px] md:flex-col">
                   {user?.id === talent?.id
                     ? renderButton(
-                        <EditIcon />,
+                        <SquarePen />,
                         'Edit Profile',
                         handleEditProfileClick,
                       )
-                    : renderButton(<EmailIcon />, 'Reach Out', () => {
+                    : renderButton(<MdEmail />, 'Reach Out', () => {
                         posthog.capture('reach out_talent profile');
                         const email = encodeURIComponent(talent?.email || '');
                         const subject = encodeURIComponent(
@@ -330,224 +297,185 @@ function TalentProfile({ talent, stats }: TalentProps) {
                         window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
                       })}
                   {renderButton(<ShareIcon />, 'Share', onOpen, true)}
-                </Flex>
-              </Flex>
+                </div>
+              </div>
               <ShareProfile
                 username={talent?.username as string}
                 isOpen={isOpen}
                 onClose={onClose}
                 id={talent?.id}
               />
-              <Divider my={8} />
-              <Flex
-                direction={{ base: 'column', md: 'row' }}
-                gap={{ base: '12', md: '100' }}
-              >
-                <Box w={{ base: '100%', md: '50%' }}>
-                  <Text mb={4} color={'brand.slate.900'} fontWeight={500}>
-                    Details
-                  </Text>
+              <Separator className="my-8" />
+              <div className="flex flex-col gap-12 md:flex-row md:gap-[25rem]">
+                <div className="w-full md:w-1/2">
+                  <p className="mb-4 font-medium text-slate-900">Details</p>
                   {workPreferenceText && (
-                    <Text mt={3} color={'brand.slate.400'}>
+                    <p className="mt-3 text-slate-400">
                       Looking for{' '}
-                      <Text as={'span'} color={'brand.slate.500'}>
+                      <span className="text-slate-500">
                         {workPreferenceText}
-                      </Text>
-                    </Text>
+                      </span>
+                    </p>
                   )}
                   {talent?.currentEmployer && (
-                    <Text mt={3} color={'brand.slate.400'}>
+                    <p className="mt-3 text-slate-400">
                       Works at{' '}
-                      <Text as={'span'} color={'brand.slate.500'}>
+                      <span className="text-slate-500">
                         {talent?.currentEmployer}
-                      </Text>
-                    </Text>
+                      </span>
+                    </p>
                   )}
                   {talent?.location && (
-                    <Text mt={3} color={'brand.slate.400'}>
+                    <p className="mt-3 text-slate-400">
                       Based in{' '}
-                      <Text as={'span'} color={'brand.slate.500'}>
-                        {talent?.location}
-                      </Text>
-                    </Text>
+                      <span className="text-slate-500">{talent?.location}</span>
+                    </p>
                   )}
-                </Box>
-                <Box w={{ base: '100%', md: '50%' }}>
-                  <Text color={'brand.slate.900'} fontWeight={500}>
-                    Skills
-                  </Text>
+                </div>
+                <div className="w-full md:w-1/2">
+                  <p className="font-medium text-slate-900">Skills</p>
                   {Array.isArray(talent.skills) ? (
                     talent.skills.map((skillItem: any, index: number) => {
                       return skillItem ? (
-                        <Box key={index} mt={4}>
-                          <Text
-                            color={'brand.slate.400'}
-                            fontSize="xs"
-                            fontWeight={500}
-                          >
+                        <div className="mt-4" key={index}>
+                          <p className="text-xs font-medium text-slate-400">
                             {skillItem.skills.toUpperCase()}
-                          </Text>
-                          <Flex align="center">
-                            <Flex wrap={'wrap'} gap={2} mt={2}>
+                          </p>
+                          <div className="flex items-center">
+                            <div className="mt-2 flex flex-wrap gap-2">
                               {skillItem.subskills
                                 .slice(0, 3)
                                 .map((subskill: string, subIndex: number) => (
-                                  <Box
+                                  <div
                                     key={subIndex}
-                                    px={'12px'}
-                                    py={'4px'}
-                                    color={'#64739C'}
-                                    fontSize={'sm'}
-                                    fontWeight={500}
-                                    borderRadius={'4px'}
-                                    bgColor={'#EFF1F5'}
+                                    className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
                                   >
                                     {subskill}
-                                  </Box>
+                                  </div>
                                 ))}
-                            </Flex>
+                            </div>
                             {skillItem.subskills.length > 3 && (
-                              <IconButton
+                              <button
                                 aria-label="Toggle subskills"
-                                icon={
-                                  showSubskills[index] ? (
-                                    <ChevronUpIcon />
-                                  ) : (
-                                    <ChevronDownIcon />
-                                  )
-                                }
+                                className={cn(
+                                  'p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+                                  'rounded transition hover:bg-gray-100',
+                                )}
                                 onClick={() => handleToggleSubskills(index)}
-                                size="sm"
-                                variant={'unstyled'}
-                              />
+                              >
+                                {showSubskills[index] ? (
+                                  <ChevronUp className="h-4 w-4" />
+                                ) : (
+                                  <ChevronDown className="h-4 w-4" />
+                                )}
+                              </button>
                             )}
-                          </Flex>
+                          </div>
 
-                          <Collapse in={showSubskills[index] ?? false}>
-                            <Flex wrap={'wrap'} gap={2} mt={2}>
+                          {showSubskills[index] && (
+                            <div
+                              className={cn(
+                                'mt-2 flex flex-wrap gap-2',
+                                'transition-all duration-300 ease-in-out',
+                              )}
+                            >
                               {skillItem.subskills
                                 .slice(3)
                                 .map((subskill: string, subIndex: number) => (
-                                  <Box
+                                  <div
                                     key={subIndex}
-                                    px={'12px'}
-                                    py={'4px'}
-                                    color={'#64739C'}
-                                    fontSize={'sm'}
-                                    fontWeight={500}
-                                    borderRadius={'4px'}
-                                    bgColor={'#EFF1F5'}
+                                    className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
                                   >
                                     {subskill}
-                                  </Box>
+                                  </div>
                                 ))}
-                            </Flex>
-                          </Collapse>
-                        </Box>
+                            </div>
+                          )}
+                        </div>
                       ) : null;
                     })
                   ) : (
                     <p>No skills available</p>
                   )}
-                </Box>
-              </Flex>
-              <Divider my={8} />
-              <Flex
-                direction={{ base: 'column', md: 'row' }}
-                gap={{ base: '12', md: '100' }}
-              >
-                <Flex gap={6} w={{ base: '100%', md: '50%' }}>
+                </div>
+              </div>
+              <Separator className="my-8" />
+              <div className="flex flex-col justify-between gap-12 md:flex-row">
+                <div className="flex w-full gap-6 md:w-1/2">
                   {socialLinks.map(({ Icon, link }, i) => {
                     return <Icon link={link} boxSize={5} key={i} />;
                   })}
-                </Flex>
-                <Flex
-                  gap={{ base: '8', md: '6' }}
-                  w={{ base: '100%', md: '50%' }}
-                >
-                  <Flex direction={'column'}>
-                    <Text fontWeight={600}>
+                </div>
+                <div className="flex w-full gap-6 md:w-1/2 md:gap-8">
+                  <div className="flex flex-col">
+                    <p className="font-semibold">
                       $
                       {new Intl.NumberFormat('en-US', {
                         maximumFractionDigits: 0,
                       }).format(Math.round(stats?.totalWinnings || 0))}
-                    </Text>
-                    <Text color={'brand.slate.500'} fontWeight={500}>
-                      Earned
-                    </Text>
-                  </Flex>
-                  <Flex direction={'column'}>
-                    <Text fontWeight={600}>{stats?.participations}</Text>
-                    <Text color={'brand.slate.500'} fontWeight={500}>
+                    </p>
+                    <p className="font-medium text-slate-500">Earned</p>
+                  </div>
+                  <div className="flex flex-col">
+                    <p className="font-semibold">{stats?.participations}</p>
+                    <p className="font-medium text-slate-500">
                       {stats.participations === 1
                         ? 'Submission'
                         : 'Submissions'}
-                    </Text>
-                  </Flex>
-                  <Flex direction={'column'}>
-                    <Text fontWeight={600}>{stats?.wins}</Text>
-                    <Text color={'brand.slate.500'} fontWeight={500}>
-                      Won
-                    </Text>
-                  </Flex>
-                </Flex>
-              </Flex>
-              <Box mt={{ base: '12', md: '16' }}>
-                <Flex
-                  align={{ base: 'right', md: 'center' }}
-                  justify={'space-between'}
-                  direction={{ base: 'column', md: 'row' }}
-                >
-                  <Flex align="center" gap={3}>
-                    <Text color={'brand.slate.900'} fontWeight={500}>
-                      Proof of Work
-                    </Text>
+                    </p>
+                  </div>
+                  <div className="flex flex-col">
+                    <p className="font-semibold">{stats?.wins}</p>
+                    <p className="font-medium text-slate-500">Won</p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-12 md:mt-16">
+                <div className="md:items:center flex flex-col items-end justify-between md:flex-row">
+                  <div className="flex items-center gap-3">
+                    <p className="font-medium text-slate-900">Proof of Work</p>
                     {user?.id === talent?.id && (
                       <Button
-                        color={'brand.slate.400'}
-                        fontSize="sm"
-                        fontWeight={600}
+                        className={cn(
+                          'px-2 py-1 text-sm font-semibold text-slate-400',
+                          'hover:bg-gray-100',
+                        )}
                         onClick={onOpenPow}
-                        size="xs"
-                        variant={'ghost'}
+                        size="sm"
+                        variant="ghost"
                       >
                         +ADD
                       </Button>
                     )}
-                  </Flex>
-                  <Flex
-                    justify={{ base: 'space-between', md: 'flex-end' }}
-                    gap={6}
-                    mt={{ base: '12', md: '0' }}
-                  >
-                    <Text
-                      color={
+                  </div>
+                  <div className="mt-12 flex justify-between gap-6 md:mt-0 md:justify-end">
+                    <p
+                      className={cn(
+                        'cursor-pointer font-medium',
                         activeTab === 'activity'
-                          ? 'brand.slate.900'
-                          : 'brand.slate.400'
-                      }
-                      fontWeight={500}
-                      cursor="pointer"
+                          ? 'text-slate-900'
+                          : 'text-slate-400',
+                      )}
                       onClick={() => setActiveTab('activity')}
                     >
                       Activity Feed
-                    </Text>
-                    <Text
-                      color={
+                    </p>
+
+                    <p
+                      className={cn(
+                        'cursor-pointer font-medium',
                         activeTab === 'projects'
-                          ? 'brand.slate.900'
-                          : 'brand.slate.400'
-                      }
-                      fontWeight={500}
-                      cursor="pointer"
+                          ? 'text-slate-900'
+                          : 'text-slate-400',
+                      )}
                       onClick={() => setActiveTab('projects')}
                     >
                       Personal Projects
-                    </Text>
-                  </Flex>
-                </Flex>
-              </Box>
-              <Divider my={4} />
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <Separator className="my-4" />
               <div>
                 <FeedLoop
                   feed={feedItems}
@@ -561,51 +489,37 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       alt={'talent empty'}
                       src={'/bg/talent-empty.svg'}
                     />
-                    <Text
-                      w="200px"
-                      mx="auto"
-                      mt={5}
-                      color={'brand.slate.400'}
-                      fontWeight={500}
-                      textAlign={'center'}
-                    >
+                    <p className="mx-auto mt-5 w-52 text-center font-medium text-slate-400">
                       {user?.id === talent?.id
                         ? 'Add some proof of work to build your profile'
                         : 'Nothing to see here yet ...'}
-                    </Text>
+                    </p>
                     {user?.id === talent?.id ? (
                       <Button
-                        display="block"
-                        w="200px"
-                        mx="auto"
-                        mt={5}
                         onClick={onOpenPow}
+                        className={cn('mt-5 w-[200px]', 'mx-auto block')}
                       >
                         Add
                       </Button>
                     ) : (
-                      <Box mt={5} />
+                      <div className="mt-5" />
                     )}
 
                     <Button
-                      display="block"
-                      w="200px"
-                      mx="auto"
-                      mt={2}
-                      color={'brand.slate.500'}
-                      fontWeight={500}
-                      bg="white"
-                      borderColor={'brand.slate.400'}
                       onClick={() => router.push('/')}
-                      variant={'outline'}
+                      className={cn(
+                        'mt-2 w-[200px] font-medium text-slate-500',
+                        'border border-slate-400 bg-white hover:bg-gray-100',
+                      )}
+                      variant="outline"
                     >
                       Browse Bounties
                     </Button>
                   </>
                 </FeedLoop>
               </div>
-            </Box>
-          </Box>
+            </div>
+          </div>
         )}
         <AddProject
           isOpen={isOpenPow}

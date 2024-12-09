@@ -1,4 +1,3 @@
-import { Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
 import router from 'next/router';
@@ -62,27 +61,16 @@ const StepsCon = () => {
   ];
 
   return (
-    <VStack gap={4} w={{ base: 'auto', md: 'xl' }} px={4}>
-      <VStack mt={8}>
-        <Heading
-          color={'#334254'}
-          fontFamily={'var(--font-sans)'}
-          fontSize={{ base: '18px', md: '24px' }}
-          fontWeight={700}
-        >
+    <div className="flex w-auto flex-col gap-4 px-4 md:w-[36rem]">
+      <div className="mt-8 flex flex-col gap-2">
+        <h1 className="font-sans text-lg font-bold text-[#334254] md:text-2xl">
           {TitleArray[currentStep - 1]?.title}
-        </Heading>
-        <Text
-          color={'#94A3B8'}
-          fontFamily={'var(--font-sans)'}
-          fontSize={{ base: '16px', md: '20px' }}
-          fontWeight={500}
-          textAlign={'center'}
-        >
+        </h1>
+        <p className="text-center text-base font-medium text-[#94A3B8] md:text-lg">
           {TitleArray[currentStep - 1]?.subTitle}
-        </Text>
-      </VStack>
-      <HStack w="100%" px={{ base: 4, md: 0 }}>
+        </p>
+      </div>
+      <div className="flex w-full gap-2 px-4 md:px-0">
         {stepList.map((step, stepIndex) => {
           return (
             <Fragment key={stepIndex}>
@@ -107,14 +95,14 @@ const StepsCon = () => {
             </Fragment>
           );
         })}
-      </HStack>
+      </div>
       {currentStep === 1 && (
         <AboutYou setStep={setSteps} useFormStore={useFormStore} />
       )}
       {currentStep === 2 && (
         <YourLinks setStep={setSteps} useFormStore={useFormStore} />
       )}
-    </VStack>
+    </div>
   );
 };
 
