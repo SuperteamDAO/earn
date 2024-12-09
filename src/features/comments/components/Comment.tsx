@@ -1,41 +1,36 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  AlertIcon,
-  AlertTitle,
-  Button,
-  Collapse,
-  Fade,
-  Flex,
-  HStack,
-  Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Text,
-  useMediaQuery,
-  VStack,
-} from '@chakra-ui/react';
 import { type CommentRefType } from '@prisma/client';
 import axios from 'axios';
-import NextLink from 'next/link';
+import { AlertCircle, ChevronDown, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { AuthWrapper } from '@/features/auth';
 import { EarnAvatar } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { type Comment as IComment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
 
@@ -176,16 +171,13 @@ export const Comment = ({
     localStorage.setItem(`comment-${refId}-${comment.id}`, newReply);
   }, [newReply]);
 
-  const [isMobile] = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
     <>
-      <HStack
+      <div
         key={comment.id}
-        align="start"
-        gap={3}
-        overflow="visible"
-        w="full"
+        className="flex w-full items-start gap-3 overflow-visible"
         onMouseEnter={() => {
           if (!isMobile) setShowOptions(true);
         }}
@@ -194,12 +186,8 @@ export const Comment = ({
         }}
       >
         <Link
-          as={NextLink}
           href={`${getURL()}t/${comment?.author?.username}`}
-          style={{
-            minWidth: isReply ? '28px' : '36px',
-            maxWidth: isReply ? '28px' : '36px',
-          }}
+          className={cn('block', isReply ? 'w-8' : 'w-10')}
           tabIndex={-1}
           target="_blank"
         >
@@ -210,69 +198,29 @@ export const Comment = ({
           />
         </Link>
 
-        <VStack align={'start'} gap={0} w="100%">
-          <HStack align="end" gap={2}>
+        <div className="flex w-full flex-col items-start">
+          <div className="flex items-end gap-2">
             <Link
-              as={NextLink}
               href={`${getURL()}t/${comment?.author?.username}`}
+              className="hover:underline"
               tabIndex={-1}
               target="_blank"
             >
-              <Text
-                color="brand.slate.800"
-                fontSize={{
-                  base: 'sm',
-                  md: 'md',
-                }}
-                fontWeight={500}
-              >
+              <p className="text-sm font-medium text-slate-800 md:text-base">
                 {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
-              </Text>
+              </p>
             </Link>
             {comment?.author?.currentSponsorId === sponsorId && (
-              <Text
-                gap={0.5}
-                display="flex"
-                pb="2px"
-                color="blue.500"
-                fontSize={{
-                  base: 'xs',
-                  md: 'sm',
-                }}
-                fontWeight={500}
-              >
+              <p className="flex gap-0.5 pb-0.5 text-xs font-medium text-blue-500 md:text-sm">
                 {isVerified && <VerifiedBadge />}
                 Sponsor
-              </Text>
+              </p>
             )}
-            <Text
-              pb="2px"
-              color="brand.slate.400"
-              fontSize={{
-                base: 'xs',
-                md: 'sm',
-              }}
-              fontWeight={500}
-            >
+            <p className="pb-0.5 text-xs font-medium text-slate-400 md:text-sm">
               {date}
-            </Text>
-          </HStack>
-          <Text
-            overflow={'clip'}
-            maxW={{
-              base: '15rem',
-              sm: '20rem',
-              md: '17rem',
-              lg: '29rem',
-              xl: '46rem',
-            }}
-            mt={'0px !important'}
-            color="brand.slate.500"
-            fontSize={{
-              base: 'sm',
-              md: 'md',
-            }}
-          >
+            </p>
+          </div>
+          <p className="mt-0 max-w-[15rem] overflow-clip pb-2 text-sm text-slate-500 sm:max-w-[20rem] md:max-w-[17rem] md:text-base lg:max-w-[29rem] xl:max-w-[46rem]">
             <CommentParser
               listingSlug={listingSlug}
               listingType={listingType}
@@ -281,132 +229,84 @@ export const Comment = ({
               submissionId={comment.submissionId}
               value={comment?.message}
             />
-          </Text>
-          <HStack overflow="visible!important" pt={2}>
+          </p>
+          <div className="flex gap-2 overflow-visible">
             {replies?.length > 0 && (
-              <Button
-                pos="relative"
-                left="-3px"
-                color="brand.purple.dark"
-                fontSize={{
-                  base: 'xs',
-                  md: 'sm',
-                }}
-                fontWeight={500}
-                bg="none"
+              <button
                 onClick={() => setShowReplies((prev) => !prev)}
-                variant="link"
+                className="relative -left-3 flex items-center text-xs font-medium text-indigo-600 hover:text-indigo-700 md:text-sm"
               >
-                <svg
-                  style={{ marginRight: '4px' }}
-                  width="7"
-                  height="4"
-                  viewBox="0 0 7 4"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M0.375 0.25L3.5 3.375L6.625 0.25H0.375Z"
-                    fill="#4F46E5"
-                  />
-                </svg>
+                <ChevronDown className="mr-1 h-4 w-4" />
                 {replies?.length} {replies?.length === 1 ? 'Reply' : 'Replies'}
-              </Button>
+              </button>
             )}
-            <Button
-              left={'-3px'}
-              color="brand.slate.500"
-              fontSize={{
-                base: 'xs',
-                md: 'sm',
-              }}
-              fontWeight={500}
-              bg="none"
+            <button
               onClick={() => setShowReplyInput((prev) => !prev)}
-              variant="link"
+              className="-left-3 text-xs font-medium text-slate-500 hover:text-slate-600 md:text-sm"
             >
               Reply
-            </Button>
-          </HStack>
-          <Collapse
-            animateOpacity
-            in={showReplyInput}
-            style={{ width: '100%', overflow: 'visible!important' }}
+            </button>
+          </div>
+          <div
+            className={cn(
+              'w-full transition-all duration-200',
+              !showReplyInput && 'hidden',
+            )}
           >
-            <VStack gap={4} w={'full'} mb={4} pt={4}>
-              <Flex gap={3} w="full">
+            <div className="mb-4 flex w-full flex-col gap-4 pt-4">
+              <div className="flex w-full gap-3">
                 <EarnAvatar size={'28px'} id={user?.id} avatar={user?.photo} />
                 <UserSuggestionTextarea
                   autoFocusOn={showReplyInput}
                   defaultSuggestions={defaultSuggestions}
-                  pt={0}
-                  fontSize={{
-                    base: 'sm',
-                    md: 'md',
-                  }}
-                  borderColor="brand.slate.200"
-                  _placeholder={{
-                    color: 'brand.slate.400',
-                  }}
-                  focusBorderColor="brand.purple"
                   placeholder="Write a comment"
                   value={newReply}
                   setValue={setNewReply}
                   variant="flushed"
                 />
-              </Flex>
+              </div>
               {!!newReplyError && (
-                <Text my={0} mt={4} color="red" fontSize="xs">
+                <p className="my-0 mt-4 text-xs text-red-500">
                   Error in adding your comment! Please try again!
-                </Text>
+                </p>
               )}
-              <Collapse
-                animateOpacity
-                in={!!newReply}
-                style={{ width: '100%', overflow: 'visible!important' }}
-                unmountOnExit={true}
+              <div
+                className={cn(
+                  'flex w-full justify-end gap-4 transition-all duration-200',
+                  !newReply && 'hidden',
+                )}
               >
-                <Flex justify={'end'} gap={4} w="full">
-                  <AuthWrapper
-                    showCompleteProfileModal
-                    completeProfileModalBodyText={
-                      'Please complete your profile before commenting on the listing.'
-                    }
+                <AuthWrapper
+                  showCompleteProfileModal
+                  completeProfileModalBodyText={
+                    'Please complete your profile before commenting on the listing.'
+                  }
+                >
+                  <Button
+                    className="h-auto bg-slate-200 px-5 py-2 text-xs text-slate-800 hover:bg-slate-300 active:bg-slate-400 disabled:opacity-50"
+                    disabled={newReplyLoading || !newReply || isTemplate}
+                    onClick={handleSubmit}
                   >
-                    <Button
-                      h="auto"
-                      px={5}
-                      py={2}
-                      color="brand.slate.800"
-                      fontSize={{
-                        base: 'xs',
-                      }}
-                      fontWeight={500}
-                      bg="brand.slate.200"
-                      _hover={{
-                        bg: 'brand.slate.300',
-                      }}
-                      _active={{
-                        bg: 'brand.slate.400',
-                      }}
-                      isDisabled={!!newReplyLoading || !newReply || isTemplate}
-                      isLoading={!!newReplyLoading}
-                      loadingText="Adding..."
-                      onClick={() => handleSubmit()}
-                    >
-                      Reply
-                    </Button>
-                  </AuthWrapper>
-                </Flex>
-              </Collapse>
-            </VStack>
-          </Collapse>
-          <Collapse
-            animateOpacity
-            in={showReplies}
-            style={{ width: '100%', overflow: 'visible!important' }}
+                    {newReplyLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Adding...
+                      </>
+                    ) : (
+                      'Reply'
+                    )}
+                  </Button>
+                </AuthWrapper>
+              </div>
+            </div>
+          </div>
+          <div
+            className={cn(
+              'w-full transition-all duration-200',
+              !showReplies && 'hidden',
+            )}
           >
-            <VStack gap={4} w="full" pt={3}>
+            <div className="flex w-full flex-col gap-4 pt-3">
               {replies.map((reply) => (
                 <Comment
                   poc={poc}
@@ -424,91 +324,92 @@ export const Comment = ({
                   refId={refId}
                 />
               ))}
-            </VStack>
-          </Collapse>
-        </VStack>
-        <Fade
-          in={(showOptions || isMobile) && comment.authorId === user?.id}
-          style={{ display: 'block' }}
+            </div>
+          </div>
+        </div>
+        <div
+          className={cn(
+            'transition-opacity duration-200',
+            (showOptions || isMobile) && comment.authorId === user?.id
+              ? 'opacity-100'
+              : 'opacity-0',
+          )}
         >
-          <Menu>
-            <MenuButton>
-              <button style={{ padding: '0 0.5rem' }}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="px-2">
                 <svg
                   width="3"
                   height="12"
                   viewBox="0 0 3 12"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
+                  className="text-slate-400"
                 >
                   <path
                     d="M1.5 3C2.325 3 3 2.325 3 1.5C3 0.675 2.325 0 1.5 0C0.675 0 0 0.675 0 1.5C0 2.325 0.675 3 1.5 3ZM1.5 4.5C0.675 4.5 0 5.175 0 6C0 6.825 0.675 7.5 1.5 7.5C2.325 7.5 3 6.825 3 6C3 5.175 2.325 4.5 1.5 4.5ZM1.5 9C0.675 9 0 9.675 0 10.5C0 11.325 0.675 12 1.5 12C2.325 12 3 11.325 3 10.5C3 9.675 2.325 9 1.5 9Z"
-                    fill="#94A3B8"
+                    fill="currentColor"
                   />
                 </svg>
               </button>
-            </MenuButton>
-            <MenuList minW="10rem" px={1} py={1}>
-              <MenuItem
-                className="ph-no-capture"
-                color="brand.slate.600"
-                fontSize={{
-                  base: 'sm',
-                  md: 'md',
-                }}
-                fontWeight={500}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="min-w-[10rem] p-1" align="end">
+              <DropdownMenuItem
+                className="ph-no-capture rounded-sm text-sm font-medium text-slate-600 md:text-base"
                 onClick={deleteOnOpen}
-                rounded="sm"
                 tabIndex={-1}
               >
                 Delete
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </Fade>
-      </HStack>
-      <AlertDialog
-        isOpen={deleteIsOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={deleteOnClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+      <AlertDialog open={deleteIsOpen} onOpenChange={deleteOnClose}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-lg font-bold">
               Delete Comment
-            </AlertDialogHeader>
+            </AlertDialogTitle>
+          </AlertDialogHeader>
 
-            <AlertDialogBody>
-              Are you sure? You {"can't"} undo this action.
-              {deleteError && (
-                <Alert mt={3} rounded="md" status="error">
-                  <AlertIcon />
-                  <div className="flex flex-col gap-2">
-                    <AlertTitle>Failed to delete comment</AlertTitle>
-                    <AlertDescription alignSelf="start">
-                      Please try again later.
-                    </AlertDescription>
-                  </div>
-                </Alert>
-              )}
-            </AlertDialogBody>
+          <AlertDialogDescription>
+            Are you sure? You can&apos;t undo this action.
+            {deleteError && (
+              <Alert variant="destructive" className="mt-3 rounded-md">
+                <AlertCircle className="h-4 w-4" />
+                <div className="flex flex-col gap-2">
+                  <AlertTitle>Failed to delete comment</AlertTitle>
+                  <AlertDescription className="self-start">
+                    Please try again later.
+                  </AlertDescription>
+                </div>
+              </Alert>
+            )}
+          </AlertDialogDescription>
 
-            <AlertDialogFooter>
+          <AlertDialogFooter>
+            <AlertDialogCancel asChild>
               <Button ref={cancelRef} onClick={deleteOnClose} variant="ghost">
                 Cancel
               </Button>
-              <Button
-                className="ph-no-capture"
-                ml={3}
-                disabled={deleteLoading}
-                isLoading={deleteLoading}
-                onClick={handleDelete}
-              >
-                Delete
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
+            </AlertDialogCancel>
+            <Button
+              className={cn('ph-no-capture', 'ml-3')}
+              disabled={deleteLoading}
+              onClick={handleDelete}
+            >
+              {deleteLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete'
+              )}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
       </AlertDialog>
     </>
   );

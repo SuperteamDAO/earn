@@ -1,6 +1,6 @@
-import { Center, Flex, Text, VStack } from '@chakra-ui/react';
+import { cn } from '@/utils';
 
-import { fontSize, maxW, padding } from '../utils';
+import { maxW } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
 const bountyFeatures = [
@@ -15,28 +15,27 @@ const projectFeatures = [
   'Examples: Full Stack Development, Hype Video Production, Hiring a Community Manager, and more',
 ];
 
-const normalFont = { base: '1.2rem' };
-
 export function ListingTypes() {
   return (
-    <VStack gap={8} w="100%" maxW={maxW} px={padding}>
-      <Text
-        maxW="48rem"
-        color="brand.slate.900"
-        fontSize={fontSize}
-        fontWeight={600}
-        lineHeight={1}
-        textAlign="center"
+    <div
+      className={cn(
+        'flex w-full flex-col items-center gap-8',
+        `max-w-[${maxW}]`,
+        'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
+      )}
+    >
+      <h2
+        className={cn(
+          'max-w-[48rem] text-center font-semibold leading-none text-slate-900',
+          'text-[2rem] md:text-[3.5rem]',
+        )}
       >
         Start by posting your first Bounty or Project
-      </Text>
-      <Flex
-        direction={{ base: 'column', md: 'row' }}
-        gap={{ base: 12 }}
-        w="100%"
-      >
-        <VStack align="start" gap={4}>
-          <Center w="full" h="10rem" bg="#F0FDFA">
+      </h2>
+
+      <div className="flex w-full flex-col gap-12 md:flex-row">
+        <div className="flex flex-col items-start gap-4">
+          <div className="flex h-40 w-full items-center justify-center bg-[#F0FDFA]">
             <svg
               width="45"
               height="45"
@@ -51,24 +50,25 @@ export function ListingTypes() {
                 fill="#0D9488"
               />
             </svg>
-          </Center>
-          <VStack align="start" gap={1}>
-            <Text fontSize={{ base: '1.625rem' }} fontWeight={600}>
-              Bounty
-            </Text>
-            <Text fontSize={normalFont} fontWeight={500} lineHeight={1.1}>
+          </div>
+
+          <div className="flex flex-col items-start gap-1">
+            <h3 className="text-[1.625rem] font-semibold">Bounty</h3>
+            <p className="text-[1.2rem] font-medium leading-[1.1]">
               Bounties are listings where everyone completes a given scope of
               work, and competes for the prize pool
-            </Text>
-          </VStack>
-          <VStack align="start" gap={4} mt={{ xl: '1rem' }}>
+            </p>
+          </div>
+
+          <div className="flex flex-col items-start gap-4 xl:mt-4">
             {bountyFeatures.map((feature) => (
               <Feature key={feature} description={feature} />
             ))}
-          </VStack>
-        </VStack>
-        <VStack align="start" gap={4}>
-          <Center w="full" h="10rem" bg="#F5F3FF">
+          </div>
+        </div>
+
+        <div className="flex flex-col items-start gap-4">
+          <div className="flex h-40 w-full items-center justify-center bg-[#F5F3FF]">
             <svg
               width="45"
               height="45"
@@ -88,24 +88,24 @@ export function ListingTypes() {
                 fill="#6366F1"
               />
             </svg>
-          </Center>
-          <VStack align="start" gap={1}>
-            <Text fontSize={{ base: '1.625rem' }} fontWeight={600}>
-              Project
-            </Text>
-            <Text fontSize={normalFont} fontWeight={500} lineHeight={1.1}>
+          </div>
+
+          <div className="flex flex-col items-start gap-1">
+            <h3 className="text-[1.625rem] font-semibold">Project</h3>
+            <p className="text-[1.2rem] font-medium leading-[1.1]">
               Projects are freelance gigs — people apply with their proposals
               but don’t begin working until you pick them
-            </Text>
-          </VStack>
-          <VStack align="start" gap={4} mt={{ xl: '1rem' }}>
+            </p>
+          </div>
+
+          <div className="flex flex-col items-start gap-4 xl:mt-4">
             {projectFeatures.map((feature) => (
               <Feature key={feature} description={feature} />
             ))}
-          </VStack>
-        </VStack>
-      </Flex>
-    </VStack>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -115,20 +115,15 @@ interface FeatureProps {
 
 function Feature({ description }: FeatureProps) {
   return (
-    <Flex align="start" direction={'row'} gap={4}>
+    <div className="flex items-start gap-4">
       <HighQualityImage
         src={'/landingsponsor/icons/purple-tick.svg'}
         alt="Purple Tick"
         className="h-4 w-4"
       />
-      <Text
-        pos={'relative'}
-        top="-5px"
-        color="brand.slate.500"
-        fontSize={normalFont}
-      >
+      <p className="relative top-[-5px] text-[1.2rem] text-xs text-slate-500">
         {description}
-      </Text>
-    </Flex>
+      </p>
+    </div>
   );
 }

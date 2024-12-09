@@ -1,17 +1,5 @@
-import { WarningIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Flex,
-  Image,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Tr,
-  VStack,
-} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import { TriangleAlert } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
@@ -125,35 +113,27 @@ export function RightSideBar({
   }
 
   return (
-    <Box w={{ base: 'full', md: 'auto' }} h="full">
-      <VStack gap={2} w="full" pt={4}>
-        <VStack
-          justify={'center'}
-          gap={0}
-          w="full"
-          bg={'#FFFFFF'}
-          rounded={'xl'}
-        >
+    <div className="h-full w-full md:w-auto">
+      <div className="flex w-full flex-col gap-2 pt-4">
+        <div className="flex w-full flex-col justify-center rounded-xl bg-white">
           {!router.asPath.split('/')[4]?.includes('submission') &&
             listing.isWinnersAnnounced && (
-              <Box display={{ base: 'block', md: 'none' }} w="full" pb={6}>
+              <div className="block w-full pb-6 md:hidden">
                 <ListingWinners bounty={listing} />
-              </Box>
+              </div>
             )}
-          <VStack justify={'space-between'} w={'full'} px={1} pb={4}>
-            <TableContainer w={'full'}>
-              <Table variant={'unstyled'}>
-                <Tbody>
-                  <Tr w={'full'}>
-                    <Td w="full" px={0} py={0} colSpan={3}>
-                      <Flex align="center" gap={2}>
-                        <Image
-                          w={8}
-                          h={8}
-                          alt={'green doller'}
-                          rounded={'full'}
+          <div className="flex w-full flex-col justify-between px-1 pb-4">
+            <div className="w-full">
+              <table className="w-full">
+                <tbody>
+                  <tr className="w-full">
+                    <td className="w-full p-0" colSpan={3}>
+                      <div className="flex items-center gap-2">
+                        <img
+                          className="h-8 w-8 rounded-full"
+                          alt="token icon"
                           src={
-                            tokenList.filter((e) => e?.tokenSymbol === token)[0]
+                            tokenList.find((e) => e?.tokenSymbol === token)
                               ?.icon ?? '/assets/dollar.svg'
                           }
                         />
@@ -168,147 +148,122 @@ export function RightSideBar({
                             widthOfPrize && `w-[${widthOfPrize}]`,
                           )}
                         />
-                        <Text
-                          color={'brand.slate.500'}
-                          fontSize={'lg'}
-                          fontWeight={400}
-                        >
+                        <p className="text-lg font-normal text-slate-500">
                           {isProject ? 'Payment' : 'Total Prizes'}
-                        </Text>
-                      </Flex>
-                    </Td>
-                  </Tr>
-                  {!isProject && (
-                    <>
-                      {rewards && (
-                        <Tr>
-                          <Td px={0} colSpan={3}>
-                            <PrizesList
-                              widthPrize={widthOfPrize}
-                              totalReward={rewardAmount ?? 0}
-                              maxBonusSpots={maxBonusSpots ?? 0}
-                              token={token ?? ''}
-                              rewards={rewards}
-                            />
-                          </Td>
-                        </Tr>
-                      )}
-                    </>
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+
+                  {!isProject && rewards && (
+                    <tr>
+                      <td className="p-0" colSpan={3}>
+                        <PrizesList
+                          widthPrize={widthOfPrize}
+                          totalReward={rewardAmount ?? 0}
+                          maxBonusSpots={maxBonusSpots ?? 0}
+                          token={token ?? ''}
+                          rewards={rewards}
+                        />
+                      </td>
+                    </tr>
                   )}
-                </Tbody>
-              </Table>
-            </TableContainer>
-          </VStack>
-          <Box
-            w="100%"
-            borderColor={'brand.slate.100'}
-            borderBottomWidth={'1px'}
-          />
-          <Flex justify={'space-between'} w={'full'} py={!rewards ? 3 : 0}>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="w-full border-b border-slate-100" />
+          <div
+            className={cn(
+              'flex w-full justify-between',
+              rewards ? 'py-0' : 'py-3',
+            )}
+          >
             {hasHackathonStarted ? (
               <>
-                <Flex align={'start'} justify={'center'} direction={'column'}>
-                  <Flex align={'center'} justify={'center'} gap={2}>
+                <div className="flex flex-col items-start justify-center">
+                  <div className="flex items-center justify-center gap-2">
                     <ExternalImage
                       className="-mt-1 w-[1.4rem]"
                       alt={'suit case'}
                       src={'/icons/purple-suitcase.svg'}
                     />
-                    <Text
-                      color={'#000000'}
-                      fontSize={{ base: 'lg', md: 'xl' }}
-                      fontWeight={500}
-                    >
+                    <p className="text-lg font-medium text-black md:text-xl">
                       {isSubmissionNumberLoading
                         ? '...'
                         : !isProject
                           ? submissionNumber?.toLocaleString('en-us')
                           : submissionRange}
-                    </Text>
-                  </Flex>
-                  <Text color={'#94A3B8'}>
+                    </p>
+                  </div>
+                  <p className="text-[#94a3b8]">
                     {isProject
                       ? 'Applications'
                       : submissionNumber === 1
                         ? 'Submission'
                         : 'Submissions'}
-                  </Text>
-                </Flex>
+                  </p>
+                </div>
 
-                <Flex
-                  align={'start'}
-                  justify={'center'}
-                  direction={'column'}
-                  py={3}
-                >
-                  <Flex align={'start'} justify={'center'} gap={1}>
+                <div className="flex flex-col items-start justify-center py-3">
+                  <div className="flex items-start justify-center gap-1">
                     <ExternalImage
                       className="mt-1 w-[1.4rem]"
                       alt={'suit case'}
                       src={'/icons/purple-timer.svg'}
                     />
-                    <VStack align={'start'} gap={0}>
-                      <Text
-                        color={'#000000'}
-                        fontSize={{ base: 'lg', md: 'xl' }}
-                        fontWeight={500}
-                      >
+                    <div className="flex flex-col items-start">
+                      <p className="text-lg font-medium text-black md:text-xl">
                         <Countdown
                           date={deadline}
                           renderer={CountDownRenderer}
                           zeroPadDays={1}
                         />
-                      </Text>
-                      <Text color={'#94A3B8'}>Remaining</Text>
-                    </VStack>
-                  </Flex>
-                </Flex>
+                      </p>
+                      <p className="text-[#94a3b8]">Remaining</p>
+                    </div>
+                  </div>
+                </div>
               </>
             ) : (
-              <Flex
-                align={'start'}
-                justify={'center'}
-                direction={'column'}
-                py={3}
-              >
-                <Flex align={'start'} justify={'center'} gap={1}>
+              <div className="flex flex-col items-start justify-center py-3">
+                <div className="flex items-start justify-center gap-1">
                   <ExternalImage
                     className="mt-1 w-[1.4rem]"
                     alt={'suit case'}
                     src={'/icons/purple-timer.svg'}
                   />
-                  <VStack align={'start'} gap={0}>
-                    <Text
-                      color={'#000000'}
-                      fontSize={{ base: 'lg', md: 'xl' }}
-                      fontWeight={500}
-                    >
+                  <div className="flex flex-col items-start">
+                    <p className="text-lg font-medium text-black md:text-xl">
                       <Countdown
                         date={Hackathon?.startDate}
                         renderer={CountDownRenderer}
                         zeroPadDays={1}
                       />
-                    </Text>
-                    <Text color={'#94A3B8'}>Until Submissions Open</Text>
-                  </VStack>
-                </Flex>
-              </Flex>
+                    </p>
+                    <p className="text-[#94a3b8]">Until Submissions Open</p>
+                  </div>
+                </div>
+              </div>
             )}
-          </Flex>
+          </div>
 
-          <Box w="full">
+          <div className="w-full">
             <SubmissionActionButton listing={listing} isTemplate={isTemplate} />
             {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
-              <Flex gap="2" w="full" mt={-1} mb={4} p="3" bg={'#62F6FF10'}>
-                <WarningIcon color="#1A7F86" />
-                <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
+              <div className="-mt-1 mb-4 flex w-full gap-2 bg-[#62F6FF10] p-3">
+                <TriangleAlert color="#1A7F86" />
+                <p
+                  className="text-xs font-medium text-[#1A7F86]"
+                  color="#1A7F86"
+                >
                   Don&apos;t start working just yet! Apply first, and then begin
                   working only once you&apos;ve been hired for the project.
-                </Text>
-              </Flex>
+                </p>
+              </div>
             )}
-          </Box>
-          <Box w="full">
+          </div>
+          <div className="w-full">
             <ExtraInfoSection
               skills={skills}
               region={listing.region}
@@ -316,13 +271,8 @@ export function RightSideBar({
               pocSocials={listing.pocSocials}
               Hackathon={listing.Hackathon}
             />
-          </Box>
-          <Box
-            display={{ base: 'none', md: 'block' }}
-            w={'full'}
-            py={8}
-            fontSize="sm"
-          >
+          </div>
+          <div className="hidden w-full py-8 text-sm md:block">
             {listing.id && (
               <RelatedListings
                 isHackathon={!!listing.hackathonId}
@@ -336,22 +286,18 @@ export function RightSideBar({
                     : undefined
                 }
               >
-                <Flex align="center" justify={'space-between'} w="full">
-                  <Text
-                    color={'brand.slate.600'}
-                    fontSize={'sm'}
-                    fontWeight={600}
-                  >
+                <div className="flex w-full items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-600">
                     {!Hackathon
                       ? 'RELATED LIVE LISTINGS'
                       : 'RELATED LIVE TRACKS'}
-                  </Text>
-                </Flex>
+                  </p>
+                </div>
               </RelatedListings>
             )}
-          </Box>
-        </VStack>
-      </VStack>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

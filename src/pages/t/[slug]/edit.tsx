@@ -1,17 +1,5 @@
-import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Center,
-  Checkbox,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Text,
-  Textarea,
-} from '@chakra-ui/react';
 import axios from 'axios';
+import { Edit, Loader2, Plus, Trash } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -26,6 +14,10 @@ import { InputField } from '@/components/Form/InputField';
 import { SelectBox } from '@/components/Form/SelectBox';
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { SkillSelect } from '@/components/shared/SkillSelect';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { FormItem, FormLabel } from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
 import {
   IndustryList,
   type MultiSelectOptions,
@@ -46,6 +38,7 @@ import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { uploadToCloudinary } from '@/utils/upload';
 import { validateSolAddressUI } from '@/utils/validateSolAddress';
 
@@ -85,6 +78,18 @@ const parseSkillsAndSubskills = (skillsObject: any) => {
   });
 
   return { skills, subSkills };
+};
+
+const selectStyles = {
+  control: (baseStyles: any) => ({
+    ...baseStyles,
+    border: '1px solid rgb(203 213 225)',
+    '&:hover': {
+      borderColor: 'rgb(203 213 225)',
+    },
+    boxShadow: 'none',
+    backgroundColor: 'white',
+  }),
 };
 
 export default function EditProfilePage({ slug }: { slug: string }) {
@@ -327,64 +332,33 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           />
         }
       >
-        <Box bg="#fff">
-          <Box maxW="600px" mx="auto" p={{ base: 3, md: 5 }}>
-            <Heading mt={3} mb={5}>
-              Edit Profile
-            </Heading>
+        <div className="bg-white">
+          <div className="mx-auto max-w-[600px] p-3 md:p-5">
+            <h1 className="mb-5 mt-3 text-2xl font-bold">Edit Profile</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <Text
-                mt={12}
-                mb={5}
-                color={'brand.slate.600'}
-                fontSize="lg"
-                fontWeight={600}
-                letterSpacing={0.4}
-              >
+              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
                 PERSONAL INFO
-              </Text>
-              <FormControl>
-                <Box mb={4}>
-                  <FormLabel
-                    mb={'1'}
-                    pb={'0'}
-                    color={'brand.slate.500'}
-                    requiredIndicator={<></>}
-                  >
-                    Profile Picture
-                  </FormLabel>
-                  {isPhotoLoading ? (
-                    <></>
-                  ) : photoUrl ? (
-                    <ImagePicker
-                      defaultValue={{ url: photoUrl }}
-                      onChange={async (e) => {
-                        setUploading(true);
-                        const a = await uploadToCloudinary(e, 'earn-pfp');
-                        setValue('photo', a);
-                        setUploading(false);
-                      }}
-                      onReset={() => {
-                        setValue('photo', '');
-                        setUploading(false);
-                      }}
-                    />
-                  ) : (
-                    <ImagePicker
-                      onChange={async (e) => {
-                        setUploading(true);
-                        const a = await uploadToCloudinary(e, 'earn-pfp');
-                        setValue('photo', a);
-                        setUploading(false);
-                      }}
-                      onReset={() => {
-                        setValue('photo', '');
-                        setUploading(false);
-                      }}
-                    />
-                  )}
-                </Box>
-              </FormControl>
+              </p>
+              <FormItem className="mb-4">
+                <FormLabel className="mb-1 pb-0 text-slate-500">
+                  Profile Picture
+                </FormLabel>
+                {!isPhotoLoading && (
+                  <ImagePicker
+                    defaultValue={photoUrl ? { url: photoUrl } : undefined}
+                    onChange={async (e) => {
+                      setUploading(true);
+                      const a = await uploadToCloudinary(e, 'earn-pfp');
+                      setValue('photo', a);
+                      setUploading(false);
+                    }}
+                    onReset={() => {
+                      setValue('photo', '');
+                      setUploading(false);
+                    }}
+                  />
+                )}
+              </FormItem>
               <InputField
                 label="Username"
                 placeholder="Username"
@@ -415,33 +389,31 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 errors={errors}
               />
 
-              <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>
+              <div className="mb-[1.25rem] w-full">
+                <FormLabel className="text-slate-500">
                   Your One-Line Bio
                 </FormLabel>
                 <Textarea
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.300',
-                  }}
-                  focusBorderColor="brand.purple"
-                  id={'bio'}
+                  className={cn(
+                    'border-slate-300 placeholder:text-slate-300',
+                    'focus:border-brand-purple focus:ring-brand-purple',
+                  )}
+                  id="bio"
                   maxLength={180}
                   placeholder="Here is a sample placeholder"
                   {...register('bio', { required: false })}
                 />
-                <Text
-                  color={
+                <p
+                  className={cn(
+                    'text-right text-xs',
                     (watch('bio')?.length || 0) > 160
-                      ? 'red'
-                      : 'brand.slate.400'
-                  }
-                  fontSize={'xs'}
-                  textAlign="right"
+                      ? 'text-red-500'
+                      : 'text-slate-400',
+                  )}
                 >
                   {180 - (watch('bio')?.length || 0)} characters left
-                </Text>
-              </Box>
+                </p>
+              </div>
               <InputField
                 label="Your Solana Wallet Address"
                 placeholder="Wallet Address"
@@ -455,41 +427,28 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 validationErrorMessage={validationErrorMessage}
                 errors={errors}
               />
-              <Text
-                mt={12}
-                mb={5}
-                color={'brand.slate.600'}
-                fontSize="lg"
-                fontWeight={600}
-                letterSpacing={0.4}
-              >
+              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
                 SOCIALS
-              </Text>
+              </p>
 
               <SocialInput register={register} watch={watch} />
 
-              <Text
-                mt={12}
-                mb={5}
-                color={'brand.slate.600'}
-                fontSize="lg"
-                fontWeight={600}
-                letterSpacing={0.4}
-              >
+              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
                 WORK
-              </Text>
+              </p>
 
-              <FormControl w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>
+              <FormItem className="mb-5 w-full">
+                <FormLabel className="text-slate-500">
                   What areas of Web3 are you most interested in?
                 </FormLabel>
                 <ReactSelect
                   closeMenuOnSelect={false}
                   components={animatedComponents}
                   isMulti
-                  options={IndustryList.map((elm: string) => {
-                    return { label: elm, value: elm };
-                  })}
+                  options={IndustryList.map((elm: string) => ({
+                    label: elm,
+                    value: elm,
+                  }))}
                   value={DropDownValues.interests}
                   onChange={(selectedOptions: any) => {
                     const selectedInterests = selectedOptions
@@ -503,27 +462,22 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     });
                     setValue('interests', selectedInterests);
                   }}
-                  styles={{
-                    control: (baseStyles) => ({
-                      ...baseStyles,
-                      backgroundColor: 'brand.slate.500',
-                      borderColor: 'brand.slate.300',
-                    }),
-                  }}
+                  styles={selectStyles}
                 />
-              </FormControl>
+              </FormItem>
 
-              <FormControl w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>
+              <FormItem className="mb-5 w-full">
+                <FormLabel className="text-slate-500">
                   Community Affiliations
                 </FormLabel>
                 <ReactSelect
                   closeMenuOnSelect={false}
                   components={animatedComponents}
                   isMulti
-                  options={CommunityList.map((elm: string) => {
-                    return { label: elm, value: elm };
-                  })}
+                  options={CommunityList.map((elm: string) => ({
+                    label: elm,
+                    value: elm,
+                  }))}
                   value={DropDownValues.community}
                   onChange={(e: any) => {
                     const selectedCommunities = e
@@ -535,15 +489,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     });
                     setValue('community', selectedCommunities);
                   }}
-                  styles={{
-                    control: (baseStyles) => ({
-                      ...baseStyles,
-                      backgroundColor: 'brand.slate.500',
-                      borderColor: 'brand.slate.300',
-                    }),
-                  }}
+                  styles={selectStyles}
                 />
-              </FormControl>
+              </FormItem>
 
               <SelectBox
                 label="Work Experience"
@@ -589,57 +537,46 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 errors={errors}
               />
 
-              <FormLabel color={'brand.slate.500'}>Proof of Work</FormLabel>
+              <FormLabel className="text-slate-500">Proof of Work</FormLabel>
               <div>
                 {pow.map((data, idx) => {
                   return (
-                    <Flex
+                    <div
+                      className="mb-1.5 mt-2 flex items-center rounded-md border border-slate-300 px-[1rem] py-[0.5rem] text-slate-500"
                       key={data.id}
-                      align={'center'}
-                      mt="2"
-                      mb={'1.5'}
-                      px={'1rem'}
-                      py={'0.5rem'}
-                      color={'brand.slate.500'}
-                      border={'1px solid gray'}
-                      borderColor="brand.slate.300"
-                      rounded={'md'}
                     >
-                      <Text w={'full'} color={'gray.800'} fontSize={'0.8rem'}>
+                      <p className="w-full text-sm text-gray-800">
                         {data.title}
-                      </Text>
-                      <Center columnGap={'0.8rem'}>
-                        <EditIcon
+                      </p>
+                      <div className="flex items-center gap-3">
+                        <Edit
                           onClick={() => {
                             setSelectedProject(idx);
                             onOpen();
                           }}
-                          cursor={'pointer'}
-                          fontSize={'0.8rem'}
+                          className="h-3.5 w-3.5 cursor-pointer"
                         />
-                        <DeleteIcon
+                        <Trash
                           onClick={() => {
                             setPow((prevPow) =>
                               prevPow.filter((_ele, id) => idx !== id),
                             );
                           }}
-                          cursor={'pointer'}
-                          fontSize={'0.8rem'}
+                          className="h-3.5 w-3.5 cursor-pointer"
                         />
-                      </Center>
-                    </Flex>
+                      </div>
+                    </div>
                   );
                 })}
               </div>
               <Button
-                w={'full'}
-                mb={8}
-                leftIcon={<AddIcon />}
+                className="mb-8 w-full"
                 onClick={() => {
                   onOpen();
                 }}
                 variant="outline"
               >
+                <Plus className="mr-2 h-4 w-4" />
                 Add Project
               </Button>
 
@@ -653,39 +590,43 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 helperText="We will send email notifications of new listings for your selected skills"
               />
 
-              <Checkbox
-                mr={1}
-                mb={8}
-                color="brand.slate.500"
-                fontWeight={500}
-                _checked={{
-                  '& .chakra-checkbox__control': {
-                    background: 'brand.purple',
-                    borderColor: 'brand.purple',
-                  },
-                }}
-                colorScheme="purple"
-                isChecked={privateValue}
-                onChange={(e) => {
-                  setValue('private', e.target.checked);
-                }}
-                size="md"
-              >
-                Keep my info private
-              </Checkbox>
+              <div className="mb-8">
+                <Checkbox
+                  checked={privateValue}
+                  onCheckedChange={(checked) => {
+                    if (typeof checked === 'boolean') {
+                      setValue('private', checked);
+                    }
+                  }}
+                  className="mr-1 text-brand-purple data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                >
+                  <span className="font-medium text-slate-500">
+                    Keep my info private
+                  </span>
+                </Checkbox>
+              </div>
               <br />
 
               <Button
-                className="ph-no-capture"
-                mb={12}
-                isLoading={uploading || isLoading}
+                className={cn(
+                  'ph-no-capture mb-12',
+                  (uploading || isLoading) && 'pointer-events-none opacity-50',
+                )}
                 type="submit"
+                disabled={uploading || isLoading}
               >
-                Update Profile
+                {uploading || isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  'Update Profile'
+                )}
               </Button>
             </form>
-          </Box>
-        </Box>
+          </div>
+        </div>
         <AddProject
           key={`${pow.length}project`}
           {...{

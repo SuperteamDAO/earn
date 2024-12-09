@@ -1,4 +1,4 @@
-import { Divider, HStack, Text, VStack } from '@chakra-ui/react';
+import { cn } from '@/utils';
 
 import { HighQualityImage } from './HighQualityImage';
 
@@ -64,82 +64,60 @@ export function ListingCard({
   amount,
 }: ListingCardProps) {
   return (
-    <VStack
-      w="21.5rem"
-      h="18.75rem"
-      bg="white"
-      border="1px solid"
-      borderColor="brand.slate.200"
-      shadow={'0px 4px 6px 0px rgba(226, 232, 240, 0.41)'}
-      rounded={6}
-    >
-      <VStack align="start" gap={4} h="full" p={4} pb={3}>
-        <HStack gap={4} w="100%">
+    <div className="flex h-[18.75rem] w-[21.5rem] flex-col rounded-md border border-slate-200 bg-white shadow-[0px_4px_6px_0px_rgba(226,232,240,0.41)]">
+      <div className="flex h-full flex-col items-start gap-4 p-4 pb-3">
+        <div className="flex w-full gap-4">
           <HighQualityImage
             alt="Pied Piper Logo"
             src={pfp}
             className="h-12 w-12"
           />
-          <VStack align="start" flexGrow={1} gap={0} w="100%" fontSize={'sm'}>
-            <Text color="brand.slate.700" fontWeight={600}>
-              {title}
-            </Text>
-            <Text color="brand.slate.400" fontWeight={600} bg="brand.slate.50">
+          <div className="flex w-full flex-grow flex-col items-start gap-0 text-sm">
+            <p className="font-semibold text-slate-700">{title}</p>
+            <p className="bg-slate-50 font-semibold text-slate-400">
               By {name}
-            </Text>
-          </VStack>
-        </HStack>
-        <Text
-          color="brand.slate.500"
-          fontSize="sm"
-          fontWeight={500}
-          noOfLines={4}
-        >
+            </p>
+          </div>
+        </div>
+
+        <p className="line-clamp-4 text-sm font-medium text-slate-500">
           {description}
-        </Text>
-        <HStack justify="space-between" w="full" mt="auto" fontSize="x-small">
-          <Text color="brand.slate.400" fontWeight={500}>
-            Skills
-          </Text>
+        </p>
+
+        <div className="mt-auto flex w-full justify-between text-xs">
+          <p className="font-medium text-slate-400">Skills</p>
           <div className="flex gap-2">
             {skills.map((s) => (
-              <Text
+              <p
                 key={s}
-                px={2}
-                py={1}
-                color={skillColors[s].foreground}
-                fontWeight={500}
-                textTransform={'capitalize'}
-                bg={skillColors[s].background}
-                rounded={6}
+                className={cn(
+                  'rounded-md px-2 py-1 font-medium capitalize',
+                  `text-[${skillColors[s].foreground}] bg-[${skillColors[s].background}]`,
+                )}
               >
                 {s}
-              </Text>
+              </p>
             ))}
           </div>
-        </HStack>
-      </VStack>
-      <Divider />
-      <HStack justify={'space-between'} w="full" px={4} pt={2} pb={4}>
+        </div>
+      </div>
+
+      <hr />
+
+      <div className="flex w-full justify-between px-4 pb-4 pt-2">
         <div className="flex gap-2">
           <HighQualityImage
             className="h-5 w-5"
             src={tokenIcon}
             alt={`${token} icon`}
           />
-          <Text color="brand.slate.800" fontWeight={600}>
-            {amount}
-          </Text>
+          <p className="font-semibold text-slate-800">{amount}</p>
         </div>
         <div className="flex gap-2">
-          <Text color="brand.slate.800" fontWeight={600}>
-            {submissionCount}
-          </Text>
-          <Text color="brand.slate.500" fontWeight={600}>
-            Submissions
-          </Text>
+          <p className="font-semibold text-slate-800">{submissionCount}</p>
+          <p className="font-semibold text-slate-500">Submissions</p>
         </div>
-      </HStack>
-    </VStack>
+      </div>
+    </div>
   );
 }

@@ -252,9 +252,9 @@ const MemberRow = ({ user }: { user: LocalProfile }) => {
       </Td>
       <Td>
         <Flex justify="flex-start" gap={4} minW={16}>
-          <Telegram boxSize={'1.2rem'} link={user.telegram} />
-          <Twitter boxSize={'1.2rem'} link={user.twitter} />
-          <Website boxSize={'1.2rem'} link={user.website} />
+          <Telegram className="h-[1.2rem] w-[1.2rem]" link={user.telegram} />
+          <Twitter className="h-[1.2rem] w-[1.2rem]" link={user.twitter} />
+          <Website className="h-[1.2rem] w-[1.2rem]" link={user.website} />
         </Flex>
       </Td>
       <Td>

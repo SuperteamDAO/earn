@@ -1,94 +1,39 @@
-import { HStack, Text, VStack } from '@chakra-ui/react';
-
 import { HighQualityImage } from '../HighQualityImage';
 
 export function StepOne() {
   return (
-    <VStack
-      align="start"
-      gap={4}
-      w="21.5rem"
-      h="18.75rem"
-      p={4}
-      bg="white"
-      border="1px solid"
-      borderColor="brand.slate.200"
-      shadow={'0px 4px 6px 0px rgba(226, 232, 240, 0.41)'}
-      rounded={6}
-    >
-      <HStack gap={4} w="100%">
+    <div className="flex h-[18.75rem] w-[21.5rem] flex-col items-start gap-4 rounded-md border border-slate-200 bg-white p-4 shadow-[0px_4px_6px_0px_rgba(226,232,240,0.41)]">
+      <div className="flex w-full gap-4">
         <HighQualityImage
           alt="Pied Piper Logo"
           className="h-12 w-12"
-          src={'/landingsponsor/sponsors/piedPiper.webp'}
+          src="/landingsponsor/sponsors/piedPiper.webp"
         />
-        <VStack align="start" flexGrow={1} w="100%">
-          <Text color="brand.slate.400" fontSize="sm" fontWeight="500">
-            Company name
-          </Text>
-          <Text
-            w="100%"
-            px={2}
-            py={1}
-            color="brand.slate.700"
-            fontSize="sm"
-            fontWeight={500}
-            bg="brand.slate.50"
-            border="1px solid"
-            borderColor="brand.slate.200"
-          >
+        <div className="flex w-full flex-grow flex-col items-start">
+          <p className="text-sm font-medium text-slate-400">Company name</p>
+          <p className="w-full border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-medium text-slate-700">
             Pied Piper
-          </Text>
-        </VStack>
-      </HStack>
-      <VStack align="start" flexGrow={1} w="100%">
-        <Text color="brand.slate.400" fontSize="sm" fontWeight="500">
-          Website URL
-        </Text>
-        <Text
-          w="100%"
-          px={2}
-          py={1}
-          color="brand.slate.700"
-          fontSize="sm"
-          fontWeight={500}
-          bg="brand.slate.50"
-          border="1px solid"
-          borderColor="brand.slate.200"
-        >
+          </p>
+        </div>
+      </div>
+
+      <div className="flex w-full flex-grow flex-col items-start">
+        <p className="text-sm font-medium text-slate-400">Website URL</p>
+        <p className="w-full border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-medium text-slate-700">
           https://piedpier.com
-        </Text>
-      </VStack>
-      <VStack align="start" flexGrow={1} w="100%">
-        <Text color="brand.slate.400" fontSize="sm" fontWeight="500">
-          Twitter Handle
-        </Text>
-        <Text
-          w="100%"
-          px={2}
-          py={1}
-          color="brand.slate.700"
-          fontSize="sm"
-          fontWeight={500}
-          bg="brand.slate.50"
-          border="1px solid"
-          borderColor="brand.slate.200"
-        >
+        </p>
+      </div>
+
+      <div className="flex w-full flex-grow flex-col items-start">
+        <p className="text-sm font-medium text-slate-400">Twitter Handle</p>
+        <p className="w-full border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-medium text-slate-700">
           @piedpiper
-        </Text>
-      </VStack>
-      <Text
-        alignSelf="end"
-        px={4}
-        py={2}
-        color="brand.purple"
-        fontSize="sm"
-        fontWeight={500}
-        bg="#EEF2FF"
-        rounded={7}
-      >
+        </p>
+      </div>
+
+      <p className="self-end rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-purple-600">
         Create Profile
-      </Text>
-    </VStack>
+      </p>
+    </div>
   );
 }

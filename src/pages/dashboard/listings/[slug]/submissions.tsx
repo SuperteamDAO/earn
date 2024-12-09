@@ -29,8 +29,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { BONUS_REWARD_POSITION } from '@/constants';
-import { PublishResults } from '@/features/listings';
 import {
+  PublishResults,
   RejectAllSubmissionModal,
   type ScoutRowType,
   scoutsQuery,

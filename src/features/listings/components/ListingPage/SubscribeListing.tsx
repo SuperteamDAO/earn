@@ -1,4 +1,3 @@
-import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
@@ -6,7 +5,7 @@ import { usePostHog } from 'posthog-js/react';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
 
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AuthWrapper } from '@/features/auth';

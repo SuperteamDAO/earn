@@ -176,11 +176,7 @@ export const UserDrawer = ({
               <Flex gap={2}>
                 {socialLinks.map(({ Component, link }, index) => (
                   <Box key={index}>
-                    <Component
-                      link={link}
-                      boxSize={5}
-                      color="brand.slate.600"
-                    />
+                    <Component link={link} className="h-5 w-5 text-slate-600" />
                   </Box>
                 ))}
               </Flex>

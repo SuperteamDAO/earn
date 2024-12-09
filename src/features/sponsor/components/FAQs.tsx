@@ -1,15 +1,9 @@
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { AccordionContent, AccordionTrigger } from '@radix-ui/react-accordion';
 
-import { fontSize, maxW, padding } from '../utils';
+import { Accordion, AccordionItem } from '@/components/ui/accordion';
+import { cn } from '@/utils';
+
+import { maxW } from '../utils';
 
 const faqs = [
   {
@@ -44,51 +38,43 @@ Earn can be used to get any small to medium scale task done, including but not l
 
 export function FAQs() {
   return (
-    <VStack w="full" pt="2rem" pb="4rem" bg="#EEF2FF" id="faqs">
-      <Text
-        pos="relative"
-        w="full"
-        color="brand.slate.800"
-        fontSize={fontSize}
-        fontWeight={600}
-        textAlign="center"
+    <div
+      className="flex w-full flex-col items-center bg-indigo-50 pb-16 pt-8"
+      id="faqs"
+    >
+      <h2
+        className={cn(
+          'relative w-full text-center font-semibold text-slate-800',
+          'text-[2rem] md:text-[3.5rem]',
+        )}
       >
         FAQs
-      </Text>
-      <Accordion
-        w="full"
-        maxW={maxW}
-        px={padding}
-        allowToggle
-        rounded="0.25rem"
+      </h2>
+
+      <div
+        className={cn(
+          'w-full rounded',
+          `max-w-[${maxW}]`,
+          'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
+        )}
       >
-        {faqs.map((faq) => (
-          <AccordionItem
-            key={faq.question}
-            my="1rem"
-            bg="white"
-            border="0"
-            rounded="0.25rem"
-          >
-            <h2>
-              <AccordionButton
-                py="0.8rem"
-                _expanded={{ bg: 'blackAlpha.50' }}
-                rounded="0.25rem"
-              >
-                <Box as="span" flex="1" textAlign="left">
-                  {faq.question}
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel
-              pb={4}
-              dangerouslySetInnerHTML={{ __html: faq.answer }}
-            />
-          </AccordionItem>
-        ))}
-      </Accordion>
-    </VStack>
+        <Accordion collapsible type="single">
+          {faqs.map((faq) => (
+            <AccordionItem
+              className="my-4 rounded border-0 bg-white"
+              key={faq.question}
+              value={faq.question}
+            >
+              <AccordionTrigger className="rounded py-3 hover:bg-black/5 data-[state=open]:bg-black/5">
+                <span className="flex-1 text-left">{faq.question}</span>
+              </AccordionTrigger>
+              <AccordionContent className="pb-4">
+                <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </div>
   );
 }
