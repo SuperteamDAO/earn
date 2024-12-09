@@ -24,12 +24,12 @@ module.exports = {
           foreground: 'hsl(var(--popover-foreground))',
         },
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
           100: 'hsl(var(--primary-100))',
           200: 'hsl(var(--primary-200))',
           300: 'hsl(var(--primary-300))',
           400: 'hsl(var(--primary-400))',
           500: 'hsl(var(--primary-500))',
+          DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
@@ -60,12 +60,12 @@ module.exports = {
         },
         brand: {
           purple: {
-            DEFAULT: '#6366F1',
-            light: '#7471ff',
-            dark: '#4F46E5',
             50: '#EEF2FF',
             300: '#A5B4FC',
             400: '#818CF8',
+            DEFAULT: '#6366F1',
+            light: '#7471ff',
+            dark: '#4F46E5',
           },
           slate: {
             50: '#f8fafc',
@@ -92,12 +92,34 @@ module.exports = {
       },
       keyframes: {
         'caret-blink': {
-          '0%,70%,100%': { opacity: '1' },
-          '20%,50%': { opacity: '0' },
+          '0%,70%,100%': {
+            opacity: '1',
+          },
+          '20%,50%': {
+            opacity: '0',
+          },
+        },
+        'accordion-down': {
+          from: {
+            height: '0',
+          },
+          to: {
+            height: 'var(--radix-accordion-content-height)',
+          },
+        },
+        'accordion-up': {
+          from: {
+            height: 'var(--radix-accordion-content-height)',
+          },
+          to: {
+            height: '0',
+          },
         },
       },
       animation: {
         'caret-blink': 'caret-blink 1.2s ease-out infinite',
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
   },

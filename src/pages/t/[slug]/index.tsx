@@ -403,7 +403,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
               <div className="flex flex-col gap-12 md:flex-row md:gap-[25rem]">
                 <div className="flex w-full gap-6 md:w-1/2">
                   {socialLinks.map(({ Icon, link }, i) => {
-                    return <Icon link={link} boxSize={5} key={i} />;
+                    return <Icon link={link} className="h-5 w-5" key={i} />;
                   })}
                 </div>
                 <div className="flex w-full gap-6 md:w-1/2 md:gap-8">

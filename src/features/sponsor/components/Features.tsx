@@ -1,14 +1,8 @@
-import {
-  AbsoluteCenter,
-  Box,
-  Center,
-  Grid,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
 import { usePostHog } from 'posthog-js/react';
 
-import { fontSize, maxW2, padding } from '../utils';
+import { cn } from '@/utils';
+
+import { maxW2 } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
 interface FeatureProps {
@@ -64,47 +58,42 @@ export function Features({ showVideo }: Props) {
   const posthog = usePostHog();
 
   return (
-    <VStack pos="relative" w="full" my="8rem" px={padding} id="features">
-      <Box
-        pos="absolute"
-        top={0}
-        w="full"
-        h={{ base: '17.8rem', md: '36.96rem' }}
-        bg="brand.purple"
-      />
-      <VStack pos="relative" maxW={maxW2} px={padding} py={'3rem'}>
-        <Text
-          maxW="48rem"
-          color="white"
-          fontSize={{ base: '1rem', md: '1.6rem' }}
-          fontWeight={600}
-          textAlign="center"
-          opacity={0.76}
-        >
+    <div
+      className="relative my-32 w-full px-[1.875rem] lg:px-[7rem] xl:px-[11rem]"
+      id="features"
+    >
+      <div className="absolute top-0 h-[17.8rem] w-full bg-purple-600 md:h-[36.96rem]" />
+
+      <div
+        className={cn(
+          'relative px-[1.875rem] py-12 lg:px-[7rem] xl:px-[11rem]',
+          `max-w-[${maxW2}]`,
+        )}
+      >
+        <p className="max-w-[48rem] text-center text-base font-semibold text-white/75 md:text-[1.6rem]">
           YOUR DASHBOARD
-        </Text>
-        <Text
-          maxW="48rem"
-          color="white"
-          fontSize={fontSize}
-          fontWeight={600}
-          lineHeight={1.1}
-          textAlign="center"
+        </p>
+        <p
+          className={cn(
+            'max-w-[48rem] text-center font-semibold leading-[1.1] text-white',
+            'text-[2rem] md:text-[3.5rem]',
+          )}
         >
           A seamless way to manage all your listings in one place
-        </Text>
-      </VStack>
-      <Center
-        className="ph-no-capture"
-        pos="relative"
-        w="full"
-        maxW={maxW2}
+        </p>
+      </div>
+
+      <div
+        className={cn(
+          'ph-no-capture relative flex w-full items-center justify-center',
+          `max-w-[${maxW2}]`,
+        )}
         onClick={() => {
           posthog?.capture('clicked_video');
           showVideo();
         }}
       >
-        <AbsoluteCenter p={3} bg="brand.purple" cursor="pointer" rounded="full">
+        <div className="absolute inset-0 m-auto flex h-fit w-fit cursor-pointer items-center justify-center rounded-full bg-purple-600 p-3">
           <svg
             width="34"
             height="34"
@@ -124,48 +113,43 @@ export function Features({ showVideo }: Props) {
               </clipPath>
             </defs>
           </svg>
-        </AbsoluteCenter>
+        </div>
+
         <HighQualityImage
           className="h-full w-full cursor-pointer rounded-md border-2 border-[#E2E8F0] shadow-md"
-          src={'/landingsponsor/displays/sponsor-dashboard.webp'}
+          src="/landingsponsor/displays/sponsor-dashboard.webp"
           alt="Sponsord dashboard screenshot"
         />
-      </Center>
-      <Grid
-        gap={{ base: 10, md: 10, xl: 20 }}
-        templateColumns={{
-          base: 'repeat(1, 1fr)',
-          md: 'repeat(2, 1fr)',
-          lg: 'repeat(3, 1fr)',
-        }}
-        maxW={maxW2}
-        mt="4rem"
+      </div>
+
+      <div
+        className={cn(
+          'mt-16 grid gap-10 xl:gap-20',
+          'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+          `max-w-[${maxW2}]`,
+        )}
       >
         {features.map((feature, index) => (
           <Feature key={index} {...feature} />
         ))}
-      </Grid>
-    </VStack>
+      </div>
+    </div>
   );
 }
 
 function Feature({ icon, title, description }: FeatureProps) {
   return (
-    <VStack align="start" gap={4}>
+    <div className="flex flex-col items-start gap-4">
       <HighQualityImage src={icon} alt={title} className="h-[1.8rem] w-8" />
-      <VStack align="start" gap={0}>
-        <Text color="brand.slate.700" fontSize={'1.25rem'} fontWeight={600}>
-          {title}
-        </Text>
-        <Text
-          color="brand.slate.500"
-          fontSize={'1rem'}
-          fontWeight={500}
-          lineHeight={1.2}
+      <div className="flex flex-col items-start">
+        <p className="text-lg font-semibold text-slate-700">{title}</p>
+        <p
+          className="text-base font-medium text-slate-500"
+          style={{ lineHeight: '1.2' }}
         >
           {description}
-        </Text>
-      </VStack>
-    </VStack>
+        </p>
+      </div>
+    </div>
   );
 }

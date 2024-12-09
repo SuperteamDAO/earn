@@ -1,117 +1,62 @@
-import { Divider, HStack, Text, VStack } from '@chakra-ui/react';
-
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 import { HighQualityImage } from '../HighQualityImage';
 
 export function StepTwo() {
   return (
-    <VStack
-      w="21.5rem"
-      h="18.75rem"
-      bg="white"
-      border="1px solid"
-      borderColor="brand.slate.200"
-      shadow={'0px 4px 6px 0px rgba(226, 232, 240, 0.41)'}
-      rounded={6}
-    >
-      <VStack align="start" gap={4} p={4} pb={3}>
-        <HStack gap={4} w="100%">
+    <div className="flex h-[18.75rem] w-[21.5rem] flex-col rounded-md border border-slate-200 bg-white shadow-[0px_4px_6px_0px_rgba(226,232,240,0.41)]">
+      <div className="flex flex-col items-start gap-4 p-4 pb-3">
+        <div className="flex w-full gap-4">
           <HighQualityImage
             alt="Pied Piper Logo"
             className="h-12 w-12"
-            src={'/landingsponsor/sponsors/piedPiper.webp'}
+            src="/landingsponsor/sponsors/piedPiper.webp"
           />
-          <VStack align="start" flexGrow={1} gap={0} w="100%" fontSize={'sm'}>
-            <Text color="brand.slate.700" fontWeight={600}>
+          <div className="flex w-full flex-col items-start gap-0 text-sm">
+            <p className="font-semibold text-slate-700">
               Write a Deep Dive on PiperCoin
-            </Text>
-            <HStack gap={2}>
-              <Text
-                color="brand.slate.400"
-                fontWeight={600}
-                bg="brand.slate.50"
-              >
+            </p>
+            <div className="flex gap-2">
+              <p className="bg-slate-50 font-semibold text-slate-400">
                 By Pied Piper
-              </Text>
-              <Divider h={6} orientation="vertical" />
-              <Text
-                color="brand.slate.400"
-                fontWeight={500}
-                bg="brand.slate.50"
-              >
+              </p>
+              <div className="h-6 w-px bg-slate-200" />
+              <p className="bg-slate-50 font-medium text-slate-400">
                 Ends in 21 days
-              </Text>
-            </HStack>
-          </VStack>
-        </HStack>
-        <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
+              </p>
+            </div>
+          </div>
+        </div>
+        <p className="text-sm font-medium text-slate-500">
           Pied Piper is a pioneering middle-out compression company. The company
           is looking for bounty hunters to deep dive into the $PIPER coin, and
           explain the coin’s background and utility to noobs.
-        </Text>
-        <HStack justify="space-between" w="full" fontSize="x-small">
-          <Text color="brand.slate.400" fontWeight={500}>
-            Skills
-          </Text>
+        </p>
+        <div className="flex w-full justify-between text-xs">
+          <p className="font-medium text-slate-400">Skills</p>
           <div className="flex gap-2">
-            <Text
-              px={2}
-              py={1}
-              color="#0d3d99"
-              fontWeight={500}
-              bg="#0D3D990A"
-              rounded={6}
-            >
+            <p className="rounded-md bg-[#0D3D990A] px-2 py-1 font-medium text-[#0d3d99]">
               Writing
-            </Text>
-            <Text
-              px={2}
-              py={1}
-              color="#F56f23"
-              fontWeight={500}
-              bg="#F56f230A"
-              rounded={6}
-            >
+            </p>
+            <p className="rounded-md bg-[#F56f230A] px-2 py-1 font-medium text-[#F56f23]">
               Marketing
-            </Text>
-            <Text
-              px={2}
-              py={1}
-              color="#838281"
-              fontWeight={500}
-              bg="#8382810A"
-              rounded={6}
-            >
+            </p>
+            <p className="rounded-md bg-[#8382810A] px-2 py-1 font-medium text-[#838281]">
               Community
-            </Text>
+            </p>
           </div>
-        </HStack>
-      </VStack>
-      <Divider />
-      <HStack justify={'space-between'} w="full" px={4}>
-        <div className="flex gap-2">
-          <ExternalImage
-            src={'/landingsponsor/icons/usdc.svg'}
-            alt="usdc icon"
-          />
-          <Text color="brand.slate.800" fontWeight={600}>
-            $1,000
-          </Text>
         </div>
-        <Text
-          alignSelf="end"
-          px={4}
-          py={2}
-          color="brand.purple"
-          fontSize="sm"
-          fontWeight={500}
-          bg="#EEF2FF"
-          rounded={7}
-        >
+      </div>
+      <div className="h-px bg-slate-200" />
+      <div className="flex w-full justify-between px-4">
+        <div className="flex gap-2">
+          <ExternalImage src="/landingsponsor/icons/usdc.svg" alt="usdc icon" />
+          <p className="font-semibold text-slate-800">$1,000</p>
+        </div>
+        <p className="rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-purple-600">
           Post Bounty
-        </Text>
-      </HStack>
-    </VStack>
+        </p>
+      </div>
+    </div>
   );
 }

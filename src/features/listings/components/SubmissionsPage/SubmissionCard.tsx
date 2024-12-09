@@ -1,17 +1,18 @@
-import { ArrowUpIcon } from '@chakra-ui/icons';
-import { Button, Icon, Link, LinkBox, LinkOverlay } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import NextLink from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
+import Link from 'next/link';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { LuHeart, LuMessageCircle } from 'react-icons/lu';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
 import { ogImageQuery } from '@/queries/og';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { type Rewards } from '../../types';
@@ -29,6 +30,7 @@ interface Props {
   setUpdate: Dispatch<SetStateAction<boolean>>;
   link: string;
 }
+
 export const SubmissionCard = ({
   winnerPosition,
   id,
@@ -41,6 +43,7 @@ export const SubmissionCard = ({
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { data: ogData } = useQuery(ogImageQuery(link));
+
   const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsLoading(true);
@@ -66,16 +69,9 @@ export const SubmissionCard = ({
   };
 
   return (
-    <LinkBox
-      pos={'relative'}
-      overflow={'hidden'}
-      w={{ base: 'full', md: 60 }}
-      bg={'white'}
-      cursor={'pointer'}
-      rounded={'md'}
-    >
+    <div className="relative w-full cursor-pointer overflow-hidden rounded-md bg-white md:w-60">
       <div className="mb-2 flex w-full justify-between gap-2">
-        <Link as={NextLink} href={`/t/${talent?.username}`}>
+        <Link href={`/t/${talent?.username}`}>
           <div className="flex gap-2">
             <EarnAvatar
               size="24px"
@@ -95,43 +91,37 @@ export const SubmissionCard = ({
           </div>
         )}
       </div>
-      <LinkOverlay as={NextLink} w="full" href={`/feed/submission/${id}`}>
+
+      <Link href={`/feed/submission/${id}`} className="block w-full">
         <img
           className="h-48 w-full rounded-sm object-contain"
           alt={'card'}
           src={ogData?.images?.[0]?.url || ASSET_URL + '/bg/og.svg'}
         />
-      </LinkOverlay>
+      </Link>
+
       <div className="flex w-full items-center gap-4">
         <Button
-          zIndex={10}
-          alignItems={'center'}
-          gap={2}
-          display={'flex'}
-          color="gray.500"
-          fontWeight={500}
-          isLoading={isLoading}
+          className={cn(
+            'z-10 flex h-auto items-center gap-2 p-0 font-medium',
+            'text-slate-500 hover:bg-transparent',
+          )}
+          variant="ghost"
+          disabled={isLoading}
           onClick={handleLike}
           type="button"
-          variant={'unstyled'}
         >
-          <Icon
-            as={LuHeart}
-            color={
-              !likes?.find((e) => e.id === (user?.id as string))
-                ? '#64748b'
-                : '#E11D48'
-            }
-            fill={
-              !likes?.find((e) => e.id === (user?.id as string))
-                ? '#fff'
-                : '#E11D48'
-            }
-            size={'1.3rem'}
+          <LuHeart
+            className={cn(
+              'h-5 w-5',
+              !likes?.find((e) => e.id === user?.id)
+                ? 'fill-white text-[#64748b]'
+                : 'fill-[#E11D48] text-[#E11D48]',
+            )}
           />
           {likes?.length}
         </Button>
-        <LinkOverlay as={NextLink} href={`/feed/submission/${id}`}>
+        <Link href={`/feed/submission/${id}`}>
           <LuMessageCircle
             size={'1.23rem'}
             fill={'#CBD5E1'}
@@ -142,31 +132,22 @@ export const SubmissionCard = ({
               cursor: 'pointer',
             }}
           />
-        </LinkOverlay>
+        </Link>
       </div>
 
-      <Link as={NextLink} href={getURLSanitized(link)} isExternal>
+      <Link
+        href={getURLSanitized(link)}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         <Button
-          w="full"
-          mt={1}
-          py={5}
-          color={'gray.400'}
-          fontWeight={500}
-          borderColor={'gray.300'}
-          rightIcon={
-            <ArrowUpIcon
-              h={5}
-              w={5}
-              color="gray.400"
-              ml={16}
-              transform="rotate(45deg)"
-            />
-          }
           variant="outline"
+          className="mt-1 w-full border-gray-300 py-5 font-medium text-gray-400"
         >
           <p className="ml-24 text-base">View</p>
+          <ArrowUpRight className="ml-16 h-5 w-5 rotate-45 text-gray-400" />
         </Button>
       </Link>
-    </LinkBox>
+    </div>
   );
 };

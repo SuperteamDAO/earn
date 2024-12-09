@@ -248,7 +248,7 @@ export const ApplicationDetails = ({
       const link = selectedApplication.user.telegram;
       return (
         <Flex align="center" justify="start" gap={2} fontSize="sm">
-          <Telegram link={link} color="#94A3B8" />
+          <Telegram link={link} className="text-[#94a3b8]" />
           <Link color="brand.slate.400" href={link} isExternal>
             @{username}
           </Link>
@@ -262,7 +262,7 @@ export const ApplicationDetails = ({
       const link = selectedApplication.user.twitter;
       return (
         <Flex align="center" justify="start" gap={2} fontSize="sm">
-          <Twitter link={link} color="#94A3B8" />
+          <Twitter link={link} className="text-[#94a3b8]" />
           <Link color="brand.slate.400" href={link} isExternal>
             @{username}
           </Link>
@@ -273,7 +273,10 @@ export const ApplicationDetails = ({
     if (selectedApplication?.user?.discord) {
       return (
         <Flex align="center" justify="start" gap={2} fontSize="sm">
-          <Discord link={selectedApplication.user.discord} color="#94A3B8" />
+          <Discord
+            link={selectedApplication.user.discord}
+            className="text-[#94a3b8]"
+          />
           <Text color="brand.slate.400">
             {selectedApplication.user.discord}
           </Text>
