@@ -499,7 +499,6 @@ model EmailSettings {
   category String
   user     User   @relation(fields: [userId], references: [id])
 
-  @@unique([userId, category])
   @@index([userId, category])
   @@index([userId])
   @@index([category])
