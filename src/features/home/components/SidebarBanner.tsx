@@ -1,6 +1,7 @@
 import NextLink from 'next/link';
 
 import { Button } from '@/components/ui/button';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { RadarLogo } from '@/svg/radar-logo';
 
 export const SidebarBanner = () => {
@@ -8,7 +9,7 @@ export const SidebarBanner = () => {
     <div
       className="flex h-max w-full flex-col gap-1 rounded-lg bg-cover bg-center bg-no-repeat px-6 py-8"
       style={{
-        backgroundImage: "url('/assets/hackathon/radar/sidebar-bg.webp')",
+        backgroundImage: `url('${ASSET_URL}/hackathon/radar/sidebar-bg.webp')`,
       }}
     >
       <div className="flex items-center">

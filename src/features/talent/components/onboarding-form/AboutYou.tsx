@@ -19,7 +19,9 @@ import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
-import { countries, CountryList, type MultiSelectOptions } from '@/constants';
+import { type MultiSelectOptions } from '@/constants';
+import { countries } from '@/constants/country';
+import { CountryList } from '@/constants/countryList';
 import { SkillSelect } from '@/features/talent';
 import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { useUser } from '@/store/user';

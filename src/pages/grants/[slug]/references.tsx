@@ -1,4 +1,3 @@
-import { Box, Grid, HStack, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useState } from 'react';
@@ -17,38 +16,20 @@ function Grants({ grant: initialGrant }: GrantsDetailsProps) {
 
   return (
     <GrantPageLayout grant={grant}>
-      <Box>
-        <HStack
-          align={['center', 'center', 'start', 'start']}
-          justify={['center', 'center', 'space-between', 'space-between']}
-          flexDir={['column', 'column', 'row', 'row']}
-          gap={4}
-          maxW={'7xl'}
-          mx={'auto'}
-          mt={6}
-          mb={10}
-          bg="white"
-          rounded="lg"
-        >
-          <Box w="full">
-            <Text mt={2} mb={6} color="gray.500" fontSize="xl" fontWeight={600}>
+      <div>
+        <div className="mb-10 mt-2 flex max-w-7xl flex-col gap-4 rounded-lg bg-white md:flex-row md:items-start md:justify-between">
+          <div className="w-full">
+            <p className="mb-6 mt-2 text-xl font-semibold text-gray-500">
               References
-            </Text>
-            <Grid
-              gap={6}
-              templateColumns={{
-                base: 'repeat(1, 1fr)',
-                md: 'repeat(2, 1fr)',
-                lg: 'repeat(3, 1fr)',
-              }}
-            >
+            </p>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {grant?.references?.map((reference, i) => (
                 <ReferenceCard link={reference.link} key={i} />
               ))}
-            </Grid>
-          </Box>
-        </HStack>
-      </Box>
+            </div>
+          </div>
+        </div>
+      </div>
     </GrantPageLayout>
   );
 }

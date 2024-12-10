@@ -1,8 +1,6 @@
 import { Divider, HStack, Text, VStack } from '@chakra-ui/react';
-import Image from 'next/image';
 
-import USDC from '@/public/assets/landingsponsor/icons/usdc.svg';
-import PiedPiper from '@/public/assets/landingsponsor/sponsors/piedPiper.webp';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 import { HighQualityImage } from '../HighQualityImage';
 
@@ -19,7 +17,11 @@ export function StepTwo() {
     >
       <VStack align="start" gap={4} p={4} pb={3}>
         <HStack gap={4} w="100%">
-          <HighQualityImage alt="Pied Piper Logo" width={49} src={PiedPiper} />
+          <HighQualityImage
+            alt="Pied Piper Logo"
+            className="h-12 w-12"
+            src={'/landingsponsor/sponsors/piedPiper.webp'}
+          />
           <VStack align="start" flexGrow={1} gap={0} w="100%" fontSize={'sm'}>
             <Text color="brand.slate.700" fontWeight={600}>
               Write a Deep Dive on PiperCoin
@@ -52,7 +54,7 @@ export function StepTwo() {
           <Text color="brand.slate.400" fontWeight={500}>
             Skills
           </Text>
-          <HStack>
+          <div className="flex gap-2">
             <Text
               px={2}
               py={1}
@@ -83,17 +85,20 @@ export function StepTwo() {
             >
               Community
             </Text>
-          </HStack>
+          </div>
         </HStack>
       </VStack>
       <Divider />
       <HStack justify={'space-between'} w="full" px={4}>
-        <HStack>
-          <Image src={USDC} alt="usdc icon" />
+        <div className="flex gap-2">
+          <ExternalImage
+            src={'/landingsponsor/icons/usdc.svg'}
+            alt="usdc icon"
+          />
           <Text color="brand.slate.800" fontWeight={600}>
             $1,000
           </Text>
-        </HStack>
+        </div>
         <Text
           alignSelf="end"
           px={4}

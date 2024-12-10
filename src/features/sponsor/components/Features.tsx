@@ -6,59 +6,50 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { type StaticImageData } from 'next/image';
 import { usePostHog } from 'posthog-js/react';
-
-import SponsorDashboard from '@/public/assets/landingsponsor/displays/sponsor-dashboard.webp';
-import Doc from '@/public/assets/landingsponsor/icons/Doc.svg';
-import Dollar from '@/public/assets/landingsponsor/icons/Dollar.svg';
-import Enter from '@/public/assets/landingsponsor/icons/Enter.svg';
-import Invite from '@/public/assets/landingsponsor/icons/Invite.svg';
-import Review from '@/public/assets/landingsponsor/icons/Review.svg';
-import Skill from '@/public/assets/landingsponsor/icons/Skill.svg';
 
 import { fontSize, maxW2, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 
 interface FeatureProps {
-  icon: StaticImageData;
+  icon: string;
   title: string;
   description: string;
 }
 
 const features: FeatureProps[] = [
   {
-    icon: Doc,
+    icon: '/landingsponsor/icons/Doc.svg',
     title: '< 1 Min to Publish a Listing',
     description:
       'Never start from scratch. No hassle of writing your own descriptions: either duplicate an existing bounty, or choose from 10+ templates.',
   },
   {
-    icon: Review,
+    icon: '/landingsponsor/icons/Review.svg',
     title: 'Review & Sort',
     description:
       'Reviewing submissions is no longer a pain. Effortlessly categorize submissions with our intuitive labelling system. ',
   },
   {
-    icon: Dollar,
+    icon: '/icons/green-dollar.svg',
     title: 'Easy Payments',
     description:
       'Pay talent directly from the platform without worrying about sending payment to the wrong address.',
   },
   {
-    icon: Skill,
+    icon: '/landingsponsor/icons/Skill.svg',
     title: 'Skill Based Targetting',
     description:
       'Each new listing gets sent to relevant people via e-mail and Discord.',
   },
   {
-    icon: Enter,
+    icon: '/landingsponsor/icons/Enter.svg',
     title: 'Get Quotes',
     description:
       'Not sure how to budget your freelance gig? Opt to receive quotes from participants instead.',
   },
   {
-    icon: Invite,
+    icon: '/landingsponsor/icons/Invite.svg',
     title: 'Invite & Collaborate',
     description:
       'Invite multiple team members via email, and collaborate on managing your listings.',
@@ -135,15 +126,8 @@ export function Features({ showVideo }: Props) {
           </svg>
         </AbsoluteCenter>
         <HighQualityImage
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: '0.3rem',
-            boxShadow: '0 4px 10px 0 rgba(0, 0, 0, 0.06)',
-            border: '1px solid #E2E8F0',
-            cursor: 'pointer',
-          }}
-          src={SponsorDashboard}
+          className="h-full w-full cursor-pointer rounded-md border-2 border-[#E2E8F0] shadow-md"
+          src={'/landingsponsor/displays/sponsor-dashboard.webp'}
           alt="Sponsord dashboard screenshot"
         />
       </Center>
@@ -168,11 +152,7 @@ export function Features({ showVideo }: Props) {
 function Feature({ icon, title, description }: FeatureProps) {
   return (
     <VStack align="start" gap={4}>
-      <HighQualityImage
-        src={icon}
-        alt={title}
-        style={{ height: '1.8rem', width: '2rem' }}
-      />
+      <HighQualityImage src={icon} alt={title} className="h-[1.8rem] w-8" />
       <VStack align="start" gap={0}>
         <Text color="brand.slate.700" fontSize={'1.25rem'} fontWeight={600}>
           {title}

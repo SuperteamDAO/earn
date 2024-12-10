@@ -51,7 +51,8 @@ import { IoEyeOffOutline, IoOpenOutline, IoTrash } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { tokenList } from '@/constants/index';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { tokenList } from '@/constants/tokenList';
 import {
   formatDeadline,
   getColorStyles,
@@ -152,7 +153,7 @@ export default function Hackathon() {
   const changeBountyStatus = async (status: boolean) => {
     setIsChangingStatus(true);
     try {
-      const result = await axios.post(`/api/hackathon/update/${bounty.id}/`, {
+      const result = await axios.post(`/api/listings/unpublish/${bounty.id}/`, {
         isPublished: status,
       });
 
@@ -302,12 +303,10 @@ export default function Hackathon() {
             isOpen={isOpenCreateListing}
             onClose={onCloseCreateListing}
           />
-          <Image
-            w={32}
-            mx="auto"
-            mt={32}
+          <ExternalImage
+            className="mx-auto mt-32 w-32"
             alt={'talent empty'}
-            src="/assets/bg/talent-empty.svg"
+            src={'/bg/talent-empty.svg'}
           />
           <Text
             mx="auto"
@@ -486,7 +485,7 @@ export default function Hackathon() {
                             src={
                               tokenList.filter(
                                 (e) => e?.tokenSymbol === currentBounty.token,
-                              )[0]?.icon ?? '/assets/icons/green-dollar.svg'
+                              )[0]?.icon ?? '/assets/dollar.svg'
                             }
                           />
                           <Text

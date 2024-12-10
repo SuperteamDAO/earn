@@ -1,29 +1,24 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Text,
-  useBreakpointValue,
-} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import { type TConductorInstance } from 'react-canvas-confetti/dist/types';
 
+import { Button } from '@/components/ui/button';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AuthWrapper } from '@/features/auth';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 import { pfpsQuery } from '../queries/vibe-pfps';
 
 const dummyUsers = [
-  { id: '1', photo: '/assets/pfps/t1.webp' },
-  { id: '2', photo: '/assets/pfps/md2.webp' },
-  { id: '3', photo: '/assets/pfps/fff1.webp' },
+  { id: '1', photo: ASSET_URL + '/pfps/t1.webp' },
+  { id: '2', photo: ASSET_URL + '/pfps/md2.webp' },
+  { id: '3', photo: ASSET_URL + '/pfps/fff1.webp' },
   { id: '55', photo: '' },
-  { id: '5', photo: '/assets/pfps/md1.webp' },
-  { id: '6', photo: '/assets/pfps/t2.webp' },
+  { id: '5', photo: ASSET_URL + '/pfps/md1.webp' },
+  { id: '6', photo: ASSET_URL + '/pfps/t2.webp' },
   { id: '7', photo: '' },
   { id: '8', photo: '' },
   { id: '9', photo: '' },
@@ -41,13 +36,12 @@ export const VibeCard = () => {
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const isMD = useBreakpointValue({ base: false, md: true });
   const { user } = useUser();
 
   const { data: fetchedUsers = [] } = useQuery(pfpsQuery(userIds));
 
   useEffect(() => {
-    audioRef.current = new Audio('/assets/memes/chipichapa.mp3');
+    audioRef.current = new Audio('/assets/chipichapa.mp3');
     audioRef.current.onended = () => setIsAudioPlaying(false);
     return () => {
       if (audioRef.current) {
@@ -99,58 +93,34 @@ export const VibeCard = () => {
   ].slice(0, 6);
 
   return (
-    <Flex
-      align={'center'}
-      justify={'space-between'}
-      w="full"
-      p={4}
-      bg="brand.slate.100"
-      borderRadius={8}
-    >
-      <Flex direction={'column'} gap={{ base: 2, md: 1 }}>
-        <Text
-          color="brand.slate.500"
-          fontSize={{ base: 'xs', md: 'sm' }}
-          fontWeight={500}
-          whiteSpace={'nowrap'}
-        >
-          <Text as="span" color="brand.slate.900">
-            {vibeCount}{' '}
-          </Text>
+    <div className="flex w-full items-center justify-between rounded-lg bg-slate-100 p-4">
+      <div className="flex flex-col gap-2 md:gap-1">
+        <p className="whitespace-nowrap text-xs font-medium text-slate-500 md:text-sm">
+          <span className="text-slate-900">{vibeCount} </span>
           people vibing rn
-        </Text>
-        <Flex align={'center'}>
+        </p>
+        <div className="flex items-center">
           {displayUsers.map((user, i) => (
-            <Box key={user.id} ml={i > 0 ? '-10px' : '0'}>
-              <EarnAvatar
-                id={user.id}
-                avatar={user.photo}
-                size={isMD ? '28px' : '24px'}
-              />
-            </Box>
+            <div className={cn(i > 0 ? '-ml-10px' : '')} key={user.id}>
+              <EarnAvatar id={user.id} avatar={user.photo} size={'24px'} />
+            </div>
           ))}
-          <Text ml={1} color="brand.slate.400" fontSize={'xs'}>
+          <p className="ml-1 text-xs text-slate-400">
             +{Math.max(0, vibeCount - 6)}
-          </Text>
-        </Flex>
-      </Flex>
-      <Divider mx={4} orientation="vertical" />
+          </p>
+        </div>
+      </div>
+      <div className="mx-4 h-full w-[1px] bg-slate-200" />
       <AuthWrapper>
         <Button
-          maxW={40}
-          px={10}
-          color="brand.slate.500"
-          fontSize="sm"
-          fontWeight={500}
-          bg="white"
-          borderColor={'brand.slate.200'}
+          variant="outline"
+          className="max-w-40 border-slate-200 bg-white px-10 text-sm font-medium text-slate-500 hover:bg-brand-purple hover:text-white"
           onClick={handleVibeClick}
-          variant={'outline'}
         >
           click to vibeeeee
         </Button>
       </AuthWrapper>
       <Fireworks onInit={onInit} />
-    </Flex>
+    </div>
   );
 };

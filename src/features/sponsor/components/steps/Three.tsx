@@ -4,17 +4,17 @@ import { HighQualityImage } from '../HighQualityImage';
 
 const submissions = [
   {
-    avatar: '/assets/landingsponsor/users/jake.webp',
+    avatar: '/landingsponsor/users/jake.webp',
     title: 'Jake’s Submission',
     subtitle: 'jake.substack.com/why-piper-coin...',
   },
   {
-    avatar: '/assets/landingsponsor/users/keith.webp',
+    avatar: '/landingsponsor/users/keith.webp',
     title: 'Keith’s Submission',
     subtitle: 'keith.substack.com/why-piper-coin...',
   },
   {
-    avatar: '/assets/landingsponsor/users/mike.webp',
+    avatar: '/landingsponsor/users/mike.webp',
     title: 'Mike’s Submission',
     subtitle: 'mike.substack.com/why-piper-coin...',
   },
@@ -39,8 +39,7 @@ function Profile({ submissions }: ProfileProps) {
       <HighQualityImage
         src={submissions.avatar}
         alt={submissions.title}
-        width={40}
-        height={40}
+        className="h-12 w-12"
       />
       <VStack align="start" gap={0}>
         <Text fontSize="sm" fontWeight={500}>

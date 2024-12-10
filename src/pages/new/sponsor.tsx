@@ -219,8 +219,8 @@ const CreateSponsor = () => {
           </Box>
         </>
       ) : (
-        <VStack w="full" pt={8} pb={24}>
-          <VStack spacing={2}>
+        <VStack w="full" px={4} pt={8} pb={24}>
+          <VStack textAlign="center" spacing={2}>
             <Heading
               color="gray.900"
               fontSize="3xl"
@@ -233,7 +233,7 @@ const CreateSponsor = () => {
               Let&apos;s start with some basic information about your team
             </Text>
           </VStack>
-          <VStack w={'2xl'} pt={10}>
+          <VStack w={{ md: '2xl' }} pt={10}>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -426,8 +426,6 @@ const CreateSponsor = () => {
                         <FormLabel isRequired>Industry</FormLabel>
                         <FormControl>
                           <MultiSelect
-                            closeMenuOnSelect={false}
-                            isMulti
                             options={IndustryList.map((elm) => ({
                               label: elm,
                               value: elm,

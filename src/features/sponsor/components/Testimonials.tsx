@@ -8,15 +8,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
-import ISC from '@/public/assets/landingsponsor/sponsors/ISC.webp';
-import Parcl from '@/public/assets/landingsponsor/sponsors/parcl.webp';
-import Solana from '@/public/assets/landingsponsor/sponsors/solana.webp';
-import Tensor from '@/public/assets/landingsponsor/sponsors/tensor.webp';
-import ChasedBarker from '@/public/assets/landingsponsor/users/chasedBarker.webp';
-import Eno from '@/public/assets/landingsponsor/users/eno.webp';
-import EvanSolomon from '@/public/assets/landingsponsor/users/evanSolomon.webp';
-import TensorHQ from '@/public/assets/landingsponsor/users/tensor.webp';
-
 import { maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 import { Stars } from './Stars';
@@ -26,8 +17,8 @@ const testimonials: TestimonialProps[] = [
   {
     stars: 5,
     message: `I'll say it again, Earn is going to become one of the most important non-protocol products in the Solana ecosystem. Connecting developers (amongst others) to opportunity and protocols to talent.`,
-    logo: Solana,
-    pfp: ChasedBarker,
+    logo: '/landingsponsor/sponsors/solana.webp',
+    pfp: '/landingsponsor/users/chasedBarker.webp',
     name: 'Chase Barker',
     position: 'Global Developer Growth, Solana',
   },
@@ -37,10 +28,10 @@ const testimonials: TestimonialProps[] = [
 @SuperteamEarn. Our team uses it to scout crypto-native talent. 
 <br />
 <br />
-Perfect hiring workflow: 
+Perfect hiring workflow:
 <br /> bounty -> trial period -> full-time offer.`,
-    logo: ISC,
-    pfp: Eno,
+    logo: '/landingsponsor/sponsors/ISC.webp',
+    pfp: '/landingsponsor/users/eno.webp',
     name: 'Eno Sim',
     position: 'Co-Founder, ISC',
   },
@@ -48,8 +39,8 @@ Perfect hiring workflow: 
     stars: 4,
     message: `Superteam Earn is one of the most underrated and valuable platforms for both Solana protocols and 
 users`,
-    logo: Parcl,
-    pfp: EvanSolomon,
+    logo: '/landingsponsor/sponsors/parcl.webp',
+    pfp: '/landingsponsor/users/evanSolomon.webp',
     name: 'Evan Solomon',
     position: 'BD Lead, Parcl',
   },
@@ -86,12 +77,9 @@ export function Testimonials() {
         >
           <Box w={{ base: '5rem', md: '8rem' }}>
             <HighQualityImage
-              src={Tensor}
+              src={'/landingsponsor/sponsors/tensor.webp'}
               alt="Tensor HQ USer"
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
+              className="h-full w-full"
             />
           </Box>
         </Center>
@@ -147,11 +135,9 @@ export function Testimonials() {
               h={{ base: '2.1rem', md: '3.1rem' }}
             >
               <HighQualityImage
-                src={TensorHQ}
+                src={'/landingsponsor/users/tensor.webp'}
                 alt="TensorHQ"
-                width={50}
-                height={50}
-                style={{ width: '100%', height: '100%' }}
+                className="h-full w-full"
               />
             </Box>
             <Text color="black" fontSize={{ base: '1rem', md: '1.5rem' }}>

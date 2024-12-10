@@ -1,10 +1,11 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import NextLink from 'next/link';
-import { useRouter } from 'next/router';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { tokenList } from '@/constants';
+import { LocalImage } from '@/components/ui/local-image';
+import { ASSET_URL } from '@/constants/ASSET_URL';
+import { tokenList } from '@/constants/tokenList';
 
 import { type Listing } from '../types';
 import { getListingIcon } from '../utils';
@@ -23,7 +24,6 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
     minRewardAsk,
     maxRewardAsk,
   } = bounty;
-  const router = useRouter();
 
   const isBounty = type === 'bounty';
 
@@ -49,19 +49,16 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
           w={'100%'}
         >
           <Flex w="100%">
-            <Image
-              w={14}
-              h={14}
-              mr={3}
-              alt={sponsor?.name}
-              rounded={5}
+            <LocalImage
+              className="mr-3 h-14 w-14 rounded-md"
+              alt={sponsor?.name!}
               src={
                 sponsor?.logo
                   ? sponsor.logo.replace(
                       '/upload/',
                       '/upload/c_scale,w_128,h_128,f_auto/',
                     )
-                  : `${router.basePath}/assets/logo/sponsor-logo.png`
+                  : `${ASSET_URL}/logo/sponsor-logo.png`
               }
             />
             <Flex justify={'space-between'} direction={'column'} w={'full'}>

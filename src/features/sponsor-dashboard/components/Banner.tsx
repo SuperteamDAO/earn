@@ -2,7 +2,6 @@ import {
   Box,
   Divider,
   Flex,
-  Image,
   Link,
   Skeleton,
   Text,
@@ -14,6 +13,7 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { PDTG } from '@/constants';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
@@ -59,7 +59,7 @@ export function Banner({
               avatar={sponsor?.logo}
               borderRadius="rounded-sm"
             />
-            <Box>
+            <div>
               <Box alignItems={'center'} flexDir={'row'} display={'flex'}>
                 <Flex align={'center'} gap={1} w="min-content">
                   <Text
@@ -98,7 +98,7 @@ export function Banner({
                     : 'Hackathon'}
                 </Text>
               )}
-            </Box>
+            </div>
           </Flex>
           <Divider
             w="2px"
@@ -217,14 +217,12 @@ export function Banner({
         >
           <Flex align={'center'} justify={'space-between'}>
             <Flex align={'center'}>
-              <Image
-                w={'3.2rem'}
-                h={14}
-                mr={3}
+              <ExternalImage
+                className="mr-3 h-14 w-[3.2rem]"
                 alt="message pratik"
-                src="/assets/sponsor/pratik.webp"
+                src={'/sponsor/pratik.webp'}
               />
-              <Box>
+              <div>
                 <Text
                   color="brand.slate.900"
                   fontWeight={600}
@@ -239,7 +237,7 @@ export function Banner({
                 >
                   Message Us
                 </Text>
-              </Box>
+              </div>
             </Flex>
             <MdOutlineChatBubbleOutline color="#1E293B" size={24} />
           </Flex>

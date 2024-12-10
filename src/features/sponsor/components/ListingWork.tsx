@@ -1,18 +1,13 @@
 import { Box, HStack, Text, VStack } from '@chakra-ui/react';
 
-import DUST from '@/public/assets/landingsponsor/icons/DUST.png';
-import USDC from '@/public/assets/landingsponsor/icons/usdc.svg';
-import DE from '@/public/assets/landingsponsor/sponsors/de.webp';
-import DReader from '@/public/assets/landingsponsor/sponsors/dreader.webp';
-import OKX from '@/public/assets/landingsponsor/sponsors/okx.webp';
-import Saros from '@/public/assets/landingsponsor/sponsors/saros.webp';
-
 import { fontSize, maxW, padding } from '../utils';
 import { ListingCard, type ListingCardProps } from './ListingCard';
 
+const base = '/landingsponsor';
+
 const works: ListingCardProps[] = [
   {
-    pfp: DReader,
+    pfp: base + '/sponsors/dreader.webp',
     title: 'Full Stack Development',
     name: 'dReader',
     description: `dReader is looking for a full stack developer to build a feature that allows creators to publish their comics, analyse stats and engage with their community. `,
@@ -20,11 +15,11 @@ const works: ListingCardProps[] = [
     submissionCount: 114,
     type: 'development',
     amount: '$1,000',
-    tokenIcon: USDC,
+    tokenIcon: base + '/icons/usdc.svg',
     token: '',
   },
   {
-    pfp: OKX,
+    pfp: base + '/sponsors/okx.webp',
     title: 'OKX Super Season Thread Bounty',
     name: 'OKX',
     description: `In celebration of the Solana Super Season, OKX is calling all crypto enthusiasts to dive into the details of this campaign on OKX Web3 Wallet, and share their insights in a captivating Twitter thread.`,
@@ -32,11 +27,11 @@ const works: ListingCardProps[] = [
     submissionCount: 116,
     type: 'content',
     amount: '$500',
-    tokenIcon: USDC,
+    tokenIcon: base + '/icons/usdc.svg',
     token: '',
   },
   {
-    pfp: DE,
+    pfp: base + '/sponsors/de.webp',
     title: 'y00ts royalty dashboard design',
     name: 'DeLabs',
     description: `de[labs], the team behind y00ts, DeGods, and BTC DeGods, is looking for a talented designers to make the y00ts royalty dashboard`,
@@ -44,11 +39,11 @@ const works: ListingCardProps[] = [
     submissionCount: 59,
     type: 'design',
     amount: '5,000',
-    tokenIcon: DUST,
+    tokenIcon: base + '/icons/DUST.png',
     token: '$DUST',
   },
   {
-    pfp: Saros,
+    pfp: base + '/sponsors/saros.webp',
     title: 'Community Manager at Saros Finance',
     name: 'Saros',
     description: `Saros, a DeFi Mobile Superapp is looking for a community manager who can help strategise community growth, and manage its community`,
@@ -56,7 +51,7 @@ const works: ListingCardProps[] = [
     submissionCount: 84,
     type: 'community',
     amount: '$6,000',
-    tokenIcon: USDC,
+    tokenIcon: base + '/icons/usdc.svg',
     token: '',
   },
 ];

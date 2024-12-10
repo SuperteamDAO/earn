@@ -14,7 +14,6 @@ import {
   GridItem,
   HStack,
   IconButton,
-  Image,
   Link,
   Modal,
   ModalBody,
@@ -30,7 +29,6 @@ import { keyframes } from '@emotion/react';
 import { type SubscribeHackathon } from '@prisma/client';
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
-import NextImage, { type StaticImageData } from 'next/image';
 import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
@@ -41,28 +39,23 @@ import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { tokenList } from '@/constants';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { LocalImage } from '@/components/ui/local-image';
 import { Superteams } from '@/constants/Superteam';
+import { tokenList } from '@/constants/tokenList';
 import { AuthWrapper } from '@/features/auth';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
-import RiseIn from '@/public/assets/company-logos/rise-in.svg';
-import Superteam from '@/public/assets/company-logos/superteam.svg';
-import Turbine from '@/public/assets/company-logos/turbine.svg';
-import CashBag from '@/public/assets/hackathon/talent-olympics/cashbag.png';
-import Coder from '@/public/assets/hackathon/talent-olympics/coder.png';
-import Trophy from '@/public/assets/hackathon/talent-olympics/trophy.png';
-import WinFlag from '@/public/assets/hackathon/talent-olympics/winflag.png';
 import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
 import { dayjs } from '@/utils/dayjs';
 
 const SLUG = 'talent-olympics';
 
-const base = '/assets/hackathon/talent-olympics/';
+const base = `/hackathon/talent-olympics/`;
 const baseAsset = (filename: string) => base + filename;
 
 const slugLink = (slug: string) => `/listings/hackathon/${slug}`;
@@ -92,7 +85,7 @@ const frontendTrack: TrackProps[] = [
     title: 'Oracle Aggregator',
 
     description:
-      'Display Orcale data using multiple sources for a DeFi application.',
+      'Display Oracle data using multiple sources for a DeFi application.',
     amount: 1000,
     token: 'USDC',
     link: slugLink('oracle-aggregator-st-talent-olympics'),
@@ -207,7 +200,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
         />
       }
     >
-      <Box>
+      <div>
         <Hero START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
         <Box overflowX="hidden" maxW="7xl" mx="auto" px={PADX}>
           <GetHiredBy />
@@ -256,7 +249,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
           <Rankings rankings={rankings} />
           <FAQs />
         </Box>
-      </Box>
+      </div>
     </Default>
   );
 }
@@ -300,7 +293,7 @@ function Hero({
       direction={'column'}
       pt={'3rem'}
       pb={'1rem'}
-      bgImage={"url('/assets/hackathon/talent-olympics/bg.png')"}
+      bgImage={`url('${base}bg.png')`}
       bgSize="cover"
       bgPosition="center"
       bgRepeat="no-repeat"
@@ -379,26 +372,23 @@ function Hero({
         POWERED BY
       </Text>
       <Flex align="center" gap={8} my={4}>
-        <Image
-          as={NextImage}
-          w={{ base: '5rem', sm: '7rem' }}
-          h={PoweredByHeight}
+        <ExternalImage
+          style={{ height: PoweredByHeight }}
           alt="Web3 Builders Alliance"
-          src={Turbine}
+          src={'/company-logos/turbine.svg'}
+          className="w-[5rem] sm:w-[7rem]"
         />
-        <Image
-          as={NextImage}
-          w={{ base: '5rem', sm: '7rem' }}
-          h={PoweredByHeight}
+        <ExternalImage
+          className="w-[5rem] sm:w-[7rem]"
           alt="Superteam"
-          src={Superteam}
+          src={'/company-logos/superteam.svg'}
+          style={{ height: PoweredByHeight }}
         />
-        <Image
-          as={NextImage}
-          w={{ base: '5rem', sm: '7rem' }}
-          h={PoweredByHeight}
+        <ExternalImage
+          className="w-[5rem] sm:w-[7rem]"
           alt="Rise In"
-          src={RiseIn}
+          src={'/company-logos/rise-in.svg'}
+          style={{ height: PoweredByHeight }}
         />
       </Flex>
     </Flex>
@@ -406,7 +396,7 @@ function Hero({
 }
 
 function GetHiredBy() {
-  const base = '/assets/company-logos/';
+  const base = '/company-logos/';
   const baseAsset = (filename: string) => base + filename;
 
   const hiredBy: { name: string; src: string }[] = [
@@ -624,11 +614,9 @@ function GetHiredBy() {
       <Box minW={0}>
         <Marquee speed={100}>
           {multipliedHiredBy.map((h, index) => (
-            <Image
+            <ExternalImage
+              className="mx-4 inline-block h-8"
               key={`${h.name}-${index}`}
-              display="inline-block"
-              h="2rem"
-              mx={4}
               alt={h.name}
               src={h.src}
             />
@@ -671,9 +659,9 @@ function About() {
             onClick={onOpen}
             rounded="full"
           >
-            <Image
+            <ExternalImage
               alt="kash"
-              src="/assets/hackathon/talent-olympics/kash.png"
+              src={base + 'kash.png'}
               style={{ width: '1.5rem', height: '1.5rem' }}
             />
             <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
@@ -693,28 +681,28 @@ function About() {
         >
           <GridItem>
             <FeatureCard
-              image={Trophy}
+              image={base + 'trophy.png'}
               title="45 Companies Hiring"
               description="at the Talent Olympics"
             />
           </GridItem>
           <GridItem>
             <FeatureCard
-              image={CashBag}
+              image={base + 'cashbag.png'}
               title="$20,000 USDC"
               description="as cash prizes for the best submissions"
             />
           </GridItem>
           <GridItem>
             <FeatureCard
-              image={Coder}
+              image={base + 'coder.png'}
               title="Front End & Rust Tracks"
               description="with multiple challenges"
             />
           </GridItem>
           <GridItem>
             <FeatureCard
-              image={WinFlag}
+              image={base + 'winflag.png'}
               title="Ten Challenges"
               description="to prove you're the best candidate"
             />
@@ -730,7 +718,7 @@ function FeatureCard({
   title,
   description,
 }: {
-  image: StaticImageData;
+  image: string;
   title: string;
   description: string;
 }) {
@@ -742,7 +730,7 @@ function FeatureCard({
       borderColor="brand.slate.200"
       rounded="lg"
     >
-      <Image as={NextImage} alt={title} src={image as any} />
+      <ExternalImage alt={title} src={image} />
       <VStack align={'start'} gap={0}>
         <Text fontWeight={600}>{title}</Text>
         <Text color="brand.slate.500" fontSize="xs" fontWeight={500}>
@@ -820,11 +808,8 @@ function TrackBox({
               gap={5}
               _hover={{ textDecoration: 'underline' }}
             >
-              <Image
-                w={{ base: 12, md: '4.5rem' }}
-                h={{ base: 12, md: '4.5rem' }}
-                borderRadius={3}
-                objectFit={'cover'}
+              <ExternalImage
+                className="h-12 w-12 rounded-md object-cover md:h-[4.5rem] md:w-[4.5rem]"
                 alt={title}
                 src={icon}
               />
@@ -847,11 +832,9 @@ function TrackBox({
               </Flex>
             </Flex>
             <Flex align="center" justify={'end'} gap={1} mt={3}>
-              <Image
-                w={{ base: 4, md: 6 }}
-                h={{ base: 4, md: 6 }}
+              <LocalImage
+                className="h-4 w-4 rounded-full md:h-6 md:w-6"
                 alt={token}
-                rounded={'full'}
                 src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
               />
               <Text
@@ -977,7 +960,7 @@ function Rankings({
               </Link>
             </HStack>
             <Flex gap={2} ml="auto" fontSize="sm" fontWeight={500}>
-              <Text>{r.rating}</Text>
+              <p>{r.rating}</p>
               <Text color="brand.slate.500">Points</Text>
             </Flex>
           </HStack>
@@ -1122,7 +1105,7 @@ const SubscribeHackathon = () => {
   }, [update]);
 
   return (
-    <HStack>
+    <div className="flex gap-2">
       <HStack align="start">
         <AuthWrapper
           showCompleteProfileModal
@@ -1179,7 +1162,7 @@ const SubscribeHackathon = () => {
           </Text>
         </VStack>
       </HStack>
-    </HStack>
+    </div>
   );
 };
 

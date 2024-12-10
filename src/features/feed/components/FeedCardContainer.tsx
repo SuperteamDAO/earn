@@ -1,28 +1,20 @@
-import {
-  Avatar,
-  AvatarGroup,
-  Box,
-  Collapse,
-  Flex,
-  Skeleton,
-  SkeletonCircle,
-  SkeletonText,
-  Text,
-  useBreakpointValue,
-} from '@chakra-ui/react';
 import axios from 'axios';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { type ReactNode, useEffect, useState } from 'react';
 import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
+import { Skeleton } from '@/components/ui/skeleton';
 import { AuthWrapper } from '@/features/auth';
 import { Comments } from '@/features/comments';
 import { EarnAvatar } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { type FeedDataProps } from '../types';
@@ -122,29 +114,26 @@ export const FeedCardContainer = ({
 
   const router = useRouter();
   const posthog = usePostHog();
-  const isSM = useBreakpointValue({ base: false, md: true });
 
   return (
-    <Box
-      mx="0"
-      mt={'-1px'}
-      px={type === 'activity' ? 5 : 0}
-      py={{ base: 4, md: 8 }}
-      borderColor={'brand.slate.200'}
-      borderBottomWidth={type === 'activity' ? '1px' : '0px'}
+    <div
+      className={cn(
+        'mx-0 -mt-[1px] px-0 py-4 md:py-8',
+        type === 'activity' && 'border-b border-slate-200 px-5',
+      )}
     >
-      <Flex gap={3}>
+      <div className="flex gap-3">
         <EarnAvatar
           id={userId}
           avatar={photo}
-          size={isSM ? '44px' : '32px'}
+          size="36px"
           onClick={(e) => {
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
             router.push(`/t/${username}`);
           }}
         />
-        <Flex direction={'column'} w={'full'}>
+        <div className="flex w-full flex-col">
           <FeedCardHeader
             name={`${firstName} ${lastName}`}
             photo={photo}
@@ -154,53 +143,27 @@ export const FeedCardContainer = ({
             description={content.description}
             type={type}
           />
-          <Box
-            as={NextLink}
-            mt={4}
-            borderWidth={'1px'}
-            borderColor={'brand.slate.200'}
-            borderRadius={'6'}
-            shadow={'0px 4px 4px 0px rgba(0, 0, 0, 0.01);'}
-            _hover={{
-              shadow: '0px 4px 8px 0px rgba(0, 0, 0, 0.1)',
-              transform: 'translateY(-0.5px)',
-              transition: 'all 0.1s ease-in-out',
-            }}
-            cursor={'pointer'}
+          <Link
+            className="mt-4 cursor-pointer rounded-md border border-slate-200 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.01)] transition-all duration-100 ease-in-out hover:-translate-y-[0.5px] hover:shadow-[0px_4px_8px_0px_rgba(0,0,0,0.1)]"
             href={sanitizedLink}
             rel="noopener noreferrer"
             target="_blank"
           >
             {children}
-            <Flex
-              align={{ base: 'start', md: 'center' }}
-              justify={'space-between'}
-              direction={{ base: 'column', md: 'row' }}
-              px={{ base: '3', md: '6' }}
-              py={{ base: '4', md: '6' }}
-            >
+            <div className="flex flex-col items-start justify-between px-3 py-4 md:flex-row md:items-center md:px-6 md:py-6">
               {actionLinks}
-            </Flex>
-          </Box>
+            </div>
+          </Link>
           {id && (
-            <Flex
-              align={'center'}
-              gap={8}
-              w="fit-content"
-              mt={2}
-              py={2}
-              pr={8}
-              pointerEvents={id ? 'all' : 'none'}
-              cursor="default"
+            <div
+              className={cn(
+                'mt-2 flex w-fit items-center gap-8 py-2 pr-8',
+                id ? 'pointer-events-auto' : 'pointer-events-none',
+              )}
               id="feed-actions"
             >
-              <Box
-                className="ph-no-capture"
-                zIndex={10}
-                alignItems={'center'}
-                gap={1}
-                display={'flex'}
-                mr={2}
+              <div
+                className="ph-no-capture z-10 mr-2 flex items-center gap-1"
                 onClick={(e) => {
                   e.stopPropagation();
                   e.nativeEvent.stopImmediatePropagation();
@@ -210,128 +173,95 @@ export const FeedCardContainer = ({
               >
                 {!isLiked && (
                   <AuthWrapper>
-                    <IoMdHeartEmpty
-                      size={isSM ? '22px' : '20px'}
-                      color={'#64748b'}
-                      cursor={'pointer'}
-                    />
+                    <IoMdHeartEmpty className="h-5 w-5 cursor-pointer text-slate-500 md:h-[22px] md:w-[22px]" />
                   </AuthWrapper>
                 )}
                 {isLiked && (
-                  <IoMdHeart
-                    size={isSM ? '22px' : '20px'}
-                    color={'#E11D48'}
-                    cursor={'pointer'}
-                  />
+                  <IoMdHeart className="h-5 w-5 cursor-pointer text-rose-600 md:h-[22px] md:w-[22px]" />
                 )}
-                <Text color="brand.slate.500" fontSize={'md'} fontWeight={500}>
+                <p className="text-base font-medium text-slate-500">
                   {totalLikes}
-                </Text>
-              </Box>
-              <Box
-                className="ph-no-capture"
-                zIndex={10}
-                alignItems={'center'}
-                gap={1}
-                display={'flex'}
-                mr={2}
+                </p>
+              </div>
+              <div
+                className="ph-no-capture z-10 mr-2 flex items-center gap-1"
                 onClick={(e) => {
                   e.stopPropagation();
                   e.nativeEvent.stopImmediatePropagation();
                   onToggleComment();
                 }}
               >
-                <GoComment
-                  color={'#64748b'}
-                  size={isSM ? '21px' : '19px'}
-                  style={{
-                    cursor: 'pointer',
-                  }}
-                />
+                <GoComment className="h-[19px] w-[19px] cursor-pointer text-slate-500 md:h-[21px] md:w-[21px]" />
                 {!!commentCount && (
-                  <Text
-                    color="brand.slate.500"
-                    fontSize={'md'}
-                    fontWeight={500}
-                  >
+                  <p className="text-base font-medium text-brand-slate-500">
                     {commentCount}
-                  </Text>
+                  </p>
                 )}
-                <AvatarGroup ml={4} max={4} size={'xs'}>
-                  {recentCommenters?.map((comment, index) => (
+                <div className="ml-4 flex -space-x-2">
+                  {recentCommenters?.slice(0, 4).map((comment, index) => (
                     <Avatar
                       key={index}
-                      pos="relative"
-                      name={comment.author.name || ''}
-                      src={comment.author.photo || ''}
-                    />
+                      className="h-6 w-6 border-2 border-white"
+                    >
+                      <AvatarImage
+                        src={comment.author.photo || ''}
+                        alt={comment.author.name || ''}
+                      />
+                      <AvatarFallback>
+                        {comment.author.name?.[0]}
+                      </AvatarFallback>
+                    </Avatar>
                   ))}
-                </AvatarGroup>
-              </Box>
-            </Flex>
+                </div>
+              </div>
+            </div>
           )}
-          <Collapse
-            animateOpacity
-            in={isCommentOpen}
-            style={{ width: '100%', overflow: 'visible!important' }}
-          >
-            <Box
-              mt={6}
-              id="comment-form"
-              onClick={(e) => {
-                e.stopPropagation();
-                e.nativeEvent.stopImmediatePropagation();
-              }}
-            >
-              <Comments
-                isAnnounced={false}
-                listingSlug={''}
-                listingType={''}
-                poc={undefined}
-                sponsorId={undefined}
-                isVerified={false}
-                refId={id}
-                refType={convertFeedPostTypeToCommentRefType(cardType)}
-                count={commentCount}
-                setCount={setCommentCount}
-                onSuccess={handleCommentSuccess}
-                take={3}
-              />
-            </Box>
-          </Collapse>
-        </Flex>
-      </Flex>
-    </Box>
+          <Collapsible open={isCommentOpen}>
+            <CollapsibleContent className="mt-6 w-full overflow-visible">
+              <div
+                className="mt-6"
+                id="comment-form"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.nativeEvent.stopImmediatePropagation();
+                }}
+              >
+                <Comments
+                  isAnnounced={false}
+                  listingSlug={''}
+                  listingType={''}
+                  poc={undefined}
+                  sponsorId={undefined}
+                  isVerified={false}
+                  refId={id}
+                  refType={convertFeedPostTypeToCommentRefType(cardType)}
+                  count={commentCount}
+                  setCount={setCommentCount}
+                  onSuccess={handleCommentSuccess}
+                  take={3}
+                />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      </div>
+    </div>
   );
 };
 
 export const FeedCardContainerSkeleton = () => {
   return (
-    <Box
-      mx="0"
-      mt={'-1px'}
-      px={5}
-      py={8}
-      borderColor={'brand.slate.200'}
-      borderBottomWidth={'1px'}
-    >
-      <Flex gap={3}>
-        <SkeletonCircle w="44px" h="44px" />
-        <Flex direction={'column'} w={'full'}>
-          <Box>
-            <SkeletonText w={36} h={5} mt={1} noOfLines={2} spacing="2" />
-          </Box>
-          <Skeleton
-            h={{ base: '200px', md: '300px' }}
-            mt={4}
-            p={4}
-            borderWidth={'1px'}
-            borderColor={'brand.slate.200'}
-            borderRadius={'6'}
-            shadow={'0px 4px 4px 0px rgba(0, 0, 0, 0.01)'}
-          />
-        </Flex>
-      </Flex>
-    </Box>
+    <div className="mx-0 -mt-[1px] border-b border-slate-200 px-5 py-8">
+      <div className="flex gap-3">
+        <Skeleton className="h-11 w-11 rounded-full" />
+        <div className="flex w-full flex-col">
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-36" />
+            <Skeleton className="h-5 w-24" />
+          </div>
+          <Skeleton className="mt-4 h-[200px] rounded-md border border-slate-200 shadow-sm md:h-[300px]" />
+        </div>
+      </div>
+    </div>
   );
 };

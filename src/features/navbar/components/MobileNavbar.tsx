@@ -90,7 +90,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
             {user && !user.currentSponsorId && !user.isTalentFilled && (
               <Button
                 variant="ghost"
-                className="text-md text-brand-purple"
+                className="text-base text-brand-purple"
                 onClick={() => {
                   router.push('/new');
                 }}
@@ -98,7 +98,6 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 Complete your Profile
               </Button>
             )}
-            <Separator className="my-2 bg-slate-300" />
             <div className="ph-no-capture flex flex-col">
               {LISTING_NAV_ITEMS?.map((navItem) => {
                 const isCurrent = `${navItem.href}` === router.asPath;
@@ -184,7 +183,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               <img
                 className="h-5 cursor-pointer object-contain"
                 alt="Superteam Earn"
-                src="/assets/logo/logo.svg"
+                src="/assets/logo.svg"
               />
             </NextLink>
           </div>
@@ -192,7 +191,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
           {status === 'unauthenticated' && !session && (
             <Button
               variant="ghost"
-              className="ph-no-capture text-md mr-2 text-brand-purple"
+              className="ph-no-capture mr-2 text-base text-brand-purple"
               onClick={() => {
                 posthog.capture('login_navbar');
                 onLoginOpen();

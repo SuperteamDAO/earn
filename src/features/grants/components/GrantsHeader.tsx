@@ -54,15 +54,15 @@ export const GrantsHeader = ({
     statusIcon = (
       <PulseIcon isPulsing w={5} h={5} bg={'#9AE6B4'} text="#16A34A" />
     );
-    statusBgColor = 'green.100';
-    statusTextColor = 'green.600';
+    statusBgColor = 'green-100';
+    statusTextColor = 'green-600';
     statusText = 'Open';
   } else {
     statusIcon = (
       <Icon as={BsFillCircleFill} w={3} h={3} color={'brand.slate.400'} />
     );
-    statusBgColor = '#ffecb3';
-    statusTextColor = 'brand.slate.400';
+    statusBgColor = '[#ffecb3]';
+    statusTextColor = 'slate-400';
     statusText = 'Closed';
   }
 
@@ -114,13 +114,13 @@ export const GrantsHeader = ({
                 {!!sponsor?.isVerified && <VerifiedBadge />}
               </Flex>
               <ListingHeaderSeparator />
-              <Flex>
+              <div className="flex">
                 <Image
                   h="4"
                   mt={{ base: '1px', sm: 1 }}
                   mr={{ base: '1px', sm: 1 }}
                   alt={'grant'}
-                  src={'/assets/icons/bank.svg'}
+                  src={'/assets/grant-icon.svg'}
                 />
                 <Text
                   color={'brand.slate.400'}
@@ -129,7 +129,7 @@ export const GrantsHeader = ({
                 >
                   Grant
                 </Text>
-              </Flex>
+              </div>
               <ListingHeaderSeparator />
               <StatusBadge
                 Icon={statusIcon}
@@ -156,14 +156,10 @@ export const GrantsHeader = ({
           borderBottomWidth={'1px'}
         >
           <ListingTabLink
-            w={{ md: '22rem' }}
+            className="pointer-events-none hidden md:flex md:w-[22rem]"
             href={`/grants/${slug}/`}
             text="Prizes"
             isActive={false}
-            styles={{
-              pointerEvents: 'none',
-              display: { base: 'none', md: 'flex' },
-            }}
           />
           <ListingTabLink
             href={`/grants/${slug}/`}

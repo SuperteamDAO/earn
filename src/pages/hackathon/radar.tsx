@@ -1,12 +1,12 @@
 import { Box, Button, Circle, Flex, SimpleGrid, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
 import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
@@ -18,7 +18,6 @@ const MotionText = motion(Text as any);
 const MotionButton = motion(Button as any);
 
 export default function Radar() {
-  const router = useRouter();
   const slug = 'radar';
 
   const startDate = '2024-10-02T00:00:00.000Z';
@@ -82,7 +81,7 @@ export default function Radar() {
           title="Radar | Superteam Earn"
           description="Build a project for the latest Solana global hackathon!"
           canonical="https://earn.superteam.fun"
-          og={`${router.basePath}/assets/og/hackathon/${slug}.png`}
+          og={ASSET_URL + `/og/hackathon/${slug}.png`}
         />
       }
     >
@@ -95,7 +94,7 @@ export default function Radar() {
           align="center"
           direction={'column'}
           pt={12}
-          bgImage={"url('/assets/hackathon/radar/bg.webp')"}
+          bgImage={`url('${ASSET_URL}/hackathon/radar/bg.webp')`}
           bgSize="cover"
           bgPosition="center"
           bgRepeat="no-repeat"

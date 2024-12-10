@@ -2,7 +2,8 @@ import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 import { useEffect, useState } from 'react';
 
-import { countries } from '@/constants';
+import { ASSET_URL } from '@/constants/ASSET_URL';
+import { countries } from '@/constants/country';
 import { cn } from '@/utils';
 
 type FlagSize =
@@ -51,7 +52,7 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
       className="flex items-center justify-center rounded-full border border-slate-50 bg-contain"
       style={{
         ...flagStyles,
-        backgroundImage: "url('/assets/superteams/logos/balkan.png')",
+        backgroundImage: `url('${ASSET_URL}/superteams/logos/balkan.png')`,
       }}
     />
   ) : (

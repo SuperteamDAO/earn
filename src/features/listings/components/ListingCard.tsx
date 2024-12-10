@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { IoIosStar } from 'react-icons/io';
 import { MdModeComment } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { tokenList } from '@/constants';
+import { ASSET_URL } from '@/constants/ASSET_URL';
+import { tokenList } from '@/constants/tokenList';
 import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
@@ -56,7 +56,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     _count,
   } = bounty;
 
-  const router = useRouter();
   const isBounty = type === 'bounty';
 
   const isBeforeDeadline = dayjs().isBefore(dayjs(deadline));
@@ -78,7 +77,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
 
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
-    : `${router.basePath}/assets/logo/sponsor-logo.png`;
+    : `${ASSET_URL}/logo/sponsor-logo.png`;
 
   const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
 
@@ -214,7 +213,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               maxRewardAsk={maxRewardAsk}
               minRewardAsk={minRewardAsk}
               rewardAmount={rewardAmount}
-              className="whitespace-nowrap text-xs font-semibold text-slate-600 md:text-base"
+              className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base"
             />
             {compensationType !== 'variable' && (
               <p className="text-xs font-medium text-gray-400 sm:text-base">

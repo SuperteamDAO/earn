@@ -6,7 +6,6 @@ import {
   Grid,
   GridItem,
   HStack,
-  Image,
   Popover,
   PopoverBody,
   PopoverContent,
@@ -28,6 +27,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { PublishResults } from '@/features/listings';
 import {
@@ -519,12 +519,10 @@ export default function BountySubmissions({ slug }: Props) {
                         !searchText &&
                         !isSubmissionsLoading ? (
                           <>
-                            <Image
-                              w={32}
-                              mx="auto"
-                              mt={32}
+                            <ExternalImage
+                              className="mx-auto mt-32 w-32"
                               alt={'talent empty'}
-                              src="/assets/bg/talent-empty.svg"
+                              src={'/bg/talent-empty.svg'}
                             />
                             <Text
                               mx="auto"
@@ -683,7 +681,7 @@ export default function BountySubmissions({ slug }: Props) {
                 )}
                 <HStack gap={4} fontSize={'lg'}>
                   <HStack fontWeight={500}>
-                    <Text>{selectedSubmissionIds.size}</Text>
+                    <p>{selectedSubmissionIds.size}</p>
                     <Text color="brand.slate.500">Selected</Text>
                   </HStack>
                   <Box w="1px" h={4} bg="brand.slate.300" />

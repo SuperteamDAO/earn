@@ -1,5 +1,4 @@
 import { Divider, HStack, Text, VStack } from '@chakra-ui/react';
-import { type StaticImageData } from 'next/image';
 
 import { HighQualityImage } from './HighQualityImage';
 
@@ -41,14 +40,14 @@ const skillColors: Record<Skills, { foreground: string; background: string }> =
   };
 
 export interface ListingCardProps {
-  pfp: StaticImageData;
+  pfp: string;
   title: string;
   name: string;
   description: string;
   skills: Skills[];
   submissionCount: number;
   token: string;
-  tokenIcon: StaticImageData;
+  tokenIcon: string;
   amount: string;
   type: ListingType;
 }
@@ -76,7 +75,11 @@ export function ListingCard({
     >
       <VStack align="start" gap={4} h="full" p={4} pb={3}>
         <HStack gap={4} w="100%">
-          <HighQualityImage alt="Pied Piper Logo" width={49} src={pfp} />
+          <HighQualityImage
+            alt="Pied Piper Logo"
+            src={pfp}
+            className="h-12 w-12"
+          />
           <VStack align="start" flexGrow={1} gap={0} w="100%" fontSize={'sm'}>
             <Text color="brand.slate.700" fontWeight={600}>
               {title}
@@ -98,7 +101,7 @@ export function ListingCard({
           <Text color="brand.slate.400" fontWeight={500}>
             Skills
           </Text>
-          <HStack>
+          <div className="flex gap-2">
             {skills.map((s) => (
               <Text
                 key={s}
@@ -113,30 +116,29 @@ export function ListingCard({
                 {s}
               </Text>
             ))}
-          </HStack>
+          </div>
         </HStack>
       </VStack>
       <Divider />
       <HStack justify={'space-between'} w="full" px={4} pt={2} pb={4}>
-        <HStack>
+        <div className="flex gap-2">
           <HighQualityImage
-            height={18}
-            width={18}
+            className="h-5 w-5"
             src={tokenIcon}
             alt={`${token} icon`}
           />
           <Text color="brand.slate.800" fontWeight={600}>
             {amount}
           </Text>
-        </HStack>
-        <HStack>
+        </div>
+        <div className="flex gap-2">
           <Text color="brand.slate.800" fontWeight={600}>
             {submissionCount}
           </Text>
           <Text color="brand.slate.500" fontWeight={600}>
             Submissions
           </Text>
-        </HStack>
+        </div>
       </HStack>
     </VStack>
   );

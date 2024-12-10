@@ -1,16 +1,13 @@
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
-import { tokenList } from '@/constants';
+import { ASSET_URL } from '@/constants/ASSET_URL';
+import { tokenList } from '@/constants/tokenList';
 import { fetchAsset, formatNumber, formatString } from '@/utils/ogHelpers';
 
 export const config = {
   runtime: 'edge',
 };
-
-const sponsorImageP = fetchAsset(
-  new URL('../../../../public/assets/logo/sponsor-logo.png', import.meta.url),
-);
 
 export default async function handler(request: NextRequest) {
   try {
@@ -26,11 +23,10 @@ export default async function handler(request: NextRequest) {
       new URL('../../../../public/Inter-Bold.woff', import.meta.url),
     );
 
-    const [mediumFont, semiBoldFont, boldFont, sponsorImg] = await Promise.all([
+    const [mediumFont, semiBoldFont, boldFont] = await Promise.all([
       mediumFontP,
       semiBoldFontP,
       boldFontP,
-      sponsorImageP,
     ]);
 
     const bgColors = ['#FFFBEB', '#FAFAF9', '#ECFDF5', '#EFF6FF', '#EEF2FF'];
@@ -43,7 +39,9 @@ export default async function handler(request: NextRequest) {
     const title = getParam('title', (x) =>
       formatString(decodeURIComponent(x), 97),
     );
-    const logo = getParam('logo', (x) => formatString(x, 100)) || sponsorImg;
+    const logo =
+      getParam('logo', (x) => formatString(x, 100)) ||
+      ASSET_URL + '/logo/sponsor-logo.png';
     const minReward = getParam('minReward', formatNumber);
     const maxReward = getParam('maxReward', formatNumber);
     const sponsor = getParam('sponsor', (x) => formatString(x, 100));
@@ -118,7 +116,7 @@ export default async function handler(request: NextRequest) {
                     objectFit: 'contain',
                   }}
                   alt="logo"
-                  src={`https://earn.superteam.fun/assets/icons/bank.svg`}
+                  src={ASSET_URL + `/grant.svg`}
                   width="64px"
                   height="64px"
                 />

@@ -8,7 +8,6 @@ import {
   Button,
   Divider,
   Flex,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
@@ -37,6 +36,7 @@ import React, {
 import { MdArrowDropDown } from 'react-icons/md';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import {
   getColorStyles,
   getListingStatus,
@@ -432,12 +432,10 @@ export default function SponsorListings() {
       )}
       {!isListingsLoading && !allListings?.length && (
         <>
-          <Image
-            w={32}
-            mx="auto"
-            mt={32}
+          <ExternalImage
+            className="mx-auto mt-32 w-32"
             alt={'talent empty'}
-            src="/assets/bg/talent-empty.svg"
+            src={'/bg/talent-empty.svg'}
           />
           <Text
             mx="auto"
@@ -476,12 +474,10 @@ export default function SponsorListings() {
         !!allListings?.length &&
         !paginatedListings.length && (
           <>
-            <Image
-              w={32}
-              mx="auto"
-              mt={32}
+            <ExternalImage
+              className="mx-auto mt-32 w-32"
               alt={'talent empty'}
-              src="/assets/bg/talent-empty.svg"
+              src={'/bg/talent-empty.svg'}
             />
             <Text
               mx="auto"

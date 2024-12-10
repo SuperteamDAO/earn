@@ -17,9 +17,14 @@ function fileToBase64(file: File): Promise<string> {
   });
 }
 
+export type EARN_IMAGE_FOLDER =
+  | 'earn-pfp'
+  | 'earn-sponsor'
+  | 'listing-description';
+
 export async function uploadToCloudinary(
   file: any,
-  folder: 'earn-pfp' | 'earn-sponsor' | 'listing-description',
+  folder: EARN_IMAGE_FOLDER,
   type = 'pfp',
 ) {
   try {
@@ -34,6 +39,7 @@ export async function uploadToCloudinary(
 
     return response.data.url;
   } catch (error) {
+    console.log('Error uploading the image:', error);
     logger.error('Error uploading the image:', error);
   }
 }

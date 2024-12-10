@@ -1,4 +1,3 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
 import { timeAgoShort } from '@/utils/timeAgo';
@@ -24,76 +23,43 @@ export const FeedCardHeader = ({
   const router = useRouter();
   if (type === 'profile') {
     return (
-      <Box mt={-0.5} mb={-1}>
-        <Flex align="center" justify={'space-between'}>
-          <Flex align="center">
-            <Text
-              color={'brand.slate.400'}
-              fontSize={{ base: 'sm', md: 'md' }}
-              fontWeight={500}
-            >
-              <Text as={'span'} color={'brand.slate.800'} fontWeight={600}>
-                {name}
-              </Text>{' '}
+      <div className="-mb-1 -mt-0.5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <p className="text-sm font-medium text-slate-400 md:text-base">
+              <span className="font-semibold text-slate-800">{name}</span>{' '}
               {action}
-            </Text>
-          </Flex>
-          <Text
-            color={'brand.slate.400'}
-            fontSize={{ base: 'xs', md: 'sm' }}
-            fontWeight={500}
-          >
+            </p>
+          </div>
+          <p className="text-xs font-medium text-slate-400 md:text-sm">
             {timeAgoShort(createdAt)}
-          </Text>
-        </Flex>
-        <Text color={'brand.slate.500'} fontSize={{ base: 'sm', md: 'md' }}>
-          {description}
-        </Text>
-      </Box>
+          </p>
+        </div>
+        <p className="text-sm text-slate-500 md:text-base">{description}</p>
+      </div>
     );
   }
   return (
-    <Flex>
-      <Flex direction={'column'} mt={-0.5}>
-        <Text
-          color={'brand.slate.800'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={600}
-          _hover={{ textDecoration: 'underline' }}
-          cursor={'pointer'}
+    <div className="flex">
+      <div className="-mt-0.5 flex flex-col">
+        <p
+          className="cursor-pointer text-sm font-semibold text-slate-800 hover:underline md:text-base"
           onClick={() => router.push(`/t/${username}`)}
         >
           {name}
-        </Text>
-        <Flex gap={1}>
-          <Text
-            mt={-1}
-            color={'brand.slate.400'}
-            fontSize={{ base: 'xs', md: 'sm' }}
-            fontWeight={500}
-            _hover={{ textDecoration: 'underline' }}
-            cursor={'pointer'}
-          >
+        </p>
+        <div className="flex gap-1">
+          <p className="-mt-1 cursor-pointer text-xs font-medium text-slate-400 hover:underline md:text-sm">
             @{username}
-          </Text>
-          <Text
-            mt={-1}
-            color={'brand.slate.400'}
-            fontSize={{ base: 'xs', md: 'sm' }}
-            fontWeight={500}
-          >
+          </p>
+          <p className="-mt-1 text-xs font-medium text-slate-400 md:text-sm">
             • {timeAgoShort(createdAt)}
-          </Text>
-        </Flex>
-        <Text
-          mt={{ base: 1, md: 2 }}
-          color={'brand.slate.600'}
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={500}
-        >
+          </p>
+        </div>
+        <p className="mt-1 text-sm font-medium text-slate-600 md:mt-2 md:text-base">
           {action}
-        </Text>
-      </Flex>
-    </Flex>
+        </p>
+      </div>
+    </div>
   );
 };

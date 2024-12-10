@@ -265,9 +265,14 @@ export const SubmissionDrawer = ({
                         name={`eligibilityAnswers.${index}.answer`}
                         label={e.question}
                         isRequired
-                        isRichEditor
+                        isRichEditor={!e.isLink && e.type !== 'link'}
                         key={e.order}
-                      />
+                      >
+                        {e.isLink ||
+                          (e.type === 'link' && (
+                            <Input placeholder="Write something..." />
+                          ))}
+                      </FormFieldWrapper>
                     ))}
                     {compensationType !== 'fixed' && (
                       <FormFieldWrapper

@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Flex,
   Modal,
@@ -81,7 +80,7 @@ export const SurveyModal = ({
       <ModalOverlay />
       <ModalContent p={6}>
         {!question ? (
-          <Box>
+          <div>
             <Skeleton h="18px" mb={2} />
             <Skeleton w="60%" h="14px" mb={5} />
             <Flex justify="center" gap={1} mt={8}>
@@ -90,10 +89,10 @@ export const SurveyModal = ({
               ))}
             </Flex>
             <Skeleton h="10" mt={8} mb={3} borderRadius={'3'} />
-          </Box>
+          </div>
         ) : (
           <>
-            <Box>
+            <div>
               <Text
                 mb={2}
                 color="brand.slate.700"
@@ -107,7 +106,7 @@ export const SurveyModal = ({
                 {question?.description}
               </Text>
               {question?.type === 'rating' && (
-                <Box>
+                <div>
                   <Flex justify="center" gap={4} mt={2}>
                     {[...Array(question.scale)].map((_, i) => (
                       <Button
@@ -128,7 +127,7 @@ export const SurveyModal = ({
                       {question.upperBoundLabel}
                     </Text>
                   </Flex>
-                </Box>
+                </div>
               )}
               {question?.type === 'single_choice' && (
                 <RadioGroup
@@ -152,7 +151,7 @@ export const SurveyModal = ({
                   </Stack>
                 </RadioGroup>
               )}
-            </Box>
+            </div>
             <Button
               mt={4}
               isDisabled={!response}

@@ -1,7 +1,6 @@
 import type { BountyType, status } from '@prisma/client';
 import type { User } from 'next-auth';
 
-import type { SuperteamName } from '@/features/listing-builder';
 import type { Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
 
@@ -15,7 +14,6 @@ export interface Listing {
   skills?: Skills;
   deadline?: string;
   eligibility?: Eligibility[];
-  references?: References[];
   status?: status;
   isActive?: boolean;
   isArchived?: boolean;
@@ -38,9 +36,7 @@ export interface Listing {
   totalPaymentsMade?: number;
   isWinnersAnnounced?: boolean;
   templateId?: string;
-  timeToComplete?: string;
   hackathonprize?: boolean;
-  referredBy?: SuperteamName;
   publishedAt?: string;
   isPrivate?: boolean;
   Hackathon?: ListingHackathon;
@@ -77,7 +73,7 @@ export interface ListingWithSubmissions extends Listing {
 interface Eligibility {
   order: number;
   question: string;
-  type?: 'text';
+  type?: 'text' | 'link';
   optional?: boolean;
   isLink?: boolean;
 }

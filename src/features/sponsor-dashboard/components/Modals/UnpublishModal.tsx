@@ -42,9 +42,7 @@ export const UnpublishModal = ({
           isPublished: status,
         });
       } else {
-        result = await axios.post(`/api/listings/update/${listingId}/`, {
-          isPublished: status,
-        });
+        result = await axios.post(`/api/listings/unpublish/${listingId}/`);
       }
       return result.data;
     },

@@ -6,7 +6,6 @@ import {
   Grid,
   GridItem,
   HStack,
-  Image,
   Popover,
   PopoverBody,
   PopoverContent,
@@ -31,6 +30,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import {
   ApplicationDetails,
   ApplicationHeader,
@@ -441,12 +441,10 @@ function GrantApplications({ slug }: Props) {
                         !searchText &&
                         !isApplicationsLoading ? (
                           <>
-                            <Image
-                              w={32}
-                              mx="auto"
-                              mt={32}
+                            <ExternalImage
+                              className="mx-auto mt-32 w-32"
                               alt={'talent empty'}
-                              src="/assets/bg/talent-empty.svg"
+                              src={'/bg/talent-empty.svg'}
                             />
                             <Text
                               mx="auto"
@@ -576,7 +574,7 @@ function GrantApplications({ slug }: Props) {
                 )}
                 <HStack gap={4} fontSize={'lg'}>
                   <HStack fontWeight={500}>
-                    <Text>{selectedApplicationIds.size}</Text>
+                    <p>{selectedApplicationIds.size}</p>
                     <Text color="brand.slate.500">Selected</Text>
                   </HStack>
                   <Box w="1px" h={4} bg="brand.slate.300" />

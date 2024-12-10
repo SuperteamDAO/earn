@@ -1,5 +1,4 @@
 import { X } from 'lucide-react';
-import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdIosShare, MdOutlineInstallMobile } from 'react-icons/md';
@@ -15,6 +14,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '../ui/drawer';
+import { LocalImage } from '../ui/local-image';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<{ outcome: 'accepted' | 'dismissed' }>;
@@ -110,7 +110,7 @@ export const InstallPWAModal = () => {
           <DrawerHeader className="border-b border-slate-100">
             <DrawerTitle className="flex items-center gap-2">
               <MdOutlineInstallMobile className="text-slate-500" />
-              <span className="text-md text-slate-700">Install Earn</span>
+              <span className="text-base text-slate-700">Install Earn</span>
             </DrawerTitle>
             <DrawerClose className="absolute right-2 top-7">
               <Button variant="ghost" size="icon">
@@ -121,11 +121,10 @@ export const InstallPWAModal = () => {
           <div className="px-4">
             <div className="my-4 flex flex-col items-center">
               <div className="mt-4 flex flex-col items-center">
-                <Image
+                <LocalImage
                   src="/android-chrome-512x512.png"
                   alt="Superteam Earn Icon"
-                  height={63}
-                  width={63}
+                  className="h-16 w-16"
                 />
                 <div className="my-12 flex flex-col items-center">
                   <p className="font-bold">Never miss a listing again!</p>

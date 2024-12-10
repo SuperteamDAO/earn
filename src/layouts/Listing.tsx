@@ -1,16 +1,8 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  type ChakraProps,
-  Flex,
-  HStack,
-  Link,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
+import { ExternalLink } from 'lucide-react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
@@ -26,13 +18,14 @@ import {
 import { bountySnackbarAtom } from '@/features/navbar';
 import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
+import { cn } from '@/utils';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
 interface ListingPageProps {
   bounty: Listing | null;
   children: React.ReactNode;
-  maxW?: ChakraProps['maxW'];
+  maxW?: '7xl' | '6xl' | '5xl' | '4xl' | '3xl' | '2xl' | 'xl' | 'lg' | 'md';
   isTemplate?: boolean;
 }
 
@@ -148,121 +141,71 @@ export function ListingPageLayout({
         </Head>
       }
     >
-      <Box bg="white">
+      <div className="bg-white">
         {initialBounty === null && <ErrorSection />}
         {initialBounty !== null && !initialBounty?.id && (
           <ErrorSection message="Sorry! The bounty you are looking for is not available." />
         )}
         {initialBounty !== null && !!initialBounty?.id && (
-          <Box w="100%" mx="auto" px={{ base: '2', lg: 6 }}>
-            <Box w="100%" maxW={'7xl'} mx="auto">
+          <div className="mx-auto w-full px-2 lg:px-6">
+            <div className="mx-auto w-full max-w-7xl">
               <ListingHeader
                 isTemplate={isTemplate}
                 commentCount={commentCount}
                 listing={initialBounty}
               />
-              <HStack
-                align={['center', 'center', 'start', 'start']}
-                justify={['center', 'center', 'space-between', 'space-between']}
-                flexDir={{ base: 'column', md: 'row' }}
-                gap={{ base: 0, md: 4 }}
-                maxW={maxW}
-                minH="100vh"
-                bg="white"
+              <div
+                className={cn(
+                  'flex min-h-screen flex-col items-center justify-center gap-0 bg-white md:flex-row md:items-start md:justify-between md:gap-4',
+                  `max-w-${maxW}`,
+                )}
               >
-                <Flex
-                  pos={{ base: 'static', md: 'sticky' }}
-                  top={14}
-                  flexGrow={1}
-                  w={{ base: 'full', md: '22rem' }}
-                  h="full"
-                >
+                <div className="static top-14 h-full w-full flex-grow md:sticky md:w-[22rem]">
                   <RightSideBar
                     isTemplate={isTemplate}
                     listing={initialBounty}
                     skills={iterableSkills}
                   />
-                </Flex>
-                <VStack
-                  flexGrow={1}
-                  gap={8}
-                  w={'full'}
-                  h="full"
-                  pb={10}
-                  pl={{ base: 0, md: 5 }}
-                  borderColor="brand.slate.100"
-                  borderLeftWidth={{ base: 0, md: '1px' }}
-                >
-                  <Box w="full">{children}</Box>
-                  <VStack
-                    align={'start'}
-                    display={{ base: 'flex', md: 'none' }}
-                    w="full"
-                  >
-                    <Text
-                      h="100%"
-                      color={'brand.slate.600'}
-                      fontSize={'sm'}
-                      fontWeight={600}
-                      textAlign="center"
-                    >
+                </div>
+                <div className="flex h-full w-full flex-grow flex-col gap-8 border-slate-100 pb-10 md:border-l md:pl-5">
+                  <div className="w-full">{children}</div>
+                  <div className="flex w-full flex-col items-start md:hidden">
+                    <p className="mb-1 h-full text-center text-xs font-semibold text-slate-600">
                       SKILLS NEEDED
-                    </Text>
-                    <HStack flexWrap={'wrap'} gap={3}>
+                    </p>
+                    <div className="flex flex-wrap gap-3">
                       {iterableSkills?.map((skill) => (
-                        <Box
+                        <div
+                          className="m-0 rounded-sm bg-[#F1F5F9] px-4 py-1 text-sm font-medium text-[#475569]"
                           key={skill}
-                          m={'0px !important'}
-                          px={4}
-                          py={1}
-                          color="#475569"
-                          fontSize="sm"
-                          fontWeight={500}
-                          bg={'#F1F5F9'}
-                          rounded={'sm'}
                         >
-                          <Text fontSize={'xs'}>{skill}</Text>
-                        </Box>
+                          <p className="text-xs">{skill}</p>
+                        </div>
                       ))}
-                    </HStack>
-                  </VStack>
+                    </div>
+                  </div>
                   {initialBounty.pocSocials && (
-                    <VStack
-                      align={'start'}
-                      display={{ base: 'flex', md: 'none' }}
-                      w={'full'}
-                      fontSize="sm"
-                    >
-                      <Text
-                        h="100%"
-                        color={'brand.slate.600'}
-                        fontWeight={600}
-                        textAlign="center"
-                      >
+                    <div className="flex w-full flex-col items-start md:hidden">
+                      <p className="h-full text-center text-xs font-semibold text-slate-600">
                         CONTACT
-                      </Text>
-                      <Text>
+                      </p>
+                      <p>
                         <Link
-                          className="ph-no-capture"
-                          color={'#64768b'}
-                          fontWeight={500}
+                          className="ph-no-capture text-xs font-medium text-[#64768b]"
                           href={getURLSanitized(initialBounty.pocSocials)}
-                          isExternal
                           onClick={() => posthog.capture('reach out_listing')}
                         >
                           Reach out
-                          <ExternalLinkIcon
-                            color={'#64768b'}
-                            mb={1}
-                            as="span"
-                            mx={1}
-                          />
+                          <ExternalLink className="mx-1 mb-1 inline h-3 w-3 text-[#64768b]" />
                         </Link>
-                        <Text as="span" color={'brand.slate.500'}>
+                        <span
+                          className="text-xs text-slate-500"
+                          color={'brand.slate.500'}
+                        >
                           if you have any questions about this listing
-                        </Text>
-                      </Text>
-                    </VStack>
+                        </span>
+                      </p>
+                    </div>
                   )}
 
                   <Comments
@@ -278,12 +221,12 @@ export function ListingPageLayout({
                     count={commentCount}
                     setCount={setCommentCount}
                   />
-                </VStack>
-              </HStack>
-            </Box>
-          </Box>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
-      </Box>
+      </div>
     </Default>
   );
 }

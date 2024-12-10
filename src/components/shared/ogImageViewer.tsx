@@ -6,6 +6,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ogImageQuery } from '@/queries/og';
 import { cn } from '@/utils';
 
+import { LocalImage } from '../ui/local-image';
+
 interface Props {
   title?: string;
   showTitle?: boolean;
@@ -16,23 +18,17 @@ interface Props {
   className?: string;
 }
 
-const getRandomFallbackImage = (): string => {
-  const fallbackImages = [
-    '/assets/fallback/og/1.webp',
-    '/assets/fallback/og/2.webp',
-    '/assets/fallback/og/3.webp',
-    '/assets/fallback/og/4.webp',
-    '/assets/fallback/og/5.webp',
-    '/assets/fallback/og/6.webp',
-    '/assets/fallback/og/7.webp',
-    '/assets/fallback/og/8.webp',
-    '/assets/fallback/og/9.webp',
-    '/assets/fallback/og/10.webp',
-    '/assets/fallback/og/11.webp',
-  ];
+const fallbackImageCache = new Map<number, string>();
 
-  const randomIndex = Math.floor(Math.random() * fallbackImages.length);
-  return fallbackImages[randomIndex]!;
+const getRandomFallbackImage = (): string => {
+  const randomNumber = Math.floor(Math.random() * 11) + 1;
+  if (!fallbackImageCache.has(randomNumber)) {
+    fallbackImageCache.set(
+      randomNumber,
+      `/assets/fallback/og/${randomNumber}.webp`,
+    );
+  }
+  return fallbackImageCache.get(randomNumber)!;
 };
 
 export const OgImageViewer = ({
@@ -44,7 +40,7 @@ export const OgImageViewer = ({
   id,
   className,
 }: Props) => {
-  const fallbackImage = getRandomFallbackImage();
+  const [fallbackImage] = useState(getRandomFallbackImage());
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
     imageUrl || null,
   );
@@ -91,7 +87,7 @@ export const OgImageViewer = ({
 
   return (
     <div>
-      <img
+      <LocalImage
         className={cn('bg-center', className)}
         alt="OG Image"
         onError={handleImageError}

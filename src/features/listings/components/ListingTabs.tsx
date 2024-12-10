@@ -5,6 +5,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import {
   Tooltip,
   TooltipContent,
@@ -30,7 +31,7 @@ interface ListingTabsProps {
   bounties: Listing[] | undefined;
   forYou?: Listing[] | undefined;
   take?: number;
-  emoji?: string;
+  showEmoji?: boolean;
   title: string;
   viewAllLink?: string;
   showViewAll?: boolean;
@@ -74,7 +75,7 @@ const generateTabContent = ({
     return (
       <div className="ph-no-capture flex flex-col gap-1">
         {Array.from({ length: 8 }, (_, index) => (
-          <ListingCardSkeleton key={index} />
+          <ListingCardSkeleton key={`skeleton-${index}`} />
         ))}
       </div>
     );
@@ -143,7 +144,7 @@ export const ListingTabs = ({
   bounties,
   forYou,
   take,
-  emoji,
+  showEmoji = false,
   title,
   viewAllLink,
   showViewAll = false,
@@ -240,17 +241,19 @@ export const ListingTabs = ({
   const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
   const posthog = usePostHog();
 
+  const emoji = '/assets/listing-tab.webp';
+
   useEffect(() => {
     posthog.capture('open_listings');
   }, []);
 
   return (
     <div className="mb-10 mt-5">
-      <div className="mb-4 flex items-center justify-between border-b-2 border-[#E2E8F0] pb-3">
+      <div className="mb-4 flex items-center justify-between border-b border-[#E2E8F0] pb-3">
         <div className="flex w-full items-center justify-between sm:justify-start">
           <div className="flex items-center">
-            {emoji && (
-              <img
+            {showEmoji && (
+              <LocalImage
                 className="xs:flex xs:hidden mr-2 h-5 w-5"
                 alt="emoji"
                 src={emoji}

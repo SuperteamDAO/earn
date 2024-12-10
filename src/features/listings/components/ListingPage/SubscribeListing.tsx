@@ -1,19 +1,17 @@
-import {
-  Avatar,
-  AvatarGroup,
-  Button,
-  HStack,
-  Spinner,
-  Text,
-} from '@chakra-ui/react';
+import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { Loader2 } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
 import { toast } from 'sonner';
 
+import { Avatar } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 import { listingSubscriptionsQuery } from '../../queries/listing-notification-status';
 
@@ -52,30 +50,32 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
     });
 
   const avatars = [
-    { name: 'Abhishkek', src: '/assets/pfps/t1.webp' },
-    { name: 'Pratik', src: '/assets/pfps/md2.webp' },
-    { name: 'Yash', src: '/assets/pfps/fff1.webp' },
+    { name: 'Abhishek', src: ASSET_URL + '/pfps/t1.webp' },
+    { name: 'Pratik', src: ASSET_URL + '/pfps/md2.webp' },
+    { name: 'Yash', src: ASSET_URL + '/pfps/fff1.webp' },
   ];
 
   const handleToggleSubscribe = () => {
     toggleSubscribe();
   };
+
+  const isSubscribed = sub.find((e) => e.userId === user?.id);
+
   return (
-    <HStack>
-      <Text color="brand.slate.500">{sub.length + 1}</Text>
-      <HStack>
-        <AvatarGroup max={3} size={{ base: 'xs', md: 'sm' }}>
-          {avatars.slice(0, sub.length + 1).map((avatar, index) => (
-            <Avatar
-              key={index}
-              pos="relative"
-              name={avatar.name}
-              src={avatar.src}
-            />
-          ))}
-        </AvatarGroup>
-      </HStack>
-      <HStack align="start">
+    <div className="flex items-center gap-2">
+      <p className="text-slate-500">{sub.length + 1}</p>
+      <div className="flex -space-x-3">
+        {avatars.slice(0, sub.length + 1).map((avatar, index) => (
+          <Avatar
+            key={index}
+            className="h-6 w-6 border-2 border-white md:h-8 md:w-8"
+          >
+            <AvatarImage src={avatar.src} alt={avatar.name || ''} />
+            <AvatarFallback>{avatar.name}</AvatarFallback>
+          </Avatar>
+        ))}
+      </div>
+      <div className="flex items-start">
         <AuthWrapper
           showCompleteProfileModal
           completeProfileModalBodyText={
@@ -83,43 +83,37 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
           }
         >
           <Button
-            className="ph-no-capture"
-            gap={2}
-            w={{ base: 2, md: 'auto' }}
-            p={0}
-            px={{ md: 4 }}
-            color={'brand.slate.500'}
-            fontWeight={500}
-            borderColor="brand.slate.300"
-            aria-label="Notify"
-            isDisabled={isTemplate}
+            className={cn(
+              'ph-no-capture gap-2 border-slate-300 font-medium text-slate-500 hover:bg-brand-purple hover:text-white',
+              'w-8 p-0 md:w-auto md:px-4',
+            )}
+            variant="outline"
+            disabled={isTemplate}
             onClick={() => {
               posthog.capture(
-                sub.find((e) => e.userId === user?.id)
-                  ? 'unnotify me_listing'
-                  : 'notify me_listing',
+                isSubscribed ? 'unnotify me_listing' : 'notify me_listing',
               );
               handleToggleSubscribe();
             }}
-            variant="outline"
+            aria-label="Notify"
           >
             {isSubscribeLoading ? (
-              <Spinner color="white" size="sm" />
-            ) : sub.find((e) => e.userId === user?.id) ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : isSubscribed ? (
               <TbBellRinging />
             ) : (
               <TbBell />
             )}
-            <Text display={{ base: 'none', md: 'inline' }}>
+            <span className="hidden md:inline">
               {isSubscribeLoading
                 ? 'Subscribing'
-                : sub.find((e) => e.userId === user?.id)
+                : isSubscribed
                   ? 'Subscribed'
                   : 'Subscribe'}
-            </Text>
+            </span>
           </Button>
         </AuthWrapper>
-      </HStack>
-    </HStack>
+      </div>
+    </div>
   );
 };

@@ -1,3 +1,4 @@
+import { type Prisma } from '@prisma/client';
 import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
@@ -8,6 +9,11 @@ import {
   withSponsorAuth,
 } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
+import {
+  backendListingRefinements,
+  createListingFormSchema,
+  createListingRefinements,
+} from '@/features/listing-builder';
 import { isDeadlineOver } from '@/features/listings';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
@@ -28,14 +34,10 @@ const allowedFields = [
   'templateId',
   'pocSocials',
   'applicationType',
-  'timeToComplete',
   'description',
   'eligibility',
-  'references',
   'region',
-  'referredBy',
   'isPrivate',
-  'requirements',
   'rewardAmount',
   'rewards',
   'maxBonusSpots',
@@ -45,16 +47,27 @@ const allowedFields = [
   'maxRewardAsk',
   'isPublished',
   'isFndnPaying',
+  'hackathonId',
 ];
 
-async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
+async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const { id } = req.query;
-
-  const data = req.body;
-  const updatedData = filterAllowedFields(data, allowedFields);
+  const data = filterAllowedFields(req.body, allowedFields);
+  const userId = req.userId;
+  const userSponsorId = req.userSponsorId;
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
   logger.debug(`Request body: ${safeStringify(req.body)}`);
+
+  if (!userId) {
+    logger.warn('Invalid token: User Id is missing');
+    return res.status(400).json({ error: 'Invalid token' });
+  }
+
+  if (!userSponsorId) {
+    logger.warn('Invalid token: User Sponsor Id is missing');
+    return res.status(400).json({ error: 'Invalid token' });
+  }
 
   try {
     const userSponsorId = req.userSponsorId;
@@ -68,6 +81,67 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(error.status).json({ error: error.message });
     }
 
+    const sponsor = await prisma.sponsors.findUnique({
+      where: { id: userSponsorId },
+      select: { isCaution: true, isVerified: true, st: true },
+    });
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId as string },
+    });
+
+    const hackathon = req.body.hackathonId
+      ? (await prisma.hackathon.findUnique({
+          where: {
+            id: req.body.hackathonId,
+          },
+        })) || undefined
+      : undefined;
+    if (req.body.hackathonId) {
+      logger.info(`Listings connected hacakthon is fetched`, {
+        listingId: id,
+        hackathon: hackathon,
+      });
+    }
+
+    logger.info('Processing Listings ZOD Validation ', {
+      id,
+      isGod: user?.role === 'GOD',
+      isEditing: true,
+      isST: !!sponsor?.st,
+      hackathonId: hackathon?.id,
+      pastListing: listing as any,
+    });
+    const listingSchema = createListingFormSchema({
+      isGod: user?.role === 'GOD',
+      isEditing: true,
+      isST: !!sponsor?.st,
+      hackathon,
+      pastListing: listing as any,
+    });
+    const innerSchema = listingSchema._def.schema.omit({
+      isPublished: true,
+      isWinnersAnnounced: true,
+      totalWinnersSelected: true,
+      totalPaymentsMade: true,
+      status: true,
+      publishedAt: true,
+      sponsorId: true,
+    });
+    const superValidator = innerSchema.superRefine(async (data, ctx) => {
+      await createListingRefinements(data as any, ctx, hackathon);
+      await backendListingRefinements(data as any, ctx);
+    });
+
+    const validatedData = await superValidator.parseAsync({
+      ...listing, // Existing data as base
+      ...data, // Merge update data
+    });
+    logger.info('Listings ZOD Validation Successful ', {
+      id,
+      validatedData,
+    });
+
     const {
       rewards,
       rewardAmount,
@@ -77,147 +151,68 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       compensationType,
       description,
       skills,
-      status,
-    } = updatedData;
-    let { isPublished } = updatedData;
+      type = listing.type,
+    } = validatedData;
 
-    let { maxBonusSpots } = updatedData;
+    let { maxBonusSpots } = validatedData;
+    const { status } = listing;
+    const { isPublished } = listing;
 
-    let publishedAt = listing.publishedAt;
-    if (isPublished && !listing.publishedAt) {
-      publishedAt = new Date();
-    }
-
-    const type = updatedData.type || listing.type;
-    if (
-      ('isPublished' in updatedData && isPublished) ||
-      (listing.isPublished &&
-        ('rewards' in updatedData ||
-          'rewardAmount' in updatedData ||
-          'token' in updatedData ||
-          'maxBonusSpots' in updatedData ||
-          'minRewardAsk' in updatedData ||
-          'maxRewardAsk' in updatedData ||
-          'compensationType' in updatedData))
-    ) {
-      if ('token' in updatedData && !token) {
-        return res.status(400).json({ error: 'Please select a valid token' });
-      }
-
-      if (type === 'project') {
-        const finalCompensationType =
-          compensationType || listing.compensationType;
-        const finalRewardAmount = rewardAmount ?? listing.rewardAmount;
-        const finalMinRewardAsk = minRewardAsk ?? listing.minRewardAsk;
-        const finalMaxRewardAsk = maxRewardAsk ?? listing.maxRewardAsk;
-
-        if ('compensationType' in updatedData && !finalCompensationType) {
-          return res
-            .status(400)
-            .json({ error: 'Please add a compensation type' });
-        }
-
-        if (
-          finalCompensationType === 'fixed' &&
-          'rewardAmount' in updatedData &&
-          !finalRewardAmount
-        ) {
-          return res.status(400).json({
-            error: 'Please specify the total reward amount to proceed',
-          });
-        }
-
-        if (finalCompensationType === 'range') {
-          const isUpdatingRange =
-            'minRewardAsk' in updatedData || 'maxRewardAsk' in updatedData;
-          if (isUpdatingRange && (!finalMinRewardAsk || !finalMaxRewardAsk)) {
-            return res.status(400).json({
-              error:
-                'Please specify your preferred minimum and maximum compensation range',
-            });
-          }
-          if (isUpdatingRange && finalMaxRewardAsk <= finalMinRewardAsk) {
-            return res.status(400).json({
-              error:
-                'The compensation range is incorrect; the maximum must be higher than the minimum',
-            });
-          }
-        }
-      } else {
-        const finalRewards = rewards || listing.rewards;
-
-        if ('rewards' in updatedData && finalRewards) {
-          if (BONUS_REWARD_POSITION in finalRewards) {
-            if (finalRewards[BONUS_REWARD_POSITION] === 0) {
-              return res.status(400).json({
-                error: "Bonus per prize can't be 0",
-              });
-            }
-            if (finalRewards[BONUS_REWARD_POSITION] < 0.01) {
-              return res.status(400).json({
-                error: "Bonus per prize can't be less than 0.01",
-              });
-            }
-          }
-
-          const prizePositions = Object.keys(finalRewards)
-            .filter((key) => key !== BONUS_REWARD_POSITION.toString())
-            .map(Number);
-
-          for (let i = 1; i <= prizePositions.length; i++) {
-            if (
-              !prizePositions.includes(i) ||
-              !finalRewards[i] ||
-              isNaN(finalRewards[i])
-            ) {
-              return res.status(400).json({
-                error: 'Please fill all podium ranks or remove unused',
-              });
-            }
-          }
-        }
-      }
-    }
-
+    // Check if listing is editable
     const pastDeadline = isDeadlineOver(listing?.deadline || undefined);
-    const wasUnPublished =
-      listing.status === 'OPEN' &&
-      listing.isPublished === false &&
-      pastDeadline;
-
-    if (
-      (wasUnPublished ||
-        listing.status === 'CLOSED' ||
-        listing.status === 'VERIFYING' ||
-        listing.status === 'VERIFY_FAIL') &&
-      req.role !== 'GOD'
-    )
+    logger.info('Check for past deadline of listing', {
+      id,
+      pastDeadline,
+      deadline: listing?.deadline,
+    });
+    if (pastDeadline && user?.role !== 'GOD') {
+      logger.warn(`Listing is past deadline, hence cannot be edited`, { id });
       return res.status(400).json({
-        message: `Listing is not open and hence cannot be edited`,
+        message: `Listing is past deadline, hence cannot be edited`,
       });
+    }
+
+    if (!listing.isPublished && req.role !== 'GOD') {
+      logger.warn(`Listing is not published, hence cannot be edited`, { id });
+      return res.status(400).json({
+        message: `Listing is not published, hence cannot be edited`,
+      });
+    }
 
     if (listing.maxBonusSpots > 0 && typeof maxBonusSpots === 'undefined') {
       maxBonusSpots = 0;
-    }
-
-    let language = '';
-    if (description) {
-      language = franc(description);
-      // both 'eng' and 'sco' are english listings
-    } else {
-      language = 'eng';
+      logger.warn(`Listing Max Bonus Spots is reset to 0`, { id });
     }
 
     const skillsToUpdate =
-      'skills' in updatedData ? (skills ? cleanSkills(skills) : []) : undefined;
-
+      'skills' in validatedData
+        ? skills
+          ? cleanSkills(skills)
+          : []
+        : undefined;
+    logger.info('Listings Skills Cleaned ', {
+      id,
+      previousSkills: skills,
+      cleanedSkills: skillsToUpdate,
+    });
+    // Handle winners count update
     const newRewardsCount = Object.keys(rewards || {}).length;
     const currentTotalWinners = listing.totalWinnersSelected
       ? listing.totalWinnersSelected - (maxBonusSpots ?? 0)
       : 0;
 
+    let totalWinnersSelected = 0;
+    // handle selected winners update
     if (newRewardsCount < currentTotalWinners) {
-      updatedData.totalWinnersSelected = newRewardsCount;
+      logger.info(
+        'Atempting to reset selected winners since new total winners are less than previous',
+        {
+          id,
+          newRewardsCount,
+          currentTotalWinners,
+        },
+      );
+      totalWinnersSelected = newRewardsCount;
 
       for (
         let position = newRewardsCount + 1;
@@ -225,7 +220,7 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         position++
       ) {
         logger.debug(
-          `Resetting winner position: ${position} for listing ID: ${id} `,
+          `Resetting winner position: ${position} for listing ID: ${id}`,
         );
         await prisma.submission.updateMany({
           where: {
@@ -241,7 +236,16 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
-    if (maxBonusSpots < listing.maxBonusSpots) {
+    // Handle bonus submissions update
+    if ((maxBonusSpots ?? 0) < listing.maxBonusSpots) {
+      logger.info(
+        'Atempting to reset selected bonus winners since new bonus spots are less than previous',
+        {
+          id,
+          newBonusSpots: maxBonusSpots,
+          previousBonusSpots: listing.maxBonusSpots,
+        },
+      );
       const bonusSubmissionsToUpdate = await prisma.submission.findMany({
         where: {
           listingId: id as string,
@@ -249,7 +253,11 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           winnerPosition: BONUS_REWARD_POSITION,
         },
         select: { id: true },
-        take: listing.maxBonusSpots - maxBonusSpots,
+        take: listing.maxBonusSpots - (maxBonusSpots ?? 0),
+      });
+      logger.info('Updating the following bonus winner selected submissions ', {
+        id,
+        bonusSubmissionsToUpdate,
       });
       await prisma.submission.updateMany({
         where: {
@@ -267,170 +275,159 @@ async function bounty(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    const sponsor = await prisma.sponsors.findUnique({
-      where: { id: userSponsorId },
-      select: { isCaution: true, isVerified: true, st: true },
+    const isVerifying = listing.status === 'VERIFYING';
+    logger.info(`Previous Listing Verificatin status is ${isVerifying}`, {
+      id,
+      isVerifying,
     });
 
-    let isVerifying = listing.status === 'VERIFYING';
-    if (isPublished) {
-      if (sponsor) {
-        // sponsor is sus, be caution
-        isVerifying = sponsor.isCaution;
-
-        if (!isVerifying) {
-          // sponsor never had a live listing
-          const bountyCount = await prisma.bounties.count({
-            where: {
-              sponsorId: userSponsorId,
-              isArchived: false,
-              isPublished: true,
-              isActive: true,
-            },
-          });
-          isVerifying = bountyCount === 0;
-        }
-
-        // sponsor is unverified and latest listing is in review for more than 2 weeks
-        if (!isVerifying && !sponsor.isVerified) {
-          const twoWeeksAgo = dayjs().subtract(2, 'weeks');
-
-          const overdueBounty = await prisma.bounties.findFirst({
-            select: {
-              id: true,
-            },
-            where: {
-              sponsorId: userSponsorId,
-              isArchived: false,
-              isPublished: true,
-              isActive: true,
-              isWinnersAnnounced: false,
-              deadline: {
-                lt: twoWeeksAgo.toDate(),
-              },
-            },
-          });
-
-          isVerifying = !!overdueBounty;
-        }
-      }
-    }
-
-    if (isVerifying) {
-      isPublished = false;
-      publishedAt = null;
-    }
-
     let usdValue = 0;
-    let amount;
-    if (isPublished && publishedAt && !isVerifying) {
+    if (isPublished && listing.publishedAt && !isVerifying) {
+      logger.info(`Calculating USD value of listing`, {
+        id,
+        isPublished,
+        publishedAt: listing.publishedAt,
+        isVerifying,
+        token,
+        compensationType,
+      });
       try {
+        let amount;
         if (compensationType === 'fixed') {
           amount = rewardAmount;
         } else if (compensationType === 'range') {
-          amount = (maxRewardAsk + minRewardAsk) / 2;
+          amount = ((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2;
         }
         if (token && amount) {
-          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
+          const tokenUsdValue = await fetchTokenUSDValue(
+            token,
+            listing.publishedAt,
+          );
           usdValue = tokenUsdValue * amount;
+          logger.info('Token USD value fetched', {
+            token,
+            publishedAt: listing.publishedAt,
+            tokenUsdValue,
+            calculatedListingUSDValue: usdValue,
+          });
         }
       } catch (err) {
         logger.error('Error calculating USD value -', err);
       }
     }
 
+    const language = description ? franc(description) : 'eng';
+    logger.info('Listings Language Detected ', {
+      id,
+      language,
+    });
     const isFndnPaying =
       sponsor?.st && type !== 'project' ? data.isFndnPaying : false;
-
-    const result = await prisma.bounties.update({
-      where: { id: id as string },
-      data: {
-        ...updatedData,
-        status: isVerifying ? 'VERIFYING' : status || listing?.status || 'OPEN',
-        rewards,
-        rewardAmount,
-        token,
-        maxRewardAsk,
-        minRewardAsk,
-        maxBonusSpots,
-        compensationType,
-        isPublished,
-        publishedAt,
-        usdValue,
-        language,
-        isFndnPaying,
-        ...(skillsToUpdate !== undefined && { skills: skillsToUpdate }),
-      },
+    logger.info('Is Foundation Paying', {
+      isFndnPaying,
+      st: sponsor?.st,
+      type,
+      rawIsFndnPaying: data.isFndnPaying,
     });
 
-    if (isVerifying) {
-      try {
-        if (!process.env.EARNCOGNITO_URL) {
-          throw new Error('ENV EARNCOGNITO_URL not provided');
-        }
-        await earncognitoClient.post(`/discord/verify-listing/initiate`, {
-          listingId: result.id,
-        });
-      } catch (err) {
-        console.log('Failed to send Verification Message to discord', err);
-        logger.error('Failed to send Verification Message to discord', err);
-      }
-    } else {
-      try {
-        if (listing.isPublished === true && result.isPublished === false) {
-          await earncognitoClient.post(`/discord/listing-update`, {
-            listingId: result.id,
-            status: 'Unpublished',
-          });
-        }
-        if (listing.isPublished === false && result.isPublished === true) {
-          await earncognitoClient.post(`/discord/listing-update`, {
-            listingId: result.id,
-            status: 'Published',
-          });
-        }
-      } catch (err) {
-        logger.error('Discord Listing Update Message Error', err);
-      }
-    }
+    const dataToUpdate: Prisma.BountiesUncheckedUpdateInput = {
+      ...validatedData,
+      status: isVerifying ? 'VERIFYING' : status || listing?.status || 'OPEN',
+      isPublished,
+      usdValue,
+      language,
+      isFndnPaying,
+      totalWinnersSelected,
+      templateId: validatedData.templateId || null,
+      id: validatedData.id || undefined,
+      eligibility: validatedData.eligibility || [],
+      rewards: rewards || {},
+      maxBonusSpots: maxBonusSpots || 0,
+      ...(skillsToUpdate !== undefined && { skills: skillsToUpdate }),
+    };
+    logger.debug(`Updating listing with data: ${safeStringify(data)}`, {
+      id,
+    });
+    const result = await prisma.bounties.update({
+      where: { id: id as string },
+      data: dataToUpdate,
+    });
+    logger.debug(`Update Listing Successful`, { id });
 
-    logger.info(`Bounty with ID: ${id} updated successfully`);
-    logger.debug(`Updated bounty data: ${safeStringify(result)} `);
+    try {
+      logger.info('Sending Discord Listing Update message', {
+        id,
+        discordStatus: 'Updated',
+      });
+      await earncognitoClient.post(`/discord/listing-update`, {
+        listingId: result.id,
+        status: 'Updated',
+      });
+      logger.info('Sent Discord Listing Update message', {
+        id,
+      });
+    } catch (err) {
+      logger.error('Discord Listing Update Message Error', err);
+    }
 
     const deadlineChanged =
       listing.deadline?.toString() !== result.deadline?.toString();
+    if (deadlineChanged)
+      logger.info('Deadline has beend changed', {
+        id,
+        previousDeadline: listing.deadline,
+        newDeadline: result.deadline,
+      });
     if (deadlineChanged && result.isPublished && userId) {
       const dayjsDeadline = dayjs(result.deadline);
       logger.debug(
-        `Creating comment for deadline extension for listing ID: ${result.id} `,
+        `Creating comment for deadline extension for listing ID: ${result.id}`,
+        {
+          id,
+          deadlineChanged,
+          isPublished: result.isPublished,
+        },
       );
       await prisma.comment.create({
         data: {
-          message: `The deadline for this listing has been updated to ${dayjsDeadline.format('h:mm A, MMMM D, YYYY (UTC)')} `,
+          message: `The deadline for this listing has been updated to ${dayjsDeadline.format('h:mm A, MMMM D, YYYY (UTC)')}`,
           refId: result.id,
           refType: 'BOUNTY',
           authorId: userId,
           type: 'DEADLINE_EXTENSION',
         },
       });
-      logger.debug(`Sending email notification for deadline extension`);
+      logger.debug(
+        `Comment Created for deadline extension for listing ID: ${result.id}`,
+        {
+          id: result.id,
+        },
+      );
+
+      logger.debug(`Sending email notification for deadline extension`, {
+        id,
+      });
       sendEmailNotification({
         type: 'deadlineExtended',
         id: id as string,
         triggeredBy: req.userId,
       });
+      logger.debug(`Sent email notification for deadline extension`, { id });
     }
+
+    logger.info(`Listing Updation API Fully Successful with ID: ${id}`);
 
     return res.status(200).json(result);
   } catch (error: any) {
+    console.log('error', JSON.stringify(error));
     logger.error(
-      `Error occurred while updating bounty with id = ${id}: ${safeStringify(error)} `,
+      `Error occurred while updating listing with id = ${id}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
       error: error.message,
-      message: `Error occurred while updating bounty with id = ${id}.`,
+      message: `Error occurred while updating listing with id = ${id}.`,
     });
   }
 }
 
-export default withSponsorAuth(bounty);
+export default withSponsorAuth(listing);

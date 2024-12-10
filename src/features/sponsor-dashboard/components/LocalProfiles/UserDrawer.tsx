@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import NextLink from 'next/link';
 import { type ReactNode } from 'react';
 
-import { skillMap } from '@/constants';
+import { skillMap } from '@/constants/skillMap';
 import { EarnAvatar, Telegram, Twitter, Website } from '@/features/talent';
 
 import { type LocalProfile } from '../../queries';
@@ -169,7 +169,7 @@ export const UserDrawer = ({
               </Flex>
             </Flex>
 
-            <Box>
+            <div>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
                 Socials
               </Text>
@@ -184,23 +184,23 @@ export const UserDrawer = ({
                   </Box>
                 ))}
               </Flex>
-            </Box>
+            </div>
 
-            <Box>
+            <div>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
                 Bio
               </Text>
               <Text color="brand.slate.500">{user.bio || '-'}</Text>
-            </Box>
+            </div>
 
-            <Box>
+            <div>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
                 Discord Username
               </Text>
               <Text color="brand.slate.500">{user.discord || '-'}</Text>
-            </Box>
+            </div>
 
-            <Box>
+            <div>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
                 Skills
               </Text>
@@ -224,9 +224,9 @@ export const UserDrawer = ({
                   <Text color="brand.slate.500">-</Text>
                 )}
               </Flex>
-            </Box>
+            </div>
 
-            <Box>
+            <div>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
                 Sub Skills
               </Text>
@@ -239,9 +239,9 @@ export const UserDrawer = ({
                   <Text color="brand.slate.500">-</Text>
                 )}
               </Flex>
-            </Box>
+            </div>
 
-            <Box>
+            <div>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
                 Interests
               </Text>
@@ -253,9 +253,9 @@ export const UserDrawer = ({
                   })()}
                 </Text>
               </Flex>
-            </Box>
+            </div>
 
-            <Box>
+            <div>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
                 Communities
               </Text>
@@ -265,13 +265,13 @@ export const UserDrawer = ({
                   return communities.length > 0 ? communities.join(', ') : '-';
                 })()}
               </Text>
-            </Box>
-            <Box>
+            </div>
+            <div>
               <Text mb={2} color="brand.slate.400" fontWeight={500}>
                 Profile Creation Date
               </Text>
               <Text color="brand.slate.500">{formattedCreatedAt}</Text>
-            </Box>
+            </div>
           </Flex>
         </DrawerBody>
       </DrawerContent>

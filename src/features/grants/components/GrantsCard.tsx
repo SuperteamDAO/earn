@@ -1,18 +1,16 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
-import NextLink from 'next/link';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 import React from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { tokenList } from '@/constants';
+import { LocalImage } from '@/components/ui/local-image';
+import { ASSET_URL } from '@/constants/ASSET_URL';
+import { tokenList } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import type { GrantWithApplicationCount } from '../types';
 import { grantAmount } from '../utils';
 
 export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
-  const router = useRouter();
-
   const {
     sponsor,
     slug,
@@ -26,131 +24,68 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
 
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
-    : `${router.basePath}/assets/logo/sponsor-logo.png`;
+    : ASSET_URL + '/logo/sponsor-logo.png';
 
   const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
 
   return (
-    <Box
-      as={NextLink}
-      w="full"
-      px={{ base: 2, sm: 4 }}
-      py={4}
-      borderRadius={5}
-      _hover={{ textDecoration: 'none', bg: 'gray.100' }}
+    <Link
+      className="block w-full rounded-md bg-white px-2 py-4 hover:bg-gray-100 hover:no-underline sm:px-4"
       href={`/grants/${slug}`}
     >
-      <Flex
-        align="center"
-        justify="space-between"
-        w={{ base: '100%', md: 'brand.120' }}
-      >
-        <Flex w="100%">
-          <Image
-            w={{ base: 14, sm: 16 }}
-            h={{ base: 14, sm: 16 }}
-            mr={{ base: 3, sm: 5 }}
-            alt={sponsor?.name}
-            rounded={5}
+      <div className="flex w-full items-center justify-between">
+        <div className="flex w-full">
+          <LocalImage
+            className="mr-3 h-14 w-14 rounded-md sm:mr-5 sm:h-16 sm:w-16"
+            alt={sponsor?.name!}
             src={sponsorLogo}
           />
-          <Flex justify="space-between" direction="column" w="full">
-            <Text
-              color="brand.slate.700"
-              fontSize={['sm', 'sm', 'md', 'md']}
-              fontWeight={600}
-              _hover={{ textDecoration: 'underline' }}
-              style={{
-                display: '-webkit-box',
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }}
-            >
+          <div className="flex w-full flex-col justify-between">
+            <p className="line-clamp-1 text-sm font-semibold text-slate-700 hover:underline sm:text-base">
               {title}
-            </Text>
-            <Flex align={'center'} gap={1} w="min-content">
-              <Text
-                w="full"
-                color="brand.slate.500"
-                fontSize={{ md: 'sm', base: 'xs' }}
-                whiteSpace={'nowrap'}
-              >
+            </p>
+            <div className="flex w-min items-center gap-1">
+              <p className="w-full whitespace-nowrap text-xs text-slate-500 md:text-sm">
                 {sponsor?.name}
-              </Text>
+              </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </Flex>
-            <Flex align="center" gap={{ base: 1, sm: 3 }} mt="1px">
+            </div>
+            <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
               <>
-                <Flex
-                  align="center"
-                  justify="start"
-                  gap={1}
-                  display={{ base: 'flex', sm: 'none' }}
-                >
-                  <Image
-                    display="flex"
-                    h={{ base: 3, sm: 4 }}
-                    alt={token}
-                    rounded={'full'}
-                    src={tokenIcon}
+                <div className="flex items-center justify-start sm:hidden">
+                  <LocalImage
+                    className="mr-0.5 h-3.5 w-3.5 rounded-full"
+                    alt={token!}
+                    src={tokenIcon!}
                   />
-                  <Flex align="baseline" gap={0.5}>
-                    <Text
-                      color="brand.slate.600"
-                      fontSize="xs"
-                      fontWeight="600"
-                      whiteSpace="nowrap"
-                    >
+                  <div className="flex items-baseline">
+                    <p className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base">
                       {grantAmount({
                         maxReward: maxReward!,
                         minReward: minReward!,
                       })}
-                    </Text>
-                    <Text color="gray.400" fontSize="xs" fontWeight={500}>
+                    </p>
+                    <p className="ml-0.5 text-xs font-medium text-gray-400">
                       {token}
-                    </Text>
-                  </Flex>
-                  <Text
-                    ml={1}
-                    color="brand.slate.300"
-                    fontSize={['xx-small', 'xs', 'sm', 'sm']}
-                  >
-                    |
-                  </Text>
-                </Flex>
-                <Flex align="center" gap={1}>
-                  <Image
-                    display="flex"
-                    h={{ base: 3, sm: 4 }}
+                    </p>
+                  </div>
+                  <p className="ml-1 text-[10px] text-slate-300">|</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <LocalImage
+                    className="-ml-0.5 flex h-3 sm:h-4"
                     alt={'grant'}
-                    src={'/assets/icons/bank.svg'}
+                    src={'/assets/grant-icon.svg'}
                   />
-                  <Text
-                    display="flex"
-                    color="gray.500"
-                    fontSize={['x-small', 'xs', 'xs', 'xs']}
-                    fontWeight={500}
-                  >
+                  <p className="font-xs flex text-xs font-medium text-gray-500">
                     Grant
-                  </Text>
-                </Flex>
+                  </p>
+                </div>
               </>
               {!!totalApproved && (
-                <Flex align="center" gap={3}>
-                  <Text
-                    display="flex"
-                    color="brand.slate.300"
-                    fontSize={['xx-small', 'xs', 'sm', 'sm']}
-                  >
-                    |
-                  </Text>
-                  <Text
-                    color="gray.500"
-                    fontSize={['x-small', '0.71875rem']}
-                    fontWeight={500}
-                    whiteSpace="nowrap"
-                  >
+                <div className="flex items-center gap-1">
+                  <p className="flex text-xs text-slate-300 md:text-sm">|</p>
+                  <p className="whitespace-nowrap text-[11px] font-medium text-gray-500 sm:text-xs">
                     $
                     {formatNumberWithSuffix(
                       Number(
@@ -159,212 +94,35 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                         ).toFixed(2),
                       ),
                     )}
-                    <Text
-                      as="span"
-                      sx={{
-                        wordSpacing: '-0.09rem',
-                      }}
-                      ml={0.3}
-                      color="gray.400"
-                      fontSize={['x-small', '0.6875rem']}
-                    >
+                    <span className="word-spacing-tight ml-0.3 text-[11px] font-medium text-gray-400 sm:text-xs">
                       {' '}
                       Avg. Grant
-                    </Text>
-                  </Text>
-                </Flex>
+                    </span>
+                  </p>
+                </div>
               )}
-            </Flex>
-          </Flex>
-        </Flex>
-        <Flex
-          align="center"
-          justify="start"
-          display={{ base: 'none', sm: 'flex' }}
-          mr={3}
-        >
-          <Image
-            w={4}
-            h={4}
-            mr={1}
-            alt={token}
-            rounded="full"
-            src={tokenIcon}
+            </div>
+          </div>
+        </div>
+        <div className="mr-3 hidden items-center justify-start sm:flex">
+          <LocalImage
+            className="mr-1 h-4 w-4 rounded-full"
+            alt={token!}
+            src={tokenIcon!}
           />
-          <Flex align="baseline" gap={1}>
-            <Text
-              color="brand.slate.600"
-              fontSize={['xs', 'xs', 'md', 'md']}
-              fontWeight="600"
-              whiteSpace="nowrap"
-            >
+          <div className="flex items-baseline gap-1">
+            <p className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base">
               {grantAmount({
                 maxReward: maxReward!,
                 minReward: minReward!,
               })}
-            </Text>
-            <Text
-              color="gray.400"
-              fontSize={['xs', 'xs', 'md', 'md']}
-              fontWeight={500}
-            >
+            </p>
+            <p className="text-xs font-medium text-gray-400 sm:text-base">
               {token}
-            </Text>
-          </Flex>
-        </Flex>
-      </Flex>
-    </Box>
-  );
-};
-
-export const GrantCardMobile = ({
-  grant,
-}: {
-  grant: GrantWithApplicationCount;
-}) => {
-  const {
-    sponsor,
-    slug,
-    title,
-    minReward,
-    maxReward,
-    token,
-    totalApproved,
-    totalApplications,
-  } = grant;
-  const router = useRouter();
-
-  const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
-
-  const sponsorLogo = sponsor?.logo
-    ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
-    : `${router.basePath}/assets/logo/sponsor-logo.png`;
-  return (
-    <>
-      <Box
-        className="ph-no-capture"
-        as={NextLink}
-        w="full"
-        px={2}
-        py={4}
-        borderRadius={5}
-        _hover={{
-          textDecoration: 'none',
-          bg: 'gray.100',
-        }}
-        href={`/grants/${slug}`}
-      >
-        <Flex
-          className="ph-no-capture"
-          align="center"
-          justify="space-between"
-          w={'100%'}
-        >
-          <Flex w="100%">
-            <Image
-              w={14}
-              h={14}
-              mr={3}
-              alt={sponsor?.name}
-              rounded={5}
-              src={sponsorLogo}
-            />
-            <Flex justify={'space-between'} direction={'column'} w={'full'}>
-              <Text
-                className="ph-no-capture"
-                color="brand.slate.700"
-                fontSize={'sm'}
-                fontWeight={600}
-                _hover={{
-                  textDecoration: 'underline',
-                }}
-                style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 1,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                }}
-              >
-                {title}
-              </Text>
-              <Flex align={'center'} gap={1} w="min-content">
-                <Text
-                  w="full"
-                  color="brand.slate.500"
-                  fontSize={{ base: 'xs' }}
-                  whiteSpace={'nowrap'}
-                >
-                  {sponsor?.name}
-                </Text>
-                <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-              </Flex>
-              <Flex align="center" gap={{ base: 1, sm: 3 }} mt="1px">
-                <>
-                  <Flex align="center" justify="start" gap={1}>
-                    <Image
-                      display="flex"
-                      h={{ base: 3, sm: 4 }}
-                      alt={token}
-                      rounded={'full'}
-                      src={tokenIcon}
-                    />
-                    <Flex align="baseline" gap={0.5}>
-                      <Text
-                        color="brand.slate.600"
-                        fontSize="xs"
-                        fontWeight="600"
-                        whiteSpace="nowrap"
-                      >
-                        {grantAmount({
-                          maxReward: maxReward!,
-                          minReward: minReward!,
-                        })}
-                      </Text>
-                      <Text color="gray.400" fontSize="xs" fontWeight={500}>
-                        {token}
-                      </Text>
-                    </Flex>
-                  </Flex>
-                </>
-                {!!totalApproved && (
-                  <Flex align="center" gap={3}>
-                    <Text
-                      display="flex"
-                      color="brand.slate.300"
-                      fontSize={['xx-small', 'xs', 'sm', 'sm']}
-                    >
-                      |
-                    </Text>
-                    <Text
-                      color="gray.500"
-                      fontSize={['x-small', '0.71875rem']}
-                      fontWeight={500}
-                      whiteSpace="nowrap"
-                    >
-                      $
-                      {formatNumberWithSuffix(
-                        Number((totalApproved / totalApplications).toFixed(2)),
-                      )}
-                      <Text
-                        as="span"
-                        sx={{
-                          wordSpacing: '-0.09rem',
-                        }}
-                        ml={0.3}
-                        color="gray.400"
-                        fontSize={['x-small', '0.6875rem']}
-                      >
-                        {' '}
-                        Avg. Grant
-                      </Text>
-                    </Text>
-                  </Flex>
-                )}
-              </Flex>
-            </Flex>
-          </Flex>
-        </Flex>
-      </Box>
-    </>
+            </p>
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 };

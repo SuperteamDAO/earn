@@ -1,25 +1,16 @@
-import {
-  Box,
-  Center,
-  Flex,
-  HStack,
-  Icon,
-  Image,
-  Link,
-  SkeletonCircle,
-  SkeletonText,
-  Text,
-} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineInsertLink } from 'react-icons/md';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { Loading } from '@/components/shared/Loading';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { exclusiveSponsorData } from '@/constants';
+import { LocalImage } from '@/components/ui/local-image';
+import { Skeleton } from '@/components/ui/skeleton';
+import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { GrantsCard } from '@/features/grants';
 import { ListingSection, ListingTabs } from '@/features/listings';
 import {
@@ -91,34 +82,26 @@ Check out all of ${title}’s latest earning opportunities on a single page.
         </Head>
       }
     >
-      <Flex px={4} bg="#F8FAFC">
-        <Flex
-          direction={{ md: 'row', base: 'column' }}
-          gap={8}
-          w={{ md: 'brand.120', base: '100%' }}
-          maxW="5xl"
-          h={{ md: 'auto', base: 'fit-content' }}
-          mx={'auto'}
-          py={14}
-          rounded={10}
-        >
-          <SkeletonCircle w={28} h={28} isLoaded={!isListingsLoading}>
-            <Center rounded="full">
-              <Image h={'full'} alt="Category icon" rounded="full" src={logo} />
-            </Center>
-          </SkeletonCircle>
-          <Box w={{ md: '80%', base: '100%' }}>
-            <SkeletonText
-              w={isListingsLoading ? '12rem' : 'auto'}
-              mt={{ base: 4, md: '0' }}
-              isLoaded={!isListingsLoading}
-              noOfLines={1}
-              skeletonHeight="1rem"
-            >
-              <HStack>
-                <Text fontSize="xl" fontWeight={'600'}>
-                  {title}
-                </Text>
+      <div className="flex bg-[#f8fafc] px-4">
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 rounded-[10] py-14 md:flex-row">
+          {isListingsLoading ? (
+            <Skeleton className="h-28 w-28 rounded-full" />
+          ) : (
+            <div className="justify-center rounded-full">
+              <LocalImage
+                className="h-28 w-28 rounded-full"
+                alt="Category icon"
+                src={logo!}
+              />
+            </div>
+          )}
+
+          <div className="w-full md:w-[80%]">
+            {isListingsLoading ? (
+              <Skeleton className="mt-4 h-4 w-48 md:mt-0" />
+            ) : (
+              <div className="flex items-center gap-2">
+                <p className="text-xl font-semibold">{title}</p>
                 {!!isVerified && (
                   <VerifiedBadge
                     style={{
@@ -127,59 +110,45 @@ Check out all of ${title}’s latest earning opportunities on a single page.
                     }}
                   />
                 )}
-              </HStack>
-            </SkeletonText>
-            <SkeletonText
-              w={isListingsLoading ? '6rem' : 'auto'}
-              mt={isListingsLoading ? 3 : 0}
-              isLoaded={!isListingsLoading}
-              noOfLines={1}
-              skeletonHeight="0.75rem"
-            >
-              <Text maxW="600px" color={'brand.slate.500'}>
-                @{sSlug}
-              </Text>
-            </SkeletonText>
-            <SkeletonText
-              maxW="600px"
-              mt={isListingsLoading ? 2 : 0}
-              isLoaded={!isListingsLoading}
-              noOfLines={2}
-              spacing={2}
-            >
+              </div>
+            )}
+            {isListingsLoading ? (
+              <Skeleton className="mt-3 h-3 w-24" />
+            ) : (
+              <p className="max-w-[600px] text-slate-500">@{sSlug}</p>
+            )}
+            {isListingsLoading ? (
+              <div className="mt-2 space-y-2">
+                <Skeleton className="h-3 w-[600px]" />
+                <Skeleton className="h-3 w-[500px]" />
+              </div>
+            ) : (
               <LinkTextParser
                 className="mt-2 text-slate-600"
                 text={description}
               />
-            </SkeletonText>
-            <HStack gap={3} mt={3} color="#64748B">
+            )}
+            <div className="mt-3 flex gap-3 text-[#64748B]">
               {url && (
-                <Link
-                  alignItems="center"
-                  display="flex"
-                  href={getURLSanitized(url)}
-                  isExternal
-                >
-                  <Icon as={MdOutlineInsertLink} w={5} h={5} />
+                <Link className="flex items-center" href={getURLSanitized(url)}>
+                  <MdOutlineInsertLink className="h-5 w-5" />
                 </Link>
               )}
               {twitter && (
                 <Link
-                  alignItems="center"
-                  display="flex"
+                  className="flex items-center"
                   href={getTwitterUrl(twitter)}
-                  isExternal
                 >
-                  <Icon as={FaXTwitter} w={4} h={4} />
+                  <FaXTwitter className="h-4 w-4" />
                 </Link>
               )}
-            </HStack>
-          </Box>
-        </Flex>
-      </Flex>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <Box w={'100%'} bg="white">
-        <Box maxW="5xl" mx="auto" px={4} pb={20}>
+      <div className="w-full bg-white">
+        <div className="mx-auto max-w-5xl px-4 pb-20">
           <ListingTabs
             bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}
@@ -194,14 +163,9 @@ Check out all of ${title}’s latest earning opportunities on a single page.
               sub="Equity-free funding opportunities for builders"
             >
               {isGrantsLoading && (
-                <Flex
-                  align="center"
-                  justify="center"
-                  direction="column"
-                  minH={52}
-                >
+                <div className="flex min-h-52 flex-col items-center justify-center">
                   <Loading />
-                </Flex>
+                </div>
               )}
               {!isGrantsLoading &&
                 grants?.map((grant) => (
@@ -209,8 +173,8 @@ Check out all of ${title}’s latest earning opportunities on a single page.
                 ))}
             </ListingSection>
           )}
-        </Box>
-      </Box>
+        </div>
+      </div>
     </Default>
   );
 };
