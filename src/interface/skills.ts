@@ -111,9 +111,12 @@ type SkillMap = {
   color: string;
 };
 
-const allSubSkills = Object.values(skillSubSkillMap).flatMap((skills) =>
+export const allSubSkills = Object.values(skillSubSkillMap).flatMap((skills) =>
   skills.map((s) => s.value),
-);
+) as [SubSkillsType, ...SubSkillsType[]];
+export const allSkills = Object.keys(skillSubSkillMap) as [
+  keyof typeof skillSubSkillMap,
+];
 
 const skillSchema = z
   .object({

@@ -20,7 +20,8 @@ import NextLink from 'next/link';
 import React from 'react';
 
 import { skillMap } from '@/constants/skillMap';
-import { EarnAvatar, Telegram, Twitter, Website } from '@/features/talent';
+import { Telegram, Twitter, Website } from '@/features/social';
+import { EarnAvatar } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
 
 import { type LocalProfile } from '../../queries';

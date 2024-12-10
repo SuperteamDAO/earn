@@ -28,12 +28,12 @@ import { tokenList } from '@/constants/tokenList';
 import { type Grant } from '@/features/grants';
 import {
   Discord,
-  EarnAvatar,
   extractTelegramUsername,
   extractTwitterUsername,
   Telegram,
   Twitter,
-} from '@/features/talent';
+} from '@/features/social';
+import { EarnAvatar } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';

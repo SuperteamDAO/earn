@@ -15,15 +15,8 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type FeedDataProps, FeedLoop, useGetFeed } from '@/features/feed';
-import {
-  AddProject,
-  EarnAvatar,
-  GitHub,
-  Linkedin,
-  ShareProfile,
-  Twitter,
-  Website,
-} from '@/features/talent';
+import { GitHub, Linkedin, Twitter, Website } from '@/features/social';
+import { AddProject, EarnAvatar, ShareProfile } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -122,7 +115,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
   };
 
   const addNewPow = () => {
-    router.replace(router.asPath);
+    refetch();
   };
 
   const isMD = useMediaQuery('(min-width: 768px)');
@@ -306,7 +299,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 id={talent?.id}
               />
               <Separator className="my-8" />
-              <div className="flex flex-col gap-12 md:flex-row md:gap-[25rem]">
+              <div className="flex w-full flex-col gap-12 md:flex-row md:gap-[6.25rem]">
                 <div className="w-full md:w-1/2">
                   <p className="mb-4 font-medium text-slate-900">Details</p>
                   {workPreferenceText && (
@@ -400,7 +393,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 </div>
               </div>
               <Separator className="my-8" />
-              <div className="flex flex-col justify-between gap-12 md:flex-row">
+              <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-[6.25rem]">
                 <div className="flex w-full gap-6 md:w-1/2">
                   {socialLinks.map(({ Icon, link }, i) => {
                     return <Icon link={link} boxSize={5} key={i} />;

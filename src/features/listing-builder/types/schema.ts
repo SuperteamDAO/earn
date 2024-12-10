@@ -15,7 +15,7 @@ import {
 } from '@/constants';
 import { tokenList } from '@/constants/tokenList';
 import { type Listing } from '@/features/listings';
-import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
+import { emailRegex, telegramRegex, twitterRegex } from '@/features/social';
 import { skillsArraySchema } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
 

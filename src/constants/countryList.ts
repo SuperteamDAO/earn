@@ -1,4 +1,4 @@
-export const CountryList: string[] = [
+export const CountryList = [
   'India',
   'Afghanistan',
   'Åland Islands',
@@ -259,4 +259,4 @@ export const CountryList: string[] = [
   'Zaire',
   'Zambia',
   'Zimbabwe',
-];
+] as const;

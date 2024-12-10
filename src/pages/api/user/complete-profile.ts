@@ -5,60 +5,44 @@ import {
   userSelectOptions,
   withAuth,
 } from '@/features/auth';
-import {
-  extractDiscordUsername,
-  extractGitHubUsername,
-  extractLinkedInUsername,
-  extractTelegramUsername,
-  extractTwitterUsername,
-} from '@/features/talent';
+import { extractSocialUsername } from '@/features/social';
+import { profileSchema } from '@/features/talent';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { filterAllowedFields } from '@/utils';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { safeStringify } from '@/utils/safeStringify';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
+
+const allowedFields = [
+  'username',
+  'photo',
+  'firstName',
+  'lastName',
+  'interests',
+  'bio',
+  'twitter',
+  'discord',
+  'github',
+  'linkedin',
+  'website',
+  'telegram',
+  'community',
+  'experience',
+  'location',
+  'cryptoExperience',
+  'workPrefernce',
+  'currentEmployer',
+  'skills',
+  'private',
+  'publicKey',
+];
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
-  const {
-    firstName,
-    lastName,
-    username,
-    location,
-    photo,
-    bio,
-    experience,
-    cryptoExperience,
-    currentEmployer,
-    community,
-    workPrefernce,
-    isPrivate,
-    discord,
-    twitter,
-    github,
-    linkedin,
-    telegram,
-    website,
-    skills,
-    publicKey,
-  } = req.body;
-
   try {
-    if (publicKey) {
-      const walletValidation = validateSolanaAddress(publicKey);
-
-      if (!walletValidation.isValid) {
-        return res.status(400).json({
-          error: 'Invalid Wallet Address',
-          message:
-            walletValidation.error || 'Invalid Solana wallet address provided.',
-        });
-      }
-    }
-
     const user = await prisma.user.findUnique({
       where: { id: userId as string },
     });
@@ -68,57 +52,37 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const correctedSkills = cleanSkills(skills);
+    const filteredData = filterAllowedFields(req.body, allowedFields);
+    type SchemaKeys = keyof typeof profileSchema._def.schema.shape;
+    const keysToValidate = Object.keys(filteredData).reduce<
+      Record<SchemaKeys, true>
+    >(
+      (acc, key) => {
+        acc[key as SchemaKeys] = true;
+        return acc;
+      },
+      {} as Record<SchemaKeys, true>,
+    );
+    const partialSchema = profileSchema._def.schema.pick(keysToValidate);
+    const updatedData = await partialSchema.parseAsync({
+      ...filteredData,
+      github: filteredData.github
+        ? extractSocialUsername('github', filteredData.github) || undefined
+        : undefined,
+      twitter: filteredData.twitter
+        ? extractSocialUsername('twitter', filteredData.twitter) || undefined
+        : undefined,
+      linkedin: filteredData.linkedin
+        ? extractSocialUsername('linkedin', filteredData.linkedin) || undefined
+        : undefined,
+      telegram: filteredData.telegram
+        ? extractSocialUsername('telegram', filteredData.telegram) || undefined
+        : undefined,
+    });
 
-    const data = {
-      firstName,
-      lastName,
-      username,
-      location,
-      photo,
-      bio,
-      experience,
-      cryptoExperience,
-      currentEmployer,
-      community,
-      workPrefernce,
-      private: isPrivate,
-      discord,
-      twitter,
-      github,
-      linkedin,
-      telegram,
-      website,
-      publicKey,
-      skills: correctedSkills,
-      superteamLevel: 'Lurker',
-      isTalentFilled: true,
-    };
-
-    if (data.twitter) {
-      const username = extractTwitterUsername(data.twitter);
-      data.twitter = `https://x.com/${username}` || null;
-    }
-
-    if (data.github) {
-      const username = extractGitHubUsername(data.github);
-      data.github = `https://github.com/${username}` || null;
-    }
-
-    if (data.linkedin) {
-      const username = extractLinkedInUsername(data.linkedin);
-      data.linkedin = `https://linkedin.com/in/${username}` || null;
-    }
-
-    if (data.discord) {
-      const username = extractDiscordUsername(data.discord);
-      data.discord = username || null;
-    }
-
-    if (data.telegram) {
-      const username = extractTelegramUsername(data.telegram);
-      data.telegram = `https://t.me/${username}` || null;
-    }
+    const correctedSkills = updatedData.skills
+      ? cleanSkills(updatedData.skills)
+      : undefined;
 
     const categories = new Set([
       'createListing',
@@ -144,13 +108,30 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    logger.info(`Completing user profile with data: ${safeStringify(data)}`);
+    logger.info(
+      `Completing user profile with data: ${safeStringify(updatedData)}`,
+    );
 
     await prisma.user.updateMany({
       where: {
         id: userId as string,
       },
-      data,
+      data: {
+        ...updatedData,
+        ...(correctedSkills
+          ? {
+              skills: correctedSkills,
+            }
+          : {}),
+        interests: updatedData.interests
+          ? JSON.stringify(updatedData.interests)
+          : undefined,
+        community: updatedData.community
+          ? JSON.stringify(updatedData.community)
+          : undefined,
+        superteamLevel: 'Lurker',
+        isTalentFilled: true,
+      },
     });
 
     const result = await prisma.user.findUnique({

@@ -1,8 +1,8 @@
-const twitterUsernameRegex = /(@?[a-zA-Z0-9_]{1,90})/;
-const telegramUsernameRegex = /(@?[a-zA-Z0-9_]{5,90})/;
-const linkedinUsernameRegex = /([a-zA-Z0-9\-]{3,100})/;
-const githubUsernameRegex = /([a-zA-Z0-9\-]{1,90})/;
-const discordUsernameRegex = /([a-zA-Z0-9_.]{2,32})/;
+const twitterUsernameRegex = /^[a-zA-Z-1-9_]{4,15}$/;
+const telegramUsernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{4,31}$/;
+const linkedinUsernameRegex = /^[a-zA-Z0-9]{3,100}$/;
+const githubUsernameRegex = /^(?!-)(?!.*--)(?!.*-$)[a-zA-Z0-9-]{1,39}$/;
+const discordUsernameRegex = /^(?=[a-z0-9._]{2,32}$)(?!.*\.\.)[a-z0-9._]+$/;
 
 const twitterRegex = new RegExp(
   `^(?:https?:\\/\\/)?(?:www\\.)?(twitter\\.com|x\\.com)\\/${twitterUsernameRegex.source}\\/?$`,
