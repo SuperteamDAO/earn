@@ -40,6 +40,7 @@ const VariantInfo = (
   const reward = listing?.rewardAmount || listing?.maxRewardAsk;
   const rewardLabel = reward ? '$' + reward.toLocaleString('en-us') : '';
   const type = listing?.type;
+  const verb = listing?.type === 'bounty' ? 'submissions' : 'applications';
   const sponsorName = listing?.sponsor?.name;
   return {
     0: {
@@ -49,8 +50,8 @@ const VariantInfo = (
       sponsorLogo: listing?.sponsor?.logo,
     },
     1: {
-      title: `High chances of winning this bounty`,
-      description: `This bounty only has ${submissionCount} submissions. Sign up to get access to this well-paying bounty!`,
+      title: `High chances of winning this ${type}`,
+      description: `This ${type} only has ${submissionCount} ${verb}. Sign up to get access to this well-paying ${type}!`,
       sponsorName: listing?.sponsor?.name,
       sponsorLogo: listing?.sponsor?.logo,
     },
