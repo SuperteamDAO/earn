@@ -160,7 +160,13 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const onSubmit = async (data: ProfileFormData) => {
     if (isInvalid) {
-      return;
+      if (!!validationErrorMessage) {
+        setError('username', {
+          message: validationErrorMessage,
+        });
+      } else clearErrors('username');
+      form.setFocus('username');
+      return false;
     }
     const socialFields = [
       'twitter',
@@ -216,8 +222,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           error: 'Failed to update profile.',
         },
       );
+      return true;
     } catch (error: any) {
       toast.error('Failed to update profile.');
+      return false;
     }
   };
 
@@ -313,9 +321,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   render={({ field }) => (
                     <FormItem className={cn('mb-5 flex flex-col gap-2')}>
                       <div>
-                        <FormLabel isRequired={true}>
-                          Your One-Line Bio
-                        </FormLabel>
+                        <FormLabel>Your One-Line Bio</FormLabel>
                       </div>
                       <div>
                         <FormControl>

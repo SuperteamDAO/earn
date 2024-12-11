@@ -6,7 +6,11 @@ import {
   withAuth,
 } from '@/features/auth';
 import { extractSocialUsername } from '@/features/social';
-import { profileSchema } from '@/features/talent';
+import {
+  profileSchema,
+  socialSuperRefine,
+  usernameSuperRefine,
+} from '@/features/talent';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { filterAllowedFields } from '@/utils';
@@ -63,7 +67,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
       {} as Record<SchemaKeys, true>,
     );
-    const partialSchema = profileSchema._def.schema.pick(keysToValidate);
+    const partialSchema = profileSchema._def.schema
+      .pick(keysToValidate)
+      .superRefine((data, ctx) => {
+        socialSuperRefine(data, ctx);
+        usernameSuperRefine(data, ctx, user.id);
+      });
     const updatedData = await partialSchema.parseAsync({
       ...filteredData,
       github: filteredData.github

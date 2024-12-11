@@ -1,7 +1,14 @@
+import axios from 'axios';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { IndustryList, web3Exp, workExp, workType } from '@/constants';
+import {
+  IndustryList,
+  USERNAME_PATTERN,
+  web3Exp,
+  workExp,
+  workType,
+} from '@/constants';
 import { CommunityList } from '@/constants/communityList';
 import { CountryList } from '@/constants/countryList';
 import {
@@ -17,7 +24,14 @@ import { validateSolAddressUI } from '@/utils/validateSolAddress';
 
 export const profileSchema = z
   .object({
-    username: z.string().min(1, 'Username is required'),
+    username: z
+      .string()
+      .min(1, 'Username is required')
+      .max(40, 'Username cannot exceed 40 characters')
+      .regex(
+        USERNAME_PATTERN,
+        'Username can only contain lowercase letters, numbers, underscores and hyphens',
+      ),
     photo: z.string().optional(),
     firstName: z.string().min(1, 'First name is required'),
     lastName: z.string().min(1, 'Last name is required'),
@@ -82,6 +96,36 @@ export const socialSuperRefine = async (
         'At least one additional social link (apart from Discord) is required',
       path: ['website'], // website is at the end in UI
     });
+  }
+};
+export const usernameSuperRefine = async (
+  data: Partial<ProfileFormData>,
+  ctx: z.RefinementCtx,
+  userId: string,
+) => {
+  if (data.username) {
+    try {
+      const response = await axios.get(`/api/user/username`, {
+        params: {
+          username: data.username,
+          userId,
+        },
+      });
+      const available = response.data.available;
+      if (!available) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Username is unavailable! Please try another one.',
+          path: ['username'],
+        });
+      }
+    } catch (error) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'An error occurred while checking username availability.',
+        path: ['username'],
+      });
+    }
   }
 };
 

@@ -50,3 +50,5 @@ export const PDTG = 'https://t.me/pratikdholani/';
 export const ABTG = 'https://t.me/abhwshek/';
 
 export const MAX_REWARD = 100_000_000_000_000; // 100 Trillion
+
+export const USERNAME_PATTERN = /^[a-z0-9_-]+$/;

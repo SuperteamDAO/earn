@@ -2,7 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import { extractSocialUsername } from '@/features/social';
-import { profileSchema } from '@/features/talent';
+import { profileSchema, usernameSuperRefine } from '@/features/talent';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
@@ -39,6 +39,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     `Handling request for user ID: ${userId} - ${safeStringify(req.body)}`,
   );
 
+  const user = await prisma.user.findUnique({
+    where: { id: userId as string },
+  });
+
+  if (!user) {
+    logger.warn(`User not found for user ID: ${userId}`);
+    return res.status(404).json({ error: 'User not found' });
+  }
   const filteredData = filterAllowedFields(req.body, allowedFields);
   type SchemaKeys = keyof typeof profileSchema._def.schema.shape;
   const keysToValidate = Object.keys(filteredData).reduce<
@@ -50,7 +58,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     },
     {} as Record<SchemaKeys, true>,
   );
-  const partialSchema = profileSchema._def.schema.pick(keysToValidate);
+  const partialSchema = profileSchema._def.schema
+    .pick(keysToValidate)
+    .superRefine((data, ctx) => {
+      usernameSuperRefine(data, ctx, user.id);
+    });
   const updatedData = await partialSchema.parseAsync({
     ...filteredData,
     github: filteredData.github

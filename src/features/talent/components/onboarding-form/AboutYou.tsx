@@ -52,7 +52,6 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
     user?.photo?.includes('googleusercontent.com') || false,
   );
 
-  console.log('aboutYouSchema', aboutYouSchema);
   const aboutYouForm = useForm<AboutYouFormData>({
     resolver: zodResolver(aboutYouSchema),
   });
@@ -143,6 +142,12 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
 
   const onSubmit = async (data: AboutYouFormData) => {
     if (isInvalid) {
+      if (!!validationErrorMessage) {
+        setError('username', {
+          message: validationErrorMessage,
+        });
+      } else clearErrors('username');
+      aboutYouForm.setFocus('username');
       return false;
     }
     posthog.capture('about you_talent');
