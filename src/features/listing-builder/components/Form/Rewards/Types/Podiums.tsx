@@ -184,7 +184,7 @@ export const Podiums = () => {
                             variant="ghost"
                             size="icon"
                             onClick={() => removeReward(position)}
-                            className="absolute right-0 top-0 hidden text-muted-foreground hover:text-destructive group-hover:flex"
+                            className="absolute right-0 top-0 hidden text-muted-foreground group-hover:flex hover:text-destructive"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -263,7 +263,7 @@ export const Podiums = () => {
                                 variant="ghost"
                                 size="icon"
                                 onClick={removeBonusReward}
-                                className="absolute right-0 top-0 hidden text-muted-foreground hover:text-destructive group-hover:flex"
+                                className="absolute right-0 top-0 hidden text-muted-foreground group-hover:flex hover:text-destructive"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>

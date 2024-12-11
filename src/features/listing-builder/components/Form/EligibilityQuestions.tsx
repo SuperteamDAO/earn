@@ -197,7 +197,7 @@ export function EligibilityQuestions() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="hidden text-muted-foreground hover:text-destructive group-hover:flex"
+                            className="hidden text-muted-foreground group-hover:flex hover:text-destructive"
                             onClick={() => handleRemoveQuestion(index)}
                           >
                             <Trash2 className="h-4 w-4" />
