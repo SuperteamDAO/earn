@@ -14,16 +14,27 @@ import { EmailSignIn } from './EmailSignIn';
 interface SigninProps {
   loginStep: number;
   setLoginStep: Dispatch<SetStateAction<number>>;
+  redirectTo?: string;
 }
 
-export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
+export const SignIn = ({
+  loginStep,
+  setLoginStep,
+  redirectTo,
+}: SigninProps) => {
   const router = useRouter();
   const posthog = usePostHog();
 
   const handleGmailSignIn = async () => {
     posthog.capture('google_auth');
+    const callbackUrl = new URL(
+      redirectTo || router.asPath,
+      window.location.origin,
+    );
+    callbackUrl.searchParams.set('loginState', 'signedIn');
+    if (redirectTo) callbackUrl.searchParams.set('originUrl', router.asPath);
     signIn('google', {
-      callbackUrl: `${router.asPath}?loginState=signedIn`,
+      callbackUrl: callbackUrl.toString(),
     });
   };
 
@@ -75,7 +86,7 @@ export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
                 : 'translate-y-5 opacity-0'
             }`}
           >
-            {loginStep === 1 && <EmailSignIn />}
+            {loginStep === 1 && <EmailSignIn redirectTo={redirectTo} />}
           </div>
         </div>
 
