@@ -20,6 +20,7 @@ import {
   websiteUrlSchema,
 } from '@/features/social';
 import { skillsArraySchema } from '@/interface/skills';
+import { getURL } from '@/utils';
 import { validateSolAddressUI } from '@/utils/validateSolAddress';
 
 export const profileSchema = z
@@ -105,7 +106,7 @@ export const usernameSuperRefine = async (
 ) => {
   if (data.username) {
     try {
-      const response = await axios.get(`/api/user/username`, {
+      const response = await axios.get(`${getURL()}api/user/username`, {
         params: {
           username: data.username,
           userId,

@@ -65,18 +65,22 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
   const updatedData = await partialSchema.parseAsync({
     ...filteredData,
-    github: filteredData.github
-      ? extractSocialUsername('github', filteredData.github) || undefined
-      : undefined,
-    twitter: filteredData.twitter
-      ? extractSocialUsername('twitter', filteredData.twitter) || undefined
-      : undefined,
-    linkedin: filteredData.linkedin
-      ? extractSocialUsername('linkedin', filteredData.linkedin) || undefined
-      : undefined,
-    telegram: filteredData.telegram
-      ? extractSocialUsername('telegram', filteredData.telegram) || undefined
-      : undefined,
+    github:
+      filteredData.github !== undefined
+        ? extractSocialUsername('github', filteredData.github) || ''
+        : undefined,
+    twitter:
+      filteredData.twitter !== undefined
+        ? extractSocialUsername('twitter', filteredData.twitter) || ''
+        : undefined,
+    linkedin:
+      filteredData.linkedin !== undefined
+        ? extractSocialUsername('linkedin', filteredData.linkedin) || ''
+        : undefined,
+    telegram:
+      filteredData.telegram !== undefined
+        ? extractSocialUsername('telegram', filteredData.telegram) || ''
+        : undefined,
   });
 
   const correctedSkills = updatedData.skills
