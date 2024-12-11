@@ -33,11 +33,11 @@ function Grants() {
           alt=""
           src={'/home/bg_grad.svg'}
         />
-        <div className="my-16 flex gap-4 text-center">
-          <p className="px-2 text-4xl font-bold leading-5 md:text-5xl">
+        <div className="my-16 flex flex-col gap-4 text-center">
+          <p className="px-2 text-4xl font-bold md:text-5xl">
             Need funds to build out your idea?
           </p>
-          <p className="mx-2 max-w-2xl text-lg text-gray-600 md:text-xl">
+          <p className="mx-auto max-w-2xl text-lg text-gray-600 md:text-xl">
             Discover the complete list of crypto grants available to support
             your project. Fast, equity-free funding without the hassle.
           </p>

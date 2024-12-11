@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ChevronDown, ChevronUp, Edit2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -15,15 +15,8 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type FeedDataProps, FeedLoop, useGetFeed } from '@/features/feed';
-import {
-  AddProject,
-  EarnAvatar,
-  GitHub,
-  Linkedin,
-  ShareProfile,
-  Twitter,
-  Website,
-} from '@/features/talent';
+import { GitHub, Linkedin, Twitter, Website } from '@/features/social';
+import { AddProject, EarnAvatar, ShareProfile } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -122,7 +115,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
   };
 
   const addNewPow = () => {
-    router.replace(router.asPath);
+    refetch();
   };
 
   const isMD = useMediaQuery('(min-width: 768px)');
@@ -174,30 +167,30 @@ function TalentProfile({ talent, stats }: TalentProps) {
             'ph-no-capture text-sm font-medium',
             outline
               ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-              : 'border-indigo-100 bg-indigo-100 text-brand-purple hover:bg-indigo-200',
+              : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
           )}
           onClick={onClickHandler}
           variant={outline ? 'outline' : 'default'}
         >
-          {icon && <span className="mr-2">{icon}</span>}
+          {icon}
           {text}
         </Button>
       );
     }
 
     return (
-      <button
+      <Button
         aria-label={text}
         onClick={onClickHandler}
         className={cn(
-          'inline-flex items-center justify-center rounded border p-2 text-sm font-medium transition',
+          'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
           outline
             ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-            : 'border-indigo-100 bg-indigo-100 text-brand-purple hover:bg-indigo-200',
+            : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
         )}
       >
         {icon}
-      </button>
+      </Button>
     );
   };
 
@@ -281,7 +274,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 <div className="flex w-auto gap-3 md:w-[160px] md:flex-col">
                   {user?.id === talent?.id
                     ? renderButton(
-                        <Edit2 />,
+                        <SquarePen />,
                         'Edit Profile',
                         handleEditProfileClick,
                       )
@@ -306,7 +299,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 id={talent?.id}
               />
               <Separator className="my-8" />
-              <div className="flex flex-col gap-12 md:flex-row md:gap-[25rem]">
+              <div className="flex w-full flex-col gap-12 md:flex-row md:gap-[6.25rem]">
                 <div className="w-full md:w-1/2">
                   <p className="mb-4 font-medium text-slate-900">Details</p>
                   {workPreferenceText && (
@@ -400,7 +393,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 </div>
               </div>
               <Separator className="my-8" />
-              <div className="flex flex-col gap-12 md:flex-row md:gap-[25rem]">
+              <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-[6.25rem]">
                 <div className="flex w-full gap-6 md:w-1/2">
                   {socialLinks.map(({ Icon, link }, i) => {
                     return <Icon link={link} className="h-5 w-5" key={i} />;

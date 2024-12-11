@@ -1,4 +1,5 @@
-import { Label } from '@/components/ui/label';
+import { type Control } from 'react-hook-form';
+
 import {
   Select,
   SelectContent,
@@ -8,36 +9,37 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/utils';
 
+import { FormFieldWrapper } from '../ui/form-field-wrapper';
+
 interface SelectBoxProps {
   label: string;
-  watchValue?: string;
-  options: string[];
-  id: string;
+  options: string[] | readonly string[];
+  name: string;
   placeholder: string;
-  register: any;
+  control: Control<any>;
   required?: boolean;
+  className?: string;
 }
 
 export const SelectBox = ({
   label,
-  watchValue,
   options,
-  id,
+  name,
   placeholder,
-  register,
+  control,
   required = false,
+  className,
 }: SelectBoxProps) => {
   return (
-    <div className="mb-5 w-full">
-      <Label className="text-slate-500">{label}</Label>
-      <Select {...register(id, { required })}>
-        <SelectTrigger
-          className={cn(
-            'mt-1.5 border-slate-300',
-            'focus:border-brand-purple focus:ring-brand-purple',
-            watchValue?.length === 0 ? 'text-slate-300' : 'text-slate-900',
-          )}
-        >
+    <FormFieldWrapper
+      name={name}
+      control={control}
+      className={cn('mb-5 w-full', className)}
+      label={label}
+      isRequired={required}
+    >
+      <Select>
+        <SelectTrigger>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
@@ -48,6 +50,6 @@ export const SelectBox = ({
           ))}
         </SelectContent>
       </Select>
-    </div>
+    </FormFieldWrapper>
   );
 };

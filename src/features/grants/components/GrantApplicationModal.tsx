@@ -22,7 +22,7 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { extractTwitterUsername, Twitter } from '@/features/talent';
+import { extractTwitterUsername, Twitter } from '@/features/social';
 import { useUpdateUser, useUser } from '@/store/user';
 import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';

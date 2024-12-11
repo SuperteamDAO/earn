@@ -37,9 +37,9 @@ export function Banner({
 
   if (!sponsorId) return null;
   return (
-    <div className="w-full gap-4">
-      <div className="mb-6 w-full rounded-md border border-slate-200 bg-white px-8 py-6 text-white">
-        <div className="flex items-center gap-8">
+    <div className="flex w-full gap-4">
+      <div className="mb-6 w-full rounded-md border border-slate-200 bg-white px-6 py-6 text-white">
+        <div className="flex items-center gap-6">
           <div className="flex flex-shrink-0 items-center gap-3">
             <EarnAvatar
               size="52px"

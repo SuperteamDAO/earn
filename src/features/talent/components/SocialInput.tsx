@@ -22,7 +22,7 @@ import {
   isValidTwitterInput,
   isValidTwitterUsername,
   isValidWebsiteUrl,
-} from '@/features/talent';
+} from '@/features/social';
 import { cn } from '@/utils';
 
 type SocialInputProps = {

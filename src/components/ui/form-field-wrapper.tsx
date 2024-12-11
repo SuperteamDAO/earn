@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { cn } from '@/utils';
+
 import { RichEditor } from '../shared/RichEditor';
 import {
   FormControl,
@@ -22,6 +24,7 @@ export const FormFieldWrapper = ({
   isTokenInput = false,
   token,
   richEditorPlaceholder,
+  className,
 }: {
   control: any;
   name: string;
@@ -33,13 +36,14 @@ export const FormFieldWrapper = ({
   isTokenInput?: boolean;
   token?: string;
   richEditorPlaceholder?: string;
+  className?: string;
 }) => {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col gap-2">
+        <FormItem className={cn('flex flex-col gap-2', className)}>
           <div>
             {label && <FormLabel isRequired={isRequired}>{label}</FormLabel>}
             {description && <FormDescription>{description}</FormDescription>}
@@ -64,7 +68,7 @@ export const FormFieldWrapper = ({
                 React.cloneElement(children as React.ReactElement, { ...field })
               )}
             </FormControl>
-            <FormMessage />
+            <FormMessage className="pt-1" />
           </div>
         </FormItem>
       )}

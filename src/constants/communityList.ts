@@ -2,7 +2,7 @@ import { Superteams } from './Superteam';
 
 const superteams = Superteams.map((team) => team.name);
 
-export const CommunityList: string[] = [
+export const CommunityList = [
   ...superteams,
   'SuperWomenDao',
   'LamportDAO',

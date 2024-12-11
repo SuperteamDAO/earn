@@ -168,66 +168,66 @@ export default function SponsorListings() {
     <SponsorLayout>
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <div className="mb-4 flex w-full justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-sm tracking-tighter text-slate-500">
-            Filter by status
-          </span>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                className="border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
-                variant="outline"
-              >
-                <span
-                  className={cn(
-                    'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-center text-[11px] capitalize',
-                    getColorStyles(selectedStatus!).color,
-                    getColorStyles(selectedStatus!).bgColor,
-                  )}
-                >
-                  {selectedStatus || 'Everything'}
-                </span>
-                <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent className="border-slate-300">
-              <DropdownMenuItem
-                className="focus:bg-slate-100"
-                onClick={() => handleStatusFilterChange(null)}
-              >
-                <span
-                  className={cn(
-                    'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-center text-[11px] capitalize',
-                    getColorStyles('Everything').color,
-                    getColorStyles('Everything').bgColor,
-                  )}
-                >
-                  Everything
-                </span>
-              </DropdownMenuItem>
-
-              {ALL_FILTERS.map((status) => (
-                <DropdownMenuItem
-                  key={status}
-                  className="focus:bg-slate-100"
-                  onClick={() => handleStatusFilterChange(status)}
+        <div className="flex w-full items-center justify-between gap-2">
+          <div>
+            <span className="mr-2 text-sm text-slate-500">
+              Filter by status
+            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  className="border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                  variant="outline"
                 >
                   <span
                     className={cn(
-                      'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-center text-[11px] font-medium capitalize',
-                      getColorStyles(status).color,
-                      getColorStyles(status).bgColor,
+                      'inline-flex items-center whitespace-nowrap rounded-full px-3 text-center text-[11px] capitalize',
+                      getColorStyles(selectedStatus!).color,
+                      getColorStyles(selectedStatus!).bgColor,
                     )}
                   >
-                    {status}
+                    {selectedStatus || 'Everything'}
+                  </span>
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent className="border-slate-300">
+                <DropdownMenuItem
+                  className="focus:bg-slate-100"
+                  onClick={() => handleStatusFilterChange(null)}
+                >
+                  <span
+                    className={cn(
+                      'inline-flex items-center whitespace-nowrap rounded-full px-3 text-center text-[11px] capitalize',
+                      getColorStyles('Everything').color,
+                      getColorStyles('Everything').bgColor,
+                    )}
+                  >
+                    Everything
                   </span>
                 </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
 
+                {ALL_FILTERS.map((status) => (
+                  <DropdownMenuItem
+                    key={status}
+                    className="focus:bg-slate-100"
+                    onClick={() => handleStatusFilterChange(status)}
+                  >
+                    <span
+                      className={cn(
+                        'inline-flex items-center whitespace-nowrap rounded-full px-3 text-center text-[11px] font-medium capitalize',
+                        getColorStyles(status).color,
+                        getColorStyles(status).bgColor,
+                      )}
+                    >
+                      {status}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <div className="relative ml-4 w-64">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input

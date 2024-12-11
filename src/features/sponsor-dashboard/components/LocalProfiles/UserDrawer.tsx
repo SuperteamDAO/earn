@@ -6,7 +6,8 @@ import { type ReactNode } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { skillMap } from '@/constants/skillMap';
-import { EarnAvatar, Telegram, Twitter, Website } from '@/features/talent';
+import { Telegram, Twitter, Website } from '@/features/social';
+import { EarnAvatar } from '@/features/talent';
 
 import { type LocalProfile } from '../../queries';
 

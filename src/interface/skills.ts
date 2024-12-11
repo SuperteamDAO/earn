@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-import { type MultiSelectOptions } from '@/constants';
-
 const skillSubSkillMap = {
   Frontend: [
     { label: 'React', value: 'React' },
@@ -91,13 +89,6 @@ const skillSubSkillMap = {
   ],
 } as const;
 
-const MainSkills: MultiSelectOptions[] = Object.keys(skillSubSkillMap).map(
-  (skill) => ({
-    label: skill,
-    value: skill,
-  }),
-);
-
 type ParentSkills = keyof typeof skillSubSkillMap;
 type SubSkillsType = (typeof skillSubSkillMap)[ParentSkills][number]['value'];
 
@@ -111,9 +102,12 @@ type SkillMap = {
   color: string;
 };
 
-const allSubSkills = Object.values(skillSubSkillMap).flatMap((skills) =>
+export const allSubSkills = Object.values(skillSubSkillMap).flatMap((skills) =>
   skills.map((s) => s.value),
-);
+) as [SubSkillsType, ...SubSkillsType[]];
+export const allSkills = Object.keys(skillSubSkillMap) as [
+  keyof typeof skillSubSkillMap,
+];
 
 const skillSchema = z
   .object({
@@ -142,4 +136,4 @@ export const skillsArraySchema = z
   }, 'Duplicate parent skills are not allowed');
 
 export type { ParentSkills, SkillMap, Skills, SubSkillsType };
-export { MainSkills, skillSubSkillMap };
+export { skillSubSkillMap };

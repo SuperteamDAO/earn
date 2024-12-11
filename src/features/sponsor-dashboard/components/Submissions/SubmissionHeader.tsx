@@ -213,7 +213,7 @@ ${socialListingLink('twitter')}
           <p className="text-slate-500">Status</p>
           <p
             className={cn(
-              'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium',
+              'mt-2 inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium',
               getColorStyles(bountyStatus).color,
               getColorStyles(bountyStatus).bgColor,
             )}

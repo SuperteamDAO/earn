@@ -12,13 +12,13 @@ export const IndustryList = [
   'Wallets and Payments',
   'NFTs',
   'Gaming',
-];
+] as const;
 
 export const web3Exp = [
   'New to crypto',
   'Occasionally contributing',
   'Contributing regularly',
-];
+] as const;
 
 export const workExp = [
   '0 Years',
@@ -26,13 +26,13 @@ export const workExp = [
   '2 to 5 Years',
   '5 to 9 Years',
   '>9 Years',
-];
+] as const;
 export const workType = [
   'Not looking for Work',
   'Freelance',
   'Fulltime',
   'Internship',
-];
+] as const;
 
 export const MAX_COMMENT_SUGGESTIONS = 5;
 
@@ -50,3 +50,5 @@ export const PDTG = 'https://t.me/pratikdholani/';
 export const ABTG = 'https://t.me/abhwshek/';
 
 export const MAX_REWARD = 100_000_000_000_000; // 100 Trillion
+
+export const USERNAME_PATTERN = /^[a-z0-9_-]+$/;

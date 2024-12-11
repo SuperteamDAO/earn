@@ -1,18 +1,19 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import { Loader2, Pencil, Plus, Trash } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
-import { type Dispatch, type SetStateAction, useState } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { FormControl } from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
+import { extractSocialUsername, SocialInput } from '@/features/social';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';
 
+import { type YourLinksFormData, yourLinksSchema } from '../../schema';
 import { AddProject } from '../AddProject';
-import { SocialInput } from '../SocialInput';
 import type { UserStoreType } from './types';
 
 interface Props {
@@ -21,7 +22,7 @@ interface Props {
 }
 
 export function YourLinks({ useFormStore }: Props) {
-  const { refetchUser } = useUser();
+  const { refetchUser, user } = useUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
   const [pow, setPow] = useState<PoW[]>([]);
@@ -55,7 +56,7 @@ export function YourLinks({ useFormStore }: Props) {
         ...socials,
       };
       // eslint-disable-next-line unused-imports/no-unused-vars
-      const { subSkills, ...finalOptions } = updateOptions;
+      const { ...finalOptions } = updateOptions;
 
       await axios.post('/api/user/complete-profile/', finalOptions);
       await axios.post('/api/email/manual/welcome-talent/');
@@ -65,25 +66,33 @@ export function YourLinks({ useFormStore }: Props) {
     }
   };
 
-  const { register, handleSubmit, watch } = useForm();
+  const yourLinksForm = useForm<YourLinksFormData>({
+    resolver: zodResolver(yourLinksSchema),
+  });
+  const { handleSubmit, control, setValue, reset } = yourLinksForm;
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        discord: user.discord || undefined,
+        github: user.github
+          ? extractSocialUsername('github', user.github) || undefined
+          : undefined,
+        twitter: user.twitter
+          ? extractSocialUsername('twitter', user.twitter) || undefined
+          : undefined,
+        linkedin: user.linkedin
+          ? extractSocialUsername('linkedin', user.linkedin) || undefined
+          : undefined,
+        telegram: user.telegram
+          ? extractSocialUsername('telegram', user.telegram) || undefined
+          : undefined,
+        website: user.website || undefined,
+      });
+    }
+  }, [user, setValue]);
 
   const onSubmit = (data: any) => {
-    const socialFields = [
-      'twitter',
-      'github',
-      'linkedin',
-      'website',
-      'telegram',
-    ];
-    const filledSocials = socialFields.filter((field) => data[field]);
-
-    if (filledSocials.length === 0) {
-      toast.error(
-        'At least one additional social link (apart from Discord) is required',
-      );
-      return;
-    }
-
     posthog.capture('finish profile_talent');
     uploadProfile(
       {
@@ -100,67 +109,70 @@ export function YourLinks({ useFormStore }: Props) {
   return (
     <>
       <div className="mb-[4rem] w-full">
-        <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
-          <FormControl className="mb-5 w-full">
-            <SocialInput watch={watch} register={register} />
-            <p className="font-medium text-slate-500">Other Proof of Work</p>
-            <p className="mb-3 text-slate-400">
-              Adding more PoW increases your chance of getting work
-            </p>
-            <div>
-              {pow.map((data, idx) => (
-                <div
-                  className="mb-1.5 mt-2 flex items-center rounded-md border border-gray-300 px-[1rem] py-[0.5rem] text-slate-500"
-                  key={data.id}
-                >
-                  <p className="w-full text-xs text-gray-800">{data.title}</p>
-                  <div className="flex items-center justify-center gap-3.5">
-                    <Pencil
-                      onClick={() => {
-                        setSelectedProject(idx);
-                        onOpen();
-                      }}
-                      className="h-3.5 w-3.5 cursor-pointer"
-                    />
-                    <Trash
-                      onClick={() => {
-                        setPow((prevPow) =>
-                          prevPow.filter((_ele, id) => idx !== id),
-                        );
-                      }}
-                      className="h-3.5 w-3.5 cursor-pointer"
-                    />
+        <Form {...yourLinksForm}>
+          <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-5 w-full">
+              <SocialInput control={control} />
+              <p className="font-medium text-slate-500">Other Proof of Work</p>
+              <p className="mb-3 text-slate-400">
+                Adding more PoW increases your chance of getting work
+              </p>
+              <div>
+                {pow.map((data, idx) => (
+                  <div
+                    className="mb-1.5 mt-2 flex items-center rounded-md border border-gray-300 px-[1rem] py-[0.5rem] text-slate-500"
+                    key={data.id}
+                  >
+                    <p className="w-full text-xs text-gray-800">{data.title}</p>
+                    <div className="flex items-center justify-center gap-3.5">
+                      <Pencil
+                        onClick={() => {
+                          setSelectedProject(idx);
+                          onOpen();
+                        }}
+                        className="h-3.5 w-3.5 cursor-pointer"
+                      />
+                      <Trash
+                        onClick={() => {
+                          setPow((prevPow) =>
+                            prevPow.filter((_ele, id) => idx !== id),
+                          );
+                        }}
+                        className="h-3.5 w-3.5 cursor-pointer"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-            <Button
-              className="mb-8 w-full"
-              onClick={() => {
-                onOpen();
-              }}
-              variant="outline"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add Project
-            </Button>
+                ))}
+              </div>
+              <Button
+                className="mb-8 w-full bg-transparent"
+                onClick={() => {
+                  onOpen();
+                }}
+                variant="outline"
+                type="button"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Project
+              </Button>
 
-            <Button
-              className="ph-no-capture h-[50px] w-full bg-[rgb(101,98,255)] text-white"
-              disabled={isLoading}
-              type="submit"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                'Finish Profile'
-              )}
-            </Button>
-          </FormControl>
-        </form>
+              <Button
+                className="ph-no-capture h-[50px] w-full bg-[rgb(101,98,255)] text-white"
+                disabled={isLoading}
+                type="submit"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  'Finish Profile'
+                )}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </div>
       <AddProject
         key={`${pow.length}project`}

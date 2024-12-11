@@ -102,7 +102,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         )}
       </div>
       <Textarea
-        className="resize-vertical whitespace-pre-wrap border-none p-2 text-sm leading-8 text-slate-400 placeholder:leading-8 placeholder:text-slate-400"
+        className="whitespace-pre-wrap border-none text-sm text-slate-400 placeholder:text-slate-400"
         key={submissionId}
         onChange={handleChange}
         onKeyDown={handleKeyDown}

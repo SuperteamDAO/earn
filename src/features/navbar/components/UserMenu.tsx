@@ -85,7 +85,10 @@ export function UserMenu() {
           </div>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="ph-no-capture" align="start">
+        <DropdownMenuContent
+          className="ph-no-capture font-medium"
+          align="start"
+        >
           {user?.isTalentFilled && (
             <>
               <DropdownMenuItem asChild>
@@ -94,7 +97,7 @@ export function UserMenu() {
                   onClick={() => {
                     posthog.capture('profile_user menu');
                   }}
-                  className="text-sm font-semibold text-slate-500"
+                  className="text-sm text-slate-500"
                 >
                   Profile
                 </Link>
@@ -105,7 +108,7 @@ export function UserMenu() {
                   onClick={() => {
                     posthog.capture('edit profile_user menu');
                   }}
-                  className="text-sm font-semibold text-slate-500"
+                  className="text-sm text-slate-500"
                 >
                   Edit Profile
                 </Link>
@@ -120,7 +123,7 @@ export function UserMenu() {
                 onClick={() => {
                   posthog.capture('sponsor dashboard_user menu');
                 }}
-                className="hidden text-sm font-semibold text-slate-500 sm:block"
+                className="hidden text-sm text-slate-500 sm:block"
               >
                 Sponsor Dashboard
               </Link>
@@ -135,10 +138,7 @@ export function UserMenu() {
                 God Mode
               </DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link
-                  href="/new/sponsor"
-                  className="text-sm font-semibold text-slate-500"
-                >
+                <Link href="/new/sponsor" className="text-sm text-slate-500">
                   Create New Sponsor
                 </Link>
               </DropdownMenuItem>
@@ -152,7 +152,7 @@ export function UserMenu() {
                 onOpen();
                 posthog.capture('email preferences_user menu');
               }}
-              className="text-sm font-semibold text-slate-500"
+              className="text-sm text-slate-500"
             >
               Email Preferences
             </DropdownMenuItem>
@@ -163,7 +163,7 @@ export function UserMenu() {
               window.open('mailto:support@superteamearn.com', '_blank');
               posthog.capture('get help_user menu');
             }}
-            className="text-sm font-semibold text-slate-500"
+            className="text-sm text-slate-500"
           >
             Get Help
           </DropdownMenuItem>
@@ -173,7 +173,7 @@ export function UserMenu() {
               posthog.capture('logout_user menu');
               logout();
             }}
-            className="text-sm font-semibold text-red-500"
+            className="text-sm text-red-500"
           >
             Logout
           </DropdownMenuItem>

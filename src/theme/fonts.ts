@@ -1,4 +1,4 @@
-import { Domine, Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 
 const fontSans = Inter({
   subsets: ['latin'],
@@ -8,16 +8,6 @@ const fontSans = Inter({
   fallback: ['Inter'],
   weight: 'variable',
   variable: '--font-sans',
-});
-
-const fontSerif = Domine({
-  subsets: ['latin'],
-  display: 'swap',
-  adjustFontFallback: true,
-  preload: false,
-  fallback: ['Times New Roman'],
-  weight: 'variable',
-  variable: '--font-serif',
 });
 
 const fontMono = JetBrains_Mono({
@@ -30,4 +20,4 @@ const fontMono = JetBrains_Mono({
   variable: '--font-mono',
 });
 
-export { fontMono, fontSans, fontSerif };
+export { fontMono, fontSans };

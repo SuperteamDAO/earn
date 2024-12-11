@@ -14,7 +14,7 @@ import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
 
 import { useUser } from '@/store/user';
-import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
+import { fontMono, fontSans } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
 
 const SolanaWalletProvider = dynamic(
@@ -73,9 +73,7 @@ function MyApp({ Component, pageProps }: any) {
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
 
   return (
-    <main
-      className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} font-sans antialiased`}
-    >
+    <>
       <PagesTopLoader color="#6366F1" showSpinner={false} />
       {isDashboardRoute ? (
         <SolanaWalletProvider>
@@ -85,13 +83,23 @@ function MyApp({ Component, pageProps }: any) {
         <Component {...pageProps} key={router.asPath} />
       )}
       <Toaster position="bottom-right" richColors />
-    </main>
+    </>
   );
 }
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
+      <style jsx global>{`
+        :root {
+          --font-sans: ${fontSans.style.fontFamily};
+          --font-mono: ${fontMono.style.fontFamily};
+        }
+        body {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+      `}</style>
       <PostHogProvider client={posthog}>
         <SessionProvider session={session}>
           <MyApp Component={Component} pageProps={pageProps} />
