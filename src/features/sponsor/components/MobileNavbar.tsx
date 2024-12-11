@@ -72,7 +72,7 @@ export const MobileNavbar = () => {
                 href="/new/sponsor/"
                 onClick={() => posthog.capture('get started_sponsor navbar')}
               >
-                <Button variant="ghost" className="text-base text-purple-600">
+                <Button variant="ghost" className="text-base text-brand-purple">
                   Get Started
                 </Button>
               </Link>
@@ -86,7 +86,7 @@ export const MobileNavbar = () => {
                   posthog.capture('create a listing_sponsor navbar')
                 }
               >
-                <Button variant="ghost" className="text-base text-purple-600">
+                <Button variant="ghost" className="text-base text-brand-purple">
                   Create a Listing
                 </Button>
               </Link>
@@ -150,7 +150,7 @@ export const MobileNavbar = () => {
           href="/new/sponsor/"
           onClick={() => posthog.capture('login_navbar')}
         >
-          <Button variant="ghost" className="mr-2 text-base text-purple-600">
+          <Button variant="ghost" className="mr-2 text-base text-brand-purple">
             Login
           </Button>
         </Link>

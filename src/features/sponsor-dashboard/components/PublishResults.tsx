@@ -1,23 +1,18 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
 import axios from 'axios';
 import { useAtomValue } from 'jotai';
+import { AlertCircle, CheckCircle2, X } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   selectedSubmissionAtom,
   useToggleWinner,
@@ -144,65 +139,66 @@ export function PublishResults({
   }, [isWinnersAnnounced]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Publish Results</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Publish Results</DialogTitle>
+          <button
+            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 disabled:pointer-events-none"
+            onClick={onClose}
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </button>
+        </DialogHeader>
+
+        <div className="space-y-4">
           {isWinnersAnnounced && (
-            <Alert
-              alignItems="center"
-              justifyContent="center"
-              flexDir="column"
-              py={4}
-              textAlign="center"
-              status="success"
-              variant="subtle"
-            >
-              <AlertIcon boxSize="40px" mr={0} />
-              <AlertTitle mt={4} mb={1} fontSize="lg">
+            <Alert className="flex-col items-center justify-center py-4 text-center">
+              <CheckCircle2 className="mb-4 h-10 w-10" />
+              <AlertTitle className="mb-1 text-lg">
                 Results Announced Successfully!
               </AlertTitle>
-              <AlertDescription maxW="sm">
+              <AlertDescription className="max-w-sm">
                 The results have been announced publicly. Everyone can view the
                 results on the Bounty&apos;s page.
                 <br />
                 <br />
                 {!bounty?.isWinnersAnnounced && (
-                  <Text as="span" color="brand.slate.500" fontSize="sm">
-                    Refreshing...
-                  </Text>
+                  <span className="text-sm text-slate-500">Refreshing...</span>
                 )}
               </AlertDescription>
             </Alert>
           )}
+
           {!isWinnersAnnounced &&
             rewards &&
             totalWinners === rewards &&
             alertType !== 'error' && (
-              <Text mb={4}>
+              <p className="mb-4">
                 Publishing the results of this listing will make the results
                 public for everyone to see!
                 <br />
                 YOU CAN&apos;T GO BACK ONCE YOU PUBLISH THE RESULTS!
-              </Text>
+              </p>
             )}
+
           {!isWinnersAnnounced && alertTitle && alertDescription && (
-            <Alert status={alertType}>
-              <AlertIcon boxSize={8} />
+            <Alert variant={alertType === 'error' ? 'destructive' : 'default'}>
+              <AlertCircle className="h-8 w-8" />
               <div>
                 <AlertTitle>{alertTitle}</AlertTitle>
                 <AlertDescription>{alertDescription}</AlertDescription>
               </div>
             </Alert>
           )}
+
           {!isWinnersAnnounced &&
             rewards &&
             totalWinners === rewards &&
             !isDeadlinePassed && (
-              <Alert mt={4} status="error">
-                <AlertIcon boxSize={8} />
+              <Alert className="mt-4" variant="destructive">
+                <AlertCircle className="h-8 w-8" />
                 <div>
                   <AlertTitle>Listing still in progress!</AlertTitle>
                   <AlertDescription>
@@ -212,31 +208,35 @@ export function PublishResults({
                 </div>
               </Alert>
             )}
-        </ModalBody>
-        <ModalFooter>
+        </div>
+
+        <DialogFooter>
           {!isWinnersAnnounced && (
-            <>
+            <div className="flex gap-4">
               <Button onClick={onClose} variant="ghost">
                 Close
               </Button>
               <Button
                 className="ph-no-capture"
-                ml={4}
-                isDisabled={!isWinnersAllSelected || alertType === 'error'}
-                isLoading={isPublishingResults}
-                loadingText={'Publishing...'}
+                disabled={!isWinnersAllSelected || alertType === 'error'}
                 onClick={() => {
                   posthog.capture('announce winners_sponsor');
                   publishResults();
                 }}
-                variant="solid"
               >
-                Publish
+                {isPublishingResults ? (
+                  <>
+                    <span className="loading loading-spinner" />
+                    Publishing...
+                  </>
+                ) : (
+                  'Publish'
+                )}
               </Button>
-            </>
+            </div>
           )}
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

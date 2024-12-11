@@ -62,7 +62,7 @@ export function Features({ showVideo }: Props) {
       className="relative my-32 w-full px-[1.875rem] lg:px-[7rem] xl:px-[11rem]"
       id="features"
     >
-      <div className="absolute top-0 h-[17.8rem] w-full bg-purple-600 md:h-[36.96rem]" />
+      <div className="absolute top-0 h-[17.8rem] w-full bg-brand-purple md:h-[36.96rem]" />
 
       <div
         className={cn(
@@ -93,7 +93,7 @@ export function Features({ showVideo }: Props) {
           showVideo();
         }}
       >
-        <div className="absolute inset-0 m-auto flex h-fit w-fit cursor-pointer items-center justify-center rounded-full bg-purple-600 p-3">
+        <div className="absolute inset-0 m-auto flex h-fit w-fit cursor-pointer items-center justify-center rounded-full bg-brand-purple p-3">
           <svg
             width="34"
             height="34"

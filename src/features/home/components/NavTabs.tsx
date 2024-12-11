@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo } from 'react';
@@ -25,7 +25,7 @@ function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
   const isActive = router.asPath === href || altActive?.includes(router.asPath);
 
   return (
-    <NextLink
+    <Link
       href={href}
       className={cn(
         'ph-no-capture flex items-center gap-2 px-3 py-0 sm:py-0.5',
@@ -36,7 +36,7 @@ function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
       onClick={() => posthog.capture(phEvent)}
     >
       {children}
-    </NextLink>
+    </Link>
   );
 }
 

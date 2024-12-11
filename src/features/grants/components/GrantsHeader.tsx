@@ -67,7 +67,7 @@ export const GrantsHeader = ({
           />
           <div className="flex flex-col items-start gap-2">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-xl font-bold tracking-[-0.5px] text-brand-slate-700">
+              <h1 className="text-xl font-bold tracking-[-0.5px] text-slate-700">
                 {title}
               </h1>
             </div>

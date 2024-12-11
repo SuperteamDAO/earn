@@ -31,7 +31,7 @@ export function StepOne() {
         </p>
       </div>
 
-      <p className="self-end rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-purple-600">
+      <p className="self-end rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-brand-purple">
         Create Profile
       </p>
     </div>

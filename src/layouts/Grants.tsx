@@ -115,7 +115,7 @@ export function GrantPageLayout({
                               )[0]?.icon ?? '/assets/dollar.svg'
                             }
                           />
-                          <p className="text-lg font-semibold text-brand-slate-700 md:text-xl">
+                          <p className="text-lg font-semibold text-slate-700 md:text-xl">
                             {grantAmount({
                               maxReward: grant.maxReward!,
                               minReward: grant.minReward!,
@@ -140,7 +140,7 @@ export function GrantPageLayout({
                           <div className="flex w-fit flex-col">
                             <div className="flex w-fit">
                               <TimeToPayIcon />
-                              <p className="text-lg font-medium text-brand-slate-700 md:text-xl">
+                              <p className="text-lg font-medium text-slate-700 md:text-xl">
                                 {grant?.avgResponseTime}
                               </p>
                             </div>

@@ -1,25 +1,28 @@
-import { Button, type ButtonProps } from '@chakra-ui/react';
 import React from 'react';
 
+import { Button } from '@/components/ui/button';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { cn } from '@/utils';
 
 import { RecordPaymentModal } from './Modals/RecordPaymentModal';
 
-export const RecordPaymentButton = ({
-  applicationId,
-  buttonStyle,
-  approvedAmount,
-  token,
-  totalPaid,
-  onPaymentRecorded,
-}: {
+interface RecordPaymentButtonProps {
   applicationId: string;
-  buttonStyle?: ButtonProps;
+  className?: string;
   approvedAmount: number;
   totalPaid: number;
   token: string;
   onPaymentRecorded: (updatedApplication: any) => void;
-}) => {
+}
+
+export const RecordPaymentButton = ({
+  applicationId,
+  className,
+  approvedAmount,
+  token,
+  totalPaid,
+  onPaymentRecorded,
+}: RecordPaymentButtonProps) => {
   const {
     isOpen: recordPaymentIsOpen,
     onOpen: recordPaymentOnOpen,
@@ -37,7 +40,10 @@ export const RecordPaymentButton = ({
         token={token}
         onPaymentRecorded={onPaymentRecorded}
       />
-      <Button {...buttonStyle} onClick={() => recordPaymentOnOpen()}>
+      <Button
+        className={cn('bg-brand-purple', className)}
+        onClick={() => recordPaymentOnOpen()}
+      >
         Record Payment
       </Button>
     </>

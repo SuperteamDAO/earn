@@ -1,4 +1,3 @@
-// importing localFont from a local file as Google imported fonts do not enable font-feature-settings. Reference: https://github.com/vercel/next.js/discussions/52456
 import { Domine, Inter, JetBrains_Mono } from 'next/font/google';
 
 const fontSans = Inter({
@@ -8,15 +7,17 @@ const fontSans = Inter({
   preload: true,
   fallback: ['Inter'],
   weight: 'variable',
+  variable: '--font-sans',
 });
 
 const fontSerif = Domine({
   subsets: ['latin'],
   display: 'swap',
   adjustFontFallback: true,
-  preload: true,
-  // fallback: ['Times New Roman'],
+  preload: false,
+  fallback: ['Times New Roman'],
   weight: 'variable',
+  variable: '--font-serif',
 });
 
 const fontMono = JetBrains_Mono({
@@ -26,6 +27,7 @@ const fontMono = JetBrains_Mono({
   preload: false,
   fallback: ['Courier New'],
   weight: 'variable',
+  variable: '--font-mono',
 });
 
 export { fontMono, fontSans, fontSerif };

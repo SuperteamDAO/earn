@@ -34,7 +34,7 @@ export const SelectBox = ({
         <SelectTrigger
           className={cn(
             'mt-1.5 border-slate-300',
-            'focus:border-purple-600 focus:ring-purple-600',
+            'focus:border-brand-purple focus:ring-brand-purple',
             watchValue?.length === 0 ? 'text-slate-300' : 'text-slate-900',
           )}
         >

@@ -234,7 +234,7 @@ export const Comment = ({
             {replies?.length > 0 && (
               <button
                 onClick={() => setShowReplies((prev) => !prev)}
-                className="relative -left-3 flex items-center text-xs font-medium text-indigo-600 hover:text-indigo-700 md:text-sm"
+                className="relative -left-3 flex items-center text-xs font-medium text-brand-purple hover:text-brand-purple-dark md:text-sm"
               >
                 <ChevronDown className="mr-1 h-4 w-4" />
                 {replies?.length} {replies?.length === 1 ? 'Reply' : 'Replies'}

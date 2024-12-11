@@ -1,6 +1,6 @@
 import { ArrowRight, Info } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
@@ -290,7 +290,7 @@ export const ListingTabs = ({
         </div>
         {showViewAll && (
           <div className="ph-no-capture hidden sm:flex">
-            <NextLink href={viewAllLink!}>
+            <Link href={viewAllLink!}>
               <Button
                 className="px-2 py-1 text-xs text-slate-400 md:text-sm"
                 onClick={() => posthog.capture('viewall top_listngs')}
@@ -299,7 +299,7 @@ export const ListingTabs = ({
               >
                 View All
               </Button>
-            </NextLink>
+            </Link>
           </div>
         )}
       </div>
@@ -307,7 +307,7 @@ export const ListingTabs = ({
       {tabs.map((tab) => tab.id === activeTab && tab.content)}
 
       {showViewAll && (
-        <NextLink className="ph-no-capture" href={viewAllLink!}>
+        <Link className="ph-no-capture" href={viewAllLink!}>
           <Button
             className="my-8 w-full border-slate-300 py-5 text-slate-400"
             onClick={() => posthog.capture('viewall bottom_listings')}
@@ -317,7 +317,7 @@ export const ListingTabs = ({
             View All
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
-        </NextLink>
+        </Link>
       )}
     </div>
   );

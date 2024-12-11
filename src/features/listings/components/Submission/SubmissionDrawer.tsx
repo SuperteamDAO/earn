@@ -388,7 +388,7 @@ export const SubmissionDrawer = ({
                     'Submit'
                   )}
                 </Button>
-                <p className="mt-2 text-center text-sm text-brand-slate-400">
+                <p className="mt-2 text-center text-sm text-slate-400">
                   By submitting/applying to this listing, you agree to our{' '}
                   <button
                     onClick={() => setIsTOSModalOpen(true)}

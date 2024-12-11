@@ -53,7 +53,7 @@ export function StepTwo() {
           <ExternalImage src="/landingsponsor/icons/usdc.svg" alt="usdc icon" />
           <p className="font-semibold text-slate-800">$1,000</p>
         </div>
-        <p className="rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-purple-600">
+        <p className="rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-brand-purple">
           Post Bounty
         </p>
       </div>

@@ -1,14 +1,22 @@
-import { ArrowForwardIcon, CopyIcon, ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Link, Text, Tooltip } from '@chakra-ui/react';
+import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useAtom } from 'jotai';
-import NextLink from 'next/link';
+import { ArrowRight, Copy, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import type { Listing, Rewards } from '@/features/listings';
 import { EarnAvatar } from '@/features/talent';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
@@ -53,104 +61,80 @@ export const SubmissionPanel = ({
 
   return (
     <>
-      <Box pos="sticky" top={'3rem'} w="100%">
+      <div className="sticky top-[3rem] w-full">
         {submissions.length ? (
           <>
-            <Box
-              py={1}
-              borderBottom={'1px'}
-              borderBottomColor={'brand.slate.200'}
-              bgColor={'white'}
-            >
-              <Flex
-                align="center"
-                justify={'space-between'}
-                w="full"
-                px={4}
-                pt={3}
-              >
-                <Flex align="center" gap={2} w="full">
+            <div className="border-b border-slate-200 bg-white py-1">
+              <div className="flex w-full items-center justify-between px-4 pt-3">
+                <div className="flex w-full items-center gap-2">
                   <EarnAvatar
                     size="40px"
                     id={selectedSubmission?.user?.id}
                     avatar={selectedSubmission?.user?.photo || undefined}
                   />
                   <div>
-                    <Text
-                      w="100%"
-                      color="brand.slate.900"
-                      fontSize="md"
-                      fontWeight={500}
-                      whiteSpace={'nowrap'}
-                    >
+                    <p className="w-full whitespace-nowrap font-medium text-slate-900">
                       {`${selectedSubmission?.user?.firstName}'s Submission`}
-                    </Text>
+                    </p>
                     <Link
-                      as={NextLink}
-                      w="100%"
-                      color="brand.purple"
-                      fontSize="xs"
-                      fontWeight={500}
-                      whiteSpace={'nowrap'}
+                      className="w-full whitespace-nowrap text-xs font-medium text-brand-purple"
                       href={`/t/${selectedSubmission?.user?.username}`}
                     >
-                      View Profile <ArrowForwardIcon mb="0.5" />
+                      View Profile{' '}
+                      <ArrowRight className="-mb-0.5 ml-1 inline-block h-4 w-4" />
                     </Link>
                   </div>
-                </Flex>
-                <Flex
-                  className="ph-no-capture"
-                  align="center"
-                  justify={'flex-end'}
-                  gap={2}
-                  w="full"
-                >
+                </div>
+                <div className="ph-no-capture flex w-full items-center justify-end gap-2">
                   {selectedSubmission?.isWinner &&
                     selectedSubmission?.winnerPosition &&
                     !selectedSubmission?.isPaid &&
                     (bounty?.isWinnersAnnounced ? (
                       <PayoutButton bounty={bounty} />
                     ) : (
-                      <>
-                        <Tooltip
-                          bg={'brand.purple'}
-                          hasArrow={true}
-                          isDisabled={!!bounty?.isWinnersAnnounced}
-                          label="Please announce the winners before you paying out the winners"
-                          placement="top"
-                        >
-                          <Button
-                            mr={4}
-                            isDisabled={!bounty?.isWinnersAnnounced}
-                            size="sm"
-                            variant="solid"
-                          >
-                            Pay {bounty?.token}{' '}
-                            {!!bounty?.rewards &&
-                              bounty?.rewards[
-                                selectedSubmission?.winnerPosition as keyof Rewards
-                              ]}
-                          </Button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              className="mr-4"
+                              disabled={!bounty?.isWinnersAnnounced}
+                              size="sm"
+                              variant="default"
+                            >
+                              Pay {bounty?.token}{' '}
+                              {!!bounty?.rewards &&
+                                bounty?.rewards[
+                                  selectedSubmission?.winnerPosition as keyof Rewards
+                                ]}
+                            </Button>
+                          </TooltipTrigger>
+                          {!bounty?.isWinnersAnnounced && (
+                            <TooltipContent sideOffset={5}>
+                              Please announce the winners before you paying out
+                              the winners
+                              <TooltipArrow />
+                            </TooltipContent>
+                          )}
                         </Tooltip>
-                      </>
+                      </TooltipProvider>
                     ))}
                   {<SelectLabel listingSlug={bounty?.slug!} />}
                   {selectedSubmission?.isWinner &&
                     selectedSubmission?.winnerPosition &&
                     selectedSubmission?.isPaid && (
                       <Button
-                        mr={4}
+                        className="mr-4"
                         onClick={() => {
                           window.open(
                             `https://solscan.io/tx/${selectedSubmission?.paymentDetails?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
                             '_blank',
                           );
                         }}
-                        rightIcon={<ExternalLinkIcon />}
-                        size="md"
+                        size="default"
                         variant="ghost"
                       >
                         View Payment Tx
+                        <ExternalLink className="ml-2 h-4 w-4" />
                       </Button>
                     )}
                   {!bounty?.isWinnersAnnounced && (
@@ -165,50 +149,44 @@ export const SubmissionPanel = ({
                         isHackathonPage={isHackathonPage}
                       />
                       {!isProject && (
-                        <Tooltip
-                          bg={'brand.purple'}
-                          hasArrow={true}
-                          isDisabled={!bounty?.isWinnersAnnounced}
-                          label="You cannot change the winners once the results are published!"
-                          placement="top"
-                        >
-                          <Button
-                            ml={4}
-                            _disabled={{
-                              bg: '#A1A1A1',
-                              cursor: 'not-allowed',
-                              _hover: {
-                                bg: '#A1A1A1',
-                              },
-                            }}
-                            isDisabled={
-                              !afterAnnounceDate ||
-                              isHackathonPage ||
-                              remainings?.podiums !== 0 ||
-                              remainings?.bonus !== 0
-                            }
-                            onClick={onWinnersAnnounceOpen}
-                            variant={'solid'}
-                          >
-                            Announce Winners
-                          </Button>
-                        </Tooltip>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                className={cn(
+                                  'ml-4',
+                                  'disabled:cursor-not-allowed disabled:bg-[#A1A1A1] disabled:hover:bg-[#A1A1A1]',
+                                )}
+                                disabled={
+                                  !afterAnnounceDate ||
+                                  isHackathonPage ||
+                                  remainings?.podiums !== 0 ||
+                                  remainings?.bonus !== 0
+                                }
+                                onClick={onWinnersAnnounceOpen}
+                                variant="default"
+                              >
+                                Announce Winners
+                              </Button>
+                            </TooltipTrigger>
+                            {bounty?.isWinnersAnnounced && (
+                              <TooltipContent sideOffset={5}>
+                                You cannot change the winners once the results
+                                are published!
+                                <TooltipArrow />
+                              </TooltipContent>
+                            )}
+                          </Tooltip>
+                        </TooltipProvider>
                       )}
                     </>
                   )}
-                </Flex>
-              </Flex>
+                </div>
+              </div>
               {!!remainings && !isProject && (
-                <Flex
-                  w="fit-content"
-                  ml="auto"
-                  px={4}
-                  py={1}
-                  fontSize={'xs'}
-                  fontStyle="italic"
-                >
+                <div className="ml-auto flex w-fit px-4 py-1 text-xs italic">
                   {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
-                    <Text color="#F55151">
+                    <p className="text-[#f55151]">
                       {remainings.podiums > 0 && (
                         <>
                           {remainings.podiums}{' '}
@@ -222,83 +200,83 @@ export const SubmissionPanel = ({
                         </>
                       )}
                       Remaining
-                    </Text>
+                    </p>
                   ) : (
-                    <Text color="#48CB6D">All winners selected</Text>
+                    <p className="text-[#48CB6D]">All winners selected</p>
                   )}
-                </Flex>
+                </div>
               )}
 
-              <Flex align="center" gap={5} px={5} py={2}>
+              <div className="flex items-center gap-5 px-5 py-2">
                 {selectedSubmission?.user?.email && (
-                  <Flex align="center" justify="start" gap={2} fontSize="sm">
+                  <div className="flex items-center justify-start gap-2 text-sm">
                     <MdOutlineMail color="#94A3B8" />
-                    <Link
-                      color="brand.slate.400"
+                    <a
                       href={`mailto:${selectedSubmission.user.email}`}
-                      isExternal
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-400 hover:text-slate-500"
                     >
                       {truncateString(selectedSubmission?.user?.email, 36)}
-                    </Link>
-                  </Flex>
+                    </a>
+                  </div>
                 )}
                 {selectedSubmission?.user?.publicKey && (
-                  <Flex
-                    align="center"
-                    justify="start"
-                    gap={2}
-                    fontSize="sm"
-                    whiteSpace={'nowrap'}
-                  >
+                  <div className="flex items-center justify-start gap-2 whitespace-nowrap text-sm">
                     <MdOutlineAccountBalanceWallet color="#94A3B8" />
-                    <Text color="brand.slate.400">
+                    <p className="text-slate-400">
                       {truncatePublicKey(
                         selectedSubmission?.user?.publicKey,
                         3,
                       )}
-                      <Tooltip label="Copy Wallet ID" placement="right">
-                        <CopyIcon
-                          cursor="pointer"
-                          ml={1}
-                          color="brand.slate.400"
-                          onClick={() =>
-                            navigator.clipboard.writeText(
-                              selectedSubmission?.user?.publicKey || '',
-                            )
-                          }
-                        />
-                      </Tooltip>
-                    </Text>
-                  </Flex>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Copy
+                              className="ml-1 h-4 w-4 cursor-pointer text-slate-400 hover:text-slate-500"
+                              onClick={() =>
+                                navigator.clipboard.writeText(
+                                  selectedSubmission?.user?.publicKey || '',
+                                )
+                              }
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent side="right">
+                            Copy Wallet ID
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </p>
+                  </div>
                 )}
                 {selectedSubmission?.user?.twitter && (
-                  <Flex align="center" justify="start" gap={2} fontSize="sm">
+                  <div className="flex items-center justify-start gap-2 text-sm">
                     <FaXTwitter color="#94A3B8" />
-
-                    <Link
-                      color="brand.slate.400"
+                    <a
                       href={selectedSubmission?.user?.twitter}
-                      isExternal
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-400 hover:text-slate-500"
                     >
                       {truncateString(selectedSubmission?.user?.twitter, 36)}
-                    </Link>
-                  </Flex>
+                    </a>
+                  </div>
                 )}
-              </Flex>
-            </Box>
+              </div>
+            </div>
             <Details bounty={bounty} />
           </>
         ) : (
-          <Box p={3}>
-            <Text color={'brand.slate.500'} fontSize={'xl'} fontWeight={500}>
+          <div className="p-3">
+            <p className="text-xl font-medium text-slate-500">
               No submissions found
-            </Text>
-            <Text color={'brand.slate.400'} fontSize={'sm'}>
+            </p>
+            <p className="text-sm text-slate-400">
               Try a different search query
-            </Text>
-          </Box>
+            </p>
+          </div>
         )}
-      </Box>
+      </div>
     </>
   );
 };

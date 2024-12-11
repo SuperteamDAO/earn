@@ -1,7 +1,7 @@
 import { useIsFetching } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronLeft, Eye, Loader2 } from 'lucide-react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useWatch } from 'react-hook-form';
@@ -45,7 +45,7 @@ export function Header() {
     <div className="hidden border-b bg-background md:block">
       <div className={cn('mx-auto flex w-full justify-between px-6 py-2')}>
         <div className="flex items-center gap-6">
-          <NextLink
+          <Link
             href="/"
             onClick={() => posthog.capture('homepage logo click_universal')}
             className="flex items-center gap-3 hover:no-underline"
@@ -57,12 +57,12 @@ export function Header() {
             />
             <Separator orientation="vertical" className="h-6 w-[3px]" />
             <span className="text-sm tracking-wider">SPONSORS</span>
-          </NextLink>
-          <NextLink href="/dashboard/listings">
+          </Link>
+          <Link href="/dashboard/listings">
             <Button variant="outline">
               <ChevronLeft /> Go Back
             </Button>
-          </NextLink>
+          </Link>
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-4 py-2">

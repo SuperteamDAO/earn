@@ -1,9 +1,9 @@
-import NextLink from 'next/link';
+import Link from 'next/link';
 import React from 'react';
 
 import { cn } from '@/utils';
 
-interface NavLinkProps extends React.ComponentPropsWithoutRef<typeof NextLink> {
+interface NavLinkProps extends React.ComponentPropsWithoutRef<typeof Link> {
   href: string;
   label: string | JSX.Element;
   isActive: boolean;
@@ -18,7 +18,7 @@ export const NavLink = ({
   ...props
 }: NavLinkProps) => {
   return (
-    <NextLink
+    <Link
       href={href}
       className={cn(
         'flex items-center py-2 font-medium',
@@ -33,6 +33,6 @@ export const NavLink = ({
       {...props}
     >
       {label}
-    </NextLink>
+    </Link>
   );
 };

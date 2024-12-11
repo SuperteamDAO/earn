@@ -885,7 +885,7 @@ function FAQs() {
               value={f.question}
               className="my-4 rounded-lg border shadow-md"
             >
-              <AccordionTrigger className="rounded px-4 py-3 text-left hover:bg-black/5 data-[state=open]:bg-black/5">
+              <AccordionTrigger className="rounded px-4 py-3 text-left data-[state=open]:bg-black/5 hover:bg-black/5">
                 <span className="flex-1 text-left text-sm sm:text-base">
                   {f.question}
                 </span>
@@ -970,7 +970,7 @@ const SubscribeHackathon = () => {
             className={cn(
               'ph-no-capture',
               isSubscribed
-                ? 'bg-purple-600 text-white hover:bg-purple-700'
+                ? 'bg-brand-purple text-white hover:bg-purple-700'
                 : 'bg-slate-100 text-slate-500 hover:bg-slate-200',
             )}
             aria-label="Notify"

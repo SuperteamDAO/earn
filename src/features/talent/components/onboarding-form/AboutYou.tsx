@@ -179,7 +179,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               className={cn(
                 'border-slate-300 text-gray-800',
                 'placeholder:text-slate-400',
-                'focus:border-purple-600 focus:ring-purple-600',
+                'focus:border-brand-purple focus:ring-brand-purple',
               )}
               placeholder="Username"
               {...register('username', { required: true })}
@@ -198,7 +198,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
             </FormLabel>
             <FormControl>
               <Input
-                className="border-slate-300 text-gray-800 placeholder:text-slate-400 focus:border-purple-600 focus:ring-purple-600"
+                className="border-slate-300 text-gray-800 placeholder:text-slate-400 focus:border-brand-purple focus:ring-brand-purple"
                 placeholder="First Name"
                 {...register('firstName', { required: true })}
                 maxLength={100}
@@ -212,7 +212,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
             </FormLabel>
             <FormControl>
               <Input
-                className="border-slate-300 text-gray-800 placeholder:text-slate-400 focus:border-purple-600 focus:ring-purple-600"
+                className="border-slate-300 text-gray-800 placeholder:text-slate-400 focus:border-brand-purple focus:ring-brand-purple"
                 placeholder="Last Name"
                 {...register('lastName', { required: true })}
                 maxLength={100}
@@ -231,7 +231,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
               className={cn(
                 'border-slate-300',
                 'text-slate-300',
-                'focus:border-purple-600 focus:ring-purple-600',
+                'focus:border-brand-purple focus:ring-brand-purple',
                 watch().location && 'text-gray-800',
               )}
             >
@@ -294,7 +294,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
           </FormDescription>
           <FormControl>
             <Input
-              className="border-slate-300 placeholder:text-slate-400 focus:border-purple-600 focus:ring-purple-600"
+              className="border-slate-300 placeholder:text-slate-400 focus:border-brand-purple focus:ring-brand-purple"
               autoComplete="off"
               placeholder="Enter your Solana wallet address"
               {...register('publicKey', {

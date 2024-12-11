@@ -1,6 +1,9 @@
-import { AccordionContent, AccordionTrigger } from '@radix-ui/react-accordion';
-
-import { Accordion, AccordionItem } from '@/components/ui/accordion';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { cn } from '@/utils';
 
 import { maxW } from '../utils';
@@ -65,7 +68,7 @@ export function FAQs() {
               key={faq.question}
               value={faq.question}
             >
-              <AccordionTrigger className="rounded py-3 hover:bg-black/5 data-[state=open]:bg-black/5">
+              <AccordionTrigger className="rounded py-3 data-[state=open]:bg-black/5 hover:bg-black/5">
                 <span className="flex-1 text-left">{faq.question}</span>
               </AccordionTrigger>
               <AccordionContent className="pb-4">

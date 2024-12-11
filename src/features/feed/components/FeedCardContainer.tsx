@@ -193,7 +193,7 @@ export const FeedCardContainer = ({
               >
                 <GoComment className="h-[19px] w-[19px] cursor-pointer text-slate-500 md:h-[21px] md:w-[21px]" />
                 {!!commentCount && (
-                  <p className="text-base font-medium text-brand-slate-500">
+                  <p className="text-base font-medium text-slate-500">
                     {commentCount}
                   </p>
                 )}

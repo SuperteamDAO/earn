@@ -1,4 +1,3 @@
-import { ChakraProvider } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { Lock, Plus } from 'lucide-react';
 import Link from 'next/link';
@@ -25,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants';
@@ -42,19 +42,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
-import { fontSans } from '@/theme/fonts';
 import { cn } from '@/utils';
-
-import theme from '../config/chakra.config';
-
-// Chakra / Next/font don't play well in config.ts file for the theme. So we extend the theme here. (only the fonts)
-const extendThemeWithNextFonts = {
-  ...theme,
-  fonts: {
-    heading: fontSans.style.fontFamily,
-    body: fontSans.style.fontFamily,
-  },
-};
 
 interface LinkItemProps {
   name: string;
@@ -196,59 +184,56 @@ export function SponsorLayout({
     : user?.currentSponsor?.id;
 
   return (
-    <ChakraProvider theme={extendThemeWithNextFonts}>
-      <Default
-        className="bg-white"
-        meta={
-          <Meta
-            title="Superteam Earn | Work to Earn in Crypto"
-            description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-            canonical="https://earn.superteam.fun"
-          />
-        }
-      >
-        <FeatureModal isSponsorsRoute />
-        <SponsorInfoModal
-          onClose={onSponsorInfoModalClose}
-          isOpen={isSponsorInfoModalOpen}
+    <Default
+      className="bg-white"
+      meta={
+        <Meta
+          title="Superteam Earn | Work to Earn in Crypto"
+          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+          canonical="https://earn.superteam.fun"
         />
+      }
+    >
+      <FeatureModal isSponsorsRoute />
+      <SponsorInfoModal
+        onClose={onSponsorInfoModalClose}
+        isOpen={isSponsorInfoModalOpen}
+      />
 
-        <EntityNameModal
-          isOpen={isEntityModalOpen}
-          onClose={handleEntityClose}
-        />
-        <div className="flex min-h-[80vh] px-3 md:hidden">
-          <p className="pt-20 text-center text-xl font-medium text-slate-500">
-            The Sponsor Dashboard on Earn is not optimized for mobile yet.
-            Please use a desktop to check out the Sponsor Dashboard
-          </p>
-        </div>
-        <div className="hidden min-h-screen justify-start md:flex">
-          <div
-            className={cn(
-              'sponsor-dashboard-sidebar overflow-x-hidden whitespace-nowrap border-r border-black/20 bg-white pt-10',
-              'transition-all duration-300 ease-in-out',
-              isCollapsible ? 'fixed' : 'static',
-              isExpanded
-                ? ['w-72 min-w-72 max-w-72', 'expanded']
-                : ['w-20 min-w-20 max-w-20'],
-              'bottom-0 left-0 top-8 z-10',
-            )}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
-            {session?.user?.role === 'GOD' && (
-              <div className="px-4 pb-6">
-                {isHackathonRoute ? (
-                  <SelectHackathon isExpanded={isExpanded} />
-                ) : (
-                  <SelectSponsor isExpanded={isExpanded} />
-                )}
-              </div>
-            )}
-            <CreateListingModal isOpen={isOpen} onClose={onClose} />
-            <div className="flex items-center justify-between px-4 pb-6">
-              {!isHackathonRoute ? (
+      <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
+      <div className="flex min-h-[80vh] px-3 md:hidden">
+        <p className="pt-20 text-center text-xl font-medium text-slate-500">
+          The Sponsor Dashboard on Earn is not optimized for mobile yet. Please
+          use a desktop to check out the Sponsor Dashboard
+        </p>
+      </div>
+      <div className="hidden min-h-screen justify-start md:flex">
+        <div
+          className={cn(
+            'sponsor-dashboard-sidebar overflow-x-hidden whitespace-nowrap border-r border-black/20 bg-white pt-10',
+            'transition-all duration-300 ease-in-out',
+            isCollapsible ? 'fixed' : 'static',
+            isExpanded
+              ? ['w-72 min-w-72 max-w-72', 'expanded']
+              : ['w-20 min-w-20 max-w-20'],
+            'bottom-0 left-0 top-8 z-10',
+          )}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {session?.user?.role === 'GOD' && (
+            <div className="px-4 pb-6">
+              {isHackathonRoute ? (
+                <SelectHackathon isExpanded={isExpanded} />
+              ) : (
+                <SelectSponsor isExpanded={isExpanded} />
+              )}
+            </div>
+          )}
+          <CreateListingModal isOpen={isOpen} onClose={onClose} />
+          <div className="flex items-center justify-between px-4 pb-6">
+            {!isHackathonRoute ? (
+              <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -296,56 +281,56 @@ export function SponsorLayout({
                       </TooltipContent>
                     )}
                 </Tooltip>
-              ) : (
-                <Button
-                  asChild
-                  className={cn('py-5.5 w-full gap-2 text-base')}
-                  variant="default"
-                >
-                  <Link href="/dashboard/new/?type=hackathon">
-                    <Plus className="h-3 w-3" />
-                    <p
-                      className={cn(
-                        'nav-item-text transition-opacity duration-200 ease-in-out',
-                        isExpanded
-                          ? ['static ml-0 opacity-100']
-                          : ['absolute -ml-[9999px] opacity-0'],
-                      )}
-                    >
-                      Create New Track
-                    </p>
-                  </Link>
-                </Button>
-              )}
-            </div>
-            {LinkItems.map((link) => (
-              <NavItem
-                onClick={() => {
-                  if (link.posthog) posthog.capture(link.posthog);
-                }}
-                className="ph-no-capture"
-                key={link.name}
-                link={link.link}
-                icon={link.icon}
-                isExpanded={isExpanded}
+              </TooltipProvider>
+            ) : (
+              <Button
+                asChild
+                className={cn('py-5.5 w-full gap-2 text-base')}
+                variant="default"
               >
-                {link.name}
-              </NavItem>
-            ))}
+                <Link href="/dashboard/new/?type=hackathon">
+                  <Plus className="h-3 w-3" />
+                  <p
+                    className={cn(
+                      'nav-item-text transition-opacity duration-200 ease-in-out',
+                      isExpanded
+                        ? ['static ml-0 opacity-100']
+                        : ['absolute -ml-[9999px] opacity-0'],
+                    )}
+                  >
+                    Create New Track
+                  </p>
+                </Link>
+              </Button>
+            )}
           </div>
-          {showLoading && <LoadingSection />}
-          {showContent && (
-            <div
-              className={cn(
-                'w-full flex-1 bg-white px-6 py-10 transition-[margin-left] duration-300 ease-in-out',
-                isCollapsible ? 'ml-20' : 'ml-0',
-              )}
+          {LinkItems.map((link) => (
+            <NavItem
+              onClick={() => {
+                if (link.posthog) posthog.capture(link.posthog);
+              }}
+              className="ph-no-capture"
+              key={link.name}
+              link={link.link}
+              icon={link.icon}
+              isExpanded={isExpanded}
             >
-              {children}
-            </div>
-          )}
+              {link.name}
+            </NavItem>
+          ))}
         </div>
-      </Default>
-    </ChakraProvider>
+        {showLoading && <LoadingSection />}
+        {showContent && (
+          <div
+            className={cn(
+              'w-full flex-1 bg-white px-6 py-10 transition-[margin-left] duration-300 ease-in-out',
+              isCollapsible ? 'ml-20' : 'ml-0',
+            )}
+          >
+            {children}
+          </div>
+        )}
+      </div>
+    </Default>
   );
 }

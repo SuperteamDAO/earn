@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Separator } from '@radix-ui/react-separator';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Info, Loader2 } from 'lucide-react';
@@ -24,6 +23,7 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
+import { Separator } from '@/components/ui/separator';
 import {
   Tooltip,
   TooltipContent,

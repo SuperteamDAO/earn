@@ -154,7 +154,7 @@ export const AddProject = ({
               <FormLabel className="text-slate-500">Project Title</FormLabel>
               <FormControl>
                 <Input
-                  className="border-slate-300 placeholder:text-slate-300 focus:border-purple-600 focus:ring-purple-600"
+                  className="border-slate-300 placeholder:text-slate-300 focus:border-brand-purple focus:ring-brand-purple"
                   placeholder="Project Title"
                   {...register('title', { required: true })}
                 />
@@ -167,7 +167,7 @@ export const AddProject = ({
               </FormLabel>
               <FormControl>
                 <Textarea
-                  className="border-slate-300 placeholder:text-slate-300 focus:border-purple-600 focus:ring-purple-600"
+                  className="border-slate-300 placeholder:text-slate-300 focus:border-brand-purple focus:ring-brand-purple"
                   maxLength={180}
                   placeholder="About the Project"
                   {...register('description', { required: true })}
@@ -200,7 +200,7 @@ export const AddProject = ({
                 <div className="relative">
                   <Link2 className="absolute left-3 top-3 h-4 w-4 text-slate-300" />
                   <Input
-                    className="border-slate-300 pl-10 placeholder:text-slate-300 focus:border-purple-600 focus:ring-purple-600"
+                    className="border-slate-300 pl-10 placeholder:text-slate-300 focus:border-brand-purple focus:ring-brand-purple"
                     placeholder="https://example.com"
                     {...register('link', { required: true })}
                   />

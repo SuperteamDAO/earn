@@ -1,4 +1,4 @@
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { LuHome, LuNewspaper, LuSearch, LuUser } from 'react-icons/lu';
 
@@ -32,7 +32,7 @@ export function BottomBar({ onSearchOpen }: Props) {
         'lg:hidden',
       )}
     >
-      <NextLink href="/" style={linkStyle}>
+      <Link href="/" style={linkStyle}>
         <Button
           variant="ghost"
           className={cn(
@@ -42,7 +42,7 @@ export function BottomBar({ onSearchOpen }: Props) {
         >
           <LuHome style={iconStyle} />
         </Button>
-      </NextLink>
+      </Link>
 
       <Button
         variant="ghost"
@@ -56,7 +56,7 @@ export function BottomBar({ onSearchOpen }: Props) {
         <LuSearch style={iconStyle} />
       </Button>
 
-      <NextLink href="/feed/" style={linkStyle}>
+      <Link href="/feed/" style={linkStyle}>
         <Button
           variant="ghost"
           className={cn(
@@ -67,10 +67,10 @@ export function BottomBar({ onSearchOpen }: Props) {
           <LuNewspaper style={iconStyle} />
           <div className="absolute right-3 top-1 h-2.5 w-2.5 rounded-full bg-red-500" />
         </Button>
-      </NextLink>
+      </Link>
 
       <AuthWrapper>
-        <NextLink
+        <Link
           href={`/t/${user?.username}`}
           style={{
             ...linkStyle,
@@ -86,7 +86,7 @@ export function BottomBar({ onSearchOpen }: Props) {
           >
             <LuUser style={iconStyle} />
           </Button>
-        </NextLink>
+        </Link>
       </AuthWrapper>
     </div>
   );

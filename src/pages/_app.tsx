@@ -73,7 +73,9 @@ function MyApp({ Component, pageProps }: any) {
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
 
   return (
-    <>
+    <main
+      className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} font-sans antialiased`}
+    >
       <PagesTopLoader color="#6366F1" showSpinner={false} />
       {isDashboardRoute ? (
         <SolanaWalletProvider>
@@ -83,20 +85,13 @@ function MyApp({ Component, pageProps }: any) {
         <Component {...pageProps} key={router.asPath} />
       )}
       <Toaster position="bottom-right" richColors />
-    </>
+    </main>
   );
 }
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <style jsx global>{`
-        :root {
-          --font-sans: ${fontSans.style.fontFamily};
-          --font-serif: ${fontSerif.style.fontFamily};
-          --font-mono: ${fontMono.style.fontFamily};
-        }
-      `}</style>
       <PostHogProvider client={posthog}>
         <SessionProvider session={session}>
           <MyApp Component={Component} pageProps={pageProps} />

@@ -160,7 +160,7 @@ export const SocialInput = ({ register, watch }: SocialInputProps) => {
                   'h-[2.6875rem] w-full text-sm font-medium text-gray-800',
                   'border-slate-300',
                   'placeholder:text-slate-300',
-                  'focus:border-purple-600 focus:ring-purple-600',
+                  'focus:border-brand-purple focus:ring-brand-purple',
                   label ? 'rounded-l-none' : 'rounded-md',
                 )}
                 placeholder={placeholder}

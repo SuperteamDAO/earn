@@ -33,10 +33,7 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: [
-      '@chakra-ui/react',
-      '@chakra-ui/icons',
       '@radix-ui/react-icons',
-      'framer-motion',
       'flag-icons',
       '@/features/auth',
       '@/features/comments',
