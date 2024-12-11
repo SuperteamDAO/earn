@@ -1,10 +1,12 @@
-import { Button } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 import { LuCheck, LuPlus } from 'react-icons/lu';
 import { toast } from 'sonner';
+
+import { Button } from '@/components/ui/button';
+import { cn } from '@/utils';
 
 interface Props {
   bountyId: string;
@@ -54,20 +56,14 @@ export function InviteButton({
 
   return (
     <Button
-      className="ph-no-capture"
-      gap={2}
-      h="full"
-      color="brand.purple"
-      fontSize="xs"
-      bg="#E0E7FF"
-      _disabled={{
-        bg: 'brand.slate.100',
-        color: 'brand.slate.400',
-        cursor: 'not-allowed',
-      }}
-      isDisabled={invited || maxInvitesReached}
-      isLoading={inviteMutation.isPending}
       onClick={handleInvite}
+      disabled={invited || maxInvitesReached}
+      className={cn(
+        'ph-no-capture h-full gap-2 text-xs',
+        'bg-indigo-50 text-brand-purple',
+        'disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400',
+      )}
+      {...(inviteMutation.isPending && { 'aria-disabled': true })}
     >
       {invited ? (
         <>

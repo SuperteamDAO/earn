@@ -1,10 +1,11 @@
-import { Flex, type FlexProps, Icon, Link, Text } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type ReactNode } from 'react';
 import { type IconType } from 'react-icons';
 
-interface NavItemProps extends FlexProps {
+import { cn } from '@/utils';
+
+interface NavItemProps extends React.HTMLAttributes<HTMLDivElement> {
   icon: IconType;
   link?: string;
   children: ReactNode;
@@ -26,67 +27,76 @@ export const NavItem = ({
     ? currentPath?.startsWith(resolvedLink)
     : false;
 
-  return (
-    <Link
-      as={NextLink}
-      _focus={{ boxShadow: 'none' }}
-      href={resolvedLink}
-      isExternal={isExternalLink}
-      style={{ textDecoration: 'none' }}
+  const LinkComponent = (
+    <NavItemContent
+      icon={icon}
+      isActiveLink={isActiveLink!}
+      isExpanded={isExpanded}
+      {...rest}
     >
-      <NavItemContent
-        icon={icon}
-        isActiveLink={isActiveLink}
-        isExpanded={isExpanded}
-        {...rest}
+      {children}
+    </NavItemContent>
+  );
+
+  if (isExternalLink) {
+    return (
+      <a
+        href={resolvedLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="no-underline"
       >
-        {children}
-      </NavItemContent>
+        {LinkComponent}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={resolvedLink || '#'} className="no-underline">
+      {LinkComponent}
     </Link>
   );
 };
 
 const NavItemContent = ({
-  icon,
+  icon: Icon,
   isActiveLink,
   isExpanded,
   children,
   ...rest
-}: any) => (
-  <Flex
-    align="center"
-    mr={isExpanded ? '0' : '1rem'}
-    px={6}
-    py={3}
-    color={isActiveLink ? '#3730A3' : 'brand.slate.500'}
-    bg={isActiveLink ? '#EEF2FF' : 'transparent'}
-    _hover={{
-      bg: '#F5F8FF',
-      color: 'brand.purple',
-    }}
-    cursor="pointer"
+}: {
+  icon: IconType;
+  isActiveLink: boolean;
+  isExpanded: boolean;
+  children: ReactNode;
+}) => (
+  <div
+    className={cn(
+      'flex cursor-pointer items-center px-6 py-3 transition-colors duration-300',
+      isExpanded ? 'mr-0' : 'mr-4',
+      isActiveLink
+        ? 'bg-[#EEF2FF] text-[#3730A3]'
+        : 'bg-transparent text-slate-500',
+      'hover:bg-[#F5F8FF] hover:text-brand-purple',
+    )}
     role="group"
     {...rest}
   >
-    {icon && (
+    {Icon && (
       <Icon
-        as={icon}
-        mr={isExpanded ? '4' : '0'}
-        fontSize={isExpanded ? '16' : '20'}
-        _groupHover={{
-          color: 'brand.purple',
-        }}
-        transition="all 0.3s ease-in-out"
+        className={cn(
+          'transition-all duration-300 ease-in-out group-hover:text-brand-purple',
+          isExpanded ? 'mr-4 text-base' : 'mr-0 text-xl',
+        )}
       />
     )}
-    <Text
-      className="nav-item-text"
-      pos={isExpanded ? 'static' : 'absolute'}
-      ml={isExpanded ? 0 : '-9999px'}
-      opacity={isExpanded ? 1 : 0}
-      transition="opacity 0.2s ease-in-out"
+    <span
+      className={cn(
+        'nav-item-text transition-opacity duration-200 ease-in-out',
+        isExpanded ? 'static opacity-100' : 'absolute -ml-[9999px] opacity-0',
+      )}
     >
       {children}
-    </Text>
-  </Flex>
+    </span>
+  </div>
 );

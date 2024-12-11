@@ -86,7 +86,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
   return (
     <FeedPageLayout isHomePage>
       <div className="border-b py-5 pl-6 md:pl-5">
-        <p className="text-lg font-medium text-brand-slate-900 lg:text-xl">
+        <p className="text-lg font-medium text-slate-900 lg:text-xl">
           Activity Feed
         </p>
         <div className="hidden w-full pt-4 md:flex lg:hidden">
@@ -107,7 +107,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
 
             {activeMenu === 'popular' && (
               <select
-                className="mr-1 w-28 text-right text-sm text-brand-slate-500"
+                className="mr-1 w-28 text-right text-sm text-slate-500"
                 onChange={(e) => {
                   setTimePeriod(e.target.value);
                 }}
@@ -134,10 +134,10 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
               src={'/bg/talent-empty.svg'}
               alt="talent empty"
             />
-            <p className="mx-auto mt-5 w-[200px] text-center text-base font-medium text-brand-slate-500 md:text-lg">
+            <p className="mx-auto mt-5 w-[200px] text-center text-base font-medium text-slate-500 md:text-lg">
               No Activity Found
             </p>
-            <p className="mx-auto mt-1 text-center text-sm text-brand-slate-400 md:text-base">
+            <p className="mx-auto mt-1 text-center text-sm text-slate-400 md:text-base">
               We couldn’t find any activity for your time filter
             </p>
           </div>

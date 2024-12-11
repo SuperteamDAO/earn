@@ -1,57 +1,54 @@
-import {
-  AddIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  EditIcon,
-  SearchIcon,
-  ViewIcon,
-  ViewOffIcon,
-} from '@chakra-ui/icons';
-import {
-  Button,
-  Divider,
-  Flex,
-  Icon,
-  IconButton,
-  Image,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Table,
-  TableContainer,
-  Tag,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tooltip,
-  Tr,
-} from '@chakra-ui/react';
 import axios from 'axios';
-import NextLink from 'next/link';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Edit,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  MoreVertical,
+  Pencil,
+  Plus,
+  Search,
+  Trash,
+  Trash2,
+  X,
+} from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
-import { AiOutlineDelete } from 'react-icons/ai';
-import { FiMoreVertical } from 'react-icons/fi';
-import { IoEyeOffOutline, IoOpenOutline, IoTrash } from 'react-icons/io5';
-import { PiNotePencil } from 'react-icons/pi';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import {
   formatDeadline,
@@ -67,6 +64,7 @@ import {
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 
 const debounce = require('lodash.debounce');
@@ -202,100 +200,109 @@ export default function Hackathon() {
 
   return (
     <SponsorLayout>
-      <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Unpublish Listing?</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text color="brand.slate.500">
-              This listing will be hidden from the homepage once unpublished.
-              Are you sure you want to unpublish this listing?
-            </Text>
-          </ModalBody>
+      <Dialog open={unpublishIsOpen} onOpenChange={unpublishOnClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Unpublish Listing?</DialogTitle>
+            <button
+              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 disabled:pointer-events-none"
+              onClick={unpublishOnClose}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </button>
+          </DialogHeader>
 
-          <ModalFooter>
-            <Button mr={4} onClick={unpublishOnClose} variant="ghost">
+          <p className="text-slate-500">
+            This listing will be hidden from the homepage once unpublished. Are
+            you sure you want to unpublish this listing?
+          </p>
+
+          <DialogFooter className="gap-4">
+            <Button onClick={unpublishOnClose} variant="ghost">
               Close
             </Button>
             <Button
-              isLoading={isChangingStatus}
-              leftIcon={<ViewOffIcon />}
-              loadingText="Unpublishing..."
+              disabled={isChangingStatus}
               onClick={() => changeBountyStatus(false)}
-              variant="solid"
             >
-              Unpublish
+              {isChangingStatus ? (
+                <>
+                  <span className="loading loading-spinner" />
+                  Unpublishing...
+                </>
+              ) : (
+                <>
+                  <EyeOff className="mr-2 h-4 w-4" />
+                  Unpublish
+                </>
+              )}
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal isOpen={deleteDraftIsOpen} onClose={deleteDraftOnClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Delete Draft?</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text color="brand.slate.500">
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={deleteDraftIsOpen} onOpenChange={deleteDraftOnClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Draft?</DialogTitle>
+            <button
+              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 disabled:pointer-events-none"
+              onClick={deleteDraftOnClose}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </button>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <p className="text-slate-500">
               Are you sure you want to delete this draft listing?
-            </Text>
-            <br />
-            <Text color="brand.slate.500">
+            </p>
+            <p className="text-slate-500">
               Note: If this was previously a published listing, all submissions
               or applications received for this listing will also be deleted.
-            </Text>
-          </ModalBody>
+            </p>
+          </div>
 
-          <ModalFooter>
-            <Button mr={4} onClick={deleteDraftOnClose} variant="ghost">
+          <DialogFooter className="gap-4">
+            <Button onClick={deleteDraftOnClose} variant="ghost">
               Close
             </Button>
-            <Button
-              isLoading={isChangingStatus}
-              leftIcon={<AiOutlineDelete />}
-              loadingText="Deleting..."
-              onClick={deleteSelectedDraft}
-              variant="solid"
-            >
-              Confirm
+            <Button disabled={isChangingStatus} onClick={deleteSelectedDraft}>
+              {isChangingStatus ? (
+                <>
+                  <span className="loading loading-spinner" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Confirm
+                </>
+              )}
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Banner stats={sponsorStats} isHackathon isLoading={isStatsLoading} />
-      <Flex justify="space-between" w="100%" mb={4}>
-        <Flex align="center" gap={3}>
-          <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
-            All Tracks
-          </Text>
-          <Divider
-            h="60%"
-            borderColor="brand.slate.200"
-            orientation="vertical"
-          />
-          <Text color="brand.slate.500">
+      <div className="mb-4 flex w-full justify-between">
+        <div className="flex items-center gap-3">
+          <p className="text-lg font-semibold text-slate-800">All Tracks</p>
+          <div className="mx-1 h-[60%] border-r border-slate-200" />
+          <p className="text-slate-500">
             Review hackathon tracks and submissions here
-          </Text>
-        </Flex>
-        <InputGroup w={64}>
+          </p>
+        </div>
+        <div className="relative w-64">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
-            bg={'white'}
-            borderColor="brand.slate.200"
-            _placeholder={{
-              color: 'brand.slate.400',
-              fontWeight: 500,
-              fontSize: 'md',
-            }}
-            focusBorderColor="brand.purple"
+            className="placeholder:text-md border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
             onChange={(e) => debouncedSetSearchText(e.target.value)}
             placeholder="Search listing..."
             type="text"
           />
-          <InputLeftElement pointerEvents="none">
-            <SearchIcon color="brand.slate.400" />
-          </InputLeftElement>
-        </InputGroup>
-      </Flex>
+        </div>
+      </div>
       {isBountiesLoading && <LoadingSection />}
       {!isBountiesLoading && !bounties?.length && (
         <>
@@ -308,109 +315,49 @@ export default function Hackathon() {
             alt={'talent empty'}
             src={'/bg/talent-empty.svg'}
           />
-          <Text
-            mx="auto"
-            mt={5}
-            color={'brand.slate.600'}
-            fontSize={'lg'}
-            fontWeight={600}
-            textAlign={'center'}
-          >
+          <p className="mx-auto mt-5 text-center text-lg font-semibold text-slate-600">
             Create your first listing
-          </Text>
-          <Text
-            mx="auto"
-            color={'brand.slate.400'}
-            fontWeight={500}
-            textAlign={'center'}
-          >
+          </p>
+          <p className="mx-auto text-center font-medium text-slate-400">
             and start getting contributions
-          </Text>
+          </p>
           <Button
-            display="block"
-            w={'200px'}
-            mx="auto"
-            mt={6}
-            mb={48}
-            fontSize="md"
-            leftIcon={<AddIcon w={3} h={3} />}
+            className="text-md mx-auto mb-48 mt-6 block w-[200px]"
             onClick={() => onOpenCreateListing()}
-            variant="solid"
           >
+            <Plus className="mr-2 h-3 w-3" />
             Create New Listing
           </Button>
         </>
       )}
       {!isBountiesLoading && !!bounties?.length && (
         <>
-          <TableContainer
-            mb={8}
-            borderWidth={'1px'}
-            borderColor={'brand.slate.200'}
-            borderRadius={8}
-          >
-            <Table variant="simple">
-              <Thead>
-                <Tr bg="brand.slate.100">
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textTransform={'capitalize'}
-                  >
+          <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
+            <Table>
+              <TableHeader>
+                <TableRow className="text-slate-100">
+                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
                     Track
-                  </Th>
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textAlign="center"
-                    textTransform={'capitalize'}
-                  >
+                  </TableCell>
+                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
                     Submissions
-                  </Th>
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textTransform={'capitalize'}
-                  >
+                  </TableCell>
+                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
                     Deadline
-                  </Th>
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textTransform={'capitalize'}
-                  >
+                  </TableCell>
+                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
                     Prize
-                  </Th>
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textTransform={'capitalize'}
-                  >
+                  </TableCell>
+                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
                     Status
-                  </Th>
-                  <Th
-                    color="brand.slate.400"
-                    fontSize={14}
-                    fontWeight={500}
-                    letterSpacing={'-2%'}
-                    textTransform={'capitalize'}
-                  >
+                  </TableCell>
+                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
                     Actions
-                  </Th>
-                  <Th pl={0} />
-                </Tr>
-              </Thead>
-              <Tbody w="full">
+                  </TableCell>
+                  <TableCell className="pl-0" />
+                </TableRow>
+              </TableHeader>
+              <TableBody className="w-full">
                 {bounties.map((currentBounty) => {
                   const deadline = formatDeadline(
                     currentBounty?.deadline,
@@ -420,169 +367,119 @@ export default function Hackathon() {
                   const bountyStatus = getListingStatus(currentBounty);
 
                   return (
-                    <Tr key={currentBounty?.id}>
-                      <Td
-                        maxW={96}
-                        color="brand.slate.700"
-                        fontWeight={500}
-                        whiteSpace="normal"
-                        wordBreak={'break-word'}
-                      >
-                        {/* <NextLink
-                          href={`/dashboard/listings/${currentBounty.slug}/submissions/`}
-                          passHref
-                        > */}
-                        <Flex align={'center'}>
-                          <Image
-                            h={5}
-                            mr={2}
-                            borderRadius={2}
+                    <TableRow key={currentBounty?.id}>
+                      <TableCell className="max-w-96 whitespace-normal break-words font-medium text-slate-700">
+                        <div className="flex items-center">
+                          <img
+                            className="mr-2 h-5 rounded-sm"
                             alt={`${currentBounty?.sponsor?.name}`}
                             src={currentBounty?.sponsor?.logo}
                           />
-
-                          <Text
-                            as="a"
-                            overflow="hidden"
-                            color="brand.slate.500"
-                            fontSize={'15px'}
-                            fontWeight={500}
-                            // _hover={{ textDecoration: 'underline' }}
-                            whiteSpace="nowrap"
-                            textOverflow="ellipsis"
-                          >
+                          <a className="overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-medium text-slate-500">
                             {currentBounty.title}
-                          </Text>
-                        </Flex>
-                        {/* </NextLink> */}
-                      </Td>
-                      <Td py={2}>
-                        <Text
-                          color="brand.slate.500"
-                          fontSize={'sm'}
-                          fontWeight={500}
-                          textAlign={'center'}
-                        >
+                          </a>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2">
+                        <p className="text-center text-sm font-medium text-slate-500">
                           {currentBounty?._count?.Submission || 0}
-                        </Text>
-                      </Td>
-                      <Td align="center" py={2}>
-                        <Text
-                          color="brand.slate.500"
-                          fontSize={'sm'}
-                          fontWeight={500}
-                        >
+                        </p>
+                      </TableCell>
+                      <TableCell className="items-center py-2">
+                        <p className="text-sm font-medium text-slate-500">
                           {deadline}
-                        </Text>
-                      </Td>
-                      <Td py={2}>
-                        <Flex align={'center'} justify={'start'} gap={1}>
-                          <Image
-                            w={5}
-                            h={5}
+                        </p>
+                      </TableCell>
+                      <TableCell className="py-2">
+                        <div className="flex items-center justify-start gap-1">
+                          <img
+                            className="h-5 w-5 rounded-full"
                             alt={'green dollar'}
-                            rounded={'full'}
                             src={
                               tokenList.filter(
                                 (e) => e?.tokenSymbol === currentBounty.token,
                               )[0]?.icon ?? '/assets/dollar.svg'
                             }
                           />
-                          <Text
-                            color="brand.slate.700"
-                            fontSize={'sm'}
-                            fontWeight={500}
-                          >
+                          <p className="text-sm font-medium text-slate-700">
                             {(currentBounty.rewardAmount || 0).toLocaleString(
                               'en-US',
                             )}
-                          </Text>
-                          <Text
-                            color="brand.slate.400"
-                            fontSize={'sm'}
-                            fontWeight={500}
-                          >
+                          </p>
+                          <p className="text-sm font-medium text-slate-400">
                             {currentBounty.token}
-                          </Text>
-                        </Flex>
-                      </Td>
-                      <Td align="center" py={2}>
-                        <Tag
-                          px={3}
-                          color={getColorStyles(bountyStatus).color}
-                          fontSize={'12px'}
-                          fontWeight={500}
-                          bg={getColorStyles(bountyStatus).bgColor}
-                          borderRadius={'full'}
-                          variant="solid"
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell className="items-center py-2">
+                        <p
+                          className={cn(
+                            'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium',
+                            getColorStyles(bountyStatus).color,
+                            getColorStyles(bountyStatus).bgColor,
+                          )}
                         >
                           {bountyStatus}
-                        </Tag>
-                      </Td>
-                      <Td px={3} py={2}>
+                        </p>
+                      </TableCell>
+                      <TableCell className="px-3 py-2">
                         {currentBounty.status === 'OPEN' &&
                           currentBounty.isPublished && (
-                            <Tooltip
-                              bg="brand.slate.500"
-                              isDisabled={hasHackathonStarted}
-                              label={`Submissions Open ${formattedDate}`}
-                              rounded="md"
-                            >
-                              <Button
-                                color="#6366F1"
-                                fontSize={'13px'}
-                                fontWeight={500}
-                                _hover={{ bg: '#E0E7FF' }}
-                                isDisabled={!hasHackathonStarted}
-                                leftIcon={<ViewIcon />}
-                                onClick={() =>
-                                  handleViewSubmissions(currentBounty.slug)
-                                }
-                                size="sm"
-                                variant="ghost"
-                              >
-                                Submissions
-                              </Button>
-                            </Tooltip>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    className="text-[13px] font-medium text-[#6366F1] hover:bg-[#E0E7FF]"
+                                    disabled={!hasHackathonStarted}
+                                    onClick={() =>
+                                      handleViewSubmissions(currentBounty.slug)
+                                    }
+                                    size="sm"
+                                    variant="ghost"
+                                  >
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    Submissions
+                                  </Button>
+                                </TooltipTrigger>
+                                {!hasHackathonStarted && (
+                                  <TooltipContent className="rounded-md bg-slate-500 text-white">
+                                    <p>Submissions Open {formattedDate}</p>
+                                  </TooltipContent>
+                                )}
+                              </Tooltip>
+                            </TooltipProvider>
                           )}
                         {currentBounty.status === 'OPEN' &&
                           !currentBounty.isPublished && (
                             <Link
-                              as={NextLink}
                               href={`/dashboard/hackathon/${currentBounty.slug}/edit/`}
                             >
                               <Button
-                                color={'brand.slate.500'}
-                                fontSize={'13px'}
-                                fontWeight={500}
-                                _hover={{ bg: 'brand.slate.200' }}
-                                leftIcon={<EditIcon />}
-                                size="sm"
                                 variant="ghost"
+                                size="sm"
+                                className="text-[13px] font-medium text-slate-500 hover:bg-slate-200"
                               >
+                                <Edit className="mr-2 h-4 w-4" />
                                 Edit
                               </Button>
                             </Link>
                           )}
-                      </Td>
-                      <Td px={0} py={2}>
-                        <Menu>
-                          <MenuButton
-                            as={IconButton}
-                            border="none"
-                            _hover={{ bg: 'brand.slate.100' }}
-                            aria-label="Options"
-                            icon={<FiMoreVertical />}
-                            size="sm"
-                            variant="ghost"
-                          />
-                          <MenuList>
-                            <MenuItem
-                              py={2}
-                              color={'brand.slate.500'}
-                              fontSize={'sm'}
-                              fontWeight={500}
-                              icon={<Icon as={IoOpenOutline} w={4} h={4} />}
+                      </TableCell>
+                      <TableCell className="px-0 py-2">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              className="border-none hover:bg-slate-100"
+                              size="sm"
+                              variant="ghost"
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                              <span className="sr-only">Options</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              className="flex items-center gap-2 py-2 text-sm font-medium text-slate-500"
                               onClick={() =>
                                 window.open(
                                   `${router.basePath}/listings/${currentBounty?.type}/${currentBounty.slug}`,
@@ -590,131 +487,88 @@ export default function Hackathon() {
                                 )
                               }
                             >
+                              <ExternalLink className="h-4 w-4" />
                               View Listing
-                            </MenuItem>
+                            </DropdownMenuItem>
+
                             {currentBounty.isPublished && (
                               <Link
-                                as={NextLink}
-                                _hover={{ textDecoration: 'none' }}
+                                className="no-underline"
                                 href={`/dashboard/hackathon/${currentBounty.slug}/edit`}
                               >
-                                <MenuItem
-                                  py={2}
-                                  color={'brand.slate.500'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  icon={<Icon as={PiNotePencil} w={4} h={4} />}
-                                >
+                                <DropdownMenuItem className="flex items-center gap-2 py-2 text-sm font-medium text-slate-500">
+                                  <Pencil className="h-4 w-4" />
                                   Edit Listing
-                                </MenuItem>
+                                </DropdownMenuItem>
                               </Link>
                             )}
-                            {/* <MenuItem
-                              py={2}
-                              color={'brand.slate.500'}
-                              fontSize={'sm'}
-                              fontWeight={500}
-                              icon={<CopyIcon h={4} w={4} />}
-                              onClick={() =>
-                                window.open(
-                                  `${router.basePath}/dashboard/hackathon/${currentBounty.slug}/duplicate`,
-                                  '_blank',
-                                )
-                              }
-                            >
-                              Duplicate
-                            </MenuItem> */}
+
                             {bountyStatus === 'Draft' && (
-                              <>
-                                <MenuItem
-                                  py={2}
-                                  color={'brand.slate.500'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  icon={
-                                    <Icon
-                                      as={IoTrash}
-                                      w={4}
-                                      h={4}
-                                      color={'gray.500'}
-                                    />
-                                  }
-                                  onClick={() =>
-                                    handleDeleteDraft(currentBounty)
-                                  }
-                                >
-                                  Delete Draft
-                                </MenuItem>
-                              </>
+                              <DropdownMenuItem
+                                className="flex items-center gap-2 py-2 text-sm font-medium text-slate-500"
+                                onClick={() => handleDeleteDraft(currentBounty)}
+                              >
+                                <Trash className="h-4 w-4 text-gray-500" />
+                                Delete Draft
+                              </DropdownMenuItem>
                             )}
+
                             {!(
                               currentBounty.status === 'OPEN' &&
                               !currentBounty.isPublished
                             ) && (
-                              <>
-                                <MenuItem
-                                  py={2}
-                                  color={'brand.slate.500'}
-                                  fontSize={'sm'}
-                                  fontWeight={500}
-                                  icon={
-                                    <Icon as={IoEyeOffOutline} boxSize={4} />
-                                  }
-                                  onClick={() => handleUnpublish(currentBounty)}
-                                >
-                                  Unpublish
-                                </MenuItem>
-                              </>
+                              <DropdownMenuItem
+                                className="flex items-center gap-2 py-2 text-sm font-medium text-slate-500"
+                                onClick={() => handleUnpublish(currentBounty)}
+                              >
+                                <EyeOff className="h-4 w-4" />
+                                Unpublish
+                              </DropdownMenuItem>
                             )}
-                          </MenuList>
-                        </Menu>
-                      </Td>
-                    </Tr>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
                   );
                 })}
-              </Tbody>
+              </TableBody>
             </Table>
-          </TableContainer>
-          <Flex align="center" justify="end" mt={6}>
-            <Text mr={4} color="brand.slate.400" fontSize="sm">
-              <Text as="span" fontWeight={700}>
-                {skip + 1}
-              </Text>{' '}
-              -{' '}
-              <Text as="span" fontWeight={700}>
+          </div>
+          <div className="mt-6 flex items-center justify-end">
+            <p className="mr-4 text-sm text-slate-400">
+              <span className="font-bold">{skip + 1}</span> -{' '}
+              <span className="font-bold">
                 {Math.min(skip + length, totalBounties)}
-              </Text>{' '}
-              of{' '}
-              <Text as="span" fontWeight={700}>
-                {totalBounties}
-              </Text>{' '}
-              Listings
-            </Text>
-            <Button
-              mr={4}
-              isDisabled={skip <= 0}
-              leftIcon={<ChevronLeftIcon w={5} h={5} />}
-              onClick={() =>
-                skip >= length ? setSkip(skip - length) : setSkip(0)
-              }
-              size="sm"
-              variant="outline"
-            >
-              Previous
-            </Button>
-            <Button
-              isDisabled={
-                totalBounties <= skip + length ||
-                (skip > 0 && skip % length !== 0)
-              }
-              onClick={() => skip % length === 0 && setSkip(skip + length)}
-              rightIcon={<ChevronRightIcon w={5} h={5} />}
-              size="sm"
-              variant="outline"
-            >
-              Next
-            </Button>
-          </Flex>
+              </span>{' '}
+              of <span className="font-bold">{totalBounties}</span> Listings
+            </p>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={skip <= 0}
+                onClick={() =>
+                  skip >= length ? setSkip(skip - length) : setSkip(0)
+                }
+              >
+                <ChevronLeft className="mr-2 h-5 w-5" />
+                Previous
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={
+                  totalBounties <= skip + length ||
+                  (skip > 0 && skip % length !== 0)
+                }
+                onClick={() => skip % length === 0 && setSkip(skip + length)}
+              >
+                Next
+                <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          </div>
         </>
       )}
     </SponsorLayout>

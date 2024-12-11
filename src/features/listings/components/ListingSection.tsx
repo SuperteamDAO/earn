@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 
@@ -76,7 +76,7 @@ export const ListingSection = ({
             showViewAllButton ? 'block' : 'hidden',
           )}
         >
-          <NextLink href={viewAllHref}>
+          <Link href={viewAllHref}>
             <Button
               variant="ghost"
               size="sm"
@@ -89,7 +89,7 @@ export const ListingSection = ({
             >
               View All
             </Button>
-          </NextLink>
+          </Link>
         </div>
       </div>
 
@@ -98,7 +98,7 @@ export const ListingSection = ({
       <div
         className={cn('ph-no-capture', showViewAllButton ? 'block' : 'hidden')}
       >
-        <NextLink href={viewAllHref}>
+        <Link href={viewAllHref}>
           <Button
             variant="outline"
             size="sm"
@@ -112,7 +112,7 @@ export const ListingSection = ({
             View All
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
-        </NextLink>
+        </Link>
       </div>
     </div>
   );

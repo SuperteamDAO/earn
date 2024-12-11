@@ -1,19 +1,8 @@
-import { InfoOutlineIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Heading,
-  HStack,
-  Link,
-  Text,
-  Tooltip,
-  VStack,
-} from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import { Info, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -22,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -33,6 +23,13 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
+import { Separator } from '@/components/ui/separator';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { IndustryList, PDTG } from '@/constants';
 import { SignIn } from '@/features/auth';
 import {
@@ -47,6 +44,7 @@ import { useUsernameValidation } from '@/features/talent';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { uploadToCloudinary } from '@/utils/upload';
 
 const CreateSponsor = () => {
@@ -186,71 +184,39 @@ const CreateSponsor = () => {
     >
       {!session ? (
         <>
-          <Box w={'full'} minH={'100vh'} bg="white">
-            <Box
-              alignItems="center"
-              justifyContent={'center'}
-              flexDir={'column'}
-              display={'flex'}
-              maxW="32rem"
-              minH="60vh"
-              mx="auto"
-            >
-              <Text
-                pt={4}
-                color="brand.slate.900"
-                fontSize={18}
-                fontWeight={600}
-                textAlign={'center'}
-              >
+          <div className="min-h-screen w-full bg-white">
+            <div className="mx-auto flex min-h-[60vh] max-w-[32rem] flex-col items-center justify-center">
+              <p className="pt-4 text-center text-2xl font-semibold text-slate-900">
                 You&apos;re one step away
-              </Text>
-              <Text
-                pb={4}
-                color="brand.slate.600"
-                fontSize={15}
-                fontWeight={400}
-                textAlign={'center'}
-              >
+              </p>
+              <p className="pb-4 text-center text-xl font-normal text-slate-600">
                 from joining Superteam Earn
-              </Text>
+              </p>
               <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
-            </Box>
-          </Box>
+            </div>
+          </div>
         </>
       ) : (
-        <VStack w="full" px={4} pt={8} pb={24}>
-          <VStack textAlign="center" spacing={2}>
-            <Heading
-              color="gray.900"
-              fontSize="3xl"
-              fontWeight="semibold"
-              letterSpacing="-0.02em"
-            >
+        <div className="flex w-full flex-col px-4 pb-24 pt-8">
+          <div className="flex flex-col gap-2 text-center">
+            <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
               Welcome to Superteam Earn
-            </Heading>
-            <Text color="gray.600" fontSize="lg" fontWeight="normal">
+            </h1>
+            <p className="text-lg font-normal text-gray-600" color="gray.600">
               Let&apos;s start with some basic information about your team
-            </Text>
-          </VStack>
-          <VStack w={{ md: '2xl' }} pt={10}>
+            </p>
+          </div>
+          <div className="flex flex-col pt-10 md:w-[42rem]">
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 style={{ width: '100%' }}
               >
-                <Text
-                  as="h2"
-                  mb={5}
-                  color="gray.900"
-                  fontSize="xl"
-                  fontWeight="semibold"
-                  letterSpacing="-0.01em"
-                >
+                <h2 className="mb-5 text-xl font-semibold tracking-tight text-gray-900">
                   About You
-                </Text>
+                </h2>
 
-                <Flex justify={'space-between'} gap={2} w={'full'} mb={4}>
+                <div className="mb-4 flex w-full justify-between gap-2">
                   <FormFieldWrapper
                     control={form.control}
                     name="user.firstName"
@@ -267,8 +233,8 @@ const CreateSponsor = () => {
                   >
                     <Input placeholder="Last Name" />
                   </FormFieldWrapper>
-                </Flex>
-                <Flex mb={4}>
+                </div>
+                <div className="mb-4 flex">
                   <FormFieldWrapper
                     control={form.control}
                     name="user.username"
@@ -288,7 +254,7 @@ const CreateSponsor = () => {
                       {validationUsernameErrorMessage}
                     </p>
                   )}
-                </Flex>
+                </div>
                 <>
                   <FormLabel isRequired>Profile Picture</FormLabel>
                   <ImagePicker
@@ -306,19 +272,12 @@ const CreateSponsor = () => {
                   />
                 </>
 
-                <Divider my={12} borderColor="brand.slate.400" />
+                <Separator className="my-12 text-slate-400" />
 
-                <Text
-                  as="h2"
-                  mb={5}
-                  color="gray.900"
-                  fontSize="xl"
-                  fontWeight="semibold"
-                  letterSpacing="-0.01em"
-                >
+                <h2 className="mb-5 text-xl font-semibold tracking-tight text-gray-900">
                   About Your Company
-                </Text>
-                <Flex justify={'space-between'} gap={2} w={'full'}>
+                </h2>
+                <div className="flex w-full justify-between gap-2">
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.name"
@@ -358,8 +317,8 @@ const CreateSponsor = () => {
                       {validationSlugErrorMessage}
                     </p>
                   )}
-                </Flex>
-                <HStack justify={'space-between'} w={'full'} my={6}>
+                </div>
+                <div className="my-6 flex w-full justify-between">
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.url"
@@ -376,35 +335,35 @@ const CreateSponsor = () => {
                   >
                     <Input placeholder="@StarkIndustries" />
                   </FormFieldWrapper>
-                </HStack>
-                <HStack w="full">
+                </div>
+                <div className="flex w-full">
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.entityName"
                     label={
                       <>
                         Entity Name
-                        <Tooltip
-                          fontSize="xs"
-                          label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
-                        >
-                          <InfoOutlineIcon
-                            color="brand.slate.500"
-                            mt={1}
-                            ml={1}
-                            w={3}
-                            h={3}
-                            display={{ base: 'none', md: 'block' }}
-                          />
-                        </Tooltip>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Info className="ml-1 mt-1 hidden h-3 w-3 text-slate-500 md:block" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs text-xs">
+                              Please mention the official entity name of your
+                              project. If you are a DAO, simply mention the name
+                              of the DAO. If you neither have an entity nor are
+                              a DAO, mention your full name.
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </>
                     }
                     isRequired
                   >
                     <Input placeholder="Full Entity Name" />
                   </FormFieldWrapper>
-                </HStack>
-                <Box w="full" mt={6} mb={3}>
+                </div>
+                <div className="mb-3 mt-6 w-full">
                   <FormLabel isRequired>Company Logo</FormLabel>
                   <ImagePicker
                     onChange={async (e) => {
@@ -415,9 +374,9 @@ const CreateSponsor = () => {
                       setIsUploading(false);
                     }}
                   />
-                </Box>
+                </div>
 
-                <HStack justify={'space-between'} w={'full'} mt={6}>
+                <div className="mt-6 flex w-full justify-between">
                   <FormField
                     control={form.control}
                     name="sponsor.industry"
@@ -442,8 +401,8 @@ const CreateSponsor = () => {
                       </FormItem>
                     )}
                   />
-                </HStack>
-                <Box my={6}>
+                </div>
+                <div className="my-6">
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.bio"
@@ -459,42 +418,47 @@ const CreateSponsor = () => {
                     {180 - (form.watch('sponsor.bio')?.length || 0)} characters
                     left
                   </div>
-                </Box>
-                <Box my={8}>
+                </div>
+                <div className="my-6">
                   {isError && (
-                    <Text align="center" mb={2} color="red">
+                    <p className="mb-2 text-center text-red-500">
                       {errorMessage}
                       {(validationSlugErrorMessage ||
                         sponsorNameValidationErrorMessage) &&
                         'Company name/username already exists.'}
-                    </Text>
+                    </p>
                   )}
                   {sponsorNameValidationErrorMessage && (
-                    <Text align={'center'} color="yellow.500">
+                    <p className="text-center text-yellow-500">
                       If you want access to the existing account, contact us on
                       Telegram at{' '}
-                      <Link href={PDTG} isExternal>
+                      <Link href={PDTG} target="_blank">
                         @pratikdholani
                       </Link>
-                    </Text>
+                    </p>
                   )}
-                </Box>
+                </div>
                 <Button
-                  className="ph-no-capture"
-                  w="full"
-                  disabled={!logoUrl || isUploading}
-                  isLoading={!!isUploading || !!isPending}
-                  loadingText="Creating..."
-                  size="lg"
+                  className={cn(
+                    'ph-no-capture h-11 w-full',
+                    'disabled:cursor-not-allowed disabled:opacity-50',
+                  )}
+                  disabled={!logoUrl || isUploading || isPending}
                   type="submit"
-                  variant="solid"
                 >
-                  Create Sponsor
+                  {isUploading || isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    'Create Sponsor'
+                  )}
                 </Button>
               </form>
             </Form>
-          </VStack>
-        </VStack>
+          </div>
+        </div>
       )}
     </Default>
   );

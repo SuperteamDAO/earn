@@ -1,7 +1,7 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
-import { Button, Circle, Flex, Text, VStack } from '@chakra-ui/react';
+import { ArrowRight } from 'lucide-react';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { GrantsCard } from '@/features/grants';
 import { ListingCard } from '@/features/listings';
 
@@ -31,11 +31,12 @@ export function Results({
 }: Props) {
   const [bountiesOffset, setBountiesOffset] = useState(bountiesCount);
   const [grantsOffset, setGrantsOffset] = useState(grantsCount);
+
   return (
-    <VStack w="full">
+    <div className="flex w-full flex-col">
       {results.length === 0 && (
-        <VStack gap={6}>
-          <Circle p={8} bg="brand.slate.100">
+        <div className="flex flex-col items-center gap-6">
+          <div className="flex h-32 w-32 items-center justify-center rounded-full bg-slate-100 p-8">
             <svg
               width="43"
               height="43"
@@ -48,43 +49,35 @@ export function Results({
                 fill="#94A3B8"
               />
             </svg>
-          </Circle>
-          <VStack gap={0}>
-            <Text fontSize="sm" fontWeight="600" textAlign="center">
+          </div>
+          <div className="flex flex-col">
+            <p className="text-center text-sm font-semibold">
               {query.length > 0
-                ? 'We couldn’t find anything for that keyword'
+                ? "We couldn't find anything for that keyword"
                 : 'The search field is empty'}
-            </Text>
-            <Text
-              color="brand.slate.400"
-              fontSize="sm"
-              fontWeight="500"
-              textAlign="center"
-            >
+            </p>
+            <p className="text-center text-sm font-medium text-slate-400">
               {query.length > 0
                 ? 'Try searching for something else'
                 : 'Please enter a keyword to search'}
-            </Text>
-          </VStack>
-        </VStack>
+            </p>
+          </div>
+        </div>
       )}
       {results.length > 0 && (
         <>
-          <VStack w="full" py={0}>
+          <div className="flex w-full flex-col gap-2">
             {results.map((r) => (
-              <Flex key={r.id} justify="space-between" w="full" p={0}>
+              <div className="flex w-full justify-between" key={r.id}>
                 {r.searchType === 'listing' && <ListingCard bounty={r} />}
                 {r.searchType === 'grants' && <GrantsCard grant={r} />}
-              </Flex>
+              </div>
             ))}
-          </VStack>
+          </div>
           {results.length < count && (
             <Button
-              gap={2}
-              w="full"
-              color="brand.slate.400"
-              fontSize="sm"
-              fontWeight={600}
+              className="w-full gap-2 rounded-none text-sm font-semibold text-slate-400"
+              variant="ghost"
               onClick={async () => {
                 if (results) {
                   const lastId = results[results.length - 1]?.id;
@@ -107,14 +100,12 @@ export function Results({
                   }
                 }
               }}
-              rounded="none"
-              variant="ghost"
             >
-              View More <ArrowForwardIcon />
+              View More <ArrowRight className="h-4 w-4" />
             </Button>
           )}
         </>
       )}
-    </VStack>
+    </div>
   );
 }

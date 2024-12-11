@@ -1,31 +1,12 @@
-import {
-  AddIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  SearchIcon,
-} from '@chakra-ui/icons';
-import {
-  Button,
-  Divider,
-  Flex,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Tag,
-  TagLabel,
-  Text,
-} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Search,
+} from 'lucide-react';
 import React, {
   useCallback,
   useEffect,
@@ -33,10 +14,18 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { MdArrowDropDown } from 'react-icons/md';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   getColorStyles,
   getListingStatus,
@@ -52,6 +41,7 @@ import {
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 const MemoizedListingTable = React.memo(ListingTable);
 
@@ -155,278 +145,207 @@ export default function SponsorListings() {
     return filters;
   }, [hasGrants]);
 
-  const selectedStyles = {
-    borderColor: 'brand.purple',
-    color: 'brand.slate.600',
-  };
-
   const handleStatusFilterChange = useCallback((status: string | null) => {
     setSelectedStatus(status);
     setCurrentPage(0);
   }, []);
 
-  const handleTabChange = useCallback(
-    (index: number) => {
-      let tabTypes = [
-        'all',
-        'bounty',
-        'project',
-        hasGrants ? 'grant' : '',
-        hasHackathons ? 'hackathon' : '',
-      ];
-      tabTypes = tabTypes.filter(Boolean);
-      const tabType = tabTypes[index] || 'all';
-      setSelectedTab(tabType);
-      setCurrentPage(0);
-    },
-    [hasGrants, hasHackathons],
-  );
+  const handleTabChange = useCallback((value: string) => {
+    const valueToType = {
+      all: 'all',
+      bounties: 'bounty',
+      projects: 'project',
+      grants: 'grant',
+      hackathons: 'hackathon',
+    };
+
+    const tabType = valueToType[value as keyof typeof valueToType] || 'all';
+    setSelectedTab(tabType);
+    setCurrentPage(0);
+  }, []);
 
   return (
     <SponsorLayout>
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
-      <Flex justify="space-between" w="100%" mb={4}>
-        <Flex align="center" gap={3}>
-          <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
-            My Listings
-          </Text>
-          <Divider
-            h="60%"
-            borderColor="brand.slate.200"
-            orientation="vertical"
-          />
-          <Text color="brand.slate.500">
-            The one place to manage your listings
-          </Text>
-        </Flex>
-        <Flex align="center" gap={2}>
-          <Text color="brand.slate.500" fontSize={'sm'} letterSpacing={'-1%'}>
+      <div className="mb-4 flex w-full justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-sm tracking-tighter text-slate-500">
             Filter by status
-          </Text>
-          <Menu>
-            <MenuButton
-              as={Button}
-              color="brand.slate.500"
-              fontWeight={500}
-              textTransform="capitalize"
-              bg="transparent"
-              borderWidth={'1px'}
-              borderColor="brand.slate.300"
-              _hover={{ backgroundColor: 'transparent' }}
-              _active={{
-                backgroundColor: 'transparent',
-                borderWidth: '1px',
-              }}
-              _expanded={{ borderColor: 'brand.purple' }}
-              rightIcon={<MdArrowDropDown />}
-            >
-              <Tag
-                px={3}
-                py={1}
-                bg={getColorStyles(selectedStatus!).bgColor}
-                rounded="full"
+          </span>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                className="border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                variant="outline"
               >
-                <TagLabel
-                  w="full"
-                  color={getColorStyles(selectedStatus!).color}
-                  fontSize={'11px'}
-                  textAlign={'center'}
-                  textTransform={'capitalize'}
-                  whiteSpace={'nowrap'}
+                <span
+                  className={cn(
+                    'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-center text-[11px] capitalize',
+                    getColorStyles(selectedStatus!).color,
+                    getColorStyles(selectedStatus!).bgColor,
+                  )}
                 >
                   {selectedStatus || 'Everything'}
-                </TagLabel>
-              </Tag>
-            </MenuButton>
-            <MenuList borderColor="brand.slate.300">
-              <MenuItem
-                key="Everything"
-                _focus={{ bg: 'brand.slate.100' }}
+                </span>
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent className="border-slate-300">
+              <DropdownMenuItem
+                className="focus:bg-slate-100"
                 onClick={() => handleStatusFilterChange(null)}
               >
-                <Tag
-                  px={3}
-                  py={1}
-                  bg={getColorStyles('Everything').bgColor}
-                  rounded="full"
+                <span
+                  className={cn(
+                    'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-center text-[11px] capitalize',
+                    getColorStyles('Everything').color,
+                    getColorStyles('Everything').bgColor,
+                  )}
                 >
-                  <TagLabel
-                    w="full"
-                    color={getColorStyles('Everything').color}
-                    fontSize={'11px'}
-                    textAlign={'center'}
-                    textTransform={'capitalize'}
-                    whiteSpace={'nowrap'}
-                  >
-                    Everything
-                  </TagLabel>
-                </Tag>
-              </MenuItem>
+                  Everything
+                </span>
+              </DropdownMenuItem>
+
               {ALL_FILTERS.map((status) => (
-                <MenuItem
+                <DropdownMenuItem
                   key={status}
-                  _focus={{ bg: 'brand.slate.100' }}
+                  className="focus:bg-slate-100"
                   onClick={() => handleStatusFilterChange(status)}
                 >
-                  <Tag
-                    px={3}
-                    py={1}
-                    bg={getColorStyles(status).bgColor}
-                    rounded="full"
+                  <span
+                    className={cn(
+                      'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-center text-[11px] font-medium capitalize',
+                      getColorStyles(status).color,
+                      getColorStyles(status).bgColor,
+                    )}
                   >
-                    <TagLabel
-                      w="full"
-                      color={getColorStyles(status).color}
-                      fontSize={'11px'}
-                      textAlign={'center'}
-                      textTransform={'capitalize'}
-                      whiteSpace={'nowrap'}
-                    >
-                      {status}
-                    </TagLabel>
-                  </Tag>
-                </MenuItem>
+                    {status}
+                  </span>
+                </DropdownMenuItem>
               ))}
-            </MenuList>
-          </Menu>
-          <InputGroup w={64} ml={4}>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <div className="relative ml-4 w-64">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              bg={'white'}
-              borderColor="brand.slate.300"
-              _placeholder={{
-                color: 'brand.slate.400',
-                fontWeight: 500,
-                fontSize: 'md',
-              }}
-              focusBorderColor="brand.purple"
+              className="placeholder:text-md border-slate-300 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search listing..."
               type="text"
             />
-            <InputLeftElement pointerEvents="none">
-              <SearchIcon color="brand.slate.400" />
-            </InputLeftElement>
-          </InputGroup>
-        </Flex>
-      </Flex>
+          </div>
+        </div>
+      </div>
 
       {isListingsLoading && <LoadingSection />}
       {!isListingsLoading && (
         <>
-          <Tabs onChange={handleTabChange}>
-            <TabList>
-              <Tab
-                color="brand.slate.400"
-                fontSize={'sm'}
-                fontWeight={500}
-                _selected={selectedStyles}
+          <Tabs onValueChange={handleTabChange} defaultValue="all">
+            <TabsList>
+              <TabsTrigger
+                value="all"
+                className="text-sm font-medium text-slate-400 data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
               >
                 All
-              </Tab>
-              <Tab
-                color="brand.slate.400"
-                fontSize={'sm'}
-                fontWeight={500}
-                _selected={selectedStyles}
+              </TabsTrigger>
+              <TabsTrigger
+                value="bounties"
+                className="text-sm font-medium text-slate-400 data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
               >
                 Bounties
-              </Tab>
-              <Tab
-                color="brand.slate.400"
-                fontSize={'sm'}
-                fontWeight={500}
-                _selected={selectedStyles}
+              </TabsTrigger>
+              <TabsTrigger
+                value="projects"
+                className="text-sm font-medium text-slate-400 data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
               >
                 Projects
-              </Tab>
+              </TabsTrigger>
               {hasGrants && (
-                <Tab
-                  color="brand.slate.400"
-                  fontSize={'sm'}
-                  fontWeight={500}
-                  _selected={selectedStyles}
+                <TabsTrigger
+                  value="grants"
+                  className="text-sm font-medium text-slate-400 data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
                 >
                   Grants
-                </Tab>
+                </TabsTrigger>
               )}
               {hasHackathons && (
-                <Tab
-                  color="brand.slate.400"
-                  fontSize={'sm'}
-                  fontWeight={500}
-                  _selected={selectedStyles}
+                <TabsTrigger
+                  value="hackathons"
+                  className="text-sm font-medium text-slate-400 data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
                 >
                   Hackathons
-                </Tab>
+                </TabsTrigger>
               )}
-            </TabList>
-            <TabPanels>
-              <TabPanel px={0}>
+            </TabsList>
+
+            <TabsContent value="all" className="px-0">
+              <MemoizedListingTable listings={paginatedListings} />
+            </TabsContent>
+            <TabsContent value="bounties" className="px-0">
+              <MemoizedListingTable listings={paginatedListings} />
+            </TabsContent>
+            <TabsContent value="projects" className="px-0">
+              <MemoizedListingTable listings={paginatedListings} />
+            </TabsContent>
+            {hasGrants && (
+              <TabsContent value="grants" className="px-0">
                 <MemoizedListingTable listings={paginatedListings} />
-              </TabPanel>
-              <TabPanel px={0}>
+              </TabsContent>
+            )}
+            {hasHackathons && (
+              <TabsContent value="hackathons" className="px-0">
                 <MemoizedListingTable listings={paginatedListings} />
-              </TabPanel>
-              <TabPanel px={0}>
-                <MemoizedListingTable listings={paginatedListings} />
-              </TabPanel>
-              {hasGrants && (
-                <TabPanel px={0}>
-                  <MemoizedListingTable listings={paginatedListings} />
-                </TabPanel>
-              )}
-              {hasHackathons && (
-                <TabPanel px={0}>
-                  <MemoizedListingTable listings={paginatedListings} />
-                </TabPanel>
-              )}
-            </TabPanels>
+              </TabsContent>
+            )}
           </Tabs>
           <CreateListingModal
             isOpen={isOpenCreateListing}
             onClose={onCloseCreateListing}
           />
           {!!paginatedListings?.length && (
-            <Flex align="center" justify="end" mt={6}>
-              <Text mr={4} color="brand.slate.400" fontSize="sm">
-                <Text as="span" fontWeight={700}>
+            <div className="mt-6 flex items-center justify-end">
+              <p className="mr-4 text-sm text-slate-400">
+                <span className="font-bold">
                   {currentPage * listingsPerPage + 1}
-                </Text>{' '}
+                </span>{' '}
                 -{' '}
-                <Text as="span" fontWeight={700}>
+                <span className="font-bold">
                   {Math.min(
                     (currentPage + 1) * listingsPerPage,
                     filteredListings.length,
                   )}
-                </Text>{' '}
-                of{' '}
-                <Text as="span" fontWeight={700}>
-                  {filteredListings.length}
-                </Text>{' '}
+                </span>{' '}
+                of <span className="font-bold">{filteredListings.length}</span>{' '}
                 Listings
-              </Text>
-              <Button
-                mr={4}
-                isDisabled={currentPage <= 0}
-                leftIcon={<ChevronLeftIcon w={5} h={5} />}
-                onClick={() => setCurrentPage(currentPage - 1)}
-                size="sm"
-                variant="outline"
-              >
-                Previous
-              </Button>
-              <Button
-                isDisabled={
-                  (currentPage + 1) * listingsPerPage >= filteredListings.length
-                }
-                onClick={() => setCurrentPage(currentPage + 1)}
-                rightIcon={<ChevronRightIcon w={5} h={5} />}
-                size="sm"
-                variant="outline"
-              >
-                Next
-              </Button>
-            </Flex>
+              </p>
+              <div className="flex gap-4">
+                <Button
+                  disabled={currentPage <= 0}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  size="sm"
+                  variant="outline"
+                >
+                  <ChevronLeft className="mr-2 h-5 w-5" />
+                  Previous
+                </Button>
+
+                <Button
+                  disabled={
+                    (currentPage + 1) * listingsPerPage >=
+                    filteredListings.length
+                  }
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  size="sm"
+                  variant="outline"
+                >
+                  Next
+                  <ChevronRight className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
+            </div>
           )}
         </>
       )}
@@ -437,35 +356,17 @@ export default function SponsorListings() {
             alt={'talent empty'}
             src={'/bg/talent-empty.svg'}
           />
-          <Text
-            mx="auto"
-            mt={5}
-            color={'brand.slate.600'}
-            fontSize={'lg'}
-            fontWeight={600}
-            textAlign={'center'}
-          >
+          <p className="mx-auto mt-5 text-center text-lg font-semibold text-slate-600">
             Create your first listing
-          </Text>
-          <Text
-            mx="auto"
-            color={'brand.slate.400'}
-            fontWeight={500}
-            textAlign={'center'}
-          >
+          </p>
+          <p className="mx-auto text-center font-medium text-slate-400">
             and start getting contributions
-          </Text>
+          </p>
           <Button
-            display="block"
-            w={'200px'}
-            mx="auto"
-            mt={6}
-            mb={48}
-            fontSize="md"
-            leftIcon={<AddIcon w={3} h={3} />}
+            className="text-md mx-auto mb-48 mt-6 block w-[200px]"
             onClick={onOpenCreateListing}
-            variant="solid"
           >
+            <Plus className="mr-2 h-3 w-3" />
             Create New Listing
           </Button>
         </>
@@ -479,24 +380,12 @@ export default function SponsorListings() {
               alt={'talent empty'}
               src={'/bg/talent-empty.svg'}
             />
-            <Text
-              mx="auto"
-              mt={5}
-              color={'brand.slate.600'}
-              fontSize={'lg'}
-              fontWeight={600}
-              textAlign={'center'}
-            >
+            <p className="mx-auto mt-5 text-center text-lg font-semibold text-slate-600">
               Zero Results
-            </Text>
-            <Text
-              mx="auto"
-              color={'brand.slate.400'}
-              fontWeight={500}
-              textAlign={'center'}
-            >
+            </p>
+            <p className="mx-auto text-center font-medium text-slate-400">
               No results matching the current filter
-            </Text>
+            </p>
           </>
         )}
     </SponsorLayout>

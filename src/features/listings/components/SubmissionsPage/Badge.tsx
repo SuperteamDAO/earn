@@ -1,5 +1,4 @@
-import { StarIcon } from '@chakra-ui/icons';
-import { HStack } from '@chakra-ui/react';
+import { Star } from 'lucide-react';
 import React from 'react';
 
 import { BONUS_REWARD_POSITION } from '@/constants';
@@ -14,19 +13,17 @@ export const Badge = ({
   if (position === BONUS_REWARD_POSITION) return <></>;
   position = Number(position);
   return (
-    <HStack
-      w="fit-content"
-      h="1.2rem"
-      px={2}
-      color={position === 1 ? '#D97706' : '#475569'}
-      fontSize="sm"
-      bg={position === 1 ? '#FFF7ED' : '#F8FAFC'}
-      rounded="full"
+    <div
+      className={`inline-flex h-[1.2rem] w-fit items-center gap-1 rounded-full px-2 text-sm ${
+        position === 1
+          ? 'bg-orange-50 text-orange-600'
+          : 'bg-slate-50 text-slate-600'
+      }`}
     >
-      <StarIcon h={3} w={3} />
+      <Star className="h-3 w-3" />
       {position !== BONUS_REWARD_POSITION && (
         <p>{nthLabelGenerator(position ?? 0)}</p>
       )}
-    </HStack>
+    </div>
   );
 };

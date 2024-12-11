@@ -1,12 +1,10 @@
-import { HStack } from '@chakra-ui/react';
-
 interface StarProps {
   count: number;
   filled: number;
 }
 export function Stars({ count, filled }: StarProps) {
   return (
-    <HStack gap={1}>
+    <div className="flex gap-1">
       {Array.from({ length: count }).map((_, i) => (
         <svg
           key={i + 1}
@@ -22,6 +20,6 @@ export function Stars({ count, filled }: StarProps) {
           />
         </svg>
       ))}
-    </HStack>
+    </div>
   );
 }

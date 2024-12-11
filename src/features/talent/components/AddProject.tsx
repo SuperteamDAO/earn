@@ -1,28 +1,19 @@
-import { LinkIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalOverlay,
-  Text,
-  Textarea,
-} from '@chakra-ui/react';
 import axios from 'axios';
+import { Link2 } from 'lucide-react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { SkillSelect } from '@/components/shared/SkillSelect';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { FormControl, FormItem, FormLabel } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import type { MultiSelectOptions } from '@/constants';
 import { type FeedDataProps } from '@/features/feed';
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 type AddProjectProps = {
   isOpen: boolean;
@@ -154,99 +145,84 @@ export const AddProject = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent maxW={'607px'} py={'1.4375rem'}>
-        <ModalBody>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FormControl isRequired>
-              <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>Project Title</FormLabel>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogOverlay />
+      <DialogContent className="max-w-[607px] py-[1.4375rem]">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-5">
+            <FormItem>
+              <FormLabel className="text-slate-500">Project Title</FormLabel>
+              <FormControl>
                 <Input
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.300',
-                  }}
-                  focusBorderColor="brand.purple"
-                  id="title"
+                  className="border-slate-300 placeholder:text-slate-300 focus:border-brand-purple focus:ring-brand-purple"
                   placeholder="Project Title"
                   {...register('title', { required: true })}
                 />
-              </Box>
-              <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>
-                  Describe Your Work
-                </FormLabel>
+              </FormControl>
+            </FormItem>
+
+            <FormItem>
+              <FormLabel className="text-slate-500">
+                Describe Your Work
+              </FormLabel>
+              <FormControl>
                 <Textarea
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.300',
-                  }}
-                  focusBorderColor="brand.purple"
-                  id={'description'}
+                  className="border-slate-300 placeholder:text-slate-300 focus:border-brand-purple focus:ring-brand-purple"
                   maxLength={180}
                   placeholder="About the Project"
                   {...register('description', { required: true })}
                 />
-                <Text
-                  color={
-                    (watch('description')?.length || 0) > 160
-                      ? 'red'
-                      : 'brand.slate.400'
-                  }
-                  fontSize={'xs'}
-                  textAlign="right"
-                >
-                  {180 - (watch('description')?.length || 0)} characters left
-                </Text>
-              </Box>
-              <SkillSelect
-                skills={skills}
-                subSkills={subSkills}
-                setSkills={setSkills}
-                setSubSkills={setSubSkills}
-                skillLabel="Skills Used"
-                subSkillLabel="Sub Skills Used"
-              />
+              </FormControl>
+              <p
+                className={cn(
+                  'text-right text-xs',
+                  (watch('description')?.length || 0) > 160
+                    ? 'text-red-500'
+                    : 'text-slate-400',
+                )}
+              >
+                {180 - (watch('description')?.length || 0)} characters left
+              </p>
+            </FormItem>
 
-              <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>Link</FormLabel>
-                <InputGroup _placeholder={{ color: 'gray.500' }}>
-                  <InputLeftElement
-                    _placeholder={{ color: 'gray.500' }}
-                    pointerEvents="none"
-                    // eslint-disable-next-line react/no-children-prop
-                    children={<LinkIcon color="gray.300" />}
-                  />
+            <SkillSelect
+              skills={skills}
+              subSkills={subSkills}
+              setSkills={setSkills}
+              setSubSkills={setSubSkills}
+              skillLabel="Skills Used"
+              subSkillLabel="Sub Skills Used"
+            />
+
+            <FormItem>
+              <FormLabel className="text-slate-500">Link</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Link2 className="absolute left-3 top-3 h-4 w-4 text-slate-300" />
                   <Input
-                    borderColor="brand.slate.300"
-                    _placeholder={{
-                      color: 'brand.slate.300',
-                    }}
-                    focusBorderColor="brand.purple"
+                    className="border-slate-300 pl-10 placeholder:text-slate-300 focus:border-brand-purple focus:ring-brand-purple"
                     placeholder="https://example.com"
                     {...register('link', { required: true })}
                   />
-                </InputGroup>
-              </Box>
-              <Box w={'full'} mb={'1.25rem'}>
-                {skillsError && (
-                  <Text color={'red'}>Please add Skills and Sub Skills</Text>
-                )}
-              </Box>
-              <Button
-                w={'full'}
-                h="50px"
-                color={'white'}
-                bg={'rgb(101, 98, 255)'}
-                type="submit"
-              >
-                Add Project
-              </Button>
-            </FormControl>
-          </form>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+                </div>
+              </FormControl>
+            </FormItem>
+
+            {skillsError && (
+              <p className="text-sm text-red-500">
+                Please add Skills and Sub Skills
+              </p>
+            )}
+
+            <Button
+              className="h-[50px] w-full bg-[rgb(101,98,255)] text-white"
+              type="submit"
+            >
+              Add Project
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };

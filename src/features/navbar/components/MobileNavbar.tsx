@@ -1,5 +1,5 @@
 import { Menu } from 'lucide-react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -173,7 +173,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
 
           <MobileDrawer />
           <div className="absolute left-1/2 -translate-x-1/2">
-            <NextLink
+            <Link
               href="/"
               className="flex items-center hover:no-underline"
               onClick={() => {
@@ -185,7 +185,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 alt="Superteam Earn"
                 src="/assets/logo.svg"
               />
-            </NextLink>
+            </Link>
           </div>
           {status === 'authenticated' && session && <UserMenu />}
           {status === 'unauthenticated' && !session && (

@@ -1,19 +1,17 @@
-import {
-  Box,
-  Divider,
-  Flex,
-  Link,
-  Skeleton,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { Info, Pencil } from 'lucide-react';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
-import { AiOutlineEdit } from 'react-icons/ai';
-import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
+import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { PDTG } from '@/constants';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
@@ -39,20 +37,10 @@ export function Banner({
 
   if (!sponsorId) return null;
   return (
-    <Flex gap={4} w="100%">
-      <Box
-        w="100%"
-        mb={6}
-        px={8}
-        py={6}
-        color="white"
-        bg="white"
-        borderWidth={'1px'}
-        borderColor={'brand.slate.200'}
-        borderRadius="md"
-      >
-        <Flex align="center" gap={8}>
-          <Flex align="center" flexShrink={0} gap={3}>
+    <div className="w-full gap-4">
+      <div className="mb-6 w-full rounded-md border border-slate-200 bg-white px-8 py-6 text-white">
+        <div className="flex items-center gap-8">
+          <div className="flex flex-shrink-0 items-center gap-3">
             <EarnAvatar
               size="52px"
               id={sponsor?.name}
@@ -60,189 +48,139 @@ export function Banner({
               borderRadius="rounded-sm"
             />
             <div>
-              <Box alignItems={'center'} flexDir={'row'} display={'flex'}>
-                <Flex align={'center'} gap={1} w="min-content">
-                  <Text
-                    color={'brand.slate.900'}
-                    fontSize="lg"
-                    fontWeight={600}
-                    whiteSpace={'nowrap'}
-                  >
+              <div className="flex items-center">
+                <div className="flex w-min items-center gap-1">
+                  <p className="whitespace-nowrap text-lg font-semibold text-slate-900">
                     {sponsor?.name}
-                  </Text>
+                  </p>
                   <div>{!!sponsor?.isVerified && <VerifiedBadgeLarge />}</div>
-                </Flex>
+                </div>
 
                 <Link
-                  as={NextLink}
-                  ml={2}
-                  color="brand.slate.500"
-                  _hover={{
-                    color: 'brand.slate.800',
-                  }}
+                  className="ml-2 text-slate-500 hover:text-slate-800"
                   href={`/sponsor/edit`}
                 >
-                  <AiOutlineEdit size={18} color="#94a3b8" />
+                  <Pencil className="h-[18px] w-[18px] text-slate-400" />
                 </Link>
-              </Box>
+              </div>
               {isLoading ? (
-                <Skeleton w="170px" h="20px" mt={2} />
+                <Skeleton className="mt-2 h-5 w-[170px]" />
               ) : (
-                <Text
-                  color={'brand.slate.500'}
-                  fontWeight={400}
-                  whiteSpace={'nowrap'}
-                >
+                <p className="whitespace-nowrap font-normal text-slate-500">
                   {!isHackathon
                     ? `Sponsor since ${stats?.yearOnPlatform}`
                     : 'Hackathon'}
-                </Text>
+                </p>
               )}
             </div>
-          </Flex>
-          <Divider
-            w="2px"
-            h={14}
-            borderColor={'brand.slate.200'}
-            orientation="vertical"
-          />
-          <Tooltip
-            color="grey"
-            bg="white"
-            label={tooltipTextReward}
-            placement="bottom"
-          >
-            <Box _hover={{ cursor: 'pointer' }}>
-              <Flex align="center">
-                <Text
-                  mr={0.5}
-                  color={'brand.slate.500'}
-                  fontSize="md"
-                  fontWeight={400}
-                  whiteSpace={'nowrap'}
-                >
-                  {!isHackathon ? 'Rewarded' : 'Total Prizes'}
-                </Text>
-                <MdInfoOutline color="#94a3b8" size={16} />
-              </Flex>
-              {isLoading ? (
-                <Skeleton w="72px" h="20px" mt={2} />
-              ) : (
-                <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-                  $
-                  {new Intl.NumberFormat('en-US', {
-                    maximumFractionDigits: 0,
-                  }).format(Math.round(stats?.totalRewardAmount || 0))}
-                </Text>
-              )}
-            </Box>
-          </Tooltip>
-          <Tooltip
-            color="grey"
-            bg="white"
-            label={tooltipTextListings}
-            placement="bottom"
-          >
-            <Box _hover={{ cursor: 'pointer' }}>
-              <Flex align="center">
-                <Text
-                  mr={0.5}
-                  color={'brand.slate.500'}
-                  fontSize="md"
-                  fontWeight={400}
-                  whiteSpace={'nowrap'}
-                >
-                  {!isHackathon ? 'Listings' : 'Tracks'}
-                </Text>
-                <MdInfoOutline color="#94a3b8" size={16} />
-              </Flex>
-              {isLoading ? (
-                <Skeleton w="32px" h="20px" mt={2} />
-              ) : (
-                <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-                  {stats?.totalListingsAndGrants}
-                </Text>
-              )}
-            </Box>
-          </Tooltip>
-          <Tooltip
-            color="grey"
-            bg="white"
-            label={tooltipTextSubmissions}
-            placement="bottom"
-          >
-            <Box _hover={{ cursor: 'pointer' }}>
-              <Flex align="center">
-                <Text
-                  mr={0.5}
-                  color={'brand.slate.500'}
-                  fontSize="md"
-                  fontWeight={400}
-                  whiteSpace={'nowrap'}
-                >
-                  Submissions
-                </Text>
-                <MdInfoOutline color="#94a3b8" size={16} />
-              </Flex>
-              {isLoading ? (
-                <Skeleton w="36px" h="20px" mt={2} />
-              ) : (
-                <Text color={'brand.slate.900'} fontSize="lg" fontWeight={600}>
-                  {stats?.totalSubmissionsAndApplications}
-                </Text>
-              )}
-            </Box>
-          </Tooltip>
-        </Flex>
-      </Box>
+          </div>
+          <div className="h-14 w-0.5 border-r border-slate-200" />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="cursor-pointer">
+                  <div className="flex items-center">
+                    <p className="mr-0.5 whitespace-nowrap text-base font-normal text-slate-500">
+                      {!isHackathon ? 'Rewarded' : 'Total Prizes'}
+                    </p>
+                    <Info className="h-4 w-4 text-slate-400" />
+                  </div>
+                  {isLoading ? (
+                    <Skeleton className="mt-2 h-5 w-[72px]" />
+                  ) : (
+                    <p className="text-lg font-semibold text-slate-900">
+                      $
+                      {new Intl.NumberFormat('en-US', {
+                        maximumFractionDigits: 0,
+                      }).format(Math.round(stats?.totalRewardAmount || 0))}
+                    </p>
+                  )}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="bg-white text-gray-600" side="bottom">
+                <p>{tooltipTextReward}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="cursor-pointer">
+                  <div className="flex items-center">
+                    <p className="mr-0.5 whitespace-nowrap text-base font-normal text-slate-500">
+                      {!isHackathon ? 'Listings' : 'Tracks'}
+                    </p>
+                    <Info className="h-4 w-4 text-slate-400" />
+                  </div>
+                  {isLoading ? (
+                    <Skeleton className="mt-2 h-5 w-[32px]" />
+                  ) : (
+                    <p className="text-lg font-semibold text-slate-900">
+                      {stats?.totalListingsAndGrants}
+                    </p>
+                  )}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="bg-white text-gray-600" side="bottom">
+                <p>{tooltipTextListings}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="cursor-pointer">
+                  <div className="flex items-center">
+                    <p className="mr-0.5 whitespace-nowrap text-base font-normal text-slate-500">
+                      Submissions
+                    </p>
+                    <Info className="h-4 w-4 text-slate-400" />
+                  </div>
+                  {isLoading ? (
+                    <Skeleton className="mt-2 h-5 w-[36px]" />
+                  ) : (
+                    <p className="text-lg font-semibold text-slate-900">
+                      {stats?.totalSubmissionsAndApplications}
+                    </p>
+                  )}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="bg-white text-gray-600" side="bottom">
+                <p>{tooltipTextSubmissions}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </div>
 
-      <Box
-        w="60%"
-        maxW="400px"
-        mb={6}
-        px={8}
-        py={6}
-        color="white"
-        bg="#EEF2FF"
-        borderWidth={'1px'}
-        borderColor={'brand.slate.200'}
-        borderRadius="md"
-      >
-        <Link
-          className="ph-no-capture"
-          _hover={{ textDecoration: 'none' }}
+      <div className="mb-6 w-[60%] max-w-[400px] rounded-md border border-slate-200 bg-[#eef2ff] px-8 py-6 text-white">
+        <a
+          className="ph-no-capture no-underline"
           href={PDTG}
-          isExternal
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={() => posthog.capture('message pratik_sponsor')}
         >
-          <Flex align={'center'} justify={'space-between'}>
-            <Flex align={'center'}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
               <ExternalImage
                 className="mr-3 h-14 w-[3.2rem]"
                 alt="message pratik"
                 src={'/sponsor/pratik.webp'}
               />
               <div>
-                <Text
-                  color="brand.slate.900"
-                  fontWeight={600}
-                  whiteSpace={'nowrap'}
-                >
+                <p className="whitespace-nowrap font-semibold text-slate-900">
                   Stuck somewhere?
-                </Text>
-                <Text
-                  color="brand.slate.500"
-                  fontWeight={600}
-                  whiteSpace={'nowrap'}
-                >
+                </p>
+                <p className="whitespace-nowrap font-semibold text-slate-500">
                   Message Us
-                </Text>
+                </p>
               </div>
-            </Flex>
+            </div>
             <MdOutlineChatBubbleOutline color="#1E293B" size={24} />
-          </Flex>
-        </Link>
-      </Box>
-    </Flex>
+          </div>
+        </a>
+      </div>
+    </div>
   );
 }

@@ -108,7 +108,7 @@ export function ListingHeader({
 
   const ListingTitle = () => {
     return (
-      <h1 className="text-xl font-bold tracking-[-0.5px] text-brand-slate-700">
+      <h1 className="text-xl font-bold tracking-[-0.5px] text-slate-700">
         {title}
       </h1>
     );

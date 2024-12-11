@@ -1,17 +1,8 @@
-import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Flex,
-  Step,
-  StepIndicator,
-  Stepper,
-  StepSeparator,
-  StepStatus,
-  Text,
-} from '@chakra-ui/react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { BONUS_REWARD_POSITION } from '@/constants';
+import { cn } from '@/utils';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { nthLabelGenerator } from '@/utils/rank';
 
@@ -76,56 +67,52 @@ export function PrizesList({
   }, [visibleRewards]);
 
   return (
-    <>
-      <Stepper gap="0" w="full" h={boxHeight} index={-1} orientation="vertical">
-        {visibleRewards.map((step, index) => (
-          <Step key={index} style={{ overflowY: 'visible' }}>
-            <StepIndicator
-              sx={{
-                '[data-status=incomplete] &': {
-                  background: 'brand.slate.200',
-                },
-              }}
-              pos="relative"
-              top={2}
-              w={3}
-              h={3}
-              mx={2.5}
+    <div className={cn('mt-3 flex w-full flex-col gap-3', `h-[${boxHeight}]`)}>
+      {visibleRewards.map((step, index) => (
+        <div
+          key={index}
+          className="relative flex gap-3"
+          style={{ overflowY: 'visible' }}
+        >
+          <div className="relative top-2 mx-2.5 h-3 w-3 rounded-full bg-slate-200">
+            <div className="h-full w-full" />
+          </div>
+
+          <div className="flex flex-shrink-0 gap-2 text-lg md:text-xl">
+            <div
+              className={cn(
+                'ml-auto flex gap-1 font-semibold',
+                `w-[${widthPrize}]`,
+              )}
             >
-              <StepStatus />
-            </StepIndicator>
+              <p className="ml-auto">
+                {!seeAll && visibleRewards.length - 1 === index && '+'}{' '}
+                {formatNumberWithSuffix(step[1], 1, true)}
+              </p>
+              <p className="font-semibold text-slate-400">{token}</p>
+            </div>
+            <LabelOrAction
+              setSeeAll={setSeeAll}
+              step={step}
+              maxBonusSpots={maxBonusSpots}
+              seeAll={seeAll}
+              index={index}
+              needsCollapse={
+                iterableRewards.length > 6 &&
+                visibleRewards.length - 1 === index
+              }
+            />
+          </div>
 
-            <Flex flexShrink="0" gap={2} fontSize={{ base: 'lg', md: 'xl' }}>
-              <Flex gap={1} w={widthPrize} ml="auto" fontWeight={600}>
-                <Text ml="auto">
-                  {!seeAll && visibleRewards.length - 1 === index && '+'}{' '}
-                  {formatNumberWithSuffix(step[1], 1, true)}
-                </Text>
-                <Text color="brand.slate.400" fontWeight={600}>
-                  {token}
-                </Text>
-              </Flex>
-              <LabelOrAction
-                setSeeAll={setSeeAll}
-                step={step}
-                maxBonusSpots={maxBonusSpots}
-                seeAll={seeAll}
-                index={index}
-                needsCollapse={
-                  iterableRewards.length > 6 &&
-                  visibleRewards.length - 1 === index
-                }
-              />
-            </Flex>
-
-            <StepSeparator
+          {index !== visibleRewards.length - 1 && (
+            <div
+              className="absolute left-4 w-px"
               style={{
-                height: '100%',
-                top: '1.15rem',
+                height: '120%',
+                top: '1.2rem',
                 maxHeight: 'none',
-                borderLeft: '1px solid',
-                background: 'none',
-                borderColor: 'var(--chakra-colors-brand-slate-300)',
+                borderLeftWidth: '1px',
+                borderColor: 'rgb(226 232 240)',
                 borderStyle:
                   visibleRewards[index + 1]?.[0] ===
                     BONUS_REWARD_POSITION + '' &&
@@ -134,13 +121,12 @@ export function PrizesList({
                     : 'solid',
               }}
             />
-          </Step>
-        ))}
-      </Stepper>
-    </>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
-
 interface LabelOrActionProps {
   step: [string, number];
   maxBonusSpots: number;
@@ -161,72 +147,44 @@ function LabelOrAction({
   if (Number(step[0]) === BONUS_REWARD_POSITION) {
     if (!seeAll) {
       return (
-        <Button
-          fontWeight={'inherit'}
-          bg="transparent"
+        <button
+          className="font-inherit flex items-center gap-1 bg-transparent hover:opacity-80"
           onClick={() => setSeeAll(true)}
-          rightIcon={
-            <ChevronDownIcon
-              border="1px solid"
-              borderRadius="full"
-              w={4}
-              h={4}
-              mt={'2px'}
-            />
-          }
-          variant="link"
         >
           View More
-        </Button>
+          <ChevronDown className="mt-0.5 h-4 w-4 rounded-full border" />
+        </button>
       );
     } else
       return (
-        <Text color="brand.slate.500" fontSize={'medium'}>
+        <p className="text-md text-slate-500">
           {nthLabelGenerator(index + 1)}
           {index + 1 !== index + maxBonusSpots && (
             <> - {nthLabelGenerator(index + maxBonusSpots)}</>
           )}
           {needsCollapse && (
-            <Button
-              fontWeight={'inherit'}
-              bg="transparent"
+            <button
+              className="font-inherit flex items-center gap-1 bg-transparent hover:opacity-80"
               onClick={() => setSeeAll(false)}
-              variant="link"
             >
-              <ChevronUpIcon
-                border="1px solid"
-                borderRadius="full"
-                w={4}
-                h={4}
-                pos="relative"
-                top={'2px'}
-              />
-            </Button>
+              <ChevronUp className="relative top-0.5 h-4 w-4 rounded-full border" />
+            </button>
           )}
-        </Text>
+        </p>
       );
   } else {
     return (
-      <Text color="brand.slate.500" fontSize={'medium'}>
+      <p className="mb-1 mt-auto text-sm font-medium text-slate-500">
         {nthLabelGenerator(Number(step[0]))}
         {needsCollapse && (
-          <Button
-            fontWeight={'inherit'}
-            bg="transparent"
+          <button
+            className="font-inherit flex items-center gap-1 bg-transparent hover:opacity-80"
             onClick={() => setSeeAll(false)}
-            variant="link"
           >
-            <ChevronUpIcon
-              border="1px solid"
-              borderRadius="full"
-              w={4}
-              h={4}
-              pos="relative"
-              top={'2px'}
-            />
-          </Button>
+            <ChevronUp className="relative top-0.5 h-4 w-4 rounded-full border" />
+          </button>
         )}
-      </Text>
+      </p>
     );
   }
 }

@@ -1,34 +1,27 @@
-import { SearchIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Checkbox,
-  Flex,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Tag,
-  TagLabel,
-  Text,
-} from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
+import { ChevronDown, Search } from 'lucide-react';
 import React, {
   type Dispatch,
   type SetStateAction,
   useEffect,
   useRef,
 } from 'react';
-import { MdArrowDropDown } from 'react-icons/md';
 
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import { type Listing } from '@/features/listings';
 import { EarnAvatar } from '@/features/talent';
 import type { SubmissionWithUser } from '@/interface/submission';
+import { cn } from '@/utils';
 import { getRankLabels } from '@/utils/rank';
 
 import { selectedSubmissionAtom } from '../..';
@@ -113,244 +106,142 @@ export const SubmissionList = ({
 
   return (
     <>
-      <Box
-        w="100%"
-        h="full"
-        bg="white"
-        borderWidth={'1px'}
-        borderColor={'brand.slate.200'}
-        roundedLeft="xl"
-      >
-        <Flex
-          align={'center'}
-          justify={'space-between'}
-          direction={'column'}
-          gap={4}
-          px={4}
-          py={3}
-          borderBottom={'1px solid'}
-          borderBottomColor="brand.slate.200"
-          cursor="pointer"
-        >
-          <Flex
-            align={'center'}
-            justify={'space-between'}
-            gap={4}
-            w="full"
-            py={3}
-          >
+      <div className="h-full w-full rounded-l-xl border border-slate-200 bg-white">
+        <div className="flex cursor-pointer flex-col items-center justify-between gap-4 border-b border-slate-200 px-4 py-3">
+          <div className="flex w-full items-center justify-between gap-4 py-3">
             {listing?.type === 'project' && (
               <Checkbox
-                _checked={{
-                  '& .chakra-checkbox__control': {
-                    background: 'brand.purple',
-                    borderColor: 'brand.purple',
-                  },
-                }}
-                isChecked={isAllToggled}
-                isDisabled={listing?.isWinnersAnnounced}
-                onChange={() => toggleAllSubmissions && toggleAllSubmissions()}
+                className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                checked={isAllToggled}
+                disabled={listing?.isWinnersAnnounced}
+                onCheckedChange={() =>
+                  toggleAllSubmissions && toggleAllSubmissions()
+                }
               />
             )}
-            <InputGroup w={'full'} size="lg">
+
+            <div className="relative w-full">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
-                bg={'white'}
-                borderColor="brand.slate.200"
-                _placeholder={{
-                  color: 'brand.slate.400',
-                  fontWeight: 500,
-                  fontSize: 'md',
-                }}
-                focusBorderColor="brand.purple"
+                className="placeholder:text-md h-12 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
                 onChange={(e) => debouncedSetSearchText(e.target.value)}
                 placeholder="Search Submissions"
                 type="text"
               />
-              <InputLeftElement pointerEvents="none">
-                <SearchIcon color="brand.slate.400" />
-              </InputLeftElement>
-            </InputGroup>
-          </Flex>
-          <Flex
-            align="center"
-            justify={'space-between'}
-            w="full"
-            cursor="default"
-          >
-            <Text color="brand.slate.500" fontSize="xs">
-              Filter By
-            </Text>
-            <Menu>
-              <MenuButton
-                as={Button}
-                h="auto"
-                px={2}
-                py={1}
-                color="brand.slate.500"
-                fontWeight={500}
-                textTransform="capitalize"
-                bg="transparent"
-                borderWidth={'1px'}
-                borderColor="brand.slate.300"
-                _hover={{ backgroundColor: 'transparent' }}
-                _active={{
-                  backgroundColor: 'transparent',
-                  borderWidth: '1px',
-                }}
-                _expanded={{ borderColor: 'brand.purple' }}
-                rightIcon={<MdArrowDropDown />}
-              >
-                <Tag minH="none" px={3} py={1} bg={bg} rounded="full">
-                  <TagLabel
-                    w="full"
-                    color={color}
-                    fontSize={'10px'}
-                    textAlign={'center'}
-                    textTransform={'capitalize'}
-                    whiteSpace={'nowrap'}
+            </div>
+          </div>
+          <div className="flex w-full cursor-default items-center justify-between">
+            <p className="text-xs text-slate-500">Filter By</p>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  className="h-auto border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                  variant="outline"
+                >
+                  <span
+                    className={cn(
+                      'inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
+                      bg,
+                      color,
+                    )}
                   >
                     {filterLabel || 'Select Option'}
-                  </TagLabel>
-                </Tag>
-              </MenuButton>
-              <MenuList minW="130px" borderColor="brand.slate.300">
-                <MenuItem
-                  _focus={{ bg: 'brand.slate.100' }}
+                  </span>
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent className="min-w-[130px] border-slate-300">
+                <DropdownMenuItem
+                  className="focus:bg-slate-100"
                   onClick={() => setFilterLabel(undefined)}
                 >
-                  <Tag minH="none" px={3} py={1} rounded="full">
-                    <TagLabel
-                      w="full"
-                      fontSize={'10px'}
-                      textAlign={'center'}
-                      textTransform={'capitalize'}
-                      whiteSpace={'nowrap'}
-                    >
-                      Select Option
-                    </TagLabel>
-                  </Tag>
-                </MenuItem>
-                <MenuItem
-                  _focus={{ bg: 'brand.slate.100' }}
+                  <span className="inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize">
+                    Select Option
+                  </span>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  className="focus:bg-slate-100"
                   onClick={() => setFilterLabel('Winner')}
                 >
-                  <Tag
-                    minH="none"
-                    px={3}
-                    py={1}
-                    bg={colorMap['Winner'].bg}
-                    rounded="full"
+                  <span
+                    className={cn(
+                      'inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
+                      colorMap['Winner'].bg,
+                      colorMap['Winner'].color,
+                    )}
                   >
-                    <TagLabel
-                      w="full"
-                      color={colorMap['Winner'].color}
-                      fontSize={'10px'}
-                      textAlign={'center'}
-                      textTransform={'capitalize'}
-                      whiteSpace={'nowrap'}
-                    >
-                      Winner
-                    </TagLabel>
-                  </Tag>
-                </MenuItem>
+                    Winner
+                  </span>
+                </DropdownMenuItem>
+
                 {listing?.type === 'project' && (
-                  <MenuItem
-                    _focus={{ bg: 'brand.slate.100' }}
+                  <DropdownMenuItem
+                    className="focus:bg-slate-100"
                     onClick={() => setFilterLabel('Rejected')}
                   >
-                    <Tag
-                      minH="none"
-                      px={3}
-                      py={1}
-                      bg={colorMap['Rejected'].bg}
-                      rounded="full"
+                    <span
+                      className={cn(
+                        'inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
+                        colorMap['Rejected'].bg,
+                        colorMap['Rejected'].color,
+                      )}
                     >
-                      <TagLabel
-                        w="full"
-                        color={colorMap['Rejected'].color}
-                        fontSize={'10px'}
-                        textAlign={'center'}
-                        textTransform={'capitalize'}
-                        whiteSpace={'nowrap'}
-                      >
-                        Rejected
-                      </TagLabel>
-                    </Tag>
-                  </MenuItem>
+                      Rejected
+                    </span>
+                  </DropdownMenuItem>
                 )}
+
                 {labelMenuOptions.map((option) => (
-                  <MenuItem
+                  <DropdownMenuItem
                     key={option.value}
-                    _focus={{ bg: 'brand.slate.100' }}
+                    className="focus:bg-slate-100"
                     onClick={() =>
                       setFilterLabel(option.value as SubmissionLabels)
                     }
                   >
-                    <Tag
-                      minH="none"
-                      px={3}
-                      py={1}
-                      bg={option.bg}
-                      rounded="full"
+                    <span
+                      className={cn(
+                        'inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
+                        option.bg,
+                        option.color,
+                      )}
                     >
-                      <TagLabel
-                        w="full"
-                        color={option.color}
-                        fontSize={'10px'}
-                        textAlign={'center'}
-                        textTransform={'capitalize'}
-                        whiteSpace={'nowrap'}
-                      >
-                        {option.label}
-                      </TagLabel>
-                    </Tag>
-                  </MenuItem>
+                      {option.label}
+                    </span>
+                  </DropdownMenuItem>
                 ))}
-              </MenuList>
-            </Menu>
-          </Flex>
-        </Flex>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
         {submissions.map((submission) => {
           const { bg, color } = getSubmissionColors(submission);
           return (
-            <Flex
+            <div
               key={submission?.id}
-              align={'center'}
-              justify={'space-between'}
-              gap={4}
-              px={4}
-              py={2}
-              bg={
+              className={cn(
+                'flex cursor-pointer items-center justify-between gap-4 border-b border-slate-200 px-4 py-2',
+                'hover:bg-slate-100',
                 selectedSubmission?.id === submission?.id
-                  ? 'brand.slate.100'
-                  : 'transparent'
-              }
-              borderBottom={'1px solid'}
-              borderBottomColor="brand.slate.200"
-              _hover={{
-                backgroundColor: 'brand.slate.100',
-              }}
-              cursor="pointer"
+                  ? 'bg-slate-100'
+                  : 'bg-transparent',
+              )}
               onClick={() => {
                 setSelectedSubmission(submission);
               }}
             >
-              <Flex align="center">
+              <div className="flex items-center">
                 {listing?.type === 'project' && (
                   <Checkbox
-                    mr={2}
-                    _checked={{
-                      '& .chakra-checkbox__control': {
-                        background: 'brand.purple',
-                        borderColor: 'brand.purple',
-                      },
-                    }}
-                    isChecked={isToggled && isToggled(submission.id)}
-                    isDisabled={
+                    className="mr-2 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                    checked={isToggled && isToggled(submission.id)}
+                    disabled={
                       listing?.isWinnersAnnounced ||
                       submission?.status !== 'Pending'
                     }
-                    onChange={() =>
+                    onCheckedChange={() =>
                       toggleSubmission && toggleSubmission(submission.id)
                     }
                   />
@@ -359,45 +250,29 @@ export const SubmissionList = ({
                   id={submission?.user?.id}
                   avatar={submission?.user?.photo || undefined}
                 />
-                <Box w={40} ml={2}>
-                  <Text
-                    overflow={'hidden'}
-                    color="brand.slate.700"
-                    fontSize="sm"
-                    fontWeight={500}
-                    whiteSpace="nowrap"
-                    textOverflow="ellipsis"
-                  >
+                <div className="ml-2 w-40">
+                  <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-slate-700">
                     {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                  </Text>
-                  <Text
-                    overflow={'hidden'}
-                    color="brand.slate.500"
-                    fontSize="xs"
-                    fontWeight={500}
-                    whiteSpace="nowrap"
-                    textOverflow="ellipsis"
-                  >
+                  </p>
+                  <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-slate-500">
                     {submission?.user?.email}
-                  </Text>
-                </Box>
-              </Flex>
-              <Tag minH="none" px={3} py={1} bg={bg} rounded="full">
-                <TagLabel
-                  w="full"
-                  color={color}
-                  fontSize={'10px'}
-                  textAlign={'center'}
-                  textTransform={'capitalize'}
-                  whiteSpace={'nowrap'}
-                >
-                  {getSubmissionLabel(submission)}
-                </TagLabel>
-              </Tag>
-            </Flex>
+                  </p>
+                </div>
+              </div>
+
+              <span
+                className={cn(
+                  'inline-flex whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
+                  bg,
+                  color,
+                )}
+              >
+                {getSubmissionLabel(submission)}
+              </span>
+            </div>
           );
         })}
-      </Box>
+      </div>
     </>
   );
 };

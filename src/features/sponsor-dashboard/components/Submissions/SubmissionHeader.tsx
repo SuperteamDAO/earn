@@ -1,39 +1,31 @@
-import {
-  CheckIcon,
-  ChevronLeftIcon,
-  CopyIcon,
-  DownloadIcon,
-  ExternalLinkIcon,
-} from '@chakra-ui/icons';
-import {
-  Box,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  Button,
-  Divider,
-  Flex,
-  Icon,
-  Image,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-  Link,
-  Tag,
-  Text,
-} from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import NextLink from 'next/link';
+import {
+  Check,
+  ChevronLeft,
+  Copy,
+  Download,
+  ExternalLink,
+  Link2,
+  Pencil,
+} from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React from 'react';
 import { FaXTwitter } from 'react-icons/fa6';
-import { LuPencil } from 'react-icons/lu';
-import { MdInsertLink } from 'react-icons/md';
 import { toast } from 'sonner';
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { tokenList } from '@/constants/tokenList';
 import {
   formatDeadline,
@@ -44,6 +36,7 @@ import {
   type Listing,
 } from '@/features/listings';
 import { useClipboard } from '@/hooks/use-clipboard';
+import { cn } from '@/utils';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
 
@@ -119,60 +112,64 @@ ${socialListingLink('twitter')}
 
   return (
     <>
-      <Box mb={2}>
-        <Breadcrumb color="brand.slate.400">
-          <BreadcrumbItem>
-            <Link
-              as={NextLink}
-              href={
-                bounty?.type === 'hackathon'
-                  ? `/dashboard/hackathon/`
-                  : '/dashboard/listings'
-              }
-              passHref
-            >
-              <BreadcrumbLink color="brand.slate.400">
-                <Flex align="center">
-                  <ChevronLeftIcon mr={1} w={6} h={6} />
+      <div className="mb-2">
+        <Breadcrumb className="text-slate-400">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link
+                  href={
+                    bounty?.type === 'hackathon'
+                      ? `/dashboard/hackathon/`
+                      : '/dashboard/listings'
+                  }
+                  className="flex items-center"
+                >
+                  <ChevronLeft className="mr-1 h-6 w-6" />
                   All Listings
-                </Flex>
+                </Link>
               </BreadcrumbLink>
-            </Link>
-          </BreadcrumbItem>
+            </BreadcrumbItem>
 
-          <BreadcrumbItem>
-            <Text color="brand.slate.400"> {bounty?.title}</Text>
-          </BreadcrumbItem>
+            <BreadcrumbItem>
+              <BreadcrumbPage>{bounty?.title}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
         </Breadcrumb>
-      </Box>
-      <Flex align="center" justify={'space-between'} mb={4}>
-        <Flex align="center" gap={2}>
-          <Image h={6} alt="" src={getListingIcon(bounty?.type!)} />
-          <Text color="brand.slate.800" fontSize="xl" fontWeight="700">
-            {bounty?.title}
-          </Text>
-        </Flex>
-        <Flex align="center" gap={2}>
+      </div>
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <img className="h-6" alt="" src={getListingIcon(bounty?.type!)} />
+          <p className="text-xl font-bold text-slate-800">{bounty?.title}</p>
+        </div>
+        <div className="flex items-center gap-2">
           <Button
-            color="brand.slate.400"
-            _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
-            isLoading={exportMutation.isPending}
-            leftIcon={<DownloadIcon />}
-            loadingText={'Exporting...'}
+            className="text-slate-400 hover:bg-[#E0E7FF] hover:text-[#6366F1]"
+            disabled={exportMutation.isPending}
             onClick={() => exportSubmissionsCsv()}
-            variant={'ghost'}
+            variant="ghost"
           >
-            Export CSV
+            {exportMutation.isPending ? (
+              <>
+                <span className="loading loading-spinner mr-2" />
+                Exporting...
+              </>
+            ) : (
+              <>
+                <Download className="mr-2 h-4 w-4" />
+                Export CSV
+              </>
+            )}
           </Button>
+
           <Button
-            color={'brand.slate.400'}
-            _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
-            leftIcon={<ExternalLinkIcon />}
+            className="text-slate-400 hover:bg-[#E0E7FF] hover:text-[#6366F1]"
             onClick={() =>
               window.open(`${router.basePath}/${listingPath}`, '_blank')
             }
-            variant={'ghost'}
+            variant="ghost"
           >
+            <ExternalLink className="mr-2 h-4 w-4" />
             View Listing
           </Button>
           {!!(
@@ -180,8 +177,7 @@ ${socialListingLink('twitter')}
             (bounty?.isPublished && !pastDeadline && bounty.type !== 'grant')
           ) && (
             <Link
-              as={NextLink}
-              _hover={{ textDecoration: 'none' }}
+              className="hover:no-underline"
               href={
                 bounty
                   ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
@@ -189,60 +185,48 @@ ${socialListingLink('twitter')}
               }
             >
               <Button
-                color={'brand.slate.400'}
-                _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
-                leftIcon={<LuPencil />}
-                variant={'ghost'}
+                variant="ghost"
+                className="text-slate-400 hover:bg-[#E0E7FF] hover:text-[#6366F1]"
               >
+                <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </Button>
             </Link>
           )}
-        </Flex>
-      </Flex>
-      <Divider />
-      <Flex align="center" gap={12} mt={4} mb={8}>
+        </div>
+      </div>
+      <Separator />
+      <div className="mb-8 mt-4 flex items-center gap-12">
         <div>
-          <Text color="brand.slate.500">Submissions</Text>
-          <Text mt={3} color="brand.slate.600" fontWeight={600}>
+          <p className="text-slate-500">Submissions</p>
+          <p className="mt-3 font-semibold text-slate-600">
             {totalSubmissions}
-          </Text>
+          </p>
         </div>
         <div>
-          <Text color="brand.slate.500">Deadline</Text>
-          <Text
-            mt={3}
-            color="brand.slate.600"
-            fontWeight={600}
-            whiteSpace={'nowrap'}
-          >
+          <p className="text-slate-500">Deadline</p>
+          <p className="mt-3 whitespace-nowrap font-semibold text-slate-600">
             {deadline}
-          </Text>
+          </p>
         </div>
         <div>
-          <Text color="brand.slate.500">Status</Text>
-          <Tag
-            mt={3}
-            px={3}
-            color={getColorStyles(bountyStatus).color}
-            fontSize={'13px'}
-            fontWeight={500}
-            bg={getColorStyles(bountyStatus).bgColor}
-            borderRadius={'full'}
-            whiteSpace={'nowrap'}
-            variant="solid"
+          <p className="text-slate-500">Status</p>
+          <p
+            className={cn(
+              'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium',
+              getColorStyles(bountyStatus).color,
+              getColorStyles(bountyStatus).bgColor,
+            )}
           >
             {bountyStatus}
-          </Tag>
+          </p>
         </div>
         <div>
-          <Text color="brand.slate.500">Prize</Text>
-          <Flex align={'center'} justify={'start'} gap={1} mt={3}>
-            <Image
-              w={5}
-              h={5}
+          <p className="text-slate-500">Prize</p>
+          <div className="mt-3 flex items-center justify-start gap-1">
+            <img
+              className="h-5 w-5 rounded-full"
               alt={'green dollar'}
-              rounded={'full'}
               src={
                 tokenList.filter((e) => e?.tokenSymbol === bounty?.token)[0]
                   ?.icon ?? '/assets/dollar.svg'
@@ -253,70 +237,46 @@ ${socialListingLink('twitter')}
               maxRewardAsk={bounty?.maxRewardAsk}
               minRewardAsk={bounty?.minRewardAsk}
               rewardAmount={bounty?.rewardAmount}
-              textStyle={{
-                fontWeight: 600,
-                color: 'brand.slate.700',
-              }}
+              className="font-semibold text-slate-700"
             />
-            <Text color="brand.slate.400" fontWeight={600}>
-              {bounty?.token}
-            </Text>
-          </Flex>
+            <p className="font-semibold text-slate-400">{bounty?.token}</p>
+          </div>
         </div>
-        <Box ml="auto">
-          <Text color="brand.slate.500">Share</Text>
-          <Flex align="center" gap={4} mt={2}>
-            <InputGroup bg="#F8FAFC" borderColor={'brand.slate.100'}>
-              <InputLeftElement>
-                <Icon as={MdInsertLink} color="brand.slate.400" />
-              </InputLeftElement>
+        <div className="ml-auto">
+          <p className="text-slate-500">Share</p>
+          <div className="mt-2 flex items-center gap-4">
+            <div className="relative border-slate-100 bg-[#F8FAFC]">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                <Link2 className="h-4 w-4 text-slate-400" />
+              </div>
+
               <Input
-                overflow="hidden"
-                w={80}
-                color="brand.slate.500"
-                borderColor="brand.slate.100"
-                whiteSpace="nowrap"
-                textOverflow="ellipsis"
-                focusBorderColor="#CFD2D7"
-                isReadOnly
+                className="w-80 overflow-hidden text-ellipsis whitespace-nowrap border-slate-100 pl-10 pr-10 text-slate-500 focus-visible:ring-[#CFD2D7] focus-visible:ring-offset-0"
+                readOnly
                 value={`${getURL()}${listingPath}`}
               />
-              <InputRightElement h="100%">
+
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
                 {hasCopied ? (
-                  <CheckIcon h="1rem" w="1rem" color="brand.slate.400" />
+                  <Check className="h-4 w-4 text-slate-400" />
                 ) : (
-                  <CopyIcon
+                  <Copy
+                    className="h-5 w-5 cursor-pointer text-slate-400"
                     onClick={onCopy}
-                    cursor="pointer"
-                    h="1.3rem"
-                    w="1.3rem"
-                    color="brand.slate.400"
                   />
                 )}
-              </InputRightElement>
-            </InputGroup>
+              </div>
+            </div>
             <Link
-              as={NextLink}
-              alignItems="center"
-              gap={1}
-              display="flex"
-              w="fit-content"
-              h="fit-content"
-              p={1.5}
-              color="white"
-              bg="brand.slate.500"
-              _hover={{
-                bg: 'brand.slate.400',
-              }}
+              className="flex h-fit w-fit items-center gap-1 rounded-full bg-slate-500 p-1.5 text-white hover:bg-slate-400"
               href={twitterShareLink}
-              rounded="full"
               target="_blank"
             >
               <FaXTwitter style={{ width: '0.9rem', height: '0.8rem' }} />
             </Link>
-          </Flex>
-        </Box>
-      </Flex>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

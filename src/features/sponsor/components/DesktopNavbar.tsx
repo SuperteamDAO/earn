@@ -1,145 +1,85 @@
-import {
-  AbsoluteCenter,
-  Button,
-  Divider,
-  Flex,
-  HStack,
-  Image,
-  Link,
-  SkeletonCircle,
-  SkeletonText,
-  Stack,
-  Text,
-} from '@chakra-ui/react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { UserMenu } from '@/features/navbar';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 import { NAV_LINKS } from '../utils';
 
 export const DesktopNavbar = () => {
   const { data: session, status } = useSession();
-
   const { user } = useUser();
-
   const posthog = usePostHog();
-
   const router = useRouter();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const maxWValue = isDashboardRoute ? '' : '7xl';
+  const maxWValue = isDashboardRoute ? '' : 'max-w-7xl';
 
   return (
-    <Flex
-      display={{ base: 'none', lg: 'flex' }}
-      px={{ base: '2', lg: 6 }}
-      color="brand.slate.500"
-      bg="white"
-      borderBottom="1px solid"
-      borderBottomColor="blackAlpha.200"
-    >
-      <Flex justify={'space-between'} w="100%" maxW={maxWValue} mx="auto">
-        <Flex align="center" gap={6}>
+    <div className="hidden border-b border-black/20 bg-white px-2 text-slate-500 lg:block lg:px-6">
+      <div className={cn('mx-auto flex w-full justify-between', maxWValue)}>
+        <div className="flex items-center gap-6">
           <Link
-            as={NextLink}
-            alignItems={'center'}
-            gap={3}
-            display={'flex'}
-            mr={5}
-            _hover={{ textDecoration: 'none' }}
             href="/"
+            className="mr-5 flex items-center gap-3 hover:no-underline"
             onClick={() => {
               posthog.capture('homepage logo click_universal');
             }}
           >
-            <Image
-              h={5}
-              cursor="pointer"
-              objectFit={'contain'}
-              alt={'Superteam Earn'}
-              src={'/assets/logo.svg'}
+            <img
+              className="h-5 cursor-pointer object-contain"
+              alt="Superteam Earn"
+              src="/assets/logo.svg"
             />
-
-            <>
-              <Divider
-                w={'3px'}
-                h={'24px'}
-                borderColor={'brand.slate.400'}
-                orientation="vertical"
-              />
-              <Text
-                color={'brand.slate.500'}
-                fontSize="sm"
-                fontWeight={600}
-                letterSpacing={'1.5px'}
-              >
-                SPONSORS
-              </Text>
-            </>
+            <div className="h-6 w-[3px] bg-slate-400" /> {/* Divider */}
+            <p className="text-sm font-semibold tracking-[1.5px] text-slate-500">
+              SPONSORS
+            </p>
           </Link>
-        </Flex>
-        <AbsoluteCenter>
-          <Flex align="center" justify={'center'} flexGrow={1} h="full" ml={10}>
-            <Stack direction={'row'} h="full" spacing={7}>
-              {NAV_LINKS?.map((navItem) => {
-                return (
-                  <Link
-                    key={navItem.label}
-                    alignItems={'center'}
-                    display={'flex'}
-                    h={{ base: '8', lg: 14 }}
-                    py={2}
-                    color="brand.slate.500"
-                    fontSize={{ base: 'lg', lg: 'sm' }}
-                    fontWeight={500}
-                    _hover={{
-                      textDecoration: 'none',
-                      color: 'brand.slate.600',
-                    }}
-                    href={navItem.link ?? '#'}
-                  >
-                    {navItem.label}
-                  </Link>
-                );
-              })}
-            </Stack>
-          </Flex>
-        </AbsoluteCenter>
+        </div>
 
-        <Stack
-          align="center"
-          justify={'flex-end'}
-          direction={'row'}
-          flex={1}
-          py={2}
-          spacing={4}
-        >
+        <div className="absolute left-1/2 -translate-x-1/2">
+          <div className="ml-10 flex h-full items-center justify-center">
+            <div className="flex h-full gap-7">
+              {NAV_LINKS?.map((navItem) => (
+                <Link
+                  key={navItem.label}
+                  href={navItem.link ?? '#'}
+                  className="flex h-8 items-center py-2 text-lg font-medium text-slate-500 hover:text-slate-600 hover:no-underline lg:h-14 lg:text-sm"
+                >
+                  {navItem.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-1 items-center justify-end gap-4 py-2">
           {status === 'loading' && !session && (
-            <Flex align={'center'} gap={2}>
-              <SkeletonCircle size="10" />
-              <SkeletonText w={'80px'} noOfLines={1} />
-            </Flex>
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="h-4 w-20" />
+            </div>
           )}
 
-          <HStack gap={2}>
-            <HStack gap={0}>
+          <div className="flex gap-2">
+            <div className="flex">
               {status === 'authenticated' && !!user?.currentSponsorId && (
                 <Link
                   className="ph-no-capture"
-                  as={NextLink}
                   href="/dashboard/listings/?open=1"
                   onClick={() => posthog.capture('create a listing_navbar')}
                 >
                   <Button
-                    color="#4F46E5"
-                    fontWeight={600}
-                    bg={'white'}
+                    variant="ghost"
                     size="sm"
+                    className="bg-white font-semibold text-[#4F46E5]"
                   >
                     Create a Listing
                   </Button>
@@ -148,57 +88,52 @@ export const DesktopNavbar = () => {
               {status === 'authenticated' && !user?.currentSponsorId && (
                 <Link
                   className="ph-no-capture"
-                  as={NextLink}
                   href="/new/sponsor/"
                   onClick={() => posthog.capture('get started_sponsor navbar')}
                 >
                   <Button
-                    color="#4F46E5"
-                    fontWeight={600}
-                    bg={'white'}
+                    variant="ghost"
                     size="sm"
+                    className="bg-white font-semibold text-[#4F46E5]"
                   >
                     Get Started
                   </Button>
                 </Link>
               )}
               {status === 'authenticated' && session && <UserMenu />}
-            </HStack>
-          </HStack>
+            </div>
+          </div>
 
           {status === 'unauthenticated' && !session && (
-            <HStack gap={2}>
-              <HStack gap={0}>
+            <div className="flex gap-2">
+              <div className="flex">
                 <Link
                   className="ph-no-capture"
-                  as={NextLink}
                   href="/new/sponsor/"
                   onClick={() => posthog.capture('login_navbar')}
                 >
-                  <Button fontSize="xs" size="sm" variant={'ghost'}>
+                  <Button variant="ghost" size="sm" className="text-xs">
                     Login
                   </Button>
                 </Link>
                 <Link
                   className="ph-no-capture"
-                  as={NextLink}
                   href="/new/sponsor/"
                   onClick={() => posthog.capture('get started_sponsor navbar')}
                 >
                   <Button
-                    color="#4F46E5"
-                    fontWeight={600}
-                    bg={'white'}
+                    variant="ghost"
                     size="sm"
+                    className="bg-white font-semibold text-[#4F46E5]"
                   >
                     Get Started
                   </Button>
                 </Link>
-              </HStack>
-            </HStack>
+              </div>
+            </div>
           )}
-        </Stack>
-      </Flex>
-    </Flex>
+        </div>
+      </div>
+    </div>
   );
 };

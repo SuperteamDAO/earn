@@ -31,7 +31,6 @@
         "@typescript-eslint",
         "unused-imports",
         "simple-import-sort",
-        "chakra-ui",
         "react",
         "react-hooks",
         "@tanstack/query"
@@ -72,9 +71,6 @@
           "error",
           { "argsIgnorePattern": "^_" }
         ],
-        "chakra-ui/props-order": "error",
-        "chakra-ui/props-shorthand": "error",
-        "chakra-ui/require-specific-component": "error",
         "@tanstack/query/exhaustive-deps": "error",
         "@tanstack/query/no-rest-destructuring": "error",
         "@tanstack/query/stable-query-client": "error"

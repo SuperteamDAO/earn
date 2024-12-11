@@ -164,12 +164,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                     'mx-1 sm:mx-0',
                   )}
                 >
-                  <MdModeComment
-                    style={{
-                      color: 'var(--chakra-colors-brand-slate-500)',
-                      width: '0.8rem',
-                    }}
-                  />
+                  <MdModeComment className="w-[0.8rem] text-slate-500" />
                   <p>{_count?.Comments}</p>
                 </div>
               )}

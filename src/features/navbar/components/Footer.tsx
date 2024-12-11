@@ -1,4 +1,4 @@
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
@@ -35,13 +35,13 @@ const FooterColumn = ({
       {title}
     </p>
     {links.map((link) => (
-      <NextLink
+      <Link
         key={link.text}
         href={link.href}
         className="text-sm text-slate-500 hover:text-slate-600 md:text-base"
       >
         {link.text}
-      </NextLink>
+      </Link>
     ))}
   </div>
 );

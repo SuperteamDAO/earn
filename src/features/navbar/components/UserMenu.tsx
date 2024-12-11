@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -69,7 +69,7 @@ export function UserMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger
           id="user menu"
-          className="ph-no-capture rounded-md border border-white bg-white px-0.5 py-1 hover:bg-slate-100 focus:outline-none active:border-slate-300 active:bg-slate-200 data-[state=open]:bg-slate-100 md:px-2"
+          className="ph-no-capture rounded-md border border-white bg-white px-0.5 py-1 data-[state=open]:bg-slate-100 hover:bg-slate-100 focus:outline-none active:border-slate-300 active:bg-slate-200 md:px-2"
           onClick={() => {
             posthog.capture('clicked_user menu');
           }}
@@ -89,7 +89,7 @@ export function UserMenu() {
           {user?.isTalentFilled && (
             <>
               <DropdownMenuItem asChild>
-                <NextLink
+                <Link
                   href={`/t/${user?.username}`}
                   onClick={() => {
                     posthog.capture('profile_user menu');
@@ -97,10 +97,10 @@ export function UserMenu() {
                   className="text-sm font-semibold text-slate-500"
                 >
                   Profile
-                </NextLink>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <NextLink
+                <Link
                   href={`/t/${user?.username}/edit`}
                   onClick={() => {
                     posthog.capture('edit profile_user menu');
@@ -108,14 +108,14 @@ export function UserMenu() {
                   className="text-sm font-semibold text-slate-500"
                 >
                   Edit Profile
-                </NextLink>
+                </Link>
               </DropdownMenuItem>
             </>
           )}
 
           {!!user?.currentSponsorId && (
             <DropdownMenuItem asChild>
-              <NextLink
+              <Link
                 href="/dashboard/listings"
                 onClick={() => {
                   posthog.capture('sponsor dashboard_user menu');
@@ -123,7 +123,7 @@ export function UserMenu() {
                 className="hidden text-sm font-semibold text-slate-500 sm:block"
               >
                 Sponsor Dashboard
-              </NextLink>
+              </Link>
             </DropdownMenuItem>
           )}
 
@@ -135,12 +135,12 @@ export function UserMenu() {
                 God Mode
               </DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <NextLink
+                <Link
                   href="/new/sponsor"
                   className="text-sm font-semibold text-slate-500"
                 >
                   Create New Sponsor
-                </NextLink>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </div>

@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -35,7 +35,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
       <div className={cn('mx-auto flex w-full justify-between', maxWidth)}>
         <div className="flex items-center gap-3 lg:gap-6">
           <LogoContextMenu>
-            <NextLink
+            <Link
               href="/"
               className="mr-5 flex items-center gap-3 hover:no-underline"
               onClick={() => {
@@ -54,7 +54,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   <p className="text-sm tracking-[1.5px]">SPONSORS</p>
                 </>
               )}
-            </NextLink>
+            </Link>
           </LogoContextMenu>
 
           {router.pathname !== '/search' && (
