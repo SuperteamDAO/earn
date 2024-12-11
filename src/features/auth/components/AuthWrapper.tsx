@@ -14,6 +14,7 @@ interface AuthWrapperProps {
   showCompleteProfileModal?: boolean;
   completeProfileModalBodyText?: string;
   redirectTo?: string;
+  hideLoginOverlay?: boolean;
 }
 
 export function AuthWrapper({
@@ -23,6 +24,7 @@ export function AuthWrapper({
   showCompleteProfileModal = false,
   completeProfileModalBodyText = 'Please complete your profile before proceeding.',
   redirectTo,
+  hideLoginOverlay,
 }: AuthWrapperProps) {
   const { status } = useSession();
   const isAuthenticated = status === 'authenticated';
@@ -75,6 +77,7 @@ export function AuthWrapper({
     <>
       {loginIsOpen && (
         <Login
+          hideOverlay={hideLoginOverlay}
           isOpen={loginIsOpen}
           onClose={loginOnClose}
           redirectTo={redirectTo}

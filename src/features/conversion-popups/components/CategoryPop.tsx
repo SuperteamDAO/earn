@@ -28,6 +28,7 @@ import { type CategoryKeys } from '@/pages/api/listings/category-earnings';
 import { formatNumberWithSuffix } from '@/utils';
 
 import { popupsShowedAtom } from '../atoms';
+import { roundToNearestThousand } from '../utils';
 import { GetStarted } from './GetStarted';
 
 type CategoryVariant = {
@@ -40,7 +41,7 @@ const getCategoryInfo = (
   totalEarnings: number | undefined,
 ): CategoryVariant[] => {
   const formatEarnings = totalEarnings
-    ? formatNumberWithSuffix(totalEarnings) || ''
+    ? formatNumberWithSuffix(roundToNearestThousand(totalEarnings)) || ''
     : '';
 
   const categoryMap: Record<CategoryKeys, CategoryVariant[]> = {
@@ -223,7 +224,7 @@ const Desktop = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-[22.5rem] bg-white p-5" hideCloseIcon>
+      <DialogContent className="max-w-[23rem] bg-white p-5" hideCloseIcon>
         <DialogHeader className="">
           <Image
             src={variant?.icon || ''}

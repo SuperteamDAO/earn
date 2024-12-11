@@ -51,7 +51,7 @@ const VariantInfo = (
     },
     1: {
       title: `High chances of winning this ${type}`,
-      description: `This ${type} only has ${submissionCount} ${verb}. Sign up to get access to this well-paying ${type}!`,
+      description: `This ${type} ${submissionCount > 0 ? 'only' : ''} has ${submissionCount} ${verb}. Sign up to get access to this well-paying ${type}!`,
       sponsorName: listing?.sponsor?.name,
       sponsorLogo: listing?.sponsor?.logo,
     },
@@ -146,7 +146,7 @@ const Desktop = ({
             alt={`${variant?.sponsorName} logo`}
             width={100}
             height={100}
-            className="w-12 rounded-md object-contain"
+            className="h-12 w-12 rounded-md"
           />
           <DialogTitle className="pt-2 text-base font-semibold">
             {variant?.title}

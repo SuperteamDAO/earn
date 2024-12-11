@@ -36,6 +36,7 @@ import { PulseIcon } from '@/svg/pulse-icon';
 import { formatNumberWithSuffix } from '@/utils';
 
 import { popupsShowedAtom } from '../atoms';
+import { roundToNearestThousand } from '../utils';
 import { GetStarted } from './GetStarted';
 
 const avatars = [
@@ -100,7 +101,7 @@ export const HomepagePop = () => {
           posthog.capture('conversion pop up_initiated', {
             'Popup Source': 'Homepage Pop-up',
           });
-        }, 10_000);
+        }, 5_000);
       }, 0);
     }
   }, [status]);
@@ -265,7 +266,12 @@ const DesktopVariantTwo = ({
         </span>
         <p className="text-4xl font-semibold">
           {liveOpportunityWorth ? (
-            <>${liveOpportunityWorth?.toLocaleString('en-us')}</>
+            <>
+              $
+              {roundToNearestThousand(
+                liveOpportunityWorth || 0,
+              )?.toLocaleString('en-us')}
+            </>
           ) : (
             <>
               <Skeleton className="h-12 w-3/4" />
@@ -276,7 +282,10 @@ const DesktopVariantTwo = ({
       <DialogHeader className="px-5">
         <DialogTitle className="text-base font-semibold">
           Get access to oppurtunities worth $
-          {formatNumberWithSuffix(liveOpportunityWorth || 0)}!
+          {formatNumberWithSuffix(
+            roundToNearestThousand(liveOpportunityWorth || 0),
+          )}
+          !
         </DialogTitle>
         <DialogDescription className="text-sm text-slate-500">
           {`Apply to hundreds of bounties & gigs with a single profile.`}

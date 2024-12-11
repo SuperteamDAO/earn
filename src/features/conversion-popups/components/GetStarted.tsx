@@ -3,8 +3,12 @@ import { AuthWrapper } from '@/features/auth';
 
 export const GetStarted = () => {
   return (
-    <AuthWrapper redirectTo="/new/talent?type=popup" className="w-full">
-      <Button className="w-full">Get Started</Button>
+    <AuthWrapper
+      hideLoginOverlay
+      redirectTo="/new/talent?type=popup"
+      className="w-full"
+    >
+      <Button className="w-full focus-visible:ring-0">Get Started</Button>
     </AuthWrapper>
   );
 };
