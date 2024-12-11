@@ -96,12 +96,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const commonUpdateField = {
       applicationStatus,
       decidedAt: new Date().toISOString(),
+      decidedBy: userId,
     };
 
     const isApproved = applicationStatus === 'Approved';
     const updatedData: {
       applicationStatus: string;
       decidedAt: string;
+      decidedBy: string | undefined;
       approvedAmount?: number;
       approvedAmountInUSD?: number;
     }[] = [];
