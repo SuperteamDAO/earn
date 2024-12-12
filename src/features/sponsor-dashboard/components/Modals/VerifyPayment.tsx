@@ -310,7 +310,7 @@ export const VerifyPaymentModal = ({
                 External Payment(s) Added
               </Text>
               <Text align="center" color="brand.slate.500" fontSize="sm">
-                We have successfully added an external payment to your listing.
+                We have successfully added external payment(s) to your listing.
               </Text>
             </VStack>
             {listing?.totalPaymentsMade !== listing?.totalWinnersSelected && (
