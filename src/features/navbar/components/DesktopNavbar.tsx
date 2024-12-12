@@ -115,7 +115,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 >
                   <Link href="/dashboard/listings">
                     Sponsor Dashboard
-                    <div className="ml-1.5 block h-1.5 w-1.5 rounded-full bg-[#38BDF8]" />
+                    <div className="block h-1.5 w-1.5 rounded-full bg-[#38BDF8]" />
                   </Link>
                 </Button>
               )}
@@ -136,7 +136,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   }}
                 >
                   Become a Sponsor
-                  <div className="ml-1.5 block h-1.5 w-1.5 rounded-full bg-[#38BDF8]" />
+                  <div className="block h-1.5 w-1.5 rounded-full bg-[#38BDF8]" />
                 </Button>
                 <Button
                   variant="ghost"
