@@ -8,8 +8,9 @@
 
 .minimal-tiptap-editor {
   * {
-    color: #334155 !important;
+    color: inherit;
   }
+  color: #334155;
 
   h1,
   h2,
