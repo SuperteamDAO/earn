@@ -194,7 +194,6 @@ export const refineReadyListing = (listing: ListingFormData) => {
     }
   }
   if (listing.deadline) {
-    console.log('listing deadline', listing.deadline);
     if (!listing.deadline.endsWith('Z'))
       listing.deadline += dayjs().format('Z');
   }

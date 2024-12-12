@@ -1,4 +1,4 @@
-import NextLink from 'next/link';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -29,14 +29,14 @@ export const SidebarBanner = () => {
         Submit to any of the Radar Side Tracks on Earn, and stand to win from a
         pool of $250k+. Deadline for submissions is October 9, 2024 (UTC).
       </p>
-      <NextLink href="/hackathon/radar" className="mt-6">
+      <Link href="/hackathon/radar" className="mt-6">
         <Button
           className="w-full rounded-lg bg-white py-6 text-[0.9rem] font-semibold text-black hover:bg-orange-100"
           variant="ghost"
         >
           View Tracks
         </Button>
-      </NextLink>
+      </Link>
     </div>
   );
 };

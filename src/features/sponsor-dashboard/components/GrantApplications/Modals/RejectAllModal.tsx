@@ -1,18 +1,14 @@
-import { CloseIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Circle,
-  Divider,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Spinner,
-  Text,
-} from '@chakra-ui/react';
+import { X } from 'lucide-react';
 import React, { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 
 interface RejectModalProps {
   rejectIsOpen: boolean;
@@ -42,43 +38,45 @@ export const RejectAllGrantApplicationModal = ({
   };
 
   return (
-    <Modal isOpen={rejectIsOpen} onClose={rejectOnClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader color={'brand.slate.500'} fontSize={'md'} fontWeight={600}>
-          Reject Grant Payment
-        </ModalHeader>
-        <ModalCloseButton />
-        <Divider />
-        <ModalBody fontSize={'0.95rem'} fontWeight={500}>
-          <Text mt={3} color="brand.slate.500">
+    <Dialog open={rejectIsOpen} onOpenChange={rejectOnClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-md font-semibold text-slate-500">
+            Reject Grant Payment
+          </DialogTitle>
+        </DialogHeader>
+
+        <Separator />
+
+        <div className="text-[0.95rem] font-medium">
+          <p className="ml-3 text-slate-500">
             You are about to reject {applicationIds.length} grant request. They
             will be notified via email.
-          </Text>
+          </p>
+
           <br />
+
           <Button
-            w="full"
-            mb={3}
-            color="white"
-            bg="#E11D48"
-            _hover={{ bg: '#E11D48' }}
-            isLoading={loading}
-            leftIcon={
-              loading ? (
-                <Spinner color="#E11D48" size="sm" />
-              ) : (
-                <Circle p={'5px'} bg="#FFF">
-                  <CloseIcon color="#E11D48" boxSize="2.5" />
-                </Circle>
-              )
-            }
-            loadingText="Rejecting"
+            className="mb-3 w-full bg-[#E11D48] text-white hover:bg-[#E11D48]/90"
+            disabled={loading}
             onClick={rejectGrant}
           >
-            Reject Grant
+            {loading ? (
+              <>
+                <span className="loading loading-spinner mr-2" />
+                Rejecting
+              </>
+            ) : (
+              <>
+                <div className="mr-2 rounded-full bg-white p-[5px]">
+                  <X className="h-2.5 w-2.5 text-[#E11D48]" />
+                </div>
+                Reject Grant
+              </>
+            )}
           </Button>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

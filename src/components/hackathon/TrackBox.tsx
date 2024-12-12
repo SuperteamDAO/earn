@@ -1,4 +1,4 @@
-import NextLink from 'next/link';
+import Link from 'next/link';
 
 import { tokenList } from '@/constants/tokenList';
 import { type TrackProps } from '@/interface/hackathon';
@@ -11,7 +11,7 @@ export const TrackBox = ({
   slug,
 }: TrackProps) => {
   return (
-    <NextLink
+    <Link
       href={`/listings/hackathon/${slug}`}
       className="block rounded-lg border border-[#E2E8F0] p-3 md:p-4"
     >
@@ -43,6 +43,6 @@ export const TrackBox = ({
           {token}
         </span>
       </div>
-    </NextLink>
+    </Link>
   );
 };

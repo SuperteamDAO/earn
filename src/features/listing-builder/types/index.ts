@@ -3,7 +3,6 @@ import { type z } from 'zod';
 import { type createListingFormSchema } from './schema';
 
 export * from './schema';
-export * from './SuperteamName';
 
 export type ListingFormSchema = ReturnType<typeof createListingFormSchema>;
 export type ListingFormData = z.infer<ListingFormSchema>;

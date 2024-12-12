@@ -1,11 +1,12 @@
-import { Button, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { MAX_COMMENT_SUGGESTIONS } from '@/constants';
 import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
+import { cn } from '@/utils';
 
 interface Props {
   defaultSuggestions: Map<string, User>;
@@ -96,54 +97,36 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
   if (suggestions.size === 0) return null;
 
   return (
-    <VStack
-      align="start"
-      w="15rem"
-      p={1}
-      bg="white"
-      border="1px"
-      borderColor="brand.slate.300"
-      rounded="lg"
-    >
+    <div className="flex w-[15rem] flex-col items-start gap-2 rounded-lg border border-slate-300 bg-white p-1">
       {[...suggestions.values()]
         .slice(0, MAX_COMMENT_SUGGESTIONS)
         .map((suggestion, index) => (
           <Button
             key={suggestion.id}
-            justifyContent="start"
-            gap={2}
-            display="flex"
-            w="full"
-            p={1}
-            bg={activeIndex === index ? 'brand.slate.100' : 'transparent'}
-            _hover={{ bg: 'brand.slate.200' }}
-            _active={{ bg: 'brand.slate.100' }}
-            onClick={() => onSelect(suggestion.username ?? '')}
             variant="ghost"
+            className={cn(
+              'flex w-full justify-start gap-2 p-1',
+              activeIndex === index ? 'bg-slate-100' : 'bg-transparent',
+              'hover:bg-slate-200 active:bg-slate-100',
+            )}
+            onClick={() => onSelect(suggestion.username ?? '')}
           >
             <EarnAvatar
               size={'28px'}
               id={suggestion?.id}
               avatar={suggestion?.photo}
             />
-            <VStack align="start" gap={0}>
-              <Text color="brand.slate.900" fontSize="small" fontWeight={500}>
+            <div className="flex flex-col items-start">
+              <p className="text-sm font-medium text-slate-900">
                 {suggestion.firstName} {suggestion.lastName}
-              </Text>
-              <Text
-                overflow="hidden"
-                maxW="10rem"
-                color="brand.slate.500"
-                fontSize="x-small"
-                fontWeight={500}
-                textOverflow="ellipsis"
-              >
+              </p>
+              <p className="max-w-[10rem] overflow-hidden text-ellipsis text-xs font-medium text-slate-500">
                 @{suggestion.username}
-              </Text>
-            </VStack>
+              </p>
+            </div>
           </Button>
         ))}
-    </VStack>
+    </div>
   );
 };
 

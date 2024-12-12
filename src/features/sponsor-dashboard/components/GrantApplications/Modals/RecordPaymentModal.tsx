@@ -1,28 +1,28 @@
-import {
-  Button,
-  Divider,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  NumberInput,
-  NumberInputField,
-  Spinner,
-} from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import React from 'react';
+import { Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { BiPlus } from 'react-icons/bi';
 import { toast } from 'sonner';
 import { z } from 'zod';
+
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 
 interface RecordPaymentModalProps {
   recordPaymentIsOpen: boolean;
@@ -69,13 +69,12 @@ export const RecordPaymentModal = ({
 }: RecordPaymentModalProps) => {
   const maxAmount = approvedAmount - totalPaid;
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<PaymentFormInputs>({
+  const form = useForm<PaymentFormInputs>({
     resolver: zodResolver(paymentSchema(maxAmount, token)),
+    defaultValues: {
+      amount: 0,
+      transactionLink: '',
+    },
   });
 
   const addPaymentMutation = useMutation({
@@ -93,7 +92,7 @@ export const RecordPaymentModal = ({
     onSuccess: (updatedApplication) => {
       onPaymentRecorded(updatedApplication);
       toast.success('Payment recorded successfully');
-      reset();
+      form.reset();
       recordPaymentOnClose();
     },
     onError: (error) => {
@@ -107,69 +106,79 @@ export const RecordPaymentModal = ({
   };
 
   return (
-    <Modal isOpen={recordPaymentIsOpen} onClose={recordPaymentOnClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader color={'brand.slate.500'} fontSize={'md'} fontWeight={600}>
-          Add Grant Payment
-        </ModalHeader>
-        <ModalCloseButton />
-        <Divider />
-        <ModalBody fontWeight={500}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FormControl isInvalid={!!errors.amount}>
-              <FormLabel color="brand.slate.500" fontSize={'0.95rem'}>
-                Amount
-              </FormLabel>
-              <NumberInput focusBorderColor="brand.purple">
-                <NumberInputField
-                  color={'brand.slate.800'}
-                  borderColor="brand.slate.300"
-                  {...register('amount', {
-                    required: 'This field is required',
-                    setValueAs: (value) => parseFloat(value),
-                  })}
-                  placeholder="Enter amount"
-                />
-              </NumberInput>
-              <FormErrorMessage>
-                {errors.amount && <p>{errors.amount.message}</p>}
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl mt={4} isInvalid={!!errors.transactionLink}>
-              <FormLabel color="brand.slate.500" fontSize={'0.95rem'}>
-                Transaction Link
-              </FormLabel>
-              <Input
-                mt={-1}
-                {...register('transactionLink')}
-                placeholder="Enter transaction link"
-              />
-              <FormErrorMessage>
-                {errors.transactionLink && (
-                  <p>{errors.transactionLink.message}</p>
-                )}
-              </FormErrorMessage>
-            </FormControl>
+    <Dialog open={recordPaymentIsOpen} onOpenChange={recordPaymentOnClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-md font-semibold text-slate-500">
+            Add Grant Payment
+          </DialogTitle>
+        </DialogHeader>
+
+        <Separator />
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="font-medium">
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-[0.95rem] text-slate-500">
+                    Amount
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      className="border-slate-300 text-slate-800 focus-visible:ring-brand-purple"
+                      placeholder="Enter amount"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="transactionLink"
+              render={({ field }) => (
+                <FormItem className="mt-4">
+                  <FormLabel className="text-[0.95rem] text-slate-500">
+                    Transaction Link
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      className="mt-[-0.25rem] border-slate-300"
+                      placeholder="Enter transaction link"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <Button
-              w="full"
-              my={6}
-              isLoading={addPaymentMutation.isPending}
-              leftIcon={
-                addPaymentMutation.isPending ? (
-                  <Spinner color="white" size="sm" />
-                ) : (
-                  <BiPlus color="white" size="18px" />
-                )
-              }
-              loadingText="Adding Payment"
+              className="my-6 w-full"
+              disabled={addPaymentMutation.isPending}
               type="submit"
             >
-              Add Payment
+              {addPaymentMutation.isPending ? (
+                <>
+                  <span className="loading loading-spinner mr-2" />
+                  Adding Payment
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 h-[18px] w-[18px]" />
+                  Add Payment
+                </>
+              )}
             </Button>
           </form>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 };

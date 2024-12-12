@@ -6,7 +6,7 @@ import {
   handleAirtableSync,
   validateGrantRequest,
 } from '@/features/grants';
-import { extractTwitterUsername } from '@/features/talent';
+import { extractTwitterUsername } from '@/features/social';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';

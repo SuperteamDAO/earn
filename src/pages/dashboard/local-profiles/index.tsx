@@ -1,11 +1,11 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Button, Divider, Flex, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { UserFlag } from '@/components/shared/UserFlag';
+import { Button } from '@/components/ui/button';
 import { Superteams } from '@/constants/Superteam';
 import {
   FilterSection,
@@ -113,29 +113,24 @@ export default function LocalProfiles() {
 
   return (
     <SponsorLayout>
-      <Flex justify="space-between" mb={4}>
-        <Flex align="center" gap={2}>
+      <div className="mb-4 flex justify-between">
+        <div className="flex items-center gap-2">
           {superteam?.code && <UserFlag location={superteam.code} isCode />}
-          <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
+          <p className="text-lg font-semibold text-slate-800">
             Local Earn Profiles
-          </Text>
-          <Divider
-            h="60%"
-            mx={1}
-            borderColor="brand.slate.200"
-            orientation="vertical"
-          />
-          <Text color="brand.slate.500">
+          </p>
+          <div className="mx-1 h-[60%] border-r border-slate-200" />
+          <p className="text-slate-500">
             All profiles that are based in {superteam?.displayValue}
-          </Text>
-        </Flex>
+          </p>
+        </div>
         <FilterSection
           checkedItems={checkedItems}
           setCheckedItems={setCheckedItems}
           debouncedSetSearchText={debouncedSetSearchText}
           setCurrentPage={setCurrentPage}
         />
-      </Flex>
+      </div>
       {isLoading && <LoadingSection />}
       {!isLoading && currentUsers && currentUsers?.length > 0 && (
         <UserTable
@@ -145,41 +140,38 @@ export default function LocalProfiles() {
         />
       )}
       {filteredUsers && filteredUsers?.length > 0 && (
-        <Flex align="center" justify="end" mt={6}>
-          <Text mr={4} color="brand.slate.400" fontSize="sm">
-            <Text as="span" fontWeight={700}>
-              {indexOfFirstUser + 1}
-            </Text>{' '}
-            -{' '}
-            <Text as="span" fontWeight={700}>
+        <div className="mt-6 flex items-center justify-end">
+          <p className="mr-4 text-sm text-slate-400">
+            <span className="font-bold">{indexOfFirstUser + 1}</span> -{' '}
+            <span className="font-bold">
               {Math.min(indexOfLastUser, filteredUsers?.length || 0)}
-            </Text>{' '}
-            of{' '}
-            <Text as="span" fontWeight={700}>
-              {filteredUsers?.length || 0}
-            </Text>{' '}
+            </span>{' '}
+            of <span className="font-bold">{filteredUsers?.length || 0}</span>{' '}
             Members
-          </Text>
-          <Button
-            mr={4}
-            isDisabled={currentPage === 1}
-            leftIcon={<ChevronLeftIcon w={5} h={5} />}
-            onClick={handlePreviousPage}
-            size="sm"
-            variant="outline"
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={currentPage === totalPages}
-            onClick={handleNextPage}
-            rightIcon={<ChevronRightIcon w={5} h={5} />}
-            size="sm"
-            variant="outline"
-          >
-            Next
-          </Button>
-        </Flex>
+          </p>
+          <div className="flex gap-4">
+            <Button
+              className="flex items-center"
+              disabled={currentPage === 1}
+              onClick={handlePreviousPage}
+              size="sm"
+              variant="outline"
+            >
+              <ChevronLeft className="mr-2 h-5 w-5" />
+              Previous
+            </Button>
+            <Button
+              className="flex items-center"
+              disabled={currentPage === totalPages}
+              onClick={handleNextPage}
+              size="sm"
+              variant="outline"
+            >
+              Next
+              <ChevronRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        </div>
       )}
     </SponsorLayout>
   );

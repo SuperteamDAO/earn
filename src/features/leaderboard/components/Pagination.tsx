@@ -1,7 +1,9 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Button, Flex } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCallback } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { cn } from '@/utils';
 
 interface Props {
   page: number;
@@ -10,7 +12,6 @@ interface Props {
 }
 
 const SIZE = 6;
-const ROUNDED = 4;
 export function Pagination({ page, setPage, count }: Props) {
   const handleClick = (newPage: number) => {
     setPage(newPage);
@@ -27,16 +28,15 @@ export function Pagination({ page, setPage, count }: Props) {
       if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
         pageNumbers.push(
           <Button
-            className={i === page ? 'active' : ''}
-            w={SIZE}
-            minW={0}
-            h={SIZE}
-            p={0}
-            color={page === i ? 'brand.purple' : 'brand.slate.500'}
-            fontSize={'xs'}
-            borderColor={page === i ? 'brand.purple' : 'brand.slate.100'}
+            className={cn(
+              `w-[${SIZE}] h-[${SIZE}] min-w-0 rounded-md px-4 py-2 text-xs`,
+              'border',
+              page === i
+                ? 'border-brand-purple text-brand-purple'
+                : 'border-slate-200 text-slate-500',
+              i === page && 'active',
+            )}
             onClick={() => debouncedHandleClick(i)}
-            rounded={ROUNDED}
             variant="outline"
           >
             {i}
@@ -45,18 +45,13 @@ export function Pagination({ page, setPage, count }: Props) {
       } else if (i === page - 2 || i === page + 2) {
         pageNumbers.push(
           <Button
+            className={cn(
+              `w-[${SIZE}] h-[${SIZE}] min-w-0 rounded-md px-1 py-2 text-xs`,
+              'border',
+              'disabled:border-slate-200 disabled:text-slate-500',
+            )}
             key={i}
-            w={SIZE}
-            minW={0}
-            h={SIZE}
-            p={0}
-            fontSize={'xs'}
-            _disabled={{
-              color: 'brand.slate.500',
-              borderColor: 'brand.slate.100',
-            }}
-            isDisabled
-            rounded={ROUNDED}
+            disabled
             variant="outline"
           >
             ...
@@ -68,46 +63,32 @@ export function Pagination({ page, setPage, count }: Props) {
     return pageNumbers;
   };
   return (
-    <Flex wrap="wrap" gap={2} mt={4}>
+    <div className="my-4 flex flex-wrap gap-2">
       <Button
-        w={SIZE}
-        minW={0}
-        h={SIZE}
-        p={0}
-        _disabled={{
-          bg: 'brand.slate.300',
-          borderColor: 'brand.slate.300',
-          color: 'brand.slate.500',
-          opacity: 0.5,
-          pointerEvents: 'none',
-        }}
-        isDisabled={page === 1}
+        className={cn(
+          `w-[${SIZE}] h-[${SIZE}] min-w-0 rounded-md p-1`,
+          'disabled:pointer-events-none disabled:border-slate-300 disabled:bg-slate-300 disabled:text-slate-500 disabled:opacity-50',
+        )}
+        disabled={page === 1}
         onClick={() => debouncedHandleClick(page - 1)}
-        rounded={ROUNDED}
         variant="outline"
       >
-        <ChevronLeftIcon w={5} h={5} />
+        <ChevronLeft className="h-5 w-5" />
       </Button>
+
       {renderPageNumbers()}
+
       <Button
-        w={SIZE}
-        minW={0}
-        h={SIZE}
-        p={0}
-        _disabled={{
-          bg: 'brand.slate.300',
-          borderColor: 'brand.slate.300',
-          color: 'brand.slate.500',
-          opacity: 0.5,
-          pointerEvents: 'none',
-        }}
-        isDisabled={page === totalPages}
+        className={cn(
+          `w-[${SIZE}] h-[${SIZE}] min-w-0 rounded-md p-1`,
+          'disabled:pointer-events-none disabled:border-slate-300 disabled:bg-slate-300 disabled:text-slate-500 disabled:opacity-50',
+        )}
+        disabled={page === totalPages}
         onClick={() => debouncedHandleClick(page + 1)}
-        rounded={ROUNDED}
         variant="outline"
       >
-        <ChevronRightIcon w={5} h={5} />
+        <ChevronRight className="h-5 w-5" />
       </Button>
-    </Flex>
+    </div>
   );
 }

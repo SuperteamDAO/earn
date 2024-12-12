@@ -15,7 +15,7 @@ export default async function checkUsername(
     return res.status(405).end('Method Not Allowed');
   }
 
-  const { username } = req.query;
+  const { username, userId } = req.query;
 
   if (!username || typeof username !== 'string') {
     logger.warn('Invalid username parameter');
@@ -28,7 +28,12 @@ export default async function checkUsername(
     logger.debug(`Checking availability for username: ${username}`);
     const user = await prisma.user.findUnique({
       where: { username },
+      select: { id: true },
     });
+    if (user && user.id === userId) {
+      logger.info(`Username ${username} is of same user`);
+      return res.status(200).json({ available: true });
+    }
 
     if (user) {
       logger.info(`Username ${username} is not available`);

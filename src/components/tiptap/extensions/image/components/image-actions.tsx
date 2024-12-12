@@ -14,11 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils';
 
 interface ImageActionsProps {
@@ -59,22 +55,19 @@ ActionWrapper.displayName = 'ActionWrapper';
 export const ActionButton = React.memo(
   React.forwardRef<HTMLButtonElement, ActionButtonProps>(
     ({ icon, tooltip, className, ...props }, ref) => (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            ref={ref}
-            variant="ghost"
-            className={cn(
-              'relative flex h-7 w-7 flex-row rounded-none p-0 text-muted-foreground hover:text-foreground',
-              'bg-transparent hover:bg-transparent',
-              className,
-            )}
-            {...props}
-          >
-            {icon}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">{tooltip}</TooltipContent>
+      <Tooltip content={tooltip} contentProps={{ side: 'bottom' }}>
+        <Button
+          ref={ref}
+          variant="ghost"
+          className={cn(
+            'relative flex h-7 w-7 flex-row rounded-none p-0 text-muted-foreground hover:text-foreground',
+            'bg-transparent hover:bg-transparent',
+            className,
+          )}
+          {...props}
+        >
+          {icon}
+        </Button>
       </Tooltip>
     ),
   ),

@@ -1,44 +1,55 @@
-import { Box, FormLabel, Select } from '@chakra-ui/react';
+import { type Control } from 'react-hook-form';
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { cn } from '@/utils';
+
+import { FormFieldWrapper } from '../ui/form-field-wrapper';
 
 interface SelectBoxProps {
   label: string;
-  watchValue?: string;
-  options: string[];
-  id: string;
+  options: string[] | readonly string[];
+  name: string;
   placeholder: string;
-  register: any;
+  control: Control<any>;
   required?: boolean;
+  className?: string;
 }
 
 export const SelectBox = ({
   label,
-  watchValue,
   options,
-  id,
+  name,
   placeholder,
-  register,
+  control,
   required = false,
+  className,
 }: SelectBoxProps) => {
   return (
-    <Box w={'full'} mb={'1.25rem'}>
-      <FormLabel color={'brand.slate.500'}>{label}</FormLabel>
-      <Select
-        color={watchValue?.length === 0 ? 'brand.slate.300' : ''}
-        borderColor="brand.slate.300"
-        _placeholder={{ color: 'brand.slate.300' }}
-        focusBorderColor="brand.purple"
-        id={id}
-        placeholder={placeholder}
-        {...register(id, { required })}
-      >
-        {options.map((option) => {
-          return (
-            <option key={option} value={option}>
+    <FormFieldWrapper
+      name={name}
+      control={control}
+      className={cn('mb-5 w-full', className)}
+      label={label}
+      isRequired={required}
+    >
+      <Select>
+        <SelectTrigger>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option} value={option}>
               {option}
-            </option>
-          );
-        })}
+            </SelectItem>
+          ))}
+        </SelectContent>
       </Select>
-    </Box>
+    </FormFieldWrapper>
   );
 };

@@ -1,8 +1,7 @@
-import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { useIsFetching } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronLeft, Eye, Loader2 } from 'lucide-react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useWatch } from 'react-hook-form';
@@ -10,7 +9,7 @@ import { useWatch } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tooltip, TooltipContent } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { UserMenu } from '@/features/navbar';
 import { cn } from '@/utils';
 
@@ -42,7 +41,7 @@ export function Header() {
     <div className="hidden border-b bg-background md:block">
       <div className={cn('mx-auto flex w-full justify-between px-6 py-2')}>
         <div className="flex items-center gap-6">
-          <NextLink
+          <Link
             href="/"
             onClick={() => posthog.capture('homepage logo click_universal')}
             className="flex items-center gap-3 hover:no-underline"
@@ -54,12 +53,12 @@ export function Header() {
             />
             <Separator orientation="vertical" className="h-6 w-[3px]" />
             <span className="text-sm tracking-wider">SPONSORS</span>
-          </NextLink>
-          <NextLink href="/dashboard/listings">
+          </Link>
+          <Link href="/dashboard/listings">
             <Button variant="outline">
               <ChevronLeft /> Go Back
             </Button>
-          </NextLink>
+          </Link>
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-4 py-2">
@@ -82,32 +81,31 @@ export function Header() {
               )}
               <StatusBadge />
               {!isEditing && (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button
-                      variant="outline"
-                      className="ph-no-capture text-slate-400"
-                      disabled={
-                        isDraftSaving ||
-                        !id ||
-                        !!form.formState.errors.slug ||
-                        isSlugLoading ||
-                        hideAutoSave
-                      }
-                      onClick={() => {
-                        posthog.capture('preview_listing');
-                        setShowPreview(true);
-                      }}
-                    >
-                      <Eye />
-                      Preview
-                    </Button>
-                  </TooltipTrigger>
-                  {!!form.formState.errors.slug && (
-                    <TooltipContent>
-                      Please fix slug to visit preview
-                    </TooltipContent>
-                  )}
+                <Tooltip
+                  content={
+                    form.formState.errors.slug
+                      ? 'Please fix slug to visit preview'
+                      : null
+                  }
+                >
+                  <Button
+                    variant="outline"
+                    className="ph-no-capture text-slate-400"
+                    disabled={
+                      isDraftSaving ||
+                      !id ||
+                      !!form.formState.errors.slug ||
+                      isSlugLoading ||
+                      hideAutoSave
+                    }
+                    onClick={() => {
+                      posthog.capture('preview_listing');
+                      setShowPreview(true);
+                    }}
+                  >
+                    <Eye />
+                    Preview
+                  </Button>
                 </Tooltip>
               )}
               <PrePublish />

@@ -1,7 +1,6 @@
 import '../styles/globals.scss';
 import '@/components/tiptap/styles/index.css';
 
-import { ChakraProvider } from '@chakra-ui/react';
 import { GoogleTagManager } from '@next/third-parties/google';
 import { setUser } from '@sentry/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -15,19 +14,8 @@ import { PostHogProvider, usePostHog } from 'posthog-js/react';
 import React, { useEffect } from 'react';
 
 import { useUser } from '@/store/user';
-import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
+import { fontMono, fontSans } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
-
-import theme from '../config/chakra.config';
-
-// Chakra / Next/font don't play well in config.ts file for the theme. So we extend the theme here. (only the fonts)
-const extendThemeWithNextFonts = {
-  ...theme,
-  fonts: {
-    heading: fontSans.style.fontFamily,
-    body: fontSans.style.fontFamily,
-  },
-};
 
 const SolanaWalletProvider = dynamic(
   () =>
@@ -105,15 +93,16 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       <style jsx global>{`
         :root {
           --font-sans: ${fontSans.style.fontFamily};
-          --font-serif: ${fontSerif.style.fontFamily};
           --font-mono: ${fontMono.style.fontFamily};
+        }
+        body {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
       `}</style>
       <PostHogProvider client={posthog}>
         <SessionProvider session={session}>
-          <ChakraProvider theme={extendThemeWithNextFonts}>
-            <MyApp Component={Component} pageProps={pageProps} />
-          </ChakraProvider>
+          <MyApp Component={Component} pageProps={pageProps} />
         </SessionProvider>
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
       </PostHogProvider>

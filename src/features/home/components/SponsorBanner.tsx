@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { MdArrowForward } from 'react-icons/md';
 
@@ -12,7 +12,7 @@ export const SponsorBanner = () => {
   const { data } = useQuery(userCountQuery);
 
   return (
-    <NextLink
+    <Link
       href="/sponsor"
       className="ph-no-capture group flex w-full justify-between gap-4 rounded-lg bg-purple-50 p-4"
       onClick={() => posthog?.capture('become a sponsor_banner')}
@@ -35,6 +35,6 @@ export const SponsorBanner = () => {
         src={'/home/display/briefcase.webp'}
         className="mr-4 w-16 flex-1 object-contain"
       />
-    </NextLink>
+    </Link>
   );
 };

@@ -1,29 +1,76 @@
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Circle,
-  Divider,
-  Flex,
-  Image,
-  InputGroup,
-  InputRightAddon,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  Spinner,
-  Text,
-} from '@chakra-ui/react';
+import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { tokenList } from '@/constants/tokenList';
+
+const CustomNumberInput = ({
+  value,
+  onChange,
+  min,
+  max,
+  step = 100,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+  min: number;
+  max?: number;
+  step?: number;
+}) => {
+  const increment = () => {
+    if (max === undefined || value + step <= max) {
+      onChange(value + step);
+    }
+  };
+
+  const decrement = () => {
+    if (value - step >= min) {
+      onChange(value - step);
+    }
+  };
+
+  return (
+    <div className="relative w-[100px]">
+      <Input
+        type="number"
+        value={value}
+        onChange={(e) => {
+          const newValue = parseFloat(e.target.value);
+          if (
+            !isNaN(newValue) &&
+            newValue >= min &&
+            (max === undefined || newValue <= max)
+          ) {
+            onChange(newValue);
+          }
+        }}
+        className="pr-8 font-semibold text-slate-600"
+      />
+      <div className="absolute right-1 top-0 flex h-full flex-col">
+        <button
+          onClick={increment}
+          className="flex-1 px-1 hover:text-brand-purple"
+        >
+          <ChevronUp className="h-3 w-3" />
+        </button>
+        <button
+          onClick={decrement}
+          className="flex-1 px-1 hover:text-brand-purple"
+        >
+          <ChevronDown className="h-3 w-3" />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 interface ApproveModalProps {
   approveIsOpen: boolean;
@@ -50,8 +97,7 @@ export const ApproveModal = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
-  const handleAmountChange = (valueString: string) => {
-    const value = parseFloat(valueString);
+  const handleAmountChange = (value: number) => {
     if (value > (ask as number)) {
       setWarningMessage(
         'Approved amount is greater than the requested amount. Are you sure you want to approve?',
@@ -84,114 +130,89 @@ export const ApproveModal = ({
   }, [applicationId, ask]);
 
   return (
-    <Modal isOpen={approveIsOpen} onClose={approveOnClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader color={'brand.slate.500'} fontSize={'md'} fontWeight={600}>
-          Approve Grant Payment
-        </ModalHeader>
-        <ModalCloseButton />
-        <Divider />
-        <ModalBody fontSize={'0.95rem'} fontWeight={500}>
-          <Text mt={3} color="brand.slate.500">
+    <Dialog open={approveIsOpen} onOpenChange={approveOnClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-md font-semibold text-slate-500">
+            Approve Grant Payment
+          </DialogTitle>
+        </DialogHeader>
+
+        <Separator />
+
+        <div className="text-[0.95rem] font-medium">
+          <p className="mt-3 text-slate-500">
             You are about to approve {granteeName}’s grant request. They will be
             notified via email.
-          </Text>
+          </p>
+
           <br />
-          <Flex align={'center'} justify="space-between" mb={6}>
-            <Text color="brand.slate.500">Grant Request</Text>
-            <Flex align="center">
-              <Image
-                boxSize="5"
+
+          <div className="mb-6 flex items-center justify-between">
+            <p className="text-slate-500">Grant Request</p>
+            <div className="flex items-center">
+              <img
+                className="h-5 w-5 rounded-full"
                 alt={`${token} icon`}
-                rounded={'full'}
                 src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
               />
-              <Text ml={1} color="brand.slate.600" fontWeight={600}>
-                {ask}{' '}
-                <Text as="span" color="brand.slate.400">
-                  {token}
-                </Text>
-              </Text>
-            </Flex>
-          </Flex>
+              <p className="ml-1 font-semibold text-slate-600">
+                {ask} <span className="text-slate-400">{token}</span>
+              </p>
+            </div>
+          </div>
 
-          <Flex align={'center'} justify="space-between" w="100%" mb={6}>
-            <Text w="100%" color="brand.slate.500" whiteSpace={'nowrap'}>
+          <div className="mb-6 flex w-full items-center justify-between">
+            <p className="w-full whitespace-nowrap text-slate-500">
               Approved Amount
-            </Text>
-            <InputGroup>
-              <NumberInput
-                w="100px"
-                defaultValue={ask}
-                max={max}
-                min={1}
+            </p>
+            <div className="flex">
+              <CustomNumberInput
+                value={approvedAmount || 0}
                 onChange={handleAmountChange}
-                step={100}
-              >
-                <NumberInputField
-                  color="brand.slate.600"
-                  fontWeight={600}
-                  borderRightRadius={2}
-                />
-                <NumberInputStepper>
-                  <NumberIncrementStepper border="none">
-                    <ChevronUpIcon />
-                  </NumberIncrementStepper>
-                  <NumberDecrementStepper border="none">
-                    <ChevronDownIcon />
-                  </NumberDecrementStepper>
-                </NumberInputStepper>
-              </NumberInput>
-              <InputRightAddon
-                color="brand.slate.400"
-                fontSize={'0.95rem'}
-                bgColor="white"
-              >
-                <Image
-                  boxSize="5"
-                  mr={1}
+                min={1}
+                max={max}
+              />
+              <div className="flex items-center rounded-r-md border border-l-0 bg-white px-3 text-[0.95rem] text-slate-400">
+                <img
+                  className="mr-1 h-5 w-5 rounded-full"
                   alt={`${token} icon`}
-                  rounded={'full'}
                   src={
                     tokenList.find((t) => t.tokenSymbol === token)?.icon || ''
                   }
                 />
                 {token}
-              </InputRightAddon>
-            </InputGroup>
-          </Flex>
+              </div>
+            </div>
+          </div>
+
           {warningMessage && (
-            <Text align={'center'} color="yellow.500" fontSize={'sm'}>
+            <p className="font-sm text-center text-yellow-500">
               {warningMessage}
-            </Text>
+            </p>
           )}
 
           <Button
-            w="full"
-            mt={2}
-            mb={3}
-            color="white"
-            bg="#079669"
-            _hover={{ bg: '#079669' }}
-            isDisabled={loading || approvedAmount === 0}
-            isLoading={loading}
-            leftIcon={
-              loading ? (
-                <Spinner color="white" size="sm" />
-              ) : (
-                <Circle p={'5px'} bg="#FFF">
-                  <CheckIcon color="#079669" boxSize="2.5" />
-                </Circle>
-              )
-            }
-            loadingText="Approving"
+            className="mb-3 mt-2 w-full bg-[#079669] text-white hover:bg-[#079669]/90"
+            disabled={loading || approvedAmount === 0}
             onClick={approveGrant}
           >
-            Approve Grant
+            {loading ? (
+              <>
+                <span className="loading loading-spinner mr-2" />
+                Approving
+              </>
+            ) : (
+              <>
+                <div className="mr-2 rounded-full bg-white p-[5px]">
+                  <Check className="h-2.5 w-2.5 text-[#079669]" />
+                </div>
+                Approve Grant
+              </>
+            )}
           </Button>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

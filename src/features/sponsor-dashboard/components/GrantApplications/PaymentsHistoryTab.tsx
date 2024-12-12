@@ -1,27 +1,21 @@
-import { ChevronUpIcon, ExternalLinkIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Flex,
-  Image,
-  LinkBox,
-  LinkOverlay,
-  Progress,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-} from '@chakra-ui/react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { ChevronUp, ExternalLink } from 'lucide-react';
 import React, { useState } from 'react';
 
+import { Progress } from '@/components/ui/progress';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { tokenList } from '@/constants/tokenList';
 import { type Grant } from '@/features/grants';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { approvedGranteesQuery } from '../../queries';
@@ -48,63 +42,52 @@ const PaymentDetailsRow = ({
 }) => {
   return (
     <>
-      <Td>
+      <TableCell>
         {paymentDetails.map((payment, index) => (
-          <Flex key={index} align="center" justify="space-between" my={2}>
-            <Flex align="center" gap={1}>
-              <Image
-                w={4}
-                h={4}
-                alt={`${token}`}
-                rounded={'full'}
+          <div className="my-2 flex items-center justify-between" key={index}>
+            <div className="flex items-center gap-1">
+              <img
+                className="h-4 w-4 rounded-full"
                 src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+                alt={`${token}`}
               />
-              <Text color="brand.slate.700" fontSize={'sm'} fontWeight={500}>
-                {payment.amount}{' '}
-                <Text as="span" color="brand.slate.400">
-                  {token}
-                </Text>
-              </Text>
-            </Flex>
-          </Flex>
+              <p className="text-sm font-medium text-slate-700">
+                {payment.amount} <span className="text-slate-400">{token}</span>
+              </p>
+            </div>
+          </div>
         ))}
-      </Td>
-      <Td>
+      </TableCell>
+      <TableCell>
         {paymentDetails.map((payment, index) => (
-          <Flex key={index} align="center" justify="space-between" my={2}>
-            <Text color="brand.slate.500" fontSize={'sm'} fontWeight={500}>
+          <div className="my-2 flex items-center justify-between" key={index}>
+            <p className="text-sm font-medium text-slate-500">
               Milestone {payment.tranche}
-            </Text>
-          </Flex>
+            </p>
+          </div>
         ))}
-      </Td>
+      </TableCell>
       {paymentDetails.some((payment) => payment.txId) && (
-        <Td colSpan={2}>
+        <TableCell colSpan={2}>
           {paymentDetails.map(
             (payment, index) =>
               payment.txId && (
-                <LinkBox key={index} my={2}>
-                  <LinkOverlay
-                    alignItems={'center'}
-                    gap={1}
-                    display={'flex'}
+                <div key={index} className="my-2">
+                  <a
+                    className="flex items-center gap-1"
                     href={payment.txId}
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    <Text
-                      color="brand.slate.500"
-                      fontSize={'sm'}
-                      fontWeight={500}
-                    >
+                    <p className="text-sm font-medium text-slate-500">
                       {truncatePublicKey(extractTxId(payment.txId), 6)}
-                    </Text>
-                    <ExternalLinkIcon color="brand.slate.400" boxSize={4} />
-                  </LinkOverlay>
-                </LinkBox>
+                    </p>
+                    <ExternalLink className="h-4 w-4 text-slate-400" />
+                  </a>
+                </div>
               ),
           )}
-        </Td>
+        </TableCell>
       )}
     </>
   );
@@ -141,15 +124,9 @@ export const PaymentsHistoryTab = ({
 
   const GrantTh = ({ children }: { children?: string }) => {
     return (
-      <Th
-        color="brand.slate.400"
-        fontSize={13}
-        fontWeight={500}
-        letterSpacing={'-2%'}
-        textTransform={'capitalize'}
-      >
+      <TableHead className="text-xs font-medium uppercase tracking-tight text-slate-500">
         {children}
-      </Th>
+      </TableHead>
     );
   };
 
@@ -167,23 +144,18 @@ export const PaymentsHistoryTab = ({
 
   return (
     <div>
-      <TableContainer
-        mb={8}
-        borderWidth={'1px'}
-        borderColor={'brand.slate.200'}
-        borderRadius={8}
-      >
-        <Table variant="simple">
-          <Thead>
-            <Tr bg="brand.slate.100">
+      <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
+        <Table>
+          <TableHeader>
+            <TableRow className="text-slate-100">
               <GrantTh>Approved Grantee</GrantTh>
               <GrantTh>Approved</GrantTh>
               <GrantTh>Paid Out</GrantTh>
               <GrantTh>% Paid</GrantTh>
               <GrantTh />
-            </Tr>
-          </Thead>
-          <Tbody w="full">
+            </TableRow>
+          </TableHeader>
+          <TableBody className="w-full">
             {grantees?.map((grantee: GrantApplicationWithUser) => {
               const paidPercentage = Number(
                 ((grantee.totalPaid / grantee.approvedAmount) * 100).toFixed(2),
@@ -192,142 +164,110 @@ export const PaymentsHistoryTab = ({
               const isExpanded = expandedRows.has(grantee.id);
               return (
                 <React.Fragment key={grantee.id}>
-                  <Tr>
-                    <Td>
-                      <Flex align="center" gap={2}>
+                  <TableRow>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
                         <EarnAvatar
                           id={grantee.userId}
                           avatar={grantee.user.photo!}
                           size="36px"
                         />
-                        <Flex direction={'column'}>
-                          <Text
-                            color="brand.slate.700"
-                            fontSize={'sm'}
-                            fontWeight={500}
-                          >
+                        <div className="flex flex-col">
+                          <p className="text-sm font-medium text-slate-700">
                             {grantee.user.firstName} {grantee.user.lastName}
-                          </Text>
-                          <Text
-                            color="brand.slate.500"
-                            fontSize={'13px'}
-                            fontWeight={500}
-                          >
+                          </p>
+                          <p className="text-sm font-medium text-slate-500">
                             @{grantee.user.username}
-                          </Text>
-                        </Flex>
-                      </Flex>
-                    </Td>
-                    <Td>
-                      <Flex align={'center'} gap={1}>
-                        <Image
-                          w={4}
-                          h={4}
-                          alt={grant?.token}
-                          rounded={'full'}
+                          </p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <img
+                          className="h-4 w-4 rounded-full"
                           src={
                             tokenList.find(
                               (t) => t.tokenSymbol === grant?.token,
                             )?.icon || ''
                           }
+                          alt={grant?.token}
                         />
-                        <Text
-                          color="brand.slate.700"
-                          fontSize={'sm'}
-                          fontWeight={500}
-                        >
+                        <p className="text-sm font-medium text-slate-700">
                           {grantee.approvedAmount}{' '}
-                          <Text as="span" color="brand.slate.400">
-                            {grant?.token}
-                          </Text>
-                        </Text>
-                      </Flex>
-                    </Td>
-                    <Td>
-                      <Flex align={'center'} gap={1}>
-                        <Image
-                          w={4}
-                          h={4}
+                          <span className="text-slate-400">{grant?.token}</span>
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <img
+                          className="h-4 w-4 rounded-full"
                           alt={grant?.token}
-                          rounded={'full'}
                           src={
                             tokenList.find(
                               (t) => t.tokenSymbol === grant?.token,
                             )?.icon || ''
                           }
                         />
-                        <Text
-                          color="brand.slate.700"
-                          fontSize={'sm'}
-                          fontWeight={500}
-                        >
+                        <p className="text-sm font-medium text-slate-700">
                           {grantee.totalPaid}{' '}
-                          <Text as="span" color="brand.slate.400">
-                            {grant?.token}
-                          </Text>
-                        </Text>
-                      </Flex>
-                    </Td>
-                    <Td>
-                      <Flex align={'center'} gap={3}>
+                          <span className="text-slate-400">{grant?.token}</span>
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
                         <Progress
-                          w="5rem"
-                          h={'1.5'}
-                          rounded={'full'}
+                          className="h-1.5 w-20 rounded-full"
                           value={paidPercentage}
                         />
-                        <Text
-                          color="brand.slate.500"
-                          fontSize={'sm'}
-                          fontWeight={500}
-                        >
+                        <p className="text-sm font-medium text-slate-500">
                           {paidPercentage}%
-                        </Text>
-                      </Flex>
-                    </Td>
-                    <Td px={0} isNumeric>
-                      <Flex align="center" gap={2}>
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell className="p-0 text-right">
+                      <div className="flex items-center gap-2">
                         {isNativeAndNonST && (
                           <RecordPaymentButton
                             applicationId={grantee.id}
-                            buttonStyle={{ size: 'sm' }}
+                            className="h-8"
                             approvedAmount={grantee.approvedAmount}
                             totalPaid={grantee.totalPaid}
                             token={grant?.token || 'USDC '}
                             onPaymentRecorded={handlePaymentRecorded}
                           />
                         )}
-                        <Box
-                          as="span"
-                          transform={
-                            isExpanded ? 'rotate(0deg)' : 'rotate(180deg)'
-                          }
-                          cursor="pointer"
-                          transition="transform 0.3s"
+                        <span
+                          className={cn(
+                            'cursor-pointer transition-transform duration-300',
+                            isExpanded ? 'rotate-0' : 'rotate-180',
+                          )}
                           onClick={() => toggleExpandRow(grantee.id)}
                         >
-                          <ChevronUpIcon />
-                        </Box>
-                      </Flex>
-                    </Td>
-                  </Tr>
+                          <ChevronUp />
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
                   {isExpanded && grantee.paymentDetails && (
-                    <Tr>
-                      <Td />
+                    <TableRow>
+                      <TableCell />
                       <PaymentDetailsRow
                         paymentDetails={
                           grantee.paymentDetails as unknown as GrantPaymentDetailProps[]
                         }
                         token={grant?.token || 'USDC'}
                       />
-                    </Tr>
+                    </TableRow>
                   )}
                 </React.Fragment>
               );
             })}
-          </Tbody>
+          </TableBody>
         </Table>
-      </TableContainer>
+      </div>
     </div>
   );
 };

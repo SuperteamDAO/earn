@@ -3,12 +3,7 @@ import React from 'react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { getURL } from '@/utils/validUrl';
 
 import { type FeedDataProps } from '../types';
@@ -81,25 +76,20 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
           {sub?.listingTitle}
         </Link>
       </div>
-      <TooltipProvider>
-        {!sub?.id && !isProject ? (
-          <Tooltip>
-            <TooltipTrigger>
-              <FeedCardLink href={link} style="opacity-50 pointer-events-none">
-                {isProject ? 'View Listing' : 'View Submission'}
-              </FeedCardLink>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-80">
-              This submission will be accessible once winners for the listing
-              have been announced.
-            </TooltipContent>
-          </Tooltip>
-        ) : (
-          <FeedCardLink href={link} style="opacity-100 pointer-events-auto">
+      {!sub?.id && !isProject ? (
+        <Tooltip
+          content="This submission will be accessible once winners for the listing have been announced."
+          contentProps={{ className: 'max-w-80' }}
+        >
+          <FeedCardLink href={link} style="opacity-50 pointer-events-none">
             {isProject ? 'View Listing' : 'View Submission'}
           </FeedCardLink>
-        )}
-      </TooltipProvider>
+        </Tooltip>
+      ) : (
+        <FeedCardLink href={link} style="opacity-100 pointer-events-auto">
+          {isProject ? 'View Listing' : 'View Submission'}
+        </FeedCardLink>
+      )}
     </>
   );
 

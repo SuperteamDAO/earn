@@ -2,11 +2,7 @@ import type { TooltipContentProps } from '@radix-ui/react-tooltip';
 import * as React from 'react';
 
 import { Toggle } from '@/components/ui/toggle';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils';
 
 interface ToolbarButtonProps
@@ -40,13 +36,15 @@ export const ToolbarButton = React.forwardRef<
     }
 
     return (
-      <Tooltip>
-        <TooltipTrigger asChild>{toggleButton}</TooltipTrigger>
-        <TooltipContent {...tooltipOptions}>
+      <Tooltip
+        content={
           <div className="flex flex-col items-center text-center">
             {tooltip}
           </div>
-        </TooltipContent>
+        }
+        contentProps={tooltipOptions}
+      >
+        {toggleButton}
       </Tooltip>
     );
   },

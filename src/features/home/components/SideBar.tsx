@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { MdArrowForward } from 'react-icons/md';
 
@@ -43,13 +43,13 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
               <span className="text-sm font-medium text-gray-400">
                 LIVE LISTINGS
               </span>
-              <NextLink
+              <Link
                 href="/"
                 className="flex items-center text-xs font-semibold text-brand-purple"
               >
                 View All
                 <MdArrowForward className="ml-1" />
-              </NextLink>
+              </Link>
             </div>
           </LiveListings>
         </>

@@ -1,4 +1,3 @@
-import { Text, type TextProps } from '@chakra-ui/react';
 import React from 'react';
 
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -8,7 +7,7 @@ interface CompensationAmountType {
   rewardAmount?: number;
   minRewardAsk?: number;
   maxRewardAsk?: number;
-  textStyle?: TextProps;
+  className?: string;
 }
 
 export const SponsorPrize = ({
@@ -16,10 +15,10 @@ export const SponsorPrize = ({
   rewardAmount,
   minRewardAsk,
   maxRewardAsk,
-  textStyle,
+  className,
 }: CompensationAmountType) => {
   return (
-    <Text {...textStyle}>
+    <p className={className}>
       {(() => {
         switch (compensationType) {
           case 'fixed':
@@ -36,6 +35,6 @@ export const SponsorPrize = ({
             return null;
         }
       })()}
-    </Text>
+    </p>
   );
 };

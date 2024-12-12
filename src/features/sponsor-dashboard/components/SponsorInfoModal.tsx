@@ -1,20 +1,14 @@
-import {
-  Button,
-  Flex,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import { Loader2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
 import { Form, FormLabel } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
@@ -86,29 +80,14 @@ export const SponsorInfoModal = ({
   };
 
   return (
-    <Modal
-      closeOnEsc={false}
-      closeOnOverlayClick={false}
-      isOpen={isOpen}
-      onClose={onClose}
-      size="lg"
-    >
-      <ModalOverlay />
-      <ModalContent px={6} py={5}>
-        <Text
-          mb={4}
-          color="gray.900"
-          fontSize="xl"
-          fontWeight="semibold"
-          letterSpacing="-0.02em"
-        >
+    <Dialog open={isOpen} onOpenChange={() => onClose()} modal>
+      <DialogOverlay className="backdrop-blur-sm" />
+      <DialogContent className="px-6 py-5 sm:max-w-lg">
+        <h2 className="mb-4 text-xl font-semibold tracking-tight text-gray-900">
           Complete Your Profile
-        </Text>
+        </h2>
         <Form {...form}>
-          <form
-            style={{ width: '100%' }}
-            onSubmit={form.handleSubmit(onSubmit)}
-          >
+          <form className="w-full" onSubmit={form.handleSubmit(onSubmit)}>
             <FormFieldWrapper
               control={form.control}
               name="username"
@@ -125,7 +104,7 @@ export const SponsorInfoModal = ({
             {isUsernameInvalid && (
               <p className="text-sm text-red-500">{usernameValidationError}</p>
             )}
-            <Flex justify="space-between" gap={8} w={'full'} my={'1.25rem'}>
+            <div className="my-5 flex w-full justify-between gap-8">
               <FormFieldWrapper
                 control={form.control}
                 name="firstName"
@@ -141,9 +120,9 @@ export const SponsorInfoModal = ({
               >
                 <Input placeholder="Last Name" />
               </FormFieldWrapper>
-            </Flex>
+            </div>
 
-            <VStack align={'start'} gap={2} rowGap={'0'} my={3} mb={'25px'}>
+            <div className="my-3 mb-6 flex flex-col items-start gap-2">
               <FormLabel>Profile Picture</FormLabel>
               <ImagePicker
                 defaultValue={user?.photo ? { url: user.photo } : undefined}
@@ -161,20 +140,25 @@ export const SponsorInfoModal = ({
                   setUploading(false);
                 }}
               />
-            </VStack>
+            </div>
 
             <Button
-              w={'full'}
-              isLoading={uploading || updateUserMutation.isPending}
-              loadingText="Submitting"
-              spinnerPlacement="start"
+              className="w-full"
+              disabled={uploading || updateUserMutation.isPending}
               type="submit"
             >
-              Submit
+              {uploading || updateUserMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting
+                </>
+              ) : (
+                'Submit'
+              )}
             </Button>
           </form>
         </Form>
-      </ModalContent>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 };

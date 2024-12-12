@@ -1,19 +1,18 @@
-import { CheckIcon } from '@chakra-ui/icons';
-import { Button, type ButtonProps } from '@chakra-ui/react';
+import { Check } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import { useDisclosure } from '@/hooks/use-disclosure';
 
 import { type GrantApplicationWithUser } from '../../types';
 import { MarkCompleteModal } from './Modals/MarkCompletedModal';
 
 interface Props {
-  buttonStyle?: ButtonProps;
   isCompleted: boolean;
   applicationId: string;
   onMarkCompleted: (updatedApplication: GrantApplicationWithUser) => void;
 }
+
 export function MarkCompleted({
-  buttonStyle,
   isCompleted,
   applicationId,
   onMarkCompleted,
@@ -27,12 +26,10 @@ export function MarkCompleted({
   if (isCompleted) {
     return (
       <Button
-        color="brand.slate.500"
-        borderColor="brand.slate.300"
-        pointerEvents="none"
-        leftIcon={<CheckIcon />}
         variant="ghost"
+        className="pointer-events-none border-slate-300 text-slate-500"
       >
+        <Check className="mr-2 h-4 w-4" />
         Completed
       </Button>
     );
@@ -47,13 +44,11 @@ export function MarkCompleted({
         onMarkCompleted={onMarkCompleted}
       />
       <Button
-        color="brand.slate.500"
-        borderColor="brand.slate.300"
-        leftIcon={<CheckIcon />}
-        onClick={markAsCompletedOnOpen}
         variant="outline"
-        {...buttonStyle}
+        onClick={markAsCompletedOnOpen}
+        className="border-slate-300 text-slate-500"
       >
+        <Check className="mr-2 h-4 w-4" />
         Mark Completed
       </Button>
     </>

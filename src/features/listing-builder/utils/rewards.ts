@@ -15,7 +15,6 @@ export const calculateTotalRewardsForPodium = (
     if (isNaN(value)) return sum;
 
     if (Number(pos) === BONUS_REWARD_POSITION) {
-      console.log('bonus reward', value, maxBonusSpots);
       return sum + value * (maxBonusSpots || 0);
     }
     return sum + value;

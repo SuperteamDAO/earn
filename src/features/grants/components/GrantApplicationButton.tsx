@@ -1,16 +1,24 @@
-import { WarningIcon } from '@chakra-ui/icons';
-import { Button, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
+import { AlertTriangle, Loader2 } from 'lucide-react';
 import React from 'react';
 import { LuPencil } from 'react-icons/lu';
 
+import { Button } from '@/components/ui/button';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Tooltip } from '@/components/ui/tooltip';
 import { AuthWrapper } from '@/features/auth';
 import {
   getRegionTooltipLabel,
   userRegionEligibilty,
 } from '@/features/listings';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 import { userApplicationQuery } from '../queries';
 import { type Grant } from '../types';
@@ -19,6 +27,42 @@ import { GrantApplicationModal } from './GrantApplicationModal';
 interface GrantApplicationButtonProps {
   grant: Grant;
 }
+
+const InfoWrapper = ({
+  children,
+  isUserEligibleByRegion,
+  regionTooltipLabel,
+  user,
+}: {
+  children: React.ReactNode;
+  isUserEligibleByRegion: boolean;
+  regionTooltipLabel: string;
+  user: any;
+}) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  if (isMobile) {
+    return (
+      <Popover>
+        <PopoverTrigger asChild>{children}</PopoverTrigger>
+        {!isUserEligibleByRegion && (
+          <PopoverContent className="w-80 p-4">
+            <p className="text-sm text-gray-700">{regionTooltipLabel}</p>
+          </PopoverContent>
+        )}
+      </Popover>
+    );
+  }
+
+  return (
+    <Tooltip
+      content={!isUserEligibleByRegion ? regionTooltipLabel : null}
+      contentProps={{ className: 'rounded-md' }}
+      disabled={!user?.id || !user?.isTalentFilled || isUserEligibleByRegion}
+    >
+      {children}
+    </Tooltip>
+  );
+};
 
 export const GrantApplicationButton = ({
   grant,
@@ -60,7 +104,7 @@ export const GrantApplicationButton = ({
   switch (applicationState) {
     case 'APPLIED':
       buttonText = 'Applied Successfully';
-      buttonBG = 'green.500';
+      buttonBG = 'bg-green-600';
       isBtnDisabled = true;
       btnLoadingText = null;
       break;
@@ -75,7 +119,7 @@ export const GrantApplicationButton = ({
 
     default:
       buttonText = 'Apply Now';
-      buttonBG = 'brand.purple';
+      buttonBG = 'bg-brand-purple';
       isBtnDisabled = Boolean(
         !grant.isPublished ||
           (user?.id && user?.isTalentFilled && !isUserEligibleByRegion),
@@ -108,27 +152,12 @@ export const GrantApplicationButton = ({
           }
         />
       )}
-      <Tooltip
-        bg="brand.slate.500"
-        hasArrow
-        isDisabled={
-          !user?.id || !user?.isTalentFilled || isUserEligibleByRegion
-        }
-        label={!isUserEligibleByRegion ? regionTooltipLabel : ''}
-        rounded="md"
+      <InfoWrapper
+        isUserEligibleByRegion={isUserEligibleByRegion}
+        regionTooltipLabel={regionTooltipLabel}
+        user={user}
       >
-        <Flex
-          className="ph-no-capture"
-          pos={{ base: 'fixed', md: 'static' }}
-          zIndex={999}
-          bottom={0}
-          left="50%"
-          w="full"
-          px={{ base: 3, md: 0 }}
-          py={{ base: 4, md: 0 }}
-          bg="white"
-          transform={{ base: 'translateX(-50%)', md: 'none' }}
-        >
+        <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 bg-white px-3 py-4 md:static md:translate-x-0 md:px-0 md:py-0">
           <AuthWrapper
             showCompleteProfileModal
             completeProfileModalBodyText={
@@ -137,36 +166,45 @@ export const GrantApplicationButton = ({
             className="w-full flex-col"
           >
             <Button
-              gap={4}
-              w={'full'}
-              mt={grant?.link && !grant?.isNative ? 4 : 0}
-              mb={{ base: 12, md: 5 }}
-              bg={buttonBG}
-              _hover={{ bg: buttonBG }}
-              _disabled={{
-                opacity: { base: '96%', md: '70%' },
-              }}
-              isDisabled={isBtnDisabled}
-              isLoading={isUserApplicationLoading}
-              loadingText={btnLoadingText}
+              className={cn(
+                'h-12 w-full gap-4 text-lg',
+                grant?.link && !grant?.isNative ? 'mt-4' : '',
+                'mb-12 lg:mb-5',
+                'disabled:opacity-70',
+                buttonBG,
+                'size-lg',
+                applicationState === 'ALLOW EDIT' &&
+                  'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
+              )}
+              disabled={isBtnDisabled}
               onClick={handleSubmit}
-              size="lg"
-              variant={applicationState === 'ALLOW EDIT' ? 'outline' : 'solid'}
+              variant={
+                applicationState === 'ALLOW EDIT' ? 'outline' : 'default'
+              }
             >
-              {applicationState === 'ALLOW EDIT' && <LuPencil />}
-              {buttonText}
+              {isUserApplicationLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {btnLoadingText}
+                </>
+              ) : (
+                <>
+                  {applicationState === 'ALLOW EDIT' && <LuPencil />}
+                  {buttonText}
+                </>
+              )}
             </Button>
           </AuthWrapper>
-        </Flex>
-      </Tooltip>
+        </div>
+      </InfoWrapper>
       {hasApplied && (
-        <Flex gap="2" w="full" mb={4} p="3" bg={'#62F6FF10'}>
-          <WarningIcon color="#1A7F86" />
-          <Text color="#1A7F86" fontSize={'xs'} fontWeight={500}>
+        <div className="mb-4 flex w-full gap-2 bg-[#62F6FF10] p-3">
+          <AlertTriangle className="text-[#1A7F86]" />
+          <p className="text-xs font-medium text-[#1A7F86]">
             You will be notified via email if your grant has been approved or
             rejected.
-          </Text>
-        </Flex>
+          </p>
+        </div>
       )}
     </>
   );

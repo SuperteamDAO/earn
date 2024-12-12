@@ -1,20 +1,18 @@
-import {
-  Button,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Tag,
-  TagLabel,
-} from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAtom } from 'jotai';
-import React from 'react';
-import { MdArrowDropDown } from 'react-icons/md';
+import { ChevronDown } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { cn } from '@/utils';
 
 import { selectedSubmissionAtom } from '../..';
 import { labelMenuOptions } from '../../constants';
@@ -39,7 +37,6 @@ export const SelectLabel = ({ listingSlug }: Props) => {
   };
 
   let bg, color;
-
   if (selectedSubmission) {
     ({ bg, color } = colorMap[selectedSubmission?.label as SubmissionLabels]);
   }
@@ -73,41 +70,30 @@ export const SelectLabel = ({ listingSlug }: Props) => {
   });
 
   return (
-    <Menu>
-      <MenuButton
-        as={Button}
-        color="brand.slate.500"
-        fontWeight={500}
-        textTransform="capitalize"
-        bg="transparent"
-        borderWidth={'1px'}
-        borderColor="brand.slate.300"
-        _hover={{ backgroundColor: 'transparent' }}
-        _active={{
-          backgroundColor: 'transparent',
-          borderWidth: '1px',
-        }}
-        _expanded={{ borderColor: 'brand.purple' }}
-        rightIcon={<MdArrowDropDown />}
-      >
-        <Tag px={3} py={1} bg={bg} rounded="full">
-          <TagLabel
-            w="full"
-            color={color}
-            fontSize={'13px'}
-            textAlign={'center'}
-            textTransform={'capitalize'}
-            whiteSpace={'nowrap'}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          className="border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+        >
+          <span
+            className={cn(
+              'inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[13px] capitalize',
+              bg,
+              color,
+            )}
           >
             {selectedSubmission?.label || 'Select Option'}
-          </TagLabel>
-        </Tag>
-      </MenuButton>
-      <MenuList borderColor="brand.slate.300">
+          </span>
+          <ChevronDown className="ml-2 h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent className="border-slate-300">
         {labelMenuOptions.map((option) => (
-          <MenuItem
+          <DropdownMenuItem
             key={option.value}
-            _focus={{ bg: 'brand.slate.100' }}
+            className="focus:bg-slate-100"
             onClick={() =>
               selectLabel(
                 option.value as SubmissionLabels,
@@ -115,21 +101,18 @@ export const SelectLabel = ({ listingSlug }: Props) => {
               )
             }
           >
-            <Tag px={3} py={1} bg={option.bg} rounded="full">
-              <TagLabel
-                w="full"
-                color={option.color}
-                fontSize={'11px'}
-                textAlign={'center'}
-                textTransform={'capitalize'}
-                whiteSpace={'nowrap'}
-              >
-                {option.label}
-              </TagLabel>
-            </Tag>
-          </MenuItem>
+            <span
+              className={cn(
+                'inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[11px] capitalize',
+                colorMap[option.value as keyof typeof colorMap].bg,
+                colorMap[option.value as keyof typeof colorMap].color,
+              )}
+            >
+              {option.label}
+            </span>
+          </DropdownMenuItem>
         ))}
-      </MenuList>
-    </Menu>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
