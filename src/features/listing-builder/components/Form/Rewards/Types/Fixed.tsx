@@ -43,7 +43,7 @@ export function Fixed() {
               onChange={(e) => {
                 field.onChange(e);
                 if (e) form.setValue(`rewards`, { 1: e });
-                else form.setValue(`rewards`, undefined);
+                else form.setValue(`rewards`, {});
                 form.saveDraft();
               }}
             />

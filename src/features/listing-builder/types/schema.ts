@@ -267,8 +267,12 @@ export const createListingRefinements = async (
         message: 'Please fill in the rewards',
         path: ['rewards'],
       });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Required',
+        path: ['rewardAmount'],
+      });
     }
-    console.log('rewards validation', data.rewards);
     if (data.type !== 'project') {
       if (!data.rewards || Object.keys(data.rewards).length === 0) {
         ctx.addIssue({
