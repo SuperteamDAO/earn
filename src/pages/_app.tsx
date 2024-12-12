@@ -12,7 +12,8 @@ import { SessionProvider } from 'next-auth/react';
 import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 
 import { useUser } from '@/store/user';
 import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
@@ -63,6 +64,7 @@ function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
   const { user } = useUser();
   const posthog = usePostHog();
+  const forcedRedirected = useRef(false);
 
   useEffect(() => {
     const handleRouteChange = () => posthog?.capture('$pageview');
@@ -72,6 +74,37 @@ function MyApp({ Component, pageProps }: any) {
     };
   }, [router.events, posthog]);
 
+  const forcedProfileRedirect = useCallback(
+    (wait?: number) => {
+      if (
+        router.pathname.startsWith('/new') ||
+        router.pathname.startsWith('/sponsor') ||
+        !user
+      )
+        return;
+      if (user.isTalentFilled || user.currentSponsorId) return;
+      setTimeout(() => {
+        if (wait) {
+          toast.info('Finish your profile to continue browsing.', {
+            description: `You will be redirected in ~${Math.floor(wait / 1000).toFixed(0)} seconds.`,
+            duration: wait || 0,
+          });
+        }
+        setTimeout(() => {
+          router.push({
+            pathname: '/new',
+            query: {
+              type: 'forced',
+              originUrl: router.asPath,
+            },
+          });
+        }, wait || 0);
+      }, 0);
+      forcedRedirected.current = true;
+    },
+    [user, router.pathname],
+  );
+
   useEffect(() => {
     if (router.query.loginState === 'signedIn' && user) {
       posthog.identify(user.email);
@@ -79,8 +112,19 @@ function MyApp({ Component, pageProps }: any) {
       const url = new URL(window.location.href);
       url.searchParams.delete('loginState');
       window.history.replaceState(null, '', url.href);
+      forcedProfileRedirect(); // instantly when just signed in
     }
   }, [router.query.loginState, user, posthog]);
+
+  // forced profile redirection
+  useEffect(() => {
+    const handleRouteComplete = () => {
+      if (!forcedRedirected.current) {
+        forcedProfileRedirect(5000);
+      }
+    };
+    handleRouteComplete();
+  }, [user?.id]);
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
 

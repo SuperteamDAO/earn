@@ -53,19 +53,22 @@ export function UserMenu() {
   return (
     <>
       <EmailSettingsModal isOpen={isOpen} onClose={handleClose} />
-      {user && !user.currentSponsorId && !user.isTalentFilled && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            posthog.capture('complete profile_nav bar');
-            router.push('/new');
-          }}
-          className="ph-no-capture hidden text-xs md:flex"
-        >
-          Complete your Profile
-        </Button>
-      )}
+      {user &&
+        !user.currentSponsorId &&
+        !user.isTalentFilled &&
+        !router.pathname.startsWith('/new') && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              posthog.capture('complete profile_nav bar');
+              router.push('/new');
+            }}
+            className="ph-no-capture hidden text-xs md:flex"
+          >
+            Complete your Profile
+          </Button>
+        )}
       <DropdownMenu>
         <DropdownMenuTrigger
           id="user menu"
