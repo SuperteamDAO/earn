@@ -286,7 +286,7 @@ export const VerifyPaymentModal = ({
                 External Payment(s) Added
               </p>
               <p className="text-center text-sm text-slate-500">
-                We have successfully added an external payment to your listing.
+                We have successfully added external payment(s) to your listing.
               </p>
             </div>
 

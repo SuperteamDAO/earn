@@ -471,9 +471,15 @@ export default function BountySubmissions({ slug }: Props) {
                     <SubmissionList
                       listing={bounty}
                       filterLabel={filterLabel}
-                      setFilterLabel={setFilterLabel}
+                      setFilterLabel={(e) => {
+                        setFilterLabel(e);
+                        setCurrentPage(1);
+                      }}
                       submissions={paginatedSubmissions}
-                      setSearchText={setSearchText}
+                      setSearchText={(e) => {
+                        setSearchText(e);
+                        setCurrentPage(1);
+                      }}
                       type={bounty?.type}
                       isToggled={isToggled}
                       toggleSubmission={toggleSubmission}
