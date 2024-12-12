@@ -1,7 +1,7 @@
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { type Rewards } from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { fetchAsset, formatString } from '@/utils/ogHelpers';
@@ -106,7 +106,7 @@ export default async function handler(request: NextRequest) {
                     src={winner?.user?.photo}
                   />
                 ) : (
-                  <img
+                  <ExternalImage
                     style={{
                       width: '126.26px',
                       height: '126.26px',
@@ -115,7 +115,7 @@ export default async function handler(request: NextRequest) {
                       display: 'flex',
                     }}
                     alt={`${winner?.user?.firstName} ${winner?.user?.lastName}`}
-                    src={ASSET_URL + '/fallback/avatar.png'}
+                    src={'/fallback/avatar.png'}
                   />
                 )}
                 <div
@@ -212,13 +212,13 @@ export default async function handler(request: NextRequest) {
                 display: 'flex',
               }}
             >
-              <img
+              <ExternalImage
                 style={{
                   width: '200px',
                   display: 'flex',
                 }}
                 alt="ST Earn Logo"
-                src={ASSET_URL + '/logo/st-earn-white.svg'}
+                src={'/logo/st-earn-white.svg'}
               />
             </div>
           </div>

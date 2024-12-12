@@ -36,7 +36,7 @@ import axios from 'axios';
 import { type Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
@@ -89,7 +89,9 @@ const Index = () => {
   const totalMembers = membersData?.total || 0;
   const members = membersData?.data || [];
 
-  const isAdminLoggedIn = () => {
+  const isAdminLoggedIn = useMemo(() => {
+    if (session?.user?.role === 'GOD') return true;
+
     const userSponsor = user?.UserSponsors?.find(
       (s) => s.sponsorId === user.currentSponsorId,
     );
@@ -101,8 +103,8 @@ const Index = () => {
       return false;
     }
 
-    return session?.user?.role === 'GOD' || userSponsor.role === 'ADMIN';
-  };
+    return userSponsor.role === 'ADMIN';
+  }, [session, user]);
 
   const removeMemberMutation = useMutation({
     mutationFn: async (userId: string) => {
@@ -356,7 +358,7 @@ const RemoveMemberModal = ({
   onRemoveMember,
 }: {
   member: UserSponsor;
-  isAdminLoggedIn: () => boolean;
+  isAdminLoggedIn: boolean;
   session: Session | null;
   onRemoveMember: (userId: string | undefined) => void;
 }) => {
@@ -368,9 +370,13 @@ const RemoveMemberModal = ({
     toast.success('Member removed successfully');
   };
 
+  const isSameUser = useMemo(
+    () => member?.user?.email !== session?.user?.email,
+    [member, session],
+  );
   return (
     <Flex align="center" justify="end">
-      {isAdminLoggedIn() && member?.user?.email !== session?.user?.email && (
+      {isAdminLoggedIn && isSameUser && (
         <Button
           color="#6366F1"
           bg="#E0E7FF"

@@ -8,7 +8,7 @@ import { LuArrowRight } from 'react-icons/lu';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 
@@ -122,10 +122,10 @@ export const Comments = ({
       rounded={'xl'}
     >
       <HStack w={'full'} pt={4}>
-        <img
+        <ExternalImage
           className="h-5 w-5"
           alt="Comments Icon"
-          src={ASSET_URL + '/icons/comments.svg'}
+          src={'/icons/comments.svg'}
         />
         <div className="flex gap-2">
           <Text color="brand.slate.900" fontSize={'medium'} fontWeight={600}>

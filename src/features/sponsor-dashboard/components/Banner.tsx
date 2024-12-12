@@ -2,7 +2,6 @@ import {
   Box,
   Divider,
   Flex,
-  Image,
   Link,
   Skeleton,
   Text,
@@ -14,8 +13,8 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { MdInfoOutline, MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { PDTG } from '@/constants';
-import { ASSET_URL } from '@/constants/ASSET_URL';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
 
@@ -218,12 +217,10 @@ export function Banner({
         >
           <Flex align={'center'} justify={'space-between'}>
             <Flex align={'center'}>
-              <Image
-                w={'3.2rem'}
-                h={14}
-                mr={3}
+              <ExternalImage
+                className="mr-3 h-14 w-[3.2rem]"
                 alt="message pratik"
-                src={ASSET_URL + '/sponsor/pratik.webp'}
+                src={'/sponsor/pratik.webp'}
               />
               <div>
                 <Text

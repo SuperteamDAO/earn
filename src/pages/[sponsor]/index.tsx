@@ -8,6 +8,7 @@ import { MdOutlineInsertLink } from 'react-icons/md';
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 import { Loading } from '@/components/shared/Loading';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { GrantsCard } from '@/features/grants';
@@ -87,10 +88,10 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             <Skeleton className="h-28 w-28 rounded-full" />
           ) : (
             <div className="justify-center rounded-full">
-              <img
+              <LocalImage
                 className="h-28 w-28 rounded-full"
                 alt="Category icon"
-                src={logo}
+                src={logo!}
               />
             </div>
           )}
@@ -99,7 +100,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             {isListingsLoading ? (
               <Skeleton className="mt-4 h-4 w-48 md:mt-0" />
             ) : (
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
                 <p className="text-xl font-semibold">{title}</p>
                 {!!isVerified && (
                   <VerifiedBadge

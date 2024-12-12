@@ -1,6 +1,6 @@
 import { Divider, HStack, Text, VStack } from '@chakra-ui/react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 import { HighQualityImage } from '../HighQualityImage';
 
@@ -20,7 +20,7 @@ export function StepTwo() {
           <HighQualityImage
             alt="Pied Piper Logo"
             className="h-12 w-12"
-            src={ASSET_URL + '/landingsponsor/sponsors/piedPiper.webp'}
+            src={'/landingsponsor/sponsors/piedPiper.webp'}
           />
           <VStack align="start" flexGrow={1} gap={0} w="100%" fontSize={'sm'}>
             <Text color="brand.slate.700" fontWeight={600}>
@@ -91,8 +91,8 @@ export function StepTwo() {
       <Divider />
       <HStack justify={'space-between'} w="full" px={4}>
         <div className="flex gap-2">
-          <img
-            src={ASSET_URL + '/landingsponsor/icons/usdc.svg'}
+          <ExternalImage
+            src={'/landingsponsor/icons/usdc.svg'}
             alt="usdc icon"
           />
           <Text color="brand.slate.800" fontWeight={600}>

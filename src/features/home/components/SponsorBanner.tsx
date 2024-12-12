@@ -3,7 +3,7 @@ import NextLink from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { MdArrowForward } from 'react-icons/md';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 import { userCountQuery } from '../queries';
 
@@ -30,9 +30,9 @@ export const SponsorBanner = () => {
           + crypto talent from one single dashboard
         </p>
       </div>
-      <img
+      <ExternalImage
         alt="Sponsor Briefcase"
-        src={ASSET_URL + '/home/display/briefcase.webp'}
+        src={'/home/display/briefcase.webp'}
         className="mr-4 w-16 flex-1 object-contain"
       />
     </NextLink>

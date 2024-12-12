@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { HomepagePop } from '@/features/conversion-popups';
 import { type FeedPostType, useGetFeed } from '@/features/feed';
 import { VibeCard } from '@/features/home';
@@ -131,9 +131,9 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
           isLoading={isLoading}
         >
           <div className="my-32">
-            <img
+            <ExternalImage
               className="mx-auto w-32"
-              src={ASSET_URL + '/bg/talent-empty.svg'}
+              src={'/bg/talent-empty.svg'}
               alt="talent empty"
             />
             <p className="mx-auto mt-5 w-[200px] text-center text-base font-medium text-brand-slate-500 md:text-lg">

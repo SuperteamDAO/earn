@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
+import { LocalImage } from '@/components/ui/local-image';
 import {
   Popover,
   PopoverContent,
@@ -160,7 +161,7 @@ export const Footer = () => {
         <div className="flex flex-col items-start justify-between md:flex-row">
           <div className="mb-8 flex max-w-[540px] flex-col md:mb-0">
             <div className="mb-4 flex items-center">
-              <img
+              <LocalImage
                 className="mr-4 h-6"
                 alt="Superteam Earn"
                 src="/assets/logo.svg"

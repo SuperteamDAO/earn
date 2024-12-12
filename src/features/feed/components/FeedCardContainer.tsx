@@ -150,7 +150,7 @@ export const FeedCardContainer = ({
             target="_blank"
           >
             {children}
-            <div className="flex flex-col items-end justify-between px-3 py-4 md:flex-row md:items-center md:px-6 md:py-6">
+            <div className="flex flex-col items-start justify-between px-3 py-4 md:flex-row md:items-center md:px-6 md:py-6">
               {actionLinks}
             </div>
           </Link>

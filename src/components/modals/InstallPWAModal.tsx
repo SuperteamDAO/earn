@@ -14,6 +14,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '../ui/drawer';
+import { LocalImage } from '../ui/local-image';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<{ outcome: 'accepted' | 'dismissed' }>;
@@ -120,7 +121,7 @@ export const InstallPWAModal = () => {
           <div className="px-4">
             <div className="my-4 flex flex-col items-center">
               <div className="mt-4 flex flex-col items-center">
-                <img
+                <LocalImage
                   src="/android-chrome-512x512.png"
                   alt="Superteam Earn Icon"
                   className="h-16 w-16"

@@ -24,6 +24,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils';
@@ -209,7 +210,7 @@ export function Templates() {
                                   idx !== 0 && '-ml-3',
                                 )}
                               >
-                                <img
+                                <LocalImage
                                   src={sponsor.logo || ''}
                                   alt={sponsor.name}
                                   className="h-full w-full rounded-full object-cover"

@@ -6,7 +6,6 @@ import {
   Grid,
   GridItem,
   HStack,
-  Image,
   Popover,
   PopoverBody,
   PopoverContent,
@@ -31,7 +30,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import {
   ApplicationDetails,
   ApplicationHeader,
@@ -442,12 +441,10 @@ function GrantApplications({ slug }: Props) {
                         !searchText &&
                         !isApplicationsLoading ? (
                           <>
-                            <Image
-                              w={32}
-                              mx="auto"
-                              mt={32}
+                            <ExternalImage
+                              className="mx-auto mt-32 w-32"
                               alt={'talent empty'}
-                              src={ASSET_URL + '/bg/talent-empty.svg'}
+                              src={'/bg/talent-empty.svg'}
                             />
                             <Text
                               mx="auto"

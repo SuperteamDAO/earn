@@ -15,9 +15,10 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
 import { latestActiveSlugQuery } from '@/features/sponsor-dashboard';
 import { useUpdateUser, useUser } from '@/store/user';
+
+import { ExternalImage } from '../ui/cloudinary-image';
 
 export const FeatureModal = ({
   isSponsorsRoute = false,
@@ -73,8 +74,8 @@ export const FeatureModal = ({
       <ModalOverlay />
       <ModalContent overflow="hidden" rounded="lg">
         <Box w="full" p={8} bg="#FAF5FF">
-          <img
-            src={ASSET_URL + '/ScoutAnnouncement.png'}
+          <ExternalImage
+            src="/ScoutAnnouncement.png"
             alt="Scouts Announcement Illustration"
             style={{ width: '92%', height: '100%' }}
           />

@@ -1,22 +1,20 @@
 import { HStack, Text, VStack } from '@chakra-ui/react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
-
 import { HighQualityImage } from '../HighQualityImage';
 
 const submissions = [
   {
-    avatar: ASSET_URL + '/landingsponsor/users/jake.webp',
+    avatar: '/landingsponsor/users/jake.webp',
     title: 'Jake’s Submission',
     subtitle: 'jake.substack.com/why-piper-coin...',
   },
   {
-    avatar: ASSET_URL + '/landingsponsor/users/keith.webp',
+    avatar: '/landingsponsor/users/keith.webp',
     title: 'Keith’s Submission',
     subtitle: 'keith.substack.com/why-piper-coin...',
   },
   {
-    avatar: ASSET_URL + '/landingsponsor/users/mike.webp',
+    avatar: '/landingsponsor/users/mike.webp',
     title: 'Mike’s Submission',
     subtitle: 'mike.substack.com/why-piper-coin...',
   },

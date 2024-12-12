@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { LocalImage } from '@/components/ui/local-image';
 import { useDebounce } from '@/components/ui/multi-select';
 import {
   Select,
@@ -217,7 +218,7 @@ function Type() {
                   {typeOptions.map(({ value, label }) => (
                     <SelectItem key={value} value={value}>
                       <div className="flex items-center gap-2 text-xs">
-                        <img
+                        <LocalImage
                           src={getListingIcon(value)}
                           alt={value}
                           className="h-4 w-4"
@@ -229,7 +230,7 @@ function Type() {
                   {hackathon && (
                     <SelectItem key={'hackathon'} value={'hackathon'}>
                       <div className="flex items-center gap-2 text-xs">
-                        <img
+                        <LocalImage
                           src={hackathon.altLogo || ''}
                           alt={hackathon.name}
                           className="h-4 w-4 object-contain"

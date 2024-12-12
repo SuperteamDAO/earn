@@ -4,7 +4,6 @@ import {
   Center,
   Flex,
   Heading,
-  Image,
   Modal,
   ModalCloseButton,
   ModalContent,
@@ -16,8 +15,7 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
-// import { useListingFormStore } from '@/features/listing-builder';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { BountyIcon } from '@/svg/bounty-icon';
 import { ProjectIcon } from '@/svg/project-icon';
 
@@ -59,11 +57,10 @@ export const CreateListingModal = ({
         <div className="flex">
           <Box pos="relative" flex={1}>
             <Center pos="relative" mb={6} px={32} py={12} bg="#F5F3FF">
-              <Image
-                w="100%"
-                h="auto"
+              <ExternalImage
+                className="h-auto w-full"
                 alt="Bounty Illustration"
-                src={ASSET_URL + '/dashboard/bounty_illustration.svg'}
+                src={'/dashboard/bounty_illustration.svg'}
               />
               <Flex
                 pos="absolute"
@@ -110,11 +107,10 @@ export const CreateListingModal = ({
             borderLeftColor={'brand.slate.200'}
           >
             <Center pos="relative" mb={6} px={32} py={12} bg="#EFF6FF">
-              <Image
-                w="100%"
-                h="auto"
+              <ExternalImage
+                className="h-auto w-full"
                 alt="Project Illustration"
-                src={ASSET_URL + '/dashboard/project_illustration.svg'}
+                src={'/dashboard/project_illustration.svg'}
               />
               <Flex
                 pos="absolute"

@@ -11,12 +11,15 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { type GetServerSideProps } from 'next';
+import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { MdCheck } from 'react-icons/md';
 
 import { SponsorButton } from '@/components/ProfileSetup/SponsorButton';
 import { TalentButton } from '@/components/ProfileSetup/TalentButton';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { ONBOARDING_KEY } from '@/constants';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AuthWrapper } from '@/features/auth';
 import { userCountQuery } from '@/features/home';
@@ -39,19 +42,24 @@ export default function NewProfilePage({
   const { data: totals } = useQuery(userCountQuery);
 
   const router = useRouter();
+  const params = useSearchParams();
   const { user } = useUser();
   const [isTalentLoading, setIsTalentLoading] = useState(false);
   const [isSponsorLoading, setIsSponsorLoading] = useState(false);
 
-  const ONBOARDING_KEY = 'onboarding_chosed';
-
   const checkTalent = async () => {
+    console.log('check talent called');
     localStorage.setItem(ONBOARDING_KEY, 'talent');
+    console.log('local storage set', localStorage.getItem(ONBOARDING_KEY));
     if (!user) return;
     try {
-      localStorage.removeItem(ONBOARDING_KEY);
+      // localStorage.removeItem(ONBOARDING_KEY);
       if (!user?.isTalentFilled) {
-        router.push('/new/talent');
+        const originUrl = params.get('originUrl');
+        router.push({
+          pathname: '/new/talent',
+          query: originUrl ? { originUrl } : undefined,
+        });
       } else {
         router.push(`/t/${user.username}`);
       }
@@ -64,12 +72,16 @@ export default function NewProfilePage({
     localStorage.setItem(ONBOARDING_KEY, 'sponsor');
     if (!user) return;
     try {
-      localStorage.removeItem(ONBOARDING_KEY);
+      // localStorage.removeItem(ONBOARDING_KEY);
       const sponsors = await axios.get('/api/user-sponsors');
-      if (sponsors?.data?.length) {
+      if (sponsors?.data?.length && user.currentSponsorId) {
         router.push('/dashboard/listings?open=1');
       } else {
-        router.push('/new/sponsor');
+        const originUrl = params.get('originUrl');
+        router.push({
+          pathname: '/new/talent',
+          query: originUrl ? { originUrl } : undefined,
+        });
       }
     } catch (error) {
       setIsSponsorLoading(false);
@@ -134,7 +146,7 @@ export default function NewProfilePage({
                 </Text>
               </Flex>
 
-              <AuthWrapper className="w-full">
+              <AuthWrapper className="w-full" onClick={checkTalent}>
                 <Flex
                   direction={'column'}
                   gap={4}
@@ -152,10 +164,10 @@ export default function NewProfilePage({
                     display={'flex'}
                     w={'full'}
                   >
-                    <img
+                    <ExternalImage
                       style={{ width: '100%' }}
                       alt={'user icon'}
-                      src={ASSET_URL + '/onboarding/talent-banner.webp'}
+                      src={'/onboarding/talent-banner.webp'}
                     />
                     <Box
                       pos="absolute"
@@ -221,7 +233,7 @@ export default function NewProfilePage({
                 next contributor
               </Text>
             </Flex>
-            <AuthWrapper className="w-full">
+            <AuthWrapper className="w-full" onClick={checkSponsor}>
               <Flex
                 direction={'column'}
                 gap={4}
@@ -239,10 +251,10 @@ export default function NewProfilePage({
                   display={'flex'}
                   w={'full'}
                 >
-                  <img
+                  <ExternalImage
                     style={{ width: '100%' }}
                     alt={'user icon'}
-                    src={ASSET_URL + '/onboarding/sponsor-banner.webp'}
+                    src={'/onboarding/sponsor-banner.webp'}
                   />
                   <Box
                     pos="absolute"
@@ -274,25 +286,25 @@ export default function NewProfilePage({
               </Flex>
             </AuthWrapper>
             <Flex align="center" justify="space-between" gap={3} mt={-3} px={3}>
-              <img
+              <ExternalImage
                 className="h-5 object-contain"
                 alt="Jupiter Icon"
-                src={ASSET_URL + '/landingsponsor/sponsors/jupiter.webp'}
+                src={'/landingsponsor/sponsors/jupiter.webp'}
               />
-              <img
+              <ExternalImage
                 className="h-8 object-contain"
                 alt="Solflare Icon"
-                src={ASSET_URL + '/landingsponsor/sponsors/solflare.webp'}
+                src={'/landingsponsor/sponsors/solflare.webp'}
               />
-              <img
+              <ExternalImage
                 className="hidden h-4 object-contain md:block"
                 alt="Squads Icon"
-                src={ASSET_URL + '/company-logos/squads.webp'}
+                src={'/company-logos/squads.webp'}
               />
-              <img
+              <ExternalImage
                 className="h-7 w-7 object-contain"
                 alt="Tensor Icon"
-                src={ASSET_URL + '/company-logos/tensor.svg'}
+                src={'/company-logos/tensor.svg'}
               />
             </Flex>
           </Flex>

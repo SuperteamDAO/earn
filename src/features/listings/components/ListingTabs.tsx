@@ -5,6 +5,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import {
   Tooltip,
   TooltipContent,
@@ -74,7 +75,7 @@ const generateTabContent = ({
     return (
       <div className="ph-no-capture flex flex-col gap-1">
         {Array.from({ length: 8 }, (_, index) => (
-          <ListingCardSkeleton key={index} />
+          <ListingCardSkeleton key={`skeleton-${index}`} />
         ))}
       </div>
     );
@@ -252,11 +253,10 @@ export const ListingTabs = ({
         <div className="flex w-full items-center justify-between sm:justify-start">
           <div className="flex items-center">
             {showEmoji && (
-              <img
+              <LocalImage
                 className="xs:flex xs:hidden mr-2 h-5 w-5"
                 alt="emoji"
                 src={emoji}
-                loading="lazy"
               />
             )}
             <p className="whitespace-nowrap pr-2 text-[14px] font-semibold text-[#334155] sm:text-[15px] md:text-[16px]">
