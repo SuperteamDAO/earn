@@ -523,59 +523,49 @@ export default function BountySubmissions({ slug }: Props) {
               </div>
 
               <div className="mt-4 flex items-center justify-start gap-4">
-                {!!searchText || !!filterLabel ? (
+                <>
+                  <Button
+                    disabled={currentPage <= 1}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    size="sm"
+                    variant="outline"
+                  >
+                    <ChevronLeft className="mr-2 h-5 w-5" />
+                    Previous
+                  </Button>
+
                   <p className="text-sm text-slate-400">
-                    Found{' '}
+                    <span className="font-bold">
+                      {(currentPage - 1) * submissionsPerPage + 1}
+                    </span>{' '}
+                    -{' '}
+                    <span className="font-bold">
+                      {Math.min(
+                        currentPage * submissionsPerPage,
+                        filteredSubmissions.length,
+                      )}
+                    </span>{' '}
+                    of{' '}
                     <span className="font-bold">
                       {filteredSubmissions.length}
                     </span>{' '}
-                    {filteredSubmissions.length === 1 ? 'result' : 'results'}
+                    Submissions
                   </p>
-                ) : (
-                  <>
-                    <Button
-                      disabled={currentPage <= 1}
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.max(prev - 1, 1))
-                      }
-                      size="sm"
-                      variant="outline"
-                    >
-                      <ChevronLeft className="mr-2 h-5 w-5" />
-                      Previous
-                    </Button>
 
-                    <p className="text-sm text-slate-400">
-                      <span className="font-bold">
-                        {(currentPage - 1) * submissionsPerPage + 1}
-                      </span>{' '}
-                      -{' '}
-                      <span className="font-bold">
-                        {Math.min(
-                          currentPage * submissionsPerPage,
-                          filteredSubmissions.length,
-                        )}
-                      </span>{' '}
-                      of{' '}
-                      <span className="font-bold">
-                        {filteredSubmissions.length}
-                      </span>{' '}
-                      Submissions
-                    </p>
-
-                    <Button
-                      disabled={currentPage >= totalPages}
-                      onClick={() =>
-                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                      }
-                      size="sm"
-                      variant="outline"
-                    >
-                      Next
-                      <ChevronRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </>
-                )}
+                  <Button
+                    disabled={currentPage >= totalPages}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    size="sm"
+                    variant="outline"
+                  >
+                    Next
+                    <ChevronRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </>
               </div>
             </TabsContent>
 
