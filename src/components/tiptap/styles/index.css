@@ -3,6 +3,7 @@
 @import './partials/lists.css';
 @import './partials/typography.css';
 @import './partials/zoom.css';
+@import './partials/colors.css';
 
 :root {
   --mt-overlay: rgba(251, 251, 251, 0.75);
