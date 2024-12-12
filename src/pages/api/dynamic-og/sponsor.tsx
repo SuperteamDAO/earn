@@ -73,7 +73,7 @@ export default async function handler(request: NextRequest) {
               style={{
                 width: '276px',
                 height: '276px',
-                background: 'black',
+                background: 'white',
                 borderRadius: '30px',
                 display: 'flex',
                 alignItems: 'center',
@@ -82,10 +82,11 @@ export default async function handler(request: NextRequest) {
             >
               <img
                 style={{
-                  width: '120px',
-                  height: '120px',
+                  width: '276px',
+                  height: '276px',
                   objectFit: 'contain',
-                  background: 'black',
+                  background: 'white',
+                  borderRadius: '30px',
                 }}
                 alt="logo"
                 src={sponsorLogo as string}
