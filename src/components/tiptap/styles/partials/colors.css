@@ -1,0 +1,166 @@
+/* PURELY TO SUPPORT OLD LISTINGS */
+.minimal-tiptap-editor {
+  [style*="color:"] {
+    color: inherit !important;
+  }
+
+  [style*="color: var(--mt-overlay)"] {
+    color: var(--mt-overlay) !important;
+  }
+
+  [style*="color: var(--mt-transparent-foreground)"] {
+    color: var(--mt-transparent-foreground) !important;
+  }
+
+  [style*="color: var(--mt-bg-secondary)"] {
+    color: var(--mt-bg-secondary) !important;
+  }
+
+  [style*="color: var(--mt-code-background)"] {
+    color: var(--mt-code-background) !important;
+  }
+
+  [style*="color: var(--mt-code-color)"] {
+    color: var(--mt-code-color) !important;
+  }
+
+  [style*="color: var(--mt-secondary)"] {
+    color: var(--mt-secondary) !important;
+  }
+
+  [style*="color: var(--mt-pre-background)"] {
+    color: var(--mt-pre-background) !important;
+  }
+
+  [style*="color: var(--mt-pre-border)"] {
+    color: var(--mt-pre-border) !important;
+  }
+
+  [style*="color: var(--mt-pre-color)"] {
+    color: var(--mt-pre-color) !important;
+  }
+
+  [style*="color: var(--mt-hr)"] {
+    color: var(--mt-hr) !important;
+  }
+
+  [style*="color: var(--mt-drag-handle-hover)"] {
+    color: var(--mt-drag-handle-hover) !important;
+  }
+
+  /* Accent Bold Colors */
+  [style*="color: var(--mt-accent-bold-blue)"] {
+    color: var(--mt-accent-bold-blue) !important;
+  }
+
+  [style*="color: var(--mt-accent-bold-teal)"] {
+    color: var(--mt-accent-bold-teal) !important;
+  }
+
+  [style*="color: var(--mt-accent-bold-green)"] {
+    color: var(--mt-accent-bold-green) !important;
+  }
+
+  [style*="color: var(--mt-accent-bold-orange)"] {
+    color: var(--mt-accent-bold-orange) !important;
+  }
+
+  [style*="color: var(--mt-accent-bold-red)"] {
+    color: var(--mt-accent-bold-red) !important;
+  }
+
+  [style*="color: var(--mt-accent-bold-purple)"] {
+    color: var(--mt-accent-bold-purple) !important;
+  }
+
+  /* Accent Colors */
+  [style*="color: var(--mt-accent-gray)"] {
+    color: var(--mt-accent-gray) !important;
+  }
+
+  [style*="color: var(--mt-accent-blue)"] {
+    color: var(--mt-accent-blue) !important;
+  }
+
+  [style*="color: var(--mt-accent-teal)"] {
+    color: var(--mt-accent-teal) !important;
+  }
+
+  [style*="color: var(--mt-accent-green)"] {
+    color: var(--mt-accent-green) !important;
+  }
+
+  [style*="color: var(--mt-accent-orange)"] {
+    color: var(--mt-accent-orange) !important;
+  }
+
+  [style*="color: var(--mt-accent-red)"] {
+    color: var(--mt-accent-red) !important;
+  }
+
+  [style*="color: var(--mt-accent-purple)"] {
+    color: var(--mt-accent-purple) !important;
+  }
+
+  /* Subtler Accent Colors */
+  [style*="color: var(--mt-accent-blue-subtler)"] {
+    color: var(--mt-accent-blue-subtler) !important;
+  }
+
+  [style*="color: var(--mt-accent-teal-subtler)"] {
+    color: var(--mt-accent-teal-subtler) !important;
+  }
+
+  [style*="color: var(--mt-accent-green-subtler)"] {
+    color: var(--mt-accent-green-subtler) !important;
+  }
+
+  [style*="color: var(--mt-accent-yellow-subtler)"] {
+    color: var(--mt-accent-yellow-subtler) !important;
+  }
+
+  [style*="color: var(--mt-accent-red-subtler)"] {
+    color: var(--mt-accent-red-subtler) !important;
+  }
+
+  [style*="color: var(--mt-accent-purple-subtler)"] {
+    color: var(--mt-accent-purple-subtler) !important;
+  }
+
+  /* HLJS Highlighting Colors */
+  [style*="color: var(--hljs-string)"] {
+    color: var(--hljs-string) !important;
+  }
+
+  [style*="color: var(--hljs-title)"] {
+    color: var(--hljs-title) !important;
+  }
+
+  [style*="color: var(--hljs-comment)"] {
+    color: var(--hljs-comment) !important;
+  }
+
+  [style*="color: var(--hljs-keyword)"] {
+    color: var(--hljs-keyword) !important;
+  }
+
+  [style*="color: var(--hljs-attr)"] {
+    color: var(--hljs-attr) !important;
+  }
+
+  [style*="color: var(--hljs-literal)"] {
+    color: var(--hljs-literal) !important;
+  }
+
+  [style*="color: var(--hljs-name)"] {
+    color: var(--hljs-name) !important;
+  }
+
+  [style*="color: var(--hljs-selector-tag)"] {
+    color: var(--hljs-selector-tag) !important;
+  }
+
+  [style*="color: var(--hljs-number)"] {
+    color: var(--hljs-number) !important;
+  }
+}
