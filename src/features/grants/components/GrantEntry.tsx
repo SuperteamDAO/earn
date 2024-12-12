@@ -47,12 +47,12 @@ export const GrantEntry = ({
 
   return (
     <Link
-      className="block w-full cursor-pointer overflow-hidden rounded-lg border shadow-md transition-all duration-300 hover:shadow-lg sm:min-w-80"
+      className="block w-full cursor-pointer overflow-hidden rounded-lg border shadow-md transition-all duration-300 hover:shadow-lg sm:w-80"
       href={`/grants/${slug}`}
     >
       <div className="relative">
         <img
-          className="h-[240px] min-w-80 object-cover sm:h-[180px]"
+          className="h-[240px] w-80 object-cover sm:h-[180px]"
           alt={title}
           src={logo || '/api/placeholder/400/240'}
         />
@@ -68,7 +68,7 @@ export const GrantEntry = ({
         <Link href={`/grants/${slug}`} className="block">
           <Button
             variant="outline"
-            className="w-full border-slate-300 text-sm font-medium text-slate-400 hover:bg-brand-purple hover:text-white"
+            className="w-full border-slate-300 bg-gray-100 text-sm font-medium text-slate-400 hover:bg-brand-purple hover:text-white"
           >
             Apply Now
           </Button>

@@ -176,7 +176,7 @@ export default function SponsorListings() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  className="border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                  className="h-9 border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
                   variant="outline"
                 >
                   <span

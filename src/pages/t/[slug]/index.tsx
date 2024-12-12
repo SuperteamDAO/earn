@@ -351,7 +351,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                               <button
                                 aria-label="Toggle subskills"
                                 className={cn(
-                                  'p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+                                  'ml-1 mt-2 p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
                                   'rounded transition hover:bg-gray-100',
                                 )}
                                 onClick={() => handleToggleSubskills(index)}
@@ -441,7 +441,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       </Button>
                     )}
                   </div>
-                  <div className="mt-12 flex justify-between gap-6 md:mt-0 md:justify-end">
+                  <div className="mt-12 flex w-full justify-between gap-6 md:mt-0 md:justify-end">
                     <p
                       className={cn(
                         'cursor-pointer font-medium',

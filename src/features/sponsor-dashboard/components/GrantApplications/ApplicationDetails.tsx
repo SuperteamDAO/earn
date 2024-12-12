@@ -10,12 +10,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { type Grant } from '@/features/grants';
 import {
@@ -488,23 +483,19 @@ export const ApplicationDetails = ({
                   <MdOutlineAccountBalanceWallet color="#94A3B8" />
                   <p className="text-slate-400">
                     {truncatePublicKey(selectedApplication?.user?.publicKey, 3)}
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Copy
-                            className="ml-1 h-4 w-4 cursor-pointer text-slate-400"
-                            onClick={() =>
-                              navigator.clipboard.writeText(
-                                selectedApplication?.user?.publicKey || '',
-                              )
-                            }
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          Copy Wallet ID
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <Tooltip
+                      content="Copy Wallet ID"
+                      contentProps={{ side: 'right' }}
+                    >
+                      <Copy
+                        className="ml-1 h-4 w-4 cursor-pointer text-slate-400"
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            selectedApplication?.user?.publicKey || '',
+                          )
+                        }
+                      />
+                    </Tooltip>
                   </p>
                 </div>
               )}

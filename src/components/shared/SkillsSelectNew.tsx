@@ -64,9 +64,6 @@ const convertSkillsToOptions = (skills: Skills): Option[] => {
 
 export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
   ({ defaultValue = [], onChange, className }, ref) => {
-    React.useEffect(() => {
-      console.log('skills select', defaultValue);
-    }, [defaultValue]);
     const [uiSkills, setUiSkills] = React.useState<Option[]>(
       convertSkillsToOptions(defaultValue),
     );

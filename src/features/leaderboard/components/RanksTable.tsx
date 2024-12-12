@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { Avatar } from '@/components/ui/avatar';
 import {
   Popover,
   PopoverContent,
@@ -141,9 +140,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                       });
                     }}
                   >
-                    <Avatar className="h-8 w-8">
-                      <EarnAvatar avatar={row.pfp!} id={row.name} />
-                    </Avatar>
+                    <EarnAvatar avatar={row.pfp!} id={row.name} />
                     <div className="flex flex-col items-start justify-center gap-1 md:justify-start">
                       <p className="block max-w-[7rem] overflow-x-hidden text-ellipsis whitespace-nowrap text-black group-hover:underline md:hidden">
                         {row.name.split(' ')[0] +
@@ -241,9 +238,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                     }}
                     target="_blank"
                   >
-                    <Avatar className="h-5 w-5 md:h-8 md:w-8">
-                      <EarnAvatar avatar={user.photo} id={user.firstName} />
-                    </Avatar>
+                    <EarnAvatar avatar={user.photo} id={user.firstName} />
                     <div className="flex flex-col items-start justify-center gap-1 md:justify-start">
                       <p className="block max-w-[7rem] overflow-x-hidden text-ellipsis whitespace-nowrap text-black group-hover:underline md:hidden">
                         {user.firstName +

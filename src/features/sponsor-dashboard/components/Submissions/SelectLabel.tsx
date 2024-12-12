@@ -104,8 +104,8 @@ export const SelectLabel = ({ listingSlug }: Props) => {
             <span
               className={cn(
                 'inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[11px] capitalize',
-                option.bg,
-                option.color,
+                colorMap[option.value as keyof typeof colorMap].bg,
+                colorMap[option.value as keyof typeof colorMap].color,
               )}
             >
               {option.label}

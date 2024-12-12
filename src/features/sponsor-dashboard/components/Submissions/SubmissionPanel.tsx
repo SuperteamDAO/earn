@@ -1,18 +1,13 @@
 import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useAtom } from 'jotai';
-import { ArrowRight, Copy, ExternalLink } from 'lucide-react';
+import { AlertTriangle, ArrowRight, Copy, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import type { Listing, Rewards } from '@/features/listings';
 import { EarnAvatar } from '@/features/talent';
 import type { SubmissionWithUser } from '@/interface/submission';
@@ -92,31 +87,31 @@ export const SubmissionPanel = ({
                     (bounty?.isWinnersAnnounced ? (
                       <PayoutButton bounty={bounty} />
                     ) : (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              className="mr-4"
-                              disabled={!bounty?.isWinnersAnnounced}
-                              size="sm"
-                              variant="default"
-                            >
-                              Pay {bounty?.token}{' '}
-                              {!!bounty?.rewards &&
-                                bounty?.rewards[
-                                  selectedSubmission?.winnerPosition as keyof Rewards
-                                ]}
-                            </Button>
-                          </TooltipTrigger>
-                          {!bounty?.isWinnersAnnounced && (
-                            <TooltipContent sideOffset={5}>
+                      <Tooltip
+                        content={
+                          !bounty?.isWinnersAnnounced ? (
+                            <>
                               Please announce the winners before you paying out
                               the winners
                               <TooltipArrow />
-                            </TooltipContent>
-                          )}
-                        </Tooltip>
-                      </TooltipProvider>
+                            </>
+                          ) : null
+                        }
+                        contentProps={{ sideOffset: 5 }}
+                      >
+                        <Button
+                          className="mr-4"
+                          disabled={!bounty?.isWinnersAnnounced}
+                          size="sm"
+                          variant="default"
+                        >
+                          Pay {bounty?.token}{' '}
+                          {!!bounty?.rewards &&
+                            bounty?.rewards[
+                              selectedSubmission?.winnerPosition as keyof Rewards
+                            ]}
+                        </Button>
+                      </Tooltip>
                     ))}
                   {<SelectLabel listingSlug={bounty?.slug!} />}
                   {selectedSubmission?.isWinner &&
@@ -149,44 +144,45 @@ export const SubmissionPanel = ({
                         isHackathonPage={isHackathonPage}
                       />
                       {!isProject && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                className={cn(
-                                  'ml-4',
-                                  'disabled:cursor-not-allowed disabled:bg-[#A1A1A1] disabled:hover:bg-[#A1A1A1]',
-                                )}
-                                disabled={
-                                  !afterAnnounceDate ||
-                                  isHackathonPage ||
-                                  remainings?.podiums !== 0 ||
-                                  remainings?.bonus !== 0
-                                }
-                                onClick={onWinnersAnnounceOpen}
-                                variant="default"
-                              >
-                                Announce Winners
-                              </Button>
-                            </TooltipTrigger>
-                            {bounty?.isWinnersAnnounced && (
-                              <TooltipContent sideOffset={5}>
+                        <Tooltip
+                          content={
+                            bounty?.isWinnersAnnounced ? (
+                              <>
                                 You cannot change the winners once the results
                                 are published!
                                 <TooltipArrow />
-                              </TooltipContent>
+                              </>
+                            ) : null
+                          }
+                          contentProps={{ sideOffset: 5 }}
+                        >
+                          <Button
+                            className={cn(
+                              'ml-4',
+                              'disabled:cursor-not-allowed disabled:bg-[#A1A1A1] disabled:hover:bg-[#A1A1A1]',
                             )}
-                          </Tooltip>
-                        </TooltipProvider>
+                            disabled={
+                              !afterAnnounceDate ||
+                              isHackathonPage ||
+                              remainings?.podiums !== 0 ||
+                              remainings?.bonus !== 0
+                            }
+                            onClick={onWinnersAnnounceOpen}
+                            variant="default"
+                          >
+                            Announce Winners
+                          </Button>
+                        </Tooltip>
                       )}
                     </>
                   )}
                 </div>
               </div>
               {!!remainings && !isProject && (
-                <div className="ml-auto flex w-fit px-4 py-1 text-xs italic">
+                <div className="ml-auto flex w-fit px-4 py-1 text-xs">
                   {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
-                    <p className="text-[#f55151]">
+                    <p className="flex items-center rounded-md bg-red-100 px-3 py-1 text-[#f55151]">
+                      <AlertTriangle className="mr-1 inline-block h-3 w-3" />
                       {remainings.podiums > 0 && (
                         <>
                           {remainings.podiums}{' '}
@@ -224,28 +220,24 @@ export const SubmissionPanel = ({
                 {selectedSubmission?.user?.publicKey && (
                   <div className="flex items-center justify-start gap-2 whitespace-nowrap text-sm">
                     <MdOutlineAccountBalanceWallet color="#94A3B8" />
-                    <p className="text-slate-400">
+                    <p className="flex items-center text-slate-400">
                       {truncatePublicKey(
                         selectedSubmission?.user?.publicKey,
                         3,
                       )}
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Copy
-                              className="ml-1 h-4 w-4 cursor-pointer text-slate-400 hover:text-slate-500"
-                              onClick={() =>
-                                navigator.clipboard.writeText(
-                                  selectedSubmission?.user?.publicKey || '',
-                                )
-                              }
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent side="right">
-                            Copy Wallet ID
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <Tooltip
+                        content="Copy Wallet ID"
+                        contentProps={{ side: 'right' }}
+                      >
+                        <Copy
+                          className="ml-1 h-4 w-4 cursor-pointer text-slate-400 hover:text-slate-500"
+                          onClick={() =>
+                            navigator.clipboard.writeText(
+                              selectedSubmission?.user?.publicKey || '',
+                            )
+                          }
+                        />
+                      </Tooltip>
                     </p>
                   </div>
                 )}

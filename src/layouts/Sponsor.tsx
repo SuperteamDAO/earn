@@ -21,12 +21,7 @@ import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
 import { Login } from '@/features/auth';
@@ -233,55 +228,52 @@ export function SponsorLayout({
           <CreateListingModal isOpen={isOpen} onClose={onClose} />
           <div className="flex items-center justify-between px-4 pb-6">
             {!isHackathonRoute ? (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      className={cn(
-                        'ph-no-capture py-5.5 w-full gap-2 text-base',
-                        'disabled:cursor-not-allowed disabled:opacity-50',
-                      )}
-                      disabled={
-                        isCreateListingAllowed !== undefined &&
-                        isCreateListingAllowed === false &&
-                        session?.user.role !== 'GOD'
-                      }
-                      onClick={() => {
-                        posthog.capture('create new listing_sponsor');
-                        onOpen();
-                      }}
-                      variant="default"
-                    >
-                      <Plus className="h-3 w-3" />
-                      <p
-                        className={cn(
-                          'nav-item-text transition-all duration-200 ease-in-out',
-                          isExpanded
-                            ? ['static ml-0 opacity-100']
-                            : ['absolute -ml-[9999px] opacity-0'],
-                        )}
-                      >
-                        Create New Listing
-                      </p>
-                      {isCreateListingAllowed !== undefined &&
-                        isCreateListingAllowed === false &&
-                        session?.user.role !== 'GOD' && (
-                          <Lock className="h-4 w-4" />
-                        )}
-                    </Button>
-                  </TooltipTrigger>
+              <Tooltip
+                content={
+                  "Creating a new listing has been temporarily locked for you since you have 5 listings which are 'In Review'. Please announce the winners for such listings to create new listings."
+                }
+                disabled={
+                  !(
+                    isCreateListingAllowed !== undefined &&
+                    isCreateListingAllowed === false &&
+                    session?.user.role !== 'GOD'
+                  )
+                }
+              >
+                <Button
+                  className={cn(
+                    'ph-no-capture py-5.5 w-full gap-2 text-base',
+                    'disabled:cursor-not-allowed disabled:opacity-50',
+                  )}
+                  disabled={
+                    isCreateListingAllowed !== undefined &&
+                    isCreateListingAllowed === false &&
+                    session?.user.role !== 'GOD'
+                  }
+                  onClick={() => {
+                    posthog.capture('create new listing_sponsor');
+                    onOpen();
+                  }}
+                  variant="default"
+                >
+                  <Plus className="h-3 w-3" />
+                  <p
+                    className={cn(
+                      'nav-item-text transition-all duration-200 ease-in-out',
+                      isExpanded
+                        ? ['static ml-0 opacity-100']
+                        : ['absolute -ml-[9999px] opacity-0'],
+                    )}
+                  >
+                    Create New Listing
+                  </p>
                   {isCreateListingAllowed !== undefined &&
                     isCreateListingAllowed === false &&
                     session?.user.role !== 'GOD' && (
-                      <TooltipContent>
-                        Creating a new listing has been temporarily locked for
-                        you since you have 5 listings which are {'In Review'}.
-                        Please announce the winners for such listings to create
-                        new listings.
-                      </TooltipContent>
+                      <Lock className="h-4 w-4" />
                     )}
-                </Tooltip>
-              </TooltipProvider>
+                </Button>
+              </Tooltip>
             ) : (
               <Button
                 asChild

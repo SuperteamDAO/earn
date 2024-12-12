@@ -6,15 +6,59 @@ import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants';
 import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
+
+interface StatsTooltipProps {
+  label: string;
+  tooltipText: string;
+  value: number | undefined;
+  isLoading: boolean;
+  isMonetary?: boolean;
+}
+
+const StatsTooltip = ({
+  label,
+  tooltipText,
+  value,
+  isLoading,
+  isMonetary = false,
+}: StatsTooltipProps) => (
+  <Tooltip
+    content={<p>{tooltipText}</p>}
+    contentProps={{
+      className: 'bg-white text-gray-600',
+      side: 'bottom',
+    }}
+  >
+    <div className="cursor-pointer">
+      <div className="flex items-center">
+        <p className="mr-0.5 whitespace-nowrap text-base font-normal text-slate-500">
+          {label}
+        </p>
+        <Info className="h-4 w-4 text-slate-400" />
+      </div>
+      {isLoading ? (
+        <Skeleton className="mt-2 h-5 w-[72px]" />
+      ) : (
+        <p className="text-lg font-semibold text-slate-900">
+          {isMonetary ? (
+            <>
+              $
+              {new Intl.NumberFormat('en-US', {
+                maximumFractionDigits: 0,
+              }).format(Math.round(value || 0))}
+            </>
+          ) : (
+            value
+          )}
+        </p>
+      )}
+    </div>
+  </Tooltip>
+);
 
 export function Banner({
   isHackathon,
@@ -75,81 +119,27 @@ export function Banner({
             </div>
           </div>
           <div className="h-14 w-0.5 border-r border-slate-200" />
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="cursor-pointer">
-                  <div className="flex items-center">
-                    <p className="mr-0.5 whitespace-nowrap text-base font-normal text-slate-500">
-                      {!isHackathon ? 'Rewarded' : 'Total Prizes'}
-                    </p>
-                    <Info className="h-4 w-4 text-slate-400" />
-                  </div>
-                  {isLoading ? (
-                    <Skeleton className="mt-2 h-5 w-[72px]" />
-                  ) : (
-                    <p className="text-lg font-semibold text-slate-900">
-                      $
-                      {new Intl.NumberFormat('en-US', {
-                        maximumFractionDigits: 0,
-                      }).format(Math.round(stats?.totalRewardAmount || 0))}
-                    </p>
-                  )}
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="bg-white text-gray-600" side="bottom">
-                <p>{tooltipTextReward}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="cursor-pointer">
-                  <div className="flex items-center">
-                    <p className="mr-0.5 whitespace-nowrap text-base font-normal text-slate-500">
-                      {!isHackathon ? 'Listings' : 'Tracks'}
-                    </p>
-                    <Info className="h-4 w-4 text-slate-400" />
-                  </div>
-                  {isLoading ? (
-                    <Skeleton className="mt-2 h-5 w-[32px]" />
-                  ) : (
-                    <p className="text-lg font-semibold text-slate-900">
-                      {stats?.totalListingsAndGrants}
-                    </p>
-                  )}
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="bg-white text-gray-600" side="bottom">
-                <p>{tooltipTextListings}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="cursor-pointer">
-                  <div className="flex items-center">
-                    <p className="mr-0.5 whitespace-nowrap text-base font-normal text-slate-500">
-                      Submissions
-                    </p>
-                    <Info className="h-4 w-4 text-slate-400" />
-                  </div>
-                  {isLoading ? (
-                    <Skeleton className="mt-2 h-5 w-[36px]" />
-                  ) : (
-                    <p className="text-lg font-semibold text-slate-900">
-                      {stats?.totalSubmissionsAndApplications}
-                    </p>
-                  )}
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="bg-white text-gray-600" side="bottom">
-                <p>{tooltipTextSubmissions}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <StatsTooltip
+            label={!isHackathon ? 'Rewarded' : 'Total Prizes'}
+            tooltipText={tooltipTextReward}
+            value={stats?.totalRewardAmount}
+            isLoading={isLoading}
+            isMonetary
+          />
+
+          <StatsTooltip
+            label={!isHackathon ? 'Listings' : 'Tracks'}
+            tooltipText={tooltipTextListings}
+            value={stats?.totalListingsAndGrants}
+            isLoading={isLoading}
+          />
+
+          <StatsTooltip
+            label="Submissions"
+            tooltipText={tooltipTextSubmissions}
+            value={stats?.totalSubmissionsAndApplications}
+            isLoading={isLoading}
+          />
         </div>
       </div>
 

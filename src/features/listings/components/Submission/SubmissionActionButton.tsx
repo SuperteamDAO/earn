@@ -14,12 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { AuthWrapper } from '@/features/auth';
 import {
   getListingDraftStatus,
@@ -79,29 +74,19 @@ const InfoWrapper = ({
   }
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger
-          asChild
-          disabled={
-            hasHackathonStarted && (isUserEligibleByRegion || pastDeadline)
-          }
-        >
-          {children}
-        </TooltipTrigger>
-        {!isUserEligibleByRegion && (
-          <TooltipContent className="rounded-md">
-            {regionTooltipLabel}
-          </TooltipContent>
-        )}
-        {!hasHackathonStarted && (
-          <TooltipContent className="rounded-md">
-            This track will open for submissions on{' '}
-            {hackathonStartDate?.format('DD MMMM, YYYY')}
-          </TooltipContent>
-        )}
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip
+      disabled={hasHackathonStarted && (isUserEligibleByRegion || pastDeadline)}
+      content={
+        !isUserEligibleByRegion
+          ? regionTooltipLabel
+          : !hasHackathonStarted
+            ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
+            : null
+      }
+      contentProps={{ className: 'rounded-md' }}
+    >
+      {children}
+    </Tooltip>
   );
 };
 

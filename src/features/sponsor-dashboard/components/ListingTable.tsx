@@ -32,12 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { grantAmount } from '@/features/grants';
 import {
@@ -199,7 +194,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
 
               return (
                 <TableRow key={listing?.id}>
-                  <TableCell className="max-w-96 whitespace-normal break-words font-medium text-slate-700">
+                  <TableCell className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
                     <Link
                       className={cn(
                         'ph-no-capture',
@@ -211,20 +206,18 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                       }}
                     >
                       <div className="flex items-center">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <img
-                                className="mr-2 h-5 rounded-full"
-                                alt={`New ${listingType}`}
-                                src={getListingIcon(listing.type!)}
-                              />
-                            </TooltipTrigger>
-                            <TooltipContent className="bg-slate-400 text-white">
-                              {listingType}
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <Tooltip
+                          content={listingType}
+                          contentProps={{
+                            className: 'bg-slate-400 text-white',
+                          }}
+                        >
+                          <img
+                            className="mr-2 h-5 rounded-full"
+                            alt={`New ${listingType}`}
+                            src={getListingIcon(listing.type!)}
+                          />
+                        </Tooltip>
                         <span
                           className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-medium text-slate-500 hover:underline"
                           title={listing.title}

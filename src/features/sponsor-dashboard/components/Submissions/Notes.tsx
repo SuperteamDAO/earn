@@ -93,7 +93,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
 
   return (
     <div className="flex w-full flex-col items-start">
-      <div className="mb-2 flex w-full justify-between text-slate-400">
+      <div className="mb-2 flex w-full items-center justify-between text-slate-400">
         <span className="font-extrabold">Review Notes</span>
         {isSaving ? (
           <Loader2 className="h-3 w-3 animate-spin" />

@@ -140,7 +140,7 @@ export const SubmissionList = ({
                 >
                   <span
                     className={cn(
-                      'inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
+                      'inline-flex w-full whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
                       bg,
                       color,
                     )}
@@ -156,7 +156,7 @@ export const SubmissionList = ({
                   className="focus:bg-slate-100"
                   onClick={() => setFilterLabel(undefined)}
                 >
-                  <span className="inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize">
+                  <span className="inline-flex w-full whitespace-nowrap rounded-full text-center text-[10px] capitalize">
                     Select Option
                   </span>
                 </DropdownMenuItem>
@@ -167,7 +167,7 @@ export const SubmissionList = ({
                 >
                   <span
                     className={cn(
-                      'inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
+                      'inline-flex w-full whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
                       colorMap['Winner'].bg,
                       colorMap['Winner'].color,
                     )}
@@ -203,9 +203,9 @@ export const SubmissionList = ({
                   >
                     <span
                       className={cn(
-                        'inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
-                        option.bg,
-                        option.color,
+                        'inline-flex w-full whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                        colorMap[option.value as keyof typeof colorMap].bg,
+                        colorMap[option.value as keyof typeof colorMap].color,
                       )}
                     >
                       {option.label}

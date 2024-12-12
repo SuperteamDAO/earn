@@ -9,12 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { AuthWrapper } from '@/features/auth';
 import {
   getRegionTooltipLabel,
@@ -59,23 +54,13 @@ const InfoWrapper = ({
   }
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger
-          asChild
-          disabled={
-            !user?.id || !user?.isTalentFilled || isUserEligibleByRegion
-          }
-        >
-          {children}
-        </TooltipTrigger>
-        {!isUserEligibleByRegion && (
-          <TooltipContent className="rounded-md">
-            {regionTooltipLabel}
-          </TooltipContent>
-        )}
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip
+      content={!isUserEligibleByRegion ? regionTooltipLabel : null}
+      contentProps={{ className: 'rounded-md' }}
+      disabled={!user?.id || !user?.isTalentFilled || isUserEligibleByRegion}
+    >
+      {children}
+    </Tooltip>
   );
 };
 

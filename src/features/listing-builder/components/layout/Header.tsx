@@ -9,11 +9,7 @@ import { useWatch } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { UserMenu } from '@/features/navbar';
 import { cn } from '@/utils';
 
@@ -85,32 +81,31 @@ export function Header() {
               )}
               <StatusBadge />
               {!isEditing && (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button
-                      variant="outline"
-                      className="ph-no-capture text-slate-400"
-                      disabled={
-                        isDraftSaving ||
-                        !id ||
-                        !!form.formState.errors.slug ||
-                        isSlugLoading ||
-                        hideAutoSave
-                      }
-                      onClick={() => {
-                        posthog.capture('preview_listing');
-                        setShowPreview(true);
-                      }}
-                    >
-                      <Eye />
-                      Preview
-                    </Button>
-                  </TooltipTrigger>
-                  {!!form.formState.errors.slug && (
-                    <TooltipContent>
-                      Please fix slug to visit preview
-                    </TooltipContent>
-                  )}
+                <Tooltip
+                  content={
+                    form.formState.errors.slug
+                      ? 'Please fix slug to visit preview'
+                      : null
+                  }
+                >
+                  <Button
+                    variant="outline"
+                    className="ph-no-capture text-slate-400"
+                    disabled={
+                      isDraftSaving ||
+                      !id ||
+                      !!form.formState.errors.slug ||
+                      isSlugLoading ||
+                      hideAutoSave
+                    }
+                    onClick={() => {
+                      posthog.capture('preview_listing');
+                      setShowPreview(true);
+                    }}
+                  >
+                    <Eye />
+                    Preview
+                  </Button>
                 </Tooltip>
               )}
               <PrePublish />

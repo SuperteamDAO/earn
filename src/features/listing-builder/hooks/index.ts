@@ -144,7 +144,6 @@ export const useListingForm = (
 
   const submitListing = useCallback(async () => {
     const formData = refineReadyListing(getValues());
-    console.log('submitListing ', formData);
     const data = await submitListingMutation.mutateAsync(formData);
     queryClient.invalidateQueries({
       queryKey: ['sponsor-dashboard-listing', data.slug],

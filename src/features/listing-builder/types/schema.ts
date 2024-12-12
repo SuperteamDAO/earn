@@ -156,7 +156,6 @@ export const createListingFormSchema = ({
         .nativeEnum(BountyType)
         .default('bounty')
         .refine((data) => {
-          console.log('hackathon at dead check', hackathon);
           if (data === 'hackathon') {
             return !!hackathon;
           }
@@ -258,8 +257,6 @@ export const createListingRefinements = async (
   ctx: z.RefinementCtx,
   hackathon?: Hackathon,
 ) => {
-  console.log('zod validating');
-
   if (data.compensationType === 'fixed') {
     if (!data.rewardAmount) {
       ctx.addIssue({
@@ -268,7 +265,6 @@ export const createListingRefinements = async (
         path: ['rewards'],
       });
     }
-    console.log('rewards validation', data.rewards);
     if (data.type !== 'project') {
       if (!data.rewards || Object.keys(data.rewards).length === 0) {
         ctx.addIssue({
@@ -341,9 +337,6 @@ export const createListingRefinements = async (
   }
 
   if (data.type === 'hackathon' && data.deadline) {
-    console.log('hackathon');
-    console.log('hackathon deadline', hackathon?.deadline);
-    console.log('hackathon data deadline', data.deadline);
     if (
       !hackathon?.deadline ||
       data.deadline !== new Date(hackathon?.deadline).toISOString()
@@ -372,7 +365,7 @@ export const backendListingRefinements = async (
       });
       return true;
     } catch (error) {
-      console.log('fetchSlugCheck error', error);
+      console.log(error);
       return false;
     }
   };

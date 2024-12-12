@@ -24,12 +24,7 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { IndustryList, PDTG } from '@/constants';
 import { SignIn } from '@/features/auth';
 import {
@@ -197,7 +192,7 @@ const CreateSponsor = () => {
           </div>
         </>
       ) : (
-        <div className="flex w-full flex-col px-4 pb-24 pt-8">
+        <div className="flex w-full flex-col items-center px-4 pb-24 pt-8">
           <div className="flex flex-col gap-2 text-center">
             <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
               Welcome to Superteam Earn
@@ -343,19 +338,12 @@ const CreateSponsor = () => {
                     label={
                       <>
                         Entity Name
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Info className="ml-1 mt-1 hidden h-3 w-3 text-slate-500 md:block" />
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-xs text-xs">
-                              Please mention the official entity name of your
-                              project. If you are a DAO, simply mention the name
-                              of the DAO. If you neither have an entity nor are
-                              a DAO, mention your full name.
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        <Tooltip
+                          content="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                          contentProps={{ className: 'max-w-xs text-xs' }}
+                        >
+                          <Info className="ml-1 mt-1 hidden h-3 w-3 text-slate-500 md:block" />
+                        </Tooltip>
                       </>
                     }
                     isRequired

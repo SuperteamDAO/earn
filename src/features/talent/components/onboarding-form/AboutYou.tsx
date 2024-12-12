@@ -22,12 +22,7 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { countries } from '@/constants/country';
 import { CountryList } from '@/constants/countryList';
 import { useUser } from '@/store/user';
@@ -277,16 +272,9 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                   <div>
                     <span className="flex items-center gap-2">
                       <FormLabel isRequired>Skills Needed</FormLabel>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Info className="h-3 w-3 text-slate-500" />
-                          </TooltipTrigger>
-                          <TooltipContent className="">
-                            Select all that apply
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <Tooltip content="Select all that apply">
+                        <Info className="h-3 w-3 text-slate-500" />
+                      </Tooltip>
                     </span>
                     <FormDescription>
                       We will send email notifications of new listings for your

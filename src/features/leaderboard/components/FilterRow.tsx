@@ -10,12 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils';
 
 import { type SKILL, type TIMEFRAME } from '../types';
@@ -134,25 +129,23 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
               Others
             </TabsTrigger>
             <div className="relative">
-              <TooltipProvider>
-                <Tooltip open={isLabelOpen}>
-                  <TooltipTrigger asChild>
-                    <Info
-                      className="ml-2 h-3 w-3 cursor-pointer"
-                      onMouseEnter={() => setIsLabelOpen(true)}
-                      onMouseLeave={() => setIsLabelOpen(false)}
-                      onClick={() => setIsLabelOpen(true)}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
-                      The skill filters showcase users based on the skills
-                      requested in the listings they&apos;ve successfully won,
-                      not the skills listed in their talent profiles.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Tooltip
+                open={isLabelOpen}
+                content={
+                  <p>
+                    The skill filters showcase users based on the skills
+                    requested in the listings they&apos;ve successfully won, not
+                    the skills listed in their talent profiles.
+                  </p>
+                }
+              >
+                <Info
+                  className="ml-2 h-3 w-3 cursor-pointer"
+                  onMouseEnter={() => setIsLabelOpen(true)}
+                  onMouseLeave={() => setIsLabelOpen(false)}
+                  onClick={() => setIsLabelOpen(true)}
+                />
+              </Tooltip>
             </div>
           </TabsList>
         </Tabs>

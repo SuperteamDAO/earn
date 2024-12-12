@@ -43,12 +43,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import {
   formatDeadline,
@@ -425,29 +420,29 @@ export default function Hackathon() {
                       <TableCell className="px-3 py-2">
                         {currentBounty.status === 'OPEN' &&
                           currentBounty.isPublished && (
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    className="text-[13px] font-medium text-[#6366F1] hover:bg-[#E0E7FF]"
-                                    disabled={!hasHackathonStarted}
-                                    onClick={() =>
-                                      handleViewSubmissions(currentBounty.slug)
-                                    }
-                                    size="sm"
-                                    variant="ghost"
-                                  >
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    Submissions
-                                  </Button>
-                                </TooltipTrigger>
-                                {!hasHackathonStarted && (
-                                  <TooltipContent className="rounded-md bg-slate-500 text-white">
-                                    <p>Submissions Open {formattedDate}</p>
-                                  </TooltipContent>
-                                )}
-                              </Tooltip>
-                            </TooltipProvider>
+                            <Tooltip
+                              content={
+                                !hasHackathonStarted
+                                  ? `Submissions Open ${formattedDate}`
+                                  : null
+                              }
+                              contentProps={{
+                                className: 'rounded-md bg-slate-500 text-white',
+                              }}
+                            >
+                              <Button
+                                className="text-[13px] font-medium text-[#6366F1] hover:bg-[#E0E7FF]"
+                                disabled={!hasHackathonStarted}
+                                onClick={() =>
+                                  handleViewSubmissions(currentBounty.slug)
+                                }
+                                size="sm"
+                                variant="ghost"
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                Submissions
+                              </Button>
+                            </Tooltip>
                           )}
                         {currentBounty.status === 'OPEN' &&
                           !currentBounty.isPublished && (

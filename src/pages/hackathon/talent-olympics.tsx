@@ -27,12 +27,7 @@ import {
   DialogPortal,
 } from '@/components/ui/dialog';
 import { LocalImage } from '@/components/ui/local-image';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
 import { tokenList } from '@/constants/tokenList';
 import { AuthWrapper } from '@/features/auth';
@@ -706,63 +701,56 @@ function TrackBox({
   hackathonIsOn,
 }: TrackProps) {
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="w-full">
-            <Link
-              href={link}
-              className={cn(
-                'w-full no-underline',
-                hackathonIsOn ? 'pointer-events-auto' : 'pointer-events-none',
-              )}
-            >
-              <div
-                className={cn(
-                  'w-full max-w-lg rounded-lg border border-slate-200 bg-white',
-                  'p-3 md:p-4',
-                  hackathonIsOn ? 'cursor-pointer' : 'cursor-not-allowed',
-                )}
-              >
-                <div className="flex items-center gap-5 hover:underline">
-                  <ExternalImage
-                    className="h-12 w-12 rounded-md object-cover md:h-[4.5rem] md:w-[4.5rem]"
-                    alt={title}
-                    src={icon}
-                  />
-                  <div className="flex flex-col">
-                    <p className="text-sm font-semibold text-slate-900 md:text-base">
-                      <TextStyler text={title} />
-                    </p>
-                    <p className="line-clamp-2 text-sm text-slate-500 md:text-base">
-                      <TextStyler text={description} />
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-3 flex items-center justify-end gap-1">
-                  <LocalImage
-                    className="h-4 w-4 rounded-full md:h-6 md:w-6"
-                    alt={token}
-                    src={
-                      tokenList.find((t) => t.tokenSymbol === token)?.icon || ''
-                    }
-                  />
-                  <p className="text-sm font-semibold text-slate-700 md:text-base">
-                    {amount?.toLocaleString('en-us')}
-                  </p>
-                  <p className="text-sm font-semibold text-slate-400 no-underline hover:no-underline md:text-base">
-                    {token}
-                  </p>
-                </div>
+    <Tooltip
+      content={!hackathonIsOn ? 'Details to be revealed on July 11.' : null}
+    >
+      <div className="w-full">
+        <Link
+          href={link}
+          className={cn(
+            'w-full no-underline',
+            hackathonIsOn ? 'pointer-events-auto' : 'pointer-events-none',
+          )}
+        >
+          <div
+            className={cn(
+              'w-full max-w-lg rounded-lg border border-slate-200 bg-white',
+              'p-3 md:p-4',
+              hackathonIsOn ? 'cursor-pointer' : 'cursor-not-allowed',
+            )}
+          >
+            <div className="flex items-center gap-5 hover:underline">
+              <ExternalImage
+                className="h-12 w-12 rounded-md object-cover md:h-[4.5rem] md:w-[4.5rem]"
+                alt={title}
+                src={icon}
+              />
+              <div className="flex flex-col">
+                <p className="text-sm font-semibold text-slate-900 md:text-base">
+                  <TextStyler text={title} />
+                </p>
+                <p className="line-clamp-2 text-sm text-slate-500 md:text-base">
+                  <TextStyler text={description} />
+                </p>
               </div>
-            </Link>
+            </div>
+            <div className="mt-3 flex items-center justify-end gap-1">
+              <LocalImage
+                className="h-4 w-4 rounded-full md:h-6 md:w-6"
+                alt={token}
+                src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
+              />
+              <p className="text-sm font-semibold text-slate-700 md:text-base">
+                {amount?.toLocaleString('en-us')}
+              </p>
+              <p className="text-sm font-semibold text-slate-400 no-underline hover:no-underline md:text-base">
+                {token}
+              </p>
+            </div>
           </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          {!hackathonIsOn && 'Details to be revealed on July 11.'}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+        </Link>
+      </div>
+    </Tooltip>
   );
 }
 

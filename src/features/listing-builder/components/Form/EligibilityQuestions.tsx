@@ -20,11 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils';
 
 import { hackathonAtom } from '../../atoms';
@@ -90,17 +86,20 @@ export function EligibilityQuestions() {
             <FormLabel className="font-bold uppercase text-slate-400">
               Custom Questions
             </FormLabel>
-            <Tooltip delayDuration={100}>
-              <TooltipTrigger>
-                <Info className="h-3 w-3 text-slate-400" />
-              </TooltipTrigger>
-              <TooltipContent className="bg-slate-100 text-slate-700">
+            <Tooltip
+              delayDuration={100}
+              content={
                 <p className="max-w-sm">
                   {type === 'project'
-                    ? `Applicant’s names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`
-                    : `The main bounty submission link, the submitter’s names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`}
+                    ? `Applicant's names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`
+                    : `The main bounty submission link, the submitter's names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`}
                 </p>
-              </TooltipContent>
+              }
+              contentProps={{
+                className: 'bg-slate-100 text-slate-700',
+              }}
+            >
+              <Info className="h-3 w-3 text-slate-400" />
             </Tooltip>
           </div>
           <div className="space-y-4">

@@ -3,12 +3,7 @@ import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { BONUS_REWARD_POSITION } from '@/constants';
 import { formatTotalPrice } from '@/features/listing-builder';
 import { EarnAvatar } from '@/features/talent';
@@ -157,30 +152,23 @@ export function ListingWinners({ bounty }: Props) {
             ...getOrRemoveBonuses(submissions, false),
           ].map((submission) => (
             <div key={submission.id}>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link
-                      key={submission.id}
-                      href={
-                        !isProject
-                          ? `/feed/submission/${submission?.id}`
-                          : `/t/${submission?.user?.username}`
-                      }
-                      className="inline-block"
-                    >
-                      <EarnAvatar
-                        size={isMD ? '44px' : '36px'}
-                        id={submission?.user?.id}
-                        avatar={submission?.user?.photo as string}
-                      />
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{submission?.user?.firstName}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Tooltip content={<p>{submission?.user?.firstName}</p>}>
+                <Link
+                  key={submission.id}
+                  href={
+                    !isProject
+                      ? `/feed/submission/${submission?.id}`
+                      : `/t/${submission?.user?.username}`
+                  }
+                  className="inline-block"
+                >
+                  <EarnAvatar
+                    size={isMD ? '44px' : '36px'}
+                    id={submission?.user?.id}
+                    avatar={submission?.user?.photo as string}
+                  />
+                </Link>
+              </Tooltip>
             </div>
           ))}
         </div>

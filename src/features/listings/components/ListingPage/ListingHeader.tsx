@@ -14,12 +14,7 @@ import { MdLock } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import {
   getListingIcon,
@@ -170,23 +165,21 @@ export function ListingHeader({
           </div>
         ) : (
           <div className="flex">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <div className="flex items-center">
-                    <LocalImage alt={type!} src={getListingIcon(type!)} />
-                    <p className="text-xs font-medium text-gray-400 md:text-sm">
-                      {isProject ? 'Project' : 'Bounty'}
-                    </p>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-80">
-                  {isProject
-                    ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
-                    : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip
+              content={
+                isProject
+                  ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
+                  : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
+              }
+              contentProps={{ className: 'max-w-80' }}
+            >
+              <div className="flex items-center">
+                <LocalImage alt={type!} src={getListingIcon(type!)} />
+                <p className="text-xs font-medium text-gray-400 md:text-sm">
+                  {isProject ? 'Project' : 'Bounty'}
+                </p>
+              </div>
+            </Tooltip>
           </div>
         )}
         <ListingHeaderSeparator />

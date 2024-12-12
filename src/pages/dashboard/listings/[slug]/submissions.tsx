@@ -13,12 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Popover, PopoverContent } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   PublishResults,
@@ -441,33 +436,31 @@ export default function BountySubmissions({ slug }: Props) {
               {bounty?.isPublished &&
                 !bounty?.isWinnersAnnounced &&
                 !isExpired && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger
-                        asChild
-                        disabled={isSponsorVerified === true}
-                      >
-                        <TabsTrigger
-                          value="scout"
-                          className={cn(
-                            'ph-no-capture px-1 text-sm data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple',
-                            !isSponsorVerified &&
-                              'cursor-not-allowed text-slate-400',
-                          )}
-                          disabled={!isSponsorVerified}
-                          onClick={() => posthog.capture('scout tab_scout')}
-                        >
-                          Scout Talent
-                          {!!isSponsorVerified && (
-                            <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
-                          )}
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent className="rounded-lg bg-white px-4 py-2 font-sans text-slate-500">
-                        Scout is an invite-only feature right now
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Tooltip
+                    content="Scout is an invite-only feature right now"
+                    contentProps={{
+                      className:
+                        'rounded-lg bg-white px-4 py-2 font-sans text-slate-500',
+                    }}
+                    disabled={isSponsorVerified === true}
+                  >
+                    <TabsTrigger
+                      value="scout"
+                      className={cn(
+                        'ph-no-capture px-1 text-sm',
+                        'data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple',
+                        !isSponsorVerified &&
+                          'cursor-not-allowed text-slate-400',
+                      )}
+                      disabled={!isSponsorVerified}
+                      onClick={() => posthog.capture('scout tab_scout')}
+                    >
+                      Scout Talent
+                      {!!isSponsorVerified && (
+                        <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
+                      )}
+                    </TabsTrigger>
+                  </Tooltip>
                 )}
             </TabsList>
 

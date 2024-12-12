@@ -26,12 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import {
   Banner,
   InviteMembers,
@@ -212,10 +207,10 @@ const Index = () => {
                       <div className="flex items-center">
                         <span
                           className={cn(
-                            'inline-flex rounded px-2 py-1 text-sm font-semibold',
+                            'inline-flex rounded px-2 py-1 text-xs font-semibold',
                             member?.role === 'ADMIN'
                               ? 'bg-[#D1FAE5] text-[#0D9488]'
-                              : 'bg-[#F3E8FF] text-[#8B5CF6]',
+                              : 'bg-[#F3E8FF] text-brand-purple',
                           )}
                         >
                           {member?.role}
@@ -223,24 +218,22 @@ const Index = () => {
                       </div>
                     </TableCell>
                     <TableCell className="font-medium text-slate-600">
-                      {member?.user?.email}
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Copy
-                              className="ml-1 h-4 w-4 cursor-pointer"
-                              onClick={() =>
-                                navigator.clipboard.writeText(
-                                  member?.user?.email as string,
-                                )
-                              }
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent side="right">
-                            <p>Copy Email Address</p>
-                          </TooltipContent>
+                      <div className="flex items-center gap-1">
+                        {member?.user?.email}
+                        <Tooltip
+                          content="Copy Email Address"
+                          contentProps={{ side: 'right' }}
+                        >
+                          <Copy
+                            className="h-4 w-4 cursor-pointer"
+                            onClick={() =>
+                              navigator.clipboard.writeText(
+                                member?.user?.email as string,
+                              )
+                            }
+                          />
                         </Tooltip>
-                      </TooltipProvider>
+                      </div>
                     </TableCell>
                     <TableCell>
                       <RemoveMemberModal

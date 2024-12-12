@@ -21,12 +21,7 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { IndustryList } from '@/constants';
 import {
   type SponsorBase,
@@ -214,19 +209,12 @@ export default function UpdateSponsor() {
                   label={
                     <>
                       Entity Name
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Info className="ml-1 mt-1 hidden h-3 w-3 text-slate-500 md:block" />
-                          </TooltipTrigger>
-                          <TooltipContent className="text-xs">
-                            Please mention the official entity name of your
-                            project. If you are a DAO, simply mention the name
-                            of the DAO. If you neither have an entity nor are a
-                            DAO, mention your full name.
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <Tooltip
+                        content="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                        contentProps={{ className: 'text-xs' }}
+                      >
+                        <Info className="ml-1 mt-1 hidden h-3 w-3 text-slate-500 md:block" />
+                      </Tooltip>
                     </>
                   }
                   isRequired

@@ -18,12 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { skillMap } from '@/constants/skillMap';
 import { EarnAvatar } from '@/features/talent';
 import { cn } from '@/utils';
@@ -70,52 +65,46 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
             <TableHead className="px-1 text-center text-xs font-medium text-slate-500 md:px-2">
               <div className="flex items-center justify-center gap-2">
                 $ Earned
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="hidden h-3 w-3 md:block" />
-                    </TooltipTrigger>
-                    <TooltipContent className="text-xs">
-                      <p>
-                        $ Earned across all relevant skills for this listing.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <Tooltip
+                  content={
+                    <p>$ Earned across all relevant skills for this listing.</p>
+                  }
+                  contentProps={{ className: 'text-xs' }}
+                >
+                  <Info className="hidden h-3 w-3 md:block" />
+                </Tooltip>
               </div>
             </TableHead>
             <TableHead className="px-1 text-center text-xs font-medium text-slate-500 md:px-2">
               <div className="flex items-center justify-center gap-2">
                 Match Score
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="hidden h-3 w-3 md:block" />
-                    </TooltipTrigger>
-                    <TooltipContent className="text-xs">
-                      <p>
-                        $ Earned across all relevant skills for this listing.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <Tooltip
+                  content={
+                    <p>
+                      An aggregate score based on multiple factors such as
+                      number of matched skills, $ earned, etc.
+                    </p>
+                  }
+                  contentProps={{ className: 'text-xs' }}
+                >
+                  <Info className="hidden h-3 w-3 md:block" />
+                </Tooltip>
               </div>
             </TableHead>
             <TableHead className="px-1 text-left text-xs font-medium text-slate-500 md:px-2">
               <div className="flex items-center justify-center gap-2">
                 Matched Skills
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="hidden h-3 w-3 md:block" />
-                    </TooltipTrigger>
-                    <TooltipContent className="text-xs">
-                      <p>
-                        $ Earned across all relevant skills for this listing.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <Tooltip
+                  content={
+                    <p>
+                      Matched Skills refer to the skills of the listings the
+                      users have previously won.
+                    </p>
+                  }
+                  contentProps={{ className: 'text-xs' }}
+                >
+                  <Info className="hidden h-3 w-3 md:block" />
+                </Tooltip>
               </div>
             </TableHead>
             <TableHead className="px-1 text-left text-xs font-medium text-slate-500 md:px-2">
@@ -182,16 +171,12 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                           {scout.name}
                         </p>
                         {scout.recommended && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <LocalImage src={SparkleIcon} alt="sparkle" />
-                              </TooltipTrigger>
-                              <TooltipContent className="text-xs">
-                                <p>Superteam Recommended</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                          <Tooltip
+                            content={<p>Superteam Recommended</p>}
+                            contentProps={{ className: 'text-xs' }}
+                          >
+                            <LocalImage src={SparkleIcon} alt="sparkle" />
+                          </Tooltip>
                         )}
                       </div>
                       <p className="max-w-[7rem] overflow-x-hidden text-ellipsis">
