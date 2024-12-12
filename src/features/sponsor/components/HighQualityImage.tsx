@@ -1,3 +1,5 @@
+import { ExternalImage } from '@/components/ui/cloudinary-image';
+
 interface HighQualityImageProps {
   alt: string;
   src: string;
@@ -9,5 +11,5 @@ export const HighQualityImage: React.FC<HighQualityImageProps> = ({
   src,
   className,
 }) => {
-  return <img alt={alt} src={src} className={className} />;
+  return <ExternalImage alt={alt} src={src} className={className} />;
 };

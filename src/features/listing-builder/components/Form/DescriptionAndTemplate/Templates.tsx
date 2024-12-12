@@ -24,6 +24,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils';
@@ -194,8 +195,8 @@ export function Templates() {
                   </CardHeader>
 
                   <CardContent className="mt-4 space-y-4">
-                    <div>
-                      <h3 className="font-medium text-slate-700">
+                    <div className="">
+                      <h3 className="line-clamp-2 h-12 font-medium text-slate-700">
                         {template.title}
                       </h3>
                       {uniqueSponsors.length > 0 ? (
@@ -209,7 +210,7 @@ export function Templates() {
                                   idx !== 0 && '-ml-3',
                                 )}
                               >
-                                <img
+                                <LocalImage
                                   src={sponsor.logo || ''}
                                   alt={sponsor.name}
                                   className="h-full w-full rounded-full object-cover"
@@ -217,7 +218,7 @@ export function Templates() {
                               </div>
                             ))}
                           </div>
-                          <span className="text-xs text-slate-400">
+                          <span className="line-clamp-2 text-xs text-slate-400">
                             Used by {uniqueSponsors[0]?.name}
                             {uniqueSponsors[1] &&
                               ` & ${uniqueSponsors[1].name}`}

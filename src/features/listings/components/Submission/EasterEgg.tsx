@@ -12,6 +12,7 @@ import Image from 'next/image';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
 import { type TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
 
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 
 interface Props {
@@ -72,8 +73,8 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
         </ModalCloseButton>
         <Container mt={[28, 6]} px={4}>
           <Box w="112px" mx="auto" mt="24px" mb="44px">
-            <img
-              src={ASSET_URL + '/icons/celebration.png'}
+            <ExternalImage
+              src={'/icons/celebration.png'}
               alt="celebration icon"
               className="h-100 w-100"
             />

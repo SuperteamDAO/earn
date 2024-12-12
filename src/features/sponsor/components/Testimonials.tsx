@@ -8,8 +8,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
-
 import { maxW, padding } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 import { Stars } from './Stars';
@@ -19,8 +17,8 @@ const testimonials: TestimonialProps[] = [
   {
     stars: 5,
     message: `I'll say it again, Earn is going to become one of the most important non-protocol products in the Solana ecosystem. Connecting developers (amongst others) to opportunity and protocols to talent.`,
-    logo: ASSET_URL + '/landingsponsor/sponsors/solana.webp',
-    pfp: ASSET_URL + '/landingsponsor/users/chasedBarker.webp',
+    logo: '/landingsponsor/sponsors/solana.webp',
+    pfp: '/landingsponsor/users/chasedBarker.webp',
     name: 'Chase Barker',
     position: 'Global Developer Growth, Solana',
   },
@@ -32,8 +30,8 @@ const testimonials: TestimonialProps[] = [
 <br />
 Perfect hiring workflow:
 <br /> bounty -> trial period -> full-time offer.`,
-    logo: ASSET_URL + '/landingsponsor/sponsors/ISC.webp',
-    pfp: ASSET_URL + '/landingsponsor/users/eno.webp',
+    logo: '/landingsponsor/sponsors/ISC.webp',
+    pfp: '/landingsponsor/users/eno.webp',
     name: 'Eno Sim',
     position: 'Co-Founder, ISC',
   },
@@ -41,8 +39,8 @@ Perfect hiring workflow:
     stars: 4,
     message: `Superteam Earn is one of the most underrated and valuable platforms for both Solana protocols and 
 users`,
-    logo: ASSET_URL + '/landingsponsor/sponsors/parcl.webp',
-    pfp: ASSET_URL + '/landingsponsor/users/evanSolomon.webp',
+    logo: '/landingsponsor/sponsors/parcl.webp',
+    pfp: '/landingsponsor/users/evanSolomon.webp',
     name: 'Evan Solomon',
     position: 'BD Lead, Parcl',
   },
@@ -79,7 +77,7 @@ export function Testimonials() {
         >
           <Box w={{ base: '5rem', md: '8rem' }}>
             <HighQualityImage
-              src={ASSET_URL + '/landingsponsor/sponsors/tensor.webp'}
+              src={'/landingsponsor/sponsors/tensor.webp'}
               alt="Tensor HQ USer"
               className="h-full w-full"
             />
@@ -137,7 +135,7 @@ export function Testimonials() {
               h={{ base: '2.1rem', md: '3.1rem' }}
             >
               <HighQualityImage
-                src={ASSET_URL + '/landingsponsor/users/tensor.webp'}
+                src={'/landingsponsor/users/tensor.webp'}
                 alt="TensorHQ"
                 className="h-full w-full"
               />

@@ -15,9 +15,10 @@ export const FeedCardLink = ({
 }) => {
   return (
     <div
-      className={
-        (cn('group hidden items-center gap-2 whitespace-nowrap md:flex'), style)
-      }
+      className={cn(
+        'hidden items-center gap-2 whitespace-nowrap md:flex',
+        style,
+      )}
     >
       <Link
         href={href ?? '#'}

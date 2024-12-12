@@ -13,6 +13,7 @@ import {
 import { MdLock } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { LocalImage } from '@/components/ui/local-image';
 import {
   Tooltip,
   TooltipContent,
@@ -161,7 +162,11 @@ export function ListingHeader({
         <ListingHeaderSeparator />
         {isHackathon ? (
           <div className="flex items-center">
-            <img className="h-[1rem]" alt={type} src={Hackathon?.altLogo} />
+            <LocalImage
+              className="h-[1rem]"
+              alt={type}
+              src={Hackathon?.altLogo!}
+            />
           </div>
         ) : (
           <div className="flex">
@@ -169,7 +174,7 @@ export function ListingHeader({
               <Tooltip>
                 <TooltipTrigger>
                   <div className="flex items-center">
-                    <img alt={type} src={getListingIcon(type!)} />
+                    <LocalImage alt={type!} src={getListingIcon(type!)} />
                     <p className="text-xs font-medium text-gray-400 md:text-sm">
                       {isProject ? 'Project' : 'Bounty'}
                     </p>

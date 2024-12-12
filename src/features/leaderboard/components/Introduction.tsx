@@ -1,6 +1,6 @@
 import { Divider, Flex, Text, VStack } from '@chakra-ui/react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 export function Introduction() {
   return (
@@ -14,10 +14,10 @@ export function Introduction() {
       rounded={12}
     >
       <VStack align="start">
-        <img
+        <ExternalImage
           className="h-26 w-26"
           alt="Medal"
-          src={ASSET_URL + '/leaderboard/medal.webp'}
+          src={'/leaderboard/medal.webp'}
         />
         <Text fontWeight={600}>Introducing Leaderboards</Text>
         <Text color="brand.slate.600">
@@ -28,17 +28,17 @@ export function Introduction() {
       <Divider />
       <VStack align="start">
         <Flex gap={2}>
-          <img
+          <ExternalImage
             className="w-5"
-            src={ASSET_URL + '/leaderboard/progress'}
+            src={'/leaderboard/progress'}
             alt="progress icon"
           />
           <Text color="brand.slate.600">Track your progress as you earn</Text>
         </Flex>
         <Flex gap={2}>
-          <img
+          <ExternalImage
             className="w-5"
-            src={ASSET_URL + '/leaderboard/rank'}
+            src={'/leaderboard/rank'}
             alt="progress icon"
             style={{ paddingRight: '0.4rem' }}
           />
@@ -47,9 +47,9 @@ export function Introduction() {
           </Text>
         </Flex>
         <Flex gap={2}>
-          <img
+          <ExternalImage
             className="w-5"
-            src={ASSET_URL + '/leaderboard/semistart'}
+            src={'/leaderboard/semistart'}
             alt="progress icon"
             style={{ paddingRight: '0.6rem' }}
           />

@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -7,6 +7,7 @@ import { IoSearchOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useUser } from '@/store/user';
 import { cn } from '@/utils';
 
 import { LISTING_NAV_ITEMS } from '../constants';
@@ -26,8 +27,10 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const posthog = usePostHog();
+  const { user } = useUser();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
+  const isHomepage = router.pathname === '/';
   const maxWidth = isDashboardRoute ? 'max-w-full pr-2' : 'max-w-7xl';
 
   return (
@@ -35,7 +38,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
       <div className={cn('mx-auto flex w-full justify-between', maxWidth)}>
         <div className="flex items-center gap-3 lg:gap-6">
           <LogoContextMenu>
-            <NextLink
+            <Link
               href="/"
               className="mr-5 flex items-center gap-3 hover:no-underline"
               onClick={() => {
@@ -54,7 +57,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   <p className="text-sm tracking-[1.5px]">SPONSORS</p>
                 </>
               )}
-            </NextLink>
+            </Link>
           </LogoContextMenu>
 
           {router.pathname !== '/search' && (
@@ -98,7 +101,27 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             </div>
           )}
 
-          {status === 'authenticated' && session && <UserMenu />}
+          {status === 'authenticated' && session && (
+            <div className="ph-no-capture flex items-center gap-2">
+              {user?.currentSponsorId && isHomepage && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs font-semibold"
+                  onClick={() => {
+                    posthog.capture('sponsor dashboard_navbar');
+                  }}
+                  asChild
+                >
+                  <Link href="/dashboard/listings">
+                    Sponsor Dashboard
+                    <div className="block h-1.5 w-1.5 rounded-full bg-[#38BDF8]" />
+                  </Link>
+                </Button>
+              )}
+              <UserMenu />
+            </div>
+          )}
 
           {status === 'unauthenticated' && !session && (
             <div className="ph-no-capture flex items-center gap-2">
@@ -113,7 +136,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   }}
                 >
                   Become a Sponsor
-                  <div className="ml-1.5 block h-1.5 w-1.5 rounded-full bg-[#38BDF8]" />
+                  <div className="block h-1.5 w-1.5 rounded-full bg-[#38BDF8]" />
                 </Button>
                 <Button
                   variant="ghost"

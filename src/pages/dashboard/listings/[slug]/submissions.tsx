@@ -6,7 +6,6 @@ import {
   Grid,
   GridItem,
   HStack,
-  Image,
   Popover,
   PopoverBody,
   PopoverContent,
@@ -28,8 +27,8 @@ import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { BONUS_REWARD_POSITION } from '@/constants';
-import { ASSET_URL } from '@/constants/ASSET_URL';
 import { PublishResults } from '@/features/listings';
 import {
   RejectAllSubmissionModal,
@@ -496,9 +495,15 @@ export default function BountySubmissions({ slug }: Props) {
                         <SubmissionList
                           listing={bounty}
                           filterLabel={filterLabel}
-                          setFilterLabel={setFilterLabel}
+                          setFilterLabel={(e) => {
+                            setFilterLabel(e);
+                            setCurrentPage(1);
+                          }}
                           submissions={paginatedSubmissions}
-                          setSearchText={setSearchText}
+                          setSearchText={(e) => {
+                            setSearchText(e);
+                            setCurrentPage(1);
+                          }}
                           type={bounty?.type}
                           isToggled={isToggled}
                           toggleSubmission={toggleSubmission}
@@ -520,12 +525,10 @@ export default function BountySubmissions({ slug }: Props) {
                         !searchText &&
                         !isSubmissionsLoading ? (
                           <>
-                            <Image
-                              w={32}
-                              mx="auto"
-                              mt={32}
+                            <ExternalImage
+                              className="mx-auto mt-32 w-32"
                               alt={'talent empty'}
-                              src={ASSET_URL + '/bg/talent-empty.svg'}
+                              src={'/bg/talent-empty.svg'}
                             />
                             <Text
                               mx="auto"
@@ -566,61 +569,49 @@ export default function BountySubmissions({ slug }: Props) {
                     </Grid>
                   </Flex>
                   <Flex align="center" justify="start" gap={4} mt={4}>
-                    {!!searchText || !!filterLabel ? (
+                    <>
+                      <Button
+                        isDisabled={currentPage <= 1}
+                        leftIcon={<ChevronLeftIcon w={5} h={5} />}
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(prev - 1, 1))
+                        }
+                        size="sm"
+                        variant="outline"
+                      >
+                        Previous
+                      </Button>
                       <Text color="brand.slate.400" fontSize="sm">
-                        Found{' '}
+                        <Text as="span" fontWeight={700}>
+                          {(currentPage - 1) * submissionsPerPage + 1}
+                        </Text>{' '}
+                        -{' '}
+                        <Text as="span" fontWeight={700}>
+                          {Math.min(
+                            currentPage * submissionsPerPage,
+                            filteredSubmissions.length,
+                          )}
+                        </Text>{' '}
+                        of{' '}
                         <Text as="span" fontWeight={700}>
                           {filteredSubmissions.length}
                         </Text>{' '}
-                        {filteredSubmissions.length === 1
-                          ? 'result'
-                          : 'results'}
+                        Submissions
                       </Text>
-                    ) : (
-                      <>
-                        <Button
-                          isDisabled={currentPage <= 1}
-                          leftIcon={<ChevronLeftIcon w={5} h={5} />}
-                          onClick={() =>
-                            setCurrentPage((prev) => Math.max(prev - 1, 1))
-                          }
-                          size="sm"
-                          variant="outline"
-                        >
-                          Previous
-                        </Button>
-                        <Text color="brand.slate.400" fontSize="sm">
-                          <Text as="span" fontWeight={700}>
-                            {(currentPage - 1) * submissionsPerPage + 1}
-                          </Text>{' '}
-                          -{' '}
-                          <Text as="span" fontWeight={700}>
-                            {Math.min(
-                              currentPage * submissionsPerPage,
-                              filteredSubmissions.length,
-                            )}
-                          </Text>{' '}
-                          of{' '}
-                          <Text as="span" fontWeight={700}>
-                            {filteredSubmissions.length}
-                          </Text>{' '}
-                          Submissions
-                        </Text>
-                        <Button
-                          isDisabled={currentPage >= totalPages}
-                          onClick={() =>
-                            setCurrentPage((prev) =>
-                              Math.min(prev + 1, totalPages),
-                            )
-                          }
-                          rightIcon={<ChevronRightIcon w={5} h={5} />}
-                          size="sm"
-                          variant="outline"
-                        >
-                          Next
-                        </Button>
-                      </>
-                    )}
+                      <Button
+                        isDisabled={currentPage >= totalPages}
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(prev + 1, totalPages),
+                          )
+                        }
+                        rightIcon={<ChevronRightIcon w={5} h={5} />}
+                        size="sm"
+                        variant="outline"
+                      >
+                        Next
+                      </Button>
+                    </>
                   </Flex>
                 </>
               </TabPanel>

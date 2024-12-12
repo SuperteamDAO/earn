@@ -3,6 +3,7 @@ import React from 'react';
 import { tokenList } from '@/constants/tokenList';
 
 import { Input } from './input';
+import { LocalImage } from './local-image';
 
 export const TokenInput = React.forwardRef<
   HTMLInputElement,
@@ -15,7 +16,7 @@ export const TokenInput = React.forwardRef<
   return (
     <div className="flex">
       <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted pl-3 pr-5">
-        <img
+        <LocalImage
           className="h-4 w-4 rounded-full"
           alt="token"
           src={

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { type FeedDataProps, type FeedPostType } from '../types';
 
 export * from './feed-post';
+export * from './home-feed';
 
 interface GetFeedParams {
   filter?: 'popular' | 'new';

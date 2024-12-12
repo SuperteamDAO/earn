@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import NextLink from 'next/link';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { LocalImage } from '@/components/ui/local-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 
@@ -48,12 +49,9 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
           w={'100%'}
         >
           <Flex w="100%">
-            <Image
-              w={14}
-              h={14}
-              mr={3}
-              alt={sponsor?.name}
-              rounded={5}
+            <LocalImage
+              className="mr-3 h-14 w-14 rounded-md"
+              alt={sponsor?.name!}
               src={
                 sponsor?.logo
                   ? sponsor.logo.replace(

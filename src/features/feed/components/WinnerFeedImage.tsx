@@ -1,4 +1,5 @@
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { LocalImage } from '@/components/ui/local-image';
 import { tokenList } from '@/constants/tokenList';
 import { type Rewards } from '@/features/listings';
 import { getRankLabels } from '@/utils/rank';
@@ -16,13 +17,13 @@ export const WinnerFeedImage = ({
 }) => {
   return (
     <div className="flex h-[200px] w-full flex-col justify-center rounded-md rounded-t-lg border-t-2 bg-[#7E51FF] md:h-[350px]">
-      <img
+      <ExternalImage
         className="mx-auto h-9 w-9 md:h-20 md:w-20"
         alt="winner"
-        src={ASSET_URL + '/icons/celebration.png'}
+        src={'/icons/celebration.png'}
       />
-      <div className="mt-4 flex w-full flex-col items-center justify-center gap-1 md:gap-4">
-        <img
+      <div className="mt-4 flex w-full items-center justify-center gap-1 md:gap-4">
+        <LocalImage
           className="h-8 w-8 md:h-16 md:w-16"
           alt={`${token} icon`}
           src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}

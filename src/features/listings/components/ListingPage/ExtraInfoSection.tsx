@@ -63,8 +63,8 @@ export function ExtraInfoSection({
         </div>
       )}
 
-      <div className="hidden w-full flex-col items-start gap-2 md:flex">
-        <p className="h-full text-center text-sm font-semibold text-slate-600">
+      <div className="hidden w-full flex-col items-start gap-2 text-sm md:flex">
+        <p className="h-full text-center font-semibold text-slate-600">
           SKILLS NEEDED
         </p>
         <div className="flex flex-wrap gap-3">

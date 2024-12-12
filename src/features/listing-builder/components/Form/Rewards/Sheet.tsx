@@ -76,7 +76,7 @@ export function RewardsSheet() {
                   </Button>
                 </div>
                 {hasRewardsErrors ? (
-                  <p className={'text-xs font-medium text-destructive'}>
+                  <p className={'text-[0.8rem] font-medium text-destructive'}>
                     Please resolve all errors in rewards
                   </p>
                 ) : (

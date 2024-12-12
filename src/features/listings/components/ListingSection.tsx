@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import { cn } from '@/utils';
 
 type ListingSectionProps = {
@@ -53,11 +54,10 @@ export const ListingSection = ({
       <div className="mb-4 flex items-center justify-between border-b border-[#E2E8F0] pb-3">
         <div className="flex items-center">
           {showEmoji && (
-            <img
+            <LocalImage
               className="mr-3 h-[1.4375rem] w-[1.4375rem]"
               alt="emoji"
               src={emoji}
-              loading="lazy"
             />
           )}
           <p className="text-sm font-semibold text-[#334155] md:text-base">

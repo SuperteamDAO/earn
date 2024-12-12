@@ -1,11 +1,9 @@
 import { Box, HStack, Text, VStack } from '@chakra-ui/react';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
-
 import { fontSize, maxW, padding } from '../utils';
 import { ListingCard, type ListingCardProps } from './ListingCard';
 
-const base = ASSET_URL + '/landingsponsor';
+const base = '/landingsponsor';
 
 const works: ListingCardProps[] = [
   {
