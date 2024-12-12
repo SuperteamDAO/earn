@@ -1,6 +1,4 @@
 import { Heading, HStack, Text, VStack } from '@chakra-ui/react';
-import axios from 'axios';
-import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -12,7 +10,6 @@ import { AboutYou, type UserStoreType, YourLinks } from '@/features/talent';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
-import { getURL } from '@/utils/validUrl';
 
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {
@@ -161,35 +158,3 @@ export default function Talent() {
     </Default>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { req } = context;
-
-  try {
-    const res = await axios.get(`${getURL()}api/user`, {
-      headers: {
-        Cookie: req.headers.cookie,
-      },
-    });
-
-    if (res.data.isTalentFilled === true) {
-      return {
-        redirect: {
-          destination: '/',
-          permanent: false,
-        },
-      };
-    }
-
-    return {
-      props: {},
-    };
-  } catch (error: any) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-};

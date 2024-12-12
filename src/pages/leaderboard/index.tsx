@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { getServerSession } from 'next-auth';
 import { useEffect, useState, useTransition } from 'react';
 
+import { HomepagePop } from '@/features/conversion-popups';
 import { totalsQuery, TotalStats } from '@/features/home';
 import {
   Banner,
@@ -112,6 +113,7 @@ function TalentLeaderboard({
         />
       }
     >
+      <HomepagePop />
       <div className="overflow-hidden bg-white pb-20">
         <div className="mx-auto flex max-w-7xl gap-4 px-3 py-4 md:gap-8">
           <div className="flex w-full flex-col items-start gap-4 md:w-[70%] md:gap-8">

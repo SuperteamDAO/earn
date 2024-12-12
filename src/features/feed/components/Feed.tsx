@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { HomepagePop } from '@/features/conversion-popups';
 import { type FeedPostType, useGetFeed } from '@/features/feed';
 import { VibeCard } from '@/features/home';
 import { FeedPageLayout } from '@/layouts/Feed';
@@ -85,6 +86,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
 
   return (
     <FeedPageLayout isHomePage>
+      <HomepagePop />
       <div className="border-b py-5 pl-6 md:pl-5">
         <p className="text-lg font-medium text-brand-slate-900 lg:text-xl">
           Activity Feed

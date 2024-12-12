@@ -9,13 +9,26 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   isSponsor?: boolean;
+  redirectTo?: string;
+  hideOverlay?: boolean;
 }
 
-export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
+export const Login = ({
+  isOpen,
+  onClose,
+  isSponsor = false,
+  redirectTo,
+  hideOverlay,
+}: Props) => {
   const [loginStep, setLoginStep] = useState(0);
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[23rem] p-0 pt-2">
+      <DialogContent
+        className="w-[23rem] p-0 pt-2"
+        classNames={{
+          overlay: hideOverlay ? 'hidden' : '',
+        }}
+      >
         <div className="py-6">
           {loginStep === 1 && (
             <ArrowLeft
@@ -32,7 +45,11 @@ export const Login = ({ isOpen, onClose, isSponsor = false }: Props) => {
               : 'From earning in global standards'}
           </p>
         </div>
-        <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
+        <SignIn
+          redirectTo={redirectTo}
+          loginStep={loginStep}
+          setLoginStep={setLoginStep}
+        />
       </DialogContent>
     </Dialog>
   );
