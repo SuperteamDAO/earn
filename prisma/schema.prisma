@@ -245,6 +245,7 @@ model GrantApplication {
   like                Json?
   likeCount           Int                    @default(0)
   Comments            Comment[]
+  decidedBy           String?
 
   @@index([userId])
   @@index([grantId])

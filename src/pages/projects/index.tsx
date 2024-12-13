@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { HomepagePop } from '@/features/conversion-popups';
 import { listingsQuery, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
@@ -27,6 +28,7 @@ export default function ProjectsPage() {
         description="Discover unique crypto projects seeking talent. Apply on Superteam Earn and take your chance to work and earn in the crypto space."
         canonical="https://earn.superteam.fun/projects/"
       />
+      <HomepagePop />
       <div className="w-full">
         <ListingTabs
           bounties={listings}

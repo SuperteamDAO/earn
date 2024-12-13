@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
-import { type Superteams } from '@/constants/Superteam';
+import { type Superteam } from '@/constants/Superteam';
 import { HomeBanner, NavTabs, UserStatsBanner } from '@/features/home';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -12,7 +12,7 @@ import { cn } from '@/utils';
 interface HomeProps {
   children: ReactNode;
   type: 'landing' | 'listing' | 'category' | 'region' | 'niche' | 'feed';
-  st?: (typeof Superteams)[0];
+  st?: Superteam;
   isAuth?: boolean;
 }
 
