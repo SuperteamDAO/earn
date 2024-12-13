@@ -201,6 +201,7 @@ export const useListingForm = (
         await partialSchema.parseAsync(values);
         return true;
       } catch (error) {
+        console.log('validation error', error);
         if (error instanceof z.ZodError) {
           error.errors.forEach((err) => {
             const fieldName = err.path.join('.') as keyof ListingFormData;
