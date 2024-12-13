@@ -25,7 +25,7 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
-import { IndustryList, PDTG } from '@/constants';
+import { IndustryList, ONBOARDING_KEY, PDTG } from '@/constants';
 import { SignIn } from '@/features/auth';
 import {
   shouldUpdateUser,
@@ -127,6 +127,7 @@ const CreateSponsor = () => {
 
         await axios.post('/api/email/manual/welcome-sponsor');
 
+        localStorage.removeItem(ONBOARDING_KEY);
         return 'Success';
       } catch (error) {
         console.error('Error in createSponsor:', error);

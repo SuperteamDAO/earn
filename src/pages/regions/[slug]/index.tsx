@@ -4,7 +4,8 @@ import React from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
-import { Superteams } from '@/constants/Superteam';
+import { type Superteam, Superteams } from '@/constants/Superteam';
+import { RegionPop } from '@/features/conversion-popups';
 import { GrantsCard } from '@/features/grants';
 import {
   ListingSection,
@@ -22,7 +23,7 @@ const RegionsPage = ({
 }: {
   slug: string;
   displayName: string;
-  st: (typeof Superteams)[0];
+  st: Superteam;
 }) => {
   const { data: listings, isLoading: isListingsLoading } = useQuery(
     regionalListingsQuery({ region: slug, take: 10 }),
@@ -42,6 +43,7 @@ const RegionsPage = ({
           og={ogImage.toString()}
         />
         <div className="w-full">
+          <RegionPop st={st} />
           <ListingTabs
             bounties={listings?.bounties}
             isListingsLoading={isListingsLoading}

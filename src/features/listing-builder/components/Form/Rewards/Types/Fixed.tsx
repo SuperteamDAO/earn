@@ -42,7 +42,8 @@ export function Fixed() {
               max={MAX_REWARD}
               onChange={(e) => {
                 field.onChange(e);
-                form.setValue(`rewards`, { 1: e || NaN });
+                if (e) form.setValue(`rewards`, { 1: e });
+                else form.setValue(`rewards`, {});
                 form.saveDraft();
               }}
             />

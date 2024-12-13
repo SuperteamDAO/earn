@@ -5,6 +5,7 @@ import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { GrantsPop } from '@/features/conversion-popups';
 import { GrantEntry, grantsQuery } from '@/features/grants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -27,6 +28,7 @@ function Grants() {
         />
       }
     >
+      <GrantsPop />
       <div className="relative flex min-h-screen w-full flex-col justify-center bg-[#F5F5F5]">
         <ExternalImage
           className="absolute left-0 right-0 top-0 h-full w-full"
