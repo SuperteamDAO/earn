@@ -283,6 +283,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                   </div>
                   <FormControl>
                     <SkillsSelect
+                      ref={field.ref}
                       key={JSON.stringify(field.value)}
                       defaultValue={field.value || []}
                       onChange={(e) => {
