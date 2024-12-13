@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { toast } from 'sonner';
 import { z } from 'zod';
 
 import {
@@ -88,9 +87,6 @@ export const socialSuperRefine = async (
   );
 
   if (filledSocials.length === 0) {
-    toast.error(
-      'At least one additional social link (apart from Discord) is required',
-    );
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message:

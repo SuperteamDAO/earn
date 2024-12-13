@@ -4,7 +4,6 @@ import { Loader2, Pencil, Plus, Trash } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
@@ -38,11 +37,11 @@ export function YourLinks({ useFormStore }: Props) {
   const uploadProfile = async (
     socials: {
       discord: string;
-      twitter: string;
-      github: string;
-      linkedin: string;
-      telegram: string;
-      website: string;
+      twitter?: string;
+      github?: string;
+      linkedin?: string;
+      telegram?: string;
+      website?: string;
     },
     pow: PoW[],
   ) => {
@@ -94,23 +93,7 @@ export function YourLinks({ useFormStore }: Props) {
     }
   }, [user, setValue]);
 
-  const onSubmit = async (data: any) => {
-    const socialFields = [
-      'twitter',
-      'github',
-      'linkedin',
-      'website',
-      'telegram',
-    ];
-    const filledSocials = socialFields.filter((field) => data[field]);
-
-    if (filledSocials.length === 0) {
-      toast.error(
-        'At least one additional social link (apart from Discord) is required',
-      );
-      return;
-    }
-
+  const onSubmit = async (data: YourLinksFormData) => {
     posthog.capture('finish profile_talent');
     await uploadProfile(
       {

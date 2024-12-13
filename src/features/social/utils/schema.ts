@@ -81,7 +81,8 @@ export const twitterUsernameSchema = z
 
 // LINKEDIN
 // - Length: 3-100
-// - Allowed: letters and numbers
+// - Allowed: letters, numbers and dashes
+// - Not Allowed: Cannot end with dash
 // - Transform: https://www.linkedin.com/in/<username>
 export const linkedinUsernameSchema = z
   .string()
@@ -89,15 +90,22 @@ export const linkedinUsernameSchema = z
   .max(100, { message: usernameLongMessage(100) })
   .superRefine((val, ctx) => {
     for (const char of val) {
-      if (!/[a-zA-Z0-9]/.test(char)) {
+      if (!/[a-zA-Z0-9-]/.test(char)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: invalidCharacterMessage(
             char,
-            'letters (a-z, A-Z), numbers (0-9)',
+            'letters (a-z, A-Z), numbers (0-9), dashes (-)',
           ),
         });
       }
+    }
+    // Ensure it doesn't start or end with dash
+    if (val.endsWith('-')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Username cannot end with a dash',
+      });
     }
   })
   .transform((val) => transformedUrl('linkedin', val));
