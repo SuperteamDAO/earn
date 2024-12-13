@@ -1,8 +1,7 @@
 import '../styles/globals.scss';
 import '@/components/tiptap/styles/index.css';
 
-import { GoogleTagManager } from '@next/third-parties/google';
-import { setUser } from '@sentry/nextjs';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
@@ -96,7 +95,6 @@ function MyApp({ Component, pageProps }: any) {
   useEffect(() => {
     if (router.query.loginState === 'signedIn' && user) {
       posthog.identify(user.email);
-      setUser({ id: user.id, email: user.email });
       const url = new URL(window.location.href);
       url.searchParams.delete('loginState');
       window.history.replaceState(null, '', url.href);
@@ -148,7 +146,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         <SessionProvider session={session}>
           <MyApp Component={Component} pageProps={pageProps} />
         </SessionProvider>
-        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
       </PostHogProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

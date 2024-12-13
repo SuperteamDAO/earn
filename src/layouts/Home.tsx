@@ -7,11 +7,10 @@ import { type Superteam } from '@/constants/Superteam';
 import { HomeBanner, NavTabs, UserStatsBanner } from '@/features/home';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { cn } from '@/utils';
 
 interface HomeProps {
   children: ReactNode;
-  type: 'landing' | 'listing' | 'category' | 'region' | 'niche' | 'feed';
+  type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
   st?: Superteam;
   isAuth?: boolean;
 }
@@ -68,12 +67,7 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
       <div className="mx-auto w-full px-2 lg:px-6">
         <div className="mx-auto w-full max-w-7xl p-0">
           <div className="flex items-start justify-between">
-            <div
-              className={cn(
-                'w-full py-4',
-                type !== 'niche' && 'lg:border-r lg:border-slate-100',
-              )}
-            >
+            <div className="w-full py-4 lg:border-r lg:border-slate-100">
               <div className="w-full pt-1 lg:pr-6">
                 {type === 'landing' && (
                   <>
@@ -96,12 +90,9 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                 {children}
               </div>
             </div>
-
-            {type !== 'niche' && (
-              <div className="hidden lg:flex">
-                <HomeSideBar type={type} />
-              </div>
-            )}
+            <div className="hidden lg:flex">
+              <HomeSideBar type={type} />
+            </div>
           </div>
         </div>
       </div>

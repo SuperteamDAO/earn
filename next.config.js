@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { withAxiom } = require('next-axiom');
-const { withSentryConfig } = require('@sentry/nextjs');
+
 const withPWA = require('next-pwa')({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
@@ -90,13 +90,4 @@ const nextConfig = {
 
 const combinedConfig = withAxiom(withPWA(nextConfig));
 
-module.exports = withSentryConfig(combinedConfig, {
-  org: 'superteam-7o',
-  project: 'earn',
-  silent: true,
-  tunnelRoute: '/monitoring',
-  hideSourceMaps: true,
-  disableLogger: true,
-  autoInstrumentServerFunctions: false,
-  autoInstrumentMiddleware: false,
-});
+module.exports = combinedConfig;

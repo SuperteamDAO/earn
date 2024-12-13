@@ -35,7 +35,7 @@ export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
           <AvatarImage src={grant?.sponsorLogo} alt="Sponsor Logo" />
         </Avatar>
         <Link
-          className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-slate-500 hover:underline md:text-base"
+          className="text-sm font-semibold text-gray-500 md:text-base"
           href={listingLink}
           rel="noopener noreferrer"
           target="_blank"

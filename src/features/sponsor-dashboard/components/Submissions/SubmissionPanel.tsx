@@ -198,7 +198,9 @@ export const SubmissionPanel = ({
                       Remaining
                     </p>
                   ) : (
-                    <p className="text-[#48CB6D]">All winners selected</p>
+                    <p className="rounded-md bg-green-100 px-3 py-1 text-[#48CB6D]">
+                      All winners selected
+                    </p>
                   )}
                 </div>
               )}

@@ -1,12 +1,6 @@
 import { z } from 'zod';
 
-import {
-  discordRegex,
-  githubRegex,
-  linkedinRegex,
-  telegramRegex,
-  twitterRegex,
-} from './regex';
+import { telegramRegex, twitterRegex } from './regex';
 
 export function extractTwitterUsername(input: string): string | null {
   const match = input.match(twitterRegex);
@@ -37,40 +31,6 @@ export function extractTelegramUsername(input: string): string | null {
       : usernameMatch[0];
   }
 
-  return null;
-}
-
-export function extractLinkedInUsername(input: string): string | null {
-  const urlMatch = input.match(linkedinRegex);
-  if (urlMatch && urlMatch[1]) {
-    return urlMatch[1];
-  }
-  const usernameRegex = /^[a-zA-Z0-9\-]{3,90}$/;
-  const usernameMatch = input.match(usernameRegex);
-  if (usernameMatch && usernameMatch[0]) {
-    return usernameMatch[0];
-  }
-  return null;
-}
-
-export function extractGitHubUsername(input: string): string | null {
-  const urlMatch = input.match(githubRegex);
-  if (urlMatch && urlMatch[1]) {
-    return urlMatch[1];
-  }
-  const usernameRegex = /^[a-zA-Z0-9\-]{1,90}$/;
-  const usernameMatch = input.match(usernameRegex);
-  if (usernameMatch && usernameMatch[0]) {
-    return usernameMatch[0];
-  }
-  return null;
-}
-
-export function extractDiscordUsername(input: string): string | null {
-  const usernameMatch = input.match(discordRegex);
-  if (usernameMatch && usernameMatch[1]) {
-    return usernameMatch[1];
-  }
   return null;
 }
 

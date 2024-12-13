@@ -123,9 +123,9 @@ export function ListingHeader({
     return (
       !!commentCount && (
         <Link className="hidden md:block" href="#comments">
-          <div className="ml-4 flex gap-2">
+          <div className="ml-4 flex items-center gap-2">
             <LuMessageSquare className="h-4 w-4 fill-slate-600 text-slate-500" />
-            <p className="text-sm">{commentCount}</p>
+            <p className="text-sm text-slate-400">{commentCount}</p>
           </div>
         </Link>
       )
@@ -137,9 +137,9 @@ export function ListingHeader({
     return (
       <>
         <ListingHeaderSeparator />
-        <div className="flex gap-1">
+        <div className="flex items-center gap-1">
           <MdLock className="h-4 w-4 text-slate-500" />
-          <p className="text-slate-400">Private</p>
+          <p className="text-sm text-slate-400">Private</p>
         </div>
       </>
     );

@@ -177,10 +177,10 @@ function Timeframe({
       onValueChange={(value) => debouncedSetTimeframe(value as TIMEFRAME)}
       value={value}
     >
-      <SelectTrigger className="h-auto border-0 p-0 text-xs font-medium text-slate-600 focus:ring-0 focus:ring-offset-0 sm:text-sm">
+      <SelectTrigger className="h-auto border-0 p-0 text-xs font-medium text-slate-500 focus:ring-0 focus:ring-offset-0 sm:text-sm">
         <SelectValue />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="text-slate-500">
         <SelectItem value="ALL_TIME">All Time</SelectItem>
         <SelectItem value="THIS_YEAR">This Year</SelectItem>
         <SelectItem value="LAST_30_DAYS">Last 30 Days</SelectItem>

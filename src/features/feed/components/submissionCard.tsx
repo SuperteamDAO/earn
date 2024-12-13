@@ -68,7 +68,7 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
           <AvatarImage src={sub?.sponsorLogo} alt="Sponsor Logo" />
         </Avatar>
         <Link
-          className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-semibold text-slate-500 hover:underline md:text-base"
+          className="text-sm font-semibold text-gray-500 md:text-base"
           href={listingLink}
           rel="noopener noreferrer"
           target="_blank"
@@ -77,10 +77,7 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
         </Link>
       </div>
       {!sub?.id && !isProject ? (
-        <Tooltip
-          content="This submission will be accessible once winners for the listing have been announced."
-          contentProps={{ className: 'max-w-80' }}
-        >
+        <Tooltip content="This submission will be accessible once winners for the listing have been announced.">
           <FeedCardLink href={link} style="opacity-50 pointer-events-none">
             {isProject ? 'View Listing' : 'View Submission'}
           </FeedCardLink>
