@@ -121,6 +121,7 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
           imageUrl={sub?.ogImage}
           type="submission"
           id={sub?.id}
+          isWinnersAnnounced={sub?.isWinnersAnnounced}
         />
       )}
     </FeedCardContainer>

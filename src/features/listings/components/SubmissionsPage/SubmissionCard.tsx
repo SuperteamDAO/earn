@@ -96,7 +96,11 @@ export const SubmissionCard = ({
         <img
           className="h-48 w-full rounded-sm object-contain"
           alt={'card'}
-          src={ogData?.images?.[0]?.url || ASSET_URL + '/bg/og.svg'}
+          src={
+            ogData === 'error'
+              ? ASSET_URL + '/bg/og.svg'
+              : ogData?.images?.[0]?.url || ASSET_URL + '/bg/og.svg'
+          }
         />
       </Link>
 
