@@ -59,34 +59,29 @@ export function Features({ showVideo }: Props) {
 
   return (
     <div
-      className="relative my-32 w-full px-[1.875rem] lg:px-[7rem] xl:px-[11rem]"
+      className="relative mx-auto my-32 w-full px-[1.875rem] lg:px-[7rem] xl:px-[11rem]"
       id="features"
     >
-      <div className="absolute top-0 h-[17.8rem] w-full bg-brand-purple md:h-[36.96rem]" />
+      <div className="absolute left-0 top-0 h-[17.8rem] w-full bg-brand-purple md:h-[36.96rem]" />
 
       <div
         className={cn(
-          'relative px-[1.875rem] py-12 lg:px-[7rem] xl:px-[11rem]',
-          `max-w-[${maxW2}]`,
+          'relative mx-auto px-[1.875rem] py-12 lg:px-[7rem] xl:px-[11rem]',
+          maxW2,
         )}
       >
-        <p className="max-w-[48rem] text-center text-base font-semibold text-white/75 md:text-[1.6rem]">
+        <p className="mx-auto max-w-[48rem] text-center text-base font-semibold text-white/75 md:text-[1.6rem]">
           YOUR DASHBOARD
         </p>
-        <p
-          className={cn(
-            'max-w-[48rem] text-center font-semibold leading-[1.1] text-white',
-            'text-[2rem] md:text-[3.5rem]',
-          )}
-        >
+        <p className="mx-auto max-w-[48rem] text-center text-[2rem] font-semibold leading-[1.1] text-white md:text-[3.5rem]">
           A seamless way to manage all your listings in one place
         </p>
       </div>
 
       <div
         className={cn(
-          'ph-no-capture relative flex w-full items-center justify-center',
-          `max-w-[${maxW2}]`,
+          'ph-no-capture relative mx-auto flex w-full items-center justify-center',
+          maxW2,
         )}
         onClick={() => {
           posthog?.capture('clicked_video');
@@ -124,9 +119,9 @@ export function Features({ showVideo }: Props) {
 
       <div
         className={cn(
-          'mt-16 grid gap-10 xl:gap-20',
+          'mx-auto mt-16 grid gap-10 xl:gap-20',
           'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-          `max-w-[${maxW2}]`,
+          maxW2,
         )}
       >
         {features.map((feature, index) => (

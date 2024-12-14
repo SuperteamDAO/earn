@@ -72,11 +72,11 @@ export const SubmissionPanel = ({
                       {`${selectedSubmission?.user?.firstName}'s Submission`}
                     </p>
                     <Link
-                      className="w-full whitespace-nowrap text-xs font-medium text-brand-purple"
+                      className="flex w-full items-center whitespace-nowrap text-xs font-medium text-brand-purple"
                       href={`/t/${selectedSubmission?.user?.username}`}
                     >
                       View Profile{' '}
-                      <ArrowRight className="-mb-0.5 ml-1 inline-block h-4 w-4" />
+                      <ArrowRight className="inline-block h-3 w-3" />
                     </Link>
                   </div>
                 </div>
@@ -181,7 +181,7 @@ export const SubmissionPanel = ({
               {!!remainings && !isProject && (
                 <div className="ml-auto flex w-fit px-4 py-1 text-xs">
                   {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
-                    <p className="flex items-center rounded-md bg-red-100 px-3 py-1 text-[#f55151]">
+                    <p className="flex items-center rounded-md bg-red-100 px-5 py-1 text-[#f55151]">
                       <AlertTriangle className="mr-1 inline-block h-3 w-3" />
                       {remainings.podiums > 0 && (
                         <>

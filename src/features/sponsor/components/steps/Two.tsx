@@ -48,9 +48,13 @@ export function StepTwo() {
         </div>
       </div>
       <div className="h-px bg-slate-200" />
-      <div className="flex w-full justify-between px-4">
-        <div className="flex gap-2">
-          <ExternalImage src="/landingsponsor/icons/usdc.svg" alt="usdc icon" />
+      <div className="flex w-full justify-between px-4 pt-3">
+        <div className="flex items-center gap-2">
+          <ExternalImage
+            src="/landingsponsor/icons/usdc.svg"
+            className="h-5 w-5"
+            alt="usdc icon"
+          />
           <p className="font-semibold text-slate-800">$1,000</p>
         </div>
         <p className="rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-brand-purple">

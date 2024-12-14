@@ -439,8 +439,7 @@ export default function BountySubmissions({ slug }: Props) {
                   <Tooltip
                     content="Scout is an invite-only feature right now"
                     contentProps={{
-                      className:
-                        'rounded-lg bg-white px-4 py-2 font-sans text-slate-500',
+                      className: 'rounded-lg px-4 py-2 font-sans',
                     }}
                     disabled={isSponsorVerified === true}
                   >

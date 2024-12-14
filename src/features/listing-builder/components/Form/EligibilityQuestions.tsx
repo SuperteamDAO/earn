@@ -95,9 +95,6 @@ export function EligibilityQuestions() {
                     : `The main bounty submission link, the submitter's names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`}
                 </p>
               }
-              contentProps={{
-                className: 'bg-slate-100 text-slate-700',
-              }}
             >
               <Info className="h-3 w-3 text-slate-400" />
             </Tooltip>

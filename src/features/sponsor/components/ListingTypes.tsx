@@ -19,21 +19,16 @@ export function ListingTypes() {
   return (
     <div
       className={cn(
-        'flex w-full flex-col items-center gap-8',
-        `max-w-[${maxW}]`,
-        'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
+        'mx-auto flex w-full flex-col items-center gap-8',
+        maxW,
+        'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
       )}
     >
-      <h2
-        className={cn(
-          'max-w-[48rem] text-center font-semibold leading-none text-slate-900',
-          'text-[2rem] md:text-[3.5rem]',
-        )}
-      >
+      <p className="max-w-[48rem] text-center text-[2rem] font-semibold leading-none text-slate-900 md:text-[3.5rem]">
         Start by posting your first Bounty or Project
-      </h2>
+      </p>
 
-      <div className="flex w-full flex-col gap-12 md:flex-row">
+      <div className="mx-auto flex w-full flex-col gap-12 md:flex-row">
         <div className="flex flex-col items-start gap-4">
           <div className="flex h-40 w-full items-center justify-center bg-[#F0FDFA]">
             <svg
@@ -119,9 +114,9 @@ function Feature({ description }: FeatureProps) {
       <HighQualityImage
         src={'/landingsponsor/icons/purple-tick.svg'}
         alt="Purple Tick"
-        className="h-4 w-4"
+        className="h-5 w-5"
       />
-      <p className="relative top-[-5px] text-[1.2rem] text-xs text-slate-500">
+      <p className="relative top-[-8px] text-[1.2rem] text-slate-500">
         {description}
       </p>
     </div>

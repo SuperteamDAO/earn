@@ -132,11 +132,14 @@ export const SelectWinner = ({
             >
               <SelectTrigger
                 className={cn(
-                  'h-10 w-44 border-slate-300 font-medium capitalize text-slate-500',
+                  'h-10 w-40 border-slate-300 font-medium capitalize text-slate-700',
                   'focus:border-brand-purple focus:ring-brand-purple',
                 )}
               >
-                <SelectValue placeholder="Select Winner" />
+                <SelectValue
+                  className="placeholder:text-slate-800"
+                  placeholder="Select Winner"
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="placeholder">Select Winner</SelectItem>
@@ -155,7 +158,11 @@ export const SelectWinner = ({
 
                   return (
                     (!isRewardUsed || isCurrentSubmissionReward) && (
-                      <SelectItem key={reward} value={reward.toString()}>
+                      <SelectItem
+                        className="capitalize"
+                        key={reward}
+                        value={reward.toString()}
+                      >
                         {isProject ? 'Winner' : getRankLabels(reward)}
                       </SelectItem>
                     )

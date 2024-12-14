@@ -22,6 +22,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -131,6 +132,8 @@ ${socialListingLink('twitter')}
               </BreadcrumbLink>
             </BreadcrumbItem>
 
+            <BreadcrumbSeparator />
+
             <BreadcrumbItem>
               <BreadcrumbPage>{bounty?.title}</BreadcrumbPage>
             </BreadcrumbItem>
@@ -213,7 +216,7 @@ ${socialListingLink('twitter')}
           <p className="text-slate-500">Status</p>
           <p
             className={cn(
-              'mt-2 inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium',
+              'mt-3 inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium',
               getColorStyles(bountyStatus).color,
               getColorStyles(bountyStatus).bgColor,
             )}

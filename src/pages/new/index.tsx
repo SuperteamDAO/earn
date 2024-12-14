@@ -107,8 +107,8 @@ export default function NewProfilePage({
       }
     >
       <div className="relative mx-auto flex max-w-[52rem] md:h-screen">
-        <div className="static top-0 flex flex-col gap-16 px-4 md:relative md:top-[10vh] md:flex-row md:gap-8 lg:px-0 lg:py-0">
-          {showTalentProfile && (
+        <div className="static top-0 my-10 flex flex-col gap-16 px-4 md:relative md:flex-row md:gap-8 lg:px-0 lg:py-0">
+          {!showTalentProfile && (
             <div className="flex w-full flex-col gap-9">
               <div className="flex flex-col gap-1.5">
                 <p className="text-2xl font-semibold text-slate-900">
@@ -143,7 +143,7 @@ export default function NewProfilePage({
                     <BulletPoint type="TALENT">Get paid in crypto</BulletPoint>
                   </div>
                   <Separator className="text-slate-300" />
-                  <div className="px-4 pb-4">
+                  <div className="px-4 pb-1">
                     <TalentButton
                       showMessage={false}
                       isLoading={isTalentLoading}
@@ -152,10 +152,10 @@ export default function NewProfilePage({
                   </div>
                 </div>
               </AuthWrapper>
-              <div className="mx-auto -mt-3 flex items-center gap-6">
+              <div className="mx-auto -mt-3 flex items-center gap-3">
                 <div className="flex -space-x-2">
                   {avatars.slice(0, 3).map((avatar, index) => (
-                    <Avatar className="relative h-4 w-4 border-0" key={index}>
+                    <Avatar className="relative h-6 w-6 border-0" key={index}>
                       <AvatarImage src={avatar.src} alt={avatar.name} />
                       <AvatarFallback>{avatar.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
@@ -207,7 +207,7 @@ export default function NewProfilePage({
                   <BulletPoint type="SPONSOR">100% free</BulletPoint>
                 </div>
                 <Separator className="text-slate-300" />
-                <div className="px-4 pb-4">
+                <div className="px-4 pb-1">
                   <SponsorButton
                     isLoading={isSponsorLoading}
                     showMessage={false}

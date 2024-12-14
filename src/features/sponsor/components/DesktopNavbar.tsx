@@ -22,7 +22,7 @@ export const DesktopNavbar = () => {
   const maxWValue = isDashboardRoute ? '' : 'max-w-7xl';
 
   return (
-    <div className="hidden border-b border-black/20 bg-white px-2 text-slate-500 lg:block lg:px-6">
+    <div className="z-10 hidden border-b border-black/20 bg-white px-2 text-slate-500 lg:flex lg:px-6">
       <div className={cn('mx-auto flex w-full justify-between', maxWValue)}>
         <div className="flex items-center gap-6">
           <Link
@@ -37,7 +37,7 @@ export const DesktopNavbar = () => {
               alt="Superteam Earn"
               src="/assets/logo.svg"
             />
-            <div className="h-6 w-[3px] bg-slate-400" /> {/* Divider */}
+            <div className="h-6 w-[3px] bg-slate-400" />
             <p className="text-sm font-semibold tracking-[1.5px] text-slate-500">
               SPONSORS
             </p>
@@ -69,7 +69,7 @@ export const DesktopNavbar = () => {
           )}
 
           <div className="flex gap-2">
-            <div className="flex">
+            <div className="flex items-center">
               {status === 'authenticated' && !!user?.currentSponsorId && (
                 <Link
                   className="ph-no-capture"

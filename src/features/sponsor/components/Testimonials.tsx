@@ -43,7 +43,7 @@ export function Testimonials() {
     <div
       className={cn(
         'mb-16 flex w-full flex-col items-start gap-8',
-        `max-w-[${maxW}]`,
+        maxW,
         'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
       )}
       id="customers"

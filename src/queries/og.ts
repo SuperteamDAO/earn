@@ -9,6 +9,7 @@ type OpenGraph = Pick<
 const fetchOgImage = async (url: string): Promise<OpenGraph> => {
   const { data } = await axios.get<{ result: OpenGraph }>('/api/og/get', {
     params: { url },
+    timeout: 5000,
   });
   return data.result;
 };
@@ -19,4 +20,9 @@ export const ogImageQuery = (url: string) =>
     queryFn: () => fetchOgImage(url!),
     enabled: !!url,
     retry: false,
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });

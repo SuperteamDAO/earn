@@ -157,7 +157,7 @@ export function ListingPageLayout({
               <div
                 className={cn(
                   'flex min-h-screen flex-col items-center justify-center gap-0 bg-white md:flex-row md:items-start md:justify-between md:gap-4',
-                  `max-w-${maxW}`,
+                  maxW,
                 )}
               >
                 <div className="static top-14 h-full w-full flex-grow md:sticky md:w-[22rem]">

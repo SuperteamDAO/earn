@@ -426,7 +426,9 @@ function TalentProfile({ talent, stats }: TalentProps) {
               <div className="mt-12 md:mt-16">
                 <div className="md:items:center flex flex-col items-end justify-between md:flex-row">
                   <div className="flex items-center gap-3">
-                    <p className="font-medium text-slate-900">Proof of Work</p>
+                    <p className="whitespace-nowrap font-medium text-slate-900">
+                      Proof of Work
+                    </p>
                     {user?.id === talent?.id && (
                       <Button
                         className={cn(
@@ -476,39 +478,34 @@ function TalentProfile({ talent, stats }: TalentProps) {
                   isFetchingNextPage={isFetchingNextPage}
                   isLoading={isLoading}
                 >
-                  <>
-                    <ExternalImage
-                      className="mx-auto mt-32 w-32"
-                      alt={'talent empty'}
-                      src={'/bg/talent-empty.svg'}
-                    />
-                    <p className="mx-auto mt-5 w-52 text-center font-medium text-slate-400">
-                      {user?.id === talent?.id
-                        ? 'Add some proof of work to build your profile'
-                        : 'Nothing to see here yet ...'}
-                    </p>
-                    {user?.id === talent?.id ? (
-                      <Button
-                        onClick={onOpenPow}
-                        className={cn('mt-5 w-[200px]', 'mx-auto block')}
-                      >
-                        Add
-                      </Button>
-                    ) : (
-                      <div className="mt-5" />
-                    )}
-
+                  <ExternalImage
+                    className="mx-auto mt-32 w-32"
+                    alt={'talent empty'}
+                    src={'/bg/talent-empty.svg'}
+                  />
+                  <p className="mx-auto mt-5 w-52 text-center font-medium text-slate-400">
+                    {user?.id === talent?.id
+                      ? 'Add some proof of work to build your profile'
+                      : 'Nothing to see here yet ...'}
+                  </p>
+                  {user?.id === talent?.id ? (
                     <Button
-                      onClick={() => router.push('/')}
-                      className={cn(
-                        'mt-2 w-[200px] font-medium text-slate-500',
-                        'border border-slate-400 bg-white hover:bg-gray-100',
-                      )}
-                      variant="outline"
+                      onClick={onOpenPow}
+                      className={cn('mt-5 w-[200px]', 'mx-auto block')}
                     >
-                      Browse Bounties
+                      Add
                     </Button>
-                  </>
+                  ) : (
+                    <div className="mt-5" />
+                  )}
+
+                  <Button
+                    onClick={() => router.push('/')}
+                    className="mx-auto mt-2 block w-[200px] border border-slate-400 bg-white font-medium text-slate-500 hover:bg-gray-100"
+                    variant="outline"
+                  >
+                    Browse Bounties
+                  </Button>
                 </FeedLoop>
               </div>
             </div>

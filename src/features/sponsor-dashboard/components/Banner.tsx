@@ -29,7 +29,6 @@ const StatsTooltip = ({
   <Tooltip
     content={<p>{tooltipText}</p>}
     contentProps={{
-      className: 'bg-white text-gray-600',
       side: 'bottom',
     }}
   >

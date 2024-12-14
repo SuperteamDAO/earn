@@ -62,7 +62,7 @@ export function Stats() {
     <div
       className={cn(
         'flex w-screen items-center gap-16 lg:flex-row-reverse lg:gap-20',
-        `max-w-[${maxW}]`,
+        maxW,
         'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
       )}
     >
@@ -76,15 +76,10 @@ export function Stats() {
 
       <div className="flex flex-col gap-8">
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-          <h2
-            className={cn(
-              'font-semibold leading-none',
-              'text-[2rem] md:text-[3.5rem]',
-            )}
-          >
+          <h2 className="text-[2rem] font-semibold leading-none md:text-[3.5rem]">
             The distribution of the Superteam network
           </h2>
-          <p className="text-[1.25rem] font-medium text-slate-500 lg:text-[1.4rem]">
+          <p className="mt-4 text-[1.25rem] font-medium text-slate-500 lg:text-[1.4rem]">
             Get instant access to Superteam’s network of the best crypto talent
             in the world
           </p>

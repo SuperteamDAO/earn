@@ -206,12 +206,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                       }}
                     >
                       <div className="flex items-center">
-                        <Tooltip
-                          content={listingType}
-                          contentProps={{
-                            className: 'bg-slate-400 text-white',
-                          }}
-                        >
+                        <Tooltip content={listingType}>
                           <img
                             className="mr-2 h-5 rounded-full"
                             alt={`New ${listingType}`}

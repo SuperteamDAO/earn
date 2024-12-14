@@ -57,7 +57,7 @@ export function FAQs() {
       <div
         className={cn(
           'w-full rounded',
-          `max-w-[${maxW}]`,
+          maxW,
           'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
         )}
       >
@@ -68,10 +68,10 @@ export function FAQs() {
               key={faq.question}
               value={faq.question}
             >
-              <AccordionTrigger className="rounded py-3 data-[state=open]:bg-black/5 hover:bg-black/5">
+              <AccordionTrigger className="rounded px-3 py-4 text-base font-normal data-[state=open]:bg-black/5 hover:bg-black/5 hover:no-underline">
                 <span className="flex-1 text-left">{faq.question}</span>
               </AccordionTrigger>
-              <AccordionContent className="pb-4">
+              <AccordionContent className="px-3 pb-4 pt-2 text-base">
                 <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
               </AccordionContent>
             </AccordionItem>

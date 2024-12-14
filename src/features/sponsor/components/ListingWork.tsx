@@ -58,7 +58,7 @@ const works: ListingCardProps[] = [
 
 export function ListingWork() {
   return (
-    <div className={cn('relative mb-16 mt-32 pt-16', 'xl:w-full')}>
+    <div className="relative mx-auto mb-16 mt-32 w-full pt-16">
       <div
         className={cn(
           'absolute left-0 top-0 w-full bg-slate-100',
@@ -67,9 +67,9 @@ export function ListingWork() {
       />
       <div
         className={cn(
-          'relative w-screen items-start gap-8',
-          `max-w-[${maxW}]`,
-          'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
+          'relative mx-auto w-screen items-start gap-8',
+          maxW,
+          'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
           'flex flex-col',
         )}
       >

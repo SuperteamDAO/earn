@@ -12,6 +12,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -79,6 +80,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
+            <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage>{grant?.title}</BreadcrumbPage>
             </BreadcrumbItem>
@@ -140,7 +142,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
           <p className="text-slate-500">Status</p>
           <p
             className={cn(
-              'mt-3 inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium',
+              'mt-3 inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium',
               getColorStyles(grantStatus).color,
               getColorStyles(grantStatus).bgColor,
             )}

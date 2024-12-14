@@ -427,7 +427,7 @@ export default function Hackathon() {
                                   : null
                               }
                               contentProps={{
-                                className: 'rounded-md bg-slate-500 text-white',
+                                className: 'rounded-md',
                               }}
                             >
                               <Button
