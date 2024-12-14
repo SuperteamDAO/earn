@@ -6,8 +6,13 @@ type OpenGraph = Pick<
   Awaited<ReturnType<typeof unfurl>>,
   'open_graph'
 >['open_graph'];
-const fetchOgImage = async (url: string): Promise<OpenGraph> => {
-  const { data } = await axios.get<{ result: OpenGraph }>('/api/og/get', {
+
+type OgApiResponse = {
+  result: OpenGraph | 'error';
+};
+
+const fetchOgImage = async (url: string): Promise<OpenGraph | 'error'> => {
+  const { data } = await axios.get<OgApiResponse>('/api/og/get', {
     params: { url },
     timeout: 5000,
   });
@@ -18,7 +23,6 @@ export const ogImageQuery = (url: string) =>
   queryOptions({
     queryKey: ['ogImage', url, url!],
     queryFn: () => fetchOgImage(url!),
-    enabled: !!url,
     retry: false,
     staleTime: Infinity,
     gcTime: Infinity,

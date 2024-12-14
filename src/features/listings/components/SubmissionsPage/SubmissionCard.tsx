@@ -120,7 +120,11 @@ export const SubmissionCard = ({
           objectFit={'contain'}
           alt={'card'}
           rounded={'sm'}
-          src={ogData?.images?.[0]?.url || ASSET_URL + '/bg/og.svg'}
+          src={
+            ogData === 'error'
+              ? ASSET_URL + '/bg/og.svg'
+              : ogData?.images?.[0]?.url || ASSET_URL + '/bg/og.svg'
+          }
         />
       </LinkOverlay>
       <HStack align={'center'} gap={4} w={'full'}>

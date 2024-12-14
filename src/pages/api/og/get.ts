@@ -4,6 +4,8 @@ import { unfurl } from 'unfurl.js';
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
 
+type UnfurlResult = Awaited<ReturnType<typeof unfurl>>;
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -25,16 +27,22 @@ export default async function handler(
 
   try {
     logger.debug(`Unfurling URL: ${url}`);
-    const metadata = await unfurl(url);
+    const metadata = await Promise.race<UnfurlResult>([
+      unfurl(url),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), 5000),
+      ),
+    ]);
 
-    // const result = metadata.open_graph.images?.[0]?.url;
+    if (!metadata.open_graph?.images?.[0]?.url) {
+      logger.warn(`No OG image found for URL: ${url}`);
+      return res.status(200).json({ result: 'error' });
+    }
 
     logger.info(`Successfully unfurled URL: ${url}`);
     return res.status(200).json({ result: metadata.open_graph });
   } catch (error: any) {
     logger.warn(`Error unfurling URL: ${url}`, safeStringify(error));
-    return res
-      .status(500)
-      .json({ error: 'Error occurred while unfurling the URL.' });
+    return res.status(200).json({ result: 'error' });
   }
 }

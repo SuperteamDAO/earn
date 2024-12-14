@@ -16,6 +16,7 @@ interface Props {
   id?: string;
   type?: 'submission' | 'pow';
   className?: string;
+  isWinnersAnnounced?: boolean;
 }
 
 const fallbackImageCache = new Map<number, string>();
@@ -39,17 +40,70 @@ export const OgImageViewer = ({
   type,
   id,
   className,
+  isWinnersAnnounced = true,
 }: Props) => {
   const [fallbackImage] = useState(getRandomFallbackImage());
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
     imageUrl || null,
   );
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  const { data: ogData, isLoading } = useQuery(ogImageQuery(externalUrl!));
+  const {
+    data: ogData,
+    isLoading,
+    error,
+  } = useQuery({
+    ...ogImageQuery(externalUrl!),
+    retry: 1,
+    enabled:
+      !imageUrl && isWinnersAnnounced && !!externalUrl && imageUrl !== 'error',
+  });
+
+  useEffect(() => {
+    const handleError = async () => {
+      if (type && id && !isUpdating) {
+        setIsUpdating(true);
+        try {
+          await axios.post('/api/og/update', {
+            type,
+            url: 'error',
+            id,
+          });
+        } finally {
+          setIsUpdating(false);
+          setCurrentImageUrl(fallbackImage);
+        }
+      }
+    };
+
+    if (error) {
+      handleError();
+    }
+  }, [error, type, id, isUpdating, fallbackImage]);
 
   useEffect(() => {
     const updateOgImage = async () => {
+      if (isUpdating) return;
+
+      if (ogData === 'error') {
+        if (type && id) {
+          setIsUpdating(true);
+          try {
+            await axios.post('/api/og/update', {
+              type,
+              url: 'error',
+              id,
+            });
+          } finally {
+            setIsUpdating(false);
+          }
+        }
+        setCurrentImageUrl(fallbackImage);
+        return;
+      }
+
       if (ogData?.images?.[0]?.url && type && id) {
+        setIsUpdating(true);
         try {
           await axios.post('/api/og/update', {
             type,
@@ -64,22 +118,34 @@ export const OgImageViewer = ({
             id,
           });
           setCurrentImageUrl(fallbackImage);
+        } finally {
+          setIsUpdating(false);
         }
-      } else if (!imageUrl && !externalUrl) {
-        setCurrentImageUrl(fallbackImage);
       }
     };
 
-    if (!currentImageUrl) {
+    if (!currentImageUrl && imageUrl !== 'error') {
       updateOgImage();
-    } else if (currentImageUrl === 'error') {
-      setCurrentImageUrl(fallbackImage);
     }
-  }, [ogData, imageUrl, externalUrl, type, id, fallbackImage]);
+  }, [ogData, type, id, fallbackImage, isUpdating, imageUrl]);
 
   const handleImageError = useCallback(() => {
-    setCurrentImageUrl(fallbackImage);
-  }, [fallbackImage]);
+    if (type && id && !isUpdating) {
+      setIsUpdating(true);
+      axios
+        .post('/api/og/update', {
+          type,
+          url: 'error',
+          id,
+        })
+        .finally(() => {
+          setIsUpdating(false);
+          setCurrentImageUrl(fallbackImage);
+        });
+    } else {
+      setCurrentImageUrl(fallbackImage);
+    }
+  }, [fallbackImage, type, id, isUpdating]);
 
   if (isLoading) {
     return <Skeleton className={className} />;
@@ -95,7 +161,7 @@ export const OgImageViewer = ({
       />
       {showTitle && (
         <p className="truncate pt-2 text-sm text-slate-500">
-          {title || ogData?.title || ''}
+          {title || (typeof ogData !== 'string' ? ogData?.title || '' : '')}
         </p>
       )}
     </div>
