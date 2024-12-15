@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,7 @@ export function CompleteProfileModal({
   isSponsor,
 }: Props) {
   const posthog = usePostHog();
+  const router = useRouter();
 
   const header = isSponsor
     ? 'Add your talent profile'
@@ -37,24 +39,22 @@ export function CompleteProfileModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="rounded-xl bg-white px-6 py-3 shadow-xl sm:max-w-md">
+      <DialogContent className="rounded-xl bg-white px-6 py-6 shadow-xl sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="px-0 py-4 text-xl font-medium text-slate-700">
-            {header}
-          </DialogTitle>
+          <DialogTitle className="text-xl font-semibold">{header}</DialogTitle>
         </DialogHeader>
 
         <div className="px-0">
-          <p className="text-base leading-relaxed text-slate-500">{body}</p>
+          <p className="text-slate-500">{body}</p>
         </div>
 
         <DialogFooter className="px-0 pt-2">
           <Button
-            className="ph-no-capture h-11 font-medium"
+            className="ph-no-capture h-10 w-full"
             asChild
             onClick={() => posthog.capture('complete profile_CTA pop up')}
           >
-            <Link href="/new/talent">{CTA}</Link>
+            <Link href={`/new/talent?originUrl=${router.asPath}`}>{CTA}</Link>
           </Button>
         </DialogFooter>
       </DialogContent>

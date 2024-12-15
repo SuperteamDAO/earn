@@ -35,7 +35,9 @@ async function grantApplication(
     const result = await prisma.grantApplication.findMany({
       where: {
         grantId,
-        applicationStatus: 'Approved',
+        applicationStatus: {
+          in: ['Approved', 'Completed'],
+        },
       },
       include: {
         user: {
