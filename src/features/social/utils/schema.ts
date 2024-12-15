@@ -4,8 +4,8 @@ import { URL_REGEX } from '@/constants';
 
 import { socials, type SocialType } from './constants';
 
-function invalidCharacterMessage(char: string, allowed: string) {
-  return `Invalid character '${char}' found in username. Allowed characters are: ${allowed}.`;
+function invalidCharacterMessage(_: string, allowed: string) {
+  return `Invalid username. Use only ${allowed}.`;
 }
 
 function usernameShortMessage(min: number) {
@@ -43,7 +43,10 @@ export const discordUsernameSchema = z
       if (!/[a-z0-9._]/.test(char)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: invalidCharacterMessage(char, "a-z, 0-9, '_', '.'"),
+          message: invalidCharacterMessage(
+            char,
+            'letters, numbers, underscore (_) and dots (.)',
+          ),
         });
       }
       if (char === '.' && i > 0 && val[i - 1] === '.') {
@@ -71,7 +74,7 @@ export const twitterUsernameSchema = z
           code: z.ZodIssueCode.custom,
           message: invalidCharacterMessage(
             char,
-            'letters (a-z, A-Z), numbers (0-9), underscore (_)',
+            'letters, numbers and underscore (_)',
           ),
         });
       }
@@ -95,7 +98,7 @@ export const linkedinUsernameSchema = z
           code: z.ZodIssueCode.custom,
           message: invalidCharacterMessage(
             char,
-            'letters (a-z, A-Z), numbers (0-9), dashes (-)',
+            'letters, numbers and hyphens (-)',
           ),
         });
       }
@@ -134,7 +137,7 @@ export const telegramUsernameSchema = z
           code: z.ZodIssueCode.custom,
           message: invalidCharacterMessage(
             char,
-            'letters (a-z, A-Z), numbers (0-9), underscore (_)',
+            'letters, numbers and underscore (_)',
           ),
         });
       }
@@ -160,7 +163,7 @@ export const githubUsernameSchema = z
           code: z.ZodIssueCode.custom,
           message: invalidCharacterMessage(
             char,
-            'letters (a-z, A-Z), numbers (0-9), hyphen (-)',
+            'letters, numbers and hyphens (-)',
           ),
         });
       }
