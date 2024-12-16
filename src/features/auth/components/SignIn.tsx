@@ -6,7 +6,7 @@ import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
-import { TERMS_OF_USE } from '@/constants';
+import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 import { GoogleIcon } from '@/svg/google';
 
 import { EmailSignIn } from './EmailSignIn';

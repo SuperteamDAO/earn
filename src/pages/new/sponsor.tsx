@@ -25,7 +25,7 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
-import { IndustryList, ONBOARDING_KEY, PDTG } from '@/constants';
+import { PDTG } from '@/constants/Telegram';
 import { SignIn } from '@/features/auth';
 import { SocialInput } from '@/features/social';
 import {
@@ -36,7 +36,11 @@ import {
   useSlugValidation,
   useSponsorNameValidation,
 } from '@/features/sponsor';
-import { useUsernameValidation } from '@/features/talent';
+import {
+  IndustryList,
+  ONBOARDING_KEY,
+  useUsernameValidation,
+} from '@/features/talent';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';

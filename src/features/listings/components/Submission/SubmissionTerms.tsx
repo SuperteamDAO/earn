@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { TERMS_OF_USE } from '@/constants';
+import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 
 export const SubmissionTerms = ({
   isOpen,

@@ -18,7 +18,7 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect, type Option } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
-import { URL_REGEX } from '@/constants';
+import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type FeedDataProps } from '@/features/feed';
 import type { PoW } from '@/interface/pow';
 import { allSkills, allSubSkills } from '@/interface/skills';

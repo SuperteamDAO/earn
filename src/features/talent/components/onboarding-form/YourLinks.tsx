@@ -7,12 +7,12 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { ONBOARDING_KEY } from '@/constants';
 import { extractSocialUsername, SocialInputAll } from '@/features/social';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';
 
+import { ONBOARDING_KEY } from '../../constants';
 import { type YourLinksFormData, yourLinksSchema } from '../../schema';
 import { AddProject } from '../AddProject';
 import type { UserStoreType } from './types';

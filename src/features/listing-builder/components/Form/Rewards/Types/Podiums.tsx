@@ -12,11 +12,11 @@ import {
 } from '@/components/ui/form';
 import {
   BONUS_REWARD_POSITION,
+  calculateTotalRewardsForPodium,
   MAX_BONUS_SPOTS,
   MAX_PODIUMS,
   MAX_REWARD,
-} from '@/constants';
-import { calculateTotalRewardsForPodium } from '@/features/listing-builder';
+} from '@/features/listing-builder';
 import { cn } from '@/utils';
 import { getRankLabels } from '@/utils/rank';
 

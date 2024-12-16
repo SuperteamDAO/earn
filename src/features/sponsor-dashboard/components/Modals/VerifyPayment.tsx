@@ -15,8 +15,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { BONUS_REWARD_POSITION } from '@/constants';
 import { tokenList } from '@/constants/tokenList';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import {
   listingSubmissionsQuery,
   type ListingWithSubmissions,

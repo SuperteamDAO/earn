@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import {
   getListingTypeLabel,
   type Listing,

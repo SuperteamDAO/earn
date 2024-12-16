@@ -22,8 +22,8 @@ import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import { PDTG } from '@/constants';
 import { Superteams } from '@/constants/Superteam';
+import { PDTG } from '@/constants/Telegram';
 import { Login } from '@/features/auth';
 import { isCreateListingAllowedQuery } from '@/features/listing-builder';
 import {

@@ -2,9 +2,10 @@ import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useEffect, useState } from 'react';
 
-import { USERNAME_PATTERN } from '@/constants';
 import logger from '@/lib/logger';
 import { useUser } from '@/store/user';
+
+import { USERNAME_PATTERN } from '../constants';
 
 export const useUsernameValidation = (initialValue = '') => {
   const [username, setUsername] = useState(initialValue);

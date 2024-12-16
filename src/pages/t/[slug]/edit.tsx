@@ -6,10 +6,10 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Select } from 'react-day-picker';
+import { type Control, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { SelectBox } from '@/components/Form/SelectBox';
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { SkillsSelect } from '@/components/shared/SkillsSelectNew';
 import { Button } from '@/components/ui/button';
@@ -26,17 +26,26 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect, type Option } from '@/components/ui/multi-select';
+import {
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip } from '@/components/ui/tooltip';
-import { IndustryList, web3Exp, workExp, workType } from '@/constants';
-import { CommunityList } from '@/constants/communityList';
 import { CountryList } from '@/constants/countryList';
 import { extractSocialUsername, SocialInputAll } from '@/features/social';
 import {
   AddProject,
+  CommunityList,
+  IndustryList,
   type ProfileFormData,
   profileSchema,
   useUsernameValidation,
+  web3Exp,
+  workExp,
+  workType,
 } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
@@ -45,6 +54,16 @@ import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils';
 import { uploadToCloudinary } from '@/utils/upload';
+
+interface SelectBoxProps {
+  label: string;
+  options: string[] | readonly string[];
+  name: string;
+  placeholder: string;
+  control: Control<any>;
+  required?: boolean;
+  className?: string;
+}
 
 export default function EditProfilePage({ slug }: { slug: string }) {
   const { user, refetchUser } = useUser();
@@ -232,6 +251,39 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   if (!session && status === 'unauthenticated') {
     router.push('/');
   }
+
+  const SelectBox = ({
+    label,
+    options,
+    name,
+    placeholder,
+    control,
+    required = false,
+    className,
+  }: SelectBoxProps) => {
+    return (
+      <FormFieldWrapper
+        name={name}
+        control={control}
+        className={cn('mb-5 w-full', className)}
+        label={label}
+        isRequired={required}
+      >
+        <Select>
+          <SelectTrigger>
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent>
+            {options.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </FormFieldWrapper>
+    );
+  };
 
   return (
     <Default

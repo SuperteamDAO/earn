@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { URL_REGEX } from '@/constants';
+import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type User } from '@/interface/user';
 import { validateSolanaAddress } from '@/utils';
 

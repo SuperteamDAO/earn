@@ -22,7 +22,6 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Tooltip } from '@/components/ui/tooltip';
-import { IndustryList } from '@/constants';
 import { extractSocialUsername, SocialInput } from '@/features/social';
 import {
   type SponsorBase,
@@ -31,6 +30,7 @@ import {
   useSponsorNameValidation,
 } from '@/features/sponsor';
 import { sponsorQuery } from '@/features/sponsor-dashboard';
+import { IndustryList } from '@/features/talent';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';

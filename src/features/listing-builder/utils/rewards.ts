@@ -1,6 +1,7 @@
-import { BONUS_REWARD_POSITION } from '@/constants';
 import { type Rewards } from '@/features/listings';
 import { cleanRewards } from '@/utils/rank';
+
+import { BONUS_REWARD_POSITION } from '../constants';
 
 export const calculateTotalPrizes = (
   rewards: Rewards | undefined | null,

@@ -4,8 +4,10 @@ import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import { BONUS_REWARD_POSITION } from '@/constants';
-import { formatTotalPrice } from '@/features/listing-builder';
+import {
+  BONUS_REWARD_POSITION,
+  formatTotalPrice,
+} from '@/features/listing-builder';
 import { EarnAvatar } from '@/features/talent';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type SubmissionWithUser } from '@/interface/submission';

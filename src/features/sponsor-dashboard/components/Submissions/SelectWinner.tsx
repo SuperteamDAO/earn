@@ -12,14 +12,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tooltip } from '@/components/ui/tooltip';
-import { BONUS_REWARD_POSITION } from '@/constants';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import { type Listing } from '@/features/listings';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils';
 import { cleanRewards, getRankLabels, sortRank } from '@/utils/rank';
 
-import { selectedSubmissionAtom } from '../..';
+import { selectedSubmissionAtom } from '../../atoms';
 import { useRejectSubmissions, useToggleWinner } from '../../mutations';
 import { RejectSubmissionModal } from './Modals/RejectModal';
 

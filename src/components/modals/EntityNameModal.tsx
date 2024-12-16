@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { PDTG, TERMS_OF_USE } from '@/constants';
+import { PDTG } from '@/constants/Telegram';
+import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 import { useUser } from '@/store/user';
 
 export const EntityNameModal = ({

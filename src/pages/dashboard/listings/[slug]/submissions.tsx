@@ -14,7 +14,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Popover, PopoverContent } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
-import { BONUS_REWARD_POSITION } from '@/constants';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import {
   PublishResults,
   RejectAllSubmissionModal,

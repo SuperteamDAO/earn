@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { URL_REGEX } from '@/constants';
+import { URL_REGEX } from '@/constants/URL_REGEX';
 import { cn, getURLSanitized } from '@/utils';
 
 const formSchema = z.object({

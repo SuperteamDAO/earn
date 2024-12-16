@@ -7,12 +7,6 @@ import {
 } from '@prisma/client';
 import { z } from 'zod';
 
-import {
-  BONUS_REWARD_POSITION,
-  MAX_BONUS_SPOTS,
-  MAX_PODIUMS,
-  MAX_REWARD,
-} from '@/constants';
 import { tokenList } from '@/constants/tokenList';
 import { type Listing } from '@/features/listings';
 import { emailRegex, telegramRegex, twitterRegex } from '@/features/social';
@@ -20,6 +14,12 @@ import { skillsArraySchema } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
 
 import { DEADLINE_FORMAT } from '../components/Form';
+import {
+  BONUS_REWARD_POSITION,
+  MAX_BONUS_SPOTS,
+  MAX_PODIUMS,
+  MAX_REWARD,
+} from '../constants';
 import { fetchSlugCheck } from '../queries/slug-check';
 import { type ListingFormData } from '.';
 

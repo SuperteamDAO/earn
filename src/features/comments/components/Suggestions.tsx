@@ -3,7 +3,6 @@ import debounce from 'lodash.debounce';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { MAX_COMMENT_SUGGESTIONS } from '@/constants';
 import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
 import { cn } from '@/utils';
@@ -13,6 +12,8 @@ interface Props {
   input: string;
   onSelect: (tag: string) => void;
 }
+
+const MAX_COMMENT_SUGGESTIONS = 5;
 
 export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
   const [suggestions, setSuggestions] =

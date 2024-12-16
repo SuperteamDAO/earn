@@ -1,12 +1,12 @@
 import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   checkListingSponsorAuth,
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';

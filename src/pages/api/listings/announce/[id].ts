@@ -1,12 +1,12 @@
 import type { NextApiResponse } from 'next';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   checkListingSponsorAuth,
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
 import { sendEmailNotification } from '@/features/emails';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import { type Rewards } from '@/features/listings';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';

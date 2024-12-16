@@ -1,14 +1,6 @@
 import axios from 'axios';
 import { z } from 'zod';
 
-import {
-  IndustryList,
-  USERNAME_PATTERN,
-  web3Exp,
-  workExp,
-  workType,
-} from '@/constants';
-import { CommunityList } from '@/constants/communityList';
 import { CountryList } from '@/constants/countryList';
 import {
   discordUsernameSchema,
@@ -21,6 +13,15 @@ import {
 import { skillsArraySchema } from '@/interface/skills';
 import { getURL } from '@/utils';
 import { validateSolAddressUI } from '@/utils/validateSolAddress';
+
+import {
+  CommunityList,
+  IndustryList,
+  USERNAME_PATTERN,
+  web3Exp,
+  workExp,
+  workType,
+} from '../constants';
 
 export const profileSchema = z
   .object({

@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import { cn } from '@/utils';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { nthLabelGenerator } from '@/utils/rank';

@@ -7,7 +7,6 @@ import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { SelectBox } from '@/components/Form/SelectBox';
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { SkillsSelect } from '@/components/shared/SkillsSelectNew';
 import { Button } from '@/components/ui/button';
@@ -22,6 +21,13 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tooltip } from '@/components/ui/tooltip';
 import { countries } from '@/constants/country';
 import { CountryList } from '@/constants/countryList';
@@ -187,13 +193,25 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
             </FormFieldWrapper>
           </div>
 
-          <SelectBox
-            label="Location"
-            options={CountryList}
+          <FormFieldWrapper
             name="location"
-            placeholder="Select Your Country"
             control={control}
-          />
+            className="mb-5 w-full"
+            label="Location"
+          >
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Your Country" />
+              </SelectTrigger>
+              <SelectContent>
+                {CountryList.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormFieldWrapper>
 
           <FormField
             name="photo"
