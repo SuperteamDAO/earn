@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants';
+import { twitterUsernameSchema } from '@/features/social';
 
 export const sponsorBaseSchema = z.object({
   name: z.string().min(1, 'Company name is required'),
@@ -18,7 +19,7 @@ export const sponsorBaseSchema = z.object({
   url: z
     .union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')])
     .optional(),
-  twitter: z.string().min(1, 'Twitter handle is required'),
+  twitter: twitterUsernameSchema,
   entityName: z.string().min(1, 'Entity name is required'),
 });
 

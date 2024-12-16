@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { ONBOARDING_KEY } from '@/constants';
-import { extractSocialUsername, SocialInput } from '@/features/social';
+import { extractSocialUsername, SocialInputAll } from '@/features/social';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';
@@ -114,7 +114,7 @@ export function YourLinks({ useFormStore }: Props) {
         <Form {...yourLinksForm}>
           <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-5 w-full">
-              <SocialInput control={control} />
+              <SocialInputAll control={control} />
               <p className="font-medium text-slate-500">Other Proof of Work</p>
               <p className="mb-3 text-slate-400">
                 Adding more PoW increases your chance of getting work

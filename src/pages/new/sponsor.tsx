@@ -27,6 +27,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
 import { IndustryList, ONBOARDING_KEY, PDTG } from '@/constants';
 import { SignIn } from '@/features/auth';
+import { SocialInput } from '@/features/social';
 import {
   shouldUpdateUser,
   sponsorFormSchema,
@@ -271,7 +272,7 @@ const CreateSponsor = () => {
                 <h2 className="mb-5 text-xl font-semibold tracking-tight text-gray-900">
                   About Your Company
                 </h2>
-                <div className="flex w-full justify-between gap-2">
+                <div className="flex w-full justify-between gap-4">
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.name"
@@ -312,7 +313,7 @@ const CreateSponsor = () => {
                     </p>
                   )}
                 </div>
-                <div className="my-6 flex w-full justify-between">
+                <div className="my-6 flex w-full justify-between gap-4">
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.url"
@@ -321,14 +322,15 @@ const CreateSponsor = () => {
                     <Input placeholder="https://starkindustries.com" />
                   </FormFieldWrapper>
 
-                  <FormFieldWrapper
-                    control={form.control}
+                  <SocialInput
                     name="sponsor.twitter"
-                    label="Company Twitter"
-                    isRequired
-                  >
-                    <Input placeholder="@StarkIndustries" />
-                  </FormFieldWrapper>
+                    socialName={'twitter'}
+                    formLabel="Company Twitter"
+                    placeholder="@StarkIndustries"
+                    required
+                    control={form.control}
+                    height="h-9"
+                  />
                 </div>
                 <div className="flex w-full">
                   <FormFieldWrapper
