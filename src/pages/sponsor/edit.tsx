@@ -129,7 +129,7 @@ export default function UpdateSponsor() {
         />
       }
     >
-      <div className="flex w-full flex-col gap-2 pb-24 pt-12">
+      <div className="mx-auto flex flex-col gap-2 pb-24 pt-12">
         <div className="flex flex-col gap-2">
           <p className="mb-8 text-3xl font-semibold tracking-tight text-gray-900">
             Edit Sponsor Profile

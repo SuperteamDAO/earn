@@ -20,6 +20,7 @@ interface Props {
   isTemplate?: boolean;
   poc?: User | undefined;
   onSuccess?: (newComment: Comment) => void;
+  isDisabled?: boolean;
 }
 
 export const CommentForm = ({
@@ -28,6 +29,7 @@ export const CommentForm = ({
   refType,
   poc,
   isTemplate = false,
+  isDisabled = false,
   onSuccess,
 }: Props) => {
   const { user } = useUser();
@@ -121,7 +123,9 @@ export const CommentForm = ({
             <Button
               variant="default"
               className="h-auto px-5 py-2 text-[10px] font-medium md:text-sm"
-              disabled={newCommentLoading || !newComment || isTemplate}
+              disabled={
+                newCommentLoading || !newComment || isTemplate || isDisabled
+              }
               onClick={handleSubmit}
             >
               {newCommentLoading ? 'Adding...' : 'Comment'}

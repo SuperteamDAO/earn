@@ -53,6 +53,7 @@ interface Props {
   addNewReply?: (msg: string) => Promise<void>;
   isVerified?: boolean;
   isTemplate?: boolean;
+  isDisabled?: boolean;
 }
 
 export const Comment = ({
@@ -70,6 +71,7 @@ export const Comment = ({
   isAnnounced,
   isVerified = false,
   isTemplate = false,
+  isDisabled = false,
 }: Props) => {
   const { user } = useUser();
   const posthog = usePostHog();
@@ -240,12 +242,15 @@ export const Comment = ({
                 {replies?.length} {replies?.length === 1 ? 'Reply' : 'Replies'}
               </button>
             )}
-            <button
+            <Button
+              variant={'link'}
+              size="sm"
               onClick={() => setShowReplyInput((prev) => !prev)}
-              className="-left-3 text-xs font-medium text-slate-500 hover:text-slate-600 md:text-sm"
+              className="-left-3 h-auto p-0 text-xs font-medium text-slate-500 hover:text-slate-600 hover:no-underline md:text-sm"
+              disabled={isDisabled}
             >
               Reply
-            </button>
+            </Button>
           </div>
           <div
             className={cn(
@@ -284,7 +289,9 @@ export const Comment = ({
                 >
                   <Button
                     className="h-auto bg-slate-200 px-5 py-2 text-xs text-slate-800 hover:bg-slate-300 active:bg-slate-400 disabled:opacity-50"
-                    disabled={newReplyLoading || !newReply || isTemplate}
+                    disabled={
+                      newReplyLoading || !newReply || isTemplate || isDisabled
+                    }
                     onClick={handleSubmit}
                   >
                     {newReplyLoading ? (

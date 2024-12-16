@@ -31,6 +31,7 @@ interface Props {
   setCount: Dispatch<SetStateAction<number>>;
   isTemplate?: boolean;
   onSuccess?: (newComment: Comment) => void;
+  isDisabled?: boolean;
 }
 export const Comments = ({
   refId,
@@ -42,6 +43,7 @@ export const Comments = ({
   isAnnounced,
   isVerified = false,
   isTemplate = false,
+  isDisabled = false,
   count,
   take = 10,
   setCount,
@@ -142,6 +144,7 @@ export const Comments = ({
           onSuccess?.(newComment);
         }}
         isTemplate={isTemplate}
+        isDisabled={isDisabled}
       />
       <div
         className={cn(
@@ -165,6 +168,7 @@ export const Comments = ({
               deleteComment={deleteComment}
               isVerified={isVerified}
               isTemplate={isTemplate}
+              isDisabled={isDisabled}
             />
           );
         })}
