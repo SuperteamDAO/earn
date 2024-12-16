@@ -5,13 +5,14 @@ import { useEffect } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+import { useUser } from '@/store/user';
+
 import { Login } from '@/features/auth/components/Login';
 import { Header } from '@/features/navbar/components/Header';
 import { activeHackathonQuery } from '@/features/sponsor-dashboard/queries/active-hackathon';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
-import { useUser } from '@/store/user';
 
 import { ListingBuilderProvider } from './ListingBuilderProvider';
 

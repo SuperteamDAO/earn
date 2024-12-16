@@ -15,11 +15,12 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Tooltip } from '@/components/ui/tooltip';
-import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';

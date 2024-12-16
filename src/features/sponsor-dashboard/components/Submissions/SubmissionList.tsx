@@ -18,11 +18,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { type Listing } from '@/features/listings/types';
-import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
+
+import { type Listing } from '@/features/listings/types';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';

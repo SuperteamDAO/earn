@@ -4,11 +4,12 @@ import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
 import { type Superteam } from '@/constants/Superteam';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+
 import { HomeBanner } from '@/features/home/components/Banner';
 import { NavTabs } from '@/features/home/components/NavTabs';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
 
 interface HomeProps {
   children: ReactNode;

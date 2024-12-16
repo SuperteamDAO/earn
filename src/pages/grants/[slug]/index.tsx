@@ -3,11 +3,12 @@ import type { GetServerSideProps } from 'next';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
 
+import { GrantPageLayout } from '@/layouts/Grants';
+import { getURL } from '@/utils/validUrl';
+
 import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
 import { type GrantWithApplicationCount } from '@/features/grants/types';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
-import { GrantPageLayout } from '@/layouts/Grants';
-import { getURL } from '@/utils/validUrl';
 
 interface InitialGrant {
   grant: GrantWithApplicationCount;

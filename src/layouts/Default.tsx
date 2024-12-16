@@ -1,8 +1,9 @@
 import dynamic from 'next/dynamic';
 import type { ReactNode } from 'react';
 
-import { Header } from '@/features/navbar/components/Header';
 import { cn } from '@/utils/cn';
+
+import { Header } from '@/features/navbar/components/Header';
 
 interface IDefaultProps {
   meta: ReactNode;

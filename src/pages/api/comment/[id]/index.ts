@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { USERNAME_PATTERN } from '@/features/talent/constants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { USERNAME_PATTERN } from '@/features/talent/constants';
 
 export default async function comment(
   req: NextApiRequest,

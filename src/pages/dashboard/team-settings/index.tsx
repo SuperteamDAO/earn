@@ -27,16 +27,17 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tooltip } from '@/components/ui/tooltip';
-import { Banner } from '@/features/sponsor-dashboard/components/Banner';
-import { InviteMembers } from '@/features/sponsor-dashboard/components/Members/InviteMembers';
-import { membersQuery } from '@/features/sponsor-dashboard/queries/members';
-import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-stats';
-import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+
+import { Banner } from '@/features/sponsor-dashboard/components/Banner';
+import { InviteMembers } from '@/features/sponsor-dashboard/components/Members/InviteMembers';
+import { membersQuery } from '@/features/sponsor-dashboard/queries/members';
+import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-stats';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 const debounce = require('lodash.debounce');
 

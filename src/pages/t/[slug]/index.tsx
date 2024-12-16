@@ -14,6 +14,14 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { useDisclosure } from '@/hooks/use-disclosure';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import type { User } from '@/interface/user';
+import { Default } from '@/layouts/Default';
+import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
+import { getURL } from '@/utils/validUrl';
+
 import { FeedLoop } from '@/features/feed/components/FeedLoop';
 import { useGetFeed } from '@/features/feed/queries/useGetFeed';
 import { type FeedDataProps } from '@/features/feed/types';
@@ -26,13 +34,6 @@ import {
 import { AddProject } from '@/features/talent/components/AddProject';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { ShareProfile } from '@/features/talent/components/shareProfile';
-import { useDisclosure } from '@/hooks/use-disclosure';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import type { User } from '@/interface/user';
-import { Default } from '@/layouts/Default';
-import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
-import { getURL } from '@/utils/validUrl';
 
 type UserWithFeed = User & {
   feed: FeedDataProps[];

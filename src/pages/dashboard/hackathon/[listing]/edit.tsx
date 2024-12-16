@@ -3,9 +3,10 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
+
+import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 
 interface Props {
   listing: string;

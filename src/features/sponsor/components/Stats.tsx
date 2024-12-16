@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { userCountQuery } from '@/features/home/queries/user-count';
 import { cn } from '@/utils/cn';
+
+import { userCountQuery } from '@/features/home/queries/user-count';
 
 import { maxW } from '../utils/styles';
 import { HighQualityImage } from './HighQualityImage';

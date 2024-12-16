@@ -1,12 +1,13 @@
 import type { NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
+
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { sponsorBaseSchema } from '@/features/sponsor/utils/sponsorFormSchema';
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;

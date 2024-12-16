@@ -1,6 +1,8 @@
 import { Regions } from '@prisma/client';
 import { type NextApiResponse } from 'next';
 
+import { prisma } from '@/prisma';
+
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { type StatusFilter } from '@/features/listings/types';
@@ -9,7 +11,6 @@ import {
   getCombinedRegion,
 } from '@/features/listings/utils/region';
 import { getStatusFilterQuery } from '@/features/listings/utils/status';
-import { prisma } from '@/prisma';
 
 const TAKE = 20;
 

@@ -18,12 +18,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { tokenList } from '@/constants/tokenList';
-import { type Grant } from '@/features/grants/types';
-import { getColorStyles } from '@/features/listings/utils/getColorStyles';
-import { getListingStatus } from '@/features/listings/utils/status';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
+
+import { type Grant } from '@/features/grants/types';
+import { getColorStyles } from '@/features/listings/utils/getColorStyles';
+import { getListingStatus } from '@/features/listings/utils/status';
 
 import { SponsorPrize } from '../SponsorPrize';
 

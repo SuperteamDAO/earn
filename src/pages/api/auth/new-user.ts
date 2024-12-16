@@ -1,10 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { handleInviteAcceptance } from '@/features/auth/utils/handleInvite';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { handleInviteAcceptance } from '@/features/auth/utils/handleInvite';
 
 export default async function newUser(
   req: NextApiRequest,

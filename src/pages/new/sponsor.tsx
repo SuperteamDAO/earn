@@ -26,6 +26,12 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants/Telegram';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
+import { uploadToCloudinary } from '@/utils/upload';
+
 import { SignIn } from '@/features/auth/components/SignIn';
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { useSlugValidation } from '@/features/sponsor/hooks/useSlugValidation';
@@ -38,11 +44,6 @@ import {
 } from '@/features/sponsor/utils/sponsorFormSchema';
 import { IndustryList, ONBOARDING_KEY } from '@/features/talent/constants';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
-import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
-import { uploadToCloudinary } from '@/utils/upload';
 
 const CreateSponsor = () => {
   const router = useRouter();

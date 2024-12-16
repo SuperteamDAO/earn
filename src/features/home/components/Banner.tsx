@@ -4,9 +4,10 @@ import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import DesktopBanner from '@/public/assets/banner.webp';
 import MobileBanner from '@/public/assets/banner-mobile.webp';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 import { userCountQuery } from '../queries/user-count';
 

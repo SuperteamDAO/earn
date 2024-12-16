@@ -17,8 +17,9 @@ import {
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
-import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
 import { useUser } from '@/store/user';
+
+import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
 
 import {
   confirmModalAtom,

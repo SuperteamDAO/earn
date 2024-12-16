@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { Home } from '@/layouts/Home';
+
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
 import { listingsQuery } from '@/features/listings/queries/listings';
-import { Home } from '@/layouts/Home';
 
 function AllListingsPage() {
   const { data: listings, isLoading } = useQuery(

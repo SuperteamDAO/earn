@@ -5,11 +5,12 @@ import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+
 import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
 import { GrantEntry } from '@/features/grants/components/GrantEntry';
 import { grantsQuery } from '@/features/grants/queries/grants';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
 
 function Grants() {
   const {

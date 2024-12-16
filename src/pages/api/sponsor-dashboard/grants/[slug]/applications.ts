@@ -4,12 +4,13 @@ import {
 } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
-import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
-import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);

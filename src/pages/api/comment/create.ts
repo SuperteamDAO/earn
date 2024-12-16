@@ -1,12 +1,13 @@
 import { type CommentRefType } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
-import { withAuth } from '@/features/auth/utils/withAuth';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 
 type CommentType =
   | 'NORMAL'

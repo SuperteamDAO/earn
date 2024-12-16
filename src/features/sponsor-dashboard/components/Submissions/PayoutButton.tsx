@@ -21,11 +21,12 @@ import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
-import { type Listing, type Rewards } from '@/features/listings/types';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
+
+import { type Listing, type Rewards } from '@/features/listings/types';
 
 import { selectedSubmissionAtom } from '../../atoms';
 

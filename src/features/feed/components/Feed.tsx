@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
-import { VibeCard } from '@/features/home/components/VibeCard';
 import { FeedPageLayout } from '@/layouts/Feed';
 import { cn } from '@/utils/cn';
+
+import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
+import { VibeCard } from '@/features/home/components/VibeCard';
 
 import { useGetFeed } from '../queries/useGetFeed';
 import { type FeedPostType } from '../types';

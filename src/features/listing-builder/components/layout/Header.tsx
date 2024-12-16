@@ -10,8 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
-import { UserMenu } from '@/features/navbar/components/UserMenu';
 import { cn } from '@/utils/cn';
+
+import { UserMenu } from '@/features/navbar/components/UserMenu';
 
 import {
   hideAutoSaveAtom,

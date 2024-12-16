@@ -2,11 +2,12 @@
 import { type Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
-import { type FeedPostType } from '@/features/feed/types';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type FeedPostType } from '@/features/feed/types';
 
 export default async function handler(
   req: NextApiRequest,

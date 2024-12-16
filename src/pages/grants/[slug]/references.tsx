@@ -2,10 +2,11 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useState } from 'react';
 
-import { type GrantWithApplicationCount } from '@/features/grants/types';
-import { ReferenceCard } from '@/features/listings/components/ListingPage/ReferenceCard';
 import { GrantPageLayout } from '@/layouts/Grants';
 import { getURL } from '@/utils/validUrl';
+
+import { type GrantWithApplicationCount } from '@/features/grants/types';
+import { ReferenceCard } from '@/features/listings/components/ListingPage/ReferenceCard';
 
 interface GrantsDetailsProps {
   grant: GrantWithApplicationCount | null;

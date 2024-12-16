@@ -1,10 +1,10 @@
-import '/node_modules/flag-icons/css/flag-icons.min.css';
-
 import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { fetchAsset } from '@/utils/ogHelpers';
+
+import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 export const config = {
   runtime: 'edge',

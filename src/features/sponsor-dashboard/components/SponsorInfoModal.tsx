@@ -12,13 +12,14 @@ import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
 import { Form, FormLabel } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { useUser } from '@/store/user';
+import { uploadToCloudinary } from '@/utils/upload';
+
 import {
   type UserSponsorDetails,
   userSponsorDetailsSchema,
 } from '@/features/sponsor/utils/sponsorFormSchema';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
-import { useUser } from '@/store/user';
-import { uploadToCloudinary } from '@/utils/upload';
 
 export const SponsorInfoModal = ({
   isOpen,

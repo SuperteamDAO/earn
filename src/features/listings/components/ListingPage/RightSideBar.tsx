@@ -8,12 +8,13 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { tokenList } from '@/constants/tokenList';
-import { RelatedListings } from '@/features/home/components/RelatedListings';
 import { type ParentSkills } from '@/interface/skills';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { cleanRewardPrizes } from '@/utils/rank';
+
+import { RelatedListings } from '@/features/home/components/RelatedListings';
 
 import { submissionCountQuery } from '../../queries/submission-count';
 import type { Listing } from '../../types';

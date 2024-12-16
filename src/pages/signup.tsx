@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
+
 import { SignIn } from '@/features/auth/components/SignIn';
 import {
   acceptInvite,

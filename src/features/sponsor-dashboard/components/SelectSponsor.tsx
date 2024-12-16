@@ -5,9 +5,10 @@ import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import type { SponsorType } from '@/interface/sponsor';
 import { useUpdateUser, useUser } from '@/store/user';
+
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 interface SponsorOptionType extends SponsorType {
   role?: string;

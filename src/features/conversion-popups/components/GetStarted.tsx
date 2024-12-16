@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 export const GetStarted = () => {

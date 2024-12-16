@@ -5,11 +5,12 @@ import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 import { Form } from '@/components/ui/form';
-import { type Listing } from '@/features/listings/types';
-import { Header } from '@/features/navbar/components/Header';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { HydrateAtoms, useInitAtom } from '@/utils/atoms';
+
+import { type Listing } from '@/features/listings/types';
+import { Header } from '@/features/navbar/components/Header';
 
 import {
   confirmModalAtom,

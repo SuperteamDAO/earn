@@ -5,13 +5,14 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { create } from 'zustand';
 
 import { Steps } from '@/components/shared/steps';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+import { useUser } from '@/store/user';
+
 import { SignIn } from '@/features/auth/components/SignIn';
 import { AboutYou } from '@/features/talent/components/onboarding-form/AboutYou';
 import { type UserStoreType } from '@/features/talent/components/onboarding-form/types';
 import { YourLinks } from '@/features/talent/components/onboarding-form/YourLinks';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
-import { useUser } from '@/store/user';
 
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {

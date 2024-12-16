@@ -6,6 +6,9 @@ import { getServerSession } from 'next-auth';
 import { useMemo } from 'react';
 
 import { CombinedRegions } from '@/constants/Superteam';
+import { Home } from '@/layouts/Home';
+import { prisma } from '@/prisma';
+
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
 import { homepageForYouListingsQuery } from '@/features/home/queries/for-you';
 import { homepageGrantsQuery } from '@/features/home/queries/grants';
@@ -17,8 +20,6 @@ import {
   filterRegionCountry,
   getCombinedRegion,
 } from '@/features/listings/utils/region';
-import { Home } from '@/layouts/Home';
-import { prisma } from '@/prisma';
 
 import { authOptions } from './api/auth/[...nextauth]';
 import { getForYouListings } from './api/homepage/for-you';

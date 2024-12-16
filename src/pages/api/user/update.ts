@@ -1,13 +1,14 @@
 import type { NextApiResponse } from 'next';
 
-import { userSelectOptions } from '@/features/auth/constants';
-import { type NextApiRequestWithUser } from '@/features/auth/types';
-import { withAuth } from '@/features/auth/utils/withAuth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 import { validateSolanaAddress } from '@/utils/validateSolAddress';
+
+import { userSelectOptions } from '@/features/auth/constants';
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;

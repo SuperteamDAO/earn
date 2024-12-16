@@ -14,6 +14,14 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Popover, PopoverContent } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
+import { useDisclosure } from '@/hooks/use-disclosure';
+import type { SubmissionWithUser } from '@/interface/submission';
+import { SponsorLayout } from '@/layouts/Sponsor';
+import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
+import { dayjs } from '@/utils/dayjs';
+import { cleanRewards } from '@/utils/rank';
+
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import {
   selectedSubmissionAtom,
@@ -30,13 +38,6 @@ import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queri
 import { scoutsQuery } from '@/features/sponsor-dashboard/queries/scouts';
 import { submissionsQuery } from '@/features/sponsor-dashboard/queries/submissions';
 import { type ScoutRowType } from '@/features/sponsor-dashboard/types';
-import { useDisclosure } from '@/hooks/use-disclosure';
-import type { SubmissionWithUser } from '@/interface/submission';
-import { SponsorLayout } from '@/layouts/Sponsor';
-import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
-import { dayjs } from '@/utils/dayjs';
-import { cleanRewards } from '@/utils/rank';
 
 interface Props {
   slug: string;

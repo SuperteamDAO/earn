@@ -1,9 +1,10 @@
 import { type NextApiResponse } from 'next';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
-import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userSponsorId = req.userSponsorId;

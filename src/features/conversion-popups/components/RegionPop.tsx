@@ -30,8 +30,9 @@ import {
 } from '@/components/ui/drawer';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type Superteam } from '@/constants/Superteam';
-import { userCountQuery } from '@/features/home/queries/user-count';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+
+import { userCountQuery } from '@/features/home/queries/user-count';
 
 import { popupsShowedAtom } from '../atoms';
 import { GetStarted } from './GetStarted';

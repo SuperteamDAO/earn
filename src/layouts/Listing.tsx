@@ -7,6 +7,12 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
+import { type User } from '@/interface/user';
+import { Default } from '@/layouts/Default';
+import { cn } from '@/utils/cn';
+import { getURLSanitized } from '@/utils/getURLSanitized';
+import { getURL } from '@/utils/validUrl';
+
 import { Comments } from '@/features/comments/components/Comments';
 import { ListingHeader } from '@/features/listings/components/ListingPage/ListingHeader';
 import { RightSideBar } from '@/features/listings/components/ListingPage/RightSideBar';
@@ -14,11 +20,6 @@ import { submissionCountQuery } from '@/features/listings/queries/submission-cou
 import { type Listing } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
 import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
-import { type User } from '@/interface/user';
-import { Default } from '@/layouts/Default';
-import { cn } from '@/utils/cn';
-import { getURLSanitized } from '@/utils/getURLSanitized';
-import { getURL } from '@/utils/validUrl';
 
 interface ListingPageProps {
   bounty: Listing | null;

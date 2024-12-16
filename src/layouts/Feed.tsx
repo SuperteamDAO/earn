@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import React from 'react';
 
+import { Home } from '@/layouts/Home';
+
 import {
   AllPostsIcon,
   HomeIcon,
   LeaderboardIcon,
   WinnersIcon,
 } from '@/features/feed/components/icons';
-import { Home } from '@/layouts/Home';
 
 interface NavItemProps {
   name: string;

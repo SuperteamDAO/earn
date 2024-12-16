@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { EmptySection } from '@/components/shared/EmptySection';
+import { Home } from '@/layouts/Home';
+
 import {
   ListingCard,
   ListingCardSkeleton,
 } from '@/features/listings/components/ListingCard';
 import { ListingSection } from '@/features/listings/components/ListingSection';
 import { listingsQuery } from '@/features/listings/queries/listings';
-import { Home } from '@/layouts/Home';
 
 export default function AllProjectsPage() {
   const { data: listings, isLoading } = useQuery(

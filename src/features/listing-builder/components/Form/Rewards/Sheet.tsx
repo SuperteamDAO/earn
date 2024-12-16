@@ -17,8 +17,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+
+import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
 import { useListingForm } from '../../../hooks';
 import { Footer } from './Footer';

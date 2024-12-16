@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/components/ui/multi-select';
+
 import { slugCheckQuery } from '@/features/listing-builder/queries/slug-check';
 
 import { isEditingAtom } from '../../../atoms';

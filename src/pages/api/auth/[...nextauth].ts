@@ -4,11 +4,12 @@ import type { Adapter } from 'next-auth/adapters';
 import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
 
+import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
+
 import { OTPTemplate } from '@/features/emails/components/otpTemplate';
 import { kashEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
 import { resend } from '@/features/emails/utils/resend';
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,

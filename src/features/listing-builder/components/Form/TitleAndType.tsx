@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
 import { hackathonAtom, isEditingAtom } from '../../atoms';

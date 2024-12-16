@@ -10,6 +10,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { cn } from '@/utils/cn';
+import { getRankLabels } from '@/utils/rank';
+
 import {
   BONUS_REWARD_POSITION,
   MAX_BONUS_SPOTS,
@@ -17,8 +20,6 @@ import {
   MAX_REWARD,
 } from '@/features/listing-builder/constants';
 import { calculateTotalRewardsForPodium } from '@/features/listing-builder/utils/rewards';
-import { cn } from '@/utils/cn';
-import { getRankLabels } from '@/utils/rank';
 
 import { useListingForm } from '../../../../hooks';
 import { TokenNumberInput } from '../Tokens/TokenNumberInput';

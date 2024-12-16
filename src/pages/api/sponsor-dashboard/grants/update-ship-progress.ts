@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import {
@@ -10,6 +8,9 @@ import {
   fetchAirtableRecordId,
   updateAirtableRecord,
 } from '@/utils/airtable';
+
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'PUT') {

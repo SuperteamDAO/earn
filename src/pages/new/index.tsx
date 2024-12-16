@@ -12,14 +12,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
-import { userCountQuery } from '@/features/home/queries/user-count';
-import { ONBOARDING_KEY } from '@/features/talent/constants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { userCountQuery } from '@/features/home/queries/user-count';
+import { ONBOARDING_KEY } from '@/features/talent/constants';
 
 export default function NewProfilePage({
   showTalentProfile,

@@ -1,8 +1,9 @@
 import type { NextApiResponse } from 'next';
 
+import { prisma } from '@/prisma';
+
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
-import { prisma } from '@/prisma';
 
 async function hackathons(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;

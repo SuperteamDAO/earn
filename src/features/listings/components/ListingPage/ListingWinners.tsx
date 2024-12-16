@@ -4,14 +4,15 @@ import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
-import { formatTotalPrize } from '@/features/listing-builder/utils/formatTotalPrize';
-import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
+
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
+import { formatTotalPrize } from '@/features/listing-builder/utils/formatTotalPrize';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { listingWinnersQuery } from '../../queries/listing-winners';
 import type { Listing, Rewards } from '../../types';

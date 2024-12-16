@@ -20,8 +20,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { cn } from '@/utils/cn';
+
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils/statusColorMap';

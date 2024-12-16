@@ -3,9 +3,10 @@ import { useRouter } from 'next/router';
 import { LuHome, LuNewspaper, LuSearch, LuUser } from 'react-icons/lu';
 
 import { Button } from '@/components/ui/button';
-import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 interface Props {
   onSearchOpen: () => void;

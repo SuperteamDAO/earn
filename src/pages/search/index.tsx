@@ -8,6 +8,11 @@ import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 
 import { CombinedRegions } from '@/constants/Superteam';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
+import { getURL } from '@/utils/validUrl';
+
 import { Filters } from '@/features/search/components/Filters';
 import { Info } from '@/features/search/components/Info';
 import { QueryInput } from '@/features/search/components/QueryInput';
@@ -19,10 +24,6 @@ import {
 } from '@/features/search/utils/filters';
 import { serverSearch } from '@/features/search/utils/search';
 import { updateCheckboxes } from '@/features/search/utils/updateCheckboxes';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
-import { prisma } from '@/prisma';
-import { getURL } from '@/utils/validUrl';
 
 import { authOptions } from '../api/auth/[...nextauth]';
 

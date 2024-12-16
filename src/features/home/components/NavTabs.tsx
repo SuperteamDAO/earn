@@ -6,9 +6,10 @@ import { useEffect, useMemo } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
-import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+
+import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
 import { regionLiveCountQuery } from '../queries/region-live-count';
 

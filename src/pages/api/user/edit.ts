@@ -1,14 +1,15 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
-import { withAuth } from '@/features/auth/utils/withAuth';
-import { extractSocialUsername } from '@/features/social/utils/extractUsername';
-import { profileSchema, usernameSuperRefine } from '@/features/talent/schema';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+import { profileSchema, usernameSuperRefine } from '@/features/talent/schema';
 
 const allowedFields = [
   'username',

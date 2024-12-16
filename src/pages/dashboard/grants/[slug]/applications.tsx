@@ -17,6 +17,10 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Popover, PopoverContent } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useDisclosure } from '@/hooks/use-disclosure';
+import { SponsorLayout } from '@/layouts/Sponsor';
+import { useUser } from '@/store/user';
+
 import { ApplicationDetails } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationDetails';
 import { ApplicationHeader } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationHeader';
 import { ApplicationList } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationList';
@@ -25,9 +29,6 @@ import { PaymentsHistoryTab } from '@/features/sponsor-dashboard/components/Gran
 import { applicationsQuery } from '@/features/sponsor-dashboard/queries/applications';
 import { sponsorGrantQuery } from '@/features/sponsor-dashboard/queries/grant';
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
-import { useDisclosure } from '@/hooks/use-disclosure';
-import { SponsorLayout } from '@/layouts/Sponsor';
-import { useUser } from '@/store/user';
 
 interface Props {
   slug: string;

@@ -8,12 +8,13 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { type User } from '@/interface/user';
 import { ogImageQuery } from '@/queries/og';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type Rewards } from '../../types';
 import { Badge } from './Badge';

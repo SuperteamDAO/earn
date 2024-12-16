@@ -2,10 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
 import { Skeleton } from '@/components/ui/skeleton';
-import { userStatsQuery } from '@/features/home/queries/user-stats';
-import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+
+import { userStatsQuery } from '@/features/home/queries/user-stats';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 interface StatProps {
   value: number | string;

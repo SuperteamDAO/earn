@@ -8,6 +8,10 @@ import { useRouter } from 'next/router';
 import { getServerSession } from 'next-auth';
 import { useEffect, useState, useTransition } from 'react';
 
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
+
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
 import { TotalStats } from '@/features/home/components/TotalStats';
 import { totalsQuery } from '@/features/home/queries/totals';
@@ -22,9 +26,6 @@ import {
   type TIMEFRAME,
 } from '@/features/leaderboard/types';
 import { getSubskills, skillCategories } from '@/features/leaderboard/utils';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
-import { prisma } from '@/prisma';
 
 import { authOptions } from '../api/auth/[...nextauth]';
 

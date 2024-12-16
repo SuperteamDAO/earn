@@ -2,13 +2,14 @@ import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
 import { Superteams } from '@/constants/Superteam';
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
-import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { type Skills } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;

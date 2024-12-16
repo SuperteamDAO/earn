@@ -12,6 +12,11 @@ import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
+import { useDisclosure } from '@/hooks/use-disclosure';
+import { cn } from '@/utils/cn';
+import { truncatePublicKey } from '@/utils/truncatePublicKey';
+import { truncateString } from '@/utils/truncateString';
+
 import { type Grant } from '@/features/grants/types';
 import {
   Discord,
@@ -23,10 +28,6 @@ import {
   extractTwitterUsername,
 } from '@/features/social/utils/extractUsername';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
-import { useDisclosure } from '@/hooks/use-disclosure';
-import { cn } from '@/utils/cn';
-import { truncatePublicKey } from '@/utils/truncatePublicKey';
-import { truncateString } from '@/utils/truncateString';
 
 import { type GrantApplicationWithUser } from '../../types';
 import { InfoBox } from '../InfoBox';

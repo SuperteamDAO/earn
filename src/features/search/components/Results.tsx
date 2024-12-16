@@ -2,6 +2,7 @@ import { ArrowRight } from 'lucide-react';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+
 import { GrantsCard } from '@/features/grants/components/GrantsCard';
 import { ListingCard } from '@/features/listings/components/ListingCard';
 

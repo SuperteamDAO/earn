@@ -23,8 +23,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
-import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type Comment as IComment } from '@/interface/comments';
@@ -33,6 +31,9 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { formatFromNow } from '../utils';
 import { CommentParser } from './CommentParser';

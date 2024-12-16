@@ -1,5 +1,11 @@
 import type { NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
+import { cleanSkills } from '@/utils/cleanSkills';
+import { filterAllowedFields } from '@/utils/filterAllowedFields';
+import { safeStringify } from '@/utils/safeStringify';
+
 import { userSelectOptions } from '@/features/auth/constants';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
@@ -9,11 +15,6 @@ import {
   socialSuperRefine,
   usernameSuperRefine,
 } from '@/features/talent/schema';
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { cleanSkills } from '@/utils/cleanSkills';
-import { filterAllowedFields } from '@/utils/filterAllowedFields';
-import { safeStringify } from '@/utils/safeStringify';
 
 const allowedFields = [
   'username',

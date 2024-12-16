@@ -8,6 +8,11 @@ import { useEffect, useState } from 'react';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/tokenList';
+import { cn } from '@/utils/cn';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { getURLSanitized } from '@/utils/getURLSanitized';
+import { getURL } from '@/utils/validUrl';
+
 import { GrantApplicationButton } from '@/features/grants/components/GrantApplicationButton';
 import { GrantsHeader } from '@/features/grants/components/GrantsHeader';
 import {
@@ -20,10 +25,6 @@ import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { LiveGrants } from '@/features/home/components/LiveGrants';
 import { ExtraInfoSection } from '@/features/listings/components/ListingPage/ExtraInfoSection';
 import { grantSnackbarAtom } from '@/features/navbar/components/GrantSnackbar';
-import { cn } from '@/utils/cn';
-import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
-import { getURLSanitized } from '@/utils/getURLSanitized';
-import { getURL } from '@/utils/validUrl';
 
 import { Default } from './Default';
 

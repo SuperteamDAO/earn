@@ -1,7 +1,8 @@
-import { createSponsorEmailSettings } from '@/features/sponsor-dashboard/utils/createSponsorEmailSettings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { createSponsorEmailSettings } from '@/features/sponsor-dashboard/utils/createSponsorEmailSettings';
 
 interface InviteAcceptanceResult {
   success: boolean;

@@ -8,14 +8,15 @@ import {
 import { z } from 'zod';
 
 import { tokenList } from '@/constants/tokenList';
+import { skillsArraySchema } from '@/interface/skills';
+import { dayjs } from '@/utils/dayjs';
+
 import { type Listing } from '@/features/listings/types';
 import {
   emailRegex,
   telegramRegex,
   twitterRegex,
 } from '@/features/social/utils/regex';
-import { skillsArraySchema } from '@/interface/skills';
-import { dayjs } from '@/utils/dayjs';
 
 import { DEADLINE_FORMAT } from '../components/Form/Deadline';
 import {

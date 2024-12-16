@@ -1,10 +1,11 @@
 import { type NextApiResponse } from 'next';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
-import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   if (!req.hackathonId) {
