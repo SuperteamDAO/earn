@@ -62,7 +62,7 @@ export function ListingBuilderLayout({ route, slug }: ListingBuilderLayout) {
   }, [router.events, queryClient, slug]);
 
   if (!session && status === 'unauthenticated') {
-    return <Login isOpen={true} onClose={() => {}} />;
+    return <Login hideCloseIcon isOpen={true} onClose={() => {}} />;
   }
 
   if (!session && status === 'loading') {

@@ -25,6 +25,7 @@ export const FormFieldWrapper = ({
   token,
   richEditorPlaceholder,
   className,
+  onChange,
 }: {
   control: any;
   name: string;
@@ -37,6 +38,7 @@ export const FormFieldWrapper = ({
   token?: string;
   richEditorPlaceholder?: string;
   className?: string;
+  onChange?: (e: any) => void; // doesnt override, only adds to existing onChange
 }) => {
   return (
     <FormField
@@ -54,7 +56,10 @@ export const FormFieldWrapper = ({
                 <RichEditor
                   id={name}
                   value={field.value || ''}
-                  onChange={field.onChange}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    onChange?.(e);
+                  }}
                   error={false}
                   placeholder={richEditorPlaceholder}
                 />
@@ -62,10 +67,19 @@ export const FormFieldWrapper = ({
                 <TokenInput
                   token={token}
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    onChange?.(e);
+                  }}
                 />
               ) : (
-                React.cloneElement(children as React.ReactElement, { ...field })
+                React.cloneElement(children as React.ReactElement, {
+                  ...field,
+                  onChange: (e: any) => {
+                    field.onChange(e);
+                    onChange?.(e);
+                  },
+                })
               )}
             </FormControl>
             <FormMessage className="pt-1" />

@@ -11,6 +11,7 @@ interface Props {
   isSponsor?: boolean;
   redirectTo?: string;
   hideOverlay?: boolean;
+  hideCloseIcon?: boolean;
 }
 
 export const Login = ({
@@ -19,6 +20,7 @@ export const Login = ({
   isSponsor = false,
   redirectTo,
   hideOverlay,
+  hideCloseIcon = false,
 }: Props) => {
   const [loginStep, setLoginStep] = useState(0);
   return (
@@ -28,6 +30,7 @@ export const Login = ({
         classNames={{
           overlay: hideOverlay ? 'hidden' : '',
         }}
+        hideCloseIcon={hideCloseIcon}
       >
         <div className="py-6">
           {loginStep === 1 && (

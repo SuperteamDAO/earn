@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -49,6 +49,13 @@ export const SponsorInfoModal = ({
     validationErrorMessage: usernameValidationError,
     username,
   } = useUsernameValidation();
+  useEffect(() => {
+    if (isUsernameInvalid) {
+      form.setError('username', {
+        message: usernameValidationError,
+      });
+    } else form.clearErrors('username');
+  }, [usernameValidationError, isUsernameInvalid]);
 
   const updateUserMutation = useMutation({
     mutationFn: async (data: UserSponsorDetails) => {
@@ -92,18 +99,12 @@ export const SponsorInfoModal = ({
               control={form.control}
               name="username"
               label="Username"
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
             >
-              <Input
-                placeholder="Username"
-                onChange={(e) => {
-                  setUsername(e.target.value);
-                }}
-                value={username}
-              />
+              <Input placeholder="Username" value={username} />
             </FormFieldWrapper>
-            {isUsernameInvalid && (
-              <p className="text-sm text-red-500">{usernameValidationError}</p>
-            )}
             <div className="my-5 flex w-full justify-between gap-8">
               <FormFieldWrapper
                 control={form.control}
