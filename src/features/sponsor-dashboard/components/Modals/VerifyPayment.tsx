@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { tokenList } from '@/constants/tokenList';
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { listingSubmissionsQuery } from '@/features/listings/queries/submissions';
 import { type ListingWithSubmissions } from '@/features/listings/types';
 import { useUser } from '@/store/user';

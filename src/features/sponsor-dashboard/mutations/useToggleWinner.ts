@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useAtom } from 'jotai';
 import { toast } from 'sonner';
 
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { type Listing, type Rewards } from '@/features/listings/types';
 import { type SubmissionWithUser } from '@/interface/submission';
 

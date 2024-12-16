@@ -4,10 +4,8 @@ import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import {
-  BONUS_REWARD_POSITION,
-  formatTotalPrice,
-} from '@/features/listing-builder';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
+import { formatTotalPrize } from '@/features/listing-builder/utils/formatTotalPrize';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type SubmissionWithUser } from '@/interface/submission';
@@ -134,7 +132,7 @@ export function ListingWinners({ bounty }: Props) {
                   <p className="line-clamp-2 w-min pt-4 text-center text-xs font-semibold text-slate-700 md:w-auto md:text-sm">{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</p>
                   <p className="text-center text-xs font-normal text-slate-500 opacity-60">
                     {bounty?.rewards &&
-                      formatTotalPrice(
+                      formatTotalPrize(
                         bounty?.rewards[
                           Number(submission?.winnerPosition) as keyof Rewards
                         ] ?? 0,

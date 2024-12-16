@@ -5,10 +5,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { MAX_REWARD } from '@/features/listing-builder';
+import { MAX_REWARD } from '@/features/listing-builder/constants';
 
 import { useListingForm } from '../../../../hooks';
-import { TokenNumberInput } from '../Tokens';
+import { TokenNumberInput } from '../Tokens/TokenNumberInput';
 
 export function Range() {
   const form = useListingForm();

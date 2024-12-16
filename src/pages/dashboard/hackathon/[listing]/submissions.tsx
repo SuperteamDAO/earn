@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { selectedSubmissionAtom } from '@/features/sponsor-dashboard/atoms';
 import { PublishResults } from '@/features/sponsor-dashboard/components/PublishResults';
 import { SubmissionHeader } from '@/features/sponsor-dashboard/components/Submissions/SubmissionHeader';

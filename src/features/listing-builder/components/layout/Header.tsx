@@ -20,7 +20,7 @@ import {
   previewAtom,
 } from '../../atoms';
 import { useListingForm } from '../../hooks';
-import { PrePublish } from '../Form/PrePublish';
+import { PrePublish } from '../Form/PrePublish/Modal';
 import { StatusBadge } from './StatusBadge';
 
 export function Header() {

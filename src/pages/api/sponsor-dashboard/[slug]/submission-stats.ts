@@ -2,7 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

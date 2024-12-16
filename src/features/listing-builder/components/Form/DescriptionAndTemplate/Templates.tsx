@@ -26,17 +26,15 @@ import {
 } from '@/components/ui/dialog';
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
+import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
+import { listingTemplatesQuery } from '@/features/listing-builder/queries/listing-templates';
+import { cleanTemplate } from '@/features/listing-builder/utils/form';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
-import {
-  isCreateListingAllowedQuery,
-  listingTemplatesQuery,
-} from '../../../queries';
-import { cleanTemplate } from '../../../utils';
 
 export function Templates() {
   const posthog = usePostHog();

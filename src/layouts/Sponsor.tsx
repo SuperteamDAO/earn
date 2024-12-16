@@ -25,7 +25,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
 import { PDTG } from '@/constants/Telegram';
 import { Login } from '@/features/auth/components/Login';
-import { isCreateListingAllowedQuery } from '@/features/listing-builder';
+import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
 import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
 import { NavItem } from '@/features/sponsor-dashboard/components/NavItems';
 import { SelectHackathon } from '@/features/sponsor-dashboard/components/SelectHackathon';

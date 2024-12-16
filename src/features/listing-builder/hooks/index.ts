@@ -23,7 +23,7 @@ import {
   createListingFormSchema,
   createListingRefinements,
 } from '../types/schema';
-import { getListingDefaults, refineReadyListing } from '../utils';
+import { getListingDefaults, refineReadyListing } from '../utils/form';
 
 interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
   saveDraft: () => void;

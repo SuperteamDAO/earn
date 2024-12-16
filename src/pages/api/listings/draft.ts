@@ -5,10 +5,8 @@ import { type NextApiResponse } from 'next';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import {
-  fetchSlugCheck,
-  type ListingFormData,
-} from '@/features/listing-builder';
+import { fetchSlugCheck } from '@/features/listing-builder/queries/slug-check';
+import { type ListingFormData } from '@/features/listing-builder/types';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';

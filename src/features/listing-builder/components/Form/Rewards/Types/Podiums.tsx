@@ -12,16 +12,16 @@ import {
 } from '@/components/ui/form';
 import {
   BONUS_REWARD_POSITION,
-  calculateTotalRewardsForPodium,
   MAX_BONUS_SPOTS,
   MAX_PODIUMS,
   MAX_REWARD,
-} from '@/features/listing-builder';
+} from '@/features/listing-builder/constants';
+import { calculateTotalRewardsForPodium } from '@/features/listing-builder/utils/rewards';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
 
 import { useListingForm } from '../../../../hooks';
-import { TokenNumberInput } from '../Tokens';
+import { TokenNumberInput } from '../Tokens/TokenNumberInput';
 
 export const Podiums = () => {
   const form = useListingForm();

@@ -17,7 +17,7 @@ import {
 import { skillsArraySchema } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
 
-import { DEADLINE_FORMAT } from '../components/Form';
+import { DEADLINE_FORMAT } from '../components/Form/Deadline';
 import {
   BONUS_REWARD_POSITION,
   MAX_BONUS_SPOTS,

@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { type Listing, type Rewards } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
 import type { SubmissionWithUser } from '@/interface/submission';
