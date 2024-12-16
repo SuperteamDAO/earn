@@ -179,19 +179,17 @@ const CreateSponsor = () => {
       }
     >
       {!session ? (
-        <>
-          <div className="min-h-screen w-full bg-white">
-            <div className="mx-auto flex min-h-[60vh] max-w-[32rem] flex-col items-center justify-center">
-              <p className="pt-4 text-center text-2xl font-semibold text-slate-900">
-                You&apos;re one step away
-              </p>
-              <p className="pb-4 text-center text-xl font-normal text-slate-600">
-                from joining Superteam Earn
-              </p>
-              <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
-            </div>
+        <div className="min-h-screen w-full bg-white">
+          <div className="mx-auto flex min-h-[60vh] max-w-[32rem] flex-col items-center justify-center">
+            <p className="pt-4 text-center text-2xl font-semibold text-slate-900">
+              You&apos;re one step away
+            </p>
+            <p className="pb-4 text-center text-xl font-normal text-slate-600">
+              from joining Superteam Earn
+            </p>
+            <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
           </div>
-        </>
+        </div>
       ) : (
         <div className="flex w-full flex-col items-center px-4 pb-24 pt-8">
           <div className="flex flex-col gap-2 text-center">

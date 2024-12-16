@@ -1,7 +1,7 @@
 import '../styles/globals.scss';
 import '@/components/tiptap/styles/index.css';
 
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleTagManager } from '@next/third-parties/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
@@ -146,7 +146,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         <SessionProvider session={session}>
           <MyApp Component={Component} pageProps={pageProps} />
         </SessionProvider>
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
       </PostHogProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

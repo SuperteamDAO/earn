@@ -56,41 +56,37 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
             </div>
             <div className="mt-px flex flex-wrap items-center gap-1">
-              <>
-                <div className="flex items-center justify-start">
+              <div className="flex items-center justify-start">
+                {compensationType !== 'variable' && (
+                  <img
+                    className="mr-0.5 h-4 w-4 rounded-full"
+                    alt={token}
+                    src={
+                      tokenList.find((ele) => {
+                        return ele.tokenSymbol === token;
+                      })?.icon
+                    }
+                  />
+                )}
+                <div className="flex items-baseline">
+                  <CompensationAmount
+                    compensationType={compensationType}
+                    maxRewardAsk={maxRewardAsk}
+                    minRewardAsk={minRewardAsk}
+                    rewardAmount={rewardAmount}
+                    className="whitespace-nowrap text-xs font-semibold text-slate-600"
+                  />
                   {compensationType !== 'variable' && (
-                    <img
-                      className="mr-0.5 h-4 w-4 rounded-full"
-                      alt={token}
-                      src={
-                        tokenList.find((ele) => {
-                          return ele.tokenSymbol === token;
-                        })?.icon
-                      }
-                    />
+                    <p className="text-xs font-medium text-gray-400">{token}</p>
                   )}
-                  <div className="flex items-baseline">
-                    <CompensationAmount
-                      compensationType={compensationType}
-                      maxRewardAsk={maxRewardAsk}
-                      minRewardAsk={minRewardAsk}
-                      rewardAmount={rewardAmount}
-                      className="whitespace-nowrap text-xs font-semibold text-slate-600"
-                    />
-                    {compensationType !== 'variable' && (
-                      <p className="text-xs font-medium text-gray-400">
-                        {token}
-                      </p>
-                    )}
-                  </div>
-                  <p className="ml-1 text-xs text-slate-300 md:text-sm">|</p>
                 </div>
-                <img
-                  className={`flex h-3 ${isBounty ? '-ml-0.5' : 'ml-0'}`}
-                  alt={type}
-                  src={getListingIcon(type!)}
-                />
-              </>
+                <p className="ml-1 text-xs text-slate-300 md:text-sm">|</p>
+              </div>
+              <img
+                className={`flex h-3 ${isBounty ? '-ml-0.5' : 'ml-0'}`}
+                alt={type}
+                src={getListingIcon(type!)}
+              />
               <p className="flex text-xs text-slate-300 md:text-sm">|</p>
 
               <div className="flex items-center gap-1">

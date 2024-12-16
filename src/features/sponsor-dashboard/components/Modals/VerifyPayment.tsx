@@ -350,149 +350,144 @@ export const VerifyPaymentModal = ({
         );
       default:
         return (
-          <>
-            <form onSubmit={handleSubmit(onSubmit)} className="h-full">
-              <div className="flex flex-col items-start gap-2">
-                <p className="font-medium text-slate-900">
-                  Add Reward Payment Link
-                </p>
-                <p className="mt-2 text-sm font-normal text-slate-500">
-                  If you have paid the winners outside of Earn and want to
-                  update the status of this listing as &quot;Completed&quot;,
-                  please add the transaction links of the payments made to the
-                  winners.
-                </p>
-              </div>
+          <form onSubmit={handleSubmit(onSubmit)} className="h-full">
+            <div className="flex flex-col items-start gap-2">
+              <p className="font-medium text-slate-900">
+                Add Reward Payment Link
+              </p>
+              <p className="mt-2 text-sm font-normal text-slate-500">
+                If you have paid the winners outside of Earn and want to update
+                the status of this listing as &quot;Completed&quot;, please add
+                the transaction links of the payments made to the winners.
+              </p>
+            </div>
 
-              <div className="my-6 flex flex-col gap-6">
-                {data?.submission
-                  .filter((sub) => sub.winnerPosition !== null)
-                  .sort(
-                    (a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0),
-                  )
-                  .map((submission, index) => (
-                    <FormField
-                      key={submission.id}
-                      control={control}
-                      name={`paymentLinks.${index}.link`}
-                      render={({ field }) => (
-                        <FormItem
-                          className={cn(
-                            'space-y-2',
-                            errors.paymentLinks?.[index]?.root ||
-                              errors.paymentLinks?.[index]?.link
-                              ? 'text-red-500'
-                              : '',
-                          )}
-                        >
-                          <div className="flex justify-between gap-2">
-                            <div className="flex w-[40%] flex-col items-start gap-2">
-                              <div className="flex gap-1 text-sm font-semibold uppercase text-slate-500">
-                                <p>
-                                  {getRankLabels(
-                                    submission.winnerPosition || 0,
-                                  )}{' '}
-                                  PRIZE
-                                </p>
-                                {submission.winnerPosition ===
-                                  BONUS_REWARD_POSITION && (
-                                  <div className="flex">
-                                    <p>(</p>
-                                    <p className="line-clamp-1 max-w-[5rem] normal-case">
-                                      @{submission.user.username}
-                                    </p>
-                                    <p>)</p>
-                                  </div>
-                                )}
-                              </div>
-                              <div className="flex gap-2">
-                                <img
-                                  className="w-[1.2rem] rounded-full"
-                                  alt={selectedToken?.tokenName}
-                                  src={selectedToken?.icon}
-                                />
-                                <p className="font-semibold text-slate-800">
-                                  {formatNumberWithSuffix(
-                                    listing?.rewards?.[
-                                      submission.winnerPosition || 0
-                                    ] || 0,
-                                  )}
-                                </p>
-                                <p className="font-semibold text-slate-400">
-                                  {selectedToken?.tokenSymbol}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div className="flex w-full items-start">
-                              {paymentLinks?.[index]?.isVerified ? (
-                                <div className="flex gap-2">
-                                  <a
-                                    className="w-full"
-                                    href={`https://solscan.io/tx/${paymentLinks?.[index]?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    <Button
-                                      className="w-full justify-start border-green-500 text-sm font-medium text-slate-500 hover:bg-green-100"
-                                      variant="outline"
-                                    >
-                                      <p className="mr-2">
-                                        Payment Verified. View Tx
-                                      </p>
-                                      <ExternalLink className="h-4 w-4" />
-                                    </Button>
-                                  </a>
-
-                                  <div className="h-6 w-6 rounded-full bg-green-500 p-1">
-                                    <Check className="h-full w-full stroke-[3] text-white" />
-                                  </div>
+            <div className="my-6 flex flex-col gap-6">
+              {data?.submission
+                .filter((sub) => sub.winnerPosition !== null)
+                .sort(
+                  (a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0),
+                )
+                .map((submission, index) => (
+                  <FormField
+                    key={submission.id}
+                    control={control}
+                    name={`paymentLinks.${index}.link`}
+                    render={({ field }) => (
+                      <FormItem
+                        className={cn(
+                          'space-y-2',
+                          errors.paymentLinks?.[index]?.root ||
+                            errors.paymentLinks?.[index]?.link
+                            ? 'text-red-500'
+                            : '',
+                        )}
+                      >
+                        <div className="flex justify-between gap-2">
+                          <div className="flex w-[40%] flex-col items-start gap-2">
+                            <div className="flex gap-1 text-sm font-semibold uppercase text-slate-500">
+                              <p>
+                                {getRankLabels(submission.winnerPosition || 0)}{' '}
+                                PRIZE
+                              </p>
+                              {submission.winnerPosition ===
+                                BONUS_REWARD_POSITION && (
+                                <div className="flex">
+                                  <p>(</p>
+                                  <p className="line-clamp-1 max-w-[5rem] normal-case">
+                                    @{submission.user.username}
+                                  </p>
+                                  <p>)</p>
                                 </div>
-                              ) : (
-                                <FormControl>
-                                  <Input
-                                    {...field}
-                                    className="text-sm placeholder:text-slate-400"
-                                    placeholder="Paste your link here"
-                                  />
-                                </FormControl>
                               )}
-                              <FormMessage />
+                            </div>
+                            <div className="flex gap-2">
+                              <img
+                                className="w-[1.2rem] rounded-full"
+                                alt={selectedToken?.tokenName}
+                                src={selectedToken?.icon}
+                              />
+                              <p className="font-semibold text-slate-800">
+                                {formatNumberWithSuffix(
+                                  listing?.rewards?.[
+                                    submission.winnerPosition || 0
+                                  ] || 0,
+                                )}
+                              </p>
+                              <p className="font-semibold text-slate-400">
+                                {selectedToken?.tokenSymbol}
+                              </p>
                             </div>
                           </div>
-                        </FormItem>
-                      )}
-                    />
-                  ))}
-              </div>
 
-              <div className="flex flex-col gap-2">
-                <Button
-                  className="w-full"
-                  disabled={data?.submission.every((sub) => sub.isPaid)}
-                  type="submit"
+                          <div className="flex w-full items-start">
+                            {paymentLinks?.[index]?.isVerified ? (
+                              <div className="flex gap-2">
+                                <a
+                                  className="w-full"
+                                  href={`https://solscan.io/tx/${paymentLinks?.[index]?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <Button
+                                    className="w-full justify-start border-green-500 text-sm font-medium text-slate-500 hover:bg-green-100"
+                                    variant="outline"
+                                  >
+                                    <p className="mr-2">
+                                      Payment Verified. View Tx
+                                    </p>
+                                    <ExternalLink className="h-4 w-4" />
+                                  </Button>
+                                </a>
+
+                                <div className="h-6 w-6 rounded-full bg-green-500 p-1">
+                                  <Check className="h-full w-full stroke-[3] text-white" />
+                                </div>
+                              </div>
+                            ) : (
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  className="text-sm placeholder:text-slate-400"
+                                  placeholder="Paste your link here"
+                                />
+                              </FormControl>
+                            )}
+                            <FormMessage />
+                          </div>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                ))}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Button
+                className="w-full"
+                disabled={data?.submission.every((sub) => sub.isPaid)}
+                type="submit"
+              >
+                Add External Payment
+              </Button>
+
+              {status === 'retry' && (
+                <a
+                  href="https://t.me/pratikdholani/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-center"
                 >
-                  Add External Payment
-                </Button>
-
-                {status === 'retry' && (
-                  <a
-                    href="https://t.me/pratikdholani/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-center"
+                  <Button
+                    className="bg-transparent text-sm font-normal underline"
+                    variant="link"
                   >
-                    <Button
-                      className="bg-transparent text-sm font-normal underline"
-                      variant="link"
-                    >
-                      Think We Made A Mistake? Text Us
-                    </Button>
-                  </a>
-                )}
-              </div>
-            </form>
-          </>
+                    Think We Made A Mistake? Text Us
+                  </Button>
+                </a>
+              )}
+            </div>
+          </form>
         );
     }
   };

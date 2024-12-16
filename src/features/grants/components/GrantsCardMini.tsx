@@ -52,24 +52,22 @@ export const GrantsCardMini = ({
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
             </div>
             <div className="mt-px flex items-center gap-1 sm:gap-3">
-              <>
-                <div className="flex items-center justify-start gap-1">
-                  <img
-                    className="flex h-3 rounded-full sm:h-4"
-                    alt={token}
-                    src={tokenIcon}
-                  />
-                  <div className="flex items-baseline gap-0.5">
-                    <p className="whitespace-nowrap text-xs font-semibold text-slate-600">
-                      {grantAmount({
-                        maxReward: maxReward!,
-                        minReward: minReward!,
-                      })}
-                    </p>
-                    <p className="text-xs font-medium text-gray-400">{token}</p>
-                  </div>
+              <div className="flex items-center justify-start gap-1">
+                <img
+                  className="flex h-3 rounded-full sm:h-4"
+                  alt={token}
+                  src={tokenIcon}
+                />
+                <div className="flex items-baseline gap-0.5">
+                  <p className="whitespace-nowrap text-xs font-semibold text-slate-600">
+                    {grantAmount({
+                      maxReward: maxReward!,
+                      minReward: minReward!,
+                    })}
+                  </p>
+                  <p className="text-xs font-medium text-gray-400">{token}</p>
                 </div>
-              </>
+              </div>
               {!!totalApproved && (
                 <div className="flex items-center gap-3">
                   <p className="flex text-xs text-slate-300 lg:text-sm">|</p>

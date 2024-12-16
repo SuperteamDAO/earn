@@ -217,308 +217,302 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const feedItems = feed?.pages.flatMap((page) => page) ?? [];
 
   return (
-    <>
-      <Default
-        meta={
-          <Head>
-            <title>{title}</title>
-            <meta property="og:title" content={title} />
-            <meta property="og:image" content={ogImage.toString()} />
-            <meta name="twitter:title" content={title} />
-            <meta name="twitter:image" content={ogImage.toString()} />
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta property="og:image:width" content="1200" />
-            <meta property="og:image:height" content="630" />
-            <meta property="og:image:alt" content="Talent on Superteam" />
-            <meta charSet="UTF-8" key="charset" />
-            <meta
-              name="viewport"
-              content="width=device-width,initial-scale=1"
-              key="viewport"
-            />
-          </Head>
-        }
-      >
-        {!talent?.id && (
-          <EmptySection message="Sorry! The profile you are looking for is not available." />
-        )}
-        {!!talent?.id && (
-          <div className="bg-white">
-            <div
-              className="h-[100px] w-full bg-cover bg-no-repeat md:h-[30vh]"
-              style={{
-                backgroundImage: `url(${ASSET_URL}/bg/profile-cover/${bgImages[randomIndex]})`,
-              }}
-            />
-            <div className="relative top-0 mx-auto max-w-[700px] rounded-[20px] bg-white px-4 py-7 md:-top-40 md:px-7">
-              <div className="flex justify-between">
-                <div>
-                  <EarnAvatar
-                    size={isMD ? '64px' : '52px'}
-                    id={talent?.id}
-                    avatar={talent?.photo}
-                  />
-
-                  <p className="mt-6 text-lg font-semibold text-slate-900 md:text-xl">
-                    {talent?.firstName} {talent?.lastName}
-                  </p>
-                  <p className="text-base font-semibold text-slate-500">
-                    @
-                    {isMD
-                      ? talent?.username
-                      : talent?.username?.length && talent?.username.length > 24
-                        ? `${talent?.username.slice(0, 24)}...`
-                        : talent?.username}
-                  </p>
-                </div>
-                <div className="flex w-auto gap-3 md:w-[160px] md:flex-col">
-                  {user?.id === talent?.id
-                    ? renderButton(
-                        <SquarePen />,
-                        'Edit Profile',
-                        handleEditProfileClick,
-                      )
-                    : renderButton(<MdEmail />, 'Reach Out', () => {
-                        posthog.capture('reach out_talent profile');
-                        const email = encodeURIComponent(talent?.email || '');
-                        const subject = encodeURIComponent(
-                          'Saw Your ST Earn Profile!',
-                        );
-                        const bcc = encodeURIComponent(
-                          'support@superteamearn.com',
-                        );
-                        window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
-                      })}
-                  {renderButton(<ShareIcon />, 'Share', onOpen, true)}
-                </div>
-              </div>
-              <ShareProfile
-                username={talent?.username as string}
-                isOpen={isOpen}
-                onClose={onClose}
-                id={talent?.id}
-              />
-              <Separator className="my-8" />
-              <div className="flex w-full flex-col gap-12 md:flex-row md:gap-[6.25rem]">
-                <div className="w-full md:w-1/2">
-                  <p className="mb-4 font-medium text-slate-900">Details</p>
-                  {workPreferenceText && (
-                    <p className="mt-3 text-slate-400">
-                      Looking for{' '}
-                      <span className="text-slate-500">
-                        {workPreferenceText}
-                      </span>
-                    </p>
-                  )}
-                  {talent?.currentEmployer && (
-                    <p className="mt-3 text-slate-400">
-                      Works at{' '}
-                      <span className="text-slate-500">
-                        {talent?.currentEmployer}
-                      </span>
-                    </p>
-                  )}
-                  {talent?.location && (
-                    <p className="mt-3 text-slate-400">
-                      Based in{' '}
-                      <span className="text-slate-500">{talent?.location}</span>
-                    </p>
-                  )}
-                </div>
-                <div className="w-full md:w-1/2">
-                  <p className="font-medium text-slate-900">Skills</p>
-                  {Array.isArray(talent.skills) ? (
-                    talent.skills.map((skillItem: any, index: number) => {
-                      return skillItem ? (
-                        <div className="mt-4" key={index}>
-                          <p className="text-xs font-medium text-slate-400">
-                            {skillItem.skills.toUpperCase()}
-                          </p>
-                          <div className="flex items-center">
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              {skillItem.subskills
-                                .slice(0, 3)
-                                .map((subskill: string, subIndex: number) => (
-                                  <div
-                                    key={subIndex}
-                                    className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
-                                  >
-                                    {subskill}
-                                  </div>
-                                ))}
-                            </div>
-                            {skillItem.subskills.length > 3 && (
-                              <button
-                                aria-label="Toggle subskills"
-                                className={cn(
-                                  'ml-1 mt-2 p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
-                                  'rounded transition hover:bg-gray-100',
-                                )}
-                                onClick={() => handleToggleSubskills(index)}
-                              >
-                                {showSubskills[index] ? (
-                                  <ChevronUp className="h-4 w-4" />
-                                ) : (
-                                  <ChevronDown className="h-4 w-4" />
-                                )}
-                              </button>
-                            )}
-                          </div>
-
-                          {showSubskills[index] && (
-                            <div
-                              className={cn(
-                                'mt-2 flex flex-wrap gap-2',
-                                'transition-all duration-300 ease-in-out',
-                              )}
-                            >
-                              {skillItem.subskills
-                                .slice(3)
-                                .map((subskill: string, subIndex: number) => (
-                                  <div
-                                    key={subIndex}
-                                    className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
-                                  >
-                                    {subskill}
-                                  </div>
-                                ))}
-                            </div>
-                          )}
-                        </div>
-                      ) : null;
-                    })
-                  ) : (
-                    <p>No skills available</p>
-                  )}
-                </div>
-              </div>
-              <Separator className="my-8" />
-              <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-[6.25rem]">
-                <div className="flex w-full gap-6 md:w-1/2">
-                  {socialLinks.map(({ Icon, link }, i) => {
-                    return <Icon link={link} className="h-5 w-5" key={i} />;
-                  })}
-                </div>
-                <div className="flex w-full gap-6 md:w-1/2 md:gap-8">
-                  <div className="flex flex-col">
-                    <p className="font-semibold">
-                      $
-                      {new Intl.NumberFormat('en-US', {
-                        maximumFractionDigits: 0,
-                      }).format(Math.round(stats?.totalWinnings || 0))}
-                    </p>
-                    <p className="font-medium text-slate-500">Earned</p>
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="font-semibold">{stats?.participations}</p>
-                    <p className="font-medium text-slate-500">
-                      {stats.participations === 1
-                        ? 'Submission'
-                        : 'Submissions'}
-                    </p>
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="font-semibold">{stats?.wins}</p>
-                    <p className="font-medium text-slate-500">Won</p>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-12 md:mt-16">
-                <div className="md:items:center flex flex-col items-end justify-between md:flex-row">
-                  <div className="flex items-center gap-3">
-                    <p className="whitespace-nowrap font-medium text-slate-900">
-                      Proof of Work
-                    </p>
-                    {user?.id === talent?.id && (
-                      <Button
-                        className={cn(
-                          'px-2 py-1 text-sm font-semibold text-slate-400',
-                          'hover:bg-gray-100',
-                        )}
-                        onClick={onOpenPow}
-                        size="sm"
-                        variant="ghost"
-                      >
-                        +ADD
-                      </Button>
-                    )}
-                  </div>
-                  <div className="mt-12 flex w-full justify-between gap-6 md:mt-0 md:justify-end">
-                    <p
-                      className={cn(
-                        'cursor-pointer font-medium',
-                        activeTab === 'activity'
-                          ? 'text-slate-900'
-                          : 'text-slate-400',
-                      )}
-                      onClick={() => setActiveTab('activity')}
-                    >
-                      Activity Feed
-                    </p>
-
-                    <p
-                      className={cn(
-                        'cursor-pointer font-medium',
-                        activeTab === 'projects'
-                          ? 'text-slate-900'
-                          : 'text-slate-400',
-                      )}
-                      onClick={() => setActiveTab('projects')}
-                    >
-                      Personal Projects
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <Separator className="my-4" />
+    <Default
+      meta={
+        <Head>
+          <title>{title}</title>
+          <meta property="og:title" content={title} />
+          <meta property="og:image" content={ogImage.toString()} />
+          <meta name="twitter:title" content={title} />
+          <meta name="twitter:image" content={ogImage.toString()} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content="Talent on Superteam" />
+          <meta charSet="UTF-8" key="charset" />
+          <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1"
+            key="viewport"
+          />
+        </Head>
+      }
+    >
+      {!talent?.id && (
+        <EmptySection message="Sorry! The profile you are looking for is not available." />
+      )}
+      {!!talent?.id && (
+        <div className="bg-white">
+          <div
+            className="h-[100px] w-full bg-cover bg-no-repeat md:h-[30vh]"
+            style={{
+              backgroundImage: `url(${ASSET_URL}/bg/profile-cover/${bgImages[randomIndex]})`,
+            }}
+          />
+          <div className="relative top-0 mx-auto max-w-[700px] rounded-[20px] bg-white px-4 py-7 md:-top-40 md:px-7">
+            <div className="flex justify-between">
               <div>
-                <FeedLoop
-                  feed={feedItems}
-                  ref={ref}
-                  isFetchingNextPage={isFetchingNextPage}
-                  isLoading={isLoading}
-                >
-                  <ExternalImage
-                    className="mx-auto mt-32 w-32"
-                    alt={'talent empty'}
-                    src={'/bg/talent-empty.svg'}
-                  />
-                  <p className="mx-auto mt-5 w-52 text-center font-medium text-slate-400">
-                    {user?.id === talent?.id
-                      ? 'Add some proof of work to build your profile'
-                      : 'Nothing to see here yet ...'}
-                  </p>
-                  {user?.id === talent?.id ? (
-                    <Button
-                      onClick={onOpenPow}
-                      className={cn('mt-5 w-[200px]', 'mx-auto block')}
-                    >
-                      Add
-                    </Button>
-                  ) : (
-                    <div className="mt-5" />
-                  )}
+                <EarnAvatar
+                  size={isMD ? '64px' : '52px'}
+                  id={talent?.id}
+                  avatar={talent?.photo}
+                />
 
-                  <Button
-                    onClick={() => router.push('/')}
-                    className="mx-auto mt-2 block w-[200px] border border-slate-400 bg-white font-medium text-slate-500 hover:bg-gray-100"
-                    variant="outline"
-                  >
-                    Browse Bounties
-                  </Button>
-                </FeedLoop>
+                <p className="mt-6 text-lg font-semibold text-slate-900 md:text-xl">
+                  {talent?.firstName} {talent?.lastName}
+                </p>
+                <p className="text-base font-semibold text-slate-500">
+                  @
+                  {isMD
+                    ? talent?.username
+                    : talent?.username?.length && talent?.username.length > 24
+                      ? `${talent?.username.slice(0, 24)}...`
+                      : talent?.username}
+                </p>
+              </div>
+              <div className="flex w-auto gap-3 md:w-[160px] md:flex-col">
+                {user?.id === talent?.id
+                  ? renderButton(
+                      <SquarePen />,
+                      'Edit Profile',
+                      handleEditProfileClick,
+                    )
+                  : renderButton(<MdEmail />, 'Reach Out', () => {
+                      posthog.capture('reach out_talent profile');
+                      const email = encodeURIComponent(talent?.email || '');
+                      const subject = encodeURIComponent(
+                        'Saw Your ST Earn Profile!',
+                      );
+                      const bcc = encodeURIComponent(
+                        'support@superteamearn.com',
+                      );
+                      window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
+                    })}
+                {renderButton(<ShareIcon />, 'Share', onOpen, true)}
               </div>
             </div>
+            <ShareProfile
+              username={talent?.username as string}
+              isOpen={isOpen}
+              onClose={onClose}
+              id={talent?.id}
+            />
+            <Separator className="my-8" />
+            <div className="flex w-full flex-col gap-12 md:flex-row md:gap-[6.25rem]">
+              <div className="w-full md:w-1/2">
+                <p className="mb-4 font-medium text-slate-900">Details</p>
+                {workPreferenceText && (
+                  <p className="mt-3 text-slate-400">
+                    Looking for{' '}
+                    <span className="text-slate-500">{workPreferenceText}</span>
+                  </p>
+                )}
+                {talent?.currentEmployer && (
+                  <p className="mt-3 text-slate-400">
+                    Works at{' '}
+                    <span className="text-slate-500">
+                      {talent?.currentEmployer}
+                    </span>
+                  </p>
+                )}
+                {talent?.location && (
+                  <p className="mt-3 text-slate-400">
+                    Based in{' '}
+                    <span className="text-slate-500">{talent?.location}</span>
+                  </p>
+                )}
+              </div>
+              <div className="w-full md:w-1/2">
+                <p className="font-medium text-slate-900">Skills</p>
+                {Array.isArray(talent.skills) ? (
+                  talent.skills.map((skillItem: any, index: number) => {
+                    return skillItem ? (
+                      <div className="mt-4" key={index}>
+                        <p className="text-xs font-medium text-slate-400">
+                          {skillItem.skills.toUpperCase()}
+                        </p>
+                        <div className="flex items-center">
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {skillItem.subskills
+                              .slice(0, 3)
+                              .map((subskill: string, subIndex: number) => (
+                                <div
+                                  key={subIndex}
+                                  className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                                >
+                                  {subskill}
+                                </div>
+                              ))}
+                          </div>
+                          {skillItem.subskills.length > 3 && (
+                            <button
+                              aria-label="Toggle subskills"
+                              className={cn(
+                                'ml-1 mt-2 p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+                                'rounded transition hover:bg-gray-100',
+                              )}
+                              onClick={() => handleToggleSubskills(index)}
+                            >
+                              {showSubskills[index] ? (
+                                <ChevronUp className="h-4 w-4" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4" />
+                              )}
+                            </button>
+                          )}
+                        </div>
+
+                        {showSubskills[index] && (
+                          <div
+                            className={cn(
+                              'mt-2 flex flex-wrap gap-2',
+                              'transition-all duration-300 ease-in-out',
+                            )}
+                          >
+                            {skillItem.subskills
+                              .slice(3)
+                              .map((subskill: string, subIndex: number) => (
+                                <div
+                                  key={subIndex}
+                                  className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                                >
+                                  {subskill}
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : null;
+                  })
+                ) : (
+                  <p>No skills available</p>
+                )}
+              </div>
+            </div>
+            <Separator className="my-8" />
+            <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-[6.25rem]">
+              <div className="flex w-full gap-6 md:w-1/2">
+                {socialLinks.map(({ Icon, link }, i) => {
+                  return <Icon link={link} className="h-5 w-5" key={i} />;
+                })}
+              </div>
+              <div className="flex w-full gap-6 md:w-1/2 md:gap-8">
+                <div className="flex flex-col">
+                  <p className="font-semibold">
+                    $
+                    {new Intl.NumberFormat('en-US', {
+                      maximumFractionDigits: 0,
+                    }).format(Math.round(stats?.totalWinnings || 0))}
+                  </p>
+                  <p className="font-medium text-slate-500">Earned</p>
+                </div>
+                <div className="flex flex-col">
+                  <p className="font-semibold">{stats?.participations}</p>
+                  <p className="font-medium text-slate-500">
+                    {stats.participations === 1 ? 'Submission' : 'Submissions'}
+                  </p>
+                </div>
+                <div className="flex flex-col">
+                  <p className="font-semibold">{stats?.wins}</p>
+                  <p className="font-medium text-slate-500">Won</p>
+                </div>
+              </div>
+            </div>
+            <div className="mt-12 md:mt-16">
+              <div className="md:items:center flex flex-col items-end justify-between md:flex-row">
+                <div className="flex items-center gap-3">
+                  <p className="whitespace-nowrap font-medium text-slate-900">
+                    Proof of Work
+                  </p>
+                  {user?.id === talent?.id && (
+                    <Button
+                      className={cn(
+                        'px-2 py-1 text-sm font-semibold text-slate-400',
+                        'hover:bg-gray-100',
+                      )}
+                      onClick={onOpenPow}
+                      size="sm"
+                      variant="ghost"
+                    >
+                      +ADD
+                    </Button>
+                  )}
+                </div>
+                <div className="mt-12 flex w-full justify-between gap-6 md:mt-0 md:justify-end">
+                  <p
+                    className={cn(
+                      'cursor-pointer font-medium',
+                      activeTab === 'activity'
+                        ? 'text-slate-900'
+                        : 'text-slate-400',
+                    )}
+                    onClick={() => setActiveTab('activity')}
+                  >
+                    Activity Feed
+                  </p>
+
+                  <p
+                    className={cn(
+                      'cursor-pointer font-medium',
+                      activeTab === 'projects'
+                        ? 'text-slate-900'
+                        : 'text-slate-400',
+                    )}
+                    onClick={() => setActiveTab('projects')}
+                  >
+                    Personal Projects
+                  </p>
+                </div>
+              </div>
+            </div>
+            <Separator className="my-4" />
+            <div>
+              <FeedLoop
+                feed={feedItems}
+                ref={ref}
+                isFetchingNextPage={isFetchingNextPage}
+                isLoading={isLoading}
+              >
+                <ExternalImage
+                  className="mx-auto mt-32 w-32"
+                  alt={'talent empty'}
+                  src={'/bg/talent-empty.svg'}
+                />
+                <p className="mx-auto mt-5 w-52 text-center font-medium text-slate-400">
+                  {user?.id === talent?.id
+                    ? 'Add some proof of work to build your profile'
+                    : 'Nothing to see here yet ...'}
+                </p>
+                {user?.id === talent?.id ? (
+                  <Button
+                    onClick={onOpenPow}
+                    className={cn('mt-5 w-[200px]', 'mx-auto block')}
+                  >
+                    Add
+                  </Button>
+                ) : (
+                  <div className="mt-5" />
+                )}
+
+                <Button
+                  onClick={() => router.push('/')}
+                  className="mx-auto mt-2 block w-[200px] border border-slate-400 bg-white font-medium text-slate-500 hover:bg-gray-100"
+                  variant="outline"
+                >
+                  Browse Bounties
+                </Button>
+              </FeedLoop>
+            </div>
           </div>
-        )}
-        <AddProject
-          isOpen={isOpenPow}
-          onClose={onClosePow}
-          upload
-          onNewPow={addNewPow}
-        />
-      </Default>
-    </>
+        </div>
+      )}
+      <AddProject
+        isOpen={isOpenPow}
+        onClose={onClosePow}
+        upload
+        onNewPow={addNewPow}
+      />
+    </Default>
   );
 }
 

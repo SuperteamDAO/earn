@@ -112,7 +112,7 @@ export default function NewProfilePage({
             <div className="flex w-full flex-col gap-9">
               <div className="flex flex-col gap-1.5">
                 <p className="text-2xl font-semibold text-slate-900">
-                  Continue as talent
+                  Continue as Talent
                 </p>
                 <p className="text-lg leading-5 tracking-[-0.2px] text-slate-500">
                   Create a profile to start submitting, and get notified on new
@@ -177,7 +177,7 @@ export default function NewProfilePage({
           <div className="flex w-full flex-col gap-9">
             <div className="flex flex-col gap-1.5">
               <p className="text-2xl font-semibold text-slate-900">
-                Continue as a sponsor
+                Continue as a Sponsor
               </p>
               <p className="text-lg leading-5 tracking-[-0.2px] text-slate-500">
                 List a bounty or freelance gig for your project and find your

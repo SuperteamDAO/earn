@@ -235,368 +235,359 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   }
 
   return (
-    <>
-      <Default
-        meta={
-          <Meta
-            title="Superteam Earn"
-            description="Every Solana opportunity in one place!"
-          />
-        }
-      >
-        <div className="bg-white">
-          <div className="mx-auto max-w-[600px] p-3 md:p-5">
-            <Form {...form}>
-              <h1 className="mb-5 mt-3 text-4xl font-bold">Edit Profile</h1>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
-                  PERSONAL INFO
-                </p>
-                <FormField
-                  name="photo"
-                  control={control}
-                  render={({ field }) => (
-                    <FormItem className="mb-4">
-                      <FormLabel className="mb-1 pb-0">
-                        Profile Picture
-                      </FormLabel>
-                      <FormControl>
-                        <ImagePicker
-                          defaultValue={
-                            field.value ? { url: field.value } : undefined
-                          }
-                          onChange={async (e) => {
-                            setUploading(true);
-                            const a = await uploadToCloudinary(e, 'earn-pfp');
-                            field.onChange(a);
-                            setUploading(false);
-                          }}
-                          onReset={() => {
-                            field.onChange('');
-                            setUploading(false);
-                          }}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormFieldWrapper
-                  label="Username"
-                  name="username"
-                  control={control}
-                  isRequired
-                  className="mb-5"
-                >
-                  <Input maxLength={40} placeholder="Username" />
-                </FormFieldWrapper>
-
-                <FormFieldWrapper
-                  label="First Name"
-                  name="firstName"
-                  control={control}
-                  isRequired
-                  className="mb-5"
-                >
-                  <Input placeholder="First Name" />
-                </FormFieldWrapper>
-
-                <FormFieldWrapper
-                  className="mb-5"
-                  label="Last Name"
-                  name="lastName"
-                  control={control}
-                  isRequired
-                >
-                  <Input placeholder="Last Name" />
-                </FormFieldWrapper>
-
-                <FormField
-                  control={control}
-                  name={'bio'}
-                  render={({ field }) => (
-                    <FormItem className={cn('mb-5 flex flex-col gap-2')}>
-                      <div>
-                        <FormLabel>Your One-Line Bio</FormLabel>
-                      </div>
-                      <div>
-                        <FormControl>
-                          <Textarea
-                            {...field}
-                            maxLength={180}
-                            placeholder="One line bio"
-                          />
-                        </FormControl>
-                        <p
-                          className={cn(
-                            'mt-1 text-right text-xs',
-                            (watch('bio')?.length || 0) > 160
-                              ? 'text-red-500'
-                              : 'text-slate-400',
-                          )}
-                        >
-                          {180 - (watch('bio')?.length || 0)} characters left
-                        </p>
-                        <FormMessage />
-                      </div>
-                    </FormItem>
-                  )}
-                />
-
-                <FormFieldWrapper
-                  className="mb-5"
-                  label="Your Solana Wallet Address"
-                  name="publicKey"
-                  control={control}
-                  isRequired
-                >
-                  <Input placeholder="Wallet Address" />
-                </FormFieldWrapper>
-
-                <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
-                  SOCIALS
-                </p>
-
-                <SocialInput control={control} />
-
-                <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
-                  WORK
-                </p>
-
-                <FormField
-                  name="interests"
-                  control={control}
-                  render={({ field }) => (
-                    <FormItem className="mb-5 w-full">
-                      <FormLabel>
-                        What areas of Web3 are you most interested in?
-                      </FormLabel>
-                      <FormControl>
-                        <MultiSelect
-                          className="mt-2"
-                          value={
-                            field.value?.map((elm) => ({
-                              label: elm,
-                              value: elm,
-                            })) || []
-                          }
-                          options={interestDropdown}
-                          onChange={(e) =>
-                            field.onChange(e.map((r) => r.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  name="community"
-                  control={control}
-                  render={({ field }) => (
-                    <FormItem className="mb-5 w-full">
-                      <FormLabel>Community Affiliations</FormLabel>
-                      <FormControl>
-                        <MultiSelect
-                          className="mt-2"
-                          value={
-                            field.value?.map((elm) => ({
-                              label: elm,
-                              value: elm,
-                            })) || []
-                          }
-                          options={communityDropdown}
-                          onChange={(e) =>
-                            field.onChange(e.map((r) => r.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <SelectBox
-                  label="Work Experience"
-                  options={workExp}
-                  name="experience"
-                  placeholder="Pick Your Experience"
-                  control={control}
-                />
-
-                <SelectBox
-                  label="Location"
-                  options={CountryList}
-                  name="location"
-                  placeholder="Select Your Country"
-                  control={control}
-                />
-
-                <SelectBox
-                  label="How familiar are you with Web3?"
-                  options={web3Exp}
-                  name="cryptoExperience"
-                  placeholder="Pick your Experience"
-                  control={control}
-                />
-
-                <SelectBox
-                  label="Work Preference"
-                  options={workType}
-                  name="workPrefernce"
-                  placeholder="Type of Work"
-                  control={control}
-                />
-
-                <FormFieldWrapper
-                  className="mb-5"
-                  label="Current Employer"
-                  name="currentEmployer"
-                  control={control}
-                >
-                  <Input placeholder="Employer" />
-                </FormFieldWrapper>
-
-                <FormLabel>Proof of Work</FormLabel>
-                <div>
-                  {pow.map((data, idx) => {
-                    return (
-                      <div
-                        className="mb-1.5 mt-2 flex items-center rounded-md border border-slate-300 px-[1rem] py-[0.5rem] text-slate-500"
-                        key={data.id}
-                      >
-                        <p className="w-full text-sm text-gray-800">
-                          {data.title}
-                        </p>
-                        <div className="flex items-center gap-3">
-                          <Edit
-                            onClick={() => {
-                              setSelectedProject(idx);
-                              onOpen();
-                            }}
-                            className="h-3.5 w-3.5 cursor-pointer"
-                          />
-                          <Trash
-                            onClick={() => {
-                              setPow((prevPow) =>
-                                prevPow.filter((_ele, id) => idx !== id),
-                              );
-                            }}
-                            className="h-3.5 w-3.5 cursor-pointer"
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <Button
-                  className="mb-8 w-full"
-                  onClick={() => {
-                    onOpen();
-                  }}
-                  variant="outline"
-                  type="button"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Project
-                </Button>
-
-                <FormField
-                  name="skills"
-                  control={control}
-                  render={({ field }) => {
-                    return (
-                      <FormItem className="mb-5 gap-2">
-                        <div>
-                          <span className="flex items-center gap-2">
-                            <FormLabel isRequired>Skills Needed</FormLabel>
-                            <Tooltip content="Select all that apply">
-                              <Info className="h-3 w-3 text-slate-500" />
-                            </Tooltip>
-                          </span>
-                          <FormDescription>
-                            We will send email notifications of new listings for
-                            your selected skills
-                          </FormDescription>
-                        </div>
-                        <FormControl>
-                          <SkillsSelect
-                            key={JSON.stringify(field.value)}
-                            defaultValue={field.value || []}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              trigger('skills');
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-
-                <FormField
-                  name="private"
-                  control={control}
-                  render={({ field }) => (
-                    <FormItem className="mb-8">
-                      <div className="flex items-center gap-2">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={(checked) => {
-                              if (typeof checked === 'boolean') {
-                                field.onChange(checked);
-                              }
-                            }}
-                            className="mr-1 text-brand-purple data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
-                          ></Checkbox>
-                        </FormControl>
-                        <FormLabel className="font-medium text-slate-500">
-                          Keep my info private
-                        </FormLabel>
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <br />
-
-                <Button
-                  className={cn(
-                    'ph-no-capture mb-12',
-                    (uploading || isLoading) &&
-                      'pointer-events-none opacity-50',
-                  )}
-                  type="submit"
-                  disabled={uploading || isLoading}
-                >
-                  {uploading || isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Updating...
-                    </>
-                  ) : (
-                    'Update Profile'
-                  )}
-                </Button>
-              </form>
-            </Form>
-          </div>
-        </div>
-        <AddProject
-          key={`${pow.length}project`}
-          {...{
-            isOpen,
-            onClose,
-            pow,
-            setPow,
-            selectedProject,
-            setSelectedProject,
-          }}
+    <Default
+      meta={
+        <Meta
+          title="Superteam Earn"
+          description="Every Solana opportunity in one place!"
         />
-      </Default>
-    </>
+      }
+    >
+      <div className="bg-white">
+        <div className="mx-auto max-w-[600px] p-3 md:p-5">
+          <Form {...form}>
+            <h1 className="mb-5 mt-3 text-4xl font-bold">Edit Profile</h1>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
+                PERSONAL INFO
+              </p>
+              <FormField
+                name="photo"
+                control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-4">
+                    <FormLabel className="mb-1 pb-0">Profile Picture</FormLabel>
+                    <FormControl>
+                      <ImagePicker
+                        defaultValue={
+                          field.value ? { url: field.value } : undefined
+                        }
+                        onChange={async (e) => {
+                          setUploading(true);
+                          const a = await uploadToCloudinary(e, 'earn-pfp');
+                          field.onChange(a);
+                          setUploading(false);
+                        }}
+                        onReset={() => {
+                          field.onChange('');
+                          setUploading(false);
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormFieldWrapper
+                label="Username"
+                name="username"
+                control={control}
+                isRequired
+                className="mb-5"
+              >
+                <Input maxLength={40} placeholder="Username" />
+              </FormFieldWrapper>
+
+              <FormFieldWrapper
+                label="First Name"
+                name="firstName"
+                control={control}
+                isRequired
+                className="mb-5"
+              >
+                <Input placeholder="First Name" />
+              </FormFieldWrapper>
+
+              <FormFieldWrapper
+                className="mb-5"
+                label="Last Name"
+                name="lastName"
+                control={control}
+                isRequired
+              >
+                <Input placeholder="Last Name" />
+              </FormFieldWrapper>
+
+              <FormField
+                control={control}
+                name={'bio'}
+                render={({ field }) => (
+                  <FormItem className={cn('mb-5 flex flex-col gap-2')}>
+                    <div>
+                      <FormLabel>Your One-Line Bio</FormLabel>
+                    </div>
+                    <div>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          maxLength={180}
+                          placeholder="One line bio"
+                        />
+                      </FormControl>
+                      <p
+                        className={cn(
+                          'mt-1 text-right text-xs',
+                          (watch('bio')?.length || 0) > 160
+                            ? 'text-red-500'
+                            : 'text-slate-400',
+                        )}
+                      >
+                        {180 - (watch('bio')?.length || 0)} characters left
+                      </p>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormFieldWrapper
+                className="mb-5"
+                label="Your Solana Wallet Address"
+                name="publicKey"
+                control={control}
+                isRequired
+              >
+                <Input placeholder="Wallet Address" />
+              </FormFieldWrapper>
+
+              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
+                SOCIALS
+              </p>
+
+              <SocialInput control={control} />
+
+              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
+                WORK
+              </p>
+
+              <FormField
+                name="interests"
+                control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-5 w-full">
+                    <FormLabel>
+                      What areas of Web3 are you most interested in?
+                    </FormLabel>
+                    <FormControl>
+                      <MultiSelect
+                        className="mt-2"
+                        value={
+                          field.value?.map((elm) => ({
+                            label: elm,
+                            value: elm,
+                          })) || []
+                        }
+                        options={interestDropdown}
+                        onChange={(e) => field.onChange(e.map((r) => r.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name="community"
+                control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-5 w-full">
+                    <FormLabel>Community Affiliations</FormLabel>
+                    <FormControl>
+                      <MultiSelect
+                        className="mt-2"
+                        value={
+                          field.value?.map((elm) => ({
+                            label: elm,
+                            value: elm,
+                          })) || []
+                        }
+                        options={communityDropdown}
+                        onChange={(e) => field.onChange(e.map((r) => r.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <SelectBox
+                label="Work Experience"
+                options={workExp}
+                name="experience"
+                placeholder="Pick Your Experience"
+                control={control}
+              />
+
+              <SelectBox
+                label="Location"
+                options={CountryList}
+                name="location"
+                placeholder="Select Your Country"
+                control={control}
+              />
+
+              <SelectBox
+                label="How familiar are you with Web3?"
+                options={web3Exp}
+                name="cryptoExperience"
+                placeholder="Pick your Experience"
+                control={control}
+              />
+
+              <SelectBox
+                label="Work Preference"
+                options={workType}
+                name="workPrefernce"
+                placeholder="Type of Work"
+                control={control}
+              />
+
+              <FormFieldWrapper
+                className="mb-5"
+                label="Current Employer"
+                name="currentEmployer"
+                control={control}
+              >
+                <Input placeholder="Employer" />
+              </FormFieldWrapper>
+
+              <FormLabel>Proof of Work</FormLabel>
+              <div>
+                {pow.map((data, idx) => {
+                  return (
+                    <div
+                      className="mb-1.5 mt-2 flex items-center rounded-md border border-slate-300 px-[1rem] py-[0.5rem] text-slate-500"
+                      key={data.id}
+                    >
+                      <p className="w-full text-sm text-gray-800">
+                        {data.title}
+                      </p>
+                      <div className="flex items-center gap-3">
+                        <Edit
+                          onClick={() => {
+                            setSelectedProject(idx);
+                            onOpen();
+                          }}
+                          className="h-3.5 w-3.5 cursor-pointer"
+                        />
+                        <Trash
+                          onClick={() => {
+                            setPow((prevPow) =>
+                              prevPow.filter((_ele, id) => idx !== id),
+                            );
+                          }}
+                          className="h-3.5 w-3.5 cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <Button
+                className="mb-8 w-full"
+                onClick={() => {
+                  onOpen();
+                }}
+                variant="outline"
+                type="button"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Project
+              </Button>
+
+              <FormField
+                name="skills"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <FormItem className="mb-5 gap-2">
+                      <div>
+                        <span className="flex items-center gap-2">
+                          <FormLabel isRequired>Skills Needed</FormLabel>
+                          <Tooltip content="Select all that apply">
+                            <Info className="h-3 w-3 text-slate-500" />
+                          </Tooltip>
+                        </span>
+                        <FormDescription>
+                          We will send email notifications of new listings for
+                          your selected skills
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <SkillsSelect
+                          key={JSON.stringify(field.value)}
+                          defaultValue={field.value || []}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            trigger('skills');
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <FormField
+                name="private"
+                control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-8">
+                    <div className="flex items-center gap-2">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(checked) => {
+                            if (typeof checked === 'boolean') {
+                              field.onChange(checked);
+                            }
+                          }}
+                          className="mr-1 text-brand-purple data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                        ></Checkbox>
+                      </FormControl>
+                      <FormLabel className="font-medium text-slate-500">
+                        Keep my info private
+                      </FormLabel>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <br />
+
+              <Button
+                className={cn(
+                  'ph-no-capture mb-12',
+                  (uploading || isLoading) && 'pointer-events-none opacity-50',
+                )}
+                type="submit"
+                disabled={uploading || isLoading}
+              >
+                {uploading || isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  'Update Profile'
+                )}
+              </Button>
+            </form>
+          </Form>
+        </div>
+      </div>
+      <AddProject
+        key={`${pow.length}project`}
+        {...{
+          isOpen,
+          onClose,
+          pow,
+          setPow,
+          selectedProject,
+          setSelectedProject,
+        }}
+      />
+    </Default>
   );
 }
 

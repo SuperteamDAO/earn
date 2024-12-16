@@ -96,10 +96,9 @@ export function Stats() {
               <p className="text-[2.3rem] font-semibold leading-[1.15] lg:text-[3.5rem]">
                 {s.title}
               </p>
-              <p className="relative whitespace-nowrap text-[0.68rem] font-medium text-slate-500 lg:text-base">
-                {s.label}
+              <p className="relative flex items-center gap-1 whitespace-nowrap text-[0.68rem] font-medium text-slate-500 lg:text-base">
                 {s.showEarn && (
-                  <span className="absolute left-[-1rem] top-0 w-[0.6rem] lg:left-[-1.25rem] lg:w-[0.9rem]">
+                  <span className="top-0 w-[0.6rem] lg:w-[0.9rem]">
                     <HighQualityImage
                       src="/landingsponsor/icons/earn.svg"
                       alt="Earn Icon"
@@ -107,6 +106,7 @@ export function Stats() {
                     />
                   </span>
                 )}
+                {s.label}
               </p>
             </div>
           ))}
