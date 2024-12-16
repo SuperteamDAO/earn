@@ -69,11 +69,11 @@ const StepsCon = () => {
 
   return (
     <div className="flex w-auto flex-col gap-4 px-4 md:w-[36rem]">
-      <div className="mt-8 flex flex-col gap-2">
+      <div className="mt-8 flex flex-col gap-2 text-center">
         <h1 className="font-sans text-lg font-bold text-[#334254] md:text-2xl">
           {TitleArray[currentStep - 1]?.title}
         </h1>
-        <p className="text-center text-base font-medium text-[#94A3B8] md:text-lg">
+        <p className="text-base font-medium text-[#94A3B8] md:text-lg">
           {TitleArray[currentStep - 1]?.subTitle}
         </p>
       </div>

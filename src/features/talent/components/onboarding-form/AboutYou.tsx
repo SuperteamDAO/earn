@@ -228,7 +228,9 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
             control={control}
             render={({ field }) => (
               <FormItem className="mb-5">
-                <FormLabel className="">Your Solana Wallet Address</FormLabel>
+                <FormLabel isRequired className="">
+                  Your Solana Wallet Address
+                </FormLabel>
                 <FormDescription className="mb-4 mt-0 text-slate-500">
                   This is where you will receive your rewards if you win.
                   Download{' '}
