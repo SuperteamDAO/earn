@@ -23,7 +23,6 @@ import { skillMap } from '@/constants/skillMap';
 import { EarnAvatar } from '@/features/talent';
 import { cn } from '@/utils';
 
-import SparkleIcon from '../../icons/sparkle.svg';
 import { type ScoutRowType } from '../../types';
 import { InviteButton } from './InviteButton';
 
@@ -175,7 +174,10 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                             content={<p>Superteam Recommended</p>}
                             contentProps={{ className: 'text-xs' }}
                           >
-                            <LocalImage src={SparkleIcon} alt="sparkle" />
+                            <LocalImage
+                              src="/assets/sparkle.svg"
+                              alt="sparkle"
+                            />
                           </Tooltip>
                         )}
                       </div>
@@ -193,7 +195,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                   </div>
                 </TableCell>
                 <TableCell className="h-full px-1 md:px-2">
-                  <div className="flex justify-center gap-3">
+                  <div className="flex items-center justify-center gap-3">
                     <p className="text-center text-black">{scout.score}</p>
                     <ScoreBar score={scout.score} />
                   </div>
@@ -283,26 +285,26 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
 function ScoreBar({ score }: { score: number }) {
   const first = normalizeValue(score, 5, 6),
     second = normalizeValue(score, 6, 7),
-    third = normalizeValue(score, 7, 10),
-    color = colorScore(score);
+    third = normalizeValue(score, 7, 10);
+
+  const getColor = (score: number) => {
+    if (score > 7) return '#0D9488';
+    if (score > 6) return '#84CC16';
+    return '#FDBA74';
+  };
 
   return (
     <div className="flex h-2 gap-0.5">
       {[first, second, third].map((value, index) => (
         <Progress
-          className={cn('h-full w-4', color)}
           key={index}
           value={value}
+          color={getColor(score)}
+          className="h-full w-4 rounded-none"
         />
       ))}
     </div>
   );
-}
-
-function colorScore(score: number) {
-  if (score > 7) return 'bg-[#0D9488]';
-  if (score > 6) return 'bg-[#84CC16]';
-  return 'bg-[#FDBA74]';
 }
 
 function normalizeValue(

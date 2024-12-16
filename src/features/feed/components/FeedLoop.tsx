@@ -12,10 +12,11 @@ interface Props {
   isFetchingNextPage?: boolean;
   ref?: (node?: Element | null | undefined) => void;
   children: React.ReactNode;
+  type: 'activity' | 'profile';
 }
 
 export const FeedLoop = forwardRef<HTMLDivElement, Omit<Props, 'ref'>>(
-  ({ feed: feedItems, isLoading, isFetchingNextPage, children }, ref) => {
+  ({ feed: feedItems, isLoading, isFetchingNextPage, children, type }, ref) => {
     return (
       <>
         {isLoading ? (
@@ -34,25 +35,21 @@ export const FeedLoop = forwardRef<HTMLDivElement, Omit<Props, 'ref'>>(
                     <div {...itemProps}>
                       <SubmissionCard
                         key={index}
+                        type={type}
                         sub={item as any}
-                        type="activity"
                       />
                     </div>
                   );
                 case 'pow':
                   return (
                     <div {...itemProps}>
-                      <PowCard key={index} pow={item as any} type="activity" />
+                      <PowCard key={index} type={type} pow={item as any} />
                     </div>
                   );
                 case 'grant-application':
                   return (
                     <div {...itemProps}>
-                      <GrantCard
-                        type="activity"
-                        grant={item as any}
-                        key={index}
-                      />
+                      <GrantCard type={type} grant={item as any} key={index} />
                     </div>
                   );
                 default:

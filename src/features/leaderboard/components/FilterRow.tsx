@@ -69,63 +69,28 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
   }
 
   return (
-    <div className="flex w-full flex-col border-b pb-2">
-      <div className="hide-scrollbar flex w-full justify-between overflow-x-auto overflow-y-hidden border-slate-200">
+    <div className="flex w-full flex-col">
+      <div className="hide-scrollbar flex w-full justify-between overflow-x-auto overflow-y-hidden border-slate-200 pb-2">
         <Tabs
           defaultValue={String(skillIndexOf(skill))}
           onValueChange={(value) => debouncedSetSkill(Number(value))}
           className="text-slate-400"
         >
-          <TabsList className="flex h-auto items-center border-b-0 bg-transparent">
-            <TabsTrigger
-              value="0"
-              className={cn(
-                'my-0 w-max px-2',
-                'data-[state=active]:bg-brand-purple data-[state=active]:text-white',
-                tabfontsize,
-              )}
-            >
+          <TabsList className="flex items-center">
+            <TabsTrigger value="0" className={cn(tabfontsize)}>
               Overall Rankings
             </TabsTrigger>
             <div className="mx-2 h-6 w-px bg-slate-200" />
-            <TabsTrigger
-              value="1"
-              className={cn(
-                'my-0 px-2',
-                'data-[state=active]:bg-brand-purple data-[state=active]:text-white',
-                tabfontsize,
-              )}
-            >
+            <TabsTrigger value="1" className={cn(tabfontsize)}>
               Content
             </TabsTrigger>
-            <TabsTrigger
-              value="2"
-              className={cn(
-                'my-0 px-2',
-                'data-[state=active]:bg-brand-purple data-[state=active]:text-white',
-                tabfontsize,
-              )}
-            >
+            <TabsTrigger value="2" className={cn(tabfontsize)}>
               Design
             </TabsTrigger>
-            <TabsTrigger
-              value="3"
-              className={cn(
-                'my-0 px-2',
-                'data-[state=active]:bg-brand-purple data-[state=active]:text-white',
-                tabfontsize,
-              )}
-            >
+            <TabsTrigger value="3" className={cn(tabfontsize)}>
               Development
             </TabsTrigger>
-            <TabsTrigger
-              value="4"
-              className={cn(
-                'my-0 px-2',
-                'data-[state=active]:bg-brand-purple data-[state=active]:text-white',
-                tabfontsize,
-              )}
-            >
+            <TabsTrigger value="4" className={cn(tabfontsize)}>
               Others
             </TabsTrigger>
             <div className="relative">
@@ -159,6 +124,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
           <Timeframe value={timeframe} setValue={setTimeframe} />
         </div>
       </div>
+      <div className="-mt-2 h-0.5 w-full bg-slate-200" />{' '}
     </div>
   );
 }

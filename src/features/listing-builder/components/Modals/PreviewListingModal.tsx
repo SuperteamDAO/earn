@@ -51,8 +51,12 @@ export const PreviewListingModal = () => {
               className="justify-self-center"
             >
               <TabsList>
-                <TabsTrigger value="desktop">Desktop</TabsTrigger>
-                <TabsTrigger value="mobile">Mobile</TabsTrigger>
+                <TabsTrigger className="text-base" value="desktop">
+                  Desktop
+                </TabsTrigger>
+                <TabsTrigger className="text-base" value="mobile">
+                  Mobile
+                </TabsTrigger>
               </TabsList>
             </Tabs>
 

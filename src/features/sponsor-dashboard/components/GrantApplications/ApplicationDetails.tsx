@@ -9,7 +9,7 @@ import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+import { CircularProgress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { type Grant } from '@/features/grants';
@@ -238,7 +238,7 @@ export const ApplicationDetails = ({
         <div className="flex items-center justify-start gap-2 text-sm">
           <Telegram link={link} className="text-[#94a3b8]" />
           <Link
-            className="text-slate-400"
+            className="block text-slate-400"
             href={link}
             rel="noopener noreferrer"
             target="_blank"
@@ -441,8 +441,8 @@ export const ApplicationDetails = ({
                   </p>
                   {isApproved && (
                     <div className="mx-3 flex">
-                      <Progress
-                        className="h-5 w-5 rounded-full border-[12px] border-brand-purple"
+                      <CircularProgress
+                        className="h-5 w-5 rounded-full bg-gray-200"
                         value={Number(
                           (
                             (selectedApplication.totalPaid /
@@ -481,7 +481,7 @@ export const ApplicationDetails = ({
               {selectedApplication?.user?.publicKey && (
                 <div className="flex items-center justify-start gap-2 whitespace-nowrap text-sm">
                   <MdOutlineAccountBalanceWallet color="#94A3B8" />
-                  <p className="text-slate-400">
+                  <p className="flex items-center text-slate-400">
                     {truncatePublicKey(selectedApplication?.user?.publicKey, 3)}
                     <Tooltip
                       content="Copy Wallet ID"

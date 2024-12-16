@@ -425,43 +425,39 @@ export default function BountySubmissions({ slug }: Props) {
           <Tabs
             defaultValue={searchParams.has('scout') ? 'scout' : 'submissions'}
           >
-            <TabsList className="gap-4 border-b font-medium text-slate-400">
-              <TabsTrigger
-                value="submissions"
-                className="px-1 text-sm data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
-              >
-                Submissions
-              </TabsTrigger>
-
-              {bounty?.isPublished &&
-                !bounty?.isWinnersAnnounced &&
-                !isExpired && (
-                  <Tooltip
-                    content="Scout is an invite-only feature right now"
-                    contentProps={{
-                      className: 'rounded-lg px-4 py-2 font-sans',
-                    }}
-                    disabled={isSponsorVerified === true}
-                  >
-                    <TabsTrigger
-                      value="scout"
-                      className={cn(
-                        'ph-no-capture px-1 text-sm',
-                        'data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple',
-                        !isSponsorVerified &&
-                          'cursor-not-allowed text-slate-400',
-                      )}
-                      disabled={!isSponsorVerified}
-                      onClick={() => posthog.capture('scout tab_scout')}
+            {bounty?.isPublished &&
+              !bounty?.isWinnersAnnounced &&
+              !isExpired && (
+                <>
+                  <TabsList className="gap-4 font-medium text-slate-400">
+                    <TabsTrigger value="submissions">Submissions</TabsTrigger>
+                    <Tooltip
+                      content="Scout is an invite-only feature right now"
+                      contentProps={{
+                        className: 'rounded-lg px-4 py-2 font-sans',
+                      }}
+                      disabled={isSponsorVerified === true}
                     >
-                      Scout Talent
-                      {!!isSponsorVerified && (
-                        <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
-                      )}
-                    </TabsTrigger>
-                  </Tooltip>
-                )}
-            </TabsList>
+                      <TabsTrigger
+                        value="scout"
+                        className={cn(
+                          'ph-no-capture',
+                          !isSponsorVerified &&
+                            'cursor-not-allowed text-slate-400',
+                        )}
+                        disabled={!isSponsorVerified}
+                        onClick={() => posthog.capture('scout tab_scout')}
+                      >
+                        Scout Talent
+                        {!!isSponsorVerified && (
+                          <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
+                        )}
+                      </TabsTrigger>
+                    </Tooltip>
+                  </TabsList>
+                  <div className="h-0.5 w-full bg-slate-200" />
+                </>
+              )}
 
             <TabsContent value="submissions" className="w-full px-0">
               <div className="flex w-full items-start bg-white">

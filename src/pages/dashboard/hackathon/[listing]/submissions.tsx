@@ -184,12 +184,7 @@ export default function BountySubmissions({ listing }: Props) {
             defaultValue={searchParams.has('scout') ? 'scout' : 'submissions'}
           >
             <TabsList className="gap-4 border-b font-medium text-slate-400">
-              <TabsTrigger
-                value="submissions"
-                className="px-1 text-sm data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
-              >
-                Submissions
-              </TabsTrigger>
+              <TabsTrigger value="submissions">Submissions</TabsTrigger>
 
               {bounty?.isPublished &&
                 !bounty?.isWinnersAnnounced &&
@@ -204,8 +199,7 @@ export default function BountySubmissions({ listing }: Props) {
                     <TabsTrigger
                       value="scout"
                       className={cn(
-                        'ph-no-capture px-1 text-sm',
-                        'data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple',
+                        'ph-no-capture',
                         !isSponsorVerified &&
                           'cursor-not-allowed text-slate-400',
                       )}
@@ -220,6 +214,7 @@ export default function BountySubmissions({ listing }: Props) {
                   </Tooltip>
                 )}
             </TabsList>
+            <div className="h-0.5 w-full bg-slate-200" />
 
             <TabsContent value="submissions" className="w-full px-0">
               <div className="flex w-full items-start bg-white">

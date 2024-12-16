@@ -107,77 +107,82 @@ export const RecordPaymentModal = ({
 
   return (
     <Dialog open={recordPaymentIsOpen} onOpenChange={recordPaymentOnClose}>
-      <DialogContent>
+      <DialogContent className="px-0">
         <DialogHeader>
-          <DialogTitle className="text-md font-semibold text-slate-500">
+          <DialogTitle className="text-md px-4 font-semibold text-slate-500">
             Add Grant Payment
           </DialogTitle>
         </DialogHeader>
 
         <Separator />
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="font-medium">
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[0.95rem] text-slate-500">
-                    Amount
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      className="border-slate-300 text-slate-800 focus-visible:ring-brand-purple"
-                      placeholder="Enter amount"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="transactionLink"
-              render={({ field }) => (
-                <FormItem className="mt-4">
-                  <FormLabel className="text-[0.95rem] text-slate-500">
-                    Transaction Link
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      className="mt-[-0.25rem] border-slate-300"
-                      placeholder="Enter transaction link"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button
-              className="my-6 w-full"
-              disabled={addPaymentMutation.isPending}
-              type="submit"
+        <div className="px-4">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="font-medium"
             >
-              {addPaymentMutation.isPending ? (
-                <>
-                  <span className="loading loading-spinner mr-2" />
-                  Adding Payment
-                </>
-              ) : (
-                <>
-                  <Plus className="mr-2 h-[18px] w-[18px]" />
-                  Add Payment
-                </>
-              )}
-            </Button>
-          </form>
-        </Form>
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[0.95rem] text-slate-500">
+                      Amount
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        className="border-slate-300 text-slate-800 focus-visible:ring-brand-purple"
+                        placeholder="Enter amount"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="transactionLink"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <FormLabel className="text-[0.95rem] text-slate-500">
+                      Transaction Link
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="border-slate-300"
+                        placeholder="Enter transaction link"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                className="my-6 w-full"
+                disabled={addPaymentMutation.isPending}
+                type="submit"
+              >
+                {addPaymentMutation.isPending ? (
+                  <>
+                    <span className="loading loading-spinner mr-2" />
+                    Adding Payment
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-2 h-[18px] w-[18px]" />
+                    Add Payment
+                  </>
+                )}
+              </Button>
+            </form>
+          </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );

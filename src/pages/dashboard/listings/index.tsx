@@ -25,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   getColorStyles,
@@ -167,8 +168,15 @@ export default function SponsorListings() {
   return (
     <SponsorLayout>
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
-      <div className="mb-4 flex w-full justify-between">
-        <div className="flex w-full items-center justify-between gap-2">
+      <div className="mb-4 flex w-full items-center justify-between">
+        <div className="flex items-center whitespace-nowrap">
+          <p className="text-lg font-semibold text-slate-800">My Listings </p>
+          <Separator className="mx-3 h-6 w-px bg-slate-300" />
+          <p className="text-slate-500">
+            The one place to manage your listings
+          </p>
+        </div>
+        <div className="flex w-full items-center justify-end gap-2">
           <div>
             <span className="mr-2 text-sm text-slate-500">
               Filter by status
@@ -245,42 +253,15 @@ export default function SponsorListings() {
         <>
           <Tabs onValueChange={handleTabChange} defaultValue="all">
             <TabsList>
-              <TabsTrigger
-                value="all"
-                className="text-sm font-medium text-slate-400 data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
-              >
-                All
-              </TabsTrigger>
-              <TabsTrigger
-                value="bounties"
-                className="text-sm font-medium text-slate-400 data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
-              >
-                Bounties
-              </TabsTrigger>
-              <TabsTrigger
-                value="projects"
-                className="text-sm font-medium text-slate-400 data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
-              >
-                Projects
-              </TabsTrigger>
-              {hasGrants && (
-                <TabsTrigger
-                  value="grants"
-                  className="text-sm font-medium text-slate-400 data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
-                >
-                  Grants
-                </TabsTrigger>
-              )}
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="bounties">Bounties</TabsTrigger>
+              <TabsTrigger value="projects">Projects</TabsTrigger>
+              {hasGrants && <TabsTrigger value="grants">Grants</TabsTrigger>}
               {hasHackathons && (
-                <TabsTrigger
-                  value="hackathons"
-                  className="text-sm font-medium text-slate-400 data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
-                >
-                  Hackathons
-                </TabsTrigger>
+                <TabsTrigger value="hackathons">Hackathons</TabsTrigger>
               )}
             </TabsList>
-
+            <div className="h-0.5 w-full bg-slate-200" />
             <TabsContent value="all" className="px-0">
               <MemoizedListingTable listings={paginatedListings} />
             </TabsContent>

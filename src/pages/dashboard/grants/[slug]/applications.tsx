@@ -355,21 +355,11 @@ function GrantApplications({ slug }: Props) {
         <>
           <ApplicationHeader grant={grant} />
           <Tabs defaultValue="applications">
-            <TabsList className="gap-4 border-b font-medium text-slate-400">
-              <TabsTrigger
-                value="applications"
-                className="px-1 text-sm font-medium data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
-              >
-                Applications
-              </TabsTrigger>
-              <TabsTrigger
-                value="payments"
-                className="px-1 text-sm font-medium data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple"
-              >
-                Payments History
-              </TabsTrigger>
+            <TabsList className="gap-4 font-medium text-slate-400">
+              <TabsTrigger value="applications">Applications</TabsTrigger>
+              <TabsTrigger value="payments">Payments History</TabsTrigger>
             </TabsList>
-
+            <div className="h-0.5 w-full bg-slate-200" />
             <TabsContent value="applications" className="w-full px-0">
               <div className="flex w-full items-start bg-white">
                 <div className="grid min-h-[600px] w-full grid-cols-[23rem_1fr] bg-white">

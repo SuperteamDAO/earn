@@ -124,6 +124,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
           ref={ref}
           isFetchingNextPage={isFetchingNextPage}
           isLoading={isLoading}
+          type="activity"
         >
           <div className="my-32">
             <ExternalImage

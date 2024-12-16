@@ -472,6 +472,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 ref={ref}
                 isFetchingNextPage={isFetchingNextPage}
                 isLoading={isLoading}
+                type="profile"
               >
                 <ExternalImage
                   className="mx-auto mt-32 w-32"
