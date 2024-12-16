@@ -3,11 +3,11 @@ import axios from 'axios';
 import { useAtom } from 'jotai';
 import { toast } from 'sonner';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import { type Listing, type Rewards } from '@/features/listings';
 import { type SubmissionWithUser } from '@/interface/submission';
 
-import { selectedSubmissionAtom } from '..';
+import { selectedSubmissionAtom } from '../atoms';
 
 export const useToggleWinner = (
   bounty: Listing | undefined,

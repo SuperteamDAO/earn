@@ -1,37 +1,27 @@
-import {
-  CheckIcon,
-  ChevronLeftIcon,
-  CopyIcon,
-  DownloadIcon,
-  ExternalLinkIcon,
-} from '@chakra-ui/icons';
-import {
-  Box,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  Button,
-  Divider,
-  Flex,
-  Image,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Link,
-  Tag,
-  Text,
-} from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import NextLink from 'next/link';
+import { Check, ChevronLeft, Copy, Download, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 import router from 'next/router';
 import React from 'react';
 import { toast } from 'sonner';
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { tokenList } from '@/constants/tokenList';
 import { type Grant } from '@/features/grants';
 import { getColorStyles, getListingStatus } from '@/features/listings';
 import { useClipboard } from '@/hooks/use-clipboard';
+import { cn } from '@/utils';
 import { getURL } from '@/utils/validUrl';
 
 import { SponsorPrize } from '../SponsorPrize';
@@ -76,98 +66,96 @@ export const ApplicationHeader = ({ grant }: Props) => {
 
   return (
     <>
-      <Box mb={2}>
-        <Breadcrumb color="brand.slate.400">
-          <BreadcrumbItem>
-            <Link as={NextLink} href={'/dashboard/listings'} passHref>
-              <BreadcrumbLink color="brand.slate.400">
-                <Flex align="center">
-                  <ChevronLeftIcon mr={1} w={6} h={6} />
+      <div className="mb-2">
+        <Breadcrumb className="text-slate-400">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link
+                  href="/dashboard/listings"
+                  className="flex items-center hover:text-slate-500"
+                >
+                  <ChevronLeft className="mr-1 h-6 w-6" />
                   All Listings
-                </Flex>
+                </Link>
               </BreadcrumbLink>
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Text color="brand.slate.400"> {grant?.title}</Text>
-          </BreadcrumbItem>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{grant?.title}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
         </Breadcrumb>
-      </Box>
-      <Flex align="center" justify={'space-between'} mb={4}>
-        <Flex align="center" gap={2}>
-          <Image h={6} alt="" src={`/assets/grant-icon.svg`} />
-          <Text color="brand.slate.800" fontSize="xl" fontWeight="700">
-            {grant?.title}
-          </Text>
-        </Flex>
-        <Flex align="center" gap={2}>
+      </div>
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <img className="h-6" alt="" src={`/assets/grant-icon.svg`} />
+          <p className="text-slate text-xl font-bold">{grant?.title}</p>
+        </div>
+        <div className="flex items-center gap-2">
           <Button
-            color="brand.slate.400"
-            _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
-            isLoading={exportMutation.isPending}
-            leftIcon={<DownloadIcon />}
-            loadingText={'Exporting...'}
+            className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
+            disabled={exportMutation.isPending}
             onClick={handleExport}
-            variant={'ghost'}
+            variant="ghost"
           >
-            Export CSV
+            {exportMutation.isPending ? (
+              <>
+                <span className="loading loading-spinner" />
+                Exporting...
+              </>
+            ) : (
+              <>
+                <Download className="mr-2 h-4 w-4" />
+                Export CSV
+              </>
+            )}
           </Button>
+
           <Button
-            color={'brand.slate.400'}
-            _hover={{ bg: '#E0E7FF', color: '#6366F1' }}
-            leftIcon={<ExternalLinkIcon />}
+            className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
             onClick={() =>
               window.open(`${router.basePath}/${listingPath}`, '_blank')
             }
-            variant={'ghost'}
+            variant="ghost"
           >
+            <ExternalLink className="mr-2 h-4 w-4" />
             View Grant
           </Button>
-        </Flex>
-      </Flex>
-      <Divider />
-      <Flex align="center" gap={12} mt={4} mb={8}>
+        </div>
+      </div>
+      <Separator />
+      <div className="mb-8 mt-4 flex items-center gap-12">
         <div>
-          <Text color="brand.slate.500">Applications</Text>
-          <Text mt={3} color="brand.slate.600" fontWeight={600}>
+          <p className="text-slate-500">Applications</p>
+          <p className="mt-3 font-semibold text-slate-600">
             {grant?.totalApplications}
-          </Text>
+          </p>
         </div>
         <div>
-          <Text color="brand.slate.500">Deadline</Text>
-          <Text
-            mt={3}
-            color="brand.slate.600"
-            fontWeight={600}
-            whiteSpace={'nowrap'}
-          >
+          <p className="text-slate-500">Deadline</p>
+          <p className="mt-3 whitespace-nowrap font-semibold text-slate-600">
             Rolling
-          </Text>
+          </p>
         </div>
         <div>
-          <Text color="brand.slate.500">Status</Text>
-          <Tag
-            mt={3}
-            px={3}
-            color={getColorStyles(grantStatus).color}
-            fontSize={'13px'}
-            fontWeight={500}
-            bg={getColorStyles(grantStatus).bgColor}
-            borderRadius={'full'}
-            whiteSpace={'nowrap'}
-            variant="solid"
+          <p className="text-slate-500">Status</p>
+          <p
+            className={cn(
+              'mt-3 inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium',
+              getColorStyles(grantStatus).color,
+              getColorStyles(grantStatus).bgColor,
+            )}
           >
             {grantStatus}
-          </Tag>
+          </p>
         </div>
         <div>
-          <Text color="brand.slate.500">Grant Size</Text>
-          <Flex align={'center'} justify={'start'} gap={1} mt={3}>
-            <Image
-              w={5}
-              h={5}
+          <p className="text-slate-500">Grant Size</p>
+          <div className="mt-3 flex items-center justify-start gap-1">
+            <img
+              className="h-5 w-5 rounded-full"
               alt={'green dollar'}
-              rounded={'full'}
               src={
                 tokenList.filter((e) => e?.tokenSymbol === grant?.token)[0]
                   ?.icon ?? '/assets/dollar.svg'
@@ -177,46 +165,32 @@ export const ApplicationHeader = ({ grant }: Props) => {
               compensationType={'range'}
               maxRewardAsk={grant?.maxReward}
               minRewardAsk={grant?.minReward ?? 0}
-              textStyle={{
-                fontWeight: 600,
-                color: 'brand.slate.700',
-              }}
+              className="font-semibold text-slate-700"
             />
-            <Text color="brand.slate.400" fontWeight={600}>
-              {grant?.token}
-            </Text>
-          </Flex>
+            <p className="font-semibold text-slate-400">{grant?.token}</p>
+          </div>
         </div>
         <div>
-          <Text color="brand.slate.500">Share</Text>
-          <InputGroup mt={1} mb={-2}>
+          <p className="text-slate-500">Share</p>
+          <div className="relative -mb-2 mt-1">
             <Input
-              overflow="hidden"
-              w={80}
-              color="brand.slate.500"
-              borderColor="brand.slate.100"
-              whiteSpace="nowrap"
-              textOverflow="ellipsis"
-              focusBorderColor="#CFD2D7"
-              isReadOnly
+              className="w-80 overflow-hidden text-ellipsis whitespace-nowrap border-slate-100 text-slate-500 focus-visible:ring-[#CFD2D7] focus-visible:ring-offset-0"
+              readOnly
               value={`${getURL()}${listingPath}`}
             />
-            <InputRightElement h="100%" mr="1rem">
+            <div className="absolute inset-y-0 right-4 flex items-center">
               {hasCopied ? (
-                <CheckIcon h="1rem" w="1rem" color="brand.slate.400" />
+                <Check className="h-4 w-4 text-slate-400" />
               ) : (
-                <CopyIcon
+                <Copy
+                  className="h-5 w-5 cursor-pointer text-slate-400"
                   onClick={onCopy}
-                  cursor="pointer"
-                  h="1.3rem"
-                  w="1.3rem"
-                  color="brand.slate.400"
                 />
               )}
-            </InputRightElement>
-          </InputGroup>
+            </div>
+          </div>
         </div>
-      </Flex>
+      </div>
     </>
   );
 };

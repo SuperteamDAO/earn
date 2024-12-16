@@ -1,6 +1,6 @@
-import { Box, HStack, Text, VStack } from '@chakra-ui/react';
+import { cn } from '@/utils';
 
-import { fontSize, maxW, padding } from '../utils';
+import { maxW } from '../utils';
 import { ListingCard, type ListingCardProps } from './ListingCard';
 
 const base = '/landingsponsor';
@@ -58,38 +58,35 @@ const works: ListingCardProps[] = [
 
 export function ListingWork() {
   return (
-    <VStack pos="relative" w={{ xl: '100%' }} mt="8rem" mb="4rem" pt="4rem">
-      <Box
-        pos="absolute"
-        top={0}
-        left={0}
-        w={{ base: 'full' }}
-        h={{ base: '27.8rem', md: '25.8rem' }}
-        bg="brand.slate.100"
+    <div className="relative mx-auto mb-16 mt-32 w-full pt-16">
+      <div
+        className={cn(
+          'absolute left-0 top-0 w-full bg-slate-100',
+          'h-[27.8rem] md:h-[25.8rem]',
+        )}
       />
-      <VStack
-        pos="relative"
-        align={{ base: 'start' }}
-        gap={8}
-        w="100vw"
-        maxW={maxW}
-        px={padding}
+      <div
+        className={cn(
+          'relative mx-auto w-screen items-start gap-8',
+          maxW,
+          'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
+          'flex flex-col',
+        )}
       >
-        <Text
-          pos="relative"
-          w="full"
-          color="brand.slate.800"
-          fontSize={fontSize}
-          fontWeight={600}
-          textAlign="center"
+        <h2
+          className={cn(
+            'relative w-full text-center font-semibold text-slate-800',
+            'text-[2rem] md:text-[3.5rem]',
+          )}
         >
           Get almost any kind of work done
-        </Text>
-        <Box className="banner-wrapper" maxW={{ base: '100%' }}>
+        </h2>
+
+        <div className="banner-wrapper w-full">
           <Banner />
-        </Box>
-      </VStack>
-    </VStack>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -98,20 +95,17 @@ function Banner() {
     <div className="banner-wrapper">
       <div className="wrapper">
         {[...new Array(4)].map((_, i) => (
-          <HStack className="content" key={i}>
+          <div className="content flex gap-2" key={i}>
             {works.map((value) => (
-              <VStack key={`${value.title}-${value.type}`} align="start">
-                <Text
-                  fontSize={'1.25rem'}
-                  fontWeight={600}
-                  textTransform={'capitalize'}
-                >
-                  {value.type}
-                </Text>
+              <div
+                className="flex flex-col items-start"
+                key={`${value.title}-${value.type}`}
+              >
+                <p className="text-lg font-semibold uppercase">{value.type}</p>
                 <ListingCard key={value.title} {...value} />
-              </VStack>
+              </div>
             ))}
-          </HStack>
+          </div>
         ))}
       </div>
     </div>

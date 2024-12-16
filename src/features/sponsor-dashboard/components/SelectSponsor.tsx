@@ -1,4 +1,3 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import { atom, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
@@ -90,24 +89,20 @@ export function SelectSponsor({
 
     return (
       <components.SingleValue {...props}>
-        <Flex align="center" py={1}>
+        <div className="flex items-center py-1">
           <EarnAvatar
             id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
             borderRadius="rounded-sm"
             size={'24px'}
           />
-          <Box display={{ base: 'none', md: 'block' }} ml={2}>
+          <div className="ml-2 hidden md:block">
             <div className="flex">
-              <Text color="brand.slate.800" fontSize="sm">
-                {data?.sponsor?.name}
-              </Text>
+              <p className="text-sm text-slate-800">{data?.sponsor?.name}</p>
             </div>
-            <Text color="brand.slate.400" fontSize="xs">
-              {data?.sponsor?.role}
-            </Text>
-          </Box>
-        </Flex>
+            <p className="text-xs text-slate-400">{data?.sponsor?.role}</p>
+          </div>
+        </div>
       </components.SingleValue>
     );
   };
@@ -116,26 +111,22 @@ export function SelectSponsor({
     const { data } = props;
     return (
       <components.Option {...props}>
-        <Flex align="center">
+        <div className="flex items-center">
           <EarnAvatar
             id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
             borderRadius="rounded-sm"
           />
-          <Box display={{ base: 'none', md: 'block' }} ml={2}>
-            <Flex align="center" wrap={'wrap'}>
-              <Text color="brand.slate.800" fontSize="sm">
-                {data?.sponsor?.name}
-              </Text>
-            </Flex>
-            <Flex align={'center'} gap={1}>
-              <Text color="brand.slate.400" fontSize="xs">
-                {data?.sponsor?.role}
-              </Text>
+          <div className="ml-2 hidden md:block">
+            <div className="flex flex-wrap items-center">
+              <p className="text-sm text-slate-800">{data?.sponsor?.name}</p>
+            </div>
+            <div className="flex items-center gap-1">
+              <p className="text-xs text-slate-400">{data?.sponsor?.role}</p>
               {data?.sponsor?.isVerified && <VerifiedBadge />}
-            </Flex>
-          </Box>
-        </Flex>
+            </div>
+          </div>
+        </div>
       </components.Option>
     );
   };

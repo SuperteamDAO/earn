@@ -42,9 +42,11 @@ const FormField = <
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
-  const { getFieldState, formState } = useFormContext();
-
-  const fieldState = getFieldState(fieldContext.name, formState);
+  const formContext = useFormContext(); // support null form context
+  const fieldState = formContext?.getFieldState?.(
+    fieldContext.name,
+    formContext?.formState,
+  );
 
   if (!fieldContext) {
     throw new Error('useFormField should be used within <FormField>');
@@ -103,10 +105,9 @@ const FormLabel = React.forwardRef<
     <Label
       ref={ref}
       className={cn(
-        isRequired &&
-          'flex after:ml-0.5 after:text-red-500 after:content-["*"]',
+        isRequired && 'after:ml-0.5 after:text-red-500 after:content-["*"]',
         error && 'text-destructive',
-        'text-[0.9rem] text-slate-600',
+        'flex text-[0.9rem] text-slate-600',
         className,
       )}
       htmlFor={formItemId}

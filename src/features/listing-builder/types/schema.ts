@@ -7,19 +7,19 @@ import {
 } from '@prisma/client';
 import { z } from 'zod';
 
+import { tokenList } from '@/constants/tokenList';
+import { type Listing } from '@/features/listings';
+import { emailRegex, telegramRegex, twitterRegex } from '@/features/social';
+import { skillsArraySchema } from '@/interface/skills';
+import { dayjs } from '@/utils/dayjs';
+
+import { DEADLINE_FORMAT } from '../components/Form';
 import {
   BONUS_REWARD_POSITION,
   MAX_BONUS_SPOTS,
   MAX_PODIUMS,
   MAX_REWARD,
-} from '@/constants';
-import { tokenList } from '@/constants/tokenList';
-import { type Listing } from '@/features/listings';
-import { emailRegex, telegramRegex, twitterRegex } from '@/features/talent';
-import { skillsArraySchema } from '@/interface/skills';
-import { dayjs } from '@/utils/dayjs';
-
-import { DEADLINE_FORMAT } from '../components/Form';
+} from '../constants';
 import { fetchSlugCheck } from '../queries/slug-check';
 import { type ListingFormData } from '.';
 
@@ -156,7 +156,6 @@ export const createListingFormSchema = ({
         .nativeEnum(BountyType)
         .default('bounty')
         .refine((data) => {
-          console.log('hackathon at dead check', hackathon);
           if (data === 'hackathon') {
             return !!hackathon;
           }
@@ -258,8 +257,6 @@ export const createListingRefinements = async (
   ctx: z.RefinementCtx,
   hackathon?: Hackathon,
 ) => {
-  console.log('zod validating');
-
   if (data.compensationType === 'fixed') {
     if (!data.rewardAmount) {
       ctx.addIssue({
@@ -345,9 +342,6 @@ export const createListingRefinements = async (
   }
 
   if (data.type === 'hackathon' && data.deadline) {
-    console.log('hackathon');
-    console.log('hackathon deadline', hackathon?.deadline);
-    console.log('hackathon data deadline', data.deadline);
     if (
       !hackathon?.deadline ||
       data.deadline !== new Date(hackathon?.deadline).toISOString()
@@ -376,7 +370,7 @@ export const backendListingRefinements = async (
       });
       return true;
     } catch (error) {
-      console.log('fetchSlugCheck error', error);
+      console.log(error);
       return false;
     }
   };

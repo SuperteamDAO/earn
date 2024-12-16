@@ -55,7 +55,12 @@ export function DescriptionUI({ description }: Props) {
   }
 
   return (
-    <div className="w-full overflow-visible border-b border-slate-100 md:border-0">
+    <div
+      className={cn(
+        'w-full overflow-visible border-b border-slate-100 md:border-0',
+        showMore && 'pb-4',
+      )}
+    >
       <div
         ref={descriptionRef}
         className="relative w-full overflow-visible rounded-xl bg-white"
@@ -79,7 +84,10 @@ export function DescriptionUI({ description }: Props) {
         </div>
         {showCollapser && (
           <Button
-            className="absolute -bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-md border-slate-300 bg-white font-medium text-slate-500"
+            className={cn(
+              'absolute -bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-md border-slate-300 bg-white font-medium text-slate-500',
+              showMore && '-bottom-8',
+            )}
             onClick={() => setShowMore(!showMore)}
             size="sm"
             variant="outline"

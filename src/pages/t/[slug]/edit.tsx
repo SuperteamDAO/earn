@@ -1,107 +1,97 @@
-import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Center,
-  Checkbox,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Text,
-  Textarea,
-} from '@chakra-ui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
+import { Edit, Info, Loader2, Plus, Trash } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import ReactSelect from 'react-select';
-import makeAnimated from 'react-select/animated';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Select } from 'react-day-picker';
+import { type Control, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { InputField } from '@/components/Form/InputField';
-import { SelectBox } from '@/components/Form/SelectBox';
 import { ImagePicker } from '@/components/shared/ImagePicker';
-import { SkillSelect } from '@/components/shared/SkillSelect';
+import { SkillsSelect } from '@/components/shared/SkillsSelectNew';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
+import { Input } from '@/components/ui/input';
+import { MultiSelect, type Option } from '@/components/ui/multi-select';
+import {
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Tooltip } from '@/components/ui/tooltip';
+import { CountryList } from '@/constants/countryList';
+import { extractSocialUsername, SocialInputAll } from '@/features/social';
+import {
+  AddProject,
+  CommunityList,
   IndustryList,
-  type MultiSelectOptions,
+  type ProfileFormData,
+  profileSchema,
+  useUsernameValidation,
   web3Exp,
   workExp,
   workType,
-} from '@/constants';
-import { CommunityList } from '@/constants/communityList';
-import { CountryList } from '@/constants/countryList';
-import {
-  AddProject,
-  SocialInput,
-  useUsernameValidation,
 } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
-import { skillSubSkillMap, type SubSkillsType } from '@/interface/skills';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { uploadToCloudinary } from '@/utils/upload';
-import { validateSolAddressUI } from '@/utils/validateSolAddress';
 
-type FormData = {
-  username: string;
-  photo?: string;
-  firstName?: string;
-  lastName?: string;
-  interests?: { value: string }[];
-  bio?: string;
-  twitter?: string;
-  discord?: string;
-  github?: string;
-  linkedin?: string;
-  website?: string;
-  telegram?: string;
-  community?: { label: string; value: string }[];
-  experience?: string;
-  location?: string;
-  cryptoExperience?: string;
-  workPrefernce?: string;
-  currentEmployer?: string;
-  skills?: any;
-  private: boolean;
-  publicKey?: string;
-};
-
-const parseSkillsAndSubskills = (skillsObject: any) => {
-  const skills: MultiSelectOptions[] = [];
-  const subSkills: MultiSelectOptions[] = [];
-
-  skillsObject.forEach((skillItem: { skills: string; subskills: string[] }) => {
-    skills.push({ value: skillItem.skills, label: skillItem.skills });
-    skillItem.subskills.forEach((subSkill) => {
-      subSkills.push({ value: subSkill, label: subSkill });
-    });
-  });
-
-  return { skills, subSkills };
-};
+interface SelectBoxProps {
+  label: string;
+  options: string[] | readonly string[];
+  name: string;
+  placeholder: string;
+  control: Control<any>;
+  required?: boolean;
+  className?: string;
+}
 
 export default function EditProfilePage({ slug }: { slug: string }) {
   const { user, refetchUser } = useUser();
   const { data: session, status } = useSession();
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<FormData>();
+  const form = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema),
+  });
+  const { control, handleSubmit, watch, setError, clearErrors, trigger } = form;
 
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  const [isPhotoLoading, setIsPhotoLoading] = useState(true);
+
+  const interestDropdown = useMemo<Option[]>(
+    () =>
+      IndustryList.map((i) => ({
+        value: i,
+        label: i,
+      })),
+    [IndustryList],
+  );
+  const communityDropdown = useMemo<Option[]>(
+    () =>
+      CommunityList.map((i) => ({
+        value: i,
+        label: i,
+      })),
+    [CommunityList],
+  );
 
   const router = useRouter();
   const posthog = usePostHog();
@@ -111,89 +101,56 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const editableFields = Object.keys(user || {}) as (keyof FormData)[];
-
-  const animatedComponents = makeAnimated();
-  const [DropDownValues, setDropDownValues] = useState<{
-    interests: { label: string; value: string }[];
-    community: { label: string; value: string }[];
-  }>({
-    interests: user?.interests ? JSON.parse(user?.interests) : [],
-    community: user?.community ? JSON.parse(user.community) : [],
-  });
-
-  const [skills, setSkills] = useState<MultiSelectOptions[]>([]);
-  const [subSkills, setSubSkills] = useState<MultiSelectOptions[]>([]);
-
-  const privateValue = watch('private', user?.private);
-
   const { setUsername, isInvalid, validationErrorMessage } =
     useUsernameValidation();
+  const watchedUsername = watch('username');
+  useEffect(() => {
+    if (watchedUsername) setUsername(watchedUsername);
+  }, [watchedUsername]);
+
+  useEffect(() => {
+    if (isInvalid && !!validationErrorMessage) {
+      setError('username', {
+        message: validationErrorMessage,
+      });
+    } else clearErrors('username');
+  }, [validationErrorMessage, isInvalid]);
 
   useEffect(() => {
     if (user) {
-      editableFields.forEach((field) => {
-        setValue(field, user[field]);
+      form.reset({
+        username: user.username || undefined,
+        bio: user.bio || undefined,
+        photo: user.photo || undefined,
+        location: (user?.location as any) || undefined,
+        skills: (user.skills as any) || undefined,
+        private: user.private || undefined,
+        firstName: user.firstName || undefined,
+        lastName: user.lastName || undefined,
+        publicKey: user.publicKey || undefined,
+        discord: user.discord || undefined,
+        github: user.github
+          ? extractSocialUsername('github', user.github) || undefined
+          : undefined,
+        twitter: user.twitter
+          ? extractSocialUsername('twitter', user.twitter) || undefined
+          : undefined,
+        linkedin: user.linkedin
+          ? extractSocialUsername('linkedin', user.linkedin) || undefined
+          : undefined,
+        telegram: user.telegram
+          ? extractSocialUsername('telegram', user.telegram) || undefined
+          : undefined,
+        website: user.website || undefined,
+        workPrefernce: (user.workPrefernce as any) || undefined,
+        experience: (user.experience as any) || undefined,
+        cryptoExperience: (user.cryptoExperience as any) || undefined,
+        community: user.community ? JSON.parse(user.community) : [],
+        interests: user.interests ? JSON.parse(user.interests) : [],
+        currentEmployer: user.currentEmployer || undefined,
       });
-
-      if (user.interests) {
-        const interestsArray: string[] = JSON.parse(user.interests);
-        const interestSelectValues = interestsArray.map((item) => ({
-          label: item,
-          value: item,
-        }));
-        setValue('interests', interestSelectValues);
-        setDropDownValues((prev) => ({
-          ...prev,
-          interests: interestSelectValues,
-        }));
-      }
-
-      if (user?.community) {
-        const communityArray: string[] = JSON.parse(user.community);
-        const communitySelectValues = communityArray.map((item) => ({
-          label: item,
-          value: item,
-        }));
-        setValue('community', communitySelectValues);
-        setDropDownValues((prev) => ({
-          ...prev,
-          community: communitySelectValues,
-        }));
-      }
-
-      if (user.experience) {
-        setValue('experience', user.experience);
-      }
-
-      if (user.location) {
-        setValue('location', user.location);
-      }
-
-      if (user.private) {
-        setValue('private', user.private);
-      }
-
-      if (user?.skills && Array.isArray(user.skills)) {
-        const { skills: parsedSkills, subSkills: parsedSubSkills } =
-          parseSkillsAndSubskills(user.skills);
-        setSkills(parsedSkills);
-        setSubSkills(parsedSubSkills);
-      }
-
-      if (user?.photo) {
-        setValue('photo', user.photo);
-        setPhotoUrl(user.photo);
-        setIsPhotoLoading(false);
-      } else {
-        setIsPhotoLoading(false);
-      }
-
-      if (user.publicKey) {
-        setValue('publicKey', user.publicKey);
-      }
     }
-  }, [user, setValue]);
+  }, [user]);
 
   useEffect(() => {
     const fetchPoW = async () => {
@@ -214,9 +171,15 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     }
   }, [user?.id]);
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: ProfileFormData) => {
     if (isInvalid) {
-      return;
+      if (!!validationErrorMessage) {
+        setError('username', {
+          message: validationErrorMessage,
+        });
+      } else clearErrors('username');
+      form.setFocus('username');
+      return false;
     }
     const socialFields = [
       'twitter',
@@ -226,7 +189,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       'telegram',
     ];
     const filledSocials = socialFields.filter(
-      (field) => data[field as keyof FormData],
+      (field) => data[field as keyof ProfileFormData],
     );
 
     if (filledSocials.length === 0) {
@@ -239,46 +202,16 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     setIsLoading(true);
     posthog.capture('confirm_edit profile');
     try {
-      const interestsArray = (data.interests || []).map((item) => item.value);
-      const interestsJSON = JSON.stringify(interestsArray);
-
-      const communityArray = (data.community || []).map((item) => item.value);
-      const communityJSON = JSON.stringify(communityArray);
-
-      const combinedSkills = skills.map((mainskill) => {
-        const main =
-          skillSubSkillMap[mainskill.value as keyof typeof skillSubSkillMap];
-        const sub: SubSkillsType[] = [];
-
-        subSkills.forEach((subskill) => {
-          if (
-            main &&
-            main.some((subSkillObj) => subSkillObj.value === subskill.value)
-          ) {
-            sub.push(subskill.value as SubSkillsType);
-          }
-        });
-
-        return {
-          skills: mainskill.value,
-          subskills: sub ?? [],
-        };
-      });
-
-      const updatedData = {
-        ...data,
-        interests: interestsJSON,
-        community: communityJSON,
-        skills: combinedSkills,
-      };
-
-      const finalUpdatedData = Object.keys(updatedData).reduce((acc, key) => {
-        const fieldKey = key as keyof FormData;
-        if (user && updatedData[fieldKey] !== user[fieldKey]) {
-          acc[fieldKey] = updatedData[fieldKey];
+      const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
+        const fieldKey = key as keyof ProfileFormData;
+        if (
+          user &&
+          JSON.stringify(data[fieldKey]) !== JSON.stringify(user[fieldKey])
+        ) {
+          acc[fieldKey] = data[fieldKey] as any;
         }
         return acc;
-      }, {} as Partial<FormData>);
+      }, {} as Partial<ProfileFormData>);
 
       toast.promise(
         async () => {
@@ -302,8 +235,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           error: 'Failed to update profile.',
         },
       );
+      return true;
     } catch (error: any) {
       toast.error('Failed to update profile.');
+      return false;
     }
   };
 
@@ -317,388 +252,393 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     router.push('/');
   }
 
-  return (
-    <>
-      <Default
-        meta={
-          <Meta
-            title="Superteam Earn"
-            description="Every Solana opportunity in one place!"
-          />
-        }
+  const SelectBox = ({
+    label,
+    options,
+    name,
+    placeholder,
+    control,
+    required = false,
+    className,
+  }: SelectBoxProps) => {
+    return (
+      <FormFieldWrapper
+        name={name}
+        control={control}
+        className={cn('mb-5 w-full', className)}
+        label={label}
+        isRequired={required}
       >
-        <Box bg="#fff">
-          <Box maxW="600px" mx="auto" p={{ base: 3, md: 5 }}>
-            <Heading mt={3} mb={5}>
-              Edit Profile
-            </Heading>
+        <Select>
+          <SelectTrigger>
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent>
+            {options.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </FormFieldWrapper>
+    );
+  };
+
+  return (
+    <Default
+      meta={
+        <Meta
+          title="Superteam Earn"
+          description="Every Solana opportunity in one place!"
+        />
+      }
+    >
+      <div className="bg-white">
+        <div className="mx-auto max-w-[600px] p-3 md:p-5">
+          <Form {...form}>
+            <h1 className="mb-5 mt-3 text-4xl font-bold">Edit Profile</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <Text
-                mt={12}
-                mb={5}
-                color={'brand.slate.600'}
-                fontSize="lg"
-                fontWeight={600}
-                letterSpacing={0.4}
-              >
+              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
                 PERSONAL INFO
-              </Text>
-              <FormControl>
-                <Box mb={4}>
-                  <FormLabel
-                    mb={'1'}
-                    pb={'0'}
-                    color={'brand.slate.500'}
-                    requiredIndicator={<></>}
-                  >
-                    Profile Picture
-                  </FormLabel>
-                  {isPhotoLoading ? (
-                    <></>
-                  ) : photoUrl ? (
-                    <ImagePicker
-                      defaultValue={{ url: photoUrl }}
-                      onChange={async (e) => {
-                        setUploading(true);
-                        const a = await uploadToCloudinary(e, 'earn-pfp');
-                        setValue('photo', a);
-                        setUploading(false);
-                      }}
-                      onReset={() => {
-                        setValue('photo', '');
-                        setUploading(false);
-                      }}
-                    />
-                  ) : (
-                    <ImagePicker
-                      onChange={async (e) => {
-                        setUploading(true);
-                        const a = await uploadToCloudinary(e, 'earn-pfp');
-                        setValue('photo', a);
-                        setUploading(false);
-                      }}
-                      onReset={() => {
-                        setValue('photo', '');
-                        setUploading(false);
-                      }}
-                    />
-                  )}
-                </Box>
-              </FormControl>
-              <InputField
+              </p>
+              <FormField
+                name="photo"
+                control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-4">
+                    <FormLabel className="mb-1 pb-0">Profile Picture</FormLabel>
+                    <FormControl>
+                      <ImagePicker
+                        defaultValue={
+                          field.value ? { url: field.value } : undefined
+                        }
+                        onChange={async (e) => {
+                          setUploading(true);
+                          const a = await uploadToCloudinary(e, 'earn-pfp');
+                          field.onChange(a);
+                          setUploading(false);
+                        }}
+                        onReset={() => {
+                          field.onChange('');
+                          setUploading(false);
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormFieldWrapper
                 label="Username"
-                placeholder="Username"
                 name="username"
-                register={register}
+                control={control}
                 isRequired
-                onChange={(e) => setUsername(e.target.value)}
-                isInvalid={isInvalid}
-                validationErrorMessage={validationErrorMessage}
-                errors={errors}
-              />
+                className="mb-5"
+              >
+                <Input maxLength={40} placeholder="Username" />
+              </FormFieldWrapper>
 
-              <InputField
+              <FormFieldWrapper
                 label="First Name"
-                placeholder="First Name"
                 name="firstName"
-                register={register}
+                control={control}
                 isRequired
-                errors={errors}
-              />
+                className="mb-5"
+              >
+                <Input placeholder="First Name" />
+              </FormFieldWrapper>
 
-              <InputField
+              <FormFieldWrapper
+                className="mb-5"
                 label="Last Name"
-                placeholder="Last Name"
                 name="lastName"
-                register={register}
+                control={control}
                 isRequired
-                errors={errors}
+              >
+                <Input placeholder="Last Name" />
+              </FormFieldWrapper>
+
+              <FormField
+                control={control}
+                name={'bio'}
+                render={({ field }) => (
+                  <FormItem className={cn('mb-5 flex flex-col gap-2')}>
+                    <div>
+                      <FormLabel>Your One-Line Bio</FormLabel>
+                    </div>
+                    <div>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          maxLength={180}
+                          placeholder="One line bio"
+                        />
+                      </FormControl>
+                      <p
+                        className={cn(
+                          'mt-1 text-right text-xs',
+                          (watch('bio')?.length || 0) > 160
+                            ? 'text-red-500'
+                            : 'text-slate-400',
+                        )}
+                      >
+                        {180 - (watch('bio')?.length || 0)} characters left
+                      </p>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
               />
 
-              <Box w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>
-                  Your One-Line Bio
-                </FormLabel>
-                <Textarea
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.300',
-                  }}
-                  focusBorderColor="brand.purple"
-                  id={'bio'}
-                  maxLength={180}
-                  placeholder="Here is a sample placeholder"
-                  {...register('bio', { required: false })}
-                />
-                <Text
-                  color={
-                    (watch('bio')?.length || 0) > 160
-                      ? 'red'
-                      : 'brand.slate.400'
-                  }
-                  fontSize={'xs'}
-                  textAlign="right"
-                >
-                  {180 - (watch('bio')?.length || 0)} characters left
-                </Text>
-              </Box>
-              <InputField
+              <FormFieldWrapper
+                className="mb-5"
                 label="Your Solana Wallet Address"
-                placeholder="Wallet Address"
                 name="publicKey"
-                register={register}
+                control={control}
                 isRequired
-                isInvalid={!!errors.publicKey}
-                validate={(value: string) => {
-                  return validateSolAddressUI(value);
-                }}
-                validationErrorMessage={validationErrorMessage}
-                errors={errors}
-              />
-              <Text
-                mt={12}
-                mb={5}
-                color={'brand.slate.600'}
-                fontSize="lg"
-                fontWeight={600}
-                letterSpacing={0.4}
               >
+                <Input placeholder="Wallet Address" />
+              </FormFieldWrapper>
+
+              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
                 SOCIALS
-              </Text>
+              </p>
 
-              <SocialInput register={register} watch={watch} />
+              <SocialInputAll control={control} />
 
-              <Text
-                mt={12}
-                mb={5}
-                color={'brand.slate.600'}
-                fontSize="lg"
-                fontWeight={600}
-                letterSpacing={0.4}
-              >
+              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
                 WORK
-              </Text>
+              </p>
 
-              <FormControl w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>
-                  What areas of Web3 are you most interested in?
-                </FormLabel>
-                <ReactSelect
-                  closeMenuOnSelect={false}
-                  components={animatedComponents}
-                  isMulti
-                  options={IndustryList.map((elm: string) => {
-                    return { label: elm, value: elm };
-                  })}
-                  value={DropDownValues.interests}
-                  onChange={(selectedOptions: any) => {
-                    const selectedInterests = selectedOptions
-                      ? selectedOptions.map(
-                          (elm: { label: string; value: string }) => elm,
-                        )
-                      : [];
-                    setDropDownValues({
-                      ...DropDownValues,
-                      interests: selectedInterests,
-                    });
-                    setValue('interests', selectedInterests);
-                  }}
-                  styles={{
-                    control: (baseStyles) => ({
-                      ...baseStyles,
-                      backgroundColor: 'brand.slate.500',
-                      borderColor: 'brand.slate.300',
-                    }),
-                  }}
-                />
-              </FormControl>
+              <FormField
+                name="interests"
+                control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-5 w-full">
+                    <FormLabel>
+                      What areas of Web3 are you most interested in?
+                    </FormLabel>
+                    <FormControl>
+                      <MultiSelect
+                        className="mt-2"
+                        value={
+                          field.value?.map((elm) => ({
+                            label: elm,
+                            value: elm,
+                          })) || []
+                        }
+                        options={interestDropdown}
+                        onChange={(e) => field.onChange(e.map((r) => r.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <FormControl w={'full'} mb={'1.25rem'}>
-                <FormLabel color={'brand.slate.500'}>
-                  Community Affiliations
-                </FormLabel>
-                <ReactSelect
-                  closeMenuOnSelect={false}
-                  components={animatedComponents}
-                  isMulti
-                  options={CommunityList.map((elm: string) => {
-                    return { label: elm, value: elm };
-                  })}
-                  value={DropDownValues.community}
-                  onChange={(e: any) => {
-                    const selectedCommunities = e
-                      ? e.map((elm: { label: string; value: string }) => elm)
-                      : [];
-                    setDropDownValues({
-                      ...DropDownValues,
-                      community: selectedCommunities,
-                    });
-                    setValue('community', selectedCommunities);
-                  }}
-                  styles={{
-                    control: (baseStyles) => ({
-                      ...baseStyles,
-                      backgroundColor: 'brand.slate.500',
-                      borderColor: 'brand.slate.300',
-                    }),
-                  }}
-                />
-              </FormControl>
+              <FormField
+                name="community"
+                control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-5 w-full">
+                    <FormLabel>Community Affiliations</FormLabel>
+                    <FormControl>
+                      <MultiSelect
+                        className="mt-2"
+                        value={
+                          field.value?.map((elm) => ({
+                            label: elm,
+                            value: elm,
+                          })) || []
+                        }
+                        options={communityDropdown}
+                        onChange={(e) => field.onChange(e.map((r) => r.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <SelectBox
                 label="Work Experience"
-                watchValue={watch('experience')}
                 options={workExp}
-                id="experience"
+                name="experience"
                 placeholder="Pick Your Experience"
-                register={register}
+                control={control}
               />
 
               <SelectBox
                 label="Location"
-                watchValue={watch('location')}
                 options={CountryList}
-                id="location"
+                name="location"
                 placeholder="Select Your Country"
-                register={register}
+                control={control}
               />
 
               <SelectBox
                 label="How familiar are you with Web3?"
-                watchValue={watch('cryptoExperience')}
                 options={web3Exp}
-                id="cryptoExperience"
+                name="cryptoExperience"
                 placeholder="Pick your Experience"
-                register={register}
+                control={control}
               />
 
               <SelectBox
                 label="Work Preference"
-                watchValue={watch('workPrefernce')}
                 options={workType}
-                id="workPrefernce"
+                name="workPrefernce"
                 placeholder="Type of Work"
-                register={register}
+                control={control}
               />
 
-              <InputField
+              <FormFieldWrapper
+                className="mb-5"
                 label="Current Employer"
-                placeholder="Employer"
                 name="currentEmployer"
-                register={register}
-                errors={errors}
-              />
+                control={control}
+              >
+                <Input placeholder="Employer" />
+              </FormFieldWrapper>
 
-              <FormLabel color={'brand.slate.500'}>Proof of Work</FormLabel>
+              <FormLabel>Proof of Work</FormLabel>
               <div>
                 {pow.map((data, idx) => {
                   return (
-                    <Flex
+                    <div
+                      className="mb-1.5 mt-2 flex items-center rounded-md border border-slate-300 px-[1rem] py-[0.5rem] text-slate-500"
                       key={data.id}
-                      align={'center'}
-                      mt="2"
-                      mb={'1.5'}
-                      px={'1rem'}
-                      py={'0.5rem'}
-                      color={'brand.slate.500'}
-                      border={'1px solid gray'}
-                      borderColor="brand.slate.300"
-                      rounded={'md'}
                     >
-                      <Text w={'full'} color={'gray.800'} fontSize={'0.8rem'}>
+                      <p className="w-full text-sm text-gray-800">
                         {data.title}
-                      </Text>
-                      <Center columnGap={'0.8rem'}>
-                        <EditIcon
+                      </p>
+                      <div className="flex items-center gap-3">
+                        <Edit
                           onClick={() => {
                             setSelectedProject(idx);
                             onOpen();
                           }}
-                          cursor={'pointer'}
-                          fontSize={'0.8rem'}
+                          className="h-3.5 w-3.5 cursor-pointer"
                         />
-                        <DeleteIcon
+                        <Trash
                           onClick={() => {
                             setPow((prevPow) =>
                               prevPow.filter((_ele, id) => idx !== id),
                             );
                           }}
-                          cursor={'pointer'}
-                          fontSize={'0.8rem'}
+                          className="h-3.5 w-3.5 cursor-pointer"
                         />
-                      </Center>
-                    </Flex>
+                      </div>
+                    </div>
                   );
                 })}
               </div>
               <Button
-                w={'full'}
-                mb={8}
-                leftIcon={<AddIcon />}
+                className="mb-8 w-full"
                 onClick={() => {
                   onOpen();
                 }}
                 variant="outline"
+                type="button"
               >
+                <Plus className="mr-2 h-4 w-4" />
                 Add Project
               </Button>
 
-              <SkillSelect
-                skills={skills}
-                subSkills={subSkills}
-                setSkills={setSkills}
-                setSubSkills={setSubSkills}
-                skillLabel="Your Skills"
-                subSkillLabel="Sub Skills"
-                helperText="We will send email notifications of new listings for your selected skills"
+              <FormField
+                name="skills"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <FormItem className="mb-5 gap-2">
+                      <div>
+                        <span className="flex items-center gap-2">
+                          <FormLabel isRequired>Skills Needed</FormLabel>
+                          <Tooltip content="Select all that apply">
+                            <Info className="h-3 w-3 text-slate-500" />
+                          </Tooltip>
+                        </span>
+                        <FormDescription>
+                          We will send email notifications of new listings for
+                          your selected skills
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <SkillsSelect
+                          key={JSON.stringify(field.value)}
+                          defaultValue={field.value || []}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            trigger('skills');
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
 
-              <Checkbox
-                mr={1}
-                mb={8}
-                color="brand.slate.500"
-                fontWeight={500}
-                _checked={{
-                  '& .chakra-checkbox__control': {
-                    background: 'brand.purple',
-                    borderColor: 'brand.purple',
-                  },
-                }}
-                colorScheme="purple"
-                isChecked={privateValue}
-                onChange={(e) => {
-                  setValue('private', e.target.checked);
-                }}
-                size="md"
-              >
-                Keep my info private
-              </Checkbox>
+              <FormField
+                name="private"
+                control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-8">
+                    <div className="flex items-center gap-2">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(checked) => {
+                            if (typeof checked === 'boolean') {
+                              field.onChange(checked);
+                            }
+                          }}
+                          className="mr-1 text-brand-purple data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                        ></Checkbox>
+                      </FormControl>
+                      <FormLabel className="font-medium text-slate-500">
+                        Keep my info private
+                      </FormLabel>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <br />
 
               <Button
-                className="ph-no-capture"
-                mb={12}
-                isLoading={uploading || isLoading}
+                className={cn(
+                  'ph-no-capture mb-12',
+                  (uploading || isLoading) && 'pointer-events-none opacity-50',
+                )}
                 type="submit"
+                disabled={uploading || isLoading}
               >
-                Update Profile
+                {uploading || isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  'Update Profile'
+                )}
               </Button>
             </form>
-          </Box>
-        </Box>
-        <AddProject
-          key={`${pow.length}project`}
-          {...{
-            isOpen,
-            onClose,
-            pow,
-            setPow,
-            selectedProject,
-            setSelectedProject,
-          }}
-        />
-      </Default>
-    </>
+          </Form>
+        </div>
+      </div>
+      <AddProject
+        key={`${pow.length}project`}
+        {...{
+          isOpen,
+          onClose,
+          pow,
+          setPow,
+          selectedProject,
+          setSelectedProject,
+        }}
+      />
+    </Default>
   );
 }
 

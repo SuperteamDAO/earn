@@ -1,4 +1,3 @@
-import { Box, Text } from '@chakra-ui/react';
 import parse, { type HTMLReactParserOptions } from 'html-react-parser';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
@@ -21,22 +20,16 @@ export const InfoBox = ({
   content?: string | null;
   isHtml?: boolean;
 }) => (
-  <Box mb={4}>
-    <Text
-      mb={1}
-      color="brand.slate.400"
-      fontSize="xs"
-      fontWeight={600}
-      textTransform={'uppercase'}
-    >
+  <div className="mb-4">
+    <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
       {label}
-    </Text>
+    </p>
     {isHtml ? (
-      <Box overflow={'visible'} w={'full'} h={'full'} id="reset-des">
+      <div className="h-full w-full overflow-visible" id="reset-des">
         {parse(content || '', options)}
-      </Box>
+      </div>
     ) : (
       <LinkTextParser text={content || ''} />
     )}
-  </Box>
+  </div>
 );

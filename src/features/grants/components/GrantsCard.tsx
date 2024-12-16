@@ -51,37 +51,33 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
             </div>
             <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
-              <>
-                <div className="flex items-center justify-start sm:hidden">
-                  <LocalImage
-                    className="mr-0.5 h-3.5 w-3.5 rounded-full"
-                    alt={token!}
-                    src={tokenIcon!}
-                  />
-                  <div className="flex items-baseline">
-                    <p className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base">
-                      {grantAmount({
-                        maxReward: maxReward!,
-                        minReward: minReward!,
-                      })}
-                    </p>
-                    <p className="ml-0.5 text-xs font-medium text-gray-400">
-                      {token}
-                    </p>
-                  </div>
-                  <p className="ml-1 text-[10px] text-slate-300">|</p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <LocalImage
-                    className="-ml-0.5 flex h-3 sm:h-4"
-                    alt={'grant'}
-                    src={'/assets/grant-icon.svg'}
-                  />
-                  <p className="font-xs flex text-xs font-medium text-gray-500">
-                    Grant
+              <div className="flex items-center justify-start sm:hidden">
+                <LocalImage
+                  className="mr-0.5 h-3.5 w-3.5 rounded-full"
+                  alt={token!}
+                  src={tokenIcon!}
+                />
+                <div className="flex items-baseline">
+                  <p className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base">
+                    {grantAmount({
+                      maxReward: maxReward!,
+                      minReward: minReward!,
+                    })}
+                  </p>
+                  <p className="ml-0.5 text-xs font-medium text-gray-400">
+                    {token}
                   </p>
                 </div>
-              </>
+                <p className="ml-1 text-[10px] text-slate-300">|</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <LocalImage
+                  className="-ml-0.5 flex h-3 sm:h-4"
+                  alt={'grant'}
+                  src={'/assets/grant-icon.svg'}
+                />
+                <p className="flex text-xs font-medium text-gray-500">Grant</p>
+              </div>
               {!!totalApproved && (
                 <div className="flex items-center gap-1">
                   <p className="flex text-xs text-slate-300 md:text-sm">|</p>

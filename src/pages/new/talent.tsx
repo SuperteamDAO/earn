@@ -1,4 +1,3 @@
-import { Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -6,7 +5,7 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { create } from 'zustand';
 
 import { Steps } from '@/components/shared/steps';
-import { Login } from '@/features/auth';
+import { SignIn } from '@/features/auth';
 import { AboutYou, type UserStoreType, YourLinks } from '@/features/talent';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -15,10 +14,9 @@ import { useUser } from '@/store/user';
 const useFormStore = create<UserStoreType>()((set) => ({
   form: {
     username: '',
-    location: '',
+    location: undefined,
     photo: '',
     skills: [],
-    subSkills: '',
     discord: '',
     twitter: '',
     github: '',
@@ -26,6 +24,8 @@ const useFormStore = create<UserStoreType>()((set) => ({
     website: '',
     telegram: '',
     publicKey: '',
+    firstName: '',
+    lastName: '',
   },
   emailVerified: false,
   updateState: (data) => {
@@ -69,27 +69,16 @@ const StepsCon = () => {
   ];
 
   return (
-    <VStack gap={4} w={{ base: 'auto', md: 'xl' }} px={4}>
-      <VStack mt={8}>
-        <Heading
-          color={'#334254'}
-          fontFamily={'var(--font-sans)'}
-          fontSize={{ base: '18px', md: '24px' }}
-          fontWeight={700}
-        >
+    <div className="flex w-auto flex-col gap-4 px-4 md:w-[36rem]">
+      <div className="mt-8 flex flex-col gap-2 text-center">
+        <h1 className="font-sans text-lg font-bold text-[#334254] md:text-2xl">
           {TitleArray[currentStep - 1]?.title}
-        </Heading>
-        <Text
-          color={'#94A3B8'}
-          fontFamily={'var(--font-sans)'}
-          fontSize={{ base: '16px', md: '20px' }}
-          fontWeight={500}
-          textAlign={'center'}
-        >
+        </h1>
+        <p className="text-base font-medium text-slate-400 md:text-lg">
           {TitleArray[currentStep - 1]?.subTitle}
-        </Text>
-      </VStack>
-      <HStack w="100%" px={{ base: 4, md: 0 }}>
+        </p>
+      </div>
+      <div className="flex w-full items-center gap-2 px-4 md:px-0">
         {stepList.map((step, stepIndex) => {
           return (
             <Fragment key={stepIndex}>
@@ -114,14 +103,14 @@ const StepsCon = () => {
             </Fragment>
           );
         })}
-      </HStack>
+      </div>
       {currentStep === 1 && (
         <AboutYou setStep={setSteps} useFormStore={useFormStore} />
       )}
       {currentStep === 2 && (
         <YourLinks setStep={setSteps} useFormStore={useFormStore} />
       )}
-    </VStack>
+    </div>
   );
 };
 
@@ -131,6 +120,8 @@ export default function Talent() {
 
   const params = useSearchParams();
   const router = useRouter();
+
+  const [loginStep, setLoginStep] = useState(0);
 
   useEffect(() => {
     if (status === 'authenticated' && user && user?.isTalentFilled) {
@@ -143,10 +134,6 @@ export default function Talent() {
     }
   }, [user, router]);
 
-  if (status === 'unauthenticated') {
-    return <Login hideCloseIcon isOpen={true} onClose={() => {}} />;
-  }
-
   return (
     <Default
       meta={
@@ -157,9 +144,23 @@ export default function Talent() {
         />
       }
     >
-      <div className="flex flex-col items-center justify-center gap-2">
-        <StepsCon />
-      </div>
+      {status === 'unauthenticated' ? (
+        <div className="min-h-screen w-full bg-white">
+          <div className="mx-auto flex min-h-[60vh] max-w-[32rem] flex-col items-center justify-center">
+            <p className="pt-4 text-center text-2xl font-semibold text-slate-900">
+              You&apos;re one step away
+            </p>
+            <p className="pb-4 text-center text-xl font-normal text-slate-600">
+              from joining Superteam Earn
+            </p>
+            <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center gap-2">
+          <StepsCon />
+        </div>
+      )}
     </Default>
   );
 }

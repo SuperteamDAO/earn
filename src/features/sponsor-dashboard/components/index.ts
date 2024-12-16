@@ -5,6 +5,7 @@ export * from './ListingTable';
 export * from './LocalProfiles';
 export * from './Members';
 export * from './NavItems';
+export * from './PublishResults';
 export * from './Scouts';
 export * from './SelectHackathon';
 export * from './SelectSponsor';

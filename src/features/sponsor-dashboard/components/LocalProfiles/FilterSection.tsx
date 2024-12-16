@@ -1,21 +1,18 @@
-import { ChevronDownIcon, DownloadIcon, SearchIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Checkbox,
-  Flex,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-} from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import { ChevronDown, Download, Search } from 'lucide-react';
 import React from 'react';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import { skillSubSkillMap } from '@/interface/skills';
 
 interface FilterSectionProps {
@@ -64,92 +61,75 @@ export const FilterSection = ({
     },
   });
 
-  const exportUserCsv = () => {
-    exportMutation.mutate();
-  };
-
   return (
-    <Flex align="center" gap={3}>
-      <Menu closeOnSelect={false}>
-        <MenuButton
-          as={Button}
-          w={'10rem'}
-          color={'brand.slate.400'}
-          fontWeight={500}
-          borderColor={'brand.slate.300'}
-          _hover={{ color: 'brand.slate.50' }}
-          rightIcon={<ChevronDownIcon />}
-          size={'sm'}
-          variant={'outline'}
-        >
-          Filter By Skills
-          {selectedSkillsCount > 0 ? ` (${selectedSkillsCount})` : ''}
-        </MenuButton>
-        <MenuList>
+    <div className="flex items-center gap-3">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            className="w-40 border-slate-300 font-medium text-slate-400 hover:text-slate-50"
+            size="sm"
+            variant="outline"
+          >
+            Filter By Skills
+            {selectedSkillsCount > 0 ? ` (${selectedSkillsCount})` : ''}
+            <ChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
           {mainSkills.map((skill) => (
-            <MenuItem
+            <DropdownMenuItem
               key={skill}
-              color={'brand.slate.500'}
-              onClick={() => handleCheckboxChange(skill)}
+              className="text-slate-500"
+              onSelect={(e) => {
+                e.preventDefault();
+                handleCheckboxChange(skill);
+              }}
             >
-              <Flex align="center">
+              <div className="flex items-center">
                 <Checkbox
-                  mr={3}
-                  _checked={{
-                    '& .chakra-checkbox__control': {
-                      background: 'brand.purple',
-                      borderColor: 'brand.purple',
-                    },
-                  }}
-                  isChecked={checkedItems[skill] || false}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    e.stopPropagation();
-                    handleCheckboxChange(skill);
-                  }}
+                  className="mr-3 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                  checked={checkedItems[skill] || false}
+                  onCheckedChange={() => handleCheckboxChange(skill)}
                 />
                 {skill}
-              </Flex>
-            </MenuItem>
+              </div>
+            </DropdownMenuItem>
           ))}
-        </MenuList>
-      </Menu>
-      <InputGroup w={64} size={'sm'}>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <div className="relative w-64">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <Input
-          bg={'white'}
-          borderColor="brand.slate.300"
-          borderRadius={'md'}
-          _placeholder={{
-            color: 'brand.slate.400',
-            fontWeight: 500,
-            fontSize: 'md',
-          }}
-          focusBorderColor="brand.slate.300"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          className="placeholder:text-md h-9 border-slate-300 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-slate-300"
+          onChange={(e) => {
             debouncedSetSearchText(e.target.value);
             setCurrentPage(1);
           }}
           placeholder="Search users..."
           type="text"
         />
-        <InputLeftElement pointerEvents="none">
-          <SearchIcon color="brand.slate.400" />
-        </InputLeftElement>
-      </InputGroup>
+      </div>
+
       <Button
-        px={4}
-        color={'brand.slate.400'}
-        fontWeight={500}
-        borderWidth={'1px'}
-        borderColor={'brand.slate.300'}
-        isLoading={exportMutation.isPending}
-        leftIcon={<DownloadIcon />}
-        loadingText={'Exporting...'}
-        onClick={() => exportUserCsv()}
-        size={'sm'}
-        variant={'ghost'}
+        className="border border-slate-300 px-4 font-medium text-slate-400"
+        disabled={exportMutation.isPending}
+        onClick={() => exportMutation.mutate()}
+        size="sm"
+        variant="ghost"
       >
-        Export CSV
+        {exportMutation.isPending ? (
+          <>
+            <span className="loading loading-spinner mr-2" />
+            Exporting...
+          </>
+        ) : (
+          <>
+            <Download className="mr-2 h-4 w-4" />
+            Export CSV
+          </>
+        )}
       </Button>
-    </Flex>
+    </div>
   );
 };

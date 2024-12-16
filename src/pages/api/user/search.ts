@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { MAX_COMMENT_SUGGESTIONS } from '@/constants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+const MAX_COMMENT_SUGGESTIONS = 5;
 
 export default async function searchUser(
   req: NextApiRequest,

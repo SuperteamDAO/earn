@@ -1,20 +1,17 @@
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import React from 'react';
-import { AiOutlineDelete } from 'react-icons/ai';
+import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { type ListingWithSubmissions } from '@/features/listings';
 import { useUser } from '@/store/user';
 
@@ -61,37 +58,46 @@ export const DeleteDraftModal = ({
   };
 
   return (
-    <Modal isOpen={deleteDraftIsOpen} onClose={deleteDraftOnClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Delete Draft?</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Text color="brand.slate.500">
+    <Dialog open={deleteDraftIsOpen} onOpenChange={deleteDraftOnClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Delete Draft?</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <DialogDescription className="text-slate-500">
             Are you sure you want to delete this draft listing?
-          </Text>
-          <br />
-          <Text color="brand.slate.500">
+          </DialogDescription>
+          <DialogDescription className="text-slate-500">
             Note: If this was previously a published listing, all submissions or
             applications received for this listing will also be deleted.
-          </Text>
-        </ModalBody>
+          </DialogDescription>
+        </div>
 
-        <ModalFooter>
-          <Button mr={4} onClick={deleteDraftOnClose} variant="ghost">
+        <DialogFooter>
+          <Button variant="ghost" onClick={deleteDraftOnClose} className="mr-4">
             Close
           </Button>
+
           <Button
-            isLoading={deleteMutation.isPending}
-            leftIcon={<AiOutlineDelete />}
-            loadingText="Deleting..."
+            variant="default"
+            disabled={deleteMutation.isPending}
             onClick={deleteSelectedDraft}
-            variant="solid"
           >
-            Confirm
+            {deleteMutation.isPending ? (
+              <>
+                <span className="loading loading-spinner mr-2" />
+                Deleting...
+              </>
+            ) : (
+              <>
+                <Trash2 className="mr-2 h-4 w-4" />
+                Confirm
+              </>
+            )}
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

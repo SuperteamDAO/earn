@@ -2,7 +2,6 @@ import { type Prisma } from '@prisma/client';
 import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   checkListingSponsorAuth,
   type NextApiRequestWithSponsor,
@@ -11,6 +10,7 @@ import {
 import { sendEmailNotification } from '@/features/emails';
 import {
   backendListingRefinements,
+  BONUS_REWARD_POSITION,
   createListingFormSchema,
   createListingRefinements,
 } from '@/features/listing-builder';

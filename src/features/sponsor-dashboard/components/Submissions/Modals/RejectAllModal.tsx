@@ -1,18 +1,14 @@
-import { CloseIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Circle,
-  Divider,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Spinner,
-  Text,
-} from '@chakra-ui/react';
+import { X } from 'lucide-react';
 import React, { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
 
 interface RejectModalProps {
   rejectIsOpen: boolean;
@@ -46,47 +42,56 @@ export const RejectAllSubmissionModal = ({
   const rejectingAll = submissionIds.length === allSubmissionsLength;
 
   return (
-    <Modal isOpen={rejectIsOpen} onClose={rejectOnClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader color={'brand.slate.500'} fontSize={'md'} fontWeight={600}>
-          {rejectingAll
-            ? 'Reject All Remaining Applications?'
-            : 'Reject Application'}
-        </ModalHeader>
-        <ModalCloseButton />
-        <Divider />
-        <ModalBody fontSize={'0.95rem'} fontWeight={500}>
-          <Text mt={3} color="brand.slate.500">
+    <Dialog open={rejectIsOpen} onOpenChange={rejectOnClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="text-md font-semibold text-slate-500">
+            {rejectingAll
+              ? 'Reject All Remaining Applications?'
+              : 'Reject Application'}
+          </DialogTitle>
+          <button
+            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 disabled:pointer-events-none"
+            onClick={rejectOnClose}
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </button>
+        </DialogHeader>
+
+        <Separator />
+
+        <div className="text-[0.95rem] font-medium">
+          <p className="mt-3 text-slate-500">
             {rejectingAll
               ? `You are about to reject all ${submissionIds.length} of the remaining applications for this Project lsiting. This action cannot be undone. Are you sure you want to proceed?`
               : `You are about to reject ${submissionIds.length} application.
-            They will be notified via email.`}
-          </Text>
+             They will be notified via email.`}
+          </p>
+
           <br />
+
           <Button
-            w="full"
-            mb={3}
-            color="white"
-            bg="#E11D48"
-            _hover={{ bg: '#E11D48' }}
-            isLoading={loading}
-            leftIcon={
-              loading ? (
-                <Spinner color="#E11D48" size="sm" />
-              ) : (
-                <Circle p={'5px'} bg="#FFF">
-                  <CloseIcon color="#E11D48" boxSize="2.5" />
-                </Circle>
-              )
-            }
-            loadingText="Rejecting"
+            className="mb-3 w-full bg-rose-600 text-white hover:bg-rose-600/90"
+            disabled={loading}
             onClick={rejectSubmission}
           >
-            Reject Application
+            {loading ? (
+              <>
+                <span className="loading loading-spinner mr-2" />
+                Rejecting
+              </>
+            ) : (
+              <>
+                <div className="mr-2 rounded-full bg-white p-[5px]">
+                  <X className="h-2.5 w-2.5 text-rose-600" />
+                </div>
+                Reject Application
+              </>
+            )}
           </Button>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

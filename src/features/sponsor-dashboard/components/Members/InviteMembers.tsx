@@ -1,31 +1,21 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Box,
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Radio,
-  RadioGroup,
-  Stack,
-  Text,
-} from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import { CheckCircle2, Send } from 'lucide-react';
 import React, { useState } from 'react';
-import { AiOutlineSend } from 'react-icons/ai';
 import { toast } from 'sonner';
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { FormLabel } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface Props {
   isOpen: boolean;
@@ -70,126 +60,113 @@ export function InviteMembers({ isOpen, onClose }: Props) {
     }
   };
 
-  const sendInvites = () => {
-    inviteMutation.mutate();
-  };
-
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Invite Member</ModalHeader>
-        <ModalCloseButton />
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Invite Member</DialogTitle>
+        </DialogHeader>
+
         {inviteMutation.isSuccess ? (
           <>
-            <ModalBody>
-              <Alert
-                alignItems="center"
-                justifyContent="center"
-                flexDir="column"
-                py={8}
-                textAlign="center"
-                borderRadius="md"
-                status="success"
-                variant="subtle"
-              >
-                <AlertIcon boxSize="40px" mr={4} />
-                <div>
-                  <AlertTitle>Sent Invite!</AlertTitle>
-                  <AlertDescription>
-                    Your team member will receive an email with a link to join
-                    Superteam Earn.
-                  </AlertDescription>
-                </div>
-              </Alert>
-            </ModalBody>
-            <ModalFooter>
-              <Button onClick={onClose} variant="solid">
-                Close
-              </Button>
-            </ModalFooter>
+            <Alert
+              variant="default"
+              className="flex flex-col items-center justify-center py-8 text-center"
+            >
+              <CheckCircle2 className="mb-4 h-10 w-10 text-green-500" />
+              <AlertTitle className="font-bold">Sent Invite!</AlertTitle>
+              <AlertDescription>
+                Your team member will receive an email with a link to join
+                Superteam Earn.
+              </AlertDescription>
+            </Alert>
+
+            <DialogFooter>
+              <Button onClick={onClose}>Close</Button>
+            </DialogFooter>
           </>
         ) : (
           <>
-            <ModalBody>
-              <FormControl isInvalid={inviteMutation.isError}>
-                <FormLabel mb={0}>Add Email Address</FormLabel>
+            <div className="space-y-4">
+              <div>
+                <FormLabel>Add Email Address</FormLabel>
                 <Input
-                  color="brand.slate.500"
-                  borderColor="brand.slate.300"
-                  _placeholder={{
-                    color: 'brand.slate.300',
-                  }}
-                  focusBorderColor="brand.purple"
+                  className="border-slate-300 text-slate-500 focus-visible:ring-brand-purple"
                   onChange={(e) => handleInput(e.target.value)}
                   type="email"
+                  placeholder="Enter email address"
                 />
-                <FormErrorMessage>
-                  Sorry! Error occurred while sending invite.
-                </FormErrorMessage>
-              </FormControl>
-              <Stack pt={4}>
-                <FormLabel mb={0}>Member Type</FormLabel>
+                {inviteMutation.isError && (
+                  <p className="mt-1 text-sm text-red-500">
+                    Sorry! Error occurred while sending invite.
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <FormLabel>Member Type</FormLabel>
                 <RadioGroup
                   defaultValue={memberType}
-                  onChange={(value) => setMemberType(value)}
+                  onValueChange={setMemberType}
+                  className="space-y-2"
                 >
-                  <Radio
-                    _hover={{ bg: 'brand.slate.100' }}
-                    colorScheme="purple"
-                    name="memberType"
-                    size="md"
-                    value="MEMBER"
-                  >
-                    <Box ml={2}>
-                      <Text fontSize="sm" fontWeight={700}>
-                        Member
-                      </Text>
-                      <Text fontSize="sm">
+                  <div className="flex items-center space-x-2 rounded-md p-2 hover:bg-slate-100">
+                    <RadioGroupItem
+                      value="MEMBER"
+                      id="member"
+                      className="text-brand-purple"
+                    />
+                    <div className="ml-2">
+                      <p className="text-sm font-bold">Member</p>
+                      <p className="text-sm">
                         Members can manage listings, submissions, winner
                         announcements and payments.
-                      </Text>
-                    </Box>
-                  </Radio>
-                  <Radio
-                    mt={2}
-                    _hover={{ bg: 'brand.slate.100' }}
-                    colorScheme="purple"
-                    name="memberType"
-                    size="md"
-                    value="ADMIN"
-                  >
-                    <Box ml={2}>
-                      <Text fontSize="sm" fontWeight={700}>
-                        Admin
-                      </Text>
-                      <Text fontSize="sm">
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2 rounded-md p-2 hover:bg-slate-100">
+                    <RadioGroupItem
+                      value="ADMIN"
+                      id="admin"
+                      className="text-brand-purple"
+                    />
+                    <div className="ml-2">
+                      <p className="text-sm font-bold">Member Admin</p>
+                      <p className="text-sm">
                         Admins can add or remove anyone from the team, in
                         addition to having all Member privileges.
-                      </Text>
-                    </Box>
-                  </Radio>
+                      </p>
+                    </div>
+                  </div>
                 </RadioGroup>
-              </Stack>
-            </ModalBody>
-            <ModalFooter>
-              <Button mr={4} onClick={onClose} variant="ghost">
+              </div>
+            </div>
+
+            <DialogFooter className="gap-4">
+              <Button variant="ghost" onClick={onClose}>
                 Close
               </Button>
               <Button
-                colorScheme="blue"
-                isDisabled={!email}
-                isLoading={inviteMutation.isPending}
-                leftIcon={<AiOutlineSend />}
-                loadingText="Inviting..."
-                onClick={sendInvites}
+                disabled={!email || inviteMutation.isPending}
+                onClick={() => inviteMutation.mutate()}
               >
-                Send Invite
+                {inviteMutation.isPending ? (
+                  <>
+                    <span className="loading loading-spinner mr-2" />
+                    Inviting...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Send Invite
+                  </>
+                )}
               </Button>
-            </ModalFooter>
+            </DialogFooter>
           </>
         )}
-      </ModalContent>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 }

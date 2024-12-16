@@ -1,16 +1,7 @@
-import { InfoOutlineIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Text,
-  Tooltip,
-  VStack,
-} from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { Info, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -18,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -29,7 +21,8 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { IndustryList } from '@/constants';
+import { Tooltip } from '@/components/ui/tooltip';
+import { extractSocialUsername, SocialInput } from '@/features/social';
 import {
   type SponsorBase,
   sponsorBaseSchema,
@@ -37,6 +30,7 @@ import {
   useSponsorNameValidation,
 } from '@/features/sponsor';
 import { sponsorQuery } from '@/features/sponsor-dashboard';
+import { IndustryList } from '@/features/talent';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
@@ -72,12 +66,28 @@ export default function UpdateSponsor() {
     sponsorName,
   } = useSponsorNameValidation();
 
+  useEffect(() => {
+    if (isSponsorNameInvalid) {
+      form.setError('name', {
+        message: sponsorNameValidationErrorMessage,
+      });
+    } else form.clearErrors('name');
+  }, [sponsorNameValidationErrorMessage, isSponsorNameInvalid]);
+
   const {
     setSlug,
     isInvalid: isSlugInvalid,
     validationErrorMessage: slugValidationErrorMessage,
     slug,
   } = useSlugValidation();
+
+  useEffect(() => {
+    if (isSlugInvalid) {
+      form.setError('slug', {
+        message: slugValidationErrorMessage,
+      });
+    } else form.clearErrors('slug');
+  }, [slugValidationErrorMessage, isSlugInvalid]);
 
   const { data: sponsorData } = useQuery(sponsorQuery(user?.currentSponsorId));
 
@@ -95,7 +105,9 @@ export default function UpdateSponsor() {
         logo,
         industry,
         url,
-        twitter,
+        twitter: twitter
+          ? extractSocialUsername('twitter', twitter) || undefined
+          : undefined,
         entityName,
       });
     }
@@ -136,66 +148,44 @@ export default function UpdateSponsor() {
         />
       }
     >
-      <VStack w="full" pt={12} pb={24}>
+      <div className="mx-auto flex flex-col gap-2 pb-24 pt-12">
         <div className="flex flex-col gap-2">
-          <Text
-            mb={8}
-            color="gray.900"
-            fontSize="3xl"
-            fontWeight="semibold"
-            letterSpacing="-0.02em"
-          >
+          <p className="mb-8 text-3xl font-semibold tracking-tight text-gray-900">
             Edit Sponsor Profile
-          </Text>
+          </p>
         </div>
-        <VStack w={'2xl'}>
+        <div className="flex w-[42rem] flex-col">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               style={{ width: '100%' }}
             >
-              <Flex justify={'space-between'} gap={2} w={'full'}>
+              <div className="flex w-full justify-between gap-4">
                 <FormFieldWrapper
                   control={form.control}
                   name="name"
                   label="Company Name"
                   isRequired
+                  onChange={(e) => {
+                    setSponsorName(e.target.value);
+                  }}
                 >
-                  <Input
-                    placeholder="Stark Industries"
-                    onChange={(e) => {
-                      setSponsorName(e.target.value);
-                    }}
-                    value={sponsorName}
-                  />
+                  <Input placeholder="Stark Industries" value={sponsorName} />
                 </FormFieldWrapper>
-                {isSponsorNameInvalid && (
-                  <p className="text-sm text-red-500">
-                    {sponsorNameValidationErrorMessage}
-                  </p>
-                )}
 
                 <FormFieldWrapper
                   control={form.control}
                   name="slug"
                   label="Company Username"
                   isRequired
+                  onChange={(e) => {
+                    setSlug(e.target.value);
+                  }}
                 >
-                  <Input
-                    placeholder="starkindustries"
-                    onChange={(e) => {
-                      setSlug(e.target.value);
-                    }}
-                    value={slug}
-                  />
+                  <Input placeholder="starkindustries" value={slug} />
                 </FormFieldWrapper>
-                {isSlugInvalid && (
-                  <p className="text-sm text-red-500">
-                    {slugValidationErrorMessage}
-                  </p>
-                )}
-              </Flex>
-              <HStack justify={'space-between'} w={'full'} my={6}>
+              </div>
+              <div className="my-6 flex w-full justify-between gap-4">
                 <FormFieldWrapper
                   control={form.control}
                   name="url"
@@ -205,17 +195,18 @@ export default function UpdateSponsor() {
                   <Input placeholder="https://starkindustries.com" />
                 </FormFieldWrapper>
 
-                <FormFieldWrapper
-                  control={form.control}
+                <SocialInput
                   name="twitter"
-                  label="Company Twitter"
-                  isRequired
-                >
-                  <Input placeholder="@StarkIndustries" />
-                </FormFieldWrapper>
-              </HStack>
+                  socialName={'twitter'}
+                  formLabel="Company Twitter"
+                  placeholder="@StarkIndustries"
+                  required
+                  control={form.control}
+                  height="h-9"
+                />
+              </div>
 
-              <HStack w="full">
+              <div className="flex w-full">
                 <FormFieldWrapper
                   control={form.control}
                   name="entityName"
@@ -223,17 +214,10 @@ export default function UpdateSponsor() {
                     <>
                       Entity Name
                       <Tooltip
-                        fontSize="xs"
-                        label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                        content="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                        contentProps={{ className: 'text-xs' }}
                       >
-                        <InfoOutlineIcon
-                          color="brand.slate.500"
-                          mt={1}
-                          ml={1}
-                          w={3}
-                          h={3}
-                          display={{ base: 'none', md: 'block' }}
-                        />
+                        <Info className="ml-1 mt-1 hidden h-3 w-3 text-slate-500 md:block" />
                       </Tooltip>
                     </>
                   }
@@ -241,9 +225,9 @@ export default function UpdateSponsor() {
                 >
                   <Input placeholder="Full Entity Name" />
                 </FormFieldWrapper>
-              </HStack>
+              </div>
 
-              <Box w="full" mt={6} mb={3}>
+              <div className="mb-3 mt-6 w-full">
                 <FormLabel isRequired>Company Logo</FormLabel>
                 <ImagePicker
                   defaultValue={logoUrl ? { url: logoUrl } : undefined}
@@ -255,9 +239,9 @@ export default function UpdateSponsor() {
                     setIsUploading(false);
                   }}
                 />
-              </Box>
+              </div>
 
-              <HStack justify={'space-between'} w={'full'} mt={6}>
+              <div className="mt-6 flex w-full justify-between">
                 <FormField
                   control={form.control}
                   name="industry"
@@ -289,8 +273,8 @@ export default function UpdateSponsor() {
                     </FormItem>
                   )}
                 />
-              </HStack>
-              <Box my={6}>
+              </div>
+              <div className="my-6">
                 <FormFieldWrapper
                   control={form.control}
                   name="bio"
@@ -305,23 +289,29 @@ export default function UpdateSponsor() {
                 <div className="text-right text-xs text-slate-400">
                   {180 - (form.watch('bio')?.length || 0)} characters left
                 </div>
-              </Box>
-              <Box mt={8}>
+              </div>
+              <div className="mt-8">
                 <Button
-                  w="full"
+                  className="w-full"
                   disabled={!logoUrl || isUploading}
-                  isLoading={isLoading}
                   size="lg"
                   type="submit"
-                  variant="solid"
+                  variant="default"
                 >
-                  Update Profile
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    'Update Profile'
+                  )}
                 </Button>
-              </Box>
+              </div>
             </form>
           </Form>
-        </VStack>
-      </VStack>
+        </div>
+      </div>
     </Default>
   );
 }

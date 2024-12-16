@@ -8,7 +8,6 @@ interface ExternalImageProps {
   alt: string | undefined;
   style?: React.CSSProperties;
   loading?: 'lazy' | 'eager';
-  fetchPriority?: 'high' | 'low';
   decoding?: 'async' | 'sync';
   transformations?: Record<string, string | number>;
 }
@@ -36,7 +35,6 @@ export const ExternalImage = ({
   alt,
   style,
   loading = 'lazy',
-  fetchPriority,
   decoding = 'async',
   transformations,
 }: ExternalImageProps) => {
@@ -51,7 +49,6 @@ export const ExternalImage = ({
       loading={loading}
       referrerPolicy="no-referrer"
       decoding={decoding}
-      fetchPriority={fetchPriority}
     />
   );
 };

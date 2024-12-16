@@ -1,30 +1,18 @@
-import { CheckIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Flex,
-  FormControl,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Progress,
-  Stepper,
-  Text,
-  useSteps,
-  VStack,
-} from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type GrantApplication } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { Check, Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
 
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import {
   Form,
+  FormControl,
   FormDescription,
   FormField,
   FormItem,
@@ -33,7 +21,8 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
-import { extractTwitterUsername, Twitter } from '@/features/talent';
+import { Progress } from '@/components/ui/progress';
+import { extractTwitterUsername, Twitter } from '@/features/social';
 import { useUpdateUser, useUser } from '@/store/user';
 import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
@@ -69,10 +58,7 @@ export const GrantApplicationModal = ({
 
   const updateUser = useUpdateUser();
 
-  const { activeStep, setActiveStep } = useSteps({
-    index: 0,
-    count: steps.length,
-  });
+  const [activeStep, setActiveStep] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<FormData>({
@@ -225,85 +211,57 @@ export const GrantApplicationModal = ({
   const date = dayjs().format('YYYY-MM-DD');
 
   return (
-    <Modal
-      closeOnOverlayClick={false}
-      isCentered
-      isOpen={isOpen}
-      onClose={onClose}
-      scrollBehavior={'inside'}
-      size={'xl'}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader px={{ base: 4, md: 10 }} pt={8} color="brand.slate.800">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-xl" ref={modalRef}>
+        <DialogTitle className="text-xl tracking-normal text-slate-700">
           Grant Application
-          <Text mt={1} color={'brand.slate.500'} fontSize="sm" fontWeight={400}>
+          <p className="mt-1 text-sm font-normal text-slate-500">
             If you&apos;re working on a project that will help the
             sponsor&apos;s ecosystem grow, apply with your proposal here and
             we&apos;ll respond soon!
-          </Text>
+          </p>
           <Progress
-            h={'1.5px'}
-            mx={-3}
-            mt={6}
-            borderRadius={2}
-            bgColor={'brand.slate.200'}
+            className="mt-6 h-[1.5px] bg-slate-200"
             value={(activeStep / steps.length) * 100 + 33}
           />
-          <Stepper w="100%" mt={3} index={activeStep}>
+          <div className="mt-3 flex w-full items-center justify-between">
             {steps.map((step, i) => (
-              <Flex key={i} align={'center'} gap={1.5} fontWeight={400}>
-                <Text
-                  align={'center'}
-                  verticalAlign={'middle'}
-                  w="6"
-                  h="6"
-                  color={
-                    i - 1 < activeStep ? 'brand.slate.500' : 'brand.slate.400'
-                  }
-                  fontWeight={i - 1 < activeStep ? 500 : 400}
-                  borderWidth={'1px'}
-                  borderColor={
+              <div className="flex items-center gap-1.5 text-base" key={i}>
+                <span
+                  className={cn(
+                    'flex h-6 w-6 items-center justify-center rounded-full border text-sm',
                     i < activeStep
-                      ? 'transparent'
+                      ? 'border-transparent'
                       : i - 1 < activeStep
-                        ? 'brand.slate.500'
-                        : 'brand.slate.300'
-                  }
-                  borderRadius={'full'}
-                  bgColor={i < activeStep ? 'brand.purple' : 'transparent'}
-                  style={{
-                    fontSize: '14px',
-                  }}
+                        ? 'border-slate-500'
+                        : 'border-slate-300',
+                    i < activeStep ? 'bg-brand-purple' : 'bg-transparent',
+                    i - 1 < activeStep ? 'text-slate-500' : 'text-slate-400',
+                    i - 1 < activeStep ? 'font-medium' : 'font-normal',
+                  )}
                 >
                   {i < activeStep ? (
-                    <CheckIcon color="white" boxSize={2.5} />
+                    <Check className="h-4 w-4 text-white" />
                   ) : (
                     i + 1
                   )}
-                </Text>
-                <Text
-                  color={
-                    i - 1 < activeStep ? 'brand.slate.600' : 'brand.slate.500'
-                  }
-                  fontSize={'md'}
-                  fontWeight={i - 1 < activeStep ? 500 : 400}
+                </span>
+                <span
+                  className={cn(
+                    'text-md',
+                    i - 1 < activeStep ? 'text-slate-600' : 'text-slate-500',
+                    i - 1 < activeStep ? 'font-medium' : 'font-normal',
+                  )}
                 >
                   {step.title}
-                </Text>
-              </Flex>
+                </span>
+              </div>
             ))}
-          </Stepper>
-        </ModalHeader>
-        <ModalCloseButton mt={5} />
-        <VStack
+          </div>
+        </DialogTitle>
+        <div
+          className="overflow-y-aut flex max-h-[50rem] flex-col items-start gap-3 px-1 pb-8 pt-3"
           ref={modalRef}
-          align={'start'}
-          gap={3}
-          overflowY={'auto'}
-          maxH={'50rem'}
-          px={{ base: 4, md: 10 }}
-          pb={10}
         >
           <Form {...form}>
             <form
@@ -315,7 +273,7 @@ export const GrantApplicationModal = ({
               })}
             >
               {activeStep === 0 && (
-                <VStack gap={4} mb={5}>
+                <div className="mb-5 flex flex-col gap-4">
                   <FormFieldWrapper
                     control={form.control}
                     name="projectTitle"
@@ -393,10 +351,10 @@ export const GrantApplicationModal = ({
                       </FormItem>
                     )}
                   />
-                </VStack>
+                </div>
               )}
               {activeStep === 1 && (
-                <VStack gap={4} mb={5}>
+                <div className="mb-5 flex flex-col gap-4">
                   <FormFieldWrapper
                     control={form.control}
                     name="projectDetails"
@@ -477,10 +435,10 @@ export const GrantApplicationModal = ({
                       isRichEditor
                     />
                   ))}
-                </VStack>
+                </div>
               )}
               {activeStep === 2 && (
-                <VStack gap={4} mb={5}>
+                <div className="mb-5 flex flex-col gap-5">
                   <FormFieldWrapper
                     control={form.control}
                     name="milestones"
@@ -500,47 +458,49 @@ export const GrantApplicationModal = ({
                     isRichEditor
                     richEditorPlaceholder="What's the key metric for success"
                   />
-                </VStack>
+                </div>
               )}
-              <Flex gap={2} mt={8}>
+              <div className="mt-8 flex gap-2">
                 {activeStep > 0 && (
                   <Button
-                    className="ph-no-capture"
-                    w={'full'}
-                    color="brand.slate.500"
+                    className="ph-no-capture w-full text-slate-500"
                     onClick={handleBack}
-                    variant="unstyled"
+                    variant="ghost"
                   >
                     Back
                   </Button>
                 )}
                 {activeStep === steps.length - 1 ? (
                   <Button
-                    className="ph-no-capture"
-                    w={'full'}
-                    isLoading={!!isLoading}
-                    loadingText="Applying..."
+                    className="ph-no-capture w-full"
+                    disabled={isLoading}
                     type="submit"
-                    variant="solid"
                   >
-                    {!!grantApplication ? 'Update' : 'Apply'}
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Applying...
+                      </>
+                    ) : grantApplication ? (
+                      'Update'
+                    ) : (
+                      'Apply'
+                    )}
                   </Button>
                 ) : (
                   <Button
-                    className="ph-no-capture"
-                    w={'full'}
+                    className="ph-no-capture w-full"
                     onClick={handleNext}
                     type="button"
-                    variant="solid"
                   >
                     Continue
                   </Button>
                 )}
-              </Flex>
+              </div>
             </form>
           </Form>
-        </VStack>
-      </ModalContent>
-    </Modal>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

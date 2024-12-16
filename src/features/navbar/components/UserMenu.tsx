@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -72,7 +72,7 @@ export function UserMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger
           id="user menu"
-          className="ph-no-capture rounded-md border border-white bg-white px-0.5 py-1 hover:bg-slate-100 focus:outline-none active:border-slate-300 active:bg-slate-200 data-[state=open]:bg-slate-100 md:px-2"
+          className="ph-no-capture rounded-md border border-white bg-white px-0.5 py-1 data-[state=open]:bg-slate-100 hover:bg-slate-100 focus:outline-none active:border-slate-300 active:bg-slate-200 md:px-2"
           onClick={() => {
             posthog.capture('clicked_user menu');
           }}
@@ -88,45 +88,48 @@ export function UserMenu() {
           </div>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="ph-no-capture" align="start">
+        <DropdownMenuContent
+          className="ph-no-capture font-medium"
+          align="start"
+        >
           {user?.isTalentFilled && (
             <>
               <DropdownMenuItem asChild>
-                <NextLink
+                <Link
                   href={`/t/${user?.username}`}
                   onClick={() => {
                     posthog.capture('profile_user menu');
                   }}
-                  className="text-sm font-semibold text-slate-500"
+                  className="text-sm text-slate-500"
                 >
                   Profile
-                </NextLink>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <NextLink
+                <Link
                   href={`/t/${user?.username}/edit`}
                   onClick={() => {
                     posthog.capture('edit profile_user menu');
                   }}
-                  className="text-sm font-semibold text-slate-500"
+                  className="text-sm text-slate-500"
                 >
                   Edit Profile
-                </NextLink>
+                </Link>
               </DropdownMenuItem>
             </>
           )}
 
           {!!user?.currentSponsorId && (
             <DropdownMenuItem asChild>
-              <NextLink
+              <Link
                 href="/dashboard/listings"
                 onClick={() => {
                   posthog.capture('sponsor dashboard_user menu');
                 }}
-                className="hidden text-sm font-semibold text-slate-500 sm:block"
+                className="hidden text-sm text-slate-500 sm:block"
               >
                 Sponsor Dashboard
-              </NextLink>
+              </Link>
             </DropdownMenuItem>
           )}
 
@@ -138,12 +141,9 @@ export function UserMenu() {
                 God Mode
               </DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <NextLink
-                  href="/new/sponsor"
-                  className="text-sm font-semibold text-slate-500"
-                >
+                <Link href="/new/sponsor" className="text-sm text-slate-500">
                   Create New Sponsor
-                </NextLink>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </div>
@@ -155,7 +155,7 @@ export function UserMenu() {
                 onOpen();
                 posthog.capture('email preferences_user menu');
               }}
-              className="text-sm font-semibold text-slate-500"
+              className="text-sm text-slate-500"
             >
               Email Preferences
             </DropdownMenuItem>
@@ -166,7 +166,7 @@ export function UserMenu() {
               window.open('mailto:support@superteamearn.com', '_blank');
               posthog.capture('get help_user menu');
             }}
-            className="text-sm font-semibold text-slate-500"
+            className="text-sm text-slate-500"
           >
             Get Help
           </DropdownMenuItem>
@@ -176,7 +176,7 @@ export function UserMenu() {
               posthog.capture('logout_user menu');
               logout();
             }}
-            className="text-sm font-semibold text-red-500"
+            className="text-sm text-red-500"
           >
             Logout
           </DropdownMenuItem>

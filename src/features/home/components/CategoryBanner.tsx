@@ -76,7 +76,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
           </h2>
         )}
         {banner.description && (
-          <p className="max-w-[37rem] text-sm font-medium text-white md:text-lg">
+          <p className="mt-3 max-w-[37rem] text-sm font-medium text-white md:text-lg">
             {banner.description}
           </p>
         )}

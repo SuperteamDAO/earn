@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { withAxiom } = require('next-axiom');
-const { withSentryConfig } = require('@sentry/nextjs');
+
 const withPWA = require('next-pwa')({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
@@ -33,19 +33,21 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: [
-      '@chakra-ui/react',
-      '@chakra-ui/icons',
       '@radix-ui/react-icons',
-      'framer-motion',
       'flag-icons',
       '@/features/auth',
       '@/features/comments',
+      '@/features/conversion-popups',
+      '@/features/emails',
+      '@/features/feed',
       '@/features/home',
       '@/features/leaderboard',
       '@/features/listing-builder',
       '@/features/listings',
       '@/features/navbar',
       '@/features/search',
+      '@/features/social',
+      '@/features/sponsor',
       '@/features/sponsor-dashboard',
       '@/features/talent',
     ],
@@ -93,13 +95,4 @@ const nextConfig = {
 
 const combinedConfig = withAxiom(withPWA(nextConfig));
 
-module.exports = withSentryConfig(combinedConfig, {
-  org: 'superteam-7o',
-  project: 'earn',
-  silent: true,
-  tunnelRoute: '/monitoring',
-  hideSourceMaps: true,
-  disableLogger: true,
-  autoInstrumentServerFunctions: false,
-  autoInstrumentMiddleware: false,
-});
+module.exports = combinedConfig;

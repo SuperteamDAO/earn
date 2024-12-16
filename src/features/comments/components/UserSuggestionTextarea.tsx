@@ -1,4 +1,3 @@
-import { Box, Text, Textarea, type TextareaProps } from '@chakra-ui/react';
 import React, {
   type ChangeEvent,
   type Dispatch,
@@ -7,10 +6,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import ResizeTextarea from 'react-textarea-autosize';
+import TextareaAutosize, {
+  type TextareaAutosizeProps,
+} from 'react-textarea-autosize';
 import getCaretCoordinates from 'textarea-caret';
 
 import { type User } from '@/interface/user';
+import { cn } from '@/utils';
 
 import {
   addMention,
@@ -20,11 +22,12 @@ import {
 
 const MAX_LENGTH = 280;
 
-interface Props extends TextareaProps {
+interface Props extends TextareaAutosizeProps {
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
   defaultSuggestions: Map<string, User>;
   autoFocusOn?: boolean;
+  variant?: 'default' | 'flushed';
 }
 
 export const UserSuggestionTextarea = ({
@@ -32,6 +35,8 @@ export const UserSuggestionTextarea = ({
   setValue,
   defaultSuggestions,
   autoFocusOn,
+  variant = 'default',
+  className,
   ...props
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -71,16 +76,27 @@ export const UserSuggestionTextarea = ({
   }, [autoFocusOn]);
 
   return (
-    <Box pos={'relative'} w="full">
-      <Box pos={'relative'} w="full">
-        <Textarea
+    <div className="relative w-full">
+      <div className="relative w-full">
+        <TextareaAutosize
           ref={inputRef}
-          as={ResizeTextarea}
-          overflow="hidden"
-          w="100%"
-          minH="unset"
-          resize="none"
-          maxLength={280}
+          className={cn(
+            'w-full resize-none overflow-hidden text-sm md:text-base',
+            'min-h-8 placeholder:text-slate-400',
+            'focus:outline-none focus:ring-0',
+            variant === 'flushed'
+              ? [
+                  'border-x-0 border-b-2 border-t-0 border-slate-200',
+                  'rounded-none px-0 py-0',
+                  'focus:border-brand-purple',
+                ]
+              : [
+                  'rounded-md border border-slate-200',
+                  'focus:border-brand-purple focus:ring-brand-purple',
+                ],
+            className,
+          )}
+          maxLength={MAX_LENGTH}
           minRows={1}
           onChange={handleInput}
           onKeyDown={(e) => {
@@ -93,32 +109,27 @@ export const UserSuggestionTextarea = ({
           value={value}
           {...props}
         />
-      </Box>
+      </div>
       {value?.length > 0 && (
-        <Text
-          pt={1}
-          pr={1}
-          color="brand.slate.400"
-          fontSize={'xs'}
-          textAlign={'right'}
-        >
+        <p className="pr-1 pt-1 text-right text-xs text-slate-400">
           {MAX_LENGTH - value.length} characters left
-        </Text>
+        </p>
       )}
       {showSuggestions && (
-        <Box
-          pos={'absolute'}
-          zIndex={100}
-          top={suggestionPosition.top}
-          left={suggestionPosition.left}
+        <div
+          className="absolute z-[100]"
+          style={{
+            top: suggestionPosition.top,
+            left: suggestionPosition.left,
+          }}
         >
           <Suggestions
             onSelect={selectSuggestion}
             input={value}
             defaultSuggestions={defaultSuggestions}
           />
-        </Box>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };

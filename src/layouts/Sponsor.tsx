@@ -1,7 +1,6 @@
-import { AddIcon } from '@chakra-ui/icons';
-import { Box, Button, Flex, Icon, Text, Tooltip } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import NextLink from 'next/link';
+import { Lock, Plus } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -14,15 +13,17 @@ import {
 } from 'react';
 import type { IconType } from 'react-icons';
 import { BiListUl } from 'react-icons/bi';
-import { LuLock, LuMessageSquare, LuUsers } from 'react-icons/lu';
+import { LuMessageSquare, LuUsers } from 'react-icons/lu';
 import { MdList, MdOutlineChatBubbleOutline } from 'react-icons/md';
 import { RiUserSettingsLine } from 'react-icons/ri';
 
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
 import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { PDTG } from '@/constants';
+import { Button } from '@/components/ui/button';
+import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
+import { PDTG } from '@/constants/Telegram';
 import { Login } from '@/features/auth';
 import { isCreateListingAllowedQuery } from '@/features/listing-builder';
 import {
@@ -36,6 +37,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 
 interface LinkItemProps {
   name: string;
@@ -194,67 +196,56 @@ export function SponsorLayout({
       />
 
       <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
-      <Flex display={{ base: 'flex', md: 'none' }} minH="80vh" px={3}>
-        <Text
-          align={'center'}
-          pt={20}
-          color={'brand.slate.500'}
-          fontSize={'xl'}
-          fontWeight={500}
-        >
+      <div className="flex min-h-[80vh] px-3 md:hidden">
+        <p className="pt-20 text-center text-xl font-medium text-slate-500">
           The Sponsor Dashboard on Earn is not optimized for mobile yet. Please
           use a desktop to check out the Sponsor Dashboard
-        </Text>
-      </Flex>
-      <Flex justify="start" display={{ base: 'none', md: 'flex' }} minH="100vh">
-        <Box
-          className={`sponsor-dashboard-sidebar ${isExpanded ? 'expanded' : ''}`}
-          pos={isCollapsible ? 'fixed' : 'static'}
-          zIndex={10}
-          top={8}
-          bottom={0}
-          left={0}
-          overflowX="hidden"
-          w={isExpanded ? '18rem' : '5rem'}
-          minW={isExpanded ? '18rem' : '5rem'}
-          maxW={isExpanded ? '18rem' : '5rem'}
-          pt={10}
-          bg="white"
-          borderRight={'1px solid'}
-          borderRightColor={'blackAlpha.200'}
-          whiteSpace="nowrap"
-          transition="all 0.3s ease-in-out"
+        </p>
+      </div>
+      <div className="hidden min-h-screen justify-start md:flex">
+        <div
+          className={cn(
+            'sponsor-dashboard-sidebar overflow-x-hidden whitespace-nowrap border-r border-black/20 bg-white pt-10',
+            'transition-all duration-300 ease-in-out',
+            isCollapsible ? 'fixed' : 'static',
+            isExpanded
+              ? ['w-72 min-w-72 max-w-72', 'expanded']
+              : ['w-20 min-w-20 max-w-20'],
+            'bottom-0 left-0 top-8 z-10',
+          )}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
           {session?.user?.role === 'GOD' && (
-            <Box px={4} pb={6}>
+            <div className="px-4 pb-6">
               {isHackathonRoute ? (
                 <SelectHackathon isExpanded={isExpanded} />
               ) : (
                 <SelectSponsor isExpanded={isExpanded} />
               )}
-            </Box>
+            </div>
           )}
           <CreateListingModal isOpen={isOpen} onClose={onClose} />
-          <Flex align="center" justify="space-between" px={4} pb={6}>
+          <div className="flex items-center justify-between px-4 pb-6">
             {!isHackathonRoute ? (
               <Tooltip
-                label={
-                  isCreateListingAllowed !== undefined &&
-                  isCreateListingAllowed === false &&
-                  session?.user.role !== 'GOD'
-                    ? 'Creating a new listing has been temporarily locked for you since you have 5 listings which are “In Review”. Please announce the winners for such listings to create new listings.'
-                    : ''
+                content={
+                  "Creating a new listing has been temporarily locked for you since you have 5 listings which are 'In Review'. Please announce the winners for such listings to create new listings."
+                }
+                disabled={
+                  !(
+                    isCreateListingAllowed !== undefined &&
+                    isCreateListingAllowed === false &&
+                    session?.user.role !== 'GOD'
+                  )
                 }
               >
                 <Button
-                  className="ph-no-capture"
-                  gap={2}
-                  w="full"
-                  py={'22px'}
-                  fontSize="md"
-                  isDisabled={
+                  className={cn(
+                    'ph-no-capture py-5.5 w-full gap-2 text-base',
+                    'disabled:cursor-not-allowed disabled:opacity-50',
+                  )}
+                  disabled={
                     isCreateListingAllowed !== undefined &&
                     isCreateListingAllowed === false &&
                     session?.user.role !== 'GOD'
@@ -263,46 +254,48 @@ export function SponsorLayout({
                     posthog.capture('create new listing_sponsor');
                     onOpen();
                   }}
-                  variant="solid"
+                  variant="default"
                 >
-                  <AddIcon w={3} h={3} />
-                  <Text
-                    className="nav-item-text"
-                    pos={isExpanded ? 'static' : 'absolute'}
-                    ml={isExpanded ? 0 : '-9999px'}
-                    opacity={isExpanded ? 1 : 0}
-                    transition="all 0.2s ease-in-out"
+                  <Plus className="h-3 w-3" />
+                  <p
+                    className={cn(
+                      'nav-item-text transition-all duration-200 ease-in-out',
+                      isExpanded
+                        ? ['static ml-0 opacity-100']
+                        : ['absolute -ml-[9999px] opacity-0'],
+                    )}
                   >
                     Create New Listing
-                  </Text>
+                  </p>
                   {isCreateListingAllowed !== undefined &&
                     isCreateListingAllowed === false &&
-                    session?.user.role !== 'GOD' && <Icon as={LuLock} />}
+                    session?.user.role !== 'GOD' && (
+                      <Lock className="h-4 w-4" />
+                    )}
                 </Button>
               </Tooltip>
             ) : (
               <Button
-                as={NextLink}
-                gap={2}
-                w="full"
-                py={'22px'}
-                fontSize="md"
-                href={`/dashboard/new/?type=hackathon`}
-                variant="solid"
+                asChild
+                className={cn('py-5.5 w-full gap-2 text-base')}
+                variant="default"
               >
-                <AddIcon w={3} h={3} />
-                <Text
-                  className="nav-item-text"
-                  pos={isExpanded ? 'static' : 'absolute'}
-                  ml={isExpanded ? 0 : '-9999px'}
-                  opacity={isExpanded ? 1 : 0}
-                  transition="opacity 0.2s ease-in-out"
-                >
-                  Create New Track
-                </Text>
+                <Link href="/dashboard/new/?type=hackathon">
+                  <Plus className="h-3 w-3" />
+                  <p
+                    className={cn(
+                      'nav-item-text transition-opacity duration-200 ease-in-out',
+                      isExpanded
+                        ? ['static ml-0 opacity-100']
+                        : ['absolute -ml-[9999px] opacity-0'],
+                    )}
+                  >
+                    Create New Track
+                  </p>
+                </Link>
               </Button>
             )}
-          </Flex>
+          </div>
           {LinkItems.map((link) => (
             <NavItem
               onClick={() => {
@@ -317,22 +310,19 @@ export function SponsorLayout({
               {link.name}
             </NavItem>
           ))}
-        </Box>
+        </div>
         {showLoading && <LoadingSection />}
         {showContent && (
-          <Box
-            flex={1}
-            w="full"
-            ml={isCollapsible ? '80px' : '0px'}
-            px={6}
-            py={10}
-            bg="white"
-            transition="margin-left 0.3s ease-in-out"
+          <div
+            className={cn(
+              'w-full flex-1 bg-white px-6 py-10 transition-[margin-left] duration-300 ease-in-out',
+              isCollapsible ? 'ml-20' : 'ml-0',
+            )}
           >
             {children}
-          </Box>
+          </div>
         )}
-      </Flex>
+      </div>
     </Default>
   );
 }

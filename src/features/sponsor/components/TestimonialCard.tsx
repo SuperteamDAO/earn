@@ -1,5 +1,3 @@
-import { Box, Center, HStack, Text, VStack } from '@chakra-ui/react';
-
 import { HighQualityImage } from './HighQualityImage';
 import { Stars } from './Stars';
 
@@ -20,39 +18,27 @@ export function TestimonialCard({
   logo,
 }: TestimonialProps) {
   return (
-    <VStack
-      flex={1}
-      gap={2}
-      w="full"
-      border="1px solid"
-      borderColor="brand.slate.300"
-      rounded={4}
-    >
-      <Center w={'100%'} h={'14.754rem'} bg="black" rounded={4}>
+    <div className="flex w-full flex-1 flex-col gap-2 rounded border border-slate-300">
+      <div className="flex h-[14.754rem] w-full items-center justify-center rounded bg-black">
         <HighQualityImage src={logo} alt={position} />
-      </Center>
-      <VStack align="start" flex={1} gap={4} h="100%" mt="auto" p={'1rem'}>
+      </div>
+
+      <div className="mt-auto flex h-full flex-1 flex-col items-start gap-4 p-4">
         <Stars count={5} filled={stars} />
-        <Text
-          color="brand.slate.600"
-          fontSize={'1.3rem'}
-          lineHeight={1.1}
+        <div
+          className="text-[1.3rem] leading-[1.1] text-slate-600"
           dangerouslySetInnerHTML={{ __html: message }}
-        ></Text>
-        <HStack gap={2} mt="auto" pt="1rem">
-          <Box gap={6} w={'2.1rem'} h={'2.1rem'}>
+        />
+        <div className="mt-auto flex items-center gap-2 pt-4">
+          <div className="h-[2.1rem] w-[2.1rem] gap-6">
             <HighQualityImage src={pfp} alt={name} className="h-full w-full" />
-          </Box>
-          <VStack align="start" gap={0}>
-            <Text color="black" fontSize={'1rem'}>
-              {name}
-            </Text>
-            <Text color="brand.slate.500" fontSize={'1rem'}>
-              {position}
-            </Text>
-          </VStack>
-        </HStack>
-      </VStack>
-    </VStack>
+          </div>
+          <div className="flex flex-col items-start gap-0">
+            <p className="text-base text-black">{name}</p>
+            <p className="text-base text-slate-500">{position}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -16,11 +16,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { isCreateListingAllowedQuery } from '@/features/listing-builder';
 import { useUser } from '@/store/user';
 
@@ -115,31 +111,30 @@ export function PrePublish() {
         isOpen(e);
       }}
     >
-      <Tooltip>
-        <TooltipTrigger>
-          <Button
-            className="ph-no-capture"
-            disabled={isDraftSaving || isDisabledHard}
-            onClick={async () => {
-              posthog.capture('basics_sponsor');
-              if (await form.validateBasics()) isOpen(true);
-              else {
-                toast.warning('Please resolve all errors to continue');
-              }
-            }}
-          >
-            Continue
-          </Button>
-        </TooltipTrigger>
-        {isDisabledHard && (
-          <TooltipContent>
+      <Tooltip
+        content={
+          isDisabledHard ? (
             <p>
               Creating a new listing has been temporarily locked for you since
-              you have 5 listings which are “In Review”. Please announce the
-              winners for such listings to create new listings.
+              you have 5 listings which are &quot;In Review&quot;. Please
+              announce the winners for such listings to create new listings.
             </p>
-          </TooltipContent>
-        )}
+          ) : null
+        }
+      >
+        <Button
+          className="ph-no-capture"
+          disabled={isDraftSaving || isDisabledHard}
+          onClick={async () => {
+            posthog.capture('basics_sponsor');
+            if (await form.validateBasics()) isOpen(true);
+            else {
+              toast.warning('Please resolve all errors to continue');
+            }
+          }}
+        >
+          Continue
+        </Button>
       </Tooltip>
       <DialogContent className="py-4 sm:max-w-[500px]">
         <DialogHeader className="flex flex-row gap-4">

@@ -1,25 +1,7 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  HStack,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -27,10 +9,14 @@ import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { BONUS_REWARD_POSITION } from '@/constants';
-import { PublishResults } from '@/features/listings';
+import { Popover, PopoverContent } from '@/components/ui/popover';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip } from '@/components/ui/tooltip';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import {
+  PublishResults,
   RejectAllSubmissionModal,
   type ScoutRowType,
   scoutsQuery,
@@ -48,17 +34,13 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 
 interface Props {
   slug: string;
 }
-
-const selectedStyles = {
-  borderColor: 'brand.purple',
-  color: 'brand.slate.600',
-};
 
 const submissionsPerPage = 10;
 
@@ -440,261 +422,212 @@ export default function BountySubmissions({ slug }: Props) {
             bounty={bounty}
             totalSubmissions={submissions?.length || 0}
           />
-          <Tabs defaultIndex={searchParams.has('scout') ? 1 : 0}>
-            <TabList
-              gap={4}
-              color="brand.slate.400"
-              fontWeight={500}
-              borderBottomWidth={'1px'}
-            >
-              <Tab px={1} fontSize="sm" _selected={selectedStyles}>
-                Submissions
-              </Tab>
-              {bounty?.isPublished &&
-                !bounty?.isWinnersAnnounced &&
-                !isExpired && (
-                  <Tooltip
-                    px={4}
-                    py={2}
-                    color="brand.slate.500"
-                    fontFamily={'var(--font-sans)'}
-                    bg="white"
-                    borderRadius={'lg'}
-                    isDisabled={isSponsorVerified === true}
-                    label="Scout is an invite-only feature right now"
-                  >
-                    <Tab
-                      className="ph-no-capture"
-                      px={1}
-                      fontSize="sm"
-                      _disabled={{ color: 'brand.slate.400' }}
-                      _selected={selectedStyles}
-                      cursor={isSponsorVerified ? 'pointer' : 'not-allowed'}
-                      isDisabled={!isSponsorVerified}
-                      onClick={() => posthog.capture('scout tab_scout')}
-                    >
-                      Scout Talent
-                      {!!isSponsorVerified && (
-                        <Box w={1.5} h={1.5} ml={1.5} bg="red" rounded="full" />
-                      )}
-                    </Tab>
-                  </Tooltip>
-                )}
-            </TabList>
-            <TabPanels>
-              <TabPanel w="full" px={0}>
+          <Tabs
+            defaultValue={searchParams.has('scout') ? 'scout' : 'submissions'}
+          >
+            {bounty?.isPublished &&
+              !bounty?.isWinnersAnnounced &&
+              !isExpired && (
                 <>
-                  <Flex align={'start'} w="full" bg="white">
-                    <Grid
-                      templateColumns="23rem 1fr"
-                      w="full"
-                      minH="600px"
-                      bg="white"
-                    >
-                      <GridItem w="full" h="full">
-                        <SubmissionList
-                          listing={bounty}
-                          filterLabel={filterLabel}
-                          setFilterLabel={(e) => {
-                            setFilterLabel(e);
-                            setCurrentPage(1);
-                          }}
-                          submissions={paginatedSubmissions}
-                          setSearchText={(e) => {
-                            setSearchText(e);
-                            setCurrentPage(1);
-                          }}
-                          type={bounty?.type}
-                          isToggled={isToggled}
-                          toggleSubmission={toggleSubmission}
-                          isAllToggled={isToggledAll}
-                          toggleAllSubmissions={toggleAllSubmissions}
-                        />
-                      </GridItem>
-                      <GridItem
-                        w="full"
-                        h="full"
-                        bg="white"
-                        borderColor="brand.slate.200"
-                        borderTopWidth="1px"
-                        borderRightWidth={'1px'}
-                        borderBottomWidth="1px"
-                        roundedRight={'xl'}
-                      >
-                        {!paginatedSubmissions?.length &&
-                        !searchText &&
-                        !isSubmissionsLoading ? (
-                          <>
-                            <ExternalImage
-                              className="mx-auto mt-32 w-32"
-                              alt={'talent empty'}
-                              src={'/bg/talent-empty.svg'}
-                            />
-                            <Text
-                              mx="auto"
-                              mt={5}
-                              color={'brand.slate.600'}
-                              fontSize={'lg'}
-                              fontWeight={600}
-                              textAlign={'center'}
-                            >
-                              {filterLabel
-                                ? `Zero Results`
-                                : 'People are working!'}
-                            </Text>
-                            <Text
-                              mx="auto"
-                              mb={200}
-                              color={'brand.slate.400'}
-                              fontWeight={500}
-                              textAlign={'center'}
-                            >
-                              {filterLabel
-                                ? `For the filters you have selected`
-                                : 'Submissions will start appearing here'}
-                            </Text>
-                          </>
-                        ) : (
-                          <SubmissionPanel
-                            isMultiSelectOn={selectedSubmissionIds.size > 0}
-                            remainings={remainings}
-                            setRemainings={setRemainings}
-                            bounty={bounty}
-                            submissions={paginatedSubmissions}
-                            usedPositions={usedPositions || []}
-                            onWinnersAnnounceOpen={onOpen}
-                          />
-                        )}
-                      </GridItem>
-                    </Grid>
-                  </Flex>
-                  <Flex align="center" justify="start" gap={4} mt={4}>
-                    <>
-                      <Button
-                        isDisabled={currentPage <= 1}
-                        leftIcon={<ChevronLeftIcon w={5} h={5} />}
-                        onClick={() =>
-                          setCurrentPage((prev) => Math.max(prev - 1, 1))
-                        }
-                        size="sm"
-                        variant="outline"
-                      >
-                        Previous
-                      </Button>
-                      <Text color="brand.slate.400" fontSize="sm">
-                        <Text as="span" fontWeight={700}>
-                          {(currentPage - 1) * submissionsPerPage + 1}
-                        </Text>{' '}
-                        -{' '}
-                        <Text as="span" fontWeight={700}>
-                          {Math.min(
-                            currentPage * submissionsPerPage,
-                            filteredSubmissions.length,
-                          )}
-                        </Text>{' '}
-                        of{' '}
-                        <Text as="span" fontWeight={700}>
-                          {filteredSubmissions.length}
-                        </Text>{' '}
-                        Submissions
-                      </Text>
-                      <Button
-                        isDisabled={currentPage >= totalPages}
-                        onClick={() =>
-                          setCurrentPage((prev) =>
-                            Math.min(prev + 1, totalPages),
-                          )
-                        }
-                        rightIcon={<ChevronRightIcon w={5} h={5} />}
-                        size="sm"
-                        variant="outline"
-                      >
-                        Next
-                      </Button>
-                    </>
-                  </Flex>
-                </>
-              </TabPanel>
-              {bounty &&
-                bounty.id &&
-                bounty.isPublished &&
-                !bounty.isWinnersAnnounced &&
-                !isExpired && (
-                  <TabPanel px={0}>
-                    <ScoutTable
-                      bountyId={bounty.id}
-                      scouts={scouts || []}
-                      setInvited={(userId: string) => {
-                        queryClient.setQueryData(
-                          ['scouts', bounty.id],
-                          (oldData: ScoutRowType[] | undefined) => {
-                            if (!oldData) return oldData;
-                            return oldData.map((scout) =>
-                              scout.userId === userId
-                                ? { ...scout, invited: true }
-                                : scout,
-                            );
-                          },
-                        );
+                  <TabsList className="gap-4 font-medium text-slate-400">
+                    <TabsTrigger value="submissions">Submissions</TabsTrigger>
+                    <Tooltip
+                      content="Scout is an invite-only feature right now"
+                      contentProps={{
+                        className: 'rounded-lg px-4 py-2 font-sans',
                       }}
+                      disabled={isSponsorVerified === true}
+                    >
+                      <TabsTrigger
+                        value="scout"
+                        className={cn(
+                          'ph-no-capture',
+                          !isSponsorVerified &&
+                            'cursor-not-allowed text-slate-400',
+                        )}
+                        disabled={!isSponsorVerified}
+                        onClick={() => posthog.capture('scout tab_scout')}
+                      >
+                        Scout Talent
+                        {!!isSponsorVerified && (
+                          <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
+                        )}
+                      </TabsTrigger>
+                    </Tooltip>
+                  </TabsList>
+                  <div className="h-0.5 w-full bg-slate-200" />
+                </>
+              )}
+
+            <TabsContent value="submissions" className="w-full px-0">
+              <div className="flex w-full items-start bg-white">
+                <div className="grid min-h-[600px] w-full grid-cols-[23rem_1fr] bg-white">
+                  <div className="h-full w-full">
+                    <SubmissionList
+                      listing={bounty}
+                      filterLabel={filterLabel}
+                      setFilterLabel={(e) => {
+                        setFilterLabel(e);
+                        setCurrentPage(1);
+                      }}
+                      submissions={paginatedSubmissions}
+                      setSearchText={(e) => {
+                        setSearchText(e);
+                        setCurrentPage(1);
+                      }}
+                      type={bounty?.type}
+                      isToggled={isToggled}
+                      toggleSubmission={toggleSubmission}
+                      isAllToggled={isToggledAll}
+                      toggleAllSubmissions={toggleAllSubmissions}
                     />
-                  </TabPanel>
-                )}
-            </TabPanels>
+                  </div>
+
+                  <div className="h-full w-full rounded-r-xl border-b border-r border-t border-slate-200 bg-white">
+                    {!paginatedSubmissions?.length &&
+                    !searchText &&
+                    !isSubmissionsLoading ? (
+                      <>
+                        <ExternalImage
+                          className="mx-auto mt-32 w-32"
+                          alt={'talent empty'}
+                          src={'/bg/talent-empty.svg'}
+                        />
+                        <p className="mx-auto mt-5 text-center text-lg font-semibold text-slate-600">
+                          {filterLabel ? 'Zero Results' : 'People are working!'}
+                        </p>
+                        <p className="mx-auto mb-[200px] text-center font-medium text-slate-400">
+                          {filterLabel
+                            ? 'For the filters you have selected'
+                            : 'Submissions will start appearing here'}
+                        </p>
+                      </>
+                    ) : (
+                      <SubmissionPanel
+                        isMultiSelectOn={selectedSubmissionIds.size > 0}
+                        remainings={remainings}
+                        setRemainings={setRemainings}
+                        bounty={bounty}
+                        submissions={paginatedSubmissions}
+                        usedPositions={usedPositions || []}
+                        onWinnersAnnounceOpen={onOpen}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center justify-start gap-4">
+                <>
+                  <Button
+                    disabled={currentPage <= 1}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    size="sm"
+                    variant="outline"
+                  >
+                    <ChevronLeft className="mr-2 h-5 w-5" />
+                    Previous
+                  </Button>
+
+                  <p className="text-sm text-slate-400">
+                    <span className="font-bold">
+                      {(currentPage - 1) * submissionsPerPage + 1}
+                    </span>{' '}
+                    -{' '}
+                    <span className="font-bold">
+                      {Math.min(
+                        currentPage * submissionsPerPage,
+                        filteredSubmissions.length,
+                      )}
+                    </span>{' '}
+                    of{' '}
+                    <span className="font-bold">
+                      {filteredSubmissions.length}
+                    </span>{' '}
+                    Submissions
+                  </p>
+
+                  <Button
+                    disabled={currentPage >= totalPages}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    size="sm"
+                    variant="outline"
+                  >
+                    Next
+                    <ChevronRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </>
+              </div>
+            </TabsContent>
+
+            {bounty &&
+              bounty.id &&
+              bounty.isPublished &&
+              !bounty.isWinnersAnnounced &&
+              !isExpired && (
+                <TabsContent value="scout" className="px-0">
+                  <ScoutTable
+                    bountyId={bounty.id}
+                    scouts={scouts || []}
+                    setInvited={(userId: string) => {
+                      queryClient.setQueryData(
+                        ['scouts', bounty.id],
+                        (oldData: ScoutRowType[] | undefined) => {
+                          if (!oldData) return oldData;
+                          return oldData.map((scout) =>
+                            scout.userId === userId
+                              ? { ...scout, invited: true }
+                              : scout,
+                          );
+                        },
+                      );
+                    }}
+                  />
+                </TabsContent>
+              )}
           </Tabs>
+
           <Popover
-            closeOnBlur={false}
-            closeOnEsc={false}
-            isOpen={isTogglerOpen}
-            onClose={onTogglerClose}
+            modal={true}
+            onOpenChange={onTogglerClose}
+            open={isTogglerOpen}
           >
             <PopoverContent
-              pos="fixed"
-              bottom={10}
-              w="full"
-              mx="auto"
-              p={0}
-              bg="transparent"
-              border="none"
-              shadow="none"
+              className="fixed bottom-10 mx-auto w-full border-none bg-transparent p-0 shadow-none"
+              align="center"
             >
-              <PopoverBody
-                w="fit-content"
-                mx="auto"
-                px={4}
-                bg="white"
-                borderWidth={2}
-                borderColor="brand.slate.200"
-                shadow="lg"
-                rounded={'lg'}
-              >
+              <div className="mx-auto w-fit rounded-lg border-2 border-slate-200 bg-white px-4 shadow-lg">
                 {selectedSubmissionIds.size > 100 && (
-                  <Text pb={2} color="red" textAlign="center">
+                  <p className="pb-2 text-center text-red-500">
                     Cannot select more than 100 applications
-                  </Text>
+                  </p>
                 )}
-                <HStack gap={4} fontSize={'lg'}>
-                  <HStack fontWeight={500}>
+
+                <div className="flex items-center gap-4 text-lg">
+                  <div className="flex items-center gap-2 font-medium">
                     <p>{selectedSubmissionIds.size}</p>
-                    <Text color="brand.slate.500">Selected</Text>
-                  </HStack>
-                  <Box w="1px" h={4} bg="brand.slate.300" />
+                    <p className="text-slate-500">Selected</p>
+                  </div>
+
+                  <div className="h-4 w-px bg-slate-300" />
+
                   <Button
-                    fontWeight={500}
-                    bg="transparent"
+                    className="bg-transparent font-medium hover:bg-transparent"
                     onClick={() => {
                       setSelectedSubmissionIds(new Set());
                     }}
-                    variant="link"
+                    variant="ghost"
                   >
                     UNSELECT ALL
                   </Button>
+
                   <Button
-                    gap={2}
-                    color="#E11D48"
-                    fontWeight={500}
-                    bg="#FEF2F2"
-                    isDisabled={
+                    className="gap-2 bg-red-100 font-medium text-rose-600 hover:bg-red-50/90"
+                    disabled={
                       selectedSubmissionIds.size === 0 ||
                       selectedSubmissionIds.size > 100
                     }
@@ -714,8 +647,8 @@ export default function BountySubmissions({ slug }: Props) {
                     </svg>
                     Reject {selectedSubmissionIds.size} Applications
                   </Button>
-                </HStack>
-              </PopoverBody>
+                </div>
+              </div>
             </PopoverContent>
           </Popover>
           <RejectAllSubmissionModal

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { cn } from '@/utils';
+
 import { RichEditor } from '../shared/RichEditor';
 import {
   FormControl,
@@ -22,6 +24,8 @@ export const FormFieldWrapper = ({
   isTokenInput = false,
   token,
   richEditorPlaceholder,
+  className,
+  onChange,
 }: {
   control: any;
   name: string;
@@ -33,13 +37,15 @@ export const FormFieldWrapper = ({
   isTokenInput?: boolean;
   token?: string;
   richEditorPlaceholder?: string;
+  className?: string;
+  onChange?: (e: any) => void; // doesnt override, only adds to existing onChange
 }) => {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col gap-2">
+        <FormItem className={cn('flex flex-col gap-2', className)}>
           <div>
             {label && <FormLabel isRequired={isRequired}>{label}</FormLabel>}
             {description && <FormDescription>{description}</FormDescription>}
@@ -50,7 +56,10 @@ export const FormFieldWrapper = ({
                 <RichEditor
                   id={name}
                   value={field.value || ''}
-                  onChange={field.onChange}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    onChange?.(e);
+                  }}
                   error={false}
                   placeholder={richEditorPlaceholder}
                 />
@@ -58,13 +67,22 @@ export const FormFieldWrapper = ({
                 <TokenInput
                   token={token}
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    onChange?.(e);
+                  }}
                 />
               ) : (
-                React.cloneElement(children as React.ReactElement, { ...field })
+                React.cloneElement(children as React.ReactElement, {
+                  ...field,
+                  onChange: (e: any) => {
+                    field.onChange(e);
+                    onChange?.(e);
+                  },
+                })
               )}
             </FormControl>
-            <FormMessage />
+            <FormMessage className="pt-1" />
           </div>
         </FormItem>
       )}

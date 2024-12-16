@@ -82,7 +82,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
         </Head>
       }
     >
-      <div className="flex bg-[#f8fafc] px-4">
+      <div className="flex bg-slate-50 px-4">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 rounded-[10] py-14 md:flex-row">
           {isListingsLoading ? (
             <Skeleton className="h-28 w-28 rounded-full" />
@@ -128,7 +128,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
                 text={description}
               />
             )}
-            <div className="mt-3 flex gap-3 text-[#64748B]">
+            <div className="mt-3 flex gap-3 text-slate-500">
               {url && (
                 <Link className="flex items-center" href={getURLSanitized(url)}>
                   <MdOutlineInsertLink className="h-5 w-5" />

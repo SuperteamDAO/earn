@@ -1,21 +1,7 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
 import { type SubmissionLabels } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { useSetAtom } from 'jotai';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -23,10 +9,13 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { BONUS_REWARD_POSITION } from '@/constants';
-import { PublishResults } from '@/features/listings';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip } from '@/components/ui/tooltip';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import {
+  PublishResults,
   selectedSubmissionAtom,
   sponsorDashboardListingQuery,
   SubmissionHeader,
@@ -38,17 +27,13 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 
 interface Props {
   listing: string;
 }
-
-const selectedStyles = {
-  borderColor: 'brand.purple',
-  color: 'brand.slate.600',
-};
 
 const submissionsPerPage = 10;
 
@@ -195,183 +180,145 @@ export default function BountySubmissions({ listing }: Props) {
             bounty={bounty}
             totalSubmissions={submissions?.length || 0}
           />
-          <Tabs defaultIndex={searchParams.has('scout') ? 1 : 0}>
-            <TabList
-              gap={4}
-              color="brand.slate.400"
-              fontWeight={500}
-              borderBottomWidth={'1px'}
-            >
-              <Tab px={1} fontSize="sm" _selected={selectedStyles}>
-                Submissions
-              </Tab>
+          <Tabs
+            defaultValue={searchParams.has('scout') ? 'scout' : 'submissions'}
+          >
+            <TabsList className="gap-4 border-b font-medium text-slate-400">
+              <TabsTrigger value="submissions">Submissions</TabsTrigger>
+
               {bounty?.isPublished &&
                 !bounty?.isWinnersAnnounced &&
                 !isExpired && (
                   <Tooltip
-                    px={4}
-                    py={2}
-                    color="brand.slate.500"
-                    fontFamily={'var(--font-sans)'}
-                    bg="white"
-                    borderRadius={'lg'}
-                    isDisabled={isSponsorVerified === true}
-                    label="Scout is an invite-only feature right now"
+                    content="Scout is an invite-only feature right now"
+                    contentProps={{
+                      className: 'rounded-lg px-4 py-2 font-sans',
+                    }}
+                    disabled={isSponsorVerified === true}
                   >
-                    <Tab
-                      className="ph-no-capture"
-                      px={1}
-                      fontSize="sm"
-                      _disabled={{ color: 'brand.slate.400' }}
-                      _selected={selectedStyles}
-                      cursor={isSponsorVerified ? 'pointer' : 'not-allowed'}
-                      isDisabled={!isSponsorVerified}
+                    <TabsTrigger
+                      value="scout"
+                      className={cn(
+                        'ph-no-capture',
+                        !isSponsorVerified &&
+                          'cursor-not-allowed text-slate-400',
+                      )}
+                      disabled={!isSponsorVerified}
                       onClick={() => posthog.capture('scout tab_scout')}
                     >
                       Scout Talent
                       {!!isSponsorVerified && (
-                        <Box w={1.5} h={1.5} ml={1.5} bg="red" rounded="full" />
+                        <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
                       )}
-                    </Tab>
+                    </TabsTrigger>
                   </Tooltip>
                 )}
-            </TabList>
-            <TabPanels>
-              <TabPanel w="full" px={0}>
-                <>
-                  <Flex align={'start'} w="full" bg="white">
-                    <Grid
-                      templateColumns="23rem 1fr"
-                      w="full"
-                      minH="600px"
-                      bg="white"
-                    >
-                      <GridItem w="full" h="full">
-                        <SubmissionList
-                          listing={bounty}
-                          filterLabel={filterLabel}
-                          setFilterLabel={setFilterLabel}
-                          submissions={paginatedSubmissions}
-                          setSearchText={setSearchText}
-                          type={bounty?.type}
-                        />
-                      </GridItem>
-                      <GridItem
-                        w="full"
-                        h="full"
-                        bg="white"
-                        borderColor="brand.slate.200"
-                        borderTopWidth="1px"
-                        borderRightWidth={'1px'}
-                        borderBottomWidth="1px"
-                        roundedRight={'xl'}
-                      >
-                        {!paginatedSubmissions?.length &&
-                        !searchText &&
-                        !isSubmissionsLoading ? (
-                          <>
-                            <ExternalImage
-                              className="mx-auto mt-32 w-32"
-                              alt={'talent empty'}
-                              src={'/bg/talent-empty.svg'}
-                            />
-                            <Text
-                              mx="auto"
-                              mt={5}
-                              color={'brand.slate.600'}
-                              fontSize={'lg'}
-                              fontWeight={600}
-                              textAlign={'center'}
-                            >
-                              {filterLabel
-                                ? `Zero Results`
-                                : 'People are working!'}
-                            </Text>
-                            <Text
-                              mx="auto"
-                              mb={200}
-                              color={'brand.slate.400'}
-                              fontWeight={500}
-                              textAlign={'center'}
-                            >
-                              {filterLabel
-                                ? `For the filters you have selected`
-                                : 'Submissions will start appearing here'}
-                            </Text>
-                          </>
-                        ) : (
-                          <SubmissionPanel
-                            remainings={remainings}
-                            setRemainings={setRemainings}
-                            bounty={bounty}
-                            submissions={paginatedSubmissions}
-                            usedPositions={usedPositions || []}
-                            onWinnersAnnounceOpen={onOpen}
-                          />
-                        )}
-                      </GridItem>
-                    </Grid>
-                  </Flex>
-                  <Flex align="center" justify="start" gap={4} mt={4}>
-                    {!!searchText || !!filterLabel ? (
-                      <Text color="brand.slate.400" fontSize="sm">
-                        Found{' '}
-                        <Text as="span" fontWeight={700}>
-                          {filteredSubmissions.length}
-                        </Text>{' '}
-                        {filteredSubmissions.length === 1
-                          ? 'result'
-                          : 'results'}
-                      </Text>
-                    ) : (
+            </TabsList>
+            <div className="h-0.5 w-full bg-slate-200" />
+
+            <TabsContent value="submissions" className="w-full px-0">
+              <div className="flex w-full items-start bg-white">
+                <div className="grid min-h-[600px] w-full grid-cols-[23rem_1fr] bg-white">
+                  <div className="h-full w-full">
+                    <SubmissionList
+                      listing={bounty}
+                      filterLabel={filterLabel}
+                      setFilterLabel={setFilterLabel}
+                      submissions={paginatedSubmissions}
+                      setSearchText={setSearchText}
+                      type={bounty?.type}
+                    />
+                  </div>
+
+                  <div className="h-full w-full rounded-r-xl border-b border-r border-t border-slate-200 bg-white">
+                    {!paginatedSubmissions?.length &&
+                    !searchText &&
+                    !isSubmissionsLoading ? (
                       <>
-                        <Button
-                          isDisabled={currentPage <= 1}
-                          leftIcon={<ChevronLeftIcon w={5} h={5} />}
-                          onClick={() =>
-                            setCurrentPage((prev) => Math.max(prev - 1, 1))
-                          }
-                          size="sm"
-                          variant="outline"
-                        >
-                          Previous
-                        </Button>
-                        <Text color="brand.slate.400" fontSize="sm">
-                          <Text as="span" fontWeight={700}>
-                            {(currentPage - 1) * submissionsPerPage + 1}
-                          </Text>{' '}
-                          -{' '}
-                          <Text as="span" fontWeight={700}>
-                            {Math.min(
-                              currentPage * submissionsPerPage,
-                              filteredSubmissions.length,
-                            )}
-                          </Text>{' '}
-                          of{' '}
-                          <Text as="span" fontWeight={700}>
-                            {filteredSubmissions.length}
-                          </Text>{' '}
-                          Submissions
-                        </Text>
-                        <Button
-                          isDisabled={currentPage >= totalPages}
-                          onClick={() =>
-                            setCurrentPage((prev) =>
-                              Math.min(prev + 1, totalPages),
-                            )
-                          }
-                          rightIcon={<ChevronRightIcon w={5} h={5} />}
-                          size="sm"
-                          variant="outline"
-                        >
-                          Next
-                        </Button>
+                        <ExternalImage
+                          className="mx-auto mt-32 w-32"
+                          alt={'talent empty'}
+                          src={'/bg/talent-empty.svg'}
+                        />
+                        <p className="mx-auto mt-5 text-center text-lg font-semibold text-slate-600">
+                          {filterLabel ? 'Zero Results' : 'People are working!'}
+                        </p>
+                        <p className="mx-auto mb-[200px] text-center font-medium text-slate-400">
+                          {filterLabel
+                            ? 'For the filters you have selected'
+                            : 'Submissions will start appearing here'}
+                        </p>
                       </>
+                    ) : (
+                      <SubmissionPanel
+                        remainings={remainings}
+                        setRemainings={setRemainings}
+                        bounty={bounty}
+                        submissions={paginatedSubmissions}
+                        usedPositions={usedPositions || []}
+                        onWinnersAnnounceOpen={onOpen}
+                      />
                     )}
-                  </Flex>
-                </>
-              </TabPanel>
-            </TabPanels>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center justify-start gap-4">
+                {!!searchText || !!filterLabel ? (
+                  <p className="text-sm text-slate-400">
+                    Found{' '}
+                    <span className="font-bold">
+                      {filteredSubmissions.length}
+                    </span>{' '}
+                    {filteredSubmissions.length === 1 ? 'result' : 'results'}
+                  </p>
+                ) : (
+                  <>
+                    <Button
+                      disabled={currentPage <= 1}
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                      size="sm"
+                      variant="outline"
+                    >
+                      <ChevronLeft className="mr-2 h-5 w-5" />
+                      Previous
+                    </Button>
+
+                    <p className="text-sm text-slate-400">
+                      <span className="font-bold">
+                        {(currentPage - 1) * submissionsPerPage + 1}
+                      </span>{' '}
+                      -{' '}
+                      <span className="font-bold">
+                        {Math.min(
+                          currentPage * submissionsPerPage,
+                          filteredSubmissions.length,
+                        )}
+                      </span>{' '}
+                      of{' '}
+                      <span className="font-bold">
+                        {filteredSubmissions.length}
+                      </span>{' '}
+                      Submissions
+                    </p>
+
+                    <Button
+                      disabled={currentPage >= totalPages}
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      size="sm"
+                      variant="outline"
+                    >
+                      Next
+                      <ChevronRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </>
+                )}
+              </div>
+            </TabsContent>
           </Tabs>
         </>
       )}

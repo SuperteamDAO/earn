@@ -1,38 +1,28 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Center,
-  CircularProgress,
-  FormControl,
-  FormErrorMessage,
-  HStack,
-  Icon,
-  Image,
-  Input,
-  Link,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { Check, ExternalLink, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { LuCheck, LuX } from 'react-icons/lu';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { tokenList } from '@/constants/tokenList';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import {
   listingSubmissionsQuery,
   type ListingWithSubmissions,
 } from '@/features/listings';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getRankLabels } from '@/utils/rank';
 
@@ -238,319 +228,263 @@ export const VerifyPaymentModal = ({
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex gap-2">
-          <CircularProgress mx="auto" color="brand.purple" isIndeterminate />
+        <div className="flex justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-brand-purple" />
         </div>
       );
     }
 
     if (error) {
       return (
-        <Text color="red.500">
+        <p className="text-red-500">
           Error loading submissions. Please try again.
-        </Text>
+        </p>
       );
     }
 
     switch (status) {
       case 'loading':
         return (
-          <VStack h="100%" spacing={4}>
-            <VStack py={14}>
-              <CircularProgress
-                mb={4}
-                color="#4F46E5"
-                isIndeterminate
-                size="8rem"
-                thickness={6}
-              />
-              <VStack maxW="20rem">
-                <Text color="brand.slate.900" fontWeight={500}>
-                  Verifying Payment
-                </Text>
-                <Text align="center" color="brand.slate.500" fontSize="sm">
+          <div className="flex h-full flex-col gap-4">
+            <div className="flex flex-col py-14">
+              <div className="mb-4 flex justify-center">
+                <div
+                  className="border-6 h-32 w-32 animate-spin rounded-full border-slate-200 border-t-indigo-600"
+                  style={{ borderWidth: '6px' }}
+                />
+              </div>
+              <div className="flex max-w-[20rem] flex-col gap-2">
+                <p className="font-medium text-slate-900">Verifying Payment</p>
+                <p className="text-center text-sm text-slate-500">
                   {`We're`} verifying all your links, hang tight! <br /> This
                   should take less than a minute
-                </Text>
-              </VStack>
-            </VStack>
+                </p>
+              </div>
+            </div>
             <Button
-              w="full"
-              mt={'auto'}
-              color="brand.slate.800"
-              fontWeight={500}
-              bg="brand.slate.300"
-              cursor="wait"
+              className="mt-auto w-full cursor-wait bg-slate-300 font-medium text-slate-800"
+              disabled
               type="submit"
             >
               Verifying Payment....
             </Button>
-          </VStack>
+          </div>
         );
       case 'success':
         return (
-          <VStack h="100%" py={16} spacing={10}>
-            <Center p={6} bg="#ECFDF5" rounded={'full'}>
-              <Center
-                w="fit-content"
-                mx="auto"
-                p={3}
-                bg={'#059669'}
-                rounded={'full'}
-              >
-                <LuCheck
-                  strokeWidth={3}
-                  color="white"
-                  style={{ width: '2.5em', height: '2.5em' }}
-                />
-              </Center>
-            </Center>
-            <VStack maxW="20rem">
-              <Text color="brand.slate.900" fontWeight={500}>
+          <div className="flex h-full flex-col gap-10 py-10">
+            <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center rounded-full bg-emerald-50 p-6">
+                <div className="rounded-full bg-emerald-600 p-3">
+                  <Check className="h-10 w-10 text-white" strokeWidth={3} />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex max-w-[20rem] flex-col gap-2">
+              <p className="font-medium text-slate-900">
                 External Payment(s) Added
-              </Text>
-              <Text align="center" color="brand.slate.500" fontSize="sm">
+              </p>
+              <p className="text-center text-sm text-slate-500">
                 We have successfully added external payment(s) to your listing.
-              </Text>
-            </VStack>
+              </p>
+            </div>
+
             {listing?.totalPaymentsMade !== listing?.totalWinnersSelected && (
               <Button
-                fontSize="sm"
-                fontWeight={400}
-                textDecoration={'underline'}
-                bg="none"
+                className="bg-none text-sm font-normal underline"
                 onClick={tryAgain}
                 variant="link"
               >
                 Verify More
               </Button>
             )}
-          </VStack>
+          </div>
         );
       case 'error':
         return (
-          <VStack h="100%" py={16} spacing={10}>
-            <Center p={6} bg="#FEF2F2" rounded={'full'}>
-              <Center
-                w="fit-content"
-                mx="auto"
-                p={3}
-                bg={'#DC2626'}
-                rounded={'full'}
-              >
-                <LuX
-                  strokeWidth={3}
-                  color="white"
-                  style={{ width: '2.5em', height: '2.5em' }}
-                />
-              </Center>
-            </Center>
-            <VStack maxW="20rem">
-              <Text color="brand.slate.900" fontWeight={500}>
+          <div className="flex h-full flex-col gap-10 py-10">
+            <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center rounded-full bg-red-50 p-6">
+                <div className="rounded-full bg-red-600 p-3">
+                  <X className="h-10 w-10 text-white" strokeWidth={3} />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex max-w-[20rem] flex-col gap-2">
+              <p className="font-medium text-slate-900">
                 Oh-Uh Verification Failed
-              </Text>
-              <Text align="center" color="brand.slate.500" fontSize="sm">
-                We {`couldn’t`} verify your payment status. <br /> Please check
-                your links again and make sure {`it’s`} the exact amount
-              </Text>
-            </VStack>
+              </p>
+              <p className="text-center text-sm text-slate-500">
+                We couldn’t verify your payment status. <br />
+                Please check your links again and make sure it’s the exact
+                amount
+              </p>
+            </div>
+
             <div className="flex flex-col gap-2">
-              <Link
+              <a
                 href="https://t.me/pratikdholani/"
-                isExternal
+                target="_blank"
                 rel="noopener noreferrer"
+                className="text-center"
               >
                 <Button
-                  fontSize="sm"
-                  fontWeight={400}
-                  textDecoration={'underline'}
-                  bg="none"
+                  className="bg-none text-sm font-normal underline"
                   variant="link"
                 >
                   Think We Made A Mistake? Text Us
                 </Button>
-              </Link>
+              </a>
+
               <Button
-                fontSize="sm"
-                fontWeight={400}
-                bg="none"
+                className="bg-none text-sm font-normal"
                 onClick={tryAgain}
                 variant="link"
               >
                 Try Again?
               </Button>
             </div>
-          </VStack>
+          </div>
         );
       default:
         return (
-          <form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
-            <VStack align="start">
-              <Text color="brand.slate.900" fontSize="medium" fontWeight={500}>
+          <form onSubmit={handleSubmit(onSubmit)} className="h-full">
+            <div className="flex flex-col items-start gap-2">
+              <p className="font-medium text-slate-900">
                 Add Reward Payment Link
-              </Text>
-              <Text
-                mt={2}
-                color="brand.slate.500"
-                fontSize="sm"
-                fontWeight={400}
-              >
+              </p>
+              <p className="mt-2 text-sm font-normal text-slate-500">
                 If you have paid the winners outside of Earn and want to update
-                the status of this listing as {`"Completed"`}, please add the
-                transaction links of the payments made to the winners.
-              </Text>
-            </VStack>
-            <VStack gap={6} my={6}>
+                the status of this listing as &quot;Completed&quot;, please add
+                the transaction links of the payments made to the winners.
+              </p>
+            </div>
+
+            <div className="my-6 flex flex-col gap-6">
               {data?.submission
                 .filter((sub) => sub.winnerPosition !== null)
                 .sort(
                   (a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0),
                 )
                 .map((submission, index) => (
-                  <Controller
+                  <FormField
                     key={submission.id}
-                    name={`paymentLinks.${index}.link`}
                     control={control}
+                    name={`paymentLinks.${index}.link`}
                     render={({ field }) => (
-                      <FormControl
-                        isInvalid={
-                          !!errors.paymentLinks?.[index]?.root ||
-                          !!errors.paymentLinks?.[index]?.link
-                        }
+                      <FormItem
+                        className={cn(
+                          'space-y-2',
+                          errors.paymentLinks?.[index]?.root ||
+                            errors.paymentLinks?.[index]?.link
+                            ? 'text-red-500'
+                            : '',
+                        )}
                       >
-                        <HStack justify="space-between">
-                          <VStack align="start" gap={2} w="40%">
-                            <HStack
-                              gap={1}
-                              color="brand.slate.500"
-                              fontSize="small"
-                              fontWeight={600}
-                              textTransform="uppercase"
-                            >
+                        <div className="flex justify-between gap-2">
+                          <div className="flex w-[40%] flex-col items-start gap-2">
+                            <div className="flex gap-1 text-sm font-semibold uppercase text-slate-500">
                               <p>
                                 {getRankLabels(submission.winnerPosition || 0)}{' '}
                                 PRIZE
                               </p>
                               {submission.winnerPosition ===
                                 BONUS_REWARD_POSITION && (
-                                <HStack gap={0}>
+                                <div className="flex">
                                   <p>(</p>
-                                  <Text
-                                    overflow="hidden"
-                                    maxW="5rem"
-                                    textTransform="none"
-                                    textOverflow="ellipsis"
-                                    noOfLines={1}
-                                  >
+                                  <p className="line-clamp-1 max-w-[5rem] normal-case">
                                     @{submission.user.username}
-                                  </Text>
+                                  </p>
                                   <p>)</p>
-                                </HStack>
+                                </div>
                               )}
-                            </HStack>
+                            </div>
                             <div className="flex gap-2">
-                              <Image
-                                w={'1.2rem'}
+                              <img
+                                className="w-[1.2rem] rounded-full"
                                 alt={selectedToken?.tokenName}
-                                rounded={'full'}
                                 src={selectedToken?.icon}
                               />
-                              <Text color="brand.slate.800" fontWeight={600}>
+                              <p className="font-semibold text-slate-800">
                                 {formatNumberWithSuffix(
                                   listing?.rewards?.[
                                     submission.winnerPosition || 0
                                   ] || 0,
                                 )}
-                              </Text>
-                              <Text color="brand.slate.400" fontWeight={600}>
+                              </p>
+                              <p className="font-semibold text-slate-400">
                                 {selectedToken?.tokenSymbol}
-                              </Text>
+                              </p>
                             </div>
-                          </VStack>
-                          <VStack align="start" gap={0} w="full">
+                          </div>
+
+                          <div className="flex w-full items-start">
                             {paymentLinks?.[index]?.isVerified ? (
-                              <HStack w="full">
-                                <Link
-                                  w="full"
+                              <div className="flex gap-2">
+                                <a
+                                  className="w-full"
                                   href={`https://solscan.io/tx/${paymentLinks?.[index]?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`}
-                                  isExternal
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                 >
                                   <Button
-                                    justifyContent="start"
-                                    w="full"
-                                    color="brand.slate.500"
-                                    fontSize="sm"
-                                    fontWeight={500}
-                                    borderWidth={1.5}
-                                    borderColor="green"
-                                    _hover={{
-                                      bg: 'green.100',
-                                    }}
+                                    className="w-full justify-start border-green-500 text-sm font-medium text-slate-500 hover:bg-green-100"
                                     variant="outline"
                                   >
-                                    <Text mr={2}>
+                                    <p className="mr-2">
                                       Payment Verified. View Tx
-                                    </Text>
-                                    <Icon as={ExternalLinkIcon} />
+                                    </p>
+                                    <ExternalLink className="h-4 w-4" />
                                   </Button>
-                                </Link>
+                                </a>
 
-                                <Icon
-                                  as={LuCheck}
-                                  w={6}
-                                  h={6}
-                                  p={1}
-                                  color="white"
-                                  bg="green"
-                                  rounded="full"
-                                  strokeWidth={3}
-                                />
-                              </HStack>
+                                <div className="h-6 w-6 rounded-full bg-green-500 p-1">
+                                  <Check className="h-full w-full stroke-[3] text-white" />
+                                </div>
+                              </div>
                             ) : (
-                              <Input
-                                {...field}
-                                fontSize="sm"
-                                _placeholder={{
-                                  color: 'brand.slate.400',
-                                }}
-                                placeholder="Paste your link here"
-                              />
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  className="text-sm placeholder:text-slate-400"
+                                  placeholder="Paste your link here"
+                                />
+                              </FormControl>
                             )}
-                            <FormErrorMessage>
-                              {errors.paymentLinks?.[index]?.root?.message}
-                              {errors.paymentLinks?.[index]?.link?.message}
-                            </FormErrorMessage>
-                          </VStack>
-                        </HStack>
-                      </FormControl>
+                            <FormMessage />
+                          </div>
+                        </div>
+                      </FormItem>
                     )}
                   />
                 ))}
-            </VStack>
+            </div>
+
             <div className="flex flex-col gap-2">
               <Button
-                w="full"
-                isDisabled={data?.submission.every((sub) => sub.isPaid)}
+                className="w-full"
+                disabled={data?.submission.every((sub) => sub.isPaid)}
                 type="submit"
               >
                 Add External Payment
               </Button>
+
               {status === 'retry' && (
-                <Link
+                <a
                   href="https://t.me/pratikdholani/"
-                  isExternal
+                  target="_blank"
                   rel="noopener noreferrer"
+                  className="text-center"
                 >
                   <Button
-                    fontSize="sm"
-                    fontWeight={400}
-                    textDecoration={'underline'}
-                    bg="none"
+                    className="bg-transparent text-sm font-normal underline"
                     variant="link"
                   >
                     Think We Made A Mistake? Text Us
                   </Button>
-                </Link>
+                </a>
               )}
             </div>
           </form>
@@ -559,18 +493,17 @@ export const VerifyPaymentModal = ({
   };
 
   return (
-    <Modal
-      closeOnEsc={false}
-      closeOnOverlayClick={false}
-      isOpen={isOpen}
-      onClose={onClose}
-      size="3xl"
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalCloseButton />
-        <ModalBody p={6}>{renderContent()}</ModalBody>
-      </ModalContent>
-    </Modal>
+    <Dialog open={isOpen} onOpenChange={onClose} modal>
+      <DialogContent className="max-w-4xl p-6">
+        <button
+          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 disabled:pointer-events-none"
+          onClick={onClose}
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </button>
+        {renderContent()}
+      </DialogContent>
+    </Dialog>
   );
 };

@@ -1,14 +1,6 @@
-import {
-  Box,
-  Center,
-  Divider,
-  Flex,
-  HStack,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { cn } from '@/utils';
 
-import { maxW, padding } from '../utils';
+import { maxW } from '../utils';
 import { HighQualityImage } from './HighQualityImage';
 import { Stars } from './Stars';
 import { TestimonialCard, type TestimonialProps } from './TestimonialCard';
@@ -48,109 +40,71 @@ users`,
 
 export function Testimonials() {
   return (
-    <VStack
-      align="start"
-      gap={8}
-      w="full"
-      maxW={maxW}
-      mb="4rem"
-      px={padding}
+    <div
+      className={cn(
+        'mb-16 flex w-full flex-col items-start gap-8',
+        maxW,
+        'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
+      )}
       id="customers"
     >
-      <Divider mb="2rem" />
-      <Flex
-        justify={'space-between'}
-        direction={{ base: 'column', md: 'row-reverse' }}
-        flex={1}
-        gap={8}
-        w="full"
-        h="100%"
-        border="1px solid"
-        borderColor="brand.slate.300"
-        rounded={4}
-      >
-        <Center
-          w={{ base: '100%', md: '40%' }}
-          h={{ base: '14.754rem', md: 'auto' }}
-          bg="black"
-          rounded={4}
-        >
-          <Box w={{ base: '5rem', md: '8rem' }}>
+      <hr className="mb-8" />
+
+      <div className="flex h-full w-full flex-col justify-between gap-8 rounded border border-slate-300 md:flex-row-reverse">
+        <div className="flex h-[14.754rem] w-full items-center justify-center rounded bg-black md:h-auto md:w-[40%]">
+          <div className="w-20 md:w-32">
             <HighQualityImage
-              src={'/landingsponsor/sponsors/tensor.webp'}
+              src="/landingsponsor/sponsors/tensor.webp"
               alt="Tensor HQ USer"
               className="h-full w-full"
             />
-          </Box>
-        </Center>
-        <VStack align="start" gap={4} p={{ base: '1rem', md: '2.5rem' }}>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-start gap-4 p-4 md:p-10">
           <Stars count={5} filled={5} />
-          <Text
-            color="brand.slate.600"
-            fontSize={{ base: '1.4rem', md: '1.87rem' }}
-            lineHeight={1.1}
-          >
+
+          <p className="text-[1.4rem] leading-[1.1] text-slate-600 md:text-[1.87rem]">
             Superteam are chads. <br />
             Superteam Earn is awesome. <br />
             Everybody should use it 💜
-          </Text>
-          <HStack gap={8}>
-            <VStack align="start" gap={0}>
-              <Text
-                color="brand.slate.800"
-                fontSize={'1.9rem'}
-                fontWeight={600}
-              >
-                520k
-              </Text>
-              <Text
-                color="brand.slate.500"
-                fontSize={{ base: '0.625rem', md: '0.925rem' }}
-                fontWeight={500}
-              >
+          </p>
+
+          <div className="flex gap-8">
+            <div className="flex flex-col items-start gap-0">
+              <p className="text-[1.9rem] font-semibold text-slate-800">520k</p>
+              <p className="text-[0.625rem] font-medium text-slate-500 md:text-[0.925rem]">
                 Page Views
-              </Text>
-            </VStack>
-            <VStack align="start" gap={0}>
-              <Text
-                color="brand.slate.800"
-                fontSize={'1.9rem'}
-                fontWeight={600}
-              >
-                369
-              </Text>
-              <Text
-                color="brand.slate.500"
-                fontSize={{ base: '0.625rem', md: '0.925rem' }}
-                fontWeight={500}
-              >
+              </p>
+            </div>
+            <div className="flex flex-col items-start gap-0">
+              <p className="text-[1.9rem] font-semibold text-slate-800">369</p>
+              <p className="text-[0.625rem] font-medium text-slate-500 md:text-[0.925rem]">
                 Total Submissions
-              </Text>
-            </VStack>
-          </HStack>
-          <HStack gap={6}>
-            <Box
-              gap={6}
-              w={{ base: '2.1rem', md: '3.1rem' }}
-              h={{ base: '2.1rem', md: '3.1rem' }}
-            >
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-6">
+            <div className="h-[2.1rem] w-[2.1rem] md:h-[3.1rem] md:w-[3.1rem]">
               <HighQualityImage
-                src={'/landingsponsor/users/tensor.webp'}
+                src="/landingsponsor/users/tensor.webp"
                 alt="TensorHQ"
                 className="h-full w-full"
               />
-            </Box>
-            <Text color="black" fontSize={{ base: '1rem', md: '1.5rem' }}>
+            </div>
+            <p className="text-base text-black md:text-[1.5rem]">
               Tensor HQ, on Twitter
-            </Text>
-          </HStack>
-        </VStack>
-      </Flex>
-      <Flex wrap={'wrap'} gap={8} mt="auto">
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-auto flex flex-wrap gap-8">
         {testimonials.map((t) => (
           <TestimonialCard key={t.name} {...t} />
         ))}
-      </Flex>
-    </VStack>
+      </div>
+    </div>
   );
 }

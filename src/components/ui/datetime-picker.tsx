@@ -49,7 +49,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/utils';
 
-import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip';
+import { Tooltip } from './tooltip';
 
 export type CalendarProps = Omit<
   React.ComponentProps<typeof DayPicker>,
@@ -371,15 +371,15 @@ export function DateTimePicker({
                   (isDisabledAfter && maxDateTooltipContent)
                 ) {
                   return (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div {...props} />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-56 text-center">
-                        {isDisabledBefore
+                    <Tooltip
+                      content={
+                        isDisabledBefore
                           ? minDateTooltipContent
-                          : maxDateTooltipContent}
-                      </TooltipContent>
+                          : maxDateTooltipContent
+                      }
+                      contentProps={{ className: 'max-w-56 text-center' }}
+                    >
+                      <div {...props} />
                     </Tooltip>
                   );
                 }

@@ -6,7 +6,6 @@ interface LocalImageProps {
   alt: string;
   style?: React.CSSProperties;
   loading?: 'lazy' | 'eager';
-  fetchPriority?: 'high' | 'low';
   decoding?: 'async' | 'sync';
   onError?: (event: React.SyntheticEvent<HTMLImageElement, Event>) => void;
 }
@@ -17,7 +16,6 @@ export const LocalImage = ({
   alt,
   style,
   loading = 'lazy',
-  fetchPriority,
   decoding = 'async',
   onError,
 }: LocalImageProps) => {
@@ -30,7 +28,6 @@ export const LocalImage = ({
       loading={loading}
       referrerPolicy="no-referrer"
       decoding={decoding}
-      fetchPriority={fetchPriority}
       onError={onError}
     />
   );

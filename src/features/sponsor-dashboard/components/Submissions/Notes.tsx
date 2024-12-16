@@ -1,10 +1,11 @@
-import { Flex, HStack, Spinner, Text, Textarea } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
+import { Loader2 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { Textarea } from '@/components/ui/textarea';
 import { type SubmissionWithUser } from '@/interface/submission';
 
 import { selectedSubmissionAtom } from '../..';
@@ -91,39 +92,27 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
   };
 
   return (
-    <Flex align="start" direction="column" w="full">
-      <HStack justify="space-between" w="full" mb={2} color="brand.slate.400">
-        <Text fontWeight={800}>Review Notes</Text>
+    <div className="flex w-full flex-col items-start">
+      <div className="mb-2 flex w-full items-center justify-between text-slate-400">
+        <span className="font-extrabold">Review Notes</span>
         {isSaving ? (
-          <Spinner size="xs" />
+          <Loader2 className="h-3 w-3 animate-spin" />
         ) : (
-          <Text fontSize="xx-small">Auto-saved</Text>
+          <span className="text-[10px]">Auto-saved</span>
         )}
-      </HStack>
+      </div>
       <Textarea
+        className="whitespace-pre-wrap border-none text-sm text-slate-400 placeholder:text-slate-400"
         key={submissionId}
-        sx={{
-          lineHeight: '2',
-          '& ::placeholder': {
-            lineHeight: '2',
-          },
-        }}
-        p={2}
-        color="brand.slate.400"
-        fontSize={'sm'}
-        border="none"
-        _placeholder={{ color: 'brand.slate.400' }}
-        whiteSpace="pre-wrap"
-        resize="vertical"
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         placeholder="• Start typing notes here"
         rows={20}
         value={notes}
       />
-      <Text mt={1} color="brand.slate.400" fontSize="xs">
+      <p className="mt-1 text-xs text-slate-400">
         {MAX_CHARACTERS - notes.length} characters remaining
-      </Text>
-    </Flex>
+      </p>
+    </div>
   );
 };

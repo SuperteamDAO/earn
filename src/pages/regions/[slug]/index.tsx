@@ -34,53 +34,51 @@ const RegionsPage = ({
   ogImage.searchParams.set('code', st.code!);
 
   return (
-    <>
-      <Home type="region" st={st}>
-        <Meta
-          title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
-          description={`Welcome to Superteam ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
-          canonical={`https://earn.superteam.fun/regions/${slug}/`}
-          og={ogImage.toString()}
+    <Home type="region" st={st}>
+      <Meta
+        title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
+        description={`Welcome to Superteam ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
+        canonical={`https://earn.superteam.fun/regions/${slug}/`}
+        og={ogImage.toString()}
+      />
+      <div className="w-full">
+        <RegionPop st={st} />
+        <ListingTabs
+          bounties={listings?.bounties}
+          isListingsLoading={isListingsLoading}
+          showEmoji
+          title="Freelance Gigs"
+          showViewAll
+          viewAllLink={`/regions/${slug}/all`}
+          take={10}
         />
-        <div className="w-full">
-          <RegionPop st={st} />
-          <ListingTabs
-            bounties={listings?.bounties}
-            isListingsLoading={isListingsLoading}
-            showEmoji
-            title="Freelance Gigs"
-            showViewAll
-            viewAllLink={`/regions/${slug}/all`}
-            take={10}
-          />
 
-          <ListingSection
-            type="grants"
-            title="Grants"
-            sub="Equity-free funding opportunities for builders"
-            showEmoji
-          >
-            {isListingsLoading && (
-              <div className="flex min-h-52 flex-col items-center justify-center">
-                <Loading />
-              </div>
-            )}
-            {!isListingsLoading && !listings?.grants?.length && (
-              <div className="mt-8 flex items-center justify-center">
-                <EmptySection
-                  title="No grants available!"
-                  message="Subscribe to notifications to get notified about new grants."
-                />
-              </div>
-            )}
-            {!isListingsLoading &&
-              listings?.grants?.map((grant) => {
-                return <GrantsCard grant={grant} key={grant.id} />;
-              })}
-          </ListingSection>
-        </div>
-      </Home>
-    </>
+        <ListingSection
+          type="grants"
+          title="Grants"
+          sub="Equity-free funding opportunities for builders"
+          showEmoji
+        >
+          {isListingsLoading && (
+            <div className="flex min-h-52 flex-col items-center justify-center">
+              <Loading />
+            </div>
+          )}
+          {!isListingsLoading && !listings?.grants?.length && (
+            <div className="mt-8 flex items-center justify-center">
+              <EmptySection
+                title="No grants available!"
+                message="Subscribe to notifications to get notified about new grants."
+              />
+            </div>
+          )}
+          {!isListingsLoading &&
+            listings?.grants?.map((grant) => {
+              return <GrantsCard grant={grant} key={grant.id} />;
+            })}
+        </ListingSection>
+      </div>
+    </Home>
   );
 };
 

@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 
@@ -51,7 +51,7 @@ export const ListingSection = ({
         shouldDisplay ? 'block' : 'hidden',
       )}
     >
-      <div className="mb-4 flex items-center justify-between border-b border-[#E2E8F0] pb-3">
+      <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-3">
         <div className="flex items-center">
           {showEmoji && (
             <LocalImage
@@ -60,7 +60,7 @@ export const ListingSection = ({
               src={emoji}
             />
           )}
-          <p className="text-sm font-semibold text-[#334155] md:text-base">
+          <p className="text-sm font-semibold text-slate-700 md:text-base">
             {title}
           </p>
           <span className="mx-3 hidden text-[0.625rem] text-slate-300 md:block">
@@ -76,7 +76,7 @@ export const ListingSection = ({
             showViewAllButton ? 'block' : 'hidden',
           )}
         >
-          <NextLink href={viewAllHref}>
+          <Link href={viewAllHref}>
             <Button
               variant="ghost"
               size="sm"
@@ -89,7 +89,7 @@ export const ListingSection = ({
             >
               View All
             </Button>
-          </NextLink>
+          </Link>
         </div>
       </div>
 
@@ -98,7 +98,7 @@ export const ListingSection = ({
       <div
         className={cn('ph-no-capture', showViewAllButton ? 'block' : 'hidden')}
       >
-        <NextLink href={viewAllHref}>
+        <Link href={viewAllHref}>
           <Button
             variant="outline"
             size="sm"
@@ -112,7 +112,7 @@ export const ListingSection = ({
             View All
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
-        </NextLink>
+        </Link>
       </div>
     </div>
   );

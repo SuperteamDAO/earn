@@ -161,9 +161,7 @@ const Mobile = ({
           </AvatarGroup>
           <DrawerTitle className="pt-2 text-base font-semibold">
             {!totalUsers ? (
-              <>
-                <Skeleton className="h-5 w-3/4" />
-              </>
+              <Skeleton className="h-5 w-3/4" />
             ) : (
               <>
                 {totalUsers?.toLocaleString('en-us')} people have joined. You
@@ -273,9 +271,7 @@ const DesktopVariantTwo = ({
               )?.toLocaleString('en-us')}
             </>
           ) : (
-            <>
-              <Skeleton className="h-12 w-3/4" />
-            </>
+            <Skeleton className="h-12 w-3/4" />
           )}
         </p>
       </div>

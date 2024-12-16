@@ -81,45 +81,39 @@ export function ListingBuilderLayout({ route, slug }: ListingBuilderLayout) {
 
   if (route !== 'new' && (!slug || !listing)) {
     return (
-      <>
-        <Default
-          meta={
-            <Meta
-              title="Superteam Earn | Work to Earn in Crypto"
-              description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-              canonical="https://earn.superteam.fun"
-            />
-          }
-        >
-          <Header />
-          <ErrorSection message="Sorry! The bounty you are looking for is not available." />
-        </Default>
-      </>
+      <Default
+        meta={
+          <Meta
+            title="Superteam Earn | Work to Earn in Crypto"
+            description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
+            canonical="https://earn.superteam.fun"
+          />
+        }
+      >
+        <Header />
+        <ErrorSection message="Sorry! The bounty you are looking for is not available." />
+      </Default>
     );
   }
 
   return (
-    <>
-      <ListingBuilder
-        listing={
-          route === 'duplicate'
-            ? {
-                ...listing,
-                title: listing?.title + ' (copy)',
-                slug: '',
-                isPublished: false,
-                publishedAt: undefined,
-                id: undefined,
-              }
-            : listing
-        }
-        isEditing={!!listing?.publishedAt}
-        hackathon={
-          listing?.type === 'hackathon'
-            ? (listing?.Hackathon as any)
-            : hackathon
-        }
-      />
-    </>
+    <ListingBuilder
+      listing={
+        route === 'duplicate'
+          ? {
+              ...listing,
+              title: listing?.title + ' (copy)',
+              slug: '',
+              isPublished: false,
+              publishedAt: undefined,
+              id: undefined,
+            }
+          : listing
+      }
+      isEditing={!!listing?.publishedAt}
+      hackathon={
+        listing?.type === 'hackathon' ? (listing?.Hackathon as any) : hackathon
+      }
+    />
   );
 }

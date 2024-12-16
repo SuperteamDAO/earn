@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { MdArrowForward } from 'react-icons/md';
 
 import { recentEarnersQuery } from '@/features/listings';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useUser } from '@/store/user';
 
 import { totalsQuery } from '../queries';
@@ -15,7 +16,7 @@ import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
 
 interface SideBarProps {
-  type: 'landing' | 'listing' | 'category' | 'region' | 'niche' | 'feed';
+  type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
 }
 
 const VibeCard = dynamic(() =>
@@ -29,9 +30,16 @@ const LiveListings = dynamic(() =>
 export const HomeSideBar = ({ type }: SideBarProps) => {
   const router = useRouter();
   const { user } = useUser();
+  const isLg = useBreakpoint('lg');
 
-  const { data: totals, isLoading: isTotalsLoading } = useQuery(totalsQuery);
-  const { data: recentEarners } = useQuery(recentEarnersQuery);
+  const { data: totals, isLoading: isTotalsLoading } = useQuery({
+    ...totalsQuery,
+    enabled: isLg,
+  });
+  const { data: recentEarners } = useQuery({
+    ...recentEarnersQuery,
+    enabled: isLg,
+  });
 
   return (
     <div className="flex w-96 flex-col gap-10 py-6 pl-6">
@@ -43,13 +51,13 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
               <span className="text-sm font-medium text-gray-400">
                 LIVE LISTINGS
               </span>
-              <NextLink
+              <Link
                 href="/"
                 className="flex items-center text-xs font-semibold text-brand-purple"
               >
                 View All
                 <MdArrowForward className="ml-1" />
-              </NextLink>
+              </Link>
             </div>
           </LiveListings>
         </>

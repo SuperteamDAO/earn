@@ -1,6 +1,7 @@
-import { BONUS_REWARD_POSITION } from '@/constants';
 import { type Rewards } from '@/features/listings';
 import { cleanRewards } from '@/utils/rank';
+
+import { BONUS_REWARD_POSITION } from '../constants';
 
 export const calculateTotalPrizes = (
   rewards: Rewards | undefined | null,
@@ -15,7 +16,6 @@ export const calculateTotalRewardsForPodium = (
     if (isNaN(value)) return sum;
 
     if (Number(pos) === BONUS_REWARD_POSITION) {
-      console.log('bonus reward', value, maxBonusSpots);
       return sum + value * (maxBonusSpots || 0);
     }
     return sum + value;

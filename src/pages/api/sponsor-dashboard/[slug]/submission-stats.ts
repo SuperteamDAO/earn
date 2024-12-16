@@ -1,10 +1,10 @@
 import type { NextApiResponse } from 'next';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
 import {
   type NextApiRequestWithSponsor,
   withSponsorAuth,
 } from '@/features/auth';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

@@ -85,7 +85,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     <Link
       href={`/listings/${type}/${slug}`}
       className={`block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4 ${
-        isFeatured && isBeforeDeadline ? 'bg-[#FAF5FF]' : 'bg-white'
+        isFeatured && isBeforeDeadline ? 'bg-purple-50' : 'bg-white'
       }`}
     >
       <div className="flex w-full items-center justify-between">
@@ -106,45 +106,42 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
             </div>
             <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
-              <>
-                <div className="flex items-center justify-start sm:hidden">
+              <div className="flex items-center justify-start sm:hidden">
+                {compensationType !== 'variable' && (
+                  <img
+                    className="mr-0.5 h-3.5 w-3.5 rounded-full"
+                    alt={token}
+                    src={tokenIcon}
+                  />
+                )}
+                <div className="flex items-baseline">
+                  <CompensationAmount
+                    compensationType={compensationType}
+                    maxRewardAsk={maxRewardAsk}
+                    minRewardAsk={minRewardAsk}
+                    rewardAmount={rewardAmount}
+                    className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base"
+                  />
                   {compensationType !== 'variable' && (
-                    <img
-                      className="mr-0.5 h-3.5 w-3.5 rounded-full"
-                      alt={token}
-                      src={tokenIcon}
-                    />
+                    <p className="text-xs font-medium text-gray-400">{token}</p>
                   )}
-                  <div className="flex items-baseline">
-                    <CompensationAmount
-                      compensationType={compensationType}
-                      maxRewardAsk={maxRewardAsk}
-                      minRewardAsk={minRewardAsk}
-                      rewardAmount={rewardAmount}
-                      className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base"
-                    />
-                    {compensationType !== 'variable' && (
-                      <p className="text-xs font-medium text-gray-400">
-                        {token}
-                      </p>
-                    )}
-                  </div>
-                  <p className="ml-1 text-[10px] text-slate-300">|</p>
                 </div>
-                <img
-                  className={`flex h-3 sm:h-4 ${isBounty ? '-ml-0.5' : ''}`}
-                  alt={type}
-                  src={getListingIcon(type!)}
-                />
-                <p
-                  className={cn(
-                    '-ml-1 hidden text-xs font-medium text-gray-500 sm:flex',
-                    isBounty ? 'sm:-ml-3' : 'sm:-ml-2.5',
-                  )}
-                >
-                  {type && type.charAt(0).toUpperCase() + type.slice(1)}
-                </p>
-              </>
+                <p className="ml-1 text-[10px] text-slate-300">|</p>
+              </div>
+              <img
+                className={`flex h-3 sm:h-4 ${isBounty ? '-ml-0.5' : ''}`}
+                alt={type}
+                src={getListingIcon(type!)}
+              />
+              <p
+                className={cn(
+                  '-ml-1 hidden text-xs font-medium text-gray-500 sm:flex',
+                  isBounty ? 'sm:-ml-3' : 'sm:-ml-2.5',
+                )}
+              >
+                {type && type.charAt(0).toUpperCase() + type.slice(1)}
+              </p>
+
               <p className="flex text-[10px] text-slate-300 sm:text-xs md:text-sm">
                 |
               </p>
@@ -164,12 +161,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                     'mx-1 sm:mx-0',
                   )}
                 >
-                  <MdModeComment
-                    style={{
-                      color: 'var(--chakra-colors-brand-slate-500)',
-                      width: '0.8rem',
-                    }}
-                  />
+                  <MdModeComment className="w-[0.8rem] text-slate-500" />
                   <p>{_count?.Comments}</p>
                 </div>
               )}
@@ -177,7 +169,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                 <div
                   className={cn(
                     'flex items-center gap-1',
-                    'text-xs text-[#7C3AED]',
+                    'text-xs text-violet-600',
                     'mx-1 sm:mx-0',
                   )}
                 >

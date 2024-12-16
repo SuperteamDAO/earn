@@ -85,19 +85,21 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogOverlay />
       <DialogContent className="h-max py-5">
-        <div className="px-6 py-3">
-          <h2 className="text-lg font-medium text-slate-900">Share Profile</h2>
-          <p className="mt-3 text-lg font-medium text-slate-500">
+        <div className="px-0 py-3 md:px-6">
+          <h2 className="text-base font-medium text-slate-900 md:text-lg">
+            Share Profile
+          </h2>
+          <p className="text base mt-3 font-medium text-slate-500 md:text-lg">
             With your friends or on social media to showcase your proof of work,
             all in one place
           </p>
         </div>
         <div className="my-4 border-t border-slate-200" />
-        <div className="px-6">
+        <div className="px-0 md:px-6">
           <div className="relative">
             <Input
               className={cn(
-                'pr-12 text-lg font-medium text-slate-500',
+                'pr-12 text-base font-medium text-slate-500 md:text-lg',
                 'overflow-hidden text-ellipsis whitespace-nowrap',
                 'focus-visible:ring-slate-300',
               )}

@@ -1,16 +1,25 @@
-import { CloseIcon } from '@chakra-ui/icons';
-import { Button, Circle, Flex, Select, Tooltip } from '@chakra-ui/react';
+import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useAtom } from 'jotai';
+import { X } from 'lucide-react';
 import React, { type Dispatch, type SetStateAction } from 'react';
-import { MdArrowDropDown } from 'react-icons/md';
 
-import { BONUS_REWARD_POSITION } from '@/constants';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tooltip } from '@/components/ui/tooltip';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import { type Listing } from '@/features/listings';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { cn } from '@/utils';
 import { cleanRewards, getRankLabels, sortRank } from '@/utils/rank';
 
-import { selectedSubmissionAtom } from '../..';
+import { selectedSubmissionAtom } from '../../atoms';
 import { useRejectSubmissions, useToggleWinner } from '../../mutations';
 import { RejectSubmissionModal } from './Modals/RejectModal';
 
@@ -74,89 +83,95 @@ export const SelectWinner = ({
   return (
     <>
       <Tooltip
-        bg={'brand.purple'}
-        hasArrow={true}
-        isDisabled={!bounty?.isWinnersAnnounced}
-        label="You cannot change the winners once the results are published!"
-        placement="top"
+        content={
+          !bounty?.isWinnersAnnounced ? (
+            <>
+              You cannot change the winners once the results are published!
+              <TooltipArrow className="fill-slate-200" />
+            </>
+          ) : null
+        }
+        contentProps={{ sideOffset: 5 }}
       >
-        {isProject ? (
-          <Flex
-            className="ph-no-capture"
-            align="center"
-            justify={'flex-end'}
-            gap={2}
-            w="fit-content"
-          >
-            {isPending && (
-              <>
-                <Button
-                  color="#E11D48"
-                  bg="#FEF2F2"
-                  _hover={{ bg: '#FED7D7' }}
-                  isDisabled={isMultiSelectOn}
-                  leftIcon={
-                    <Circle p={'5px'} bg="#E11D48">
-                      <CloseIcon color="white" boxSize="2" />
-                    </Circle>
-                  }
-                  onClick={rejectedOnOpen}
-                >
-                  Reject
-                </Button>
-                <Button
-                  isDisabled={isMultiSelectOn}
-                  onClick={onWinnersAnnounceOpen}
-                >
-                  Announce As Winner
-                </Button>
-              </>
-            )}
-          </Flex>
-        ) : (
-          <Select
-            minW={44}
-            maxW={44}
-            color="brand.slate.500"
-            fontWeight={500}
-            textTransform="capitalize"
-            borderColor="brand.slate.300"
-            _placeholder={{ color: 'brand.slate.300' }}
-            focusBorderColor="brand.purple"
-            icon={<MdArrowDropDown />}
-            isDisabled={!!bounty?.isWinnersAnnounced || isHackathonPage}
-            onChange={(e) =>
-              selectWinner(Number(e.target.value), selectedSubmission?.id)
-            }
-            value={
-              selectedSubmission?.isWinner
-                ? selectedSubmission.winnerPosition || ''
-                : ''
-            }
-          >
-            <option>Select Winner</option>
-            {rewards.map((reward) => {
-              let isRewardUsed = usedPositions.includes(reward);
-              if (reward === BONUS_REWARD_POSITION) {
-                if (
-                  usedPositions.filter((u) => u === BONUS_REWARD_POSITION)
-                    .length < (bounty?.maxBonusSpots ?? 0)
-                ) {
-                  isRewardUsed = false;
-                }
+        <div>
+          {isProject ? (
+            <div className="ph-no-capture flex w-fit items-center justify-end gap-2">
+              {isPending && (
+                <>
+                  <Button
+                    variant="destructive"
+                    className="bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
+                    disabled={isMultiSelectOn}
+                    onClick={rejectedOnOpen}
+                  >
+                    <div className="mr-2 rounded-full bg-red-600 p-[5px]">
+                      <X className="h-2 w-2 text-white" />
+                    </div>
+                    Reject
+                  </Button>
+                  <Button
+                    disabled={isMultiSelectOn}
+                    onClick={onWinnersAnnounceOpen}
+                  >
+                    Announce As Winner
+                  </Button>
+                </>
+              )}
+            </div>
+          ) : (
+            <Select
+              disabled={!!bounty?.isWinnersAnnounced || isHackathonPage}
+              onValueChange={(value) =>
+                selectWinner(Number(value), selectedSubmission?.id)
               }
-              const isCurrentSubmissionReward =
-                Number(selectedSubmission?.winnerPosition) === reward;
-              return (
-                (!isRewardUsed || isCurrentSubmissionReward) && (
-                  <option key={reward} value={reward}>
-                    {isProject ? 'Winner' : getRankLabels(reward)}
-                  </option>
-                )
-              );
-            })}
-          </Select>
-        )}
+              value={
+                selectedSubmission?.isWinner
+                  ? selectedSubmission.winnerPosition?.toString() || ''
+                  : ''
+              }
+            >
+              <SelectTrigger
+                className={cn(
+                  'h-10 w-40 border-slate-300 font-medium capitalize text-slate-700',
+                  'focus:border-brand-purple focus:ring-brand-purple',
+                )}
+              >
+                <SelectValue
+                  className="placeholder:text-slate-800"
+                  placeholder="Select Winner"
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="placeholder">Select Winner</SelectItem>
+                {rewards.map((reward) => {
+                  let isRewardUsed = usedPositions.includes(reward);
+                  if (reward === BONUS_REWARD_POSITION) {
+                    if (
+                      usedPositions.filter((u) => u === BONUS_REWARD_POSITION)
+                        .length < (bounty?.maxBonusSpots ?? 0)
+                    ) {
+                      isRewardUsed = false;
+                    }
+                  }
+                  const isCurrentSubmissionReward =
+                    Number(selectedSubmission?.winnerPosition) === reward;
+
+                  return (
+                    (!isRewardUsed || isCurrentSubmissionReward) && (
+                      <SelectItem
+                        className="capitalize"
+                        key={reward}
+                        value={reward.toString()}
+                      >
+                        {isProject ? 'Winner' : getRankLabels(reward)}
+                      </SelectItem>
+                    )
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
       </Tooltip>
       <RejectSubmissionModal
         onRejectSubmission={handleRejectSubmission}

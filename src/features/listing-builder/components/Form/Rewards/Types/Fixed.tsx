@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { MAX_REWARD } from '@/constants';
+import { MAX_REWARD } from '@/features/listing-builder';
 
 import { useListingForm } from '../../../../hooks';
 import { TokenNumberInput } from '../Tokens';

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { isValidTwitterInput, isValidTwitterUsername } from '@/features/talent';
+import { isValidTwitterInput, isValidTwitterUsername } from '@/features/social';
 import { validateSolanaAddress } from '@/utils';
 
 export const grantApplicationSchema = (
