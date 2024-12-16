@@ -4,7 +4,7 @@ import { Pencil } from 'lucide-react';
 import { useRouter } from 'next/router';
 
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 type BountySnackbarType = {

@@ -1,11 +1,12 @@
 import { useSession } from 'next-auth/react';
 import { type ReactNode, useEffect, useState } from 'react';
 
-import { Login } from '@/features/auth';
-import { CompleteProfileModal } from '@/features/listings';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { CompleteProfileModal } from './CompleteProfileModal';
+import { Login } from './Login';
 
 interface AuthWrapperProps {
   children: ReactNode;

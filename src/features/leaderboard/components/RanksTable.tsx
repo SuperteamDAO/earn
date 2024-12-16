@@ -17,9 +17,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { EarnAvatar } from '@/features/talent';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { type RowType, type SKILL } from '../types';
 import { getSubskills, skillCategories } from '../utils';

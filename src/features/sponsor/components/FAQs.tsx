@@ -4,9 +4,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
-import { maxW } from '../utils';
+import { maxW } from '../utils/styles';
 
 const faqs = [
   {

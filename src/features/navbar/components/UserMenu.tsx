@@ -14,7 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { EarnAvatar, EmailSettingsModal } from '@/features/talent';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
 

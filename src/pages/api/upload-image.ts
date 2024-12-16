@@ -2,7 +2,8 @@ import { v2 as cloudinary } from 'cloudinary';
 import { type NextApiResponse } from 'next';
 import sharp from 'sharp';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
 

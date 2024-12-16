@@ -13,14 +13,15 @@ import {
 } from '@/components/ui/select';
 import { Tooltip } from '@/components/ui/tooltip';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
-import { type Listing } from '@/features/listings';
+import { type Listing } from '@/features/listings/types';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { type SubmissionWithUser } from '@/interface/submission';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { cleanRewards, getRankLabels, sortRank } from '@/utils/rank';
 
 import { selectedSubmissionAtom } from '../../atoms';
-import { useRejectSubmissions, useToggleWinner } from '../../mutations';
+import { useRejectSubmissions } from '../../mutations/useRejectSubmissions';
+import { useToggleWinner } from '../../mutations/useToggleWinner';
 import { RejectSubmissionModal } from './Modals/RejectModal';
 
 interface Props {

@@ -9,10 +9,10 @@ import {
   telegramUsernameSchema,
   twitterUsernameSchema,
   websiteUrlSchema,
-} from '@/features/social';
+} from '@/features/social/utils/schema';
 import { skillsArraySchema } from '@/interface/skills';
-import { getURL } from '@/utils';
 import { validateSolAddressUI } from '@/utils/validateSolAddress';
+import { getURL } from '@/utils/validUrl';
 
 import {
   CommunityList,

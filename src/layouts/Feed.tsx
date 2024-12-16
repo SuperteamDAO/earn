@@ -1,12 +1,12 @@
+import { HomeIcon } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
 import {
   AllPostsIcon,
-  HomeIcon,
   LeaderboardIcon,
   WinnersIcon,
-} from '@/features/feed';
+} from '@/features/feed/components/icons';
 import { Home } from '@/layouts/Home';
 
 interface NavItemProps {

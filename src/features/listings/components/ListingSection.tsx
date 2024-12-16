@@ -5,7 +5,7 @@ import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 type ListingSectionProps = {
   children?: React.ReactNode;

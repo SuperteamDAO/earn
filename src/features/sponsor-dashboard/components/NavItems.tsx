@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { type ReactNode } from 'react';
 import { type IconType } from 'react-icons';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 interface NavItemProps {
   icon: IconType;

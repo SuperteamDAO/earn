@@ -6,19 +6,17 @@ import { getServerSession } from 'next-auth';
 import { useMemo } from 'react';
 
 import { CombinedRegions } from '@/constants/Superteam';
-import { HomepagePop } from '@/features/conversion-popups';
-import {
-  homepageForYouListingsQuery,
-  homepageGrantsQuery,
-  homepageListingsQuery,
-} from '@/features/home';
+import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
+import { homepageForYouListingsQuery } from '@/features/home/queries/for-you';
+import { homepageGrantsQuery } from '@/features/home/queries/grants';
+import { homepageListingsQuery } from '@/features/home/queries/listings';
+import { ListingSection } from '@/features/listings/components/ListingSection';
+import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { type Listing } from '@/features/listings/types';
 import {
   filterRegionCountry,
   getCombinedRegion,
-  type Listing,
-  ListingSection,
-  ListingTabs,
-} from '@/features/listings';
+} from '@/features/listings/utils/region';
 import { Home } from '@/layouts/Home';
 import { prisma } from '@/prisma';
 
@@ -43,7 +41,10 @@ const InstallPWAModal = dynamic(
 );
 
 const GrantsCard = dynamic(
-  () => import('@/features/grants').then((mod) => mod.GrantsCard),
+  () =>
+    import('@/features/grants/components/GrantsCard').then(
+      (mod) => mod.GrantsCard,
+    ),
   { ssr: false },
 );
 

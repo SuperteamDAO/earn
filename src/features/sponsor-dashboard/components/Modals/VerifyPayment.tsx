@@ -17,12 +17,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { tokenList } from '@/constants/tokenList';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
-import {
-  listingSubmissionsQuery,
-  type ListingWithSubmissions,
-} from '@/features/listings';
+import { listingSubmissionsQuery } from '@/features/listings/queries/submissions';
+import { type ListingWithSubmissions } from '@/features/listings/types';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getRankLabels } from '@/utils/rank';
 

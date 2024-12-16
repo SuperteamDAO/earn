@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { type ReactNode } from 'react';
 
-import { GrantsCardMini, grantsQuery } from '@/features/grants';
+import { GrantsCardMini } from '@/features/grants/components/GrantsCardMini';
+import { grantsQuery } from '@/features/grants/queries/grants';
 
 export const LiveGrants = ({
   children,

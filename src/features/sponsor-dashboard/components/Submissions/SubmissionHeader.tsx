@@ -28,16 +28,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { tokenList } from '@/constants/tokenList';
+import { type Listing } from '@/features/listings/types';
 import {
   formatDeadline,
-  getColorStyles,
-  getListingIcon,
-  getListingStatus,
   isDeadlineOver,
-  type Listing,
-} from '@/features/listings';
+} from '@/features/listings/utils/deadline';
+import { getColorStyles } from '@/features/listings/utils/getColorStyles';
+import { getListingIcon } from '@/features/listings/utils/getListingIcon';
+import { getListingStatus } from '@/features/listings/utils/status';
 import { useClipboard } from '@/hooks/use-clipboard';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
 

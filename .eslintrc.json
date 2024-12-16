@@ -45,17 +45,17 @@
         "project": "./tsconfig.json"
       },
       "rules": {
-        "no-restricted-imports": [
-          "error",
-          {
-            "patterns": [
-              {
-                "group": ["@/features/*/*"],
-                "message": "Import from '@features' should not go beyond the first level of nesting."
-              }
-            ]
-          }
-        ],
+        // "no-restricted-imports": [
+        //   "error",
+        //   {
+        //     "patterns": [
+        //       {
+        //         "group": ["@/features/*/*"],
+        //         "message": "Import from '@features' should not go beyond the first level of nesting."
+        //       }
+        //     ]
+        //   }
+        // ],
         "import/no-duplicates": ["error", { "prefer-inline": true }],
         "react-hooks/exhaustive-deps": "off", // Incorrectly report needed dependency with Next.js router
         "@next/next/no-img-element": "off", // We currently not using next/image because it isn't supported with SSG mode

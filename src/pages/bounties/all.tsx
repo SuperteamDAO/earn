@@ -4,11 +4,11 @@ import { EmptySection } from '@/components/shared/EmptySection';
 import {
   ListingCard,
   ListingCardSkeleton,
-  ListingSection,
-  listingsQuery,
-} from '@/features/listings';
+} from '@/features/listings/components/ListingCard';
+import { ListingSection } from '@/features/listings/components/ListingSection';
+import { listingsQuery } from '@/features/listings/queries/listings';
 import { Home } from '@/layouts/Home';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 export default function AllBountiesPage() {
   const { data: listings, isLoading } = useQuery(

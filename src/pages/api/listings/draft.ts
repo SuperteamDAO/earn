@@ -2,11 +2,9 @@ import { type Prisma } from '@prisma/client';
 import { franc } from 'franc';
 import { type NextApiResponse } from 'next';
 
-import {
-  checkListingSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import {
   fetchSlugCheck,
   type ListingFormData,

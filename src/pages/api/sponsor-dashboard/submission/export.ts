@@ -1,11 +1,9 @@
 import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
-import {
-  checkListingSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';

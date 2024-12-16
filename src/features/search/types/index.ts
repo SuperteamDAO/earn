@@ -1,5 +1,5 @@
-import { type GrantWithApplicationCount } from '@/features/grants';
-import { type Listing } from '@/features/listings';
+import { type GrantWithApplicationCount } from '@/features/grants/types';
+import { type Listing } from '@/features/listings/types';
 
 export interface CheckboxFilter {
   label: string;

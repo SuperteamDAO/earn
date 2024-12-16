@@ -15,8 +15,8 @@ import { Input } from '@/components/ui/input';
 import {
   type UserSponsorDetails,
   userSponsorDetailsSchema,
-} from '@/features/sponsor';
-import { useUsernameValidation } from '@/features/talent';
+} from '@/features/sponsor/utils/sponsorFormSchema';
+import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 

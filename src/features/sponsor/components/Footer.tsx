@@ -4,9 +4,9 @@ import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
-import { maxW2 } from '../utils';
+import { maxW2 } from '../utils/styles';
 
 export function Footer() {
   const { data: session } = useSession();

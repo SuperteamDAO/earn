@@ -1,11 +1,9 @@
 import type { NextApiResponse } from 'next';
 
-import {
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import { extractSocialUsername } from '@/features/social';
-import { sponsorBaseSchema } from '@/features/sponsor';
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+import { sponsorBaseSchema } from '@/features/sponsor/utils/sponsorFormSchema';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

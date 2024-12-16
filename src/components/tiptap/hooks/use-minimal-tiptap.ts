@@ -12,19 +12,18 @@ import { StarterKit } from '@tiptap/starter-kit';
 import * as React from 'react';
 import { toast } from 'sonner';
 
-import { cn, type EARN_IMAGE_FOLDER, uploadToCloudinary } from '@/utils';
+import { cn } from '@/utils/cn';
+import { type EARN_IMAGE_FOLDER, uploadToCloudinary } from '@/utils/upload';
 
-import {
-  CodeBlockLowlight,
-  Color,
-  FileHandler,
-  HorizontalRule,
-  Image,
-  Link,
-  ResetMarksOnEnter,
-  Selection,
-  UnsetAllMarks,
-} from '../extensions';
+import { CodeBlockLowlight } from '../extensions/code-block-lowlight/code-block-lowlight';
+import { Color } from '../extensions/color';
+import { FileHandler } from '../extensions/file-handler';
+import { HorizontalRule } from '../extensions/horizontal-rule';
+import { Image } from '../extensions/image';
+import { Link } from '../extensions/link';
+import { ResetMarksOnEnter } from '../extensions/reset-marks-on-enter';
+import { Selection } from '../extensions/selection';
+import { UnsetAllMarks } from '../extensions/unset-all-marks';
 import { fileToBase64, getOutput, reasonToText } from '../utils';
 import { useThrottle } from './use-throttle';
 

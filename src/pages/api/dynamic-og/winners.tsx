@@ -2,7 +2,7 @@ import { ImageResponse } from '@vercel/og';
 import type { NextRequest } from 'next/server';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { type Rewards } from '@/features/listings';
+import { type Rewards } from '@/features/listings/types';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { fetchAsset, formatString } from '@/utils/ogHelpers';
 import { nthLabelGenerator } from '@/utils/rank';

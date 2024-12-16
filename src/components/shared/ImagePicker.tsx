@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { RxUpload } from 'react-icons/rx';
 import { toast } from 'sonner';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { Input } from '../ui/input';
 

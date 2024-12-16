@@ -1,11 +1,9 @@
 import type { NextApiResponse } from 'next';
 
-import {
-  checkListingSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import { sendEmailNotification } from '@/features/emails';
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

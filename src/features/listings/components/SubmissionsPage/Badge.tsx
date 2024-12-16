@@ -2,7 +2,7 @@ import { Star } from 'lucide-react';
 import React from 'react';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
-import { type Rewards } from '@/features/listings';
+import { type Rewards } from '@/features/listings/types';
 import { nthLabelGenerator } from '@/utils/rank';
 
 export const Badge = ({

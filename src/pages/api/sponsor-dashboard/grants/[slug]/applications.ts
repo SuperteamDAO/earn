@@ -4,11 +4,9 @@ import {
 } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
-import {
-  checkGrantSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

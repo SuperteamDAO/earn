@@ -22,7 +22,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { tokenList } from '@/constants/tokenList';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { useListingForm } from '../../../../hooks';
 import { TokenLabel } from './TokenLabel';

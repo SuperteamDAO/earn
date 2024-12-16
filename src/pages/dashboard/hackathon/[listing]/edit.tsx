@@ -3,8 +3,7 @@ import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-// import { CreateListing } from '@/features/listing-builder';
-import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard';
+import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 

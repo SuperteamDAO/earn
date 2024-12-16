@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { MdArrowForward } from 'react-icons/md';
 
-import { recentEarnersQuery } from '@/features/listings';
+import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useUser } from '@/store/user';
 
-import { totalsQuery } from '../queries';
+import { totalsQuery } from '../queries/totals';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
@@ -20,11 +20,13 @@ interface SideBarProps {
 }
 
 const VibeCard = dynamic(() =>
-  import('@/features/home').then((mod) => mod.VibeCard),
+  import('@/features/home/components/VibeCard').then((mod) => mod.VibeCard),
 );
 
 const LiveListings = dynamic(() =>
-  import('@/features/home').then((mod) => mod.LiveListings),
+  import('@/features/home/components/LiveListings').then(
+    (mod) => mod.LiveListings,
+  ),
 );
 
 export const HomeSideBar = ({ type }: SideBarProps) => {

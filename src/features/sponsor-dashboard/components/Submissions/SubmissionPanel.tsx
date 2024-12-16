@@ -8,10 +8,10 @@ import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import type { Listing, Rewards } from '@/features/listings';
-import { EarnAvatar } from '@/features/talent';
+import type { Listing, Rewards } from '@/features/listings/types';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';

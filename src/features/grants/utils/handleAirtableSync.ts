@@ -1,7 +1,7 @@
 import { type GrantApplication } from '@prisma/client';
 import axios from 'axios';
 
-import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils';
+import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 
 import { convertGrantApplicationToAirtable } from './convertGrantApplicationToAirtable';
 

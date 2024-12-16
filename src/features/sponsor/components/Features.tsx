@@ -1,8 +1,8 @@
 import { usePostHog } from 'posthog-js/react';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
-import { maxW2 } from '../utils';
+import { maxW2 } from '../utils/styles';
 import { HighQualityImage } from './HighQualityImage';
 
 interface FeatureProps {

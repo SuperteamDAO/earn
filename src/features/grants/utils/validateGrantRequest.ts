@@ -1,4 +1,4 @@
-import { userRegionEligibilty } from '@/features/listings';
+import { userRegionEligibilty } from '@/features/listings/utils/region';
 import { prisma } from '@/prisma';
 
 export async function validateGrantRequest(userId: string, grantId: string) {

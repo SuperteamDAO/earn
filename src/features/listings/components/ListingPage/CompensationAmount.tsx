@@ -1,7 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import React from 'react';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 interface CompensationAmountType {

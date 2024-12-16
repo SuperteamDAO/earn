@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { listingStatusAtom } from '../../atoms';
 import { type ListingStatus } from '../../types';

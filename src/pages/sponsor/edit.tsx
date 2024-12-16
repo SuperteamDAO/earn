@@ -22,15 +22,16 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Tooltip } from '@/components/ui/tooltip';
-import { extractSocialUsername, SocialInput } from '@/features/social';
+import { SocialInput } from '@/features/social/components/SocialInput';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+import { useSlugValidation } from '@/features/sponsor/hooks/useSlugValidation';
+import { useSponsorNameValidation } from '@/features/sponsor/hooks/useSponsorNameValidation';
 import {
   type SponsorBase,
   sponsorBaseSchema,
-  useSlugValidation,
-  useSponsorNameValidation,
-} from '@/features/sponsor';
-import { sponsorQuery } from '@/features/sponsor-dashboard';
-import { IndustryList } from '@/features/talent';
+} from '@/features/sponsor/utils/sponsorFormSchema';
+import { sponsorQuery } from '@/features/sponsor-dashboard/queries/sponsor';
+import { IndustryList } from '@/features/talent/constants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';

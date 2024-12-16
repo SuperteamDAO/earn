@@ -1,10 +1,8 @@
 import type { NextApiResponse } from 'next';
 
-import {
-  type NextApiRequestWithUser,
-  userSelectOptions,
-  withAuth,
-} from '@/features/auth';
+import { userSelectOptions } from '@/features/auth/constants';
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';

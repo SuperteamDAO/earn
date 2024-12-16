@@ -27,7 +27,7 @@ import {
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { isEditingAtom } from '../../../atoms';

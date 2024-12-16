@@ -2,7 +2,8 @@ import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useState } from 'react';
 
-import { type Listing, SubmissionList } from '@/features/listings';
+import { SubmissionList } from '@/features/listings/components/SubmissionsPage/SubmissionList';
+import { type Listing } from '@/features/listings/types';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { getURL } from '@/utils/validUrl';

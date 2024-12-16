@@ -1,8 +1,8 @@
 import dynamic from 'next/dynamic';
 import type { ReactNode } from 'react';
 
-import { Header } from '@/features/navbar';
-import { cn } from '@/utils';
+import { Header } from '@/features/navbar/components/Header';
+import { cn } from '@/utils/cn';
 
 interface IDefaultProps {
   meta: ReactNode;
@@ -12,7 +12,7 @@ interface IDefaultProps {
 }
 
 const Footer = dynamic(() =>
-  import('@/features/navbar').then((mod) => mod.Footer),
+  import('@/features/navbar/components/Footer').then((mod) => mod.Footer),
 );
 
 export const Default = ({

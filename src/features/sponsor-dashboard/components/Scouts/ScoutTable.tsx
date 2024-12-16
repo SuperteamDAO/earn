@@ -20,8 +20,8 @@ import {
 } from '@/components/ui/table';
 import { Tooltip } from '@/components/ui/tooltip';
 import { skillMap } from '@/constants/skillMap';
-import { EarnAvatar } from '@/features/talent';
-import { cn } from '@/utils';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+import { cn } from '@/utils/cn';
 
 import { type ScoutRowType } from '../../types';
 import { InviteButton } from './InviteButton';

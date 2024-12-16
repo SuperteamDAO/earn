@@ -1,7 +1,8 @@
 import { status } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
 import { prisma } from '@/prisma';
 
 async function getHackathonListings(

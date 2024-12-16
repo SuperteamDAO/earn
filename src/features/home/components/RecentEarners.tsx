@@ -5,7 +5,7 @@ import { MdArrowForward } from 'react-icons/md';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
-import { EarnAvatar } from '@/features/talent';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { type User } from '@/interface/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';

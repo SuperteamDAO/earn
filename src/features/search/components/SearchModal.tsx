@@ -9,9 +9,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { GrantsCard } from '@/features/grants';
-import { ListingCard } from '@/features/listings';
-import { cn } from '@/utils';
+import { GrantsCard } from '@/features/grants/components/GrantsCard';
+import { ListingCard } from '@/features/listings/components/ListingCard';
+import { cn } from '@/utils/cn';
 
 import { type SearchResult } from '../types';
 

@@ -12,7 +12,7 @@ import TextareaAutosize, {
 import getCaretCoordinates from 'textarea-caret';
 
 import { type User } from '@/interface/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import {
   addMention,

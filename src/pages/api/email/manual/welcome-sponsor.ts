@@ -1,12 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import {
-  kashEmail,
-  replyToEmail,
-  resend,
-  WelcomeSponsorTemplate,
-} from '@/features/emails';
+import { WelcomeSponsorTemplate } from '@/features/emails/components/welcomeSponsorTemplate';
+import { kashEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
+import { resend } from '@/features/emails/utils/resend';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

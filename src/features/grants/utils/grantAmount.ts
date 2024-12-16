@@ -1,4 +1,4 @@
-import { formatNumberWithSuffix } from '@/utils';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 export function grantAmount({
   minReward,

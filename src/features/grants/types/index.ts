@@ -1,4 +1,4 @@
-import { type References } from '@/features/listings';
+import { type References } from '@/features/listings/types';
 import type { Skills } from '@/interface/skills';
 import type { User } from '@/interface/user';
 

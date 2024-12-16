@@ -5,9 +5,13 @@ import { useEffect } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
 
-const Login = dynamic(() => import('@/features/auth').then((mod) => mod.Login));
+const Login = dynamic(() =>
+  import('@/features/auth/components/Login').then((mod) => mod.Login),
+);
 const SearchModal = dynamic(() =>
-  import('@/features/search').then((mod) => mod.SearchModal),
+  import('@/features/search/components/SearchModal').then(
+    (mod) => mod.SearchModal,
+  ),
 );
 const BottomBar = dynamic(() =>
   import('./BottomBar').then((mod) => mod.BottomBar),

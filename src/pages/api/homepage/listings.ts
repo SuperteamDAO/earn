@@ -1,6 +1,7 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
-import { getStatusFilterQuery, type StatusFilter } from '@/features/listings';
+import { type StatusFilter } from '@/features/listings/types';
+import { getStatusFilterQuery } from '@/features/listings/utils/status';
 import { prisma } from '@/prisma';
 
 const TAKE = 20;

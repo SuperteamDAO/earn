@@ -16,25 +16,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import {
-  PublishResults,
-  RejectAllSubmissionModal,
-  type ScoutRowType,
-  scoutsQuery,
-  ScoutTable,
   selectedSubmissionAtom,
   selectedSubmissionIdsAtom,
-  sponsorDashboardListingQuery,
-  SubmissionHeader,
-  SubmissionList,
-  SubmissionPanel,
-  submissionsQuery,
-  useRejectSubmissions,
-} from '@/features/sponsor-dashboard';
+} from '@/features/sponsor-dashboard/atoms';
+import { PublishResults } from '@/features/sponsor-dashboard/components/PublishResults';
+import { ScoutTable } from '@/features/sponsor-dashboard/components/Scouts/ScoutTable';
+import { RejectAllSubmissionModal } from '@/features/sponsor-dashboard/components/Submissions/Modals/RejectAllModal';
+import { SubmissionHeader } from '@/features/sponsor-dashboard/components/Submissions/SubmissionHeader';
+import { SubmissionList } from '@/features/sponsor-dashboard/components/Submissions/SubmissionList';
+import { SubmissionPanel } from '@/features/sponsor-dashboard/components/Submissions/SubmissionPanel';
+import { useRejectSubmissions } from '@/features/sponsor-dashboard/mutations/useRejectSubmissions';
+import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
+import { scoutsQuery } from '@/features/sponsor-dashboard/queries/scouts';
+import { submissionsQuery } from '@/features/sponsor-dashboard/queries/submissions';
+import { type ScoutRowType } from '@/features/sponsor-dashboard/types';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 

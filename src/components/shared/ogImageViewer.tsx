@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { ogImageQuery } from '@/queries/og';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { LocalImage } from '../ui/local-image';
 

@@ -8,17 +8,17 @@ import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 
 import { CombinedRegions } from '@/constants/Superteam';
+import { Filters } from '@/features/search/components/Filters';
+import { Info } from '@/features/search/components/Info';
+import { QueryInput } from '@/features/search/components/QueryInput';
+import { Results } from '@/features/search/components/Results';
+import { type SearchResult } from '@/features/search/types';
 import {
-  Filters,
-  Info,
   preSkillFilters,
   preStatusFilters,
-  QueryInput,
-  Results,
-  type SearchResult,
-  serverSearch,
-  updateCheckboxes,
-} from '@/features/search';
+} from '@/features/search/utils/filters';
+import { serverSearch } from '@/features/search/utils/search';
+import { updateCheckboxes } from '@/features/search/utils/updateCheckboxes';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';

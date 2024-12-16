@@ -8,7 +8,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants/Telegram';
-import { EarnAvatar } from '@/features/talent';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { useUser } from '@/store/user';
 
 interface StatsTooltipProps {

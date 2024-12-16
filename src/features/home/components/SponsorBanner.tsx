@@ -5,7 +5,7 @@ import { MdArrowForward } from 'react-icons/md';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
-import { userCountQuery } from '../queries';
+import { userCountQuery } from '../queries/user-count';
 
 export const SponsorBanner = () => {
   const posthog = usePostHog();

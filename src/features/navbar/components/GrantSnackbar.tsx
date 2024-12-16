@@ -1,7 +1,7 @@
 import { atom, useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 type GrantSnackbarType = {
   isPublished: boolean;

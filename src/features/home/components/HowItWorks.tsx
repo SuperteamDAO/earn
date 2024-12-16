@@ -3,10 +3,10 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { LuCheck } from 'react-icons/lu';
 
-import { AuthWrapper } from '@/features/auth';
-import { userStatsQuery } from '@/features/home';
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 const StepIcon = ({ step }: { step: number }) => {
   if (step === 1) {

@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tooltip } from '@/components/ui/tooltip';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 interface ImageActionsProps {
   shouldMerge?: boolean;

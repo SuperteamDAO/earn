@@ -18,15 +18,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
-import { type Listing } from '@/features/listings';
-import { EarnAvatar } from '@/features/talent';
+import { type Listing } from '@/features/listings/types';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
 
-import { selectedSubmissionAtom } from '../..';
+import { selectedSubmissionAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';
-import { colorMap } from '../../utils';
+import { colorMap } from '../../utils/statusColorMap';
 
 interface Props {
   listing?: Listing;

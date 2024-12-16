@@ -4,7 +4,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
 
-import { grantAmount } from '../utils';
+import { grantAmount } from '../utils/grantAmount';
 
 export const GrantEntry = ({
   title,

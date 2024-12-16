@@ -16,11 +16,15 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { skillMap } from '@/constants/skillMap';
-import { Telegram, Twitter, Website } from '@/features/social';
-import { EarnAvatar } from '@/features/talent';
+import {
+  Telegram,
+  Twitter,
+  Website,
+} from '@/features/social/components/SocialIcons';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { useDisclosure } from '@/hooks/use-disclosure';
 
-import { type LocalProfile } from '../../queries';
+import { type LocalProfile } from '../../queries/local-profiles';
 import { SortableTH, TH } from './TH';
 import { UserDrawer } from './UserDrawer';
 

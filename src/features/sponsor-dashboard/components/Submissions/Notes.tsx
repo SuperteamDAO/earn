@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { type SubmissionWithUser } from '@/interface/submission';
 
-import { selectedSubmissionAtom } from '../..';
+import { selectedSubmissionAtom } from '../../atoms';
 
 const MAX_CHARACTERS = 500;
 

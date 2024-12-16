@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type User } from '@/interface/user';
-import { validateSolanaAddress } from '@/utils';
+import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
 import { type Listing } from '../types';
 

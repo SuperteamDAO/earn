@@ -7,7 +7,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 
 import { type Listing } from '../types';
-import { getListingIcon } from '../utils';
+import { getListingIcon } from '../utils/getListingIcon';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {

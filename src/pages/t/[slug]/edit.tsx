@@ -35,24 +35,24 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip } from '@/components/ui/tooltip';
 import { CountryList } from '@/constants/countryList';
-import { extractSocialUsername, SocialInputAll } from '@/features/social';
+import { SocialInputAll } from '@/features/social/components/SocialInput';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+import { AddProject } from '@/features/talent/components/AddProject';
 import {
-  AddProject,
   CommunityList,
   IndustryList,
-  type ProfileFormData,
-  profileSchema,
-  useUsernameValidation,
   web3Exp,
   workExp,
   workType,
-} from '@/features/talent';
+} from '@/features/talent/constants';
+import { type ProfileFormData, profileSchema } from '@/features/talent/schema';
+import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { uploadToCloudinary } from '@/utils/upload';
 
 interface SelectBoxProps {

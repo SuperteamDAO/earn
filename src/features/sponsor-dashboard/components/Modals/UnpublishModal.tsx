@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { type ListingWithSubmissions } from '@/features/listings';
+import { type ListingWithSubmissions } from '@/features/listings/types';
 import { useUser } from '@/store/user';
 
 interface UnpublishModalProps {

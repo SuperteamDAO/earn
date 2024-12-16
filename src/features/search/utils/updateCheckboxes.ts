@@ -1,8 +1,5 @@
 import { type CheckboxFilter } from '../types';
 
-export * from './filters';
-export * from './search';
-
 export function updateCheckboxes(
   arrayFilters: string,
   filters: CheckboxFilter[],

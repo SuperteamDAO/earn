@@ -7,7 +7,8 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
-import { extractSocialUsername, SocialInputAll } from '@/features/social';
+import { SocialInputAll } from '@/features/social/components/SocialInput';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';

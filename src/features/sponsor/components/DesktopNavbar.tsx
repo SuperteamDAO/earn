@@ -6,11 +6,11 @@ import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { UserMenu } from '@/features/navbar';
+import { UserMenu } from '@/features/navbar/components/UserMenu';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
-import { NAV_LINKS } from '../utils';
+import { NAV_LINKS } from '../utils/constants';
 
 export const DesktopNavbar = () => {
   const { data: session, status } = useSession();

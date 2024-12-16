@@ -1,5 +1,5 @@
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
-import { type Rewards } from '@/features/listings';
+import { type Rewards } from '@/features/listings/types';
 
 const rankLabels = [
   'zeroth',

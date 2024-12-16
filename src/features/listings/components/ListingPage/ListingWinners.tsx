@@ -8,16 +8,16 @@ import {
   BONUS_REWARD_POSITION,
   formatTotalPrice,
 } from '@/features/listing-builder';
-import { EarnAvatar } from '@/features/talent';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type SubmissionWithUser } from '@/interface/submission';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
 import { listingWinnersQuery } from '../../queries/listing-winners';
 import type { Listing, Rewards } from '../../types';
-import { tweetTemplate } from '../../utils';
+import { tweetTemplate } from '../../utils/tweetTemplate';
 
 interface Props {
   bounty: Listing;

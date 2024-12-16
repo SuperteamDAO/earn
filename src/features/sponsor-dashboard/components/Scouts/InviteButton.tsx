@@ -6,7 +6,7 @@ import { LuCheck, LuPlus } from 'react-icons/lu';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 interface Props {
   bountyId: string;

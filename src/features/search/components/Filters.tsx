@@ -6,7 +6,7 @@ import { useCallback, useState, useTransition } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 
 import { type CheckboxFilter } from '../types';
-import { serverSearch } from '../utils';
+import { serverSearch } from '../utils/search';
 
 interface Props {
   statusFilters: CheckboxFilter[];

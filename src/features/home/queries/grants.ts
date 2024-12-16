@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { type GrantWithApplicationCount } from '@/features/grants';
+import { type GrantWithApplicationCount } from '@/features/grants/types';
 
 interface GrantsParams {
   userRegion: string[] | null;

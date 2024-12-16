@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { Meta } from '@/layouts/Meta';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { Header } from './Header';
 

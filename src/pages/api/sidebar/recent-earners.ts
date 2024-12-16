@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import type { Rewards } from '@/features/listings';
+import type { Rewards } from '@/features/listings/types';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { setCacheHeaders } from '@/utils/cacheControl';

@@ -27,22 +27,18 @@ import {
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  getColorStyles,
-  getListingStatus,
-  type ListingWithSubmissions,
-} from '@/features/listings';
-import {
-  Banner,
-  CreateListingModal,
-  dashboardQuery,
-  ListingTable,
-  sponsorStatsQuery,
-} from '@/features/sponsor-dashboard';
+import { type ListingWithSubmissions } from '@/features/listings/types';
+import { getColorStyles } from '@/features/listings/utils/getColorStyles';
+import { getListingStatus } from '@/features/listings/utils/status';
+import { Banner } from '@/features/sponsor-dashboard/components/Banner';
+import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
+import { ListingTable } from '@/features/sponsor-dashboard/components/ListingTable';
+import { dashboardQuery } from '@/features/sponsor-dashboard/queries/dashboard';
+import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-stats';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 const MemoizedListingTable = React.memo(ListingTable);
 

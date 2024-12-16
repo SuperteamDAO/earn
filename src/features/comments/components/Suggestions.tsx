@@ -3,9 +3,9 @@ import debounce from 'lodash.debounce';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { EarnAvatar } from '@/features/talent';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { type User } from '@/interface/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 interface Props {
   defaultSuggestions: Map<string, User>;

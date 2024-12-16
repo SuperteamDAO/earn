@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { countries } from '@/constants/country';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 type FlagSize =
   | '12px'

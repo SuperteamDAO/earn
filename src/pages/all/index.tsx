@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { HomepagePop } from '@/features/conversion-popups';
-import { listingsQuery, ListingTabs } from '@/features/listings';
+import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
+import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { listingsQuery } from '@/features/listings/queries/listings';
 import { Home } from '@/layouts/Home';
 
 function AllListingsPage() {

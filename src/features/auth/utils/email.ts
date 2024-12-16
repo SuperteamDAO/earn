@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { emailRegex } from '@/features/social';
+import { emailRegex } from '@/features/social/utils/regex';
 
 export const checkEmailValidity = async (email: string) => {
   try {

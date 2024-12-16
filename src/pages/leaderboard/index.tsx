@@ -8,20 +8,20 @@ import { useRouter } from 'next/router';
 import { getServerSession } from 'next-auth';
 import { useEffect, useState, useTransition } from 'react';
 
-import { HomepagePop } from '@/features/conversion-popups';
-import { totalsQuery, TotalStats } from '@/features/home';
+import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
+import { TotalStats } from '@/features/home/components/TotalStats';
+import { totalsQuery } from '@/features/home/queries/totals';
+import { Banner } from '@/features/leaderboard/components/Banner';
+import { FilterRow } from '@/features/leaderboard/components/FilterRow';
+import { Introduction } from '@/features/leaderboard/components/Introduction';
+import { Pagination } from '@/features/leaderboard/components/Pagination';
+import { RanksTable } from '@/features/leaderboard/components/RanksTable';
 import {
-  Banner,
-  FilterRow,
-  getSubskills,
-  Introduction,
-  Pagination,
-  RanksTable,
   type RowType,
   type SKILL,
-  skillCategories,
   type TIMEFRAME,
-} from '@/features/leaderboard';
+} from '@/features/leaderboard/types';
+import { getSubskills, skillCategories } from '@/features/leaderboard/utils';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';

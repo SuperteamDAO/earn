@@ -11,12 +11,11 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
-import { GrantsCard } from '@/features/grants';
-import { ListingSection, ListingTabs } from '@/features/listings';
-import {
-  sponsorGrantsQuery,
-  sponsorListingsQuery,
-} from '@/features/sponsor-dashboard';
+import { GrantsCard } from '@/features/grants/components/GrantsCard';
+import { ListingSection } from '@/features/listings/components/ListingSection';
+import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { sponsorGrantsQuery } from '@/features/sponsor-dashboard/queries/sponsor-grants';
+import { sponsorListingsQuery } from '@/features/sponsor-dashboard/queries/sponsor-listings';
 import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { prisma } from '@/prisma';

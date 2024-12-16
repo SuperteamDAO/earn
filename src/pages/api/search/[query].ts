@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
 import { CombinedRegions } from '@/constants/Superteam';
-import { type GrantsSearch, type ListingSearch } from '@/features/search';
+import { type GrantsSearch, type ListingSearch } from '@/features/search/types';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 

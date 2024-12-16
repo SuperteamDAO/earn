@@ -8,8 +8,12 @@ import {
 import { z } from 'zod';
 
 import { tokenList } from '@/constants/tokenList';
-import { type Listing } from '@/features/listings';
-import { emailRegex, telegramRegex, twitterRegex } from '@/features/social';
+import { type Listing } from '@/features/listings/types';
+import {
+  emailRegex,
+  telegramRegex,
+  twitterRegex,
+} from '@/features/social/utils/regex';
 import { skillsArraySchema } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
 

@@ -5,13 +5,11 @@ import React from 'react';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { type Superteam, Superteams } from '@/constants/Superteam';
-import { RegionPop } from '@/features/conversion-popups';
-import { GrantsCard } from '@/features/grants';
-import {
-  ListingSection,
-  ListingTabs,
-  regionalListingsQuery,
-} from '@/features/listings';
+import { RegionPop } from '@/features/conversion-popups/components/RegionPop';
+import { GrantsCard } from '@/features/grants/components/GrantsCard';
+import { ListingSection } from '@/features/listings/components/ListingSection';
+import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { regionalListingsQuery } from '@/features/listings/queries/region-listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { getURL } from '@/utils/validUrl';

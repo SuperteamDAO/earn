@@ -2,10 +2,8 @@ import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
 import { Superteams } from '@/constants/Superteam';
-import {
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { type Skills } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';

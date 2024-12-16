@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { type SKILL, type TIMEFRAME } from '../types';
 

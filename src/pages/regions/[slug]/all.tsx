@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 
 import { type Superteam, Superteams } from '@/constants/Superteam';
-import { ListingTabs, regionalListingsQuery } from '@/features/listings';
+import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { regionalListingsQuery } from '@/features/listings/queries/region-listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { getURL } from '@/utils/validUrl';

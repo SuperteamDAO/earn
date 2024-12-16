@@ -12,13 +12,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { tokenList } from '@/constants/tokenList';
-import { type Grant } from '@/features/grants';
-import { EarnAvatar } from '@/features/talent';
+import { type Grant } from '@/features/grants/types';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-import { approvedGranteesQuery } from '../../queries';
+import { approvedGranteesQuery } from '../../queries/approved-grantees';
 import { type GrantApplicationWithUser } from '../../types';
 import { RecordPaymentButton } from './RecordPaymentButton';
 

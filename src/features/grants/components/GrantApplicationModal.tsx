@@ -22,12 +22,13 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { extractTwitterUsername, Twitter } from '@/features/social';
+import { Twitter } from '@/features/social/components/SocialIcons';
+import { extractTwitterUsername } from '@/features/social/utils/extractUsername';
 import { useUpdateUser, useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
-import { userApplicationQuery } from '../queries';
+import { userApplicationQuery } from '../queries/user-application';
 import { type Grant } from '../types';
 import { grantApplicationSchema } from '../utils/grantApplicationSchema';
 

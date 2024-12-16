@@ -17,7 +17,7 @@ import {
   MAX_PODIUMS,
   MAX_REWARD,
 } from '@/features/listing-builder';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
 
 import { useListingForm } from '../../../../hooks';

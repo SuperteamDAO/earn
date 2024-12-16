@@ -1,4 +1,4 @@
-import { type Rewards } from '@/features/listings';
+import { type Rewards } from '@/features/listings/types';
 import { cleanRewards } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '../constants';

@@ -1,11 +1,9 @@
 import type { NextApiResponse } from 'next';
 
-import {
-  type NextApiRequestWithUser,
-  userSelectOptions,
-  withAuth,
-} from '@/features/auth';
-import { userSponsorDetailsSchema } from '@/features/sponsor';
+import { userSelectOptions } from '@/features/auth/constants';
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+import { userSponsorDetailsSchema } from '@/features/sponsor/utils/sponsorFormSchema';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

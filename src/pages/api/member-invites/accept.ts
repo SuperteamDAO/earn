@@ -1,11 +1,9 @@
 import type { NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 
-import {
-  handleInviteAcceptance,
-  type NextApiRequestWithUser,
-  withAuth,
-} from '@/features/auth';
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { handleInviteAcceptance } from '@/features/auth/utils/handleInvite';
+import { withAuth } from '@/features/auth/utils/withAuth';
 import logger from '@/lib/logger';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { safeStringify } from '@/utils/safeStringify';

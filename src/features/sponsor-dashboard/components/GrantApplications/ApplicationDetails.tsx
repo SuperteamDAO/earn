@@ -12,17 +12,19 @@ import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
-import { type Grant } from '@/features/grants';
+import { type Grant } from '@/features/grants/types';
 import {
   Discord,
-  extractTelegramUsername,
-  extractTwitterUsername,
   Telegram,
   Twitter,
-} from '@/features/social';
-import { EarnAvatar } from '@/features/talent';
+} from '@/features/social/components/SocialIcons';
+import {
+  extractTelegramUsername,
+  extractTwitterUsername,
+} from '@/features/social/utils/extractUsername';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 

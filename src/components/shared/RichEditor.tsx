@@ -24,7 +24,7 @@ import React, {
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 interface RichEditorProps {
   id: string;

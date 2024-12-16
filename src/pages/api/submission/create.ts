@@ -1,11 +1,10 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import { sendEmailNotification } from '@/features/emails';
-import {
-  submissionSchema,
-  validateSubmissionRequest,
-} from '@/features/listings';
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
+import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

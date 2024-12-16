@@ -8,7 +8,7 @@ import { tokenList } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import type { GrantWithApplicationCount } from '../types';
-import { grantAmount } from '../utils';
+import { grantAmount } from '../utils/grantAmount';
 
 export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
   const {

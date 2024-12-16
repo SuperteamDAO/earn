@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { withSponsorAuth } from '@/features/auth';
-import { sendEmailNotification } from '@/features/emails';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import {

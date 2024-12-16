@@ -2,7 +2,10 @@ import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { filterRegionCountry, getCombinedRegion } from '@/features/listings';
+import {
+  filterRegionCountry,
+  getCombinedRegion,
+} from '@/features/listings/utils/region';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

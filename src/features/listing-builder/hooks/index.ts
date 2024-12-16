@@ -18,11 +18,11 @@ import {
   saveDraftMutationAtom,
   submitListingMutationAtom,
 } from '../atoms';
+import { type ListingFormData } from '../types';
 import {
   createListingFormSchema,
   createListingRefinements,
-  type ListingFormData,
-} from '../types';
+} from '../types/schema';
 import { getListingDefaults, refineReadyListing } from '../utils';
 
 interface UseListingFormReturn extends UseFormReturn<ListingFormData> {

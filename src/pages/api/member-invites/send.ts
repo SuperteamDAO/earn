@@ -1,16 +1,11 @@
 import crypto from 'crypto';
 import type { NextApiResponse } from 'next';
 
-import {
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import {
-  InviteMemberTemplate,
-  kashEmail,
-  replyToEmail,
-  resend,
-} from '@/features/emails';
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { InviteMemberTemplate } from '@/features/emails/components/inviteMemberTemplate';
+import { kashEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
+import { resend } from '@/features/emails/utils/resend';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';

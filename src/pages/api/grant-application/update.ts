@@ -1,12 +1,11 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import {
-  grantApplicationSchema,
-  handleAirtableSync,
-  validateGrantRequest,
-} from '@/features/grants';
-import { extractTwitterUsername } from '@/features/social';
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
+import { handleAirtableSync } from '@/features/grants/utils/handleAirtableSync';
+import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
+import { extractTwitterUsername } from '@/features/social/utils/extractUsername';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';

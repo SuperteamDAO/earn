@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { Toggle } from '@/components/ui/toggle';
 import { Tooltip } from '@/components/ui/tooltip';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 interface ToolbarButtonProps
   extends React.ComponentPropsWithoutRef<typeof Toggle> {

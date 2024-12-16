@@ -29,11 +29,11 @@ import {
 } from '@/components/ui/drawer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { userCountQuery } from '@/features/home';
-import { liveOpportunitiesQuery } from '@/features/listings';
+import { userCountQuery } from '@/features/home/queries/user-count';
+import { liveOpportunitiesQuery } from '@/features/listings/queries/live-opportunities';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { PulseIcon } from '@/svg/pulse-icon';
-import { formatNumberWithSuffix } from '@/utils';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { popupsShowedAtom } from '../atoms';
 import { roundToNearestThousand } from '../utils';

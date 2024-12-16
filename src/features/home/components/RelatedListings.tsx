@@ -2,11 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { type ReactNode, useMemo } from 'react';
 
-import {
-  ListingCardMini,
-  listingsQuery,
-  relatedlistingsQuery,
-} from '@/features/listings';
+import { ListingCardMini } from '@/features/listings/components/ListingCardMini';
+import { listingsQuery } from '@/features/listings/queries/listings';
+import { relatedlistingsQuery } from '@/features/listings/queries/related-listing';
 
 interface LiveListingProps {
   children: ReactNode;

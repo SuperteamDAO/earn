@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import {
   CATEGORY_NAV_ITEMS,

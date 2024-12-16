@@ -2,7 +2,7 @@ import { type Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { z } from 'zod';
 
-import { type FeedPostType, FeedPostTypeSchema } from '@/features/feed';
+import { type FeedPostType, FeedPostTypeSchema } from '@/features/feed/types';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
