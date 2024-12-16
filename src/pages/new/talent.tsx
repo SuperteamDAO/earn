@@ -5,6 +5,7 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { create } from 'zustand';
 
 import { Steps } from '@/components/shared/steps';
+import { SignIn } from '@/features/auth';
 import { AboutYou, type UserStoreType, YourLinks } from '@/features/talent';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -120,6 +121,8 @@ export default function Talent() {
   const params = useSearchParams();
   const router = useRouter();
 
+  const [loginStep, setLoginStep] = useState(0);
+
   useEffect(() => {
     if (status === 'authenticated' && user && user?.isTalentFilled) {
       const originUrl = params.get('originUrl');
@@ -141,9 +144,23 @@ export default function Talent() {
         />
       }
     >
-      <div className="flex flex-col items-center justify-center gap-2">
-        <StepsCon />
-      </div>
+      {status === 'unauthenticated' ? (
+        <div className="min-h-screen w-full bg-white">
+          <div className="mx-auto flex min-h-[60vh] max-w-[32rem] flex-col items-center justify-center">
+            <p className="pt-4 text-center text-2xl font-semibold text-slate-900">
+              You&apos;re one step away
+            </p>
+            <p className="pb-4 text-center text-xl font-normal text-slate-600">
+              from joining Superteam Earn
+            </p>
+            <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center gap-2">
+          <StepsCon />
+        </div>
+      )}
     </Default>
   );
 }

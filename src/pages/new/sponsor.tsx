@@ -206,7 +206,7 @@ const CreateSponsor = () => {
         />
       }
     >
-      {!session ? (
+      {status === 'unauthenticated' ? (
         <div className="min-h-screen w-full bg-white">
           <div className="mx-auto flex min-h-[60vh] max-w-[32rem] flex-col items-center justify-center">
             <p className="pt-4 text-center text-2xl font-semibold text-slate-900">
