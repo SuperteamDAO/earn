@@ -137,7 +137,7 @@ const Index = () => {
               )?.role === 'ADMIN'
             )) && (
             <Button
-              className="ph-no-capture bg-[#E0E7FF] text-[#6366F1] hover:bg-[#E0E7FF]/90"
+              className="ph-no-capture bg-indigo-100 text-brand-purple hover:bg-indigo-100/90"
               onClick={() => {
                 posthog.capture('invite member_sponsor');
                 onOpen();
@@ -209,8 +209,8 @@ const Index = () => {
                           className={cn(
                             'inline-flex rounded px-2 py-1 text-xs font-semibold',
                             member?.role === 'ADMIN'
-                              ? 'bg-[#D1FAE5] text-[#0D9488]'
-                              : 'bg-[#F3E8FF] text-brand-purple',
+                              ? 'bg-emerald-100 text-teal-600'
+                              : 'bg-purple-100 text-brand-purple',
                           )}
                         >
                           {member?.role}
@@ -319,7 +319,7 @@ const RemoveMemberModal = ({
         <Button
           onClick={() => setIsOpen(true)}
           size="sm"
-          className="bg-[#E0E7FF] text-[#6366F1] hover:bg-[#E0E7FF]/90"
+          className="bg-indigo-100 text-brand-purple hover:bg-indigo-100/90"
         >
           Remove
         </Button>

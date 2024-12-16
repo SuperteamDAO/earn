@@ -431,7 +431,7 @@ export default function Hackathon() {
                               }}
                             >
                               <Button
-                                className="text-[13px] font-medium text-[#6366F1] hover:bg-[#E0E7FF]"
+                                className="text-[13px] font-medium text-brand-purple hover:bg-indigo-100"
                                 disabled={!hasHackathonStarted}
                                 onClick={() =>
                                   handleViewSubmissions(currentBounty.slug)

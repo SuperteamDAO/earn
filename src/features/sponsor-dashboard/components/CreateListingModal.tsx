@@ -46,13 +46,13 @@ export const CreateListingModal = ({
 
         <div className="flex">
           <div className="relative flex-1">
-            <div className="relative mb-6 flex items-center justify-center bg-[#F5F3FF] px-32 py-12">
+            <div className="relative mb-6 flex items-center justify-center bg-violet-50 px-32 py-12">
               <ExternalImage
                 className="h-auto w-full"
                 alt="Bounty Illustration"
                 src={'/dashboard/bounty_illustration.svg'}
               />
-              <div className="absolute right-4 top-4 flex items-center rounded-full bg-white px-3 py-1 text-[#8B5CF6]">
+              <div className="absolute right-4 top-4 flex items-center rounded-full bg-white px-3 py-1 text-violet-500">
                 <BountyIcon
                   styles={{
                     width: '1rem',
@@ -85,13 +85,13 @@ export const CreateListingModal = ({
           </div>
 
           <div className="relative flex-1 border-l border-slate-200">
-            <div className="relative mb-6 flex items-center justify-center bg-[#EFF6FF] px-32 py-12">
+            <div className="relative mb-6 flex items-center justify-center bg-blue-50 px-32 py-12">
               <ExternalImage
                 className="h-auto w-full"
                 alt="Project Illustration"
                 src={'/dashboard/project_illustration.svg'}
               />
-              <div className="absolute right-4 top-4 flex items-center rounded-full bg-white px-3 py-1 text-[#3B82F6]">
+              <div className="absolute right-4 top-4 flex items-center rounded-full bg-white px-3 py-1 text-blue-500">
                 <ProjectIcon
                   styles={{
                     width: '1rem',

@@ -196,7 +196,7 @@ export function RightSideBar({
                           : submissionRange}
                     </p>
                   </div>
-                  <p className="text-[#94a3b8]">
+                  <p className="text-slate-400">
                     {isProject
                       ? 'Applications'
                       : submissionNumber === 1
@@ -220,7 +220,7 @@ export function RightSideBar({
                           zeroPadDays={1}
                         />
                       </p>
-                      <p className="text-[#94a3b8]">Remaining</p>
+                      <p className="text-slate-400">Remaining</p>
                     </div>
                   </div>
                 </div>
@@ -241,7 +241,7 @@ export function RightSideBar({
                         zeroPadDays={1}
                       />
                     </p>
-                    <p className="text-[#94a3b8]">Until Submissions Open</p>
+                    <p className="text-slate-400">Until Submissions Open</p>
                   </div>
                 </div>
               </div>

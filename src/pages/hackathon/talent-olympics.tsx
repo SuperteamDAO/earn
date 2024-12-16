@@ -197,7 +197,7 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
         <div className="mx-auto max-w-7xl overflow-x-hidden px-4">
           <About />
         </div>
-        <div className="relative w-full bg-[#F8FAFC] px-4 py-8">
+        <div className="relative w-full bg-slate-50 px-4 py-8">
           <p className="absolute top-32 z-0 hidden rotate-[-90deg] text-7xl font-bold text-slate-300 md:block">
             Tracks
           </p>
@@ -271,7 +271,7 @@ function Hero({
       <div className="mb-1 mt-6 flex flex-col items-center gap-3 sm:gap-6 md:flex-row">
         <div className="flex w-full gap-5 md:w-auto">
           <Button
-            className="w-full rounded-full bg-[#6366F1] px-6 text-sm text-white hover:bg-[#6366F1]/90 active:bg-[#6366D1] md:w-auto"
+            className="w-full rounded-full bg-brand-purple px-6 text-sm text-white hover:bg-brand-purple/90 active:bg-[#6366D1] md:w-auto"
             asChild
           >
             <Link
@@ -590,7 +590,7 @@ function About() {
           </p>
           <button
             onClick={onOpen}
-            className="flex gap-2 rounded-full bg-[#F8FAFC] px-3 py-2 hover:bg-slate-200"
+            className="flex gap-2 rounded-full bg-slate-50 px-3 py-2 hover:bg-slate-200"
           >
             <ExternalImage
               alt="kash"

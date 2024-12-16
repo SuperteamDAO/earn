@@ -57,7 +57,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
     >
       <Table>
         <TableHeader>
-          <TableRow className="bg-[#f8fafc]">
+          <TableRow className="bg-slate-50">
             <TableHead className="text-xs font-medium text-slate-500">
               User
             </TableHead>

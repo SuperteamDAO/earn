@@ -80,7 +80,9 @@ export function ListingHeader({
     statusText = isMD ? 'Submissions Paused' : 'Paused';
     statusTextColor = '[#F59E0B]';
   } else if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
-    statusIcon = <LuClock className={cn(statusIconStyles, 'text-[#F3E8FF]')} />;
+    statusIcon = (
+      <LuClock className={cn(statusIconStyles, 'text-purple-100')} />
+    );
     statusText = 'Opens Soon';
     statusTextColor = '[#8B5CF6]';
   } else if (status === 'OPEN' && isWinnersAnnounced) {
@@ -149,7 +151,7 @@ export function ListingHeader({
     return (
       <div className="flex flex-wrap items-center gap-1 md:gap-3">
         <div className="flex items-center gap-1">
-          <p className="whitespace-nowrap text-sm font-medium text-[#94A3B8]">
+          <p className="whitespace-nowrap text-sm font-medium text-slate-400">
             by {sponsor?.name}
           </p>
           {!!sponsor?.isVerified && <VerifiedBadge />}

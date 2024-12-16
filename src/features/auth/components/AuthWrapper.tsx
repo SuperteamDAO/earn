@@ -99,7 +99,7 @@ export function AuthWrapper({
           className="h-full w-full"
           style={{
             pointerEvents:
-              isLoading || shouldAllowInteraction ? 'auto' : 'none',
+              isLoading || !shouldAllowInteraction ? 'none' : 'auto',
           }}
         >
           {children}

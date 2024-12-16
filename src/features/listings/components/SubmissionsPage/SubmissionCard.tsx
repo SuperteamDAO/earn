@@ -119,8 +119,8 @@ export const SubmissionCard = ({
             className={cn(
               'h-5 w-5',
               !likes?.find((e) => e.id === user?.id)
-                ? 'fill-white text-[#64748b]'
-                : 'fill-[#E11D48] text-[#E11D48]',
+                ? 'fill-white text-slate-500'
+                : 'fill-rose-600 text-rose-600',
             )}
           />
           {likes?.length}

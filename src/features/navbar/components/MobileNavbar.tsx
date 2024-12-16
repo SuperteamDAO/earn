@@ -202,7 +202,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
           )}
         </div>
       </div>
-      <div className="flex items-center justify-between bg-[#F8FAFC] px-3 py-0 sm:px-4 lg:hidden">
+      <div className="flex items-center justify-between bg-slate-50 px-3 py-0 sm:px-4 lg:hidden">
         <div
           className={cn(
             'ph-no-capture mx-auto flex w-full justify-evenly gap-8 pl-1 sm:gap-8 md:gap-12',

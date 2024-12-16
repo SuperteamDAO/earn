@@ -236,7 +236,7 @@ export const ApplicationDetails = ({
       const link = selectedApplication.user.telegram;
       return (
         <div className="flex items-center justify-start gap-2 text-sm">
-          <Telegram link={link} className="text-[#94a3b8]" />
+          <Telegram link={link} className="text-slate-400" />
           <Link
             className="block text-slate-400"
             href={link}
@@ -255,7 +255,7 @@ export const ApplicationDetails = ({
       const link = selectedApplication.user.twitter;
       return (
         <div className="flex items-center justify-start gap-2 text-sm">
-          <Twitter link={link} className="text-[#94a3b8]" />
+          <Twitter link={link} className="text-slate-400" />
           <Link
             className="text-slate-400"
             href={link}
@@ -273,7 +273,7 @@ export const ApplicationDetails = ({
         <div className="flex items-center justify-start gap-2 text-sm">
           <Discord
             link={selectedApplication.user.discord}
-            className="text-[#94a3b8]"
+            className="text-slate-400"
           />
           <p className="text-slate-400">{selectedApplication.user.discord}</p>
         </div>

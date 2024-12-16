@@ -55,7 +55,7 @@ export function Hero() {
           </Link>
         </div>
 
-        <div className="absolute bottom-[-12rem] h-[12rem] w-full bg-[#F8FAFC]" />
+        <div className="absolute bottom-[-12rem] h-[12rem] w-full bg-slate-50" />
       </div>
 
       <div

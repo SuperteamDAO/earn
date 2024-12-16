@@ -52,7 +52,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
       )}
     >
       <Table>
-        <TableHeader className="bg-[#F8FAFC]">
+        <TableHeader className="bg-slate-50">
           <TableRow className="normal-case">
             <TableHead className="px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
               Rank

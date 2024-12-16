@@ -142,7 +142,7 @@ export function Banner({
         </div>
       </div>
 
-      <div className="mb-6 w-[60%] max-w-[400px] rounded-md border border-slate-200 bg-[#eef2ff] px-8 py-6 text-white">
+      <div className="mb-6 w-[60%] max-w-[400px] rounded-md border border-slate-200 bg-indigo-50 px-8 py-6 text-white">
         <a
           className="ph-no-capture no-underline"
           href={PDTG}

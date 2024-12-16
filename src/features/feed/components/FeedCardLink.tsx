@@ -24,12 +24,12 @@ export const FeedCardLink = ({
         href={href ?? '#'}
         rel="noopener noreferrer"
         target="_blank"
-        className="flex items-center gap-3 group-hover:underline group-hover:decoration-[#6366F1] group-hover:underline-offset-2"
+        className="flex items-center gap-3 group-hover:underline group-hover:decoration-brand-purple group-hover:underline-offset-2"
       >
-        <span className="text-sm font-medium text-[#6366F1] md:text-base">
+        <span className="text-sm font-medium text-brand-purple md:text-base">
           {children}
         </span>
-        <ArrowRight className="h-4 w-4 text-[#6366F1]" />
+        <ArrowRight className="h-4 w-4 text-brand-purple" />
       </Link>
     </div>
   );

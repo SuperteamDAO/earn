@@ -508,7 +508,7 @@ function GrantApplications({ slug }: Props) {
                   </Button>
 
                   <Button
-                    className="gap-2 bg-[#FEF2F2] font-medium text-[#E11D48] hover:bg-[#FEF2F2]/90 disabled:opacity-50"
+                    className="gap-2 bg-red-50 font-medium text-rose-600 hover:bg-red-50/90 disabled:opacity-50"
                     disabled={
                       selectedApplicationIds.size === 0 ||
                       selectedApplicationIds.size > 100

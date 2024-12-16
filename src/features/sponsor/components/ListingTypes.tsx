@@ -30,7 +30,7 @@ export function ListingTypes() {
 
       <div className="mx-auto flex w-full flex-col gap-12 md:flex-row">
         <div className="flex flex-col items-start gap-4">
-          <div className="flex h-40 w-full items-center justify-center bg-[#F0FDFA]">
+          <div className="flex h-40 w-full items-center justify-center bg-teal-50">
             <svg
               width="45"
               height="45"
@@ -63,7 +63,7 @@ export function ListingTypes() {
         </div>
 
         <div className="flex flex-col items-start gap-4">
-          <div className="flex h-40 w-full items-center justify-center bg-[#F5F3FF]">
+          <div className="flex h-40 w-full items-center justify-center bg-violet-50">
             <svg
               width="45"
               height="45"

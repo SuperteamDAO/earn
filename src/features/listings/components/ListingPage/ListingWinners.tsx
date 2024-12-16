@@ -146,7 +146,7 @@ export function ListingWinners({ bounty }: Props) {
       </div>
       {(getOrRemoveBonuses(submissions, true).length > 3 ||
         getOrRemoveBonuses(submissions, false).length > 0) && (
-        <div className="wrap flex justify-center gap-2 border-t border-[#DDD6FE] px-2 py-3">
+        <div className="wrap flex justify-center gap-2 border-t border-violet-200 px-2 py-3">
           {[
             ...getOrRemoveBonuses(submissions, true).slice(3),
             ...getOrRemoveBonuses(submissions, false),

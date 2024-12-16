@@ -29,7 +29,7 @@ function Grants() {
       }
     >
       <GrantsPop />
-      <div className="relative flex min-h-screen w-full flex-col justify-center bg-[#F5F5F5]">
+      <div className="relative flex min-h-screen w-full flex-col justify-center bg-neutral-100">
         <ExternalImage
           className="absolute left-0 right-0 top-0 h-full w-full"
           alt=""

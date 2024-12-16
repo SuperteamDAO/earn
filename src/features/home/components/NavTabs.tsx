@@ -30,8 +30,8 @@ function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
       className={cn(
         'ph-no-capture flex items-center gap-2 px-3 py-0 sm:py-0.5',
         'rounded-full border border-slate-200 text-sm',
-        'hover:bg-[#F5F3FF] hover:no-underline',
-        isActive ? 'bg-[#F5F3FF] text-black' : 'bg-white text-slate-500',
+        'hover:bg-violet-50 hover:no-underline',
+        isActive ? 'bg-violet-50 text-black' : 'bg-white text-slate-500',
       )}
       onClick={() => posthog.capture(phEvent)}
     >

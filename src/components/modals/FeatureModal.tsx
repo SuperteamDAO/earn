@@ -65,7 +65,7 @@ export const FeatureModal = ({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogOverlay />
       <DialogContent className="w-[480px] overflow-hidden rounded-lg">
-        <div className="w-full bg-[#faf5ff] p-8">
+        <div className="w-full bg-purple-50 p-8">
           <ExternalImage
             src="/ScoutAnnouncement.png"
             alt="Scouts Announcement Illustration"

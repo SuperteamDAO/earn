@@ -176,7 +176,7 @@ export function ListingPageLayout({
                     <div className="flex flex-wrap gap-3">
                       {iterableSkills?.map((skill) => (
                         <div
-                          className="m-0 rounded-sm bg-[#F1F5F9] px-4 py-1 text-sm font-medium text-[#475569]"
+                          className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-sm font-medium text-slate-600"
                           key={skill}
                         >
                           <p className="text-xs">{skill}</p>

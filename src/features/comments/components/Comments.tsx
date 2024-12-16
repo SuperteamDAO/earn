@@ -117,7 +117,7 @@ export const Comments = ({
 
   return (
     <div
-      className="flex w-full flex-col items-start gap-4 rounded-xl bg-[#FFFFFF]"
+      className="flex w-full flex-col items-start gap-4 rounded-xl bg-white"
       id="comments"
     >
       <div className="flex w-full gap-2 pt-4">

@@ -79,7 +79,7 @@ export const DesktopNavbar = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="bg-white font-semibold text-[#4F46E5]"
+                    className="bg-white font-semibold text-indigo-600"
                   >
                     Create a Listing
                   </Button>
@@ -94,7 +94,7 @@ export const DesktopNavbar = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="bg-white font-semibold text-[#4F46E5]"
+                    className="bg-white font-semibold text-indigo-600"
                   >
                     Get Started
                   </Button>
@@ -124,7 +124,7 @@ export const DesktopNavbar = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="bg-white font-semibold text-[#4F46E5]"
+                    className="bg-white font-semibold text-indigo-600"
                   >
                     Get Started
                   </Button>

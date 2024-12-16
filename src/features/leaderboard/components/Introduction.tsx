@@ -2,7 +2,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 
 export function Introduction() {
   return (
-    <div className="items-star flex w-full flex-col gap-4 rounded-xl bg-[#FAF5FF] p-6 text-sm">
+    <div className="items-star flex w-full flex-col gap-4 rounded-xl bg-purple-50 p-6 text-sm">
       <div className="flex flex-col items-start">
         <ExternalImage
           className="h-7 w-7"

@@ -111,7 +111,7 @@ export function Features({ showVideo }: Props) {
         </div>
 
         <HighQualityImage
-          className="h-full w-full cursor-pointer rounded-md border-2 border-[#E2E8F0] shadow-md"
+          className="h-full w-full cursor-pointer rounded-md border-2 border-slate-200 shadow-md"
           src="/landingsponsor/displays/sponsor-dashboard.webp"
           alt="Sponsord dashboard screenshot"
         />

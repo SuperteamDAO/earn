@@ -626,7 +626,7 @@ export default function BountySubmissions({ slug }: Props) {
                   </Button>
 
                   <Button
-                    className="gap-2 bg-[#FEF2F2] font-medium text-[#E11D48] hover:bg-[#FEF2F2]/90"
+                    className="gap-2 bg-red-100 font-medium text-rose-600 hover:bg-red-50/90"
                     disabled={
                       selectedSubmissionIds.size === 0 ||
                       selectedSubmissionIds.size > 100

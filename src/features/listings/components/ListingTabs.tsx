@@ -239,7 +239,7 @@ export const ListingTabs = ({
 
   return (
     <div className="mb-10 mt-5">
-      <div className="mb-4 flex items-center justify-between border-b border-[#E2E8F0] pb-3">
+      <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-3">
         <div className="flex w-full items-center justify-between sm:justify-start">
           <div className="flex items-center">
             {showEmoji && (
@@ -249,7 +249,7 @@ export const ListingTabs = ({
                 src={emoji}
               />
             )}
-            <p className="whitespace-nowrap pr-2 text-[14px] font-semibold text-[#334155] sm:text-[15px] md:text-[16px]">
+            <p className="whitespace-nowrap pr-2 text-[14px] font-semibold text-slate-700 sm:text-[15px] md:text-[16px]">
               {title}
             </p>
           </div>
@@ -263,7 +263,7 @@ export const ListingTabs = ({
                   'ph-no-capture relative cursor-pointer p-1 sm:p-2',
                   tab.id === activeTab ? 'text-slate-700' : 'text-slate-500',
                   tab.id === activeTab &&
-                    "after:absolute after:bottom-[-13px] after:left-0 after:right-0 after:h-[2px] after:bg-[#6366f1] after:content-['']",
+                    "after:absolute after:bottom-[-13px] after:left-0 after:right-0 after:h-[2px] after:bg-brand-purple after:content-['']",
                 )}
                 key={tab.id}
                 onClick={() => {

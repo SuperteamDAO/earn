@@ -232,10 +232,10 @@ export function GrantPageLayout({
                     <div className="flex flex-wrap gap-3">
                       {iterableSkills?.map((skill) => (
                         <div
-                          className="m-0 rounded-sm bg-[#F1F5F9] px-4 py-1 text-sm font-medium"
+                          className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-sm font-medium"
                           key={skill}
                         >
-                          <p className="text-xs text-[#475569]">{skill}</p>
+                          <p className="text-xs text-slate-600">{skill}</p>
                         </div>
                       ))}
                     </div>

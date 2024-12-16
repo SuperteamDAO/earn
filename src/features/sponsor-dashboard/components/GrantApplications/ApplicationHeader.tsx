@@ -94,7 +94,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
         </div>
         <div className="flex items-center gap-2">
           <Button
-            className="text-slate-400 hover:bg-[#E0E7FF] hover:text-[#6366F1]"
+            className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
             disabled={exportMutation.isPending}
             onClick={handleExport}
             variant="ghost"
@@ -113,7 +113,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
           </Button>
 
           <Button
-            className="text-slate-400 hover:bg-[#E0E7FF] hover:text-[#6366F1]"
+            className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
             onClick={() =>
               window.open(`${router.basePath}/${listingPath}`, '_blank')
             }

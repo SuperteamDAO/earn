@@ -72,7 +72,7 @@ export const RejectAllSubmissionModal = ({
           <br />
 
           <Button
-            className="mb-3 w-full bg-[#E11D48] text-white hover:bg-[#E11D48]/90"
+            className="mb-3 w-full bg-rose-600 text-white hover:bg-rose-600/90"
             disabled={loading}
             onClick={rejectSubmission}
           >
@@ -84,7 +84,7 @@ export const RejectAllSubmissionModal = ({
             ) : (
               <>
                 <div className="mr-2 rounded-full bg-white p-[5px]">
-                  <X className="h-2.5 w-2.5 text-[#E11D48]" />
+                  <X className="h-2.5 w-2.5 text-rose-600" />
                 </div>
                 Reject Application
               </>

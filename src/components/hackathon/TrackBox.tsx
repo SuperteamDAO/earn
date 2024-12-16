@@ -13,7 +13,7 @@ export const TrackBox = ({
   return (
     <Link
       href={`/listings/hackathon/${slug}`}
-      className="block rounded-lg border border-[#E2E8F0] p-3 md:p-4"
+      className="block rounded-lg border border-slate-200 p-3 md:p-4"
     >
       <div className="flex items-center gap-3">
         <img

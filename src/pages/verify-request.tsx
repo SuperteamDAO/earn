@@ -50,13 +50,13 @@ export default function VerifyRequest() {
         </Link>
       </div>
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-3">
-        <h1 className="mt-16 text-center text-2xl text-[#1E293B] md:text-[28px]">
+        <h1 className="mt-16 text-center text-2xl text-slate-800 md:text-[28px]">
           We just sent an OTP
         </h1>
-        <p className="text-center text-lg text-[#475569] md:text-xl">
+        <p className="text-center text-lg text-slate-600 md:text-xl">
           On your email {email}
         </p>
-        <div className="mx-auto my-16 flex h-32 w-32 items-center justify-center rounded-full bg-[#EEF2FF]">
+        <div className="mx-auto my-16 flex h-32 w-32 items-center justify-center rounded-full bg-indigo-50">
           <Mail size={32} className="text-slate-500" />
         </div>
 

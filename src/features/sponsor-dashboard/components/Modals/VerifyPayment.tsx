@@ -249,7 +249,7 @@ export const VerifyPaymentModal = ({
             <div className="flex flex-col py-14">
               <div className="mb-4 flex justify-center">
                 <div
-                  className="border-6 h-32 w-32 animate-spin rounded-full border-slate-200 border-t-[#4F46E5]"
+                  className="border-6 h-32 w-32 animate-spin rounded-full border-slate-200 border-t-indigo-600"
                   style={{ borderWidth: '6px' }}
                 />
               </div>
@@ -274,8 +274,8 @@ export const VerifyPaymentModal = ({
         return (
           <div className="flex h-full flex-col gap-10 py-10">
             <div className="flex items-center justify-center">
-              <div className="flex items-center justify-center rounded-full bg-[#ECFDF5] p-6">
-                <div className="rounded-full bg-[#059669] p-3">
+              <div className="flex items-center justify-center rounded-full bg-emerald-50 p-6">
+                <div className="rounded-full bg-emerald-600 p-3">
                   <Check className="h-10 w-10 text-white" strokeWidth={3} />
                 </div>
               </div>
@@ -305,8 +305,8 @@ export const VerifyPaymentModal = ({
         return (
           <div className="flex h-full flex-col gap-10 py-10">
             <div className="flex items-center justify-center">
-              <div className="flex items-center justify-center rounded-full bg-[#FEF2F2] p-6">
-                <div className="rounded-full bg-[#DC2626] p-3">
+              <div className="flex items-center justify-center rounded-full bg-red-50 p-6">
+                <div className="rounded-full bg-red-600 p-3">
                   <X className="h-10 w-10 text-white" strokeWidth={3} />
                 </div>
               </div>
