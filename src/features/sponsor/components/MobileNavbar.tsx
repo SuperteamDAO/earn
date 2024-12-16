@@ -7,11 +7,12 @@ import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
-import { UserMenu } from '@/features/navbar';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 
-import { NAV_LINKS } from '../utils';
+import { UserMenu } from '@/features/navbar/components/UserMenu';
+
+import { NAV_LINKS } from '../utils/constants';
 
 export const MobileNavbar = () => {
   const {

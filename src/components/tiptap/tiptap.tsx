@@ -2,7 +2,7 @@ import { type Content, type Editor, EditorContent } from '@tiptap/react';
 import * as React from 'react';
 
 import { Separator } from '@/components/ui/separator';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { LinkBubbleMenu } from './components/bubble-menu/link-bubble-menu';
 import { MeasuredContainer } from './components/measured-container';

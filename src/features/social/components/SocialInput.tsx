@@ -9,16 +9,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
+import { socials, type SocialType } from '../utils/constants';
 import {
   extractSocialUsername,
   linkedUsernames,
   lowercaseOnly,
   removeAtSign,
-  socials,
-  type SocialType,
-} from '../utils';
+} from '../utils/extractUsername';
 
 const getDisplayValue = (name: SocialType, value: string) => {
   const social = socials.find((s) => s.name === name);

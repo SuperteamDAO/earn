@@ -34,9 +34,9 @@ import { CountryList } from '@/constants/countryList';
 import { useUser } from '@/store/user';
 import { uploadToCloudinary } from '@/utils/upload';
 
-import { usernameRandomQuery } from '../../queries';
+import { usernameRandomQuery } from '../../queries/random-username';
 import { type AboutYouFormData, aboutYouSchema } from '../../schema';
-import { useUsernameValidation } from '../../utils';
+import { useUsernameValidation } from '../../utils/useUsernameValidation';
 import type { UserStoreType } from './types';
 
 interface Step1Props {

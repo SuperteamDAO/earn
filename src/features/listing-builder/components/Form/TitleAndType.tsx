@@ -24,12 +24,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getListingIcon } from '@/features/listings';
+
+import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
 import { hackathonAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
-import { slugCheckQuery } from '../../queries';
-import { calculateTotalRewardsForPodium, getSuggestions } from '../../utils';
+import { slugCheckQuery } from '../../queries/slug-check';
+import { calculateTotalRewardsForPodium } from '../../utils/rewards';
+import { getSuggestions } from '../../utils/suggestions';
 
 const typeOptions = [
   { value: 'bounty', label: 'Bounty' },

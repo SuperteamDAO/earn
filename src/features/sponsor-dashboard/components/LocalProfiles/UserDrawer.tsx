@@ -6,10 +6,15 @@ import { type ReactNode } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { skillMap } from '@/constants/skillMap';
-import { Telegram, Twitter, Website } from '@/features/social';
-import { EarnAvatar } from '@/features/talent';
 
-import { type LocalProfile } from '../../queries';
+import {
+  Telegram,
+  Twitter,
+  Website,
+} from '@/features/social/components/SocialIcons';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+
+import { type LocalProfile } from '../../queries/local-profiles';
 
 export const UserDrawer = ({
   isOpen,

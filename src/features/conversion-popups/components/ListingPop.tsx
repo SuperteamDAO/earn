@@ -20,9 +20,11 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { isDeadlineOver, type Listing } from '@/features/listings';
-import { bountySnackbarAtom } from '@/features/navbar';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+
+import { type Listing } from '@/features/listings/types';
+import { isDeadlineOver } from '@/features/listings/utils/deadline';
+import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
 
 import { popupsShowedAtom } from '../atoms';
 import { GetStarted } from './GetStarted';

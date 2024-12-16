@@ -7,8 +7,9 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
-import { latestActiveSlugQuery } from '@/features/sponsor-dashboard';
 import { useUpdateUser, useUser } from '@/store/user';
+
+import { latestActiveSlugQuery } from '@/features/sponsor-dashboard/queries/latest-active-slug';
 
 import { ExternalImage } from '../ui/cloudinary-image';
 

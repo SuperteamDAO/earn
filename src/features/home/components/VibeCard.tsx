@@ -5,10 +5,11 @@ import { type TConductorInstance } from 'react-canvas-confetti/dist/types';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { AuthWrapper } from '@/features/auth';
-import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { pfpsQuery } from '../queries/vibe-pfps';
 

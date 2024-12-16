@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { HomepagePop } from '@/features/conversion-popups';
-import { type FeedPostType, useGetFeed } from '@/features/feed';
-import { VibeCard } from '@/features/home';
 import { FeedPageLayout } from '@/layouts/Feed';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
+import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
+import { VibeCard } from '@/features/home/components/VibeCard';
+
+import { useGetFeed } from '../queries/useGetFeed';
+import { type FeedPostType } from '../types';
 import { FeedLoop } from './FeedLoop';
 
 interface Props {

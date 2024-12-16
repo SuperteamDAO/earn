@@ -16,16 +16,14 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import {
-  getListingIcon,
-  type Listing,
-  submissionCountQuery,
-} from '@/features/listings';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { PulseIcon } from '@/svg/pulse-icon';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
+import { submissionCountQuery } from '../../queries/submission-count';
+import { type Listing } from '../../types';
+import { getListingIcon } from '../../utils/getListingIcon';
 import { ListingTabLink } from './ListingTabLink';
 import { RegionLabel } from './RegionLabel';
 import { ListingHeaderSeparator } from './Separator';

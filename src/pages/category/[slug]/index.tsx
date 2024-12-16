@@ -5,16 +5,16 @@ import { useMemo } from 'react';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { CategoryPop } from '@/features/conversion-popups';
-import { GrantsCard, grantsQuery } from '@/features/grants';
-import {
-  ListingSection,
-  listingsQuery,
-  ListingTabs,
-} from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { dayjs } from '@/utils/dayjs';
+
+import { CategoryPop } from '@/features/conversion-popups/components/CategoryPop';
+import { GrantsCard } from '@/features/grants/components/GrantsCard';
+import { grantsQuery } from '@/features/grants/queries/grants';
+import { ListingSection } from '@/features/listings/components/ListingSection';
+import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { listingsQuery } from '@/features/listings/queries/listings';
 
 type SlugKeys = 'design' | 'content' | 'development' | 'other';
 

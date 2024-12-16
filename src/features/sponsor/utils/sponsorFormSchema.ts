@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants/URL_REGEX';
-import { twitterUsernameSchema } from '@/features/social';
+
+import { twitterUsernameSchema } from '@/features/social/utils/schema';
 
 export const sponsorBaseSchema = z.object({
   name: z.string().min(1, 'Company name is required'),

@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 const bannerPrefix = ASSET_URL + '/category_assets/banners/';
 

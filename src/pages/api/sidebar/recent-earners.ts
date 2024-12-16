@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import type { Rewards } from '@/features/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { setCacheHeaders } from '@/utils/cacheControl';
+
+import type { Rewards } from '@/features/listings/types';
 
 export default async function user(_req: NextApiRequest, res: NextApiResponse) {
   try {

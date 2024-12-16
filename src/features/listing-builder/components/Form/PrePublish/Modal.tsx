@@ -17,8 +17,9 @@ import {
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
-import { isCreateListingAllowedQuery } from '@/features/listing-builder';
 import { useUser } from '@/store/user';
+
+import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
 
 import {
   confirmModalAtom,
@@ -29,9 +30,10 @@ import {
   submitListingMutationAtom,
 } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
-import { GeoLock, Visibility } from '..';
 import { Foundation } from './Foundation';
+import { GeoLock } from './GeoLock';
 import { Slug } from './Slug';
+import { Visibility } from './Visibility';
 
 export function PrePublish() {
   const isST = useAtomValue(isSTAtom);

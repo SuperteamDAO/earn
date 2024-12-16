@@ -1,7 +1,7 @@
 import Avatar from 'boring-avatars';
 import React, { useState } from 'react';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 const sizeMap = {
   '24px': 'h-6 w-6',

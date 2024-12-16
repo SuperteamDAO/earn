@@ -5,7 +5,7 @@ import {
 import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard';
+import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
 interface ApplicationsParams {
   searchText: string;

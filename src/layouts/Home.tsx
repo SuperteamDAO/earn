@@ -4,9 +4,12 @@ import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
 import { type Superteam } from '@/constants/Superteam';
-import { HomeBanner, NavTabs, UserStatsBanner } from '@/features/home';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+
+import { HomeBanner } from '@/features/home/components/Banner';
+import { NavTabs } from '@/features/home/components/NavTabs';
+import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 
 interface HomeProps {
   children: ReactNode;
@@ -18,15 +21,19 @@ interface HomeProps {
 type CategoryTypes = 'content' | 'development' | 'design' | 'other';
 
 const RegionBanner = dynamic(() =>
-  import('@/features/home').then((mod) => mod.RegionBanner),
+  import('@/features/home/components/RegionBanner').then(
+    (mod) => mod.RegionBanner,
+  ),
 );
 
 const CategoryBanner = dynamic(() =>
-  import('@/features/home').then((mod) => mod.CategoryBanner),
+  import('@/features/home/components/CategoryBanner').then(
+    (mod) => mod.CategoryBanner,
+  ),
 );
 
 const HomeSideBar = dynamic(() =>
-  import('@/features/home').then((mod) => mod.HomeSideBar),
+  import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
 
 export function Home({ children, type, st, isAuth }: HomeProps) {

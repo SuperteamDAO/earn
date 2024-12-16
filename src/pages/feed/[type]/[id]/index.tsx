@@ -1,11 +1,8 @@
 import { type GetServerSideProps } from 'next';
 import { z } from 'zod';
 
-import {
-  FeedPost,
-  type FeedPostType,
-  FeedPostTypeSchema,
-} from '@/features/feed';
+import { FeedPost } from '@/features/feed/components/FeedPost';
+import { type FeedPostType, FeedPostTypeSchema } from '@/features/feed/types';
 
 interface Props {
   type: FeedPostType;

@@ -1,10 +1,11 @@
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
-import { type Listing } from '@/features/listings';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
-import { selectedSubmissionAtom } from '../..';
+import { type Listing } from '@/features/listings/types';
+
+import { selectedSubmissionAtom } from '../../atoms';
 import { InfoBox } from '../InfoBox';
 import { Notes } from './Notes';
 

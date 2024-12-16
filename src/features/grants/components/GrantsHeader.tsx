@@ -3,13 +3,12 @@ import React from 'react';
 import { BsFillCircleFill } from 'react-icons/bs';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import {
-  ListingHeaderSeparator,
-  ListingTabLink,
-  RegionLabel,
-  StatusBadge,
-} from '@/features/listings';
 import { PulseIcon } from '@/svg/pulse-icon';
+
+import { ListingTabLink } from '@/features/listings/components/ListingPage/ListingTabLink';
+import { RegionLabel } from '@/features/listings/components/ListingPage/RegionLabel';
+import { ListingHeaderSeparator } from '@/features/listings/components/ListingPage/Separator';
+import { StatusBadge } from '@/features/listings/components/ListingPage/StatusBadge';
 
 interface Props {
   sponsor?: {

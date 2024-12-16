@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { type Listing } from '@/features/listings';
+import { type Listing } from '@/features/listings/types';
 
 const fetchListing = async (slug: string): Promise<Listing> => {
   const response = await axios.get(`/api/sponsor-dashboard/${slug}/listing/`);

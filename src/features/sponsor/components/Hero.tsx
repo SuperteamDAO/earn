@@ -4,9 +4,9 @@ import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
-import { maxW } from '../utils';
+import { maxW } from '../utils/styles';
 import { HighQualityImage } from './HighQualityImage';
 import { StepOne } from './steps/One';
 import { StepThree } from './steps/Three';

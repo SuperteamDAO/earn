@@ -1,5 +1,3 @@
-import '@solana/wallet-adapter-react-ui/styles.css';
-
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import {
   ConnectionProvider,
@@ -7,6 +5,8 @@ import {
 } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { useMemo } from 'react';
+
+import '@solana/wallet-adapter-react-ui/styles.css';
 
 export function SolanaWalletProvider({
   children,

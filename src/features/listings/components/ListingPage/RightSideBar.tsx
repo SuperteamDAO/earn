@@ -8,14 +8,15 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { tokenList } from '@/constants/tokenList';
-import { RelatedListings } from '@/features/home';
 import { type ParentSkills } from '@/interface/skills';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { cleanRewardPrizes } from '@/utils/rank';
 
-import { submissionCountQuery } from '../../queries';
+import { RelatedListings } from '@/features/home/components/RelatedListings';
+
+import { submissionCountQuery } from '../../queries/submission-count';
 import type { Listing } from '../../types';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';

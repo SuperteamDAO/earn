@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { RecordPaymentModal } from './Modals/RecordPaymentModal';
 

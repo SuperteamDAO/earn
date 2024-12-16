@@ -6,8 +6,12 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
-import { SignIn } from '@/features/auth';
-import { acceptInvite, verifyInviteQuery } from '@/features/sponsor-dashboard';
+
+import { SignIn } from '@/features/auth/components/SignIn';
+import {
+  acceptInvite,
+  verifyInviteQuery,
+} from '@/features/sponsor-dashboard/queries/accept-invite';
 
 export default function SignupPage() {
   const [loginStep, setLoginStep] = useState(0);

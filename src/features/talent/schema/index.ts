@@ -2,6 +2,10 @@ import axios from 'axios';
 import { z } from 'zod';
 
 import { CountryList } from '@/constants/countryList';
+import { skillsArraySchema } from '@/interface/skills';
+import { validateSolAddressUI } from '@/utils/validateSolAddress';
+import { getURL } from '@/utils/validUrl';
+
 import {
   discordUsernameSchema,
   githubUsernameSchema,
@@ -9,10 +13,7 @@ import {
   telegramUsernameSchema,
   twitterUsernameSchema,
   websiteUrlSchema,
-} from '@/features/social';
-import { skillsArraySchema } from '@/interface/skills';
-import { getURL } from '@/utils';
-import { validateSolAddressUI } from '@/utils/validateSolAddress';
+} from '@/features/social/utils/schema';
 
 import {
   CommunityList,

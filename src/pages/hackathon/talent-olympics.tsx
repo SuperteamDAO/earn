@@ -30,7 +30,6 @@ import { LocalImage } from '@/components/ui/local-image';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
 import { tokenList } from '@/constants/tokenList';
-import { AuthWrapper } from '@/features/auth';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -39,8 +38,10 @@ import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 const SLUG = 'talent-olympics';
 

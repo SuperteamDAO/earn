@@ -21,13 +21,14 @@ import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
-import { type Listing, type Rewards } from '@/features/listings';
 import { type SubmissionWithUser } from '@/interface/submission';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-import { selectedSubmissionAtom } from '../..';
+import { type Listing, type Rewards } from '@/features/listings/types';
+
+import { selectedSubmissionAtom } from '../../atoms';
 
 interface Props {
   bounty: Listing | null;

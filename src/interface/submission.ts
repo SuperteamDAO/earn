@@ -1,6 +1,6 @@
 import { type SubmissionLabels, type SubmissionStatus } from '@prisma/client';
 
-import type { Listing, Rewards } from '@/features/listings';
+import type { Listing, Rewards } from '@/features/listings/types';
 
 import { type User } from './user';
 

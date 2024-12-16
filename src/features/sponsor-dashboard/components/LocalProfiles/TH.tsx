@@ -2,7 +2,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import React, { type ReactNode } from 'react';
 
 import { TableHead } from '@/components/ui/table';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 type SortDirection = 'asc' | 'desc' | null;
 

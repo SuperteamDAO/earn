@@ -4,15 +4,13 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
-import {
-  getListingTypeLabel,
-  type Listing,
-  type Rewards,
-} from '@/features/listings';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { sortRank } from '@/utils/rank';
 import { getURL } from '@/utils/validUrl';
+
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
+import { type Listing, type Rewards } from '@/features/listings/types';
+import { getListingTypeLabel } from '@/features/listings/utils/status';
 
 interface BountyDetailsProps {
   bounty: Listing | null;

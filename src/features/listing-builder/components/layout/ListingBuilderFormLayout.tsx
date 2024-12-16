@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { Meta } from '@/layouts/Meta';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { Header } from './Header';
 
@@ -10,7 +10,11 @@ interface LayoutProps {
   className?: string;
 }
 
-export function Layout({ className, children, ...props }: LayoutProps) {
+export function ListingBuilderFormLayout({
+  className,
+  children,
+  ...props
+}: LayoutProps) {
   return (
     <div
       className={cn(

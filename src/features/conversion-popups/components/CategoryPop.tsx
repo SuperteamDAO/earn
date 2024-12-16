@@ -22,10 +22,11 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { categoryEarningsQuery } from '@/features/listings';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { type CategoryKeys } from '@/pages/api/listings/category-earnings';
-import { formatNumberWithSuffix } from '@/utils';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+
+import { categoryEarningsQuery } from '@/features/listings/queries/category-earnings';
 
 import { popupsShowedAtom } from '../atoms';
 import { roundToNearestThousand } from '../utils';

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 interface NavLinkProps extends React.ComponentPropsWithoutRef<typeof Link> {
   href: string;

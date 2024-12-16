@@ -1,14 +1,13 @@
 import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 
-import { ListingPop } from '@/features/conversion-popups';
-import {
-  DescriptionUI,
-  type Listing,
-  ListingWinners,
-} from '@/features/listings';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { getURL } from '@/utils/validUrl';
+
+import { ListingPop } from '@/features/conversion-popups/components/ListingPop';
+import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
+import { ListingWinners } from '@/features/listings/components/ListingPage/ListingWinners';
+import { type Listing } from '@/features/listings/types';
 
 interface BountyDetailsProps {
   bounty: Listing | null;

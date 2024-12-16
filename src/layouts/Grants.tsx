@@ -8,22 +8,23 @@ import { useEffect, useState } from 'react';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { tokenList } from '@/constants/tokenList';
-import {
-  DollarIcon,
-  grantAmount,
-  GrantApplicationButton,
-  GrantsHeader,
-  type GrantWithApplicationCount,
-  PayoutIcon,
-  TimeToPayIcon,
-} from '@/features/grants';
-import { LiveGrants } from '@/features/home';
-import { ExtraInfoSection } from '@/features/listings';
-import { grantSnackbarAtom } from '@/features/navbar';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
+
+import { GrantApplicationButton } from '@/features/grants/components/GrantApplicationButton';
+import { GrantsHeader } from '@/features/grants/components/GrantsHeader';
+import {
+  DollarIcon,
+  PayoutIcon,
+  TimeToPayIcon,
+} from '@/features/grants/components/icons';
+import { type GrantWithApplicationCount } from '@/features/grants/types';
+import { grantAmount } from '@/features/grants/utils/grantAmount';
+import { LiveGrants } from '@/features/home/components/LiveGrants';
+import { ExtraInfoSection } from '@/features/listings/components/ListingPage/ExtraInfoSection';
+import { grantSnackbarAtom } from '@/features/navbar/components/GrantSnackbar';
 
 import { Default } from './Default';
 

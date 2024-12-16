@@ -13,23 +13,22 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
-import {
-  PublishResults,
-  selectedSubmissionAtom,
-  sponsorDashboardListingQuery,
-  SubmissionHeader,
-  SubmissionList,
-  SubmissionPanel,
-  submissionsQuery,
-} from '@/features/sponsor-dashboard';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
+
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
+import { selectedSubmissionAtom } from '@/features/sponsor-dashboard/atoms';
+import { PublishResults } from '@/features/sponsor-dashboard/components/PublishResults';
+import { SubmissionHeader } from '@/features/sponsor-dashboard/components/Submissions/SubmissionHeader';
+import { SubmissionList } from '@/features/sponsor-dashboard/components/Submissions/SubmissionList';
+import { SubmissionPanel } from '@/features/sponsor-dashboard/components/Submissions/SubmissionPanel';
+import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
+import { submissionsQuery } from '@/features/sponsor-dashboard/queries/submissions';
 
 interface Props {
   listing: string;

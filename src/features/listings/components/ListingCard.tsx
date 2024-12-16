@@ -6,12 +6,12 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { type Listing } from '../types';
-import { getListingIcon } from '../utils';
+import { getListingIcon } from '../utils/getListingIcon';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardSkeleton = () => {

@@ -1,6 +1,3 @@
-import '../styles/globals.scss';
-import '@/components/tiptap/styles/index.css';
-
 import { GoogleTagManager } from '@next/third-parties/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
@@ -16,6 +13,9 @@ import { toast } from 'sonner';
 import { useUser } from '@/store/user';
 import { fontMono, fontSans } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
+
+import '../styles/globals.scss';
+import '@/components/tiptap/styles/index.css';
 
 const SolanaWalletProvider = dynamic(
   () =>

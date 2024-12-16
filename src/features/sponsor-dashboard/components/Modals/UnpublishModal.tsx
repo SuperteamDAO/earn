@@ -12,8 +12,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { type ListingWithSubmissions } from '@/features/listings';
 import { useUser } from '@/store/user';
+
+import { type ListingWithSubmissions } from '@/features/listings/types';
 
 interface UnpublishModalProps {
   unpublishIsOpen: boolean;

@@ -10,8 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
-import { UserMenu } from '@/features/navbar';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { UserMenu } from '@/features/navbar/components/UserMenu';
 
 import {
   hideAutoSaveAtom,
@@ -20,7 +21,7 @@ import {
   previewAtom,
 } from '../../atoms';
 import { useListingForm } from '../../hooks';
-import { PrePublish } from '../Form/PrePublish';
+import { PrePublish } from '../Form/PrePublish/Modal';
 import { StatusBadge } from './StatusBadge';
 
 export function Header() {

@@ -12,11 +12,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { type SubmissionWithUser } from '@/interface/submission';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
-import { selectedSubmissionAtom } from '../..';
+import { selectedSubmissionAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';
-import { colorMap } from '../../utils';
+import { colorMap } from '../../utils/statusColorMap';
 
 interface Props {
   listingSlug: string;

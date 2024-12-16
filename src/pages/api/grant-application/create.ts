@@ -1,17 +1,17 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import { sendEmailNotification } from '@/features/emails';
-import {
-  grantApplicationSchema,
-  handleAirtableSync,
-  validateGrantRequest,
-} from '@/features/grants';
-import { extractTwitterUsername } from '@/features/social';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
+import { handleAirtableSync } from '@/features/grants/utils/handleAirtableSync';
+import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
+import { extractTwitterUsername } from '@/features/social/utils/extractUsername';
 
 async function createGrantApplication(
   userId: string,

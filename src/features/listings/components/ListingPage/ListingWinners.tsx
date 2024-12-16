@@ -4,20 +4,19 @@ import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import {
-  BONUS_REWARD_POSITION,
-  formatTotalPrice,
-} from '@/features/listing-builder';
-import { EarnAvatar } from '@/features/talent';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type SubmissionWithUser } from '@/interface/submission';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { nthLabelGenerator } from '@/utils/rank';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
+import { formatTotalPrize } from '@/features/listing-builder/utils/formatTotalPrize';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+
 import { listingWinnersQuery } from '../../queries/listing-winners';
 import type { Listing, Rewards } from '../../types';
-import { tweetTemplate } from '../../utils';
+import { tweetTemplate } from '../../utils/tweetTemplate';
 
 interface Props {
   bounty: Listing;
@@ -134,7 +133,7 @@ export function ListingWinners({ bounty }: Props) {
                   <p className="line-clamp-2 w-min pt-4 text-center text-xs font-semibold text-slate-700 md:w-auto md:text-sm">{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</p>
                   <p className="text-center text-xs font-normal text-slate-500 opacity-60">
                     {bounty?.rewards &&
-                      formatTotalPrice(
+                      formatTotalPrize(
                         bounty?.rewards[
                           Number(submission?.winnerPosition) as keyof Rewards
                         ] ?? 0,

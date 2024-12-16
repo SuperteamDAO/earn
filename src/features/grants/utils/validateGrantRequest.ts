@@ -1,5 +1,6 @@
-import { userRegionEligibilty } from '@/features/listings';
 import { prisma } from '@/prisma';
+
+import { userRegionEligibilty } from '@/features/listings/utils/region';
 
 export async function validateGrantRequest(userId: string, grantId: string) {
   const grant = await prisma.grants.findUnique({

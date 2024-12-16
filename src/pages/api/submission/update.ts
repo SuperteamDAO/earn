@@ -1,13 +1,13 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import {
-  submissionSchema,
-  validateSubmissionRequest,
-} from '@/features/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
+import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 
 async function updateSubmission(
   userId: string,

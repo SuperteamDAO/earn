@@ -13,7 +13,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard';
+
+import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
 interface Props {
   isOpen: boolean;

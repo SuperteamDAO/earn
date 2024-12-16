@@ -10,17 +10,18 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Tooltip } from '@/components/ui/tooltip';
-import { AuthWrapper } from '@/features/auth';
-import {
-  getRegionTooltipLabel,
-  userRegionEligibilty,
-} from '@/features/listings';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
-import { userApplicationQuery } from '../queries';
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import {
+  getRegionTooltipLabel,
+  userRegionEligibilty,
+} from '@/features/listings/utils/region';
+
+import { userApplicationQuery } from '../queries/user-application';
 import { type Grant } from '../types';
 import { GrantApplicationModal } from './GrantApplicationModal';
 

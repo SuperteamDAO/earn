@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { withAuth } from '@/features/auth/utils/withAuth';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { type, url, id } = req.body;

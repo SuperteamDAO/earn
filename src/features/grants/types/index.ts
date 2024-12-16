@@ -1,6 +1,7 @@
-import { type References } from '@/features/listings';
 import type { Skills } from '@/interface/skills';
 import type { User } from '@/interface/user';
+
+import { type References } from '@/features/listings/types';
 
 interface Grant {
   id: string;

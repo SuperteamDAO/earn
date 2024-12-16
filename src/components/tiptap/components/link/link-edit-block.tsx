@@ -15,7 +15,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { URL_REGEX } from '@/constants/URL_REGEX';
-import { cn, getURLSanitized } from '@/utils';
+import { cn } from '@/utils/cn';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 
 const formSchema = z.object({
   url: z
@@ -28,7 +29,7 @@ const formSchema = z.object({
   isNewTab: z.boolean().default(false),
 });
 
-export interface LinkEditorProps extends React.HTMLAttributes<HTMLDivElement> {
+interface LinkEditorProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultUrl?: string;
   defaultText?: string;
   defaultIsNewTab?: boolean;

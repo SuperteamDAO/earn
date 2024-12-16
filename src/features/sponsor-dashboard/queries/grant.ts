@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { type Grant } from '@/features/grants';
+import { type Grant } from '@/features/grants/types';
 
 interface GrantWithApplicationCount extends Grant {
   totalApplications: number;

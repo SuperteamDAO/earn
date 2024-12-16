@@ -2,7 +2,7 @@ import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 export const FeedCardLink = ({
   href,

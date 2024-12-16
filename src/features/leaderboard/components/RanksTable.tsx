@@ -1,5 +1,3 @@
-import '/node_modules/flag-icons/css/flag-icons.min.css';
-
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
@@ -17,12 +15,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { EarnAvatar } from '@/features/talent';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type RowType, type SKILL } from '../types';
 import { getSubskills, skillCategories } from '../utils';
+
+import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',

@@ -2,11 +2,12 @@ import { ArrowRight } from 'lucide-react';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { GrantsCard } from '@/features/grants';
-import { ListingCard } from '@/features/listings';
+
+import { GrantsCard } from '@/features/grants/components/GrantsCard';
+import { ListingCard } from '@/features/listings/components/ListingCard';
 
 import { type SearchResult } from '../types';
-import { search } from '../utils';
+import { search } from '../utils/search';
 
 interface Props {
   results: SearchResult[];

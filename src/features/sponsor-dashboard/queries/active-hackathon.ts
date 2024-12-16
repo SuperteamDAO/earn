@@ -2,7 +2,7 @@ import { type Hackathon } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { getURL } from '@/utils';
+import { getURL } from '@/utils/validUrl';
 
 const fetchActiveHackathon = async (): Promise<Hackathon> => {
   const { data } = await axios.get(

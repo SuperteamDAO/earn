@@ -6,7 +6,7 @@ import { FaTelegram, FaWhatsapp, FaXTwitter } from 'react-icons/fa6';
 import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 interface Props {

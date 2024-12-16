@@ -1,16 +1,15 @@
 import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
-import {
-  checkListingSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;

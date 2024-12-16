@@ -19,11 +19,12 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect, type Option } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
 import { URL_REGEX } from '@/constants/URL_REGEX';
-import { type FeedDataProps } from '@/features/feed';
 import type { PoW } from '@/interface/pow';
 import { allSkills, allSubSkills } from '@/interface/skills';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { type FeedDataProps } from '@/features/feed/types';
 
 const PowSchema = z.object({
   title: z.string().min(1, 'Required'),

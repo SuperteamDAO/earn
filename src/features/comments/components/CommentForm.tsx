@@ -4,12 +4,13 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { AuthWrapper } from '@/features/auth';
-import { EarnAvatar } from '@/features/talent';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { UserSuggestionTextarea } from './UserSuggestionTextarea';
 

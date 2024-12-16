@@ -1,13 +1,12 @@
 import type { NextApiResponse } from 'next';
 
-import {
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;

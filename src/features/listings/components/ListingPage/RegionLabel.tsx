@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/popover';
 import { Tooltip } from '@/components/ui/tooltip';
 
-import { getCombinedRegion, getRegionTooltipLabel } from '../../utils';
+import { getCombinedRegion, getRegionTooltipLabel } from '../../utils/region';
 
 export const RegionLabel = ({
   region,

@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tooltip } from '@/components/ui/tooltip';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { hackathonAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';

@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { validUsernamesAtom } from '../atoms';
 import { Comment as CommentUI } from './Comment';

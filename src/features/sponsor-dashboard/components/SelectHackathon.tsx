@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 
-import { EarnAvatar } from '@/features/talent';
 import type { SponsorType } from '@/interface/sponsor';
 import { useUpdateUser, useUser } from '@/store/user';
+
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { hackathonSponsorAtom } from './SelectSponsor';
 

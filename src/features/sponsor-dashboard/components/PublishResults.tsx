@@ -13,15 +13,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  selectedSubmissionAtom,
-  useToggleWinner,
-} from '@/features/sponsor-dashboard';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 
 import { type Listing } from '../../listings/types';
+import { selectedSubmissionAtom } from '../atoms';
+import { useToggleWinner } from '../mutations/useToggleWinner';
 
 interface Props {
   onClose: () => void;

@@ -24,20 +24,19 @@ import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
 import { PDTG } from '@/constants/Telegram';
-import { Login } from '@/features/auth';
-import { isCreateListingAllowedQuery } from '@/features/listing-builder';
-import {
-  CreateListingModal,
-  NavItem,
-  SelectHackathon,
-  SelectSponsor,
-  SponsorInfoModal,
-} from '@/features/sponsor-dashboard';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { Login } from '@/features/auth/components/Login';
+import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
+import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
+import { NavItem } from '@/features/sponsor-dashboard/components/NavItems';
+import { SelectHackathon } from '@/features/sponsor-dashboard/components/SelectHackathon';
+import { SelectSponsor } from '@/features/sponsor-dashboard/components/SelectSponsor';
+import { SponsorInfoModal } from '@/features/sponsor-dashboard/components/SponsorInfoModal';
 
 interface LinkItemProps {
   name: string;

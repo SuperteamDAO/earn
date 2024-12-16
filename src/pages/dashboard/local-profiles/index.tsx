@@ -7,13 +7,12 @@ import { LoadingSection } from '@/components/shared/LoadingSection';
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';
 import { Superteams } from '@/constants/Superteam';
-import {
-  FilterSection,
-  localProfilesQuery,
-  UserTable,
-} from '@/features/sponsor-dashboard';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
+
+import { FilterSection } from '@/features/sponsor-dashboard/components/LocalProfiles/FilterSection';
+import { UserTable } from '@/features/sponsor-dashboard/components/LocalProfiles/UserTable';
+import { localProfilesQuery } from '@/features/sponsor-dashboard/queries/local-profiles';
 
 type SortDirection = 'asc' | 'desc' | null;
 

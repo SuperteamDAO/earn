@@ -1,8 +1,10 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
 
 async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;

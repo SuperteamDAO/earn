@@ -1,19 +1,18 @@
 import type { NextApiResponse } from 'next';
 
-import {
-  checkListingSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import { sendEmailNotification } from '@/features/emails';
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder';
-import { type Rewards } from '@/features/listings';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
+import { type Rewards } from '@/features/listings/types';
 
 async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;

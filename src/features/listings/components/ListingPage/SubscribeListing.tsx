@@ -8,9 +8,10 @@ import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 import { listingSubscriptionsQuery } from '../../queries/listing-notification-status';
 

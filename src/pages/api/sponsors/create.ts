@@ -1,12 +1,14 @@
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
-import { extractSocialUsername } from '@/features/social';
-import { sponsorBaseSchema } from '@/features/sponsor';
-import { createSponsorEmailSettings } from '@/features/sponsor-dashboard';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+import { sponsorBaseSchema } from '@/features/sponsor/utils/sponsorFormSchema';
+import { createSponsorEmailSettings } from '@/features/sponsor-dashboard/utils/createSponsorEmailSettings';
 
 async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;

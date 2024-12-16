@@ -3,9 +3,10 @@ import { useRouter } from 'next/router';
 import { LuHome, LuNewspaper, LuSearch, LuUser } from 'react-icons/lu';
 
 import { Button } from '@/components/ui/button';
-import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 interface Props {
   onSearchOpen: () => void;
@@ -28,7 +29,7 @@ export function BottomBar({ onSearchOpen }: Props) {
   return (
     <div
       className={cn(
-        'z-999 flex w-full justify-between border-t border-slate-200 bg-white px-4 py-2',
+        'z-[999] flex w-full justify-between border-t border-slate-200 bg-white px-4 py-2',
         'lg:hidden',
       )}
     >

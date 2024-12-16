@@ -2,19 +2,18 @@ import localFont from 'next/font/local';
 import { useState } from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import {
-  FAQs,
-  Features,
-  Footer,
-  Header,
-  Hero,
-  ListingTypes,
-  ListingWork,
-  Stats,
-  Testimonials,
-} from '@/features/sponsor';
 import { Meta } from '@/layouts/Meta';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { FAQs } from '@/features/sponsor/components/FAQs';
+import { Features } from '@/features/sponsor/components/Features';
+import { Footer } from '@/features/sponsor/components/Footer';
+import { Header } from '@/features/sponsor/components/Header';
+import { Hero } from '@/features/sponsor/components/Hero';
+import { ListingTypes } from '@/features/sponsor/components/ListingTypes';
+import { ListingWork } from '@/features/sponsor/components/ListingWork';
+import { Stats } from '@/features/sponsor/components/Stats';
+import { Testimonials } from '@/features/sponsor/components/Testimonials';
 
 const font = localFont({
   src: '../../../public/OverusedGrotesk-VF.woff2',

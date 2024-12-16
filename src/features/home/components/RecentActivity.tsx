@@ -4,8 +4,10 @@ import { usePostHog } from 'posthog-js/react';
 import { MdArrowForward } from 'react-icons/md';
 
 import { LocalImage } from '@/components/ui/local-image';
-import { type FeedPostType, homeFeedQuery } from '@/features/feed';
 import { timeAgoShort } from '@/utils/timeAgo';
+
+import { homeFeedQuery } from '@/features/feed/queries/home-feed';
+import { type FeedPostType } from '@/features/feed/types';
 
 interface ActivityCardProps {
   firstName: string;

@@ -26,26 +26,24 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants/Telegram';
-import { SignIn } from '@/features/auth';
-import { SocialInput } from '@/features/social';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
+import { uploadToCloudinary } from '@/utils/upload';
+
+import { SignIn } from '@/features/auth/components/SignIn';
+import { SocialInput } from '@/features/social/components/SocialInput';
+import { useSlugValidation } from '@/features/sponsor/hooks/useSlugValidation';
+import { useSponsorNameValidation } from '@/features/sponsor/hooks/useSponsorNameValidation';
 import {
   shouldUpdateUser,
   sponsorFormSchema,
   type SponsorFormValues,
   transformFormToApiData,
-  useSlugValidation,
-  useSponsorNameValidation,
-} from '@/features/sponsor';
-import {
-  IndustryList,
-  ONBOARDING_KEY,
-  useUsernameValidation,
-} from '@/features/talent';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
-import { useUser } from '@/store/user';
-import { cn } from '@/utils';
-import { uploadToCloudinary } from '@/utils/upload';
+} from '@/features/sponsor/utils/sponsorFormSchema';
+import { IndustryList, ONBOARDING_KEY } from '@/features/talent/constants';
+import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
 const CreateSponsor = () => {
   const router = useRouter();

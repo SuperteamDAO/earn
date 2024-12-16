@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 interface Props {
   description?: string;

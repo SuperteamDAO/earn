@@ -8,7 +8,7 @@ import { IoSearchOutline } from 'react-icons/io5';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';

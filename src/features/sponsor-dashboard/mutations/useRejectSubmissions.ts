@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 import { type SubmissionWithUser } from '@/interface/submission';
 
-import { selectedSubmissionAtom, selectedSubmissionIdsAtom } from '..';
+import { selectedSubmissionAtom, selectedSubmissionIdsAtom } from '../atoms';
 
 export const useRejectSubmissions = (slug: string) => {
   const queryClient = useQueryClient();

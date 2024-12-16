@@ -34,21 +34,26 @@ import {
 } from '@/components/ui/table';
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
-import { grantAmount } from '@/features/grants';
-import {
-  formatDeadline,
-  getColorStyles,
-  getListingIcon,
-  getListingStatus,
-  getListingTypeLabel,
-  isDeadlineOver,
-  type ListingWithSubmissions,
-} from '@/features/listings';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
-import { DeleteDraftModal, UnpublishModal, VerifyPaymentModal } from './Modals';
+import { grantAmount } from '@/features/grants/utils/grantAmount';
+import { type ListingWithSubmissions } from '@/features/listings/types';
+import {
+  formatDeadline,
+  isDeadlineOver,
+} from '@/features/listings/utils/deadline';
+import { getColorStyles } from '@/features/listings/utils/getColorStyles';
+import { getListingIcon } from '@/features/listings/utils/getListingIcon';
+import {
+  getListingStatus,
+  getListingTypeLabel,
+} from '@/features/listings/utils/status';
+
+import { DeleteDraftModal } from './Modals/DeleteDraftModal';
+import { UnpublishModal } from './Modals/UnpublishModal';
+import { VerifyPaymentModal } from './Modals/VerifyPayment';
 import { SponsorPrize } from './SponsorPrize';
 
 interface ListingTableProps {

@@ -1,6 +1,6 @@
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
-import { maxW } from '../utils';
+import { maxW } from '../utils/styles';
 import { HighQualityImage } from './HighQualityImage';
 
 const bountyFeatures = [

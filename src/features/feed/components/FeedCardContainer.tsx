@@ -9,13 +9,14 @@ import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import { Avatar } from '@/components/ui/avatar';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AuthWrapper } from '@/features/auth';
-import { Comments } from '@/features/comments';
-import { EarnAvatar } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { Comments } from '@/features/comments/components/Comments';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type FeedDataProps } from '../types';
 import { convertFeedPostTypeToCommentRefType } from '../utils';

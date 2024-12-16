@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCallback } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 interface Props {
   page: number;

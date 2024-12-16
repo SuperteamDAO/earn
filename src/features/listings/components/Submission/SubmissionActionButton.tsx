@@ -15,20 +15,21 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Tooltip } from '@/components/ui/tooltip';
-import { AuthWrapper } from '@/features/auth';
-import {
-  getListingDraftStatus,
-  getRegionTooltipLabel,
-  isDeadlineOver,
-  type Listing,
-  userRegionEligibilty,
-} from '@/features/listings';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
+import { type Listing } from '../../types';
+import { isDeadlineOver } from '../../utils/deadline';
+import {
+  getRegionTooltipLabel,
+  userRegionEligibilty,
+} from '../../utils/region';
+import { getListingDraftStatus } from '../../utils/status';
 import { EasterEgg } from './EasterEgg';
 import { SubmissionDrawer } from './SubmissionDrawer';
 
