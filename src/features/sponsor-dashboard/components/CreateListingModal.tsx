@@ -1,4 +1,3 @@
-import { X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
@@ -35,15 +34,7 @@ export const CreateListingModal = ({
   if (!isMD) return null;
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl overflow-hidden rounded-lg bg-white">
-        <button
-          className="absolute right-4 top-4 rounded-sm text-slate-300 opacity-70 ring-offset-background transition-opacity hover:opacity-100"
-          onClick={onClose}
-        >
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </button>
-
+      <DialogContent className="max-w-7xl overflow-hidden rounded-lg bg-white p-0">
         <div className="flex">
           <div className="relative flex-1">
             <div className="relative mb-6 flex items-center justify-center bg-violet-50 px-32 py-12">

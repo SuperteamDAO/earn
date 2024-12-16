@@ -67,7 +67,7 @@ export function Hero() {
       >
         <div className="flex flex-col items-start">
           <StepOne />
-          <div className="flex gap-2">
+          <div className="mt-2 flex gap-2">
             <p className="font-semibold text-slate-800">STEP 1</p>
             <p className="font-semibold text-slate-500">Create a profile</p>
           </div>
@@ -87,7 +87,7 @@ export function Hero() {
 
         <div className="flex flex-col items-start">
           <StepTwo />
-          <div className="flex gap-2">
+          <div className="mt-2 flex gap-2">
             <p className="font-semibold text-slate-800">STEP 2</p>
             <p className="font-semibold text-slate-500">Post your listing</p>
           </div>
@@ -110,7 +110,7 @@ export function Hero() {
 
         <div className="flex flex-col items-start">
           <StepThree />
-          <div className="flex gap-2">
+          <div className="mt-2 flex gap-2">
             <p className="font-semibold text-slate-800">STEP 3</p>
             <p className="font-semibold text-slate-500">Get submissions</p>
           </div>

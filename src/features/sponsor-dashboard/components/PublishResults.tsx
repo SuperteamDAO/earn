@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useAtomValue } from 'jotai';
-import { AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle2, X } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 
@@ -184,11 +184,16 @@ export function PublishResults({
             )}
 
           {!isWinnersAnnounced && alertTitle && alertDescription && (
-            <Alert variant={alertType === 'error' ? 'destructive' : 'default'}>
-              <AlertCircle className="h-8 w-8" />
-              <div>
-                <AlertTitle>{alertTitle}</AlertTitle>
-                <AlertDescription>{alertDescription}</AlertDescription>
+            <Alert
+              variant={alertType === 'error' ? 'destructive' : 'default'}
+              className="flex"
+            >
+              <div className="flex gap-2">
+                <AlertTriangle className="h-6 w-6" />
+                <div>
+                  <AlertTitle className="text-base">{alertTitle}</AlertTitle>
+                  <AlertDescription>{alertDescription}</AlertDescription>
+                </div>
               </div>
             </Alert>
           )}
@@ -198,7 +203,7 @@ export function PublishResults({
             totalWinners === rewards &&
             !isDeadlinePassed && (
               <Alert className="mt-4" variant="destructive">
-                <AlertCircle className="h-8 w-8" />
+                <AlertCircle className="h-4 w-4" />
                 <div>
                   <AlertTitle>Listing still in progress!</AlertTitle>
                   <AlertDescription>

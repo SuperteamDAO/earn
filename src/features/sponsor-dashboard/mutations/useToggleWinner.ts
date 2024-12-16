@@ -7,7 +7,7 @@ import { BONUS_REWARD_POSITION } from '@/constants';
 import { type Listing, type Rewards } from '@/features/listings';
 import { type SubmissionWithUser } from '@/interface/submission';
 
-import { selectedSubmissionAtom } from '..';
+import { selectedSubmissionAtom } from '../atoms';
 
 export const useToggleWinner = (
   bounty: Listing | undefined,

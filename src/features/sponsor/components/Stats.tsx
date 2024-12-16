@@ -61,7 +61,7 @@ export function Stats() {
   return (
     <div
       className={cn(
-        'flex w-screen items-center gap-16 lg:flex-row-reverse lg:gap-20',
+        'flex w-screen flex-col items-center gap-16 lg:flex-row-reverse lg:gap-20',
         maxW,
         'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
       )}

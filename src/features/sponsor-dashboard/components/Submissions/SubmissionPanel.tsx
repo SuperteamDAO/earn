@@ -16,7 +16,7 @@ import { dayjs } from '@/utils/dayjs';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
-import { selectedSubmissionAtom } from '../..';
+import { selectedSubmissionAtom } from '../../atoms';
 import { Details } from './Details';
 import { PayoutButton } from './PayoutButton';
 import { SelectLabel } from './SelectLabel';
@@ -144,14 +144,13 @@ export const SubmissionPanel = ({
                     {!isProject && (
                       <Tooltip
                         content={
-                          bounty?.isWinnersAnnounced ? (
-                            <>
-                              You cannot change the winners once the results are
-                              published!
-                              <TooltipArrow />
-                            </>
-                          ) : null
+                          <>
+                            You cannot change the winners once the results are
+                            published!
+                            <TooltipArrow />
+                          </>
                         }
+                        disabled={!bounty?.isWinnersAnnounced}
                         contentProps={{ sideOffset: 5 }}
                       >
                         <Button
