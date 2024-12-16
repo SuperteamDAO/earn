@@ -29,7 +29,7 @@ const formSchema = z.object({
   isNewTab: z.boolean().default(false),
 });
 
-export interface LinkEditorProps extends React.HTMLAttributes<HTMLDivElement> {
+interface LinkEditorProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultUrl?: string;
   defaultText?: string;
   defaultIsNewTab?: boolean;

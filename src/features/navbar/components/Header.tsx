@@ -75,7 +75,7 @@ export const Header = () => {
 
       <MobileNavbar onLoginOpen={onLoginOpen} />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
-      <div className="fixed bottom-0 z-40 w-full">
+      <div className="fixed bottom-0 z-[90] w-full">
         <BottomBar onSearchOpen={searchOpenWithEvent} />
       </div>
     </>

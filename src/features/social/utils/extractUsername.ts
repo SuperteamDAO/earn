@@ -51,7 +51,7 @@ export const linkedUsernames = z.enum([
   'github',
   'telegram',
 ]);
-export type LinkedUsernames = z.infer<typeof linkedUsernames>;
+type LinkedUsernames = z.infer<typeof linkedUsernames>;
 export function extractSocialUsername(
   platform: LinkedUsernames,
   url: string,
