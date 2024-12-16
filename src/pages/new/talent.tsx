@@ -6,6 +6,7 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { create } from 'zustand';
 
 import { Steps } from '@/components/shared/steps';
+import { Login } from '@/features/auth';
 import { AboutYou, type UserStoreType, YourLinks } from '@/features/talent';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -141,6 +142,10 @@ export default function Talent() {
       }
     }
   }, [user, router]);
+
+  if (status === 'unauthenticated') {
+    return <Login hideCloseIcon isOpen={true} onClose={() => {}} />;
+  }
 
   return (
     <Default

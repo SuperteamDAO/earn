@@ -185,7 +185,7 @@ const CreateSponsor = () => {
         />
       }
     >
-      {!session ? (
+      {status === 'unauthenticated' ? (
         <>
           <Box w={'full'} minH={'100vh'} bg="white">
             <Box
