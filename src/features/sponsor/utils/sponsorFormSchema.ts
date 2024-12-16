@@ -17,8 +17,9 @@ export const sponsorBaseSchema = z.object({
   logo: z.string().min(1, 'Company logo is required'),
   industry: z.string().min(1, 'At least one industry must be selected'),
   url: z
-    .union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')])
-    .optional(),
+    .string()
+    .min(1, 'Company URL is required')
+    .regex(URL_REGEX, 'Invalid URL'),
   twitter: twitterUsernameSchema,
   entityName: z.string().min(1, 'Entity name is required'),
 });

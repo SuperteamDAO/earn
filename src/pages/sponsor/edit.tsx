@@ -23,7 +23,7 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Tooltip } from '@/components/ui/tooltip';
 import { IndustryList } from '@/constants';
-import { SocialInput } from '@/features/social';
+import { extractSocialUsername, SocialInput } from '@/features/social';
 import {
   type SponsorBase,
   sponsorBaseSchema,
@@ -66,12 +66,28 @@ export default function UpdateSponsor() {
     sponsorName,
   } = useSponsorNameValidation();
 
+  useEffect(() => {
+    if (isSponsorNameInvalid) {
+      form.setError('name', {
+        message: sponsorNameValidationErrorMessage,
+      });
+    } else form.clearErrors('name');
+  }, [sponsorNameValidationErrorMessage, isSponsorNameInvalid]);
+
   const {
     setSlug,
     isInvalid: isSlugInvalid,
     validationErrorMessage: slugValidationErrorMessage,
     slug,
   } = useSlugValidation();
+
+  useEffect(() => {
+    if (isSlugInvalid) {
+      form.setError('slug', {
+        message: slugValidationErrorMessage,
+      });
+    } else form.clearErrors('slug');
+  }, [slugValidationErrorMessage, isSlugInvalid]);
 
   const { data: sponsorData } = useQuery(sponsorQuery(user?.currentSponsorId));
 
@@ -89,7 +105,9 @@ export default function UpdateSponsor() {
         logo,
         industry,
         url,
-        twitter,
+        twitter: twitter
+          ? extractSocialUsername('twitter', twitter) || undefined
+          : undefined,
         entityName,
       });
     }
@@ -148,40 +166,24 @@ export default function UpdateSponsor() {
                   name="name"
                   label="Company Name"
                   isRequired
+                  onChange={(e) => {
+                    setSponsorName(e.target.value);
+                  }}
                 >
-                  <Input
-                    placeholder="Stark Industries"
-                    onChange={(e) => {
-                      setSponsorName(e.target.value);
-                    }}
-                    value={sponsorName}
-                  />
+                  <Input placeholder="Stark Industries" value={sponsorName} />
                 </FormFieldWrapper>
-                {isSponsorNameInvalid && (
-                  <p className="text-sm text-red-500">
-                    {sponsorNameValidationErrorMessage}
-                  </p>
-                )}
 
                 <FormFieldWrapper
                   control={form.control}
                   name="slug"
                   label="Company Username"
                   isRequired
+                  onChange={(e) => {
+                    setSlug(e.target.value);
+                  }}
                 >
-                  <Input
-                    placeholder="starkindustries"
-                    onChange={(e) => {
-                      setSlug(e.target.value);
-                    }}
-                    value={slug}
-                  />
+                  <Input placeholder="starkindustries" value={slug} />
                 </FormFieldWrapper>
-                {isSlugInvalid && (
-                  <p className="text-sm text-red-500">
-                    {slugValidationErrorMessage}
-                  </p>
-                )}
               </div>
               <div className="my-6 flex w-full justify-between gap-4">
                 <FormFieldWrapper

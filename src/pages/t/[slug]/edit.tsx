@@ -98,7 +98,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   }, [validationErrorMessage, isInvalid]);
 
   useEffect(() => {
-    console.log('user', user);
     if (user) {
       form.reset({
         username: user.username || undefined,

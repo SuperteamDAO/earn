@@ -76,34 +76,61 @@ const CreateSponsor = () => {
     },
   });
 
+  useEffect(() => {
+    if (user) {
+      user.username && setUsername(user.username);
+      form.reset({
+        user: {
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          username: user?.username || '',
+          photo: user?.photo || '',
+        },
+      });
+    }
+  }, [user]);
+
   const {
     setSponsorName,
     isInvalid: isSponsorNameInvalid,
     validationErrorMessage: sponsorNameValidationErrorMessage,
     sponsorName,
   } = useSponsorNameValidation();
+  useEffect(() => {
+    if (isSponsorNameInvalid) {
+      form.setError('sponsor.name', {
+        message: sponsorNameValidationErrorMessage,
+      });
+    } else form.clearErrors('sponsor.name');
+  }, [sponsorNameValidationErrorMessage, isSponsorNameInvalid]);
+
   const {
     setSlug,
     isInvalid: isSlugInvalid,
     validationErrorMessage: validationSlugErrorMessage,
     slug,
   } = useSlugValidation();
+  useEffect(() => {
+    if (isSlugInvalid) {
+      form.setError('sponsor.slug', {
+        message: validationSlugErrorMessage,
+      });
+    } else form.clearErrors('sponsor.slug');
+  }, [validationSlugErrorMessage, isSlugInvalid]);
+
   const {
     setUsername,
     isInvalid: isUsernameInvalid,
     validationErrorMessage: validationUsernameErrorMessage,
     username,
   } = useUsernameValidation(user?.username);
-
   useEffect(() => {
-    if (user?.photo) {
-      form.setValue('user.photo', user.photo);
-    }
-    if (user?.username) {
-      setUsername(user.username);
-      form.setValue('user.username', user.username);
-    }
-  }, [user]);
+    if (isUsernameInvalid) {
+      form.setError('user.username', {
+        message: validationUsernameErrorMessage,
+      });
+    } else form.clearErrors('user.username');
+  }, [validationUsernameErrorMessage, isUsernameInvalid]);
 
   useEffect(() => {
     if (user?.currentSponsorId && session?.user?.role !== 'GOD') {
@@ -235,20 +262,12 @@ const CreateSponsor = () => {
                     name="user.username"
                     label="Username"
                     isRequired
+                    onChange={(e) => {
+                      setUsername(e.target.value);
+                    }}
                   >
-                    <Input
-                      placeholder="Username"
-                      onChange={(e) => {
-                        setUsername(e.target.value);
-                      }}
-                      value={username}
-                    />
+                    <Input placeholder="Username" value={username} />
                   </FormFieldWrapper>
-                  {isUsernameInvalid && (
-                    <p className="text-sm text-red-500">
-                      {validationUsernameErrorMessage}
-                    </p>
-                  )}
                 </div>
                 <>
                   <FormLabel isRequired>Profile Picture</FormLabel>
@@ -278,40 +297,24 @@ const CreateSponsor = () => {
                     name="sponsor.name"
                     label="Company Name"
                     isRequired
+                    onChange={(e) => {
+                      setSponsorName(e.target.value);
+                    }}
                   >
-                    <Input
-                      placeholder="Stark Industries"
-                      onChange={(e) => {
-                        setSponsorName(e.target.value);
-                      }}
-                      value={sponsorName}
-                    />
+                    <Input placeholder="Stark Industries" value={sponsorName} />
                   </FormFieldWrapper>
-                  {isSponsorNameInvalid && (
-                    <p className="text-sm text-red-500">
-                      {sponsorNameValidationErrorMessage}
-                    </p>
-                  )}
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.slug"
                     label="Company Username"
                     isRequired
+                    onChange={(e) => {
+                      const lowercaseValue = e.target.value.toLowerCase();
+                      setSlug(lowercaseValue);
+                    }}
                   >
-                    <Input
-                      placeholder="starkindustries"
-                      onChange={(e) => {
-                        const lowercaseValue = e.target.value.toLowerCase();
-                        setSlug(lowercaseValue);
-                      }}
-                      value={slug}
-                    />
+                    <Input placeholder="starkindustries" value={slug} />
                   </FormFieldWrapper>
-                  {isSlugInvalid && (
-                    <p className="text-sm text-red-500">
-                      {validationSlugErrorMessage}
-                    </p>
-                  )}
                 </div>
                 <div className="my-6 flex w-full justify-between gap-4">
                   <FormFieldWrapper
