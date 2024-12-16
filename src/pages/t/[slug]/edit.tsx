@@ -31,7 +31,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { IndustryList, web3Exp, workExp, workType } from '@/constants';
 import { CommunityList } from '@/constants/communityList';
 import { CountryList } from '@/constants/countryList';
-import { extractSocialUsername, SocialInput } from '@/features/social';
+import { extractSocialUsername, SocialInputAll } from '@/features/social';
 import {
   AddProject,
   type ProfileFormData,
@@ -356,7 +356,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   SOCIALS
                 </p>
 
-                <SocialInput control={control} />
+                <SocialInputAll control={control} />
 
                 <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
                   WORK

@@ -23,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Tooltip } from '@/components/ui/tooltip';
 import { IndustryList } from '@/constants';
+import { SocialInput } from '@/features/social';
 import {
   type SponsorBase,
   sponsorBaseSchema,
@@ -141,7 +142,7 @@ export default function UpdateSponsor() {
               onSubmit={form.handleSubmit(onSubmit)}
               style={{ width: '100%' }}
             >
-              <div className="flex w-full justify-between gap-2">
+              <div className="flex w-full justify-between gap-4">
                 <FormFieldWrapper
                   control={form.control}
                   name="name"
@@ -182,7 +183,7 @@ export default function UpdateSponsor() {
                   </p>
                 )}
               </div>
-              <div className="my-6 flex w-full justify-between gap-2">
+              <div className="my-6 flex w-full justify-between gap-4">
                 <FormFieldWrapper
                   control={form.control}
                   name="url"
@@ -192,14 +193,15 @@ export default function UpdateSponsor() {
                   <Input placeholder="https://starkindustries.com" />
                 </FormFieldWrapper>
 
-                <FormFieldWrapper
-                  control={form.control}
+                <SocialInput
                   name="twitter"
-                  label="Company Twitter"
-                  isRequired
-                >
-                  <Input placeholder="@StarkIndustries" />
-                </FormFieldWrapper>
+                  socialName={'twitter'}
+                  formLabel="Company Twitter"
+                  placeholder="@StarkIndustries"
+                  required
+                  control={form.control}
+                  height="h-9"
+                />
               </div>
 
               <div className="flex w-full">
