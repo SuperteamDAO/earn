@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useAtomValue } from 'jotai';
-import { AlertCircle, AlertTriangle, CheckCircle2, X } from 'lucide-react';
+import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 
@@ -141,13 +141,6 @@ export function PublishResults({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Publish Results</DialogTitle>
-          <button
-            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 disabled:pointer-events-none"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </button>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -173,7 +166,7 @@ export function PublishResults({
             rewards &&
             totalWinners === rewards &&
             alertType !== 'error' && (
-              <p className="mb-4">
+              <p className="mb-4 mt-1">
                 Publishing the results of this listing will make the results
                 public for everyone to see!
                 <br />
@@ -184,10 +177,10 @@ export function PublishResults({
           {!isWinnersAnnounced && alertTitle && alertDescription && (
             <Alert
               variant={alertType === 'error' ? 'destructive' : 'default'}
-              className="flex"
+              className="flex border-amber-600"
             >
               <div className="flex gap-2">
-                <AlertTriangle className="h-6 w-6" />
+                <AlertTriangle className="-mt-0.5 h-8 w-8" />
                 <div>
                   <AlertTitle className="text-base">{alertTitle}</AlertTitle>
                   <AlertDescription>{alertDescription}</AlertDescription>
@@ -201,13 +194,18 @@ export function PublishResults({
             totalWinners === rewards &&
             !isDeadlinePassed && (
               <Alert className="mt-4" variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <div>
-                  <AlertTitle>Listing still in progress!</AlertTitle>
-                  <AlertDescription>
-                    If you publish the results before the deadline, the listing
-                    will close since the winner(s) will have been announced.
-                  </AlertDescription>
+                <div className="flex gap-2">
+                  <AlertTriangle className="-mt-0.5 h-8 w-8" />
+                  <div>
+                    <AlertTitle className="text-base">
+                      Listing still in progress!
+                    </AlertTitle>
+                    <AlertDescription>
+                      If you publish the results before the deadline, the
+                      listing will close since the winner(s) will have been
+                      announced.
+                    </AlertDescription>
+                  </div>
                 </div>
               </Alert>
             )}
