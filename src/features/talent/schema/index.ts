@@ -60,13 +60,13 @@ export const profileSchema = z
         },
       ),
     interests: z.enum(IndustryList).array().optional().nullable(),
-    experience: z.enum(workExp).optional().nullable(),
-    cryptoExperience: z.enum(web3Exp).optional().nullable(),
-    workPrefernce: z.enum(workType).optional().nullable(),
+    experience: z.enum(workExp).optional().nullable().or(z.literal('')),
+    cryptoExperience: z.enum(web3Exp).optional().nullable().or(z.literal('')),
+    workPrefernce: z.enum(workType).optional().nullable().or(z.literal('')),
     currentEmployer: z.string().optional(),
     skills: skillsArraySchema,
     private: z.boolean().default(false),
-    location: z.enum(CountryList).optional(),
+    location: z.enum(CountryList).optional().nullable().or(z.literal('')),
     publicKey: z
       .string()
       .min(1, 'Wallet address is required')
