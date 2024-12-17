@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Select } from 'react-day-picker';
 import { type Control, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -27,6 +26,7 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect, type Option } from '@/components/ui/multi-select';
 import {
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -65,6 +65,39 @@ interface SelectBoxProps {
   required?: boolean;
   className?: string;
 }
+
+const SelectBox = ({
+  label,
+  options,
+  name,
+  placeholder,
+  control,
+  required = false,
+  className,
+}: SelectBoxProps) => {
+  return (
+    <FormFieldWrapper
+      name={name}
+      control={control}
+      className={cn('mb-5 w-full', className)}
+      label={label}
+      isRequired={required}
+    >
+      <Select>
+        <SelectTrigger>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option} value={option}>
+              {option}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </FormFieldWrapper>
+  );
+};
 
 export default function EditProfilePage({ slug }: { slug: string }) {
   const { user, refetchUser } = useUser();
@@ -252,39 +285,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   if (!session && status === 'unauthenticated') {
     router.push('/');
   }
-
-  const SelectBox = ({
-    label,
-    options,
-    name,
-    placeholder,
-    control,
-    required = false,
-    className,
-  }: SelectBoxProps) => {
-    return (
-      <FormFieldWrapper
-        name={name}
-        control={control}
-        className={cn('mb-5 w-full', className)}
-        label={label}
-        isRequired={required}
-      >
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder={placeholder} />
-          </SelectTrigger>
-          <SelectContent>
-            {options.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </FormFieldWrapper>
-    );
-  };
 
   return (
     <Default
