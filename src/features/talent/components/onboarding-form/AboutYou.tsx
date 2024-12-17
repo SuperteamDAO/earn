@@ -260,6 +260,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                     }}
                   />
                 </FormControl>
+                <FormMessage className="mt-1" />
               </FormItem>
             )}
           />
@@ -301,7 +302,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="mt-1" />
               </FormItem>
             )}
           />

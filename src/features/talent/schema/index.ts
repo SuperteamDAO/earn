@@ -35,7 +35,7 @@ export const profileSchema = z
         'Username can only contain lowercase letters, numbers, underscores and hyphens',
       )
       .transform((val) => val.replace(/^[-\s]+|[-\s]+$/g, '')),
-    photo: z.string().optional(),
+    photo: z.string().optional().nullable(),
     firstName: z.string().min(1, 'First name is required'),
     lastName: z.string().min(1, 'Last name is required'),
     bio: z.string().max(180, 'Bio cannot exceed 180 characters').optional(),
