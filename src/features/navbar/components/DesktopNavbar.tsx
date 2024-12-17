@@ -31,12 +31,16 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const isHomepage = router.pathname === '/';
-  const maxWidth = isDashboardRoute
-    ? 'max-w-full px-8'
-    : 'max-w-7xl px-2 lg:px-6';
+  const maxWidth = isDashboardRoute ? 'max-w-full' : 'max-w-7xl';
+  const padding = isDashboardRoute ? 'pr-8 pl-6' : 'px-2 lg:px-6';
 
   return (
-    <div className="hidden h-14 border-b border-slate-200 bg-white text-slate-500 lg:flex">
+    <div
+      className={cn(
+        'hidden h-14 border-b border-slate-200 bg-white text-slate-500 lg:flex',
+        padding,
+      )}
+    >
       <div className={cn('mx-auto flex w-full justify-between', maxWidth)}>
         <div className="flex items-center gap-3 lg:gap-6">
           <LogoContextMenu>

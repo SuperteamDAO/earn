@@ -21,6 +21,7 @@ interface TabProps {
   content: JSX.Element;
   posthog: string;
 }
+
 interface ListingTabsProps {
   isListingsLoading: boolean;
   bounties: Listing[] | undefined;
@@ -51,6 +52,31 @@ const EmptySection = dynamic(
   () =>
     import('@/components/shared/EmptySection').then((mod) => mod.EmptySection),
   { ssr: false },
+);
+
+const ListingTabTrigger = ({
+  isActive,
+  onClick,
+  children,
+}: {
+  isActive: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) => (
+  <button
+    onClick={onClick}
+    className={cn(
+      'group relative inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all',
+      'hover:text-brand-purple',
+      isActive && [
+        'text-brand-purple',
+        'after:absolute after:bottom-[-6px] after:left-0 after:h-[2px] after:w-full after:bg-brand-purple/80',
+      ],
+      !isActive && 'text-slate-500',
+    )}
+  >
+    {children}
+  </button>
 );
 
 const generateTabContent = ({
@@ -141,16 +167,20 @@ export const ListingTabs = ({
   showNotifSub = true,
 }: ListingTabsProps) => {
   const { user } = useUser();
+  const posthog = usePostHog();
+  const emoji = '/assets/listing-tab.webp';
+  const [activeTab, setActiveTab] = useState('open');
+
   const tabs: TabProps[] = [
     {
-      id: 'tab1',
+      id: 'open',
       title: 'Open',
       posthog: 'open_listings',
       content: generateTabContent({
         user,
         title: 'Open',
-        bounties: bounties,
-        forYou: forYou,
+        bounties,
+        forYou,
         take,
         isListingsLoading,
         filterFunction: (bounty) =>
@@ -164,14 +194,14 @@ export const ListingTabs = ({
       }),
     },
     {
-      id: 'tab2',
+      id: 'in-review',
       title: 'In Review',
       posthog: 'in review_listing',
       content: generateTabContent({
         user,
         title: 'In Review',
-        bounties: bounties,
-        forYou: forYou,
+        bounties,
+        forYou,
         take,
         isListingsLoading,
         filterFunction: (bounty) =>
@@ -185,14 +215,14 @@ export const ListingTabs = ({
       }),
     },
     {
-      id: 'tab3',
+      id: 'completed',
       title: 'Completed',
       posthog: 'completed_listing',
       content: generateTabContent({
         user,
         title: 'Completed',
-        bounties: bounties,
-        forYou: forYou,
+        bounties,
+        forYou,
         take,
         isListingsLoading,
         filterFunction: (bounty) => bounty.isWinnersAnnounced || false,
@@ -228,18 +258,13 @@ export const ListingTabs = ({
     },
   ];
 
-  const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
-  const posthog = usePostHog();
-
-  const emoji = '/assets/listing-tab.webp';
-
   useEffect(() => {
     posthog.capture('open_listings');
   }, []);
 
   return (
     <div className="mb-10 mt-5">
-      <div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-3">
+      <div className="mb-5 flex items-center justify-between sm:mb-4">
         <div className="flex w-full items-center justify-between sm:justify-start">
           <div className="flex items-center">
             {showEmoji && (
@@ -253,29 +278,27 @@ export const ListingTabs = ({
               {title}
             </p>
           </div>
+
           <div className="flex items-center">
             <span className="mx-0 mr-3 text-[0.625rem] text-slate-300 sm:mx-3">
               |
             </span>
-            {tabs.map((tab) => (
-              <div
-                className={cn(
-                  'ph-no-capture relative cursor-pointer p-1 sm:p-2',
-                  tab.id === activeTab ? 'text-slate-700' : 'text-slate-500',
-                  tab.id === activeTab &&
-                    "after:absolute after:bottom-[-13px] after:left-0 after:right-0 after:h-[2px] after:bg-brand-purple after:content-['']",
-                )}
-                key={tab.id}
-                onClick={() => {
-                  posthog.capture(tab.posthog);
-                  setActiveTab(tab.id);
-                }}
-              >
-                <p className="whitespace-nowrap text-[13px] font-medium md:text-[14px]">
-                  {tab.title}
-                </p>
-              </div>
-            ))}
+            <div className="flex">
+              {tabs.map((tab) => (
+                <ListingTabTrigger
+                  key={tab.id}
+                  isActive={activeTab === tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    posthog.capture(tab.posthog);
+                  }}
+                >
+                  <span className="text-[13px] font-medium md:text-[14px]">
+                    {tab.title}
+                  </span>
+                </ListingTabTrigger>
+              ))}
+            </div>
           </div>
         </div>
         {showViewAll && (
@@ -283,7 +306,7 @@ export const ListingTabs = ({
             <Link href={viewAllLink!}>
               <Button
                 className="px-2 py-1 text-xs text-slate-400 md:text-sm"
-                onClick={() => posthog.capture('viewall top_listngs')}
+                onClick={() => posthog.capture('viewall top_listings')}
                 size="sm"
                 variant="ghost"
               >
@@ -294,7 +317,9 @@ export const ListingTabs = ({
         )}
       </div>
 
-      {tabs.map((tab) => tab.id === activeTab && tab.content)}
+      <div className="-mt-4 mb-4 h-0.5 w-full bg-slate-200 sm:-mt-3.5" />
+
+      {tabs.find((tab) => tab.id === activeTab)?.content}
 
       {showViewAll && (
         <Link className="ph-no-capture" href={viewAllLink!}>

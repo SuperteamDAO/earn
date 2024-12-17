@@ -74,7 +74,7 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
       <div className="mx-auto w-full px-2 lg:px-6">
         <div className="mx-auto w-full max-w-7xl p-0">
           <div className="flex items-start justify-between">
-            <div className="w-full py-4 lg:border-r lg:border-slate-100">
+            <div className="w-full py-3 lg:border-r lg:border-slate-100">
               <div className="w-full pt-1 lg:pr-6">
                 {type === 'landing' && (
                   <>

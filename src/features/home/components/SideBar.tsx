@@ -45,7 +45,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   });
 
   return (
-    <div className="flex w-96 flex-col gap-10 py-6 pl-6">
+    <div className="flex w-96 flex-col gap-10 py-4 pl-6">
       {type === 'feed' && (
         <>
           <VibeCard />

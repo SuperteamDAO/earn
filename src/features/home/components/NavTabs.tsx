@@ -69,7 +69,7 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
   return (
     <div
       className={cn(
-        'mb-6 flex flex-wrap items-center gap-x-3 gap-y-2',
+        'mb-4 flex flex-wrap items-center gap-x-3 gap-y-2',
         className,
       )}
       {...props}
