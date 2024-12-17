@@ -49,6 +49,7 @@ export const profileSchema = z
       .string()
       .array()
       .optional()
+      .nullable()
       .refine(
         (community) => {
           if (!community) return true;
@@ -58,10 +59,10 @@ export const profileSchema = z
           message: 'Invalid Community values',
         },
       ),
-    interests: z.enum(IndustryList).array().optional(),
-    experience: z.enum(workExp).optional(),
-    cryptoExperience: z.enum(web3Exp).optional(),
-    workPrefernce: z.enum(workType).optional(),
+    interests: z.enum(IndustryList).array().optional().nullable(),
+    experience: z.enum(workExp).optional().nullable(),
+    cryptoExperience: z.enum(web3Exp).optional().nullable(),
+    workPrefernce: z.enum(workType).optional().nullable(),
     currentEmployer: z.string().optional(),
     skills: skillsArraySchema,
     private: z.boolean().default(false),

@@ -94,6 +94,11 @@ const SelectBox = ({
                   />
                 </SelectTrigger>
                 <SelectContent>
+                  {!required && !!field.value && (
+                    <SelectItem value={null!} className="text-slate-400">
+                      {placeholder}
+                    </SelectItem>
+                  )}
                   {options.map((option) => (
                     <SelectItem key={option} value={option}>
                       {option}
