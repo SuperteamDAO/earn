@@ -59,7 +59,7 @@ export const NavItem = ({
         )}
         <span
           className={cn(
-            'transition-opacity duration-200 ease-in-out',
+            'text-sm font-medium transition-opacity duration-200 ease-in-out',
             isExpanded
               ? 'static opacity-100'
               : 'absolute -ml-[9999px] opacity-0',

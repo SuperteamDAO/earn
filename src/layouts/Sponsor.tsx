@@ -204,19 +204,19 @@ export function SponsorLayout({
       <div className="hidden min-h-screen justify-start md:flex">
         <div
           className={cn(
-            'sponsor-dashboard-sidebar overflow-x-hidden whitespace-nowrap border-r border-black/20 bg-white pt-10',
+            'sponsor-dashboard-sidebar overflow-x-hidden whitespace-nowrap border-r border-black/20 bg-white pt-5',
             'transition-all duration-300 ease-in-out',
             isCollapsible ? 'fixed' : 'static',
             isExpanded
-              ? ['w-72 min-w-72 max-w-72', 'expanded']
+              ? ['w-64 min-w-64 max-w-64', 'expanded']
               : ['w-20 min-w-20 max-w-20'],
-            'bottom-0 left-0 top-8 z-10',
+            'bottom-0 left-0 top-12 z-10',
           )}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
           {session?.user?.role === 'GOD' && (
-            <div className="px-4 pb-6">
+            <div className={cn('pb-6', isExpanded ? 'pl-6 pr-4' : 'px-4')}>
               {isHackathonRoute ? (
                 <SelectHackathon isExpanded={isExpanded} />
               ) : (
@@ -225,7 +225,12 @@ export function SponsorLayout({
             </div>
           )}
           <CreateListingModal isOpen={isOpen} onClose={onClose} />
-          <div className="flex items-center justify-between px-4 pb-6">
+          <div
+            className={cn(
+              'flex items-center justify-between px-4 pb-6',
+              isExpanded ? 'pl-6 pr-4' : 'px-4',
+            )}
+          >
             {!isHackathonRoute ? (
               <Tooltip
                 content={
@@ -314,7 +319,7 @@ export function SponsorLayout({
         {showContent && (
           <div
             className={cn(
-              'w-full flex-1 bg-white px-6 py-10 transition-[margin-left] duration-300 ease-in-out',
+              'w-full flex-1 bg-white py-5 pl-4 pr-8 transition-[margin-left] duration-300 ease-in-out',
               isCollapsible ? 'ml-20' : 'ml-0',
             )}
           >

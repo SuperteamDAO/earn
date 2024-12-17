@@ -82,14 +82,14 @@ export function Banner({
   if (!sponsorId) return null;
   return (
     <div className="flex w-full gap-4">
-      <div className="mb-6 w-full rounded-md border border-slate-200 bg-white px-6 py-6 text-white">
+      <div className="mb-6 w-full rounded-md border border-slate-200 bg-white px-6 py-5 text-white">
         <div className="flex items-center gap-6">
           <div className="flex flex-shrink-0 items-center gap-3">
             <EarnAvatar
               size="52px"
               id={sponsor?.name}
               avatar={sponsor?.logo}
-              borderRadius="rounded-sm"
+              borderRadius="rounded-md"
             />
             <div>
               <div className="flex items-center">
@@ -104,7 +104,7 @@ export function Banner({
                   className="ml-2 text-slate-500 hover:text-slate-800"
                   href={`/sponsor/edit`}
                 >
-                  <Pencil className="h-[18px] w-[18px] text-slate-400" />
+                  <Pencil className="h-4 w-4 text-slate-400" />
                 </Link>
               </div>
               {isLoading ? (
@@ -143,7 +143,7 @@ export function Banner({
         </div>
       </div>
 
-      <div className="mb-6 w-[60%] max-w-[400px] rounded-md border border-slate-200 bg-indigo-50 px-8 py-6 text-white">
+      <div className="mb-6 w-[60%] max-w-[400px] rounded-md border border-slate-200 bg-indigo-50 px-8 py-5 text-white">
         <a
           className="ph-no-capture no-underline"
           href={PDTG}
