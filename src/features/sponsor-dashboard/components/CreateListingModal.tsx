@@ -34,7 +34,10 @@ export const CreateListingModal = ({
   if (!isMD) return null;
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl overflow-hidden rounded-lg bg-white p-0">
+      <DialogContent
+        hideCloseIcon
+        className="max-w-5xl overflow-hidden rounded-lg bg-white p-0"
+      >
         <div className="flex">
           <div className="relative flex-1">
             <div className="relative mb-6 flex items-center justify-center bg-violet-50 px-32 py-12">
@@ -66,7 +69,7 @@ export const CreateListingModal = ({
                 submission(s) are rewarded. Get multiple options to choose from.
               </p>
               <Button
-                className="w-full py-7"
+                className="w-full py-6"
                 onClick={handleCreateBounty}
                 size="lg"
               >
@@ -104,7 +107,7 @@ export const CreateListingModal = ({
                 quotes.
               </p>
               <Button
-                className="w-full py-7"
+                className="w-full py-6"
                 onClick={handleCreateProject}
                 size="lg"
               >

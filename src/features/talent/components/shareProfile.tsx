@@ -3,7 +3,7 @@ import { type IconType } from 'react-icons';
 import { FaCheck, FaCopy } from 'react-icons/fa';
 import { FaTelegram, FaWhatsapp, FaXTwitter } from 'react-icons/fa6';
 
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -83,7 +83,6 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogOverlay />
       <DialogContent className="h-max py-5">
         <div className="px-0 py-3 md:px-6">
           <h2 className="text-base font-medium text-slate-900 md:text-lg">

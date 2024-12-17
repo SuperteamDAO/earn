@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -162,7 +162,6 @@ export const AddProject = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogOverlay />
       <DialogContent className="max-w-[607px] py-[1.4375rem]">
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>

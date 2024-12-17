@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Form, FormLabel } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
@@ -89,7 +89,6 @@ export const SponsorInfoModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => onClose()} modal>
-      <DialogOverlay className="backdrop-blur-sm" />
       <DialogContent className="px-6 py-5 sm:max-w-lg">
         <h2 className="mb-4 text-xl font-semibold tracking-tight text-gray-900">
           Complete Your Profile

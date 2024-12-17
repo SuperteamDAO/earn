@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { PDTG } from '@/constants/Telegram';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
@@ -42,7 +42,6 @@ export const EntityNameModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose} modal>
-      <DialogOverlay />
       <DialogContent
         className="w-[480px] gap-6 overflow-hidden rounded-lg p-6"
         onPointerDownOutside={(e) => e.preventDefault()}

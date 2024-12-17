@@ -4,7 +4,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -64,7 +64,6 @@ export const SurveyModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogOverlay />
       <DialogContent
         className="max-w-lg p-6"
         onPointerDownOutside={(e) => e.preventDefault()}

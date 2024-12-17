@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useUpdateUser, useUser } from '@/store/user';
 
 import { latestActiveSlugQuery } from '@/features/sponsor-dashboard/queries/latest-active-slug';
@@ -64,7 +64,6 @@ export const FeatureModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogOverlay />
       <DialogContent className="w-[480px] overflow-hidden rounded-lg">
         <div className="w-full bg-purple-50 p-8">
           <ExternalImage

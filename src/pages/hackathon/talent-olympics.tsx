@@ -20,12 +20,7 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import {
-  Dialog,
-  DialogContent,
-  DialogOverlay,
-  DialogPortal,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogPortal } from '@/components/ui/dialog';
 import { LocalImage } from '@/components/ui/local-image';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Superteams } from '@/constants/Superteam';
@@ -1005,7 +1000,6 @@ function KashModal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogPortal>
-        <DialogOverlay />
         <DialogContent className="max-w-7xl border-none p-0">
           <div className="aspect-video w-[100vw]">
             <iframe

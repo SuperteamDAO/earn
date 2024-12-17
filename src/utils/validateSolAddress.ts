@@ -22,17 +22,3 @@ export function validateSolanaAddress(address: string) {
     };
   }
 }
-
-export function validateSolAddressUI(
-  address: string,
-  setError?: (arg0: string) => void,
-): string | true {
-  const result = validateSolanaAddress(address);
-
-  if (!result.isValid && result.error) {
-    setError?.(result.error);
-    return result.error;
-  }
-
-  return true;
-}
