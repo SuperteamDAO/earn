@@ -104,12 +104,12 @@ function MyApp({ Component, pageProps }: any) {
 
   // forced profile redirection
   useEffect(() => {
-    const handleRouteComplete = () => {
+    const loadRedirect = () => {
       if (!forcedRedirected.current) {
         forcedProfileRedirect(5000);
       }
     };
-    handleRouteComplete();
+    loadRedirect();
   }, [user?.id]);
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');

@@ -1,4 +1,4 @@
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
@@ -21,8 +21,9 @@ import {
 } from '@/components/ui/drawer';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { useTimeout } from '@/hooks/use-timeout';
 
-import { popupsShowedAtom } from '../atoms';
+import { popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 interface GrantInfo {
@@ -39,6 +40,15 @@ const grantInfo: GrantInfo = {
 
 export const GrantsPop = () => {
   const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
+  const setPopupTimeout = useSetAtom(popupTimeoutAtom);
+
+  const timeoutHandle = useTimeout(() => {
+    setOpen(true);
+    setPopupsShowed((s) => s + 1);
+    posthog.capture('conversion pop up_initiated', {
+      'Popup Source': 'Grants Pop-up',
+    });
+  }, 5_000);
 
   const [open, setOpen] = useState(false);
   const { status } = useSession();
@@ -56,13 +66,8 @@ export const GrantsPop = () => {
     ) {
       initated.current = true;
       setTimeout(() => {
-        setTimeout(() => {
-          setOpen(true);
-          setPopupsShowed((s) => s + 1);
-          posthog.capture('conversion pop up_initiated', {
-            'Popup Source': 'Grants Pop-up',
-          });
-        }, 5_000);
+        timeoutHandle.start();
+        setPopupTimeout(timeoutHandle);
       }, 0);
     }
   }, [status]);

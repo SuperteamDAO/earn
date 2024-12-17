@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -31,14 +31,24 @@ import {
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type Superteam } from '@/constants/Superteam';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { useTimeout } from '@/hooks/use-timeout';
 
 import { userCountQuery } from '@/features/home/queries/user-count';
 
-import { popupsShowedAtom } from '../atoms';
+import { popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 export const RegionPop = ({ st }: { st: Superteam }) => {
   const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
+  const setPopupTimeout = useSetAtom(popupTimeoutAtom);
+
+  const timeoutHandle = useTimeout(() => {
+    setOpen(true);
+    setPopupsShowed((s) => s + 1);
+    posthog.capture('conversion pop up_initiated', {
+      'Popup Source': 'Region Pop-up',
+    });
+  }, 5_000);
 
   const [open, setOpen] = useState(false);
   const { status } = useSession();
@@ -66,13 +76,8 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
     ) {
       initated.current = true;
       setTimeout(() => {
-        setTimeout(() => {
-          setOpen(true);
-          setPopupsShowed((s) => s + 1);
-          posthog.capture('conversion pop up_initiated', {
-            'Popup Source': 'Region Pop-up',
-          });
-        }, 5_000);
+        timeoutHandle.start();
+        setPopupTimeout(timeoutHandle);
       }, 0);
     }
   }, [status]);
