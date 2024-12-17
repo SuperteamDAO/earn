@@ -18,7 +18,7 @@ export const StatusBadge = ({ textColor, text, Icon }: StatusBadgeProps) => {
       color={textColor}
     >
       {Icon}
-      <p>{text}</p>
+      <p className="hidden sm:flex">{text}</p>
     </div>
   );
 };

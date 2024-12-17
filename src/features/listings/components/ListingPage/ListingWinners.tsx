@@ -59,7 +59,7 @@ export function ListingWinners({ bounty }: Props) {
   }
 
   return (
-    <div className="relative mx-auto w-full max-w-7xl rounded-lg bg-gray-50 px-4 pt-4">
+    <div className="relative mx-auto w-full max-w-7xl rounded-lg bg-brand-purple/10 px-4 pt-4">
       <div className="flex justify-between gap-2">
         <p className="mx-3 font-semibold text-slate-500 md:text-xl">
           🎉 Winners
@@ -95,7 +95,7 @@ export function ListingWinners({ bounty }: Props) {
         </Link>
       </div>
       <div className="mx-3 mt-2 md:mt-0">
-        <div className="w-full rounded-md bg-white px-3 py-4 md:px-4">
+        <div className="w-full rounded-md px-3 py-4 md:px-4">
           <div className="flex flex-wrap items-center justify-center gap-10">
             {getOrRemoveBonuses(submissions, true)
               .slice(0, 3)

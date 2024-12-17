@@ -28,7 +28,7 @@ export const RegionLabel = ({
   return (
     <>
       <Tooltip content={regionTooltipLabel}>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {region === 'GLOBAL' ? (
             <LuGlobe className="h-4 w-4" strokeWidth={1} />
           ) : (
@@ -43,7 +43,7 @@ export const RegionLabel = ({
       <Popover>
         <PopoverTrigger asChild>
           <button className="flex sm:hidden">
-            <Info className="h-3 w-3" />
+            <Info className="h-3 w-3 text-slate-600" />
           </button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-2">

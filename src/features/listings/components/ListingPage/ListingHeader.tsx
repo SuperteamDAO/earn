@@ -174,7 +174,11 @@ export function ListingHeader({
               contentProps={{ className: 'max-w-80' }}
             >
               <div className="flex items-center">
-                <LocalImage alt={type!} src={getListingIcon(type!)} />
+                <LocalImage
+                  alt={type!}
+                  className="-ml-0.5"
+                  src={getListingIcon(type!)}
+                />
                 <p className="text-xs font-medium text-gray-400 md:text-sm">
                   {isProject ? 'Project' : 'Bounty'}
                 </p>
