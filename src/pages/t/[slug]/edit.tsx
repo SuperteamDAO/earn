@@ -76,26 +76,37 @@ const SelectBox = ({
   className,
 }: SelectBoxProps) => {
   return (
-    <FormFieldWrapper
-      name={name}
+    <FormField
       control={control}
-      className={cn('mb-5 w-full', className)}
-      label={label}
-      isRequired={required}
-    >
-      <Select>
-        <SelectTrigger>
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option} value={option}>
-              {option}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </FormFieldWrapper>
+      name={name}
+      render={({ field }) => (
+        <FormItem className={cn('mb-5 flex w-full flex-col gap-2', className)}>
+          <div>
+            {label && <FormLabel isRequired={required}>{label}</FormLabel>}
+          </div>
+          <div>
+            <FormControl>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger>
+                  <SelectValue
+                    onBlur={field.onBlur}
+                    placeholder={placeholder}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {options.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <FormMessage className="pt-1" />
+          </div>
+        </FormItem>
+      )}
+    />
   );
 };
 
@@ -253,6 +264,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     setIsLoading(true);
     posthog.capture('confirm_edit profile');
     try {
+      console.log('data pre filter', data);
       const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
         const fieldKey = key as keyof ProfileFormData;
         if (
@@ -264,6 +276,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         return acc;
       }, {} as Partial<ProfileFormData>);
 
+      console.log('final updated data', finalUpdatedData);
       toast.promise(
         async () => {
           await axios.post('/api/pow/edit', {
