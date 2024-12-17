@@ -46,7 +46,7 @@ interface Step1Props {
 
 export function AboutYou({ setStep, useFormStore }: Step1Props) {
   const [uploading, setUploading] = useState<boolean>(false);
-  const { updateState } = useFormStore();
+  const { updateState, form } = useFormStore();
   const { user } = useUser();
   const posthog = usePostHog();
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
@@ -55,6 +55,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
 
   const aboutYouForm = useForm<AboutYouFormData>({
     resolver: zodResolver(aboutYouSchema),
+    mode: 'onBlur',
   });
   const {
     control,
@@ -91,13 +92,17 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
   useEffect(() => {
     if (user) {
       reset({
-        username: user.username || undefined,
-        firstName: user.firstName || undefined,
-        lastName: user.lastName || undefined,
-        skills: (user.skills as any) || undefined,
-        publicKey: user.publicKey || undefined,
-        photo: user.photo || undefined,
-        location: (user?.location as any) || undefined,
+        username: form.username || user?.username,
+        firstName: form.firstName || user?.firstName,
+        lastName: form.lastName || user?.lastName,
+        skills: aboutYouSchema.shape.skills.safeParse(
+          form.skills || user?.skills,
+        ).data,
+        publicKey: form.publicKey || user?.publicKey,
+        photo: form.photo || user?.photo,
+        location: aboutYouSchema.shape.location.safeParse(
+          form.location || user?.location,
+        ).data,
       });
     }
   }, [user, setValue]);
@@ -108,6 +113,24 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
       setUsername(randomUsername?.username);
     }
   }, [randomUsername]);
+
+  useEffect(() => {
+    const subscription = watch((values) => {
+      if (values) {
+        updateState({
+          ...form,
+          username: values.username || '',
+          firstName: values.firstName || '',
+          lastName: values.lastName || '',
+          skills: values.skills || ([] as any),
+          publicKey: values.publicKey || '',
+          photo: values.photo,
+          location: values.location,
+        });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, updateState]);
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -312,7 +335,6 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                       }}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               );
             }}

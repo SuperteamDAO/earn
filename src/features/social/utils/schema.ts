@@ -5,7 +5,7 @@ import { URL_REGEX } from '@/constants/URL_REGEX';
 import { socials, type SocialType } from './constants';
 
 function invalidCharacterMessage(_: string, allowed: string) {
-  return `Invalid username. Use only ${allowed}.`;
+  return `Invalid username. Only ${allowed} allowed.`;
 }
 
 function usernameShortMessage(min: number) {
@@ -17,6 +17,10 @@ function usernameLongMessage(max: number) {
 
 function transformedUrl(name: SocialType, username: string) {
   return `${socials.find((s) => s.name === name)?.prefix}${username}`;
+}
+
+function platformNameMessage(name: SocialType) {
+  return `Please add your ${name.charAt(0).toUpperCase() + name.slice(1)} username here`;
 }
 
 // DISCORD
@@ -37,6 +41,13 @@ export const discordUsernameSchema = z
       });
     }
 
+    if (val.startsWith('https://') || val.startsWith('http://')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: platformNameMessage('discord'),
+      });
+    }
+
     // Check allowed chars and no consecutive dots
     for (let i = 0; i < val.length; i++) {
       const char = val[i] || '';
@@ -45,7 +56,7 @@ export const discordUsernameSchema = z
           code: z.ZodIssueCode.custom,
           message: invalidCharacterMessage(
             char,
-            'letters, numbers, underscore (_) and dots (.)',
+            `letters, numbers, '_' and '.'`,
           ),
         });
       }
@@ -68,14 +79,17 @@ export const twitterUsernameSchema = z
   .min(4, { message: usernameShortMessage(4) })
   .max(15, { message: usernameLongMessage(15) })
   .superRefine((val, ctx) => {
+    if (val.startsWith('https://') || val.startsWith('http://')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: platformNameMessage('twitter'),
+      });
+    }
     for (const char of val) {
       if (!/[a-zA-Z0-9_]/.test(char)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: invalidCharacterMessage(
-            char,
-            'letters, numbers and underscore (_)',
-          ),
+          message: invalidCharacterMessage(char, `letters, numbers and '_'`),
         });
       }
     }
@@ -92,14 +106,17 @@ export const linkedinUsernameSchema = z
   .min(3, { message: usernameShortMessage(3) })
   .max(100, { message: usernameLongMessage(100) })
   .superRefine((val, ctx) => {
+    if (val.startsWith('https://') || val.startsWith('http://')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: platformNameMessage('linkedin'),
+      });
+    }
     for (const char of val) {
       if (!/[a-zA-Z0-9-]/.test(char)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: invalidCharacterMessage(
-            char,
-            'letters, numbers and hyphens (-)',
-          ),
+          message: invalidCharacterMessage(char, `letters, numbers and '-'`),
         });
       }
     }
@@ -131,14 +148,18 @@ export const telegramUsernameSchema = z
       });
     }
 
+    if (val.startsWith('https://') || val.startsWith('http://')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: platformNameMessage('telegram'),
+      });
+    }
+
     for (const char of val) {
       if (!/[a-zA-Z0-9_]/.test(char)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: invalidCharacterMessage(
-            char,
-            'letters, numbers and underscore (_)',
-          ),
+          message: invalidCharacterMessage(char, `letters, numbers and '_' `),
         });
       }
     }
@@ -156,15 +177,18 @@ export const githubUsernameSchema = z
   .min(1, { message: usernameShortMessage(1) })
   .max(39, { message: usernameLongMessage(39) })
   .superRefine((val, ctx) => {
+    if (val.startsWith('https://') || val.startsWith('http://')) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: platformNameMessage('github'),
+      });
+    }
     // Check chars
     for (const char of val) {
       if (!/[a-zA-Z0-9-]/.test(char)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: invalidCharacterMessage(
-            char,
-            'letters, numbers and hyphens (-)',
-          ),
+          message: invalidCharacterMessage(char, `letters, numbers and '-'`),
         });
       }
     }

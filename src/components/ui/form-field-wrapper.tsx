@@ -1,4 +1,5 @@
 import React from 'react';
+import { type Control, type FieldValues, type Path } from 'react-hook-form';
 
 import { cn } from '@/utils/cn';
 
@@ -13,7 +14,22 @@ import {
 } from './form';
 import { TokenInput } from './token-input';
 
-export const FormFieldWrapper = ({
+interface FormFieldWrapperProps<T extends FieldValues> {
+  control: Control<T>;
+  name: Path<T>;
+  label?: React.ReactNode;
+  description?: React.ReactNode;
+  isRequired?: boolean;
+  children?: React.ReactNode;
+  isRichEditor?: boolean;
+  isTokenInput?: boolean;
+  token?: string;
+  richEditorPlaceholder?: string;
+  className?: string;
+  onChange?: (e: any) => void;
+}
+
+export function FormFieldWrapper<T extends FieldValues>({
   control,
   name,
   label,
@@ -26,20 +42,7 @@ export const FormFieldWrapper = ({
   richEditorPlaceholder,
   className,
   onChange,
-}: {
-  control: any;
-  name: string;
-  label?: React.ReactNode;
-  description?: React.ReactNode;
-  isRequired?: boolean;
-  children?: React.ReactNode;
-  isRichEditor?: boolean;
-  isTokenInput?: boolean;
-  token?: string;
-  richEditorPlaceholder?: string;
-  className?: string;
-  onChange?: (e: any) => void; // doesnt override, only adds to existing onChange
-}) => {
+}: FormFieldWrapperProps<T>) {
   return (
     <FormField
       control={control}
@@ -88,4 +91,4 @@ export const FormFieldWrapper = ({
       )}
     />
   );
-};
+}

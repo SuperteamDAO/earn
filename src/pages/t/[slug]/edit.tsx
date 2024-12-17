@@ -104,6 +104,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   const { data: session, status } = useSession();
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
+    mode: 'onBlur',
   });
   const { control, handleSubmit, watch, setError, clearErrors, trigger } = form;
 
@@ -137,10 +138,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const { setUsername, isInvalid, validationErrorMessage } =
     useUsernameValidation();
-  const watchedUsername = watch('username');
-  useEffect(() => {
-    if (watchedUsername) setUsername(watchedUsername);
-  }, [watchedUsername]);
 
   useEffect(() => {
     if (isInvalid && !!validationErrorMessage) {
@@ -156,8 +153,12 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         username: user.username || undefined,
         bio: user.bio || undefined,
         photo: user.photo || undefined,
-        location: (user?.location as any) || undefined,
-        skills: (user.skills as any) || undefined,
+        location:
+          profileSchema._def.schema.shape.location.safeParse(user?.location)
+            .data || undefined,
+        skills:
+          profileSchema._def.schema.shape.skills.safeParse(user.skills).data ||
+          undefined,
         private: user.private || undefined,
         firstName: user.firstName || undefined,
         lastName: user.lastName || undefined,
@@ -176,11 +177,27 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           ? extractSocialUsername('telegram', user.telegram) || undefined
           : undefined,
         website: user.website || undefined,
-        workPrefernce: (user.workPrefernce as any) || undefined,
-        experience: (user.experience as any) || undefined,
-        cryptoExperience: (user.cryptoExperience as any) || undefined,
-        community: user.community ? JSON.parse(user.community) : [],
-        interests: user.interests ? JSON.parse(user.interests) : [],
+        workPrefernce:
+          profileSchema._def.schema.shape.workPrefernce.safeParse(
+            user.workPrefernce,
+          ).data || undefined,
+        experience:
+          profileSchema._def.schema.shape.experience.safeParse(user.experience)
+            .data || undefined,
+        cryptoExperience:
+          profileSchema._def.schema.shape.cryptoExperience.safeParse(
+            user.cryptoExperience,
+          ).data || undefined,
+        community: user.community
+          ? profileSchema._def.schema.shape.community.safeParse(
+              JSON.parse(user.community),
+            ).data || []
+          : [],
+        interests: user.interests
+          ? profileSchema._def.schema.shape.interests.safeParse(
+              JSON.parse(user.interests),
+            ).data || []
+          : [],
         currentEmployer: user.currentEmployer || undefined,
       });
     }
@@ -271,6 +288,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       );
       return true;
     } catch (error: any) {
+      setIsLoading(false);
       toast.error('Failed to update profile.');
       return false;
     }
@@ -335,6 +353,13 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 control={control}
                 isRequired
                 className="mb-5"
+                onChange={(e) => {
+                  const value = e.target.value
+                    .toLowerCase()
+                    .replace(/\s+/g, '-'); // Replace spaces with dashes
+                  setUsername(value);
+                  form.setValue('username', value);
+                }}
               >
                 <Input maxLength={40} placeholder="Username" />
               </FormFieldWrapper>
@@ -574,7 +599,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                           }}
                         />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   );
                 }}

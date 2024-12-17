@@ -71,29 +71,51 @@ export function YourLinks({ useFormStore }: Props) {
 
   const yourLinksForm = useForm<YourLinksFormData>({
     resolver: zodResolver(yourLinksSchema),
+    mode: 'onBlur',
   });
-  const { handleSubmit, control, setValue, reset } = yourLinksForm;
+  const { handleSubmit, control, setValue, reset, watch } = yourLinksForm;
 
   useEffect(() => {
     if (user) {
       reset({
-        discord: user.discord || undefined,
-        github: user.github
-          ? extractSocialUsername('github', user.github) || undefined
-          : undefined,
-        twitter: user.twitter
-          ? extractSocialUsername('twitter', user.twitter) || undefined
-          : undefined,
-        linkedin: user.linkedin
-          ? extractSocialUsername('linkedin', user.linkedin) || undefined
-          : undefined,
-        telegram: user.telegram
-          ? extractSocialUsername('telegram', user.telegram) || undefined
-          : undefined,
+        discord: form.discord || user.discord || undefined,
+        github:
+          form.github ||
+          extractSocialUsername('github', user.github || '') ||
+          undefined,
+        twitter:
+          form.twitter ||
+          extractSocialUsername('twitter', user.twitter || '') ||
+          undefined,
+        linkedin:
+          form.linkedin ||
+          extractSocialUsername('linkedin', user.linkedin || '') ||
+          undefined,
+        telegram:
+          form.telegram ||
+          extractSocialUsername('telegram', user.telegram || '') ||
+          undefined,
         website: user.website || undefined,
       });
     }
   }, [user, setValue]);
+
+  useEffect(() => {
+    const subscription = watch((values) => {
+      if (values) {
+        updateState({
+          ...form,
+          discord: values.discord || '',
+          github: values.github || undefined,
+          twitter: values.twitter || undefined,
+          linkedin: values.linkedin || undefined,
+          telegram: values.telegram || undefined,
+          website: values.website || undefined,
+        });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, updateState]);
 
   const onSubmit = async (data: YourLinksFormData) => {
     posthog.capture('finish profile_talent');

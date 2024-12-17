@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { CountryList } from '@/constants/countryList';
 import { skillsArraySchema } from '@/interface/skills';
-import { validateSolAddressUI } from '@/utils/validateSolAddress';
+import { validateSolanaAddress } from '@/utils/validateSolAddress';
 import { getURL } from '@/utils/validUrl';
 
 import {
@@ -33,7 +33,8 @@ export const profileSchema = z
       .regex(
         USERNAME_PATTERN,
         'Username can only contain lowercase letters, numbers, underscores and hyphens',
-      ),
+      )
+      .transform((val) => val.replace(/^[-\s]+|[-\s]+$/g, '')),
     photo: z.string().optional(),
     firstName: z.string().min(1, 'First name is required'),
     lastName: z.string().min(1, 'Last name is required'),
@@ -69,7 +70,7 @@ export const profileSchema = z
       .string()
       .min(1, 'Wallet address is required')
       .refine(
-        (val) => validateSolAddressUI(val),
+        (val) => validateSolanaAddress(val).isValid,
         'Invalid Solana wallet address',
       ),
   })
