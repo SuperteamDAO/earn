@@ -130,6 +130,7 @@ const Mobile = ({
         classNames={{
           overlay: isLoginOpen ? 'z-[200]' : '',
         }}
+        className="!border-0 !ring-0"
       >
         <DrawerHeader className="text-left">
           <UserFlag isCode location={st.code} size="44px" />
@@ -163,7 +164,10 @@ const Desktop = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-[22.5rem] bg-white p-5" hideCloseIcon>
+      <DialogContent
+        className="max-w-[22.5rem] overflow-hidden bg-white p-5"
+        hideCloseIcon
+      >
         <DialogHeader className="">
           <UserFlag location={st.code} isCode size="44px" />
           <DialogTitle className="pt-2 text-base font-semibold">
