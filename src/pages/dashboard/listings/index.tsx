@@ -341,7 +341,7 @@ export default function SponsorListings() {
             and start getting contributions
           </p>
           <Button
-            className="text-md mx-auto mb-48 mt-6 block w-[200px]"
+            className="text-md mx-auto mb-48 mt-6 flex w-[200px]"
             onClick={onOpenCreateListing}
           >
             <Plus className="mr-2 h-3 w-3" />
