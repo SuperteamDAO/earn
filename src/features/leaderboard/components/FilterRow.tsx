@@ -118,13 +118,13 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
           <Timeframe value={timeframe} setValue={setTimeframe} />
         </div>
       </div>
-      <div className="flex w-full justify-between pl-2 text-xs sm:text-sm md:hidden">
+      <div className="-mt-2 h-0.5 w-full bg-slate-200" />
+      <div className="mt-1 flex w-full justify-between pl-2 text-xs sm:text-sm md:hidden">
         <p className="text-slate-400">Timeframe</p>
         <div className="flex">
           <Timeframe value={timeframe} setValue={setTimeframe} />
         </div>
       </div>
-      <div className="-mt-2 h-0.5 w-full bg-slate-200" />{' '}
     </div>
   );
 }

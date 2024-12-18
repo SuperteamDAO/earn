@@ -17,7 +17,7 @@ export function EmptySection({
           {title || 'Sorry! Nothing found'}
         </span>
         {showNotifSub && (
-          <span className="mt-2 text-slate-300">
+          <span className="mt-2 text-center text-slate-300">
             {message || 'Something went wrong! Please try again!'}
           </span>
         )}

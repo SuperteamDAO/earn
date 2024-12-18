@@ -3,7 +3,6 @@ import { useSession } from 'next-auth/react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
-import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -54,7 +53,12 @@ export const UserStatsBanner = () => {
       {stats && (stats.wins ?? 0) > 0 && (
         <div className="mx-0.5 -mt-1.5 flex justify-between gap-4 sm:gap-8 md:mt-0 md:justify-start">
           <Stat
-            value={'$' + formatNumberWithSuffix(stats.totalWinnings ?? 0, 1)}
+            value={new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              maximumFractionDigits: 0,
+              notation: 'compact',
+            }).format(stats.totalWinnings ?? 0)}
             label="Total Earned"
           />
           <Stat value={stats.participations} label="Participated" />
