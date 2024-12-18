@@ -4,6 +4,7 @@ import { ChevronRight, Eye, LayoutGrid, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
@@ -252,15 +253,20 @@ export function Templates() {
                         size="sm"
                         className="ph-no-capture flex-1"
                         disabled={isDisabled}
-                        onClick={() => {
-                          posthog.capture('template_sponsor');
-                          form.reset(
-                            cleanTemplate(
+                        onClick={async () => {
+                          try {
+                            await posthog.capture('template_sponsor');
+                            const currentValues = form.getValues();
+                            const cleanedTemplate = cleanTemplate(
                               template as any,
-                              form.getValues(),
-                            ) as any,
-                          );
-                          form.saveDraft();
+                              currentValues,
+                            );
+
+                            form.reset(cleanedTemplate as any);
+                            await form.saveDraft();
+                          } catch (error) {
+                            log.error('Error applying template');
+                          }
                         }}
                       >
                         Use
