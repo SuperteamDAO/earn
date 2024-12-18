@@ -4,6 +4,7 @@ import Papa from 'papaparse';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
+import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -55,6 +56,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.debug('Transforming submissions to JSON format for CSV export');
     const finalJson = submissions.map((submission, i: number) => {
       const user = submission.user;
+      const accountAge = Math.abs(dayjs(user.createdAt).diff(dayjs(), 'day'));
       const eligibility: any = {};
       eligibilityQuestions.forEach((question) => {
         const answer = (submission.eligibilityAnswers as Array<any>)?.find(
@@ -79,6 +81,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             ? 'Bonus'
             : submission.winnerPosition
           : '',
+        'Account Age': `${accountAge} day${accountAge > 1 ? 's' : ''} ago`,
       };
     });
 
