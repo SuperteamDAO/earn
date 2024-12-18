@@ -146,8 +146,10 @@ export function RightSideBar({
                           token={token}
                           className={cn(
                             'text-lg font-semibold text-slate-700 md:text-xl',
-                            widthOfPrize && `w-[${widthOfPrize}]`,
                           )}
+                          style={{
+                            width: widthOfPrize,
+                          }}
                         />
                         <p className="text-lg font-normal text-slate-500">
                           {isProject ? 'Payment' : 'Total Prizes'}

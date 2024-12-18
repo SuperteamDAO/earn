@@ -81,10 +81,10 @@ export function PrizesList({
 
           <div className="flex flex-shrink-0 gap-2 text-lg md:text-xl">
             <div
-              className={cn(
-                'ml-auto flex gap-1 font-semibold',
-                `w-[${widthPrize}]`,
-              )}
+              className={cn('ml-auto flex gap-1 font-semibold')}
+              style={{
+                width: widthPrize,
+              }}
             >
               <p className="ml-auto">
                 {!seeAll && visibleRewards.length - 1 === index && '+'}{' '}
