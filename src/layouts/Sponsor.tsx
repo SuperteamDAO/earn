@@ -120,6 +120,12 @@ export function SponsorLayout({
     modalsToShow();
   }, [user, session]);
 
+  useEffect(() => {
+    if (status === 'authenticated' && !user?.currentSponsorId) {
+      router.push('/');
+    }
+  }, [user, status]);
+
   if (!session && status === 'loading') {
     return <LoadingSection />;
   }
