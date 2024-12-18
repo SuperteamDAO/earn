@@ -4,6 +4,8 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { USERNAME_PATTERN } from '@/features/talent/constants';
+
 export default async function comment(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -110,14 +112,13 @@ export default async function comment(
 
 function extractUsernames(comments: any[]): Set<string> {
   const usernames = new Set<string>();
-  const usernamePattern = /^[a-z0-9_-]+$/;
 
   const processMessage = (message: string) => {
     const matches = message.match(/@(\w+)/g);
     if (matches) {
       matches.forEach((match) => {
         const username = match.slice(1);
-        if (username && usernamePattern.test(username)) {
+        if (username && USERNAME_PATTERN.test(username)) {
           usernames.add(username);
         }
       });

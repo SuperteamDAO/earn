@@ -1,5 +1,5 @@
 import { Menu } from 'lucide-react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -10,7 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import {
   CATEGORY_NAV_ITEMS,
@@ -173,7 +173,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
 
           <MobileDrawer />
           <div className="absolute left-1/2 -translate-x-1/2">
-            <NextLink
+            <Link
               href="/"
               className="flex items-center hover:no-underline"
               onClick={() => {
@@ -185,7 +185,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                 alt="Superteam Earn"
                 src="/assets/logo.svg"
               />
-            </NextLink>
+            </Link>
           </div>
           {status === 'authenticated' && session && <UserMenu />}
           {status === 'unauthenticated' && !session && (
@@ -202,7 +202,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
           )}
         </div>
       </div>
-      <div className="flex items-center justify-between bg-[#F8FAFC] px-3 py-0 sm:px-4 lg:hidden">
+      <div className="flex items-center justify-between bg-slate-50 px-3 py-0 sm:px-4 lg:hidden">
         <div
           className={cn(
             'ph-no-capture mx-auto flex w-full justify-evenly gap-8 pl-1 sm:gap-8 md:gap-12',

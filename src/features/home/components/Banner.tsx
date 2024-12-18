@@ -4,9 +4,10 @@ import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { AuthWrapper } from '@/features/auth';
 import DesktopBanner from '@/public/assets/banner.webp';
 import MobileBanner from '@/public/assets/banner-mobile.webp';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 import { userCountQuery } from '../queries/user-count';
 
@@ -61,9 +62,9 @@ export function HomeBanner() {
         companies, all with a single profile.
       </p>
       <div className="relative z-10 mt-4 flex flex-col items-center gap-3 md:flex-row md:gap-4">
-        <AuthWrapper className="w-full md:w-auto">
+        <AuthWrapper className="group w-full md:w-auto">
           <button
-            className="ph-no-capture w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] md:w-auto"
+            className="ph-no-capture w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] hover:bg-brand-purple hover:text-white md:w-auto"
             onClick={() => {
               posthog.capture('signup_banner');
             }}

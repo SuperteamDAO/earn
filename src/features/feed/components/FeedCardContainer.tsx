@@ -6,16 +6,17 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AuthWrapper } from '@/features/auth';
-import { Comments } from '@/features/comments';
-import { EarnAvatar } from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { Comments } from '@/features/comments/components/Comments';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type FeedDataProps } from '../types';
 import { convertFeedPostTypeToCommentRefType } from '../utils';
@@ -193,7 +194,7 @@ export const FeedCardContainer = ({
               >
                 <GoComment className="h-[19px] w-[19px] cursor-pointer text-slate-500 md:h-[21px] md:w-[21px]" />
                 {!!commentCount && (
-                  <p className="text-base font-medium text-brand-slate-500">
+                  <p className="text-base font-medium text-slate-500">
                     {commentCount}
                   </p>
                 )}
@@ -203,13 +204,10 @@ export const FeedCardContainer = ({
                       key={index}
                       className="h-6 w-6 border-2 border-white"
                     >
-                      <AvatarImage
-                        src={comment.author.photo || ''}
-                        alt={comment.author.name || ''}
+                      <EarnAvatar
+                        avatar={comment.author.photo!}
+                        id={comment.author.name!}
                       />
-                      <AvatarFallback>
-                        {comment.author.name?.[0]}
-                      </AvatarFallback>
                     </Avatar>
                   ))}
                 </div>

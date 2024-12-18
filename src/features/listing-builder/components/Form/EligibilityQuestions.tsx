@@ -20,12 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { cn } from '@/utils';
+import { Tooltip } from '@/components/ui/tooltip';
+import { cn } from '@/utils/cn';
 
 import { hackathonAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
@@ -90,17 +86,17 @@ export function EligibilityQuestions() {
             <FormLabel className="font-bold uppercase text-slate-400">
               Custom Questions
             </FormLabel>
-            <Tooltip delayDuration={100}>
-              <TooltipTrigger>
-                <Info className="h-3 w-3 text-slate-400" />
-              </TooltipTrigger>
-              <TooltipContent className="bg-slate-100 text-slate-700">
+            <Tooltip
+              delayDuration={100}
+              content={
                 <p className="max-w-sm">
                   {type === 'project'
-                    ? `Applicant’s names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`
-                    : `The main bounty submission link, the submitter’s names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`}
+                    ? `Applicant's names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`
+                    : `The main bounty submission link, the submitter's names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`}
                 </p>
-              </TooltipContent>
+              }
+            >
+              <Info className="h-3 w-3 text-slate-400" />
             </Tooltip>
           </div>
           <div className="space-y-4">
@@ -197,7 +193,7 @@ export function EligibilityQuestions() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="hidden text-muted-foreground hover:text-destructive group-hover:flex"
+                            className="hidden text-muted-foreground group-hover:flex hover:text-destructive"
                             onClick={() => handleRemoveQuestion(index)}
                           >
                             <Trash2 className="h-4 w-4" />

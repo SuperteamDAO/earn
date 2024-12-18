@@ -3,31 +3,37 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
-import { type Superteams } from '@/constants/Superteam';
-import { HomeBanner, NavTabs, UserStatsBanner } from '@/features/home';
+import { type Superteam } from '@/constants/Superteam';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { cn } from '@/utils';
+
+import { HomeBanner } from '@/features/home/components/Banner';
+import { NavTabs } from '@/features/home/components/NavTabs';
+import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 
 interface HomeProps {
   children: ReactNode;
-  type: 'landing' | 'listing' | 'category' | 'region' | 'niche' | 'feed';
-  st?: (typeof Superteams)[0];
+  type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
+  st?: Superteam;
   isAuth?: boolean;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other';
 
 const RegionBanner = dynamic(() =>
-  import('@/features/home').then((mod) => mod.RegionBanner),
+  import('@/features/home/components/RegionBanner').then(
+    (mod) => mod.RegionBanner,
+  ),
 );
 
 const CategoryBanner = dynamic(() =>
-  import('@/features/home').then((mod) => mod.CategoryBanner),
+  import('@/features/home/components/CategoryBanner').then(
+    (mod) => mod.CategoryBanner,
+  ),
 );
 
 const HomeSideBar = dynamic(() =>
-  import('@/features/home').then((mod) => mod.HomeSideBar),
+  import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
 
 export function Home({ children, type, st, isAuth }: HomeProps) {
@@ -68,12 +74,7 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
       <div className="mx-auto w-full px-2 lg:px-6">
         <div className="mx-auto w-full max-w-7xl p-0">
           <div className="flex items-start justify-between">
-            <div
-              className={cn(
-                'w-full py-4',
-                type !== 'niche' && 'lg:border-r lg:border-slate-100',
-              )}
-            >
+            <div className="w-full py-3 lg:border-r lg:border-slate-100">
               <div className="w-full pt-1 lg:pr-6">
                 {type === 'landing' && (
                   <>
@@ -96,12 +97,9 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                 {children}
               </div>
             </div>
-
-            {type !== 'niche' && (
-              <div className="hidden lg:flex">
-                <HomeSideBar type={type} />
-              </div>
-            )}
+            <div className="hidden lg:flex">
+              <HomeSideBar type={type} />
+            </div>
           </div>
         </div>
       </div>

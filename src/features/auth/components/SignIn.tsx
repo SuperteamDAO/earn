@@ -1,4 +1,4 @@
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -6,7 +6,7 @@ import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
-import { TERMS_OF_USE } from '@/constants';
+import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 import { GoogleIcon } from '@/svg/google';
 
 import { EmailSignIn } from './EmailSignIn';
@@ -14,16 +14,27 @@ import { EmailSignIn } from './EmailSignIn';
 interface SigninProps {
   loginStep: number;
   setLoginStep: Dispatch<SetStateAction<number>>;
+  redirectTo?: string;
 }
 
-export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
+export const SignIn = ({
+  loginStep,
+  setLoginStep,
+  redirectTo,
+}: SigninProps) => {
   const router = useRouter();
   const posthog = usePostHog();
 
   const handleGmailSignIn = async () => {
     posthog.capture('google_auth');
+    const callbackUrl = new URL(
+      redirectTo || router.asPath,
+      window.location.origin,
+    );
+    callbackUrl.searchParams.set('loginState', 'signedIn');
+    if (redirectTo) callbackUrl.searchParams.set('originUrl', router.asPath);
     signIn('google', {
-      callbackUrl: `${router.asPath}?loginState=signedIn`,
+      callbackUrl: callbackUrl.toString(),
     });
   };
 
@@ -75,28 +86,28 @@ export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
                 : 'translate-y-5 opacity-0'
             }`}
           >
-            {loginStep === 1 && <EmailSignIn />}
+            {loginStep === 1 && <EmailSignIn redirectTo={redirectTo} />}
           </div>
         </div>
 
         <p className="mb-2 mt-4 text-center text-xs text-slate-500">
           By using this website, you agree to our{' '}
-          <NextLink
+          <Link
             href={TERMS_OF_USE}
             className="font-semibold hover:underline"
             target="_blank"
             rel="noopener noreferrer"
           >
             Terms of Use
-          </NextLink>{' '}
+          </Link>{' '}
           and our{' '}
-          <NextLink
+          <Link
             href={`${router.basePath}/privacy-policy.pdf`}
             className="font-semibold hover:underline"
             target="_blank"
           >
             Privacy Policy
-          </NextLink>
+          </Link>
           .
         </p>
       </div>
@@ -104,13 +115,13 @@ export const SignIn = ({ loginStep, setLoginStep }: SigninProps) => {
       <div className="rounded-b-md bg-slate-100 py-[7px]">
         <p className="text-center text-xs text-slate-400">
           Need help? Reach out to us at{' '}
-          <NextLink
+          <Link
             href="mailto:support@superteamearn.com"
             className="underline hover:text-slate-500"
             target="_blank"
           >
             support@superteamearn.com
-          </NextLink>
+          </Link>
         </p>
       </div>
     </div>

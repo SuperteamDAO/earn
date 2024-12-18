@@ -1,33 +1,29 @@
-import { InfoOutlineIcon } from '@chakra-ui/icons';
+import { Info } from 'lucide-react';
+import Link from 'next/link';
+import { usePostHog } from 'posthog-js/react';
+
+import { Button } from '@/components/ui/button';
+import { LocalImage } from '@/components/ui/local-image';
 import {
-  Avatar,
-  Badge,
-  Button,
-  Center,
-  Flex,
-  Link,
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Progress,
+} from '@/components/ui/popover';
+import { Progress } from '@/components/ui/progress';
+import {
   Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tooltip,
-  Tr,
-  VStack,
-} from '@chakra-ui/react';
-import NextLink from 'next/link';
-import { usePostHog } from 'posthog-js/react';
-
-import { LocalImage } from '@/components/ui/local-image';
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Tooltip } from '@/components/ui/tooltip';
 import { skillMap } from '@/constants/skillMap';
+import { cn } from '@/utils/cn';
 
-import SparkleIcon from '../../icons/sparkle.svg';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+
 import { type ScoutRowType } from '../../types';
 import { InviteButton } from './InviteButton';
 
@@ -54,119 +50,71 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
   const invitesLeft = MAX_INVITES - invitedCount;
 
   return (
-    <TableContainer
-      className="hide-scrollbar"
-      overflowX="auto"
-      w="full"
-      h={scouts.length === 0 ? '25rem' : 'auto'}
-      border="1px solid #E2E8F0"
-      borderRadius="md"
+    <div
+      className={cn(
+        'h-auto w-full overflow-x-auto rounded-md border border-gray-200',
+        scouts.length === 0 ? 'h-25rem' : 'h-auto',
+      )}
     >
       <Table>
-        <Thead>
-          <Tr textTransform={'none'} bg="#F8FAFC">
-            <Th
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'start'}
-              textTransform={'none'}
-            >
+        <TableHeader>
+          <TableRow className="bg-slate-50">
+            <TableHead className="text-xs font-medium text-slate-500">
               User
-            </Th>
-            <Th
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'center'}
-              textTransform={'none'}
-            >
-              <Flex align="center" justify={'center'} gap={2}>
+            </TableHead>
+            <TableHead className="px-1 text-center text-xs font-medium text-slate-500 md:px-2">
+              <div className="flex items-center justify-center gap-2">
                 $ Earned
                 <Tooltip
-                  fontSize="xs"
-                  label="$ Earned across all relevant skills for this listing."
+                  content={
+                    <p>$ Earned across all relevant skills for this listing.</p>
+                  }
+                  contentProps={{ className: 'text-xs' }}
                 >
-                  <InfoOutlineIcon
-                    w={3}
-                    h={3}
-                    display={{ base: 'none', md: 'block' }}
-                  />
+                  <Info className="hidden h-3 w-3 md:block" />
                 </Tooltip>
-              </Flex>
-            </Th>
-            <Th
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'center'}
-              textTransform={'none'}
-            >
-              <Flex align="center" justify={'center'} gap={2}>
+              </div>
+            </TableHead>
+            <TableHead className="px-1 text-center text-xs font-medium text-slate-500 md:px-2">
+              <div className="flex items-center justify-center gap-2">
                 Match Score
                 <Tooltip
-                  fontSize="xs"
-                  label="An aggregate score based on multiple factors such as number of matched skills, $ earned, etc."
+                  content={
+                    <p>
+                      An aggregate score based on multiple factors such as
+                      number of matched skills, $ earned, etc.
+                    </p>
+                  }
+                  contentProps={{ className: 'text-xs' }}
                 >
-                  <InfoOutlineIcon
-                    w={3}
-                    h={3}
-                    display={{ base: 'none', md: 'block' }}
-                  />
+                  <Info className="hidden h-3 w-3 md:block" />
                 </Tooltip>
-              </Flex>
-            </Th>
-            <Th
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'start'}
-              textTransform={'none'}
-            >
-              <Flex align="center" gap={2}>
+              </div>
+            </TableHead>
+            <TableHead className="px-1 text-left text-xs font-medium text-slate-500 md:px-2">
+              <div className="flex items-center justify-center gap-2">
                 Matched Skills
                 <Tooltip
-                  fontSize="xs"
-                  label="Matched Skills refer to the skills of the listings the users have previously won."
+                  content={
+                    <p>
+                      Matched Skills refer to the skills of the listings the
+                      users have previously won.
+                    </p>
+                  }
+                  contentProps={{ className: 'text-xs' }}
                 >
-                  <InfoOutlineIcon
-                    w={3}
-                    h={3}
-                    display={{ base: 'none', md: 'block' }}
-                  />
+                  <Info className="hidden h-3 w-3 md:block" />
                 </Tooltip>
-              </Flex>
-            </Th>
-            <Th
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'start'}
-              textTransform={'none'}
-            >
+              </div>
+            </TableHead>
+            <TableHead className="px-1 text-left text-xs font-medium text-slate-500 md:px-2">
               Invites Left: {invitesLeft}/{MAX_INVITES}
-            </Th>
-          </Tr>
-        </Thead>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
         {scouts.length === 0 && (
-          <VStack
-            pos="absolute"
-            top={'12rem'}
-            left="50%"
-            gap={3}
-            mx="auto"
-            transform="translateX(-50%)"
-          >
-            <Center p={5} bg="brand.slate.100" rounded="full">
+          <div className="absolute left-1/2 top-48 flex -translate-x-1/2 flex-col items-center gap-3">
+            <div className="flex items-center justify-center rounded-full bg-slate-100 p-5">
               <svg
                 width="54"
                 height="54"
@@ -192,26 +140,22 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                   fill="#94A3B8"
                 />
               </svg>
-            </Center>
-            <VStack gap={0} fontSize="base" fontWeight={600}>
-              <p>No Profiles Found</p>
-              <Text color="brand.slate.500" fontWeight={400}>
-                We couldn’t find any suitable matches for your listing
-              </Text>
-            </VStack>
-          </VStack>
+            </div>
+            <div className="flex flex-col items-center gap-0 text-base">
+              <p className="font-semibold">No Profiles Found</p>
+              <p className="font-normal text-slate-500">
+                We couldn’t find any suitable matches for your listing.
+              </p>
+            </div>
+          </div>
         )}
         {scouts.length > 0 && (
-          <Tbody color="brand.slate.500" fontSize="sm" fontWeight={500}>
+          <TableBody className="text-sm font-medium text-slate-500">
             {scouts.map((scout) => (
-              <Tr key={scout.id + scout.invited}>
-                <Td w="fit-content" h="full" fontSize="xs">
+              <TableRow key={scout.id + scout.invited}>
+                <TableCell className="h-full w-fit text-xs">
                   <Link
-                    className="ph-no-capture"
-                    as={NextLink}
-                    alignItems="center"
-                    gap={2}
-                    display="flex"
+                    className="ph-no-capture flex items-center gap-2"
                     href={`/t/${scout.username}`}
                     onClick={() => {
                       posthog.capture('profile click_scouts', {
@@ -220,138 +164,94 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                     }}
                     target="_blank"
                   >
-                    <Avatar
-                      w={{ base: 5, md: 8 }}
-                      h={{ base: 5, md: 8 }}
-                      src={scout.pfp ?? undefined}
-                    />
-                    <VStack
-                      align="start"
-                      justify={{ base: 'center', md: 'start' }}
-                      gap={1}
-                      lineHeight={{ base: 'normal', md: 1.15 }}
-                    >
-                      <Flex gap={1}>
-                        <Text
-                          overflow="hidden"
-                          maxW={'14rem'}
-                          color="brand.slate.800"
-                          fontSize={'14px'}
-                          textOverflow={'ellipsis'}
-                        >
+                    <EarnAvatar id={scout.id} avatar={scout.pfp || undefined} />
+                    <div className="align-start flex flex-col justify-center gap-1 md:justify-start">
+                      <div className="flex gap-1">
+                        <p className="max-w-[14rem] overflow-hidden text-ellipsis text-xs text-slate-800">
                           {scout.name}
-                        </Text>
+                        </p>
                         {scout.recommended && (
-                          <Tooltip fontSize="xs" label="Superteam Recommended">
-                            <LocalImage src={SparkleIcon} alt="sparkle" />
+                          <Tooltip
+                            content={<p>Superteam Recommended</p>}
+                            contentProps={{ className: 'text-xs' }}
+                          >
+                            <LocalImage
+                              src="/assets/sparkle.svg"
+                              alt="sparkle"
+                            />
                           </Tooltip>
                         )}
-                      </Flex>
-                      <Text
-                        overflowX="hidden"
-                        maxW={'7rem'}
-                        textOverflow={'ellipsis'}
-                      >
+                      </div>
+                      <p className="max-w-[7rem] overflow-x-hidden text-ellipsis">
                         @{scout.username}
-                      </Text>
-                    </VStack>
+                      </p>
+                    </div>
                   </Link>
-                </Td>
-                <Td h="full" px={{ base: 1, md: 2 }}>
-                  <Flex justify="center" gap={2}>
-                    <Text color="black" textAlign={'center'}>
+                </TableCell>
+                <TableCell className="h-full px-1 md:px-2">
+                  <div className="flex justify-center gap-2">
+                    <p className="text-center text-black">
                       {formatter(scout.dollarsEarned)}
-                    </Text>
-                  </Flex>
-                </Td>
-                <Td h="full" px={{ base: 1, md: 2 }}>
-                  <Flex align="center" justify="center" gap={3}>
-                    <Text color="black" textAlign={'center'}>
-                      {scout.score}
-                    </Text>
+                    </p>
+                  </div>
+                </TableCell>
+                <TableCell className="h-full px-1 md:px-2">
+                  <div className="flex items-center justify-center gap-3">
+                    <p className="text-center text-black">{scout.score}</p>
                     <ScoreBar score={scout.score} />
-                  </Flex>
-                </Td>
-                <Td h="full" px={{ base: 1, md: 2 }}>
-                  <Flex gap={2} h="full" textAlign={'center'}>
-                    {scout.skills.slice(0, MAX_SHOW_SKILLS).map((s) => (
-                      <Badge
-                        key={s}
-                        px={2}
-                        color={
-                          skillMap.find((e) => e.mainskill === s)
-                            ? skillMap.find((e) => e.mainskill === s)?.color
-                            : '#64739C'
-                        }
-                        fontSize={'x-small'}
-                        fontWeight={500}
-                        textTransform={'none'}
-                        bg={
-                          skillMap.find((e) => e.mainskill === s)
-                            ? `${skillMap.find((e) => e.mainskill === s)?.color}1A`
-                            : '#EFF1F5'
-                        }
-                      >
-                        {s}
-                      </Badge>
-                    ))}
-                    {scout.skills.length > MAX_SHOW_SKILLS && (
-                      <Popover trigger="hover">
-                        <PopoverTrigger>
-                          <Badge
-                            px={2}
-                            color="#64739C"
-                            fontSize={'x-small'}
-                            fontWeight={500}
-                            textTransform={'none'}
-                            bg="#EFF1F5"
-                            rounded="full"
-                          >
-                            +{scout.skills.length - MAX_SHOW_SKILLS}
-                          </Badge>
-                        </PopoverTrigger>
-                        <PopoverContent
-                          w="fit-content"
-                          maxW="10rem"
-                          px={4}
-                          py={2}
-                          shadow="lg"
+                  </div>
+                </TableCell>
+                <TableCell className="h-full px-1 md:px-2">
+                  <div className="flex h-full gap-2 text-center">
+                    {scout.skills.slice(0, MAX_SHOW_SKILLS).map((s) => {
+                      const skillColor =
+                        skillMap.find((e) => e.mainskill === s)?.color ||
+                        '#64739C';
+                      const bgColor = skillMap.find((e) => e.mainskill === s)
+                        ? `${skillMap.find((e) => e.mainskill === s)?.color}1A`
+                        : '#EFF1F5';
+
+                      return (
+                        <span
+                          key={s}
+                          className="inline-flex px-2 text-xs font-medium"
+                          style={{
+                            color: skillColor,
+                            backgroundColor: bgColor,
+                          }}
                         >
-                          <Flex
-                            wrap={'wrap'}
-                            gap={2}
-                            w="fit-content"
-                            h="full"
-                            textAlign={'center'}
-                          >
+                          {s}
+                        </span>
+                      );
+                    })}
+
+                    {scout.skills.length > MAX_SHOW_SKILLS && (
+                      <Popover>
+                        <PopoverTrigger>
+                          <span className="inline-flex rounded-full bg-[#EFF1F5] px-2 text-xs font-medium text-[#64739C]">
+                            +{scout.skills.length - MAX_SHOW_SKILLS}
+                          </span>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-fit max-w-40 px-4 py-2 shadow-lg">
+                          <div className="flex h-full w-fit flex-wrap gap-2 text-center">
                             {scout.skills.slice(MAX_SHOW_SKILLS).map((s) => (
-                              <Badge
+                              <span
                                 key={s}
-                                px={2}
-                                color="#64739C"
-                                fontSize={'x-small'}
-                                fontWeight={500}
-                                textTransform={'none'}
-                                bg="#EFF1F5"
-                                rounded="full"
+                                className="inline-flex rounded-full bg-[#EFF1F5] px-2 text-xs font-medium text-[#64739C]"
                               >
                                 {s}
-                              </Badge>
+                              </span>
                             ))}
-                          </Flex>
+                          </div>
                         </PopoverContent>
                       </Popover>
                     )}
-                  </Flex>
-                </Td>
-                <Td align="left" pl="0">
-                  <Flex align="start" gap={2} h={'2rem'}>
+                  </div>
+                </TableCell>
+                <TableCell className="items-left pl-0">
+                  <div className="flex h-8 items-start gap-2">
                     <Link
-                      className="ph-no-capture"
-                      as={NextLink}
-                      alignItems="center"
-                      display="block"
-                      h="full"
+                      className="ph-no-capture block h-full"
                       href={`/t/${scout.username}`}
                       onClick={() => {
                         posthog.capture('view profile_scouts', {
@@ -360,7 +260,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                       }}
                       target="_blank"
                     >
-                      <Button h="full" fontSize="xs" variant="ghost">
+                      <Button className="h-full text-xs" variant="ghost">
                         View Profile
                       </Button>
                     </Link>
@@ -372,36 +272,40 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                       maxInvitesReached={maxInvitesReached}
                       invitesLeft={invitesLeft}
                     />
-                  </Flex>
-                </Td>
-              </Tr>
+                  </div>
+                </TableCell>
+              </TableRow>
             ))}
-          </Tbody>
+          </TableBody>
         )}
       </Table>
-    </TableContainer>
+    </div>
   );
 }
 
 function ScoreBar({ score }: { score: number }) {
   const first = normalizeValue(score, 5, 6),
     second = normalizeValue(score, 6, 7),
-    third = normalizeValue(score, 7, 10),
-    color = colorScore(score);
+    third = normalizeValue(score, 7, 10);
+
+  const getColor = (score: number) => {
+    if (score > 7) return '#0D9488';
+    if (score > 6) return '#84CC16';
+    return '#FDBA74';
+  };
 
   return (
-    <Flex gap={0.5} h={2}>
-      <Progress w="1rem" h={'full'} colorScheme={color} value={first} />
-      <Progress w="1rem" h={'full'} colorScheme={color} value={second} />
-      <Progress w="1rem" h={'full'} colorScheme={color} value={third} />
-    </Flex>
+    <div className="flex h-2 gap-0.5">
+      {[first, second, third].map((value, index) => (
+        <Progress
+          key={index}
+          value={value}
+          color={getColor(score)}
+          className="h-full w-4 rounded-none"
+        />
+      ))}
+    </div>
   );
-}
-
-function colorScore(score: number) {
-  if (score > 7) return 'brand.progress.darkGreen';
-  if (score > 6) return 'brand.progress.lightGreen';
-  return 'brand.progress.lightYellow';
 }
 
 function normalizeValue(

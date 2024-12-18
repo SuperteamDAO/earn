@@ -2,9 +2,11 @@ import { v2 as cloudinary } from 'cloudinary';
 import { type NextApiResponse } from 'next';
 import sharp from 'sharp';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

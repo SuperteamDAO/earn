@@ -1,11 +1,12 @@
 import { useSession } from 'next-auth/react';
 import { type ReactNode, useEffect, useState } from 'react';
 
-import { Login } from '@/features/auth';
-import { CompleteProfileModal } from '@/features/listings';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { CompleteProfileModal } from './CompleteProfileModal';
+import { Login } from './Login';
 
 interface AuthWrapperProps {
   children: ReactNode;
@@ -13,6 +14,10 @@ interface AuthWrapperProps {
   onClick?: () => void;
   showCompleteProfileModal?: boolean;
   completeProfileModalBodyText?: string;
+  redirectTo?: string;
+  hideLoginOverlay?: boolean;
+  onLoginOpenCallback?: () => void;
+  onLoginCloseCallback?: () => void;
 }
 
 export function AuthWrapper({
@@ -21,6 +26,10 @@ export function AuthWrapper({
   onClick,
   showCompleteProfileModal = false,
   completeProfileModalBodyText = 'Please complete your profile before proceeding.',
+  redirectTo,
+  hideLoginOverlay,
+  onLoginCloseCallback,
+  onLoginOpenCallback,
 }: AuthWrapperProps) {
   const { status } = useSession();
   const isAuthenticated = status === 'authenticated';
@@ -37,6 +46,12 @@ export function AuthWrapper({
     onOpen: loginOnOpen,
     onClose: loginOnClose,
   } = useDisclosure();
+
+  useEffect(() => {
+    if (loginIsOpen) onLoginOpenCallback?.();
+    else onLoginCloseCallback?.();
+  }, [loginIsOpen]);
+
   const {
     isOpen: profileModalIsOpen,
     onOpen: profileModalOnOpen,
@@ -71,7 +86,14 @@ export function AuthWrapper({
 
   return (
     <>
-      {loginIsOpen && <Login isOpen={loginIsOpen} onClose={loginOnClose} />}
+      {loginIsOpen && (
+        <Login
+          hideOverlay={hideLoginOverlay}
+          isOpen={loginIsOpen}
+          onClose={loginOnClose}
+          redirectTo={redirectTo}
+        />
+      )}
       {profileModalIsOpen && (
         <CompleteProfileModal
           isOpen={profileModalIsOpen}
@@ -88,7 +110,7 @@ export function AuthWrapper({
           className="h-full w-full"
           style={{
             pointerEvents:
-              isLoading || shouldAllowInteraction ? 'auto' : 'none',
+              isLoading || !shouldAllowInteraction ? 'none' : 'auto',
           }}
         >
           {children}

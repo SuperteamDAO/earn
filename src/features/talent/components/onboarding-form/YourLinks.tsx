@@ -1,17 +1,22 @@
-import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons';
-import { Box, Button, Center, Flex, FormControl, Text } from '@chakra-ui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
+import { Loader2, Pencil, Plus, Trash } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
-import { type Dispatch, type SetStateAction, useState } from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { useUser } from '@/store/user';
 
+import { SocialInputAll } from '@/features/social/components/SocialInput';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+
+import { ONBOARDING_KEY } from '../../constants';
+import { type YourLinksFormData, yourLinksSchema } from '../../schema';
 import { AddProject } from '../AddProject';
-import { SocialInput } from '../SocialInput';
 import type { UserStoreType } from './types';
 
 interface Props {
@@ -20,7 +25,7 @@ interface Props {
 }
 
 export function YourLinks({ useFormStore }: Props) {
-  const { refetchUser } = useUser();
+  const { refetchUser, user } = useUser();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { form } = useFormStore();
   const [pow, setPow] = useState<PoW[]>([]);
@@ -34,11 +39,11 @@ export function YourLinks({ useFormStore }: Props) {
   const uploadProfile = async (
     socials: {
       discord: string;
-      twitter: string;
-      github: string;
-      linkedin: string;
-      telegram: string;
-      website: string;
+      twitter?: string;
+      github?: string;
+      linkedin?: string;
+      telegram?: string;
+      website?: string;
     },
     pow: PoW[],
   ) => {
@@ -54,7 +59,7 @@ export function YourLinks({ useFormStore }: Props) {
         ...socials,
       };
       // eslint-disable-next-line unused-imports/no-unused-vars
-      const { subSkills, ...finalOptions } = updateOptions;
+      const { ...finalOptions } = updateOptions;
 
       await axios.post('/api/user/complete-profile/', finalOptions);
       await axios.post('/api/email/manual/welcome-talent/');
@@ -64,27 +69,57 @@ export function YourLinks({ useFormStore }: Props) {
     }
   };
 
-  const { register, handleSubmit, watch } = useForm();
+  const yourLinksForm = useForm<YourLinksFormData>({
+    resolver: zodResolver(yourLinksSchema),
+    mode: 'onBlur',
+  });
+  const { handleSubmit, control, setValue, reset, watch } = yourLinksForm;
 
-  const onSubmit = (data: any) => {
-    const socialFields = [
-      'twitter',
-      'github',
-      'linkedin',
-      'website',
-      'telegram',
-    ];
-    const filledSocials = socialFields.filter((field) => data[field]);
-
-    if (filledSocials.length === 0) {
-      toast.error(
-        'At least one additional social link (apart from Discord) is required',
-      );
-      return;
+  useEffect(() => {
+    if (user) {
+      reset({
+        discord: form.discord || user.discord || undefined,
+        github:
+          form.github ||
+          extractSocialUsername('github', user.github || '') ||
+          undefined,
+        twitter:
+          form.twitter ||
+          extractSocialUsername('twitter', user.twitter || '') ||
+          undefined,
+        linkedin:
+          form.linkedin ||
+          extractSocialUsername('linkedin', user.linkedin || '') ||
+          undefined,
+        telegram:
+          form.telegram ||
+          extractSocialUsername('telegram', user.telegram || '') ||
+          undefined,
+        website: user.website || undefined,
+      });
     }
+  }, [user, setValue]);
 
+  useEffect(() => {
+    const subscription = watch((values) => {
+      if (values) {
+        updateState({
+          ...form,
+          discord: values.discord || '',
+          github: values.github || undefined,
+          twitter: values.twitter || undefined,
+          linkedin: values.linkedin || undefined,
+          telegram: values.telegram || undefined,
+          website: values.website || undefined,
+        });
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, updateState]);
+
+  const onSubmit = async (data: YourLinksFormData) => {
     posthog.capture('finish profile_talent');
-    uploadProfile(
+    await uploadProfile(
       {
         discord: data.discord,
         twitter: data.twitter,
@@ -95,85 +130,76 @@ export function YourLinks({ useFormStore }: Props) {
       },
       pow,
     );
+    localStorage.removeItem(ONBOARDING_KEY);
   };
   return (
     <>
-      <Box w={'full'} mb={'4rem'}>
-        <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
-          <FormControl w="full" mb={5}>
-            <SocialInput watch={watch} register={register} />
-            <Text color={'brand.slate.500'} fontWeight={'500'}>
-              Other Proof of Work
-            </Text>
-            <Text mb={3} color={'brand.slate.400'} fontWeight={400}>
-              Adding more PoW increases your chance of getting work
-            </Text>
-            <div>
-              {pow.map((data, idx) => (
-                <Flex
-                  key={data.id}
-                  align={'center'}
-                  mt="2"
-                  mb={'1.5'}
-                  px={'1rem'}
-                  py={'0.5rem'}
-                  color={'brand.slate.500'}
-                  border={'1px solid gray'}
-                  borderColor="brand.slate.300"
-                  rounded={'md'}
-                >
-                  <Text w={'full'} color={'gray.800'} fontSize={'0.8rem'}>
-                    {data.title}
-                  </Text>
-                  <Center columnGap={'0.8rem'}>
-                    <EditIcon
-                      onClick={() => {
-                        setSelectedProject(idx);
-                        onOpen();
-                      }}
-                      cursor={'pointer'}
-                      fontSize={'0.8rem'}
-                    />
-                    <DeleteIcon
-                      onClick={() => {
-                        setPow((prevPow) =>
-                          prevPow.filter((_ele, id) => idx !== id),
-                        );
-                      }}
-                      cursor={'pointer'}
-                      fontSize={'0.8rem'}
-                    />
-                  </Center>
-                </Flex>
-              ))}
-            </div>
-            <Button
-              w={'full'}
-              mb={8}
-              leftIcon={<AddIcon />}
-              onClick={() => {
-                onOpen();
-              }}
-              variant="outline"
-            >
-              Add Project
-            </Button>
+      <div className="mb-[4rem] w-full">
+        <Form {...yourLinksForm}>
+          <form style={{ width: '100%' }} onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-5 w-full">
+              <SocialInputAll control={control} />
+              <p className="font-medium text-slate-500">Other Proof of Work</p>
+              <p className="mb-3 text-slate-400">
+                Adding more PoW increases your chance of getting work
+              </p>
+              <div>
+                {pow.map((data, idx) => (
+                  <div
+                    className="mb-1.5 mt-2 flex items-center rounded-md border border-gray-300 px-[1rem] py-[0.5rem] text-slate-500"
+                    key={data.id}
+                  >
+                    <p className="w-full text-xs text-gray-800">{data.title}</p>
+                    <div className="flex items-center justify-center gap-3.5">
+                      <Pencil
+                        onClick={() => {
+                          setSelectedProject(idx);
+                          onOpen();
+                        }}
+                        className="h-3.5 w-3.5 cursor-pointer"
+                      />
+                      <Trash
+                        onClick={() => {
+                          setPow((prevPow) =>
+                            prevPow.filter((_ele, id) => idx !== id),
+                          );
+                        }}
+                        className="h-3.5 w-3.5 cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Button
+                className="mb-8 w-full bg-transparent"
+                onClick={() => {
+                  onOpen();
+                }}
+                variant="outline"
+                type="button"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Project
+              </Button>
 
-            <Button
-              className="ph-no-capture"
-              w={'full'}
-              h="50px"
-              color={'white'}
-              bg={'rgb(101, 98, 255)'}
-              isLoading={isLoading}
-              spinnerPlacement="start"
-              type="submit"
-            >
-              Finish Profile
-            </Button>
-          </FormControl>
-        </form>
-      </Box>
+              <Button
+                className="ph-no-capture h-[50px] w-full bg-[rgb(101,98,255)] text-white"
+                disabled={isLoading}
+                type="submit"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  'Finish Profile'
+                )}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
       <AddProject
         key={`${pow.length}project`}
         {...{

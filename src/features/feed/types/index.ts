@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type Rewards } from '@/features/listings';
+import { type Rewards } from '@/features/listings/types';
 
 export interface FeedDataProps {
   id: string;

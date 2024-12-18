@@ -1,20 +1,17 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import * as React from 'react';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
-const TooltipProvider = ({
-  children,
-  ...props
-}: TooltipPrimitive.TooltipProviderProps) => (
-  <TooltipPrimitive.Provider delayDuration={0} {...props}>
-    {children}
-  </TooltipPrimitive.Provider>
-);
-
-const Tooltip = TooltipPrimitive.Root;
-
-const TooltipTrigger = TooltipPrimitive.Trigger;
+interface TooltipProps
+  extends React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root> {
+  content: React.ReactNode;
+  children: React.ReactNode;
+  contentProps?: React.ComponentPropsWithoutRef<
+    typeof TooltipPrimitive.Content
+  >;
+  disabled?: boolean;
+}
 
 const TooltipContent = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,
@@ -34,4 +31,22 @@ const TooltipContent = React.forwardRef<
 ));
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger };
+const Tooltip = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Root>,
+  TooltipProps
+>(({ children, content, contentProps, disabled, ...props }) => {
+  if (disabled) {
+    return <>{children}</>;
+  }
+  return (
+    <TooltipPrimitive.Provider delayDuration={0}>
+      <TooltipPrimitive.Root {...props}>
+        <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
+        <TooltipContent {...contentProps}>{content}</TooltipContent>
+      </TooltipPrimitive.Root>
+    </TooltipPrimitive.Provider>
+  );
+});
+Tooltip.displayName = 'Tooltip';
+
+export { Tooltip };

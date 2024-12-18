@@ -2,16 +2,15 @@ import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
-import {
-  checkGrantSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
 function getSocialMediaLink(user: any): string {
   if (user.telegram) return user.telegram;

@@ -1,26 +1,35 @@
-import { Button, Flex } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
 
-import { Tooltip } from '@/components/shared/responsive-tooltip';
 import { SurveyModal } from '@/components/shared/Survey';
-import { AuthWrapper } from '@/features/auth';
+import { Button } from '@/components/ui/button';
 import {
-  getListingDraftStatus,
-  getRegionTooltipLabel,
-  isDeadlineOver,
-  type Listing,
-  userRegionEligibilty,
-} from '@/features/listings';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
+import { type Listing } from '../../types';
+import { isDeadlineOver } from '../../utils/deadline';
+import {
+  getRegionTooltipLabel,
+  userRegionEligibilty,
+} from '../../utils/region';
+import { getListingDraftStatus } from '../../utils/status';
 import { EasterEgg } from './EasterEgg';
 import { SubmissionDrawer } from './SubmissionDrawer';
 
@@ -28,6 +37,59 @@ interface Props {
   listing: Listing;
   isTemplate?: boolean;
 }
+
+const InfoWrapper = ({
+  children,
+  isUserEligibleByRegion,
+  hasHackathonStarted,
+  regionTooltipLabel,
+  hackathonStartDate,
+  pastDeadline,
+}: {
+  children: React.ReactNode;
+  isUserEligibleByRegion: boolean;
+  hasHackathonStarted: boolean;
+  regionTooltipLabel: string;
+  hackathonStartDate: dayjs.Dayjs | null;
+  pastDeadline: boolean;
+}) => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+  if (isMobile) {
+    return (
+      <Popover>
+        <PopoverTrigger asChild>{children}</PopoverTrigger>
+        <PopoverContent className="w-80 p-4">
+          {!isUserEligibleByRegion && (
+            <p className="text-sm text-gray-700">{regionTooltipLabel}</p>
+          )}
+          {!hasHackathonStarted && (
+            <p className="text-sm text-gray-700">
+              This track will open for submissions on{' '}
+              {hackathonStartDate?.format('DD MMMM, YYYY')}
+            </p>
+          )}
+        </PopoverContent>
+      </Popover>
+    );
+  }
+
+  return (
+    <Tooltip
+      disabled={hasHackathonStarted && (isUserEligibleByRegion || pastDeadline)}
+      content={
+        !isUserEligibleByRegion
+          ? regionTooltipLabel
+          : !hasHackathonStarted
+            ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
+            : null
+      }
+      contentProps={{ className: 'rounded-md' }}
+    >
+      {children}
+    </Tooltip>
+  );
+};
 
 export const SubmissionActionButton = ({
   listing,
@@ -45,7 +107,6 @@ export const SubmissionActionButton = ({
   } = listing;
 
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
-  const [isLabelOpen, setIsLabelOpen] = useState(false);
 
   const { user } = useUser();
 
@@ -100,7 +161,6 @@ export const SubmissionActionButton = ({
 
   let buttonText;
   let buttonBG;
-  let buttonTextColor;
   let isBtnDisabled;
   let btnLoadingText;
 
@@ -121,7 +181,7 @@ export const SubmissionActionButton = ({
       buttonText = isProject
         ? 'Applied Successfully'
         : 'Submitted Successfully';
-      buttonBG = 'green.500';
+      buttonBG = 'bg-green-600';
       isBtnDisabled = true;
       btnLoadingText = null;
       break;
@@ -133,7 +193,7 @@ export const SubmissionActionButton = ({
         listing.compensationType === 'range'
       )
         buttonText = 'Send Quote';
-      buttonBG = 'brand.purple';
+      buttonBG = 'bg-brand-purple';
       isBtnDisabled = Boolean(
         pastDeadline ||
           (user?.id &&
@@ -146,10 +206,10 @@ export const SubmissionActionButton = ({
   }
   if (isDeadlineOver(deadline) && !isWinnersAnnounced) {
     buttonText = 'Submissions in Review';
-    buttonBG = 'gray.500';
+    buttonBG = 'bg-gray-500';
   } else if (isWinnersAnnounced) {
     buttonText = 'Winners Announced';
-    buttonBG = 'gray.500';
+    buttonBG = 'bg-gray-500';
   }
 
   const {
@@ -190,18 +250,7 @@ export const SubmissionActionButton = ({
         />
       )}
 
-      <Flex
-        className="ph-no-capture"
-        pos={{ base: 'fixed', md: 'static' }}
-        zIndex={30}
-        bottom={0}
-        left="50%"
-        w="full"
-        px={{ base: 3, md: 0 }}
-        py={{ base: 4, md: 0 }}
-        bg="white"
-        transform={{ base: 'translateX(-50%)', md: 'none' }}
-      >
+      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 bg-white px-3 py-4 md:static md:translate-x-0 md:px-0 md:py-0">
         <AuthWrapper
           showCompleteProfileModal
           completeProfileModalBodyText={
@@ -209,51 +258,44 @@ export const SubmissionActionButton = ({
           }
           className="w-full"
         >
-          <Tooltip
-            isOpen={isLabelOpen}
-            setIsOpen={setIsLabelOpen}
-            bg="brand.slate.500"
-            hasArrow
-            isDisabled={
-              hasHackathonStarted && (isUserEligibleByRegion || pastDeadline)
-            }
-            label={
-              !isUserEligibleByRegion
-                ? regionTooltipLabel
-                : !hasHackathonStarted
-                  ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
-                  : ''
-            }
-            rounded="md"
+          <InfoWrapper
+            isUserEligibleByRegion={isUserEligibleByRegion}
+            hasHackathonStarted={hasHackathonStarted}
+            regionTooltipLabel={regionTooltipLabel}
+            hackathonStartDate={hackathonStartDate}
+            pastDeadline={pastDeadline!}
           >
-            <div
-              onClick={() => setIsLabelOpen(true)}
-              onMouseEnter={() => setIsLabelOpen(true)}
-              onMouseLeave={() => setIsLabelOpen(false)}
-              style={{ width: '100%' }}
-            >
+            <div className="w-full">
               <Button
-                gap={4}
-                w={'full'}
-                mb={{ base: 12, md: 5 }}
-                textColor={buttonTextColor}
-                bg={buttonBG}
-                _hover={{ bg: buttonBG }}
-                _disabled={{ opacity: '70%' }}
-                isDisabled={isBtnDisabled}
-                isLoading={isUserSubmissionLoading}
-                loadingText={btnLoadingText}
+                className={cn(
+                  'h-12 w-full gap-4 text-lg',
+                  'mb-12 md:mb-5',
+                  'disabled:opacity-70',
+                  buttonBG,
+                  'hover:opacity-90',
+                  buttonState === 'edit' &&
+                    'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
+                )}
+                disabled={isBtnDisabled}
                 onClick={handleSubmit}
-                size="lg"
-                variant={buttonState === 'edit' ? 'outline' : 'solid'}
+                variant={buttonState === 'edit' ? 'outline' : 'default'}
               >
-                {buttonState === 'edit' && <LuPencil />}
-                {buttonText}
+                {isUserSubmissionLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {btnLoadingText}
+                  </>
+                ) : (
+                  <>
+                    {buttonState === 'edit' && <LuPencil />}
+                    {buttonText}
+                  </>
+                )}
               </Button>
             </div>
-          </Tooltip>
+          </InfoWrapper>
         </AuthWrapper>
-      </Flex>
+      </div>
     </>
   );
 };

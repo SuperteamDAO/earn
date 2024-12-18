@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 type ListingTabLinkProps = {
   href: string;

@@ -1,46 +1,39 @@
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  EditIcon,
-  EmailIcon,
-} from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Collapse,
-  Divider,
-  Flex,
-  IconButton,
-  Text,
-  useBreakpointValue,
-  useDisclosure,
-} from '@chakra-ui/react';
 import axios from 'axios';
+import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useState } from 'react';
+import { MdEmail } from 'react-icons/md';
 import { useInView } from 'react-intersection-observer';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ShareIcon } from '@/components/shared/shareIcon';
+import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { type FeedDataProps, FeedLoop, useGetFeed } from '@/features/feed';
-import {
-  AddProject,
-  EarnAvatar,
-  GitHub,
-  Linkedin,
-  ShareProfile,
-  Twitter,
-  Website,
-} from '@/features/talent';
+import { useDisclosure } from '@/hooks/use-disclosure';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
+
+import { FeedLoop } from '@/features/feed/components/FeedLoop';
+import { useGetFeed } from '@/features/feed/queries/useGetFeed';
+import { type FeedDataProps } from '@/features/feed/types';
+import {
+  GitHub,
+  Linkedin,
+  Twitter,
+  Website,
+} from '@/features/social/components/SocialIcons';
+import { AddProject } from '@/features/talent/components/AddProject';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+import { ShareProfile } from '@/features/talent/components/shareProfile';
 
 type UserWithFeed = User & {
   feed: FeedDataProps[];
@@ -132,10 +125,10 @@ function TalentProfile({ talent, stats }: TalentProps) {
   };
 
   const addNewPow = () => {
-    router.replace(router.asPath);
+    refetch();
   };
 
-  const isMD = useBreakpointValue({ base: false, md: true });
+  const isMD = useMediaQuery('(min-width: 768px)');
 
   const getWorkPreferenceText = (workPrefernce?: string): string | null => {
     if (!workPrefernce || workPrefernce === 'Not looking for Work') {
@@ -180,33 +173,34 @@ function TalentProfile({ talent, stats }: TalentProps) {
     if (isMD) {
       return (
         <Button
-          className="ph-no-capture"
-          color={outline ? 'brand.slate.500' : '#6366F1'}
-          fontSize="sm"
-          fontWeight={500}
-          bg={outline ? 'white' : '#EDE9FE'}
-          borderColor={outline ? 'brand.slate.400' : '#EDE9FE'}
-          leftIcon={icon}
+          className={cn(
+            'ph-no-capture text-sm font-medium',
+            outline
+              ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+              : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
+          )}
           onClick={onClickHandler}
-          variant={outline ? 'outline' : 'solid'}
+          variant={outline ? 'outline' : 'default'}
         >
+          {icon}
           {text}
         </Button>
       );
     }
 
     return (
-      <IconButton
-        color={outline ? 'brand.slate.500' : '#6366F1'}
-        fontSize="sm"
-        fontWeight={500}
-        bg={outline ? 'white' : '#EDE9FE'}
-        borderColor={outline ? 'brand.slate.400' : '#EDE9FE'}
+      <Button
         aria-label={text}
-        icon={icon}
         onClick={onClickHandler}
-        variant={outline ? 'outline' : 'solid'}
-      />
+        className={cn(
+          'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
+          outline
+            ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+            : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
+        )}
+      >
+        {icon}
+      </Button>
     );
   };
 
@@ -233,388 +227,303 @@ function TalentProfile({ talent, stats }: TalentProps) {
   const feedItems = feed?.pages.flatMap((page) => page) ?? [];
 
   return (
-    <>
-      <Default
-        meta={
-          <Head>
-            <title>{title}</title>
-            <meta property="og:title" content={title} />
-            <meta property="og:image" content={ogImage.toString()} />
-            <meta name="twitter:title" content={title} />
-            <meta name="twitter:image" content={ogImage.toString()} />
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta property="og:image:width" content="1200" />
-            <meta property="og:image:height" content="630" />
-            <meta property="og:image:alt" content="Talent on Superteam" />
-            <meta charSet="UTF-8" key="charset" />
-            <meta
-              name="viewport"
-              content="width=device-width,initial-scale=1"
-              key="viewport"
-            />
-          </Head>
-        }
-      >
-        {!talent?.id && (
-          <EmptySection message="Sorry! The profile you are looking for is not available." />
-        )}
-        {!!talent?.id && (
-          <Box bg="white">
-            <Box
-              w="100%"
-              h={{ base: '100px', md: '30vh' }}
-              bgImage={ASSET_URL + `/bg/profile-cover/${bgImages[randomIndex]}`}
-              bgSize={'cover'}
-              bgRepeat={'no-repeat'}
-              objectFit={'cover'}
-            />
-            <Box
-              pos={'relative'}
-              top={{ base: '0', md: '-40' }}
-              maxW={'700px'}
-              mx="auto"
-              px={{ base: '4', md: '7' }}
-              py={7}
-              bg="white"
-              borderRadius={'20px'}
-            >
-              <Flex justify={'space-between'}>
-                <div>
-                  <EarnAvatar
-                    size={isMD ? '64px' : '52px'}
-                    id={talent?.id}
-                    avatar={talent?.photo}
-                  />
-
-                  <Text
-                    mt={6}
-                    color={'brand.slate.900'}
-                    fontSize={{ base: 'lg', md: 'xl' }}
-                    fontWeight={'600'}
-                  >
-                    {talent?.firstName} {talent?.lastName}
-                  </Text>
-                  <Text
-                    color={'brand.slate.500'}
-                    fontSize={{ base: 'md', md: 'md' }}
-                    fontWeight={'600'}
-                  >
-                    @
-                    {isMD
-                      ? talent?.username
-                      : talent?.username?.length && talent?.username.length > 24
-                        ? `${talent?.username.slice(0, 24)}...`
-                        : talent?.username}
-                  </Text>
-                </div>
-                <Flex
-                  direction={{ base: 'row', md: 'column' }}
-                  gap={3}
-                  w={{ base: 'auto', md: '160px' }}
-                >
-                  {user?.id === talent?.id
-                    ? renderButton(
-                        <EditIcon />,
-                        'Edit Profile',
-                        handleEditProfileClick,
-                      )
-                    : renderButton(<EmailIcon />, 'Reach Out', () => {
-                        posthog.capture('reach out_talent profile');
-                        const email = encodeURIComponent(talent?.email || '');
-                        const subject = encodeURIComponent(
-                          'Saw Your ST Earn Profile!',
-                        );
-                        const bcc = encodeURIComponent(
-                          'support@superteamearn.com',
-                        );
-                        window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
-                      })}
-                  {renderButton(<ShareIcon />, 'Share', onOpen, true)}
-                </Flex>
-              </Flex>
-              <ShareProfile
-                username={talent?.username as string}
-                isOpen={isOpen}
-                onClose={onClose}
-                id={talent?.id}
-              />
-              <Divider my={8} />
-              <Flex
-                direction={{ base: 'column', md: 'row' }}
-                gap={{ base: '12', md: '100' }}
-              >
-                <Box w={{ base: '100%', md: '50%' }}>
-                  <Text mb={4} color={'brand.slate.900'} fontWeight={500}>
-                    Details
-                  </Text>
-                  {workPreferenceText && (
-                    <Text mt={3} color={'brand.slate.400'}>
-                      Looking for{' '}
-                      <Text as={'span'} color={'brand.slate.500'}>
-                        {workPreferenceText}
-                      </Text>
-                    </Text>
-                  )}
-                  {talent?.currentEmployer && (
-                    <Text mt={3} color={'brand.slate.400'}>
-                      Works at{' '}
-                      <Text as={'span'} color={'brand.slate.500'}>
-                        {talent?.currentEmployer}
-                      </Text>
-                    </Text>
-                  )}
-                  {talent?.location && (
-                    <Text mt={3} color={'brand.slate.400'}>
-                      Based in{' '}
-                      <Text as={'span'} color={'brand.slate.500'}>
-                        {talent?.location}
-                      </Text>
-                    </Text>
-                  )}
-                </Box>
-                <Box w={{ base: '100%', md: '50%' }}>
-                  <Text color={'brand.slate.900'} fontWeight={500}>
-                    Skills
-                  </Text>
-                  {Array.isArray(talent.skills) ? (
-                    talent.skills.map((skillItem: any, index: number) => {
-                      return skillItem ? (
-                        <Box key={index} mt={4}>
-                          <Text
-                            color={'brand.slate.400'}
-                            fontSize="xs"
-                            fontWeight={500}
-                          >
-                            {skillItem.skills.toUpperCase()}
-                          </Text>
-                          <Flex align="center">
-                            <Flex wrap={'wrap'} gap={2} mt={2}>
-                              {skillItem.subskills
-                                .slice(0, 3)
-                                .map((subskill: string, subIndex: number) => (
-                                  <Box
-                                    key={subIndex}
-                                    px={'12px'}
-                                    py={'4px'}
-                                    color={'#64739C'}
-                                    fontSize={'sm'}
-                                    fontWeight={500}
-                                    borderRadius={'4px'}
-                                    bgColor={'#EFF1F5'}
-                                  >
-                                    {subskill}
-                                  </Box>
-                                ))}
-                            </Flex>
-                            {skillItem.subskills.length > 3 && (
-                              <IconButton
-                                aria-label="Toggle subskills"
-                                icon={
-                                  showSubskills[index] ? (
-                                    <ChevronUpIcon />
-                                  ) : (
-                                    <ChevronDownIcon />
-                                  )
-                                }
-                                onClick={() => handleToggleSubskills(index)}
-                                size="sm"
-                                variant={'unstyled'}
-                              />
-                            )}
-                          </Flex>
-
-                          <Collapse in={showSubskills[index] ?? false}>
-                            <Flex wrap={'wrap'} gap={2} mt={2}>
-                              {skillItem.subskills
-                                .slice(3)
-                                .map((subskill: string, subIndex: number) => (
-                                  <Box
-                                    key={subIndex}
-                                    px={'12px'}
-                                    py={'4px'}
-                                    color={'#64739C'}
-                                    fontSize={'sm'}
-                                    fontWeight={500}
-                                    borderRadius={'4px'}
-                                    bgColor={'#EFF1F5'}
-                                  >
-                                    {subskill}
-                                  </Box>
-                                ))}
-                            </Flex>
-                          </Collapse>
-                        </Box>
-                      ) : null;
-                    })
-                  ) : (
-                    <p>No skills available</p>
-                  )}
-                </Box>
-              </Flex>
-              <Divider my={8} />
-              <Flex
-                direction={{ base: 'column', md: 'row' }}
-                gap={{ base: '12', md: '100' }}
-              >
-                <Flex gap={6} w={{ base: '100%', md: '50%' }}>
-                  {socialLinks.map(({ Icon, link }, i) => {
-                    return <Icon link={link} boxSize={5} key={i} />;
-                  })}
-                </Flex>
-                <Flex
-                  gap={{ base: '8', md: '6' }}
-                  w={{ base: '100%', md: '50%' }}
-                >
-                  <Flex direction={'column'}>
-                    <Text fontWeight={600}>
-                      $
-                      {new Intl.NumberFormat('en-US', {
-                        maximumFractionDigits: 0,
-                      }).format(Math.round(stats?.totalWinnings || 0))}
-                    </Text>
-                    <Text color={'brand.slate.500'} fontWeight={500}>
-                      Earned
-                    </Text>
-                  </Flex>
-                  <Flex direction={'column'}>
-                    <Text fontWeight={600}>{stats?.participations}</Text>
-                    <Text color={'brand.slate.500'} fontWeight={500}>
-                      {stats.participations === 1
-                        ? 'Submission'
-                        : 'Submissions'}
-                    </Text>
-                  </Flex>
-                  <Flex direction={'column'}>
-                    <Text fontWeight={600}>{stats?.wins}</Text>
-                    <Text color={'brand.slate.500'} fontWeight={500}>
-                      Won
-                    </Text>
-                  </Flex>
-                </Flex>
-              </Flex>
-              <Box mt={{ base: '12', md: '16' }}>
-                <Flex
-                  align={{ base: 'right', md: 'center' }}
-                  justify={'space-between'}
-                  direction={{ base: 'column', md: 'row' }}
-                >
-                  <Flex align="center" gap={3}>
-                    <Text color={'brand.slate.900'} fontWeight={500}>
-                      Proof of Work
-                    </Text>
-                    {user?.id === talent?.id && (
-                      <Button
-                        color={'brand.slate.400'}
-                        fontSize="sm"
-                        fontWeight={600}
-                        onClick={onOpenPow}
-                        size="xs"
-                        variant={'ghost'}
-                      >
-                        +ADD
-                      </Button>
-                    )}
-                  </Flex>
-                  <Flex
-                    justify={{ base: 'space-between', md: 'flex-end' }}
-                    gap={6}
-                    mt={{ base: '12', md: '0' }}
-                  >
-                    <Text
-                      color={
-                        activeTab === 'activity'
-                          ? 'brand.slate.900'
-                          : 'brand.slate.400'
-                      }
-                      fontWeight={500}
-                      cursor="pointer"
-                      onClick={() => setActiveTab('activity')}
-                    >
-                      Activity Feed
-                    </Text>
-                    <Text
-                      color={
-                        activeTab === 'projects'
-                          ? 'brand.slate.900'
-                          : 'brand.slate.400'
-                      }
-                      fontWeight={500}
-                      cursor="pointer"
-                      onClick={() => setActiveTab('projects')}
-                    >
-                      Personal Projects
-                    </Text>
-                  </Flex>
-                </Flex>
-              </Box>
-              <Divider my={4} />
+    <Default
+      meta={
+        <Head>
+          <title>{title}</title>
+          <meta property="og:title" content={title} />
+          <meta property="og:image" content={ogImage.toString()} />
+          <meta name="twitter:title" content={title} />
+          <meta name="twitter:image" content={ogImage.toString()} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta property="og:image:alt" content="Talent on Superteam" />
+          <meta charSet="UTF-8" key="charset" />
+          <meta
+            name="viewport"
+            content="width=device-width,initial-scale=1"
+            key="viewport"
+          />
+        </Head>
+      }
+    >
+      {!talent?.id && (
+        <EmptySection message="Sorry! The profile you are looking for is not available." />
+      )}
+      {!!talent?.id && (
+        <div className="bg-white">
+          <div
+            className="h-[100px] w-full bg-cover bg-no-repeat md:h-[30vh]"
+            style={{
+              backgroundImage: `url(${ASSET_URL}/bg/profile-cover/${bgImages[randomIndex]})`,
+            }}
+          />
+          <div className="relative top-0 mx-auto max-w-[700px] rounded-[20px] bg-white px-4 py-7 md:-top-40 md:px-7">
+            <div className="flex justify-between">
               <div>
-                <FeedLoop
-                  feed={feedItems}
-                  ref={ref}
-                  isFetchingNextPage={isFetchingNextPage}
-                  isLoading={isLoading}
-                >
-                  <>
-                    <ExternalImage
-                      className="mx-auto mt-32 w-32"
-                      alt={'talent empty'}
-                      src={'/bg/talent-empty.svg'}
-                    />
-                    <Text
-                      w="200px"
-                      mx="auto"
-                      mt={5}
-                      color={'brand.slate.400'}
-                      fontWeight={500}
-                      textAlign={'center'}
-                    >
-                      {user?.id === talent?.id
-                        ? 'Add some proof of work to build your profile'
-                        : 'Nothing to see here yet ...'}
-                    </Text>
-                    {user?.id === talent?.id ? (
-                      <Button
-                        display="block"
-                        w="200px"
-                        mx="auto"
-                        mt={5}
-                        onClick={onOpenPow}
-                      >
-                        Add
-                      </Button>
-                    ) : (
-                      <Box mt={5} />
-                    )}
+                <EarnAvatar
+                  size={isMD ? '64px' : '52px'}
+                  id={talent?.id}
+                  avatar={talent?.photo}
+                />
 
-                    <Button
-                      display="block"
-                      w="200px"
-                      mx="auto"
-                      mt={2}
-                      color={'brand.slate.500'}
-                      fontWeight={500}
-                      bg="white"
-                      borderColor={'brand.slate.400'}
-                      onClick={() => router.push('/')}
-                      variant={'outline'}
-                    >
-                      Browse Bounties
-                    </Button>
-                  </>
-                </FeedLoop>
+                <p className="mt-6 text-lg font-semibold text-slate-900 md:text-xl">
+                  {talent?.firstName} {talent?.lastName}
+                </p>
+                <p className="text-base font-semibold text-slate-500">
+                  @
+                  {isMD
+                    ? talent?.username
+                    : talent?.username?.length && talent?.username.length > 24
+                      ? `${talent?.username.slice(0, 24)}...`
+                      : talent?.username}
+                </p>
               </div>
-            </Box>
-          </Box>
-        )}
-        <AddProject
-          isOpen={isOpenPow}
-          onClose={onClosePow}
-          upload
-          onNewPow={addNewPow}
-        />
-      </Default>
-    </>
+              <div className="flex w-auto gap-3 md:w-[160px] md:flex-col">
+                {user?.id === talent?.id
+                  ? renderButton(
+                      <SquarePen />,
+                      'Edit Profile',
+                      handleEditProfileClick,
+                    )
+                  : renderButton(<MdEmail />, 'Reach Out', () => {
+                      posthog.capture('reach out_talent profile');
+                      const email = encodeURIComponent(talent?.email || '');
+                      const subject = encodeURIComponent(
+                        'Saw Your ST Earn Profile!',
+                      );
+                      const bcc = encodeURIComponent(
+                        'support@superteamearn.com',
+                      );
+                      window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
+                    })}
+                {renderButton(<ShareIcon />, 'Share', onOpen, true)}
+              </div>
+            </div>
+            <ShareProfile
+              username={talent?.username as string}
+              isOpen={isOpen}
+              onClose={onClose}
+              id={talent?.id}
+            />
+            <Separator className="my-8" />
+            <div className="flex w-full flex-col gap-12 md:flex-row md:gap-[6.25rem]">
+              <div className="w-full md:w-1/2">
+                <p className="mb-4 font-medium text-slate-900">Details</p>
+                {workPreferenceText && (
+                  <p className="mt-3 text-slate-400">
+                    Looking for{' '}
+                    <span className="text-slate-500">{workPreferenceText}</span>
+                  </p>
+                )}
+                {talent?.currentEmployer && (
+                  <p className="mt-3 text-slate-400">
+                    Works at{' '}
+                    <span className="text-slate-500">
+                      {talent?.currentEmployer}
+                    </span>
+                  </p>
+                )}
+                {talent?.location && (
+                  <p className="mt-3 text-slate-400">
+                    Based in{' '}
+                    <span className="text-slate-500">{talent?.location}</span>
+                  </p>
+                )}
+              </div>
+              <div className="w-full md:w-1/2">
+                <p className="font-medium text-slate-900">Skills</p>
+                {Array.isArray(talent.skills) ? (
+                  talent.skills.map((skillItem: any, index: number) => {
+                    return skillItem ? (
+                      <div className="mt-4" key={index}>
+                        <p className="text-xs font-medium text-slate-400">
+                          {skillItem.skills.toUpperCase()}
+                        </p>
+                        <div className="flex items-center">
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {skillItem.subskills
+                              .slice(0, 3)
+                              .map((subskill: string, subIndex: number) => (
+                                <div
+                                  key={subIndex}
+                                  className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                                >
+                                  {subskill}
+                                </div>
+                              ))}
+                          </div>
+                          {skillItem.subskills.length > 3 && (
+                            <button
+                              aria-label="Toggle subskills"
+                              className={cn(
+                                'ml-1 mt-2 p-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+                                'rounded transition hover:bg-gray-100',
+                              )}
+                              onClick={() => handleToggleSubskills(index)}
+                            >
+                              {showSubskills[index] ? (
+                                <ChevronUp className="h-4 w-4" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4" />
+                              )}
+                            </button>
+                          )}
+                        </div>
+
+                        {showSubskills[index] && (
+                          <div
+                            className={cn(
+                              'mt-2 flex flex-wrap gap-2',
+                              'transition-all duration-300 ease-in-out',
+                            )}
+                          >
+                            {skillItem.subskills
+                              .slice(3)
+                              .map((subskill: string, subIndex: number) => (
+                                <div
+                                  key={subIndex}
+                                  className="rounded bg-[#EFF1F5] px-3 py-1 text-sm font-medium text-[#64739C]"
+                                >
+                                  {subskill}
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : null;
+                  })
+                ) : (
+                  <p>No skills available</p>
+                )}
+              </div>
+            </div>
+            <Separator className="my-8" />
+            <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-[6.25rem]">
+              <div className="flex w-full gap-6 md:w-1/2">
+                {socialLinks.map(({ Icon, link }, i) => {
+                  return <Icon link={link} className="h-5 w-5" key={i} />;
+                })}
+              </div>
+              <div className="flex w-full gap-6 md:w-1/2 md:gap-8">
+                <div className="flex flex-col">
+                  <p className="font-semibold">
+                    $
+                    {new Intl.NumberFormat('en-US', {
+                      maximumFractionDigits: 0,
+                    }).format(Math.round(stats?.totalWinnings || 0))}
+                  </p>
+                  <p className="font-medium text-slate-500">Earned</p>
+                </div>
+                <div className="flex flex-col">
+                  <p className="font-semibold">{stats?.participations}</p>
+                  <p className="font-medium text-slate-500">
+                    {stats.participations === 1 ? 'Submission' : 'Submissions'}
+                  </p>
+                </div>
+                <div className="flex flex-col">
+                  <p className="font-semibold">{stats?.wins}</p>
+                  <p className="font-medium text-slate-500">Won</p>
+                </div>
+              </div>
+            </div>
+            <div className="mt-12 md:mt-16">
+              <div className="md:items:center flex flex-col items-end justify-between md:flex-row">
+                <div className="flex items-center gap-3">
+                  <p className="whitespace-nowrap font-medium text-slate-900">
+                    Proof of Work
+                  </p>
+                  {user?.id === talent?.id && (
+                    <Button
+                      className={cn(
+                        'px-2 py-1 text-sm font-semibold text-slate-400',
+                        'hover:bg-gray-100',
+                      )}
+                      onClick={onOpenPow}
+                      size="sm"
+                      variant="ghost"
+                    >
+                      +ADD
+                    </Button>
+                  )}
+                </div>
+                <div className="mt-12 flex w-full justify-between gap-6 md:mt-0 md:justify-end">
+                  <p
+                    className={cn(
+                      'cursor-pointer font-medium',
+                      activeTab === 'activity'
+                        ? 'text-slate-900'
+                        : 'text-slate-400',
+                    )}
+                    onClick={() => setActiveTab('activity')}
+                  >
+                    Activity Feed
+                  </p>
+
+                  <p
+                    className={cn(
+                      'cursor-pointer font-medium',
+                      activeTab === 'projects'
+                        ? 'text-slate-900'
+                        : 'text-slate-400',
+                    )}
+                    onClick={() => setActiveTab('projects')}
+                  >
+                    Personal Projects
+                  </p>
+                </div>
+              </div>
+            </div>
+            <Separator className="my-4" />
+            <div>
+              <FeedLoop
+                feed={feedItems}
+                ref={ref}
+                isFetchingNextPage={isFetchingNextPage}
+                isLoading={isLoading}
+                type="profile"
+              >
+                <ExternalImage
+                  className="mx-auto mt-32 w-32"
+                  alt={'talent empty'}
+                  src={'/bg/talent-empty.svg'}
+                />
+                <p className="mx-auto mt-5 w-52 text-center font-medium text-slate-400">
+                  {user?.id === talent?.id
+                    ? 'Add some proof of work to build your profile'
+                    : 'Nothing to see here yet ...'}
+                </p>
+                {user?.id === talent?.id ? (
+                  <Button
+                    onClick={onOpenPow}
+                    className={cn('mt-5 w-[200px]', 'mx-auto block')}
+                  >
+                    Add
+                  </Button>
+                ) : (
+                  <div className="mt-5" />
+                )}
+
+                <Button
+                  onClick={() => router.push('/')}
+                  className="mx-auto mt-2 block w-[200px] border border-slate-400 bg-white font-medium text-slate-500 hover:bg-gray-100"
+                  variant="outline"
+                >
+                  Browse Bounties
+                </Button>
+              </FeedLoop>
+            </div>
+          </div>
+        </div>
+      )}
+      <AddProject
+        isOpen={isOpenPow}
+        onClose={onClosePow}
+        upload
+        onNewPow={addNewPow}
+      />
+    </Default>
   );
 }
 

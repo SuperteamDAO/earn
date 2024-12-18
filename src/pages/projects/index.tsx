@@ -1,10 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { listingsQuery, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { dayjs } from '@/utils/dayjs';
+
+import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
+import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { listingsQuery } from '@/features/listings/queries/listings';
 
 export default function ProjectsPage() {
   const deadline = useMemo(
@@ -27,6 +30,7 @@ export default function ProjectsPage() {
         description="Discover unique crypto projects seeking talent. Apply on Superteam Earn and take your chance to work and earn in the crypto space."
         canonical="https://earn.superteam.fun/projects/"
       />
+      <HomepagePop />
       <div className="w-full">
         <ListingTabs
           bounties={listings}

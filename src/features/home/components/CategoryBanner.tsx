@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { AuthWrapper } from '@/features/auth';
 import { useUser } from '@/store/user';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 const bannerPrefix = ASSET_URL + '/category_assets/banners/';
 
@@ -76,7 +77,7 @@ export function CategoryBanner({ category }: { category: CategoryTypes }) {
           </h2>
         )}
         {banner.description && (
-          <p className="max-w-[37rem] text-sm font-medium text-white md:text-lg">
+          <p className="mt-3 max-w-[37rem] text-sm font-medium text-white md:text-lg">
             {banner.description}
           </p>
         )}

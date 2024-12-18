@@ -1,13 +1,13 @@
 import type { NextApiResponse } from 'next';
 
-import {
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import { sponsorBaseSchema } from '@/features/sponsor';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+import { sponsorBaseSchema } from '@/features/sponsor/utils/sponsorFormSchema';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
@@ -24,7 +24,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug(`Request body: ${safeStringify(req.body)}`);
 
-    const validationResult = sponsorBaseSchema.safeParse(req.body);
+    const validationResult = sponsorBaseSchema.safeParse({
+      ...req.body,
+      twitter:
+        req.body.twitter !== undefined
+          ? extractSocialUsername('twitter', req.body.twitter) || ''
+          : undefined,
+    });
 
     if (!validationResult.success) {
       logger.warn(

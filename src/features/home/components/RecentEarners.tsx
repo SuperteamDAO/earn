@@ -1,14 +1,15 @@
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { MdArrowForward } from 'react-icons/md';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
-import { EarnAvatar } from '@/features/talent';
 import { type User } from '@/interface/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';
+
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 interface EarnerProps {
   name: string;
@@ -35,7 +36,7 @@ const Earner = ({
     : ASSET_URL + '/landingsponsor/icons/usdc.svg';
 
   return (
-    <NextLink href={`${getURL()}t/${username}`} className="block">
+    <Link href={`${getURL()}t/${username}`} className="block">
       <div className="my-4 flex w-full items-center">
         <div className="mr-3 flex items-center justify-center">
           <EarnAvatar id={id} avatar={avatar} />
@@ -60,7 +61,7 @@ const Earner = ({
           <span className="text-sm font-medium text-gray-400">{token}</span>
         </div>
       </div>
-    </NextLink>
+    </Link>
   );
 };
 
@@ -99,7 +100,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
         <span className="text-sm font-medium text-gray-400">
           RECENT EARNERS
         </span>
-        <NextLink
+        <Link
           href="/leaderboard"
           className="ph-no-capture flex items-center text-xs font-semibold text-brand-purple"
           onClick={() => {
@@ -108,7 +109,7 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
         >
           Leaderboard
           <MdArrowForward className="ml-1" />
-        </NextLink>
+        </Link>
       </div>
       <div className="flex flex-col">
         <div

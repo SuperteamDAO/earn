@@ -1,7 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import React from 'react';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 interface CompensationAmountType {
@@ -11,6 +11,7 @@ interface CompensationAmountType {
   maxRewardAsk?: number;
   token?: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const CompensationAmount = ({
@@ -20,6 +21,7 @@ export const CompensationAmount = ({
   maxRewardAsk,
   token,
   className,
+  style,
 }: CompensationAmountType) => {
   const Token = () => {
     return <span className="ml-1 text-slate-400">{token}</span>;
@@ -55,7 +57,9 @@ export const CompensationAmount = ({
 
   return (
     <>
-      <div className={cn('flex', className)}>{renderCompensation()}</div>
+      <div className={cn('flex', className)} style={style}>
+        {renderCompensation()}
+      </div>
       {compensationType === 'variable' && !token && (
         <div className="flex items-center gap-1">
           <span className={className}>Send Quote</span>

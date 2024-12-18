@@ -23,9 +23,9 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
-import { submissionCountQuery } from '../../queries';
+import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
 import { submissionSchema } from '../../utils/submissionFormSchema';
@@ -388,7 +388,7 @@ export const SubmissionDrawer = ({
                     'Submit'
                   )}
                 </Button>
-                <p className="mt-2 text-center text-sm text-brand-slate-400">
+                <p className="mt-2 text-center text-sm text-slate-400">
                   By submitting/applying to this listing, you agree to our{' '}
                   <button
                     onClick={() => setIsTOSModalOpen(true)}

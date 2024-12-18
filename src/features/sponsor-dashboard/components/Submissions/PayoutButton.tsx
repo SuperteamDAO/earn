@@ -1,4 +1,3 @@
-import { Button } from '@chakra-ui/react';
 import {
   createAssociatedTokenAccountInstruction,
   createTransferInstruction,
@@ -14,18 +13,22 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAtom } from 'jotai';
+import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
-import { type Listing, type Rewards } from '@/features/listings';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-import { selectedSubmissionAtom } from '../..';
+import { type Listing, type Rewards } from '@/features/listings/types';
+
+import { selectedSubmissionAtom } from '../../atoms';
 
 interface Props {
   bounty: Listing | null;
@@ -214,13 +217,11 @@ export const PayoutButton = ({ bounty }: Props) => {
       </div>
       {connected && (
         <Button
-          className="ph-no-capture"
-          w="fit-content"
-          minW={'120px'}
-          mr={4}
-          isDisabled={!bounty?.isWinnersAnnounced}
-          isLoading={isPaying}
-          loadingText={'Paying...'}
+          className={cn(
+            'ph-no-capture mr-4 min-w-[120px]',
+            'disabled:cursor-not-allowed',
+          )}
+          disabled={!bounty?.isWinnersAnnounced}
           onClick={async () => {
             if (!selectedSubmission?.user.publicKey) {
               console.error('Public key is null, cannot proceed with payment');
@@ -236,18 +237,24 @@ export const PayoutButton = ({ bounty }: Props) => {
               receiver: new PublicKey(selectedSubmission.user.publicKey),
             });
           }}
-          size="md"
-          variant="solid"
+          variant="default"
         >
-          {`Pay ${
-            formatNumberWithSuffix(
-              bounty?.rewards?.[
-                selectedSubmission?.winnerPosition as keyof Rewards
-              ]!,
-              2,
-              true,
-            ) || '0'
-          } ${bounty?.token}`}
+          {isPaying ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Paying...
+            </>
+          ) : (
+            `Pay ${
+              formatNumberWithSuffix(
+                bounty?.rewards?.[
+                  selectedSubmission?.winnerPosition as keyof Rewards
+                ]!,
+                2,
+                true,
+              ) || '0'
+            } ${bounty?.token}`
+          )}
         </Button>
       )}
     </>

@@ -11,7 +11,7 @@ export const TotalStats = ({
   isTotalLoading: boolean;
 }) => {
   return (
-    <div className="flex w-full flex-wrap items-center justify-between gap-2 rounded-md bg-[#F8FAFC] px-2 py-4">
+    <div className="flex w-full flex-wrap items-center justify-between gap-2 rounded-md bg-slate-50 px-2 py-4">
       <div className="flex">
         <ExternalImage
           className="mb-auto mr-2 h-[1.5625rem]"
@@ -31,7 +31,7 @@ export const TotalStats = ({
           </p>
         </div>
       </div>
-      <div className="hidden h-[80%] w-[0.0625rem] bg-[#CBD5E1] xl:block" />
+      <div className="hidden h-[80%] w-[0.0625rem] bg-slate-300 xl:block" />
       <div className="flex">
         <ExternalImage
           className="mb-auto mr-2 h-[25px]"

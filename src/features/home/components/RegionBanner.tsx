@@ -1,9 +1,9 @@
 import Image from 'next/image';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { type Superteams } from '@/constants/Superteam';
+import { type Superteam } from '@/constants/Superteam';
 
-export function RegionBanner({ st }: { st: (typeof Superteams)[0] }) {
+export function RegionBanner({ st }: { st: Superteam }) {
   return (
     <div className="relative flex h-72 w-full flex-col items-center">
       <Image

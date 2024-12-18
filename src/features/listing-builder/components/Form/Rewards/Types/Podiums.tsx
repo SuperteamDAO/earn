@@ -10,18 +10,19 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { cn } from '@/utils/cn';
+import { getRankLabels } from '@/utils/rank';
+
 import {
   BONUS_REWARD_POSITION,
   MAX_BONUS_SPOTS,
   MAX_PODIUMS,
   MAX_REWARD,
-} from '@/constants';
-import { calculateTotalRewardsForPodium } from '@/features/listing-builder';
-import { cn } from '@/utils';
-import { getRankLabels } from '@/utils/rank';
+} from '@/features/listing-builder/constants';
+import { calculateTotalRewardsForPodium } from '@/features/listing-builder/utils/rewards';
 
 import { useListingForm } from '../../../../hooks';
-import { TokenNumberInput } from '../Tokens';
+import { TokenNumberInput } from '../Tokens/TokenNumberInput';
 
 export const Podiums = () => {
   const form = useListingForm();
@@ -184,7 +185,7 @@ export const Podiums = () => {
                             variant="ghost"
                             size="icon"
                             onClick={() => removeReward(position)}
-                            className="absolute right-0 top-0 hidden text-muted-foreground hover:text-destructive group-hover:flex"
+                            className="absolute right-0 top-0 hidden text-muted-foreground group-hover:flex hover:text-destructive"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -263,7 +264,7 @@ export const Podiums = () => {
                                 variant="ghost"
                                 size="icon"
                                 onClick={removeBonusReward}
-                                className="absolute right-0 top-0 hidden text-muted-foreground hover:text-destructive group-hover:flex"
+                                className="absolute right-0 top-0 hidden text-muted-foreground group-hover:flex hover:text-destructive"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>

@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { toggleVariants } from '@/components/ui/toggle';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import type { FormatAction } from '../types';
 import { getShortcutKey } from '../utils';

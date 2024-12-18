@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { getURL } from '@/utils';
+import { getURL } from '@/utils/validUrl';
 
 interface SlugCheckParams {
   slug: string;

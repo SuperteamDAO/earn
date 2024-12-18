@@ -1,32 +1,29 @@
-import '/node_modules/flag-icons/css/flag-icons.min.css';
-
-import {
-  Avatar,
-  Badge,
-  Center,
-  Flex,
-  Link,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  VStack,
-} from '@chakra-ui/react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
+
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type RowType, type SKILL } from '../types';
 import { getSubskills, skillCategories } from '../utils';
+
+import '/node_modules/flag-icons/css/flag-icons.min.css';
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -48,113 +45,50 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
   const userSkills = getSubskills(user?.skills as any, skillCategories[skill]);
 
   return (
-    <TableContainer
-      className="hide-scrollbar"
-      overflowX="auto"
-      w="full"
-      h={rankings.length === 0 ? '35rem' : 'auto'}
-      opacity={loading ? 0.3 : 1}
-      border="1px solid #E2E8F0"
-      borderRadius="md"
+    <div
+      className={cn(
+        'hide-scrollbar w-full overflow-x-auto rounded-md border border-slate-200',
+        rankings.length === 0 ? 'h-[35rem]' : 'h-auto',
+        loading ? 'opacity-30' : 'opacity-100',
+      )}
     >
-      <Table style={{ borderCollapse: 'collapse' }}>
-        <Thead>
-          <Tr textTransform={'none'} bg="#F8FAFC">
-            <Th
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'center'}
-              textTransform={'none'}
-            >
+      <Table>
+        <TableHeader className="bg-slate-50">
+          <TableRow className="normal-case">
+            <TableHead className="px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
               Rank
-            </Th>
-            <Th
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'start'}
-              textTransform={'none'}
-            >
+            </TableHead>
+            <TableHead className="px-1 text-left text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
               Name
-            </Th>
-            <Th
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'center'}
-              textTransform={'none'}
-            >
-              <Text display={{ base: 'none', md: 'block' }}>
+            </TableHead>
+            <TableHead className="px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
+              <p className="hidden whitespace-nowrap md:block">
                 Dollars Earned
-              </Text>
-              <Text display={{ base: 'block', md: 'none' }}>$ Earned</Text>
-            </Th>
-            <Th
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'center'}
-              textTransform={'none'}
-            >
+              </p>
+              <p className="block md:hidden">$ Earned</p>
+            </TableHead>
+            <TableHead className="whitespace-nowrap px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
               Win Rate
-            </Th>
-            <Th
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'center'}
-              textTransform={'none'}
-            >
+            </TableHead>
+            <TableHead className="px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
               Wins
-            </Th>
-            <Th
-              overflowX="hidden"
-              maxW={{ base: '3.5rem', md: 'none' }}
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'center'}
-              textTransform={'none'}
-              textOverflow="ellipsis"
-            >
+            </TableHead>
+            <TableHead className="max-w-[3.5rem] overflow-x-hidden truncate px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:max-w-none md:px-2">
               Submissions
-            </Th>
-            <Th
-              display={{ base: 'none', md: skill !== 'ALL' ? 'none' : 'block' }}
-              px={{ base: 1, md: 2 }}
-              color="brand.slate.500"
-              fontSize={'xs'}
-              fontWeight={500}
-              letterSpacing={0.5}
-              textAlign={'start'}
-              textTransform={'none'}
+            </TableHead>
+            <TableHead
+              className={cn(
+                'px-1 text-left text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2',
+                skill !== 'ALL' ? 'hidden' : 'hidden md:table-cell',
+              )}
             >
               Skills
-            </Th>
-          </Tr>
-        </Thead>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
         {rankings.length === 0 && (
-          <VStack
-            pos="absolute"
-            top={'10rem'}
-            left="50%"
-            mx="auto"
-            transform="translateX(-50%)"
-          >
-            <Center w={20} h={20} bg="brand.slate.100" rounded="full">
+          <div className="absolute left-1/2 top-40 flex -translate-x-1/2 flex-col items-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-slate-100">
               <svg
                 width="24"
                 height="24"
@@ -174,212 +108,129 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                   </clipPath>
                 </defs>
               </svg>
-            </Center>
-            <VStack fontSize="xs" fontWeight={500}>
+            </div>
+            <div className="flex flex-col text-xs font-medium">
               <p>The Leaderboard is empty for your filters</p>
-              <Text color="brand.slate.500">
+              <p className="text-slate-500">
                 Please change your filters or try again later
-              </Text>
-            </VStack>
-          </VStack>
+              </p>
+            </div>
+          </div>
         )}
         {rankings.length > 0 && (
-          <Tbody color="brand.slate.500" fontSize="xs" fontWeight={500}>
+          <TableBody className="text-xs font-medium text-slate-500">
             {rankings.map((row) => (
-              <Tr
+              <TableRow
                 key={row.username}
-                h="full"
-                bg={row.username === user?.username ? '#F5F3FF80' : ''}
+                className={cn(
+                  'h-full',
+                  row.username === user?.username ? 'bg-[#F5F3FF80]' : '',
+                )}
               >
-                <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
+                <TableCell className="h-full px-1 text-center md:px-2">
                   #{row.rank}
-                </Td>
-                <Td h="full" px={{ base: 1, md: 2 }}>
+                </TableCell>
+                <TableCell className="h-full px-1 md:px-2">
                   <Link
-                    className="ph-no-capture"
-                    as={NextLink}
-                    alignItems="center"
-                    gap={2}
-                    display="flex"
                     href={`/t/${row.username}`}
+                    target="_blank"
+                    className="ph-no-capture flex items-center gap-2"
                     onClick={() => {
                       posthog.capture('profile click_leaderboard', {
                         clicked_username: row.username,
                       });
                     }}
-                    target="_blank"
                   >
-                    <Avatar
-                      w={{ base: 5, md: 8 }}
-                      h={{ base: 5, md: 8 }}
-                      src={row.pfp ?? undefined}
-                    />
-                    <VStack
-                      align="start"
-                      justify={{ base: 'center', md: 'start' }}
-                      gap={1}
-                      lineHeight={{ base: 'normal', md: 1.15 }}
-                    >
-                      <Text
-                        display={{ base: 'block', md: 'none' }}
-                        overflowX="hidden"
-                        maxW={'7rem'}
-                        color="black"
-                        _groupHover={{
-                          textDecoration: 'underline',
-                        }}
-                        textOverflow={'ellipsis'}
-                      >
+                    <EarnAvatar avatar={row.pfp!} id={row.name} />
+                    <div className="flex flex-col items-start justify-center gap-1 md:justify-start">
+                      <p className="block max-w-[7rem] overflow-x-hidden text-ellipsis whitespace-nowrap text-black group-hover:underline md:hidden">
                         {row.name.split(' ')[0] +
                           ' ' +
                           row.name.split(' ')[1]?.slice(0, 1).toUpperCase()}
-                      </Text>
-                      <Flex align={'center'} gap={2}>
-                        <Text
-                          display={{ base: 'none', md: 'block' }}
-                          overflowX="hidden"
-                          maxW={'7rem'}
-                          color="black"
-                          textOverflow={'ellipsis'}
-                        >
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="hidden overflow-x-hidden text-ellipsis whitespace-nowrap text-black md:block">
                           {row.name}
-                        </Text>
+                        </p>
                         {row.location && (
                           <UserFlag size="12px" location={row.location} />
                         )}
-                      </Flex>
-                      <Text
-                        display={{ base: 'none', md: 'block' }}
-                        overflowX="hidden"
-                        maxW={'7rem'}
-                        textOverflow={'ellipsis'}
-                      >
+                      </div>
+                      <p className="hidden max-w-[7rem] overflow-x-hidden text-ellipsis md:block">
                         @{row.username}
-                      </Text>
-                    </VStack>
+                      </p>
+                    </div>
                   </Link>
-                </Td>
-                <Td h="full" px={{ base: 1, md: 2 }}>
-                  <Flex justify="center" gap={2}>
-                    <Text color="black" textAlign={'center'}>
+                </TableCell>
+                <TableCell className="h-full px-1 md:px-2">
+                  <div className="flex justify-center gap-2">
+                    <p className="text-center text-black">
                       {formatter(row.dollarsEarned)}
-                    </Text>
-                    <Text
-                      display={{ base: 'none', md: 'block' }}
-                      textAlign={'center'}
-                    >
-                      USD
-                    </Text>
-                  </Flex>
-                </Td>
-                <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
+                    </p>
+                    <p className="hidden text-center md:block">USD</p>
+                  </div>
+                </TableCell>
+                <TableCell className="h-full px-1 text-center md:px-2">
                   {row.winRate}%
-                </Td>
-                <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
+                </TableCell>
+                <TableCell className="h-full px-1 text-center md:px-2">
                   {row.wins}
-                </Td>
-                <Td h="full" px={{ base: 1, md: 2 }} textAlign={'center'}>
+                </TableCell>
+                <TableCell className="h-full px-1 text-center md:px-2">
                   {row.submissions}
-                </Td>
-                <Td
-                  display={{
-                    base: 'none',
-                    md: skill !== 'ALL' ? 'none' : 'table-cell',
-                  }}
-                  h="full"
-                  px={{ base: 1, md: 2 }}
+                </TableCell>
+                <TableCell
+                  className={cn(
+                    'h-full px-1 md:px-2',
+                    skill !== 'ALL' ? 'hidden' : 'hidden md:table-cell',
+                  )}
                 >
-                  <Flex gap={2} h="full" textAlign={'center'}>
+                  <div className="flex h-full gap-2 text-center">
                     {row.skills.slice(0, 2).map((s) => (
-                      <Badge
+                      <span
                         key={s}
-                        px={2}
-                        color="#64739C"
-                        fontSize={'x-small'}
-                        fontWeight={500}
-                        textTransform={'none'}
-                        bg="#EFF1F5"
-                        rounded="full"
+                        className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]"
                       >
                         {s}
-                      </Badge>
+                      </span>
                     ))}
                     {row.skills.length > 2 && (
-                      <Popover trigger="hover">
+                      <Popover>
                         <PopoverTrigger>
-                          <Badge
-                            px={2}
-                            color="#64739C"
-                            fontSize={'x-small'}
-                            fontWeight={500}
-                            textTransform={'none'}
-                            bg="#EFF1F5"
-                            rounded="full"
-                          >
+                          <span className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]">
                             +{row.skills.length - 2}
-                          </Badge>
+                          </span>
                         </PopoverTrigger>
                         <PopoverContent
-                          w="fit-content"
-                          maxW="10rem"
-                          px={4}
-                          py={2}
-                          shadow="lg"
+                          className="w-fit max-w-40 px-4 py-2 shadow-lg"
+                          align="center"
                         >
-                          <Flex
-                            wrap={'wrap'}
-                            gap={2}
-                            w="fit-content"
-                            h="full"
-                            textAlign={'center'}
-                          >
+                          <div className="flex h-full w-fit flex-wrap gap-2 text-center">
                             {row.skills.slice(2).map((s) => (
-                              <Badge
+                              <span
                                 key={s}
-                                px={2}
-                                color="#64739C"
-                                fontSize={'x-small'}
-                                fontWeight={500}
-                                textTransform={'none'}
-                                bg="#EFF1F5"
-                                rounded="full"
+                                className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]"
                               >
                                 {s}
-                              </Badge>
+                              </span>
                             ))}
-                          </Flex>
+                          </div>
                         </PopoverContent>
                       </Popover>
                     )}
-                  </Flex>
-                </Td>
-              </Tr>
+                  </div>
+                </TableCell>
+              </TableRow>
             ))}
             {user && !rankings.find((r) => r.username === user?.username) && (
-              <Tr w="full" bg="#F5F3FF80">
-                <Td
-                  pos="sticky"
-                  zIndex={100}
-                  bottom={0}
-                  px={{ base: 1, md: 2 }}
-                  textAlign={'center'}
-                  borderBottomWidth={'0px'}
-                >
+              <TableRow className="w-full bg-[#F5F3FF80]">
+                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 text-center md:px-2">
                   {userRank ? '#' + userRank.rank : '-'}
-                </Td>
-                <Td
-                  pos="sticky"
-                  zIndex={100}
-                  bottom={0}
-                  px={{ base: 1, md: 2 }}
-                  borderBottomWidth={'0px'}
-                >
+                </TableCell>
+
+                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 md:px-2">
                   <Link
-                    className="ph-no-capture"
-                    as={NextLink}
-                    alignItems="center"
-                    gap={2}
-                    display="flex"
+                    className="ph-no-capture flex items-center gap-2"
                     href={`/t/${user.username}`}
                     onClick={() => {
                       posthog.capture('profile click_leaderboard', {
@@ -388,183 +239,95 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                     }}
                     target="_blank"
                   >
-                    <Avatar
-                      w={{ base: 5, md: 8 }}
-                      h={{ base: 5, md: 8 }}
-                      src={user.photo ?? undefined}
-                    />
-                    <VStack
-                      align="start"
-                      justify={{ base: 'center', md: 'start' }}
-                      gap={1}
-                      lineHeight={{ base: 1.5, md: 1.15 }}
-                    >
-                      <Text
-                        display={{ base: 'block', md: 'none' }}
-                        overflowX="hidden"
-                        maxW={'7rem'}
-                        color="black"
-                        _groupHover={{
-                          textDecoration: 'underline',
-                        }}
-                        textOverflow={'ellipsis'}
-                      >
+                    <EarnAvatar avatar={user.photo} id={user.firstName} />
+                    <div className="flex flex-col items-start justify-center gap-1 md:justify-start">
+                      <p className="block max-w-[7rem] overflow-x-hidden text-ellipsis whitespace-nowrap text-black group-hover:underline md:hidden">
                         {user.firstName +
                           ' ' +
                           user.lastName?.slice(0, 1).toUpperCase()}
-                      </Text>
-                      <Flex align={'center'} gap={2}>
-                        <Text
-                          display={{ base: 'none', md: 'block' }}
-                          overflowX="hidden"
-                          maxW={'7rem'}
-                          color="black"
-                          textOverflow={'ellipsis'}
-                        >
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="line-clamp-1 hidden max-w-[7rem] overflow-x-hidden text-ellipsis whitespace-nowrap text-black md:block">
                           {user.firstName + ' ' + user.lastName}
-                        </Text>
+                        </p>
                         {user.location && (
                           <UserFlag size="12px" location={user.location} />
                         )}
-                      </Flex>
-                      <Text
-                        display={{ base: 'none', md: 'block' }}
-                        overflowX="hidden"
-                        maxW={'7rem'}
-                        textOverflow={'ellipsis'}
-                      >
+                      </div>
+                      <p className="hidden max-w-[7rem] overflow-x-hidden text-ellipsis md:block">
                         @{user.username}
-                      </Text>
-                    </VStack>
+                      </p>
+                    </div>
                   </Link>
-                </Td>
-                <Td
-                  pos="sticky"
-                  zIndex={100}
-                  bottom={0}
-                  px={{ base: 1, md: 2 }}
-                  borderBottomWidth={'0px'}
-                >
-                  <Flex justify="center" gap={2}>
-                    <Text color="black" textAlign={'center'}>
+                </TableCell>
+
+                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 md:px-2">
+                  <div className="flex justify-center gap-2">
+                    <p className="text-center text-black">
                       {formatter(userRank?.dollarsEarned ?? 0)}
-                    </Text>
-                    <Text
-                      display={{ base: 'none', md: 'block' }}
-                      textAlign={'center'}
-                    >
-                      USD
-                    </Text>
-                  </Flex>
-                </Td>
-                <Td
-                  pos="sticky"
-                  zIndex={100}
-                  bottom={0}
-                  px={{ base: 1, md: 2 }}
-                  textAlign={'center'}
-                  borderBottomWidth={'0px'}
-                >
+                    </p>
+                    <p className="hidden text-center md:block">USD</p>
+                  </div>
+                </TableCell>
+
+                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 text-center md:px-2">
                   {userRank?.winRate ? userRank?.winRate + '%' : '-'}
-                </Td>
-                <Td
-                  pos="sticky"
-                  zIndex={100}
-                  bottom={0}
-                  px={{ base: 1, md: 2 }}
-                  textAlign={'center'}
-                  borderBottomWidth={'0px'}
-                >
+                </TableCell>
+
+                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 text-center md:px-2">
                   {userRank?.wins ?? '-'}
-                </Td>
-                <Td
-                  pos="sticky"
-                  zIndex={100}
-                  bottom={0}
-                  px={{ base: 1, md: 2 }}
-                  textAlign={'center'}
-                  borderBottomWidth={'0px'}
-                >
+                </TableCell>
+
+                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 text-center md:px-2">
                   {userRank?.submissions ?? '-'}
-                </Td>
-                <Td
-                  bottom={0}
-                  display={{
-                    base: 'none',
-                    md: skill !== 'ALL' ? 'none' : 'table-cell',
-                  }}
-                  px={{ base: 1, md: 2 }}
-                  borderBottomWidth={'0px'}
+                </TableCell>
+
+                <TableCell
+                  className={cn(
+                    'bottom-0 border-b-0 px-1 md:px-2',
+                    skill !== 'ALL' ? 'hidden' : 'hidden md:table-cell',
+                  )}
                 >
-                  <Flex gap={2} h="full" textAlign={'center'}>
+                  <div className="flex h-full gap-2 text-center">
                     {userSkills.slice(0, 2).map((s) => (
-                      <Badge
+                      <span
                         key={s}
-                        px={2}
-                        color="#64739C"
-                        fontSize={'x-small'}
-                        fontWeight={500}
-                        textTransform={'none'}
-                        bg="#EFF1F5"
-                        rounded="full"
+                        className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]"
                       >
                         {s}
-                      </Badge>
+                      </span>
                     ))}
                     {userSkills.length > 2 && (
-                      <Popover trigger="hover">
+                      <Popover>
                         <PopoverTrigger>
-                          <Badge
-                            px={2}
-                            color="#64739C"
-                            fontSize={'x-small'}
-                            fontWeight={500}
-                            textTransform={'none'}
-                            bg="#EFF1F5"
-                            rounded="full"
-                          >
+                          <span className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]">
                             +{userSkills.length - 2}
-                          </Badge>
+                          </span>
                         </PopoverTrigger>
                         <PopoverContent
-                          w="fit-content"
-                          maxW="10rem"
-                          px={4}
-                          py={2}
-                          shadow="lg"
+                          className="w-fit max-w-40 px-4 py-2 shadow-lg"
+                          align="center"
                         >
-                          <Flex
-                            wrap={'wrap'}
-                            gap={2}
-                            w="fit-content"
-                            h="full"
-                            textAlign={'center'}
-                          >
+                          <div className="flex h-full w-fit flex-wrap gap-2 text-center">
                             {userSkills.slice(2).map((s) => (
-                              <Badge
+                              <span
                                 key={s}
-                                px={2}
-                                color="#64739C"
-                                fontSize={'x-small'}
-                                fontWeight={500}
-                                textTransform={'none'}
-                                bg="#EFF1F5"
-                                rounded="full"
+                                className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]"
                               >
                                 {s}
-                              </Badge>
+                              </span>
                             ))}
-                          </Flex>
+                          </div>
                         </PopoverContent>
                       </Popover>
                     )}
-                  </Flex>
-                </Td>
-              </Tr>
+                  </div>
+                </TableCell>
+              </TableRow>
             )}
-          </Tbody>
+          </TableBody>
         )}
       </Table>
-    </TableContainer>
+    </div>
   );
 }

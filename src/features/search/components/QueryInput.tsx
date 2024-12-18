@@ -1,12 +1,6 @@
-import { SearchIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-  Spinner,
-} from '@chakra-ui/react';
+import { Loader2, Search } from 'lucide-react';
+
+import { Input } from '@/components/ui/input';
 
 interface Props {
   loading: boolean;
@@ -16,27 +10,20 @@ interface Props {
 
 export function QueryInput({ loading, query, setQuery }: Props) {
   return (
-    <Box className="ph-no-capture" w="full" maxW="xl" px={{ base: 1, sm: 4 }}>
-      <InputGroup border="none">
-        <InputLeftElement color="brand.slate.400" pointerEvents="none">
-          <SearchIcon />
-        </InputLeftElement>
+    <div className="ph-no-capture w-full max-w-xl px-1 sm:px-4">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <Input
-          className="ph-no-capture"
-          color="brand.slate.600"
-          fontSize={{ base: 'sm', md: 'md' }}
-          fontWeight={500}
-          borderColor="brand.slate.300"
+          className="ph-no-capture rounded-md border-slate-300 pl-9 pr-10 text-sm font-medium text-slate-600 md:text-base"
           autoFocus
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for Superteam Earn Listings"
           value={query}
-          variant="outline"
         />
-        <InputRightElement>
-          {loading && <Spinner size={'sm'} />}
-        </InputRightElement>
-      </InputGroup>
-    </Box>
+        {loading && (
+          <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-slate-400" />
+        )}
+      </div>
+    </div>
   );
 }

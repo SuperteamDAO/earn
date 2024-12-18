@@ -3,10 +3,11 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { LuCheck } from 'react-icons/lu';
 
-import { AuthWrapper } from '@/features/auth';
-import { userStatsQuery } from '@/features/home';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { userStatsQuery } from '@/features/home/queries/user-stats';
 
 const StepIcon = ({ step }: { step: number }) => {
   if (step === 1) {
@@ -96,7 +97,7 @@ const Step = ({
         'h-[2.375rem] w-[2.375rem] overflow-visible rounded-full',
         isComplete
           ? 'bg-brand-purple text-white'
-          : 'bg-[#F4F4FE] text-[#94A3B8]',
+          : 'bg-[#F4F4FE] text-slate-400',
       )}
     >
       {isComplete ? (
@@ -108,7 +109,7 @@ const Step = ({
         <div
           className={cn(
             'absolute top-[110%] h-[90%] w-[0.12rem]',
-            isComplete ? 'bg-purple-700' : 'bg-slate-400',
+            isComplete ? 'bg-brand-purple' : 'bg-slate-400',
             'opacity-60',
           )}
         />

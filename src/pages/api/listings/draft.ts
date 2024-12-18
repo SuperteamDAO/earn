@@ -2,19 +2,16 @@ import { type Prisma } from '@prisma/client';
 import { franc } from 'franc';
 import { type NextApiResponse } from 'next';
 
-import {
-  checkListingSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import {
-  fetchSlugCheck,
-  type ListingFormData,
-} from '@/features/listing-builder';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { fetchSlugCheck } from '@/features/listing-builder/queries/slug-check';
+import { type ListingFormData } from '@/features/listing-builder/types';
 
 import { generateUniqueSlug } from './check-slug';
 

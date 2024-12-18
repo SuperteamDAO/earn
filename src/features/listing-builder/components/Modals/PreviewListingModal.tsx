@@ -12,11 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 
 import { previewAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
@@ -55,28 +51,25 @@ export const PreviewListingModal = () => {
               className="justify-self-center"
             >
               <TabsList>
-                <TabsTrigger value="desktop">Desktop</TabsTrigger>
-                <TabsTrigger value="mobile">Mobile</TabsTrigger>
+                <TabsTrigger className="text-base" value="desktop">
+                  Desktop
+                </TabsTrigger>
+                <TabsTrigger className="text-base" value="mobile">
+                  Mobile
+                </TabsTrigger>
               </TabsList>
             </Tabs>
 
             <div className="flex items-center justify-end gap-4">
               <div className="flex items-center gap-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-slate-300 hover:text-slate-400"
-                    >
-                      <Info className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    This link is for preview purposes only and is accessible
-                    only to those who have it. It is not your final link for
-                    sharing with your community
-                  </TooltipContent>
+                <Tooltip content="This link is for preview purposes only and is accessible only to those who have it. It is not your final link for sharing with your community">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-slate-300 hover:text-slate-400"
+                  >
+                    <Info className="h-4 w-4" />
+                  </Button>
                 </Tooltip>
 
                 <Button

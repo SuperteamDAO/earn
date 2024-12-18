@@ -8,7 +8,7 @@ import { IoSearchOutline } from 'react-icons/io5';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
@@ -31,10 +31,16 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const isHomepage = router.pathname === '/';
-  const maxWidth = isDashboardRoute ? 'max-w-full pr-2' : 'max-w-7xl';
+  const maxWidth = isDashboardRoute ? 'max-w-full' : 'max-w-7xl';
+  const padding = isDashboardRoute ? 'pr-8 pl-6' : 'px-2 lg:px-6';
 
   return (
-    <div className="hidden border-b border-slate-200 bg-white px-2 text-slate-500 lg:flex lg:px-6">
+    <div
+      className={cn(
+        'hidden h-14 border-b border-slate-200 bg-white text-slate-500 lg:flex',
+        padding,
+      )}
+    >
       <div className={cn('mx-auto flex w-full justify-between', maxWidth)}>
         <div className="flex items-center gap-3 lg:gap-6">
           <LogoContextMenu>
@@ -115,7 +121,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 >
                   <Link href="/dashboard/listings">
                     Sponsor Dashboard
-                    <div className="block h-1.5 w-1.5 rounded-full bg-[#38BDF8]" />
+                    <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                   </Link>
                 </Button>
               )}
@@ -136,7 +142,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   }}
                 >
                   Become a Sponsor
-                  <div className="block h-1.5 w-1.5 rounded-full bg-[#38BDF8]" />
+                  <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                 </Button>
                 <Button
                   variant="ghost"

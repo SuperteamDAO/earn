@@ -14,23 +14,16 @@ import { MdLock } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import {
-  getListingIcon,
-  type Listing,
-  submissionCountQuery,
-} from '@/features/listings';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { PulseIcon } from '@/svg/pulse-icon';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
+import { submissionCountQuery } from '../../queries/submission-count';
+import { type Listing } from '../../types';
+import { getListingIcon } from '../../utils/getListingIcon';
 import { ListingTabLink } from './ListingTabLink';
 import { RegionLabel } from './RegionLabel';
 import { ListingHeaderSeparator } from './Separator';
@@ -85,7 +78,9 @@ export function ListingHeader({
     statusText = isMD ? 'Submissions Paused' : 'Paused';
     statusTextColor = '[#F59E0B]';
   } else if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
-    statusIcon = <LuClock className={cn(statusIconStyles, 'text-[#F3E8FF]')} />;
+    statusIcon = (
+      <LuClock className={cn(statusIconStyles, 'text-purple-100')} />
+    );
     statusText = 'Opens Soon';
     statusTextColor = '[#8B5CF6]';
   } else if (status === 'OPEN' && isWinnersAnnounced) {
@@ -108,7 +103,7 @@ export function ListingHeader({
 
   const ListingTitle = () => {
     return (
-      <h1 className="text-xl font-bold tracking-[-0.5px] text-brand-slate-700">
+      <h1 className="text-xl font-bold tracking-[-0.5px] text-slate-700">
         {title}
       </h1>
     );
@@ -128,9 +123,9 @@ export function ListingHeader({
     return (
       !!commentCount && (
         <Link className="hidden md:block" href="#comments">
-          <div className="ml-4 flex gap-2">
+          <div className="ml-4 flex items-center gap-2">
             <LuMessageSquare className="h-4 w-4 fill-slate-600 text-slate-500" />
-            <p className="text-sm">{commentCount}</p>
+            <p className="text-sm text-slate-400">{commentCount}</p>
           </div>
         </Link>
       )
@@ -142,9 +137,9 @@ export function ListingHeader({
     return (
       <>
         <ListingHeaderSeparator />
-        <div className="flex gap-1">
+        <div className="flex items-center gap-1">
           <MdLock className="h-4 w-4 text-slate-500" />
-          <p className="text-slate-400">Private</p>
+          <p className="text-sm text-slate-400">Private</p>
         </div>
       </>
     );
@@ -154,7 +149,7 @@ export function ListingHeader({
     return (
       <div className="flex flex-wrap items-center gap-1 md:gap-3">
         <div className="flex items-center gap-1">
-          <p className="whitespace-nowrap text-sm font-medium text-[#94A3B8]">
+          <p className="whitespace-nowrap text-sm font-medium text-slate-400">
             by {sponsor?.name}
           </p>
           {!!sponsor?.isVerified && <VerifiedBadge />}
@@ -170,23 +165,25 @@ export function ListingHeader({
           </div>
         ) : (
           <div className="flex">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <div className="flex items-center">
-                    <LocalImage alt={type!} src={getListingIcon(type!)} />
-                    <p className="text-xs font-medium text-gray-400 md:text-sm">
-                      {isProject ? 'Project' : 'Bounty'}
-                    </p>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-80">
-                  {isProject
-                    ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
-                    : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip
+              content={
+                isProject
+                  ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
+                  : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
+              }
+              contentProps={{ className: 'max-w-80' }}
+            >
+              <div className="flex items-center">
+                <LocalImage
+                  alt={type!}
+                  className="-ml-0.5"
+                  src={getListingIcon(type!)}
+                />
+                <p className="text-xs font-medium text-gray-400 md:text-sm">
+                  {isProject ? 'Project' : 'Bounty'}
+                </p>
+              </div>
+            </Tooltip>
           </div>
         )}
         <ListingHeaderSeparator />

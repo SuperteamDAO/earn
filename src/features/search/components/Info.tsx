@@ -1,4 +1,4 @@
-import { Box, Spinner, Text } from '@chakra-ui/react';
+import { Loader2 } from 'lucide-react';
 
 interface Props {
   count: number;
@@ -8,20 +8,20 @@ interface Props {
 
 export function Info({ count, query, loading }: Props) {
   return (
-    <Box px={{ base: 1, sm: 4 }} py={4}>
+    <div className="px-1 py-4 sm:px-4">
       <div className="flex gap-2">
-        <Text fontSize="sm" fontWeight={600}>
+        <p className="text-sm font-semibold text-slate-700">
           {query.length === 0
             ? 'Enter a keyword to find what you need.'
             : `Found ${count} search results`}
-        </Text>
-        {loading && <Spinner size={'sm'} />}
+        </p>
+        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
       </div>
       {query.length > 0 && (
-        <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
+        <p className="text-sm font-medium text-slate-500">
           for {`"${query.trim()}"`}
-        </Text>
+        </p>
       )}
-    </Box>
+    </div>
   );
 }

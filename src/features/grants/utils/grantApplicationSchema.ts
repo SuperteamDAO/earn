@@ -1,7 +1,11 @@
 import { z } from 'zod';
 
-import { isValidTwitterInput, isValidTwitterUsername } from '@/features/talent';
-import { validateSolanaAddress } from '@/utils';
+import { validateSolanaAddress } from '@/utils/validateSolAddress';
+
+import {
+  isValidTwitterInput,
+  isValidTwitterUsername,
+} from '@/features/social/utils/regex';
 
 export const grantApplicationSchema = (
   minReward: number,

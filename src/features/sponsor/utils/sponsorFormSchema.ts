@@ -1,13 +1,18 @@
 import { z } from 'zod';
 
-import { URL_REGEX } from '@/constants';
+import { URL_REGEX } from '@/constants/URL_REGEX';
+
+import { twitterUsernameSchema } from '@/features/social/utils/schema';
 
 export const sponsorBaseSchema = z.object({
   name: z.string().min(1, 'Company name is required'),
   slug: z
     .string()
     .min(1, 'Company username is required')
-    .regex(/^[a-zA-Z0-9-]+$/, 'Only letters, numbers, and hyphens are allowed')
+    .regex(
+      /^[a-zA-Z0-9-]+$/,
+      `Slug can only contain lowercase letters, numbers, '_', and '-'`,
+    )
     .toLowerCase(),
   bio: z
     .string()
@@ -16,9 +21,10 @@ export const sponsorBaseSchema = z.object({
   logo: z.string().min(1, 'Company logo is required'),
   industry: z.string().min(1, 'At least one industry must be selected'),
   url: z
-    .union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')])
-    .optional(),
-  twitter: z.string().min(1, 'Twitter handle is required'),
+    .string()
+    .min(1, 'Company URL is required')
+    .regex(URL_REGEX, 'Invalid URL'),
+  twitter: twitterUsernameSchema,
   entityName: z.string().min(1, 'Entity name is required'),
 });
 

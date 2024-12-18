@@ -1,20 +1,15 @@
 import { ArrowRight, Info } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { type User } from '@/interface/user';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '../types';
@@ -26,6 +21,7 @@ interface TabProps {
   content: JSX.Element;
   posthog: string;
 }
+
 interface ListingTabsProps {
   isListingsLoading: boolean;
   bounties: Listing[] | undefined;
@@ -56,6 +52,31 @@ const EmptySection = dynamic(
   () =>
     import('@/components/shared/EmptySection').then((mod) => mod.EmptySection),
   { ssr: false },
+);
+
+const ListingTabTrigger = ({
+  isActive,
+  onClick,
+  children,
+}: {
+  isActive: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) => (
+  <button
+    onClick={onClick}
+    className={cn(
+      'group relative inline-flex items-center justify-center whitespace-nowrap rounded-md px-1 py-1 text-sm font-medium ring-offset-background transition-all sm:px-3',
+      'hover:text-brand-purple',
+      isActive && [
+        'text-brand-purple',
+        'after:absolute after:bottom-[-6px] after:left-0 after:h-[2px] after:w-full after:bg-brand-purple/80',
+      ],
+      !isActive && 'text-slate-500',
+    )}
+  >
+    {children}
+  </button>
 );
 
 const generateTabContent = ({
@@ -92,17 +113,12 @@ const generateTabContent = ({
           <div className="mb-2 flex w-fit items-center gap-3 font-semibold text-gray-900">
             <p className="flex-1">For You</p>
             <div className="text-gray-500">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Info className="h-3 w-3" />
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-80">
-                    List of top opportunities curated for you, based on your
-                    skills, listing subscriptions and location.
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Tooltip
+                content="List of top opportunities curated for you, based on your skills, listing subscriptions and location."
+                contentProps={{ className: 'max-w-80' }}
+              >
+                <Info className="h-3 w-3" />
+              </Tooltip>
             </div>
           </div>
           <div className="ph-no-capture flex flex-col gap-1">
@@ -151,16 +167,20 @@ export const ListingTabs = ({
   showNotifSub = true,
 }: ListingTabsProps) => {
   const { user } = useUser();
+  const posthog = usePostHog();
+  const emoji = '/assets/listing-tab.webp';
+  const [activeTab, setActiveTab] = useState('open');
+
   const tabs: TabProps[] = [
     {
-      id: 'tab1',
+      id: 'open',
       title: 'Open',
       posthog: 'open_listings',
       content: generateTabContent({
         user,
         title: 'Open',
-        bounties: bounties,
-        forYou: forYou,
+        bounties,
+        forYou,
         take,
         isListingsLoading,
         filterFunction: (bounty) =>
@@ -174,14 +194,14 @@ export const ListingTabs = ({
       }),
     },
     {
-      id: 'tab2',
+      id: 'in-review',
       title: 'In Review',
       posthog: 'in review_listing',
       content: generateTabContent({
         user,
         title: 'In Review',
-        bounties: bounties,
-        forYou: forYou,
+        bounties,
+        forYou,
         take,
         isListingsLoading,
         filterFunction: (bounty) =>
@@ -195,14 +215,14 @@ export const ListingTabs = ({
       }),
     },
     {
-      id: 'tab3',
+      id: 'completed',
       title: 'Completed',
       posthog: 'completed_listing',
       content: generateTabContent({
         user,
         title: 'Completed',
-        bounties: bounties,
-        forYou: forYou,
+        bounties,
+        forYou,
         take,
         isListingsLoading,
         filterFunction: (bounty) => bounty.isWinnersAnnounced || false,
@@ -238,18 +258,13 @@ export const ListingTabs = ({
     },
   ];
 
-  const [activeTab, setActiveTab] = useState<string>(tabs[0]!.id);
-  const posthog = usePostHog();
-
-  const emoji = '/assets/listing-tab.webp';
-
   useEffect(() => {
     posthog.capture('open_listings');
   }, []);
 
   return (
     <div className="mb-10 mt-5">
-      <div className="mb-4 flex items-center justify-between border-b border-[#E2E8F0] pb-3">
+      <div className="mb-5 flex items-center justify-between sm:mb-4">
         <div className="flex w-full items-center justify-between sm:justify-start">
           <div className="flex items-center">
             {showEmoji && (
@@ -259,55 +274,53 @@ export const ListingTabs = ({
                 src={emoji}
               />
             )}
-            <p className="whitespace-nowrap pr-2 text-[14px] font-semibold text-[#334155] sm:text-[15px] md:text-[16px]">
+            <p className="whitespace-nowrap pr-2 text-[14px] font-semibold text-slate-700 sm:text-[15px] md:text-[16px]">
               {title}
             </p>
           </div>
+
           <div className="flex items-center">
-            <span className="mx-0 mr-3 text-[0.625rem] text-slate-300 sm:mx-3">
-              |
-            </span>
-            {tabs.map((tab) => (
-              <div
-                className={cn(
-                  'ph-no-capture relative cursor-pointer p-1 sm:p-2',
-                  tab.id === activeTab ? 'text-slate-700' : 'text-slate-500',
-                  tab.id === activeTab &&
-                    "after:absolute after:bottom-[-13px] after:left-0 after:right-0 after:h-[2px] after:bg-[#6366f1] after:content-['']",
-                )}
-                key={tab.id}
-                onClick={() => {
-                  posthog.capture(tab.posthog);
-                  setActiveTab(tab.id);
-                }}
-              >
-                <p className="whitespace-nowrap text-[13px] font-medium md:text-[14px]">
-                  {tab.title}
-                </p>
-              </div>
-            ))}
+            <div className="mx-2 h-6 w-px bg-slate-200" />
+            <div className="flex">
+              {tabs.map((tab) => (
+                <ListingTabTrigger
+                  key={tab.id}
+                  isActive={activeTab === tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    posthog.capture(tab.posthog);
+                  }}
+                >
+                  <span className="text-[13px] font-medium md:text-[14px]">
+                    {tab.title}
+                  </span>
+                </ListingTabTrigger>
+              ))}
+            </div>
           </div>
         </div>
         {showViewAll && (
           <div className="ph-no-capture hidden sm:flex">
-            <NextLink href={viewAllLink!}>
+            <Link href={viewAllLink!}>
               <Button
                 className="px-2 py-1 text-xs text-slate-400 md:text-sm"
-                onClick={() => posthog.capture('viewall top_listngs')}
+                onClick={() => posthog.capture('viewall top_listings')}
                 size="sm"
                 variant="ghost"
               >
                 View All
               </Button>
-            </NextLink>
+            </Link>
           </div>
         )}
       </div>
 
-      {tabs.map((tab) => tab.id === activeTab && tab.content)}
+      <div className="-mt-4 mb-4 h-0.5 w-full bg-slate-200 sm:-mt-3.5" />
+
+      {tabs.find((tab) => tab.id === activeTab)?.content}
 
       {showViewAll && (
-        <NextLink className="ph-no-capture" href={viewAllLink!}>
+        <Link className="ph-no-capture" href={viewAllLink!}>
           <Button
             className="my-8 w-full border-slate-300 py-5 text-slate-400"
             onClick={() => posthog.capture('viewall bottom_listings')}
@@ -317,7 +330,7 @@ export const ListingTabs = ({
             View All
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
-        </NextLink>
+        </Link>
       )}
     </div>
   );

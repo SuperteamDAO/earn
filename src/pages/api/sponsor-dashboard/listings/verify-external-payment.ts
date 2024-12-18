@@ -1,19 +1,18 @@
 import { type NextApiResponse } from 'next';
 
 import { tokenList } from '@/constants/tokenList';
-import {
-  checkListingSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import {
-  validatePayment,
-  type ValidatePaymentResult,
-  type VerifyPaymentsFormData,
-} from '@/features/sponsor-dashboard';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import {
+  type ValidatePaymentResult,
+  type VerifyPaymentsFormData,
+} from '@/features/sponsor-dashboard/types';
+import { validatePayment } from '@/features/sponsor-dashboard/utils/paymentRPCValidation';
 
 async function wait(ms: number) {
   return await new Promise((resolve) => setTimeout(resolve, ms));

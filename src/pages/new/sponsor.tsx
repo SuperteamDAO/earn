@@ -1,27 +1,17 @@
-import { InfoOutlineIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Heading,
-  HStack,
-  Link,
-  Text,
-  Tooltip,
-  VStack,
-} from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import { Info, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -33,21 +23,27 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { IndustryList, PDTG } from '@/constants';
-import { SignIn } from '@/features/auth';
+import { Separator } from '@/components/ui/separator';
+import { Tooltip } from '@/components/ui/tooltip';
+import { PDTG } from '@/constants/Telegram';
+import { Default } from '@/layouts/Default';
+import { Meta } from '@/layouts/Meta';
+import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
+import { uploadToCloudinary } from '@/utils/upload';
+
+import { SignIn } from '@/features/auth/components/SignIn';
+import { SocialInput } from '@/features/social/components/SocialInput';
+import { useSlugValidation } from '@/features/sponsor/hooks/useSlugValidation';
+import { useSponsorNameValidation } from '@/features/sponsor/hooks/useSponsorNameValidation';
 import {
   shouldUpdateUser,
   sponsorFormSchema,
   type SponsorFormValues,
   transformFormToApiData,
-  useSlugValidation,
-  useSponsorNameValidation,
-} from '@/features/sponsor';
-import { useUsernameValidation } from '@/features/talent';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
-import { useUser } from '@/store/user';
-import { uploadToCloudinary } from '@/utils/upload';
+} from '@/features/sponsor/utils/sponsorFormSchema';
+import { IndustryList, ONBOARDING_KEY } from '@/features/talent/constants';
+import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
 const CreateSponsor = () => {
   const router = useRouter();
@@ -62,6 +58,7 @@ const CreateSponsor = () => {
 
   const form = useForm<SponsorFormValues>({
     resolver: zodResolver(sponsorFormSchema),
+    mode: 'onBlur',
     defaultValues: {
       sponsor: {
         name: '',
@@ -82,34 +79,79 @@ const CreateSponsor = () => {
     },
   });
 
+  useEffect(() => {
+    if (user) {
+      user.username && setUsername(user.username);
+      form.reset({
+        user: {
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          username: user?.username || '',
+          photo: user?.photo || '',
+        },
+      });
+    }
+  }, [user]);
+
   const {
     setSponsorName,
     isInvalid: isSponsorNameInvalid,
     validationErrorMessage: sponsorNameValidationErrorMessage,
     sponsorName,
   } = useSponsorNameValidation();
+  useEffect(() => {
+    form.clearErrors('sponsor.name');
+    if (isSponsorNameInvalid && !form.formState.errors.sponsor?.name?.message) {
+      form.setError('sponsor.name', {
+        message: sponsorNameValidationErrorMessage,
+      });
+    }
+  }, [
+    sponsorNameValidationErrorMessage,
+    isSponsorNameInvalid,
+    form.formState.errors.sponsor?.name?.message,
+    sponsorName,
+  ]);
+
   const {
     setSlug,
     isInvalid: isSlugInvalid,
     validationErrorMessage: validationSlugErrorMessage,
     slug,
   } = useSlugValidation();
+  useEffect(() => {
+    form.clearErrors('sponsor.slug');
+    if (isSlugInvalid && !form.formState.errors.sponsor?.slug?.message) {
+      form.setError('sponsor.slug', {
+        message: validationSlugErrorMessage,
+      });
+    }
+  }, [
+    validationSlugErrorMessage,
+    isSlugInvalid,
+    form.formState.errors.sponsor?.slug?.message,
+    slug,
+  ]);
+
   const {
     setUsername,
     isInvalid: isUsernameInvalid,
     validationErrorMessage: validationUsernameErrorMessage,
     username,
   } = useUsernameValidation(user?.username);
-
   useEffect(() => {
-    if (user?.photo) {
-      form.setValue('user.photo', user.photo);
+    form.clearErrors('user.username');
+    if (isUsernameInvalid && !form.formState.errors.user?.username?.message) {
+      form.setError('user.username', {
+        message: validationUsernameErrorMessage,
+      });
     }
-    if (user?.username) {
-      setUsername(user.username);
-      form.setValue('user.username', user.username);
-    }
-  }, [user]);
+  }, [
+    validationUsernameErrorMessage,
+    isUsernameInvalid,
+    form.formState.errors.user?.username?.message,
+    username,
+  ]);
 
   useEffect(() => {
     if (user?.currentSponsorId && session?.user?.role !== 'GOD') {
@@ -134,6 +176,7 @@ const CreateSponsor = () => {
 
         await axios.post('/api/email/manual/welcome-sponsor');
 
+        localStorage.removeItem(ONBOARDING_KEY);
         return 'Success';
       } catch (error) {
         console.error('Error in createSponsor:', error);
@@ -165,7 +208,26 @@ const CreateSponsor = () => {
     },
   });
 
+  const isSubmitDisabled = useMemo(
+    () =>
+      !logoUrl ||
+      isUploading ||
+      isPending ||
+      isSlugInvalid ||
+      isUsernameInvalid ||
+      isSponsorNameInvalid,
+    [
+      logoUrl,
+      isUploading,
+      isPending,
+      isSlugInvalid,
+      isUsernameInvalid,
+      isSponsorNameInvalid,
+    ],
+  );
+
   const onSubmit = (data: SponsorFormValues) => {
+    if (isSubmitDisabled) return;
     posthog.capture('complete profile_sponsor');
     createSponsor(data);
   };
@@ -184,73 +246,39 @@ const CreateSponsor = () => {
         />
       }
     >
-      {!session ? (
-        <>
-          <Box w={'full'} minH={'100vh'} bg="white">
-            <Box
-              alignItems="center"
-              justifyContent={'center'}
-              flexDir={'column'}
-              display={'flex'}
-              maxW="32rem"
-              minH="60vh"
-              mx="auto"
-            >
-              <Text
-                pt={4}
-                color="brand.slate.900"
-                fontSize={18}
-                fontWeight={600}
-                textAlign={'center'}
-              >
-                You&apos;re one step away
-              </Text>
-              <Text
-                pb={4}
-                color="brand.slate.600"
-                fontSize={15}
-                fontWeight={400}
-                textAlign={'center'}
-              >
-                from joining Superteam Earn
-              </Text>
-              <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
-            </Box>
-          </Box>
-        </>
+      {status === 'unauthenticated' ? (
+        <div className="min-h-screen w-full bg-white">
+          <div className="mx-auto flex min-h-[60vh] max-w-[32rem] flex-col items-center justify-center">
+            <p className="pt-4 text-center text-2xl font-semibold text-slate-900">
+              You&apos;re one step away
+            </p>
+            <p className="pb-4 text-center text-xl font-normal text-slate-600">
+              from joining Superteam Earn
+            </p>
+            <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
+          </div>
+        </div>
       ) : (
-        <VStack w="full" px={4} pt={8} pb={24}>
-          <VStack textAlign="center" spacing={2}>
-            <Heading
-              color="gray.900"
-              fontSize="3xl"
-              fontWeight="semibold"
-              letterSpacing="-0.02em"
-            >
+        <div className="flex w-full flex-col items-center px-4 pb-24 pt-8">
+          <div className="flex flex-col gap-2 text-center">
+            <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
               Welcome to Superteam Earn
-            </Heading>
-            <Text color="gray.600" fontSize="lg" fontWeight="normal">
+            </h1>
+            <p className="text-lg font-normal text-gray-600" color="gray.600">
               Let&apos;s start with some basic information about your team
-            </Text>
-          </VStack>
-          <VStack w={{ md: '2xl' }} pt={10}>
+            </p>
+          </div>
+          <div className="flex flex-col pt-10 md:w-[42rem]">
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 style={{ width: '100%' }}
               >
-                <Text
-                  as="h2"
-                  mb={5}
-                  color="gray.900"
-                  fontSize="xl"
-                  fontWeight="semibold"
-                  letterSpacing="-0.01em"
-                >
+                <h2 className="mb-5 text-xl font-semibold tracking-tight text-gray-900">
                   About You
-                </Text>
+                </h2>
 
-                <Flex justify={'space-between'} gap={2} w={'full'} mb={4}>
+                <div className="mb-4 flex w-full justify-between gap-2">
                   <FormFieldWrapper
                     control={form.control}
                     name="user.firstName"
@@ -267,28 +295,24 @@ const CreateSponsor = () => {
                   >
                     <Input placeholder="Last Name" />
                   </FormFieldWrapper>
-                </Flex>
-                <Flex mb={4}>
+                </div>
+                <div className="mb-4 flex">
                   <FormFieldWrapper
                     control={form.control}
                     name="user.username"
                     label="Username"
                     isRequired
+                    onChange={(e) => {
+                      const value = e.target.value
+                        .toLowerCase()
+                        .replace(/\s+/g, '-');
+                      setUsername(value);
+                      form.setValue('user.username', value);
+                    }}
                   >
-                    <Input
-                      placeholder="Username"
-                      onChange={(e) => {
-                        setUsername(e.target.value);
-                      }}
-                      value={username}
-                    />
+                    <Input placeholder="Username" value={username} />
                   </FormFieldWrapper>
-                  {isUsernameInvalid && (
-                    <p className="text-sm text-red-500">
-                      {validationUsernameErrorMessage}
-                    </p>
-                  )}
-                </Flex>
+                </div>
                 <>
                   <FormLabel isRequired>Profile Picture</FormLabel>
                   <ImagePicker
@@ -306,60 +330,40 @@ const CreateSponsor = () => {
                   />
                 </>
 
-                <Divider my={12} borderColor="brand.slate.400" />
+                <Separator className="my-12 text-slate-400" />
 
-                <Text
-                  as="h2"
-                  mb={5}
-                  color="gray.900"
-                  fontSize="xl"
-                  fontWeight="semibold"
-                  letterSpacing="-0.01em"
-                >
+                <h2 className="mb-5 text-xl font-semibold tracking-tight text-gray-900">
                   About Your Company
-                </Text>
-                <Flex justify={'space-between'} gap={2} w={'full'}>
+                </h2>
+                <div className="flex w-full justify-between gap-4">
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.name"
                     label="Company Name"
                     isRequired
+                    onChange={(e) => {
+                      setSponsorName(e.target.value);
+                    }}
                   >
-                    <Input
-                      placeholder="Stark Industries"
-                      onChange={(e) => {
-                        setSponsorName(e.target.value);
-                      }}
-                      value={sponsorName}
-                    />
+                    <Input placeholder="Stark Industries" value={sponsorName} />
                   </FormFieldWrapper>
-                  {isSponsorNameInvalid && (
-                    <p className="text-sm text-red-500">
-                      {sponsorNameValidationErrorMessage}
-                    </p>
-                  )}
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.slug"
                     label="Company Username"
                     isRequired
+                    onChange={(e) => {
+                      const value = e.target.value
+                        .toLowerCase()
+                        .replace(/\s+/g, '-');
+                      setSlug(value);
+                      form.setValue('sponsor.slug', value);
+                    }}
                   >
-                    <Input
-                      placeholder="starkindustries"
-                      onChange={(e) => {
-                        const lowercaseValue = e.target.value.toLowerCase();
-                        setSlug(lowercaseValue);
-                      }}
-                      value={slug}
-                    />
+                    <Input placeholder="starkindustries" value={slug} />
                   </FormFieldWrapper>
-                  {isSlugInvalid && (
-                    <p className="text-sm text-red-500">
-                      {validationSlugErrorMessage}
-                    </p>
-                  )}
-                </Flex>
-                <HStack justify={'space-between'} w={'full'} my={6}>
+                </div>
+                <div className="my-6 flex w-full justify-between gap-4">
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.url"
@@ -368,16 +372,17 @@ const CreateSponsor = () => {
                     <Input placeholder="https://starkindustries.com" />
                   </FormFieldWrapper>
 
-                  <FormFieldWrapper
-                    control={form.control}
+                  <SocialInput
                     name="sponsor.twitter"
-                    label="Company Twitter"
-                    isRequired
-                  >
-                    <Input placeholder="@StarkIndustries" />
-                  </FormFieldWrapper>
-                </HStack>
-                <HStack w="full">
+                    socialName={'twitter'}
+                    formLabel="Company Twitter"
+                    placeholder="@StarkIndustries"
+                    required
+                    control={form.control}
+                    height="h-9"
+                  />
+                </div>
+                <div className="flex w-full">
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.entityName"
@@ -385,17 +390,10 @@ const CreateSponsor = () => {
                       <>
                         Entity Name
                         <Tooltip
-                          fontSize="xs"
-                          label="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                          content="Please mention the official entity name of your project. If you are a DAO, simply mention the name of the DAO. If you neither have an entity nor are a DAO, mention your full name."
+                          contentProps={{ className: 'max-w-xs text-xs' }}
                         >
-                          <InfoOutlineIcon
-                            color="brand.slate.500"
-                            mt={1}
-                            ml={1}
-                            w={3}
-                            h={3}
-                            display={{ base: 'none', md: 'block' }}
-                          />
+                          <Info className="ml-1 mt-1 hidden h-3 w-3 text-slate-500 md:block" />
                         </Tooltip>
                       </>
                     }
@@ -403,8 +401,8 @@ const CreateSponsor = () => {
                   >
                     <Input placeholder="Full Entity Name" />
                   </FormFieldWrapper>
-                </HStack>
-                <Box w="full" mt={6} mb={3}>
+                </div>
+                <div className="mb-3 mt-6 w-full">
                   <FormLabel isRequired>Company Logo</FormLabel>
                   <ImagePicker
                     onChange={async (e) => {
@@ -415,9 +413,9 @@ const CreateSponsor = () => {
                       setIsUploading(false);
                     }}
                   />
-                </Box>
+                </div>
 
-                <HStack justify={'space-between'} w={'full'} mt={6}>
+                <div className="mt-6 flex w-full justify-between">
                   <FormField
                     control={form.control}
                     name="sponsor.industry"
@@ -442,8 +440,8 @@ const CreateSponsor = () => {
                       </FormItem>
                     )}
                   />
-                </HStack>
-                <Box my={6}>
+                </div>
+                <div className="my-6">
                   <FormFieldWrapper
                     control={form.control}
                     name="sponsor.bio"
@@ -459,42 +457,47 @@ const CreateSponsor = () => {
                     {180 - (form.watch('sponsor.bio')?.length || 0)} characters
                     left
                   </div>
-                </Box>
-                <Box my={8}>
+                </div>
+                <div className="my-6">
                   {isError && (
-                    <Text align="center" mb={2} color="red">
+                    <p className="mb-2 text-center text-red-500">
                       {errorMessage}
                       {(validationSlugErrorMessage ||
                         sponsorNameValidationErrorMessage) &&
                         'Company name/username already exists.'}
-                    </Text>
+                    </p>
                   )}
                   {sponsorNameValidationErrorMessage && (
-                    <Text align={'center'} color="yellow.500">
+                    <p className="text-center text-yellow-500">
                       If you want access to the existing account, contact us on
                       Telegram at{' '}
-                      <Link href={PDTG} isExternal>
+                      <Link href={PDTG} target="_blank">
                         @pratikdholani
                       </Link>
-                    </Text>
+                    </p>
                   )}
-                </Box>
+                </div>
                 <Button
-                  className="ph-no-capture"
-                  w="full"
-                  disabled={!logoUrl || isUploading}
-                  isLoading={!!isUploading || !!isPending}
-                  loadingText="Creating..."
-                  size="lg"
+                  className={cn(
+                    'ph-no-capture h-11 w-full',
+                    'disabled:cursor-not-allowed disabled:opacity-50',
+                  )}
+                  disabled={isSubmitDisabled}
                   type="submit"
-                  variant="solid"
                 >
-                  Create Sponsor
+                  {isUploading || isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    'Create Sponsor'
+                  )}
                 </Button>
               </form>
             </Form>
-          </VStack>
-        </VStack>
+          </div>
+        </div>
       )}
     </Default>
   );

@@ -2,18 +2,17 @@ import axios from 'axios';
 import type { NextApiResponse } from 'next';
 import { z } from 'zod';
 
-import {
-  checkGrantSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import { sendEmailNotification } from '@/features/emails';
-import { convertGrantApplicationToAirtable } from '@/features/grants';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils';
+import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 
 const MAX_RECORDS = 10;
 
@@ -96,12 +95,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const commonUpdateField = {
       applicationStatus,
       decidedAt: new Date().toISOString(),
+      decidedBy: userId,
     };
 
     const isApproved = applicationStatus === 'Approved';
     const updatedData: {
       applicationStatus: string;
       decidedAt: string;
+      decidedBy: string | undefined;
       approvedAmount?: number;
       approvedAmountInUSD?: number;
     }[] = [];

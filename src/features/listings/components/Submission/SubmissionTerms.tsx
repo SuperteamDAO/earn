@@ -1,19 +1,9 @@
-import {
-  Button,
-  Center,
-  Divider,
-  HStack,
-  Link,
-  ListItem,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Text,
-  UnorderedList,
-  VStack,
-} from '@chakra-ui/react';
+import Link from 'next/link';
 
-import { TERMS_OF_USE } from '@/constants';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
+import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 
 export const SubmissionTerms = ({
   isOpen,
@@ -27,18 +17,14 @@ export const SubmissionTerms = ({
   entityName?: string;
 }) => {
   return (
-    <Modal
-      autoFocus={false}
-      closeOnEsc={false}
-      closeOnOverlayClick={false}
-      isOpen={isOpen}
-      onClose={onClose}
-      size="xl"
-    >
-      <ModalOverlay />
-      <ModalContent overflow="hidden" rounded="lg">
-        <HStack gap={5} px={5} py={4}>
-          <Center p={3} bg="brand.slate.200" rounded="full">
+    <Dialog open={isOpen} onOpenChange={onClose} modal>
+      <DialogContent
+        className="max-w-xl overflow-hidden rounded-lg"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
+        <div className="gap-5 px-5 py-4">
+          <div className="flex items-center justify-center rounded-full bg-slate-200 p-3">
             <svg
               width="32"
               height="32"
@@ -51,85 +37,74 @@ export const SubmissionTerms = ({
                 fill="#4D55E4"
               />
             </svg>
-          </Center>
-          <Text align="start" fontSize="xl" fontWeight={600} lineHeight={1}>
-            Terms of Use
-          </Text>
-        </HStack>
-        <Divider borderBottomWidth={2} />
-        <VStack
-          align="start"
-          gap={3}
-          px={5}
-          py={4}
-          color="brand.slate.500"
-          fontWeight={500}
-          textAlign="left"
-        >
-          <UnorderedList>
-            <ListItem>
+          </div>
+          <p className="items-start text-xl font-semibold">Terms of Use</p>
+        </div>
+        <Separator className="border-b-2" />
+        <div className="flex flex-col items-start gap-3 px-5 py-4 text-left font-medium text-slate-500">
+          <ul className="list-disc space-y-2 pl-5">
+            <li>
               You acknowledge that you are submitting your work or application
               to {entityName ? `${entityName} ("${sponsorName}")` : sponsorName}
               .
-            </ListItem>
-            <ListItem>
+            </li>
+            <li>
               Superteam Earn acts solely as a platform for the Partner to list
               contests, bounties, projects or similar engagements{' '}
-              {`("Activities")`} on its platform {`(“ST Earn Platform”)`}.
-            </ListItem>
-            <ListItem>
+              {`("Activities")`} on its platform {`("ST Earn Platform")`}.
+            </li>
+            <li>
               Superteam Earn shall not be liable for any Activities listed by
               the Partner on the ST Earn Platform. The Partner is solely
               responsible for the content, rules, scope and execution of their
               Activities.
-            </ListItem>
-            <ListItem>
+            </li>
+            <li>
               Users participating in Activities listed by Partners do so at
               their own risk and discretion. Superteam Earn disclaims all
               liabilities related to user participation in such Activities.
-            </ListItem>
-            <ListItem>
+            </li>
+            <li>
               Any disputes or issues arising between users and partners
               regarding Activities shall be resolved directly between the
               parties involved. Superteam Earn shall not be responsible for
               mediating or resolving such disputes.
-            </ListItem>
-            <ListItem>
+            </li>
+            <li>
               By using the platform and participating in any Activities, users
               agree to release Superteam Earn from any claims, liabilities, or
               damages arising from their participation in Activities listed by
               Partners.
-            </ListItem>
-            <ListItem>
+            </li>
+            <li>
               Superteam Earn does not guarantee the accuracy or legality of
               Activities listed by Partners. Users are advised to exercise
               caution and conduct their own due diligence before participating
               in any Activities.
-            </ListItem>
-            <ListItem>
+            </li>
+            <li>
               Partners listing Activities on the Platform agree to indemnify and
-              hold Superteam Earn harmless from any claims, damages, or
+              hold Superteam Earn harmless from any claims, damages, or
               liabilities arising from their Activities.
-            </ListItem>
-          </UnorderedList>
-          <Text as={'p'} lineHeight={1.25}>
+            </li>
+          </ul>
+          <p className="leading-5">
             These terms are in addition to our{' '}
             <Link
-              textDecoration={'underline'}
+              className="underline underline-offset-2"
               href={TERMS_OF_USE}
               rel="noopener noreferrer"
               target="_blank"
-              textUnderlineOffset={2}
             >
               Terms of Use
             </Link>
             .
-          </Text>
-          <Button ml="auto" px={10} fontSize="lg" onClick={onClose}>
+          </p>
+          <Button onClick={onClose} className="ml-auto px-10 text-lg">
             Done
           </Button>
-        </VStack>
-      </ModalContent>
-    </Modal>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

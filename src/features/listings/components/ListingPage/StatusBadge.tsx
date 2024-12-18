@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 interface StatusBadgeProps {
   textColor: string;
@@ -12,13 +12,13 @@ export const StatusBadge = ({ textColor, text, Icon }: StatusBadgeProps) => {
   return (
     <div
       className={cn(
-        'flex items-center gap-2 whitespace-nowrap rounded-full py-1 text-xs font-medium sm:text-sm',
+        'flex items-center gap-1 whitespace-nowrap rounded-full py-1 text-xs font-medium sm:text-sm',
         `text-${textColor}`,
       )}
       color={textColor}
     >
       {Icon}
-      <p>{text}</p>
+      <p className="hidden sm:flex">{text}</p>
     </div>
   );
 };

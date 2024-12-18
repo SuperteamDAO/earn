@@ -1,20 +1,13 @@
-import {
-  Button,
-  Flex,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Radio,
-  RadioGroup,
-  Skeleton,
-  Stack,
-  Text,
-} from '@chakra-ui/react';
 import axios from 'axios';
 import { type Survey, type SurveyQuestion } from 'posthog-js';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
 
 function getMatchingSurvey(surveys: Survey[], id: string): Survey | null {
@@ -70,100 +63,93 @@ export const SurveyModal = ({
   }, [posthog]);
 
   return (
-    <Modal
-      closeOnEsc={false}
-      closeOnOverlayClick={false}
-      isOpen={isOpen}
-      onClose={onClose}
-      size="lg"
-    >
-      <ModalOverlay />
-      <ModalContent p={6}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent
+        className="max-w-lg p-6"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+      >
         {!question ? (
           <div>
-            <Skeleton h="18px" mb={2} />
-            <Skeleton w="60%" h="14px" mb={5} />
-            <Flex justify="center" gap={1} mt={8}>
+            <Skeleton className="mb-2 h-[18px]" />
+            <Skeleton className="mb-5 h-[14px] w-[60%]" />
+            <div className="mt-8 flex justify-center gap-1">
               {[...Array(10)].map((_, i) => (
-                <Skeleton key={i} w="40px" h="36px" />
+                <Skeleton key={i} className="h-[36px] w-[40px]" />
               ))}
-            </Flex>
-            <Skeleton h="10" mt={8} mb={3} borderRadius={'3'} />
+            </div>
+            <Skeleton className="mb-3 mt-8 h-10 rounded-md" />
           </div>
         ) : (
           <>
             <div>
-              <Text
-                mb={2}
-                color="brand.slate.700"
-                fontSize="lg"
-                fontWeight={600}
-                lineHeight={'125%'}
-              >
+              <p className="mb-2 text-lg font-semibold leading-[125%] text-slate-700">
                 {question?.question}
-              </Text>
-              <Text mb={5} color="brand.slate.500" fontSize="sm">
+              </p>
+              <p className="mb-5 text-sm text-slate-500">
                 {question?.description}
-              </Text>
+              </p>
+
               {question?.type === 'rating' && (
                 <div>
-                  <Flex justify="center" gap={4} mt={2}>
+                  <div className="mt-2 flex justify-center gap-4">
                     {[...Array(question.scale)].map((_, i) => (
                       <Button
                         key={i}
                         onClick={() => handleRating(i + 1)}
-                        size={'sm'}
-                        variant={response === i + 1 ? 'solid' : 'outline'}
+                        size="sm"
+                        variant={response === i + 1 ? 'default' : 'outline'}
                       >
                         {i + 1}
                       </Button>
                     ))}
-                  </Flex>
-                  <Flex justify={'space-between'} flexGrow={1} mt={0.5}>
-                    <Text color="brand.slate.400" fontSize="xs">
+                  </div>
+                  <div className="mt-0.5 flex flex-grow justify-between">
+                    <p className="text-xs text-slate-400">
                       {question.lowerBoundLabel}
-                    </Text>
-                    <Text color="brand.slate.400" fontSize="xs">
+                    </p>
+                    <p className="text-xs text-slate-400">
                       {question.upperBoundLabel}
-                    </Text>
-                  </Flex>
+                    </p>
+                  </div>
                 </div>
               )}
+
               {question?.type === 'single_choice' && (
                 <RadioGroup
-                  mb={3}
-                  onChange={(value) => handleChoiceSelection(value)}
+                  className="mb-3 flex flex-col gap-2"
+                  onValueChange={handleChoiceSelection}
                   value={response !== undefined ? String(response) : undefined}
                 >
-                  <Stack direction="column">
-                    {question.choices.map((choice, idx) => (
-                      <Radio
-                        key={idx}
-                        _hover={{ bg: 'brand.slate.100' }}
-                        colorScheme="purple"
-                        name="memberType"
-                        size="md"
+                  {question.choices.map((choice, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center space-x-2 rounded-md p-2 hover:bg-slate-100"
+                    >
+                      <RadioGroupItem
                         value={choice}
-                      >
+                        id={`choice-${idx}`}
+                        className="text-brand-purple"
+                      />
+                      <Label htmlFor={`choice-${idx}`} className="font-normal">
                         {choice}
-                      </Radio>
-                    ))}
-                  </Stack>
+                      </Label>
+                    </div>
+                  ))}
                 </RadioGroup>
               )}
             </div>
+
             <Button
-              mt={4}
-              isDisabled={!response}
-              isLoading={isSubmitting}
-              loadingText="Submitting..."
+              className="mt-4"
+              disabled={!response || isSubmitting}
               onClick={handleSubmit}
             >
-              Submit
+              {isSubmitting ? 'Submitting...' : 'Submit'}
             </Button>
           </>
         )}
-      </ModalContent>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 };

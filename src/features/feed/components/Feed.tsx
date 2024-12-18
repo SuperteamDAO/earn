@@ -3,11 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { type FeedPostType, useGetFeed } from '@/features/feed';
-import { VibeCard } from '@/features/home';
 import { FeedPageLayout } from '@/layouts/Feed';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
+import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
+import { VibeCard } from '@/features/home/components/VibeCard';
+
+import { useGetFeed } from '../queries/useGetFeed';
+import { type FeedPostType } from '../types';
 import { FeedLoop } from './FeedLoop';
 
 interface Props {
@@ -66,7 +69,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
       <button
         className={cn(
           'cursor-pointer capitalize',
-          'text-[15px] lg:text-base',
+          'text-sm lg:text-base',
           activeMenu === option
             ? 'font-semibold text-slate-700'
             : 'font-normal text-slate-500',
@@ -85,40 +88,36 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
 
   return (
     <FeedPageLayout isHomePage>
-      <div className="border-b py-5 pl-6 md:pl-5">
-        <p className="text-lg font-medium text-brand-slate-900 lg:text-xl">
+      <HomepagePop />
+      <div className="border-b py-5 pl-6 pr-2 md:pl-5">
+        <p className="text-lg font-medium text-slate-900 lg:text-xl">
           Activity Feed
         </p>
-        <div className="hidden w-full pt-4 md:flex lg:hidden">
+        <p className="text-base text-slate-500">
+          Discover the best work on Earn
+        </p>
+        <div className="flex w-full pt-4 lg:hidden">
           <VibeCard />
         </div>
-        <div className="mt-2 flex flex-col items-end justify-between md:flex-row md:items-center">
-          <p className="text-sm text-slate-600 lg:text-base">
-            Discover the best work on Earn
-          </p>
-          <div className="flex w-full pr-4 pt-4 md:hidden">
-            <VibeCard />
+        <div className="mt-4 flex w-full items-center justify-between">
+          <div className="mr-3 flex gap-3">
+            <MenuOption option="new" />
+            <MenuOption option="popular" />
           </div>
-          <div className="mt-4 flex items-center justify-between md:mt-0">
-            <div className="mr-3 flex gap-3">
-              <MenuOption option="new" />
-              <MenuOption option="popular" />
-            </div>
 
-            {activeMenu === 'popular' && (
-              <select
-                className="mr-1 w-28 text-right text-sm text-brand-slate-500"
-                onChange={(e) => {
-                  setTimePeriod(e.target.value);
-                }}
-                value={timePeriod}
-              >
-                <option>This Week</option>
-                <option>This Month</option>
-                <option>This Year</option>
-              </select>
-            )}
-          </div>
+          {activeMenu === 'popular' && (
+            <select
+              className="mr-1 w-28 text-right text-sm text-slate-500"
+              onChange={(e) => {
+                setTimePeriod(e.target.value);
+              }}
+              value={timePeriod}
+            >
+              <option>This Week</option>
+              <option>This Month</option>
+              <option>This Year</option>
+            </select>
+          )}
         </div>
       </div>
       <div className="pl-1 md:pl-0">
@@ -127,6 +126,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
           ref={ref}
           isFetchingNextPage={isFetchingNextPage}
           isLoading={isLoading}
+          type="activity"
         >
           <div className="my-32">
             <ExternalImage
@@ -134,10 +134,10 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
               src={'/bg/talent-empty.svg'}
               alt="talent empty"
             />
-            <p className="mx-auto mt-5 w-[200px] text-center text-base font-medium text-brand-slate-500 md:text-lg">
+            <p className="mx-auto mt-5 w-[200px] text-center text-base font-medium text-slate-500 md:text-lg">
               No Activity Found
             </p>
-            <p className="mx-auto mt-1 text-center text-sm text-brand-slate-400 md:text-base">
+            <p className="mx-auto mt-1 text-center text-sm text-slate-400 md:text-base">
               We couldn’t find any activity for your time filter
             </p>
           </div>

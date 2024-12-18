@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { setCacheHeaders } from '@/utils/cacheControl';
+import { safeStringify } from '@/utils/safeStringify';
 
 export default async function handler(
   _req: NextApiRequest,
@@ -18,6 +20,14 @@ export default async function handler(
 
     const roundedUserCount = Math.ceil((userCount - errorCount) / 10) * 10;
 
+    setCacheHeaders(res, {
+      public: true,
+      // Cache for 1 day
+      maxAge: 24 * 60 * 60,
+      sMaxAge: 24 * 60 * 60,
+      staleWhileRevalidate: 60 * 60, // 1 hour
+    });
+
     logger.info('Successfully fetched user count', {
       totalUsers: roundedUserCount,
     });
@@ -27,7 +37,7 @@ export default async function handler(
     });
   } catch (error: any) {
     logger.error('Error occurred while fetching user count', {
-      error: error.message,
+      error: safeStringify(error),
     });
 
     return res.status(500).json({

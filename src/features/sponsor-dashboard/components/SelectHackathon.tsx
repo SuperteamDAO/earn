@@ -1,13 +1,13 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import { useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 
-import { EarnAvatar } from '@/features/talent';
 import type { SponsorType } from '@/interface/sponsor';
 import { useUpdateUser, useUser } from '@/store/user';
+
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { hackathonSponsorAtom } from './SelectSponsor';
 
@@ -88,22 +88,18 @@ export function SelectHackathon({
 
     return (
       <components.SingleValue {...props}>
-        <Flex align="center" py={1}>
+        <div className="flex items-center py-1">
           <EarnAvatar
             borderRadius="rounded-sm"
             id={data?.hackathon?.name}
             avatar={data?.hackathon?.logo}
             size={'24px'}
           />
-          <Box display={{ base: 'none', md: 'block' }} ml={2}>
-            <Text color="brand.slate.800" fontSize="sm">
-              {data?.hackathon?.name}
-            </Text>
-            <Text color="brand.slate.400" fontSize="xs">
-              {data?.hackathon?.role}
-            </Text>
-          </Box>
-        </Flex>
+          <div className="ml-2 hidden md:block">
+            <p className="text-sm text-slate-800">{data?.hackathon?.name}</p>
+            <p className="text-xs text-slate-400">{data?.hackathon?.role}</p>
+          </div>
+        </div>
       </components.SingleValue>
     );
   };
@@ -112,21 +108,17 @@ export function SelectHackathon({
     const { data } = props;
     return (
       <components.Option {...props}>
-        <Flex align="center">
+        <div className="flex items-center">
           <EarnAvatar
             borderRadius="rounded-sm"
             id={data?.hackathon?.name}
             avatar={data?.hackathon?.logo}
           />
-          <Box display={{ base: 'none', md: 'block' }} ml={2}>
-            <Text color="brand.slate.800" fontSize="sm">
-              {data?.hackathon?.name}
-            </Text>
-            <Text color="brand.slate.400" fontSize="xs">
-              {data?.hackathon?.role}
-            </Text>
-          </Box>
-        </Flex>
+          <div className="ml-2 hidden md:block">
+            <p className="text-sm text-slate-800">{data?.hackathon?.name}</p>
+            <p className="text-xs text-slate-400">{data?.hackathon?.role}</p>
+          </div>
+        </div>
       </components.Option>
     );
   };

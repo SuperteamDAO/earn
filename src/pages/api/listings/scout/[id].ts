@@ -2,10 +2,12 @@ import { Prisma } from '@prisma/client';
 import dayjs from 'dayjs';
 import type { NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
 
 function flattenSubSkills(skillsArray: any[]): string[] {
   const flattenedSubSkills: string[] = [];

@@ -1,38 +1,6 @@
-import {
-  AddIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  CopyIcon,
-  SearchIcon,
-} from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Table,
-  TableContainer,
-  Tag,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tooltip,
-  Tr,
-} from '@chakra-ui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { ChevronLeft, ChevronRight, Copy, Plus, Search, X } from 'lucide-react';
 import { type Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -41,17 +9,35 @@ import { toast } from 'sonner';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { Button } from '@/components/ui/button';
 import {
-  Banner,
-  InviteMembers,
-  membersQuery,
-  sponsorStatsQuery,
-} from '@/features/sponsor-dashboard';
-import { EarnAvatar } from '@/features/talent';
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
+
+import { Banner } from '@/features/sponsor-dashboard/components/Banner';
+import { InviteMembers } from '@/features/sponsor-dashboard/components/Members/InviteMembers';
+import { membersQuery } from '@/features/sponsor-dashboard/queries/members';
+import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-stats';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 const debounce = require('lodash.debounce');
 
@@ -133,21 +119,15 @@ const Index = () => {
     <SponsorLayout>
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
-      <Flex justify="space-between" mb={4}>
-        <Flex align="center" gap={3}>
-          <Text color="brand.slate.800" fontSize="lg" fontWeight={600}>
-            Team Members
-          </Text>
-          <Divider
-            h="60%"
-            borderColor="brand.slate.200"
-            orientation="vertical"
-          />
-          <Text color="brand.slate.500">
+      <div className="mb-4 flex justify-between">
+        <div className="flex items-center gap-3">
+          <p className="text-lg font-semibold text-slate-800">Team Members</p>
+          <div className="h-[60%] border-r border-slate-200" />
+          <p className="text-slate-500">
             Manage who gets access to your sponsor profile
-          </Text>
-        </Flex>
-        <Flex align="center" gap={3}>
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
           {(session?.user?.role === 'GOD' ||
             !!(
               user?.UserSponsors?.length &&
@@ -156,39 +136,27 @@ const Index = () => {
               )?.role === 'ADMIN'
             )) && (
             <Button
-              className="ph-no-capture"
-              color="#6366F1"
-              bg="#E0E7FF"
-              leftIcon={<AddIcon />}
+              className="ph-no-capture bg-indigo-100 text-brand-purple hover:bg-indigo-100/90"
               onClick={() => {
                 posthog.capture('invite member_sponsor');
                 onOpen();
               }}
-              variant="solid"
             >
+              <Plus className="mr-2 h-4 w-4" />
               Invite Members
             </Button>
           )}
-          <InputGroup w={52}>
+          <div className="relative w-52">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              bg={'white'}
-              borderColor="brand.slate.200"
-              _placeholder={{
-                color: 'brand.slate.400',
-                fontWeight: 500,
-                fontSize: 'md',
-              }}
-              focusBorderColor="brand.purple"
+              className="placeholder:text-md border-slate-200 bg-white placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search members..."
               type="text"
             />
-            <InputLeftElement pointerEvents="none">
-              <SearchIcon color="brand.slate.400" />
-            </InputLeftElement>
-          </InputGroup>
-        </Flex>
-      </Flex>
+          </div>
+        </div>
+      </div>
       {isMembersLoading && <LoadingSection />}
       {!isMembersLoading && !members?.length && (
         <ErrorSection
@@ -197,156 +165,125 @@ const Index = () => {
         />
       )}
       {!isMembersLoading && !!members?.length && (
-        <TableContainer
-          mb={8}
-          borderWidth={'1px'}
-          borderColor={'brand.slate.200'}
-          borderRadius={8}
-        >
-          <Table variant="simple">
-            <Thead>
-              <Tr bg="brand.slate.100">
-                <Th
-                  color="brand.slate.400"
-                  fontSize="sm"
-                  fontWeight={500}
-                  letterSpacing={'-2%'}
-                  textTransform={'capitalize'}
-                >
+        <div className="rounded-md border border-slate-200 bg-white">
+          <Table>
+            <TableHeader>
+              <TableRow className="text-slate-100">
+                <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
                   Member
-                </Th>
-                <Th
-                  color="brand.slate.400"
-                  fontSize="sm"
-                  fontWeight={500}
-                  letterSpacing={'-2%'}
-                  textTransform={'capitalize'}
-                >
+                </TableHead>
+                <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
                   Role
-                </Th>
-                <Th
-                  color="brand.slate.400"
-                  fontSize="sm"
-                  fontWeight={500}
-                  letterSpacing={'-2%'}
-                  textTransform={'capitalize'}
-                >
+                </TableHead>
+                <TableHead className="text-sm font-medium uppercase tracking-tight text-slate-400">
                   Email
-                </Th>
-                <Th
-                  color="brand.slate.400"
-                  fontSize="sm"
-                  fontWeight={500}
-                  textTransform={'capitalize'}
-                ></Th>
-              </Tr>
-            </Thead>
-            <Tbody>
+                </TableHead>
+                <TableHead className="text-sm" />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {members.map((member: UserSponsor) => {
                 return (
-                  <Tr key={member?.userId}>
-                    <Td>
-                      <Flex align="center">
+                  <TableRow key={member?.userId}>
+                    <TableCell>
+                      <div className="flex items-center">
                         <EarnAvatar
                           size="36px"
                           id={member?.user?.id}
                           avatar={member?.user?.photo}
                         />
-                        <Box display={{ base: 'none', md: 'block' }} ml={2}>
-                          <Text
-                            color="brand.slate.500"
-                            fontSize="15px"
-                            fontWeight={500}
-                          >
+                        <div className="ml-2 hidden md:block">
+                          <p className="text-sm font-medium text-slate-500">
                             {`${member?.user?.firstName} ${member?.user?.lastName}`}
-                          </Text>
-                          <Text color="brand.slate.400" fontSize="sm">
+                          </p>
+                          <p className="text-sm text-slate-400">
                             @{member?.user?.username}
-                          </Text>
-                        </Box>
-                      </Flex>
-                    </Td>
-                    <Td>
-                      <Flex align="center">
-                        <Tag
-                          color={
-                            member?.role === 'ADMIN' ? '#0D9488' : '#8B5CF6'
-                          }
-                          fontWeight={600}
-                          bg={member?.role === 'ADMIN' ? '#D1FAE5' : '#F3E8FF'}
-                          size="sm"
-                          variant="solid"
+                          </p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <span
+                          className={cn(
+                            'inline-flex rounded px-2 py-1 text-xs font-semibold',
+                            member?.role === 'ADMIN'
+                              ? 'bg-emerald-100 text-teal-600'
+                              : 'bg-purple-100 text-brand-purple',
+                          )}
                         >
                           {member?.role}
-                        </Tag>
-                      </Flex>
-                    </Td>
-                    <Td color={'brand.slate.600'} fontWeight={500}>
-                      {member?.user?.email}
-                      <Tooltip label="Copy Email Address" placement="right">
-                        <CopyIcon
-                          cursor="pointer"
-                          ml={1}
-                          onClick={() =>
-                            navigator.clipboard.writeText(
-                              member?.user?.email as string,
-                            )
-                          }
-                        />
-                      </Tooltip>
-                    </Td>
-                    <Td>
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium text-slate-600">
+                      <div className="flex items-center gap-1">
+                        {member?.user?.email}
+                        <Tooltip
+                          content="Copy Email Address"
+                          contentProps={{ side: 'right' }}
+                        >
+                          <Copy
+                            className="h-4 w-4 cursor-pointer"
+                            onClick={() =>
+                              navigator.clipboard.writeText(
+                                member?.user?.email as string,
+                              )
+                            }
+                          />
+                        </Tooltip>
+                      </div>
+                    </TableCell>
+                    <TableCell>
                       <RemoveMemberModal
                         member={member}
                         isAdminLoggedIn={isAdminLoggedIn}
                         session={session}
                         onRemoveMember={onRemoveMember}
                       />
-                    </Td>
-                  </Tr>
+                    </TableCell>
+                  </TableRow>
                 );
               })}
-            </Tbody>
+            </TableBody>
           </Table>
-        </TableContainer>
+        </div>
       )}
-      <Flex align="center" justify="end" mt={6}>
-        <Text mr={4} color="brand.slate.400" fontSize="sm">
-          <Text as="span" fontWeight={700}>
-            {skip + 1}
-          </Text>{' '}
-          -{' '}
-          <Text as="span" fontWeight={700}>
+      <div className="mt-6 flex items-center justify-end">
+        <p className="mr-4 text-sm text-slate-400">
+          <span className="font-bold">{skip + 1}</span> -{' '}
+          <span className="font-bold">
             {Math.min(skip + length, totalMembers)}
-          </Text>{' '}
-          of{' '}
-          <Text as="span" fontWeight={700}>
-            {totalMembers}
-          </Text>{' '}
-          Members
-        </Text>
-        <Button
-          mr={4}
-          isDisabled={skip <= 0}
-          leftIcon={<ChevronLeftIcon w={5} h={5} />}
-          onClick={() => (skip >= length ? setSkip(skip - length) : setSkip(0))}
-          size="sm"
-          variant="outline"
-        >
-          Previous
-        </Button>
-        <Button
-          isDisabled={
-            totalMembers <= skip + length || (skip > 0 && skip % length !== 0)
-          }
-          onClick={() => skip % length === 0 && setSkip(skip + length)}
-          rightIcon={<ChevronRightIcon w={5} h={5} />}
-          size="sm"
-          variant="outline"
-        >
-          Next
-        </Button>
-      </Flex>
+          </span>{' '}
+          of <span className="font-bold">{totalMembers}</span> Members
+        </p>
+        <div className="flex gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={skip <= 0}
+            onClick={() =>
+              skip >= length ? setSkip(skip - length) : setSkip(0)
+            }
+            className="flex items-center"
+          >
+            <ChevronLeft className="mr-2 h-5 w-5" />
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={
+              totalMembers <= skip + length || (skip > 0 && skip % length !== 0)
+            }
+            onClick={() => skip % length === 0 && setSkip(skip + length)}
+            className="flex items-center"
+          >
+            Next
+            <ChevronRight className="ml-2 h-5 w-5" />
+          </Button>
+        </div>
+      </div>
     </SponsorLayout>
   );
 };
@@ -374,54 +311,59 @@ const RemoveMemberModal = ({
     () => member?.user?.email !== session?.user?.email,
     [member, session],
   );
+
   return (
-    <Flex align="center" justify="end">
+    <div className="flex items-center justify-end">
       {isAdminLoggedIn && isSameUser && (
         <Button
-          color="#6366F1"
-          bg="#E0E7FF"
           onClick={() => setIsOpen(true)}
           size="sm"
-          variant="solid"
+          className="bg-indigo-100 text-brand-purple hover:bg-indigo-100/90"
         >
           Remove
         </Button>
       )}
-      <Modal
+      <Dialog
         key={member.userId}
-        closeOnOverlayClick={false}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
+        open={isOpen}
+        onOpenChange={(open) => setIsOpen(open)}
       >
-        <ModalOverlay />
-        <ModalContent py={2}>
-          <ModalHeader color={'brand.slate.900'} fontSize="xl">
-            Remove Member?
-          </ModalHeader>
-          <ModalCloseButton mt={4} onClick={() => setIsOpen(false)} />
-          <ModalBody>
+        <DialogContent className="py-2">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-slate-900">
+              Remove Member?
+            </DialogTitle>
+            <button
+              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 disabled:pointer-events-none"
+              onClick={() => setIsOpen(false)}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </button>
+          </DialogHeader>
+
+          <div className="py-4">
             <p>
               Are you sure you want to remove{' '}
-              <Text as="span" fontWeight={600}>
-                {member.user?.email}
-              </Text>{' '}
-              from accessing your sponsor dashboard? You can invite them back
-              again later if needed.
+              <span className="font-semibold">{member.user?.email}</span> from
+              accessing your sponsor dashboard? You can invite them back again
+              later if needed.
             </p>
-          </ModalBody>
-          <ModalFooter justifyContent="flex-end" display="flex" mt={2}>
+          </div>
+
+          <DialogFooter className="mt-2">
             <Button
-              w="full"
+              className="w-full"
               onClick={() => {
                 removeMember(member.userId);
               }}
             >
               Remove Member
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Flex>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 

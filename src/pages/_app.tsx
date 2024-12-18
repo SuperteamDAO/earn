@@ -1,9 +1,4 @@
-import '../styles/globals.scss';
-import '@/components/tiptap/styles/index.css';
-
-import { ChakraProvider } from '@chakra-ui/react';
 import { GoogleTagManager } from '@next/third-parties/google';
-import { setUser } from '@sentry/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
@@ -12,22 +7,15 @@ import { SessionProvider } from 'next-auth/react';
 import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 
 import { useUser } from '@/store/user';
-import { fontMono, fontSans, fontSerif } from '@/theme/fonts';
+import { fontMono, fontSans } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
 
-import theme from '../config/chakra.config';
-
-// Chakra / Next/font don't play well in config.ts file for the theme. So we extend the theme here. (only the fonts)
-const extendThemeWithNextFonts = {
-  ...theme,
-  fonts: {
-    heading: fontSans.style.fontFamily,
-    body: fontSans.style.fontFamily,
-  },
-};
+import '../styles/globals.scss';
+import '@/components/tiptap/styles/index.css';
 
 const SolanaWalletProvider = dynamic(
   () =>
@@ -63,6 +51,7 @@ function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
   const { user } = useUser();
   const posthog = usePostHog();
+  const forcedRedirected = useRef(false);
 
   useEffect(() => {
     const handleRouteChange = () => posthog?.capture('$pageview');
@@ -72,15 +61,56 @@ function MyApp({ Component, pageProps }: any) {
     };
   }, [router.events, posthog]);
 
+  const forcedProfileRedirect = useCallback(
+    (wait?: number) => {
+      if (
+        router.pathname.startsWith('/new') ||
+        router.pathname.startsWith('/sponsor') ||
+        !user
+      )
+        return;
+      if (user.isTalentFilled || user.currentSponsorId) return;
+      setTimeout(() => {
+        if (wait) {
+          toast.info('Finish your profile to continue browsing.', {
+            description: `You will be redirected in ~${Math.floor(wait / 1000).toFixed(0)} seconds.`,
+            duration: wait || 0,
+          });
+        }
+        setTimeout(() => {
+          router.push({
+            pathname: '/new',
+            query: {
+              type: 'forced',
+              originUrl: router.asPath,
+            },
+          });
+        }, wait || 0);
+      }, 0);
+      forcedRedirected.current = true;
+    },
+    [user, router.pathname],
+  );
+
   useEffect(() => {
     if (router.query.loginState === 'signedIn' && user) {
       posthog.identify(user.email);
-      setUser({ id: user.id, email: user.email });
       const url = new URL(window.location.href);
       url.searchParams.delete('loginState');
       window.history.replaceState(null, '', url.href);
+      forcedProfileRedirect(); // instantly when just signed in
     }
   }, [router.query.loginState, user, posthog]);
+
+  // forced profile redirection
+  useEffect(() => {
+    const loadRedirect = () => {
+      if (!forcedRedirected.current) {
+        forcedProfileRedirect(5000);
+      }
+    };
+    loadRedirect();
+  }, [user?.id]);
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
 
@@ -105,15 +135,16 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       <style jsx global>{`
         :root {
           --font-sans: ${fontSans.style.fontFamily};
-          --font-serif: ${fontSerif.style.fontFamily};
           --font-mono: ${fontMono.style.fontFamily};
+        }
+        body {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
       `}</style>
       <PostHogProvider client={posthog}>
         <SessionProvider session={session}>
-          <ChakraProvider theme={extendThemeWithNextFonts}>
-            <MyApp Component={Component} pageProps={pageProps} />
-          </ChakraProvider>
+          <MyApp Component={Component} pageProps={pageProps} />
         </SessionProvider>
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
       </PostHogProvider>

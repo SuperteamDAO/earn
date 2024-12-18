@@ -1,42 +1,33 @@
-import {
-  ArrowForwardIcon,
-  CheckIcon,
-  CloseIcon,
-  CopyIcon,
-} from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Circle,
-  CircularProgress,
-  Flex,
-  Image,
-  Link,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
 import { GrantApplicationStatus } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import NextLink from 'next/link';
+import { ArrowRight, Check, Copy, X } from 'lucide-react';
+import Link from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
+import { Button } from '@/components/ui/button';
+import { CircularProgress } from '@/components/ui/progress';
+import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
-import { type Grant } from '@/features/grants';
-import {
-  Discord,
-  EarnAvatar,
-  extractTelegramUsername,
-  extractTwitterUsername,
-  Telegram,
-  Twitter,
-} from '@/features/talent';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { cn } from '@/utils/cn';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
+
+import { type Grant } from '@/features/grants/types';
+import {
+  Discord,
+  Telegram,
+  Twitter,
+} from '@/features/social/components/SocialIcons';
+import {
+  extractTelegramUsername,
+  extractTwitterUsername,
+} from '@/features/social/utils/extractUsername';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type GrantApplicationWithUser } from '../../types';
 import { InfoBox } from '../InfoBox';
@@ -247,12 +238,17 @@ export const ApplicationDetails = ({
         extractTelegramUsername(selectedApplication.user.telegram) || null;
       const link = selectedApplication.user.telegram;
       return (
-        <Flex align="center" justify="start" gap={2} fontSize="sm">
-          <Telegram link={link} color="#94A3B8" />
-          <Link color="brand.slate.400" href={link} isExternal>
+        <div className="flex items-center justify-start gap-2 text-sm">
+          <Telegram link={link} className="text-slate-400" />
+          <Link
+            className="block text-slate-400"
+            href={link}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             @{username}
           </Link>
-        </Flex>
+        </div>
       );
     }
 
@@ -261,23 +257,29 @@ export const ApplicationDetails = ({
         extractTwitterUsername(selectedApplication.user.twitter) || null;
       const link = selectedApplication.user.twitter;
       return (
-        <Flex align="center" justify="start" gap={2} fontSize="sm">
-          <Twitter link={link} color="#94A3B8" />
-          <Link color="brand.slate.400" href={link} isExternal>
+        <div className="flex items-center justify-start gap-2 text-sm">
+          <Twitter link={link} className="text-slate-400" />
+          <Link
+            className="text-slate-400"
+            href={link}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             @{username}
           </Link>
-        </Flex>
+        </div>
       );
     }
 
     if (selectedApplication?.user?.discord) {
       return (
-        <Flex align="center" justify="start" gap={2} fontSize="sm">
-          <Discord link={selectedApplication.user.discord} color="#94A3B8" />
-          <Text color="brand.slate.400">
-            {selectedApplication.user.discord}
-          </Text>
-        </Flex>
+        <div className="flex items-center justify-start gap-2 text-sm">
+          <Discord
+            link={selectedApplication.user.discord}
+            className="text-slate-400"
+          />
+          <p className="text-slate-400">{selectedApplication.user.discord}</p>
+        </div>
       );
     }
 
@@ -285,7 +287,7 @@ export const ApplicationDetails = ({
   };
 
   return (
-    <Box w="100%" bg="white" roundedRight={'xl'}>
+    <div className="w-full rounded-r-xl bg-white">
       <RejectGrantApplicationModal
         applicationId={selectedApplication?.id}
         rejectIsOpen={rejectedIsOpen}
@@ -309,86 +311,63 @@ export const ApplicationDetails = ({
 
       {applications?.length ? (
         <>
-          <Box
-            pos="sticky"
-            top={'3rem'}
-            py={1}
-            borderBottom={'1px'}
-            borderBottomColor={'brand.slate.200'}
-            bgColor={'white'}
-          >
-            <Flex
-              align="center"
-              justify={'space-between'}
-              w="full"
-              px={4}
-              py={3}
-            >
-              <Flex align="center" gap={2} w="full">
+          <div className="sticky top-[3rem] border-b border-slate-200 bg-white py-1">
+            <div className="flex w-full items-center justify-between px-4 py-2">
+              <div className="flex w-full items-center gap-2">
                 <EarnAvatar
                   size="40px"
                   id={selectedApplication?.user?.id}
                   avatar={selectedApplication?.user?.photo || undefined}
                 />
                 <div>
-                  <Text
-                    w="100%"
-                    color="brand.slate.900"
-                    fontSize="md"
-                    fontWeight={500}
-                    whiteSpace={'nowrap'}
-                  >
+                  <p className="w-full whitespace-nowrap text-base font-medium text-slate-900">
                     {`${selectedApplication?.user?.firstName}'s Application`}
-                  </Text>
+                  </p>
                   <Link
-                    as={NextLink}
-                    w="100%"
-                    color="brand.purple"
-                    fontSize="xs"
-                    fontWeight={500}
-                    whiteSpace={'nowrap'}
                     href={`/t/${selectedApplication?.user?.username}`}
-                    isExternal
+                    className="flex w-full items-center gap-1 whitespace-nowrap text-xs font-medium text-brand-purple"
+                    rel="noopener noreferrer"
+                    target="_blank"
                   >
-                    View Profile <ArrowForwardIcon mb="0.5" />
+                    View Profile
+                    <ArrowRight className="mb-0.5 h-4 w-4" />
                   </Link>
                 </div>
-              </Flex>
-              <Flex
-                className="ph-no-capture"
-                align="center"
-                justify={'flex-end'}
-                gap={2}
-                w="full"
-              >
+              </div>
+              <div className="ph-no-capture flex w-full items-center justify-end gap-2">
                 {isPending && (
                   <>
                     <Button
-                      color="#079669"
-                      bg="#ECFEF6"
-                      _hover={{ bg: '#D1FAE5' }}
-                      isDisabled={isMultiSelectOn}
-                      leftIcon={
-                        <Circle p={'5px'} bg="#079669">
-                          <CheckIcon color="white" boxSize="2.5" />
-                        </Circle>
-                      }
+                      className={cn(
+                        'bg-emerald-50 text-emerald-600 hover:bg-emerald-100',
+                        isMultiSelectOn && 'cursor-not-allowed opacity-50',
+                      )}
+                      disabled={isMultiSelectOn}
                       onClick={approveOnOpen}
+                      variant="ghost"
                     >
+                      <div className="mr-2 flex items-center">
+                        <div className="rounded-full bg-emerald-600 p-[5px]">
+                          <Check className="h-2.5 w-2.5 text-white" />
+                        </div>
+                      </div>
                       Approve
                     </Button>
+
                     <Button
-                      color="#E11D48"
-                      bg="#FEF2F2"
-                      _hover={{ bg: '#FED7D7' }}
-                      isDisabled={isMultiSelectOn}
-                      leftIcon={
-                        <Circle p={'5px'} bg="#E11D48">
-                          <CloseIcon color="white" boxSize="2" />
-                        </Circle>
-                      }
+                      className={cn(
+                        'bg-rose-50 text-rose-600 hover:bg-rose-100',
+                        isMultiSelectOn && 'cursor-not-allowed opacity-50',
+                      )}
+                      disabled={isMultiSelectOn}
                       onClick={rejectedOnOpen}
+                      variant="ghost"
                     >
+                      <div className="mr-2 flex items-center">
+                        <div className="rounded-full bg-rose-600 p-[5px]">
+                          <X className="h-2 w-2 text-white" />
+                        </div>
+                      </div>
                       Reject
                     </Button>
                   </>
@@ -414,19 +393,15 @@ export const ApplicationDetails = ({
                         />
                       )}
                     <Button
-                      color="#079669"
-                      bg="#ECFEF6"
-                      _disabled={{
-                        opacity: 1,
-                      }}
-                      pointerEvents={'none'}
-                      isDisabled={true}
-                      leftIcon={
-                        <Circle p={'5px'} bg="#079669">
-                          <CheckIcon color="white" boxSize="2.5" />
-                        </Circle>
-                      }
+                      className="pointer-events-none bg-emerald-50 text-emerald-600 disabled:opacity-100"
+                      disabled={true}
+                      variant="ghost"
                     >
+                      <div className="mr-2 flex items-center">
+                        <div className="rounded-full bg-emerald-600 p-[5px]">
+                          <Check className="h-2.5 w-2.5 text-white" />
+                        </div>
+                      </div>
                       Approved
                     </Button>
                   </>
@@ -434,64 +409,43 @@ export const ApplicationDetails = ({
                 {isRejected && (
                   <>
                     <Button
-                      color="#E11D48"
-                      bg="#FEF2F2"
-                      _disabled={{
-                        opacity: 1,
-                      }}
-                      pointerEvents={'none'}
-                      isDisabled={true}
-                      leftIcon={
-                        <Circle p={'5px'} bg="#E11D48">
-                          <CloseIcon color="white" boxSize="2" />
-                        </Circle>
-                      }
+                      className="pointer-events-none bg-rose-50 text-rose-600 disabled:opacity-100"
+                      disabled={true}
+                      variant="ghost"
                     >
+                      <div className="mr-2 flex items-center">
+                        <div className="rounded-full bg-rose-600 p-[5px]">
+                          <X className="h-2 w-2 text-white" />
+                        </div>
+                      </div>
                       Rejected
                     </Button>
                   </>
                 )}
-              </Flex>
-            </Flex>
+              </div>
+            </div>
 
-            <Flex align="center" gap={5} px={4} py={2}>
+            <div className="flex items-center gap-5 px-4 py-2">
               {isApproved && (
-                <Flex align="center">
-                  <Text
-                    mr={3}
-                    color="brand.slate.400"
-                    fontSize={'sm'}
-                    fontWeight={600}
-                    whiteSpace={'nowrap'}
-                  >
+                <div className="flex items-center">
+                  <p className="mr-3 whitespace-nowrap text-sm font-semibold text-slate-400">
                     APPROVED
-                  </Text>
-
-                  <Image
-                    w={4}
-                    h={4}
-                    mr={0.5}
-                    alt={'token'}
-                    rounded={'full'}
+                  </p>
+                  <img
+                    className="mr-0.5 h-4 w-4 rounded-full"
                     src={tokenIcon}
+                    alt="token"
                   />
-                  <Text
-                    color="brand.slate.600"
-                    fontSize={'sm'}
-                    fontWeight={600}
-                    whiteSpace={'nowrap'}
-                  >
+                  <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
                     {`${selectedApplication?.approvedAmount?.toLocaleString('en-us')}`}
-                    <Text as="span" ml={0.5} color="brand.slate.400">
+                    <span className="ml-0.5 text-slate-400">
                       {grant?.token}
-                    </Text>
-                  </Text>
+                    </span>
+                  </p>
                   {isApproved && (
-                    <Flex mr={4} ml={3}>
+                    <div className="mx-3 flex">
                       <CircularProgress
-                        color="brand.purple"
-                        size="20px"
-                        thickness={'12px'}
+                        className="h-5 w-5 rounded-full bg-gray-200"
                         value={Number(
                           (
                             (selectedApplication.totalPaid /
@@ -500,13 +454,7 @@ export const ApplicationDetails = ({
                           ).toFixed(2),
                         )}
                       />
-                      <Text
-                        ml={1}
-                        color="brand.slate.600"
-                        fontSize={'sm'}
-                        fontWeight={500}
-                        whiteSpace={'nowrap'}
-                      >
+                      <p className="ml-1 whitespace-nowrap text-sm font-medium text-slate-600">
                         {Number(
                           (
                             (selectedApplication.totalPaid /
@@ -514,43 +462,36 @@ export const ApplicationDetails = ({
                             100
                           ).toFixed(2),
                         )}
-                        %{' '}
-                        <Text as="span" color="brand.slate.400">
-                          Paid
-                        </Text>
-                      </Text>
-                    </Flex>
+                        % <span className="text-slate-400">Paid</span>
+                      </p>
+                    </div>
                   )}
-                </Flex>
+                </div>
               )}
               {selectedApplication?.user?.email && (
-                <Flex align="center" justify="start" gap={2} fontSize="sm">
+                <div className="flex items-center justify-start gap-2 text-sm">
                   <MdOutlineMail color="#94A3B8" />
                   <Link
-                    color="brand.slate.400"
+                    className="text-slate-400"
                     href={`mailto:${selectedApplication.user.email}`}
-                    isExternal
+                    rel="noopener noreferrer"
+                    target="_blank"
                   >
                     {truncateString(selectedApplication?.user?.email, 36)}
                   </Link>
-                </Flex>
+                </div>
               )}
               {selectedApplication?.user?.publicKey && (
-                <Flex
-                  align="center"
-                  justify="start"
-                  gap={2}
-                  fontSize="sm"
-                  whiteSpace={'nowrap'}
-                >
+                <div className="flex items-center justify-start gap-2 whitespace-nowrap text-sm">
                   <MdOutlineAccountBalanceWallet color="#94A3B8" />
-                  <Text color="brand.slate.400">
+                  <p className="flex items-center text-slate-400">
                     {truncatePublicKey(selectedApplication?.user?.publicKey, 3)}
-                    <Tooltip label="Copy Wallet ID" placement="right">
-                      <CopyIcon
-                        cursor="pointer"
-                        ml={1}
-                        color="brand.slate.400"
+                    <Tooltip
+                      content="Copy Wallet ID"
+                      contentProps={{ side: 'right' }}
+                    >
+                      <Copy
+                        className="ml-1 h-4 w-4 cursor-pointer text-slate-400"
                         onClick={() =>
                           navigator.clipboard.writeText(
                             selectedApplication?.user?.publicKey || '',
@@ -558,86 +499,55 @@ export const ApplicationDetails = ({
                         }
                       />
                     </Tooltip>
-                  </Text>
-                </Flex>
+                  </p>
+                </div>
               )}
 
               <SocialMediaLink />
-            </Flex>
-          </Box>
+            </div>
+          </div>
 
-          <Box
-            overflowY={'scroll'}
-            w="100%"
-            maxW="60rem"
-            h={'67.15rem'}
-            css={{
-              '&::-webkit-scrollbar': {
-                width: '4px',
-              },
-              '&::-webkit-scrollbar-track': {
-                width: '6px',
-              },
-              '&::-webkit-scrollbar-thumb': {
-                background: '#cbd5e1',
-                borderRadius: '30px',
-              },
-            }}
+          <div
+            className="h-[67.15rem] w-full max-w-[60rem] overflow-y-scroll"
+            style={
+              {
+                '&::-webkit-scrollbar': { width: '4px' },
+                '&::-webkit-scrollbar-track': { width: '6px' },
+                '&::-webkit-scrollbar-thumb': {
+                  backgroundColor: '#cbd5e1',
+                  borderRadius: '30px',
+                },
+              } as React.CSSProperties
+            }
           >
-            <Box w="full" px={4} py={5}>
-              <Box mb={4}>
-                <Text
-                  mb={1}
-                  color="brand.slate.400"
-                  fontSize="xs"
-                  fontWeight={600}
-                  textTransform={'uppercase'}
-                >
+            <div className="w-full px-4 py-5">
+              <div className="mb-4">
+                <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
                   ASK
-                </Text>
-                <Flex align={'center'} gap={0.5}>
-                  <Image
-                    w={4}
-                    h={4}
-                    mr={0.5}
-                    alt={'token'}
-                    rounded={'full'}
+                </p>
+                <div className="flex items-center gap-0.5">
+                  <img
+                    className="mr-0.5 h-4 w-4 rounded-full"
                     src={tokenIcon}
+                    alt="token"
                   />
-                  <Text
-                    color="brand.slate.600"
-                    fontSize={'sm'}
-                    fontWeight={600}
-                    whiteSpace={'nowrap'}
-                  >
+                  <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
                     {`${selectedApplication?.ask?.toLocaleString('en-us')}`}
-                    <Text as="span" ml={0.5} color="brand.slate.400">
+                    <span className="ml-0.5 text-slate-400">
                       {grant?.token}
-                    </Text>
-                  </Text>
-                </Flex>
-              </Box>
+                    </span>
+                  </p>
+                </div>
+              </div>
 
-              <Box mb={4}>
-                <Text
-                  mb={1}
-                  color="brand.slate.400"
-                  fontSize="xs"
-                  fontWeight={600}
-                  textTransform={'uppercase'}
-                >
+              <div className="mb-4">
+                <div className="mb-1 text-xs font-semibold uppercase text-slate-400">
                   APPLICATION DATE
-                </Text>
-
-                <Text
-                  color="brand.slate.600"
-                  fontSize={'sm'}
-                  fontWeight={500}
-                  whiteSpace={'nowrap'}
-                >
+                </div>
+                <p className="whitespace-nowrap text-sm font-medium text-slate-600">
                   {formattedCreatedAt}
-                </Text>
-              </Box>
+                </p>
+              </div>
 
               <InfoBox
                 label="Project Title"
@@ -683,19 +593,17 @@ export const ApplicationDetails = ({
                     />
                   ),
                 )}
-            </Box>
-          </Box>
+            </div>
+          </div>
         </>
       ) : (
-        <Box p={3}>
-          <Text color={'brand.slate.500'} fontSize={'xl'} fontWeight={500}>
+        <div className="p-3">
+          <p className="text-xl font-medium text-slate-500">
             No applications found
-          </Text>
-          <Text color={'brand.slate.400'} fontSize={'sm'}>
-            Try a different search query
-          </Text>
-        </Box>
+          </p>
+          <p className="text-sm text-slate-400">Try a different search query</p>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };

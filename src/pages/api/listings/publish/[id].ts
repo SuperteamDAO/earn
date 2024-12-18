@@ -2,16 +2,6 @@ import { type Prisma } from '@prisma/client';
 import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
-import {
-  checkListingSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
-import {
-  backendListingRefinements,
-  createListingFormSchema,
-  createListingRefinements,
-} from '@/features/listing-builder';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -19,6 +9,15 @@ import { cleanSkills } from '@/utils/cleanSkills';
 import { dayjs } from '@/utils/dayjs';
 import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import {
+  backendListingRefinements,
+  createListingFormSchema,
+  createListingRefinements,
+} from '@/features/listing-builder/types/schema';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const id = req.query.id as string;

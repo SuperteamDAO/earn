@@ -1,21 +1,3 @@
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  HStack,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
-} from '@chakra-ui/react';
 import { GrantApplicationStatus, type SubmissionLabels } from '@prisma/client';
 import {
   keepPreviousData,
@@ -24,35 +6,33 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import axios from 'axios';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import {
-  ApplicationDetails,
-  ApplicationHeader,
-  ApplicationList,
-  applicationsQuery,
-  type GrantApplicationWithUser,
-  PaymentsHistoryTab,
-  RejectAllGrantApplicationModal,
-  sponsorGrantQuery,
-} from '@/features/sponsor-dashboard';
+import { Popover, PopoverContent } from '@/components/ui/popover';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
+import { ApplicationDetails } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationDetails';
+import { ApplicationHeader } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationHeader';
+import { ApplicationList } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationList';
+import { RejectAllGrantApplicationModal } from '@/features/sponsor-dashboard/components/GrantApplications/Modals/RejectAllModal';
+import { PaymentsHistoryTab } from '@/features/sponsor-dashboard/components/GrantApplications/PaymentsHistoryTab';
+import { applicationsQuery } from '@/features/sponsor-dashboard/queries/applications';
+import { sponsorGrantQuery } from '@/features/sponsor-dashboard/queries/grant';
+import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
+
 interface Props {
   slug: string;
 }
-
-const selectedStyles = {
-  borderColor: 'brand.purple',
-  color: 'brand.slate.600',
-};
 
 function GrantApplications({ slug }: Props) {
   const { user } = useUser();
@@ -373,227 +353,162 @@ function GrantApplications({ slug }: Props) {
       ) : (
         <>
           <ApplicationHeader grant={grant} />
-          <Tabs defaultIndex={0}>
-            <TabList
-              gap={4}
-              color="brand.slate.400"
-              fontWeight={500}
-              borderBottomWidth={'1px'}
-            >
-              <Tab
-                px={1}
-                fontSize="sm"
-                fontWeight={500}
-                _selected={selectedStyles}
-              >
-                Applications
-              </Tab>
-              <Tab
-                px={1}
-                fontSize="sm"
-                fontWeight={500}
-                _selected={selectedStyles}
-              >
-                Payments History
-              </Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel w="full" px={0}>
-                <>
-                  <Flex align={'start'} w="full" bg="white">
-                    <Grid
-                      templateColumns="23rem 1fr"
-                      w="full"
-                      minH="600px"
-                      bg="white"
-                    >
-                      <GridItem w="full" h="full">
-                        <ApplicationList
-                          filterLabel={filterLabel}
-                          setFilterLabel={setFilterLabel}
-                          applications={applications}
-                          setSearchText={setSearchText}
-                          selectedApplication={selectedApplication}
-                          setSelectedApplication={setSelectedApplication}
-                          isToggled={isToggled}
-                          toggleApplication={toggleApplication}
-                          isAllToggled={isToggledAll}
-                          toggleAllApplications={toggleAllApplications}
-                          isToggleDisabled={
-                            applications?.filter(
-                              (application) =>
-                                application.applicationStatus === 'Pending',
-                            ).length === 0
-                          }
-                        />
-                      </GridItem>
-                      <GridItem
-                        w="full"
-                        h="full"
-                        bg="white"
-                        borderColor="brand.slate.200"
-                        borderTopWidth="1px"
-                        borderRightWidth={'1px'}
-                        borderBottomWidth="1px"
-                        roundedRight={'xl'}
-                      >
-                        {!applications?.length &&
-                        !searchText &&
-                        !isApplicationsLoading ? (
-                          <>
-                            <ExternalImage
-                              className="mx-auto mt-32 w-32"
-                              alt={'talent empty'}
-                              src={'/bg/talent-empty.svg'}
-                            />
-                            <Text
-                              mx="auto"
-                              mt={5}
-                              color={'brand.slate.600'}
-                              fontSize={'lg'}
-                              fontWeight={600}
-                              textAlign={'center'}
-                            >
-                              {filterLabel
-                                ? `Zero Results`
-                                : 'People are working!'}
-                            </Text>
-                            <Text
-                              mx="auto"
-                              mb={200}
-                              color={'brand.slate.400'}
-                              fontWeight={500}
-                              textAlign={'center'}
-                            >
-                              {filterLabel
-                                ? `For the filters you have selected`
-                                : 'Submissions will start appearing here'}
-                            </Text>
-                          </>
-                        ) : (
-                          <ApplicationDetails
-                            isMultiSelectOn={selectedApplicationIds.size > 0}
-                            grant={grant}
-                            applications={applications}
-                            selectedApplication={selectedApplication}
-                            setSelectedApplication={setSelectedApplication}
-                            params={params}
-                          />
-                        )}
-                      </GridItem>
-                    </Grid>
-                  </Flex>
-                  <Flex align="center" justify="start" gap={4} mt={4}>
-                    {!!searchText ? (
-                      <Text color="brand.slate.400" fontSize="sm">
-                        Found{' '}
-                        <Text as="span" fontWeight={700}>
-                          {applications?.length || 0}
-                        </Text>{' '}
-                        {applications?.length === 1 ? 'result' : 'results'}
-                      </Text>
-                    ) : (
+          <Tabs defaultValue="applications">
+            <TabsList className="gap-4 font-medium text-slate-400">
+              <TabsTrigger value="applications">Applications</TabsTrigger>
+              <TabsTrigger value="payments">Payments History</TabsTrigger>
+            </TabsList>
+            <div className="h-0.5 w-full bg-slate-200" />
+            <TabsContent value="applications" className="w-full px-0">
+              <div className="flex w-full items-start bg-white">
+                <div className="grid min-h-[600px] w-full grid-cols-[23rem_1fr] bg-white">
+                  <div className="h-full w-full">
+                    <ApplicationList
+                      filterLabel={filterLabel}
+                      setFilterLabel={setFilterLabel}
+                      applications={applications}
+                      setSearchText={setSearchText}
+                      selectedApplication={selectedApplication}
+                      setSelectedApplication={setSelectedApplication}
+                      isToggled={isToggled}
+                      toggleApplication={toggleApplication}
+                      isAllToggled={isToggledAll}
+                      toggleAllApplications={toggleAllApplications}
+                      isToggleDisabled={
+                        applications?.filter(
+                          (application) =>
+                            application.applicationStatus === 'Pending',
+                        ).length === 0
+                      }
+                    />
+                  </div>
+
+                  <div className="h-full w-full rounded-r-xl border-b border-r border-t border-slate-200 bg-white">
+                    {!applications?.length &&
+                    !searchText &&
+                    !isApplicationsLoading ? (
                       <>
-                        <Button
-                          isDisabled={skip <= 0}
-                          leftIcon={<ChevronLeftIcon w={5} h={5} />}
-                          onClick={() =>
-                            changePage(Math.max(skip - length, 0), length - 1)
-                          }
-                          size="sm"
-                          variant="outline"
-                        >
-                          Previous
-                        </Button>
-                        <Text color="brand.slate.400" fontSize="sm">
-                          <Text as="span" fontWeight={700}>
-                            {skip + 1}
-                          </Text>{' '}
-                          -{' '}
-                          <Text as="span" fontWeight={700}>
-                            {Math.min(skip + length, grant?.totalApplications!)}
-                          </Text>{' '}
-                          of{' '}
-                          <Text as="span" fontWeight={700}>
-                            {grant?.totalApplications}
-                          </Text>{' '}
-                          Applications
-                        </Text>
-                        <Button
-                          isDisabled={
-                            grant?.totalApplications! <= skip + length ||
-                            (skip > 0 && skip % length !== 0)
-                          }
-                          onClick={() => changePage(skip + length, 0)}
-                          rightIcon={<ChevronRightIcon w={5} h={5} />}
-                          size="sm"
-                          variant="outline"
-                        >
-                          Next
-                        </Button>
+                        <ExternalImage
+                          className="mx-auto mt-32 w-32"
+                          alt={'talent empty'}
+                          src={'/bg/talent-empty.svg'}
+                        />
+                        <p className="mx-auto mt-5 text-center text-lg font-semibold text-slate-600">
+                          {filterLabel ? 'Zero Results' : 'People are working!'}
+                        </p>
+                        <p className="mx-auto mb-[200px] text-center font-medium text-slate-400">
+                          {filterLabel
+                            ? 'For the filters you have selected'
+                            : 'Submissions will start appearing here'}
+                        </p>
                       </>
+                    ) : (
+                      <ApplicationDetails
+                        isMultiSelectOn={selectedApplicationIds.size > 0}
+                        grant={grant}
+                        applications={applications}
+                        selectedApplication={selectedApplication}
+                        setSelectedApplication={setSelectedApplication}
+                        params={params}
+                      />
                     )}
-                  </Flex>
-                </>
-              </TabPanel>
-              <TabPanel px={0}>
-                <PaymentsHistoryTab grant={grant} grantId={grant?.id} />
-              </TabPanel>
-            </TabPanels>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center justify-start gap-4">
+                {!!searchText ? (
+                  <p className="text-sm text-slate-400">
+                    Found{' '}
+                    <span className="font-bold">
+                      {applications?.length || 0}
+                    </span>{' '}
+                    {applications?.length === 1 ? 'result' : 'results'}
+                  </p>
+                ) : (
+                  <>
+                    <Button
+                      disabled={skip <= 0}
+                      onClick={() =>
+                        changePage(Math.max(skip - length, 0), length - 1)
+                      }
+                      size="sm"
+                      variant="outline"
+                    >
+                      <ChevronLeft className="mr-2 h-5 w-5" />
+                      Previous
+                    </Button>
+
+                    <p className="text-sm text-slate-400">
+                      <span className="font-bold">{skip + 1}</span> -{' '}
+                      <span className="font-bold">
+                        {Math.min(skip + length, grant?.totalApplications!)}
+                      </span>{' '}
+                      of{' '}
+                      <span className="font-bold">
+                        {grant?.totalApplications}
+                      </span>{' '}
+                      Applications
+                    </p>
+
+                    <Button
+                      disabled={
+                        grant?.totalApplications! <= skip + length ||
+                        (skip > 0 && skip % length !== 0)
+                      }
+                      onClick={() => changePage(skip + length, 0)}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Next
+                      <ChevronRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="payments" className="px-0">
+              <PaymentsHistoryTab grant={grant} grantId={grant?.id} />
+            </TabsContent>
           </Tabs>
           <Popover
-            closeOnBlur={false}
-            closeOnEsc={false}
-            isOpen={isTogglerOpen}
-            onClose={onTogglerClose}
+            modal={true}
+            onOpenChange={onTogglerClose}
+            open={isTogglerOpen}
           >
             <PopoverContent
-              pos="fixed"
-              bottom={10}
-              w="full"
-              mx="auto"
-              p={0}
-              bg="transparent"
-              border="none"
-              shadow="none"
+              className="fixed bottom-10 mx-auto w-full border-none bg-transparent p-0 shadow-none"
+              align="center"
             >
-              <PopoverBody
-                w="fit-content"
-                mx="auto"
-                px={4}
-                bg="white"
-                borderWidth={2}
-                borderColor="brand.slate.200"
-                shadow="lg"
-                rounded={'lg'}
-              >
+              <div className="mx-auto w-fit rounded-lg border-2 border-slate-200 bg-white px-4 shadow-lg">
                 {selectedApplicationIds.size > 100 && (
-                  <Text pb={2} color="red" textAlign="center">
+                  <p className="pb-2 text-center text-red-500">
                     Cannot select more than 100 applications
-                  </Text>
+                  </p>
                 )}
-                <HStack gap={4} fontSize={'lg'}>
-                  <HStack fontWeight={500}>
+
+                <div className="flex items-center gap-4 text-lg">
+                  <div className="flex items-center font-medium">
                     <p>{selectedApplicationIds.size}</p>
-                    <Text color="brand.slate.500">Selected</Text>
-                  </HStack>
-                  <Box w="1px" h={4} bg="brand.slate.300" />
+                    <p className="ml-1 text-slate-500">Selected</p>
+                  </div>
+
+                  <div className="h-4 w-px bg-slate-300" />
+
                   <Button
-                    fontWeight={500}
-                    bg="transparent"
+                    className="bg-transparent font-medium hover:bg-transparent"
                     onClick={() => {
                       setSelectedApplicationIds(new Set());
                     }}
-                    variant="link"
+                    variant="ghost"
                   >
                     UNSELECT ALL
                   </Button>
+
                   <Button
-                    gap={2}
-                    color="#E11D48"
-                    fontWeight={500}
-                    bg="#FEF2F2"
-                    isDisabled={
+                    className="gap-2 bg-red-50 font-medium text-rose-600 hover:bg-red-50/90 disabled:opacity-50"
+                    disabled={
                       selectedApplicationIds.size === 0 ||
                       selectedApplicationIds.size > 100
                     }
@@ -613,10 +528,11 @@ function GrantApplications({ slug }: Props) {
                     </svg>
                     Reject All
                   </Button>
-                </HStack>
-              </PopoverBody>
+                </div>
+              </div>
             </PopoverContent>
           </Popover>
+
           <RejectAllGrantApplicationModal
             applicationIds={Array.from(selectedApplicationIds)}
             rejectIsOpen={rejectedIsOpen}

@@ -12,7 +12,7 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 export interface Option {
   value: string;

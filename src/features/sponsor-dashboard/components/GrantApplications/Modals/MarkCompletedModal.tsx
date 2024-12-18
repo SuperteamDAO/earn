@@ -1,18 +1,20 @@
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Button,
-} from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import React from 'react';
 import { toast } from 'sonner';
 
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+
+import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
 interface Props {
   isOpen: boolean;
@@ -20,14 +22,13 @@ interface Props {
   applicationId: string;
   onMarkCompleted: (updatedApplication: GrantApplicationWithUser) => void;
 }
+
 export function MarkCompleteModal({
   isOpen,
   onClose,
   applicationId,
   onMarkCompleted,
 }: Props) {
-  const cancelRef = React.useRef<HTMLButtonElement | null>(null);
-
   const { mutate: markCompletedMutation, isPending: markCompletePending } =
     useMutation({
       mutationFn: async () => {
@@ -67,47 +68,47 @@ export function MarkCompleteModal({
   };
 
   return (
-    <>
-      <AlertDialog
-        isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Mark as Completed
-            </AlertDialogHeader>
+    <AlertDialog open={isOpen} onOpenChange={onClose}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="text-lg font-bold">
+            Mark as Completed
+          </AlertDialogTitle>
+        </AlertDialogHeader>
 
-            <AlertDialogBody>
-              We will inform the user that their grant project has been marked
-              as completed. This will allow them to apply for this grant again.
-              <br />
-              <br />
-              You cannot undo this action. Are you sure you want to mark this as
-              completed?
-            </AlertDialogBody>
+        <AlertDialogDescription className="space-y-4">
+          <p>
+            We will inform the user that their grant project has been marked as
+            completed. This will allow them to apply for this grant again.
+          </p>
+          <p>
+            You cannot undo this action. Are you sure you want to mark this as
+            completed?
+          </p>
+        </AlertDialogDescription>
 
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose} variant="ghost">
-                Cancel
-              </Button>
-              <Button
-                ml={3}
-                bg="red.500"
-                _hover={{
-                  bg: 'red.400',
-                }}
-                isLoading={markCompletePending}
-                loadingText="Marking..."
-                onClick={handleMarkAsCompleted}
-              >
-                Mark as Completed
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-    </>
+        <AlertDialogFooter>
+          <AlertDialogCancel asChild>
+            <Button variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
+          </AlertDialogCancel>
+          <Button
+            className="ml-3 bg-red-500 hover:bg-red-400"
+            disabled={markCompletePending}
+            onClick={handleMarkAsCompleted}
+          >
+            {markCompletePending ? (
+              <>
+                <span className="loading loading-spinner" />
+                Marking...
+              </>
+            ) : (
+              'Mark as Completed'
+            )}
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

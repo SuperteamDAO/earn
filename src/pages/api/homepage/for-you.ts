@@ -1,14 +1,16 @@
 import { Regions } from '@prisma/client';
 import { type NextApiResponse } from 'next';
 
-import { type NextApiRequestWithUser, withAuth } from '@/features/auth';
+import { prisma } from '@/prisma';
+
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+import { type StatusFilter } from '@/features/listings/types';
 import {
   filterRegionCountry,
   getCombinedRegion,
-  getStatusFilterQuery,
-  type StatusFilter,
-} from '@/features/listings';
-import { prisma } from '@/prisma';
+} from '@/features/listings/utils/region';
+import { getStatusFilterQuery } from '@/features/listings/utils/status';
 
 const TAKE = 20;
 

@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { MdArrowForward } from 'react-icons/md';
 
 import { LocalImage } from '@/components/ui/local-image';
-import { type FeedPostType, homeFeedQuery } from '@/features/feed';
 import { timeAgoShort } from '@/utils/timeAgo';
+
+import { homeFeedQuery } from '@/features/feed/queries/home-feed';
+import { type FeedPostType } from '@/features/feed/types';
 
 interface ActivityCardProps {
   firstName: string;
@@ -67,7 +69,7 @@ const ActivityCard = ({
   const ogImage = getRandomFallbackImage();
 
   return (
-    <NextLink href={'/feed/?filter=new'} className="flex">
+    <Link href={'/feed/?filter=new'} className="flex">
       <LocalImage
         className="h-12 w-20 bg-center object-cover"
         alt="OG Image"
@@ -88,7 +90,7 @@ const ActivityCard = ({
         </div>
         <p className="text-sm font-medium text-slate-600">{actionText}</p>
       </div>
-    </NextLink>
+    </Link>
   );
 };
 
@@ -104,7 +106,7 @@ export const RecentActivity = () => {
         <span className="text-sm font-medium text-gray-400">
           RECENT ACTIVITY
         </span>
-        <NextLink
+        <Link
           href="/feed"
           className="ph-no-capture flex items-center text-xs font-semibold text-brand-purple"
           onClick={() => {
@@ -113,7 +115,7 @@ export const RecentActivity = () => {
         >
           View All
           <MdArrowForward className="ml-1" />
-        </NextLink>
+        </Link>
       </div>
       <div className="mt-4 flex w-full flex-col gap-4">
         {data?.map((act, i) => (

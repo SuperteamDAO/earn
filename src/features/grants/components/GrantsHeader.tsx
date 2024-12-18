@@ -1,25 +1,14 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  HStack,
-  Icon,
-  Image,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { BsFillCircleFill } from 'react-icons/bs';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import {
-  ListingHeaderSeparator,
-  ListingTabLink,
-  RegionLabel,
-  StatusBadge,
-} from '@/features/listings';
 import { PulseIcon } from '@/svg/pulse-icon';
+
+import { ListingTabLink } from '@/features/listings/components/ListingPage/ListingTabLink';
+import { RegionLabel } from '@/features/listings/components/ListingPage/RegionLabel';
+import { ListingHeaderSeparator } from '@/features/listings/components/ListingPage/Separator';
+import { StatusBadge } from '@/features/listings/components/ListingPage/StatusBadge';
 
 interface Props {
   sponsor?: {
@@ -58,9 +47,7 @@ export const GrantsHeader = ({
     statusTextColor = 'green-600';
     statusText = 'Open';
   } else {
-    statusIcon = (
-      <Icon as={BsFillCircleFill} w={3} h={3} color={'brand.slate.400'} />
-    );
+    statusIcon = <BsFillCircleFill className="h-3 w-3 text-slate-400" />;
     statusBgColor = '[#ffecb3]';
     statusTextColor = 'slate-400';
     statusText = 'Closed';
@@ -69,66 +56,38 @@ export const GrantsHeader = ({
   const router = useRouter();
 
   return (
-    <Box w="full" bg={'white'}>
-      <VStack
-        align="start"
-        justify={['start', 'start', 'space-between', 'space-between']}
-        flexDir={['column', 'column', 'row', 'row']}
-        gap={5}
-        w={'full'}
-        maxW={'7xl'}
-        mx={'auto'}
-        py={10}
-      >
-        <HStack align="start" flexDir={{ base: 'column', md: 'row' }}>
-          <Image
-            w={'4rem'}
-            h={'4rem'}
-            objectFit={'cover'}
-            alt={'phantom'}
-            rounded={'md'}
+    <div className="w-full bg-white">
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-start gap-5 py-10 md:flex-row md:justify-between">
+        <div className="flex flex-col items-start gap-2 md:flex-row">
+          <img
+            className="h-16 w-16 rounded-md object-cover"
+            alt={sponsor?.name}
             src={sponsor?.logo}
           />
-          <VStack align={'start'} gap={2}>
-            <Flex align={'center'} wrap={'wrap'} gap={2}>
-              <Heading
-                color={'brand.slate.700'}
-                fontFamily={'var(--font-sans)'}
-                fontSize={'xl'}
-                fontWeight={700}
-              >
+          <div className="flex flex-col items-start gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-xl font-bold tracking-[-0.5px] text-slate-700">
                 {title}
-              </Heading>
-            </Flex>
+              </h1>
+            </div>
 
-            <Flex align={'center'} wrap={'wrap'} gap={{ base: 1, md: 3 }}>
-              <Flex align={'center'} gap={1}>
-                <Text
-                  color={'#94A3B8'}
-                  fontSize={{ base: 'xs', sm: 'md' }}
-                  fontWeight={500}
-                  whiteSpace={'nowrap'}
-                >
+            <div className="flex flex-wrap items-center gap-1 md:gap-3">
+              <div className="flex items-center gap-1">
+                <p className="whitespace-nowrap text-sm font-medium text-slate-400">
                   by {sponsor?.name}
-                </Text>
+                </p>
                 {!!sponsor?.isVerified && <VerifiedBadge />}
-              </Flex>
+              </div>
               <ListingHeaderSeparator />
               <div className="flex">
-                <Image
-                  h="4"
-                  mt={{ base: '1px', sm: 1 }}
-                  mr={{ base: '1px', sm: 1 }}
+                <img
+                  className="mr-[1px] mt-[1px] h-4 sm:mr-1 sm:mt-1"
                   alt={'grant'}
                   src={'/assets/grant-icon.svg'}
                 />
-                <Text
-                  color={'brand.slate.400'}
-                  fontSize={{ base: 'xs', sm: 'md' }}
-                  fontWeight={500}
-                >
+                <p className="text-xs font-medium text-slate-400 md:text-base">
                   Grant
-                </Text>
+                </p>
               </div>
               <ListingHeaderSeparator />
               <StatusBadge
@@ -138,23 +97,12 @@ export const GrantsHeader = ({
               />
               <ListingHeaderSeparator />
               <RegionLabel region={region} isGrant />
-            </Flex>
-          </VStack>
-        </HStack>
-      </VStack>
-      <Flex align={'center'} w={'full'} h={10}>
-        <HStack
-          align="center"
-          justifyContent="start"
-          gap={10}
-          w={'full'}
-          maxW={'7xl'}
-          h={'full'}
-          mx={'auto'}
-          my={'auto'}
-          borderColor="brand.slate.200"
-          borderBottomWidth={'1px'}
-        >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex h-10 w-full items-center">
+        <div className="mx-auto my-auto flex h-full w-full max-w-7xl items-center justify-start gap-10 border-b border-slate-200">
           <ListingTabLink
             className="pointer-events-none hidden md:flex md:w-[22rem]"
             href={`/grants/${slug}/`}
@@ -174,8 +122,8 @@ export const GrantsHeader = ({
               isActive={!!router.asPath.split('/')[3]?.includes('references')}
             />
           )}
-        </HStack>
-      </Flex>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 };

@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react';
 import * as React from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -13,6 +14,8 @@ import {
   skillSubSkillMap,
   type SubSkillsType,
 } from '@/interface/skills';
+
+import { FormMessage } from '../ui/form';
 
 const SELECTABLE_PARENTS = [
   'Frontend',
@@ -281,6 +284,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
 
     const suggestions = React.useMemo(() => getSuggestions(), [getSuggestions]);
 
+    const formContext = useFormContext();
     return (
       <div className="space-y-2">
         <MultiSelect
@@ -292,6 +296,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
           className={className}
           groupBy="group"
         />
+        {!!formContext && <FormMessage />}
         {suggestions.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {suggestions.map((suggestion) => (

@@ -1,6 +1,5 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
-import NextLink from 'next/link';
+import Link from 'next/link';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
@@ -8,7 +7,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
 
 import { type Listing } from '../types';
-import { getListingIcon } from '../utils';
+import { getListingIcon } from '../utils/getListingIcon';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
@@ -28,143 +27,79 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
   const isBounty = type === 'bounty';
 
   return (
-    <>
-      <Box
-        className="ph-no-capture"
-        as={NextLink}
-        w="full"
-        px={2}
-        py={4}
-        borderRadius={5}
-        _hover={{
-          textDecoration: 'none',
-          bg: 'gray.100',
-        }}
-        href={`/listings/${type}/${slug}`}
-      >
-        <Flex
-          className="ph-no-capture"
-          align="center"
-          justify="space-between"
-          w={'100%'}
-        >
-          <Flex w="100%">
-            <LocalImage
-              className="mr-3 h-14 w-14 rounded-md"
-              alt={sponsor?.name!}
-              src={
-                sponsor?.logo
-                  ? sponsor.logo.replace(
-                      '/upload/',
-                      '/upload/c_scale,w_128,h_128,f_auto/',
-                    )
-                  : `${ASSET_URL}/logo/sponsor-logo.png`
-              }
-            />
-            <Flex justify={'space-between'} direction={'column'} w={'full'}>
-              <Text
-                className="ph-no-capture"
-                color="brand.slate.700"
-                fontSize={'sm'}
-                fontWeight={600}
-                _hover={{
-                  textDecoration: 'underline',
-                }}
-                style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 1,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                }}
-              >
-                {title}
-              </Text>
-              <Flex align={'center'} gap={1} w="min-content">
-                <Text
-                  w="full"
-                  color="brand.slate.500"
-                  fontSize={{ base: 'xs' }}
-                  whiteSpace={'nowrap'}
-                >
-                  {sponsor?.name}
-                </Text>
-                <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-              </Flex>
-              <Flex align={'center'} wrap={'wrap'} gap={1} mt={'1px'}>
-                <>
-                  <Flex align={'center'} justify="start" display={'flex'}>
-                    {compensationType !== 'variable' && (
-                      <Image
-                        w={3.5}
-                        h={3.5}
-                        mr={0.5}
-                        alt={token}
-                        rounded="full"
-                        src={
-                          tokenList.find((ele) => {
-                            return ele.tokenSymbol === token;
-                          })?.icon
-                        }
-                      />
-                    )}
-                    <Flex align="baseline">
-                      <CompensationAmount
-                        compensationType={compensationType}
-                        maxRewardAsk={maxRewardAsk}
-                        minRewardAsk={minRewardAsk}
-                        rewardAmount={rewardAmount}
-                        className="whitespace-nowrap text-xs font-semibold text-slate-600"
-                      />
-                      {compensationType !== 'variable' && (
-                        <Text
-                          color={'gray.400'}
-                          fontSize={'xs'}
-                          fontWeight={500}
-                        >
-                          {token}
-                        </Text>
-                      )}
-                    </Flex>
-                    <Text
-                      ml={1}
-                      color={'brand.slate.300'}
-                      fontSize={['xx-small', 'xs', 'sm', 'sm']}
-                    >
-                      |
-                    </Text>
-                  </Flex>
-                  <Image
-                    display={'flex'}
-                    h={3}
-                    ml={isBounty ? -0.5 : 0}
-                    alt={type}
-                    src={getListingIcon(type!)}
+    <Link
+      className="ph-no-capture w-full rounded-md px-2 py-4 hover:bg-gray-100 hover:no-underline"
+      href={`/listings/${type}/${slug}`}
+    >
+      <div className="ph-no-capture flex w-full items-center justify-between">
+        <div className="flex w-full">
+          <LocalImage
+            className="mr-3 h-14 w-14 rounded-md"
+            alt={sponsor?.name!}
+            src={
+              sponsor?.logo
+                ? sponsor.logo.replace(
+                    '/upload/',
+                    '/upload/c_scale,w_128,h_128,f_auto/',
+                  )
+                : `${ASSET_URL}/logo/sponsor-logo.png`
+            }
+          />
+          <div className="flex w-full flex-col justify-between">
+            <p className="ph-no-capture line-clamp-1 text-sm font-semibold text-slate-700 hover:underline">
+              {title}
+            </p>
+            <div className="flex w-min items-center gap-1">
+              <p className="w-full whitespace-nowrap text-xs text-slate-500">
+                {sponsor?.name}
+              </p>
+              <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
+            </div>
+            <div className="mt-px flex flex-wrap items-center gap-1">
+              <div className="flex items-center justify-start">
+                {compensationType !== 'variable' && (
+                  <img
+                    className="mr-0.5 h-4 w-4 rounded-full"
+                    alt={token}
+                    src={
+                      tokenList.find((ele) => {
+                        return ele.tokenSymbol === token;
+                      })?.icon
+                    }
                   />
-                </>
-                <Text
-                  display={'flex'}
-                  color={'brand.slate.300'}
-                  fontSize={['xx-small', 'xs', 'sm', 'sm']}
-                >
-                  |
-                </Text>
+                )}
+                <div className="flex items-baseline">
+                  <CompensationAmount
+                    compensationType={compensationType}
+                    maxRewardAsk={maxRewardAsk}
+                    minRewardAsk={minRewardAsk}
+                    rewardAmount={rewardAmount}
+                    className="whitespace-nowrap text-xs font-semibold text-slate-600"
+                  />
+                  {compensationType !== 'variable' && (
+                    <p className="text-xs font-medium text-gray-400">{token}</p>
+                  )}
+                </div>
+                <p className="ml-1 text-xs text-slate-300 md:text-sm">|</p>
+              </div>
+              <img
+                className={`flex h-3 ${isBounty ? '-ml-0.5' : 'ml-0'}`}
+                alt={type}
+                src={getListingIcon(type!)}
+              />
+              <p className="flex text-xs text-slate-300 md:text-sm">|</p>
 
-                <Flex align={'center'} gap={1}>
-                  <Text
-                    color={'gray.500'}
-                    fontSize={'x-small'}
-                    whiteSpace={'nowrap'}
-                  >
-                    {dayjs().isBefore(dayjs(deadline))
-                      ? `Due ${dayjs(deadline).fromNow()}`
-                      : `Closed ${dayjs(deadline).fromNow()}`}
-                  </Text>
-                </Flex>
-              </Flex>
-            </Flex>
-          </Flex>
-        </Flex>
-      </Box>
-    </>
+              <div className="flex items-center gap-1">
+                <p className="whitespace-nowrap text-xs text-gray-500">
+                  {dayjs().isBefore(dayjs(deadline))
+                    ? `Due ${dayjs(deadline).fromNow()}`
+                    : `Closed ${dayjs(deadline).fromNow()}`}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 };

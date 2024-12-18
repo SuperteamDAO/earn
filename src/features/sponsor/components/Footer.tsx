@@ -1,11 +1,12 @@
-import { Button, Link, Text, VStack } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 
+import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
 
-import { fontSize, maxW2, padding } from '../utils';
+import { maxW2 } from '../utils/styles';
 
 export function Footer() {
   const { data: session } = useSession();
@@ -21,46 +22,40 @@ export function Footer() {
   }
 
   return (
-    <VStack
-      gap={8}
-      maxW={maxW2}
-      mx={padding}
-      mt={'3rem'}
-      mb="6rem"
-      px={padding}
-      py={{ base: '1.275rem', lg: '2rem', xl: '3rem' }}
-      lineHeight={1.2}
-      bg="#4F46E5"
-      rounded="0.5rem"
+    <div
+      className={cn(
+        'flex flex-col items-center gap-8 rounded-lg bg-indigo-600 leading-tight',
+        'mb-24 mt-12',
+        'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
+        'py-5 lg:py-8 xl:py-12',
+        maxW2,
+      )}
     >
-      <Text
-        color="white"
-        fontSize={fontSize}
-        fontWeight={600}
-        textAlign={'center'}
+      <p
+        className={cn(
+          'text-center font-semibold text-white',
+          'text-[2rem] md:text-[3.5rem]',
+        )}
       >
         Where Solana teams come to get sh*t done
-      </Text>
+      </p>
+
       <Link
         className="ph-no-capture"
-        as={NextLink}
         href={getStartedWhere(!!session, !!user?.currentSponsorId)}
         onClick={() => posthog.capture('clicked_footer_get_started')}
       >
         <Button
-          w="12.5rem"
-          h="3.125rem"
-          mx="auto"
-          px={'2.5rem'}
-          color="#4F46E5"
-          fontSize="1.125rem"
-          bg="white"
-          borderRadius="0.625rem"
-          variant={'solid'}
+          className={cn(
+            'mx-auto h-[3.125rem] w-[12.5rem] px-10',
+            'rounded-[0.625rem] text-lg',
+            'bg-white text-indigo-600 hover:bg-white/90',
+          )}
+          variant="ghost"
         >
           Get Started
         </Button>
       </Link>
-    </VStack>
+    </div>
   );
 }

@@ -7,7 +7,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from '@/components/ui/form';
 
 import { useListingForm } from '../../hooks';
@@ -41,7 +40,6 @@ export function Skills() {
                 }}
               />
             </FormControl>
-            <FormMessage />
           </FormItem>
         );
       }}

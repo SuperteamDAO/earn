@@ -5,9 +5,13 @@ import { useEffect } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
 
-const Login = dynamic(() => import('@/features/auth').then((mod) => mod.Login));
+const Login = dynamic(() =>
+  import('@/features/auth/components/Login').then((mod) => mod.Login),
+);
 const SearchModal = dynamic(() =>
-  import('@/features/search').then((mod) => mod.SearchModal),
+  import('@/features/search/components/SearchModal').then(
+    (mod) => mod.SearchModal,
+  ),
 );
 const BottomBar = dynamic(() =>
   import('./BottomBar').then((mod) => mod.BottomBar),
@@ -71,7 +75,7 @@ export const Header = () => {
 
       <MobileNavbar onLoginOpen={onLoginOpen} />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
-      <div className="fixed bottom-0 z-40 w-full">
+      <div className="fixed bottom-0 z-[90] w-full">
         <BottomBar onSearchOpen={searchOpenWithEvent} />
       </div>
     </>

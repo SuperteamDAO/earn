@@ -3,7 +3,7 @@ import { type NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 import * as React from 'react';
 import { Controlled as ControlledZoom } from 'react-medium-image-zoom';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 import { Spinner } from '../../../components/spinner';
 import { blobUrlToBase64, randomId } from '../../../utils';

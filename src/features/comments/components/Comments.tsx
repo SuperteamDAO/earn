@@ -1,16 +1,17 @@
-import { Button, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { type CommentRefType } from '@prisma/client';
 import axios from 'axios';
 import { useSetAtom } from 'jotai';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
-import { LuArrowRight } from 'react-icons/lu';
 
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
+import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
+import { cn } from '@/utils/cn';
 
 import { validUsernamesAtom } from '../atoms';
 import { Comment as CommentUI } from './Comment';
@@ -30,6 +31,7 @@ interface Props {
   setCount: Dispatch<SetStateAction<number>>;
   isTemplate?: boolean;
   onSuccess?: (newComment: Comment) => void;
+  isDisabled?: boolean;
 }
 export const Comments = ({
   refId,
@@ -41,6 +43,7 @@ export const Comments = ({
   isAnnounced,
   isVerified = false,
   isTemplate = false,
+  isDisabled = false,
   count,
   take = 10,
   setCount,
@@ -113,29 +116,23 @@ export const Comments = ({
   if (error) return <ErrorInfo />;
 
   return (
-    <VStack
-      align={'start'}
-      gap={4}
-      w={'full'}
-      bg={'#FFFFFF'}
+    <div
+      className="flex w-full flex-col items-start gap-4 rounded-xl bg-white"
       id="comments"
-      rounded={'xl'}
     >
-      <HStack w={'full'} pt={4}>
+      <div className="flex w-full gap-2 pt-4">
         <ExternalImage
           className="h-5 w-5"
           alt="Comments Icon"
           src={'/icons/comments.svg'}
         />
         <div className="flex gap-2">
-          <Text color="brand.slate.900" fontSize={'medium'} fontWeight={600}>
-            {count}
-          </Text>
-          <Text color="brand.slate.900" fontSize={'medium'} fontWeight={400}>
+          <p className="text-base font-medium text-slate-900">{count}</p>
+          <p className="text-base text-slate-900">
             {comments?.length === 1 ? 'Comment' : 'Comments'}
-          </Text>
+          </p>
         </div>
-      </HStack>
+      </div>
       <CommentForm
         defaultSuggestions={defaultSuggestions}
         refType={refType}
@@ -147,8 +144,14 @@ export const Comments = ({
           onSuccess?.(newComment);
         }}
         isTemplate={isTemplate}
+        isDisabled={isDisabled}
       />
-      <VStack align="start" gap={5} w={'full'} pb={comments.length > 0 ? 4 : 0}>
+      <div
+        className={cn(
+          'flex w-full flex-col items-start gap-5',
+          comments.length > 0 && 'pb-4',
+        )}
+      >
         {comments?.map((comment) => {
           return (
             <CommentUI
@@ -165,28 +168,36 @@ export const Comments = ({
               deleteComment={deleteComment}
               isVerified={isVerified}
               isTemplate={isTemplate}
+              isDisabled={isDisabled}
             />
           );
         })}
-      </VStack>
+      </div>
       {!!comments.length && comments.length !== count && (
-        <Flex justify="center" w="full" rounded="md">
+        <div className="flex w-full justify-center rounded-md">
           <Button
-            fontSize={'sm'}
-            fontWeight={400}
-            border="none"
-            isDisabled={!!isLoading}
-            isLoading={!!isLoading}
-            loadingText="Fetching Comments..."
+            className={cn(
+              'border border-slate-400 text-sm font-normal text-slate-400 hover:bg-slate-400 hover:text-white',
+              'disabled:hover:border-slate-400 disabled:hover:bg-transparent disabled:hover:text-slate-400',
+            )}
+            disabled={!!isLoading}
             onClick={() => getComments(comments.length)}
-            rightIcon={<LuArrowRight />}
-            rounded="md"
-            variant="outlineSecondary"
+            variant="outline"
           >
-            Show More Comments
+            {isLoading ? (
+              <>
+                <span>Fetching Comments...</span>
+                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+              </>
+            ) : (
+              <>
+                <span>Show More Comments</span>
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
           </Button>
-        </Flex>
+        </div>
       )}
-    </VStack>
+    </div>
   );
 };

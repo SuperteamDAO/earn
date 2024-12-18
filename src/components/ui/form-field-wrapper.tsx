@@ -1,4 +1,7 @@
 import React from 'react';
+import { type Control, type FieldValues, type Path } from 'react-hook-form';
+
+import { cn } from '@/utils/cn';
 
 import { RichEditor } from '../shared/RichEditor';
 import {
@@ -11,7 +14,22 @@ import {
 } from './form';
 import { TokenInput } from './token-input';
 
-export const FormFieldWrapper = ({
+interface FormFieldWrapperProps<T extends FieldValues> {
+  control: Control<T>;
+  name: Path<T>;
+  label?: React.ReactNode;
+  description?: React.ReactNode;
+  isRequired?: boolean;
+  children?: React.ReactNode;
+  isRichEditor?: boolean;
+  isTokenInput?: boolean;
+  token?: string;
+  richEditorPlaceholder?: string;
+  className?: string;
+  onChange?: (e: any) => void;
+}
+
+export function FormFieldWrapper<T extends FieldValues>({
   control,
   name,
   label,
@@ -22,24 +40,15 @@ export const FormFieldWrapper = ({
   isTokenInput = false,
   token,
   richEditorPlaceholder,
-}: {
-  control: any;
-  name: string;
-  label?: React.ReactNode;
-  description?: React.ReactNode;
-  isRequired?: boolean;
-  children?: React.ReactNode;
-  isRichEditor?: boolean;
-  isTokenInput?: boolean;
-  token?: string;
-  richEditorPlaceholder?: string;
-}) => {
+  className,
+  onChange,
+}: FormFieldWrapperProps<T>) {
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col gap-2">
+        <FormItem className={cn('flex flex-col gap-2', className)}>
           <div>
             {label && <FormLabel isRequired={isRequired}>{label}</FormLabel>}
             {description && <FormDescription>{description}</FormDescription>}
@@ -50,7 +59,10 @@ export const FormFieldWrapper = ({
                 <RichEditor
                   id={name}
                   value={field.value || ''}
-                  onChange={field.onChange}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    onChange?.(e);
+                  }}
                   error={false}
                   placeholder={richEditorPlaceholder}
                 />
@@ -58,16 +70,25 @@ export const FormFieldWrapper = ({
                 <TokenInput
                   token={token}
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    onChange?.(e);
+                  }}
                 />
               ) : (
-                React.cloneElement(children as React.ReactElement, { ...field })
+                React.cloneElement(children as React.ReactElement, {
+                  ...field,
+                  onChange: (e: any) => {
+                    field.onChange(e);
+                    onChange?.(e);
+                  },
+                })
               )}
             </FormControl>
-            <FormMessage />
+            <FormMessage className="pt-1" />
           </div>
         </FormItem>
       )}
     />
   );
-};
+}

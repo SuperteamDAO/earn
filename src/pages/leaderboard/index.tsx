@@ -8,22 +8,24 @@ import { useRouter } from 'next/router';
 import { getServerSession } from 'next-auth';
 import { useEffect, useState, useTransition } from 'react';
 
-import { totalsQuery, TotalStats } from '@/features/home';
-import {
-  Banner,
-  FilterRow,
-  getSubskills,
-  Introduction,
-  Pagination,
-  RanksTable,
-  type RowType,
-  type SKILL,
-  skillCategories,
-  type TIMEFRAME,
-} from '@/features/leaderboard';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
+
+import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
+import { TotalStats } from '@/features/home/components/TotalStats';
+import { totalsQuery } from '@/features/home/queries/totals';
+import { Banner } from '@/features/leaderboard/components/Banner';
+import { FilterRow } from '@/features/leaderboard/components/FilterRow';
+import { Introduction } from '@/features/leaderboard/components/Introduction';
+import { Pagination } from '@/features/leaderboard/components/Pagination';
+import { RanksTable } from '@/features/leaderboard/components/RanksTable';
+import {
+  type RowType,
+  type SKILL,
+  type TIMEFRAME,
+} from '@/features/leaderboard/types';
+import { getSubskills, skillCategories } from '@/features/leaderboard/utils';
 
 import { authOptions } from '../api/auth/[...nextauth]';
 
@@ -112,6 +114,7 @@ function TalentLeaderboard({
         />
       }
     >
+      <HomepagePop />
       <div className="overflow-hidden bg-white pb-20">
         <div className="mx-auto flex max-w-7xl gap-4 px-3 py-4 md:gap-8">
           <div className="flex w-full flex-col items-start gap-4 md:w-[70%] md:gap-8">

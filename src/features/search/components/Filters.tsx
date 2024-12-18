@@ -1,11 +1,12 @@
-import { Checkbox, Stack, Text, VStack } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import { useCallback, useState, useTransition } from 'react';
 
+import { Checkbox } from '@/components/ui/checkbox';
+
 import { type CheckboxFilter } from '../types';
-import { serverSearch } from '../utils';
+import { serverSearch } from '../utils/search';
 
 interface Props {
   statusFilters: CheckboxFilter[];
@@ -72,84 +73,58 @@ export function Filters({
   };
 
   return (
-    <VStack
-      className="ph-no-capture"
-      align="start"
-      gap={{ base: 4, md: 8 }}
-      w="full"
-      maxW="xl"
-      px={{ base: 1, sm: 4 }}
-      pb={2}
-      pointerEvents={loading ? 'none' : 'auto'}
+    <div
+      className={`ph-no-capture flex w-full max-w-xl flex-col items-start gap-4 px-1 pb-2 sm:px-4 md:gap-8 ${
+        loading ? 'pointer-events-none' : ''
+      }`}
     >
-      <VStack align="start">
-        <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
-          STATUS
-        </Text>
-        <Stack
-          flexWrap="wrap"
-          direction={{ base: 'row', md: 'column' }}
-          columnGap={{ base: 6, md: 4 }}
-        >
+      <div className="flex w-full flex-col items-start">
+        <p className="mb-3 text-sm font-medium text-slate-500">STATUS</p>
+        <div className="flex flex-wrap gap-6 md:flex-col md:gap-2">
           {statusFilters?.map((f) => (
-            <Stack key={f.value}>
+            <div key={f.value} className="flex items-center space-x-2">
               <Checkbox
-                _checked={{
-                  '& .chakra-checkbox__control': {
-                    background: 'brand.purple',
-                    borderColor: 'brand.purple',
-                  },
-                }}
+                id={`status-${f.value}`}
                 checked={f.checked}
                 defaultChecked={f.checked}
                 disabled={loading}
-                onChange={() => {
-                  handleStatusChange(f.value);
-                }}
-                value={f.value}
+                onCheckedChange={() => handleStatusChange(f.value)}
+                className="border-slate-300 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+              />
+              <label
+                htmlFor={`status-${f.value}`}
+                className="text-sm font-medium text-slate-500"
               >
-                <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
-                  {f.label}
-                </Text>
-              </Checkbox>
-            </Stack>
+                {f.label}
+              </label>
+            </div>
           ))}
-        </Stack>
-      </VStack>
-      <VStack align="start">
-        <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
-          SKILLS
-        </Text>
-        <Stack
-          flexWrap="wrap"
-          direction={{ base: 'row', md: 'column' }}
-          columnGap={{ base: 6, md: 4 }}
-        >
+        </div>
+      </div>
+
+      <div className="flex w-full flex-col items-start">
+        <p className="mb-3 text-sm font-medium text-slate-500">SKILLS</p>
+        <div className="flex flex-wrap gap-6 md:flex-col md:gap-2">
           {skillsFilters?.map((f) => (
-            <Stack key={f.value}>
+            <div key={f.value} className="flex items-center space-x-2">
               <Checkbox
-                _checked={{
-                  '& .chakra-checkbox__control': {
-                    background: 'brand.purple',
-                    borderColor: 'brand.purple',
-                  },
-                }}
+                id={`skill-${f.value}`}
                 checked={f.checked}
                 defaultChecked={f.checked}
                 disabled={loading}
-                onChange={() => {
-                  handleSkillsChange(f.value);
-                }}
-                value={f.value}
+                onCheckedChange={() => handleSkillsChange(f.value)}
+                className="border-slate-300 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+              />
+              <label
+                htmlFor={`skill-${f.value}`}
+                className="text-sm font-medium text-slate-500"
               >
-                <Text color="brand.slate.500" fontSize="sm" fontWeight={500}>
-                  {f.label}
-                </Text>
-              </Checkbox>
-            </Stack>
+                {f.label}
+              </label>
+            </div>
           ))}
-        </Stack>
-      </VStack>
-    </VStack>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,11 +1,11 @@
-import { Flex } from '@chakra-ui/react';
 import { useAtomValue } from 'jotai';
 import React from 'react';
 
-import { type Listing } from '@/features/listings';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
-import { selectedSubmissionAtom } from '../..';
+import { type Listing } from '@/features/listings/types';
+
+import { selectedSubmissionAtom } from '../../atoms';
 import { InfoBox } from '../InfoBox';
 import { Notes } from './Notes';
 
@@ -18,31 +18,8 @@ export const Details = ({ bounty }: Props) => {
   const isProject = bounty?.type === 'project';
 
   return (
-    <Flex
-      overflowY={'scroll'}
-      w="full"
-      h={'32.6rem'}
-      css={{
-        '&::-webkit-scrollbar': {
-          width: '4px',
-        },
-        '&::-webkit-scrollbar-track': {
-          width: '6px',
-        },
-        '&::-webkit-scrollbar-thumb': {
-          background: '#cbd5e1',
-          borderRadius: '30px',
-        },
-      }}
-    >
-      <Flex
-        direction={'column'}
-        flex="1"
-        w="full"
-        p={4}
-        borderColor="brand.slate.200"
-        borderRightWidth="1px"
-      >
+    <div className="scrollbar-thumb-rounded-full flex h-[32.6rem] w-full overflow-y-scroll scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+      <div className="flex w-full flex-1 flex-col border-r border-slate-200 p-4">
         {!isProject && (
           <>
             <InfoBox
@@ -84,8 +61,8 @@ export const Details = ({ bounty }: Props) => {
           content={selectedSubmission?.otherInfo}
           isHtml
         />
-      </Flex>
-      <Flex w="25%" p={4}>
+      </div>
+      <div className="w-1/4 p-4">
         {selectedSubmission && (
           <Notes
             key={selectedSubmission.id}
@@ -94,7 +71,7 @@ export const Details = ({ bounty }: Props) => {
             slug={bounty?.slug}
           />
         )}
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   );
 };

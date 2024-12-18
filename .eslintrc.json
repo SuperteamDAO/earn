@@ -31,7 +31,6 @@
         "@typescript-eslint",
         "unused-imports",
         "simple-import-sort",
-        "chakra-ui",
         "react",
         "react-hooks",
         "@tanstack/query"
@@ -46,22 +45,35 @@
         "project": "./tsconfig.json"
       },
       "rules": {
-        "no-restricted-imports": [
-          "error",
-          {
-            "patterns": [
-              {
-                "group": ["@/features/*/*"],
-                "message": "Import from '@features' should not go beyond the first level of nesting."
-              }
-            ]
-          }
-        ],
+        // "no-restricted-imports": [
+        //   "error",
+        //   {
+        //     "patterns": [
+        //       {
+        //         "group": ["@/features/*/*"],
+        //         "message": "Import from '@features' should not go beyond the first level of nesting."
+        //       }
+        //     ]
+        //   }
+        // ],
         "import/no-duplicates": ["error", { "prefer-inline": true }],
         "react-hooks/exhaustive-deps": "off", // Incorrectly report needed dependency with Next.js router
         "@next/next/no-img-element": "off", // We currently not using next/image because it isn't supported with SSG mode
         "@typescript-eslint/consistent-type-imports": "error", // Ensure `import type` is used when it's necessary
-        "simple-import-sort/imports": "error", // Import configuration for `eslint-plugin-simple-import-sort`
+        "simple-import-sort/imports": [
+          "error",
+          {
+            "groups": [
+              ["^\\u0000", "^@?\\w"],
+              [
+                "^(@(?!/features)|@/lib|@/utils|@/hooks|@/components|@/interface|@/layouts|@/constants)(/.*|$)"
+              ],
+              ["^@/features/([^/]+)(?=/).*$"],
+              ["^\\."],
+              ["^.+\\.s?css$"]
+            ]
+          }
+        ],
         "simple-import-sort/exports": "error", // Export configuration for `eslint-plugin-simple-import-sort`
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
@@ -72,9 +84,6 @@
           "error",
           { "argsIgnorePattern": "^_" }
         ],
-        "chakra-ui/props-order": "error",
-        "chakra-ui/props-shorthand": "error",
-        "chakra-ui/require-specific-component": "error",
         "@tanstack/query/exhaustive-deps": "error",
         "@tanstack/query/no-rest-destructuring": "error",
         "@tanstack/query/stable-query-client": "error"

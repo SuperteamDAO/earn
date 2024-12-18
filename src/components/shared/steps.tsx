@@ -1,7 +1,7 @@
 import { type Dispatch, type SetStateAction } from 'react';
 import { AiOutlineCheck } from 'react-icons/ai';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
 interface Props {
   currentStep: number;

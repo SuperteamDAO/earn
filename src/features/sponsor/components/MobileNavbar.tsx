@@ -1,29 +1,18 @@
-import { HamburgerIcon } from '@chakra-ui/icons';
-import {
-  AbsoluteCenter,
-  Button,
-  CloseButton,
-  Divider,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerOverlay,
-  Flex,
-  IconButton,
-  Image,
-  Link,
-  Text,
-} from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { Menu } from 'lucide-react';
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useRef } from 'react';
 
-import { UserMenu } from '@/features/navbar';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 
-import { NAV_LINKS } from '../utils';
+import { UserMenu } from '@/features/navbar/components/UserMenu';
+
+import { NAV_LINKS } from '../utils/constants';
 
 export const MobileNavbar = () => {
   const {
@@ -33,82 +22,58 @@ export const MobileNavbar = () => {
   } = useDisclosure();
 
   const { data: session, status } = useSession();
-
   const { user } = useUser();
-
   const posthog = usePostHog();
-
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const MobileDrawer = () => {
     return (
-      <Drawer
-        finalFocusRef={btnRef}
-        isOpen={isDrawerOpen}
-        onClose={onDrawerClose}
-        placement="left"
-      >
-        <DrawerOverlay display={{ base: 'block', lg: 'none' }} />
-        <DrawerContent display={{ base: 'block', lg: 'none' }}>
-          <Flex px={3} py={2}>
-            <CloseButton onClick={onDrawerClose} />
-          </Flex>
-          <DrawerBody>
+      <Sheet open={isDrawerOpen} onOpenChange={onDrawerClose}>
+        <SheetContent
+          side="left"
+          className="block w-[300px] p-0 sm:w-[380px] lg:hidden"
+        >
+          <div className="flex px-3 py-2">
+            <SheetClose />
+          </div>
+          <div className="px-6">
             {status === 'unauthenticated' && !session && (
-              <Flex align="center" gap={3}>
+              <div className="flex items-center gap-3">
                 <Link
                   className="ph-no-capture"
-                  as={NextLink}
                   href="/new/sponsor/"
                   onClick={() => posthog.capture('login_navbar')}
                 >
-                  <Button
-                    color="brand.slate.500"
-                    fontSize="md"
-                    size="md"
-                    variant="unstyled"
-                  >
+                  <Button variant="ghost" className="text-base text-slate-500">
                     Login
                   </Button>
                 </Link>
-                <Divider
-                  h={5}
-                  borderWidth={'0.5px'}
-                  borderColor={'brand.slate.300'}
+                <Separator
                   orientation="vertical"
+                  className="h-5 bg-slate-300"
                 />
                 <Link
                   className="ph-no-capture"
-                  as={NextLink}
                   href="/new/sponsor/"
                   onClick={() => posthog.capture('get started_sponsor navbar')}
                 >
                   <Button
-                    color="#4F46E5"
-                    fontWeight={600}
-                    bg={'white'}
-                    size="md"
-                    variant="unstyled"
+                    variant="ghost"
+                    className="bg-white font-semibold text-indigo-600"
                   >
                     Get Started
                   </Button>
                 </Link>
-              </Flex>
+              </div>
             )}
 
             {user && !user.currentSponsorId && (
               <Link
                 className="ph-no-capture"
-                as={NextLink}
                 href="/new/sponsor/"
                 onClick={() => posthog.capture('get started_sponsor navbar')}
               >
-                <Button
-                  color={'brand.purple'}
-                  fontSize="md"
-                  size="md"
-                  variant="unstyled"
-                >
+                <Button variant="ghost" className="text-base text-brand-purple">
                   Get Started
                 </Button>
               </Link>
@@ -117,129 +82,80 @@ export const MobileNavbar = () => {
             {user && !!user.currentSponsorId && (
               <Link
                 className="ph-no-capture"
-                as={NextLink}
                 href="/dashboard/listings/?open=1"
                 onClick={() =>
                   posthog.capture('create a listing_sponsor navbar')
                 }
               >
-                <Button
-                  color={'brand.purple'}
-                  fontSize="md"
-                  size="md"
-                  variant="unstyled"
-                >
+                <Button variant="ghost" className="text-base text-brand-purple">
                   Create a Listing
                 </Button>
               </Link>
             )}
 
-            <Flex direction={'column'}>
-              {NAV_LINKS?.map((navItem) => {
-                return (
-                  <Link
-                    key={navItem.label}
-                    alignItems={'center'}
-                    display={'flex'}
-                    h={{ base: '8', lg: 14 }}
-                    py={2}
-                    color="brand.slate.500"
-                    fontSize={{ base: 'lg', lg: 'sm' }}
-                    fontWeight={500}
-                    _hover={{
-                      textDecoration: 'none',
-                      color: 'brand.slate.600',
-                    }}
-                    href={navItem.link ?? '#'}
-                  >
-                    {navItem.label}
-                  </Link>
-                );
-              })}
-            </Flex>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+            <div className="flex flex-col">
+              {NAV_LINKS?.map((navItem) => (
+                <Link
+                  key={navItem.label}
+                  className="flex h-8 items-center py-2 text-lg font-medium text-slate-500 hover:text-slate-600 hover:no-underline lg:h-14 lg:text-sm"
+                  href={navItem.link ?? '#'}
+                >
+                  {navItem.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     );
   };
 
   return (
-    <Flex
-      align="center"
-      justify="space-between"
-      display={{ base: 'flex', lg: 'none' }}
-      px={1}
-      py={2}
-      bg="white"
-      borderBottom="1px solid"
-      borderBottomColor="blackAlpha.200"
-    >
-      <IconButton
+    <div className="flex items-center justify-between border-b border-black/20 bg-white px-1 py-2 lg:hidden">
+      <Button
         ref={btnRef}
-        bg="transparent"
-        _hover={{ bg: 'transparent' }}
-        _active={{ bg: 'transparent' }}
-        aria-label="Open Drawer"
-        icon={<HamburgerIcon h={6} w={6} color="brand.slate.500" />}
+        variant="ghost"
+        size="sm"
+        className="hover:bg-transparent"
         onClick={onDrawerOpen}
-      />
+      >
+        <Menu className="h-6 w-6 text-slate-500" />
+      </Button>
+
       <MobileDrawer />
-      <AbsoluteCenter>
+
+      <div className="absolute left-1/2 -translate-x-1/2">
         <Link
-          as={NextLink}
-          alignItems={'center'}
-          gap={3}
-          display={'flex'}
-          _hover={{ textDecoration: 'none' }}
           href="/"
+          className="flex items-center gap-3 hover:no-underline"
           onClick={() => {
             posthog.capture('homepage logo click_universal');
           }}
         >
-          <Image
-            h={5}
-            cursor="pointer"
-            objectFit={'contain'}
-            alt={'Superteam Earn'}
-            src={'/assets/logo.svg'}
+          <img
+            className="h-5 cursor-pointer object-contain"
+            alt="Superteam Earn"
+            src="/assets/logo.svg"
           />
-          <>
-            <Divider
-              w={'3px'}
-              h={'24px'}
-              borderColor={'brand.slate.400'}
-              orientation="vertical"
-            />
-            <Text
-              color={'brand.slate.500'}
-              fontSize="sm"
-              fontWeight={600}
-              letterSpacing={'1.5px'}
-            >
-              SPONSORS
-            </Text>
-          </>
+          <div className="h-6 w-[3px] bg-slate-400" />
+          <p className="text-sm font-semibold tracking-[1.5px] text-slate-500">
+            SPONSORS
+          </p>
         </Link>
-      </AbsoluteCenter>
+      </div>
+
       {status === 'authenticated' && session && <UserMenu />}
       {status === 'unauthenticated' && !session && (
         <Link
           className="ph-no-capture"
-          as={NextLink}
           href="/new/sponsor/"
           onClick={() => posthog.capture('login_navbar')}
         >
-          <Button
-            mr={2}
-            color="brand.purple"
-            fontSize="md"
-            size="sm"
-            variant="unstyled"
-          >
+          <Button variant="ghost" className="mr-2 text-base text-brand-purple">
             Login
           </Button>
         </Link>
       )}
-    </Flex>
+    </div>
   );
 };

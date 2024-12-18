@@ -1,9 +1,9 @@
-import NextLink from 'next/link';
+import Link from 'next/link';
 import React from 'react';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 
-interface NavLinkProps extends React.ComponentPropsWithoutRef<typeof NextLink> {
+interface NavLinkProps extends React.ComponentPropsWithoutRef<typeof Link> {
   href: string;
   label: string | JSX.Element;
   isActive: boolean;
@@ -18,7 +18,7 @@ export const NavLink = ({
   ...props
 }: NavLinkProps) => {
   return (
-    <NextLink
+    <Link
       href={href}
       className={cn(
         'flex items-center py-2 font-medium',
@@ -26,13 +26,13 @@ export const NavLink = ({
         'text-lg lg:text-sm',
         isActive ? 'text-slate-600' : 'text-slate-500',
         'hover:text-slate-600 hover:no-underline',
-        'lg:border-b',
+        'relative lg:border-b',
         isActive ? 'lg:border-brand-purple' : 'lg:border-transparent',
         className,
       )}
       {...props}
     >
       {label}
-    </NextLink>
+    </Link>
   );
 };

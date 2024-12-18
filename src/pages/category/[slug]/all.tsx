@@ -2,9 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { listingsQuery, ListingTabs } from '@/features/listings';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+
+import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { listingsQuery } from '@/features/listings/queries/listings';
 
 type SlugKeys = 'design' | 'content' | 'development' | 'other';
 

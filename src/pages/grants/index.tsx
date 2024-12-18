@@ -1,4 +1,3 @@
-import { Container, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 
@@ -6,9 +5,12 @@ import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { GrantEntry, grantsQuery } from '@/features/grants';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+
+import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
+import { GrantEntry } from '@/features/grants/components/GrantEntry';
+import { grantsQuery } from '@/features/grants/queries/grants';
 
 function Grants() {
   const {
@@ -28,52 +30,32 @@ function Grants() {
         />
       }
     >
-      <VStack
-        pos={'relative'}
-        justify={'center'}
-        direction={'column'}
-        w={'100%'}
-        minH={'100vh'}
-        bg={'#F5F5F5'}
-      >
+      <GrantsPop />
+      <div className="relative flex min-h-screen w-full flex-col justify-center bg-neutral-100">
         <ExternalImage
           className="absolute left-0 right-0 top-0 h-full w-full"
           alt=""
           src={'/home/bg_grad.svg'}
         />
-        <VStack my={16} textAlign="center" spacing={4}>
-          <Text
-            px={2}
-            fontSize={{ base: '4xl', md: '5xl' }}
-            fontWeight={700}
-            lineHeight="1.2"
-          >
+        <div className="my-16 flex flex-col gap-4 text-center">
+          <p className="px-2 text-4xl font-bold md:text-5xl">
             Need funds to build out your idea?
-          </Text>
-          <Text
-            maxW="2xl"
-            mx={2}
-            color="gray.600"
-            fontSize={{ base: 'lg', md: 'xl' }}
-          >
+          </p>
+          <p className="mx-auto max-w-2xl text-lg text-gray-600 md:text-xl">
             Discover the complete list of crypto grants available to support
             your project. Fast, equity-free funding without the hassle.
-          </Text>
-          <Text
-            mt={3}
-            color={'brand.slate.400'}
-            fontSize={{ base: 'sm', md: 'md' }}
-          >
+          </p>
+          <p className="mt-3 text-sm text-slate-400 md:text-base">
             Equity-Free • No Bullshit • Fast AF
-          </Text>
-        </VStack>
-        <Container maxW={'7xl'} mb={12}>
+          </p>
+        </div>
+        <div className="container mx-auto mb-12 max-w-7xl px-4">
           {isLoading && <Loading />}
           {isError && <ErrorInfo />}
           {!isLoading && !isError && (
-            <Wrap justify={'center'} mx="auto" spacing={10}>
+            <div className="flex flex-wrap justify-center gap-10">
               {grants?.map((grant) => (
-                <WrapItem key={grant?.id}>
+                <div key={grant?.id} className="flex-shrink-0">
                   <GrantEntry
                     title={grant?.title}
                     slug={grant.slug}
@@ -82,12 +64,12 @@ function Grants() {
                     token={grant?.token}
                     logo={grant?.logo}
                   />
-                </WrapItem>
+                </div>
               ))}
-            </Wrap>
+            </div>
           )}
-        </Container>
-      </VStack>
+        </div>
+      </div>
     </Default>
   );
 }

@@ -1,23 +1,20 @@
-import { ArrowForwardIcon } from '@chakra-ui/icons';
-import {
-  Badge,
-  Box,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerOverlay,
-  Flex,
-  Link,
-  Text,
-} from '@chakra-ui/react';
 import dayjs from 'dayjs';
-import NextLink from 'next/link';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import { type ReactNode } from 'react';
 
+import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { skillMap } from '@/constants/skillMap';
-import { EarnAvatar, Telegram, Twitter, Website } from '@/features/talent';
 
-import { type LocalProfile } from '../../queries';
+import {
+  Telegram,
+  Twitter,
+  Website,
+} from '@/features/social/components/SocialIcons';
+import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
+
+import { type LocalProfile } from '../../queries/local-profiles';
 
 export const UserDrawer = ({
   isOpen,
@@ -40,241 +37,155 @@ export const UserDrawer = ({
 
   const DBadge = ({ children }: { children: ReactNode }) => {
     return (
-      <Badge
-        px={'12px'}
-        py={'4px'}
-        color={'#64739C'}
-        fontSize={'xs'}
-        fontWeight={500}
-        borderRadius={'4px'}
-        bgColor={'#EFF1F5'}
-      >
+      <Badge className="rounded bg-[#EFF1F5] px-3 py-1 text-xs font-medium text-[#64739C]">
         {children}
       </Badge>
     );
   };
 
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} placement="right" size="xl">
-      <DrawerOverlay />
-      <DrawerContent>
-        <DrawerBody p={6}>
-          <Flex direction="column" gap={6}>
-            <Flex
-              align="center"
-              justify="space-between"
-              pb={6}
-              borderColor={'brand.slate.300'}
-              borderBottomWidth={'1px'}
-            >
-              <Flex align="center">
-                <EarnAvatar size="44px" id={user?.id} avatar={user?.photo} />
-                <Box ml={4}>
-                  <Flex gap={3}>
-                    <Text
-                      fontWeight={500}
-                    >{`${user?.firstName} ${user?.lastName}`}</Text>
-                  </Flex>
-                  <Text mt={-0.5} color="brand.slate.500" fontSize={'0.92rem'}>
-                    {user?.email}
-                  </Text>
-                </Box>
-              </Flex>
-              <Flex align={'center'} gap={10}>
-                <Flex
-                  align="center"
-                  justify="center"
-                  direction="column"
-                  alignSelf={'center'}
-                  textAlign="center"
-                >
-                  <Text
-                    color="brand.slate.500"
-                    fontSize="1.05rem"
-                    fontWeight={500}
-                  >
-                    {user?.wins}
-                  </Text>
-                  <Text color="brand.slate.500" fontSize={'0.92rem'}>
-                    Wins
-                  </Text>
-                </Flex>
-                <Flex
-                  align="center"
-                  justify="center"
-                  direction="column"
-                  alignSelf={'center'}
-                  textAlign="center"
-                >
-                  <Text
-                    color="brand.slate.500"
-                    fontSize="1.05rem"
-                    fontWeight={500}
-                  >
-                    {user?.totalSubmissions}
-                  </Text>
-                  <Text color="brand.slate.500" fontSize={'0.92rem'}>
-                    Submissions
-                  </Text>
-                </Flex>
-                <Flex
-                  align="center"
-                  justify="center"
-                  direction="column"
-                  alignSelf={'center'}
-                  textAlign="center"
-                >
-                  <Text
-                    color="brand.slate.500"
-                    fontSize="1.05rem"
-                    fontWeight={500}
-                  >
-                    ${user.totalEarnings.toLocaleString('en-us')}
-                  </Text>
-                  <Text color="brand.slate.500" fontSize={'0.92rem'}>
-                    $ Earned
-                  </Text>
-                </Flex>
-                <Flex
-                  align="center"
-                  justify="center"
-                  direction="column"
-                  alignSelf={'center'}
-                  textAlign="center"
-                >
-                  <Text
-                    color="brand.slate.500"
-                    fontSize="1.05rem"
-                    fontWeight={500}
-                  >
-                    #{user?.rank}
-                  </Text>
-                  <Text color="brand.slate.500" fontSize={'0.92rem'}>
-                    # Rank
-                  </Text>
-                </Flex>
-
-                <Link
-                  as={NextLink}
-                  pl={6}
-                  color="brand.slate.500"
-                  fontSize={'0.9rem'}
-                  fontWeight={500}
-                  href={`/t/${user.username}`}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  View Profile <ArrowForwardIcon />
-                </Link>
-              </Flex>
-            </Flex>
-
-            <div>
-              <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Socials
-              </Text>
-              <Flex gap={2}>
-                {socialLinks.map(({ Component, link }, index) => (
-                  <Box key={index}>
-                    <Component
-                      link={link}
-                      boxSize={5}
-                      color="brand.slate.600"
-                    />
-                  </Box>
-                ))}
-              </Flex>
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent className="w-[768px] p-6 sm:max-w-[768px]">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center justify-between border-b border-slate-300 pb-6">
+            <div className="flex items-center">
+              <EarnAvatar size="44px" id={user?.id} avatar={user?.photo} />
+              <div className="ml-4">
+                <div className="flex gap-3">
+                  <p className="font-medium">{`${user?.firstName} ${user?.lastName}`}</p>
+                </div>
+                <p className="-mt-0.5 text-[0.92rem] text-slate-500">
+                  {user?.email}
+                </p>
+              </div>
             </div>
+            <div className="flex items-center gap-10">
+              <div className="flex flex-col items-center justify-center self-center text-center">
+                <p className="text-[1.05rem] font-medium text-slate-500">
+                  {user?.wins}
+                </p>
+                <p className="text-[0.92rem] text-slate-500">Wins</p>
+              </div>
+              <div className="flex flex-col items-center justify-center self-center text-center">
+                <p className="text-[1.05rem] font-medium text-slate-500">
+                  {user?.totalSubmissions}
+                </p>
+                <p className="text-[0.92rem] text-slate-500">Submissions</p>
+              </div>
+              <div className="flex flex-col items-center justify-center self-center text-center">
+                <p className="text-[1.05rem] font-medium text-slate-500">
+                  ${user.totalEarnings.toLocaleString('en-us')}
+                </p>
+                <p className="text-[0.92rem] text-slate-500">$ Earned</p>
+              </div>
+              <div className="flex flex-col items-center justify-center self-center text-center">
+                <p className="text-[1.05rem] font-medium text-slate-500">
+                  #{user?.rank}
+                </p>
+                <p className="text-[0.92rem] text-slate-500"># Rank</p>
+              </div>
 
-            <div>
-              <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Bio
-              </Text>
-              <Text color="brand.slate.500">{user.bio || '-'}</Text>
+              <Link
+                href={`/t/${user.username}`}
+                className="flex items-center pl-6 text-[0.9rem] font-medium text-slate-500 hover:text-slate-600"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                View Profile <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
             </div>
+          </div>
 
-            <div>
-              <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Discord Username
-              </Text>
-              <Text color="brand.slate.500">{user.discord || '-'}</Text>
+          <div>
+            <p className="mb-2 font-medium text-slate-400">Socials</p>
+            <div className="flex gap-2">
+              {socialLinks.map(({ Component, link }, index) => (
+                <div key={index}>
+                  <Component link={link} className="h-5 w-5 text-slate-600" />
+                </div>
+              ))}
             </div>
+          </div>
 
-            <div>
-              <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Skills
-              </Text>
-              <Flex wrap="wrap" gap={2}>
-                {parentSkills.length > 0 ? (
-                  parentSkills.map((skill: string) => (
+          <div>
+            <p className="mb-2 font-medium text-slate-400">Bio</p>
+            <p className="text-slate-500">{user.bio || '-'}</p>
+          </div>
+
+          <div>
+            <p className="mb-2 font-medium text-slate-400">Discord Username</p>
+            <p className="text-slate-500">{user.discord || '-'}</p>
+          </div>
+
+          <div>
+            <p className="mb-2 font-medium text-slate-400">Skills</p>
+            <div className="flex flex-wrap gap-2">
+              {parentSkills.length > 0 ? (
+                parentSkills.map((skill: string) => {
+                  const skillColor = skillMap.find(
+                    (e) => e.mainskill === skill,
+                  )?.color;
+                  return (
                     <Badge
                       key={skill}
-                      px={'12px'}
-                      py={'4px'}
-                      color={`${skillMap.find((e) => e.mainskill === skill)?.color}`}
-                      fontSize={'xs'}
-                      fontWeight={500}
-                      bg={`${skillMap.find((e) => e.mainskill === skill)?.color}1A`}
-                      borderRadius={'4px'}
+                      className={`rounded px-3 py-1 text-xs font-medium`}
+                      style={{
+                        color: skillColor,
+                        backgroundColor: `${skillColor}1A`,
+                      }}
                     >
                       {skill}
                     </Badge>
-                  ))
-                ) : (
-                  <Text color="brand.slate.500">-</Text>
-                )}
-              </Flex>
+                  );
+                })
+              ) : (
+                <p className="text-slate-500">-</p>
+              )}
             </div>
+          </div>
 
-            <div>
-              <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Sub Skills
-              </Text>
-              <Flex wrap="wrap" gap={2}>
-                {subSkills.length > 0 ? (
-                  subSkills.map((skill: string) => (
-                    <DBadge key={skill}>{skill}</DBadge>
-                  ))
-                ) : (
-                  <Text color="brand.slate.500">-</Text>
-                )}
-              </Flex>
+          <div>
+            <p className="mb-2 font-medium text-slate-400">Sub Skills</p>
+            <div className="flex flex-wrap gap-2">
+              {subSkills.length > 0 ? (
+                subSkills.map((skill: string) => (
+                  <DBadge key={skill}>{skill}</DBadge>
+                ))
+              ) : (
+                <p className="text-slate-500">-</p>
+              )}
             </div>
+          </div>
 
-            <div>
-              <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Interests
-              </Text>
-              <Flex wrap="wrap" gap={2}>
-                <Text color="brand.slate.500">
-                  {(() => {
-                    const interests = JSON.parse(user?.interests || '[]');
-                    return interests.length > 0 ? interests.join(', ') : '-';
-                  })()}
-                </Text>
-              </Flex>
-            </div>
-
-            <div>
-              <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Communities
-              </Text>
-              <Text color="brand.slate.500">
+          <div>
+            <p className="mb-2 font-medium text-slate-400">Interests</p>
+            <div className="flex flex-wrap gap-2">
+              <p className="text-slate-500">
                 {(() => {
-                  const communities = JSON.parse(user?.community || '[]');
-                  return communities.length > 0 ? communities.join(', ') : '-';
+                  const interests = JSON.parse(user?.interests || '[]');
+                  return interests.length > 0 ? interests.join(', ') : '-';
                 })()}
-              </Text>
+              </p>
             </div>
-            <div>
-              <Text mb={2} color="brand.slate.400" fontWeight={500}>
-                Profile Creation Date
-              </Text>
-              <Text color="brand.slate.500">{formattedCreatedAt}</Text>
-            </div>
-          </Flex>
-        </DrawerBody>
-      </DrawerContent>
-    </Drawer>
+          </div>
+
+          <div>
+            <p className="mb-2 font-medium text-slate-400">Communities</p>
+            <p className="text-slate-500">
+              {(() => {
+                const communities = JSON.parse(user?.community || '[]');
+                return communities.length > 0 ? communities.join(', ') : '-';
+              })()}
+            </p>
+          </div>
+          <div>
+            <p className="mb-2 font-medium text-slate-400">
+              Profile Creation Date
+            </p>
+            <p className="text-slate-500">{formattedCreatedAt}</p>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 };

@@ -1,22 +1,26 @@
-import { Flex, type FlexProps, Icon, Link, Text } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type ReactNode } from 'react';
 import { type IconType } from 'react-icons';
 
-interface NavItemProps extends FlexProps {
+import { cn } from '@/utils/cn';
+
+interface NavItemProps {
   icon: IconType;
   link?: string;
   children: ReactNode;
   isExpanded: boolean;
+  className?: string;
+  onClick?: () => void;
 }
 
 export const NavItem = ({
-  icon,
+  icon: Icon,
   link,
   children,
   isExpanded,
-  ...rest
+  className,
+  onClick,
 }: NavItemProps) => {
   const router = useRouter();
   const currentPath = router.asPath.split('?')[0];
@@ -28,65 +32,42 @@ export const NavItem = ({
 
   return (
     <Link
-      as={NextLink}
-      _focus={{ boxShadow: 'none' }}
-      href={resolvedLink}
-      isExternal={isExternalLink}
-      style={{ textDecoration: 'none' }}
+      href={resolvedLink || '#'}
+      target={isExternalLink ? '_blank' : undefined}
+      rel={isExternalLink ? 'noopener noreferrer' : undefined}
+      className="no-underline focus:outline-none"
     >
-      <NavItemContent
-        icon={icon}
-        isActiveLink={isActiveLink}
-        isExpanded={isExpanded}
-        {...rest}
+      <div
+        className={cn(
+          'flex cursor-pointer items-center px-6 py-3 transition-colors',
+          isExpanded ? 'mr-0' : 'mr-4',
+          isActiveLink
+            ? 'bg-indigo-50 text-indigo-800'
+            : 'bg-transparent text-slate-500',
+          'hover:bg-blue-50 hover:text-indigo-700',
+          className,
+        )}
+        onClick={onClick}
       >
-        {children}
-      </NavItemContent>
+        {Icon && (
+          <Icon
+            className={cn(
+              'transition-all duration-300 ease-in-out hover:text-indigo-700',
+              isExpanded ? 'mr-4 text-base' : 'mr-0 text-xl',
+            )}
+          />
+        )}
+        <span
+          className={cn(
+            'text-sm font-medium transition-opacity duration-200 ease-in-out',
+            isExpanded
+              ? 'static opacity-100'
+              : 'absolute -ml-[9999px] opacity-0',
+          )}
+        >
+          {children}
+        </span>
+      </div>
     </Link>
   );
 };
-
-const NavItemContent = ({
-  icon,
-  isActiveLink,
-  isExpanded,
-  children,
-  ...rest
-}: any) => (
-  <Flex
-    align="center"
-    mr={isExpanded ? '0' : '1rem'}
-    px={6}
-    py={3}
-    color={isActiveLink ? '#3730A3' : 'brand.slate.500'}
-    bg={isActiveLink ? '#EEF2FF' : 'transparent'}
-    _hover={{
-      bg: '#F5F8FF',
-      color: 'brand.purple',
-    }}
-    cursor="pointer"
-    role="group"
-    {...rest}
-  >
-    {icon && (
-      <Icon
-        as={icon}
-        mr={isExpanded ? '4' : '0'}
-        fontSize={isExpanded ? '16' : '20'}
-        _groupHover={{
-          color: 'brand.purple',
-        }}
-        transition="all 0.3s ease-in-out"
-      />
-    )}
-    <Text
-      className="nav-item-text"
-      pos={isExpanded ? 'static' : 'absolute'}
-      ml={isExpanded ? 0 : '-9999px'}
-      opacity={isExpanded ? 1 : 0}
-      transition="opacity 0.2s ease-in-out"
-    >
-      {children}
-    </Text>
-  </Flex>
-);

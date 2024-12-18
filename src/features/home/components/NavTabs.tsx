@@ -1,14 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import NextLink from 'next/link';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Superteams } from '@/constants/Superteam';
-import { CATEGORY_NAV_ITEMS } from '@/features/navbar';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
+
+import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
 import { regionLiveCountQuery } from '../queries/region-live-count';
 
@@ -25,18 +26,18 @@ function PillTab({ href, children, altActive, phEvent }: PillTabProps) {
   const isActive = router.asPath === href || altActive?.includes(router.asPath);
 
   return (
-    <NextLink
+    <Link
       href={href}
       className={cn(
         'ph-no-capture flex items-center gap-2 px-3 py-0 sm:py-0.5',
         'rounded-full border border-slate-200 text-sm',
-        'hover:bg-[#F5F3FF] hover:no-underline',
-        isActive ? 'bg-[#F5F3FF] text-black' : 'bg-white text-slate-500',
+        'hover:bg-violet-50 hover:no-underline',
+        isActive ? 'bg-violet-50 text-black' : 'bg-white text-slate-500',
       )}
       onClick={() => posthog.capture(phEvent)}
     >
       {children}
-    </NextLink>
+    </Link>
   );
 }
 
@@ -68,7 +69,7 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
   return (
     <div
       className={cn(
-        'mb-6 flex flex-wrap items-center gap-x-3 gap-y-2',
+        'mb-4 flex flex-wrap items-center gap-x-3 gap-y-2',
         className,
       )}
       {...props}

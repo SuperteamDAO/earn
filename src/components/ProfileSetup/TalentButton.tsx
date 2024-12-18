@@ -31,7 +31,7 @@ export function TalentButton({
             'Redirecting...'
           ) : (
             <>
-              Continue as talent <span className="ml-1">-&gt;</span>
+              Continue as Talent <span className="ml-1">-&gt;</span>
             </>
           )}
         </Button>

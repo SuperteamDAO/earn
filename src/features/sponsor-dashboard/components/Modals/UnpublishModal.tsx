@@ -1,22 +1,20 @@
-import { ViewOffIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import React from 'react';
+import { EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { type ListingWithSubmissions } from '@/features/listings';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useUser } from '@/store/user';
+
+import { type ListingWithSubmissions } from '@/features/listings/types';
 
 interface UnpublishModalProps {
   unpublishIsOpen: boolean;
@@ -72,32 +70,40 @@ export const UnpublishModal = ({
   };
 
   return (
-    <Modal isOpen={unpublishIsOpen} onClose={unpublishOnClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Unpublish Listing?</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Text color="brand.slate.500">
+    <Dialog open={unpublishIsOpen} onOpenChange={unpublishOnClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Unpublish Listing?</DialogTitle>
+          <DialogDescription className="text-slate-500">
             This listing will be hidden from the homepage once unpublished. Are
             you sure you want to unpublish this listing?
-          </Text>
-        </ModalBody>
-        <ModalFooter>
-          <Button mr={4} onClick={unpublishOnClose} variant="ghost">
+          </DialogDescription>
+        </DialogHeader>
+
+        <DialogFooter>
+          <Button variant="ghost" onClick={unpublishOnClose} className="mr-4">
             Close
           </Button>
+
           <Button
-            isLoading={updateMutation.isPending}
-            leftIcon={<ViewOffIcon />}
-            loadingText="Unpublishing..."
+            variant="default"
+            disabled={updateMutation.isPending}
             onClick={() => changeBountyStatus(false)}
-            variant="solid"
           >
-            Unpublish
+            {updateMutation.isPending ? (
+              <>
+                <span className="loading loading-spinner mr-2" />
+                Unpublishing...
+              </>
+            ) : (
+              <>
+                <EyeOff className="mr-2 h-4 w-4" />
+                Unpublish
+              </>
+            )}
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 
-import { Superteams } from '@/constants/Superteam';
-import { ListingTabs, regionalListingsQuery } from '@/features/listings';
+import { type Superteam, Superteams } from '@/constants/Superteam';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { getURL } from '@/utils/validUrl';
+
+import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { regionalListingsQuery } from '@/features/listings/queries/region-listings';
 
 export default function AllRegionListingsPage({
   slug,
@@ -14,7 +16,7 @@ export default function AllRegionListingsPage({
 }: {
   slug: string;
   displayName: string;
-  st: (typeof Superteams)[0];
+  st: Superteam;
 }) {
   const { data: listings, isLoading: isListingsLoading } = useQuery(
     regionalListingsQuery({ region: slug }),

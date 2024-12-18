@@ -7,20 +7,19 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import { Comments } from '@/features/comments';
-import {
-  getListingTypeLabel,
-  type Listing,
-  ListingHeader,
-  RightSideBar,
-  submissionCountQuery,
-} from '@/features/listings';
-import { bountySnackbarAtom } from '@/features/navbar';
 import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
-import { cn } from '@/utils';
+import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
+
+import { Comments } from '@/features/comments/components/Comments';
+import { ListingHeader } from '@/features/listings/components/ListingPage/ListingHeader';
+import { RightSideBar } from '@/features/listings/components/ListingPage/RightSideBar';
+import { submissionCountQuery } from '@/features/listings/queries/submission-count';
+import { type Listing } from '@/features/listings/types';
+import { getListingTypeLabel } from '@/features/listings/utils/status';
+import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
 
 interface ListingPageProps {
   bounty: Listing | null;
@@ -157,7 +156,7 @@ export function ListingPageLayout({
               <div
                 className={cn(
                   'flex min-h-screen flex-col items-center justify-center gap-0 bg-white md:flex-row md:items-start md:justify-between md:gap-4',
-                  `max-w-${maxW}`,
+                  maxW,
                 )}
               >
                 <div className="static top-14 h-full w-full flex-grow md:sticky md:w-[22rem]">
@@ -176,7 +175,7 @@ export function ListingPageLayout({
                     <div className="flex flex-wrap gap-3">
                       {iterableSkills?.map((skill) => (
                         <div
-                          className="m-0 rounded-sm bg-[#F1F5F9] px-4 py-1 text-sm font-medium text-[#475569]"
+                          className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-sm font-medium text-slate-600"
                           key={skill}
                         >
                           <p className="text-xs">{skill}</p>
@@ -220,6 +219,10 @@ export function ListingPageLayout({
                     refType="BOUNTY"
                     count={commentCount}
                     setCount={setCommentCount}
+                    isDisabled={
+                      !initialBounty.isPublished &&
+                      initialBounty.status === 'OPEN'
+                    }
                   />
                 </div>
               </div>

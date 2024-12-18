@@ -2,10 +2,14 @@ import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { filterRegionCountry, getCombinedRegion } from '@/features/listings';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import {
+  filterRegionCountry,
+  getCombinedRegion,
+} from '@/features/listings/utils/region';
 
 export default async function grants(
   req: NextApiRequest,

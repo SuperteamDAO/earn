@@ -29,7 +29,7 @@ export function SponsorButton({
           'Redirecting...'
         ) : (
           <>
-            Continue as a sponsor <span className="ml-1">-&gt;</span>
+            Continue as a Sponsor <span className="ml-1">-&gt;</span>
           </>
         )}
       </Button>

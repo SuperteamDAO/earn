@@ -6,11 +6,13 @@ import {
 } from '@prisma/client';
 import { z } from 'zod';
 
-import { type Listing } from '@/features/listings';
 import { dayjs } from '@/utils/dayjs';
 
-import { DEADLINE_FORMAT } from '../components/Form';
-import { createListingFormSchema, type ListingFormData } from '../types';
+import { type Listing } from '@/features/listings/types';
+
+import { DEADLINE_FORMAT } from '../components/Form/Deadline';
+import { type ListingFormData } from '../types';
+import { createListingFormSchema } from '../types/schema';
 interface ListingDefaults {
   isGod: boolean;
   isEditing: boolean;
@@ -194,7 +196,6 @@ export const refineReadyListing = (listing: ListingFormData) => {
     }
   }
   if (listing.deadline) {
-    console.log('listing deadline', listing.deadline);
     if (!listing.deadline.endsWith('Z'))
       listing.deadline += dayjs().format('Z');
   }

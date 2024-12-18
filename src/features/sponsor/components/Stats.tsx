@@ -1,9 +1,10 @@
-import { Box, Divider, Flex, Grid, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 
-import { userCountQuery } from '@/features/home';
+import { cn } from '@/utils/cn';
 
-import { fontSize, maxW, padding } from '../utils';
+import { userCountQuery } from '@/features/home/queries/user-count';
+
+import { maxW } from '../utils/styles';
 import { HighQualityImage } from './HighQualityImage';
 
 type Stats = {
@@ -59,81 +60,59 @@ export function Stats() {
   });
 
   return (
-    <Flex
-      align="center"
-      direction={{ base: 'column', lg: 'row-reverse' }}
-      gap={{ base: 16, lg: 20 }}
-      w="100vw"
-      maxW={maxW}
-      px={padding}
+    <div
+      className={cn(
+        'flex w-screen flex-col items-center gap-16 lg:flex-row-reverse lg:gap-20',
+        maxW,
+        'mx-[1.875rem] px-[1.875rem] lg:mx-[7rem] lg:px-[7rem] xl:mx-[11rem] xl:px-[11rem]',
+      )}
     >
-      <Box w="full" maxW={{ base: '20rem', xl: '30rem' }}>
+      <div className="w-full max-w-[20rem] xl:max-w-[30rem]">
         <HighQualityImage
-          src={'/landingsponsor/displays/global-earn.webp'}
+          src="/landingsponsor/displays/global-earn.webp"
           alt="Superteam Earn Global"
           className="w-full max-w-[30rem]"
         />
-      </Box>
-      <VStack gap={{ base: 8 }}>
-        <VStack
-          align={{ base: 'center', lg: 'start' }}
-          textAlign={{ base: 'center', lg: 'left' }}
-        >
-          <Text fontSize={fontSize} fontWeight={600} lineHeight={1}>
+      </div>
+
+      <div className="flex flex-col gap-8">
+        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+          <h2 className="text-[2rem] font-semibold leading-none md:text-[3.5rem]">
             The distribution of the Superteam network
-          </Text>
-          <Text
-            color="brand.slate.500"
-            fontSize={{ base: '1.25rem', lg: '1.4rem' }}
-            fontWeight={500}
-          >
+          </h2>
+          <p className="mt-4 text-[1.25rem] font-medium text-slate-500 lg:text-[1.4rem]">
             Get instant access to Superteam’s network of the best crypto talent
             in the world
-          </Text>
-        </VStack>
-        <Divider display={{ base: 'none', lg: 'block' }} />
-        <Grid gap={4} columnGap={8} templateColumns="repeat(3, 1fr)" w="full">
+          </p>
+        </div>
+
+        <hr className="hidden lg:block" />
+
+        <div className="grid w-full grid-cols-3 gap-4 gap-x-8">
           {stats.map((s) => (
-            <VStack
+            <div
               key={s.title}
-              align={{ base: 'center', lg: 'start' }}
-              gap={0}
-              overflow="visible"
+              className="flex flex-col items-center gap-0 overflow-visible lg:items-start"
             >
-              <Text
-                fontSize={{ base: '2.3rem', lg: '3.5rem' }}
-                fontWeight={600}
-                lineHeight={1.15}
-              >
+              <p className="text-[2.3rem] font-semibold leading-[1.15] lg:text-[3.5rem]">
                 {s.title}
-              </Text>
-              <Text
-                pos="relative"
-                color="brand.slate.500"
-                fontSize={{ base: '0.68rem', lg: '1rem' }}
-                fontWeight={500}
-                whiteSpace={{ base: 'nowrap' }}
-              >
-                {s.label}
+              </p>
+              <p className="relative flex items-center gap-1 whitespace-nowrap text-[0.68rem] font-medium text-slate-500 lg:text-base">
                 {s.showEarn && (
-                  <Box
-                    pos="absolute"
-                    top={0}
-                    left={{ base: -4, lg: -5 }}
-                    w={{ base: '0.6rem', lg: '0.9rem' }}
-                  >
+                  <span className="top-0 w-[0.6rem] lg:w-[0.9rem]">
                     <HighQualityImage
-                      src={'/landingsponsor/icons/earn.svg'}
+                      src="/landingsponsor/icons/earn.svg"
                       alt="Earn Icon"
                       className="h-full w-full"
                     />
-                  </Box>
+                  </span>
                 )}
-              </Text>
-            </VStack>
+                {s.label}
+              </p>
+            </div>
           ))}
-        </Grid>
-      </VStack>
-    </Flex>
+        </div>
+      </div>
+    </div>
   );
 }

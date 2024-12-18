@@ -1,13 +1,12 @@
 import type { NextApiResponse } from 'next';
 
-import {
-  checkGrantSponsorAuth,
-  type NextApiRequestWithSponsor,
-  withSponsorAuth,
-} from '@/features/auth';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
+
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function grantApplication(
   req: NextApiRequestWithSponsor,
@@ -35,7 +34,9 @@ async function grantApplication(
     const result = await prisma.grantApplication.findMany({
       where: {
         grantId,
-        applicationStatus: 'Approved',
+        applicationStatus: {
+          in: ['Approved', 'Completed'],
+        },
       },
       include: {
         user: {

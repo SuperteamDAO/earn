@@ -17,14 +17,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { calculateTotalPrizes } from '@/features/listing-builder';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+
+import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
 import { useListingForm } from '../../../hooks';
 import { Footer } from './Footer';
 import { PaymentType } from './PaymentType';
-import { TokenLabel, TokenSelect } from './Tokens';
-import { Fixed, Podiums, Range, Variable } from './Types';
+import { TokenLabel } from './Tokens/TokenLabel';
+import { TokenSelect } from './Tokens/TokenSelect';
+import { Fixed } from './Types/Fixed';
+import { Podiums } from './Types/Podiums';
+import { Range } from './Types/Range';
 
 export function RewardsSheet() {
   const form = useListingForm();
@@ -135,7 +139,7 @@ const Type = memo(() => {
       case 'range':
         return <Range />;
       case 'variable':
-        return <Variable />;
+        return <></>;
       default:
         return null;
     }

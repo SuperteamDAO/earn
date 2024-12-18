@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import logger from '@/lib/logger';
 import { useUser } from '@/store/user';
 
+import { USERNAME_PATTERN } from '../constants';
+
 export const useUsernameValidation = (initialValue = '') => {
   const [username, setUsername] = useState(initialValue);
   const [isInvalid, setIsInvalid] = useState(false);
@@ -12,10 +14,8 @@ export const useUsernameValidation = (initialValue = '') => {
 
   const { user } = useUser();
 
-  const usernamePattern = /^[a-z0-9_-]+$/;
-
   const checkUsernameAvailability = async (username: string) => {
-    if (!usernamePattern.test(username)) {
+    if (!USERNAME_PATTERN.test(username)) {
       setIsInvalid(true);
       setValidationErrorMessage(
         "Username can only contain lowercase letters, numbers, '_', and '-'",

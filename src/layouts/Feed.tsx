@@ -1,13 +1,14 @@
-import NextLink from 'next/link';
+import Link from 'next/link';
 import React from 'react';
+
+import { Home } from '@/layouts/Home';
 
 import {
   AllPostsIcon,
   HomeIcon,
   LeaderboardIcon,
   WinnersIcon,
-} from '@/features/feed';
-import { Home } from '@/layouts/Home';
+} from '@/features/feed/components/icons';
 
 interface NavItemProps {
   name: string;
@@ -17,12 +18,12 @@ interface NavItemProps {
 
 const NavItem = ({ name, icon: Icon, href }: NavItemProps) => {
   return (
-    <NextLink href={href} className="flex items-center">
+    <Link href={href} className="flex items-center">
       <div className="flex h-9 w-9 items-center justify-center">
         <Icon />
       </div>
       <span className="mt-1 font-medium text-slate-500">{name}</span>
-    </NextLink>
+    </Link>
   );
 };
 

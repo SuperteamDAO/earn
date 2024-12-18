@@ -8,14 +8,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 
-import { getCombinedRegion, getRegionTooltipLabel } from '../../utils';
+import { getCombinedRegion, getRegionTooltipLabel } from '../../utils/region';
 
 export const RegionLabel = ({
   region,
@@ -31,27 +26,24 @@ export const RegionLabel = ({
   const regionTooltipLabel = getRegionTooltipLabel(region, isGrant);
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>
-          <div className="flex items-center gap-2">
-            {region === 'GLOBAL' ? (
-              <LuGlobe className="h-4 w-4" strokeWidth={1} />
-            ) : (
-              <UserFlag location={code || ''} isCode />
-            )}
-            <span className="whitespace-nowrap rounded-full text-xs font-medium text-slate-500 sm:text-sm">
-              {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
-            </span>
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>{regionTooltipLabel}</TooltipContent>
+    <>
+      <Tooltip content={regionTooltipLabel}>
+        <div className="flex items-center gap-1">
+          {region === 'GLOBAL' ? (
+            <LuGlobe className="h-4 w-4" strokeWidth={1} />
+          ) : (
+            <UserFlag location={code || ''} isCode />
+          )}
+          <span className="whitespace-nowrap rounded-full text-xs font-medium text-slate-500 sm:text-sm">
+            {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
+          </span>
+        </div>
       </Tooltip>
 
       <Popover>
         <PopoverTrigger asChild>
           <button className="flex sm:hidden">
-            <Info className="h-3 w-3" />
+            <Info className="h-3 w-3 text-slate-600" />
           </button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-2">
@@ -60,6 +52,6 @@ export const RegionLabel = ({
           </div>
         </PopoverContent>
       </Popover>
-    </TooltipProvider>
+    </>
   );
 };
