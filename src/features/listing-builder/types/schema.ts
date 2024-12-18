@@ -219,7 +219,10 @@ export const createListingFormSchema = ({
           message: 'Required',
         })
         .min(0)
-        .max(50)
+        .max(
+          MAX_BONUS_SPOTS,
+          `# of Prizes cannot be more than ${MAX_BONUS_SPOTS}`,
+        )
         .optional()
         .nullable(),
       isFndnPaying: z

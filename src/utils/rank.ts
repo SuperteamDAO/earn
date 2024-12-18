@@ -79,11 +79,27 @@ export const cleanRewardPrizes = (rewards?: Rewards, skipBonus = false) => {
 };
 
 export const nthLabelGenerator = (key: number) => {
-  if (key === 1) return '1st';
-  if (key === 2) return '2nd';
-  if (key === 3) return '3rd';
+  const BONUS_REWARD_POSITION = 10;
+
   if (key === BONUS_REWARD_POSITION) return 'bonus';
-  return `${key}th`;
+
+  const lastDigit = key % 10;
+  const lastTwoDigits = key % 100;
+
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+    return `${key}th`;
+  }
+
+  switch (lastDigit) {
+    case 1:
+      return `${key}st`;
+    case 2:
+      return `${key}nd`;
+    case 3:
+      return `${key}rd`;
+    default:
+      return `${key}th`;
+  }
 };
 
 export const sortRank = (rankArray: number[]) => {

@@ -149,7 +149,7 @@ function LabelOrAction({
     if (!seeAll) {
       return (
         <button
-          className="font-inherit flex items-center gap-1 bg-transparent hover:opacity-80"
+          className="flex items-center gap-1 bg-transparent text-xs font-medium text-slate-500 hover:opacity-80"
           onClick={() => setSeeAll(true)}
         >
           View More
@@ -158,7 +158,7 @@ function LabelOrAction({
       );
     } else
       return (
-        <p className="text-md text-slate-500">
+        <p className="text-md flex items-center gap-2 text-sm font-medium text-slate-500">
           {nthLabelGenerator(index + 1)}
           {index + 1 !== index + maxBonusSpots && (
             <> - {nthLabelGenerator(index + maxBonusSpots)}</>
