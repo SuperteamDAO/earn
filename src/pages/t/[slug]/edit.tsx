@@ -88,16 +88,26 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { setUsername, isInvalid, validationErrorMessage } =
+  const { setUsername, isInvalid, validationErrorMessage, username } =
     useUsernameValidation();
 
   useEffect(() => {
-    if (isInvalid && !!validationErrorMessage) {
+    form.clearErrors('username');
+    if (
+      isInvalid &&
+      !!validationErrorMessage &&
+      !form.formState.errors.username?.message
+    ) {
       setError('username', {
         message: validationErrorMessage,
       });
-    } else clearErrors('username');
-  }, [validationErrorMessage, isInvalid]);
+    }
+  }, [
+    validationErrorMessage,
+    isInvalid,
+    username,
+    form.formState.errors.username?.message,
+  ]);
 
   useEffect(() => {
     if (user) {

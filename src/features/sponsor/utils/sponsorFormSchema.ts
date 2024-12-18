@@ -9,7 +9,10 @@ export const sponsorBaseSchema = z.object({
   slug: z
     .string()
     .min(1, 'Company username is required')
-    .regex(/^[a-zA-Z0-9-]+$/, 'Only letters, numbers, and hyphens are allowed')
+    .regex(
+      /^[a-zA-Z0-9-]+$/,
+      `Slug can only contain lowercase letters, numbers, '_', and '-'`,
+    )
     .toLowerCase(),
   bio: z
     .string()

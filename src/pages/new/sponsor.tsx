@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -58,6 +58,7 @@ const CreateSponsor = () => {
 
   const form = useForm<SponsorFormValues>({
     resolver: zodResolver(sponsorFormSchema),
+    mode: 'onBlur',
     defaultValues: {
       sponsor: {
         name: '',
@@ -99,12 +100,18 @@ const CreateSponsor = () => {
     sponsorName,
   } = useSponsorNameValidation();
   useEffect(() => {
-    if (isSponsorNameInvalid) {
+    form.clearErrors('sponsor.name');
+    if (isSponsorNameInvalid && !form.formState.errors.sponsor?.name?.message) {
       form.setError('sponsor.name', {
         message: sponsorNameValidationErrorMessage,
       });
-    } else form.clearErrors('sponsor.name');
-  }, [sponsorNameValidationErrorMessage, isSponsorNameInvalid]);
+    }
+  }, [
+    sponsorNameValidationErrorMessage,
+    isSponsorNameInvalid,
+    form.formState.errors.sponsor?.name?.message,
+    sponsorName,
+  ]);
 
   const {
     setSlug,
@@ -113,12 +120,18 @@ const CreateSponsor = () => {
     slug,
   } = useSlugValidation();
   useEffect(() => {
-    if (isSlugInvalid) {
+    form.clearErrors('sponsor.slug');
+    if (isSlugInvalid && !form.formState.errors.sponsor?.slug?.message) {
       form.setError('sponsor.slug', {
         message: validationSlugErrorMessage,
       });
-    } else form.clearErrors('sponsor.slug');
-  }, [validationSlugErrorMessage, isSlugInvalid]);
+    }
+  }, [
+    validationSlugErrorMessage,
+    isSlugInvalid,
+    form.formState.errors.sponsor?.slug?.message,
+    slug,
+  ]);
 
   const {
     setUsername,
@@ -127,12 +140,18 @@ const CreateSponsor = () => {
     username,
   } = useUsernameValidation(user?.username);
   useEffect(() => {
-    if (isUsernameInvalid) {
+    form.clearErrors('user.username');
+    if (isUsernameInvalid && !form.formState.errors.user?.username?.message) {
       form.setError('user.username', {
         message: validationUsernameErrorMessage,
       });
-    } else form.clearErrors('user.username');
-  }, [validationUsernameErrorMessage, isUsernameInvalid]);
+    }
+  }, [
+    validationUsernameErrorMessage,
+    isUsernameInvalid,
+    form.formState.errors.user?.username?.message,
+    username,
+  ]);
 
   useEffect(() => {
     if (user?.currentSponsorId && session?.user?.role !== 'GOD') {
@@ -189,7 +208,26 @@ const CreateSponsor = () => {
     },
   });
 
+  const isSubmitDisabled = useMemo(
+    () =>
+      !logoUrl ||
+      isUploading ||
+      isPending ||
+      isSlugInvalid ||
+      isUsernameInvalid ||
+      isSponsorNameInvalid,
+    [
+      logoUrl,
+      isUploading,
+      isPending,
+      isSlugInvalid,
+      isUsernameInvalid,
+      isSponsorNameInvalid,
+    ],
+  );
+
   const onSubmit = (data: SponsorFormValues) => {
+    if (isSubmitDisabled) return;
     posthog.capture('complete profile_sponsor');
     createSponsor(data);
   };
@@ -265,7 +303,11 @@ const CreateSponsor = () => {
                     label="Username"
                     isRequired
                     onChange={(e) => {
-                      setUsername(e.target.value);
+                      const value = e.target.value
+                        .toLowerCase()
+                        .replace(/\s+/g, '-');
+                      setUsername(value);
+                      form.setValue('user.username', value);
                     }}
                   >
                     <Input placeholder="Username" value={username} />
@@ -311,8 +353,11 @@ const CreateSponsor = () => {
                     label="Company Username"
                     isRequired
                     onChange={(e) => {
-                      const lowercaseValue = e.target.value.toLowerCase();
-                      setSlug(lowercaseValue);
+                      const value = e.target.value
+                        .toLowerCase()
+                        .replace(/\s+/g, '-');
+                      setSlug(value);
+                      form.setValue('sponsor.slug', value);
                     }}
                   >
                     <Input placeholder="starkindustries" value={slug} />
@@ -437,7 +482,7 @@ const CreateSponsor = () => {
                     'ph-no-capture h-11 w-full',
                     'disabled:cursor-not-allowed disabled:opacity-50',
                   )}
-                  disabled={!logoUrl || isUploading || isPending}
+                  disabled={isSubmitDisabled}
                   type="submit"
                 >
                   {isUploading || isPending ? (

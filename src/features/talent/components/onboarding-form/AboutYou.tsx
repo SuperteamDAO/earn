@@ -63,21 +63,26 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
     reset,
   } = aboutYouForm;
 
-  const { setUsername, isInvalid, validationErrorMessage } =
+  const { setUsername, isInvalid, validationErrorMessage, username } =
     useUsernameValidation();
 
-  const watchedUsername = watch('username');
   useEffect(() => {
-    if (watchedUsername) setUsername(watchedUsername);
-  }, [watchedUsername]);
-
-  useEffect(() => {
-    if (isInvalid && !!validationErrorMessage) {
+    aboutYouForm.clearErrors('username');
+    if (
+      isInvalid &&
+      !!validationErrorMessage &&
+      !aboutYouForm.formState.errors.username?.message
+    ) {
       setError('username', {
         message: validationErrorMessage,
       });
-    } else clearErrors('username');
-  }, [validationErrorMessage, isInvalid]);
+    }
+  }, [
+    validationErrorMessage,
+    isInvalid,
+    username,
+    aboutYouForm.formState.errors.username?.message,
+  ]);
 
   const { data: randomUsername } = useQuery({
     ...usernameRandomQuery(user?.firstName),
@@ -189,6 +194,11 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
             control={control}
             isRequired
             className="mb-5"
+            onChange={(e) => {
+              const value = e.target.value.toLowerCase().replace(/\s+/g, '-');
+              setUsername(value);
+              aboutYouForm.setValue('username', value);
+            }}
           >
             <Input maxLength={40} placeholder="Username" />
           </FormFieldWrapper>

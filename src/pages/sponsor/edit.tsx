@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Info, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -69,12 +69,20 @@ export default function UpdateSponsor() {
   } = useSponsorNameValidation();
 
   useEffect(() => {
-    if (isSponsorNameInvalid) {
-      form.setError('name', {
-        message: sponsorNameValidationErrorMessage,
-      });
-    } else form.clearErrors('name');
-  }, [sponsorNameValidationErrorMessage, isSponsorNameInvalid]);
+    form.clearErrors('name');
+    if (!form.formState.errors?.name?.message) {
+      if (isSponsorNameInvalid) {
+        form.setError('name', {
+          message: sponsorNameValidationErrorMessage,
+        });
+      }
+    }
+  }, [
+    sponsorNameValidationErrorMessage,
+    isSponsorNameInvalid,
+    form.formState.errors.name?.message,
+    sponsorName,
+  ]);
 
   const {
     setSlug,
@@ -84,12 +92,18 @@ export default function UpdateSponsor() {
   } = useSlugValidation();
 
   useEffect(() => {
-    if (isSlugInvalid) {
+    form.clearErrors('slug');
+    if (isSlugInvalid && !form.formState.errors.slug?.message) {
       form.setError('slug', {
         message: slugValidationErrorMessage,
       });
-    } else form.clearErrors('slug');
-  }, [slugValidationErrorMessage, isSlugInvalid]);
+    }
+  }, [
+    slugValidationErrorMessage,
+    isSlugInvalid,
+    form.formState.errors.slug?.message,
+    slug,
+  ]);
 
   const { data: sponsorData } = useQuery(sponsorQuery(user?.currentSponsorId));
 
@@ -115,7 +129,18 @@ export default function UpdateSponsor() {
     }
   }, [sponsorData, form.reset, setSlug, setSponsorName]);
 
+  const isSubmitDisabled = useMemo(
+    () =>
+      !logoUrl ||
+      isUploading ||
+      isLoading ||
+      isSlugInvalid ||
+      isSponsorNameInvalid,
+    [logoUrl, isUploading, isLoading, isSlugInvalid, isSponsorNameInvalid],
+  );
+
   const onSubmit = async (data: SponsorBase) => {
+    if (isSubmitDisabled) return;
     setIsLoading(true);
     try {
       await axios.post('/api/sponsors/edit', data);
@@ -181,7 +206,11 @@ export default function UpdateSponsor() {
                   label="Company Username"
                   isRequired
                   onChange={(e) => {
-                    setSlug(e.target.value);
+                    const value = e.target.value
+                      .toLowerCase()
+                      .replace(/\s+/g, '-');
+                    form.setValue('slug', value);
+                    setSlug(value);
                   }}
                 >
                   <Input placeholder="starkindustries" value={slug} />
@@ -295,7 +324,7 @@ export default function UpdateSponsor() {
               <div className="mt-8">
                 <Button
                   className="w-full"
-                  disabled={!logoUrl || isUploading}
+                  disabled={isSubmitDisabled}
                   size="lg"
                   type="submit"
                   variant="default"
