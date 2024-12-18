@@ -66,7 +66,7 @@ const ListingTabTrigger = ({
   <button
     onClick={onClick}
     className={cn(
-      'group relative inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all',
+      'group relative inline-flex items-center justify-center whitespace-nowrap rounded-md px-1 py-1 text-sm font-medium ring-offset-background transition-all sm:px-3',
       'hover:text-brand-purple',
       isActive && [
         'text-brand-purple',
@@ -280,9 +280,7 @@ export const ListingTabs = ({
           </div>
 
           <div className="flex items-center">
-            <span className="mx-0 mr-3 text-[0.625rem] text-slate-300 sm:mx-3">
-              |
-            </span>
+            <div className="mx-2 h-6 w-px bg-slate-200" />
             <div className="flex">
               {tabs.map((tab) => (
                 <ListingTabTrigger
