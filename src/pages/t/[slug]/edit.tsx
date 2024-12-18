@@ -84,6 +84,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const [pow, setPow] = useState<PoW[]>([]);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
+  const [skillsRefreshKey, setSkillsRefreshKey] = useState<number>(0);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -151,6 +152,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
           : [],
         currentEmployer: user.currentEmployer || undefined,
       });
+      setSkillsRefreshKey((s) => s + 1);
     }
   }, [user]);
 
@@ -544,7 +546,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                       </div>
                       <FormControl>
                         <SkillsSelect
-                          key={JSON.stringify(field.value)}
+                          key={skillsRefreshKey}
                           defaultValue={field.value || []}
                           onChange={(e) => {
                             field.onChange(e);

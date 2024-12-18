@@ -46,6 +46,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
   );
+  const [skillsRefreshKey, setSkillsRefreshKey] = useState<number>(0);
 
   const aboutYouForm = useForm<AboutYouFormData>({
     resolver: zodResolver(aboutYouSchema),
@@ -90,7 +91,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
         firstName: form.firstName || user?.firstName,
         lastName: form.lastName || user?.lastName,
         skills: aboutYouSchema.shape.skills.safeParse(
-          form.skills || user?.skills,
+          form.skills.length > 0 ? form.skills : user?.skills,
         ).data,
         publicKey: form.publicKey || user?.publicKey,
         photo: form.photo || user?.photo,
@@ -98,6 +99,7 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
           form.location || user?.location,
         ).data,
       });
+      setSkillsRefreshKey((s) => s + 1);
     }
   }, [user, setValue]);
 
@@ -309,8 +311,8 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                   </div>
                   <FormControl>
                     <SkillsSelect
+                      key={skillsRefreshKey}
                       ref={field.ref}
-                      key={JSON.stringify(field.value)}
                       defaultValue={field.value || []}
                       onChange={(e) => {
                         field.onChange(e);
