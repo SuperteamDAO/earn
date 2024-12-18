@@ -1,6 +1,6 @@
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { useQuery } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -30,13 +30,14 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { useTimeout } from '@/hooks/use-timeout';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { liveOpportunitiesQuery } from '@/features/listings/queries/live-opportunities';
 
-import { popupsShowedAtom } from '../atoms';
+import { popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { roundToNearestThousand } from '../utils';
 import { GetStarted } from './GetStarted';
 
@@ -57,6 +58,19 @@ const avatars = [
 
 export const HomepagePop = () => {
   const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
+  const setPopupTimeout = useSetAtom(popupTimeoutAtom);
+
+  const timeoutHandle = useTimeout(() => {
+    const variant =
+      Number(localStorage.getItem('homepage-desktop-pop-variant')) || 1;
+    setVariant(variant || 1);
+    localStorage.setItem('homepage-desktop-pop-variant', String(variant + 1));
+    setOpen(true);
+    setPopupsShowed((s) => s + 1);
+    posthog.capture('conversion pop up_initiated', {
+      'Popup Source': 'Homepage Pop-up',
+    });
+  }, 5000);
 
   const [variant, setVariant] = useState<number>(1);
   const [open, setOpen] = useState(false);
@@ -89,20 +103,8 @@ export const HomepagePop = () => {
     ) {
       initated.current = true;
       setTimeout(() => {
-        setTimeout(() => {
-          const variant =
-            Number(localStorage.getItem('homepage-desktop-pop-variant')) || 1;
-          setVariant(variant || 1);
-          localStorage.setItem(
-            'homepage-desktop-pop-variant',
-            String(variant + 1),
-          );
-          setOpen(true);
-          setPopupsShowed((s) => s + 1);
-          posthog.capture('conversion pop up_initiated', {
-            'Popup Source': 'Homepage Pop-up',
-          });
-        }, 5_000);
+        timeoutHandle.start();
+        setPopupTimeout(timeoutHandle);
       }, 0);
     }
   }, [status]);
@@ -172,7 +174,7 @@ const Mobile = ({
           </DrawerTitle>
           <DrawerDescription className="text-sm text-slate-500">
             Sign up to never miss out on amazing opportunities that pay in
-            global standards. 
+            global standards.
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="pt-0">
@@ -244,7 +246,7 @@ const DesktopVariantOne = ({
         </DialogTitle>
         <DialogDescription className="text-sm text-slate-500">
           Sign up to never miss out on amazing opportunities that pay in global
-          standards. 
+          standards.
         </DialogDescription>
       </DialogHeader>
     </>

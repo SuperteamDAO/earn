@@ -1,4 +1,4 @@
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -21,12 +21,13 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { useTimeout } from '@/hooks/use-timeout';
 
 import { type Listing } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
 
-import { popupsShowedAtom } from '../atoms';
+import { popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
 interface VariantInfo {
@@ -62,6 +63,15 @@ const VariantInfo = (
 
 export const ListingPop = ({ listing }: { listing: Listing | null }) => {
   const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
+  const setPopupTimeout = useSetAtom(popupTimeoutAtom);
+
+  const timeoutHandle = useTimeout(() => {
+    setOpen(true);
+    setPopupsShowed((s) => s + 1);
+    posthog.capture('conversion pop up_initiated', {
+      'Popup Source': 'Listing Pop-up',
+    });
+  }, 5_000);
 
   const [variant, setVariant] = useState<VariantInfo>();
   const [open, setOpen] = useState(false);
@@ -83,13 +93,8 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
     ) {
       initated.current = true;
       setTimeout(() => {
-        setTimeout(() => {
-          setOpen(true);
-          setPopupsShowed((s) => s + 1);
-          posthog.capture('conversion pop up_initiated', {
-            'Popup Source': 'Listing Pop-up',
-          });
-        }, 5_000);
+        timeoutHandle.start();
+        setPopupTimeout(timeoutHandle);
       }, 0);
     }
   }, [status]);

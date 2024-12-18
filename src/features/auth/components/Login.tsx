@@ -1,7 +1,10 @@
+import { useAtomValue } from 'jotai';
 import { ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+
+import { popupTimeoutAtom } from '@/features/conversion-popups/atoms';
 
 import { SignIn } from './SignIn';
 
@@ -22,9 +25,31 @@ export const Login = ({
   hideOverlay,
   hideCloseIcon = false,
 }: Props) => {
+  const popupTimeout = useAtomValue(popupTimeoutAtom);
+
+  useEffect(() => {
+    if (popupTimeout) {
+      if (isOpen) {
+        popupTimeout.pause();
+      }
+    }
+  }, [isOpen]);
+
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (popupTimeout) {
+        if (!open) {
+          popupTimeout.resume();
+        }
+      }
+      onClose();
+    },
+    [popupTimeout, onClose],
+  );
+
   const [loginStep, setLoginStep] = useState(0);
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         className="w-[23rem] p-0 pt-2"
         classNames={{

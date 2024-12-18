@@ -19,15 +19,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { FormFieldSelect } from '@/components/ui/form-field-select';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Tooltip } from '@/components/ui/tooltip';
 import { countries } from '@/constants/country';
 import { CountryList } from '@/constants/countryList';
@@ -216,25 +210,13 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
             </FormFieldWrapper>
           </div>
 
-          <FormFieldWrapper
-            name="location"
-            control={control}
-            className="mb-5 w-full"
+          <FormFieldSelect
             label="Location"
-          >
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select Your Country" />
-              </SelectTrigger>
-              <SelectContent>
-                {CountryList.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormFieldWrapper>
+            options={CountryList}
+            name="location"
+            placeholder="Select Your Country"
+            control={control}
+          />
 
           <FormField
             name="photo"

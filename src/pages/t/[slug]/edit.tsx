@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { type Control, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
@@ -22,16 +22,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { FormFieldSelect } from '@/components/ui/form-field-select';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect, type Option } from '@/components/ui/multi-select';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip } from '@/components/ui/tooltip';
 import { CountryList } from '@/constants/countryList';
@@ -55,65 +49,6 @@ import {
 } from '@/features/talent/constants';
 import { type ProfileFormData, profileSchema } from '@/features/talent/schema';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
-
-interface SelectBoxProps {
-  label: string;
-  options: string[] | readonly string[];
-  name: string;
-  placeholder: string;
-  control: Control<any>;
-  required?: boolean;
-  className?: string;
-}
-
-const SelectBox = ({
-  label,
-  options,
-  name,
-  placeholder,
-  control,
-  required = false,
-  className,
-}: SelectBoxProps) => {
-  return (
-    <FormField
-      control={control}
-      name={name}
-      render={({ field }) => (
-        <FormItem className={cn('mb-5 flex w-full flex-col gap-2', className)}>
-          <div>
-            {label && <FormLabel isRequired={required}>{label}</FormLabel>}
-          </div>
-          <div>
-            <FormControl>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger>
-                  <SelectValue
-                    onBlur={field.onBlur}
-                    placeholder={placeholder}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {!required && !!field.value && (
-                    <SelectItem value={null!} className="text-slate-400">
-                      {placeholder}
-                    </SelectItem>
-                  )}
-                  {options.map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormControl>
-            <FormMessage className="pt-1" />
-          </div>
-        </FormItem>
-      )}
-    />
-  );
-};
 
 export default function EditProfilePage({ slug }: { slug: string }) {
   const { user, refetchUser } = useUser();
@@ -504,7 +439,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 )}
               />
 
-              <SelectBox
+              <FormFieldSelect
                 label="Work Experience"
                 options={workExp}
                 name="experience"
@@ -512,7 +447,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 control={control}
               />
 
-              <SelectBox
+              <FormFieldSelect
                 label="Location"
                 options={CountryList}
                 name="location"
@@ -520,7 +455,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 control={control}
               />
 
-              <SelectBox
+              <FormFieldSelect
                 label="How familiar are you with Web3?"
                 options={web3Exp}
                 name="cryptoExperience"
@@ -528,7 +463,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 control={control}
               />
 
-              <SelectBox
+              <FormFieldSelect
                 label="Work Preference"
                 options={workType}
                 name="workPrefernce"
