@@ -120,7 +120,7 @@ export const SocialInput = ({
                     onChange={(e) => {
                       const value = e.currentTarget.value;
                       const linkedUsernameValue =
-                        linkedUsernames.safeParse(name);
+                        linkedUsernames.safeParse(socialName);
                       if (linkedUsernameValue.data) {
                         const extractedUsername = extractSocialUsername(
                           linkedUsernameValue.data,
@@ -130,7 +130,7 @@ export const SocialInput = ({
                           field.onChange(removeAtSign(extractedUsername));
                         else field.onChange(removeAtSign(value));
                       } else {
-                        if (lowercaseOnly.safeParse(name).success) {
+                        if (lowercaseOnly.safeParse(socialName).success) {
                           field.onChange(removeAtSign(value.toLowerCase()));
                         } else {
                           field.onChange(removeAtSign(value));
