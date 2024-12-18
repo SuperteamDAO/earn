@@ -16,6 +16,8 @@ interface AuthWrapperProps {
   completeProfileModalBodyText?: string;
   redirectTo?: string;
   hideLoginOverlay?: boolean;
+  onLoginOpenCallback?: () => void;
+  onLoginCloseCallback?: () => void;
 }
 
 export function AuthWrapper({
@@ -26,6 +28,8 @@ export function AuthWrapper({
   completeProfileModalBodyText = 'Please complete your profile before proceeding.',
   redirectTo,
   hideLoginOverlay,
+  onLoginCloseCallback,
+  onLoginOpenCallback,
 }: AuthWrapperProps) {
   const { status } = useSession();
   const isAuthenticated = status === 'authenticated';
@@ -42,6 +46,12 @@ export function AuthWrapper({
     onOpen: loginOnOpen,
     onClose: loginOnClose,
   } = useDisclosure();
+
+  useEffect(() => {
+    if (loginIsOpen) onLoginOpenCallback?.();
+    else onLoginCloseCallback?.();
+  }, [loginIsOpen]);
+
   const {
     isOpen: profileModalIsOpen,
     onOpen: profileModalOnOpen,

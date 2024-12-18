@@ -123,9 +123,14 @@ const Mobile = ({
   st: Superteam;
   totalUsers: number | undefined;
 }) => {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerContent>
+      <DrawerContent
+        classNames={{
+          overlay: isLoginOpen ? 'z-[200]' : '',
+        }}
+      >
         <DrawerHeader className="text-left">
           <UserFlag isCode location={st.code} size="44px" />
           <DrawerTitle className="pt-2 text-base font-semibold">
@@ -137,7 +142,7 @@ const Mobile = ({
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="flex-col gap-4 pt-0 sm:flex-col">
-          <GetStarted />
+          <GetStarted setIsLoginOpen={setIsLoginOpen} />
           <People st={st} totalUsers={totalUsers} />
         </DrawerFooter>
       </DrawerContent>

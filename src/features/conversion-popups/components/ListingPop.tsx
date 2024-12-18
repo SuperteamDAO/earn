@@ -179,9 +179,14 @@ const Mobile = ({
   setOpen: (e: boolean) => void;
   variant: VariantInfo | undefined;
 }) => {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerContent>
+      <DrawerContent
+        classNames={{
+          overlay: isLoginOpen ? 'z-[200]' : '',
+        }}
+      >
         <DrawerHeader className="text-left">
           <Image
             src={variant?.sponsorLogo || ''}
@@ -198,7 +203,7 @@ const Mobile = ({
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="pt-0">
-          <GetStarted />
+          <GetStarted setIsLoginOpen={setIsLoginOpen} />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

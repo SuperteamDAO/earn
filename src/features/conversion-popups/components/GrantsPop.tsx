@@ -97,9 +97,14 @@ const Mobile = ({
   setOpen: (e: boolean) => void;
   variant: GrantInfo;
 }) => {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerContent>
+      <DrawerContent
+        classNames={{
+          overlay: isLoginOpen ? 'z-[200]' : '',
+        }}
+      >
         <DrawerHeader className="text-left">
           <img
             src={variant?.icon || ''}
@@ -116,7 +121,7 @@ const Mobile = ({
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="pt-0">
-          <GetStarted />
+          <GetStarted setIsLoginOpen={setIsLoginOpen} />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
