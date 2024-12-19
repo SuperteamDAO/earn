@@ -32,6 +32,16 @@
   - You have to set up resend to run the app:
     - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
 
+  - Zerobounce Setup
+    To use the Zerobounce integration, you need to generate an API key.
+    - Log in to the [Zerobounce dashboard](https://www.zerobounce.net).
+    - Generate your API key and add it to the .env file:
+     ```bash
+     ZEROBOUNCE_API_KEY='your-api-key-here'
+     ```
+     - This is required for email validation functionality.
+
+
 5. Start Developing
     ```bash
     pnpm dev
