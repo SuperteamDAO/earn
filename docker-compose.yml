@@ -1,0 +1,30 @@
+services:
+  db:
+    image: mysql
+    container_name: db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=strong_password
+      - MYSQL_DATABASE=earn
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-pstrong_password"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  app:
+    build: .
+    container_name: app
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
