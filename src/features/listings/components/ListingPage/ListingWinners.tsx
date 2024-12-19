@@ -149,7 +149,7 @@ export function ListingWinners({ bounty }: Props) {
                       </div>
                     )}
                     <EarnAvatar
-                      size={isMD ? '64px' : '52px'}
+                      className="h-14 w-14 md:h-16 md:w-16"
                       id={submission?.user?.id}
                       avatar={submission?.user?.photo as string}
                     />
@@ -191,7 +191,7 @@ export function ListingWinners({ bounty }: Props) {
                   className="inline-block"
                 >
                   <EarnAvatar
-                    size={isMD ? '44px' : '36px'}
+                    className="h-9 w-9 md:h-11 md:w-11"
                     id={submission?.user?.id}
                     avatar={submission?.user?.photo as string}
                   />

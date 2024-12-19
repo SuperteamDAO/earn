@@ -171,7 +171,7 @@ export const PaymentsHistoryTab = ({
                         <EarnAvatar
                           id={grantee.userId}
                           avatar={grantee.user.photo!}
-                          size="36px"
+                          className="h-9 w-9"
                         />
                         <div className="flex flex-col">
                           <p className="text-sm font-medium text-slate-700">

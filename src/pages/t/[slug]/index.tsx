@@ -263,7 +263,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
             <div className="flex justify-between">
               <div>
                 <EarnAvatar
-                  size={isMD ? '64px' : '52px'}
+                  className="h-14 w-14 md:h-16 md:w-16"
                   id={talent?.id}
                   avatar={talent?.photo}
                 />

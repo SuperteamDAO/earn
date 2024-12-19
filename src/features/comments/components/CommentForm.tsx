@@ -84,7 +84,7 @@ export const CommentForm = ({
   return (
     <div className="mb-4 flex w-full flex-col gap-4">
       <div className="flex w-full gap-3">
-        <EarnAvatar size={'36px'} id={user?.id} avatar={user?.photo} />
+        <EarnAvatar className="h-9 w-9" id={user?.id} avatar={user?.photo} />
         <div className="relative mt-0.5 w-full">
           <UserSuggestionTextarea
             defaultSuggestions={defaultSuggestions}
@@ -109,7 +109,7 @@ export const CommentForm = ({
         <div className="flex w-full justify-end gap-4">
           <Button
             variant="ghost"
-            className="h-auto px-5 py-2 text-[10px] font-medium md:text-sm"
+            className="h-auto px-5 py-1.5 text-[10px] font-medium text-slate-500 md:text-sm"
             disabled={newCommentLoading || !newComment}
             onClick={() => setNewComment('')}
           >
@@ -123,7 +123,7 @@ export const CommentForm = ({
           >
             <Button
               variant="default"
-              className="h-auto px-5 py-2 text-[10px] font-medium md:text-sm"
+              className="h-auto px-5 py-1.5 text-[10px] font-medium md:text-sm"
               disabled={
                 newCommentLoading || !newComment || isTemplate || isDisabled
               }

@@ -90,10 +90,9 @@ export function SelectHackathon({
       <components.SingleValue {...props}>
         <div className="flex items-center py-1">
           <EarnAvatar
-            borderRadius="rounded-sm"
             id={data?.hackathon?.name}
             avatar={data?.hackathon?.logo}
-            size={'24px'}
+            className="h-6 w-6 rounded-sm"
           />
           <div className="ml-2 hidden md:block">
             <p className="text-sm text-slate-800">{data?.hackathon?.name}</p>
@@ -110,7 +109,7 @@ export function SelectHackathon({
       <components.Option {...props}>
         <div className="flex items-center">
           <EarnAvatar
-            borderRadius="rounded-sm"
+            className="rounded-sm"
             id={data?.hackathon?.name}
             avatar={data?.hackathon?.logo}
           />

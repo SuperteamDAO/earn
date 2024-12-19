@@ -188,7 +188,7 @@ const Index = () => {
                     <TableCell>
                       <div className="flex items-center">
                         <EarnAvatar
-                          size="36px"
+                          className="h-9 w-9"
                           id={member?.user?.id}
                           avatar={member?.user?.photo}
                         />

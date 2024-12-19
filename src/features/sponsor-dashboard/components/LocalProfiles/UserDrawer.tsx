@@ -49,7 +49,11 @@ export const UserDrawer = ({
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between border-b border-slate-300 pb-6">
             <div className="flex items-center">
-              <EarnAvatar size="44px" id={user?.id} avatar={user?.photo} />
+              <EarnAvatar
+                className="h-11 w-11"
+                id={user?.id}
+                avatar={user?.photo}
+              />
               <div className="ml-4">
                 <div className="flex gap-3">
                   <p className="font-medium">{`${user?.firstName} ${user?.lastName}`}</p>
