@@ -117,7 +117,7 @@ export const SubmissionPanel = ({
                   selectedSubmission?.winnerPosition &&
                   selectedSubmission?.isPaid && (
                     <Button
-                      className="mr-4"
+                      className="mr-4 text-slate-600"
                       onClick={() => {
                         window.open(
                           `https://solscan.io/tx/${selectedSubmission?.paymentDetails?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,

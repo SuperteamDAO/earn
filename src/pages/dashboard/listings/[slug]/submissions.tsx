@@ -456,7 +456,7 @@ export default function BountySubmissions({ slug }: Props) {
                       </TabsTrigger>
                     </Tooltip>
                   </TabsList>
-                  <div className="h-0.5 w-full bg-slate-200" />
+                  <div className="h-[1.5px] w-full bg-slate-200/70" />
                 </>
               )}
 

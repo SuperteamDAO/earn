@@ -38,7 +38,7 @@ const StatsTooltip = ({
         <p className="mr-0.5 whitespace-nowrap text-base font-normal text-slate-500">
           {label}
         </p>
-        <Info className="h-4 w-4 text-slate-400" />
+        <Info className="h-3 w-3 text-slate-400" />
       </div>
       {isLoading ? (
         <Skeleton className="mt-2 h-5 w-[72px]" />

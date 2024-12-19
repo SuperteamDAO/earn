@@ -47,7 +47,7 @@ export const DesktopNavbar = () => {
 
         <div className="absolute left-1/2 -translate-x-1/2">
           <div className="ml-10 flex h-full items-center justify-center">
-            <div className="flex h-full gap-7">
+            <div className="flex h-full items-center gap-7">
               {NAV_LINKS?.map((navItem) => (
                 <Link
                   key={navItem.label}

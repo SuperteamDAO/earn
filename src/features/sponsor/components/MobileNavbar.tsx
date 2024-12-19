@@ -127,7 +127,7 @@ export const MobileNavbar = () => {
       <div className="absolute left-1/2 -translate-x-1/2">
         <Link
           href="/"
-          className="flex items-center gap-3 hover:no-underline"
+          className="flex items-center gap-2 hover:no-underline"
           onClick={() => {
             posthog.capture('homepage logo click_universal');
           }}
@@ -137,7 +137,7 @@ export const MobileNavbar = () => {
             alt="Superteam Earn"
             src="/assets/logo.svg"
           />
-          <div className="h-6 w-[3px] bg-slate-400" />
+          <div className="h-6 w-px bg-slate-300" />
           <p className="text-sm font-semibold tracking-[1.5px] text-slate-500">
             SPONSORS
           </p>

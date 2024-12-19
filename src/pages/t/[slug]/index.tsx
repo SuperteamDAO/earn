@@ -177,7 +177,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
             'ph-no-capture text-sm font-medium',
             outline
               ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-              : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
+              : 'border-brand-purple/5 bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20',
           )}
           onClick={onClickHandler}
           variant={outline ? 'outline' : 'default'}

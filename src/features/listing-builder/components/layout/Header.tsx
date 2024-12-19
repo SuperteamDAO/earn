@@ -53,7 +53,7 @@ export function Header() {
               className="h-5 w-auto cursor-pointer object-contain"
             />
             <Separator orientation="vertical" className="h-6 w-[3px]" />
-            <span className="text-sm tracking-wider">SPONSORS</span>
+            <div className="h-6 w-[1.5px] bg-slate-300" />
           </Link>
           <Link href="/dashboard/listings">
             <Button variant="outline">
