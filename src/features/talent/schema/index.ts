@@ -16,7 +16,6 @@ import {
 } from '@/features/social/utils/schema';
 
 import {
-  CommunityList,
   IndustryList,
   USERNAME_PATTERN,
   web3Exp,
@@ -45,20 +44,17 @@ export const profileSchema = z
     linkedin: linkedinUsernameSchema.optional().or(z.literal('')),
     telegram: telegramUsernameSchema.optional().or(z.literal('')),
     website: websiteUrlSchema.optional().or(z.literal('')),
-    community: z
-      .string()
-      .array()
-      .optional()
-      .nullable()
-      .refine(
-        (community) => {
-          if (!community) return true;
-          return community.every((item) => CommunityList.includes(item));
-        },
-        {
-          message: 'Invalid Community values',
-        },
-      ),
+    community: z.string().array().optional().nullable(),
+    // removing this since for some unknown reason where even valid one's fail only in backend
+    // .refine(
+    //   (community) => {
+    //     if (!community) return true;
+    //     return community.every((item) => CommunityList.includes(item));
+    //   },
+    //   {
+    //     message: 'Invalid Community values',
+    //   },
+    // )
     interests: z.enum(IndustryList).array().optional().nullable(),
     experience: z.enum(workExp).optional().nullable().or(z.literal('')),
     cryptoExperience: z.enum(web3Exp).optional().nullable().or(z.literal('')),
