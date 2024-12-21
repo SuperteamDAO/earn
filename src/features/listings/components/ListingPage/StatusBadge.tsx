@@ -12,7 +12,7 @@ export const StatusBadge = ({ textColor, text, Icon }: StatusBadgeProps) => {
   return (
     <div
       className={cn(
-        'flex items-center gap-1 whitespace-nowrap rounded-full py-1 text-xs font-medium sm:text-sm',
+        'flex items-center gap-1 whitespace-nowrap rounded-full py-1 text-xs font-medium sm:gap-2 sm:text-sm',
         `text-${textColor}`,
       )}
       color={textColor}

@@ -1,3 +1,4 @@
+import { Info } from 'lucide-react';
 import React from 'react';
 import { LuGlobe } from 'react-icons/lu';
 
@@ -30,6 +31,7 @@ export const RegionLabel = ({
         <span className="whitespace-nowrap rounded-full text-xs font-medium text-slate-500 sm:text-sm">
           {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
         </span>
+        <Info className="h-3 w-3 text-slate-600 sm:hidden" />
       </div>
     </Tooltip>
   );

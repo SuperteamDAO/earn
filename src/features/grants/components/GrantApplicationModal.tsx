@@ -369,7 +369,7 @@ export const GrantApplicationModal = ({
                     description="What is the problem you're trying to solve, and how you're going to solve it?"
                     isRequired
                     isRichEditor
-                    richEditorPlaceholder="Describe the problem and your solution"
+                    richEditorPlaceholder="Describe the problem & solution"
                   />
 
                   <FormFieldWrapper
