@@ -115,8 +115,6 @@ export const PayoutButton = ({ bounty }: Props) => {
       const tokenAddress = tokenDetails?.mintAddress as string;
       const power = tokenDetails?.decimals as number;
 
-      const latestBlockHash = await connection.getLatestBlockhash();
-
       const senderATA = await getAssociatedTokenAddressSync(
         new PublicKey(tokenAddress),
         publicKey as PublicKey,
@@ -158,16 +156,37 @@ export const PayoutButton = ({ bounty }: Props) => {
         );
       }
 
-      const signature = await sendTransaction(transaction, connection);
+      const signature = await sendTransaction(transaction, connection, {
+        preflightCommitment: 'confirmed',
+      });
 
-      await connection.confirmTransaction(
-        {
-          blockhash: latestBlockHash.blockhash,
-          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature,
-        },
-        'finalized',
-      );
+      const pollForSignature = async (sig: string) => {
+        const MAX_RETRIES = 45;
+        let retries = 0;
+
+        while (retries < MAX_RETRIES) {
+          const status = await connection.getSignatureStatus(sig, {
+            searchTransactionHistory: true,
+          });
+
+          if (status?.value?.confirmationStatus === 'confirmed') {
+            return true;
+          }
+
+          if (status?.value?.err) {
+            throw new Error(
+              `Transaction failed: ${status.value.err.toString()}`,
+            );
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          retries++;
+        }
+
+        throw new Error('Transaction confirmation timeout');
+      };
+
+      await pollForSignature(signature);
 
       await addPayment({
         id,
