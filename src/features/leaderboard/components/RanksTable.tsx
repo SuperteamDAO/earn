@@ -65,7 +65,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               <p className="hidden whitespace-nowrap md:block">
                 Dollars Earned
               </p>
-              <p className="block md:hidden">$ Earned</p>
+              <p className="block whitespace-nowrap md:hidden">$ Earned</p>
             </TableHead>
             <TableHead className="whitespace-nowrap px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
               Win Rate
@@ -130,7 +130,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                 <TableCell className="h-full px-1 text-center md:px-2">
                   #{row.rank}
                 </TableCell>
-                <TableCell className="h-full px-1 md:px-2">
+                <TableCell className="h-full pr-8 sm:px-2">
                   <Link
                     href={`/t/${row.username}`}
                     target="_blank"
@@ -163,11 +163,9 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                   </Link>
                 </TableCell>
                 <TableCell className="h-full px-1 md:px-2">
-                  <div className="flex justify-center gap-2">
-                    <p className="text-center text-black">
-                      {formatter(row.dollarsEarned)}
-                    </p>
-                    <p className="hidden text-center md:block">USD</p>
+                  <div className="flex gap-2">
+                    <p className="text-black">{formatter(row.dollarsEarned)}</p>
+                    <p className="hidden md:block">USD</p>
                   </div>
                 </TableCell>
                 <TableCell className="h-full px-1 text-center md:px-2">

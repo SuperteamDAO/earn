@@ -1,6 +1,6 @@
 import debounce from 'lodash.debounce';
 import { Info } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import {
   Select,
@@ -11,14 +11,8 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
-import { cn } from '@/utils/cn';
 
 import { type SKILL, type TIMEFRAME } from '../types';
-
-const tabfontsize = {
-  base: 'xs',
-  sm: 'sm',
-};
 
 interface Props {
   timeframe: TIMEFRAME;
@@ -29,7 +23,6 @@ interface Props {
 
 export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
   const debouncedSetSkill = useCallback(debounce(decideSkill, 500), []);
-  const [isLabelOpen, setIsLabelOpen] = useState(false);
 
   function decideSkill(value: number) {
     switch (value) {
@@ -77,25 +70,24 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
           className="text-slate-400"
         >
           <TabsList className="flex items-center">
-            <TabsTrigger value="0" className={cn(tabfontsize)}>
+            <TabsTrigger value="0" className="px-1 sm:px-3">
               Overall Rankings
             </TabsTrigger>
-            <div className="mx-2 h-6 w-px bg-slate-200" />
-            <TabsTrigger value="1" className={cn(tabfontsize)}>
+            <div className="mx-1 h-6 w-px bg-slate-200 sm:mx-2" />
+            <TabsTrigger value="1" className="px-1.5 sm:px-3">
               Content
             </TabsTrigger>
-            <TabsTrigger value="2" className={cn(tabfontsize)}>
+            <TabsTrigger value="2" className="px-1.5 sm:px-3">
               Design
             </TabsTrigger>
-            <TabsTrigger value="3" className={cn(tabfontsize)}>
+            <TabsTrigger value="3" className="px-1.5 sm:px-3">
               Development
             </TabsTrigger>
-            <TabsTrigger value="4" className={cn(tabfontsize)}>
+            <TabsTrigger value="4" className="px-1.5 sm:px-3">
               Others
             </TabsTrigger>
             <div className="relative">
               <Tooltip
-                open={isLabelOpen}
                 content={
                   <p>
                     The skill filters showcase users based on the skills
@@ -104,12 +96,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
                   </p>
                 }
               >
-                <Info
-                  className="ml-2 h-3 w-3 cursor-pointer"
-                  onMouseEnter={() => setIsLabelOpen(true)}
-                  onMouseLeave={() => setIsLabelOpen(false)}
-                  onClick={() => setIsLabelOpen(true)}
-                />
+                <Info className="ml-2 h-3 w-3 cursor-pointer" />
               </Tooltip>
             </div>
           </TabsList>
@@ -118,8 +105,8 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
           <Timeframe value={timeframe} setValue={setTimeframe} />
         </div>
       </div>
-      <div className="-mt-2 h-0.5 w-full bg-slate-200" />
-      <div className="mt-1 flex w-full justify-between pl-2 text-xs sm:text-sm md:hidden">
+      <div className="-mt-2.5 h-0.5 w-full bg-slate-200 sm:-mt-2" />
+      <div className="mt-3 flex w-full justify-between pl-2 text-xs sm:text-sm md:hidden">
         <p className="text-slate-400">Timeframe</p>
         <div className="flex">
           <Timeframe value={timeframe} setValue={setTimeframe} />

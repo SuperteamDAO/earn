@@ -71,10 +71,14 @@ export function InviteMembers({ isOpen, onClose }: Props) {
           <>
             <Alert
               variant="default"
-              className="flex flex-col items-center justify-center py-8 text-center"
+              className="flex flex-col items-center justify-center py-5 text-center"
             >
-              <CheckCircle2 className="mb-4 h-10 w-10 text-green-500" />
-              <AlertTitle className="font-bold">Sent Invite!</AlertTitle>
+              <div className="mb-3 flex items-center gap-2">
+                <CheckCircle2 className="mb-1 h-5 w-5 text-green-500" />
+                <AlertTitle className="text-xl font-bold">
+                  Sent Invite!
+                </AlertTitle>
+              </div>
               <AlertDescription>
                 Your team member will receive an email with a link to join
                 Superteam Earn.

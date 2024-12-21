@@ -29,7 +29,7 @@ export function BottomBar({ onSearchOpen }: Props) {
   return (
     <div
       className={cn(
-        'z-[999] flex w-full justify-between border-t border-slate-200 bg-white px-4 py-2',
+        'flex w-full justify-between border-t border-slate-200 bg-white px-4 py-2',
         'lg:hidden',
       )}
     >

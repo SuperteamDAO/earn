@@ -35,13 +35,33 @@ const Tooltip = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Root>,
   TooltipProps
 >(({ children, content, contentProps, disabled, ...props }) => {
+  const [open, setOpen] = React.useState(false);
+
   if (disabled) {
     return <>{children}</>;
   }
+
   return (
     <TooltipPrimitive.Provider delayDuration={0}>
-      <TooltipPrimitive.Root {...props}>
-        <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
+      <TooltipPrimitive.Root open={open} {...props}>
+        <TooltipPrimitive.Trigger asChild>
+          <button
+            type="button"
+            className="cursor-pointer"
+            onClick={() => setOpen(!open)}
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+            onTouchStart={() => setOpen(open)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                setOpen(!open);
+              }
+            }}
+          >
+            {children}
+          </button>
+        </TooltipPrimitive.Trigger>
         <TooltipContent {...contentProps}>{content}</TooltipContent>
       </TooltipPrimitive.Root>
     </TooltipPrimitive.Provider>
