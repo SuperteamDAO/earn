@@ -4,14 +4,8 @@ import React from 'react';
 import { LuPencil } from 'react-icons/lu';
 
 import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -40,20 +34,6 @@ const InfoWrapper = ({
   regionTooltipLabel: string;
   user: any;
 }) => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
-  if (isMobile) {
-    return (
-      <Popover>
-        <PopoverTrigger asChild>{children}</PopoverTrigger>
-        {!isUserEligibleByRegion && (
-          <PopoverContent className="w-80 p-4">
-            <p className="text-sm text-gray-700">{regionTooltipLabel}</p>
-          </PopoverContent>
-        )}
-      </Popover>
-    );
-  }
-
   return (
     <Tooltip
       content={!isUserEligibleByRegion ? regionTooltipLabel : null}

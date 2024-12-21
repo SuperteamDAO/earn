@@ -48,11 +48,11 @@ export const FeedCardHeader = ({
         >
           {name}
         </p>
-        <div className="flex gap-1">
-          <p className="-mt-1 cursor-pointer text-xs font-medium text-slate-400 hover:underline md:text-sm">
+        <div className="flex items-center gap-1">
+          <p className="cursor-pointer text-xs font-medium text-slate-400 hover:underline md:-mt-1 md:text-sm">
             @{username}
           </p>
-          <p className="-mt-1 text-xs font-medium text-slate-400 md:text-sm">
+          <p className="text-xs font-medium text-slate-400 md:-mt-1 md:text-sm">
             • {timeAgoShort(createdAt)}
           </p>
         </div>

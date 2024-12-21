@@ -91,7 +91,7 @@ export function UserMenu() {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
-          className="ph-no-capture font-medium"
+          className="ph-no-capture px-0 font-medium"
           align="start"
         >
           {user?.isTalentFilled && (

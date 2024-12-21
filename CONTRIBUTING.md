@@ -18,7 +18,7 @@
   - Database setup
     - Create a local `MySQL` instance and replace `<user>`, `<pass>`, `<db-host>`, and `<db-port>` with their applicable values.
       ```
-      DATABASE_URL='mysql://<user>:<pass>@<db-host>:<db-port>'
+      LOCAL_DATABASE_URL='mysql://<user>:<pass>@<db-host>:<db-port>'
       ``` 
     - If you don't want to create a local DB, then you can also consider using services like railway.app or render.
       - [Setup MySQL DB with railway.app](https://docs.railway.app/guides/mysql)

@@ -195,7 +195,7 @@ export const Comment = ({
           target="_blank"
         >
           <EarnAvatar
-            size={isReply ? '28px' : '36px'}
+            className={cn(isReply ? 'h-7 w-7' : 'h-9 w-9')}
             id={comment?.author?.id}
             avatar={comment?.author?.photo}
           />
@@ -261,7 +261,11 @@ export const Comment = ({
           >
             <div className="mb-4 flex w-full flex-col gap-4 pt-4">
               <div className="flex w-full gap-3">
-                <EarnAvatar size={'28px'} id={user?.id} avatar={user?.photo} />
+                <EarnAvatar
+                  className="h-7 w-7"
+                  id={user?.id}
+                  avatar={user?.photo}
+                />
                 <UserSuggestionTextarea
                   autoFocusOn={showReplyInput}
                   defaultSuggestions={defaultSuggestions}

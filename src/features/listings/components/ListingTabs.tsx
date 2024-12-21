@@ -70,7 +70,7 @@ const ListingTabTrigger = ({
       'hover:text-brand-purple',
       isActive && [
         'text-brand-purple',
-        'after:absolute after:bottom-[-6px] after:left-0 after:h-[2px] after:w-full after:bg-brand-purple/80',
+        'after:absolute after:bottom-[-12px] after:left-0 after:h-[2px] after:w-full after:bg-brand-purple/80',
       ],
       !isActive && 'text-slate-500',
     )}
@@ -315,7 +315,7 @@ export const ListingTabs = ({
         )}
       </div>
 
-      <div className="-mt-4 mb-4 h-0.5 w-full bg-slate-200 sm:-mt-3.5" />
+      <div className="-mt-2.5 mb-4 h-0.5 w-full bg-slate-200 sm:-mt-2" />
 
       {tabs.find((tab) => tab.id === activeTab)?.content}
 

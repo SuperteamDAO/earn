@@ -136,7 +136,7 @@ const Index = () => {
               )?.role === 'ADMIN'
             )) && (
             <Button
-              className="ph-no-capture bg-indigo-100 text-brand-purple hover:bg-indigo-100/90"
+              className="ph-no-captur h-9 bg-indigo-100 text-brand-purple hover:bg-indigo-100/90"
               onClick={() => {
                 posthog.capture('invite member_sponsor');
                 onOpen();
@@ -146,10 +146,10 @@ const Index = () => {
               Invite Members
             </Button>
           )}
-          <div className="relative w-52">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <div className="relative w-64">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md border-slate-200 bg-white placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
+              className="placeholder:text-md h-9 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search members..."
               type="text"
@@ -188,7 +188,7 @@ const Index = () => {
                     <TableCell>
                       <div className="flex items-center">
                         <EarnAvatar
-                          size="36px"
+                          className="h-9 w-9"
                           id={member?.user?.id}
                           avatar={member?.user?.photo}
                         />

@@ -26,6 +26,7 @@ import { useUpdateUser, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
+import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 import { Twitter } from '@/features/social/components/SocialIcons';
 import { extractTwitterUsername } from '@/features/social/utils/extractUsername';
 
@@ -61,6 +62,7 @@ export const GrantApplicationModal = ({
   const updateUser = useUpdateUser();
 
   const [activeStep, setActiveStep] = useState(0);
+  const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<FormData>({
@@ -215,7 +217,7 @@ export const GrantApplicationModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-xl" ref={modalRef}>
-        <DialogTitle className="text-xl tracking-normal text-slate-700">
+        <DialogTitle className="text-lg tracking-normal text-slate-700 sm:text-xl">
           Grant Application
           <p className="mt-1 text-sm font-normal text-slate-500">
             If you&apos;re working on a project that will help the
@@ -228,7 +230,10 @@ export const GrantApplicationModal = ({
           />
           <div className="mt-3 flex w-full items-center justify-between">
             {steps.map((step, i) => (
-              <div className="flex items-center gap-1.5 text-base" key={i}>
+              <div
+                className="flex items-center gap-1.5 text-sm sm:text-base"
+                key={i}
+              >
                 <span
                   className={cn(
                     'flex h-6 w-6 items-center justify-center rounded-full border text-sm',
@@ -262,7 +267,7 @@ export const GrantApplicationModal = ({
           </div>
         </DialogTitle>
         <div
-          className="overflow-y-aut flex max-h-[50rem] flex-col items-start gap-3 px-1 pb-8 pt-3"
+          className="flex max-h-[30rem] flex-col items-start gap-3 overflow-y-auto pb-4 pt-3 sm:px-1 md:max-h-[50rem]"
           ref={modalRef}
         >
           <Form {...form}>
@@ -364,7 +369,7 @@ export const GrantApplicationModal = ({
                     description="What is the problem you're trying to solve, and how you're going to solve it?"
                     isRequired
                     isRichEditor
-                    richEditorPlaceholder="Explain the problem you're solving and your solution"
+                    richEditorPlaceholder="Describe the problem & solution"
                   />
 
                   <FormFieldWrapper
@@ -412,7 +417,7 @@ export const GrantApplicationModal = ({
                         <Twitter className="mr-3 h-5 w-5 text-slate-600" />
                       </div>
                       <div className="flex h-9 items-center rounded-l-md border border-r-0 border-input px-3">
-                        <span className="text-sm font-medium text-slate-600 md:text-[0.875rem]">
+                        <span className="text-[0.8rem] font-medium text-slate-600 sm:text-sm">
                           x.com/
                         </span>
                       </div>
@@ -501,7 +506,26 @@ export const GrantApplicationModal = ({
               </div>
             </form>
           </Form>
+          <p className="-mt-1 w-full text-center text-sm text-slate-400">
+            By applying for this grant, you agree to our{' '}
+            <button
+              onClick={() => setIsTOSModalOpen(true)}
+              className="cursor-pointer underline underline-offset-2"
+              rel="noopener noreferrer"
+            >
+              Terms of Use
+            </button>
+            .
+          </p>
         </div>
+        {grant?.sponsor?.name && (
+          <SubmissionTerms
+            entityName={grant.sponsor.entityName}
+            isOpen={isTOSModalOpen}
+            onClose={() => setIsTOSModalOpen(false)}
+            sponsorName={grant.sponsor.name}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

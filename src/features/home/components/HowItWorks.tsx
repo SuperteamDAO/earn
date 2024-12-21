@@ -167,7 +167,7 @@ export const HowItWorks = () => {
                   }
                 }}
               >
-                Create your profile
+                Create your Profile
               </button>
               <p className="text-base font-medium text-gray-500">
                 by telling us about yourself

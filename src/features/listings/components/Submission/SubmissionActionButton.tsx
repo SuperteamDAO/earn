@@ -9,14 +9,8 @@ import { LuPencil } from 'react-icons/lu';
 
 import { SurveyModal } from '@/components/shared/Survey';
 import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { useMediaQuery } from '@/hooks/use-media-query';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -53,27 +47,6 @@ const InfoWrapper = ({
   hackathonStartDate: dayjs.Dayjs | null;
   pastDeadline: boolean;
 }) => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
-
-  if (isMobile) {
-    return (
-      <Popover>
-        <PopoverTrigger asChild>{children}</PopoverTrigger>
-        <PopoverContent className="w-80 p-4">
-          {!isUserEligibleByRegion && (
-            <p className="text-sm text-gray-700">{regionTooltipLabel}</p>
-          )}
-          {!hasHackathonStarted && (
-            <p className="text-sm text-gray-700">
-              This track will open for submissions on{' '}
-              {hackathonStartDate?.format('DD MMMM, YYYY')}
-            </p>
-          )}
-        </PopoverContent>
-      </Popover>
-    );
-  }
-
   return (
     <Tooltip
       disabled={hasHackathonStarted && (isUserEligibleByRegion || pastDeadline)}

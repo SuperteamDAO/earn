@@ -311,11 +311,11 @@ export const ApplicationDetails = ({
 
       {applications?.length ? (
         <>
-          <div className="sticky top-[3rem] border-b border-slate-200 bg-white py-1">
+          <div className="sticky top-[3rem] rounded-t-xl border-b border-slate-200 bg-white py-1">
             <div className="flex w-full items-center justify-between px-4 py-2">
               <div className="flex w-full items-center gap-2">
                 <EarnAvatar
-                  size="40px"
+                  className="h-10 w-10"
                   id={selectedApplication?.user?.id}
                   avatar={selectedApplication?.user?.photo || undefined}
                 />

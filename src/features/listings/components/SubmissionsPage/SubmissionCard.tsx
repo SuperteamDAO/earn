@@ -75,7 +75,7 @@ export const SubmissionCard = ({
         <Link href={`/t/${talent?.username}`}>
           <div className="flex gap-2">
             <EarnAvatar
-              size="24px"
+              className="h-6 w-6"
               id={talent?.id}
               avatar={talent?.photo || undefined}
             />

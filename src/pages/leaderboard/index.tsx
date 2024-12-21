@@ -116,7 +116,7 @@ function TalentLeaderboard({
     >
       <HomepagePop />
       <div className="overflow-hidden bg-white pb-20">
-        <div className="mx-auto flex max-w-7xl gap-4 px-3 py-4 md:gap-8">
+        <div className="mx-auto flex max-w-7xl gap-4 px-1 py-4 sm:px-3 md:gap-8">
           <div className="flex w-full flex-col items-start gap-4 md:w-[70%] md:gap-8">
             <Banner />
             <div className="flex w-full flex-col gap-4 md:hidden md:gap-8">

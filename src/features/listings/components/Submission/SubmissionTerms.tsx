@@ -23,11 +23,11 @@ export const SubmissionTerms = ({
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        <div className="gap-5 px-5 py-4">
+        <div className="flex items-center gap-3 px-5 py-1">
           <div className="flex items-center justify-center rounded-full bg-slate-200 p-3">
             <svg
-              width="32"
-              height="32"
+              width="20"
+              height="20"
               viewBox="0 0 24 31"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -100,7 +100,7 @@ export const SubmissionTerms = ({
             </Link>
             .
           </p>
-          <Button onClick={onClose} className="ml-auto px-10 text-lg">
+          <Button onClick={onClose} className="ml-auto mt-5 px-10 text-lg">
             Done
           </Button>
         </div>

@@ -108,7 +108,7 @@ export const SubmissionList = ({
   return (
     <div className="h-full w-full rounded-l-xl border border-slate-200 bg-white">
       <div className="flex cursor-pointer flex-col items-center justify-between gap-4 border-b border-slate-200 px-4 py-3">
-        <div className="flex w-full items-center justify-between gap-4 py-3">
+        <div className="flex w-full items-center justify-between gap-4 py-[3px]">
           {listing?.type === 'project' && (
             <Checkbox
               className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"

@@ -84,8 +84,9 @@ export const RichEditor: React.FC<RichEditorProps> = ({
       <FloatingToolbar editor={editor} editorClassname={`editor-${id}`} />
       <div
         className={cn(
-          'w-full overflow-y-auto rounded-md border py-2 shadow-sm [&_*]:!text-[0.875rem]',
-          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-sm',
+          'w-full overflow-y-auto rounded-md border py-2 shadow-sm [&_*]:!text-xs sm:[&_*]:!text-sm',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-xs',
+          '[&_.ProseMirror_p.is-editor-empty:first-child::before]:sm:text-sm',
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-slate-400',
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]',
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:float-left',
@@ -99,7 +100,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
         id="reset-des"
         ref={editorRef}
       >
-        <EditorContent editor={editor} className="mt-0 text-sm" />
+        <EditorContent editor={editor} className="mt-0 text-xs sm:text-sm" />
       </div>
     </div>
   );

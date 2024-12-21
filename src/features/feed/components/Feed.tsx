@@ -107,7 +107,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
 
           {activeMenu === 'popular' && (
             <select
-              className="mr-1 w-28 text-right text-sm text-slate-500"
+              className="mr-1 w-28 text-right text-sm text-slate-500 outline-none"
               onChange={(e) => {
                 setTimePeriod(e.target.value);
               }}

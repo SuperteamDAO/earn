@@ -94,8 +94,7 @@ export function SelectSponsor({
           <EarnAvatar
             id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
-            borderRadius="rounded-sm"
-            size={'24px'}
+            className="h-6 w-6 rounded-sm"
           />
           <div className="ml-2 hidden md:block">
             <div className="flex">
@@ -116,7 +115,7 @@ export function SelectSponsor({
           <EarnAvatar
             id={data?.sponsor?.name}
             avatar={data?.sponsor?.logo}
-            borderRadius="rounded-sm"
+            className="rounded-sm"
           />
           <div className="ml-2 hidden md:block">
             <div className="flex flex-wrap items-center">

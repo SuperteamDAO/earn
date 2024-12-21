@@ -17,7 +17,7 @@ export const WinnerFeedImage = ({
   grantApplicationAmount?: number;
 }) => {
   return (
-    <div className="flex h-[200px] w-full flex-col justify-center rounded-md rounded-t-lg border-t-2 bg-[#7E51FF] md:h-[350px]">
+    <div className="flex h-[200px] w-full flex-col justify-center rounded-t-md border bg-[#7E51FF] md:h-[350px]">
       <ExternalImage
         className="mx-auto h-9 w-9 md:h-20 md:w-20"
         alt="winner"

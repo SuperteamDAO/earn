@@ -121,7 +121,7 @@ const MemberRow = ({ user }: { user: LocalProfile }) => {
       </TableCell>
       <TableCell>
         <div className="flex items-center">
-          <EarnAvatar size="36px" id={user?.id} avatar={user?.photo} />
+          <EarnAvatar className="h-9 w-9" id={user?.id} avatar={user?.photo} />
           <div className="ml-2 hidden md:block">
             <p className="w-40 overflow-x-hidden text-ellipsis text-sm font-medium text-slate-700 group-hover:underline">
               {`${user?.firstName} ${user?.lastName}`}

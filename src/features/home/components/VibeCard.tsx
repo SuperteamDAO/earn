@@ -103,7 +103,11 @@ export const VibeCard = () => {
         <div className="flex items-center">
           {displayUsers.map((user, i) => (
             <div className={cn(i > 0 ? '-ml-10px' : '')} key={user.id}>
-              <EarnAvatar id={user.id} avatar={user.photo} size={'24px'} />
+              <EarnAvatar
+                id={user.id}
+                avatar={user.photo}
+                className="h-6 w-6"
+              />
             </div>
           ))}
           <p className="ml-1 text-xs text-slate-400">
