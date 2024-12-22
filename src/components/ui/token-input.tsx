@@ -24,7 +24,9 @@ export const TokenInput = React.forwardRef<
             '/assets/dollar.svg'
           }
         />
-        <p className="font-medium text-slate-500">{token}</p>
+        <p className="text-sm font-medium text-slate-500 sm:text-base">
+          {token}
+        </p>
       </div>
       <Input
         className="rounded-l-none"

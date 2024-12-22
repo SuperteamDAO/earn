@@ -2,24 +2,22 @@ import { Client } from '@planetscale/database';
 import { PrismaPlanetScale } from '@prisma/adapter-planetscale';
 import { PrismaClient } from '@prisma/client';
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+const prismaClient = () => {
+  return process.env.DATABASE_URL
+    ? new PrismaClient({
+        adapter: new PrismaPlanetScale(
+          new Client({ url: process.env.DATABASE_URL }),
+        ),
+      })
+    : new PrismaClient({
+        datasourceUrl: process.env.LOCAL_DATABASE_URL,
+      });
 };
 
-let prismaClient: PrismaClient;
+declare const globalThis: {
+  prismaGlobal: ReturnType<typeof prismaClient>;
+} & typeof global;
 
-try {
-  const client = new Client({ url: process.env.DATABASE_URL });
-  const adapter = new PrismaPlanetScale(client);
-  prismaClient = new PrismaClient({ adapter });
-} catch (error) {
-  if (process.env.NODE_ENV === 'production') {
-    throw error;
-  }
-  console.warn('PlanetScale setup failed, falling back to MySQL:', error);
-  prismaClient = new PrismaClient();
-}
+export const prisma = globalThis.prismaGlobal ?? prismaClient();
 
-export const prisma = globalForPrisma.prisma ?? prismaClient;
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma;

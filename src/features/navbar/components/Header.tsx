@@ -63,7 +63,9 @@ export const Header = () => {
 
   return (
     <>
-      {!!isLoginOpen && <Login isOpen={isLoginOpen} onClose={onLoginClose} />}
+      {!!isLoginOpen && (
+        <Login hideCloseIcon isOpen={isLoginOpen} onClose={onLoginClose} />
+      )}
       <BountySnackbar />
       <GrantSnackbar />
       <div className="sticky top-0 z-40">
@@ -75,7 +77,7 @@ export const Header = () => {
 
       <MobileNavbar onLoginOpen={onLoginOpen} />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
-      <div className="fixed bottom-0 z-[90] w-full">
+      <div className="fixed bottom-0 z-[60] w-full">
         <BottomBar onSearchOpen={searchOpenWithEvent} />
       </div>
     </>

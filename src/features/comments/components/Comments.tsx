@@ -177,12 +177,12 @@ export const Comments = ({
         <div className="flex w-full justify-center rounded-md">
           <Button
             className={cn(
-              'border border-slate-400 text-sm font-normal text-slate-400 hover:bg-slate-400 hover:text-white',
-              'disabled:hover:border-slate-400 disabled:hover:bg-transparent disabled:hover:text-slate-400',
+              'text-sm font-normal text-slate-400 hover:bg-slate-400 hover:text-white',
+              'disabled:hover:bg-transparent disabled:hover:text-slate-400',
             )}
             disabled={!!isLoading}
             onClick={() => getComments(comments.length)}
-            variant="outline"
+            variant="ghost"
           >
             {isLoading ? (
               <>

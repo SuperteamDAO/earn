@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
+import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useMediaQuery } from '@/hooks/use-media-query';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { nthLabelGenerator } from '@/utils/rank';
@@ -40,7 +41,10 @@ export function ListingWinners({ bounty }: Props) {
   const isProject = bounty?.type === 'project';
 
   const posthog = usePostHog();
-  const isMD = useMediaQuery('(min-width: 768px)');
+  const isMD = useBreakpoint('md');
+  const isSM = useBreakpoint('sm');
+  const isLG = useBreakpoint('lg');
+  const isXL = useBreakpoint('xl');
 
   const { data: submissions = [], isLoading } = useQuery(
     listingWinnersQuery(bounty?.id),
@@ -53,6 +57,26 @@ export function ListingWinners({ bounty }: Props) {
 
     return tweetEmbedLink(tweetTemplate(path));
   };
+
+  const sliceValue = useMemo(() => {
+    if (isXL) return 12;
+    if (isLG) return 9;
+    if (isMD) return 5;
+    if (isSM) return 9;
+    return 3;
+  }, [isMD, isSM, isLG, isXL]);
+
+  const bonusSubmissions = useMemo(
+    () => [
+      ...getOrRemoveBonuses(submissions, true).slice(3),
+      ...getOrRemoveBonuses(submissions, false),
+    ],
+    [submissions],
+  );
+  const extraBonusSubmissions = useMemo(
+    () => bonusSubmissions.length - sliceValue,
+    [bonusSubmissions, sliceValue],
+  );
 
   if (isLoading || !submissions.length) {
     return null;
@@ -125,7 +149,7 @@ export function ListingWinners({ bounty }: Props) {
                       </div>
                     )}
                     <EarnAvatar
-                      size={isMD ? '64px' : '52px'}
+                      className="h-14 w-14 md:h-16 md:w-16"
                       id={submission?.user?.id}
                       avatar={submission?.user?.photo as string}
                     />
@@ -147,12 +171,15 @@ export function ListingWinners({ bounty }: Props) {
       </div>
       {(getOrRemoveBonuses(submissions, true).length > 3 ||
         getOrRemoveBonuses(submissions, false).length > 0) && (
-        <div className="wrap flex justify-center gap-2 border-t border-violet-200 px-2 py-3">
-          {[
-            ...getOrRemoveBonuses(submissions, true).slice(3),
-            ...getOrRemoveBonuses(submissions, false),
-          ].map((submission) => (
-            <div key={submission.id}>
+        <div className="wrap flex flex-wrap justify-center gap-2 border-t border-violet-200 px-2 py-3">
+          {bonusSubmissions.slice(0, sliceValue).map((submission) => (
+            <div
+              key={submission.id}
+              style={{
+                width: isMD ? '44px' : '36px',
+                height: isMD ? '44px' : '36px',
+              }}
+            >
               <Tooltip content={<p>{submission?.user?.firstName}</p>}>
                 <Link
                   key={submission.id}
@@ -164,7 +191,7 @@ export function ListingWinners({ bounty }: Props) {
                   className="inline-block"
                 >
                   <EarnAvatar
-                    size={isMD ? '44px' : '36px'}
+                    className="h-9 w-9 md:h-11 md:w-11"
                     id={submission?.user?.id}
                     avatar={submission?.user?.photo as string}
                   />
@@ -172,6 +199,23 @@ export function ListingWinners({ bounty }: Props) {
               </Tooltip>
             </div>
           ))}
+          {extraBonusSubmissions > 0 && (
+            <>
+              <div
+                className="flex items-center justify-center rounded-full bg-slate-200"
+                style={{
+                  width: isMD ? '44px' : '36px',
+                  height: isMD ? '44px' : '36px',
+                }}
+              >
+                <Tooltip content={<p>+{extraBonusSubmissions} more</p>}>
+                  <span className="text-sm font-medium text-slate-700">
+                    +{extraBonusSubmissions}
+                  </span>
+                </Tooltip>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>

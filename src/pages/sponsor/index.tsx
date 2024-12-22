@@ -26,7 +26,7 @@ const Sponsor = () => {
   const VideoPlayback = () => {
     return (
       <div
-        className="fixed z-50 grid h-screen w-screen place-content-center bg-[rgba(191,203,220,0.67)] font-sans"
+        className="fixed z-50 grid h-screen w-screen place-content-center bg-[rgba(191,203,220,0.67)]"
         onClick={() => setVideoPopup(false)}
       >
         <div className="relative flex w-[95vw] flex-col gap-5 overflow-hidden pt-[56.25%] lg:w-[60vw]">
@@ -58,7 +58,6 @@ const Sponsor = () => {
           'flex flex-col items-center overflow-hidden bg-white',
           font.className,
         )}
-        style={font.style}
       >
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <Hero />

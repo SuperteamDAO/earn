@@ -169,7 +169,7 @@ export function ListingPageLayout({
                 <div className="flex h-full w-full flex-grow flex-col gap-8 border-slate-100 pb-10 md:border-l md:pl-5">
                   <div className="w-full">{children}</div>
                   <div className="flex w-full flex-col items-start md:hidden">
-                    <p className="mb-1 h-full text-center text-xs font-semibold text-slate-600">
+                    <p className="mb-1.5 h-full text-center text-xs font-semibold text-slate-600">
                       SKILLS NEEDED
                     </p>
                     <div className="flex flex-wrap gap-3">

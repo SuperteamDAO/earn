@@ -15,6 +15,12 @@ export default async function handler(
     return res.status(400).json({ message: 'Email is required' });
   }
 
+  // adding this to eliminate the need for OSS contributors to set up zerobounce themselves
+  const isDev = process.env.VERCEL_ENV !== 'production';
+  if (isDev) {
+    res.status(200).json({ isValid: true });
+  }
+
   try {
     const { data } = await axios.get(
       `https://api.zerobounce.net/v2/validate?api_key=${process.env.ZEROBOUNCE_API_KEY}&email=${email}`,

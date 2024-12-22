@@ -68,7 +68,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
           {router.pathname !== '/search' && (
             <Button
-              className="ph-no-capture gap-2 border-none font-normal text-slate-400 hover:bg-slate-100"
+              className="ph-no-capture gap-2 border-none font-normal text-slate-400 shadow-none hover:bg-slate-100"
               variant="outline"
               onClick={onSearchOpen}
             >

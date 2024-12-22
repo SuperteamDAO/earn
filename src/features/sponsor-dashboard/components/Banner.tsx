@@ -38,7 +38,7 @@ const StatsTooltip = ({
         <p className="mr-0.5 whitespace-nowrap text-base font-normal text-slate-500">
           {label}
         </p>
-        <Info className="h-4 w-4 text-slate-400" />
+        <Info className="h-3 w-3 text-slate-400" />
       </div>
       {isLoading ? (
         <Skeleton className="mt-2 h-5 w-[72px]" />
@@ -86,10 +86,9 @@ export function Banner({
         <div className="flex items-center gap-6">
           <div className="flex flex-shrink-0 items-center gap-3">
             <EarnAvatar
-              size="52px"
+              className="h-14 w-14 rounded-md"
               id={sponsor?.name}
               avatar={sponsor?.logo}
-              borderRadius="rounded-md"
             />
             <div>
               <div className="flex items-center">

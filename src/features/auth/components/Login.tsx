@@ -57,17 +57,17 @@ export const Login = ({
         }}
         hideCloseIcon={hideCloseIcon}
       >
-        <div className="py-6">
+        <div className="py-5">
           {loginStep === 1 && (
             <ArrowLeft
-              className="ml-5 h-5 w-5 cursor-pointer text-slate-500"
+              className="absolute top-8 ml-5 h-5 w-5 cursor-pointer text-slate-500"
               onClick={() => setLoginStep(0)}
             />
           )}
           <p className="text-center text-lg font-semibold text-slate-900">
             You&apos;re one step away
           </p>
-          <p className="text-center text-[15px] text-slate-600">
+          <p className="text-center text-sm text-slate-600">
             {isSponsor
               ? 'from joining Superteam Earn'
               : 'From earning in global standards'}

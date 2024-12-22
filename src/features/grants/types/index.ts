@@ -18,6 +18,7 @@ interface Grant {
     name: string;
     logo: string;
     isVerified: boolean;
+    entityName: string;
   };
   pocId?: string;
   poc?: User;

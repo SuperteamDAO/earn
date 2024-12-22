@@ -80,7 +80,7 @@ export const ListingSection = ({
             <Button
               variant="ghost"
               size="sm"
-              className="text-slate-400"
+              className="text-xs text-slate-400 sm:text-sm"
               onClick={() => {
                 if (type === 'grants') {
                   posthog.capture('grants_viewall_top');
