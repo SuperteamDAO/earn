@@ -52,7 +52,7 @@ export const GrantEntry = ({
     >
       <div className="relative">
         <img
-          className="h-[200px] w-full object-cover sm:h-[180px] sm:w-80"
+          className="h-[180px] w-full object-cover"
           alt={title}
           src={logo || '/api/placeholder/400/240'}
         />
