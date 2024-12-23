@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { Popover, PopoverContent } from '@/components/ui/popover';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
@@ -472,23 +472,29 @@ function GrantApplications({ slug }: Props) {
               <PaymentsHistoryTab grant={grant} grantId={grant?.id} />
             </TabsContent>
           </Tabs>
-          <Popover
-            modal={true}
+          <Dialog
+            modal={false}
             onOpenChange={onTogglerClose}
             open={isTogglerOpen}
           >
-            <PopoverContent
-              className="fixed bottom-10 mx-auto w-full border-none bg-transparent p-0 shadow-none"
-              align="center"
+            <DialogContent
+              onEscapeKeyDown={(e) => e.preventDefault()}
+              onInteractOutside={(e) => e.preventDefault()}
+              classNames={{
+                overlay: 'hidden',
+              }}
+              unsetDefaultPosition
+              hideCloseIcon
+              className="fixed bottom-4 left-1/2 -translate-x-1/2 p-1"
             >
-              <div className="mx-auto w-fit rounded-lg border-2 border-slate-200 bg-white px-4 shadow-lg">
+              <div className="mx-auto w-fit rounded-lg bg-white">
                 {selectedApplicationIds.size > 100 && (
                   <p className="pb-2 text-center text-red-500">
                     Cannot select more than 100 applications
                   </p>
                 )}
 
-                <div className="flex items-center gap-4 text-lg">
+                <div className="flex items-center gap-4 text-base">
                   <div className="flex items-center font-medium">
                     <p>{selectedApplicationIds.size}</p>
                     <p className="ml-1 text-slate-500">Selected</p>
@@ -530,8 +536,8 @@ function GrantApplications({ slug }: Props) {
                   </Button>
                 </div>
               </div>
-            </PopoverContent>
-          </Popover>
+            </DialogContent>
+          </Dialog>
 
           <RejectAllGrantApplicationModal
             applicationIds={Array.from(selectedApplicationIds)}
