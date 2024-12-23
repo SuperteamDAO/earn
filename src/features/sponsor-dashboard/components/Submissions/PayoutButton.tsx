@@ -5,6 +5,7 @@ import {
 } from '@solana/spl-token';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
+  ComputeBudgetProgram,
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
@@ -156,12 +157,17 @@ export const PayoutButton = ({ bounty }: Props) => {
         );
       }
 
-      const signature = await sendTransaction(transaction, connection, {
-        preflightCommitment: 'confirmed',
-      });
+      const compute = [
+        ComputeBudgetProgram.setComputeUnitLimit({ units: 100000 }),
+        ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 1000000 }),
+      ];
+
+      transaction.add(...compute);
+
+      const signature = await sendTransaction(transaction, connection);
 
       const pollForSignature = async (sig: string) => {
-        const MAX_RETRIES = 45;
+        const MAX_RETRIES = 60;
         let retries = 0;
 
         while (retries < MAX_RETRIES) {
@@ -169,17 +175,20 @@ export const PayoutButton = ({ bounty }: Props) => {
             searchTransactionHistory: true,
           });
 
-          if (status?.value?.confirmationStatus === 'confirmed') {
-            return true;
-          }
-
           if (status?.value?.err) {
             throw new Error(
               `Transaction failed: ${status.value.err.toString()}`,
             );
           }
 
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          if (
+            status?.value?.confirmationStatus === 'confirmed' ||
+            status.value?.confirmationStatus === 'finalized'
+          ) {
+            return true;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 500));
           retries++;
         }
 

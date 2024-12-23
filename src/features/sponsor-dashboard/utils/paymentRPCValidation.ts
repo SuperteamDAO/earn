@@ -1,8 +1,4 @@
-import {
-  clusterApiUrl,
-  Connection,
-  type VersionedTransactionResponse,
-} from '@solana/web3.js';
+import { Connection, type VersionedTransactionResponse } from '@solana/web3.js';
 
 import logger from '@/lib/logger';
 
@@ -28,7 +24,10 @@ export async function validatePayment({
   expectedAmount,
   tokenMintAddress,
 }: ValidatePaymentParams): Promise<ValidationResult> {
-  const connection = new Connection(clusterApiUrl('mainnet-beta'));
+  const connection = new Connection(
+    `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
+    'confirmed',
+  );
   const maxRetries = 3;
   const delayMs = 5000;
 
@@ -57,6 +56,13 @@ export async function validatePayment({
     }
 
     const { meta } = tx;
+
+    if (meta.err) {
+      return {
+        isValid: false,
+        error: 'Transaction Errored on chain',
+      };
+    }
 
     const preBalance = meta.preTokenBalances?.find(
       (balance) => balance.owner === recipientPublicKey,
