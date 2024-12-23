@@ -13,7 +13,7 @@ model Bounties {
   id                   String             @id @default(uuid())
   title                String
   slug                 String             @unique
-  description          String?            @db.Text
+  description          String?            @db.LongText
   deadline             DateTime?
   eligibility          Json?
   status               status             @default(OPEN)
