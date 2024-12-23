@@ -47,7 +47,7 @@ export const GrantEntry = ({
 
   return (
     <Link
-      className="block w-full cursor-pointer overflow-hidden rounded-lg border shadow-md transition-all duration-300 hover:shadow-lg sm:w-80"
+      className="mx-auto block w-full cursor-pointer overflow-hidden rounded-lg border shadow-md transition-all duration-300 hover:shadow-lg sm:w-80"
       href={`/grants/${slug}`}
     >
       <div className="relative">
