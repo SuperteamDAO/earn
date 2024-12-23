@@ -96,7 +96,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
                   </p>
                 }
               >
-                <Info className="ml-2 h-3 w-3 cursor-pointer" />
+                <Info className="h-3 w-3 cursor-pointer" />
               </Tooltip>
             </div>
           </TabsList>
@@ -107,8 +107,7 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
       </div>
       <div className="-mt-2.5 h-0.5 w-full bg-slate-200 sm:-mt-2" />
       <div className="mt-3 flex w-full justify-between pl-2 text-xs sm:text-sm md:hidden">
-        <p className="text-slate-400">Timeframe</p>
-        <div className="flex">
+        <div className="ml-auto flex">
           <Timeframe value={timeframe} setValue={setTimeframe} />
         </div>
       </div>

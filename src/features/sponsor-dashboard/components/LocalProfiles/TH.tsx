@@ -47,16 +47,22 @@ export const SortableTH = ({
   };
 
   return (
-    <TableHead className={className} {...props}>
+    <TableHead
+      className={cn(
+        'text-xs font-medium tracking-wider text-slate-500',
+        className,
+      )}
+      {...props}
+    >
       <div
         className="flex cursor-pointer items-center gap-0.5"
         onClick={handleSort}
       >
-        <span>{children}</span>
+        <span className="whitespace-nowrap">{children}</span>
         <div className="flex flex-col">
           <ChevronUp
             className={cn(
-              'mb-[-4px] h-4 w-4 transition-colors',
+              'mb-[-4px] h-3 w-3 transition-colors',
               currentSort.column === column && currentSort.direction === 'asc'
                 ? 'text-slate-600'
                 : 'text-slate-400 hover:text-slate-500',
@@ -64,7 +70,7 @@ export const SortableTH = ({
           />
           <ChevronDown
             className={cn(
-              'h-4 w-4 transition-colors',
+              'h-3 w-3 transition-colors',
               currentSort.column === column && currentSort.direction === 'desc'
                 ? 'text-slate-700'
                 : 'text-slate-400 hover:text-slate-500',
