@@ -26,11 +26,11 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useTimeout } from '@/hooks/use-timeout';
 import { type CategoryKeys } from '@/pages/api/listings/category-earnings';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { roundToNearestThousand } from '@/utils/number';
 
 import { categoryEarningsQuery } from '@/features/listings/queries/category-earnings';
 
 import { popupsShowedAtom, popupTimeoutAtom } from '../atoms';
-import { roundToNearestThousand } from '../utils';
 import { GetStarted } from './GetStarted';
 
 type CategoryVariant = {

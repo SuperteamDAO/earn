@@ -1,18 +1,18 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function checkUsername(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+
+async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.info(`Request query: ${safeStringify(req.query)}`);
 
   if (req.method !== 'GET') {
     logger.warn(`Method not allowed: ${req.method}`);
-    return res.status(405).end('Method Not Allowed');
+    return res.status(405).send('Method Not Allowed');
   }
 
   const { username, userId } = req.query;
@@ -51,3 +51,5 @@ export default async function checkUsername(
     });
   }
 }
+
+export default withAuth(handler);
