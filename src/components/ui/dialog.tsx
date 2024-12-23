@@ -58,6 +58,7 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
+          'max-h-screen overflow-y-auto',
           'fixed z-[60] grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg sm:rounded-lg',
           'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out',
           !unsetDefaultPosition &&

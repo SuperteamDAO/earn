@@ -210,10 +210,10 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         posthog.capture('submissions_sponsor');
                       }}
                     >
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-2">
                         <Tooltip content={listingType}>
                           <img
-                            className="mr-2 h-5 rounded-full"
+                            className="h-5 w-5 rounded-full"
                             alt={`New ${listingType}`}
                             src={getListingIcon(listing.type!)}
                           />

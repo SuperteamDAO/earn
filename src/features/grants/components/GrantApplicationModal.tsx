@@ -267,7 +267,7 @@ export const GrantApplicationModal = ({
           </div>
         </DialogTitle>
         <div
-          className="flex max-h-[30rem] flex-col items-start gap-3 overflow-y-auto pb-4 pt-3 sm:px-1 md:max-h-[50rem]"
+          className="flex max-h-[30rem] flex-col items-start gap-3 pb-4 pt-3 sm:px-1 md:max-h-[50rem]"
           ref={modalRef}
         >
           <Form {...form}>
@@ -506,7 +506,7 @@ export const GrantApplicationModal = ({
               </div>
             </form>
           </Form>
-          <p className="-mt-1 w-full text-center text-sm text-slate-400">
+          <p className="-mt-1 w-full pb-3 text-center text-xs text-slate-400 sm:text-sm">
             By applying for this grant, you agree to our{' '}
             <button
               onClick={() => setIsTOSModalOpen(true)}

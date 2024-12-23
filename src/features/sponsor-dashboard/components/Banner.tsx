@@ -43,7 +43,7 @@ const StatsTooltip = ({
       {isLoading ? (
         <Skeleton className="mt-2 h-5 w-[72px]" />
       ) : (
-        <p className="text-lg font-semibold text-slate-900">
+        <p className="text-left text-lg font-semibold text-slate-900">
           {isMonetary ? (
             <>
               $
@@ -86,7 +86,7 @@ export function Banner({
         <div className="flex items-center gap-6">
           <div className="flex flex-shrink-0 items-center gap-3">
             <EarnAvatar
-              className="h-14 w-14 rounded-md"
+              className="h-12 w-12 rounded-md"
               id={sponsor?.name}
               avatar={sponsor?.logo}
             />
@@ -109,7 +109,7 @@ export function Banner({
               {isLoading ? (
                 <Skeleton className="mt-2 h-5 w-[170px]" />
               ) : (
-                <p className="whitespace-nowrap font-normal text-slate-500">
+                <p className="-mt-0.5 whitespace-nowrap text-[1.05rem] font-normal text-slate-500">
                   {!isHackathon
                     ? `Sponsor since ${stats?.yearOnPlatform}`
                     : 'Hackathon'}

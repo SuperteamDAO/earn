@@ -64,7 +64,7 @@ export const FeatureModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-[480px] overflow-hidden rounded-lg">
+      <DialogContent className="w-[480px] overflow-hidden rounded-lg p-0">
         <div className="w-full bg-purple-50 p-8">
           <ExternalImage
             src="/ScoutAnnouncement.png"
@@ -75,7 +75,7 @@ export const FeatureModal = ({
 
         <div className="flex flex-col items-start gap-3 p-6">
           <p className="text-lg font-semibold">Introducing Scout</p>
-          <p className="text-slate-500">
+          <p className="pb-4 text-slate-500">
             A curated list of the best talent on Superteam Earn that you can
             invite to participate in your listings to get high quality
             submissions! Add a new listing, or check out any of your currently

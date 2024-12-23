@@ -248,11 +248,11 @@ export const VerifyPaymentModal = ({
             <div className="flex flex-col py-14">
               <div className="mb-4 flex justify-center">
                 <div
-                  className="border-6 h-32 w-32 animate-spin rounded-full border-slate-200 border-t-indigo-600"
-                  style={{ borderWidth: '6px' }}
+                  className="h-8 w-8 animate-spin rounded-full border-slate-200 border-t-indigo-600"
+                  style={{ borderWidth: '3px' }}
                 />
               </div>
-              <div className="flex max-w-[20rem] flex-col gap-2">
+              <div className="mx-auto flex max-w-[20rem] flex-col items-center gap-2">
                 <p className="font-medium text-slate-900">Verifying Payment</p>
                 <p className="text-center text-sm text-slate-500">
                   {`We're`} verifying all your links, hang tight! <br /> This
@@ -280,7 +280,7 @@ export const VerifyPaymentModal = ({
               </div>
             </div>
 
-            <div className="flex max-w-[20rem] flex-col gap-2">
+            <div className="mx-auto flex max-w-[20rem] flex-col items-center gap-2">
               <p className="font-medium text-slate-900">
                 External Payment(s) Added
               </p>
@@ -305,13 +305,13 @@ export const VerifyPaymentModal = ({
           <div className="flex h-full flex-col gap-10 py-10">
             <div className="flex items-center justify-center">
               <div className="flex items-center justify-center rounded-full bg-red-50 p-6">
-                <div className="rounded-full bg-red-600 p-3">
-                  <X className="h-10 w-10 text-white" strokeWidth={3} />
+                <div className="rounded-full bg-red-600 p-2.5">
+                  <X className="h-7 w-7 text-white" strokeWidth={3} />
                 </div>
               </div>
             </div>
 
-            <div className="flex max-w-[20rem] flex-col gap-2">
+            <div className="mx-auto flex max-w-[20rem] flex-col items-center gap-2">
               <p className="font-medium text-slate-900">
                 Oh-Uh Verification Failed
               </p>
@@ -322,7 +322,7 @@ export const VerifyPaymentModal = ({
               </p>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="mx-auto flex flex-col items-center gap-2">
               <a
                 href="https://t.me/pratikdholani/"
                 target="_blank"
@@ -400,9 +400,9 @@ export const VerifyPaymentModal = ({
                                 </div>
                               )}
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex items-center gap-1">
                               <img
-                                className="w-[1.2rem] rounded-full"
+                                className="h-[1.2rem] w-[1.2rem] rounded-full"
                                 alt={selectedToken?.tokenName}
                                 src={selectedToken?.icon}
                               />
