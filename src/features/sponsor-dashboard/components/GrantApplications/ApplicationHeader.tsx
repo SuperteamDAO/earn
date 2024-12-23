@@ -78,10 +78,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link
-                  href="/dashboard/listings"
-                  className="flex items-center hover:text-slate-500"
-                >
+                <Link href="/dashboard/listings" className="flex items-center">
                   <ChevronLeft className="mr-1 h-6 w-6" />
                   All Listings
                 </Link>
