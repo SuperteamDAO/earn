@@ -73,7 +73,7 @@ export default function NewProfilePage({
       } else {
         const originUrl = params.get('originUrl');
         router.push({
-          pathname: '/new/talent',
+          pathname: '/new/sponsor',
           query: originUrl ? { originUrl } : undefined,
         });
       }
