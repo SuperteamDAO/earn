@@ -60,6 +60,9 @@ interface SocialInputProps {
   placeholder?: string;
   formLabel?: string;
   height?: string;
+  classNames?: {
+    input?: string;
+  };
 }
 export const SocialInput = ({
   control,
@@ -69,6 +72,7 @@ export const SocialInput = ({
   placeholder,
   formLabel,
   height,
+  classNames,
 }: SocialInputProps) => {
   const social = useMemo(
     () => socials.find((s) => s.name === socialName),
@@ -115,6 +119,7 @@ export const SocialInput = ({
                     className={cn(
                       'h-full w-full',
                       social?.label ? 'rounded-l-none' : 'rounded-md',
+                      classNames?.input,
                     )}
                     placeholder={placeholder}
                     value={displayValue}

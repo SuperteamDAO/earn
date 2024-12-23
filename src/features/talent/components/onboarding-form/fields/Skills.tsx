@@ -48,6 +48,7 @@ export function SkillsField({ skillsRefreshKey }: Props) {
                   field.onChange(e);
                   trigger('skills');
                 }}
+                maxSuggestions={5}
               />
             </FormControl>
           </FormItem>

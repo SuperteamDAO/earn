@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -121,6 +121,7 @@ export function SocialsField() {
                     onCheckedChange={(checked) =>
                       handleToggleSocial(social, checked)
                     }
+                    className="capitalize"
                   >
                     {social}
                   </DropdownMenuCheckboxItem>
@@ -132,15 +133,30 @@ export function SocialsField() {
       </div>
       <div className="mt-4 space-y-4">
         {orderedSelectedSocials.map((social) => (
-          <SocialInput
-            key={social}
-            control={control}
-            name={social}
-            socialName={social}
-            required={social === requiredSocial}
-            placeholder={`Enter your ${social} username or URL`}
-            height="h-[2.3rem]"
-          />
+          <div className="group relative" key={social}>
+            <SocialInput
+              control={control}
+              name={social}
+              socialName={social}
+              required={social === requiredSocial}
+              placeholder={`Enter your ${social} username or URL`}
+              height="h-[2.3rem]"
+              classNames={{
+                input: 'pr-8',
+              }}
+            />
+            {social !== requiredSocial && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => handleToggleSocial(social, false)}
+                className="absolute right-0 top-0 flex text-muted-foreground hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         ))}
       </div>
     </div>

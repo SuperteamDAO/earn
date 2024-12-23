@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { ImagePlus, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { RxUpload } from 'react-icons/rx';
 import { toast } from 'sonner';
@@ -98,10 +98,9 @@ export const ImagePicker = ({
     return (
       <div
         className={cn(
-          'relative mt-2 h-14 w-14 rounded-full border shadow-md',
-          isDragging
-            ? 'border-dashed border-primary'
-            : 'border-1 border-slate-300',
+          'relative mt-2 h-14 w-14 rounded-full border bg-slate-100 text-primary shadow-md',
+          !preview && 'border-[1.5px] border-dashed border-primary',
+          isDragging && 'bg-primary-200',
           className,
         )}
         onDragEnter={handleDragEnter}
@@ -117,8 +116,12 @@ export const ImagePicker = ({
               alt="Preview"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-slate-100">
-              <RxUpload className="size-6 text-slate-500" />
+            <div className="flex h-full w-full items-center justify-center">
+              {isDragging ? (
+                <ImagePlus className="size-6" />
+              ) : (
+                <RxUpload className="size-6" />
+              )}
             </div>
           )}
           {preview && (
