@@ -11,7 +11,6 @@ import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotifica
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import { handleAirtableSync } from '@/features/grants/utils/handleAirtableSync';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
-import { extractTwitterUsername } from '@/features/social/utils/extractUsername';
 
 async function createGrantApplication(
   userId: string,
@@ -58,7 +57,7 @@ async function createGrantApplication(
     walletAddress: validatedData.walletAddress,
     ask: validatedData.ask,
     twitter: validatedData.twitter
-      ? `https://x.com/${extractTwitterUsername(validatedData.twitter)}`
+      ? `https://x.com/${validatedData.twitter}`
       : null,
     answers: validatedData.answers || [],
   };
