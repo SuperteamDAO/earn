@@ -28,7 +28,7 @@ import { dayjs } from '@/utils/dayjs';
 
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 import { Twitter } from '@/features/social/components/SocialIcons';
-import { extractTwitterUsername } from '@/features/social/utils/extractUsername';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 import { userApplicationQuery } from '../queries/user-application';
 import { type Grant } from '../types';
@@ -89,8 +89,8 @@ export const GrantApplicationModal = ({
       milestones: grantApplication?.milestones || '',
       kpi: grantApplication?.kpi || '',
       twitter: grantApplication?.twitter
-        ? extractTwitterUsername(grantApplication?.twitter) || ''
-        : extractTwitterUsername(user?.twitter || '') || '',
+        ? extractSocialUsername('twitter', grantApplication?.twitter) || ''
+        : extractSocialUsername('twitter', user?.twitter || '') || '',
       answers:
         Array.isArray(questions) && questions.length > 0
           ? questions.map((q) => ({
@@ -424,8 +424,10 @@ export const GrantApplicationModal = ({
                       <Input
                         className="rounded-l-none"
                         defaultValue={
-                          extractTwitterUsername(user?.twitter || '') ||
-                          undefined
+                          extractSocialUsername(
+                            'twitter',
+                            user?.twitter || '',
+                          ) || undefined
                         }
                         placeholder="johncena"
                       />
