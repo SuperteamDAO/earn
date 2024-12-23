@@ -3,6 +3,7 @@ import { type Control } from 'react-hook-form';
 
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -58,6 +59,7 @@ interface SocialInputProps {
   required?: boolean;
   placeholder?: string;
   formLabel?: string;
+  formDescription?: string;
   height?: string;
 }
 export const SocialInput = ({
@@ -67,6 +69,7 @@ export const SocialInput = ({
   socialName,
   placeholder,
   formLabel,
+  formDescription,
   height,
 }: SocialInputProps) => {
   const social = useMemo(
@@ -83,9 +86,14 @@ export const SocialInput = ({
         return (
           <FormItem className="">
             <div className="flex flex-col gap-2">
-              {formLabel && (
-                <FormLabel isRequired={required}>{formLabel}</FormLabel>
-              )}
+              <div>
+                {formLabel && (
+                  <FormLabel isRequired={required}>{formLabel}</FormLabel>
+                )}
+                {formLabel && (
+                  <FormDescription>{formDescription}</FormDescription>
+                )}
+              </div>
               <div
                 className={cn(
                   'flex h-[2.6875rem] items-center justify-center',

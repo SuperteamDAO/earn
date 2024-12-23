@@ -27,8 +27,8 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
-import { Twitter } from '@/features/social/components/SocialIcons';
-import { extractTwitterUsername } from '@/features/social/utils/extractUsername';
+import { SocialInput } from '@/features/social/components/SocialInput';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 import { userApplicationQuery } from '../queries/user-application';
 import { type Grant } from '../types';
@@ -89,8 +89,8 @@ export const GrantApplicationModal = ({
       milestones: grantApplication?.milestones || '',
       kpi: grantApplication?.kpi || '',
       twitter: grantApplication?.twitter
-        ? extractTwitterUsername(grantApplication?.twitter) || ''
-        : extractTwitterUsername(user?.twitter || '') || '',
+        ? extractSocialUsername('twitter', grantApplication?.twitter) || ''
+        : extractSocialUsername('twitter', user?.twitter || '') || '',
       answers:
         Array.isArray(questions) && questions.length > 0
           ? questions.map((q) => ({
@@ -405,32 +405,16 @@ export const GrantApplicationModal = ({
                     richEditorPlaceholder="Provide links to your portfolio or previous work"
                   />
 
-                  <FormFieldWrapper
-                    control={form.control}
+                  <SocialInput
                     name="twitter"
-                    label="Personal Twitter Profile"
-                    description="Add your personal Twitter username"
-                    isRequired
-                  >
-                    <div className="flex items-center">
-                      <div className="relative flex items-center">
-                        <Twitter className="mr-3 h-5 w-5 text-slate-600" />
-                      </div>
-                      <div className="flex h-9 items-center rounded-l-md border border-r-0 border-input px-3">
-                        <span className="text-[0.8rem] font-medium text-slate-600 sm:text-sm">
-                          x.com/
-                        </span>
-                      </div>
-                      <Input
-                        className="rounded-l-none"
-                        defaultValue={
-                          extractTwitterUsername(user?.twitter || '') ||
-                          undefined
-                        }
-                        placeholder="johncena"
-                      />
-                    </div>
-                  </FormFieldWrapper>
+                    socialName={'twitter'}
+                    placeholder="@StarkIndustries"
+                    required
+                    formLabel="Personal Twitter Profile"
+                    formDescription="Include links to your best work that will make the community trust you to execute on this project."
+                    control={form.control}
+                    height="h-9"
+                  />
 
                   {questions?.map((question: any, index: number) => (
                     <FormFieldWrapper
