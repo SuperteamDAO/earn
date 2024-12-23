@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GrantApplication } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -216,7 +216,11 @@ export const GrantApplicationModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-xl" ref={modalRef}>
+      <DialogContent hideCloseIcon className="max-w-xl" ref={modalRef}>
+        <X
+          className="absolute right-4 top-7 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
+          onClick={onClose}
+        />
         <DialogTitle className="text-lg tracking-normal text-slate-700 sm:text-xl">
           Grant Application
           <p className="mt-1 text-sm font-normal text-slate-500">
@@ -225,7 +229,7 @@ export const GrantApplicationModal = ({
             we&apos;ll respond soon!
           </p>
           <Progress
-            className="mt-6 h-[1.5px] bg-slate-200"
+            className="mt-6 h-[2px] bg-slate-200"
             value={(activeStep / steps.length) * 100 + 33}
           />
           <div className="mt-3 flex w-full items-center justify-between">

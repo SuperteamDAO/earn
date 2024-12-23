@@ -37,7 +37,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
       logger.warn(
         `Invalid sponsor data: ${safeStringify(validationResult.error)}`,
       );
-      return res.status(400).json({
+      return res.status(403).json({
         error: 'Invalid sponsor data',
         details: validationResult.error.errors,
       });
@@ -83,7 +83,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
       logger.warn(
         `User ${userId} does not have permission to create a sponsor`,
       );
-      return res.status(403).json({
+      return res.status(400).json({
         message: 'Error occurred while adding a new sponsor.',
       });
     }
