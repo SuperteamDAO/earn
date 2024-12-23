@@ -55,7 +55,7 @@ function Grants() {
           {!isLoading && !isError && (
             <div className="flex flex-wrap justify-center gap-10">
               {grants?.map((grant) => (
-                <div key={grant?.id} className="flex-shrink-0">
+                <div key={grant?.id} className="w-full max-w-[20rem]">
                   <GrantEntry
                     title={grant?.title}
                     slug={grant.slug}
