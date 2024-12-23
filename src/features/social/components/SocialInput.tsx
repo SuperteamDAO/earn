@@ -29,19 +29,20 @@ const getDisplayValue = (name: SocialType, value: string) => {
 
 type SocialInputAllProps = {
   control: Control<any>;
+  required?: SocialType[];
 };
 
-export const SocialInputAll = ({ control }: SocialInputAllProps) => {
+export const SocialInputAll = ({ control, required }: SocialInputAllProps) => {
   return (
     <>
-      {socials.map(({ name, placeholder, required }) => {
+      {socials.map(({ name, placeholder }) => {
         return (
           <div className="mb-5" key={name}>
             <SocialInput
               name={name}
               socialName={name}
               placeholder={placeholder}
-              required={required}
+              required={required?.includes(name)}
               control={control}
             />
           </div>
@@ -103,7 +104,7 @@ export const SocialInput = ({
                 </FormLabel>
 
                 {social?.label && (
-                  <div className="flex h-full items-center justify-center rounded-l-md border border-r-0 border-slate-300 px-3 text-xs font-medium text-slate-600 shadow-sm md:justify-start md:text-sm">
+                  <div className="flex h-full items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-50 px-3 text-xs font-medium text-slate-600 shadow-sm md:justify-start md:text-sm">
                     {social?.label}
                   </div>
                 )}

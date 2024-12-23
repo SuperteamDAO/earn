@@ -23,23 +23,28 @@ import {
   workExp,
   workType,
 } from '../constants';
+import { hasDevSkills } from '../utils/skills';
 
 export const profileSchema = z
   .object({
     username: z
-      .string()
+      .string({ message: 'Username is required' })
       .min(1, 'Username is required')
       .max(40, 'Username cannot exceed 40 characters')
       .regex(
         USERNAME_PATTERN,
-        'Username can only contain lowercase letters, numbers, underscores and hyphens',
+        `Username can only contain lowercase letters, numbers, '_', and '-'`,
       )
       .transform((val) => val.replace(/^[-\s]+|[-\s]+$/g, '')),
     photo: z.string().optional().nullable(),
-    firstName: z.string().min(1, 'First name is required'),
-    lastName: z.string().min(1, 'Last name is required'),
+    firstName: z
+      .string({ message: 'First name is required' })
+      .min(1, 'First name is required'),
+    lastName: z
+      .string({ message: 'Last name is required' })
+      .min(1, 'Last name is required'),
     bio: z.string().max(180, 'Bio cannot exceed 180 characters').optional(),
-    discord: discordUsernameSchema,
+    discord: discordUsernameSchema.optional().or(z.literal('')),
     twitter: twitterUsernameSchema.optional().or(z.literal('')),
     github: githubUsernameSchema.optional().or(z.literal('')),
     linkedin: linkedinUsernameSchema.optional().or(z.literal('')),
@@ -68,7 +73,7 @@ export const profileSchema = z
     private: z.boolean().default(false),
     location: z.enum(CountryList).optional().nullable().or(z.literal('')),
     publicKey: z
-      .string()
+      .string({ message: 'Wallet address is required' })
       .min(1, 'Wallet address is required')
       .refine(
         (val) => validateSolanaAddress(val).isValid,
@@ -85,17 +90,19 @@ export const socialSuperRefine = async (
   data: Partial<ProfileFormData>,
   ctx: z.RefinementCtx,
 ) => {
-  const socialFields = ['twitter', 'github', 'linkedin', 'website', 'telegram'];
-  const filledSocials = socialFields.filter(
-    (field) => data[field as keyof typeof data],
-  );
-
-  if (filledSocials.length === 0) {
+  if (data.skills && hasDevSkills(data.skills)) {
+    if (!data.github) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Github is requierd',
+        path: ['github'],
+      });
+    }
+  } else if (!data.twitter) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message:
-        'At least one additional social link (apart from Discord) is required',
-      path: ['website'], // website is at the end in UI
+      message: 'Twitter is requierd',
+      path: ['twitter'],
     });
   }
 };
@@ -129,6 +136,23 @@ export const usernameSuperRefine = async (
     }
   }
 };
+
+export const newTalentSchema = profileSchema._def.schema.pick({
+  username: true,
+  firstName: true,
+  lastName: true,
+  location: true,
+  photo: true,
+  publicKey: true,
+  skills: true,
+  discord: true,
+  twitter: true,
+  github: true,
+  linkedin: true,
+  telegram: true,
+  website: true,
+});
+export type NewTalentFormData = z.infer<typeof newTalentSchema>;
 
 export const aboutYouSchema = profileSchema._def.schema.pick({
   username: true,

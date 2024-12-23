@@ -33,12 +33,12 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useTimeout } from '@/hooks/use-timeout';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { roundToNearestThousand } from '@/utils/number';
 
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { liveOpportunitiesQuery } from '@/features/listings/queries/live-opportunities';
 
 import { popupsShowedAtom, popupTimeoutAtom } from '../atoms';
-import { roundToNearestThousand } from '../utils';
 import { GetStarted } from './GetStarted';
 
 const avatars = [

@@ -50,9 +50,13 @@ export default function NewProfilePage({
       // localStorage.removeItem(ONBOARDING_KEY);
       if (!user?.isTalentFilled) {
         const originUrl = params.get('originUrl');
+        const type = params.get('type');
+        const query: Record<string, string> = {};
+        if (originUrl) query['originUrl'] = originUrl;
+        if (type) query['type'] = type;
         router.push({
           pathname: '/new/talent',
-          query: originUrl ? { originUrl } : undefined,
+          query,
         });
       } else {
         router.push(`/t/${user.username}`);
