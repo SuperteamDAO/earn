@@ -11,12 +11,4 @@ const telegramRegex = new RegExp(
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export function isValidTwitterInput(input: string) {
-  return twitterRegex.test(input);
-}
-
-export function isValidTwitterUsername(value: string) {
-  return twitterUsernameRegex.test(value);
-}
-
-export { emailRegex, telegramRegex, twitterRegex, twitterUsernameRegex };
+export { emailRegex, telegramRegex, twitterRegex };
