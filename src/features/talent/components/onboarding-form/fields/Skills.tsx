@@ -10,6 +10,7 @@ import {
   FormLabel,
 } from '@/components/ui/form';
 import { Tooltip } from '@/components/ui/tooltip';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 import { type NewTalentFormData } from '@/features/talent/schema';
 
@@ -20,13 +21,15 @@ export function SkillsField({ skillsRefreshKey }: Props) {
   const form = useFormContext<NewTalentFormData>();
   const { control, trigger } = form;
 
+  const isSM = useBreakpoint('sm');
+
   return (
     <FormField
       name="skills"
       control={control}
       render={({ field }) => {
         return (
-          <FormItem className="mb-5 gap-2">
+          <FormItem className="mb-3 gap-2 sm:mb-4">
             <div>
               <span className="flex items-center gap-2">
                 <FormLabel isRequired>Skills Needed</FormLabel>
@@ -35,8 +38,7 @@ export function SkillsField({ skillsRefreshKey }: Props) {
                 </Tooltip>
               </span>
               <FormDescription>
-                We will send email notifications of new listings for your
-                selected skills
+                Get notified of new listings based on your skills
               </FormDescription>
             </div>
             <FormControl>
@@ -48,7 +50,7 @@ export function SkillsField({ skillsRefreshKey }: Props) {
                   field.onChange(e);
                   trigger('skills');
                 }}
-                maxSuggestions={5}
+                maxSuggestions={isSM ? 5 : 3}
               />
             </FormControl>
           </FormItem>

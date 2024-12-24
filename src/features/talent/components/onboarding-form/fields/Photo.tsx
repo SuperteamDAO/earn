@@ -24,7 +24,7 @@ export function PhotoField({ setUploading, setIsGooglePhoto }: Props) {
       name="photo"
       control={control}
       render={({ field }) => (
-        <FormItem className="mb-4 w-fit">
+        <FormItem className="mt-auto w-fit">
           <FormLabel className="sr-only">Profile Picture</FormLabel>
           <FormControl>
             <ImagePicker

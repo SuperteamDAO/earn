@@ -98,7 +98,7 @@ export const ImagePicker = ({
     return (
       <div
         className={cn(
-          'relative mt-2 h-14 w-14 rounded-full border bg-slate-100 text-primary shadow-md',
+          'relative h-14 w-14 rounded-full border bg-slate-100 text-primary',
           !preview && 'border-[1.5px] border-dashed border-primary',
           isDragging && 'bg-primary-200',
           className,
@@ -126,7 +126,7 @@ export const ImagePicker = ({
           )}
           {preview && (
             <X
-              className="absolute bottom-0 right-0 z-10 h-5 w-5 cursor-pointer rounded-full bg-white stroke-[3] p-1 text-slate-400 shadow-lg"
+              className="absolute bottom-0 right-0 z-10 h-5 w-5 cursor-pointer rounded-full border bg-white stroke-[3] p-1 text-slate-400"
               onClick={handleReset}
             />
           )}

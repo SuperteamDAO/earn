@@ -129,7 +129,7 @@ export const TalentForm = () => {
     <div className="">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} style={{ width: '100%' }}>
-          <div className="mb-6 mt-8 flex flex-col text-left">
+          <div className="mb-3 mt-4 flex flex-col text-left sm:mb-4 2xl:mt-8">
             <h1 className="font-sans text-lg font-medium md:text-2xl">
               {TitleArray?.title}
             </h1>
@@ -137,7 +137,7 @@ export const TalentForm = () => {
               {TitleArray?.subTitle}
             </p>
           </div>
-          <div className="flex gap-4">
+          <div className="mb-3 flex items-start gap-4 sm:mb-4">
             <PhotoField
               setIsGooglePhoto={setIsGooglePhoto}
               setUploading={setUploading}
@@ -147,6 +147,7 @@ export const TalentForm = () => {
               name="firstName"
               control={control}
               isRequired
+              className="gap-1 sm:gap-2"
             >
               <Input maxLength={100} placeholder="First Name" />
             </FormFieldWrapper>
@@ -155,20 +156,23 @@ export const TalentForm = () => {
               name="lastName"
               control={control}
               isRequired
+              className="gap-1 sm:gap-2"
             >
               <Input maxLength={100} placeholder="Last Name" />
             </FormFieldWrapper>
           </div>
 
-          <UsernameField />
+          <div className="flex flex-col md:flex-row md:gap-2">
+            <UsernameField />
+            <LocationField />
+          </div>
 
-          <LocationField />
           <PublicKeyField />
           <SkillsField skillsRefreshKey={skillsRefreshKey} />
           <SocialsField />
           <Button
             type="submit"
-            className="mb-12 mt-8 w-full"
+            className="mb-12 mt-5 w-full sm:mt-8"
             disabled={isSubmitDisabled}
           >
             Create Profile

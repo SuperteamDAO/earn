@@ -151,19 +151,7 @@ export const TalentImageCard = () => {
               </p>
             </div>
             <div className="flex items-center gap-3 pl-3">
-              <svg
-                className="min-h-2 min-w-2"
-                width="10"
-                height="11"
-                viewBox="0 0 10 11"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M10 5.5C10 8.53757 7.76142 11 5 11C2.23858 11 0 8.53757 0 5.5C0 2.46243 2.23858 0 5 0C7.76142 0 10 2.46243 10 5.5Z"
-                  fill="#10B981"
-                />
-              </svg>
+              <span className="h-[0.625rem] w-[0.625rem] rounded-full bg-[#10B981]" />
               <p className="text-2xl font-semibold">
                 $
                 {formatNumberWithSuffix(

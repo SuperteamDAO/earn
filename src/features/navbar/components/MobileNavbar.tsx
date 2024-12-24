@@ -202,30 +202,32 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
           )}
         </div>
       </div>
-      <div className="flex items-center justify-between bg-slate-50 px-3 py-0 sm:px-4 lg:hidden">
-        <div
-          className={cn(
-            'ph-no-capture mx-auto flex w-full justify-evenly gap-8 pl-1 sm:gap-8 md:gap-12',
-            hideListingTypes ? 'hidden' : 'flex',
-          )}
-        >
-          {LISTING_NAV_ITEMS?.map((navItem) => {
-            const isCurrent = `${navItem.href}` === router.asPath;
-            return (
-              <NavLink
-                onClick={() => {
-                  posthog.capture(navItem.posthog);
-                }}
-                className="ph-no-capture h-auto border-b-0 py-2 text-sm font-medium lg:py-3"
-                key={navItem.label}
-                href={navItem.href ?? '#'}
-                label={renderLabel(navItem)}
-                isActive={isCurrent}
-              />
-            );
-          })}
+      {!router.asPath.startsWith('/new/') && (
+        <div className="flex items-center justify-between bg-slate-50 px-3 py-0 sm:px-4 lg:hidden">
+          <div
+            className={cn(
+              'ph-no-capture mx-auto flex w-full justify-evenly gap-8 pl-1 sm:gap-8 md:gap-12',
+              hideListingTypes ? 'hidden' : 'flex',
+            )}
+          >
+            {LISTING_NAV_ITEMS?.map((navItem) => {
+              const isCurrent = `${navItem.href}` === router.asPath;
+              return (
+                <NavLink
+                  onClick={() => {
+                    posthog.capture(navItem.posthog);
+                  }}
+                  className="ph-no-capture h-auto border-b-0 py-2 text-sm font-medium lg:py-3"
+                  key={navItem.label}
+                  href={navItem.href ?? '#'}
+                  label={renderLabel(navItem)}
+                  isActive={isCurrent}
+                />
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

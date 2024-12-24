@@ -91,14 +91,17 @@ export const SocialInput = ({
         return (
           <FormItem className="">
             <div className="flex flex-col gap-2">
-              <div>
-                {formLabel && (
-                  <FormLabel isRequired={required}>{formLabel}</FormLabel>
-                )}
-                {formLabel && (
-                  <FormDescription>{formDescription}</FormDescription>
-                )}
-              </div>
+              {formLabel ||
+                (formDescription && (
+                  <div>
+                    {formLabel && (
+                      <FormLabel isRequired={required}>{formLabel}</FormLabel>
+                    )}
+                    {formDescription && (
+                      <FormDescription>{formDescription}</FormDescription>
+                    )}
+                  </div>
+                ))}
               <div
                 className={cn(
                   'flex h-[2.6875rem] items-center justify-center',
@@ -107,7 +110,14 @@ export const SocialInput = ({
               >
                 <FormLabel className="relative">
                   <span className="sr-only">{name}</span>
-                  {Icon && <Icon className="mr-3 h-5 w-5 text-slate-600" />}
+                  {Icon && (
+                    <Icon
+                      className={cn(
+                        'mr-3 h-5 w-5 text-slate-600',
+                        // socialName === 'twitter' && 'h-[1.125rem] w-[1.125rem]'
+                      )}
+                    />
+                  )}
                   {required && !formLabel && (
                     <span className="absolute -top-1 right-1 font-medium text-red-500">
                       *

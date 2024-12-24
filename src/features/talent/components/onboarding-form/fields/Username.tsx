@@ -77,7 +77,7 @@ export function UsernameField() {
       control={control}
       name={'username'}
       render={({ field }) => (
-        <FormItem className={cn('mb-5 flex flex-col gap-2')}>
+        <FormItem className={cn('mb-3 flex flex-col gap-1 sm:mb-4 sm:gap-2')}>
           <FormLabel isRequired>Username</FormLabel>
           <FormControl>
             <div className="relative flex">

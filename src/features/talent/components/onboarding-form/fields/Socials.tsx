@@ -94,8 +94,10 @@ export function SocialsField() {
     <div>
       <div className="flex justify-between">
         <div>
-          <Label>Socials </Label>
-          <p className="mt-0 text-[0.8rem] text-muted-foreground text-slate-500">
+          <Label className="text-[0.85rem] text-slate-600 sm:text-[0.9rem]">
+            Socials{' '}
+          </Label>
+          <p className="mt-0 text-xs text-muted-foreground text-slate-500 sm:text-[0.8rem]">
             Fill at least one, but more the merrier
           </p>
         </div>
@@ -128,6 +130,7 @@ export function SocialsField() {
                       handleToggleSocial(social, checked)
                     }
                     className="capitalize"
+                    onSelect={(e) => e.preventDefault()}
                   >
                     {social}
                   </DropdownMenuCheckboxItem>
@@ -137,7 +140,7 @@ export function SocialsField() {
           </DropdownMenu>
         </div>
       </div>
-      <div className="mt-4 space-y-4">
+      <div className="mt-2 flex flex-col gap-3 md:mt-4">
         {orderedSelectedSocials.map((social) => (
           <div className="group relative" key={social}>
             <SocialInput
@@ -145,7 +148,11 @@ export function SocialsField() {
               name={social}
               socialName={social}
               required={social === requiredSocial}
-              placeholder={`Enter your ${social} username or URL`}
+              placeholder={
+                social !== 'website'
+                  ? `Enter your ${social?.charAt(0).toUpperCase() + social?.slice(1).toLowerCase()} username`
+                  : 'Enter your Website URL'
+              }
               height="h-[2.3rem]"
               classNames={{
                 input: 'pr-8',

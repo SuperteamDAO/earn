@@ -58,12 +58,12 @@ export function LocationField() {
       name="location"
       control={control}
       render={({ field }) => (
-        <FormItem className="mb-4 w-full gap-2">
+        <FormItem className="mb-3 w-full gap-1 sm:mb-4 sm:gap-2">
           <FormLabel className="">Location</FormLabel>
           <FormControl>
             <RegionCombobox
               unset
-              className="w-full"
+              className="h-9 w-full"
               value={field.value}
               onChange={(e) => {
                 field.onChange(e);

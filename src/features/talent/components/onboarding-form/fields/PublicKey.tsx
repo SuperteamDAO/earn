@@ -34,12 +34,12 @@ export function PublicKeyField() {
       name="publicKey"
       control={control}
       render={({ field }) => (
-        <FormItem className="mb-5">
+        <FormItem className="mb-3 sm:mb-4">
           <FormLabel isRequired className="">
             Your Solana Wallet Address
           </FormLabel>
-          <FormDescription className="mb-4 mt-0 text-slate-500">
-            This is where you will receive your rewards if you win. Download{' '}
+          <FormDescription className="mb-2 mt-0 text-slate-500 sm:mb-4">
+            You will receive rewards if you win. Download{' '}
             <Link
               className="underline"
               href="https://backpack.app"
