@@ -66,38 +66,41 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             </Link>
           </LogoContextMenu>
 
-          {router.pathname !== '/search' && (
-            <Button
-              className="ph-no-capture gap-2 border-none font-normal text-slate-400 hover:bg-slate-100"
-              variant="outline"
-              onClick={onSearchOpen}
-            >
-              <IoSearchOutline className="h-4 w-4" />
-            </Button>
-          )}
+          {router.pathname !== '/search' &&
+            !router.pathname.startsWith('/new/') && (
+              <Button
+                className="ph-no-capture gap-2 border-none font-normal text-slate-400 hover:bg-slate-100"
+                variant="outline"
+                onClick={onSearchOpen}
+              >
+                <IoSearchOutline className="h-4 w-4" />
+              </Button>
+            )}
         </div>
 
-        <div className="absolute left-1/2 -translate-x-1/2">
-          <div className="ml-10 flex h-full items-center justify-center">
-            <div className="ph-no-capture flex h-full flex-row gap-7">
-              {LISTING_NAV_ITEMS?.map((navItem) => {
-                const isCurrent = `${navItem.href}` === router.asPath;
-                return (
-                  <NavLink
-                    className="ph-no-capture"
-                    onClick={() => {
-                      posthog.capture(navItem.posthog);
-                    }}
-                    key={navItem.label}
-                    href={navItem.href ?? '#'}
-                    label={navItem.label}
-                    isActive={isCurrent}
-                  />
-                );
-              })}
+        {!router.pathname.startsWith('/new/') && (
+          <div className="absolute left-1/2 -translate-x-1/2">
+            <div className="ml-10 flex h-full items-center justify-center">
+              <div className="ph-no-capture flex h-full flex-row gap-7">
+                {LISTING_NAV_ITEMS?.map((navItem) => {
+                  const isCurrent = `${navItem.href}` === router.asPath;
+                  return (
+                    <NavLink
+                      className="ph-no-capture"
+                      onClick={() => {
+                        posthog.capture(navItem.posthog);
+                      }}
+                      key={navItem.label}
+                      href={navItem.href ?? '#'}
+                      label={navItem.label}
+                      isActive={isCurrent}
+                    />
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="flex flex-1 items-center justify-end gap-4 py-1.5">
           {status === 'loading' && !session && (

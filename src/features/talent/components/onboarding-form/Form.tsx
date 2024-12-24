@@ -86,22 +86,31 @@ export const TalentForm = () => {
   };
 
   const isSubmitDisabled = useMemo(() => {
-    return uploading || isLoading || !!errors.username?.message;
-  }, [uploading || isLoading || errors.username?.message]);
+    return uploading || isLoading;
+  }, [uploading || isLoading]);
 
   const onSubmit = async (data: NewTalentFormData) => {
     if (isSubmitDisabled) return false;
+    if (errors.username?.message) {
+      form.setFocus('username');
+      return;
+    }
     setisLoading(true);
     posthog.capture('finish profile_talent');
     try {
       toast.promise(
         async () => {
-          await axios.post('/api/user/complete-profile/', {
-            ...data,
-            photo: isGooglePhoto ? user?.photo : data.photo,
-          });
-          await refetchUser();
-          setisLoading(false);
+          try {
+            await axios.post('/api/user/complete-profile/', {
+              ...data,
+              photo: isGooglePhoto ? user?.photo : data.photo,
+            });
+            await refetchUser();
+            setisLoading(false);
+          } catch (err) {
+            setisLoading(false);
+            throw err;
+          }
         },
         {
           loading: 'Creating your profile...',

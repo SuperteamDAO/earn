@@ -29,7 +29,7 @@ const ALL_SOCIALS: SocialType[] = [
 
 export function SocialsField() {
   const form = useFormContext<NewTalentFormData>();
-  const { control, watch, clearErrors } = form;
+  const { control, watch, clearErrors, getValues, setValue } = form;
 
   const [selectedSocials, setSelectedSocials] = useState<SocialType[]>([
     'twitter',
@@ -47,19 +47,22 @@ export function SocialsField() {
   }, [skills]);
 
   useEffect(() => {
+    const twitter = getValues('twitter');
+    const github = getValues('github');
     setSelectedSocials((prev) => {
-      if (prev.includes(requiredSocial)) {
-        return [
-          requiredSocial,
-          ...prev.filter(
-            (s) => s !== requiredSocial && s !== 'github' && s !== 'twitter',
-          ),
-        ];
+      const newSocials: SocialType[] = [requiredSocial];
+      if (requiredSocial === 'twitter' && !!github) {
+        newSocials.push('github');
       }
-      return [
-        requiredSocial,
-        ...prev.filter((s) => s !== 'github' && s !== 'twitter'),
-      ];
+      if (requiredSocial === 'github' && !!twitter) {
+        newSocials.push('twitter');
+      }
+      newSocials.push(
+        ...prev.filter(
+          (s) => s !== requiredSocial && s !== 'github' && s !== 'twitter',
+        ),
+      );
+      return newSocials;
     });
   }, [requiredSocial]);
 
@@ -74,6 +77,7 @@ export function SocialsField() {
         }
         return prev;
       } else {
+        setValue(social, '');
         return prev.filter((s) => s !== social);
       }
     });
@@ -92,7 +96,7 @@ export function SocialsField() {
         <div>
           <Label>Socials </Label>
           <p className="mt-0 text-[0.8rem] text-muted-foreground text-slate-500">
-            fill at least one, but more the merrier
+            Fill at least one, but more the merrier
           </p>
         </div>
         <div>
@@ -107,8 +111,10 @@ export function SocialsField() {
                 ADD MORE
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-fit">
-              <DropdownMenuLabel>Choose Socials</DropdownMenuLabel>
+            <DropdownMenuContent className="mr-2 w-fit">
+              <DropdownMenuLabel className="font-medium">
+                Choose Socials
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               {ALL_SOCIALS.map((social) => {
                 const isChecked = selectedSocials.includes(social);

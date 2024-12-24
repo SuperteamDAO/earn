@@ -119,6 +119,7 @@ export const SocialInput = ({
                     className={cn(
                       'h-full w-full',
                       social?.label ? 'rounded-l-none' : 'rounded-md',
+                      'placeholder:text-sm',
                       classNames?.input,
                     )}
                     placeholder={placeholder}

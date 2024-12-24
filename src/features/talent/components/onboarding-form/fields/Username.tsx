@@ -101,7 +101,7 @@ export function UsernameField() {
               />
               {!errors.username?.message &&
                 !isUsernameTyping &&
-                field.value === '' && (
+                field.value !== '' && (
                   <span
                     className={cn(
                       'absolute right-2 top-2 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1 text-background',
