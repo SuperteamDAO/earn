@@ -152,7 +152,7 @@ ${socialListingLink('twitter')}
               </>
             ) : (
               <>
-                <Download className="mr-2 h-4 w-4" />
+                <Download className="h-4 w-4" />
                 Export CSV
               </>
             )}
@@ -165,7 +165,7 @@ ${socialListingLink('twitter')}
             }
             variant="ghost"
           >
-            <ExternalLink className="mr-2 h-4 w-4" />
+            <ExternalLink className="h-4 w-4" />
             View Listing
           </Button>
           {!!(
@@ -184,7 +184,7 @@ ${socialListingLink('twitter')}
                 variant="ghost"
                 className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
               >
-                <Pencil className="mr-2 h-4 w-4" />
+                <Pencil className="h-4 w-4" />
                 Edit
               </Button>
             </Link>
