@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { z } from 'zod';
 
-import { CountryList } from '@/constants/countryList';
 import { skillsArraySchema } from '@/interface/skills';
 import { validateSolanaAddress } from '@/utils/validateSolAddress';
 import { getURL } from '@/utils/validUrl';
@@ -60,14 +59,30 @@ export const profileSchema = z
     //     message: 'Invalid Community values',
     //   },
     // )
-    interests: z.enum(IndustryList).array().optional().nullable(),
-    experience: z.enum(workExp).optional().nullable().or(z.literal('')),
-    cryptoExperience: z.enum(web3Exp).optional().nullable().or(z.literal('')),
-    workPrefernce: z.enum(workType).optional().nullable().or(z.literal('')),
+    interests: z
+      .enum(IndustryList, { message: 'Invalid Industry' })
+      .array()
+      .optional()
+      .nullable(),
+    experience: z
+      .enum(workExp, { message: 'Invalid Work Experience' })
+      .optional()
+      .nullable()
+      .or(z.literal('')),
+    cryptoExperience: z
+      .enum(web3Exp, { message: 'Invalid Crypto Experience' })
+      .optional()
+      .nullable()
+      .or(z.literal('')),
+    workPrefernce: z
+      .enum(workType, { message: 'Invalid Work Preference' })
+      .optional()
+      .nullable()
+      .or(z.literal('')),
     currentEmployer: z.string().optional(),
     skills: skillsArraySchema,
     private: z.boolean().default(false),
-    location: z.enum(CountryList).optional().nullable().or(z.literal('')),
+    location: z.string().optional().nullable().or(z.literal('')),
     publicKey: z
       .string({ message: 'Wallet address is required' })
       .min(1, 'Wallet address is required')
