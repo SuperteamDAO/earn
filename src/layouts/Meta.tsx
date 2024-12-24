@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
-import { useEffect, useState } from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { AppConfig } from '@/utils/AppConfig';
@@ -15,21 +14,16 @@ type IMetaProps = {
 
 const Meta = (props: IMetaProps) => {
   const router = useRouter();
-  const [viewport, setViewport] = useState(
-    'width=device-width, initial-scale=1',
-  );
-
-  useEffect(() => {
-    if (navigator.userAgent.indexOf('iPhone') > -1) {
-      setViewport('width=device-width, initial-scale=1, maximum-scale=1');
-    }
-  }, []);
 
   return (
     <>
       <Head>
         <meta charSet="UTF-8" key="charset" />
-        <meta name="viewport" content={viewport} key="viewport" />
+        <meta
+          name="viewport"
+          content={'width=device-width, initial-scale=1, maximum-scale=1'}
+          key="viewport"
+        />
         <link
           rel="apple-touch-icon"
           href={`${router.basePath}/apple-touch-icon.png`}

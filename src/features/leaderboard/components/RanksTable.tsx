@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/table';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
@@ -24,12 +25,6 @@ import { type RowType, type SKILL } from '../types';
 import { getSubskills, skillCategories } from '../utils';
 
 import '/node_modules/flag-icons/css/flag-icons.min.css';
-
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  maximumFractionDigits: 0,
-  currency: 'USD',
-}).format;
 
 interface Props {
   rankings: RowType[];
@@ -163,8 +158,10 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                   </Link>
                 </TableCell>
                 <TableCell className="h-full px-1 md:px-2">
-                  <div className="flex gap-2">
-                    <p className="text-black">{formatter(row.dollarsEarned)}</p>
+                  <div className="flex justify-end gap-1 text-right">
+                    <p className="text-black">
+                      ${formatNumberWithSuffix(row.dollarsEarned)}
+                    </p>
                     <p className="hidden md:block">USD</p>
                   </div>
                 </TableCell>
@@ -260,11 +257,11 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                 </TableCell>
 
                 <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 md:px-2">
-                  <div className="flex justify-center gap-2">
-                    <p className="text-center text-black">
-                      {formatter(userRank?.dollarsEarned ?? 0)}
+                  <div className="flex justify-end gap-1 text-right">
+                    <p className="text-black">
+                      ${formatNumberWithSuffix(userRank?.dollarsEarned ?? 0)}
                     </p>
-                    <p className="hidden text-center md:block">USD</p>
+                    <p className="hidden md:block">USD</p>
                   </div>
                 </TableCell>
 

@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
@@ -219,7 +220,14 @@ export const SubmissionDrawer = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="h-full w-full max-w-2xl px-2 sm:max-w-2xl sm:p-4">
+      <SheetContent
+        showCloseIcon={false}
+        className="h-full w-full max-w-2xl px-2 sm:max-w-2xl sm:p-4"
+      >
+        <X
+          className="absolute right-4 top-10 z-10 h-4 w-4 text-slate-400 sm:right-8 sm:top-8"
+          onClick={onClose}
+        />
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -388,7 +396,7 @@ export const SubmissionDrawer = ({
                     'Submit'
                   )}
                 </Button>
-                <p className="mt-2 text-center text-sm text-slate-400">
+                <p className="mt-2 text-center text-xs text-slate-400 sm:text-sm">
                   By submitting/applying to this listing, you agree to our{' '}
                   <button
                     onClick={() => setIsTOSModalOpen(true)}

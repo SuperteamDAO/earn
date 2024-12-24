@@ -48,7 +48,7 @@ export const EntityNameModal = ({
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <div className="flex flex-col items-start">
-          <p className="text-lg font-medium">Update Your Entity Name</p>
+          <p className="mb-4 text-lg font-medium">Update Your Entity Name</p>
           <p className="text-sm text-slate-400">
             In accordance with our updated{' '}
             <Link

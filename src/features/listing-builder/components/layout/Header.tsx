@@ -7,7 +7,6 @@ import { usePostHog } from 'posthog-js/react';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
@@ -52,8 +51,8 @@ export function Header() {
               alt="Superteam Earn"
               className="h-5 w-auto cursor-pointer object-contain"
             />
-            <Separator orientation="vertical" className="h-6 w-[3px]" />
             <div className="h-6 w-[1.5px] bg-slate-300" />
+            <p className="text-sm tracking-[1.5px] text-slate-600">SPONSORS</p>
           </Link>
           <Link href="/dashboard/listings">
             <Button variant="outline">
@@ -83,11 +82,8 @@ export function Header() {
               <StatusBadge />
               {!isEditing && (
                 <Tooltip
-                  content={
-                    form.formState.errors.slug
-                      ? 'Please fix slug to visit preview'
-                      : null
-                  }
+                  content={'Please fix slug to visit preview'}
+                  disabled={!form.formState.errors.slug}
                 >
                   <Button
                     variant="outline"

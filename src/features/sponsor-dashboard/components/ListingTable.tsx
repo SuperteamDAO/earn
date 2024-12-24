@@ -32,7 +32,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { cn } from '@/utils/cn';
@@ -105,7 +104,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
     children,
     className,
   }: {
-    children: string;
+    children?: string;
     className?: string;
   }) => {
     return (
@@ -159,12 +158,13 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
         <Table>
           <TableHeader>
             <TableRow className="bg-slate-100">
+              <ListingTh />
               <ListingTh>Listing Name</ListingTh>
               <ListingTh className="text-center">Submissions</ListingTh>
               <ListingTh>Deadline</ListingTh>
               <ListingTh>Prize</ListingTh>
               <ListingTh>Status</ListingTh>
-              <ListingTh>Actions</ListingTh>
+              <ListingTh className="pl-6">Actions</ListingTh>
               <TableHead className="pl-0" />
             </TableRow>
           </TableHeader>
@@ -199,6 +199,14 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
 
               return (
                 <TableRow key={listing?.id}>
+                  <TableCell className="pr-0">
+                    <img
+                      className="h-5 w-5 rounded-full"
+                      alt={`New ${listingType}`}
+                      src={getListingIcon(listing.type!)}
+                      title={listingType}
+                    />
+                  </TableCell>
                   <TableCell className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
                     <Link
                       className={cn(
@@ -210,21 +218,12 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         posthog.capture('submissions_sponsor');
                       }}
                     >
-                      <div className="flex items-center">
-                        <Tooltip content={listingType}>
-                          <img
-                            className="mr-2 h-5 rounded-full"
-                            alt={`New ${listingType}`}
-                            src={getListingIcon(listing.type!)}
-                          />
-                        </Tooltip>
-                        <span
-                          className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-medium text-slate-500 hover:underline"
-                          title={listing.title}
-                        >
-                          {listing.title}
-                        </span>
-                      </div>
+                      <p
+                        className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-medium text-slate-500 hover:underline"
+                        title={listing.title}
+                      >
+                        {listing.title}
+                      </p>
                     </Link>
                   </TableCell>
                   <TableCell className="py-2">

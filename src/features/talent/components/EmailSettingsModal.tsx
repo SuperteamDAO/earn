@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { useUser } from '@/store/user';
 
@@ -80,7 +80,7 @@ export const EmailSettingsModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="p-2">
-        <div className="p-6">
+        <div className="px-3 py-6 sm:px-6">
           <h2 className="text-2xl font-semibold text-slate-700">
             Update Email Preferences
           </h2>
@@ -163,15 +163,16 @@ export const EmailSettingsModal = ({
             </div>
           )}
         </div>
-        <DialogFooter>
+
+        <div className="px-2 sm:px-4">
           <Button
-            className="ph-no-capture mx-5 mb-3 w-full"
+            className="ph-no-capture mb-3 w-full"
             disabled={isUpdating}
             onClick={updateEmailSettings}
           >
             {isUpdating ? 'Updating Preferences..' : 'Update Preferences'}
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

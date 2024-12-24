@@ -24,7 +24,7 @@ import { Link } from '../extensions/link';
 import { ResetMarksOnEnter } from '../extensions/reset-marks-on-enter';
 import { Selection } from '../extensions/selection';
 import { UnsetAllMarks } from '../extensions/unset-all-marks';
-import { fileToBase64, getOutput, reasonToText } from '../utils';
+import { getOutput, reasonToText } from '../utils';
 import { useThrottle } from './use-throttle';
 
 interface ImageSetting {
@@ -61,8 +61,6 @@ const createExtensions = (placeholder: string, imageSetting: ImageSetting) => [
     maxFileSize: 5 * 1024 * 1024,
     allowBase64: true,
     uploadFn: async (file) => {
-      // NOTE: This is a fake upload function. Replace this with your own upload logic.
-      // This function should return the uploaded image URL.
       const src = await uploadToCloudinary(
         file,
         imageSetting.folderName,
@@ -118,7 +116,11 @@ const createExtensions = (placeholder: string, imageSetting: ImageSetting) => [
     maxFileSize: 5 * 1024 * 1024,
     onDrop: (editor, files, pos) => {
       files.forEach(async (file) => {
-        const src = await fileToBase64(file);
+        const src = await uploadToCloudinary(
+          file,
+          imageSetting.folderName,
+          imageSetting.type,
+        );
         editor.commands.insertContentAt(pos, {
           type: 'image',
           attrs: { src },
@@ -127,7 +129,11 @@ const createExtensions = (placeholder: string, imageSetting: ImageSetting) => [
     },
     onPaste: (editor, files) => {
       files.forEach(async (file) => {
-        const src = await fileToBase64(file);
+        const src = await uploadToCloudinary(
+          file,
+          imageSetting.folderName,
+          imageSetting.type,
+        );
         editor.commands.insertContent({
           type: 'image',
           attrs: { src },

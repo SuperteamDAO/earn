@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GrantApplication } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -27,8 +27,8 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
-import { Twitter } from '@/features/social/components/SocialIcons';
-import { extractTwitterUsername } from '@/features/social/utils/extractUsername';
+import { SocialInput } from '@/features/social/components/SocialInput';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 import { userApplicationQuery } from '../queries/user-application';
 import { type Grant } from '../types';
@@ -89,8 +89,8 @@ export const GrantApplicationModal = ({
       milestones: grantApplication?.milestones || '',
       kpi: grantApplication?.kpi || '',
       twitter: grantApplication?.twitter
-        ? extractTwitterUsername(grantApplication?.twitter) || ''
-        : extractTwitterUsername(user?.twitter || '') || '',
+        ? extractSocialUsername('twitter', grantApplication?.twitter) || ''
+        : extractSocialUsername('twitter', user?.twitter || '') || '',
       answers:
         Array.isArray(questions) && questions.length > 0
           ? questions.map((q) => ({
@@ -216,7 +216,11 @@ export const GrantApplicationModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-xl" ref={modalRef}>
+      <DialogContent hideCloseIcon className="max-w-xl" ref={modalRef}>
+        <X
+          className="absolute right-4 top-7 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
+          onClick={onClose}
+        />
         <DialogTitle className="text-lg tracking-normal text-slate-700 sm:text-xl">
           Grant Application
           <p className="mt-1 text-sm font-normal text-slate-500">
@@ -225,7 +229,7 @@ export const GrantApplicationModal = ({
             we&apos;ll respond soon!
           </p>
           <Progress
-            className="mt-6 h-[1.5px] bg-slate-200"
+            className="mt-6 h-[2px] bg-slate-200"
             value={(activeStep / steps.length) * 100 + 33}
           />
           <div className="mt-3 flex w-full items-center justify-between">
@@ -267,7 +271,7 @@ export const GrantApplicationModal = ({
           </div>
         </DialogTitle>
         <div
-          className="flex max-h-[30rem] flex-col items-start gap-3 overflow-y-auto pb-4 pt-3 sm:px-1 md:max-h-[50rem]"
+          className="flex max-h-[30rem] flex-col items-start gap-3 pb-4 pt-3 sm:px-1 md:max-h-[50rem]"
           ref={modalRef}
         >
           <Form {...form}>
@@ -405,32 +409,16 @@ export const GrantApplicationModal = ({
                     richEditorPlaceholder="Provide links to your portfolio or previous work"
                   />
 
-                  <FormFieldWrapper
-                    control={form.control}
+                  <SocialInput
                     name="twitter"
-                    label="Personal Twitter Profile"
-                    description="Add your personal Twitter username"
-                    isRequired
-                  >
-                    <div className="flex items-center">
-                      <div className="relative flex items-center">
-                        <Twitter className="mr-3 h-5 w-5 text-slate-600" />
-                      </div>
-                      <div className="flex h-9 items-center rounded-l-md border border-r-0 border-input px-3">
-                        <span className="text-[0.8rem] font-medium text-slate-600 sm:text-sm">
-                          x.com/
-                        </span>
-                      </div>
-                      <Input
-                        className="rounded-l-none"
-                        defaultValue={
-                          extractTwitterUsername(user?.twitter || '') ||
-                          undefined
-                        }
-                        placeholder="johncena"
-                      />
-                    </div>
-                  </FormFieldWrapper>
+                    socialName={'twitter'}
+                    placeholder="@StarkIndustries"
+                    required
+                    formLabel="Personal Twitter Profile"
+                    formDescription="Include links to your best work that will make the community trust you to execute on this project."
+                    control={form.control}
+                    height="h-9"
+                  />
 
                   {questions?.map((question: any, index: number) => (
                     <FormFieldWrapper
@@ -506,7 +494,7 @@ export const GrantApplicationModal = ({
               </div>
             </form>
           </Form>
-          <p className="-mt-1 w-full text-center text-sm text-slate-400">
+          <p className="-mt-1 w-full pb-3 text-center text-xs text-slate-400 sm:text-sm">
             By applying for this grant, you agree to our{' '}
             <button
               onClick={() => setIsTOSModalOpen(true)}

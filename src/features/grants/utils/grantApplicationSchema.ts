@@ -2,10 +2,7 @@ import { z } from 'zod';
 
 import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
-import {
-  isValidTwitterInput,
-  isValidTwitterUsername,
-} from '@/features/social/utils/regex';
+import { twitterUsernameSchema } from '@/features/social/utils/schema';
 
 export const grantApplicationSchema = (
   minReward: number,
@@ -36,13 +33,7 @@ export const grantApplicationSchema = (
       proofOfWork: z.string().min(1, 'Proof of work is required'),
       milestones: z.string().min(1, 'Milestones are required'),
       kpi: z.string().min(1, 'KPI is required'),
-      twitter: z
-        .string()
-        .refine(
-          (value) =>
-            isValidTwitterInput(value) || isValidTwitterUsername(value),
-          'Please enter a valid Twitter handle',
-        ),
+      twitter: twitterUsernameSchema,
       answers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),

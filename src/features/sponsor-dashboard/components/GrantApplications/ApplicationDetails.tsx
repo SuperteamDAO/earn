@@ -23,10 +23,7 @@ import {
   Telegram,
   Twitter,
 } from '@/features/social/components/SocialIcons';
-import {
-  extractTelegramUsername,
-  extractTwitterUsername,
-} from '@/features/social/utils/extractUsername';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type GrantApplicationWithUser } from '../../types';
@@ -235,7 +232,8 @@ export const ApplicationDetails = ({
   const SocialMediaLink = () => {
     if (selectedApplication?.user?.telegram) {
       const username =
-        extractTelegramUsername(selectedApplication.user.telegram) || null;
+        extractSocialUsername('telegram', selectedApplication.user.telegram) ||
+        null;
       const link = selectedApplication.user.telegram;
       return (
         <div className="flex items-center justify-start gap-2 text-sm">
@@ -254,7 +252,8 @@ export const ApplicationDetails = ({
 
     if (selectedApplication?.user?.twitter) {
       const username =
-        extractTwitterUsername(selectedApplication.user.twitter) || null;
+        extractSocialUsername('twitter', selectedApplication.user.twitter) ||
+        null;
       const link = selectedApplication.user.twitter;
       return (
         <div className="flex items-center justify-start gap-2 text-sm">
@@ -508,7 +507,7 @@ export const ApplicationDetails = ({
           </div>
 
           <div
-            className="h-[67.15rem] w-full max-w-[60rem] overflow-y-scroll"
+            className="h-[67.15rem] w-full overflow-y-scroll"
             style={
               {
                 '&::-webkit-scrollbar': { width: '4px' },

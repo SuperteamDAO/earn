@@ -115,14 +115,13 @@ export function PrePublish() {
     >
       <Tooltip
         content={
-          isDisabledHard ? (
-            <p>
-              Creating a new listing has been temporarily locked for you since
-              you have 5 listings which are &quot;In Review&quot;. Please
-              announce the winners for such listings to create new listings.
-            </p>
-          ) : null
+          <p>
+            Creating a new listing has been temporarily locked for you since you
+            have 5 listings which are &quot;In Review&quot;. Please announce the
+            winners for such listings to create new listings.
+          </p>
         }
+        disabled={!isDisabledHard}
       >
         <Button
           className="ph-no-capture"
@@ -138,7 +137,7 @@ export function PrePublish() {
           Continue
         </Button>
       </Tooltip>
-      <DialogContent className="py-4 sm:max-w-[500px]">
+      <DialogContent className="overflow-y-visible py-4 sm:max-w-[500px]">
         <DialogHeader className="flex flex-row gap-4">
           <DialogTitle className="text-base">Publish Listing</DialogTitle>
           {isDisabledSoft && (
