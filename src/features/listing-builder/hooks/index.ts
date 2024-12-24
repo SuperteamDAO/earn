@@ -7,6 +7,8 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useForm, useFormContext, type UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
+import { dayjs } from '@/utils/dayjs';
+
 import {
   draftQueueAtom,
   hackathonAtom,
@@ -105,6 +107,11 @@ export const useListingForm = (
     }));
     try {
       const dataToSave = getValues();
+
+      if (dataToSave.deadline) {
+        if (!dataToSave.deadline.endsWith('Z'))
+          dataToSave.deadline += dayjs().format('Z');
+      }
       const data = await saveDraftMutation.mutateAsync(dataToSave);
       setHideAutoSave(false);
       formMethods.setValue('id', data.id);
