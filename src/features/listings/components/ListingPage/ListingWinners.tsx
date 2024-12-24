@@ -118,8 +118,8 @@ export function ListingWinners({ bounty }: Props) {
           </Button>
         </Link>
       </div>
-      <div className="mx-3 mt-2 md:mt-0">
-        <div className="w-full rounded-md px-3 py-4 md:px-4">
+      <div className="mx-0 mt-2 md:mt-0">
+        <div className="w-full rounded-md py-4 md:px-4">
           <div className="flex flex-wrap items-center justify-center gap-10">
             {getOrRemoveBonuses(submissions, true)
               .slice(0, 3)
@@ -149,12 +149,13 @@ export function ListingWinners({ bounty }: Props) {
                       </div>
                     )}
                     <EarnAvatar
-                      size={isMD ? '64px' : '52px'}
+                      className="h-14 w-14 md:h-16 md:w-16"
                       id={submission?.user?.id}
                       avatar={submission?.user?.photo as string}
                     />
                   </div>
-                  <p className="line-clamp-2 w-min pt-4 text-center text-xs font-semibold text-slate-700 md:w-auto md:text-sm">{`${submission?.user?.firstName} ${submission?.user?.lastName}`}</p>
+                  <p className="w-16 truncate pt-4 text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.firstName}`}</p>
+                  <p className="w-16 truncate text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.lastName}`}</p>
                   <p className="text-center text-xs font-normal text-slate-500 opacity-60">
                     {bounty?.rewards &&
                       formatTotalPrize(
@@ -191,7 +192,7 @@ export function ListingWinners({ bounty }: Props) {
                   className="inline-block"
                 >
                   <EarnAvatar
-                    size={isMD ? '44px' : '36px'}
+                    className="h-9 w-9 md:h-11 md:w-11"
                     id={submission?.user?.id}
                     avatar={submission?.user?.photo as string}
                   />
@@ -201,7 +202,8 @@ export function ListingWinners({ bounty }: Props) {
           ))}
           {extraBonusSubmissions > 0 && (
             <>
-              <div
+              <Link
+                href={`/listings/${bounty.type}/${bounty.slug}/submission`}
                 className="flex items-center justify-center rounded-full bg-slate-200"
                 style={{
                   width: isMD ? '44px' : '36px',
@@ -213,7 +215,7 @@ export function ListingWinners({ bounty }: Props) {
                     +{extraBonusSubmissions}
                   </span>
                 </Tooltip>
-              </div>
+              </Link>
             </>
           )}
         </div>

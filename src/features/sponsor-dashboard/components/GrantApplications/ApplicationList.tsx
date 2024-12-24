@@ -110,7 +110,7 @@ export const ApplicationList = ({
               >
                 <span
                   className={cn(
-                    'inline-flex whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
+                    'inline-flex whitespace-nowrap rounded-full px-3 py-0.5 text-center text-[10px] capitalize',
                     bg,
                     color,
                   )}

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { ChevronLeft, ChevronRight, Copy, Plus, Search, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Copy, Plus, Search } from 'lucide-react';
 import { type Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
@@ -188,7 +188,7 @@ const Index = () => {
                     <TableCell>
                       <div className="flex items-center">
                         <EarnAvatar
-                          size="36px"
+                          className="h-9 w-9"
                           id={member?.user?.id}
                           avatar={member?.user?.photo}
                         />
@@ -304,7 +304,6 @@ const RemoveMemberModal = ({
   const removeMember = async (userId: string | undefined) => {
     await onRemoveMember(userId);
     setIsOpen(false);
-    toast.success('Member removed successfully');
   };
 
   const isSameUser = useMemo(
@@ -328,18 +327,11 @@ const RemoveMemberModal = ({
         open={isOpen}
         onOpenChange={(open) => setIsOpen(open)}
       >
-        <DialogContent className="py-2">
+        <DialogContent className="py-5">
           <DialogHeader>
             <DialogTitle className="text-xl text-slate-900">
               Remove Member?
             </DialogTitle>
-            <button
-              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 disabled:pointer-events-none"
-              onClick={() => setIsOpen(false)}
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </button>
           </DialogHeader>
 
           <div className="py-4">

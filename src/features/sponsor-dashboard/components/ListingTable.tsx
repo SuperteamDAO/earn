@@ -32,7 +32,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { cn } from '@/utils/cn';
@@ -210,14 +209,15 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         posthog.capture('submissions_sponsor');
                       }}
                     >
-                      <div className="flex items-center">
-                        <Tooltip content={listingType}>
-                          <img
-                            className="mr-2 h-5 rounded-full"
-                            alt={`New ${listingType}`}
-                            src={getListingIcon(listing.type!)}
-                          />
-                        </Tooltip>
+                      <div className="flex items-center gap-2">
+                        {/* <Tooltip content={listingType}> */}
+                        <img
+                          className="h-5 w-5 rounded-full"
+                          alt={`New ${listingType}`}
+                          src={getListingIcon(listing.type!)}
+                          title={listingType}
+                        />
+                        {/* </Tooltip> */}
                         <span
                           className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-medium text-slate-500 hover:underline"
                           title={listing.title}

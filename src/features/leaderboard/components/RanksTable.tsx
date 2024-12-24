@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/table';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
@@ -24,12 +25,6 @@ import { type RowType, type SKILL } from '../types';
 import { getSubskills, skillCategories } from '../utils';
 
 import '/node_modules/flag-icons/css/flag-icons.min.css';
-
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  maximumFractionDigits: 0,
-  currency: 'USD',
-}).format;
 
 interface Props {
   rankings: RowType[];
@@ -65,7 +60,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
               <p className="hidden whitespace-nowrap md:block">
                 Dollars Earned
               </p>
-              <p className="block md:hidden">$ Earned</p>
+              <p className="block whitespace-nowrap md:hidden">$ Earned</p>
             </TableHead>
             <TableHead className="whitespace-nowrap px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
               Win Rate
@@ -130,7 +125,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                 <TableCell className="h-full px-1 text-center md:px-2">
                   #{row.rank}
                 </TableCell>
-                <TableCell className="h-full px-1 md:px-2">
+                <TableCell className="h-full pr-8 sm:px-2">
                   <Link
                     href={`/t/${row.username}`}
                     target="_blank"
@@ -163,11 +158,11 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                   </Link>
                 </TableCell>
                 <TableCell className="h-full px-1 md:px-2">
-                  <div className="flex justify-center gap-2">
-                    <p className="text-center text-black">
-                      {formatter(row.dollarsEarned)}
+                  <div className="flex justify-end gap-1 text-right">
+                    <p className="text-black">
+                      ${formatNumberWithSuffix(row.dollarsEarned)}
                     </p>
-                    <p className="hidden text-center md:block">USD</p>
+                    <p className="hidden md:block">USD</p>
                   </div>
                 </TableCell>
                 <TableCell className="h-full px-1 text-center md:px-2">
@@ -262,11 +257,11 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                 </TableCell>
 
                 <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 md:px-2">
-                  <div className="flex justify-center gap-2">
-                    <p className="text-center text-black">
-                      {formatter(userRank?.dollarsEarned ?? 0)}
+                  <div className="flex justify-end gap-1 text-right">
+                    <p className="text-black">
+                      ${formatNumberWithSuffix(userRank?.dollarsEarned ?? 0)}
                     </p>
-                    <p className="hidden text-center md:block">USD</p>
+                    <p className="hidden md:block">USD</p>
                   </div>
                 </TableCell>
 

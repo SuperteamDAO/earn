@@ -1,4 +1,3 @@
-import { PopoverContent } from '@radix-ui/react-popover';
 import { Info } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 
@@ -10,9 +9,7 @@ import {
   FormItem,
   FormLabel,
 } from '@/components/ui/form';
-import { Popover, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 import { type NewTalentFormData } from '@/features/talent/schema';
 
@@ -22,8 +19,6 @@ interface Props {
 export function SkillsField({ skillsRefreshKey }: Props) {
   const form = useFormContext<NewTalentFormData>();
   const { control, trigger } = form;
-
-  const isMD = useBreakpoint('md');
 
   return (
     <FormField
@@ -35,20 +30,9 @@ export function SkillsField({ skillsRefreshKey }: Props) {
             <div>
               <span className="flex items-center gap-2">
                 <FormLabel isRequired>Skills Needed</FormLabel>
-                {isMD ? (
-                  <Tooltip content="Select all that apply">
-                    <Info className="h-3 w-3 text-slate-500" />
-                  </Tooltip>
-                ) : (
-                  <Popover>
-                    <PopoverTrigger>
-                      <Info className="h-3 w-3 text-slate-500" />
-                    </PopoverTrigger>
-                    <PopoverContent className="rounded-md border bg-gray-50 px-3 py-1.5 text-xs text-slate-700">
-                      Select all that apply
-                    </PopoverContent>
-                  </Popover>
-                )}
+                <Tooltip content="Select all that apply">
+                  <Info className="h-3 w-3 text-slate-500" />
+                </Tooltip>
               </span>
               <FormDescription>
                 We will send email notifications of new listings for your

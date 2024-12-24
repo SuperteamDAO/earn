@@ -12,10 +12,11 @@ type EmailType =
   | 'createListing'
   | 'deadlineExtended'
   | 'submissionRejected'
+  | 'submissionLike'
+  | 'applicationLike'
+  | 'powLike'
   | 'submissionSponsor'
   | 'submissionTalent'
-  | 'applicationTalent'
-  | 'applicationSponsor'
   | 'grantApproved'
   | 'grantCompleted'
   | 'grantRejected'
@@ -45,7 +46,7 @@ export function sendEmailNotification({
     expiresIn: '60s',
   });
 
-  axios
+  void axios
     .post(
       process.env.EMAIL_BACKEND!,
       {
@@ -58,7 +59,7 @@ export function sendEmailNotification({
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        timeout: 15000,
+        timeout: 5000,
       },
     )
     .catch((error) => {

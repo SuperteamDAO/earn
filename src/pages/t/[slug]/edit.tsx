@@ -219,15 +219,51 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     setIsLoading(true);
     posthog.capture('confirm_edit profile');
     try {
-      console.log('data pre filter', data);
       const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
         const fieldKey = key as keyof ProfileFormData;
-        if (
-          user &&
-          JSON.stringify(data[fieldKey]) !== JSON.stringify(user[fieldKey])
-        ) {
-          acc[fieldKey] = data[fieldKey] as any;
+        const newValue = data[fieldKey];
+        const oldValue = user?.[fieldKey];
+
+        if (newValue === undefined && oldValue === undefined) return acc;
+        if (newValue === undefined && oldValue === null) return acc;
+        if (newValue === undefined && oldValue === '') return acc;
+        if (newValue === null && oldValue === null) return acc;
+
+        try {
+          let normalizedOldValue: any = oldValue;
+          const normalizedNewValue: any = newValue;
+
+          if (
+            typeof oldValue === 'string' &&
+            (oldValue.startsWith('{') || oldValue.startsWith('['))
+          ) {
+            try {
+              normalizedOldValue = JSON.parse(oldValue);
+            } catch {
+              // If parsing fails, keep original string value
+              normalizedOldValue = oldValue;
+            }
+          }
+
+          const oldValueStr =
+            typeof normalizedOldValue === 'object'
+              ? JSON.stringify(normalizedOldValue)
+              : String(normalizedOldValue);
+
+          const newValueStr =
+            typeof normalizedNewValue === 'object'
+              ? JSON.stringify(normalizedNewValue)
+              : String(normalizedNewValue);
+
+          if (oldValueStr !== newValueStr) {
+            acc[fieldKey] = newValue as any;
+          }
+        } catch (error) {
+          if (oldValue !== newValue) {
+            acc[fieldKey] = newValue as any;
+          }
         }
+
         return acc;
       }, {} as Partial<ProfileFormData>);
 
@@ -256,6 +292,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       );
       return true;
     } catch (error: any) {
+      console.log('Error edit profile - ', error);
       setIsLoading(false);
       toast.error('Failed to update profile.');
       return false;

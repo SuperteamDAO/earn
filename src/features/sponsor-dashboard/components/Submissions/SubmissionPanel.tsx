@@ -59,11 +59,11 @@ export const SubmissionPanel = ({
     <div className="sticky top-[3rem] w-full">
       {submissions.length ? (
         <>
-          <div className="border-b border-slate-200 bg-white py-1">
+          <div className="rounded-t-xl border-b border-slate-200 bg-white py-1">
             <div className="flex w-full items-center justify-between px-4 pt-3">
               <div className="flex w-full items-center gap-2">
                 <EarnAvatar
-                  size="40px"
+                  className="h-10 w-10"
                   id={selectedSubmission?.user?.id}
                   avatar={selectedSubmission?.user?.photo || undefined}
                 />
@@ -117,7 +117,7 @@ export const SubmissionPanel = ({
                   selectedSubmission?.winnerPosition &&
                   selectedSubmission?.isPaid && (
                     <Button
-                      className="mr-4"
+                      className="mr-4 text-slate-600"
                       onClick={() => {
                         window.open(
                           `https://solscan.io/tx/${selectedSubmission?.paymentDetails?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,

@@ -66,7 +66,7 @@ export const FilterSection = ({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            className="w-40 border-slate-300 font-medium text-slate-400 hover:text-slate-50"
+            className="h-9 w-40 border-slate-300 font-medium text-slate-400 hover:text-slate-500"
             size="sm"
             variant="outline"
           >
@@ -112,7 +112,7 @@ export const FilterSection = ({
       </div>
 
       <Button
-        className="border border-slate-300 px-4 font-medium text-slate-400"
+        className="h-9 border border-slate-300 px-4 font-medium text-slate-400"
         disabled={exportMutation.isPending}
         onClick={() => exportMutation.mutate()}
         size="sm"

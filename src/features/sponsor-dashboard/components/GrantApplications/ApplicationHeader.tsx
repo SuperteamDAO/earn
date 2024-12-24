@@ -1,6 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { Check, ChevronLeft, Copy, Download, ExternalLink } from 'lucide-react';
+import {
+  Check,
+  ChevronLeft,
+  Copy,
+  Download,
+  ExternalLink,
+  Link2,
+} from 'lucide-react';
 import Link from 'next/link';
 import router from 'next/router';
 import React from 'react';
@@ -11,8 +18,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -73,18 +78,11 @@ export const ApplicationHeader = ({ grant }: Props) => {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link
-                  href="/dashboard/listings"
-                  className="flex items-center hover:text-slate-500"
-                >
+                <Link href="/dashboard/listings" className="flex items-center">
                   <ChevronLeft className="mr-1 h-6 w-6" />
                   All Listings
                 </Link>
               </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>{grant?.title}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -174,13 +172,18 @@ export const ApplicationHeader = ({ grant }: Props) => {
         </div>
         <div>
           <p className="text-slate-500">Share</p>
-          <div className="relative -mb-2 mt-1">
+          <div className="relative border-slate-100 bg-slate-50">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+              <Link2 className="h-4 w-4 text-slate-400" />
+            </div>
+
             <Input
-              className="w-80 overflow-hidden text-ellipsis whitespace-nowrap border-slate-100 text-slate-500 focus-visible:ring-[#CFD2D7] focus-visible:ring-offset-0"
+              className="w-80 overflow-hidden text-ellipsis whitespace-nowrap border-slate-100 pl-10 pr-10 text-slate-500 focus-visible:ring-[#CFD2D7] focus-visible:ring-offset-0"
               readOnly
               value={`${getURL()}${listingPath}`}
             />
-            <div className="absolute inset-y-0 right-4 flex items-center">
+
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
               {hasCopied ? (
                 <Check className="h-4 w-4 text-slate-400" />
               ) : (

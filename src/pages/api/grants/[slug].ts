@@ -28,6 +28,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             name: true,
             logo: true,
             isVerified: true,
+            entityName: true,
           },
         },
         _count: {

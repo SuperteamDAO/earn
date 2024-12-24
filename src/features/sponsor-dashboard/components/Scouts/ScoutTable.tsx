@@ -92,7 +92,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
               </div>
             </TableHead>
             <TableHead className="px-1 text-left text-xs font-medium text-slate-500 md:px-2">
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center gap-2">
                 Matched Skills
                 <Tooltip
                   content={
@@ -190,14 +190,14 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                 </TableCell>
                 <TableCell className="h-full px-1 md:px-2">
                   <div className="flex justify-center gap-2">
-                    <p className="text-center text-black">
+                    <p className="text-center text-slate-600">
                       {formatter(scout.dollarsEarned)}
                     </p>
                   </div>
                 </TableCell>
                 <TableCell className="h-full px-1 md:px-2">
                   <div className="flex items-center justify-center gap-3">
-                    <p className="text-center text-black">{scout.score}</p>
+                    <p className="text-center text-slate-600">{scout.score}</p>
                     <ScoreBar score={scout.score} />
                   </div>
                 </TableCell>

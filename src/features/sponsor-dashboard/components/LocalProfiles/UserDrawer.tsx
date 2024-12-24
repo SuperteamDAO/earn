@@ -45,49 +45,56 @@ export const UserDrawer = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-[768px] p-6 sm:max-w-[768px]">
+      <SheetContent
+        className="w-[60rem] p-6 sm:max-w-[60rem]"
+        showCloseIcon={false}
+      >
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between border-b border-slate-300 pb-6">
             <div className="flex items-center">
-              <EarnAvatar size="44px" id={user?.id} avatar={user?.photo} />
+              <EarnAvatar
+                className="h-11 w-11"
+                id={user?.id}
+                avatar={user?.photo}
+              />
               <div className="ml-4">
                 <div className="flex gap-3">
                   <p className="font-medium">{`${user?.firstName} ${user?.lastName}`}</p>
                 </div>
-                <p className="-mt-0.5 text-[0.92rem] text-slate-500">
-                  {user?.email}
-                </p>
+                <p className="-mt-0.5 text-sm text-slate-500">{user?.email}</p>
               </div>
             </div>
             <div className="flex items-center gap-10">
               <div className="flex flex-col items-center justify-center self-center text-center">
-                <p className="text-[1.05rem] font-medium text-slate-500">
+                <p className="text-base font-medium text-slate-500">
                   {user?.wins}
                 </p>
-                <p className="text-[0.92rem] text-slate-500">Wins</p>
+                <p className="text-sm text-slate-500">Wins</p>
               </div>
               <div className="flex flex-col items-center justify-center self-center text-center">
-                <p className="text-[1.05rem] font-medium text-slate-500">
+                <p className="text-base font-medium text-slate-500">
                   {user?.totalSubmissions}
                 </p>
-                <p className="text-[0.92rem] text-slate-500">Submissions</p>
+                <p className="text-sm text-slate-500">Submissions</p>
               </div>
               <div className="flex flex-col items-center justify-center self-center text-center">
-                <p className="text-[1.05rem] font-medium text-slate-500">
+                <p className="text-base font-medium text-slate-500">
                   ${user.totalEarnings.toLocaleString('en-us')}
                 </p>
-                <p className="text-[0.92rem] text-slate-500">$ Earned</p>
+                <p className="text-sm text-slate-500">$ Earned</p>
               </div>
               <div className="flex flex-col items-center justify-center self-center text-center">
-                <p className="text-[1.05rem] font-medium text-slate-500">
+                <p className="text-base font-medium text-slate-500">
                   #{user?.rank}
                 </p>
-                <p className="text-[0.92rem] text-slate-500"># Rank</p>
+                <p className="whitespace-nowrap text-sm text-slate-500">
+                  # Rank
+                </p>
               </div>
 
               <Link
                 href={`/t/${user.username}`}
-                className="flex items-center pl-6 text-[0.9rem] font-medium text-slate-500 hover:text-slate-600"
+                className="flex items-center whitespace-nowrap pl-6 text-[0.9rem] font-medium text-slate-500 hover:text-slate-600"
                 rel="noopener noreferrer"
                 target="_blank"
               >

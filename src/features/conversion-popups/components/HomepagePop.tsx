@@ -155,7 +155,7 @@ const Mobile = ({
         classNames={{
           overlay: isLoginOpen ? 'z-[200]' : '',
         }}
-        className="!border-0 !ring-0"
+        className="focus:ring-0 focus:ring-transparent focus:ring-offset-0"
       >
         <DrawerHeader className="text-left">
           <AvatarGroup>

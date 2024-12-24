@@ -10,7 +10,7 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import { handleAirtableSync } from '@/features/grants/utils/handleAirtableSync';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
-import { extractTwitterUsername } from '@/features/social/utils/extractUsername';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 async function updateGrantApplication(
   userId: string,
@@ -23,7 +23,13 @@ async function updateGrantApplication(
     grant.maxReward,
     grant.token,
     grant.questions,
-  ).safeParse(data);
+  ).safeParse({
+    ...data,
+    twitter:
+      data.twitter !== undefined
+        ? extractSocialUsername('twitter', data.twitter) || ''
+        : undefined,
+  });
 
   if (!validationResult.success) {
     throw new Error(JSON.stringify(validationResult.error.formErrors));
@@ -73,9 +79,7 @@ async function updateGrantApplication(
     kpi: validatedData.kpi,
     walletAddress: validatedData.walletAddress,
     ask: validatedData.ask,
-    twitter: validatedData.twitter
-      ? `https://x.com/${extractTwitterUsername(validatedData.twitter)}`
-      : null,
+    twitter: validatedData.twitter,
     answers: validatedData.answers || [],
   };
 

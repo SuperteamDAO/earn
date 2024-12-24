@@ -210,7 +210,7 @@ export function SponsorLayout({
       <div className="hidden min-h-screen justify-start md:flex">
         <div
           className={cn(
-            'sponsor-dashboard-sidebar overflow-x-hidden whitespace-nowrap border-r border-black/20 bg-white pt-5',
+            'sponsor-dashboard-sidebar overflow-x-hidden whitespace-nowrap border-r border-slate-200 bg-white pt-5',
             'transition-all duration-300 ease-in-out',
             isCollapsible ? 'fixed' : 'static',
             isExpanded

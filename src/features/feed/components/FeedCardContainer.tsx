@@ -6,7 +6,6 @@ import { type ReactNode, useEffect, useState } from 'react';
 import { GoComment } from 'react-icons/go';
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 
-import { Avatar } from '@/components/ui/avatar';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -127,7 +126,7 @@ export const FeedCardContainer = ({
         <EarnAvatar
           id={userId}
           avatar={photo}
-          size="36px"
+          className="h-9 w-9"
           onClick={(e) => {
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
@@ -180,7 +179,7 @@ export const FeedCardContainer = ({
                 {isLiked && (
                   <IoMdHeart className="h-5 w-5 cursor-pointer text-rose-600 md:h-[22px] md:w-[22px]" />
                 )}
-                <p className="text-base font-medium text-slate-500">
+                <p className="cursor-pointer text-base font-medium text-slate-500">
                   {totalLikes}
                 </p>
               </div>
@@ -194,22 +193,21 @@ export const FeedCardContainer = ({
               >
                 <GoComment className="h-[19px] w-[19px] cursor-pointer text-slate-500 md:h-[21px] md:w-[21px]" />
                 {!!commentCount && (
-                  <p className="text-base font-medium text-slate-500">
+                  <p className="cursor-pointer text-base font-medium text-slate-500">
                     {commentCount}
                   </p>
                 )}
-                <div className="ml-4 flex -space-x-2">
-                  {recentCommenters?.slice(0, 4).map((comment, index) => (
-                    <Avatar
-                      key={index}
-                      className="h-6 w-6 border-2 border-white"
-                    >
+                <div className="ml-1 flex -space-x-2">
+                  {recentCommenters
+                    ?.slice(0, 4)
+                    .map((comment, index) => (
                       <EarnAvatar
                         avatar={comment.author.photo!}
                         id={comment.author.name!}
+                        key={index}
+                        className="h-6 w-6 border border-white"
                       />
-                    </Avatar>
-                  ))}
+                    ))}
                 </div>
               </div>
             </div>

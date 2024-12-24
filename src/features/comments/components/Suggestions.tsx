@@ -114,7 +114,7 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
             onClick={() => onSelect(suggestion.username ?? '')}
           >
             <EarnAvatar
-              size={'28px'}
+              className="h-7 w-7"
               id={suggestion?.id}
               avatar={suggestion?.photo}
             />

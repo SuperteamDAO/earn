@@ -39,7 +39,7 @@ export function CompleteProfileModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="rounded-xl bg-white px-6 py-6 shadow-xl sm:max-w-md">
+      <DialogContent className="rounded-xl bg-white px-6 py-6 shadow-xl sm:max-w-md lg:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">{header}</DialogTitle>
         </DialogHeader>

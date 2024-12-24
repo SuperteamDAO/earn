@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { Popover, PopoverContent } from '@/components/ui/popover';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -456,7 +456,7 @@ export default function BountySubmissions({ slug }: Props) {
                       </TabsTrigger>
                     </Tooltip>
                   </TabsList>
-                  <div className="h-0.5 w-full bg-slate-200" />
+                  <div className="h-[1.5px] w-full bg-slate-200/70" />
                 </>
               )}
 
@@ -592,16 +592,22 @@ export default function BountySubmissions({ slug }: Props) {
               )}
           </Tabs>
 
-          <Popover
-            modal={true}
+          <Dialog
+            modal={false}
             onOpenChange={onTogglerClose}
             open={isTogglerOpen}
           >
-            <PopoverContent
-              className="fixed bottom-10 mx-auto w-full border-none bg-transparent p-0 shadow-none"
-              align="center"
+            <DialogContent
+              onEscapeKeyDown={(e) => e.preventDefault()}
+              onInteractOutside={(e) => e.preventDefault()}
+              classNames={{
+                overlay: 'hidden',
+              }}
+              unsetDefaultPosition
+              hideCloseIcon
+              className="fixed bottom-4 left-1/2 -translate-x-1/2 overflow-hidden p-1"
             >
-              <div className="mx-auto w-fit rounded-lg border-2 border-slate-200 bg-white px-4 shadow-lg">
+              <div className="mx-auto w-fit rounded-lg px-4">
                 {selectedSubmissionIds.size > 100 && (
                   <p className="pb-2 text-center text-red-500">
                     Cannot select more than 100 applications
@@ -617,7 +623,7 @@ export default function BountySubmissions({ slug }: Props) {
                   <div className="h-4 w-px bg-slate-300" />
 
                   <Button
-                    className="bg-transparent font-medium hover:bg-transparent"
+                    className="focus:none bg-transparent font-medium hover:bg-transparent"
                     onClick={() => {
                       setSelectedSubmissionIds(new Set());
                     }}
@@ -650,8 +656,8 @@ export default function BountySubmissions({ slug }: Props) {
                   </Button>
                 </div>
               </div>
-            </PopoverContent>
-          </Popover>
+            </DialogContent>
+          </Dialog>
           <RejectAllSubmissionModal
             allSubmissionsLength={submissions?.length || 0}
             submissionIds={Array.from(selectedSubmissionIds)}

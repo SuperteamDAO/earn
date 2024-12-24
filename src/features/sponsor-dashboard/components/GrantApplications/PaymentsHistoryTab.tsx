@@ -171,7 +171,7 @@ export const PaymentsHistoryTab = ({
                         <EarnAvatar
                           id={grantee.userId}
                           avatar={grantee.user.photo!}
-                          size="36px"
+                          className="h-9 w-9"
                         />
                         <div className="flex flex-col">
                           <p className="text-sm font-medium text-slate-700">
@@ -240,15 +240,17 @@ export const PaymentsHistoryTab = ({
                             onPaymentRecorded={handlePaymentRecorded}
                           />
                         )}
-                        <span
-                          className={cn(
-                            'cursor-pointer text-slate-500 transition-transform duration-300',
-                            isExpanded ? 'rotate-0' : 'rotate-180',
-                          )}
-                          onClick={() => toggleExpandRow(grantee.id)}
-                        >
-                          <ChevronUp className="h-4 w-4 text-slate-400" />
-                        </span>
+                        {grantee.paymentDetails && (
+                          <span
+                            className={cn(
+                              'cursor-pointer text-slate-500 transition-transform duration-300',
+                              isExpanded ? 'rotate-0' : 'rotate-180',
+                            )}
+                            onClick={() => toggleExpandRow(grantee.id)}
+                          >
+                            <ChevronUp className="h-4 w-4 text-slate-400" />
+                          </span>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>

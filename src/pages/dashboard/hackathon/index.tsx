@@ -12,7 +12,6 @@ import {
   Search,
   Trash,
   Trash2,
-  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -194,16 +193,7 @@ export default function Hackathon() {
     <SponsorLayout>
       <Dialog open={unpublishIsOpen} onOpenChange={unpublishOnClose}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Unpublish Listing?</DialogTitle>
-            <button
-              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 disabled:pointer-events-none"
-              onClick={unpublishOnClose}
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </button>
-          </DialogHeader>
+          <DialogTitle>Unpublish Listing?</DialogTitle>
 
           <p className="text-slate-500">
             This listing will be hidden from the homepage once unpublished. Are
@@ -237,13 +227,6 @@ export default function Hackathon() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Draft?</DialogTitle>
-            <button
-              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 disabled:pointer-events-none"
-              onClick={deleteDraftOnClose}
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </button>
           </DialogHeader>
 
           <div className="space-y-4">
