@@ -79,7 +79,7 @@ export function GrantPageLayout({
           <meta charSet="UTF-8" key="charset" />
           <meta
             name="viewport"
-            content="width=device-width,initial-scale=1"
+            content="width=device-width, initial-scale=1, maximum-scale=1"
             key="viewport"
           />
         </Head>
@@ -227,7 +227,7 @@ export function GrantPageLayout({
                 <div className="border-l-1 flex w-full flex-col gap-8 border-slate-100 px-2 md:px-5">
                   {children}
                   <div className="flex flex-col items-start md:hidden">
-                    <p className="h-full text-center text-sm font-semibold text-slate-600">
+                    <p className="mb-1.5 h-full text-center text-xs font-semibold text-slate-600">
                       SKILLS NEEDED
                     </p>
                     <div className="flex flex-wrap gap-3">

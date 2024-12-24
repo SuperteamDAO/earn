@@ -18,6 +18,7 @@ import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
@@ -183,6 +184,9 @@ export const PayoutButton = ({ bounty }: Props) => {
       console.log(error);
       log.error(
         `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error}`,
+      );
+      toast.error(
+        'Alert: Payment might have gone through. Please check your wallet history to confirm.',
       );
     } finally {
       setIsPaying(false);
