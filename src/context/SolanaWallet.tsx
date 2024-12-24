@@ -20,7 +20,10 @@ export function SolanaWalletProvider({
   const endpoint = useMemo(() => rpc, [network]);
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
+    <ConnectionProvider
+      endpoint={endpoint}
+      config={{ commitment: 'confirmed' }}
+    >
       <WalletProvider wallets={[]} autoConnect>
         <WalletModalProvider>{children}</WalletModalProvider>
       </WalletProvider>

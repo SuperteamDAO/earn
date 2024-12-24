@@ -58,6 +58,13 @@ export async function validatePayment({
 
     const { meta } = tx;
 
+    if (meta.err) {
+      return {
+        isValid: false,
+        error: 'Transaction Errored on chain',
+      };
+    }
+
     const preBalance = meta.preTokenBalances?.find(
       (balance) => balance.owner === recipientPublicKey,
     );
