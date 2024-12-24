@@ -1,4 +1,8 @@
-import { Connection, type VersionedTransactionResponse } from '@solana/web3.js';
+import {
+  clusterApiUrl,
+  Connection,
+  type VersionedTransactionResponse,
+} from '@solana/web3.js';
 
 import logger from '@/lib/logger';
 
@@ -24,10 +28,7 @@ export async function validatePayment({
   expectedAmount,
   tokenMintAddress,
 }: ValidatePaymentParams): Promise<ValidationResult> {
-  const connection = new Connection(
-    `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
-    'confirmed',
-  );
+  const connection = new Connection(clusterApiUrl('mainnet-beta'));
   const maxRetries = 3;
   const delayMs = 5000;
 
