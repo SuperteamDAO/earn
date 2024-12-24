@@ -36,18 +36,18 @@ const FooterColumn = ({
   links: { href: string; text: string }[];
 }) => (
   <div className="flex flex-col items-start">
-    <p className="text-xs font-medium uppercase text-slate-400 md:text-sm">
-      {title}
-    </p>
-    {links.map((link) => (
-      <Link
-        key={link.text}
-        href={link.href}
-        className="text-sm text-slate-500 hover:text-slate-600 md:text-base"
-      >
-        {link.text}
-      </Link>
-    ))}
+    <p className="mb-2 text-xs font-medium uppercase text-slate-400">{title}</p>
+    <div className="flex flex-col space-y-2">
+      {links.map((link) => (
+        <Link
+          key={link.text}
+          href={link.href}
+          className="text-sm text-slate-500 hover:text-slate-600"
+        >
+          {link.text}
+        </Link>
+      ))}
+    </div>
   </div>
 );
 
@@ -161,7 +161,7 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className="border-t border-black/20 bg-white">
+    <footer className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="flex flex-col items-start justify-between md:flex-row">
           <div className="mb-8 flex max-w-[540px] flex-col md:mb-0">
@@ -172,15 +172,24 @@ export const Footer = () => {
                 src="/assets/logo.svg"
               />
             </div>
-            <p className="mb-6 text-sm text-slate-500 md:text-base">
+            <p className="mb-6 text-sm text-slate-500">
               Discover high paying crypto bounties, projects and grants from the
               best Solana companies in one place and apply to them using a
               single profile.
             </p>
             <div className="flex gap-4">
-              <GitHub link="https://github.com/SuperteamDAO/earn" />
-              <Twitter link="https://twitter.com/superteamearn" />
-              <Discord link="https://discord.com/invite/Mq3ReaekgG" />
+              <GitHub
+                link="https://github.com/SuperteamDAO/earn"
+                className="text-slate-500"
+              />
+              <Twitter
+                link="https://twitter.com/superteamearn"
+                className="text-slate-500"
+              />
+              <Discord
+                link="https://discord.com/invite/Mq3ReaekgG"
+                className="text-slate-500"
+              />
             </div>
           </div>
           <div className="flex w-full flex-wrap justify-start gap-6 md:w-auto md:justify-end md:gap-16">
