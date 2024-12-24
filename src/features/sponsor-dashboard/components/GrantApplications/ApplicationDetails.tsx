@@ -507,7 +507,7 @@ export const ApplicationDetails = ({
           </div>
 
           <div
-            className="h-[67.15rem] w-full max-w-[60rem] overflow-y-scroll"
+            className="h-[67.15rem] w-full overflow-y-scroll"
             style={
               {
                 '&::-webkit-scrollbar': { width: '4px' },

@@ -48,13 +48,6 @@ export const RejectSubmissionModal = ({
           <DialogTitle className="text-md font-semibold text-slate-500">
             Reject Application
           </DialogTitle>
-          <button
-            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 disabled:pointer-events-none"
-            onClick={rejectOnClose}
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </button>
         </DialogHeader>
 
         <Separator />
