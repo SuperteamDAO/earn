@@ -64,7 +64,7 @@ export const verifyPaymentsSchema = z.object({
         })),
     )
     .refine((links) => links.some((link) => link.link || link.isVerified), {
-      message: 'At least one payment link or verified payment is required',
+      message: 'Please add atleast one valid payment link',
     }),
 });
 

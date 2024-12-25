@@ -19,7 +19,7 @@ export const Details = ({ bounty }: Props) => {
 
   return (
     <div className="flex h-[32.6rem] w-full">
-      <div className="scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-scroll border-r border-slate-200 p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+      <div className="scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
         {!isProject && (
           <>
             <InfoBox

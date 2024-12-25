@@ -58,6 +58,7 @@ const InfoWrapper = ({
             : null
       }
       contentProps={{ className: 'rounded-md' }}
+      triggerClassName="w-full"
     >
       {children}
     </Tooltip>
