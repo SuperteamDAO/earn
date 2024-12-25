@@ -146,11 +146,13 @@ export function PublishResults({
         <div className="space-y-4">
           {isWinnersAnnounced && (
             <Alert className="flex-col items-center justify-center py-4 text-center">
-              <CheckCircle2 className="mb-4 h-10 w-10" />
-              <AlertTitle className="mb-1 text-lg">
-                Results Announced Successfully!
-              </AlertTitle>
-              <AlertDescription className="max-w-sm">
+              <div className="flex items-center justify-center gap-2">
+                <CheckCircle2 className="mb-1 h-6 w-6" />
+                <AlertTitle className="mb-1 text-lg">
+                  Results Announced Successfully!
+                </AlertTitle>
+              </div>
+              <AlertDescription className="mx-auto mt-2 max-w-sm">
                 The results have been announced publicly. Everyone can view the
                 results on the Bounty&apos;s page.
                 <br />
