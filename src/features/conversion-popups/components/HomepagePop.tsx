@@ -289,7 +289,7 @@ const DesktopVariantTwo = ({
       </div>
       <DialogHeader className="px-5">
         <DialogTitle className="text-base font-semibold">
-          Get access to oppurtunities worth $
+          Get access to opportunities worth $
           {formatNumberWithSuffix(
             roundToNearestThousand(liveOpportunityWorth || 0),
           )}
