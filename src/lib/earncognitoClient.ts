@@ -10,7 +10,6 @@ if (!earncognitoUrl || !earncognitoSecret) {
 
 const earncognitoClient: AxiosInstance = axios.create({
   baseURL: earncognitoUrl,
-  timeout: 5000,
 });
 
 earncognitoClient.interceptors.request.use(
