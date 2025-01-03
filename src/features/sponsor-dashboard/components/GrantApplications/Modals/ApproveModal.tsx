@@ -37,11 +37,22 @@ const CustomNumberInput = ({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowUp') {
+      increment();
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      decrement();
+      return;
+    }
+  };
+
   return (
     <div className="relative w-[100px]">
       <Input
-        // type="number"
         value={value}
+        onKeyDown={handleKeyDown}
         onChange={(e) => {
           const newValue = parseFloat(e.target.value);
           if (

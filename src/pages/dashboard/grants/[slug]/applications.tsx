@@ -312,42 +312,44 @@ function GrantApplications({ slug }: Props) {
 
   useEffect(() => {
     const handleKeyDown = async (e: KeyboardEvent) => {
-      if (isAnyModalOpen || !applications?.length) return;
+      if (!applications?.length) return;
 
-      const currentIndex = applications.findIndex(
-        (app) => app.id === selectedApplication?.id,
-      );
+      if (!isAnyModalOpen) {
+        const currentIndex = applications.findIndex(
+          (app) => app.id === selectedApplication?.id,
+        );
 
-      switch (e.key) {
-        case 'ArrowUp':
-          e.preventDefault();
-          if (currentIndex > 0) {
-            setSelectedApplication(applications[currentIndex - 1]);
-          } else if (skip > 0) {
-            // When going to the previous page, select the last item
-            await changePage(Math.max(skip - length, 0), length - 1);
-          }
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          if (currentIndex < applications.length - 1) {
-            setSelectedApplication(applications[currentIndex + 1]);
-          } else if (skip + length < grant?.totalApplications!) {
-            await changePage(skip + length, 0);
-          }
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          if (skip > 0) {
-            await changePage(Math.max(skip - length, 0), -1);
-          }
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          if (skip + length < grant?.totalApplications!) {
-            await changePage(skip + length, -1);
-          }
-          break;
+        switch (e.key) {
+          case 'ArrowUp':
+            e.preventDefault();
+            if (currentIndex > 0) {
+              setSelectedApplication(applications[currentIndex - 1]);
+            } else if (skip > 0) {
+              // When going to the previous page, select the last item
+              await changePage(Math.max(skip - length, 0), length - 1);
+            }
+            break;
+          case 'ArrowDown':
+            e.preventDefault();
+            if (currentIndex < applications.length - 1) {
+              setSelectedApplication(applications[currentIndex + 1]);
+            } else if (skip + length < grant?.totalApplications!) {
+              await changePage(skip + length, 0);
+            }
+            break;
+          case 'ArrowLeft':
+            e.preventDefault();
+            if (skip > 0) {
+              await changePage(Math.max(skip - length, 0), -1);
+            }
+            break;
+          case 'ArrowRight':
+            e.preventDefault();
+            if (skip + length < grant?.totalApplications!) {
+              await changePage(skip + length, -1);
+            }
+            break;
+        }
       }
     };
 
