@@ -439,6 +439,7 @@ export const VerifyPaymentModal = ({
                                     rel="noopener noreferrer"
                                   >
                                     <Button
+                                      type="button"
                                       className="w-full justify-start border-green-500 text-sm font-medium text-slate-500 hover:bg-green-100"
                                       variant="outline"
                                     >
@@ -510,6 +511,7 @@ export const VerifyPaymentModal = ({
                     className="text-center"
                   >
                     <Button
+                      type="button"
                       className="bg-transparent text-sm font-normal underline"
                       variant="link"
                     >
