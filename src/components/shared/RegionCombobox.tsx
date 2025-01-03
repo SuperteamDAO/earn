@@ -212,19 +212,21 @@ export function RegionCombobox({
       >
         <Command>
           <CommandInput placeholder="Search..." />
-          <CommandEmpty>No region found.</CommandEmpty>
           <CommandList>
-            {!!value && unset && (
-              <CommandItem
-                value={undefined}
-                onSelect={() => {
-                  onChange?.(null!);
-                  setOpen(false);
-                }}
-              >
-                <p className="text-slate-400">Select a region</p>
-              </CommandItem>
-            )}
+            <CommandEmpty>No region found.</CommandEmpty>
+            <CommandGroup>
+              {!!value && unset && (
+                <CommandItem
+                  value={undefined}
+                  onSelect={() => {
+                    onChange?.(null!);
+                    setOpen(false);
+                  }}
+                >
+                  <p className="text-slate-400">Select a region</p>
+                </CommandItem>
+              )}
+            </CommandGroup>
             {filteredOptions?.map((option, idx) => {
               if (isGroupedOption(option)) {
                 return (
@@ -262,29 +264,30 @@ export function RegionCombobox({
               }
 
               return (
-                <CommandItem
-                  key={option.value}
-                  value={option.value}
-                  onSelect={(currentValue) => {
-                    onChange?.(currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      'mr-2 h-4 w-4',
-                      value === option.value ? 'opacity-100' : 'opacity-0',
+                <CommandGroup key={option.value}>
+                  <CommandItem
+                    value={option.value}
+                    onSelect={(currentValue) => {
+                      onChange?.(currentValue);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        'mr-2 h-4 w-4',
+                        value === option.value ? 'opacity-100' : 'opacity-0',
+                      )}
+                    />
+                    {option.value === Regions.GLOBAL ? (
+                      <>
+                        <Earth className="text-slate-500" />
+                        Global
+                      </>
+                    ) : (
+                      <UserFlag location={option.code} isCode />
                     )}
-                  />
-                  {option.value === Regions.GLOBAL ? (
-                    <>
-                      <Earth className="text-slate-500" />
-                      Global
-                    </>
-                  ) : (
-                    <UserFlag location={option.code} isCode />
-                  )}
-                </CommandItem>
+                  </CommandItem>
+                </CommandGroup>
               );
             })}
           </CommandList>
