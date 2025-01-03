@@ -26,43 +26,6 @@ export const UserStatsBanner = () => {
   const { data: session, status } = useSession();
   const { data: stats, isLoading } = useQuery(userStatsQuery);
 
-  const getTimeBasedMessage = () => {
-    const hour = new Date().getHours();
-
-    if (hour >= 6 && hour < 12) {
-      return {
-        greeting: `gm! ${user?.firstName}`,
-        subtext: 'Ready to crush your day?',
-      };
-    }
-
-    if (hour >= 12 && hour < 17) {
-      return {
-        greeting: `Good Afternoon, ${user?.firstName}`,
-        subtext: 'Here are some great listings for you, this afternoon.',
-      };
-    }
-
-    if (hour >= 17 && hour < 20) {
-      return {
-        greeting: `Good Evening, ${user?.firstName}`,
-        subtext: 'Hope you have a calm & relaxed evening',
-      };
-    }
-
-    if (hour >= 20 && hour < 24) {
-      return {
-        greeting: `Glad to see you tonight, ${user?.firstName}`,
-        subtext: 'Ready to crush your next gig?',
-      };
-    }
-
-    return {
-      greeting: `Happy late night, ${user?.firstName}`,
-      subtext: 'The night is young to cook some bounties & projects.',
-    };
-  };
-
   if (!user) return <></>;
 
   if ((!session && status === 'loading') || isLoading) {
@@ -71,17 +34,17 @@ export const UserStatsBanner = () => {
     );
   }
 
-  const { greeting, subtext } = getTimeBasedMessage();
-
   return (
     <div className="flex flex-col gap-4 rounded-md bg-gradient-to-r from-[#4C52E2] to-[#4338CA] px-6 py-6 text-white md:flex-row md:items-center md:justify-between md:px-8">
       <div className="flex items-center gap-4">
         <EarnAvatar id={user.id} avatar={user.photo} className="h-12 w-12" />
         <div className="flex flex-col gap-0">
           <p className="max-w-[25rem] truncate text-lg font-semibold md:text-xl">
-            {greeting}
+            Welcome back, {user.firstName}
           </p>
-          <p className="text-sm text-[#c4c2ef]">{subtext}</p>
+          <p className="text-sm text-[#c4c2ef]">
+            We&apos;re so glad to have you on Earn
+          </p>
         </div>
       </div>
 

@@ -1,18 +1,14 @@
-import { GrantApplicationStatus } from '@prisma/client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
-import { useDisclosure } from '@/hooks/use-disclosure';
 import { cn } from '@/utils/cn';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
@@ -29,8 +25,6 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { type GrantApplicationWithUser } from '../../types';
 import { InfoBox } from '../InfoBox';
 import { MarkCompleted } from './MarkCompleted';
-import { ApproveModal } from './Modals/ApproveModal';
-import { RejectGrantApplicationModal } from './Modals/RejectModal';
 import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface Props {
@@ -46,6 +40,8 @@ interface Props {
     length: number;
     skip: number;
   };
+  approveOnOpen: () => void;
+  rejectedOnOpen: () => void;
 }
 export const ApplicationDetails = ({
   grant,
@@ -54,6 +50,8 @@ export const ApplicationDetails = ({
   setSelectedApplication,
   isMultiSelectOn,
   params,
+  approveOnOpen,
+  rejectedOnOpen,
 }: Props) => {
   const isPending = selectedApplication?.applicationStatus === 'Pending';
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
@@ -63,18 +61,6 @@ export const ApplicationDetails = ({
 
   const queryClient = useQueryClient();
 
-  const {
-    isOpen: approveIsOpen,
-    onOpen: approveOnOpen,
-    onClose: approveOnClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: rejectedIsOpen,
-    onOpen: rejectedOnOpen,
-    onClose: rejectedOnClose,
-  } = useDisclosure();
-
   const tokenIcon = tokenList.find(
     (ele) => ele.tokenSymbol === grant?.token,
   )?.icon;
@@ -82,22 +68,6 @@ export const ApplicationDetails = ({
   const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
     'DD MMM YYYY',
   );
-
-  const moveToNextPendingApplication = () => {
-    if (!selectedApplication) return;
-
-    const currentIndex =
-      applications?.findIndex((app) => app.id === selectedApplication.id) || 0;
-    if (currentIndex === -1) return;
-
-    const nextPendingApplication = applications
-      ?.slice(currentIndex + 1)
-      .find((app) => app.applicationStatus === GrantApplicationStatus.Pending);
-
-    if (nextPendingApplication) {
-      setSelectedApplication(nextPendingApplication);
-    }
-  };
 
   const updateApplicationState = (
     updatedApplication: GrantApplicationWithUser,
@@ -113,120 +83,6 @@ export const ApplicationDetails = ({
             : application,
         ),
     );
-  };
-
-  const approveGrantMutation = useMutation({
-    mutationFn: async ({
-      applicationId,
-      approvedAmount,
-    }: {
-      applicationId: string;
-      approvedAmount: number;
-    }) => {
-      const response = await axios.post(
-        '/api/sponsor-dashboard/grants/update-application-status',
-        {
-          data: [{ id: applicationId, approvedAmount }],
-          applicationStatus: 'Approved',
-        },
-      );
-      return response.data;
-    },
-    onMutate: async ({ applicationId, approvedAmount }) => {
-      const previousApplications = queryClient.getQueryData<
-        GrantApplicationWithUser[]
-      >(['sponsor-applications', grant?.slug, params]);
-
-      queryClient.setQueryData<GrantApplicationWithUser[]>(
-        ['sponsor-applications', grant?.slug, params],
-        (oldData) => {
-          if (!oldData) return oldData;
-          const updatedApplications = oldData.map((application) =>
-            application.id === applicationId
-              ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Approved,
-                  approvedAmount: approvedAmount,
-                }
-              : application,
-          );
-          const updatedApplication = updatedApplications.find(
-            (application) => application.id === applicationId,
-          );
-          setSelectedApplication(updatedApplication);
-          moveToNextPendingApplication();
-          return updatedApplications;
-        },
-      );
-
-      return { previousApplications };
-    },
-    onError: (_, __, context) => {
-      queryClient.setQueryData(
-        ['sponsor-applications', grant?.slug, params],
-        context?.previousApplications,
-      );
-      toast.error('Failed to approve grant. Please try again.');
-    },
-  });
-
-  const rejectGrantMutation = useMutation({
-    mutationFn: async (applicationId: string) => {
-      const response = await axios.post(
-        '/api/sponsor-dashboard/grants/update-application-status',
-        {
-          data: [{ id: applicationId }],
-          applicationStatus: 'Rejected',
-        },
-      );
-      return response.data;
-    },
-    onMutate: async (applicationId) => {
-      const previousApplications = queryClient.getQueryData<
-        GrantApplicationWithUser[]
-      >(['sponsor-applications', grant?.slug, params]);
-
-      queryClient.setQueryData<GrantApplicationWithUser[]>(
-        ['sponsor-applications', grant?.slug, params],
-        (oldData) => {
-          if (!oldData) return oldData;
-          const updatedApplications = oldData.map((application) =>
-            application.id === applicationId
-              ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Rejected,
-                }
-              : application,
-          );
-          const updatedApplication = updatedApplications.find(
-            (application) => application.id === applicationId,
-          );
-          setSelectedApplication(updatedApplication);
-          moveToNextPendingApplication();
-          return updatedApplications;
-        },
-      );
-
-      return { previousApplications };
-    },
-    onError: (_, __, context) => {
-      queryClient.setQueryData(
-        ['sponsor-applications', grant?.slug, params],
-        context?.previousApplications,
-      );
-      toast.error('Failed to reject grant. Please try again.');
-    },
-  });
-
-  const handleApproveGrant = (
-    applicationId: string,
-    approvedAmount: number,
-  ) => {
-    approveGrantMutation.mutate({ applicationId, approvedAmount });
-  };
-
-  const handleRejectGrant = (applicationId: string) => {
-    rejectGrantMutation.mutate(applicationId);
   };
 
   const SocialMediaLink = () => {
@@ -287,27 +143,6 @@ export const ApplicationDetails = ({
 
   return (
     <div className="w-full rounded-r-xl bg-white">
-      <RejectGrantApplicationModal
-        applicationId={selectedApplication?.id}
-        rejectIsOpen={rejectedIsOpen}
-        rejectOnClose={rejectedOnClose}
-        ask={selectedApplication?.ask}
-        granteeName={selectedApplication?.user?.firstName}
-        token={grant?.token || 'USDC'}
-        onRejectGrant={handleRejectGrant}
-      />
-
-      <ApproveModal
-        applicationId={selectedApplication?.id}
-        approveIsOpen={approveIsOpen}
-        approveOnClose={approveOnClose}
-        ask={selectedApplication?.ask}
-        granteeName={selectedApplication?.user?.firstName}
-        token={grant?.token || 'USDC'}
-        onApproveGrant={handleApproveGrant}
-        max={grant?.maxReward}
-      />
-
       {applications?.length ? (
         <>
           <div className="sticky top-[3rem] rounded-t-xl border-b border-slate-200 bg-white py-1">
@@ -507,7 +342,7 @@ export const ApplicationDetails = ({
           </div>
 
           <div
-            className="h-[67.15rem] w-full max-w-[60rem] overflow-y-scroll"
+            className="h-[67.15rem] w-full overflow-y-auto"
             style={
               {
                 '&::-webkit-scrollbar': { width: '4px' },

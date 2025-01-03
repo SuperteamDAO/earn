@@ -100,6 +100,12 @@ const CreateSponsor = () => {
     sponsorName,
   } = useSponsorNameValidation();
   useEffect(() => {
+    if (form.formState.touchedFields.sponsor?.name && sponsorName === '') {
+      form.setError('sponsor.name', {
+        message: 'Company Name is required',
+      });
+      return;
+    }
     form.clearErrors('sponsor.name');
     if (isSponsorNameInvalid && !form.formState.errors.sponsor?.name?.message) {
       form.setError('sponsor.name', {
@@ -120,6 +126,12 @@ const CreateSponsor = () => {
     slug,
   } = useSlugValidation();
   useEffect(() => {
+    if (form.formState.touchedFields.sponsor?.slug && slug === '') {
+      form.setError('sponsor.slug', {
+        message: 'Company Username is required',
+      });
+      return;
+    }
     form.clearErrors('sponsor.slug');
     if (isSlugInvalid && !form.formState.errors.sponsor?.slug?.message) {
       form.setError('sponsor.slug', {
@@ -140,6 +152,12 @@ const CreateSponsor = () => {
     username,
   } = useUsernameValidation(user?.username);
   useEffect(() => {
+    if (form.formState.touchedFields.user?.username && username === '') {
+      form.setError('user.username', {
+        message: 'Username is required',
+      });
+      return;
+    }
     form.clearErrors('user.username');
     if (isUsernameInvalid && !form.formState.errors.user?.username?.message) {
       form.setError('user.username', {
@@ -368,6 +386,7 @@ const CreateSponsor = () => {
                     control={form.control}
                     name="sponsor.url"
                     label="Company URL"
+                    isRequired
                   >
                     <Input placeholder="https://starkindustries.com" />
                   </FormFieldWrapper>

@@ -137,7 +137,7 @@ export function PrePublish() {
           Continue
         </Button>
       </Tooltip>
-      <DialogContent className="py-4 sm:max-w-[500px]">
+      <DialogContent className="overflow-y-visible py-4 sm:max-w-[500px]">
         <DialogHeader className="flex flex-row gap-4">
           <DialogTitle className="text-base">Publish Listing</DialogTitle>
           {isDisabledSoft && (

@@ -34,7 +34,7 @@ export const FeedLoop = forwardRef<HTMLDivElement, Omit<Props, 'ref'>>(
                   return (
                     <div {...itemProps}>
                       <SubmissionCard
-                        key={index}
+                        key={item.id}
                         type={type}
                         sub={item as any}
                       />
@@ -43,13 +43,17 @@ export const FeedLoop = forwardRef<HTMLDivElement, Omit<Props, 'ref'>>(
                 case 'pow':
                   return (
                     <div {...itemProps}>
-                      <PowCard key={index} type={type} pow={item as any} />
+                      <PowCard key={item.id} type={type} pow={item as any} />
                     </div>
                   );
                 case 'grant-application':
                   return (
                     <div {...itemProps}>
-                      <GrantCard type={type} grant={item as any} key={index} />
+                      <GrantCard
+                        type={type}
+                        grant={item as any}
+                        key={item.id}
+                      />
                     </div>
                   );
                 default:

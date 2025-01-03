@@ -5,6 +5,7 @@ import {
 } from '@solana/spl-token';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
+  ComputeBudgetProgram,
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
@@ -18,6 +19,7 @@ import dynamic from 'next/dynamic';
 import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
@@ -118,8 +120,6 @@ export const PayoutButton = ({ bounty }: Props) => {
       const tokenAddress = tokenDetails?.mintAddress as string;
       const power = tokenDetails?.decimals as number;
 
-      const latestBlockHash = await connection.getLatestBlockhash();
-
       const senderATA = await getAssociatedTokenAddressSync(
         new PublicKey(tokenAddress),
         publicKey as PublicKey,
@@ -161,16 +161,46 @@ export const PayoutButton = ({ bounty }: Props) => {
         );
       }
 
+      const compute = [
+        ComputeBudgetProgram.setComputeUnitLimit({ units: 100000 }),
+        ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 1000000 }),
+      ];
+
+      transaction.add(...compute);
+
       const signature = await sendTransaction(transaction, connection);
 
-      await connection.confirmTransaction(
-        {
-          blockhash: latestBlockHash.blockhash,
-          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature,
-        },
-        'finalized',
-      );
+      const pollForSignature = async (sig: string) => {
+        const MAX_RETRIES = 60;
+        let retries = 0;
+
+        while (retries < MAX_RETRIES) {
+          const status = await connection.getSignatureStatus(sig, {
+            searchTransactionHistory: true,
+          });
+
+          if (status?.value?.err) {
+            console.log(status.value.err);
+            throw new Error(
+              `Transaction failed: ${status.value.err.toString()}`,
+            );
+          }
+
+          if (
+            status?.value?.confirmationStatus === 'confirmed' ||
+            status.value?.confirmationStatus === 'finalized'
+          ) {
+            return true;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          retries++;
+        }
+
+        throw new Error('Transaction confirmation timeout');
+      };
+
+      await pollForSignature(signature);
 
       await addPayment({
         id,
@@ -182,7 +212,10 @@ export const PayoutButton = ({ bounty }: Props) => {
     } catch (error) {
       console.log(error);
       log.error(
-        `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error}`,
+        `Sponsor unable to pay, user id: ${user?.id}, sponsor id: ${user?.currentSponsorId}, error: ${error?.toString()}`,
+      );
+      toast.error(
+        'Alert: Payment might have gone through. Please check your wallet history to confirm.',
       );
     } finally {
       setIsPaying(false);

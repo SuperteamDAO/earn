@@ -55,18 +55,26 @@ export const UserSuggestionTextarea = ({
   const handleInput = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const input = event.target.value;
     setValue(input);
-    if (inputRef.current) {
-      if (!showSuggestions) {
-        const caret = getCaretCoordinates(
-          inputRef.current,
-          inputRef.current.selectionStart,
-        );
-        setSuggestionPosition({ top: caret.top + 20, left: caret.left });
-      }
-    }
-    if (input[input.length - 1] === '@') {
-      setShowSuggestions(true);
-    }
+
+    if (!inputRef.current || showSuggestions) return;
+
+    const isNewMention = input[input.length - 1] === '@';
+    if (!isNewMention) return;
+
+    const caret = getCaretCoordinates(
+      inputRef.current,
+      inputRef.current.selectionStart,
+    );
+
+    setShowSuggestions(true);
+
+    const textareaWidth = inputRef.current.offsetWidth;
+    const midpoint = textareaWidth / 2;
+
+    setSuggestionPosition({
+      top: caret.top + 20,
+      left: caret.left > midpoint ? caret.left - 240 : caret.left,
+    });
   };
 
   useEffect(() => {
