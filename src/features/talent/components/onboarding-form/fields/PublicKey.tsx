@@ -32,7 +32,7 @@ export function PublicKeyField() {
 
   const description = (
     <>
-      You will receive rewards if you win. If you don&apos;t have a wallet,
+      You will receive rewards here if you win. If you don&apos;t have a wallet,
       check out{' '}
       <Link
         className="underline"
