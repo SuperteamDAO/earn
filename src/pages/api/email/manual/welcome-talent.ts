@@ -6,7 +6,7 @@ import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { WelcomeTalentTemplate } from '@/features/emails/components/welcomeTalentTemplate';
-import { kashEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
+import { pratikEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
 import { resend } from '@/features/emails/utils/resend';
 
 export default async function handler(
@@ -38,7 +38,7 @@ export default async function handler(
   try {
     logger.debug(`Sending welcome email to: ${userEmail}`);
     await resend.emails.send({
-      from: kashEmail,
+      from: pratikEmail,
       to: [userEmail],
       subject: 'Welcome to Superteam Earn!',
       react: WelcomeTalentTemplate(),
