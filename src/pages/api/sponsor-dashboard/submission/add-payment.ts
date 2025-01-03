@@ -82,7 +82,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       txId: paymentDetails.txId,
       recipientPublicKey: user.publicKey!,
       expectedAmount: winnerReward,
-      tokenMintAddress: dbToken.mintAddress,
+      tokenMint: dbToken,
     });
 
     if (!validationResult.isValid) {
