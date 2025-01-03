@@ -89,7 +89,7 @@ export function PrizesList({
               }}
             >
               <p className="ml-auto">
-                {!seeAll && visibleRewards.length - 1 === index && '+'}{' '}
+                {!seeAll && visibleRewards.length - 1 === index && '+'}
                 {formatNumberWithSuffix(step[1], 1, true)}
               </p>
               <p className="font-semibold text-slate-400">{token}</p>
