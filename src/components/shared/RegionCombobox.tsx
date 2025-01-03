@@ -212,7 +212,7 @@ export function RegionCombobox({
       >
         <Command>
           <CommandInput placeholder="Search..." />
-          <CommandList>
+          <CommandList className="max-h-[200px] md:max-h-[300px]">
             <CommandEmpty>No region found.</CommandEmpty>
             <CommandGroup>
               {!!value && unset && (
