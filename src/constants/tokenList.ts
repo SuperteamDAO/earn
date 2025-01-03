@@ -1,6 +1,6 @@
 import { ASSET_URL } from './ASSET_URL';
 
-interface Token {
+export interface Token {
   tokenName: string;
   tokenSymbol: string;
   mintAddress: string;

@@ -200,7 +200,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ? listing.totalWinnersSelected - (maxBonusSpots ?? 0)
       : 0;
 
-    let totalWinnersSelected = 0;
+    let totalWinnersSelected = currentTotalWinners;
     // handle selected winners update
     if (newRewardsCount < currentTotalWinners) {
       logger.info(

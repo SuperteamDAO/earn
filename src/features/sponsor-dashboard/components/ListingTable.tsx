@@ -32,6 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { cn } from '@/utils/cn';
@@ -200,12 +201,14 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
               return (
                 <TableRow key={listing?.id}>
                   <TableCell className="pr-0">
-                    <img
-                      className="h-5 w-5 rounded-full"
-                      alt={`New ${listingType}`}
-                      src={getListingIcon(listing.type!)}
-                      title={listingType}
-                    />
+                    <Tooltip content={<p>{listingType}</p>}>
+                      <img
+                        className="mt-1.5 h-5 w-5 flex-shrink-0 rounded-full"
+                        alt={`New ${listingType}`}
+                        src={getListingIcon(listing.type!)}
+                        title={listingType}
+                      />
+                    </Tooltip>
                   </TableCell>
                   <TableCell className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
                     <Link
@@ -248,7 +251,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
                         }
                       />
                       {listing?.type === 'grant' && (
-                        <p className="text-sm font-medium text-slate-700">
+                        <p className="whitespace-nowrap text-sm font-medium text-slate-700">
                           {grantAmount({
                             minReward: listing?.minRewardAsk!,
                             maxReward: listing?.maxRewardAsk!,

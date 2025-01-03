@@ -49,6 +49,7 @@ export default function UpdateSponsor() {
 
   const form = useForm<SponsorBase>({
     resolver: zodResolver(sponsorBaseSchema),
+    mode: 'onBlur',
     defaultValues: {
       name: '',
       slug: '',
@@ -69,7 +70,9 @@ export default function UpdateSponsor() {
   } = useSponsorNameValidation();
 
   useEffect(() => {
-    form.clearErrors('name');
+    if (form.formState.touchedFields.name && sponsorName === '') {
+      form.clearErrors('name');
+    }
     if (!form.formState.errors?.name?.message) {
       if (isSponsorNameInvalid) {
         form.setError('name', {
@@ -92,6 +95,9 @@ export default function UpdateSponsor() {
   } = useSlugValidation();
 
   useEffect(() => {
+    if (form.formState.touchedFields.slug && slug === '') {
+      form.clearErrors('slug');
+    }
     form.clearErrors('slug');
     if (isSlugInvalid && !form.formState.errors.slug?.message) {
       form.setError('slug', {

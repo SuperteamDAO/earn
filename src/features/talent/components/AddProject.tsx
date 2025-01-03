@@ -29,9 +29,9 @@ import { type FeedDataProps } from '@/features/feed/types';
 const PowSchema = z.object({
   title: z.string().min(1, 'Required'),
   description: z.string().min(1, 'Required'),
-  link: z.union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')]),
-  skills: z.enum(allSkills).array().default([]),
-  subSkills: z.enum(allSubSkills).array().default([]),
+  link: z.string().min(1, 'Required').regex(URL_REGEX, 'Invalid URL'),
+  skills: z.enum(allSkills).array().min(1, 'Required').default([]),
+  subSkills: z.enum(allSubSkills).array().min(1, 'Required').default([]),
 });
 type PowFormData = z.infer<typeof PowSchema>;
 
@@ -191,18 +191,20 @@ export const AddProject = ({
                           placeholder="Project Description"
                         />
                       </FormControl>
-                      <p
-                        className={cn(
-                          'mt-1 text-right text-xs',
-                          (watch('description')?.length || 0) > 160
-                            ? 'text-red-500'
-                            : 'text-slate-400',
-                        )}
-                      >
-                        {180 - (watch('description')?.length || 0)} characters
-                        left
-                      </p>
-                      <FormMessage />
+                      <div className="mt-1 flex justify-between">
+                        <FormMessage />
+                        <p
+                          className={cn(
+                            'ml-auto text-xs',
+                            (watch('description')?.length || 0) > 160
+                              ? 'text-red-500'
+                              : 'text-slate-400',
+                          )}
+                        >
+                          {180 - (watch('description')?.length || 0)} characters
+                          left
+                        </p>
+                      </div>
                     </div>
                   </FormItem>
                 )}
@@ -227,7 +229,7 @@ export const AddProject = ({
                         onChange={(e) => field.onChange(e.map((r) => r.value))}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="mt-1" />
                   </FormItem>
                 )}
               />
@@ -250,7 +252,7 @@ export const AddProject = ({
                         onChange={(e) => field.onChange(e.map((r) => r.value))}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="mt-1" />
                   </FormItem>
                 )}
               />
