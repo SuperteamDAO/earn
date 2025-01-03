@@ -15,6 +15,11 @@ export const useUsernameValidation = (initialValue = '') => {
   const { user } = useUser();
 
   const checkUsernameAvailability = async (username: string) => {
+    if (username === '') {
+      setIsInvalid(true);
+      setValidationErrorMessage('Username is required');
+      return;
+    }
     if (!USERNAME_PATTERN.test(username)) {
       setIsInvalid(true);
       setValidationErrorMessage(

@@ -83,7 +83,7 @@ export function UserMenu() {
             <EarnAvatar id={user?.id} avatar={user?.photo} />
             <div className="ml-2 hidden items-center md:flex">
               <p className="text-sm font-medium text-slate-600">
-                {user?.firstName ?? 'New User'}
+                {user?.firstName ?? user?.email ?? 'New User'}
               </p>
             </div>
             <ChevronDown className="ml-2 h-4 w-4 text-slate-400 md:h-5 md:w-5" />
