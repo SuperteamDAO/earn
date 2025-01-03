@@ -161,7 +161,7 @@ export const TalentImageCard = () => {
             </div>
             <div className="col-span-2">
               <p className="text-sm text-slate-500">
-                Worth of opportunities are live, waiting for you to participate
+                worth of opportunities are live, waiting for you to participate
               </p>
             </div>
           </CardContent>

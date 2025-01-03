@@ -44,7 +44,7 @@ export default function Talent() {
       }
     >
       {status === 'unauthenticated' ? (
-        <div className="min-h-screen w-full bg-white">
+        <div className="h-screen w-full bg-white">
           <div className="mx-auto flex min-h-[60vh] max-w-[32rem] flex-col items-center justify-center">
             <p className="pt-4 text-center text-2xl font-semibold text-slate-900">
               You&apos;re one step away
@@ -57,10 +57,14 @@ export default function Talent() {
         </div>
       ) : (
         <div className="grid h-full w-full grid-cols-1 grid-rows-1 lg:grid-cols-2">
-          <div className="mx-4 lg:ml-24 lg:mr-12">
+          <div className="mx-auto max-w-3xl px-4 lg:mx-0 lg:ml-auto lg:w-full lg:pl-24 lg:pr-12">
             <TalentForm />
           </div>
-          {isMD && <TalentImageCard />}
+          {isMD && (
+            <div className="h-full max-h-[calc(100vh-3.5rem)] w-full">
+              <TalentImageCard />
+            </div>
+          )}
         </div>
       )}
     </Default>

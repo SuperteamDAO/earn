@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from 'lucide-react';
+import { Info, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Label } from '@/components/ui/label';
+import { Tooltip } from '@/components/ui/tooltip';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { type SocialType } from '@/features/social/utils/constants';
@@ -94,10 +95,17 @@ export function SocialsField() {
     <div>
       <div className="flex justify-between">
         <div>
-          <Label className="text-[0.85rem] text-slate-600 sm:text-[0.9rem]">
-            Socials{' '}
-          </Label>
-          <p className="mt-0 text-xs text-muted-foreground text-slate-500 sm:text-[0.8rem]">
+          <span className="flex items-center gap-2">
+            <Label className="text-[0.85rem] text-slate-600 sm:text-[0.9rem]">
+              Socials{' '}
+            </Label>
+            <div className="lg:hidden">
+              <Tooltip content={'Fill at least one, but more the merrier'}>
+                <Info className="h-3 w-3 text-slate-500" />
+              </Tooltip>
+            </div>
+          </span>
+          <p className="mt-0 hidden text-xs text-muted-foreground text-slate-500 sm:text-[0.8rem] lg:block">
             Fill at least one, but more the merrier
           </p>
         </div>
@@ -107,7 +115,7 @@ export function SocialsField() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="items-center gap-1 text-[0.7rem] text-primary"
+                className="h-5 items-center gap-1 px-1 text-[0.7rem] text-primary"
               >
                 <Plus className="!h-3 !w-3" />
                 ADD MORE
@@ -140,7 +148,7 @@ export function SocialsField() {
           </DropdownMenu>
         </div>
       </div>
-      <div className="mt-2 flex flex-col gap-3 md:mt-4">
+      <div className="mt-1 flex flex-col gap-3 md:mt-4">
         {orderedSelectedSocials.map((social) => (
           <div className="group relative" key={social}>
             <SocialInput

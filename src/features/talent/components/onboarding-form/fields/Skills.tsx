@@ -17,11 +17,21 @@ import { type NewTalentFormData } from '@/features/talent/schema';
 interface Props {
   skillsRefreshKey: number;
 }
+
 export function SkillsField({ skillsRefreshKey }: Props) {
   const form = useFormContext<NewTalentFormData>();
   const { control, trigger } = form;
 
   const isSM = useBreakpoint('sm');
+
+  const tooltipContent = (
+    <>
+      <p className="mt-1 lg:hidden">
+        Get notified of new listings based on your skills
+      </p>
+      <p>Select all that apply</p>
+    </>
+  );
 
   return (
     <FormField
@@ -33,11 +43,11 @@ export function SkillsField({ skillsRefreshKey }: Props) {
             <div>
               <span className="flex items-center gap-2">
                 <FormLabel isRequired>Skills Needed</FormLabel>
-                <Tooltip content="Select all that apply">
+                <Tooltip content={tooltipContent}>
                   <Info className="h-3 w-3 text-slate-500" />
                 </Tooltip>
               </span>
-              <FormDescription>
+              <FormDescription className="hidden lg:block">
                 Get notified of new listings based on your skills
               </FormDescription>
             </div>
