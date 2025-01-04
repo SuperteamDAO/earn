@@ -90,6 +90,7 @@ export const getListingStatus = (
         return 'Payment Pending';
       if (
         listing?.isWinnersAnnounced &&
+        listing.totalPaymentsMade > 0 &&
         listing?.totalPaymentsMade === listing?.totalWinnersSelected
       )
         return 'Completed';
