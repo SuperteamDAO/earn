@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { RxUpload } from 'react-icons/rx';
 import { toast } from 'sonner';
 
@@ -20,18 +20,23 @@ export const ImagePicker = ({
   onChange,
   onReset,
   defaultValue,
-  maxSize = 5,
 }: ImagePickerProps) => {
   const [preview, setPreview] = useState<string | null>(
-    defaultValue?.url || null,
+    defaultValue?.url ?? null,
   );
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (defaultValue?.url) {
+      setPreview(defaultValue.url);
+    }
+  }, [defaultValue]);
+
   const handleFileChange = (file: File | null | undefined) => {
     if (file) {
-      if (file.size > maxSize * 1024 * 1024) {
-        toast.error(`The image size must be smaller than ${maxSize}MB`);
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`The image size must be smaller than 5MB`);
         return;
       }
 
