@@ -81,13 +81,15 @@ export function PrizesList({
 
           <div className="flex flex-shrink-0 gap-2 text-lg md:text-xl">
             <div
-              className={cn('ml-auto flex gap-1 font-semibold')}
+              className={cn(
+                'ml-auto flex gap-1 whitespace-nowrap font-semibold',
+              )}
               style={{
                 width: widthPrize,
               }}
             >
               <p className="ml-auto">
-                {!seeAll && visibleRewards.length - 1 === index && '+'}{' '}
+                {!seeAll && visibleRewards.length - 1 === index && '+'}
                 {formatNumberWithSuffix(step[1], 1, true)}
               </p>
               <p className="font-semibold text-slate-400">{token}</p>
@@ -153,7 +155,7 @@ function LabelOrAction({
           onClick={() => setSeeAll(true)}
         >
           View More
-          <ChevronDown className="mt-0.5 h-4 w-4 rounded-full border" />
+          <ChevronDown className="h-4 w-4 rounded-full border" />
         </button>
       );
     } else
@@ -168,7 +170,7 @@ function LabelOrAction({
               className="font-inherit flex items-center gap-1 bg-transparent hover:opacity-80"
               onClick={() => setSeeAll(false)}
             >
-              <ChevronUp className="relative top-0.5 h-4 w-4 rounded-full border" />
+              <ChevronUp className="relative h-4 w-4 rounded-full border" />
             </button>
           )}
         </p>

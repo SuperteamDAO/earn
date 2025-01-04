@@ -494,7 +494,7 @@ export const GrantApplicationModal = ({
               </div>
             </form>
           </Form>
-          <p className="-mt-1 w-full pb-6 text-center text-xs text-slate-400 sm:pb-3 sm:text-sm">
+          <p className="-mt-1 w-full pb-6 text-center text-xs text-slate-400 sm:mt-1 sm:pb-0 sm:text-sm lg:mt-3">
             By applying for this grant, you agree to our{' '}
             <button
               onClick={() => setIsTOSModalOpen(true)}

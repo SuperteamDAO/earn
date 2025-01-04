@@ -13,6 +13,20 @@ export const TokenInput = React.forwardRef<
     value?: number | null;
   }
 >(({ token, onChange, value, ...props }, ref) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+
+    if (inputValue === '') {
+      onChange?.(null);
+      return;
+    }
+
+    const numericValue = inputValue.replace(/[^0-9]/g, '');
+    const finalValue = numericValue ? Number(numericValue) : null;
+
+    onChange?.(finalValue);
+  };
+
   return (
     <div className="flex">
       <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted pl-3 pr-5">
@@ -31,12 +45,19 @@ export const TokenInput = React.forwardRef<
       <Input
         className="rounded-l-none"
         ref={ref}
-        onChange={(e) => {
-          const value = e.target.value === '' ? null : Number(e.target.value);
-          onChange?.(value);
-        }}
+        onChange={handleInputChange}
         type="number"
+        inputMode="numeric"
+        pattern="[0-9]*"
         value={value ?? ''}
+        min="0"
+        onKeyDown={(e) => {
+          if (
+            !/[0-9]|\Backspace|\Tab|\Delete|\ArrowLeft|\ArrowRight/.test(e.key)
+          ) {
+            e.preventDefault();
+          }
+        }}
         {...props}
       />
     </div>

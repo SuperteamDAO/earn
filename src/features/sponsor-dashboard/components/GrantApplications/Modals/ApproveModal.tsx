@@ -37,11 +37,22 @@ const CustomNumberInput = ({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowUp') {
+      increment();
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      decrement();
+      return;
+    }
+  };
+
   return (
     <div className="relative w-[100px]">
       <Input
-        type="number"
         value={value}
+        onKeyDown={handleKeyDown}
         onChange={(e) => {
           const newValue = parseFloat(e.target.value);
           if (
@@ -52,18 +63,18 @@ const CustomNumberInput = ({
             onChange(newValue);
           }
         }}
-        className="pr-8 font-semibold text-slate-600"
+        className="rounded-r-none pr-8 font-semibold text-slate-600"
       />
       <div className="absolute right-1 top-0 flex h-full flex-col">
         <button
           onClick={increment}
-          className="flex-1 px-1 hover:text-brand-purple"
+          className="flex-1 px-1 text-slate-400 hover:text-slate-600"
         >
           <ChevronUp className="h-3 w-3" />
         </button>
         <button
           onClick={decrement}
-          className="flex-1 px-1 hover:text-brand-purple"
+          className="flex-1 px-1 text-slate-400 hover:text-slate-600"
         >
           <ChevronDown className="h-3 w-3" />
         </button>

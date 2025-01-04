@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface Props {
@@ -114,35 +115,43 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                   onValueChange={setMemberType}
                   className="space-y-2"
                 >
-                  <div className="flex items-center space-x-2 rounded-md p-2 hover:bg-slate-100">
-                    <RadioGroupItem
-                      value="MEMBER"
-                      id="member"
-                      className="text-brand-purple"
-                    />
-                    <div className="ml-2">
-                      <p className="text-sm font-bold">Member</p>
-                      <p className="text-sm">
-                        Members can manage listings, submissions, winner
-                        announcements and payments.
-                      </p>
-                    </div>
-                  </div>
+                  <RadioGroup defaultValue="MEMBER">
+                    <Label
+                      htmlFor="member"
+                      className="flex cursor-pointer items-center space-x-2 rounded-md p-2 hover:bg-slate-100"
+                    >
+                      <RadioGroupItem
+                        value="MEMBER"
+                        id="member"
+                        className="text-brand-purple"
+                      />
+                      <div className="ml-2">
+                        <p className="text-sm font-bold">Member</p>
+                        <p className="text-sm">
+                          Members can manage listings, submissions, winner
+                          announcements and payments.
+                        </p>
+                      </div>
+                    </Label>
 
-                  <div className="flex items-center space-x-2 rounded-md p-2 hover:bg-slate-100">
-                    <RadioGroupItem
-                      value="ADMIN"
-                      id="admin"
-                      className="text-brand-purple"
-                    />
-                    <div className="ml-2">
-                      <p className="text-sm font-bold">Member Admin</p>
-                      <p className="text-sm">
-                        Admins can add or remove anyone from the team, in
-                        addition to having all Member privileges.
-                      </p>
-                    </div>
-                  </div>
+                    <Label
+                      htmlFor="admin"
+                      className="flex cursor-pointer items-center space-x-2 rounded-md p-2 hover:bg-slate-100"
+                    >
+                      <RadioGroupItem
+                        value="ADMIN"
+                        id="admin"
+                        className="text-brand-purple"
+                      />
+                      <div className="ml-2">
+                        <p className="text-sm font-bold">Member Admin</p>
+                        <p className="text-sm">
+                          Admins can add or remove anyone from the team, in
+                          addition to having all Member privileges.
+                        </p>
+                      </div>
+                    </Label>
+                  </RadioGroup>
                 </RadioGroup>
               </div>
             </div>
