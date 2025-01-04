@@ -46,7 +46,7 @@ export async function uploadToCld(
 
 export async function deleteFromCld(imageUrl: string) {
   try {
-    await axios.post('/api/image/delete', { imageUrl });
+    await axios.delete('/api/image/delete', { data: { imageUrl } });
   } catch (error) {
     console.error('Error deleting image:', error);
     logger.error('Error deleting image:', error);

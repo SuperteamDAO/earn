@@ -13,21 +13,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-function extractPublicIdFromUrl(url: string): string {
-  try {
-    const urlParts = url.split('/');
-    const filenameWithExtension = urlParts[urlParts.length - 1];
-    const filename = filenameWithExtension?.split('.')[0];
-    const folderPath = urlParts[urlParts.length - 2];
-    return `${folderPath}/${filename}`;
-  } catch (error) {
-    logger.error(
-      `Error extracting public_id from URL: ${safeStringify(error)}`,
-    );
-    throw new Error('Invalid Cloudinary URL format');
-  }
-}
-
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
@@ -35,27 +20,23 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const { imageUrl } = req.body;
 
     if (!imageUrl) {
-      logger.warn('No image URL provided');
       return res.status(400).json({ error: 'Image URL is required' });
     }
 
-    if (!imageUrl.includes('cloudinary')) {
-      logger.warn('Invalid Cloudinary URL');
-      return res.status(400).json({ error: 'Invalid Cloudinary URL' });
-    }
+    const urlParts = imageUrl.split('/');
+    const publicIdWithExtension = urlParts[urlParts.length - 1];
+    const publicId = publicIdWithExtension.split('.')[0];
 
-    const publicId = extractPublicIdFromUrl(imageUrl);
-
-    logger.info(`Attempting to delete image with public_id: ${publicId}`);
+    logger.info(`Attempting to delete image with public ID: ${publicId}`);
 
     const result = await cloudinary.uploader.destroy(publicId);
 
     if (result.result === 'ok') {
-      logger.info('Image successfully deleted from Cloudinary');
+      logger.info('Image deleted successfully');
       return res.status(200).json({ message: 'Image deleted successfully' });
     } else {
       logger.error(`Failed to delete image: ${safeStringify(result)}`);
-      return res.status(500).json({
+      return res.status(404).json({
         error: 'Failed to delete image',
         details: result,
       });
@@ -70,9 +51,3 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 }
 
 export default withAuth(handler);
-
-export const config = {
-  api: {
-    bodyParser: true,
-  },
-};
