@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { RxUpload } from 'react-icons/rx';
 import { toast } from 'sonner';
 
@@ -8,31 +8,30 @@ import { cn } from '@/utils/cn';
 import { Input } from '../ui/input';
 
 interface ImagePickerProps {
-  onChange?: (file: File) => void;
+  onChange?: (file: File, previewUrl: string) => void;
   onReset?: () => void;
   defaultValue?: {
     url: string;
   };
+  maxSize?: number;
 }
 
 export const ImagePicker = ({
   onChange,
   onReset,
   defaultValue,
+  maxSize = 5,
 }: ImagePickerProps) => {
   const [preview, setPreview] = useState<string | null>(
     defaultValue?.url || null,
   );
-  useEffect(() => {
-    setPreview(defaultValue?.url || null);
-  }, [defaultValue]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (file: File | null | undefined) => {
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('The image size must be smaller than 5MB');
+      if (file.size > maxSize * 1024 * 1024) {
+        toast.error(`The image size must be smaller than ${maxSize}MB`);
         return;
       }
 
@@ -46,10 +45,11 @@ export const ImagePicker = ({
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result as string);
+        const previewUrl = reader.result as string;
+        setPreview(previewUrl);
+        onChange && onChange(file, previewUrl);
       };
       reader.readAsDataURL(file);
-      onChange && onChange(file);
     }
   };
 

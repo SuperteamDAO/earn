@@ -25,7 +25,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
-import { uploadToCloudinary } from '@/utils/upload';
+import { uploadAndReplaceImage } from '@/utils/image';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -43,7 +43,8 @@ export default function UpdateSponsor() {
   const { data: session, status } = useSession();
   const { user, refetchUser } = useUser();
 
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -119,7 +120,7 @@ export default function UpdateSponsor() {
         sponsorData;
       setSponsorName(name);
       setSlug(slug);
-      setLogoUrl(logo || '');
+      setLogoPreview(logo || '');
       form.reset({
         name,
         slug,
@@ -137,18 +138,32 @@ export default function UpdateSponsor() {
 
   const isSubmitDisabled = useMemo(
     () =>
-      !logoUrl ||
+      !logoPreview ||
       isUploading ||
       isLoading ||
       isSlugInvalid ||
       isSponsorNameInvalid,
-    [logoUrl, isUploading, isLoading, isSlugInvalid, isSponsorNameInvalid],
+    [logoPreview, isUploading, isLoading, isSlugInvalid, isSponsorNameInvalid],
   );
 
   const onSubmit = async (data: SponsorBase) => {
     if (isSubmitDisabled) return;
-    setIsLoading(true);
+
     try {
+      setIsLoading(true);
+
+      if (selectedLogo) {
+        setIsUploading(true);
+        const oldLogoUrl = sponsorData?.logo;
+        const uploadedUrl = await uploadAndReplaceImage({
+          newFile: selectedLogo,
+          folder: 'earn-sponsor',
+          oldImageUrl: oldLogoUrl,
+        });
+        data.logo = uploadedUrl;
+        setIsUploading(false);
+      }
+
       await axios.post('/api/sponsors/edit', data);
       await refetchUser();
       toast.success('Sponsor profile updated successfully!');
@@ -267,13 +282,16 @@ export default function UpdateSponsor() {
               <div className="mb-3 mt-6 w-full">
                 <FormLabel isRequired>Company Logo</FormLabel>
                 <ImagePicker
-                  defaultValue={logoUrl ? { url: logoUrl } : undefined}
-                  onChange={async (e) => {
-                    setIsUploading(true);
-                    const url = await uploadToCloudinary(e, 'earn-sponsor');
-                    setLogoUrl(url);
-                    form.setValue('logo', url);
-                    setIsUploading(false);
+                  defaultValue={logoPreview ? { url: logoPreview } : undefined}
+                  onChange={(file, previewUrl) => {
+                    setSelectedLogo(file);
+                    setLogoPreview(previewUrl);
+                    form.setValue('logo', previewUrl);
+                  }}
+                  onReset={() => {
+                    setSelectedLogo(null);
+                    setLogoPreview(null);
+                    form.setValue('logo', '');
                   }}
                 />
               </div>

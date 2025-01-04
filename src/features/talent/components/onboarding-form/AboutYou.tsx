@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { SkillsSelect } from '@/components/shared/SkillsSelectNew';
@@ -26,7 +27,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { countries } from '@/constants/country';
 import { CountryList } from '@/constants/countryList';
 import { useUser } from '@/store/user';
-import { uploadToCloudinary } from '@/utils/upload';
+import { uploadAndReplaceImage } from '@/utils/image';
 
 import { usernameRandomQuery } from '../../queries/random-username';
 import { type AboutYouFormData, aboutYouSchema } from '../../schema';
@@ -39,10 +40,11 @@ interface Step1Props {
 }
 
 export function AboutYou({ setStep, useFormStore }: Step1Props) {
-  const [uploading, setUploading] = useState<boolean>(false);
   const { updateState, form } = useFormStore();
   const { user } = useUser();
   const posthog = usePostHog();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState<boolean>(false);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
   );
@@ -175,13 +177,34 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
       aboutYouForm.setFocus('username');
       return false;
     }
-    posthog.capture('about you_talent');
-    updateState({
-      ...data,
-      photo: isGooglePhoto ? user?.photo : data.photo,
-    });
-    setStep((i) => i + 1);
-    return true;
+
+    try {
+      let finalPhotoUrl = data.photo;
+      if (selectedFile && !isGooglePhoto) {
+        setUploading(true);
+        const oldPhotoUrl =
+          !isGooglePhoto && user?.photo ? user.photo : undefined;
+        finalPhotoUrl = await uploadAndReplaceImage({
+          newFile: selectedFile,
+          folder: 'earn-pfp',
+          oldImageUrl: oldPhotoUrl,
+        });
+      }
+
+      posthog.capture('about you_talent');
+      updateState({
+        ...data,
+        photo: isGooglePhoto ? user?.photo : finalPhotoUrl,
+      });
+      setStep((i) => i + 1);
+      return true;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image. Please try again.');
+      return false;
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -241,16 +264,15 @@ export function AboutYou({ setStep, useFormStore }: Step1Props) {
                     defaultValue={
                       field.value ? { url: field.value } : undefined
                     }
-                    onChange={async (e) => {
-                      setUploading(true);
-                      const a = await uploadToCloudinary(e, 'earn-pfp');
+                    onChange={(file, previewUrl) => {
+                      setSelectedFile(file);
                       setIsGooglePhoto(false);
-                      field.onChange(a);
-                      setUploading(false);
+                      field.onChange(previewUrl);
                     }}
                     onReset={() => {
+                      setSelectedFile(null);
+                      setIsGooglePhoto(false);
                       field.onChange('');
-                      setUploading(false);
                     }}
                   />
                 </FormControl>

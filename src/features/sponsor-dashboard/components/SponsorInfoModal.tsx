@@ -13,7 +13,7 @@ import { Form, FormLabel } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@/store/user';
-import { uploadToCloudinary } from '@/utils/upload';
+import { uploadAndReplaceImage } from '@/utils/image';
 
 import {
   type UserSponsorDetails,
@@ -38,7 +38,8 @@ export const SponsorInfoModal = ({
       photo: user?.photo || '',
     },
   });
-  const [imageUrl, setImageUrl] = useState<string>('');
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
@@ -77,14 +78,33 @@ export const SponsorInfoModal = ({
     },
   });
 
-  const onSubmit = (data: UserSponsorDetails) => {
+  const onSubmit = async (data: UserSponsorDetails) => {
     if (isUsernameInvalid) return;
 
-    const finalData = {
-      ...data,
-      photo: isGooglePhoto ? user?.photo : imageUrl,
-    };
-    updateUserMutation.mutate(finalData);
+    try {
+      setUploading(true);
+
+      let finalPhotoUrl = isGooglePhoto ? user?.photo : data.photo;
+
+      if (selectedFile && !isGooglePhoto) {
+        const url = await uploadAndReplaceImage({
+          newFile: selectedFile,
+          folder: 'earn-pfp',
+          oldImageUrl: !isGooglePhoto && user?.photo ? user.photo : undefined,
+        });
+        finalPhotoUrl = url;
+      }
+
+      updateUserMutation.mutate({
+        ...data,
+        photo: finalPhotoUrl,
+      });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Failed to upload image. Please try again.');
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -127,18 +147,15 @@ export const SponsorInfoModal = ({
               <FormLabel>Profile Picture</FormLabel>
               <ImagePicker
                 defaultValue={user?.photo ? { url: user.photo } : undefined}
-                onChange={async (e) => {
-                  setUploading(true);
-                  const url = await uploadToCloudinary(e, 'earn-pfp');
+                onChange={(file, previewUrl) => {
+                  setSelectedFile(file);
                   setIsGooglePhoto(false);
-                  setImageUrl(url);
-                  form.setValue('photo', url);
-                  setUploading(false);
+                  form.setValue('photo', previewUrl);
                 }}
                 onReset={() => {
-                  setImageUrl('');
+                  setSelectedFile(null);
+                  setIsGooglePhoto(false);
                   form.setValue('photo', '');
-                  setUploading(false);
                 }}
               />
             </div>

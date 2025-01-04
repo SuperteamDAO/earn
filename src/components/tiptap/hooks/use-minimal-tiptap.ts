@@ -13,7 +13,7 @@ import * as React from 'react';
 import { toast } from 'sonner';
 
 import { cn } from '@/utils/cn';
-import { type EARN_IMAGE_FOLDER, uploadToCloudinary } from '@/utils/upload';
+import { type EARN_IMAGE_FOLDER, uploadAndReplaceImage } from '@/utils/image';
 
 import { CodeBlockLowlight } from '../extensions/code-block-lowlight/code-block-lowlight';
 import { Color } from '../extensions/color';
@@ -61,11 +61,11 @@ const createExtensions = (placeholder: string, imageSetting: ImageSetting) => [
     maxFileSize: 5 * 1024 * 1024,
     allowBase64: true,
     uploadFn: async (file) => {
-      const src = await uploadToCloudinary(
-        file,
-        imageSetting.folderName,
-        imageSetting.type,
-      );
+      const src = await uploadAndReplaceImage({
+        newFile: file,
+        folder: imageSetting.folderName,
+        type: imageSetting.type as 'pfp' | 'sponsor',
+      });
       // wait 3s to simulate upload
       // await new Promise((resolve) => setTimeout(resolve, 3000));
 
@@ -116,11 +116,11 @@ const createExtensions = (placeholder: string, imageSetting: ImageSetting) => [
     maxFileSize: 5 * 1024 * 1024,
     onDrop: (editor, files, pos) => {
       files.forEach(async (file) => {
-        const src = await uploadToCloudinary(
-          file,
-          imageSetting.folderName,
-          imageSetting.type,
-        );
+        const src = await uploadAndReplaceImage({
+          newFile: file,
+          folder: imageSetting.folderName,
+          type: imageSetting.type as 'pfp' | 'sponsor',
+        });
         editor.commands.insertContentAt(pos, {
           type: 'image',
           attrs: { src },
@@ -129,11 +129,11 @@ const createExtensions = (placeholder: string, imageSetting: ImageSetting) => [
     },
     onPaste: (editor, files) => {
       files.forEach(async (file) => {
-        const src = await uploadToCloudinary(
-          file,
-          imageSetting.folderName,
-          imageSetting.type,
-        );
+        const src = await uploadAndReplaceImage({
+          newFile: file,
+          folder: imageSetting.folderName,
+          type: imageSetting.type as 'pfp' | 'sponsor',
+        });
         editor.commands.insertContent({
           type: 'image',
           attrs: { src },

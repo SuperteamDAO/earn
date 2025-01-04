@@ -30,7 +30,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { uploadToCloudinary } from '@/utils/upload';
+import { uploadAndReplaceImage } from '@/utils/image';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import { SocialInput } from '@/features/social/components/SocialInput';
@@ -51,7 +51,9 @@ const CreateSponsor = () => {
   const { user, refetchUser } = useUser();
   const posthog = usePostHog();
 
-  const [logoUrl, setLogoUrl] = useState<string>('');
+  const [selectedUserPhoto, setSelectedUserPhoto] = useState<File | null>(null);
+  const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loginStep, setLoginStep] = useState(0);
@@ -228,14 +230,15 @@ const CreateSponsor = () => {
 
   const isSubmitDisabled = useMemo(
     () =>
-      !logoUrl ||
+      (!selectedLogo && !logoPreview) ||
       isUploading ||
       isPending ||
       isSlugInvalid ||
       isUsernameInvalid ||
       isSponsorNameInvalid,
     [
-      logoUrl,
+      selectedLogo,
+      logoPreview,
       isUploading,
       isPending,
       isSlugInvalid,
@@ -244,10 +247,40 @@ const CreateSponsor = () => {
     ],
   );
 
-  const onSubmit = (data: SponsorFormValues) => {
+  const onSubmit = async (data: SponsorFormValues) => {
     if (isSubmitDisabled) return;
-    posthog.capture('complete profile_sponsor');
-    createSponsor(data);
+
+    try {
+      setIsUploading(true);
+
+      let userPhotoUrl = data.user?.photo;
+      if (selectedUserPhoto) {
+        const oldUserPhotoUrl = user?.photo;
+        userPhotoUrl = await uploadAndReplaceImage({
+          newFile: selectedUserPhoto,
+          folder: 'earn-pfp',
+          oldImageUrl: oldUserPhotoUrl,
+        });
+        data.user!.photo = userPhotoUrl;
+      }
+
+      let logoUrl = data.sponsor.logo;
+      if (selectedLogo) {
+        logoUrl = await uploadAndReplaceImage({
+          newFile: selectedLogo,
+          folder: 'earn-sponsor',
+        });
+        data.sponsor.logo = logoUrl;
+      }
+
+      posthog.capture('complete profile_sponsor');
+      await createSponsor(data);
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      toast.error('Failed to upload images. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   if (!session && status === 'loading') {
@@ -335,15 +368,13 @@ const CreateSponsor = () => {
                   <FormLabel isRequired>Profile Picture</FormLabel>
                   <ImagePicker
                     defaultValue={user?.photo ? { url: user.photo } : undefined}
-                    onChange={async (e) => {
-                      setIsUploading(true);
-                      const url = await uploadToCloudinary(e, 'earn-pfp');
-                      form.setValue('user.photo', url);
-                      setIsUploading(false);
+                    onChange={(file, previewUrl) => {
+                      setSelectedUserPhoto(file);
+                      form.setValue('user.photo', previewUrl);
                     }}
                     onReset={() => {
+                      setSelectedUserPhoto(null);
                       form.setValue('user.photo', '');
-                      setIsUploading(false);
                     }}
                   />
                 </>
@@ -424,12 +455,15 @@ const CreateSponsor = () => {
                 <div className="mb-3 mt-6 w-full">
                   <FormLabel isRequired>Company Logo</FormLabel>
                   <ImagePicker
-                    onChange={async (e) => {
-                      setIsUploading(true);
-                      const url = await uploadToCloudinary(e, 'earn-sponsor');
-                      setLogoUrl(url);
-                      form.setValue('sponsor.logo', url);
-                      setIsUploading(false);
+                    onChange={(file, previewUrl) => {
+                      setSelectedLogo(file);
+                      setLogoPreview(previewUrl);
+                      form.setValue('sponsor.logo', previewUrl);
+                    }}
+                    onReset={() => {
+                      setSelectedLogo(null);
+                      setLogoPreview('');
+                      form.setValue('sponsor.logo', '');
                     }}
                   />
                 </div>

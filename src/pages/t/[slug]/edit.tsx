@@ -35,7 +35,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { uploadToCloudinary } from '@/utils/upload';
+import { uploadAndReplaceImage } from '@/utils/image';
 
 import { SocialInputAll } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -59,6 +59,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   });
   const { control, handleSubmit, watch, setError, clearErrors, trigger } = form;
 
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -216,6 +217,19 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     setIsLoading(true);
     posthog.capture('confirm_edit profile');
     try {
+      if (selectedPhoto) {
+        setUploading(true);
+        const oldPhotoUrl = user?.photo;
+        const photoUrl = await uploadAndReplaceImage({
+          newFile: selectedPhoto,
+          folder: 'earn-pfp',
+          oldImageUrl: oldPhotoUrl,
+        });
+
+        data.photo = photoUrl;
+        setUploading(false);
+      }
+
       const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
         const fieldKey = key as keyof ProfileFormData;
         const newValue = data[fieldKey];
@@ -275,8 +289,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
           await refetchUser();
 
-          setIsLoading(false);
-
           setTimeout(() => {
             router.push(`/t/${data.username}`);
           }, 500);
@@ -289,10 +301,12 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       );
       return true;
     } catch (error: any) {
-      console.log('Error edit profile - ', error);
-      setIsLoading(false);
+      console.error('Error edit profile - ', error);
       toast.error('Failed to update profile.');
       return false;
+    } finally {
+      setIsLoading(false);
+      setUploading(false);
     }
   };
 
@@ -334,15 +348,13 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                         defaultValue={
                           field.value ? { url: field.value } : undefined
                         }
-                        onChange={async (e) => {
-                          setUploading(true);
-                          const a = await uploadToCloudinary(e, 'earn-pfp');
-                          field.onChange(a);
-                          setUploading(false);
+                        onChange={(file, previewUrl) => {
+                          setSelectedPhoto(file);
+                          field.onChange(previewUrl);
                         }}
                         onReset={() => {
+                          setSelectedPhoto(null);
                           field.onChange('');
-                          setUploading(false);
                         }}
                       />
                     </FormControl>
