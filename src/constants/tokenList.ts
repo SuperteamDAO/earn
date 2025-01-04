@@ -163,6 +163,14 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'dean-s-list',
   },
   {
+    tokenName: 'Assai',
+    tokenSymbol: 'ASSAI',
+    mintAddress: '12XbSPVc5hmWjKUzf5ExTysM2pEL3tM953YkMXmLWkGd',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/35018.png',
+    decimals: 9,
+    coingeckoSymbol: 'assai',
+  },
+  {
     tokenName: 'Ore',
     tokenSymbol: 'ORE',
     mintAddress: 'oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp',
