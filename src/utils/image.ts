@@ -31,7 +31,7 @@ export async function uploadToCld(
     const base64Image = await fileToBase64(file);
     const base64Content = base64Image.split(',')[1];
 
-    const response = await axios.post('/api/upload-image', {
+    const response = await axios.post('/api/image/upload', {
       imageBase64: base64Content,
       type,
       folder,
@@ -46,7 +46,7 @@ export async function uploadToCld(
 
 export async function deleteFromCld(imageUrl: string) {
   try {
-    await axios.post('/api/delete-image', { imageUrl });
+    await axios.post('/api/image/delete', { imageUrl });
   } catch (error) {
     console.error('Error deleting image:', error);
     logger.error('Error deleting image:', error);

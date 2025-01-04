@@ -13,13 +13,18 @@ import * as React from 'react';
 import { toast } from 'sonner';
 
 import { cn } from '@/utils/cn';
-import { type EARN_IMAGE_FOLDER, uploadAndReplaceImage } from '@/utils/image';
+import {
+  deleteFromCld,
+  type EARN_IMAGE_FOLDER,
+  uploadAndReplaceImage,
+} from '@/utils/image';
 
 import { CodeBlockLowlight } from '../extensions/code-block-lowlight/code-block-lowlight';
 import { Color } from '../extensions/color';
 import { FileHandler } from '../extensions/file-handler';
 import { HorizontalRule } from '../extensions/horizontal-rule';
 import { Image } from '../extensions/image';
+import { ImageCleanup } from '../extensions/image/components/image-cleanup';
 import { Link } from '../extensions/link';
 import { ResetMarksOnEnter } from '../extensions/reset-marks-on-enter';
 import { Selection } from '../extensions/selection';
@@ -42,124 +47,146 @@ export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
   imageSetting: ImageSetting;
 }
 
-const createExtensions = (placeholder: string, imageSetting: ImageSetting) => [
-  StarterKit.configure({
-    horizontalRule: false,
-    codeBlock: false,
-    paragraph: { HTMLAttributes: { class: 'text-node' } },
-    heading: { HTMLAttributes: { class: 'heading-node' } },
-    blockquote: { HTMLAttributes: { class: 'block-node' } },
-    bulletList: { HTMLAttributes: { class: 'list-node' } },
-    orderedList: { HTMLAttributes: { class: 'list-node' } },
-    code: { HTMLAttributes: { class: 'inline', spellcheck: 'false' } },
-    dropcursor: { width: 2, class: 'ProseMirror-dropcursor border' },
-  }),
-  Link,
-  Underline,
-  Image.configure({
-    allowedMimeTypes: ['image/*'],
-    maxFileSize: 5 * 1024 * 1024,
-    allowBase64: true,
-    uploadFn: async (file) => {
-      const src = await uploadAndReplaceImage({
-        newFile: file,
-        folder: imageSetting.folderName,
-        type: imageSetting.type as 'pfp' | 'sponsor',
-      });
-      // wait 3s to simulate upload
-      // await new Promise((resolve) => setTimeout(resolve, 3000));
+const createExtensions = (placeholder: string, imageSetting: ImageSetting) => {
+  const trackedImages = new Set<string>();
 
-      // const src = await fileToBase64(file);
-
-      // either return { id: string | number, src: string } or just src
-      return src;
-      // return { id: randomId(), src };
-    },
-    onImageRemoved({ id, src }) {
-      console.log('Image removed', { id, src });
-    },
-    onValidationError(errors) {
-      errors.forEach((error) => {
-        const errorContent = reasonToText(error.reason);
-        toast.error(errorContent.title, {
-          position: 'bottom-right',
-          description: errorContent.subTitle,
-        });
-      });
-    },
-    onActionSuccess({ action }) {
-      const mapping = {
-        copyImage: 'Copy Image',
-        copyLink: 'Copy Link',
-        download: 'Download',
-      };
-      toast.success(mapping[action], {
-        position: 'bottom-right',
-        description: 'Image action success',
-      });
-    },
-    onActionError(error, { action }) {
-      const mapping = {
-        copyImage: 'Copy Image',
-        copyLink: 'Copy Link',
-        download: 'Download',
-      };
-      toast.error(`Failed to ${mapping[action]}`, {
-        position: 'bottom-right',
-        description: error.message,
-      });
-    },
-  }),
-  FileHandler.configure({
-    allowBase64: true,
-    allowedMimeTypes: ['image/*'],
-    maxFileSize: 5 * 1024 * 1024,
-    onDrop: (editor, files, pos) => {
-      files.forEach(async (file) => {
+  return [
+    StarterKit.configure({
+      horizontalRule: false,
+      codeBlock: false,
+      paragraph: { HTMLAttributes: { class: 'text-node' } },
+      heading: { HTMLAttributes: { class: 'heading-node' } },
+      blockquote: { HTMLAttributes: { class: 'block-node' } },
+      bulletList: { HTMLAttributes: { class: 'list-node' } },
+      orderedList: { HTMLAttributes: { class: 'list-node' } },
+      code: { HTMLAttributes: { class: 'inline', spellcheck: 'false' } },
+      dropcursor: { width: 2, class: 'ProseMirror-dropcursor border' },
+    }),
+    Link,
+    Underline,
+    Image.configure({
+      allowedMimeTypes: ['image/*'],
+      maxFileSize: 5 * 1024 * 1024,
+      allowBase64: true,
+      uploadFn: async (file) => {
         const src = await uploadAndReplaceImage({
           newFile: file,
           folder: imageSetting.folderName,
           type: imageSetting.type as 'pfp' | 'sponsor',
         });
-        editor.commands.insertContentAt(pos, {
-          type: 'image',
-          attrs: { src },
+        // wait 3s to simulate upload
+        // await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        // const src = await fileToBase64(file);
+
+        // either return { id: string | number, src: string } or just src
+        return src;
+        // return { id: randomId(), src };
+      },
+      onImageRemoved({ id, src }) {
+        console.log('Image removed', { id, src });
+        if (src) {
+          try {
+            deleteFromCld(src);
+          } catch (error) {
+            console.error('Error deleting image:', error);
+          }
+        }
+      },
+      onValidationError(errors) {
+        errors.forEach((error) => {
+          const errorContent = reasonToText(error.reason);
+          toast.error(errorContent.title, {
+            position: 'bottom-right',
+            description: errorContent.subTitle,
+          });
         });
-      });
-    },
-    onPaste: (editor, files) => {
-      files.forEach(async (file) => {
-        const src = await uploadAndReplaceImage({
-          newFile: file,
-          folder: imageSetting.folderName,
-          type: imageSetting.type as 'pfp' | 'sponsor',
-        });
-        editor.commands.insertContent({
-          type: 'image',
-          attrs: { src },
-        });
-      });
-    },
-    onValidationError: (errors) => {
-      errors.forEach((error) => {
-        const errorContent = reasonToText(error.reason);
-        toast.error(errorContent.title, {
+      },
+      onActionSuccess({ action }) {
+        const mapping = {
+          copyImage: 'Copy Image',
+          copyLink: 'Copy Link',
+          download: 'Download',
+        };
+        toast.success(mapping[action], {
           position: 'bottom-right',
-          description: errorContent.subTitle,
+          description: 'Image action success',
         });
-      });
-    },
-  }),
-  Color,
-  TextStyle,
-  Selection,
-  Typography,
-  UnsetAllMarks,
-  HorizontalRule,
-  ResetMarksOnEnter,
-  CodeBlockLowlight,
-  Placeholder.configure({ placeholder: () => placeholder }),
-];
+      },
+      onActionError(error, { action }) {
+        const mapping = {
+          copyImage: 'Copy Image',
+          copyLink: 'Copy Link',
+          download: 'Download',
+        };
+        toast.error(`Failed to ${mapping[action]}`, {
+          position: 'bottom-right',
+          description: error.message,
+        });
+      },
+    }),
+    FileHandler.configure({
+      allowBase64: true,
+      allowedMimeTypes: ['image/*'],
+      maxFileSize: 5 * 1024 * 1024,
+      onDrop: (editor, files, pos) => {
+        files.forEach(async (file) => {
+          const src = await uploadAndReplaceImage({
+            newFile: file,
+            folder: imageSetting.folderName,
+            type: imageSetting.type as 'pfp' | 'sponsor',
+          });
+          trackedImages.add(src);
+          editor.commands.insertContentAt(pos, {
+            type: 'image',
+            attrs: { src },
+          });
+        });
+      },
+      onPaste: (editor, files) => {
+        files.forEach(async (file) => {
+          const src = await uploadAndReplaceImage({
+            newFile: file,
+            folder: imageSetting.folderName,
+            type: imageSetting.type as 'pfp' | 'sponsor',
+          });
+          trackedImages.add(src);
+          editor.commands.insertContent({
+            type: 'image',
+            attrs: { src },
+          });
+        });
+      },
+      onValidationError: (errors) => {
+        errors.forEach((error) => {
+          const errorContent = reasonToText(error.reason);
+          toast.error(errorContent.title, {
+            position: 'bottom-right',
+            description: errorContent.subTitle,
+          });
+        });
+      },
+    }),
+    ImageCleanup.configure({
+      onCleanup: (src) => {
+        try {
+          deleteFromCld(src);
+        } catch (error) {
+          console.error('Error deleting image:', error);
+        }
+      },
+    }),
+    Color,
+    TextStyle,
+    Selection,
+    Typography,
+    UnsetAllMarks,
+    HorizontalRule,
+    ResetMarksOnEnter,
+    CodeBlockLowlight,
+    Placeholder.configure({ placeholder: () => placeholder }),
+  ];
+};
 
 export const useMinimalTiptapEditor = ({
   value,
