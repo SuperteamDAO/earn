@@ -3,6 +3,7 @@ import { type GrantApplication } from '@prisma/client';
 interface GrantApplicationWithUserAndGrant extends GrantApplication {
   grant: {
     airtableId: string | null;
+    title: string;
   };
   user: {
     firstName: string | null;
@@ -29,6 +30,7 @@ interface GrantApplicationAirtableSchema {
   Description: string;
   'Discord Handle': string | undefined;
   Deadline: string;
+  'Grant Listing Title (Earn)': string;
 }
 
 export function convertGrantApplicationToAirtable(
@@ -65,5 +67,6 @@ export function convertGrantApplicationToAirtable(
     Description: grantApplication.projectDetails,
     'Discord Handle': grantApplication.user.discord ?? undefined,
     Deadline: grantApplication.projectTimeline,
+    'Grant Listing Title (Earn)': grantApplication.grant.title,
   };
 }

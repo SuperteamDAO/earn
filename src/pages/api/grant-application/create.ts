@@ -81,6 +81,7 @@ async function createGrantApplication(
       grant: {
         select: {
           airtableId: true,
+          title: true,
         },
       },
     },

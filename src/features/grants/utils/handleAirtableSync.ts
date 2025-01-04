@@ -8,6 +8,7 @@ import { convertGrantApplicationToAirtable } from './convertGrantApplicationToAi
 interface GrantApplicationWithUserAndGrant extends GrantApplication {
   grant: {
     airtableId: string | null;
+    title: string;
   };
   user: {
     firstName: string | null;
