@@ -197,7 +197,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.debug('Sending winner announcement email notifications');
     sendEmailNotification({
       type: 'announceWinners',
-      id,
+      entityId: id,
       triggeredBy: userId,
     });
 
@@ -208,13 +208,13 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     ) {
       sendEmailNotification({
         type: 'STWinners',
-        id,
+        entityId: id,
         triggeredBy: userId,
       });
     } else {
       sendEmailNotification({
         type: 'nonSTWinners',
-        id,
+        entityId: id,
         triggeredBy: userId,
       });
     }

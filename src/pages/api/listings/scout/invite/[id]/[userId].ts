@@ -79,7 +79,7 @@ async function scoutInvite(
     );
     sendEmailNotification({
       type: 'scoutInvite',
-      id: id,
+      entityId: id,
       userId,
       triggeredBy: sponsorUserId,
     });

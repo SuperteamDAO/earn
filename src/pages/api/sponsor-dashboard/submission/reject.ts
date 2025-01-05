@@ -93,7 +93,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       try {
         sendEmailNotification({
           type: 'submissionRejected',
-          id: submission.id,
+          entityId: submission.id,
           userId: submission.userId,
           triggeredBy: req.userId,
         });

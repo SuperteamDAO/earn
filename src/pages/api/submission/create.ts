@@ -99,7 +99,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     sendEmailNotification({
       type: 'submissionTalent',
-      id: listingId,
+      entityId: listingId,
       userId: userId as string,
       triggeredBy: userId,
     });

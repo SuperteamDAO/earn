@@ -2,6 +2,7 @@ import axios from 'axios';
 import jwt from 'jsonwebtoken';
 
 import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
 
 type EmailType =
   | 'addPayment'
@@ -29,19 +30,26 @@ type EmailType =
 
 interface EmailNotificationParams {
   type: EmailType;
-  id: string;
+  entityId: string;
   userId?: string;
   otherInfo?: any;
   triggeredBy: any;
 }
 
-export function sendEmailNotification({
+export async function sendEmailNotification({
   type,
-  id,
+  entityId,
   userId, // pass userId of the person you are sending the email to
   otherInfo,
   triggeredBy,
 }: EmailNotificationParams) {
+  const log = await prisma.resendLogs.create({
+    data: {
+      type,
+      status: 'initiated',
+    },
+  });
+
   const token = jwt.sign({ triggeredBy }, process.env.EMAIL_SECRET as string, {
     expiresIn: '60s',
   });
@@ -51,20 +59,20 @@ export function sendEmailNotification({
       process.env.EMAIL_BACKEND!,
       {
         type,
-        id,
+        entityId,
         userId,
         otherInfo,
+        logId: log.id,
       },
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        timeout: 5000,
       },
     )
     .catch((error) => {
       logger.error(
-        `failed to send email for ${type} to ${userId} with ID ${id}: ${error}`,
+        `failed to send email for ${type} to ${userId} with entity ID ${entityId}: ${error}`,
       );
     });
 }

@@ -125,7 +125,7 @@ async function grantApplication(
       try {
         sendEmailNotification({
           type: 'application',
-          id: result.id,
+          entityId: result.id,
           userId: userId,
           triggeredBy: userId,
         });

@@ -94,7 +94,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         for (const taggedUser of taggedUsers) {
           sendEmailNotification({
             type: 'commentTag',
-            id: refId,
+            entityId: refId,
             userId: taggedUser.id,
             otherInfo: {
               personName: result.author.firstName,
@@ -111,7 +111,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
         );
         sendEmailNotification({
           type: 'commentReply',
-          id: refId,
+          entityId: refId,
           userId: replyToUserId as string,
           triggeredBy: userId,
           otherInfo: {
@@ -129,7 +129,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
           logger.info(`Sending email notification to POC ID: ${pocId}`);
           sendEmailNotification({
             type: 'commentSponsor',
-            id: refId,
+            entityId: refId,
             userId: pocId as string,
             triggeredBy: userId,
           });
@@ -139,7 +139,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
           logger.info(`Sending email notification for activity comment`);
           sendEmailNotification({
             type: 'commentActivity',
-            id: refId,
+            entityId: refId,
             otherInfo: {
               personName: result?.author?.firstName,
               type: refType,

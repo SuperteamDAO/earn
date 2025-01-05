@@ -113,7 +113,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
       sendEmailNotification({
         type: 'grantCompleted',
-        id: result.id,
+        entityId: result.id,
         userId: result.user.id,
         triggeredBy: result.grant.pocId,
       });

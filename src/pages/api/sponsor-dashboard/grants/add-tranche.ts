@@ -96,7 +96,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     sendEmailNotification({
       type: 'grantPaymentReceived',
-      id,
+      entityId: id,
       triggeredBy: userId,
       userId: currentApplication.userId,
     });

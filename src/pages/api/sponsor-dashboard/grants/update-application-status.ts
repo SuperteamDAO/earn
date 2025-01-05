@@ -195,7 +195,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       result.forEach(async (r) => {
         sendEmailNotification({
           type: isApproved ? 'grantApproved' : 'grantRejected',
-          id: r.id,
+          entityId: r.id,
           userId: r.userId,
           triggeredBy: userId,
         });

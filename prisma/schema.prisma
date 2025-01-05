@@ -552,11 +552,12 @@ model emailLogs {
 
 model ResendLogs {
   id        String   @id @default(uuid())
-  email     String
-  subject   String
+  email     String?
+  subject   String?
   status    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  type      String
 
   @@index([email, createdAt(sort: Desc)])
   @@index([createdAt(sort: Desc)])

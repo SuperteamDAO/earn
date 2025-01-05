@@ -408,7 +408,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
       sendEmailNotification({
         type: 'deadlineExtended',
-        id: id as string,
+        entityId: id as string,
         triggeredBy: req.userId,
       });
       logger.debug(`Sent email notification for deadline extension`, { id });
