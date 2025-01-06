@@ -3,6 +3,12 @@ import Image from 'next/image';
 import { UserFlag } from '@/components/shared/UserFlag';
 import { type Superteam } from '@/constants/Superteam';
 
+const customBannerPosition: Record<string, Partial<React.CSSProperties>> = {
+  KR: {
+    objectPosition: 'bottom',
+  },
+};
+
 export function RegionBanner({ st }: { st: Superteam }) {
   return (
     <div className="relative flex h-72 w-full flex-col items-center">
@@ -12,6 +18,9 @@ export function RegionBanner({ st }: { st: Superteam }) {
         width={1440}
         height={290}
         className="h-full w-full object-cover object-center"
+        style={{
+          ...(customBannerPosition[st.code] || {}),
+        }}
       />
       <div className="absolute inset-0 block h-full w-full bg-[rgba(64,65,108,0.8)]" />
       <div className="absolute top-1/2 flex -translate-y-1/2 flex-col items-center px-4">
