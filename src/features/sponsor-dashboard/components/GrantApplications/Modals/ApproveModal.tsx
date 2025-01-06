@@ -37,33 +37,62 @@ const CustomNumberInput = ({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      increment();
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      decrement();
+      return;
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+
+    if (newValue === '') {
+      onChange(0);
+      return;
+    }
+
+    const numericValue = parseFloat(newValue);
+    if (
+      !isNaN(numericValue) &&
+      numericValue >= min &&
+      (max === undefined || numericValue <= max)
+    ) {
+      onChange(numericValue);
+    }
+  };
+
   return (
-    <div className="relative w-[100px]">
+    <div className="relative w-[160px]">
       <Input
-        // type="number"
-        value={value}
-        onChange={(e) => {
-          const newValue = parseFloat(e.target.value);
-          if (
-            !isNaN(newValue) &&
-            newValue >= min &&
-            (max === undefined || newValue <= max)
-          ) {
-            onChange(newValue);
-          }
-        }}
+        value={value || ''}
+        onKeyDown={handleKeyDown}
+        onChange={handleInputChange}
         className="rounded-r-none pr-8 font-semibold text-slate-600"
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
       />
       <div className="absolute right-1 top-0 flex h-full flex-col">
         <button
+          type="button"
           onClick={increment}
           className="flex-1 px-1 text-slate-400 hover:text-slate-600"
+          aria-label="Increment value"
         >
           <ChevronUp className="h-3 w-3" />
         </button>
         <button
+          type="button"
           onClick={decrement}
           className="flex-1 px-1 text-slate-400 hover:text-slate-600"
+          aria-label="Decrement value"
         >
           <ChevronDown className="h-3 w-3" />
         </button>

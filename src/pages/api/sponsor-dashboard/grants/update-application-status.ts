@@ -163,6 +163,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               select: {
                 airtableId: true,
                 isNative: true,
+                title: true,
               },
             },
           },

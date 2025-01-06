@@ -100,6 +100,7 @@ async function updateGrantApplication(
       grant: {
         select: {
           airtableId: true,
+          title: true,
         },
       },
     },

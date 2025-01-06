@@ -46,7 +46,7 @@ export function sendEmailNotification({
     expiresIn: '60s',
   });
 
-  void axios
+  axios
     .post(
       process.env.EMAIL_BACKEND!,
       {
