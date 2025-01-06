@@ -3,7 +3,7 @@ import axios from 'axios';
 import { AlertCircle, ChevronDown, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -169,6 +169,15 @@ export const Comment = ({
       setNewReplyLoading(false);
     }
   };
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (newReply && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleSubmit();
+      }
+    },
+    [newReply],
+  );
 
   useEffect(() => {
     localStorage.setItem(`comment-${refId}-${comment.id}`, newReply);
@@ -273,6 +282,7 @@ export const Comment = ({
                   value={newReply}
                   setValue={setNewReply}
                   variant="flushed"
+                  onKeyDown={handleKeyDown}
                 />
               </div>
               {!!newReplyError && (

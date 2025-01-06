@@ -76,6 +76,17 @@ export function PrePublish() {
   const [isDisabledSoft, setIsDisabledSoft] = useState(true);
 
   useEffect(() => {
+    if (router.pathname.includes('/dashboard/new')) {
+      if (isST) {
+        form.setValue('isFndnPaying', true);
+      } else {
+        form.setValue('isFndnPaying', false);
+      }
+    }
+    form.saveDraft();
+  }, [isST, router.pathname]);
+
+  useEffect(() => {
     const shouldBeDisabled =
       isDraftSaving ||
       submitListingMutation.isPending ||

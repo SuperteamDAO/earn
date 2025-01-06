@@ -68,6 +68,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  if (
+    slug === 'contribute-to-the-solana-ai-agent-toolkit-part-2' &&
+    type === 'project'
+  ) {
+    return {
+      redirect: {
+        destination: `https://earn.superteam.fun/listings/bounty/contribute-to-the-solana-ai-agent-toolkit-part-2`,
+        permanent: false,
+      },
+    };
+  }
+
   let bountyData;
   try {
     const bountyDetails = await axios.get(
