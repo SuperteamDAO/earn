@@ -274,6 +274,28 @@ export default async function handler(
       });
       return;
     }
+    feedPost.sort((a, b) => {
+      if (a.id === id) return -1;
+      if (b.id === id) return 1;
+
+      if (type === 'submission') {
+        if (hasWinnerPosition(a) && hasWinnerPosition(b)) {
+          if (a.winnerPosition !== null && b.winnerPosition !== null) {
+            return a.winnerPosition - b.winnerPosition;
+          }
+          if (a.winnerPosition !== null || b.winnerPosition !== null) {
+            if (a.winnerPosition === null) return 1;
+            if (b.winnerPosition === null) return -1;
+          }
+        }
+      }
+
+      if (a.likeCount !== b.likeCount) {
+        return (b.likeCount || 0) - (a.likeCount || 0); // Handle potential null/undefined
+      }
+
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    });
     res.status(200).json(feedPost);
     return;
   } catch (error: any) {
@@ -283,3 +305,9 @@ export default async function handler(
     res.status(500).json({ error: `Unable to fetch data: ${error.message}` });
   }
 }
+
+const hasWinnerPosition = (
+  obj: any,
+): obj is { winnerPosition: number | null } => {
+  return 'winnerPosition' in obj;
+};
