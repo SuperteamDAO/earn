@@ -169,12 +169,15 @@ export const Comment = ({
       setNewReplyLoading(false);
     }
   };
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
-      handleSubmit();
-    }
-  }, []);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (newReply && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleSubmit();
+      }
+    },
+    [newReply],
+  );
 
   useEffect(() => {
     localStorage.setItem(`comment-${refId}-${comment.id}`, newReply);
