@@ -1,7 +1,7 @@
 import { type CommentRefType } from '@prisma/client';
 import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import type { Comment } from '@/interface/comments';
@@ -65,6 +65,13 @@ export const CommentForm = ({
     addNewComment();
   };
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  }, []);
+
   useEffect(() => {
     const comment = localStorage.getItem(`comment-${refId}`);
     if (comment) {
@@ -91,6 +98,7 @@ export const CommentForm = ({
             placeholder="Write a comment"
             value={newComment}
             setValue={setNewComment}
+            onKeyDown={handleKeyDown}
             variant="flushed"
           />
         </div>
