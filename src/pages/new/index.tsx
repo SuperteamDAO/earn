@@ -50,9 +50,13 @@ export default function NewProfilePage({
       // localStorage.removeItem(ONBOARDING_KEY);
       if (!user?.isTalentFilled) {
         const originUrl = params.get('originUrl');
+        const type = params.get('type');
+        const query: Record<string, string> = {};
+        if (originUrl) query['originUrl'] = originUrl;
+        if (type) query['type'] = type;
         router.push({
           pathname: '/new/talent',
-          query: originUrl ? { originUrl } : undefined,
+          query,
         });
       } else {
         router.push(`/t/${user.username}`);
@@ -107,8 +111,8 @@ export default function NewProfilePage({
         />
       }
     >
-      <div className="relative mx-auto flex max-w-[52rem] md:h-screen">
-        <div className="static top-0 my-10 flex flex-col gap-16 px-4 md:relative md:flex-row md:gap-8 lg:px-0 lg:py-0">
+      <div className="relative mx-auto mt-6 flex max-w-[52rem] items-center md:mt-0 md:h-[calc(100vh-3.5rem)]">
+        <div className="static top-0 mb-10 flex flex-col gap-16 px-4 md:relative md:flex-row md:gap-8 lg:px-0 lg:py-0">
           {showTalentProfile && (
             <div className="flex w-full flex-col gap-9">
               <div className="flex flex-col gap-1.5">

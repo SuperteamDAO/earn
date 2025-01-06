@@ -28,6 +28,7 @@ interface Props extends TextareaAutosizeProps {
   defaultSuggestions: Map<string, User>;
   autoFocusOn?: boolean;
   variant?: 'default' | 'flushed';
+  onKeyDown?: (e: React.KeyboardEvent) => void;
 }
 
 export const UserSuggestionTextarea = ({
@@ -37,6 +38,7 @@ export const UserSuggestionTextarea = ({
   autoFocusOn,
   variant = 'default',
   className,
+  onKeyDown,
   ...props
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -113,6 +115,7 @@ export const UserSuggestionTextarea = ({
                 setShowSuggestions(false),
               );
             }
+            onKeyDown?.(e);
           }}
           value={value}
           {...props}

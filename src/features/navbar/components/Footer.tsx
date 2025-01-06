@@ -24,7 +24,7 @@ type Country = {
 };
 
 const countries: Country[] = Superteams.map((superteam) => ({
-  name: superteam.displayValue,
+  name: superteam.region,
   code: superteam.code ?? 'GLOBAL',
 }));
 
@@ -102,7 +102,9 @@ const CountrySelector: React.FC = () => {
           ) : (
             <UserFlag location={selectedCountry.code} isCode />
           )}
-          <p className="select-none">{selectedCountry.name}</p>
+          <p className="select-none capitalize">
+            {selectedCountry.name.toLocaleLowerCase()}
+          </p>
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
@@ -118,7 +120,7 @@ const CountrySelector: React.FC = () => {
               ) : (
                 <UserFlag location={country.code} isCode />
               )}
-              <p>{country.name}</p>
+              <p className="capitalize">{country.name.toLocaleLowerCase()}</p>
             </div>
           ))}
         </div>

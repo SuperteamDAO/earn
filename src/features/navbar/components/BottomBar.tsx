@@ -26,6 +26,10 @@ export function BottomBar({ onSearchOpen }: Props) {
     WebkitTapHighlightColor: 'transparent',
   } as React.CSSProperties;
 
+  if (router.asPath.startsWith('/new/')) {
+    return null;
+  }
+
   return (
     <div
       className={cn(

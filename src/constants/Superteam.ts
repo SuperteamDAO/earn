@@ -26,7 +26,7 @@ const basePath = ASSET_URL + '/superteams/';
 export const Superteams = [
   {
     name: 'Superteam India',
-    icons: basePath + 'logosindia.jpg',
+    icons: basePath + 'logos/india.jpg',
     banner: basePath + 'banners/India.png',
     region: Regions.INDIA,
     displayValue: 'India',
@@ -47,7 +47,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Germany',
-    icons: basePath + 'logosgermany.jpg',
+    icons: basePath + 'logos/germany.jpg',
     banner: basePath + 'banners/Germany.png',
     region: Regions.GERMANY,
     displayValue: 'Germany',
@@ -68,7 +68,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam UK',
-    icons: basePath + 'logosuk.png',
+    icons: basePath + 'logos/uk.png',
     banner: basePath + 'banners/UK.png',
     region: Regions.UK,
     displayValue: 'UK',
@@ -85,7 +85,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Turkey',
-    icons: basePath + 'logosturkey.jpg',
+    icons: basePath + 'logos/turkey.jpg',
     banner: basePath + 'banners/Turkey.png',
     region: Regions.TURKEY,
     displayValue: 'Turkey',
@@ -102,7 +102,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Vietnam',
-    icons: basePath + 'logosvietnam.png',
+    icons: basePath + 'logos/vietnam.png',
     banner: basePath + 'banners/Vietnam.png',
     region: Regions.VIETNAM,
     displayValue: 'Vietnam',
@@ -127,7 +127,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam UAE',
-    icons: basePath + 'logosuae.png',
+    icons: basePath + 'logos/uae.png',
     banner: basePath + 'banners/UAE.png',
     region: Regions.UAE,
     displayValue: 'UAE',
@@ -144,7 +144,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Nigeria',
-    icons: basePath + 'logosnigeria.png',
+    icons: basePath + 'logos/nigeria.png',
     banner: basePath + 'banners/Nigeria.png',
     region: Regions.NIGERIA,
     displayValue: 'Nigeria',
@@ -165,7 +165,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Brazil',
-    icons: basePath + 'logosbrazil.png',
+    icons: basePath + 'logos/brazil.png',
     banner: basePath + 'banners/Brazil.png',
     region: Regions.BRAZIL,
     displayValue: 'Brazil',
@@ -182,7 +182,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Malaysia',
-    icons: basePath + 'logosmalaysia.jpg',
+    icons: basePath + 'logos/malaysia.jpg',
     banner: basePath + 'banners/Malaysia.png',
     region: Regions.MALAYSIA,
     displayValue: 'Malaysia',
@@ -199,7 +199,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Balkan',
-    icons: basePath + 'logosbalkan.png',
+    icons: basePath + 'logos/balkan.png',
     banner: basePath + 'banners/Balkan.png',
     region: Regions.BALKAN,
     displayValue: 'Balkan',
@@ -232,7 +232,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Philippines',
-    icons: basePath + 'logosphilippines.png',
+    icons: basePath + 'logos/philippines.png',
     banner: basePath + 'banners/Philippines.png',
     region: Regions.PHILIPPINES,
     displayValue: 'Philippines',
@@ -253,7 +253,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Japan',
-    icons: basePath + 'logosjapan.png',
+    icons: basePath + 'logos/japan.png',
     banner: basePath + 'banners/Japan.png',
     region: Regions.JAPAN,
     displayValue: 'Japan',
@@ -270,7 +270,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam France',
-    icons: basePath + 'logosfrance.png',
+    icons: basePath + 'logos/france.png',
     banner: basePath + 'banners/France.png',
     region: Regions.FRANCE,
     displayValue: 'France',
@@ -287,7 +287,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Mexico',
-    icons: basePath + 'logosmexico.jpg',
+    icons: basePath + 'logos/mexico.jpg',
     banner: basePath + 'banners/Mexico.png',
     region: Regions.MEXICO,
     displayValue: 'Mexico',
@@ -298,7 +298,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Canada',
-    icons: basePath + 'logoscanada.png',
+    icons: basePath + 'logos/canada.png',
     banner: basePath + 'banners/Canada.png',
     region: Regions.CANADA,
     displayValue: 'Canada',
@@ -315,7 +315,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Singapore',
-    icons: basePath + 'logossingapore.png',
+    icons: basePath + 'logos/singapore.png',
     banner: basePath + 'banners/Singapore.png',
     region: Regions.SINGAPORE,
     displayValue: 'Singapore',
@@ -329,6 +329,28 @@ export const Superteams = [
         pfp: 'https://pbs.twimg.com/profile_images/859254261418303489/1VGdiak1_400x400.jpg',
       },
     ],
+  },
+  {
+    name: 'Superteam Poland',
+    icons: basePath + 'logos/poland.png',
+    banner: basePath + 'banners/poland.png',
+    region: Regions.POLAND,
+    displayValue: 'Poland',
+    country: ['Poland'],
+    code: 'PL',
+    hello: 'Cześć',
+    nationality: 'Poles',
+  },
+  {
+    name: 'Superteam Korea',
+    icons: basePath + 'logos/korea.png',
+    banner: basePath + 'banners/korea.png',
+    region: Regions.KOREA,
+    displayValue: 'South Korea',
+    country: ['South Korea'],
+    code: 'KR',
+    hello: 'Annyeonghaseyo',
+    nationality: 'Koreans',
   },
 ];
 
