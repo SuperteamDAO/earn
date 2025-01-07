@@ -550,19 +550,35 @@ model emailLogs {
   @@index([email, type])
 }
 
-model ResendLogs {
-  id        String   @id @default(uuid())
-  email     String?
-  subject   String?
-  status    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  type      String
+model EmailBatch {
+  id          String   @id @default(uuid())
+  type        String
+  status      String   @default("initiated")
+  triggeredBy String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  emails Emails[]
+}
+
+model Emails {
+  id          String   @id @default(uuid())
+  email       String?
+  subject     String?
+  status      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  type        String
+  batchId     String?
+  triggeredBy String
+
+  batch EmailBatch? @relation(fields: [batchId], references: [id])
 
   @@index([email, createdAt(sort: Desc)])
   @@index([createdAt(sort: Desc)])
   @@index([status])
   @@index([email, status])
+  @@index([batchId])
 }
 
 model SubscribeBounty {
