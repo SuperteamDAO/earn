@@ -46,7 +46,7 @@ export function RegionBanner({ st }: { st: Superteam }) {
           ...(customBannerPosition[st.region] || {}),
         }}
       />
-      <div className="absolute inset-0 block h-full w-full bg-[rgba(64,65,108,0.7)]" />
+      <div className="absolute inset-0 block h-full w-full bg-[rgba(64,65,108,0.75)]" />
       <div className="absolute top-1/2 flex -translate-y-1/2 flex-col items-center px-4">
         {st.code && <UserFlag location={st.code} isCode size="44px" />}
         {st.hello && (
