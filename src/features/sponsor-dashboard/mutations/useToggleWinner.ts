@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useAtom } from 'jotai';
 import { toast } from 'sonner';
 
 import { type SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { type Listing, type Rewards } from '@/features/listings/types';
@@ -31,7 +31,7 @@ export const useToggleWinner = (
       isWinner: boolean;
       winnerPosition: number | null;
     }) => {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/sponsor-dashboard/submission/toggle-winner/`,
         {
           id,

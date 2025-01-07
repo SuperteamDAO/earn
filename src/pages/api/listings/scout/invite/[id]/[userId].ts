@@ -40,7 +40,7 @@ async function scoutInvite(
 
     if (scoutSponsor?.isVerified === false) {
       logger.warn(`Sponsor isn't Verified, not sending scout data`);
-      return res.status(401).send('Unauthorized');
+      return res.status(403).send('Unauthorized');
     }
 
     const invitedCount = await prisma.scouts.count({

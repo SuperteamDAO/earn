@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { ChevronDown, Download, Search } from 'lucide-react';
 import React from 'react';
 import { toast } from 'sonner';
@@ -14,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { skillSubSkillMap } from '@/interface/skills';
+import { api } from '@/lib/api';
 
 interface FilterSectionProps {
   checkedItems: Record<string, boolean>;
@@ -41,7 +41,7 @@ export const FilterSection = ({
 
   const exportMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.get(
+      const response = await api.get(
         `/api/sponsor-dashboard/local-profiles/export/`,
       );
       return response.data;

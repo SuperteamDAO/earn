@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type GrantApplication } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { Check, Loader2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -22,6 +21,7 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
+import { api } from '@/lib/api';
 import { useUpdateUser, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -136,7 +136,7 @@ export const GrantApplicationModal = ({
 
       const apiAction = !!grantApplication ? 'update' : 'create';
 
-      await axios.post(`/api/grant-application/${apiAction}/`, {
+      await api.post(`/api/grant-application/${apiAction}/`, {
         grantId: id,
         projectTitle,
         projectOneLiner,

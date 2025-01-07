@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -9,6 +8,7 @@ import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
@@ -103,7 +103,7 @@ export const FeedCardContainer = ({
     setTotalLikes(newTotalLikes);
 
     try {
-      await axios.post(`/api/${cardType}/like`, { id });
+      await api.post(`/api/${cardType}/like`, { id });
     } catch (error) {
       console.log(error);
       setIsLiked(isLiked);

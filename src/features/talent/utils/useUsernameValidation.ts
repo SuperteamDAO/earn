@@ -1,7 +1,7 @@
-import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useEffect, useState } from 'react';
 
+import { api } from '@/lib/api';
 import logger from '@/lib/logger';
 import { useUser } from '@/store/user';
 
@@ -15,6 +15,11 @@ export const useUsernameValidation = (initialValue = '') => {
   const { user } = useUser();
 
   const checkUsernameAvailability = async (username: string) => {
+    if (username === '') {
+      setIsInvalid(true);
+      setValidationErrorMessage('Username is required');
+      return;
+    }
     if (!USERNAME_PATTERN.test(username)) {
       setIsInvalid(true);
       setValidationErrorMessage(
@@ -24,9 +29,7 @@ export const useUsernameValidation = (initialValue = '') => {
     }
 
     try {
-      const response = await axios.get(
-        `/api/user/username?username=${username}`,
-      );
+      const response = await api.get(`/api/user/username?username=${username}`);
       const available = response.data.available;
       setIsInvalid(!available);
       setValidationErrorMessage(

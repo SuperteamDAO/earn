@@ -5,6 +5,7 @@ import Link from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -220,22 +221,37 @@ export const SubmissionPanel = ({
               {selectedSubmission?.user?.publicKey && (
                 <div className="flex items-center justify-start gap-2 whitespace-nowrap text-sm">
                   <MdOutlineAccountBalanceWallet color="#94A3B8" />
-                  <p className="flex items-center text-slate-400">
-                    {truncatePublicKey(selectedSubmission?.user?.publicKey, 3)}
+                  <button
+                    className="flex items-center text-slate-400"
+                    onClick={() => {
+                      toast.promise(
+                        async () => {
+                          navigator.clipboard.writeText(
+                            selectedSubmission?.user?.publicKey || '',
+                          );
+                        },
+                        {
+                          loading: 'Copying Wallet Address...',
+                          success: 'Wallet Address copied!',
+                          error: 'Failed to copy Wallet Address!',
+                        },
+                      );
+                    }}
+                  >
                     <Tooltip
                       content="Copy Wallet ID"
                       contentProps={{ side: 'right' }}
+                      triggerClassName="flex items-center hover:underline underline-offset-1 "
                     >
-                      <Copy
-                        className="ml-1 h-4 w-4 cursor-pointer text-slate-400 hover:text-slate-500"
-                        onClick={() =>
-                          navigator.clipboard.writeText(
-                            selectedSubmission?.user?.publicKey || '',
-                          )
-                        }
-                      />
+                      <p>
+                        {truncatePublicKey(
+                          selectedSubmission?.user?.publicKey,
+                          3,
+                        )}
+                      </p>
+                      <Copy className="ml-1 h-3.5 w-3.5 cursor-pointer text-slate-400 hover:text-slate-500" />
                     </Tooltip>
-                  </p>
+                  </button>
                 </div>
               )}
               {selectedSubmission?.user?.twitter && (

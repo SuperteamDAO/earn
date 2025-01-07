@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 export interface LocalProfile {
   id: string;
@@ -24,7 +25,7 @@ export interface LocalProfile {
 }
 
 const fetchLocalProfiles = async (): Promise<LocalProfile[]> => {
-  const { data } = await axios.get('/api/sponsor-dashboard/local-profiles/', {
+  const { data } = await api.get('/api/sponsor-dashboard/local-profiles/', {
     params: {},
   });
   return data;

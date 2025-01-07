@@ -5,7 +5,6 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import axios from 'axios';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -19,6 +18,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { ApplicationDetails } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationDetails';
@@ -173,7 +173,7 @@ function GrantApplications({ slug }: Props) {
       const batchSize = 10;
       for (let i = 0; i < applicationIds.length; i += batchSize) {
         const batch = applicationIds.slice(i, i + batchSize);
-        await axios.post(
+        await api.post(
           `/api/sponsor-dashboard/grants/update-application-status`,
           {
             data: batch.map((a) => ({ id: a })),
@@ -389,7 +389,7 @@ function GrantApplications({ slug }: Props) {
       applicationId: string;
       approvedAmount: number;
     }) => {
-      const response = await axios.post(
+      const response = await api.post(
         '/api/sponsor-dashboard/grants/update-application-status',
         {
           data: [{ id: applicationId, approvedAmount }],
@@ -438,7 +438,7 @@ function GrantApplications({ slug }: Props) {
 
   const rejectGrantMutation = useMutation({
     mutationFn: async (applicationId: string) => {
-      const response = await axios.post(
+      const response = await api.post(
         '/api/sponsor-dashboard/grants/update-application-status',
         {
           data: [{ id: applicationId }],

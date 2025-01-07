@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
 
 import { type TrackProps } from '@/interface/hackathon';
+import { api } from '@/lib/api';
 
 interface Stats {
   totalRewardAmount: number;
@@ -9,14 +9,14 @@ interface Stats {
 }
 
 const fetchTracks = async (slug: string): Promise<TrackProps[]> => {
-  const response = await axios.get('/api/hackathon/', {
+  const response = await api.get('/api/hackathon/', {
     params: { slug },
   });
   return response.data;
 };
 
 const fetchStats = async (slug: string): Promise<Stats> => {
-  const response = await axios.get('/api/hackathon/public-stats/', {
+  const response = await api.get('/api/hackathon/public-stats/', {
     params: { slug },
   });
   return response.data;

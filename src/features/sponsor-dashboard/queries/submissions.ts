@@ -1,18 +1,15 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
 
 import { type SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
 
 const fetchSubmissions = async (
   slug: string,
   isHackathon?: boolean,
 ): Promise<SubmissionWithUser[]> => {
-  const { data } = await axios.get(
-    `/api/sponsor-dashboard/${slug}/submissions`,
-    {
-      params: { isHackathon },
-    },
-  );
+  const { data } = await api.get(`/api/sponsor-dashboard/${slug}/submissions`, {
+    params: { isHackathon },
+  });
   return data;
 };
 

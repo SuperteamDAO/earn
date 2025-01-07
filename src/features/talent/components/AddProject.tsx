@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
 import { type Dispatch, type SetStateAction, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -21,6 +20,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import type { PoW } from '@/interface/pow';
 import { allSkills, allSubSkills } from '@/interface/skills';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -123,7 +123,7 @@ export const AddProject = ({
 
     if (upload) {
       try {
-        await axios.post('/api/pow/create', {
+        await api.post('/api/pow/create', {
           pows: [
             {
               title: projectData.title,

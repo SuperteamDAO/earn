@@ -1,10 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
 
 import { type User } from '@/interface/user';
+import { api } from '@/lib/api';
 
 const fetchRecentEarners = async (): Promise<User[]> => {
-  const response = await axios.get('/api/sidebar/recent-earners');
+  const response = await api.get('/api/sidebar/recent-earners');
   return response.data;
 };
 

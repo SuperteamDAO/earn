@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -14,6 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
@@ -50,9 +50,13 @@ export default function NewProfilePage({
       // localStorage.removeItem(ONBOARDING_KEY);
       if (!user?.isTalentFilled) {
         const originUrl = params.get('originUrl');
+        const type = params.get('type');
+        const query: Record<string, string> = {};
+        if (originUrl) query['originUrl'] = originUrl;
+        if (type) query['type'] = type;
         router.push({
           pathname: '/new/talent',
-          query: originUrl ? { originUrl } : undefined,
+          query,
         });
       } else {
         router.push(`/t/${user.username}`);
@@ -67,7 +71,7 @@ export default function NewProfilePage({
     if (!user) return;
     try {
       // localStorage.removeItem(ONBOARDING_KEY);
-      const sponsors = await axios.get('/api/user-sponsors');
+      const sponsors = await api.get('/api/user-sponsors');
       if (sponsors?.data?.length && user.currentSponsorId) {
         router.push('/dashboard/listings?open=1');
       } else {
@@ -107,8 +111,8 @@ export default function NewProfilePage({
         />
       }
     >
-      <div className="relative mx-auto flex max-w-[52rem] md:h-screen">
-        <div className="static top-0 my-10 flex flex-col gap-16 px-4 md:relative md:flex-row md:gap-8 lg:px-0 lg:py-0">
+      <div className="relative mx-auto mt-6 flex max-w-[52rem] items-center md:mt-0 md:h-[calc(100vh-3.5rem)]">
+        <div className="static top-0 mb-10 flex flex-col gap-16 px-4 md:relative md:flex-row md:gap-8 lg:px-0 lg:py-0">
           {showTalentProfile && (
             <div className="flex w-full flex-col gap-9">
               <div className="flex flex-col gap-1.5">
@@ -251,7 +255,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let showTalentProfile = true;
 
   try {
-    const response = await axios.get(`${getURL()}api/user`, {
+    const response = await api.get(`${getURL()}api/user`, {
       headers: {
         Cookie: req.headers.cookie,
       },

@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import {
   Check,
   ChevronLeft,
@@ -27,6 +26,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { tokenList } from '@/constants/tokenList';
 import { useClipboard } from '@/hooks/use-clipboard';
+import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
@@ -79,7 +79,7 @@ ${socialListingLink('twitter')}
 
   const exportMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.get(
+      const response = await api.get(
         `/api/sponsor-dashboard/submission/export/`,
         {
           params: {

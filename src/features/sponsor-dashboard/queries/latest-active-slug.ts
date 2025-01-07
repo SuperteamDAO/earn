@@ -1,8 +1,9 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 const fetchLatestActiveSlug = async (): Promise<string> => {
-  const { data } = await axios.get('/api/listings/latest-active-slug');
+  const { data } = await api.get('/api/listings/latest-active-slug');
   return data;
 };
 

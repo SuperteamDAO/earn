@@ -12,7 +12,6 @@ import {
   Transaction,
 } from '@solana/web3.js';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useAtom } from 'jotai';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -24,6 +23,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { tokenList } from '@/constants/tokenList';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -67,7 +67,7 @@ export const PayoutButton = ({ bounty }: Props) => {
       isPaid: boolean;
       paymentDetails: any;
     }) =>
-      axios.post(`/api/sponsor-dashboard/submission/add-payment/`, {
+      api.post(`/api/sponsor-dashboard/submission/add-payment/`, {
         id,
         isPaid,
         paymentDetails,

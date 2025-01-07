@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import React from 'react';
 import { toast } from 'sonner';
 
@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { api } from '@/lib/api';
 
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
@@ -32,7 +33,7 @@ export function MarkCompleteModal({
   const { mutate: markCompletedMutation, isPending: markCompletePending } =
     useMutation({
       mutationFn: async () => {
-        const response = await axios.put<GrantApplicationWithUser>(
+        const response = await api.put<GrantApplicationWithUser>(
           `/api/sponsor-dashboard/grants/update-ship-progress`,
           {
             id: applicationId,

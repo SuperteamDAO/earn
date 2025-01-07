@@ -1,10 +1,10 @@
-import axios from 'axios';
+import { api } from '@/lib/api';
 
 import { emailRegex } from '@/features/social/utils/regex';
 
 export const checkEmailValidity = async (email: string) => {
   try {
-    const { data } = await axios.post('/api/email/validate', { email });
+    const { data } = await api.post('/api/email/validate', { email });
     return data.isValid;
   } catch (error) {
     console.error('Error checking email validity:', error);

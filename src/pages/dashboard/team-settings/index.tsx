@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { ChevronLeft, ChevronRight, Copy, Plus, Search } from 'lucide-react';
 import { type Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
@@ -30,6 +29,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { SponsorLayout } from '@/layouts/Sponsor';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -94,7 +94,7 @@ const Index = () => {
 
   const removeMemberMutation = useMutation({
     mutationFn: async (userId: string) => {
-      await axios.post('/api/sponsor-dashboard/members/remove', {
+      await api.post('/api/sponsor-dashboard/members/remove', {
         id: userId,
       });
     },

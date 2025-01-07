@@ -25,7 +25,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (!user) {
       logger.warn(`Unauthorized access attempt by user ${userId}`);
-      return res.status(401).json({ error: 'Unauthorized' });
+      return res.status(403).json({ error: 'Unauthorized' });
     }
 
     const result = await prisma.bounties.findFirst({

@@ -28,6 +28,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { PDTG } from '@/constants/Telegram';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { uploadToCloudinary } from '@/utils/upload';
@@ -186,13 +187,13 @@ const CreateSponsor = () => {
       const { sponsorData, userData } = transformFormToApiData(data);
 
       try {
-        await axios.post('/api/sponsors/create', sponsorData);
+        await api.post('/api/sponsors/create', sponsorData);
 
         if (userData && shouldUpdateUser(userData, user)) {
-          await axios.post('/api/sponsors/usersponsor-details/', userData);
+          await api.post('/api/sponsors/usersponsor-details/', userData);
         }
 
-        await axios.post('/api/email/manual/welcome-sponsor');
+        await api.post('/api/email/manual/welcome-sponsor');
 
         localStorage.removeItem(ONBOARDING_KEY);
         return 'Success';

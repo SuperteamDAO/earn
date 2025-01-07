@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 import { type Grant } from '@/features/grants/types';
 
@@ -14,9 +15,7 @@ export const sponsorGrantQuery = (
   queryOptions({
     queryKey: ['grant', slug],
     queryFn: async (): Promise<GrantWithApplicationCount> => {
-      const response = await axios.get(
-        `/api/sponsor-dashboard/grants/${slug}/`,
-      );
+      const response = await api.get(`/api/sponsor-dashboard/grants/${slug}/`);
       return response.data;
     },
     enabled: !!currentSponsorId,

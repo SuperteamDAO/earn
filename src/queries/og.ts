@@ -1,6 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
 import { type unfurl } from 'unfurl.js';
+
+import { api } from '@/lib/api';
 
 type OpenGraph = Pick<
   Awaited<ReturnType<typeof unfurl>>,
@@ -12,7 +13,7 @@ type OgApiResponse = {
 };
 
 const fetchOgImage = async (url: string): Promise<OpenGraph | 'error'> => {
-  const { data } = await axios.get<OgApiResponse>('/api/og/get', {
+  const { data } = await api.get<OgApiResponse>('/api/og/get', {
     params: { url },
     timeout: 5000,
   });

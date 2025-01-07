@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useAtomValue } from 'jotai';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
@@ -14,6 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 
@@ -111,7 +111,7 @@ export function PublishResults({
           });
         }
       }
-      await axios.post(`/api/listings/announce/${bounty?.id}/`);
+      await api.post(`/api/listings/announce/${bounty?.id}/`);
       setIsWinnersAnnounced(true);
       setIsPublishingResults(false);
     } catch (e) {

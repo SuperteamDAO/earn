@@ -1,5 +1,4 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
 
 interface ListingSubmissionParams {
   slug: string;
@@ -7,6 +6,7 @@ interface ListingSubmissionParams {
 }
 
 import { type SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
 
 import { type Listing } from '../types';
 
@@ -18,7 +18,7 @@ const fetchListingSubmissions = async (
 }> => {
   const slug = params.slug;
   delete (params as any).slug;
-  const { data } = await axios.get(`/api/listings/submissions/${slug}/`, {
+  const { data } = await api.get(`/api/listings/submissions/${slug}/`, {
     params,
   });
   return data;

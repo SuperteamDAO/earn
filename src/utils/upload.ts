@@ -1,5 +1,4 @@
-import axios from 'axios';
-
+import { api } from '@/lib/api';
 import logger from '@/lib/logger';
 
 function fileToBase64(file: File): Promise<string> {
@@ -31,7 +30,7 @@ export async function uploadToCloudinary(
     const base64Image = await fileToBase64(file);
     const base64Content = base64Image.split(',')[1];
 
-    const response = await axios.post('/api/upload-image', {
+    const response = await api.post('/api/upload-image', {
       imageBase64: base64Content,
       type,
       folder,
