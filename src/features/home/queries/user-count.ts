@@ -1,12 +1,13 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 interface TotalType {
   totalUsers?: number;
 }
 
 const fetchUserCount = async (): Promise<TotalType> => {
-  const { data } = await axios.get('/api/homepage/user-count');
+  const { data } = await api.get('/api/homepage/user-count');
   return data;
 };
 

@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 interface HomeFeed {
   createdAt: string;
@@ -16,7 +17,7 @@ interface HomeFeed {
 }
 
 const fetchHomeFeed = async (): Promise<HomeFeed[]> => {
-  const { data } = await axios.get('/api/feed/home');
+  const { data } = await api.get('/api/feed/home');
   return data;
 };
 

@@ -1,7 +1,7 @@
-import axios from 'axios';
 import type { NextRouter } from 'next/router';
 import type { TransitionStartFunction } from 'react';
 
+import { api } from '@/lib/api';
 import logger from '@/lib/logger';
 
 import { type SearchResult } from '../types';
@@ -43,7 +43,7 @@ interface SearchQuery {
 export async function search(query: string, params?: SearchQuery) {
   try {
     if (query.length > 0) {
-      const resp = await axios.get(`/api/search/${encodeURIComponent(query)}`, {
+      const resp = await api.get(`/api/search/${encodeURIComponent(query)}`, {
         params: {
           bountiesLimit: 10,
           grantsLimit: 3,

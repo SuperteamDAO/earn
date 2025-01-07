@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
@@ -6,6 +5,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 interface AlertOptionProps {
@@ -59,7 +59,7 @@ export const EmailSettingsModal = ({
     try {
       posthog.capture('confirm_email preferences');
       setIsUpdating(true);
-      await axios.post('/api/user/update-email-settings', {
+      await api.post('/api/user/update-email-settings', {
         categories: selectedCategories,
       });
 

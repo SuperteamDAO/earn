@@ -1,9 +1,9 @@
-import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
 import { ListingPageLayout } from '@/layouts/Listing';
+import { api } from '@/lib/api';
 import { getURL } from '@/utils/validUrl';
 
 import { SubmissionList } from '@/features/listings/components/SubmissionsPage/SubmissionList';
@@ -24,9 +24,7 @@ const SubmissionPage = ({
 
   const resetSubmissions = async () => {
     try {
-      const bountyDetails = await axios.get(
-        `/api/listings/submissions/${slug}`,
-      );
+      const bountyDetails = await api.get(`/api/listings/submissions/${slug}`);
       setSubmission(bountyDetails.data.submission);
     } catch (e) {
       console.log(e);
@@ -51,7 +49,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let bountyData;
   try {
-    const bountyDetails = await axios.get(
+    const bountyDetails = await api.get(
       `${getURL()}api/listings/submissions/${slug}`,
       {
         params: { type },

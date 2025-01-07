@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -10,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -101,7 +101,7 @@ export const TalentForm = () => {
       toast.promise(
         async () => {
           try {
-            await axios.post('/api/user/complete-profile/', {
+            await api.post('/api/user/complete-profile/', {
               ...data,
               photo: isGooglePhoto ? user?.photo : data.photo,
             });

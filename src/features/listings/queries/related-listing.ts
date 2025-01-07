@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 import { type Listing } from '../types';
 
@@ -12,10 +13,9 @@ interface RelatedListingsParams {
 const fetchRelatedListings = async (
   params: RelatedListingsParams,
 ): Promise<Listing[]> => {
-  const { data } = await axios.get(
-    `/api/listings/${params.listingId}/related`,
-    { params },
-  );
+  const { data } = await api.get(`/api/listings/${params.listingId}/related`, {
+    params,
+  });
   return data;
 };
 

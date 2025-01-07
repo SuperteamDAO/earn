@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { Check, ExternalLink, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -17,6 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { tokenList } from '@/constants/tokenList';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -121,7 +121,7 @@ export const VerifyPaymentModal = ({
   }, [listing?.slug]);
 
   const verifyPaymentMutation = async (body: VerifyPaymentsFormData) => {
-    return await axios.post<{ validationResults: ValidatePaymentResult[] }>(
+    return await api.post<{ validationResults: ValidatePaymentResult[] }>(
       '/api/sponsor-dashboard/listings/verify-external-payment',
       {
         paymentLinks: body.paymentLinks,

@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 interface UserStats {
   wins: number;
@@ -8,7 +9,7 @@ interface UserStats {
 }
 
 const fetchUserStats = async (): Promise<UserStats> => {
-  const { data } = await axios.get<UserStats>('/api/user/stats');
+  const { data } = await api.get<UserStats>('/api/user/stats');
   return data;
 };
 

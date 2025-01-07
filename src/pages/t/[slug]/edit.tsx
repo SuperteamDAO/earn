@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
 import { Edit, Info, Loader2, Plus, Trash } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -33,6 +32,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { uploadToCloudinary } from '@/utils/upload';
@@ -172,7 +172,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   useEffect(() => {
     const fetchPoW = async () => {
       try {
-        const response = await axios.get('/api/pow/get', {
+        const response = await api.get('/api/pow/get', {
           params: {
             userId: user?.id,
           },
@@ -270,11 +270,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       console.log('final updated data', finalUpdatedData);
       toast.promise(
         async () => {
-          await axios.post('/api/pow/edit', {
+          await api.post('/api/pow/edit', {
             pows: pow,
           });
 
-          await axios.post('/api/user/edit', { ...finalUpdatedData });
+          await api.post('/api/user/edit', { ...finalUpdatedData });
 
           await refetchUser();
 

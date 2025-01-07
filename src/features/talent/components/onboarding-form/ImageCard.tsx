@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -14,6 +13,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type Superteam, Superteams } from '@/constants/Superteam';
+import { api } from '@/lib/api';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { roundToNearestThousand } from '@/utils/number';
 
@@ -49,7 +49,7 @@ export const TalentImageCard = () => {
   useEffect(() => {
     const fetchLocation = async () => {
       try {
-        const response = await axios.get('https://ipapi.co/json/');
+        const response = await api.get('https://ipapi.co/json/');
         const locationData = response.data;
 
         if (locationData && locationData.country_code) {

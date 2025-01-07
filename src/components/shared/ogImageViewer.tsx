@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/api';
 import { ogImageQuery } from '@/queries/og';
 import { cn } from '@/utils/cn';
 
@@ -64,7 +65,7 @@ export const OgImageViewer = ({
       if (type && id && !isUpdating) {
         setIsUpdating(true);
         try {
-          await axios.post('/api/og/update', {
+          await api.post('/api/og/update', {
             type,
             url: 'error',
             id,
@@ -89,7 +90,7 @@ export const OgImageViewer = ({
         if (type && id) {
           setIsUpdating(true);
           try {
-            await axios.post('/api/og/update', {
+            await api.post('/api/og/update', {
               type,
               url: 'error',
               id,
@@ -105,14 +106,14 @@ export const OgImageViewer = ({
       if (ogData?.images?.[0]?.url && type && id) {
         setIsUpdating(true);
         try {
-          await axios.post('/api/og/update', {
+          await api.post('/api/og/update', {
             type,
             url: ogData.images[0].url,
             id,
           });
           setCurrentImageUrl(ogData.images[0].url);
         } catch (error) {
-          await axios.post('/api/og/update', {
+          await api.post('/api/og/update', {
             type,
             url: 'error',
             id,

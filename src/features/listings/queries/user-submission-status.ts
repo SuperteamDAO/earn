@@ -1,8 +1,9 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 const checkUserSubmission = async (listingId: string) => {
-  const { data } = await axios.get('/api/submission/check/', {
+  const { data } = await api.get('/api/submission/check/', {
     params: { listingId },
   });
   return data;

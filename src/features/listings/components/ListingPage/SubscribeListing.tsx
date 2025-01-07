@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import { TbBell, TbBellRinging } from 'react-icons/tb';
@@ -8,6 +7,7 @@ import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -21,7 +21,7 @@ interface Props {
 }
 
 const toggleSubscription = async (id: string) => {
-  await axios.post('/api/listings/notifications/toggle', { bountyId: id });
+  await api.post('/api/listings/notifications/toggle', { bountyId: id });
 };
 
 export const SubscribeListing = ({ id, isTemplate = false }: Props) => {

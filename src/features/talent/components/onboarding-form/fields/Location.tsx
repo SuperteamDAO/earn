@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -11,6 +10,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { countries } from '@/constants/country';
+import { api } from '@/lib/api';
 
 import {
   type NewTalentFormData,
@@ -26,7 +26,7 @@ export function LocationField() {
       try {
         const currentLocation = watch('location');
         if (!currentLocation) {
-          const response = await axios.get('https://ipapi.co/json/');
+          const response = await api.get('https://ipapi.co/json/');
           const locationData = response.data;
 
           if (locationData && locationData.country_code) {

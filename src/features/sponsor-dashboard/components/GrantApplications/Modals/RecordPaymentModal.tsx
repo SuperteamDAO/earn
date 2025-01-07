@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -23,6 +22,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { api } from '@/lib/api';
 
 interface RecordPaymentModalProps {
   recordPaymentIsOpen: boolean;
@@ -79,7 +79,7 @@ export const RecordPaymentModal = ({
 
   const addPaymentMutation = useMutation({
     mutationFn: async (data: PaymentFormInputs) => {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/sponsor-dashboard/grants/add-tranche`,
         {
           id: applicationId,

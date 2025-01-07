@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
+import { api } from '@/lib/api';
 import { validateSolanaAddress } from '@/utils/validateSolAddress';
 import { getURL } from '@/utils/validUrl';
 
@@ -124,7 +124,7 @@ export const usernameSuperRefine = async (
 ) => {
   if (data.username) {
     try {
-      const response = await axios.get(`${getURL()}api/user/username`, {
+      const response = await api.get(`${getURL()}api/user/username`, {
         params: {
           username: data.username,
           userId,

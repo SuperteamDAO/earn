@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { type Survey, type SurveyQuestion } from 'posthog-js';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
@@ -8,6 +7,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 function getMatchingSurvey(surveys: Survey[], id: string): Survey | null {
@@ -47,7 +47,7 @@ export const SurveyModal = ({
       $survey_id: surveyId,
       $survey_response: response,
     });
-    await axios.post('/api/user/update-survey/', {
+    await api.post('/api/user/update-survey/', {
       surveyId,
     });
     await refetchUser();

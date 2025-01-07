@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
@@ -14,6 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
@@ -71,7 +71,7 @@ export default function NewProfilePage({
     if (!user) return;
     try {
       // localStorage.removeItem(ONBOARDING_KEY);
-      const sponsors = await axios.get('/api/user-sponsors');
+      const sponsors = await api.get('/api/user-sponsors');
       if (sponsors?.data?.length && user.currentSponsorId) {
         router.push('/dashboard/listings?open=1');
       } else {
@@ -255,7 +255,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let showTalentProfile = true;
 
   try {
-    const response = await axios.get(`${getURL()}api/user`, {
+    const response = await api.get(`${getURL()}api/user`, {
       headers: {
         Cookie: req.headers.cookie,
       },

@@ -1,10 +1,10 @@
 import { SubmissionStatus } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useSetAtom } from 'jotai';
 import { toast } from 'sonner';
 
 import { type SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
 
 import { selectedSubmissionAtom, selectedSubmissionIdsAtom } from '../atoms';
 
@@ -18,7 +18,7 @@ export const useRejectSubmissions = (slug: string) => {
       const batchSize = 10;
       for (let i = 0; i < submissionIds.length; i += batchSize) {
         const batch = submissionIds.slice(i, i + batchSize);
-        await axios.post(`/api/sponsor-dashboard/submission/reject`, {
+        await api.post(`/api/sponsor-dashboard/submission/reject`, {
           data: batch.map((a) => ({ id: a })),
         });
       }

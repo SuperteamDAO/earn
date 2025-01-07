@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect } from 'react';
@@ -7,6 +6,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { type User } from '@/interface/user';
+import { api } from '@/lib/api';
 
 interface UserState {
   user: User | null;
@@ -34,7 +34,7 @@ export const useUser = () => {
   const { data, error, refetch, isLoading } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
-      const { data } = await axios.get<User>('/api/user/');
+      const { data } = await api.get<User>('/api/user/');
       if (data?.isBlocked && !router.pathname.includes('/blocked')) {
         router.push('/blocked');
       }
@@ -62,7 +62,7 @@ export const useUpdateUser = () => {
 
   return useMutation({
     mutationFn: (userData: Partial<User>) =>
-      axios.post<User>('/api/user/update/', userData),
+      api.post<User>('/api/user/update/', userData),
     onSuccess: (data) => {
       queryClient.setQueryData(['user'], data.data);
       setUser(data.data);

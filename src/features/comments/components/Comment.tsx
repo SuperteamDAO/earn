@@ -1,5 +1,4 @@
 import { type CommentRefType } from '@prisma/client';
-import axios from 'axios';
 import { AlertCircle, ChevronDown, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
@@ -27,6 +26,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type Comment as IComment } from '@/interface/comments';
 import { type User } from '@/interface/user';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -107,7 +107,7 @@ export const Comment = ({
     posthog.capture('delete_comment');
     const replyIndex = replies.findIndex((reply) => reply.id === replyId);
     if (replyIndex > -1) {
-      await axios.delete(`/api/comment/${replyId}/delete`);
+      await api.delete(`/api/comment/${replyId}/delete`);
       setReplies((prevReplies) => {
         const newReplies = [...prevReplies];
         newReplies.splice(replyIndex, 1);
@@ -135,7 +135,7 @@ export const Comment = ({
   const addNewReplyLvl1 = async (msg: string) => {
     posthog.capture('publish_comment');
     setNewReplyError(false);
-    const newReplyData = await axios.post(`/api/comment/create`, {
+    const newReplyData = await api.post(`/api/comment/create`, {
       message: msg,
       refType: refType,
       refId: refId,

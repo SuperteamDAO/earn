@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
 
+import { api } from '@/lib/api';
 import { getURL } from '@/utils/validUrl';
 
 interface SlugCheckParams {
@@ -10,7 +10,7 @@ interface SlugCheckParams {
 }
 
 export const fetchSlugCheck = async (params: SlugCheckParams) => {
-  const newSlug = await axios.get<{ slugExists?: boolean; slug?: string }>(
+  const newSlug = await api.get<{ slugExists?: boolean; slug?: string }>(
     `${getURL()}api/listings/check-slug`,
     {
       params: { ...params },
