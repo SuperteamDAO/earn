@@ -18,9 +18,5 @@ export default function SigninPage() {
     toast.error('There was an error. You need to sign in again.');
   }, []);
 
-  return (
-    <div>
-      <Login isOpen={true} onClose={() => {}} redirectTo={redirectPath} />
-    </div>
-  );
+  return <Login isOpen={true} onClose={() => {}} redirectTo={redirectPath} />;
 }
