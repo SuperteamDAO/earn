@@ -18,7 +18,8 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@next-auth/prisma-adapter": "^1.0.7",
-    "@next/third-parties": "^14.2.14",
+    "@next/third-parties": "^14.2.20",
+    "@phantom/wallet-sdk": "^0.0.12",
     "@planetscale/database": "^1.19.0",
     "@prisma/adapter-planetscale": "^6.0.1",
     "@prisma/client": "6.0.1",

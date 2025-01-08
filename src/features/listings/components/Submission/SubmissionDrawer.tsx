@@ -311,18 +311,18 @@ export const SubmissionDrawer = ({
                             </FormLabel>
                             <FormDescription>
                               {!!user?.publicKey ? (
-                                <>
+                                <span>
                                   This is where you will receive your rewards if
-                                  you win. If you want to edit it,{' '}
-                                  <a
-                                    href={`/t/${user?.username}/edit`}
-                                    className="text-blue-600 underline hover:text-blue-700"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                  you win. If you don&apos;t have a wallet,{' '}
+                                  <span
+                                    onClick={() => {
+                                      window.phantom.solana.connect();
+                                    }}
+                                    className="cursor-pointer text-blue-600 underline hover:text-blue-700"
                                   >
-                                    click here
-                                  </a>
-                                </>
+                                    Generate one
+                                  </span>
+                                </span>
                               ) : (
                                 <>
                                   This wallet address will be linked to your

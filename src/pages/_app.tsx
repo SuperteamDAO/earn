@@ -1,4 +1,6 @@
 import { GoogleTagManager } from '@next/third-parties/google';
+import { createPhantom, type CreatePhantomConfig } from '@phantom/wallet-sdk';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
@@ -27,15 +29,12 @@ const Toaster = dynamic(() => import('sonner').then((mod) => mod.Toaster), {
   ssr: false,
 });
 
-const ReactQueryDevtools = dynamic(
-  () =>
-    import('@tanstack/react-query-devtools').then(
-      (mod) => mod.ReactQueryDevtools,
-    ),
-  { ssr: false },
-);
-
 const queryClient = new QueryClient();
+
+const opts: CreatePhantomConfig = {
+  zIndex: 10_000,
+  hideLauncherBeforeOnboarded: false,
+};
 
 if (typeof window !== 'undefined') {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
@@ -53,6 +52,8 @@ function MyApp({ Component, pageProps }: any) {
   const posthog = usePostHog();
   const forcedRedirected = useRef(false);
 
+  const { publicKey } = useWallet();
+
   useEffect(() => {
     const handleRouteChange = () => posthog?.capture('$pageview');
     router.events.on('routeChangeComplete', handleRouteChange);
@@ -60,6 +61,13 @@ function MyApp({ Component, pageProps }: any) {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [router.events, posthog]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      createPhantom(opts);
+    }
+    console.log('wallet', publicKey);
+  }, []);
 
   const forcedProfileRedirect = useCallback(
     (wait?: number) => {
@@ -112,18 +120,16 @@ function MyApp({ Component, pageProps }: any) {
     loadRedirect();
   }, [user?.id]);
 
-  const isDashboardRoute = router.pathname.startsWith('/dashboard');
-
   return (
     <>
       <PagesTopLoader color="#6366F1" showSpinner={false} />
-      {isDashboardRoute ? (
-        <SolanaWalletProvider>
-          <Component {...pageProps} key={router.asPath} />
-        </SolanaWalletProvider>
-      ) : (
+      {/* {isDashboardRoute ? ( */}
+      <SolanaWalletProvider>
         <Component {...pageProps} key={router.asPath} />
-      )}
+      </SolanaWalletProvider>
+      {/* ) : (
+        <Component {...pageProps} key={router.asPath} />
+      )} */}
       <Toaster position="bottom-right" richColors />
     </>
   );
@@ -148,7 +154,7 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         </SessionProvider>
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
       </PostHogProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 }
