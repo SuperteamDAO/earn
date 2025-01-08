@@ -17,7 +17,7 @@ export default function VerifyRequest() {
   useEffect(() => {
     const storedEmail = localStorage.getItem('emailForSignIn');
     if (storedEmail) {
-      setEmail(storedEmail?.toLowerCase);
+      setEmail(storedEmail?.toLowerCase() || '');
     }
   }, []);
 
