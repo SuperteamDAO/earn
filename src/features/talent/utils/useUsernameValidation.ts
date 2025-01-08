@@ -23,7 +23,7 @@ export const useUsernameValidation = (initialValue = '') => {
     if (!USERNAME_PATTERN.test(username)) {
       setIsInvalid(true);
       setValidationErrorMessage(
-        "Username can only contain lowercase letters, numbers, '_', and '-'",
+        "Username can only contain letters, numbers, '_', and '-'",
       );
       return;
     }
@@ -47,7 +47,7 @@ export const useUsernameValidation = (initialValue = '') => {
   const debouncedCheckUsername = debounce(checkUsernameAvailability, 300);
 
   useEffect(() => {
-    if (username && username === user?.username) {
+    if (username && username.toLowerCase() === user?.username?.toLowerCase()) {
       setIsInvalid(false);
       setValidationErrorMessage('');
       return;

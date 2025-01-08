@@ -31,7 +31,7 @@ export const workType = [
   'Internship',
 ] as const;
 
-export const USERNAME_PATTERN = /^[a-z0-9_-]+$/;
+export const USERNAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
 
 const superteams = Superteams.map((team) => team.name);
 
