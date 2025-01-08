@@ -1,11 +1,11 @@
 import { type CommentRefType } from '@prisma/client';
-import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -46,7 +46,7 @@ export const CommentForm = ({
     setNewCommentLoading(true);
     setNewCommentError(false);
     try {
-      const newCommentData = await axios.post(`/api/comment/create`, {
+      const newCommentData = await api.post(`/api/comment/create`, {
         message: newComment,
         refType: refType,
         refId: refId,
@@ -64,6 +64,16 @@ export const CommentForm = ({
   const handleSubmit = () => {
     addNewComment();
   };
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (newComment && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleSubmit();
+      }
+    },
+    [newComment],
+  );
 
   useEffect(() => {
     const comment = localStorage.getItem(`comment-${refId}`);
@@ -91,6 +101,7 @@ export const CommentForm = ({
             placeholder="Write a comment"
             value={newComment}
             setValue={setNewComment}
+            onKeyDown={handleKeyDown}
             variant="flushed"
           />
         </div>

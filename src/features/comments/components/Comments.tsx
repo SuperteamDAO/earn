@@ -1,5 +1,4 @@
 import { type CommentRefType } from '@prisma/client';
-import axios from 'axios';
 import { useSetAtom } from 'jotai';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
@@ -11,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { Comment } from '@/interface/comments';
 import { type User } from '@/interface/user';
+import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
 import { validUsernamesAtom } from '../atoms';
@@ -65,7 +65,7 @@ export const Comments = ({
       (comment) => comment.id === commentId,
     );
     if (commentIndex > -1) {
-      await axios.delete(`/api/comment/${commentId}/delete`);
+      await api.delete(`/api/comment/${commentId}/delete`);
       setComments((prevComments) => {
         const newComments = [...prevComments];
         newComments.splice(commentIndex, 1);
@@ -79,7 +79,7 @@ export const Comments = ({
   const getComments = async (skip = 0, take = 10) => {
     setIsLoading(true);
     try {
-      const commentsData = await axios.get(`/api/comment/${refId}`, {
+      const commentsData = await api.get(`/api/comment/${refId}`, {
         params: {
           skip,
           take,

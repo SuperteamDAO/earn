@@ -1,10 +1,10 @@
-import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import type { SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
 import { sortRank } from '@/utils/rank';
 import { getURL } from '@/utils/validUrl';
 
@@ -101,7 +101,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let bountyData;
   const submissions: StrippedSubmission[] = [];
   try {
-    const bountyDetails = await axios.get(
+    const bountyDetails = await api.get(
       `${fullUrl}api/listings/details/${slug}`,
       {
         params: { type },
@@ -109,7 +109,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     );
     bountyData = bountyDetails.data;
 
-    const submissionsDetails = await axios.get<SubmissionWithUser[]>(
+    const submissionsDetails = await api.get<SubmissionWithUser[]>(
       `${fullUrl}api/listings/${bountyDetails.data.id}/winners/`,
     );
     let { data } = submissionsDetails;

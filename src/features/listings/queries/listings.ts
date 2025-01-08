@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 import { type Listing } from '../types';
 
@@ -15,7 +16,7 @@ interface ListingsParams {
 }
 
 const fetchListings = async (params: ListingsParams): Promise<Listing[]> => {
-  const { data } = await axios.get('/api/listings/', { params });
+  const { data } = await api.get('/api/listings/', { params });
   return data;
 };
 

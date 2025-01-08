@@ -1,11 +1,12 @@
 import { type SubscribeBounty, type User } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 const fetchSubscriptions = async (
   id: string,
 ): Promise<(SubscribeBounty & { User: User | null })[]> => {
-  const { data } = await axios.get('/api/listings/notifications/status', {
+  const { data } = await api.get('/api/listings/notifications/status', {
     params: { listingId: id },
   });
   return data;

@@ -1,10 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
 
 import { type Scouts } from '@/interface/scouts';
+import { api } from '@/lib/api';
 
 const fetchScouts = async (bountyId: string) => {
-  const response = await axios.get<Scouts[]>(`/api/listings/scout/${bountyId}`);
+  const response = await api.get<Scouts[]>(`/api/listings/scout/${bountyId}`);
   return response.data;
 };
 

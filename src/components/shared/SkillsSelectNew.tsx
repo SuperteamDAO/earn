@@ -31,6 +31,7 @@ interface SkillsSelectProps {
   defaultValue?: Skills;
   onChange: (skills: Skills) => void;
   className?: string;
+  maxSuggestions?: number;
 }
 
 const convertSkillsToOptions = (skills: Skills): Option[] => {
@@ -66,7 +67,15 @@ const convertSkillsToOptions = (skills: Skills): Option[] => {
 };
 
 export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
-  ({ defaultValue = [], onChange, className }, ref) => {
+  (
+    {
+      defaultValue = [],
+      onChange,
+      className,
+      maxSuggestions = MAX_SUGGESTIONS,
+    },
+    ref,
+  ) => {
     const [uiSkills, setUiSkills] = React.useState<Option[]>(
       convertSkillsToOptions(defaultValue),
     );
@@ -189,7 +198,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
       const addSuggestion = (option: Option) => {
         if (
           !selectedValues.has(option.value) &&
-          suggestions.length < MAX_SUGGESTIONS
+          suggestions.length < maxSuggestions
         ) {
           suggestions.push(option);
         }
@@ -266,7 +275,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
                   value !== 'Other' &&
                   !selectedValues.has(`${compSkill}:${value}`),
               )
-              .slice(0, MAX_SUGGESTIONS - suggestions.length);
+              .slice(0, maxSuggestions - suggestions.length);
 
             unselectedSubskills.forEach(({ label, value }) => {
               addSuggestion({

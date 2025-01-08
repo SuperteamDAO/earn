@@ -39,7 +39,7 @@ export default async function comment(
 
     if (comment.authorId !== userId) {
       logger.warn(`Unauthorized deletion attempt by user ID: ${userId}`);
-      return res.status(401).json({ error: 'Unauthorized' });
+      return res.status(403).json({ error: 'Unauthorized' });
     }
 
     logger.debug(`Deleting replies to comment with ID: ${commentId}`);

@@ -135,9 +135,15 @@ export default async function handler(
             skip: parseInt(skip as string, 10),
             take: parseInt(take as string, 10),
             orderBy:
-              filter === 'popular'
-                ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
-                : { createdAt: 'desc' },
+              highlightType === 'submission'
+                ? [
+                    { winnerPosition: 'asc' },
+                    { likeCount: 'desc' },
+                    { createdAt: 'desc' },
+                  ]
+                : filter === 'popular'
+                  ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
+                  : { createdAt: 'desc' },
             include: submissionInclude,
           })
         : [];
@@ -272,10 +278,7 @@ export default async function handler(
             take: parseInt(take as string, 10),
             orderBy:
               filter === 'popular'
-                ? [
-                    // { approvedAmount: 'desc' },
-                    { decidedAt: 'desc' },
-                  ]
+                ? [{ likeCount: 'desc' }, { decidedAt: 'desc' }]
                 : { decidedAt: 'desc' },
             include: grantApplicationInclude,
           })

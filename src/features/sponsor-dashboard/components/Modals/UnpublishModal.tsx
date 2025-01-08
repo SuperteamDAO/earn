@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -12,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { type ListingWithSubmissions } from '@/features/listings/types';
@@ -36,11 +36,11 @@ export const UnpublishModal = ({
     mutationFn: async (status: boolean) => {
       let result;
       if (listingType === 'grant') {
-        result = await axios.post(`/api/grants/update/${listingId}/`, {
+        result = await api.post(`/api/grants/update/${listingId}/`, {
           isPublished: status,
         });
       } else {
-        result = await axios.post(`/api/listings/unpublish/${listingId}/`);
+        result = await api.post(`/api/listings/unpublish/${listingId}/`);
       }
       return result.data;
     },

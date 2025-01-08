@@ -1,9 +1,9 @@
-import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { type User } from '@/interface/user';
+import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -28,7 +28,7 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
       setSuggestions(searchSuggestions);
     } else {
       if (suggestions.size < MAX_COMMENT_SUGGESTIONS) {
-        const searchResp = await axios.get('/api/user/search', {
+        const searchResp = await api.get('/api/user/search', {
           params: {
             query: text,
             take: MAX_COMMENT_SUGGESTIONS - suggestions.size,

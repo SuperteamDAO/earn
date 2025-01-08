@@ -1,5 +1,4 @@
 import { type SubscribeHackathon } from '@prisma/client';
-import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Link from 'next/link';
@@ -30,6 +29,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { api } from '@/lib/api';
 import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
@@ -912,7 +912,7 @@ const SubscribeHackathon = () => {
   const handleToggleSubscribe = async () => {
     setIsSubscribeLoading(true);
     try {
-      await axios.post('/api/hackathon/subscribe/toggle', { slug: SLUG });
+      await api.post('/api/hackathon/subscribe/toggle', { slug: SLUG });
       setUpdate((prev) => !prev);
       toast.success(
         sub.find((e) => e.userId === user?.id) ? 'Unsubscribed' : 'Subscribed',
@@ -928,7 +928,7 @@ const SubscribeHackathon = () => {
   useEffect(() => {
     const fetchSubscriptions = async () => {
       try {
-        const { data } = await axios.post('/api/hackathon/subscribe/get', {
+        const { data } = await api.post('/api/hackathon/subscribe/get', {
           slug: SLUG,
         });
         setSub(data);

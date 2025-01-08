@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
 import { Edit, Info, Loader2, Plus, Trash } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -10,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
+import { RegionCombobox } from '@/components/shared/RegionCombobox';
 import { SkillsSelect } from '@/components/shared/SkillsSelectNew';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -28,11 +28,11 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect, type Option } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip } from '@/components/ui/tooltip';
-import { CountryList } from '@/constants/countryList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { uploadAndReplaceImage } from '@/utils/image';
@@ -48,6 +48,7 @@ import {
   workType,
 } from '@/features/talent/constants';
 import { type ProfileFormData, profileSchema } from '@/features/talent/schema';
+import { hasDevSkills } from '@/features/talent/utils/skills';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
 export default function EditProfilePage({ slug }: { slug: string }) {
@@ -58,6 +59,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     mode: 'onBlur',
   });
   const { control, handleSubmit, watch, setError, clearErrors, trigger } = form;
+
+  const skills = watch('skills');
 
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -170,7 +173,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
   useEffect(() => {
     const fetchPoW = async () => {
       try {
-        const response = await axios.get('/api/pow/get', {
+        const response = await api.get('/api/pow/get', {
           params: {
             userId: user?.id,
           },
@@ -281,11 +284,11 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       console.log('final updated data', finalUpdatedData);
       toast.promise(
         async () => {
-          await axios.post('/api/pow/edit', {
+          await api.post('/api/pow/edit', {
             pows: pow,
           });
 
-          await axios.post('/api/user/edit', { ...finalUpdatedData });
+          await api.post('/api/user/edit', { ...finalUpdatedData });
 
           await refetchUser();
 
@@ -368,9 +371,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 isRequired
                 className="mb-5"
                 onChange={(e) => {
-                  const value = e.target.value
-                    .toLowerCase()
-                    .replace(/\s+/g, '-'); // Replace spaces with dashes
+                  const value = e.target.value.replace(/\s+/g, '-'); // Replace spaces with dashes
                   setUsername(value);
                   form.setValue('username', value);
                 }}
@@ -444,7 +445,10 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 SOCIALS
               </p>
 
-              <SocialInputAll control={control} />
+              <SocialInputAll
+                control={control}
+                required={hasDevSkills(skills) ? ['github'] : ['twitter']}
+              />
 
               <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
                 WORK
@@ -508,12 +512,29 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 control={control}
               />
 
-              <FormFieldSelect
-                label="Location"
-                options={CountryList}
+              <FormField
                 name="location"
-                placeholder="Select Your Country"
                 control={control}
+                render={({ field }) => (
+                  <FormItem className="mb-4 w-full gap-2">
+                    <FormLabel className="">Location</FormLabel>
+                    <FormControl>
+                      <RegionCombobox
+                        unset
+                        className="w-full"
+                        value={field.value}
+                        onChange={(e) => {
+                          field.onChange(e);
+                        }}
+                        classNames={{
+                          popoverContent:
+                            'w-[var(--radix-popper-anchor-width)]',
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage className="mt-1" />
+                  </FormItem>
+                )}
               />
 
               <FormFieldSelect

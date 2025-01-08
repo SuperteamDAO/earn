@@ -1,6 +1,5 @@
 import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
 
@@ -12,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
 import { selectedSubmissionAtom } from '../../atoms';
@@ -43,7 +43,7 @@ export const SelectLabel = ({ listingSlug }: Props) => {
 
   const { mutate: updateLabel } = useMutation({
     mutationFn: ({ id, label }: { id: string; label: SubmissionLabels }) =>
-      axios.post(`/api/sponsor-dashboard/submission/update-label/`, {
+      api.post(`/api/sponsor-dashboard/submission/update-label/`, {
         id,
         label,
       }),

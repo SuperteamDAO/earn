@@ -1,8 +1,8 @@
-import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 import React, { useState } from 'react';
 
 import { GrantPageLayout } from '@/layouts/Grants';
+import { api } from '@/lib/api';
 import { getURL } from '@/utils/validUrl';
 
 import { type GrantWithApplicationCount } from '@/features/grants/types';
@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   let grantData;
   try {
-    const grantDetails = await axios.get(`${getURL()}api/grants/${slug}`);
+    const grantDetails = await api.get(`${getURL()}api/grants/${slug}`);
     grantData = grantDetails.data;
   } catch (e) {
     console.error(e);

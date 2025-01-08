@@ -1,8 +1,8 @@
 import { type Hackathon } from '@prisma/client';
-import axios from 'axios';
 import { atom, createStore } from 'jotai';
 import { atomWithMutation } from 'jotai-tanstack-query';
 
+import { api } from '@/lib/api';
 import { convertUndefinedToNull } from '@/utils/undefinedToNull';
 
 import { type ListingFormData, type ListingStatus } from '../types';
@@ -34,7 +34,7 @@ const previewAtom = atom(false);
 const saveDraftMutationAtom = atomWithMutation(() => ({
   mutationKey: ['saveDraft'],
   mutationFn: async (data: Partial<ListingFormData>) => {
-    const response = await axios.post<ListingFormData>('/api/listings/draft', {
+    const response = await api.post<ListingFormData>('/api/listings/draft', {
       ...data,
     });
     return response.data;
@@ -49,12 +49,9 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
     const endpoint = isEditing
       ? '/api/listings/update'
       : '/api/listings/publish';
-    const response = await axios.post<ListingFormData>(
-      `${endpoint}/${data.id}`,
-      {
-        ...convertUndefinedToNull(data),
-      },
-    );
+    const response = await api.post<ListingFormData>(`${endpoint}/${data.id}`, {
+      ...convertUndefinedToNull(data),
+    });
     return response.data;
   },
 }));

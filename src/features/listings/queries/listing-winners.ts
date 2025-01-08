@@ -1,10 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
 
 import { type SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
 
 const fetchWinners = async (id: string): Promise<SubmissionWithUser[]> => {
-  const { data } = await axios.get(`/api/listings/${id}/winners/`);
+  const { data } = await api.get(`/api/listings/${id}/winners/`);
   return data.sort((a: SubmissionWithUser, b: SubmissionWithUser) => {
     if (!a.winnerPosition) return 1;
     if (!b.winnerPosition) return -1;

@@ -1,10 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
 
 import { type SponsorType } from '@/interface/sponsor';
+import { api } from '@/lib/api';
 
 const fetchSponsorData = async (): Promise<SponsorType> => {
-  const { data } = await axios.get('/api/sponsors/');
+  const { data } = await api.get('/api/sponsors/');
   return data;
 };
 

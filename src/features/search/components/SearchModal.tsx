@@ -1,4 +1,3 @@
-import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { ArrowRight, Search } from 'lucide-react';
 import Link from 'next/link';
@@ -9,6 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
 import { GrantsCard } from '@/features/grants/components/GrantsCard';
@@ -39,9 +39,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
     try {
       setLoading(true);
       if (query.length > 0) {
-        const resp = await axios.get(
-          `/api/search/${encodeURIComponent(query)}`,
-        );
+        const resp = await api.get(`/api/search/${encodeURIComponent(query)}`);
         setResults(resp.data.results as SearchResult[]);
         router.prefetch(`/search?q=${query}`);
       }

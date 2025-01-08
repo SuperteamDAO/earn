@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 interface MembersQueryParams {
   searchText: string;
@@ -13,7 +14,7 @@ const fetchMembersQueryFn = async ({
   skip,
   length,
 }: MembersQueryParams) => {
-  const response = await axios.get('/api/sponsor-dashboard/members/', {
+  const response = await api.get('/api/sponsor-dashboard/members/', {
     params: {
       searchText,
       skip,

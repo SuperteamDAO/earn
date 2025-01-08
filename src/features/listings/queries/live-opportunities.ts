@@ -1,8 +1,9 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 const fetchLiveOpportunities = async () => {
-  const response = await axios.get<{ totalUsdValue: number }>(
+  const response = await api.get<{ totalUsdValue: number }>(
     '/api/listings/live-opportunities',
   );
   return response.data;

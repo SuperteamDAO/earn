@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -7,6 +6,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { PDTG } from '@/constants/Telegram';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 export const EntityNameModal = ({
@@ -27,7 +27,7 @@ export const EntityNameModal = ({
     setLoading(true);
     try {
       if (user.currentSponsor) {
-        await axios.post('/api/sponsors/update-entity-name', {
+        await api.post('/api/sponsors/update-entity-name', {
           entityName,
         });
         await refetchUser();

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
   ChevronLeft,
   ChevronRight,
@@ -46,6 +45,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -99,7 +99,7 @@ export default function Hackathon() {
   const getBounties = async () => {
     setIsBountiesLoading(true);
     try {
-      const hackathonQuery = await axios.get('/api/hackathon/listings/', {
+      const hackathonQuery = await api.get('/api/hackathon/listings/', {
         params: {
           searchText,
           skip,
@@ -124,7 +124,7 @@ export default function Hackathon() {
 
   useEffect(() => {
     const getSponsorStats = async () => {
-      const sponsorData = await axios.get('/api/hackathon/stats');
+      const sponsorData = await api.get('/api/hackathon/stats');
       setSponsorStats(sponsorData.data);
       setIsStatsLoading(false);
     };
@@ -142,7 +142,7 @@ export default function Hackathon() {
   const changeBountyStatus = async (status: boolean) => {
     setIsChangingStatus(true);
     try {
-      const result = await axios.post(`/api/listings/unpublish/${bounty.id}/`, {
+      const result = await api.post(`/api/listings/unpublish/${bounty.id}/`, {
         isPublished: status,
       });
 
@@ -168,7 +168,7 @@ export default function Hackathon() {
 
   const deleteSelectedDraft = async () => {
     try {
-      await axios.post(`/api/listings/delete/${bounty.id}`);
+      await api.post(`/api/listings/delete/${bounty.id}`);
       const update = bounties.filter((x) => x.id !== bounty.id);
       setBounties(update);
     } catch (e) {

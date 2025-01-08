@@ -1,9 +1,10 @@
 import { type GrantApplication } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 const fetchUserApplication = async (grantId: string) => {
-  const response = await axios.get<GrantApplication>(
+  const response = await api.get<GrantApplication>(
     '/api/grant-application/get',
     {
       params: { id: grantId },

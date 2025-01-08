@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
@@ -7,6 +6,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Textarea } from '@/components/ui/textarea';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
 
 import { selectedSubmissionAtom } from '../../atoms';
 
@@ -27,7 +27,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
 
   const { mutate: updateNotes, isPending: isSaving } = useMutation({
     mutationFn: (content: string) =>
-      axios.post('/api/sponsor-dashboard/submission/update-notes', {
+      api.post('/api/sponsor-dashboard/submission/update-notes', {
         id: submissionId,
         notes: content,
       }),

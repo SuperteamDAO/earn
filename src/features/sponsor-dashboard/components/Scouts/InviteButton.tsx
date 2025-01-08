@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 import { LuCheck, LuPlus } from 'react-icons/lu';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
 interface Props {
@@ -29,7 +29,7 @@ export function InviteButton({
 
   const inviteMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post(
+      const response = await api.post(
         `/api/listings/scout/invite/${bountyId}/${userId}`,
       );
       return response.data;

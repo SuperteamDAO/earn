@@ -1,6 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
 import axios from 'axios';
 
+import { api } from '@/lib/api';
+
 interface InviteDetails {
   sponsorName: string;
   senderName: string;
@@ -10,7 +12,7 @@ interface InviteDetails {
 
 const verifyInvite = async (token: string): Promise<InviteDetails> => {
   try {
-    const { data } = await axios.get<InviteDetails>(
+    const { data } = await api.get<InviteDetails>(
       '/api/member-invites/verify',
       {
         params: { token },
@@ -29,7 +31,7 @@ const verifyInvite = async (token: string): Promise<InviteDetails> => {
 
 export const acceptInvite = async (token: string): Promise<void> => {
   try {
-    await axios.post('/api/member-invites/accept', { token });
+    await api.post('/api/member-invites/accept', { token });
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(

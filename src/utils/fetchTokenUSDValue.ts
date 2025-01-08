@@ -1,7 +1,7 @@
-import axios from 'axios';
 import dayjs from 'dayjs';
 
 import { tokenList } from '@/constants/tokenList';
+import { api } from '@/lib/api';
 import logger from '@/lib/logger';
 
 const CG_BASE_URL = 'https://api.coingecko.com/api/v3';
@@ -9,7 +9,7 @@ const STABLE_COINS = ['USDT', 'USDC', 'USDP'];
 
 async function getHistoricalPrice(coingeckoSymbol: string, date: Date) {
   const formattedDate = dayjs(date).format('DD-MM-YYYY');
-  const { data } = await axios.get(
+  const { data } = await api.get(
     `${CG_BASE_URL}/coins/${coingeckoSymbol}/history`,
     { params: { date: formattedDate } },
   );
@@ -17,7 +17,7 @@ async function getHistoricalPrice(coingeckoSymbol: string, date: Date) {
 }
 
 async function getCurrentPrice(coingeckoSymbol: string) {
-  const { data } = await axios.get(`${CG_BASE_URL}/simple/price`, {
+  const { data } = await api.get(`${CG_BASE_URL}/simple/price`, {
     params: { ids: coingeckoSymbol, vs_currencies: 'USD' },
   });
   return data[coingeckoSymbol].usd;

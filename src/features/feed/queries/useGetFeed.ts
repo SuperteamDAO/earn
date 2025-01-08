@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 import { type FeedDataProps, type FeedPostType } from '../types';
 
@@ -18,7 +19,7 @@ const fetchFeed = async ({
   pageParam,
   ...params
 }: GetFeedParams & { pageParam: number }) => {
-  const { data } = await axios.get<FeedDataProps[]>('/api/feed/get', {
+  const { data } = await api.get<FeedDataProps[]>('/api/feed/get', {
     params: {
       ...params,
       skip: pageParam,

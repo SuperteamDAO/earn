@@ -1,7 +1,7 @@
-import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useEffect, useState } from 'react';
 
+import { api } from '@/lib/api';
 import logger from '@/lib/logger';
 import { useUser } from '@/store/user';
 
@@ -15,18 +15,21 @@ export const useUsernameValidation = (initialValue = '') => {
   const { user } = useUser();
 
   const checkUsernameAvailability = async (username: string) => {
+    if (username === '') {
+      setIsInvalid(true);
+      setValidationErrorMessage('Username is required');
+      return;
+    }
     if (!USERNAME_PATTERN.test(username)) {
       setIsInvalid(true);
       setValidationErrorMessage(
-        "Username can only contain lowercase letters, numbers, '_', and '-'",
+        "Username can only contain letters, numbers, '_', and '-'",
       );
       return;
     }
 
     try {
-      const response = await axios.get(
-        `/api/user/username?username=${username}`,
-      );
+      const response = await api.get(`/api/user/username?username=${username}`);
       const available = response.data.available;
       setIsInvalid(!available);
       setValidationErrorMessage(
@@ -44,7 +47,7 @@ export const useUsernameValidation = (initialValue = '') => {
   const debouncedCheckUsername = debounce(checkUsernameAvailability, 300);
 
   useEffect(() => {
-    if (username && username === user?.username) {
+    if (username && username.toLowerCase() === user?.username?.toLowerCase()) {
       setIsInvalid(false);
       setValidationErrorMessage('');
       return;

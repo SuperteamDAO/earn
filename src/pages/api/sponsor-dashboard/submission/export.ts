@@ -18,8 +18,20 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
-  const params = req.query;
-  const listingId = params.listingId as string;
+  const listingId = Array.isArray(req.query.listingId)
+    ? req.query.listingId[0]
+    : req.query.listingId;
+
+  logger.debug(
+    `Export request received - listingId: ${listingId}, userSponsorId: ${userSponsorId}`,
+  );
+
+  if (!listingId) {
+    logger.error('Export request missing listingId parameter');
+    return res.status(400).json({
+      error: 'Missing required parameter: listingId',
+    });
+  }
 
   try {
     const { error, listing } = await checkListingSponsorAuth(

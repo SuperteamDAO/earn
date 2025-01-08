@@ -52,7 +52,7 @@ const submissionSchema = (
         ctx.addIssue({
           code: 'custom',
           path: ['link'],
-          message: 'Application link is required for non-project listings',
+          message: 'Add a valid link to continue',
         });
       }
       if (listing.type === 'project' && listing.compensationType !== 'fixed') {

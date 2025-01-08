@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -12,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { type ListingWithSubmissions } from '@/features/listings/types';
@@ -35,9 +35,9 @@ export const DeleteDraftModal = ({
   const deleteMutation = useMutation({
     mutationFn: async () => {
       if (listingType === 'grant') {
-        await axios.post(`/api/grants/delete/${listingId}`);
+        await api.post(`/api/grants/delete/${listingId}`);
       } else {
-        await axios.post(`/api/listings/delete/${listingId}`);
+        await api.post(`/api/listings/delete/${listingId}`);
       }
     },
     onSuccess: () => {

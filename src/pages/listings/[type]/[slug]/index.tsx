@@ -1,7 +1,7 @@
-import axios from 'axios';
 import type { GetServerSideProps } from 'next';
 
 import { ListingPageLayout } from '@/layouts/Listing';
+import { api } from '@/lib/api';
 import { getURL } from '@/utils/validUrl';
 
 import { ListingPop } from '@/features/conversion-popups/components/ListingPop';
@@ -68,9 +68,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  if (
+    slug === 'contribute-to-the-solana-ai-agent-toolkit-part-2' &&
+    type === 'project'
+  ) {
+    return {
+      redirect: {
+        destination: `https://earn.superteam.fun/listings/bounty/contribute-to-the-solana-ai-agent-toolkit-part-2`,
+        permanent: false,
+      },
+    };
+  }
+
   let bountyData;
   try {
-    const bountyDetails = await axios.get(
+    const bountyDetails = await api.get(
       `${getURL()}api/listings/details/${slug}`,
       {
         params: { type },

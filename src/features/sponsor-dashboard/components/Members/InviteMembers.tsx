@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { CheckCircle2, Send } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
@@ -17,6 +16,7 @@ import { FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { api } from '@/lib/api';
 
 interface Props {
   isOpen: boolean;
@@ -37,7 +37,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
 
   const inviteMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post('/api/member-invites/send/', {
+      const response = await api.post('/api/member-invites/send/', {
         email,
         memberType,
       });

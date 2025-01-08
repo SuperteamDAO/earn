@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 interface UsernameRandomType {
   available: boolean;
@@ -11,7 +12,7 @@ const fetchUsernameRandom = async (
   firstName?: string,
 ): Promise<UsernameRandomType> => {
   const params = firstName ? { firstName } : {};
-  const { data } = await axios.get<UsernameRandomType>(
+  const { data } = await api.get<UsernameRandomType>(
     '/api/user/random-username',
     { params },
   );

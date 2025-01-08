@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 import { type GrantWithApplicationCount } from '@/features/grants/types';
 
@@ -13,7 +14,7 @@ interface GetGrantsParams {
 const fetchGrants = async (
   params: GetGrantsParams = {},
 ): Promise<GrantWithApplicationCount[]> => {
-  const { data } = await axios.get('/api/grants/', { params });
+  const { data } = await api.get('/api/grants/', { params });
   return data;
 };
 

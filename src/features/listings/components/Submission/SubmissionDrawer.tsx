@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -23,6 +22,7 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -94,7 +94,7 @@ export const SubmissionDrawer = ({
     const fetchData = async () => {
       if (editMode && id) {
         try {
-          const response = await axios.get('/api/submission/get/', {
+          const response = await api.get('/api/submission/get/', {
             params: { id },
           });
 
@@ -126,7 +126,7 @@ export const SubmissionDrawer = ({
         ? '/api/submission/update/'
         : '/api/submission/create/';
 
-      await axios.post(submissionEndpoint, {
+      await api.post(submissionEndpoint, {
         listingId: id,
         link: data.link || '',
         tweet: data.tweet || '',

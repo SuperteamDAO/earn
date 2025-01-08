@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -12,6 +11,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Form, FormLabel } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { uploadAndReplaceImage } from '@/utils/image';
 
@@ -61,7 +61,7 @@ export const SponsorInfoModal = ({
 
   const updateUserMutation = useMutation({
     mutationFn: async (data: UserSponsorDetails) => {
-      const response = await axios.post(
+      const response = await api.post(
         '/api/sponsors/usersponsor-details/',
         data,
       );

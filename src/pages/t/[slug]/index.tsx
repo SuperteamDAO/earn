@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -18,6 +17,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
@@ -530,10 +530,10 @@ function TalentProfile({ talent, stats }: TalentProps) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
   try {
-    const talentReq = await axios.post(`${getURL()}/api/user/info`, {
+    const talentReq = await api.post(`${getURL()}/api/user/info`, {
       username: slug,
     });
-    const statsReq = await axios.post(`${getURL()}/api/user/public-stats`, {
+    const statsReq = await api.post(`${getURL()}/api/user/public-stats`, {
       username: slug,
     });
     const talent = talentReq.data;

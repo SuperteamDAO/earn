@@ -21,11 +21,13 @@ import {
 type Country = {
   name: string;
   code: string;
+  slug: string;
 };
 
 const countries: Country[] = Superteams.map((superteam) => ({
   name: superteam.displayValue,
   code: superteam.code ?? 'GLOBAL',
+  slug: superteam.region,
 }));
 
 const FooterColumn = ({
@@ -67,12 +69,13 @@ const CountrySelector: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country>({
     name: 'Global',
     code: 'global',
+    slug: '/',
   });
 
   useEffect(() => {
     const path = router.asPath.toLowerCase();
     const matchedCountry = countries.find((country) =>
-      path.includes(`/regions/${country.name.toLowerCase()}`),
+      path.includes(`/regions/${country.slug?.toLowerCase()}`),
     );
     if (matchedCountry) {
       setSelectedCountry(matchedCountry);
@@ -83,13 +86,13 @@ const CountrySelector: React.FC = () => {
     if (country.name === 'Global') {
       router.push('/');
     } else {
-      const regionUrl = `/regions/${country.name.toLowerCase()}`;
+      const regionUrl = `/regions/${country.slug.toLowerCase()}`;
       router.push(regionUrl);
     }
   };
 
   const dropdownCountries = [
-    { name: 'Global', code: 'global' },
+    { name: 'Global', code: 'global', slug: '/' },
     ...countries.filter((country) => country.name !== 'Global'),
   ];
 
@@ -102,7 +105,7 @@ const CountrySelector: React.FC = () => {
           ) : (
             <UserFlag location={selectedCountry.code} isCode />
           )}
-          <p className="select-none">{selectedCountry.name}</p>
+          <p className="select-none capitalize">{selectedCountry?.name}</p>
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
@@ -118,7 +121,7 @@ const CountrySelector: React.FC = () => {
               ) : (
                 <UserFlag location={country.code} isCode />
               )}
-              <p>{country.name}</p>
+              <p className="capitalize">{country?.name}</p>
             </div>
           ))}
         </div>

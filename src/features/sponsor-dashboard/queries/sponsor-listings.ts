@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 import { type Listing } from '@/features/listings/types';
 
@@ -8,7 +9,7 @@ interface Listings {
 }
 
 const fetchListings = async (slug: string): Promise<Listings> => {
-  const { data } = await axios.post(`/api/listings/sponsor`, {
+  const { data } = await api.post(`/api/listings/sponsor`, {
     sponsor: slug,
   });
   return data;

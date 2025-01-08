@@ -1,8 +1,9 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 const fetchRegionLiveCount = async (region: string) => {
-  const { data } = await axios.get<{ count: number }>(
+  const { data } = await api.get<{ count: number }>(
     '/api/listings/region-live-count',
     { params: { region: region.toLowerCase() } },
   );

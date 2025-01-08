@@ -3,7 +3,8 @@ import {
   type SubmissionLabels,
 } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
@@ -18,7 +19,7 @@ const fetchApplications = async (
   params: ApplicationsParams,
   slug: string,
 ): Promise<GrantApplicationWithUser[]> => {
-  const { data } = await axios.get(
+  const { data } = await api.get(
     `/api/sponsor-dashboard/grants/${slug}/applications/`,
     { params },
   );

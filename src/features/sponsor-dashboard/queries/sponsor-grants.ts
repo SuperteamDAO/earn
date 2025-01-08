@@ -1,12 +1,13 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 import { type GrantWithApplicationCount } from '@/features/grants/types';
 
 const fetchGrants = async (
   slug: string,
 ): Promise<GrantWithApplicationCount[]> => {
-  const { data } = await axios.post('/api/grants/sponsor', { sponsor: slug });
+  const { data } = await api.post('/api/grants/sponsor', { sponsor: slug });
   return data;
 };
 

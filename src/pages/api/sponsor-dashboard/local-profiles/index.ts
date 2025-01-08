@@ -28,7 +28,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const superteam = Superteams.find((team) => team.name === sponsor?.name);
     if (!superteam) {
-      return res.status(401).json({ error: 'Invalid sponsor' });
+      return res.status(403).json({ error: 'Invalid sponsor' });
     }
 
     const region = superteam.region;
@@ -38,7 +38,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       user?.stLead === region || user?.stLead === 'MAHADEV';
 
     if (!isLocalProfileVisible) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      return res.status(403).json({ error: 'Unauthorized' });
     }
 
     logger.debug('Fetching user details');

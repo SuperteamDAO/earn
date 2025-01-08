@@ -1,7 +1,7 @@
-import axios from 'axios';
 import debounce from 'lodash.debounce';
 import { useEffect, useState } from 'react';
 
+import { api } from '@/lib/api';
 import logger from '@/lib/logger';
 import { useUser } from '@/store/user';
 
@@ -14,7 +14,7 @@ export const useSponsorNameValidation = (initialValue = '') => {
 
   const checkSponsorNameAvailability = async (name: string) => {
     try {
-      const response = await axios.get(`/api/sponsors/check-name?name=${name}`);
+      const response = await api.get(`/api/sponsors/check-name?name=${name}`);
       const available = response.data.available;
       setIsInvalid(!available);
       setValidationErrorMessage(available ? '' : 'Company name already exists');

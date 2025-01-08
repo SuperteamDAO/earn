@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import axios from 'axios';
+
+import { api } from '@/lib/api';
 
 interface TotalType {
   count?: number;
@@ -7,7 +8,7 @@ interface TotalType {
 }
 
 const fetchTotals = async (): Promise<TotalType> => {
-  const { data } = await axios.get('/api/sidebar/stats');
+  const { data } = await api.get('/api/sidebar/stats');
   return data;
 };
 

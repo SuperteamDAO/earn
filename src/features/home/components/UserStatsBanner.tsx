@@ -40,7 +40,9 @@ export const UserStatsBanner = () => {
         <EarnAvatar id={user.id} avatar={user.photo} className="h-12 w-12" />
         <div className="flex flex-col gap-0">
           <p className="max-w-[25rem] truncate text-lg font-semibold md:text-xl">
-            Welcome back, {user.firstName}
+            {user.isTalentFilled
+              ? `Welcome back, ${user.firstName}`
+              : 'Welcome!'}
           </p>
           <p className="text-sm text-[#c4c2ef]">
             We&apos;re so glad to have you on Earn
