@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { type IncomingMessage } from 'http';
 import { buffer } from 'micro';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -30,7 +31,16 @@ interface WebhookEvent {
   type: EmailType;
 }
 
-async function handleEmailBounce(recipientEmail: string) {
+async function handleEmailBounce(recipientEmail: string, isValid: boolean) {
+  if (!isValid) {
+    await prisma.blockedEmail.create({
+      data: {
+        email: recipientEmail,
+      },
+    });
+    return;
+  }
+
   const last6Emails = await prisma.resendLogs.findMany({
     where: {
       email: recipientEmail,
@@ -41,21 +51,22 @@ async function handleEmailBounce(recipientEmail: string) {
     take: 6,
   });
 
+  const bouncedCount = last6Emails.filter(
+    (email) => email.status === 'email.bounced',
+  ).length;
+  const delayedCount = last6Emails.filter(
+    (email) => email.status === 'email.delivery_delayed',
+  ).length;
+
   const lastThreeAreBounced = last6Emails
     .slice(0, 3)
     .every((email) => email.status === 'email.bounced');
 
-  const bouncedEmails = last6Emails.filter(
-    (email) => email.status === 'email.bounced',
-  );
-  const delayedEmails = last6Emails.filter(
-    (email) => email.status === 'email.delivery_delayed',
-  );
+  const highFailureTrend = bouncedCount + delayedCount >= 6;
+  const allDelays = delayedCount === 6;
+  const highBounceRatio = bouncedCount / last6Emails.length > 0.5;
 
-  const hasEnoughBounced = bouncedEmails.length >= 3;
-  const hasEnoughDelayed = delayedEmails.length >= 3;
-
-  if (lastThreeAreBounced || (hasEnoughBounced && hasEnoughDelayed)) {
+  if (lastThreeAreBounced || highFailureTrend || allDelays || highBounceRatio) {
     await prisma.blockedEmail.create({
       data: {
         email: recipientEmail,
@@ -83,7 +94,12 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         if (event.type === 'email.bounced') {
-          await handleEmailBounce(recipientEmail);
+          const { data } = await axios.post(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/email/validate`,
+            { email: recipientEmail },
+          );
+          const isValid = data?.isValid || false;
+          await handleEmailBounce(recipientEmail, isValid);
         }
 
         await prisma.resendLogs.create({
