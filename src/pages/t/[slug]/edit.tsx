@@ -359,9 +359,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 isRequired
                 className="mb-5"
                 onChange={(e) => {
-                  const value = e.target.value
-                    .toLowerCase()
-                    .replace(/\s+/g, '-'); // Replace spaces with dashes
+                  const value = e.target.value.replace(/\s+/g, '-'); // Replace spaces with dashes
                   setUsername(value);
                   form.setValue('username', value);
                 }}

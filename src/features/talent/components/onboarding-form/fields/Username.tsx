@@ -91,9 +91,7 @@ export function UsernameField() {
                 {...field}
                 onChange={(e) => {
                   setIsUsernameTyping(true);
-                  const value = e.target.value
-                    .toLowerCase()
-                    .replace(/\s+/g, '-');
+                  const value = e.target.value.replace(/\s+/g, '-');
                   debouncedSetUsername(value);
                   field.onChange(value);
                   // debouncedSetIsUsernameTyping(false)
