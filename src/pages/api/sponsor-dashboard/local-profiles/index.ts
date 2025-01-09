@@ -43,7 +43,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const superteam = Superteams.find(
       (team) =>
-        team.name.trim().toLowerCase() === sponsor?.name.trim().toLowerCase(),
+        team.name.trim().toLowerCase().normalize() ===
+        sponsor?.name.trim().toLowerCase().normalize(),
     );
     if (!superteam) {
       logger.warn(
