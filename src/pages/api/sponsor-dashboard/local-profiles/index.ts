@@ -20,20 +20,41 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   logger.debug(`Query params: ${safeStringify({ page, limit, ...params })}`);
 
   try {
+    logger.debug(`Fetching stLead value of user with ${userId}`);
     const user = await prisma.user.findUnique({
       where: { id: userId as string },
       select: { stLead: true },
     });
 
+    logger.debug(`ST Lead value of user ${userId} is ${user?.stLead}`, {
+      userId,
+      ...user,
+    });
+
+    logger.debug(`Fetching sponsor name of user ${userId}`);
     const sponsor = await prisma.sponsors.findUnique({
       where: { id: sponsorId },
       select: { name: true },
     });
+    logger.debug(`Sponsor Name of user ${userId} is ${sponsor?.name}`, {
+      sponsorId,
+      ...sponsor,
+    });
 
     const superteam = Superteams.find((team) => team.name === sponsor?.name);
     if (!superteam) {
+      logger.warn(
+        `Invalid sponsor used for local profiles by userId ${userId} and sponsorId ${sponsorId}`,
+      );
       return res.status(403).json({ error: 'Invalid sponsor' });
     }
+
+    logger.debug(
+      `Superteam of sponsor ${sponsor?.name} of user ${userId} is found`,
+      {
+        superteam,
+      },
+    );
 
     const region = superteam.region;
     const countries = superteam.country;
