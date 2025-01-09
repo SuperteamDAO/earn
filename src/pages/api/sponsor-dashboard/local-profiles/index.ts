@@ -41,7 +41,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ...sponsor,
     });
 
-    const superteam = Superteams.find((team) => team.name === sponsor?.name);
+    const superteam = Superteams.find(
+      (team) =>
+        team.name.trim().toLowerCase() === sponsor?.name.trim().toLowerCase(),
+    );
     if (!superteam) {
       logger.warn(
         `Invalid sponsor used for local profiles by userId ${userId} and sponsorId ${sponsorId}`,
