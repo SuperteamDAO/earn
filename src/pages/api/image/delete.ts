@@ -13,6 +13,17 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+const CLOUDINARY_REGEX =
+  /^.+\.cloudinary\.com\/(?:[^\/]+\/)(?:(image|video|raw)\/)?(?:(upload|fetch|private|authenticated|sprite|facebook|twitter|youtube|vimeo)\/)?(?:(?:[^_/]+_[^,/]+,?)*\/)?(?:v(\d+|\w{1,2})\/)?([^\.^\s]+)(?:\.(.+))?$/;
+
+const extractPublicId = (link: string) => {
+  if (!link) return '';
+
+  const parts = CLOUDINARY_REGEX.exec(link);
+
+  return parts && parts.length > 2 ? parts[parts.length - 2] : link;
+};
+
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
@@ -23,9 +34,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(400).json({ error: 'Image URL is required' });
     }
 
-    const urlParts = imageUrl.split('/');
-    const publicIdWithExtension = urlParts[urlParts.length - 1];
-    const publicId = publicIdWithExtension.split('.')[0];
+    const publicId = extractPublicId(imageUrl);
+
+    if (!publicId) {
+      return res.status(400).json({ error: 'Invalid Cloudinary URL' });
+    }
 
     logger.info(`Attempting to delete image with public ID: ${publicId}`);
 

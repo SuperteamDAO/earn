@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { ImagePicker } from '@/components/shared/ImagePicker';
 import { Button } from '@/components/ui/button';
@@ -107,30 +108,40 @@ export const TalentForm = () => {
     setisLoading(true);
     posthog.capture('finish profile_talent');
 
-    try {
-      setUploading(true);
-      const photoUrl = selectedPhoto
-        ? await uploadAndReplaceImage({
-            newFile: selectedPhoto,
-            folder: 'earn-pfp',
-            oldImageUrl: !isGooglePhoto && user?.photo ? user.photo : undefined,
-          })
-        : data.photo;
+    return toast.promise(
+      async () => {
+        try {
+          setUploading(true);
+          const photoUrl = selectedPhoto
+            ? await uploadAndReplaceImage({
+                newFile: selectedPhoto,
+                folder: 'earn-pfp',
+                oldImageUrl:
+                  !isGooglePhoto && user?.photo ? user.photo : undefined,
+              })
+            : data.photo;
 
-      await api.post('/api/user/complete-profile/', {
-        ...data,
-        photo: isGooglePhoto ? user?.photo : photoUrl,
-      });
+          await api.post('/api/user/complete-profile/', {
+            ...data,
+            photo: isGooglePhoto ? user?.photo : photoUrl,
+          });
 
-      await refetchUser();
-      return true;
-    } catch (error) {
-      console.error('Error:', error);
-      return false;
-    } finally {
-      setisLoading(false);
-      setUploading(false);
-    }
+          await refetchUser();
+          return true;
+        } catch (error) {
+          console.error('Error:', error);
+          throw error;
+        } finally {
+          setisLoading(false);
+          setUploading(false);
+        }
+      },
+      {
+        loading: 'Creating your profile...',
+        success: 'Your profile has been created successfully!',
+        error: 'Failed to create your profile.',
+      },
+    );
   };
 
   return (
