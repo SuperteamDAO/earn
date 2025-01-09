@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useState } from 'react';
+import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -47,6 +48,11 @@ export function PrePublish() {
   const setShowPreview = useSetAtom(previewAtom);
 
   const isEditing = useAtomValue(isEditingAtom);
+
+  const type = useWatch({
+    control: form.control,
+    name: 'type',
+  });
 
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
 
@@ -160,7 +166,7 @@ export function PrePublish() {
           <Visibility />
           <GeoLock />
           <Slug />
-          {isST && <Foundation />}
+          {isST && type !== 'project' && <Foundation />}
         </div>
         <DialogFooter className="flex w-full pt-4 sm:justify-between">
           {!isEditing && (
