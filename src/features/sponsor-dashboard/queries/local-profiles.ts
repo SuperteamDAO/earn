@@ -1,3 +1,4 @@
+import { type Regions } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
@@ -37,22 +38,25 @@ export interface PaginatedResponse {
 interface FetchLocalProfilesParams {
   page?: number;
   limit?: number;
+  region: Regions;
 }
 
 const fetchLocalProfiles = async ({
   page = 1,
   limit = 10,
-}: FetchLocalProfilesParams = {}): Promise<PaginatedResponse> => {
+  region,
+}: FetchLocalProfilesParams): Promise<PaginatedResponse> => {
   const { data } = await api.get('/api/sponsor-dashboard/local-profiles/', {
     params: {
       page,
       limit,
+      region,
     },
   });
   return data;
 };
 
-export const localProfilesQuery = (params: FetchLocalProfilesParams = {}) =>
+export const localProfilesQuery = (params: FetchLocalProfilesParams) =>
   queryOptions({
     queryKey: ['localProfiles', params],
     queryFn: () => fetchLocalProfiles(params),
