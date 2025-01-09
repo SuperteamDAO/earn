@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { UserFlag } from '@/components/shared/UserFlag';
@@ -29,12 +29,19 @@ export default function LocalProfiles() {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
   const { user } = useUser();
-  const { data, isLoading } = useQuery(
-    localProfilesQuery({
+
+  const superteam = useMemo(() => {
+    return Superteams.find((st) => st.name === user?.currentSponsor?.name);
+  }, [user]);
+
+  const { data, isLoading } = useQuery({
+    ...localProfilesQuery({
       page: currentPage,
       limit: usersPerPage,
+      region: superteam?.region!,
     }),
-  );
+    enabled: !!superteam?.region,
+  });
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -105,10 +112,6 @@ export default function LocalProfiles() {
     setCurrentSort({ column, direction });
     setCurrentPage(1);
   };
-
-  const superteam = Superteams.find(
-    (st) => st.name === user?.currentSponsor?.name,
-  );
 
   return (
     <SponsorLayout>
