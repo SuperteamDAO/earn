@@ -41,11 +41,27 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ...sponsor,
     });
 
-    const superteam = Superteams.find(
-      (team) =>
-        JSON.stringify(team.name.trim().toLowerCase().normalize()) ===
-        JSON.stringify(sponsor?.name.trim().toLowerCase().normalize()),
-    );
+    const sponsorNameNormalized = sponsor?.name
+      .trim()
+      .toLowerCase()
+      .normalize('NFKC');
+    logger.debug('Normalized sponsor name:', {
+      original: sponsor?.name,
+      normalized: sponsorNameNormalized,
+    });
+
+    const superteam = Superteams.find((team) => {
+      const teamNameNormalized = team.name
+        .trim()
+        .toLowerCase()
+        .normalize('NFKC');
+      logger.debug('Comparing team:', {
+        original: team.name,
+        normalized: teamNameNormalized,
+        matches: teamNameNormalized === sponsorNameNormalized,
+      });
+      return teamNameNormalized === sponsorNameNormalized;
+    });
     if (!superteam) {
       logger.warn(
         `Invalid sponsor used for local profiles by userId ${userId} and sponsorId ${sponsorId}`,
