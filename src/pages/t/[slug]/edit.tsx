@@ -220,88 +220,90 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     setIsLoading(true);
     posthog.capture('confirm_edit profile');
     try {
-      if (selectedPhoto) {
-        setUploading(true);
-        const oldPhotoUrl = user?.photo;
-        const photoUrl = await uploadAndReplaceImage({
-          newFile: selectedPhoto,
-          folder: 'earn-pfp',
-          oldImageUrl: oldPhotoUrl,
-        });
+      await toast
+        .promise(
+          async () => {
+            if (selectedPhoto) {
+              setUploading(true);
+              const oldPhotoUrl = user?.photo;
+              const photoUrl = await uploadAndReplaceImage({
+                newFile: selectedPhoto,
+                folder: 'earn-pfp',
+                oldImageUrl: oldPhotoUrl,
+              });
 
-        data.photo = photoUrl;
-        setUploading(false);
-      }
-
-      const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
-        const fieldKey = key as keyof ProfileFormData;
-        const newValue = data[fieldKey];
-        const oldValue = user?.[fieldKey];
-
-        if (newValue === undefined && oldValue === undefined) return acc;
-        if (newValue === undefined && oldValue === null) return acc;
-        if (newValue === undefined && oldValue === '') return acc;
-        if (newValue === null && oldValue === null) return acc;
-
-        try {
-          let normalizedOldValue: any = oldValue;
-          const normalizedNewValue: any = newValue;
-
-          if (
-            typeof oldValue === 'string' &&
-            (oldValue.startsWith('{') || oldValue.startsWith('['))
-          ) {
-            try {
-              normalizedOldValue = JSON.parse(oldValue);
-            } catch {
-              // If parsing fails, keep original string value
-              normalizedOldValue = oldValue;
+              data.photo = photoUrl;
+              setUploading(false);
             }
-          }
 
-          const oldValueStr =
-            typeof normalizedOldValue === 'object'
-              ? JSON.stringify(normalizedOldValue)
-              : String(normalizedOldValue);
+            const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
+              const fieldKey = key as keyof ProfileFormData;
+              const newValue = data[fieldKey];
+              const oldValue = user?.[fieldKey];
 
-          const newValueStr =
-            typeof normalizedNewValue === 'object'
-              ? JSON.stringify(normalizedNewValue)
-              : String(normalizedNewValue);
+              if (newValue === undefined && oldValue === undefined) return acc;
+              if (newValue === undefined && oldValue === null) return acc;
+              if (newValue === undefined && oldValue === '') return acc;
+              if (newValue === null && oldValue === null) return acc;
 
-          if (oldValueStr !== newValueStr) {
-            acc[fieldKey] = newValue as any;
-          }
-        } catch (error) {
-          if (oldValue !== newValue) {
-            acc[fieldKey] = newValue as any;
-          }
-        }
+              try {
+                let normalizedOldValue: any = oldValue;
+                const normalizedNewValue: any = newValue;
 
-        return acc;
-      }, {} as Partial<ProfileFormData>);
+                if (
+                  typeof oldValue === 'string' &&
+                  (oldValue.startsWith('{') || oldValue.startsWith('['))
+                ) {
+                  try {
+                    normalizedOldValue = JSON.parse(oldValue);
+                  } catch {
+                    // If parsing fails, keep original string value
+                    normalizedOldValue = oldValue;
+                  }
+                }
 
-      console.log('final updated data', finalUpdatedData);
-      toast.promise(
-        async () => {
-          await api.post('/api/pow/edit', {
-            pows: pow,
-          });
+                const oldValueStr =
+                  typeof normalizedOldValue === 'object'
+                    ? JSON.stringify(normalizedOldValue)
+                    : String(normalizedOldValue);
 
-          await api.post('/api/user/edit', { ...finalUpdatedData });
+                const newValueStr =
+                  typeof normalizedNewValue === 'object'
+                    ? JSON.stringify(normalizedNewValue)
+                    : String(normalizedNewValue);
 
-          await refetchUser();
+                if (oldValueStr !== newValueStr) {
+                  acc[fieldKey] = newValue as any;
+                }
+              } catch (error) {
+                if (oldValue !== newValue) {
+                  acc[fieldKey] = newValue as any;
+                }
+              }
 
-          setTimeout(() => {
-            router.push(`/t/${data.username}`);
-          }, 500);
-        },
-        {
-          loading: 'Updating your profile...',
-          success: 'Your profile has been updated successfully!',
-          error: 'Failed to update profile.',
-        },
-      );
+              return acc;
+            }, {} as Partial<ProfileFormData>);
+
+            console.log('final updated data', finalUpdatedData);
+            await api.post('/api/pow/edit', {
+              pows: pow,
+            });
+
+            await api.post('/api/user/edit', { ...finalUpdatedData });
+
+            await refetchUser();
+
+            setTimeout(() => {
+              router.push(`/t/${data.username}`);
+            }, 500);
+          },
+          {
+            loading: 'Updating your profile...',
+            success: 'Your profile has been updated successfully!',
+            error: 'Failed to update profile.',
+          },
+        )
+        .unwrap();
       return true;
     } catch (error: any) {
       console.error('Error edit profile - ', error);
