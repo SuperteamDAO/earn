@@ -8,7 +8,7 @@ import { cn } from '@/utils/cn';
 import { Input } from '../ui/input';
 
 interface ImagePickerProps {
-  onChange?: (file: File) => void;
+  onChange?: (file: File, previewUrl: string) => void;
   onReset?: () => void;
   defaultValue?: {
     url: string;
@@ -25,18 +25,21 @@ export const ImagePicker = ({
   className,
 }: ImagePickerProps) => {
   const [preview, setPreview] = useState<string | null>(
-    defaultValue?.url || null,
+    defaultValue?.url ?? null,
   );
-  useEffect(() => {
-    setPreview(defaultValue?.url || null);
-  }, [defaultValue]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (defaultValue?.url) {
+      setPreview(defaultValue.url);
+    }
+  }, [defaultValue]);
 
   const handleFileChange = (file: File | null | undefined) => {
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('The image size must be smaller than 5MB');
+        toast.error(`The image size must be smaller than 5MB`);
         return;
       }
 
@@ -50,10 +53,11 @@ export const ImagePicker = ({
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result as string);
+        const previewUrl = reader.result as string;
+        setPreview(previewUrl);
+        onChange && onChange(file, previewUrl);
       };
       reader.readAsDataURL(file);
-      onChange && onChange(file);
     }
   };
 

@@ -5,12 +5,21 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { ImagePicker } from '@/components/shared/ImagePicker';
 import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
+import { uploadAndReplaceImage } from '@/utils/image';
 
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import {
@@ -20,7 +29,6 @@ import {
 } from '@/features/talent/schema';
 
 import { LocationField } from './fields/Location';
-import { PhotoField } from './fields/Photo';
 import { PublicKeyField } from './fields/PublicKey';
 import { SkillsField } from './fields/Skills';
 import { SocialsField } from './fields/Socials';
@@ -44,6 +52,7 @@ export const TalentForm = () => {
   } = form;
 
   const [uploading, setUploading] = useState<boolean>(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [isLoading, setisLoading] = useState<boolean>(false);
   const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
@@ -95,34 +104,44 @@ export const TalentForm = () => {
       form.setFocus('username');
       return;
     }
+
     setisLoading(true);
     posthog.capture('finish profile_talent');
-    try {
-      toast.promise(
-        async () => {
-          try {
-            await api.post('/api/user/complete-profile/', {
-              ...data,
-              photo: isGooglePhoto ? user?.photo : data.photo,
-            });
-            await refetchUser();
-            setisLoading(false);
-          } catch (err) {
-            setisLoading(false);
-            throw err;
-          }
-        },
-        {
-          loading: 'Creating your profile...',
-          success: 'Your profile has been created successfully!',
-          error: 'Failed to create your profile.',
-        },
-      );
-      return true;
-    } catch {
-      setisLoading(false);
-      return false;
-    }
+
+    return toast.promise(
+      async () => {
+        try {
+          setUploading(true);
+          const photoUrl = selectedPhoto
+            ? await uploadAndReplaceImage({
+                newFile: selectedPhoto,
+                folder: 'earn-pfp',
+                oldImageUrl:
+                  !isGooglePhoto && user?.photo ? user.photo : undefined,
+              })
+            : data.photo;
+
+          await api.post('/api/user/complete-profile/', {
+            ...data,
+            photo: isGooglePhoto ? user?.photo : photoUrl,
+          });
+
+          await refetchUser();
+          return true;
+        } catch (error) {
+          console.error('Error:', error);
+          throw error;
+        } finally {
+          setisLoading(false);
+          setUploading(false);
+        }
+      },
+      {
+        loading: 'Creating your profile...',
+        success: 'Your profile has been created successfully!',
+        error: 'Failed to create your profile.',
+      },
+    );
   };
 
   return (
@@ -138,9 +157,33 @@ export const TalentForm = () => {
             </p>
           </div>
           <div className="mb-3 flex items-start gap-4 sm:mb-4">
-            <PhotoField
-              setIsGooglePhoto={setIsGooglePhoto}
-              setUploading={setUploading}
+            <FormField
+              name="photo"
+              control={control}
+              render={({ field }) => (
+                <FormItem className="mt-auto w-fit">
+                  <FormLabel className="sr-only">Profile Picture</FormLabel>
+                  <FormControl>
+                    <ImagePicker
+                      variant="short"
+                      defaultValue={
+                        field.value ? { url: field.value } : undefined
+                      }
+                      onChange={async (file, previewUrl) => {
+                        setSelectedPhoto(file);
+                        setIsGooglePhoto(false);
+                        field.onChange(previewUrl);
+                      }}
+                      onReset={() => {
+                        setSelectedPhoto(null);
+                        setIsGooglePhoto(false);
+                        field.onChange('');
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage className="mt-1" />
+                </FormItem>
+              )}
             />
             <FormFieldWrapper
               label="First Name"

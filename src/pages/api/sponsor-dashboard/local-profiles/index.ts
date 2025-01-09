@@ -9,11 +9,15 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
-  const params = req.query;
+  const { page = '1', limit = '10', ...params } = req.query;
   const sponsorId = req.userSponsorId;
   const userId = req.userId;
 
-  logger.debug(`Query params: ${safeStringify(params)}`);
+  const pageNumber = parseInt(page as string, 10);
+  const limitNumber = parseInt(limit as string, 10);
+  const skip = (pageNumber - 1) * limitNumber;
+
+  logger.debug(`Query params: ${safeStringify({ page, limit, ...params })}`);
 
   try {
     const user = await prisma.user.findUnique({
@@ -42,6 +46,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     logger.debug('Fetching user details');
+
+    const totalCount = await prisma.user.count({
+      where: { location: { in: countries } },
+    });
+
     const users = await prisma.user.findMany({
       where: { location: { in: countries } },
       select: {
@@ -78,6 +87,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           },
         },
       },
+      skip,
+      take: limitNumber,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     const processedUsers = users.map((user) => {
@@ -106,11 +120,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       .sort((a, b) => b.totalEarnings - a.totalEarnings)
       .map((user, index) => ({
         ...user,
-        rank: index + 1,
+        rank: skip + index + 1,
       }));
 
     logger.info('Successfully fetched and processed user details');
-    res.status(200).json(rankedUsers);
+    res.status(200).json({
+      users: rankedUsers,
+      pagination: {
+        total: totalCount,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(totalCount / limitNumber),
+      },
+    });
   } catch (err: any) {
     logger.error(`Error fetching and processing users: ${safeStringify(err)}`);
     res.status(400).json({ error: 'Error occurred while fetching users.' });
