@@ -8,6 +8,16 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
+const normalizedSuperteamMap = new Map(
+  Superteams.map((team) => [
+    team.name,
+    {
+      fullName: team.name.trim().toLowerCase().normalize('NFKC'),
+      original: team,
+    },
+  ]),
+);
+
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const { page = '1', limit = '10', ...params } = req.query;
   const sponsorId = req.userSponsorId;
@@ -50,18 +60,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       normalized: sponsorNameNormalized,
     });
 
-    const superteam = Superteams.find((team) => {
-      const teamNameNormalized = team.name
-        .trim()
-        .toLowerCase()
-        .normalize('NFKC');
-      logger.debug('Comparing team:', {
-        original: team.name,
-        normalized: teamNameNormalized,
-        matches: teamNameNormalized === sponsorNameNormalized,
-      });
-      return teamNameNormalized === sponsorNameNormalized;
-    });
+    const superteam = sponsor?.name
+      ? normalizedSuperteamMap.get(sponsor?.name)?.original || undefined
+      : undefined;
     if (!superteam) {
       logger.warn(
         `Invalid sponsor used for local profiles by userId ${userId} and sponsorId ${sponsorId}`,
