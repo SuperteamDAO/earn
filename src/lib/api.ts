@@ -9,7 +9,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       await signOut({
         redirect: true,
-        callbackUrl: '/auth/signin',
+        callbackUrl: '/signin',
       });
     }
     return Promise.reject(error);
