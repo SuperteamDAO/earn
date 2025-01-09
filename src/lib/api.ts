@@ -6,12 +6,13 @@ const api = axios.create();
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      await signOut({
-        redirect: true,
-        callbackUrl: '/signin',
-      });
-    }
+    const currentPath = window.location.pathname;
+    localStorage.setItem('loginRedirectPath', currentPath);
+
+    await signOut({
+      redirect: true,
+      callbackUrl: '/signin',
+    });
     return Promise.reject(error);
   },
 );
