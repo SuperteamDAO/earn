@@ -63,20 +63,23 @@ const submissionSchema = (
             message: 'Compensation is required',
           });
         } else if (!data.ask) {
-          if (data.ask < minRewardAsk) {
-            ctx.addIssue({
-              code: 'custom',
-              path: ['ask'],
-              message: `Compensation must be at least ${minRewardAsk}`,
-            });
-          }
-          if (data.ask > maxRewardAsk) {
-            ctx.addIssue({
-              code: 'custom',
-              path: ['ask'],
-              message: `Compensation cannot exceed ${maxRewardAsk}`,
-            });
-          }
+          ctx.addIssue({
+            code: 'custom',
+            path: ['ask'],
+            message: 'Compensation is required',
+          });
+        } else if (data.ask < minRewardAsk) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['ask'],
+            message: `Compensation must be at least ${minRewardAsk}`,
+          });
+        } else if (data.ask > maxRewardAsk) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['ask'],
+            message: `Compensation cannot exceed ${maxRewardAsk}`,
+          });
         }
       }
 
