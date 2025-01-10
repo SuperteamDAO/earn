@@ -5,6 +5,7 @@ import { type TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 interface Props {
   isOpen: boolean;
@@ -44,6 +45,7 @@ const decorateOptions: TDecorateOptionsFn = (options) => {
 };
 
 export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
+  const isMD = useBreakpoint('md');
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
@@ -54,7 +56,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
         }}
       >
         <Pride
-          autorun={{ speed: 10 }}
+          autorun={{ speed: isMD ? 10 : 5 }}
           decorateOptions={decorateOptions}
           className="absolute -z-10 h-full w-full"
         />
