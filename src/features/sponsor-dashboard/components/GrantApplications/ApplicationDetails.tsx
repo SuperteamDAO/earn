@@ -11,16 +11,16 @@ import { CircularProgress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
 import {
-  Discord,
   Telegram,
   Twitter,
+  Website,
 } from '@/features/social/components/SocialIcons';
-import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type GrantApplicationWithUser } from '../../types';
@@ -57,6 +57,7 @@ export const ApplicationDetails = ({
   const isPending = selectedApplication?.applicationStatus === 'Pending';
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
   const isRejected = selectedApplication?.applicationStatus === 'Rejected';
+  const isCompleted = selectedApplication?.applicationStatus === 'Completed';
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
 
@@ -84,62 +85,6 @@ export const ApplicationDetails = ({
             : application,
         ),
     );
-  };
-
-  const SocialMediaLink = () => {
-    if (selectedApplication?.user?.telegram) {
-      const username =
-        extractSocialUsername('telegram', selectedApplication.user.telegram) ||
-        null;
-      const link = selectedApplication.user.telegram;
-      return (
-        <div className="flex items-center justify-start gap-2 text-sm">
-          <Telegram link={link} className="text-slate-400" />
-          <Link
-            className="block text-slate-400"
-            href={link}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            @{username}
-          </Link>
-        </div>
-      );
-    }
-
-    if (selectedApplication?.user?.twitter) {
-      const username =
-        extractSocialUsername('twitter', selectedApplication.user.twitter) ||
-        null;
-      const link = selectedApplication.user.twitter;
-      return (
-        <div className="flex items-center justify-start gap-2 text-sm">
-          <Twitter link={link} className="text-slate-400" />
-          <Link
-            className="text-slate-400"
-            href={link}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            @{username}
-          </Link>
-        </div>
-      );
-    }
-
-    if (selectedApplication?.user?.discord) {
-      return (
-        <div className="flex items-center justify-start gap-2 text-sm">
-          <Discord
-            link={selectedApplication.user.discord}
-            className="text-slate-400"
-          />
-          <p className="text-slate-400">{selectedApplication.user.discord}</p>
-        </div>
-      );
-    }
-
-    return null;
   };
 
   return (
@@ -207,7 +152,7 @@ export const ApplicationDetails = ({
                     </Button>
                   </>
                 )}
-                {selectedApplication?.applicationStatus === 'Completed' && (
+                {isCompleted && (
                   <Button
                     className="pointer-events-none bg-blue-100 text-blue-600 disabled:opacity-100"
                     disabled={true}
@@ -224,9 +169,7 @@ export const ApplicationDetails = ({
                 {isApproved && (
                   <>
                     <MarkCompleted
-                      isCompleted={
-                        selectedApplication.applicationStatus === 'Completed'
-                      }
+                      isCompleted={isCompleted}
                       applicationId={selectedApplication.id}
                       onMarkCompleted={updateApplicationState}
                     />
@@ -274,7 +217,7 @@ export const ApplicationDetails = ({
               </div>
             </div>
 
-            <div className="flex items-center gap-5 px-4 py-2">
+            <div className="flex items-center gap-4 px-4 py-2">
               {isApproved && (
                 <div className="flex items-center">
                   <p className="mr-3 whitespace-nowrap text-sm font-semibold text-slate-400">
@@ -367,7 +310,27 @@ export const ApplicationDetails = ({
                 </div>
               )}
 
-              <SocialMediaLink />
+              <div className="flex gap-2">
+                <Telegram
+                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                  link={selectedApplication?.user?.telegram || ''}
+                />
+                <Twitter
+                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                  link={selectedApplication?.user?.twitter || ''}
+                />
+                <Website
+                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                  link={selectedApplication?.user?.website || ''}
+                />
+              </div>
+              <p className="whitespace-nowrap text-sm text-slate-400">
+                $
+                {formatNumberWithSuffix(
+                  selectedApplication?.totalEarnings || 0,
+                )}{' '}
+                Earned
+              </p>
             </div>
           </div>
 

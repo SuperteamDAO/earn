@@ -16,6 +16,7 @@ export type ScoutRowType = {
 
 export interface GrantApplicationWithUser extends GrantApplication {
   user: User;
+  totalEarnings?: number;
 }
 
 export interface SponsorStats {

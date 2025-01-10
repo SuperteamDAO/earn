@@ -91,7 +91,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
 
       const grantWinnings = user.GrantApplication.filter(
-        (g) => g.applicationStatus === 'Approved',
+        (g) =>
+          g.applicationStatus === 'Approved' ||
+          g.applicationStatus === 'Completed',
       ).reduce(
         (sum, application) => sum + (application.approvedAmountInUSD || 0),
         0,

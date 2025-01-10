@@ -56,32 +56,20 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   } = filterLabel
     ? {
         ...(filterLabel === 'Approved'
-          ? {
-              applicationStatus: 'Approved',
-            }
+          ? { applicationStatus: 'Approved' }
           : {}),
         ...(filterLabel === 'Rejected'
-          ? {
-              applicationStatus: 'Rejected',
-            }
+          ? { applicationStatus: 'Rejected' }
           : {}),
-        ...(filterLabel === 'Pending'
-          ? {
-              applicationStatus: 'Pending',
-            }
-          : {}),
+        ...(filterLabel === 'Pending' ? { applicationStatus: 'Pending' } : {}),
         ...(filterLabel === 'Completed'
-          ? {
-              applicationStatus: 'Completed',
-            }
+          ? { applicationStatus: 'Completed' }
           : {}),
         ...(filterLabel !== 'Rejected' &&
         filterLabel !== 'Approved' &&
         filterLabel !== 'Pending' &&
         filterLabel !== 'Completed'
-          ? {
-              label: filterLabel,
-            }
+          ? { label: filterLabel }
           : {}),
       }
     : {};
@@ -107,7 +95,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(error.status).json({ error: error.message });
     }
 
-    const applications = await prisma.grantApplication.findMany({
+    const query = await prisma.grantApplication.findMany({
       where: {
         grant: {
           slug,
@@ -130,6 +118,23 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             username: true,
             twitter: true,
             telegram: true,
+            Submission: {
+              select: {
+                isWinner: true,
+                rewardInUSD: true,
+                listing: {
+                  select: {
+                    isWinnersAnnounced: true,
+                  },
+                },
+              },
+            },
+            GrantApplication: {
+              select: {
+                approvedAmountInUSD: true,
+                applicationStatus: true,
+              },
+            },
           },
         },
         grant: true,
@@ -139,11 +144,27 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       take,
     });
 
+    const applications = query.map((application) => {
+      const listingWinnings = application.user.Submission.filter(
+        (s) => s.isWinner && s.listing.isWinnersAnnounced,
+      ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
+
+      const grantWinnings = application.user.GrantApplication.filter(
+        (g) =>
+          g.applicationStatus === 'Approved' ||
+          g.applicationStatus === 'Completed',
+      ).reduce(
+        (sum, application) => sum + (application.approvedAmountInUSD || 0),
+        0,
+      );
+
+      const totalEarnings = listingWinnings + grantWinnings;
+
+      return { ...application, totalEarnings };
+    });
+
     if (!applications || applications.length === 0) {
       logger.info(`No submissions found for slug: ${slug}`);
-      // return res.status(404).json({
-      //   message: `Submissions with slug=${slug} not found.`,
-      // });
     }
 
     logger.info(
