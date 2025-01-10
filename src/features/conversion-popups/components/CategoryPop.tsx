@@ -25,6 +25,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useTimeout } from '@/hooks/use-timeout';
 import { type CategoryKeys } from '@/pages/api/listings/category-earnings';
+import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { roundToNearestThousand } from '@/utils/number';
 
@@ -233,10 +234,14 @@ const Desktop = ({
   setOpen: (e: boolean) => void;
   variant: CategoryVariantInfo | undefined;
 }) => {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
-        className="max-w-[23rem] overflow-hidden bg-white p-5"
+        className={cn(
+          'max-w-[23rem] overflow-hidden bg-white p-5',
+          isLoginOpen && 'invisible',
+        )}
         hideCloseIcon
       >
         <DialogHeader className="">
@@ -255,7 +260,7 @@ const Desktop = ({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="">
-          <GetStarted />
+          <GetStarted setIsLoginOpen={setIsLoginOpen} />
         </DialogFooter>
       </DialogContent>
     </Dialog>
