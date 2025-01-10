@@ -207,6 +207,20 @@ export const ApplicationDetails = ({
                     </Button>
                   </>
                 )}
+                {selectedApplication?.applicationStatus === 'Completed' && (
+                  <Button
+                    className="pointer-events-none bg-blue-100 text-blue-600 disabled:opacity-100"
+                    disabled={true}
+                    variant="ghost"
+                  >
+                    <div className="flex items-center">
+                      <div className="rounded-full bg-blue-600 p-[5px]">
+                        <Check className="h-2.5 w-2.5 text-white" />
+                      </div>
+                    </div>
+                    Completed
+                  </Button>
+                )}
                 {isApproved && (
                   <>
                     <MarkCompleted
@@ -232,7 +246,7 @@ export const ApplicationDetails = ({
                       disabled={true}
                       variant="ghost"
                     >
-                      <div className="mr-2 flex items-center">
+                      <div className="flex items-center">
                         <div className="rounded-full bg-emerald-600 p-[5px]">
                           <Check className="h-2.5 w-2.5 text-white" />
                         </div>
@@ -248,7 +262,7 @@ export const ApplicationDetails = ({
                       disabled={true}
                       variant="ghost"
                     >
-                      <div className="mr-2 flex items-center">
+                      <div className="flex items-center">
                         <div className="rounded-full bg-rose-600 p-[5px]">
                           <X className="h-2 w-2 text-white" />
                         </div>
