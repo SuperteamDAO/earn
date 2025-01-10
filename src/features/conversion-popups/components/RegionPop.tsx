@@ -32,6 +32,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type Superteam } from '@/constants/Superteam';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useTimeout } from '@/hooks/use-timeout';
+import { cn } from '@/utils/cn';
 
 import { userCountQuery } from '@/features/home/queries/user-count';
 
@@ -162,10 +163,14 @@ const Desktop = ({
   st: Superteam;
   totalUsers: number | undefined;
 }) => {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
-        className="max-w-[22.5rem] overflow-hidden bg-white p-5"
+        className={cn(
+          'max-w-[23rem] overflow-hidden bg-white p-5',
+          isLoginOpen && 'invisible',
+        )}
         hideCloseIcon
       >
         <DialogHeader className="">
@@ -179,7 +184,7 @@ const Desktop = ({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex-col gap-4 sm:flex-col">
-          <GetStarted />
+          <GetStarted setIsLoginOpen={setIsLoginOpen} />
           <People st={st} totalUsers={totalUsers} />
         </DialogFooter>
       </DialogContent>

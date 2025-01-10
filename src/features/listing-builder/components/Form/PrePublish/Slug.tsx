@@ -45,7 +45,7 @@ export function Slug() {
     name: 'publishedAt',
   });
 
-  const debouncedSlug = useDebounce(slug);
+  const debouncedSlug = useDebounce(slug, 1000);
 
   const queryEnabled = useMemo(
     () =>
