@@ -106,6 +106,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
               isPublished: false,
               publishedAt: undefined,
               id: undefined,
+              deadline: undefined,
             }
           : listing
       }
