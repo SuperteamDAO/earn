@@ -226,7 +226,7 @@ export const SubmissionPanel = ({
                     onClick={() => {
                       toast.promise(
                         async () => {
-                          navigator.clipboard.writeText(
+                          await navigator.clipboard.writeText(
                             selectedSubmission?.user?.publicKey || '',
                           );
                         },

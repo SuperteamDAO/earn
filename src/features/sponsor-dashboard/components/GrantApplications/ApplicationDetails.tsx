@@ -324,7 +324,7 @@ export const ApplicationDetails = ({
                     onClick={() => {
                       toast.promise(
                         async () => {
-                          navigator.clipboard.writeText(
+                          await navigator.clipboard.writeText(
                             selectedApplication?.user?.publicKey || '',
                           );
                         },
