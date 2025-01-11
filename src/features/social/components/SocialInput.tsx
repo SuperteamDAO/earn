@@ -91,17 +91,16 @@ export const SocialInput = ({
         return (
           <FormItem className="">
             <div className="flex flex-col gap-2">
-              {formLabel ||
-                (formDescription && (
-                  <div>
-                    {formLabel && (
-                      <FormLabel isRequired={required}>{formLabel}</FormLabel>
-                    )}
-                    {formDescription && (
-                      <FormDescription>{formDescription}</FormDescription>
-                    )}
-                  </div>
-                ))}
+              {(formLabel || formDescription) && (
+                <div>
+                  {formLabel && (
+                    <FormLabel isRequired={required}>{formLabel}</FormLabel>
+                  )}
+                  {formDescription && (
+                    <FormDescription>{formDescription}</FormDescription>
+                  )}
+                </div>
+              )}
               <div
                 className={cn(
                   'flex h-[2.6875rem] items-center justify-center',

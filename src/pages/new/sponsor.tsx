@@ -423,6 +423,19 @@ const CreateSponsor = () => {
                     <Input placeholder="https://starkindustries.com" />
                   </FormFieldWrapper>
 
+                  <div className="hidden w-full md:flex">
+                    <SocialInput
+                      name="sponsor.twitter"
+                      socialName={'twitter'}
+                      formLabel="Company Twitter"
+                      placeholder="@StarkIndustries"
+                      required
+                      control={form.control}
+                      height="h-9"
+                    />
+                  </div>
+                </div>
+                <div className="my-6 flex w-full md:hidden">
                   <SocialInput
                     name="sponsor.twitter"
                     socialName={'twitter'}
