@@ -15,7 +15,7 @@ export default function AllBountiesPage() {
   const { data: listings, isLoading } = useQuery(
     listingsQuery({
       type: 'bounty',
-      take: 100,
+      take: 2000,
     }),
   );
 
