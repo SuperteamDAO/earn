@@ -1,4 +1,3 @@
-import { Regions } from '@prisma/client';
 import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -7,7 +6,6 @@ import { getServerSession } from 'next-auth';
 import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 
-import { CombinedRegions } from '@/constants/Superteam';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
@@ -167,7 +165,7 @@ const Search = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerSession(context.req, context.res, authOptions);
-  let userRegion: Regions[] | null | undefined = null;
+  let userRegion: string | null | undefined = null;
 
   if (session?.user?.id) {
     const user = await prisma.user.findFirst({
@@ -175,14 +173,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       select: { location: true },
     });
 
-    const matchedRegion = CombinedRegions.find((region) =>
-      region.country.includes(user?.location!),
-    );
-
-    if (matchedRegion?.region) {
-      userRegion = [matchedRegion.region, Regions.GLOBAL];
-    } else {
-      userRegion = [Regions.GLOBAL];
+    if (user?.location) {
+      userRegion = user.location;
     }
   }
 

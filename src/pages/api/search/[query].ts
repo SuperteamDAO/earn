@@ -2,7 +2,6 @@ import { Regions, status as Status } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { CombinedRegions } from '@/constants/Superteam';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
@@ -36,7 +35,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const bountiesOffset = (req.query.bountiesOffset as string) || null;
   const grantsOffset = (req.query.grantsOffset as string) || null;
 
-  let userRegion = params.userRegion as Regions | undefined;
+  let userRegion = params.userRegion as string | undefined | null;
 
   const status = req.query.status as string;
   let statusList: string[] = [];
@@ -64,10 +63,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       where: { id: userId },
       select: { location: true },
     });
-    const matchedRegion = CombinedRegions.find(
-      (region) => user?.location && region.country.includes(user?.location),
-    );
-    userRegion = matchedRegion?.region;
+    userRegion = user?.location;
   }
 
   const skills = req.query.skills as string;
