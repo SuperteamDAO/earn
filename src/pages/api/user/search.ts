@@ -30,21 +30,35 @@ export default async function searchUser(
 
     const users = await prisma.user.findMany({
       where: {
-        OR: [
+        AND: [
           {
             username: {
-              contains: query as string,
+              not: '',
             },
           },
           {
-            firstName: {
-              contains: query as string,
+            username: {
+              not: null,
             },
           },
           {
-            lastName: {
-              contains: query as string,
-            },
+            OR: [
+              {
+                username: {
+                  contains: query as string,
+                },
+              },
+              {
+                firstName: {
+                  contains: query as string,
+                },
+              },
+              {
+                lastName: {
+                  contains: query as string,
+                },
+              },
+            ],
           },
         ],
       },
