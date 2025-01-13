@@ -89,11 +89,15 @@ export const Comments = ({
 
       setCount(commentsData.data.count);
       setComments([...comments, ...allComments]);
-      if (poc && poc.id) defaultSuggestions.set(poc.id, poc);
-      allComments.forEach((comment) => {
-        setDefaultSuggestions((suggestions) =>
-          suggestions.set(comment.authorId, comment.author),
-        );
+      setDefaultSuggestions((prevSuggestions) => {
+        const newSuggestions = new Map(prevSuggestions);
+        if (poc && poc.id) {
+          newSuggestions.set(poc.id, poc);
+        }
+        allComments.forEach((comment) => {
+          newSuggestions.set(comment.authorId, comment.author);
+        });
+        return newSuggestions;
       });
       setValidUsernames(commentsData.data.validUsernames as string[]);
     } catch (e) {

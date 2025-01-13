@@ -223,7 +223,7 @@ export const Comment = ({
               </p>
             </Link>
             {comment?.author?.currentSponsorId === sponsorId && (
-              <p className="flex gap-0.5 pb-0.5 text-xs font-medium text-blue-500 md:text-sm">
+              <p className="flex items-center gap-0.5 pb-0.5 text-xs font-medium text-blue-500 md:text-sm">
                 {isVerified && <VerifiedBadge />}
                 Sponsor
               </p>

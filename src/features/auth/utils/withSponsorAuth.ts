@@ -32,6 +32,10 @@ export const withSponsorAuth = (handler: Handler): NextApiHandler => {
         where: { id: userId as string },
         select: { currentSponsorId: true, role: true, hackathonId: true },
       });
+      logger.info(`User with ID: ${userId} found`, {
+        userId,
+        ...user,
+      });
 
       if (!user || !user.currentSponsorId) {
         logger.warn('User does not have a current sponsor or is unauthorized');

@@ -14,7 +14,7 @@ export default function AllProjectsPage() {
   const { data: listings, isLoading } = useQuery(
     listingsQuery({
       type: 'project',
-      take: 100,
+      take: 2000,
     }),
   );
 

@@ -1,4 +1,3 @@
-import { X } from 'lucide-react';
 import Image from 'next/image';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
 import { type TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
@@ -6,6 +5,7 @@ import { type TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 interface Props {
   isOpen: boolean;
@@ -45,21 +45,23 @@ const decorateOptions: TDecorateOptionsFn = (options) => {
 };
 
 export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
+  const isMD = useBreakpoint('md');
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="fixed inset-0 m-0 h-screen w-screen max-w-none rounded-none bg-[#5243FF]"
+        className="h-screen w-screen max-w-none overflow-hidden rounded-none bg-[#5243FF]"
         onInteractOutside={(e) => e.preventDefault()}
+        classNames={{
+          closeIcon: 'text-white',
+        }}
       >
-        <Pride autorun={{ speed: 10 }} decorateOptions={decorateOptions} />
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 h-6 w-6 text-white"
-        >
-          <X className="h-4 w-4" />
-        </button>
-        <div className="container mt-28 px-4 md:mt-6">
-          <div className="mx-auto mb-11 mt-6 w-28">
+        <Pride
+          autorun={{ speed: isMD ? 10 : 5 }}
+          decorateOptions={decorateOptions}
+          className="absolute -z-10 h-full w-full"
+        />
+        <div className="container mx-auto mt-auto px-4 md:mt-6">
+          <div className="mx-auto mb-6 mt-6 w-14 md:mb-11 md:w-28">
             <ExternalImage
               src={'/icons/celebration.png'}
               alt="celebration icon"
@@ -73,17 +75,22 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
             Sending some vibes your way 💃 💃
           </p>
         </div>
-        <div className="absolute bottom-0 left-1/2 mx-auto mt-auto flex h-auto w-[150%] -translate-x-1/2 flex-col items-end md:w-full lg:w-1/2">
+        <div className="mx-auto mt-auto flex h-auto flex-col items-end md:w-full lg:w-1/2">
           <Image
             src={ASSET_URL + '/memes/JohnCenaVibingToCupid.gif'}
             alt="John Cena Vibing to Cupid"
-            style={{ width: '100%', marginTop: 'auto', display: 'block' }}
+            style={{
+              width: '100%',
+              height: '100%',
+              marginTop: 'auto',
+              display: 'block',
+            }}
             width="1000"
             height="1200"
             priority
             loading="eager"
             quality={80}
-            className="scale-125"
+            className="scale-150 md:scale-125"
           />
         </div>
         <audio

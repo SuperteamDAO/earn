@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { UserFlag } from '@/components/shared/UserFlag';
@@ -29,7 +29,19 @@ export default function LocalProfiles() {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
   const { user } = useUser();
-  const { data: allUsers, isLoading } = useQuery(localProfilesQuery);
+
+  const superteam = useMemo(() => {
+    return Superteams.find((st) => st.name === user?.currentSponsor?.name);
+  }, [user]);
+
+  const { data, isLoading } = useQuery({
+    ...localProfilesQuery({
+      page: currentPage,
+      limit: usersPerPage,
+      region: superteam?.region!,
+    }),
+    enabled: !!superteam?.region,
+  });
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
@@ -39,7 +51,7 @@ export default function LocalProfiles() {
     posthog.capture('members tab_sponsor');
   }, []);
 
-  const filteredUsers = allUsers?.filter((user) => {
+  const filteredUsers = data?.users?.filter((user) => {
     const searchLower = searchText.toLowerCase();
     const searchMatch =
       user.username.toLowerCase().includes(searchLower) ||
@@ -86,29 +98,20 @@ export default function LocalProfiles() {
     }
   });
 
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-
-  const currentUsers = sortedUsers?.slice(indexOfFirstUser, indexOfLastUser);
-
-  const totalPages = Math.ceil((sortedUsers?.length || 0) / usersPerPage);
-
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
   const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    setCurrentPage((prev) =>
+      Math.min(prev + 1, data?.pagination.totalPages || 1),
+    );
   };
 
   const setSort = (column: string, direction: SortDirection) => {
     setCurrentSort({ column, direction });
     setCurrentPage(1);
   };
-
-  const superteam = Superteams.find(
-    (st) => st.name === user?.currentSponsor?.name,
-  );
 
   return (
     <SponsorLayout>
@@ -131,21 +134,24 @@ export default function LocalProfiles() {
         />
       </div>
       {isLoading && <LoadingSection />}
-      {!isLoading && currentUsers && currentUsers?.length > 0 && (
+      {!isLoading && sortedUsers && sortedUsers?.length > 0 && (
         <UserTable
-          currentUsers={currentUsers}
+          currentUsers={sortedUsers}
           currentSort={currentSort}
           setSort={setSort}
         />
       )}
-      {filteredUsers && filteredUsers?.length > 0 && (
+      {data?.pagination && sortedUsers && sortedUsers?.length > 0 && (
         <div className="mt-6 flex items-center justify-end">
           <p className="mr-4 text-sm text-slate-400">
-            <span className="font-bold">{indexOfFirstUser + 1}</span> -{' '}
             <span className="font-bold">
-              {Math.min(indexOfLastUser, filteredUsers?.length || 0)}
+              {(currentPage - 1) * usersPerPage + 1}
             </span>{' '}
-            of <span className="font-bold">{filteredUsers?.length || 0}</span>{' '}
+            -{' '}
+            <span className="font-bold">
+              {Math.min(currentPage * usersPerPage, data.pagination.total)}
+            </span>{' '}
+            of <span className="font-bold">{data.pagination.total}</span>{' '}
             Members
           </p>
           <div className="flex gap-4">
@@ -161,7 +167,7 @@ export default function LocalProfiles() {
             </Button>
             <Button
               className="flex items-center"
-              disabled={currentPage === totalPages}
+              disabled={currentPage === data.pagination.totalPages}
               onClick={handleNextPage}
               size="sm"
               variant="outline"

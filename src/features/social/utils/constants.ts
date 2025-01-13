@@ -62,7 +62,7 @@ export const socials: Social[] = [
     name: 'website',
     placeholder: 'https://starkindustries.com',
     icon: FaGlobe,
-    prefix: undefined,
-    label: undefined,
+    prefix: 'https://',
+    label: 'https://',
   },
 ] as const;

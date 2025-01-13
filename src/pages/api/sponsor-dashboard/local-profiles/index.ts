@@ -8,28 +8,74 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
+const normalizedSuperteamMap = new Map(
+  Superteams.map((team) => [
+    team.name,
+    {
+      fullName: team.name.trim().toLowerCase().normalize('NFKC'),
+      original: team,
+    },
+  ]),
+);
+
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
-  const params = req.query;
+  const { page = '1', limit = '10', ...params } = req.query;
   const sponsorId = req.userSponsorId;
   const userId = req.userId;
 
-  logger.debug(`Query params: ${safeStringify(params)}`);
+  const pageNumber = parseInt(page as string, 10);
+  const limitNumber = parseInt(limit as string, 10);
+  const skip = (pageNumber - 1) * limitNumber;
+
+  logger.debug(`Query params: ${safeStringify({ page, limit, ...params })}`);
 
   try {
+    logger.debug(`Fetching stLead value of user with ${userId}`);
     const user = await prisma.user.findUnique({
       where: { id: userId as string },
       select: { stLead: true },
     });
 
+    logger.debug(`ST Lead value of user ${userId} is ${user?.stLead}`, {
+      userId,
+      ...user,
+    });
+
+    logger.debug(`Fetching sponsor name of user ${userId}`);
     const sponsor = await prisma.sponsors.findUnique({
       where: { id: sponsorId },
       select: { name: true },
     });
+    logger.debug(`Sponsor Name of user ${userId} is ${sponsor?.name}`, {
+      sponsorId,
+      ...sponsor,
+    });
 
-    const superteam = Superteams.find((team) => team.name === sponsor?.name);
+    const sponsorNameNormalized = sponsor?.name
+      .trim()
+      .toLowerCase()
+      .normalize('NFKC');
+    logger.debug('Normalized sponsor name:', {
+      original: sponsor?.name,
+      normalized: sponsorNameNormalized,
+    });
+
+    const superteam = sponsor?.name
+      ? normalizedSuperteamMap.get(sponsor?.name)?.original || undefined
+      : undefined;
     if (!superteam) {
+      logger.warn(
+        `Invalid sponsor used for local profiles by userId ${userId} and sponsorId ${sponsorId}`,
+      );
       return res.status(403).json({ error: 'Invalid sponsor' });
     }
+
+    logger.debug(
+      `Superteam of sponsor ${sponsor?.name} of user ${userId} is found`,
+      {
+        superteam,
+      },
+    );
 
     const region = superteam.region;
     const countries = superteam.country;
@@ -42,6 +88,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     logger.debug('Fetching user details');
+
+    const totalCount = await prisma.user.count({
+      where: { location: { in: countries } },
+    });
+
     const users = await prisma.user.findMany({
       where: { location: { in: countries } },
       select: {
@@ -78,6 +129,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           },
         },
       },
+      skip,
+      take: limitNumber,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     const processedUsers = users.map((user) => {
@@ -91,7 +147,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
 
       const grantWinnings = user.GrantApplication.filter(
-        (g) => g.applicationStatus === 'Approved',
+        (g) =>
+          g.applicationStatus === 'Approved' ||
+          g.applicationStatus === 'Completed',
       ).reduce(
         (sum, application) => sum + (application.approvedAmountInUSD || 0),
         0,
@@ -106,11 +164,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       .sort((a, b) => b.totalEarnings - a.totalEarnings)
       .map((user, index) => ({
         ...user,
-        rank: index + 1,
+        rank: skip + index + 1,
       }));
 
     logger.info('Successfully fetched and processed user details');
-    res.status(200).json(rankedUsers);
+    res.status(200).json({
+      users: rankedUsers,
+      pagination: {
+        total: totalCount,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(totalCount / limitNumber),
+      },
+    });
   } catch (err: any) {
     logger.error(`Error fetching and processing users: ${safeStringify(err)}`);
     res.status(400).json({ error: 'Error occurred while fetching users.' });

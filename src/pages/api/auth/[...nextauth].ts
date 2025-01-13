@@ -8,7 +8,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 import { OTPTemplate } from '@/features/emails/components/otpTemplate';
-import { kashEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
+import { pratikEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
 import { resend } from '@/features/emails/utils/resend';
 
 export const authOptions: NextAuthOptions = {
@@ -58,7 +58,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         await resend.emails.send({
-          from: kashEmail,
+          from: pratikEmail,
           to: [identifier],
           subject: 'Log in to Superteam Earn',
           react: OTPTemplate({ token }),

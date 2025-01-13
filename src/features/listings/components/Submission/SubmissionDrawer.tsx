@@ -260,10 +260,18 @@ export const SubmissionDrawer = ({
                           label="Tweet Link"
                           description="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
                         >
-                          <Input
-                            maxLength={500}
-                            placeholder="Add a tweet's link"
-                          />
+                          <div className="flex">
+                            <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
+                              <p className="text-sm font-medium text-slate-500">
+                                https://
+                              </p>
+                            </div>
+                            <Input
+                              maxLength={500}
+                              placeholder="Add a tweet's link"
+                              className="rounded-l-none"
+                            />
+                          </div>
                         </FormFieldWrapper>
                       </>
                     )}
@@ -278,7 +286,17 @@ export const SubmissionDrawer = ({
                       >
                         {e.isLink ||
                           (e.type === 'link' && (
-                            <Input placeholder="Write something..." />
+                            <div className="flex">
+                              <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
+                                <p className="text-sm font-medium text-slate-500">
+                                  https://
+                                </p>
+                              </div>
+                              <Input
+                                placeholder="Write something..."
+                                className="rounded-l-none"
+                              />
+                            </div>
                           ))}
                       </FormFieldWrapper>
                     ))}

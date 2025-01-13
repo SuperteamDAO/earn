@@ -35,7 +35,7 @@ import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { uploadToCloudinary } from '@/utils/upload';
+import { uploadAndReplaceImage } from '@/utils/image';
 
 import { SocialInputAll } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -62,6 +62,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
   const skills = watch('skills');
 
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -219,83 +220,98 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     setIsLoading(true);
     posthog.capture('confirm_edit profile');
     try {
-      const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
-        const fieldKey = key as keyof ProfileFormData;
-        const newValue = data[fieldKey];
-        const oldValue = user?.[fieldKey];
+      await toast
+        .promise(
+          async () => {
+            if (selectedPhoto) {
+              setUploading(true);
+              const oldPhotoUrl = user?.photo;
+              const photoUrl = await uploadAndReplaceImage({
+                newFile: selectedPhoto,
+                folder: 'earn-pfp',
+                oldImageUrl: oldPhotoUrl,
+              });
 
-        if (newValue === undefined && oldValue === undefined) return acc;
-        if (newValue === undefined && oldValue === null) return acc;
-        if (newValue === undefined && oldValue === '') return acc;
-        if (newValue === null && oldValue === null) return acc;
-
-        try {
-          let normalizedOldValue: any = oldValue;
-          const normalizedNewValue: any = newValue;
-
-          if (
-            typeof oldValue === 'string' &&
-            (oldValue.startsWith('{') || oldValue.startsWith('['))
-          ) {
-            try {
-              normalizedOldValue = JSON.parse(oldValue);
-            } catch {
-              // If parsing fails, keep original string value
-              normalizedOldValue = oldValue;
+              data.photo = photoUrl;
+              setUploading(false);
             }
-          }
 
-          const oldValueStr =
-            typeof normalizedOldValue === 'object'
-              ? JSON.stringify(normalizedOldValue)
-              : String(normalizedOldValue);
+            const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
+              const fieldKey = key as keyof ProfileFormData;
+              const newValue = data[fieldKey];
+              const oldValue = user?.[fieldKey];
 
-          const newValueStr =
-            typeof normalizedNewValue === 'object'
-              ? JSON.stringify(normalizedNewValue)
-              : String(normalizedNewValue);
+              if (newValue === undefined && oldValue === undefined) return acc;
+              if (newValue === undefined && oldValue === null) return acc;
+              if (newValue === undefined && oldValue === '') return acc;
+              if (newValue === null && oldValue === null) return acc;
 
-          if (oldValueStr !== newValueStr) {
-            acc[fieldKey] = newValue as any;
-          }
-        } catch (error) {
-          if (oldValue !== newValue) {
-            acc[fieldKey] = newValue as any;
-          }
-        }
+              try {
+                let normalizedOldValue: any = oldValue;
+                const normalizedNewValue: any = newValue;
 
-        return acc;
-      }, {} as Partial<ProfileFormData>);
+                if (
+                  typeof oldValue === 'string' &&
+                  (oldValue.startsWith('{') || oldValue.startsWith('['))
+                ) {
+                  try {
+                    normalizedOldValue = JSON.parse(oldValue);
+                  } catch {
+                    // If parsing fails, keep original string value
+                    normalizedOldValue = oldValue;
+                  }
+                }
 
-      console.log('final updated data', finalUpdatedData);
-      toast.promise(
-        async () => {
-          await api.post('/api/pow/edit', {
-            pows: pow,
-          });
+                const oldValueStr =
+                  typeof normalizedOldValue === 'object'
+                    ? JSON.stringify(normalizedOldValue)
+                    : String(normalizedOldValue);
 
-          await api.post('/api/user/edit', { ...finalUpdatedData });
+                const newValueStr =
+                  typeof normalizedNewValue === 'object'
+                    ? JSON.stringify(normalizedNewValue)
+                    : String(normalizedNewValue);
 
-          await refetchUser();
+                if (oldValueStr !== newValueStr) {
+                  acc[fieldKey] = newValue as any;
+                }
+              } catch (error) {
+                if (oldValue !== newValue) {
+                  acc[fieldKey] = newValue as any;
+                }
+              }
 
-          setIsLoading(false);
+              return acc;
+            }, {} as Partial<ProfileFormData>);
 
-          setTimeout(() => {
-            router.push(`/t/${data.username}`);
-          }, 500);
-        },
-        {
-          loading: 'Updating your profile...',
-          success: 'Your profile has been updated successfully!',
-          error: 'Failed to update profile.',
-        },
-      );
+            console.log('final updated data', finalUpdatedData);
+            await api.post('/api/pow/edit', {
+              pows: pow,
+            });
+
+            await api.post('/api/user/edit', { ...finalUpdatedData });
+
+            await refetchUser();
+
+            setTimeout(() => {
+              router.push(`/t/${data.username}`);
+            }, 500);
+          },
+          {
+            loading: 'Updating your profile...',
+            success: 'Your profile has been updated successfully!',
+            error: 'Failed to update profile.',
+          },
+        )
+        .unwrap();
       return true;
     } catch (error: any) {
-      console.log('Error edit profile - ', error);
-      setIsLoading(false);
+      console.error('Error edit profile - ', error);
       toast.error('Failed to update profile.');
       return false;
+    } finally {
+      setIsLoading(false);
+      setUploading(false);
     }
   };
 
@@ -337,15 +353,13 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                         defaultValue={
                           field.value ? { url: field.value } : undefined
                         }
-                        onChange={async (e) => {
-                          setUploading(true);
-                          const a = await uploadToCloudinary(e, 'earn-pfp');
-                          field.onChange(a);
-                          setUploading(false);
+                        onChange={(file, previewUrl) => {
+                          setSelectedPhoto(file);
+                          field.onChange(previewUrl);
                         }}
                         onReset={() => {
+                          setSelectedPhoto(null);
                           field.onChange('');
-                          setUploading(false);
                         }}
                       />
                     </FormControl>

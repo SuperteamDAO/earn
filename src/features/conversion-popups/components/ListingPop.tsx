@@ -163,7 +163,7 @@ const Desktop = ({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="pt-0">
-          <GetStarted />
+          <GetStarted showLoginOverlay />
         </DialogFooter>
       </DialogContent>
     </Dialog>

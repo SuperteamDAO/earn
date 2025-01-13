@@ -28,20 +28,36 @@ const SocialIcon = ({
 }: SocialIconProps) => {
   if (!Icon) return null;
 
-  return (
-    <Link href={link || '#'} rel="noopener noreferrer" target="_blank">
-      <div className="flex">
-        <Icon
-          size={size}
-          className={cn(
-            'transition-opacity',
-            !link && 'cursor-auto opacity-30 grayscale',
-            link && 'cursor-pointer opacity-100',
-            className,
-          )}
-          {...props}
-        />
+  const iconElement = (
+    <Icon
+      size={size}
+      className={cn(
+        'transition-opacity duration-200',
+        !link && 'opacity-20 grayscale',
+        link && 'cursor-pointer opacity-100 hover:opacity-80',
+        className,
+      )}
+      {...props}
+    />
+  );
+
+  if (!link) {
+    return (
+      <div className="flex" role="presentation">
+        {iconElement}
       </div>
+    );
+  }
+
+  return (
+    <Link
+      href={link}
+      rel="noopener noreferrer"
+      target="_blank"
+      className="flex"
+      tabIndex={0}
+    >
+      {iconElement}
     </Link>
   );
 };

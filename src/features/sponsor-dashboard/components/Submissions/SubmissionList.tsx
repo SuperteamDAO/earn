@@ -135,7 +135,7 @@ export const SubmissionList = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="h-auto border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                className="h-auto w-32 border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
                 variant="outline"
               >
                 <span
@@ -151,12 +151,12 @@ export const SubmissionList = ({
               </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent className="min-w-[130px] border-slate-300">
+            <DropdownMenuContent className="min-w-32 border-slate-300">
               <DropdownMenuItem
                 className="focus:bg-slate-100"
                 onClick={() => setFilterLabel(undefined)}
               >
-                <span className="inline-flex w-full whitespace-nowrap rounded-full text-center text-[10px] capitalize">
+                <span className="inline-flex whitespace-nowrap rounded-full bg-slate-100 px-3 text-center text-[10px] capitalize">
                   Select Option
                 </span>
               </DropdownMenuItem>
@@ -167,7 +167,7 @@ export const SubmissionList = ({
               >
                 <span
                   className={cn(
-                    'inline-flex w-full whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                    'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
                     colorMap['Winner'].bg,
                     colorMap['Winner'].color,
                   )}
@@ -183,7 +183,7 @@ export const SubmissionList = ({
                 >
                   <span
                     className={cn(
-                      'inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
+                      'inline-flex whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
                       colorMap['Rejected'].bg,
                       colorMap['Rejected'].color,
                     )}
@@ -203,7 +203,7 @@ export const SubmissionList = ({
                 >
                   <span
                     className={cn(
-                      'inline-flex w-full whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                      'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
                       colorMap[option.value as keyof typeof colorMap].bg,
                       colorMap[option.value as keyof typeof colorMap].color,
                     )}

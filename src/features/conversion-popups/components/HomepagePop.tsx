@@ -32,6 +32,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useTimeout } from '@/hooks/use-timeout';
 import { PulseIcon } from '@/svg/pulse-icon';
+import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { roundToNearestThousand } from '@/utils/number';
 
@@ -204,10 +205,14 @@ const Desktop = ({
   liveOpportunityWorth: number | undefined;
   variant: number;
 }) => {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
-        className="max-w-[22.5rem] overflow-hidden bg-white p-0"
+        className={cn(
+          'max-w-[22.5rem] overflow-hidden bg-white p-0',
+          isLoginOpen && 'invisible',
+        )}
         hideCloseIcon
       >
         {variant % 2 === 0 ? (
@@ -216,7 +221,7 @@ const Desktop = ({
           <DesktopVariantTwo liveOpportunityWorth={liveOpportunityWorth} />
         )}
         <DialogFooter className="p-5 pt-0">
-          <GetStarted />
+          <GetStarted setIsLoginOpen={setIsLoginOpen} />
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -38,7 +38,7 @@ export const DesktopNavbar = () => {
               alt="Superteam Earn"
               src="/assets/logo.svg"
             />
-            <div className="h-6 w-[3px] bg-slate-400" />
+            <div className="h-6 w-[1.5px] bg-slate-300" />
             <p className="text-sm font-semibold tracking-[1.5px] text-slate-500">
               SPONSORS
             </p>
