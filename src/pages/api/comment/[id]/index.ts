@@ -114,7 +114,7 @@ function extractUsernames(comments: any[]): Set<string> {
   const usernames = new Set<string>();
 
   const processMessage = (message: string) => {
-    const matches = message.match(/@(\w+)/g);
+    const matches = message.match(/@([\w-]+)/g);
     if (matches) {
       matches.forEach((match) => {
         const username = match.slice(1);
