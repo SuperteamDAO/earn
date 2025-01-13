@@ -1,3 +1,4 @@
+import { Regions } from '@prisma/client';
 import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -8,9 +9,14 @@ import { useCallback, useEffect, useState, useTransition } from 'react';
 
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { api } from '@/lib/api';
 import { prisma } from '@/prisma';
 import { getURL } from '@/utils/validUrl';
 
+import {
+  filterRegionCountry,
+  getCombinedRegion,
+} from '@/features/listings/utils/region';
 import { Filters } from '@/features/search/components/Filters';
 import { Info } from '@/features/search/components/Info';
 import { QueryInput } from '@/features/search/components/QueryInput';
@@ -165,7 +171,7 @@ const Search = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerSession(context.req, context.res, authOptions);
-  let userRegion: string | null | undefined = null;
+  let userRegion: string[] | null | undefined = null;
 
   if (session?.user?.id) {
     const user = await prisma.user.findFirst({
@@ -174,26 +180,43 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     });
 
     if (user?.location) {
-      userRegion = user.location;
+      const matchedRegion = user.location
+        ? getCombinedRegion(user.location, true)
+        : undefined;
+      if (matchedRegion?.name) {
+        userRegion = [
+          matchedRegion.name,
+          Regions.GLOBAL,
+          ...(filterRegionCountry(matchedRegion, user.location || '').country ||
+            []),
+        ];
+      } else {
+        userRegion = [Regions.GLOBAL];
+      }
     }
   }
 
   const fullUrl = getURL();
   const queryTerm = (context.query.q as string).trim();
-  const queryString = new URLSearchParams(context.query as any).toString();
 
   const status = (context.query.status as string) || undefined;
   const statusFilters = updateCheckboxes(status ?? '', preStatusFilters);
 
   const skills = (context.query.skills as string) || undefined;
   const skillsFilters = updateCheckboxes(skills ?? '', preSkillFilters);
-
   try {
-    const response = await fetch(
-      `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}?${queryString}&bountiesLimit=10&grantsLimit=3${userRegion ? `&userRegion=${userRegion}` : ''}`,
+    const searchUrl = new URL(
+      `${fullUrl}/api/search/${encodeURIComponent(queryTerm)}`,
     );
-    const results = await response.json();
+    searchUrl.search = new URLSearchParams(context.query as any).toString();
+    searchUrl.searchParams.set('bountiesLimit', '10');
+    searchUrl.searchParams.set('grantsLimit', '3');
+    if (userRegion?.length) {
+      searchUrl.searchParams.set('userRegion', userRegion.join(','));
+    }
 
+    const response = await api.get(searchUrl.toString());
+    const results = await response.data;
     return {
       props: {
         statusFilters,
