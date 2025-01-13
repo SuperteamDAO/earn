@@ -16,10 +16,10 @@ export default async function handler(
   }
 
   // adding this to eliminate the need for OSS contributors to set up zerobounce themselves
-  const isDev = process.env.VERCEL_ENV !== 'production';
-  if (isDev) {
-    res.status(200).json({ isValid: true });
-  }
+  // const isDev = process.env.VERCEL_ENV !== 'production';
+  // if (isDev) {
+  //   res.status(200).json({ isValid: true });
+  // }
 
   try {
     const { data } = await axios.get(
@@ -27,11 +27,13 @@ export default async function handler(
     );
     console.log(data);
 
-    const isValid = data.status === 'valid';
+    const emailIsValid = data.status === 'valid';
     const isRoleBased =
       data.status === 'do_not_mail' && data.sub_status === 'role_based';
 
-    return res.status(200).json({ isValid: isValid || isRoleBased });
+    const isValid = emailIsValid || isRoleBased;
+
+    return res.status(200).json({ isValid });
   } catch (error) {
     console.error('Error validating email:', error);
     return res.status(500).json({ message: 'Error validating email' });
