@@ -21,23 +21,26 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     logger.debug(
       `Checking submission existence for listing ID: ${listingId} and user ID: ${userId}`,
     );
-    const submissionExists =
-      (await prisma.submission.findFirst({
-        where: {
-          listingId,
-          userId,
-          isActive: true,
-          isArchived: false,
-        },
-        select: {
-          id: true,
-        },
-      })) !== null;
+    const submission = await prisma.submission.findFirst({
+      where: {
+        listingId,
+        userId,
+        isActive: true,
+        isArchived: false,
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
 
     logger.info(
       `Checked submission existence for listing ID: ${listingId} and user ID: ${userId}`,
     );
-    res.status(200).json({ isSubmitted: submissionExists });
+    res.status(200).json({
+      isSubmitted: !!submission,
+      status: submission ? submission?.status : null,
+    });
   } catch (error: any) {
     logger.error(
       `Error occurred while checking submission existence for listing ID=${listingId} and user ID=${userId}: ${safeStringify(error)}`,
