@@ -62,7 +62,7 @@ const submissionSchema = (
             path: ['ask'],
             message: 'Compensation is required',
           });
-        } else if (!data.ask) {
+        } else if (!data.ask && listing.compensationType === 'range') {
           if (data.ask < minRewardAsk) {
             ctx.addIssue({
               code: 'custom',
