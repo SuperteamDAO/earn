@@ -56,25 +56,25 @@ const submissionSchema = (
         });
       }
       if (listing.type === 'project' && listing.compensationType !== 'fixed') {
-        if (data.ask === undefined || data.ask === null) {
+        if (data.ask === undefined || data.ask === null || !data.ask) {
           ctx.addIssue({
             code: 'custom',
             path: ['ask'],
             message: 'Compensation is required',
           });
-        } else if (!data.ask) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['ask'],
-            message: 'Compensation is required',
-          });
-        } else if (data.ask < minRewardAsk) {
+        } else if (
+          listing.compensationType === 'range' &&
+          data.ask < minRewardAsk
+        ) {
           ctx.addIssue({
             code: 'custom',
             path: ['ask'],
             message: `Compensation must be at least ${minRewardAsk}`,
           });
-        } else if (data.ask > maxRewardAsk) {
+        } else if (
+          listing.compensationType === 'range' &&
+          data.ask > maxRewardAsk
+        ) {
           ctx.addIssue({
             code: 'custom',
             path: ['ask'],
