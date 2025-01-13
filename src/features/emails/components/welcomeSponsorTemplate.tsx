@@ -15,11 +15,11 @@ export const WelcomeSponsorTemplate = () => {
       </p>
       <p style={styles.textWithMargin}>
         If you need any help related to setting up your listing on Earn,
-        don&apos;t hesitate to get in touch with&nbsp;
+        don&apos;t hesitate to contact me on&nbsp;
         <a href={PDTG} style={styles.link}>
-          Pratik
-        </a>{' '}
-        on Telegram.&nbsp;
+          Telegram
+        </a>
+        .
       </p>
       <p style={styles.salutation}>
         Best,
