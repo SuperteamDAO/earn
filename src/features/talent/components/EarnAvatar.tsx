@@ -42,6 +42,7 @@ export const EarnAvatar = ({
       ) : (
         <div className={cn(commonClassName, className)}>
           <Avatar
+            className="!h-full !w-full"
             size="100%"
             name={id}
             variant="marble"

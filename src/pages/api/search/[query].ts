@@ -5,6 +5,10 @@ import { getToken } from 'next-auth/jwt';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
+import {
+  filterRegionCountry,
+  getCombinedRegion,
+} from '@/features/listings/utils/region';
 import { type GrantsSearch, type ListingSearch } from '@/features/search/types';
 
 // GOTTA SAVE FROM SQL INJECTION
@@ -35,7 +39,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
   const bountiesOffset = (req.query.bountiesOffset as string) || null;
   const grantsOffset = (req.query.grantsOffset as string) || null;
 
-  let userRegion = params.userRegion as string | undefined | null;
+  let userRegion = req.query.userRegion
+    ? (req.query.userRegion as string).split(',')
+    : undefined;
 
   const status = req.query.status as string;
   let statusList: string[] = [];
@@ -58,12 +64,26 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   const token = await getToken({ req });
   const userId = token?.sub;
-  if (userId) {
+  if (userId && !userRegion) {
     const user = await prisma.user.findFirst({
       where: { id: userId },
       select: { location: true },
     });
-    userRegion = user?.location;
+    if (user?.location) {
+      const matchedRegion = user.location
+        ? getCombinedRegion(user.location, true)
+        : undefined;
+      if (matchedRegion?.name) {
+        userRegion = [
+          matchedRegion.name,
+          Regions.GLOBAL,
+          ...(filterRegionCountry(matchedRegion, user.location || '').country ||
+            []),
+        ];
+      } else {
+        userRegion = [Regions.GLOBAL];
+      }
+    }
   }
 
   const skills = req.query.skills as string;
@@ -92,8 +112,9 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     .join(' OR ');
 
   let regionFilter = '';
-  if (userRegion) {
-    regionFilter = `AND (b.region = ? OR b.region = '${Regions.GLOBAL}')`;
+  if (userRegion?.length) {
+    const placeholders = userRegion.map(() => '?').join(',');
+    regionFilter = `AND (b.region IN (${placeholders}) OR b.region = '${Regions.GLOBAL}')`;
   }
 
   const words = query
@@ -260,11 +281,15 @@ s.name LIKE CONCAT('%', ?, '%')
   let bountiesValues: (string | number)[] = duplicateElements(words, 2);
   if (hackathonId) bountiesValues.push(hackathonId);
   if (skills) bountiesValues = bountiesValues.concat(skillsFlattened);
-  if (userRegion) bountiesValues.push(userRegion);
+  if (userRegion?.length) {
+    bountiesValues = bountiesValues.concat(userRegion);
+  }
 
   let grantsValues: (string | number)[] = duplicateElements(words, 2);
   if (skills) grantsValues = grantsValues.concat(skillsFlattened);
-  if (userRegion) grantsValues.push(userRegion);
+  if (userRegion?.length) {
+    grantsValues = grantsValues.concat(userRegion);
+  }
 
   try {
     let grantsCount: [{ totalCount: bigint }] = [{ totalCount: BigInt(0) }];
