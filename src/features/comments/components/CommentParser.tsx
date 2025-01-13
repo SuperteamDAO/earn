@@ -5,6 +5,8 @@ import { type CommentType } from '@/interface/comments';
 import { isLink } from '@/utils/isLink';
 import { truncateString } from '@/utils/truncateString';
 
+import { USERNAME_PATTERN } from '@/features/talent/constants';
+
 import { validUsernamesAtom } from '../atoms';
 
 interface Props {
@@ -27,7 +29,10 @@ export const CommentParser = ({
   const validUsernames = useAtomValue(validUsernamesAtom);
 
   function parseComment(comment: string) {
-    const parts = comment.split(/(\s+|@[a-z0-9_-]+)/g).filter(Boolean);
+    const usernamePatternString = USERNAME_PATTERN.source;
+    const parts = comment
+      .split(new RegExp(`(\\s+|@${usernamePatternString})`, 'g'))
+      .filter(Boolean);
     return parts.map((part) => {
       if (
         part.startsWith('@') &&

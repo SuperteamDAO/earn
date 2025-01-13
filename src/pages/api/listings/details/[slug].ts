@@ -43,6 +43,8 @@ export default async function handler(
             id: true,
             firstName: true,
             lastName: true,
+            username: true,
+            photo: true,
           },
         },
         Hackathon: {

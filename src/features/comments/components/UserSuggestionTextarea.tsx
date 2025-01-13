@@ -1,3 +1,4 @@
+import { useSetAtom } from 'jotai';
 import React, {
   type ChangeEvent,
   type Dispatch,
@@ -14,6 +15,7 @@ import getCaretCoordinates from 'textarea-caret';
 import { type User } from '@/interface/user';
 import { cn } from '@/utils/cn';
 
+import { validUsernamesAtom } from '../atoms';
 import {
   addMention,
   Suggestions,
@@ -42,6 +44,7 @@ export const UserSuggestionTextarea = ({
   ...props
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const setValidUsernames = useSetAtom(validUsernamesAtom);
 
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionPosition, setSuggestionPosition] = useState({
@@ -50,6 +53,7 @@ export const UserSuggestionTextarea = ({
   });
 
   const selectSuggestion = (tag: string) => {
+    setValidUsernames((s) => Array.from(new Set([...s, tag])));
     setValue((value) => addMention(value, tag));
     setShowSuggestions(false);
   };
