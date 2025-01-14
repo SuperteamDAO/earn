@@ -12,10 +12,11 @@ export function ErrorSection({
       <div className="flex flex-col items-center justify-center">
         <AiOutlineWarning size={96} className="text-slate-500" />
         <span className="mt-2 text-lg font-bold text-slate-500">
-          {title || 'Error Occurred!'}
+          {title || 'Something went wrong!'}
         </span>
         <span className="mt-2 text-slate-500">
-          {message || 'Something went wrong! Please try again!'}
+          {message ||
+            'There seems to be an error. Contact support@superteamearn.com to get help'}
         </span>
       </div>
     </div>
