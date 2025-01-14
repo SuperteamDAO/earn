@@ -137,7 +137,7 @@ model BountiesTemplates {
 
 model Comment {
   id               String            @id @default(uuid())
-  message          String            @db.VarChar(1000)
+  message          String            @db.VarChar(5000)
   authorId         String
   refType          CommentRefType    @default(BOUNTY)
   refId            String
