@@ -105,7 +105,7 @@ export const ApplicationList = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="h-9 border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                className="h-9 w-32 border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
                 variant="outline"
               >
                 <span
@@ -121,12 +121,12 @@ export const ApplicationList = ({
               </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent className="min-w-[130px] border-slate-300">
+            <DropdownMenuContent className="min-w-32 border-slate-300">
               <DropdownMenuItem
                 className="focus:bg-slate-100"
                 onClick={() => setFilterLabel(undefined)}
               >
-                <span className="inline-flex w-full whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize">
+                <span className="inline-flex whitespace-nowrap rounded-full bg-slate-100 px-3 text-center text-[10px] capitalize">
                   Select Option
                 </span>
               </DropdownMenuItem>
@@ -139,7 +139,7 @@ export const ApplicationList = ({
                 >
                   <span
                     className={cn(
-                      'inline-flex w-full whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                      'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
                       colorMap[status].bg,
                       colorMap[status].color,
                     )}

@@ -4,12 +4,14 @@ import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 export const GetStarted = ({
   setIsLoginOpen,
+  showLoginOverlay = false,
 }: {
   setIsLoginOpen?: (value: boolean) => void;
+  showLoginOverlay?: boolean;
 }) => {
   return (
     <AuthWrapper
-      hideLoginOverlay
+      hideLoginOverlay={!showLoginOverlay}
       redirectTo="/new/talent?type=popup"
       className="w-full"
       onLoginCloseCallback={() => setIsLoginOpen?.(false)}

@@ -36,7 +36,7 @@ interface Grant {
   region: string;
   references: References[];
   requirements?: string;
-  applicationStatus?: 'Pending' | 'Approved' | 'Rejected';
+  applicationStatus?: 'Pending' | 'Approved' | 'Rejected' | 'Completed';
   totalPaid: number;
   totalApproved: number;
   historicalApplications: number;

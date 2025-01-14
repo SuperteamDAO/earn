@@ -93,14 +93,13 @@ export const SubmissionActionButton = ({
     userLocation: user?.location,
   });
 
-  const { data: submissionStatus, isLoading: isUserSubmissionLoading } =
-    useQuery({
-      ...userSubmissionQuery(id!, user?.id),
-      enabled: isAuthenticated,
-    });
+  const { data: submission, isLoading: isUserSubmissionLoading } = useQuery({
+    ...userSubmissionQuery(id!, user?.id),
+    enabled: isAuthenticated,
+  });
 
-  const isSubmitted = submissionStatus?.isSubmitted ?? false;
-
+  const isSubmitted = submission?.isSubmitted ?? false;
+  const submissionStatus = submission?.status;
   const posthog = usePostHog();
   const router = useRouter();
   const { query } = router;
@@ -139,12 +138,20 @@ export const SubmissionActionButton = ({
   let btnLoadingText;
 
   function getButtonState() {
+    if (isSubmitted && !pastDeadline && submissionStatus === 'Rejected')
+      return 'rejected';
     if (isSubmitted && !pastDeadline) return 'edit';
     if (isSubmitted && pastDeadline) return 'submitted';
     return 'submit';
   }
 
   switch (buttonState) {
+    case 'rejected':
+      buttonText = 'Application Rejected';
+      buttonBG = 'bg-red-600';
+      isBtnDisabled = true;
+      btnLoadingText = null;
+      break;
     case 'edit':
       buttonText = isProject ? 'Edit Application' : 'Edit Submission';
       isBtnDisabled = false;

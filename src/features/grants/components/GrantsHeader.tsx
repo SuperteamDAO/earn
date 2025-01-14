@@ -3,6 +3,7 @@ import React from 'react';
 import { BsFillCircleFill } from 'react-icons/bs';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
+import { LocalImage } from '@/components/ui/local-image';
 import { PulseIcon } from '@/svg/pulse-icon';
 
 import { ListingTabLink } from '@/features/listings/components/ListingPage/ListingTabLink';
@@ -32,24 +33,21 @@ export const GrantsHeader = ({
   references,
   isPublished,
 }: Props) => {
-  let statusBgColor = '';
   let statusTextColor = '';
   let statusText = '';
   let statusIcon = (
-    <PulseIcon w={5} h={5} bg={statusBgColor} text={statusTextColor} />
+    <PulseIcon isPulsing w={4} h={4} bg={'#9AE6B4'} text="#16A34A" />
   );
 
   if (status === 'OPEN' && isPublished) {
     statusIcon = (
       <PulseIcon isPulsing w={5} h={5} bg={'#9AE6B4'} text="#16A34A" />
     );
-    statusBgColor = 'green-100';
-    statusTextColor = 'green-600';
+    statusTextColor = 'text-green-600';
     statusText = 'Open';
   } else {
     statusIcon = <BsFillCircleFill className="h-3 w-3 text-slate-400" />;
-    statusBgColor = '[#ffecb3]';
-    statusTextColor = 'slate-400';
+    statusTextColor = 'text-slate-400';
     statusText = 'Closed';
   }
 
@@ -64,9 +62,9 @@ export const GrantsHeader = ({
             alt={sponsor?.name}
             src={sponsor?.logo}
           />
-          <div className="flex flex-col items-start gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-xl font-bold tracking-[-0.5px] text-slate-700">
+          <div className="flex flex-col items-start gap-1">
+            <div className="flex flex-wrap items-center gap-1">
+              <h1 className="mt-0.5 text-xl font-bold tracking-[-0.5px] text-slate-700">
                 {title}
               </h1>
             </div>
@@ -79,13 +77,13 @@ export const GrantsHeader = ({
                 {!!sponsor?.isVerified && <VerifiedBadge />}
               </div>
               <ListingHeaderSeparator />
-              <div className="flex">
-                <img
-                  className="mr-[1px] mt-[1px] h-4 sm:mr-1 sm:mt-1"
+              <div className="flex items-center gap-1">
+                <LocalImage
+                  className="-ml-0.5"
                   alt={'grant'}
                   src={'/assets/grant-icon.svg'}
                 />
-                <p className="text-xs font-medium text-slate-400 md:text-base">
+                <p className="text-xs font-medium text-gray-400 md:text-sm">
                   Grant
                 </p>
               </div>

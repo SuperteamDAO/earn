@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai';
 import { CheckIcon, Loader2 } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import {
   FormControl,
@@ -44,7 +45,7 @@ export function Slug() {
     name: 'publishedAt',
   });
 
-  const debouncedSlug = useDebounce(slug);
+  const debouncedSlug = useDebounce(slug, 1000);
 
   const queryEnabled = useMemo(
     () =>
@@ -94,9 +95,27 @@ export function Slug() {
           <FormItem className="gap-2">
             <div>
               <FormLabel className="">Customise URL (Slug)</FormLabel>
-              <FormDescription className="max-w-[28rem] truncate">
-                https://earn.superteam.fun/{type}/
-                <span className="underline underline-offset-2">{slug}</span>
+              <FormDescription className="cursor-pointer">
+                <button
+                  className="max-w-[28rem] cursor-pointer truncate text-slate-400"
+                  onClick={() => {
+                    toast.promise(
+                      async () => {
+                        await navigator.clipboard.writeText(
+                          `https://earn.superteam.fun/listings/${type}/${slug}`,
+                        );
+                      },
+                      {
+                        loading: 'Copying Listing URL...',
+                        success: 'Listing URL copied!',
+                        error: 'Failed to copy Listing URL!',
+                      },
+                    );
+                  }}
+                >
+                  https://earn.superteam.fun/listings/{type}/
+                  <span className="underline underline-offset-2">{slug}</span>
+                </button>
               </FormDescription>
             </div>
             <FormControl>

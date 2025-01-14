@@ -73,33 +73,31 @@ export function ListingHeader({
   if (!isPublished && !publishedAt) {
     statusIcon = <LuFile className={cn(statusIconStyles, 'text-slate-400')} />;
     statusText = 'Draft';
-    statusTextColor = 'slate-500';
+    statusTextColor = 'text-slate-500';
   } else if (!isPublished && publishedAt) {
     statusIcon = <LuPause className={cn(statusIconStyles, 'text-[#ffecb3]')} />;
     statusText = isMD ? 'Submissions Paused' : 'Paused';
-    statusTextColor = '[#F59E0B]';
+    statusTextColor = 'text-[#F59E0B]';
   } else if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
     statusIcon = (
       <LuClock className={cn(statusIconStyles, 'text-purple-100')} />
     );
     statusText = 'Opens Soon';
-    statusTextColor = '[#8B5CF6]';
+    statusTextColor = 'text-[#8B5CF6]';
   } else if (status === 'OPEN' && isWinnersAnnounced) {
     statusIcon = <LuCheck className={cn(statusIconStyles, 'text-slate-400')} />;
     statusText = 'Completed';
-    statusTextColor = 'slate-400';
+    statusTextColor = 'text-slate-400';
   } else if (!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN') {
-    statusIcon = (
-      <PulseIcon w={5} h={5} bg="bg-orange-100" text="text-orange-600" />
-    );
+    statusIcon = <PulseIcon w={5} h={5} bg="bg-orange-100" text="#f97316" />;
     statusText = 'In Review';
-    statusTextColor = 'orange-600';
+    statusTextColor = 'text-orange-500';
   } else if (!hasDeadlineEnded && !isWinnersAnnounced && status === 'OPEN') {
     statusIcon = (
       <PulseIcon isPulsing w={4} h={4} bg={'#9AE6B4'} text="#16A34A" />
     );
     statusText = isMD ? 'Submissions Open' : 'Open';
-    statusTextColor = 'green-600';
+    statusTextColor = 'text-green-600';
   }
 
   const ListingTitle = () => {
@@ -174,7 +172,7 @@ export function ListingHeader({
               }
               contentProps={{ className: 'max-w-80' }}
             >
-              <div className="flex items-center">
+              <div className="flex items-center gap-1">
                 <LocalImage
                   alt={type!}
                   className="-ml-0.5"
