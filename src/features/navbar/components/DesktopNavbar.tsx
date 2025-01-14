@@ -30,7 +30,6 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const { user } = useUser();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const isHomepage = router.pathname === '/';
   const maxWidth = isDashboardRoute ? 'max-w-full' : 'max-w-7xl';
   const padding = isDashboardRoute ? 'pr-8 pl-6' : 'px-2 lg:px-6';
 
@@ -112,7 +111,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
           {status === 'authenticated' && session && (
             <div className="ph-no-capture flex items-center gap-2">
-              {user?.currentSponsorId && isHomepage && (
+              {user?.currentSponsorId && !isDashboardRoute && (
                 <Button
                   variant="ghost"
                   size="sm"
