@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -89,6 +90,17 @@ export const SubmissionDrawer = ({
   const posthog = usePostHog();
   const router = useRouter();
   const { query } = router;
+
+  const { connected, publicKey } = useWallet();
+
+  useEffect(() => {
+    console.log(window.phantom.solana);
+    if (connected && publicKey) {
+      form.setValue('publicKey', publicKey.toString());
+    }
+    console.log(connected);
+    console.log(publicKey);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -217,6 +229,18 @@ export const SubmissionDrawer = ({
       );
       break;
   }
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      console.log(window.phantom.solana);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      console.log(window.phantom.solana.publicKey);
+    }
+  }, []);
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>

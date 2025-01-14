@@ -1,6 +1,5 @@
 import { GoogleTagManager } from '@next/third-parties/google';
 import { createPhantom, type CreatePhantomConfig } from '@phantom/wallet-sdk';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
@@ -52,8 +51,6 @@ function MyApp({ Component, pageProps }: any) {
   const posthog = usePostHog();
   const forcedRedirected = useRef(false);
 
-  const { publicKey } = useWallet();
-
   useEffect(() => {
     const handleRouteChange = () => posthog?.capture('$pageview');
     router.events.on('routeChangeComplete', handleRouteChange);
@@ -66,7 +63,6 @@ function MyApp({ Component, pageProps }: any) {
     if (typeof window !== 'undefined') {
       createPhantom(opts);
     }
-    console.log('wallet', publicKey);
   }, []);
 
   const forcedProfileRedirect = useCallback(
