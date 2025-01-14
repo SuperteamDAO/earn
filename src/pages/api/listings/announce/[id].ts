@@ -244,3 +244,7 @@ async function announce(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 }
 
 export default withSponsorAuth(announce);
+
+export const config = {
+  maxDuration: 300,
+};
