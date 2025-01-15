@@ -21,11 +21,13 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
+import { WalletConnectField } from '@/components/ui/wallet-connect-field';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { walletFieldListings } from '../../constants';
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
@@ -219,11 +221,8 @@ export const SubmissionDrawer = ({
   }
 
   return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent
-        showCloseIcon={false}
-        className="h-full w-full max-w-2xl px-2 sm:max-w-2xl sm:p-4"
-      >
+    <SideDrawer open={isOpen} onClose={onClose}>
+      <SideDrawerContent>
         <X
           className="absolute right-4 top-10 z-10 h-4 w-4 text-slate-400 sm:right-8 sm:top-8"
           onClick={onClose}
@@ -252,7 +251,18 @@ export const SubmissionDrawer = ({
                           description="Make sure this link is accessible by everyone!"
                           isRequired
                         >
-                          <Input maxLength={500} placeholder="Add a link" />
+                          <div className="flex">
+                            <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
+                              <p className="text-sm font-medium text-slate-500">
+                                https://
+                              </p>
+                            </div>
+                            <Input
+                              maxLength={500}
+                              placeholder="Add a link"
+                              className="rounded-l-none"
+                            />
+                          </div>
                         </FormFieldWrapper>
                         <FormFieldWrapper
                           control={form.control}
@@ -275,17 +285,33 @@ export const SubmissionDrawer = ({
                         </FormFieldWrapper>
                       </>
                     )}
-                    {eligibility?.map((e, index) => (
-                      <FormFieldWrapper
-                        control={form.control}
-                        name={`eligibilityAnswers.${index}.answer`}
-                        label={e.question}
-                        isRequired
-                        isRichEditor={!e.isLink && e.type !== 'link'}
-                        key={e.order}
-                      >
-                        {e.isLink ||
-                          (e.type === 'link' && (
+                    {eligibility?.map((e, index) => {
+                      if (
+                        walletFieldListings.includes(id!) &&
+                        e.question === 'Connect Your Solana Wallet'
+                      ) {
+                        return (
+                          <WalletConnectField
+                            key={e.order}
+                            control={form.control}
+                            name={`eligibilityAnswers.${index}.answer`}
+                            label={e.question}
+                            isRequired
+                            description="Connect your wallet to verify ownership. This is mandatory for this bounty."
+                          />
+                        );
+                      }
+
+                      return (
+                        <FormFieldWrapper
+                          key={e.order}
+                          control={form.control}
+                          name={`eligibilityAnswers.${index}.answer`}
+                          label={e.question}
+                          isRequired
+                          isRichEditor={!e.isLink && e.type !== 'link'}
+                        >
+                          {(e.isLink || e.type === 'link') && (
                             <div className="flex">
                               <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
                                 <p className="text-sm font-medium text-slate-500">
@@ -297,9 +323,10 @@ export const SubmissionDrawer = ({
                                 className="rounded-l-none"
                               />
                             </div>
-                          ))}
-                      </FormFieldWrapper>
-                    ))}
+                          )}
+                        </FormFieldWrapper>
+                      );
+                    })}
                     {compensationType !== 'fixed' && (
                       <FormFieldWrapper
                         control={form.control}
@@ -318,54 +345,56 @@ export const SubmissionDrawer = ({
                       isRichEditor
                       richEditorPlaceholder="Add info or link"
                     />
-                    <FormField
-                      control={form.control}
-                      name="publicKey"
-                      render={({ field }) => (
-                        <FormItem className="flex w-full flex-col gap-2">
-                          <div>
-                            <FormLabel isRequired={!user?.publicKey}>
-                              Your Solana Wallet Address
-                            </FormLabel>
-                            <FormDescription>
-                              {!!user?.publicKey ? (
-                                <>
-                                  This is where you will receive your rewards if
-                                  you win. If you want to edit it,{' '}
-                                  <a
-                                    href={`/t/${user?.username}/edit`}
-                                    className="text-blue-600 underline hover:text-blue-700"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    click here
-                                  </a>
-                                </>
-                              ) : (
-                                <>
-                                  This wallet address will be linked to your
-                                  profile and you will receive your rewards here
-                                  if you win.
-                                </>
-                              )}
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Input
-                              className={cn(
-                                !!user?.publicKey &&
-                                  'cursor-not-allowed text-slate-600 opacity-80',
-                              )}
-                              placeholder="Add your Solana wallet address"
-                              readOnly={!!user?.publicKey}
-                              {...(!!user?.publicKey ? {} : field)}
-                              value={user?.publicKey || field.value}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {!walletFieldListings.includes(id!) && (
+                      <FormField
+                        control={form.control}
+                        name="publicKey"
+                        render={({ field }) => (
+                          <FormItem className="flex w-full flex-col gap-2">
+                            <div>
+                              <FormLabel isRequired={!user?.publicKey}>
+                                Your Solana Wallet Address
+                              </FormLabel>
+                              <FormDescription>
+                                {!!user?.publicKey ? (
+                                  <>
+                                    This is where you will receive your rewards
+                                    if you win. If you want to edit it,{' '}
+                                    <a
+                                      href={`/t/${user?.username}/edit`}
+                                      className="text-blue-600 underline hover:text-blue-700"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      click here
+                                    </a>
+                                  </>
+                                ) : (
+                                  <>
+                                    This wallet address will be linked to your
+                                    profile and you will receive your rewards
+                                    here if you win.
+                                  </>
+                                )}
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Input
+                                className={cn(
+                                  !!user?.publicKey &&
+                                    'cursor-not-allowed text-slate-600 opacity-80',
+                                )}
+                                placeholder="Add your Solana wallet address"
+                                readOnly={!!user?.publicKey}
+                                {...(!!user?.publicKey ? {} : field)}
+                                value={user?.publicKey || field.value}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -437,7 +466,7 @@ export const SubmissionDrawer = ({
             sponsorName={listing.sponsor.name}
           />
         )}
-      </SheetContent>
-    </Sheet>
+      </SideDrawerContent>
+    </SideDrawer>
   );
 };

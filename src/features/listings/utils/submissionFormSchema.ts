@@ -4,6 +4,7 @@ import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type User } from '@/interface/user';
 import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
+import { walletFieldListings } from '../constants';
 import { type Listing } from '../types';
 
 const submissionSchema = (
@@ -31,7 +32,12 @@ const submissionSchema = (
       publicKey: z.string().optional(),
     })
     .superRefine((data, ctx) => {
-      if (user && !user?.publicKey && !data.publicKey) {
+      if (
+        !walletFieldListings.includes(listing.id!) &&
+        user &&
+        !user?.publicKey &&
+        !data.publicKey
+      ) {
         ctx.addIssue({
           code: 'custom',
           path: ['publicKey'],
