@@ -7,6 +7,7 @@ import {
   type Path,
   useFormContext,
 } from 'react-hook-form';
+import { BsWallet2 } from 'react-icons/bs';
 
 import { cn } from '@/utils/cn';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
@@ -73,11 +74,18 @@ export function WalletConnectField<T extends FieldValues>({
                   paddingRight: '16px',
                   paddingLeft: '16px',
                   fontSize: '12px',
+                  backgroundColor: connected ? '#27272a' : `#52525b`,
+                  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+                  transition: 'all 0.2s ease',
                 }}
               >
-                {connected
-                  ? truncatePublicKey(publicKey?.toBase58(), 5)
-                  : 'Connect Wallet'}
+                <>
+                  <BsWallet2 className="mr-2" />
+
+                  {connected
+                    ? truncatePublicKey(publicKey?.toBase58(), 5)
+                    : 'Connect Wallet'}
+                </>
               </DynamicWalletMultiButton>
               <Input
                 type="hidden"
