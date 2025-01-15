@@ -113,11 +113,12 @@ function MyApp({ Component, pageProps }: any) {
   }, [user?.id]);
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
+  const walletListingRoute = router.pathname.startsWith('/listings');
 
   return (
     <>
       <PagesTopLoader color="#6366F1" showSpinner={false} />
-      {isDashboardRoute ? (
+      {isDashboardRoute || walletListingRoute ? (
         <SolanaWalletProvider>
           <Component {...pageProps} key={router.asPath} />
         </SolanaWalletProvider>
