@@ -8,8 +8,6 @@ import { truncateString } from '@/utils/truncateString';
 import { validUsernamesAtom } from '../atoms';
 
 interface Props {
-  listingSlug: string;
-  listingType: string;
   value: string;
   type: CommentType;
   isAnnounced: boolean;
@@ -20,8 +18,6 @@ export const CommentParser = ({
   value,
   type,
   submissionId,
-  listingSlug,
-  listingType,
   isAnnounced,
 }: Props) => {
   const validUsernames = useAtomValue(validUsernamesAtom);
@@ -48,7 +44,7 @@ export const CommentParser = ({
       <>
         {value} -{' '}
         <Link
-          href={`/listings/${listingType}/${listingSlug}/submission/${submissionId}`}
+          href={`/feed/submission/${submissionId}`}
           className="text-brand-purple hover:underline"
         >
           check it out!

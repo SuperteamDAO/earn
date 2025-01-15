@@ -18,7 +18,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (data.type) {
     return {
       redirect: {
-        destination: `/listings/${data.type}/${slug}/submission`,
+        destination: `/listing/${slug}/submission`,
         permanent: false,
       },
     };

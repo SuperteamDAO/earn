@@ -32,10 +32,7 @@ export function Slug() {
     control: form.control,
     name: 'slug',
   });
-  const type = useWatch({
-    control: form.control,
-    name: 'type',
-  });
+
   const listingId = useWatch({
     control: form.control,
     name: 'id',
@@ -102,7 +99,7 @@ export function Slug() {
                     toast.promise(
                       async () => {
                         await navigator.clipboard.writeText(
-                          `https://earn.superteam.fun/listings/${type}/${slug}`,
+                          `https://earn.superteam.fun/listing/${slug}`,
                         );
                       },
                       {
@@ -113,7 +110,7 @@ export function Slug() {
                     );
                   }}
                 >
-                  https://earn.superteam.fun/listings/{type}/
+                  https://earn.superteam.fun/listing/
                   <span className="underline underline-offset-2">{slug}</span>
                 </button>
               </FormDescription>

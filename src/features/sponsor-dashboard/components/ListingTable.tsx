@@ -188,7 +188,7 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
               const listingLink =
                 listing?.type === 'grant'
                   ? `${getURL()}grants/${listing.slug}`
-                  : `${getURL()}listings/${listing?.type}/${listing.slug}`;
+                  : `${getURL()}listing/${listing.slug}`;
 
               const listingSubmissionLink =
                 listing.type === 'grant'

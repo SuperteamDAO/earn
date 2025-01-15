@@ -58,7 +58,7 @@ export const SubmissionHeader = ({
 
   const deadline = formatDeadline(bounty?.deadline, bounty?.type);
 
-  const listingPath = `listings/${bounty?.type}/${bounty?.slug}`;
+  const listingPath = `listing/${bounty?.slug}`;
   const { hasCopied, onCopy } = useClipboard(`${getURL()}${listingPath}`);
 
   const bountyStatus = getListingStatus(bounty);
@@ -66,7 +66,7 @@ export const SubmissionHeader = ({
   const listingLink =
     bounty?.type === 'grant'
       ? `${getURL()}grants/${bounty.slug}/`
-      : `${getURL()}listings/${bounty?.type}/${bounty?.slug}/`;
+      : `${getURL()}listing/${bounty?.slug}/`;
 
   const socialListingLink = (medium?: 'twitter' | 'telegram') =>
     `${listingLink}${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;

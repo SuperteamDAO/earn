@@ -83,7 +83,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
 
   return (
     <Link
-      href={`/listings/${type}/${slug}`}
+      href={`/listing/${slug}`}
       className={`block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4 ${
         isFeatured && isBeforeDeadline ? 'bg-purple-50' : 'bg-white'
       }`}

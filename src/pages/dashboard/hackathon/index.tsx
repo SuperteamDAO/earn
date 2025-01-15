@@ -457,7 +457,7 @@ export default function Hackathon() {
                               className="flex items-center gap-2 py-2 text-sm font-medium text-slate-500"
                               onClick={() =>
                                 window.open(
-                                  `${router.basePath}/listings/${currentBounty?.type}/${currentBounty.slug}`,
+                                  `${router.basePath}/listing/${currentBounty.slug}`,
                                   '_blank',
                                 )
                               }
