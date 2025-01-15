@@ -5,8 +5,6 @@ import { type CommentType } from '@/interface/comments';
 import { isLink } from '@/utils/isLink';
 import { truncateString } from '@/utils/truncateString';
 
-import { USERNAME_PATTERN } from '@/features/talent/constants';
-
 import { validUsernamesAtom } from '../atoms';
 
 interface Props {
@@ -29,25 +27,21 @@ export const CommentParser = ({
   const validUsernames = useAtomValue(validUsernamesAtom);
 
   function parseComment(comment: string) {
-    const usernamePatternString = USERNAME_PATTERN.source;
-    const parts = comment
-      .split(new RegExp(`(\\s+|@${usernamePatternString})`, 'g'))
-      .filter(Boolean);
-    return parts.map((part) => {
-      if (
-        part.startsWith('@') &&
-        part.length > 1 &&
-        validUsernames.includes(part.split('@')[1] || '')
-      ) {
-        return { type: 'mention', value: part };
-      } else if (isLink(part)) {
-        return { type: 'link', value: part };
+    const tokens = comment.split(/(\s+|@\w+[\w-]*|[^\s@]+)/g).filter(Boolean);
+
+    return tokens.map((token) => {
+      const mentionMatch = token.match(/^@(\w+[\w-]*)/);
+      if (mentionMatch && validUsernames.includes(mentionMatch[1] || '')) {
+        return { type: 'mention', value: mentionMatch[0] };
       }
-      return { type: 'text', value: part };
+
+      if (isLink(token)) {
+        return { type: 'link', value: token };
+      }
+
+      return { type: 'text', value: token };
     });
   }
-
-  const parsedComment = parseComment(value);
 
   if (type === 'SUBMISSION' && submissionId && isAnnounced) {
     return (
@@ -62,6 +56,8 @@ export const CommentParser = ({
       </>
     );
   }
+
+  const parsedComment = parseComment(value);
 
   return (
     <>
