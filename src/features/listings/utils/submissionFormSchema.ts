@@ -54,7 +54,11 @@ const submissionSchema = (
           });
         }
       }
-      if (listing.type !== 'project' && !data.link) {
+      if (
+        listing.type !== 'project' &&
+        !data.link &&
+        !walletFieldListings.includes(listing.id!)
+      ) {
         ctx.addIssue({
           code: 'custom',
           path: ['link'],

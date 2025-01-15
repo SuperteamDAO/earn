@@ -242,7 +242,7 @@ export const SubmissionDrawer = ({
                 </div>
                 <div>
                   <div className="mb-5 flex flex-col gap-4">
-                    {!isProject && (
+                    {!isProject && !walletFieldListings.includes(id!) && (
                       <>
                         <FormFieldWrapper
                           control={form.control}
