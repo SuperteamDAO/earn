@@ -22,7 +22,6 @@ export default async function submission(
         isArchived: false,
         isWinner: true,
       },
-      take: 100,
       orderBy: { updatedAt: 'desc' },
       include: {
         user: {
