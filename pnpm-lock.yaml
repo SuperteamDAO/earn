@@ -95,15 +95,24 @@ importers:
       '@solana/spl-token':
         specifier: ^0.4.9
         version: 0.4.9(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.7.2)(utf-8-validate@5.0.10)
+      '@solana/wallet-adapter-backpack':
+        specifier: ^0.1.14
+        version: 0.1.14(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/wallet-adapter-base':
         specifier: ^0.9.23
         version: 0.9.23(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@solana/wallet-adapter-phantom':
+        specifier: ^0.9.24
+        version: 0.9.24(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/wallet-adapter-react':
         specifier: ^0.15.35
         version: 0.15.35(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.76.3(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
       '@solana/wallet-adapter-react-ui':
         specifier: ^0.9.35
         version: 0.9.35(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-dom@18.3.1(react@18.3.1))(react-native@0.76.3(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
+      '@solana/wallet-adapter-solflare':
+        specifier: ^0.6.28
+        version: 0.6.28(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js':
         specifier: ^1.95.4
         version: 1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -2307,6 +2316,13 @@ packages:
     peerDependencies:
       '@solana/web3.js': ^1.95.3
 
+  '@solana/wallet-adapter-backpack@0.1.14':
+    resolution: {integrity: sha512-DfNLd5S1P7rmrgqMp+jRd21ryuXUxia1mu4qmZ+cau1NGFO2v5ep14LhzYXmqPde6kgbzPLPkLdRnkffLdI4TA==}
+    engines: {node: '>=16'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+    peerDependencies:
+      '@solana/web3.js': ^1.77.3
+
   '@solana/wallet-adapter-base-ui@0.1.2':
     resolution: {integrity: sha512-33l0WqY0mKKhcrNBbqS9anvT4MjzNnKewoF1VcdbI/uSlMOZtGy+9fr8ETVFI+ivr44QHpvbiZX9dmz2mTCGXw==}
     engines: {node: '>=16'}
@@ -2316,6 +2332,12 @@ packages:
 
   '@solana/wallet-adapter-base@0.9.23':
     resolution: {integrity: sha512-apqMuYwFp1jFi55NxDfvXUX2x1T0Zh07MxhZ/nCCTGys5raSfYUh82zen2BLv8BSDj/JxZ2P/s7jrQZGrX8uAw==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@solana/web3.js': ^1.77.3
+
+  '@solana/wallet-adapter-phantom@0.9.24':
+    resolution: {integrity: sha512-D24AxRHmRJ4AYoRvijbiuUb9LmC4xLGKLMSJS2ly+zGxVmaPASPM/ThaY/DlYTDL31QvkYtl8RzSR4yIU1gpLg==}
     engines: {node: '>=16'}
     peerDependencies:
       '@solana/web3.js': ^1.77.3
@@ -2334,6 +2356,12 @@ packages:
     peerDependencies:
       '@solana/web3.js': ^1.77.3
       react: '*'
+
+  '@solana/wallet-adapter-solflare@0.6.28':
+    resolution: {integrity: sha512-iiUQtuXp8p4OdruDawsm1dRRnzUCcsu+lKo8OezESskHtbmZw2Ifej0P99AbJbBAcBw7q4GPI6987Vh05Si5rw==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@solana/web3.js': ^1.77.3
 
   '@solana/wallet-standard-chains@1.1.0':
     resolution: {integrity: sha512-IRJHf94UZM8AaRRmY18d34xCJiVPJej1XVwXiTjihHnmwD0cxdQbc/CKjrawyqFyQAKJx7raE5g9mnJsAdspTg==}
@@ -2375,6 +2403,16 @@ packages:
 
   '@solana/web3.js@1.95.5':
     resolution: {integrity: sha512-hU9cBrbg1z6gEjLH9vwIckGBVB78Ijm0iZFNk4ocm5OD82piPwuk3MeQ1rfiKD9YQtr95krrcaopb49EmQJlRg==}
+
+  '@solflare-wallet/metamask-sdk@1.0.3':
+    resolution: {integrity: sha512-os5Px5PTMYKGS5tzOoyjDxtOtj0jZKnbI1Uwt8+Jsw1HHIA+Ib2UACCGNhQ/un2f8sIbTfLD1WuucNMOy8KZpQ==}
+    peerDependencies:
+      '@solana/web3.js': '*'
+
+  '@solflare-wallet/sdk@1.4.2':
+    resolution: {integrity: sha512-jrseNWipwl9xXZgrzwZF3hhL0eIVxuEtoZOSLmuPuef7FgHjstuTtNJAeT4icA7pzdDV4hZvu54pI2r2f7SmrQ==}
+    peerDependencies:
+      '@solana/web3.js': '*'
 
   '@stablelib/base64@1.0.1':
     resolution: {integrity: sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==}
@@ -6849,6 +6887,10 @@ packages:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
 
+  uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    hasBin: true
+
   vaul@1.1.1:
     resolution: {integrity: sha512-+ejzF6ffQKPcfgS7uOrGn017g39F8SO4yLPXbBhpC7a0H+oPqPna8f1BUfXaz8eU4+pxbQcmjxW+jWBSbxjaFg==}
     peerDependencies:
@@ -9349,6 +9391,11 @@ snapshots:
       - typescript
       - utf-8-validate
 
+  '@solana/wallet-adapter-backpack@0.1.14(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@solana/web3.js': 1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+
   '@solana/wallet-adapter-base-ui@0.1.2(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.76.3(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
     dependencies:
       '@solana/wallet-adapter-react': 0.15.35(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.76.3(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
@@ -9365,6 +9412,11 @@ snapshots:
       '@wallet-standard/base': 1.1.0
       '@wallet-standard/features': 1.1.0
       eventemitter3: 4.0.7
+
+  '@solana/wallet-adapter-phantom@0.9.24(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@solana/web3.js': 1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
   '@solana/wallet-adapter-react-ui@0.9.35(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-dom@18.3.1(react@18.3.1))(react-native@0.76.3(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
     dependencies:
@@ -9388,6 +9440,15 @@ snapshots:
     transitivePeerDependencies:
       - bs58
       - react-native
+
+  '@solana/wallet-adapter-solflare@0.6.28(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@solana/wallet-standard-chains': 1.1.0
+      '@solana/web3.js': 1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@solflare-wallet/metamask-sdk': 1.0.3(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@solflare-wallet/sdk': 1.4.2(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@wallet-standard/wallet': 1.1.0
 
   '@solana/wallet-standard-chains@1.1.0':
     dependencies:
@@ -9475,6 +9536,22 @@ snapshots:
       - bufferutil
       - encoding
       - utf-8-validate
+
+  '@solflare-wallet/metamask-sdk@1.0.3(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@solana/wallet-standard-features': 1.2.0
+      '@solana/web3.js': 1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@wallet-standard/base': 1.1.0
+      bs58: 5.0.0
+      eventemitter3: 5.0.1
+      uuid: 9.0.1
+
+  '@solflare-wallet/sdk@1.4.2(@solana/web3.js@1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@solana/web3.js': 1.95.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      bs58: 5.0.0
+      eventemitter3: 5.0.1
+      uuid: 9.0.1
 
   '@stablelib/base64@1.0.1': {}
 
@@ -14498,6 +14575,8 @@ snapshots:
   utils-merge@1.0.1: {}
 
   uuid@8.3.2: {}
+
+  uuid@9.0.1: {}
 
   vaul@1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
