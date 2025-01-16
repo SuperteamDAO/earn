@@ -1,7 +1,6 @@
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
 
@@ -25,7 +24,6 @@ export function UserMenu() {
   const posthog = usePostHog();
   const { user } = useUser();
   const logout = useLogout();
-  const { data: session } = useSession();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   useEffect(() => {
@@ -137,7 +135,7 @@ export function UserMenu() {
 
           <DropdownMenuSeparator />
 
-          {session?.user?.role === 'GOD' && (
+          {user?.role === 'GOD' && (
             <div className="hidden sm:block">
               <DropdownMenuLabel className="-mb-2 text-xs font-medium text-slate-400">
                 God Mode

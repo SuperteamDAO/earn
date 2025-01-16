@@ -1,5 +1,5 @@
+import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
@@ -9,14 +9,12 @@ import { cn } from '@/utils/cn';
 import { maxW2 } from '../utils/styles';
 
 export function Footer() {
-  const { data: session } = useSession();
-
+  const { authenticated } = usePrivy();
   const { user } = useUser();
-
   const posthog = usePostHog();
 
-  function getStartedWhere(authenticated: boolean, isSponsor: boolean) {
-    if (!authenticated) return '/new/sponsor';
+  function getStartedWhere(isAuthenticated: boolean, isSponsor: boolean) {
+    if (!isAuthenticated) return '/new/sponsor';
     if (!isSponsor) return '/new/sponsor';
     return '/dashboard/listings/?open=1';
   }
@@ -42,7 +40,7 @@ export function Footer() {
 
       <Link
         className="ph-no-capture"
-        href={getStartedWhere(!!session, !!user?.currentSponsorId)}
+        href={getStartedWhere(authenticated, !!user?.currentSponsorId)}
         onClick={() => posthog.capture('clicked_footer_get_started')}
       >
         <Button

@@ -1,10 +1,16 @@
+import { useLoginWithEmail } from '@privy-io/react-auth';
 import { useRouter } from 'next/router';
-import { signIn } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
+import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
 import { checkEmailValidity, validateEmailRegex } from '../utils/email';
@@ -12,6 +18,7 @@ import { checkEmailValidity, validateEmailRegex } from '../utils/email';
 interface LoginProps {
   redirectTo?: string;
 }
+
 export const EmailSignIn = ({ redirectTo }: LoginProps) => {
   const [email, setEmail] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(false);
@@ -21,6 +28,30 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
 
   const router = useRouter();
   const posthog = usePostHog();
+
+  const { state, sendCode, loginWithCode } = useLoginWithEmail({
+    onComplete: async ({ isNewUser, user }) => {
+      if (isNewUser) {
+        await api.post('/api/user/create', {
+          email: user.email,
+          privyDid: user.id,
+        });
+      }
+      const callbackUrl = new URL(
+        redirectTo || router.asPath,
+        window.location.origin,
+      );
+      callbackUrl.searchParams.set('loginState', 'signedIn');
+      if (redirectTo) {
+        callbackUrl.searchParams.set('originUrl', router.asPath);
+      }
+      router.push(callbackUrl.toString());
+    },
+    onError: () => {
+      setEmailError('Authentication failed. Please try again.');
+      setIsLoading(false);
+    },
+  });
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const emailInput = e.target.value.trim();
@@ -39,18 +70,8 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
         const isValidEmail = await checkEmailValidity(email);
         if (isValidEmail) {
           posthog.capture('email OTP_auth');
-          const callbackUrl = new URL(
-            redirectTo || router.asPath,
-            window.location.origin,
-          );
-          callbackUrl.searchParams.set('loginState', 'signedIn');
-          if (redirectTo)
-            callbackUrl.searchParams.set('originUrl', router.asPath);
           localStorage.setItem('emailForSignIn', email);
-          signIn('email', {
-            email,
-            callbackUrl: callbackUrl.toString(),
-          });
+          await sendCode({ email });
         } else {
           setIsLoading(false);
           setEmailError(
@@ -70,6 +91,16 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
     }
   };
 
+  const handleVerifyOTP = async (value: string) => {
+    setIsLoading(true);
+    try {
+      await loginWithCode({ code: value });
+    } catch (error) {
+      setEmailError('Invalid code. Please try again.');
+      setIsLoading(false);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -78,6 +109,40 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
   };
 
   const isError = hasAttemptedSubmit && !isEmailValid;
+  const showOTPInput = state.status === 'awaiting-code-input';
+
+  if (showOTPInput) {
+    return (
+      <div className="mb-20 flex flex-col items-center gap-4">
+        <h1 className="text-center text-lg font-medium text-slate-500">
+          Enter OTP
+        </h1>
+        <InputOTP
+          maxLength={6}
+          onComplete={handleVerifyOTP}
+          autoFocus
+          inputMode="numeric"
+        >
+          <InputOTPGroup>
+            <InputOTPSlot index={0} className="border-gray-400" />
+            <InputOTPSlot index={1} className="border-gray-400" />
+            <InputOTPSlot index={2} className="border-gray-400" />
+            <InputOTPSlot index={3} className="border-gray-400" />
+            <InputOTPSlot index={4} className="border-gray-400" />
+            <InputOTPSlot index={5} className="border-gray-400" />
+          </InputOTPGroup>
+        </InputOTP>
+        <p className="text-center text-xs text-slate-400">
+          We just sent an OTP on your email <b>{email}</b>
+        </p>
+        {emailError && (
+          <p className="mt-2 text-center text-xs leading-[0.9rem] text-red-500">
+            {emailError}
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <>

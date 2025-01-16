@@ -1,6 +1,6 @@
+import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
@@ -14,7 +14,7 @@ import { UserMenu } from '@/features/navbar/components/UserMenu';
 import { NAV_LINKS } from '../utils/constants';
 
 export const DesktopNavbar = () => {
-  const { data: session, status } = useSession();
+  const { authenticated, ready } = usePrivy();
   const { user } = useUser();
   const posthog = usePostHog();
   const router = useRouter();
@@ -62,7 +62,7 @@ export const DesktopNavbar = () => {
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-4 py-2">
-          {status === 'loading' && !session && (
+          {!ready && (
             <div className="flex items-center gap-2">
               <Skeleton className="h-10 w-10 rounded-full" />
               <Skeleton className="h-4 w-20" />
@@ -71,7 +71,7 @@ export const DesktopNavbar = () => {
 
           <div className="flex gap-2">
             <div className="flex items-center">
-              {status === 'authenticated' && !!user?.currentSponsorId && (
+              {authenticated && !!user?.currentSponsorId && (
                 <Link
                   className="ph-no-capture"
                   href="/dashboard/listings/?open=1"
@@ -86,7 +86,7 @@ export const DesktopNavbar = () => {
                   </Button>
                 </Link>
               )}
-              {status === 'authenticated' && !user?.currentSponsorId && (
+              {authenticated && !user?.currentSponsorId && (
                 <Link
                   className="ph-no-capture"
                   href="/new/sponsor/"
@@ -101,11 +101,11 @@ export const DesktopNavbar = () => {
                   </Button>
                 </Link>
               )}
-              {status === 'authenticated' && session && <UserMenu />}
+              {authenticated && <UserMenu />}
             </div>
           </div>
 
-          {status === 'unauthenticated' && !session && (
+          {ready && !authenticated && (
             <div className="flex gap-2">
               <div className="flex">
                 <Link

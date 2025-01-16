@@ -1,6 +1,6 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
 import { useBreakpoint } from '@/hooks/use-breakpoint';
@@ -14,7 +14,7 @@ import { TalentImageCard } from '@/features/talent/components/onboarding-form/Im
 
 export default function Talent() {
   const { user } = useUser();
-  const { status } = useSession();
+  const { authenticated } = usePrivy();
   const isMD = useBreakpoint('lg');
 
   const params = useSearchParams();
@@ -23,7 +23,7 @@ export default function Talent() {
   const [loginStep, setLoginStep] = useState(0);
 
   useEffect(() => {
-    if (status === 'authenticated' && user && user?.isTalentFilled) {
+    if (authenticated && user && user?.isTalentFilled) {
       const originUrl = params.get('originUrl');
       if (!!originUrl && typeof originUrl === 'string') {
         router.push(originUrl);
@@ -31,7 +31,7 @@ export default function Talent() {
         router.push('/');
       }
     }
-  }, [user, router]);
+  }, [user, authenticated, router, params]);
 
   return (
     <Default
@@ -43,7 +43,7 @@ export default function Talent() {
         />
       }
     >
-      {status === 'unauthenticated' ? (
+      {!authenticated ? (
         <div className="h-screen w-full bg-white">
           <div className="mx-auto flex min-h-[60vh] max-w-[32rem] flex-col items-center justify-center">
             <p className="pt-4 text-center text-2xl font-semibold text-slate-900">

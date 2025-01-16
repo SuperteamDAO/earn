@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { usePrivy } from '@privy-io/react-auth';
 import { Edit, Info, Loader2, Plus, Trash } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -53,7 +53,8 @@ import { useUsernameValidation } from '@/features/talent/utils/useUsernameValida
 
 export default function EditProfilePage({ slug }: { slug: string }) {
   const { user, refetchUser } = useUser();
-  const { data: session, status } = useSession();
+  const { authenticated, ready } = usePrivy();
+
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     mode: 'onBlur',
@@ -321,7 +322,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     }
   }, [slug, router, user]);
 
-  if (!session && status === 'unauthenticated') {
+  if (ready && !authenticated) {
     router.push('/');
   }
 

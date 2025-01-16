@@ -1,7 +1,7 @@
+import { usePrivy } from '@privy-io/react-auth';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { IoSearchOutline } from 'react-icons/io5';
 
@@ -24,7 +24,7 @@ const LogoContextMenu = dynamic(() =>
 );
 
 export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
-  const { data: session, status } = useSession();
+  const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const posthog = usePostHog();
   const { user } = useUser();
@@ -102,14 +102,14 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         )}
 
         <div className="flex flex-1 items-center justify-end gap-4 py-1.5">
-          {status === 'loading' && !session && (
+          {!ready && (
             <div className="flex items-center gap-2">
               <Skeleton className="h-10 w-10 rounded-full" />
               <Skeleton className="h-4 w-20" />
             </div>
           )}
 
-          {status === 'authenticated' && session && (
+          {ready && authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
               {user?.currentSponsorId && !isDashboardRoute && (
                 <Button
@@ -131,7 +131,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             </div>
           )}
 
-          {status === 'unauthenticated' && !session && (
+          {ready && !authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
               <div className="flex items-center gap-0">
                 <Button

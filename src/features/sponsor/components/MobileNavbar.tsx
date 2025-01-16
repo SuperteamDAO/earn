@@ -1,6 +1,6 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useRef } from 'react';
 
@@ -21,7 +21,7 @@ export const MobileNavbar = () => {
     onClose: onDrawerClose,
   } = useDisclosure();
 
-  const { data: session, status } = useSession();
+  const { authenticated, ready } = usePrivy();
   const { user } = useUser();
   const posthog = usePostHog();
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -37,7 +37,7 @@ export const MobileNavbar = () => {
             <SheetClose />
           </div>
           <div className="px-6">
-            {status === 'unauthenticated' && !session && (
+            {ready && !authenticated && (
               <div className="flex items-center gap-3">
                 <Link
                   className="ph-no-capture"
@@ -144,8 +144,8 @@ export const MobileNavbar = () => {
         </Link>
       </div>
 
-      {status === 'authenticated' && session && <UserMenu />}
-      {status === 'unauthenticated' && !session && (
+      {ready && authenticated && <UserMenu />}
+      {ready && !authenticated && (
         <Link
           className="ph-no-capture"
           href="/new/sponsor/"

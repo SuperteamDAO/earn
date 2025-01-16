@@ -1,5 +1,5 @@
+import { usePrivy } from '@privy-io/react-auth';
 import dynamic from 'next/dynamic';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
 
@@ -30,7 +30,7 @@ const MobileNavbar = dynamic(() =>
 );
 
 export const Header = () => {
-  const { data: session, status } = useSession();
+  const { authenticated, ready } = usePrivy();
 
   const {
     isOpen: isLoginOpen,
@@ -53,13 +53,13 @@ export const Header = () => {
   useEffect(() => {
     const checkHashAndOpenModal = () => {
       const hashHasEmail = window.location.hash === '#emailPreferences';
-      if (hashHasEmail && status === 'unauthenticated' && !session) {
+      if (hashHasEmail && ready && !authenticated) {
         onLoginOpen();
       }
     };
 
     checkHashAndOpenModal();
-  }, [isLoginOpen, onLoginOpen, status]);
+  }, [isLoginOpen, onLoginOpen, ready, authenticated]);
 
   return (
     <>

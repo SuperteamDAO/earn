@@ -1,7 +1,7 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -35,7 +35,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
     onClose: onDrawerClose,
   } = useDisclosure();
 
-  const { data: session, status } = useSession();
+  const { authenticated, ready } = usePrivy();
   const posthog = usePostHog();
 
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -56,7 +56,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
         <SheetContent side="left" className="w-[300px] p-0 sm:w-[380px]">
           <SheetClose />
           <div className="px-4 pb-8">
-            {status === 'unauthenticated' && !session && (
+            {ready && !authenticated && (
               <div className="ph-no-capture flex items-center gap-3">
                 <Button
                   variant="link"
@@ -187,8 +187,8 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               />
             </Link>
           </div>
-          {status === 'authenticated' && session && <UserMenu />}
-          {status === 'unauthenticated' && !session && (
+          {ready && authenticated && <UserMenu />}
+          {ready && !authenticated && (
             <Button
               variant="ghost"
               className="ph-no-capture mr-2 text-base text-brand-purple"

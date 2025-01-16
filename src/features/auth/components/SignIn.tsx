@@ -1,6 +1,6 @@
+import { useLoginWithOAuth } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signIn } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
@@ -25,17 +25,23 @@ export const SignIn = ({
   const router = useRouter();
   const posthog = usePostHog();
 
+  const callbackUrl = new URL(
+    redirectTo || router.asPath,
+    window.location.origin,
+  );
+  callbackUrl.searchParams.set('loginState', 'signedIn');
+  if (redirectTo) callbackUrl.searchParams.set('originUrl', router.asPath);
+
+  const { initOAuth } = useLoginWithOAuth({
+    onComplete: () => {
+      posthog.capture('google_auth');
+      router.push(callbackUrl.toString());
+    },
+  });
+
   const handleGmailSignIn = async () => {
     posthog.capture('google_auth');
-    const callbackUrl = new URL(
-      redirectTo || router.asPath,
-      window.location.origin,
-    );
-    callbackUrl.searchParams.set('loginState', 'signedIn');
-    if (redirectTo) callbackUrl.searchParams.set('originUrl', router.asPath);
-    signIn('google', {
-      callbackUrl: callbackUrl.toString(),
-    });
+    await initOAuth({ provider: 'google' });
   };
 
   return (

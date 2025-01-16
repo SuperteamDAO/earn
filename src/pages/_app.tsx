@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { SessionProvider } from 'next-auth/react';
 import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
@@ -13,6 +12,8 @@ import { toast } from 'sonner';
 import { useUser } from '@/store/user';
 import { fontMono, fontSans } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
+
+import Providers from '@/features/privy/providers';
 
 import '../styles/globals.scss';
 import '@/components/tiptap/styles/index.css';
@@ -130,7 +131,7 @@ function MyApp({ Component, pageProps }: any) {
   );
 }
 
-function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <style jsx global>{`
@@ -144,9 +145,9 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         }
       `}</style>
       <PostHogProvider client={posthog}>
-        <SessionProvider session={session}>
+        <Providers>
           <MyApp Component={Component} pageProps={pageProps} />
-        </SessionProvider>
+        </Providers>
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
       </PostHogProvider>
       <ReactQueryDevtools initialIsOpen={false} />
