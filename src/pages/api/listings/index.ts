@@ -1,11 +1,11 @@
 import { type BountyType, type Prisma, Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
   filterRegionCountry,
   getCombinedRegion,
@@ -116,13 +116,12 @@ export default async function listings(
     }
   }
 
-  const token = await getToken({ req });
-  const userId = token?.sub;
+  const privyDid = await getPrivyToken(req);
   let userRegion;
   let userLocation;
-  if (userId) {
+  if (privyDid) {
     const user = await prisma.user.findFirst({
-      where: { id: userId },
+      where: { privyDid },
       select: { location: true },
     });
     userRegion = user?.location

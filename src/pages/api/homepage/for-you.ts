@@ -15,21 +15,22 @@ import { getStatusFilterQuery } from '@/features/listings/utils/status';
 const TAKE = 20;
 
 interface ForYouProps {
-  userId: string;
+  privyDid?: string;
   order?: 'asc' | 'desc';
   statusFilter?: StatusFilter;
+  userId?: string;
 }
 
 export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { skills: true, location: true, isTalentFilled: true },
+    select: { skills: true, location: true, isTalentFilled: true, id: true },
   });
 
   if (!user?.isTalentFilled) return [];
 
   const subscribedListings = prisma.subscribeBounty.findMany({
-    where: { userId },
+    where: { userId: user?.id },
     select: { bountyId: true },
   });
 

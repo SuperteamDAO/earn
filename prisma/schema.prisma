@@ -420,7 +420,7 @@ model User {
   GrantApplication   GrantApplication[]
   SubscribeHackathon SubscribeHackathon[]
   isBlocked          Boolean              @default(false)
-  privyDid           String?
+  privyDid           String?              @unique
 
   @@index([currentSponsorId])
   @@index([hackathonId])

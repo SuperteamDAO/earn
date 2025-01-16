@@ -1,41 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { userSelectOptions } from '@/features/auth/constants';
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   try {
-    const token = await getToken({ req });
+    const privyDid = await getPrivyToken(req);
 
-    if (!token) {
+    if (!privyDid) {
       logger.warn('Unauthorized request - No token provided');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const userEmail = token.email;
-    logger.debug(`Token retrieved, user email: ${userEmail}`);
-
-    if (!userEmail) {
-      logger.warn('Invalid token - No email found');
-      return res.status(400).json({ error: 'Invalid token' });
-    }
-
     const result = await prisma.user.findUnique({
-      where: {
-        email: userEmail,
-      },
+      where: { privyDid },
       select: userSelectOptions,
     });
 
     if (!result) {
-      logger.warn(`User not found for email: ${userEmail}`);
+      logger.warn(`User not found for privyDid: ${privyDid}`);
       return res.status(404).json({ error: 'User not found' });
     }
 

@@ -1,34 +1,24 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+
+async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   try {
-    const token = await getToken({ req });
-    logger.debug(`Token retrieved: ${safeStringify(token)}`);
+    const userId = req.userId;
 
-    if (!token) {
-      logger.warn('Unauthorized request - No token provided');
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const userEmail = token.email;
-    logger.debug(`User email from token: ${userEmail}`);
-
-    if (!userEmail) {
-      logger.warn('Invalid token - No email found');
+    if (!userId) {
+      logger.warn('Invalid token - No user id found');
       return res.status(400).json({ error: 'Invalid token' });
     }
 
     const result = await prisma.user.findUnique({
       where: {
-        email: userEmail,
+        id: userId,
       },
       select: {
         Submission: {
@@ -52,7 +42,7 @@ export default async function handler(
     });
 
     if (!result) {
-      logger.warn(`User not found for email: ${userEmail}`);
+      logger.warn(`User not found for id: ${userId}`);
       return res.status(404).json({ error: 'User not found' });
     }
 
@@ -96,3 +86,5 @@ export default async function handler(
       .json({ error: 'Error occurred while processing the request.' });
   }
 }
+
+export default withAuth(handler);

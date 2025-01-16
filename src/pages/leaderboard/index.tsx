@@ -1,17 +1,18 @@
 import {
   type TalentRankingSkills,
   type TalentRankingTimeframe,
+  type User,
 } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { getServerSession } from 'next-auth';
 import { useEffect, useState, useTransition } from 'react';
 
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
 import { TotalStats } from '@/features/home/components/TotalStats';
 import { totalsQuery } from '@/features/home/queries/totals';
@@ -26,8 +27,6 @@ import {
   type TIMEFRAME,
 } from '@/features/leaderboard/types';
 import { getSubskills, skillCategories } from '@/features/leaderboard/utils';
-
-import { authOptions } from '../api/auth/[...nextauth]';
 
 interface Props {
   results: RowType[];
@@ -161,14 +160,20 @@ export default TalentLeaderboard;
 export const getServerSideProps: GetServerSideProps = async ({
   query,
   req,
-  res,
 }) => {
   const skill = (query.skill || 'ALL') as TalentRankingSkills;
   const timeframe = (query.timeframe || 'ALL_TIME') as TalentRankingTimeframe;
   let page = Number(query.page) || 1;
   if (page < 1) page = 1;
 
-  const session = await getServerSession(req, res, authOptions);
+  const privyDid = await getPrivyToken(req);
+  let user: User | null = null;
+
+  if (privyDid) {
+    user = await prisma.user.findUnique({
+      where: { privyDid },
+    });
+  }
 
   const PAGE_SIZE = 10;
 
@@ -208,12 +213,12 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   let userRank: (typeof results)[0] | null = null;
   let formatterUserRank: RowType | null = null;
-  if (session && !results.find((c) => c.userId === session.user.id)) {
+  if (user && !results.find((c) => c.userId === user?.id)) {
     userRank = await prisma.talentRankings.findFirst({
       where: {
         skill,
         timeframe,
-        userId: session.user.id,
+        userId: user?.id,
       },
       include: {
         user: {

@@ -1,17 +1,16 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function comment(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+import { type NextApiRequestWithUser } from '@/features/auth/types';
+import { withAuth } from '@/features/auth/utils/withAuth';
+
+async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
   const params = req.query;
   const commentId = params.id as string;
-
+  const userId = req.userId;
   logger.info(`Request Params: ${safeStringify(req.query)}`);
 
   if (req.method !== 'DELETE') {
@@ -20,18 +19,6 @@ export default async function comment(
   }
 
   try {
-    const token = await getToken({ req });
-    if (!token) {
-      logger.warn('Unauthorized request - No token provided');
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const userId = token.id as string;
-    if (!userId) {
-      logger.warn('Invalid token - No user ID found');
-      return res.status(400).json({ error: 'Invalid token' });
-    }
-
     logger.debug(`Fetching comment with ID: ${commentId}`);
     const comment = await prisma.comment.findUniqueOrThrow({
       where: { id: commentId },
@@ -64,3 +51,5 @@ export default async function comment(
     });
   }
 }
+
+export default withAuth(comment);

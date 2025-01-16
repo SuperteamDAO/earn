@@ -2,13 +2,13 @@ import { Regions } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
-import { getServerSession } from 'next-auth';
 import { useMemo } from 'react';
 
 import { CombinedRegions } from '@/constants/Superteam';
 import { Home } from '@/layouts/Home';
 import { prisma } from '@/prisma';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
 import { homepageForYouListingsQuery } from '@/features/home/queries/for-you';
 import { homepageGrantsQuery } from '@/features/home/queries/grants';
@@ -21,7 +21,6 @@ import {
   getCombinedRegion,
 } from '@/features/listings/utils/region';
 
-import { authOptions } from './api/auth/[...nextauth]';
 import { getForYouListings } from './api/homepage/for-you';
 import { getListings } from './api/homepage/listings';
 
@@ -158,20 +157,25 @@ export default function HomePage({
   );
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async (
-  context,
-) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
+export const getServerSideProps: GetServerSideProps = async (context) => {
   let userRegion: string[] | null | undefined = null;
   let userGrantsRegion: string[] | null | undefined = null;
   let isAuth = false;
 
-  if (session && session.user.id) {
+  const privyDid = await getPrivyToken(context.req);
+  let openForYouListings: Awaited<ReturnType<typeof getForYouListings>> = [];
+
+  if (privyDid) {
     const user = await prisma.user.findUnique({
-      where: {
-        id: session.user.id,
-      },
+      where: { privyDid },
     });
+
+    openForYouListings = await getForYouListings({
+      statusFilter: 'open',
+      order: 'desc',
+      userId: user?.id,
+    });
+
     if (user) {
       isAuth = true;
       const matchedRegion = user.location
@@ -188,7 +192,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         userRegion = [Regions.GLOBAL];
       }
       const matchedGrantsRegion = CombinedRegions.find((region) =>
-        region.country.includes(session.user.location!),
+        region.country.includes(user.location!),
       );
       if (matchedGrantsRegion?.region) {
         userGrantsRegion = [
@@ -200,15 +204,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
         userGrantsRegion = [Regions.GLOBAL];
       }
     }
-  }
-
-  let openForYouListings: Awaited<ReturnType<typeof getForYouListings>> = [];
-  if (session && session.user.id) {
-    openForYouListings = await getForYouListings({
-      statusFilter: 'open',
-      order: 'desc',
-      userId: session.user.id,
-    });
   }
 
   const openListings = await getListings({
