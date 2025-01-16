@@ -34,18 +34,12 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
       if (isNewUser) {
         await api.post('/api/user/create', {
           email: user.email,
-          privyDid: user.id,
         });
       }
-      const callbackUrl = new URL(
-        redirectTo || router.asPath,
-        window.location.origin,
-      );
-      callbackUrl.searchParams.set('loginState', 'signedIn');
-      if (redirectTo) {
-        callbackUrl.searchParams.set('originUrl', router.asPath);
-      }
-      router.push(callbackUrl.toString());
+      const url = new URL(redirectTo || router.asPath, window.location.origin);
+      url.searchParams.set('loginState', 'signedIn');
+      if (redirectTo) url.searchParams.set('originUrl', router.asPath);
+      router.push(url.toString());
     },
     onError: () => {
       setEmailError('Authentication failed. Please try again.');

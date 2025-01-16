@@ -7,6 +7,7 @@ import { MdOutlineEmail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
+import { api } from '@/lib/api';
 import { GoogleIcon } from '@/svg/google';
 
 import { EmailSignIn } from './EmailSignIn';
@@ -25,17 +26,18 @@ export const SignIn = ({
   const router = useRouter();
   const posthog = usePostHog();
 
-  const callbackUrl = new URL(
-    redirectTo || router.asPath,
-    window.location.origin,
-  );
-  callbackUrl.searchParams.set('loginState', 'signedIn');
-  if (redirectTo) callbackUrl.searchParams.set('originUrl', router.asPath);
-
   const { initOAuth } = useLoginWithOAuth({
-    onComplete: () => {
+    onComplete: async ({ isNewUser, user }) => {
+      if (isNewUser) {
+        await api.post('/api/user/create', {
+          email: user.email,
+        });
+      }
       posthog.capture('google_auth');
-      router.push(callbackUrl.toString());
+      const url = new URL(redirectTo || router.asPath, window.location.origin);
+      url.searchParams.set('loginState', 'signedIn');
+      if (redirectTo) url.searchParams.set('originUrl', router.asPath);
+      router.push(url.toString());
     },
   });
 

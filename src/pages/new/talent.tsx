@@ -31,7 +31,7 @@ export default function Talent() {
         router.push('/');
       }
     }
-  }, [user, authenticated, router, params]);
+  }, [user, authenticated, router]);
 
   return (
     <Default
