@@ -144,12 +144,12 @@ function App({ Component, pageProps }: AppProps) {
           -moz-osx-font-smoothing: grayscale;
         }
       `}</style>
-      <PostHogProvider client={posthog}>
-        <Providers>
+      <Providers>
+        <PostHogProvider client={posthog}>
           <MyApp Component={Component} pageProps={pageProps} />
-        </Providers>
-        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
-      </PostHogProvider>
+          <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
+        </PostHogProvider>
+      </Providers>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
