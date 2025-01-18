@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
 
+import { RichEditor } from '@/components/shared/RichEditor';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -244,45 +245,77 @@ export const SubmissionDrawer = ({
                   <div className="mb-5 flex flex-col gap-4">
                     {!isProject && !walletFieldListings.includes(id!) && (
                       <>
-                        <FormFieldWrapper
+                        <FormField
                           control={form.control}
-                          name="link"
-                          label="Link to Your Submission"
-                          description="Make sure this link is accessible by everyone!"
-                          isRequired
-                        >
-                          <div className="flex">
-                            <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
-                              <p className="text-sm font-medium text-slate-500">
-                                https://
-                              </p>
-                            </div>
-                            <Input
-                              maxLength={500}
-                              placeholder="Add a link"
-                              className="rounded-l-none"
-                            />
-                          </div>
-                        </FormFieldWrapper>
-                        <FormFieldWrapper
+                          name={'link'}
+                          render={({ field }) => (
+                            <FormItem className={cn('flex flex-col gap-2')}>
+                              <div>
+                                <FormLabel isRequired>
+                                  Link to Your Submission
+                                </FormLabel>
+                                <FormDescription>
+                                  Make sure this link is accessible by everyone!
+                                </FormDescription>
+                              </div>
+                              <div>
+                                <FormControl>
+                                  <div className="flex">
+                                    <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
+                                      <p className="text-sm font-medium text-slate-500">
+                                        https://
+                                      </p>
+                                    </div>
+                                    <Input
+                                      {...field}
+                                      maxLength={500}
+                                      placeholder="Add a link"
+                                      className="rounded-l-none"
+                                    />
+                                  </div>
+                                </FormControl>
+
+                                <FormMessage className="pt-1" />
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
                           control={form.control}
-                          name="tweet"
-                          label="Tweet Link"
-                          description="This helps sponsors discover (and maybe repost) your work on Twitter! If this submission is for a Twitter thread bounty, you can ignore this field."
-                        >
-                          <div className="flex">
-                            <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
-                              <p className="text-sm font-medium text-slate-500">
-                                https://
-                              </p>
-                            </div>
-                            <Input
-                              maxLength={500}
-                              placeholder="Add a tweet's link"
-                              className="rounded-l-none"
-                            />
-                          </div>
-                        </FormFieldWrapper>
+                          name={'tweet'}
+                          render={({ field }) => (
+                            <FormItem className={cn('flex flex-col gap-2')}>
+                              <div>
+                                <FormLabel isRequired>Tweet Link</FormLabel>
+                                <FormDescription>
+                                  This helps sponsors discover (and maybe
+                                  repost) your work on Twitter! If this
+                                  submission is for a Twitter thread bounty, you
+                                  can ignore this field.
+                                </FormDescription>
+                              </div>
+                              <div>
+                                <FormControl>
+                                  <div className="flex">
+                                    <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
+                                      <p className="text-sm font-medium text-slate-500">
+                                        https://
+                                      </p>
+                                    </div>
+                                    <Input
+                                      {...field}
+                                      maxLength={500}
+                                      placeholder="Add a tweet's link"
+                                      className="rounded-l-none"
+                                    />
+                                  </div>
+                                </FormControl>
+
+                                <FormMessage className="pt-1" />
+                              </div>
+                            </FormItem>
+                          )}
+                        />
                       </>
                     )}
                     {eligibility?.map((e, index) => {
@@ -303,28 +336,45 @@ export const SubmissionDrawer = ({
                       }
 
                       return (
-                        <FormFieldWrapper
+                        <FormField
                           key={e.order}
                           control={form.control}
                           name={`eligibilityAnswers.${index}.answer`}
-                          label={e.question}
-                          isRequired
-                          isRichEditor={!e.isLink && e.type !== 'link'}
-                        >
-                          {(e.isLink || e.type === 'link') && (
-                            <div className="flex">
-                              <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
-                                <p className="text-sm font-medium text-slate-500">
-                                  https://
-                                </p>
+                          render={({ field }) => (
+                            <FormItem className={cn('flex flex-col gap-2')}>
+                              <div>
+                                <FormLabel isRequired>e.question</FormLabel>
                               </div>
-                              <Input
-                                placeholder="Write something..."
-                                className="rounded-l-none"
-                              />
-                            </div>
+                              <div>
+                                <FormControl>
+                                  {e.isLink || e.type === 'link' ? (
+                                    <div className="flex">
+                                      <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
+                                        <p className="text-sm font-medium text-slate-500">
+                                          https://
+                                        </p>
+                                      </div>
+                                      <Input
+                                        {...field}
+                                        placeholder="Add a link..."
+                                        className="rounded-l-none"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <RichEditor
+                                      {...field}
+                                      id={`eligibilityAnswers.${index}.answer`}
+                                      value={field.value || ''}
+                                      error={false}
+                                      placeholder={'Write something...'}
+                                    />
+                                  )}
+                                </FormControl>
+                                <FormMessage className="pt-1" />
+                              </div>
+                            </FormItem>
                           )}
-                        </FormFieldWrapper>
+                        />
                       );
                     })}
                     {compensationType !== 'fixed' && (
