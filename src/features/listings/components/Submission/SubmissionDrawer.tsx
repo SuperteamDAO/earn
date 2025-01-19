@@ -343,7 +343,7 @@ export const SubmissionDrawer = ({
                           render={({ field }) => (
                             <FormItem className={cn('flex flex-col gap-2')}>
                               <div>
-                                <FormLabel isRequired>e.question</FormLabel>
+                                <FormLabel isRequired>{e.question}</FormLabel>
                               </div>
                               <div>
                                 <FormControl>
