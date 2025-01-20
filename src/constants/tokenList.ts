@@ -402,4 +402,12 @@ export const tokenList: Token[] = [
     decimals: 9,
     coingeckoSymbol: 'octo-gaming',
   },
+  {
+    tokenName: 'deBridge',
+    tokenSymbol: 'DBR',
+    mintAddress: 'DBRiDgJAMsM95moTzJs7M9LnkGErpbv9v6CUR1DXnUu5',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/31528.png',
+    decimals: 6,
+    coingeckoSymbol: 'debridge',
+  },
 ];
