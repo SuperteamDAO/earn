@@ -33,7 +33,7 @@ export const SignIn = ({
           email: user.email,
         });
       }
-      posthog.capture('google_auth');
+
       const url = new URL(redirectTo || router.asPath, window.location.origin);
       url.searchParams.set('loginState', 'signedIn');
       if (redirectTo) url.searchParams.set('originUrl', router.asPath);
