@@ -10,14 +10,13 @@ export default async function handler(
 ) {
   const params = req.query;
   const slug = params.slug as string;
-  const type = params.type as 'bounty' | 'project' | 'hackathon';
 
   logger.debug(`Request query: ${safeStringify(params)}`);
 
-  if (!slug || !type) {
-    logger.warn('Missing required query parameters: slug and/or type');
+  if (!slug) {
+    logger.warn('Missing required query parameters: slug');
     return res.status(400).json({
-      error: 'Missing required query parameters: slug and/or type',
+      error: 'Missing required query parameters: slug',
     });
   }
 
@@ -25,7 +24,6 @@ export default async function handler(
     const result = await prisma.bounties.findFirst({
       where: {
         slug,
-        type,
         isActive: true,
       },
       include: {

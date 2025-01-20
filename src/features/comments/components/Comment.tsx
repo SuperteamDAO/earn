@@ -234,8 +234,6 @@ export const Comment = ({
           </div>
           <p className="mt-0 max-w-[15rem] overflow-clip pb-2 text-sm text-slate-500 sm:max-w-[20rem] md:max-w-[17rem] md:text-base lg:max-w-[29rem] xl:max-w-[46rem]">
             <CommentParser
-              listingSlug={listingSlug}
-              listingType={listingType}
               isAnnounced={isAnnounced}
               type={comment.type}
               submissionId={comment.submissionId}
