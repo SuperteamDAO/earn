@@ -32,9 +32,7 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
   const { state, sendCode, loginWithCode } = useLoginWithEmail({
     onComplete: async ({ isNewUser, user }) => {
       if (isNewUser) {
-        await api.post('/api/user/create', {
-          email: user.email,
-        });
+        await api.post('/api/user/create', { email: user.email });
       }
       const url = new URL(redirectTo || router.asPath, window.location.origin);
       url.searchParams.set('loginState', 'signedIn');

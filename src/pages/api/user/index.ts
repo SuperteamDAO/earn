@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { userSelectOptions } from '@/features/auth/constants';
+import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 
 export default async function handler(

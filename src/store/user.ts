@@ -75,9 +75,9 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
 
   return async () => {
-    await logout();
     queryClient.setQueryData(['user'], null);
-    queryClient.clear();
     localStorage.removeItem('user-storage');
+    await logout();
+    window.location.reload();
   };
 };

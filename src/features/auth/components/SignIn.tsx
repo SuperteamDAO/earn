@@ -1,4 +1,3 @@
-import { useLoginWithOAuth } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
@@ -7,9 +6,9 @@ import { MdOutlineEmail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
-import { api } from '@/lib/api';
 import { GoogleIcon } from '@/svg/google';
 
+import { useOAuth } from '../hooks/useOAuth';
 import { EmailSignIn } from './EmailSignIn';
 
 interface SigninProps {
@@ -26,24 +25,11 @@ export const SignIn = ({
   const router = useRouter();
   const posthog = usePostHog();
 
-  const { initOAuth } = useLoginWithOAuth({
-    onComplete: async ({ isNewUser, user }) => {
-      if (isNewUser) {
-        await api.post('/api/user/create', {
-          email: user.email,
-        });
-      }
-
-      const url = new URL(redirectTo || router.asPath, window.location.origin);
-      url.searchParams.set('loginState', 'signedIn');
-      if (redirectTo) url.searchParams.set('originUrl', router.asPath);
-      router.push(url.toString());
-    },
-  });
+  const { isLoading: isGoogleLoading, startOAuth } = useOAuth({ redirectTo });
 
   const handleGmailSignIn = async () => {
     posthog.capture('google_auth');
-    await initOAuth({ provider: 'google' });
+    await startOAuth();
   };
 
   return (
@@ -63,9 +49,10 @@ export const SignIn = ({
                   className="ph-no-capture h-12 w-full font-medium"
                   size="lg"
                   onClick={handleGmailSignIn}
+                  disabled={isGoogleLoading}
                 >
                   <GoogleIcon />
-                  Continue with Google
+                  {isGoogleLoading ? 'Connecting...' : 'Continue with Google'}
                 </Button>
 
                 <div className="my-3 flex w-full items-center gap-4">

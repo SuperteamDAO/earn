@@ -92,6 +92,7 @@ export function AuthWrapper({
           isOpen={loginIsOpen}
           onClose={loginOnClose}
           redirectTo={redirectTo}
+          onOpen={loginOnOpen}
         />
       )}
       {profileModalIsOpen && (

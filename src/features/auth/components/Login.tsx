@@ -6,6 +6,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 import { popupTimeoutAtom } from '@/features/conversion-popups/atoms';
 
+import { isOAuthInProgress } from '../utils/isOAuthInProgress';
 import { SignIn } from './SignIn';
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
   isSponsor?: boolean;
   redirectTo?: string;
   hideOverlay?: boolean;
+  onOpen?: () => void;
 }
 
 export const Login = ({
@@ -22,6 +24,7 @@ export const Login = ({
   isSponsor = false,
   redirectTo,
   hideOverlay,
+  onOpen,
 }: Props) => {
   const [loginStep, setLoginStep] = useState(0);
   const popupTimeout = useAtomValue(popupTimeoutAtom);
@@ -34,14 +37,20 @@ export const Login = ({
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isOAuthInProgress()) {
+      onOpen?.();
+    }
+  }, [onOpen]);
+
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      if (popupTimeout) {
-        if (!open) {
+      if (!isOAuthInProgress()) {
+        if (!open && popupTimeout) {
           popupTimeout.resume();
         }
+        onClose();
       }
-      onClose();
     },
     [popupTimeout, onClose],
   );

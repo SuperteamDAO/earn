@@ -5,9 +5,8 @@ import { useEffect } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
 
-const Login = dynamic(() =>
-  import('@/features/auth/components/Login').then((mod) => mod.Login),
-);
+import { Login } from '@/features/auth/components/Login';
+
 const SearchModal = dynamic(() =>
   import('@/features/search/components/SearchModal').then(
     (mod) => mod.SearchModal,
@@ -63,7 +62,7 @@ export const Header = () => {
 
   return (
     <>
-      {!!isLoginOpen && <Login isOpen={isLoginOpen} onClose={onLoginClose} />}
+      <Login isOpen={isLoginOpen} onClose={onLoginClose} onOpen={onLoginOpen} />
       <BountySnackbar />
       <GrantSnackbar />
       <div className="sticky top-0 z-40">

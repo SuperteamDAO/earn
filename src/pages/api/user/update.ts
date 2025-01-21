@@ -5,7 +5,7 @@ import { prisma } from '@/prisma';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { userSelectOptions } from '@/features/auth/constants';
+import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 
