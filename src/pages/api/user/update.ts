@@ -4,7 +4,6 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
 import { userSelectOptions } from '@/features/auth/constants';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -38,19 +37,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res
         .status(400)
         .json({ error: 'No valid fields provided for update' });
-    }
-
-    if ('publicKey' in updatedData) {
-      const walletValidation = validateSolanaAddress(updatedData.publicKey);
-
-      if (!walletValidation.isValid) {
-        logger.warn(`Invalid public key provided for user ID: ${userId}`);
-        return res.status(400).json({
-          error: 'Invalid Wallet Address',
-          message:
-            walletValidation.error || 'Invalid Solana wallet address provided.',
-        });
-      }
     }
 
     logger.info(`Updating user with data: ${safeStringify(updatedData)}`);

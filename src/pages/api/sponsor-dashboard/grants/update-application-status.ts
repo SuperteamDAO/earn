@@ -157,6 +157,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
                 email: true,
                 twitter: true,
                 discord: true,
+                publicKey: true,
               },
             },
             grant: {

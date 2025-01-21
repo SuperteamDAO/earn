@@ -129,7 +129,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         private: user.private || undefined,
         firstName: user.firstName || undefined,
         lastName: user.lastName || undefined,
-        publicKey: user.publicKey || undefined,
         discord: user.discord || undefined,
         github: user.github
           ? extractSocialUsername('github', user.github) || undefined
@@ -433,16 +432,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   </FormItem>
                 )}
               />
-
-              <FormFieldWrapper
-                className="mb-5"
-                label="Your Solana Wallet Address"
-                name="publicKey"
-                control={control}
-                isRequired
-              >
-                <Input placeholder="Wallet Address" />
-              </FormFieldWrapper>
 
               <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
                 SOCIALS

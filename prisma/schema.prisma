@@ -224,7 +224,7 @@ model GrantApplication {
   projectDetails      String                 @db.Text
   projectTimeline     String
   proofOfWork         String                 @db.Text
-  walletAddress       String
+  walletAddress       String?
   twitter             String?
   milestones          String?                @db.Text
   kpi                 String?                @db.Text

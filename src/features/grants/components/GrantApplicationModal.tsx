@@ -2,27 +2,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type GrantApplication } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Check, Loader2, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { type z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { api } from '@/lib/api';
-import { useUpdateUser, useUser } from '@/store/user';
+import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
@@ -59,8 +51,6 @@ export const GrantApplicationModal = ({
 
   const { user, refetchUser } = useUser();
 
-  const updateUser = useUpdateUser();
-
   const [activeStep, setActiveStep] = useState(0);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
 
@@ -78,7 +68,6 @@ export const GrantApplicationModal = ({
       projectTitle: grantApplication?.projectTitle || '',
       projectOneLiner: grantApplication?.projectOneLiner || '',
       ask: grantApplication?.ask || undefined,
-      walletAddress: grantApplication?.walletAddress || user?.publicKey || '',
       projectDetails: grantApplication?.projectDetails || '',
       projectTimeline: grantApplication?.projectTimeline
         ? dayjs(grantApplication?.projectTimeline, 'D MMMM YYYY').format(
@@ -111,10 +100,6 @@ export const GrantApplicationModal = ({
 
   const modalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (user?.publicKey) form.setValue('walletAddress', user?.publicKey);
-  }, [user]);
-
   const submitApplication = async (data: FormData) => {
     setIsLoading(true);
     try {
@@ -122,7 +107,6 @@ export const GrantApplicationModal = ({
         projectTitle,
         projectOneLiner,
         ask,
-        walletAddress,
         projectDetails,
         projectTimeline,
         proofOfWork,
@@ -131,8 +115,6 @@ export const GrantApplicationModal = ({
         twitter,
         answers,
       } = data;
-
-      await updateUser.mutateAsync({ publicKey: walletAddress });
 
       const apiAction = !!grantApplication ? 'update' : 'create';
 
@@ -145,7 +127,6 @@ export const GrantApplicationModal = ({
         proofOfWork,
         milestones,
         kpi,
-        walletAddress,
         ask: ask || null,
         twitter,
         answers: answers || [],
@@ -180,7 +161,7 @@ export const GrantApplicationModal = ({
       number,
       (keyof FormData | `answers.${number}.answer`)[]
     > = {
-      0: ['projectTitle', 'projectOneLiner', 'walletAddress', 'ask'],
+      0: ['projectTitle', 'projectOneLiner', 'ask'],
       1: [
         'projectDetails',
         'projectTimeline',
@@ -312,55 +293,6 @@ export const GrantApplicationModal = ({
                     isRequired
                     isTokenInput
                     token={token}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="walletAddress"
-                    render={({ field }) => (
-                      <FormItem className="flex w-full flex-col gap-2">
-                        <div>
-                          <FormLabel isRequired={!user?.publicKey}>
-                            Your Solana Wallet Address
-                          </FormLabel>
-                          <FormDescription>
-                            {!!user?.publicKey ? (
-                              <>
-                                This is where you will receive your rewards if
-                                you win. If you want to edit it,{' '}
-                                <a
-                                  href={`/t/${user?.username}/edit`}
-                                  className="text-blue-600 underline hover:text-blue-700"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  click here
-                                </a>
-                              </>
-                            ) : (
-                              <>
-                                This wallet address will be linked to your
-                                profile and you will receive your rewards here
-                                if you win.
-                              </>
-                            )}
-                          </FormDescription>
-                        </div>
-                        <FormControl>
-                          <Input
-                            className={cn(
-                              !!user?.publicKey &&
-                                'cursor-not-allowed text-slate-600 opacity-80',
-                            )}
-                            placeholder="Add your Solana wallet address"
-                            readOnly={!!user?.publicKey}
-                            {...(!!user?.publicKey ? {} : field)}
-                            value={user?.publicKey || field.value}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
                   />
                 </div>
               )}

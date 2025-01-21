@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
 import { api } from '@/lib/api';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
 import { getURL } from '@/utils/validUrl';
 
 import {
@@ -83,13 +82,6 @@ export const profileSchema = z
     skills: skillsArraySchema,
     private: z.boolean().default(false),
     location: z.string().optional().nullable().or(z.literal('')),
-    publicKey: z
-      .string({ message: 'Wallet address is required' })
-      .min(1, 'Wallet address is required')
-      .refine(
-        (val) => validateSolanaAddress(val).isValid,
-        'Invalid Solana wallet address',
-      ),
   })
   .superRefine((data, ctx) => {
     socialSuperRefine(data, ctx);
@@ -154,7 +146,6 @@ export const newTalentSchema = profileSchema._def.schema.pick({
   lastName: true,
   location: true,
   photo: true,
-  publicKey: true,
   skills: true,
   discord: true,
   twitter: true,
@@ -171,7 +162,6 @@ export const aboutYouSchema = profileSchema._def.schema.pick({
   lastName: true,
   location: true,
   photo: true,
-  publicKey: true,
   skills: true,
 });
 
