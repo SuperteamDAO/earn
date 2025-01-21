@@ -82,7 +82,7 @@ export const profileSchema = z
     currentEmployer: z.string().optional(),
     skills: skillsArraySchema,
     private: z.boolean().default(false),
-    location: z.string().optional().nullable().or(z.literal('')),
+    location: z.string(),
     publicKey: z
       .string({ message: 'Wallet address is required' })
       .min(1, 'Wallet address is required')

@@ -40,7 +40,7 @@ export function LocationField() {
               setValue(
                 'location',
                 newTalentSchema.shape.location.safeParse(country.name).data ||
-                  undefined,
+                  '',
               );
             }
           }
@@ -62,7 +62,6 @@ export function LocationField() {
           <FormLabel className="">Location</FormLabel>
           <FormControl>
             <RegionCombobox
-              unset
               className="h-9 w-full"
               value={field.value}
               onChange={(e) => {
