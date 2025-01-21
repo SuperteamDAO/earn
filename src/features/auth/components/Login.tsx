@@ -1,12 +1,14 @@
+import { useLoginWithOAuth } from '@privy-io/react-auth';
 import { useAtomValue } from 'jotai';
 import { ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { api } from '@/lib/api';
 
 import { popupTimeoutAtom } from '@/features/conversion-popups/atoms';
 
-import { isOAuthInProgress } from '../utils/isOAuthInProgress';
 import { SignIn } from './SignIn';
 
 interface Props {
@@ -24,10 +26,24 @@ export const Login = ({
   isSponsor = false,
   redirectTo,
   hideOverlay,
-  onOpen,
 }: Props) => {
+  const router = useRouter();
   const [loginStep, setLoginStep] = useState(0);
   const popupTimeout = useAtomValue(popupTimeoutAtom);
+
+  useLoginWithOAuth({
+    onComplete: async ({ isNewUser, user }) => {
+      if (isNewUser) {
+        await api.post('/api/user/create', { email: user.email });
+      }
+
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else {
+        router.replace(router.asPath);
+      }
+    },
+  });
 
   useEffect(() => {
     if (popupTimeout) {
@@ -37,20 +53,12 @@ export const Login = ({
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (isOAuthInProgress()) {
-      onOpen?.();
-    }
-  }, [onOpen]);
-
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      if (!isOAuthInProgress()) {
-        if (!open && popupTimeout) {
-          popupTimeout.resume();
-        }
-        onClose();
+      if (!open && popupTimeout) {
+        popupTimeout.resume();
       }
+      onClose();
     },
     [popupTimeout, onClose],
   );

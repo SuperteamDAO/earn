@@ -1,14 +1,15 @@
+import { useLoginWithOAuth } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import React, { type Dispatch, type SetStateAction } from 'react';
+import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
+import { api } from '@/lib/api';
 import { GoogleIcon } from '@/svg/google';
 
-import { useOAuth } from '../hooks/useOAuth';
 import { EmailSignIn } from './EmailSignIn';
 
 interface SigninProps {
@@ -24,12 +25,26 @@ export const SignIn = ({
 }: SigninProps) => {
   const router = useRouter();
   const posthog = usePostHog();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { isLoading: isGoogleLoading, startOAuth } = useOAuth({ redirectTo });
+  const { initOAuth } = useLoginWithOAuth({
+    onComplete: async ({ isNewUser, user }) => {
+      if (isNewUser) {
+        await api.post('/api/user/create', { email: user.email });
+      }
+
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else {
+        router.replace(router.asPath);
+      }
+    },
+  });
 
   const handleGmailSignIn = async () => {
     posthog.capture('google_auth');
-    await startOAuth();
+    setIsLoading(true);
+    await initOAuth({ provider: 'google' });
   };
 
   return (
@@ -49,10 +64,10 @@ export const SignIn = ({
                   className="ph-no-capture h-12 w-full font-medium"
                   size="lg"
                   onClick={handleGmailSignIn}
-                  disabled={isGoogleLoading}
+                  disabled={isLoading}
                 >
                   <GoogleIcon />
-                  {isGoogleLoading ? 'Connecting...' : 'Continue with Google'}
+                  {isLoading ? 'Connecting...' : 'Continue with Google'}
                 </Button>
 
                 <div className="my-3 flex w-full items-center gap-4">

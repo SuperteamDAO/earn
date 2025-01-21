@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { privy } from '@/lib/privy';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
@@ -146,6 +147,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       where: { id: userId as string },
       select: userSelectOptions,
     });
+
+    if (result) {
+      await privy.createWallets({
+        userId: result.privyDid,
+        createSolanaWallet: true,
+      });
+    }
 
     logger.info(`User onboarded successfully for user ID: ${userId}`);
     return res.status(200).json(result);
