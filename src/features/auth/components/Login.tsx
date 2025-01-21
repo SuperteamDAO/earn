@@ -14,7 +14,6 @@ interface Props {
   isSponsor?: boolean;
   redirectTo?: string;
   hideOverlay?: boolean;
-  hideCloseIcon?: boolean;
 }
 
 export const Login = ({
@@ -23,8 +22,8 @@ export const Login = ({
   isSponsor = false,
   redirectTo,
   hideOverlay,
-  hideCloseIcon = false,
 }: Props) => {
+  const [loginStep, setLoginStep] = useState(0);
   const popupTimeout = useAtomValue(popupTimeoutAtom);
 
   useEffect(() => {
@@ -47,7 +46,6 @@ export const Login = ({
     [popupTimeout, onClose],
   );
 
-  const [loginStep, setLoginStep] = useState(0);
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
@@ -55,7 +53,7 @@ export const Login = ({
         classNames={{
           overlay: hideOverlay ? 'hidden' : '',
         }}
-        hideCloseIcon={hideCloseIcon}
+        hideCloseIcon
       >
         <div className="py-5">
           {loginStep === 1 && (

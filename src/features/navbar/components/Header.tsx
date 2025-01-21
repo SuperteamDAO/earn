@@ -63,9 +63,7 @@ export const Header = () => {
 
   return (
     <>
-      {!!isLoginOpen && (
-        <Login hideCloseIcon isOpen={isLoginOpen} onClose={onLoginClose} />
-      )}
+      {!!isLoginOpen && <Login isOpen={isLoginOpen} onClose={onLoginClose} />}
       <BountySnackbar />
       <GrantSnackbar />
       <div className="sticky top-0 z-40">

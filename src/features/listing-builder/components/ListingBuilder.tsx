@@ -61,7 +61,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
   }, [router.events, queryClient, slug]);
 
   if (ready && !authenticated) {
-    return <Login hideCloseIcon isOpen={true} onClose={() => {}} />;
+    return <Login isOpen={true} onClose={() => {}} />;
   }
 
   if (!ready) {

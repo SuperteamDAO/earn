@@ -128,7 +128,7 @@ export function SponsorLayout({
   }
 
   if (ready && !authenticated) {
-    return <Login hideCloseIcon isOpen={true} onClose={() => {}} />;
+    return <Login isOpen={true} onClose={() => {}} />;
   }
 
   const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
