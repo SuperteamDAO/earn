@@ -1,3 +1,4 @@
+import { getAccessToken } from '@privy-io/react-auth';
 import axios from 'axios';
 
 const api = axios.create();
@@ -15,5 +16,20 @@ const api = axios.create();
 //     return Promise.reject(error);
 //   },
 // );
+
+api.interceptors.request.use(
+  async (config) => {
+    const authToken = await getAccessToken();
+
+    if (authToken) {
+      config.headers.Authorization = `Bearer ${authToken}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
 
 export { api };

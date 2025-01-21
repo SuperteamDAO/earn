@@ -5,7 +5,6 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
-import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -13,6 +12,7 @@ import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAu
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
+import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const MAX_RECORDS = 10;
 

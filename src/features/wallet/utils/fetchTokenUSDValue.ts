@@ -4,20 +4,20 @@ import { tokenList } from '@/constants/tokenList';
 import { api } from '@/lib/api';
 import logger from '@/lib/logger';
 
-const CG_BASE_URL = 'https://api.coingecko.com/api/v3';
+import { COINGECKO_API_URL } from '@/features/wallet/constants/coingecko';
 const STABLE_COINS = ['USDT', 'USDC', 'USDP'];
 
 async function getHistoricalPrice(coingeckoSymbol: string, date: Date) {
   const formattedDate = dayjs(date).format('DD-MM-YYYY');
   const { data } = await api.get(
-    `${CG_BASE_URL}/coins/${coingeckoSymbol}/history`,
+    `${COINGECKO_API_URL}/coins/${coingeckoSymbol}/history`,
     { params: { date: formattedDate } },
   );
   return data.market_data.current_price.usd;
 }
 
 async function getCurrentPrice(coingeckoSymbol: string) {
-  const { data } = await api.get(`${CG_BASE_URL}/simple/price`, {
+  const { data } = await api.get(`${COINGECKO_API_URL}/simple/price`, {
     params: { ids: coingeckoSymbol, vs_currencies: 'USD' },
   });
   return data[coingeckoSymbol].usd;

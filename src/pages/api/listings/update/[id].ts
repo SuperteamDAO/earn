@@ -7,7 +7,6 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { dayjs } from '@/utils/dayjs';
-import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -22,6 +21,7 @@ import {
   createListingRefinements,
 } from '@/features/listing-builder/types/schema';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
+import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const allowedFields = [
   'type',
