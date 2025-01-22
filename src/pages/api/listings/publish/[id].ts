@@ -17,7 +17,7 @@ import {
   createListingFormSchema,
   createListingRefinements,
 } from '@/features/listing-builder/types/schema';
-import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
+import { fetchHistoricalTokenUSDValue } from '@/features/wallet/utils/fetchHistoricalTokenUSDValue';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const id = req.query.id as string;
@@ -283,7 +283,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         }
 
         if (amount && token) {
-          const tokenUsdValue = await fetchTokenUSDValue(token, publishedAt);
+          const tokenUsdValue = await fetchHistoricalTokenUSDValue(
+            token,
+            publishedAt,
+          );
           usdValue = tokenUsdValue * amount;
           logger.info('Token USD value fetched', {
             token,

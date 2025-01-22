@@ -1,66 +1,25 @@
-import { useQuery } from '@tanstack/react-query';
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useUpdateUser, useUser } from '@/store/user';
 
-import { latestActiveSlugQuery } from '@/features/sponsor-dashboard/queries/latest-active-slug';
-
 import { ExternalImage } from '../ui/cloudinary-image';
 
-export const FeatureModal = ({
-  isSponsorsRoute = false,
-  forceOpen = false,
-}: {
-  isSponsorsRoute?: boolean;
-  forceOpen?: boolean;
-}) => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export const FeatureModal = () => {
   const { user } = useUser();
   const updateUser = useUpdateUser();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: latestActiveSlug } = useQuery({
-    ...latestActiveSlugQuery,
-    enabled:
-      !!user?.currentSponsorId &&
-      user.featureModalShown === false &&
-      (isSponsorsRoute || !router.pathname.includes('dashboard')),
-  });
-
-  useEffect(() => {
-    const shouldShowModal = async () => {
-      if (
-        (user?.currentSponsorId &&
-          user.featureModalShown === false &&
-          (isSponsorsRoute || !router.pathname.includes('dashboard')) &&
-          latestActiveSlug &&
-          user.currentSponsor?.isVerified) ||
-        forceOpen
-      ) {
-        if (!searchParams.has('scout')) setIsOpen(true);
-        if (!forceOpen) {
-          await updateUser.mutateAsync({ featureModalShown: true });
-        }
-      }
-    };
-
-    shouldShowModal();
-  }, [user, router.pathname, latestActiveSlug, isSponsorsRoute, forceOpen]);
-
   const handleClose = () => {
     setIsOpen(false);
+    updateUser.mutateAsync({ featureModalShown: true });
   };
 
-  const onSubmit = () => {
-    handleClose();
-  };
+  useEffect(() => {
+    if (user?.featureModalShown === false) {
+      setIsOpen(true);
+    }
+  }, [user]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -81,25 +40,6 @@ export const FeatureModal = ({
             submissions! Add a new listing, or check out any of your currently
             live listings to try Scout.
           </p>
-
-          {latestActiveSlug ? (
-            <Link
-              href={`/dashboard/listings/${latestActiveSlug}/submissions?scout`}
-              onClick={onSubmit}
-              className="w-full"
-            >
-              <Button className="w-full gap-2 text-sm font-medium">
-                Check it out <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          ) : (
-            <Button
-              className="w-full gap-2 text-sm font-medium"
-              onClick={onSubmit}
-            >
-              Good to know!
-            </Button>
-          )}
         </div>
       </DialogContent>
     </Dialog>

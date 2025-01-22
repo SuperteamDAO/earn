@@ -1,45 +1,38 @@
-import dayjs from 'dayjs';
-
-import { tokenList } from '@/constants/tokenList';
-import { api } from '@/lib/api';
-import logger from '@/lib/logger';
-
-import { COINGECKO_API_URL } from '@/features/wallet/constants/coingecko';
-const STABLE_COINS = ['USDT', 'USDC', 'USDP'];
-
-async function getHistoricalPrice(coingeckoSymbol: string, date: Date) {
-  const formattedDate = dayjs(date).format('DD-MM-YYYY');
-  const { data } = await api.get(
-    `${COINGECKO_API_URL}/coins/${coingeckoSymbol}/history`,
-    { params: { date: formattedDate } },
-  );
-  return data.market_data.current_price.usd;
+interface PriceResponse {
+  data: {
+    [key: string]: {
+      id: string;
+      type: string;
+      price: string;
+    };
+  };
+  timeTaken: number;
 }
 
-async function getCurrentPrice(coingeckoSymbol: string) {
-  const { data } = await api.get(`${COINGECKO_API_URL}/simple/price`, {
-    params: { ids: coingeckoSymbol, vs_currencies: 'USD' },
-  });
-  return data[coingeckoSymbol].usd;
-}
-
-export async function fetchTokenUSDValue(token: string, date?: Date) {
+export async function fetchTokenUSDValue(mintAddress: string): Promise<number> {
   try {
-    if (STABLE_COINS.includes(token)) {
-      return 1;
+    if (!mintAddress) {
+      throw new Error('Mint address is required');
     }
 
-    const tokenEntry = tokenList.find((t) => t.tokenSymbol === token);
-    if (!tokenEntry?.coingeckoSymbol) {
-      throw new Error(`No CoinGecko symbol found for token: ${token}`);
+    const baseUrl = 'https://api.jup.ag/price/v2';
+    const response = await fetch(`${baseUrl}?ids=${mintAddress}`);
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
 
-    const { coingeckoSymbol } = tokenEntry;
-    return date
-      ? await getHistoricalPrice(coingeckoSymbol, date)
-      : await getCurrentPrice(coingeckoSymbol);
+    const data = (await response.json()) as PriceResponse;
+
+    if (!data.data || !data.data[mintAddress]) {
+      throw new Error(`No price data found for token: ${mintAddress}`);
+    }
+
+    const price = parseFloat(data.data[mintAddress].price);
+
+    return price;
   } catch (error) {
-    logger.error('Error fetching token value from CoinGecko:', error);
-    return 0;
+    console.error('Error fetching token price:', error);
+    throw error;
   }
 }

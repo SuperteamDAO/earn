@@ -1,7 +1,8 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { type Connection, type PublicKey } from '@solana/web3.js';
 
-import { fetchTokenMetadata } from './fetchTokenMetadata';
+import { tokenList } from '@/constants/tokenList';
+
 import { fetchTokenUSDValue } from './fetchTokenUSDValue';
 
 export interface TokenAsset {
@@ -10,6 +11,7 @@ export interface TokenAsset {
   tokenImg: string;
   amount: number;
   usdValue: number;
+  tokenName: string;
 }
 
 export async function fetchUserTokens(
@@ -20,12 +22,15 @@ export async function fetchUserTokens(
   const solAsset: TokenAsset = {
     tokenAddress: 'SOL',
     tokenSymbol: 'SOL',
-    tokenImg: '',
+    tokenImg: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
     amount: solBalance / 1e9,
     usdValue: 0,
+    tokenName: 'Solana',
   };
 
-  const solPrice = await fetchTokenUSDValue('SOL');
+  const solPrice = await fetchTokenUSDValue(
+    'So11111111111111111111111111111111111111112',
+  );
   solAsset.usdValue = solAsset.amount * solPrice;
 
   const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
@@ -41,15 +46,29 @@ export async function fetchUserTokens(
       const mintAddress = accountData.mint;
       const amount = Number(accountData.tokenAmount.uiAmount);
 
-      const tokenMetadata = await fetchTokenMetadata(mintAddress);
-      const usdPrice = await fetchTokenUSDValue(tokenMetadata.symbol);
+      const tokenMetadata = tokenList.find(
+        (token) => token.mintAddress === mintAddress,
+      );
+
+      if (!tokenMetadata) {
+        return {
+          tokenAddress: mintAddress,
+          tokenSymbol: 'Unknown',
+          tokenImg: '',
+          amount,
+          usdValue: 0,
+          tokenName: 'Unknown',
+        };
+      }
+      const usdPrice = await fetchTokenUSDValue(tokenMetadata.mintAddress);
 
       return {
         tokenAddress: mintAddress,
-        tokenSymbol: tokenMetadata.symbol,
-        tokenImg: tokenMetadata.image,
+        tokenSymbol: tokenMetadata.tokenSymbol,
+        tokenImg: tokenMetadata.icon,
         amount,
         usdValue: amount * usdPrice,
+        tokenName: tokenMetadata.tokenName,
       };
     }),
   );

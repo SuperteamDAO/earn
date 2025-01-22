@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { NextApiResponse } from 'next';
 import { z } from 'zod';
 
+import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
@@ -128,9 +129,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               `Approved amount ${parsedAmount} exceeds maximum reward limit of ${currentApplicant.grant.maxReward} for application ${currentApplicant.id}`,
             );
           }
-          const tokenUSDValue = await fetchTokenUSDValue(
-            currentApplicant.grant.token!,
+          const token = tokenList.find(
+            (t) => t.tokenSymbol === currentApplicant.grant.token!,
           );
+          const tokenUSDValue = await fetchTokenUSDValue(token?.mintAddress!);
           const usdValue = tokenUSDValue * parsedAmount;
           approvedData = {
             approvedAmount: parsedAmount,

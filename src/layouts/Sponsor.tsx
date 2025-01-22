@@ -18,7 +18,6 @@ import { MdList, MdOutlineChatBubbleOutline } from 'react-icons/md';
 import { RiUserSettingsLine } from 'react-icons/ri';
 
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
-import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -191,7 +190,6 @@ export function SponsorLayout({
         />
       }
     >
-      <FeatureModal isSponsorsRoute />
       <SponsorInfoModal
         onClose={onSponsorInfoModalClose}
         isOpen={isSponsorInfoModalOpen}

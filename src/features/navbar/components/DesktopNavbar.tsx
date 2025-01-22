@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { Wallet } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -7,8 +8,11 @@ import { IoSearchOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+
+import { WalletDrawer } from '@/features/wallet/components/WalletDrawer';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
@@ -28,6 +32,8 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const router = useRouter();
   const posthog = usePostHog();
   const { user } = useUser();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const maxWidth = isDashboardRoute ? 'max-w-full' : 'max-w-7xl';
@@ -126,6 +132,15 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                     <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                   </Link>
                 </Button>
+              )}
+
+              {user?.isTalentFilled && (
+                <>
+                  <Button onClick={onOpen} variant="outline" className="gap-2">
+                    <Wallet className="h-4 w-4" />
+                  </Button>
+                  <WalletDrawer isOpen={isOpen} onClose={onClose} />
+                </>
               )}
               <UserMenu />
             </div>

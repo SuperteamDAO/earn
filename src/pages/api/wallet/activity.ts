@@ -1,6 +1,9 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { privy } from '@/lib/privy';
+
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
   fetchWalletActivity,
   type TokenActivity,
@@ -20,17 +23,25 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { publicKey } = req.query;
+  const privyDid = await getPrivyToken(req);
 
-  if (!publicKey || typeof publicKey !== 'string') {
-    return res.status(400).json({ error: 'Public key is required' });
+  if (!privyDid) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const user = await privy.getUser(privyDid);
+
+  const walletAddress = user.wallet?.address;
+
+  if (!walletAddress) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   try {
     const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
     const activities = await fetchWalletActivity(
       connection,
-      new PublicKey(publicKey),
+      new PublicKey(walletAddress),
     );
     return res.status(200).json(activities);
   } catch (error) {

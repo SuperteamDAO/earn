@@ -2,11 +2,11 @@ import { Regions } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
+import { FeatureModal } from '@/components/modals/FeatureModal';
 import { CombinedRegions } from '@/constants/Superteam';
 import { Home } from '@/layouts/Home';
-import { api } from '@/lib/api';
 import { prisma } from '@/prisma';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -118,27 +118,11 @@ export default function HomePage({
     ];
   }, [openForYouListings, reviewForYouListings, completeForYouListings]);
 
-  useEffect(() => {
-    const fetchAssets = async () => {
-      try {
-        const response = await api.get('/api/wallet/assets', {
-          params: {
-            publicKey: 'BdiMNsZAPoyvLP9evKmb1GkCM61SPGc8d1nQvHyvff3v',
-          },
-        });
-        console.log('Solana assets:', response.data);
-      } catch (error) {
-        console.error('Error fetching assets:', error);
-      }
-    };
-
-    fetchAssets();
-  }, []);
-
   return (
     <Home type="landing" isAuth={isAuth}>
       <InstallPWAModal />
       <HomepagePop />
+      <FeatureModal />
       <div className="w-full">
         <ListingTabs
           bounties={combinedListings}

@@ -1,10 +1,13 @@
 import { type Connection, type PublicKey } from '@solana/web3.js';
 
-import { fetchTokenMetadata } from './fetchTokenMetadata';
+import { tokenList } from '@/constants/tokenList';
+
+import { fetchTokenUSDValue } from './fetchTokenUSDValue';
 
 export interface TokenActivity {
-  type: 'received' | 'sent';
+  type: 'Credited' | 'Withdrawn';
   amount: number;
+  usdValue: number;
   counterpartyAddress: string;
   tokenAddress: string;
   tokenSymbol: string;
@@ -29,6 +32,17 @@ export async function fetchWalletActivity(
     ),
   );
 
+  let solPrice = 0;
+  try {
+    solPrice = await fetchTokenUSDValue(
+      'So11111111111111111111111111111111111111112',
+    );
+  } catch (error) {
+    console.error('Error fetching SOL price:', error);
+  }
+
+  const tokenPriceCache: Record<string, number> = {};
+
   for (const tx of transactions) {
     if (!tx?.meta) continue;
 
@@ -42,13 +56,16 @@ export async function fetchWalletActivity(
       const balanceChange = (postBalance - preBalance) / 1e9;
 
       if (balanceChange !== 0) {
+        const amount = Math.abs(balanceChange);
         activities.push({
-          type: balanceChange > 0 ? 'received' : 'sent',
-          amount: Math.abs(balanceChange),
+          type: balanceChange > 0 ? 'Credited' : 'Withdrawn',
+          amount,
+          usdValue: amount * solPrice,
           tokenAddress: 'SOL',
           counterpartyAddress: '',
           tokenSymbol: 'SOL',
-          tokenImg: '',
+          tokenImg:
+            'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
           timestamp: tx.blockTime ? tx.blockTime * 1000 : Date.now(),
         });
       }
@@ -56,8 +73,8 @@ export async function fetchWalletActivity(
 
     if (!tx.meta.postTokenBalances || !tx.meta.preTokenBalances) continue;
 
-    const tokenChanges = tx.meta.postTokenBalances
-      .map((post) => {
+    const tokenPromises = tx.meta.postTokenBalances
+      .map(async (post) => {
         if (post.owner !== publicKey.toString()) {
           return null;
         }
@@ -72,26 +89,48 @@ export async function fetchWalletActivity(
 
         if (balanceChange === 0) return null;
 
+        const amount = Math.abs(balanceChange);
+        let tokenPrice = 0;
+
+        if (!tokenPriceCache[post.mint]) {
+          try {
+            tokenPriceCache[post.mint] = await fetchTokenUSDValue(post.mint);
+            console.log(tokenPriceCache[post.mint]);
+          } catch (error) {
+            console.error(
+              `Error fetching price for token ${post.mint}:`,
+              error,
+            );
+          }
+        }
+        tokenPrice = tokenPriceCache[post.mint] || 0;
+
+        const metadata = tokenList.find(
+          (token) => token.mintAddress === post.mint,
+        );
+        if (!metadata) return null;
+
         return {
-          type: balanceChange > 0 ? ('received' as const) : ('sent' as const),
-          amount: Math.abs(balanceChange),
+          type: balanceChange > 0 ? 'Credited' : 'Withdrawn',
+          amount,
+          usdValue: amount * tokenPrice,
           tokenAddress: post.mint,
           counterpartyAddress: '',
-          tokenSymbol: '',
-          tokenImg: '',
+          tokenSymbol: metadata.tokenSymbol,
+          tokenImg: metadata.icon,
           timestamp: tx.blockTime ? tx.blockTime * 1000 : Date.now(),
-        };
+        } as TokenActivity;
       })
       .filter(
-        (change): change is NonNullable<typeof change> => change !== null,
+        (promise): promise is Promise<TokenActivity | null> => promise !== null,
       );
 
-    for (const change of tokenChanges) {
-      const metadata = await fetchTokenMetadata(change.tokenAddress);
-      change.tokenSymbol = metadata.symbol;
-      change.tokenImg = metadata.image;
-      activities.push(change);
-    }
+    const tokenChanges = await Promise.all(tokenPromises);
+    activities.push(
+      ...tokenChanges.filter(
+        (change): change is TokenActivity => change !== null,
+      ),
+    );
   }
 
   return activities.sort((a, b) => b.timestamp - a.timestamp);
