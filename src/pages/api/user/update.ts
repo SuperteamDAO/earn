@@ -24,7 +24,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const allowedFields = ['featureModalShown', 'publicKey', 'acceptedTOS'];
+    const allowedFields = ['featureModalShown', 'acceptedTOS'];
 
     if (user.role === 'GOD') {
       allowedFields.push('currentSponsorId', 'hackathonId');

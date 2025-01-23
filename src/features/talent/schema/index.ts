@@ -155,29 +155,3 @@ export const newTalentSchema = profileSchema._def.schema.pick({
   website: true,
 });
 export type NewTalentFormData = z.infer<typeof newTalentSchema>;
-
-export const aboutYouSchema = profileSchema._def.schema.pick({
-  username: true,
-  firstName: true,
-  lastName: true,
-  location: true,
-  photo: true,
-  skills: true,
-});
-
-export type AboutYouFormData = z.infer<typeof aboutYouSchema>;
-
-export const yourLinksSchema = profileSchema._def.schema
-  .pick({
-    discord: true,
-    twitter: true,
-    github: true,
-    linkedin: true,
-    telegram: true,
-    website: true,
-  })
-  .superRefine((data, ctx) => {
-    socialSuperRefine(data, ctx);
-  });
-
-export type YourLinksFormData = z.infer<typeof yourLinksSchema>;

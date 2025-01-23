@@ -81,7 +81,7 @@ async function updateGrantApplication(
           lastName: true,
           email: true,
           discord: true,
-          publicKey: true,
+          walletAddress: true,
         },
       },
       grant: {

@@ -38,7 +38,6 @@ const allowedFields = [
   'currentEmployer',
   'skills',
   'private',
-  'publicKey',
 ];
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {

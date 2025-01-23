@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useQuery } from '@tanstack/react-query';
 import { Wallet } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -11,8 +12,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { WalletDrawer } from '@/features/wallet/components/WalletDrawer';
+import { tokenAssetsQuery } from '@/features/wallet/queries/fetch-assets';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
@@ -34,6 +37,12 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
   const { user } = useUser();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { data: tokens, isLoading, error } = useQuery(tokenAssetsQuery);
+
+  const totalBalance = tokens?.reduce((acc, token) => {
+    return acc + (token.usdValue || 0);
+  }, 0);
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const maxWidth = isDashboardRoute ? 'max-w-full' : 'max-w-7xl';
@@ -136,10 +145,19 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
               {user?.isTalentFilled && (
                 <>
-                  <Button onClick={onOpen} variant="outline" className="gap-2">
-                    <Wallet className="h-4 w-4" />
+                  <Button onClick={onOpen} variant="ghost" className="gap-2">
+                    <Wallet className="h-4 w-4 text-brand-purple" />
+                    <p className="text-sm font-semibold text-slate-900">
+                      ${formatNumberWithSuffix(totalBalance || 0, 2, true)}
+                    </p>
                   </Button>
-                  <WalletDrawer isOpen={isOpen} onClose={onClose} />
+                  <WalletDrawer
+                    tokens={tokens || []}
+                    isLoading={isLoading}
+                    error={error}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                  />
                 </>
               )}
               <UserMenu />

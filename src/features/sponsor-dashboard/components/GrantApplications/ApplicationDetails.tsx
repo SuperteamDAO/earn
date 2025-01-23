@@ -273,7 +273,7 @@ export const ApplicationDetails = ({
                   </Link>
                 </div>
               )}
-              {selectedApplication?.user?.publicKey && (
+              {selectedApplication?.user?.walletAddress && (
                 <div className="flex items-center justify-start gap-2 whitespace-nowrap text-sm">
                   <MdOutlineAccountBalanceWallet color="#94A3B8" />
                   <button
@@ -282,7 +282,7 @@ export const ApplicationDetails = ({
                       toast.promise(
                         async () => {
                           await navigator.clipboard.writeText(
-                            selectedApplication?.user?.publicKey || '',
+                            selectedApplication?.user?.walletAddress || '',
                           );
                         },
                         {
@@ -300,7 +300,7 @@ export const ApplicationDetails = ({
                     >
                       <p className="flex items-center text-slate-400">
                         {truncatePublicKey(
-                          selectedApplication?.user?.publicKey,
+                          selectedApplication?.user?.walletAddress,
                           3,
                         )}
                       </p>

@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { useState } from 'react';
 
@@ -7,32 +6,33 @@ import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import { tokenAssetsQuery } from '../queries/fetch-assets';
 import { type TokenAsset } from '../utils/fetchUserTokens';
 import { SendTokenForm } from './SendTokenForm';
-import { TokenSelector } from './TokenSelector';
+import { TokenList } from './TokenList';
 import { WalletActivity } from './WalletActivity';
 
-type DrawerView = 'main' | 'send' | 'tokenSelect';
+type DrawerView = 'main' | 'send';
 
 export function WalletDrawer({
   isOpen,
   onClose,
+  tokens,
+  isLoading,
+  error,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  tokens: TokenAsset[];
+  isLoading: boolean;
+  error: Error | null;
 }) {
   const [view, setView] = useState<DrawerView>('main');
-  const [selectedToken, setSelectedToken] = useState<TokenAsset | null>(null);
 
   const { user } = useUser();
 
   const handleBack = () => {
-    if (view === 'tokenSelect') setView('main');
-    if (view === 'send') setView('tokenSelect');
+    if (view === 'send') setView('main');
   };
-
-  const { data: tokens, isLoading, error } = useQuery(tokenAssetsQuery);
 
   const totalBalance = tokens?.reduce((acc, token) => {
     return acc + (token.usdValue || 0);
@@ -62,8 +62,9 @@ export function WalletDrawer({
             <p className="mt-1 text-base font-medium text-slate-500">BALANCE</p>
             {view === 'main' && (
               <Button
-                onClick={() => setView('tokenSelect')}
+                onClick={() => setView('send')}
                 className="mt-6 rounded-lg bg-indigo-600 px-5 text-base"
+                disabled={!tokens?.length}
               >
                 Withdraw
                 <ArrowUpRight className="h-4 w-4" />
@@ -73,50 +74,40 @@ export function WalletDrawer({
 
           {view === 'main' && (
             <>
-              <div className="border-b px-8 pb-2 pt-2 text-slate-500">
+              <div className="border-b px-8 pb-2 pt-6 text-sm font-medium text-slate-500">
                 Assets
               </div>
-              <TokenSelector
-                onSelect={() => {}}
+              <TokenList
                 tokens={tokens || []}
                 isLoading={isLoading}
                 error={error}
               />
 
-              <div className="border-b px-8 pb-2 pt-6 text-slate-500">
+              <div className="border-b px-8 pb-2 pt-6 text-sm font-medium text-slate-500">
                 Activity
               </div>
               <WalletActivity />
             </>
           )}
-
           {view !== 'main' && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleBack}
-              className="mr-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center border-b py-1.5">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleBack}
+                className="ml-4 mr-1"
+              >
+                <ArrowLeft className="h-4 w-4 text-slate-400" />
+              </Button>
+              <h2 className="text-sm font-medium text-slate-500">
+                {view === 'send' && 'Withdraw Funds'}
+              </h2>
+            </div>
           )}
-
-          <div className="flex-1 overflow-y-auto py-4">
-            {view === 'tokenSelect' && (
-              <TokenSelector
-                onSelect={(token) => {
-                  setSelectedToken(token);
-                  setView('send');
-                }}
-                tokens={tokens || []}
-                isLoading={isLoading}
-                error={error}
-              />
-            )}
-
-            {view === 'send' && selectedToken && (
+          <div className="flex-1 overflow-y-auto px-8 py-4">
+            {view === 'send' && (
               <SendTokenForm
-                token={selectedToken}
+                tokens={tokens || []}
                 onSuccess={() => onClose()}
               />
             )}

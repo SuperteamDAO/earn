@@ -4,19 +4,13 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { type TokenAsset } from '../utils/fetchUserTokens';
 import { TokenSkeleton } from './TokenSkeleton';
 
-interface TokenSelectorProps {
-  onSelect: (token: TokenAsset) => void;
+interface TokenListProps {
   tokens: TokenAsset[];
   isLoading: boolean;
   error: Error | null;
 }
 
-export function TokenSelector({
-  onSelect,
-  tokens,
-  isLoading,
-  error,
-}: TokenSelectorProps) {
+export function TokenList({ tokens, isLoading, error }: TokenListProps) {
   if (isLoading) {
     return (
       <div className="space-y-0.5">
@@ -46,7 +40,6 @@ export function TokenSelector({
           <Button
             variant="ghost"
             className="h-auto w-full px-8 py-4 hover:bg-accent"
-            onClick={() => onSelect(token)}
           >
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-3">

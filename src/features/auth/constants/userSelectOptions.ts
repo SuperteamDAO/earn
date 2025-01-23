@@ -9,7 +9,7 @@ export const userSelectOptions: Prisma.UserSelect = {
   id: true,
   location: true,
   currentSponsorId: true,
-  publicKey: true,
+  walletAddress: true,
   skills: true,
   hackathonId: true,
   surveysShown: true,

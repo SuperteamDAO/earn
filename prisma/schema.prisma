@@ -365,6 +365,7 @@ model Session {
 model User {
   id                 String               @id @default(uuid())
   publicKey          String?
+  walletAddress      String?
   email              String               @unique
   username           String?              @unique
   photo              String?              @db.Text

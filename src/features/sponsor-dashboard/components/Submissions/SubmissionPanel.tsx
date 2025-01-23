@@ -218,7 +218,7 @@ export const SubmissionPanel = ({
                   </a>
                 </div>
               )}
-              {selectedSubmission?.user?.publicKey && (
+              {selectedSubmission?.user?.walletAddress && (
                 <div className="flex items-center justify-start gap-2 whitespace-nowrap text-sm">
                   <MdOutlineAccountBalanceWallet color="#94A3B8" />
                   <button
@@ -227,7 +227,7 @@ export const SubmissionPanel = ({
                       toast.promise(
                         async () => {
                           await navigator.clipboard.writeText(
-                            selectedSubmission?.user?.publicKey || '',
+                            selectedSubmission?.user?.walletAddress || '',
                           );
                         },
                         {
@@ -245,7 +245,7 @@ export const SubmissionPanel = ({
                     >
                       <p>
                         {truncatePublicKey(
-                          selectedSubmission?.user?.publicKey,
+                          selectedSubmission?.user?.walletAddress,
                           3,
                         )}
                       </p>
