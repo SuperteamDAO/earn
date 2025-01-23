@@ -183,7 +183,7 @@ export const SubmissionList = ({
                 >
                   <span
                     className={cn(
-                      'inline-flex whitespace-nowrap rounded-full px-3 py-1 text-center text-[10px] capitalize',
+                      'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
                       colorMap['Rejected'].bg,
                       colorMap['Rejected'].color,
                     )}
