@@ -79,8 +79,6 @@ export const cleanRewardPrizes = (rewards?: Rewards, skipBonus = false) => {
 };
 
 export const nthLabelGenerator = (key: number) => {
-  const BONUS_REWARD_POSITION = 10;
-
   if (key === BONUS_REWARD_POSITION) return 'bonus';
 
   const lastDigit = key % 10;
