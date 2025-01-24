@@ -161,9 +161,9 @@ function LabelOrAction({
     } else
       return (
         <p className="text-md flex items-center gap-2 text-sm font-medium text-slate-500">
-          {nthLabelGenerator(index + 1)}
+          {nthLabelGenerator(index + 1, true)}
           {index + 1 !== index + maxBonusSpots && (
-            <> - {nthLabelGenerator(index + maxBonusSpots)}</>
+            <> - {nthLabelGenerator(index + maxBonusSpots, true)}</>
           )}
           {needsCollapse && (
             <button
@@ -178,7 +178,7 @@ function LabelOrAction({
   } else {
     return (
       <p className="mb-1 mt-auto flex items-center gap-1 text-sm font-medium text-slate-500">
-        {nthLabelGenerator(Number(step[0]))}
+        {nthLabelGenerator(Number(step[0]), true)}
         {needsCollapse && (
           <button
             className="font-inherit flex items-center gap-1 bg-transparent hover:opacity-80"
