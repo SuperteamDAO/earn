@@ -3,7 +3,7 @@ import { ArrowDownLeft, ArrowDownRight } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import { type TokenActivity } from '../utils/fetchWalletActivity';
+import { type TokenActivity } from '../../types/TokenActivity';
 
 interface ActivityItemProps {
   activity: TokenActivity;
@@ -14,7 +14,7 @@ export function ActivityItem({ activity }: ActivityItemProps) {
   const amount = isCredit ? `+${activity.amount}` : `-${activity.amount}`;
 
   return (
-    <div className="flex items-center justify-between px-8 py-4">
+    <div className="flex items-center justify-between px-6 py-4 sm:px-8">
       <div className="flex items-center gap-3">
         <div className="relative">
           {activity.tokenImg ? (

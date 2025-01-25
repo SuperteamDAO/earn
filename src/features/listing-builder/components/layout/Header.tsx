@@ -49,7 +49,7 @@ export function Header() {
             <img
               src="/assets/logo.svg"
               alt="Superteam Earn"
-              className="h-5 w-auto cursor-pointer object-contain"
+              className="h-[1.4rem] w-auto cursor-pointer object-contain"
             />
             <div className="h-6 w-[1.5px] bg-slate-300" />
             <p className="text-sm tracking-[1.5px] text-slate-600">SPONSORS</p>

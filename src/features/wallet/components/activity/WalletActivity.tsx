@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { tokenActivityQuery } from '../queries/fetch-activity';
+import { tokenActivityQuery } from '../../queries/fetch-activity';
+import { TokenSkeleton } from '../tokens/TokenSkeleton';
 import { ActivityItem } from './ActivityItem';
-import { TokenSkeleton } from './TokenSkeleton';
 
 export const WalletActivity = () => {
   const { data: activities, isLoading, error } = useQuery(tokenActivityQuery);

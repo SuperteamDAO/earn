@@ -284,7 +284,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               return acc;
             }, {} as Partial<ProfileFormData>);
 
-            console.log('final updated data', finalUpdatedData);
             await api.post('/api/pow/edit', {
               pows: pow,
             });

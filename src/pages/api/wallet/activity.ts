@@ -4,16 +4,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { privy } from '@/lib/privy';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
-import {
-  fetchWalletActivity,
-  type TokenActivity,
-} from '@/features/wallet/utils/fetchWalletActivity';
+import { type TokenActivity } from '@/features/wallet/types/TokenActivity';
+import { fetchWalletActivity } from '@/features/wallet/utils/fetchWalletActivity';
 
 interface ErrorResponse {
   error: string;
 }
-
-const SOLANA_RPC_URL = 'https://api.mainnet-beta.solana.com';
 
 export default async function handler(
   req: NextApiRequest,
@@ -38,7 +34,10 @@ export default async function handler(
   }
 
   try {
-    const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
+    const connection = new Connection(
+      `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
+      'confirmed',
+    );
     const activities = await fetchWalletActivity(
       connection,
       new PublicKey(walletAddress),

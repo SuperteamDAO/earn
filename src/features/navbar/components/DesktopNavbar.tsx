@@ -1,11 +1,10 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
-import { Wallet } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import { IoSearchOutline } from 'react-icons/io5';
+import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -66,7 +65,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               }}
             >
               <img
-                className="h-5 cursor-pointer object-contain"
+                className="h-[1.4rem] cursor-pointer object-contain"
                 alt="Superteam Earn"
                 src="/assets/logo.svg"
               />
@@ -82,13 +81,12 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
           {router.pathname !== '/search' &&
             !router.pathname.startsWith('/new/') && (
-              <Button
-                className="ph-no-capture gap-2 border-none font-normal text-slate-700 shadow-none hover:bg-slate-100"
-                variant="outline"
+              <div
+                className="flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                 onClick={onSearchOpen}
               >
-                <IoSearchOutline className="h-4 w-4" />
-              </Button>
+                <IoSearchOutline className="h-5 w-5" />
+              </div>
             )}
         </div>
 
@@ -145,12 +143,15 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
               {user?.isTalentFilled && (
                 <>
-                  <Button onClick={onOpen} variant="ghost" className="gap-2">
-                    <Wallet className="h-4 w-4 text-brand-purple" />
-                    <p className="text-sm font-semibold text-slate-900">
-                      ${formatNumberWithSuffix(totalBalance || 0, 2, true)}
+                  <div
+                    className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
+                    onClick={onOpen}
+                  >
+                    <IoWalletOutline className="h-6 w-6 text-brand-purple" />
+                    <p className="text-sm font-semibold">
+                      ${formatNumberWithSuffix(totalBalance || 0, 1, true)}
                     </p>
-                  </Button>
+                  </div>
                   <WalletDrawer
                     tokens={tokens || []}
                     isLoading={isLoading}

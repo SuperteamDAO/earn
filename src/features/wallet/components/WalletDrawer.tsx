@@ -1,17 +1,18 @@
-import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import { type TokenAsset } from '../utils/fetchUserTokens';
-import { SendTokenForm } from './SendTokenForm';
-import { TokenList } from './TokenList';
-import { WalletActivity } from './WalletActivity';
+import { type TokenAsset } from '../types/TokenAsset';
+import { WalletActivity } from './activity/WalletActivity';
+import { TokenList } from './tokens/TokenList';
+import { WithdrawFundsFlow } from './withdraw/WithdrawFundsFlow';
 
-type DrawerView = 'main' | 'send';
+export type DrawerView = 'main' | 'withdraw' | 'success';
 
 export function WalletDrawer({
   isOpen,
@@ -31,18 +32,30 @@ export function WalletDrawer({
   const { user } = useUser();
 
   const handleBack = () => {
-    if (view === 'send') setView('main');
+    if (view === 'withdraw') setView('main');
+    if (view === 'success') setView('main');
   };
 
   const totalBalance = tokens?.reduce((acc, token) => {
     return acc + (token.usdValue || 0);
   }, 0);
 
+  const padding = 'px-6 sm:px-8';
+
   return (
     <SideDrawer isOpen={isOpen} onClose={onClose}>
-      <SideDrawerContent className="w-[30rem]">
+      <SideDrawerContent className="w-screen sm:w-[30rem]">
+        <X
+          className="absolute right-4 top-5 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:hidden"
+          onClick={onClose}
+        />
         <div className="flex h-full flex-col">
-          <div className="items-center border-b bg-slate-50 px-8 py-5 pb-4">
+          <div
+            className={cn(
+              'items-center border-b bg-slate-50 py-5 pb-4',
+              padding,
+            )}
+          >
             <h2 className="text-lg font-semibold tracking-tight">
               {user?.firstName + "'s Wallet"}
             </h2>
@@ -50,7 +63,7 @@ export function WalletDrawer({
               You will get paid in this wallet everytime you win
             </p>
           </div>
-          <div className="bg-slate-50 px-8 py-4">
+          <div className={cn('bg-slate-50 py-4', padding)}>
             <div className="flex items-baseline gap-1">
               <p className="text-3xl font-semibold tracking-tight text-slate-900">
                 ${formatNumberWithSuffix(totalBalance || 0, 2, true)}
@@ -62,8 +75,8 @@ export function WalletDrawer({
             <p className="mt-1 text-base font-medium text-slate-500">BALANCE</p>
             {view === 'main' && (
               <Button
-                onClick={() => setView('send')}
-                className="mt-6 rounded-lg bg-indigo-600 px-5 text-base"
+                onClick={() => setView('withdraw')}
+                className="mt-6 rounded-lg bg-brand-purple px-5 text-base"
                 disabled={!tokens?.length}
               >
                 Withdraw
@@ -74,7 +87,12 @@ export function WalletDrawer({
 
           {view === 'main' && (
             <>
-              <div className="border-b px-8 pb-2 pt-6 text-sm font-medium text-slate-500">
+              <div
+                className={cn(
+                  'border-b pb-2 pt-6 text-sm font-medium text-slate-500',
+                  padding,
+                )}
+              >
                 Assets
               </div>
               <TokenList
@@ -83,7 +101,12 @@ export function WalletDrawer({
                 error={error}
               />
 
-              <div className="border-b px-8 pb-2 pt-6 text-sm font-medium text-slate-500">
+              <div
+                className={cn(
+                  'border-b pb-2 pt-6 text-sm font-medium text-slate-500',
+                  padding,
+                )}
+              >
                 Activity
               </div>
               <WalletActivity />
@@ -100,15 +123,17 @@ export function WalletDrawer({
                 <ArrowLeft className="h-4 w-4 text-slate-400" />
               </Button>
               <h2 className="text-sm font-medium text-slate-500">
-                {view === 'send' && 'Withdraw Funds'}
+                {view === 'withdraw' && 'Withdraw Funds'}
+                {view === 'success' && 'Successfully Withdrawn'}
               </h2>
             </div>
           )}
-          <div className="flex-1 overflow-y-auto px-8 py-4">
-            {view === 'send' && (
-              <SendTokenForm
+          <div className={cn('flex-1 overflow-y-auto py-4', padding)}>
+            {view !== 'main' && (
+              <WithdrawFundsFlow
                 tokens={tokens || []}
-                onSuccess={() => onClose()}
+                setView={setView}
+                view={view}
               />
             )}
           </div>

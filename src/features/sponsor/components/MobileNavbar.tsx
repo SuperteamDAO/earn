@@ -133,7 +133,7 @@ export const MobileNavbar = () => {
           }}
         >
           <img
-            className="h-5 cursor-pointer object-contain"
+            className="h-[1.3rem] cursor-pointer object-contain"
             alt="Superteam Earn"
             src="/assets/logo.svg"
           />

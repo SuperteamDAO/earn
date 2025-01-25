@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-import { type TokenAsset } from '../utils/fetchUserTokens';
+import { type TokenAsset } from '../types/TokenAsset';
 
 const fetchTokenAssetsFn = async (): Promise<TokenAsset[]> => {
   const { data } = await api.get<TokenAsset[]>('/api/wallet/assets');

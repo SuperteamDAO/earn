@@ -2,18 +2,8 @@ import { type Connection, type PublicKey } from '@solana/web3.js';
 
 import { tokenList } from '@/constants/tokenList';
 
+import { type TokenActivity } from '../types/TokenActivity';
 import { fetchTokenUSDValue } from './fetchTokenUSDValue';
-
-export interface TokenActivity {
-  type: 'Credited' | 'Withdrawn';
-  amount: number;
-  usdValue: number;
-  counterpartyAddress: string;
-  tokenAddress: string;
-  tokenSymbol: string;
-  tokenImg: string;
-  timestamp: number;
-}
 
 export async function fetchWalletActivity(
   connection: Connection,
@@ -61,7 +51,7 @@ export async function fetchWalletActivity(
           type: balanceChange > 0 ? 'Credited' : 'Withdrawn',
           amount,
           usdValue: amount * solPrice,
-          tokenAddress: 'SOL',
+          tokenAddress: 'So11111111111111111111111111111111111111112',
           counterpartyAddress: '',
           tokenSymbol: 'SOL',
           tokenImg:
@@ -95,7 +85,6 @@ export async function fetchWalletActivity(
         if (!tokenPriceCache[post.mint]) {
           try {
             tokenPriceCache[post.mint] = await fetchTokenUSDValue(post.mint);
-            console.log(tokenPriceCache[post.mint]);
           } catch (error) {
             console.error(
               `Error fetching price for token ${post.mint}:`,

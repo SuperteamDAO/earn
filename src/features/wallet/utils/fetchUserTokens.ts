@@ -3,16 +3,8 @@ import { type Connection, type PublicKey } from '@solana/web3.js';
 
 import { tokenList } from '@/constants/tokenList';
 
+import { type TokenAsset } from '../types/TokenAsset';
 import { fetchTokenUSDValue } from './fetchTokenUSDValue';
-
-export interface TokenAsset {
-  tokenAddress: string;
-  tokenSymbol: string;
-  tokenImg: string;
-  amount: number;
-  usdValue: number;
-  tokenName: string;
-}
 
 export async function fetchUserTokens(
   connection: Connection,
@@ -20,7 +12,7 @@ export async function fetchUserTokens(
 ): Promise<TokenAsset[]> {
   const solBalance = await connection.getBalance(publicKey);
   const solAsset: TokenAsset = {
-    tokenAddress: 'SOL',
+    tokenAddress: 'So11111111111111111111111111111111111111112',
     tokenSymbol: 'SOL',
     tokenImg: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
     amount: solBalance / 1e9,

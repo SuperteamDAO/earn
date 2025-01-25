@@ -1,10 +1,11 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
-import { Menu, Wallet } from 'lucide-react';
+import { AlignLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useRef, useState } from 'react';
+import { IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -48,8 +49,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
 
   const { user } = useUser();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const { onOpen, onClose, isOpen } = useDisclosure();
   const { data: tokens, isLoading, error } = useQuery(tokenAssetsQuery);
 
   const totalBalance = tokens?.reduce((acc, token) => {
@@ -171,8 +171,8 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
     <>
       {/* {router.pathname === '/' && <AnnouncementBar />} */}
       <div className="sticky top-0 z-50">
-        <div className="flex items-center justify-between border-b border-black/20 bg-white px-1 py-2 lg:hidden">
-          <div>
+        <div className="flex items-center justify-between border-b border-black/20 bg-white px-1 py-0.5 lg:hidden">
+          <div className="flex items-center gap-0">
             <Button
               ref={btnRef}
               variant="ghost"
@@ -180,12 +180,8 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               className="hover:bg-transparent"
               onClick={onDrawerOpen}
             >
-              <Menu className="h-6 w-6 text-slate-500" />
+              <AlignLeft className="h-6 w-6 text-slate-500" />
             </Button>
-          </div>
-
-          <MobileDrawer />
-          <div className="absolute left-1/2 -translate-x-1/2">
             <Link
               href="/"
               className="flex items-center hover:no-underline"
@@ -194,23 +190,32 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               }}
             >
               <img
-                className="h-5 cursor-pointer object-contain"
+                className="h-[1.3rem] cursor-pointer object-contain"
                 alt="Superteam Earn"
                 src="/assets/logo.svg"
               />
             </Link>
           </div>
+
+          <MobileDrawer />
           {ready && authenticated && (
-            <>
-              <UserMenu />
+            <div className="flex items-center gap-1">
               {user?.isTalentFilled && (
                 <>
-                  <Button onClick={onOpen} variant="ghost" className="gap-2">
-                    <Wallet className="h-4 w-4 text-brand-purple" />
-                    <p className="text-sm font-semibold text-slate-900">
-                      ${formatNumberWithSuffix(totalBalance || 0, 2, true)}
-                    </p>
-                  </Button>
+                  <div className="relative">
+                    <div
+                      className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
+                      onClick={onOpen}
+                    >
+                      <IoWalletOutline className="h-7 w-7 text-brand-purple" />
+                      <span className="absolute -right-1.5 top-px block rounded-md bg-brand-purple/95 px-1 py-px text-[10px] font-semibold tracking-tight text-white sm:hidden">
+                        ${formatNumberWithSuffix(totalBalance || 0, 1, true)}
+                      </span>
+                      <p className="hidden text-sm font-semibold sm:block">
+                        ${formatNumberWithSuffix(totalBalance || 0, 1, true)}
+                      </p>
+                    </div>
+                  </div>
                   <WalletDrawer
                     tokens={tokens || []}
                     isLoading={isLoading}
@@ -220,7 +225,8 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                   />
                 </>
               )}
-            </>
+              <UserMenu />
+            </div>
           )}
           {ready && !authenticated && (
             <Button

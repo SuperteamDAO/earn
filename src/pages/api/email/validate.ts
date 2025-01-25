@@ -25,7 +25,6 @@ export default async function handler(
     const { data } = await axios.get(
       `https://api.zerobounce.net/v2/validate?api_key=${process.env.ZEROBOUNCE_API_KEY}&email=${email}`,
     );
-    console.log(data);
 
     const emailIsValid = data.status === 'valid';
     const isRoleBased =

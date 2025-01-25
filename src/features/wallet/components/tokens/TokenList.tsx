@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import { type TokenAsset } from '../utils/fetchUserTokens';
+import { type TokenAsset } from '../../types/TokenAsset';
 import { TokenSkeleton } from './TokenSkeleton';
 
 interface TokenListProps {
@@ -39,7 +39,7 @@ export function TokenList({ tokens, isLoading, error }: TokenListProps) {
         <div key={token.tokenAddress} className="overflow-hidden">
           <Button
             variant="ghost"
-            className="h-auto w-full px-8 py-4 hover:bg-accent"
+            className="h-auto w-full px-6 py-4 hover:bg-accent sm:px-8"
           >
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-3">
