@@ -1,11 +1,13 @@
-import { ArrowLeft, ArrowUpRight, X } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, CheckIcon, CopyIcon, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
+import { useClipboard } from '@/hooks/use-clipboard';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type TokenAsset } from '../types/TokenAsset';
 import { WalletActivity } from './activity/WalletActivity';
@@ -42,6 +44,8 @@ export function WalletDrawer({
 
   const padding = 'px-6 sm:px-8';
 
+  const { onCopy, hasCopied } = useClipboard(user?.walletAddress || '');
+
   return (
     <SideDrawer isOpen={isOpen} onClose={onClose}>
       <SideDrawerContent className="w-screen sm:w-[30rem]">
@@ -56,9 +60,25 @@ export function WalletDrawer({
               padding,
             )}
           >
-            <h2 className="text-lg font-semibold tracking-tight">
-              {user?.firstName + "'s Wallet"}
-            </h2>
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-lg font-semibold tracking-tight">
+                {user?.firstName + "'s Wallet"}
+              </h2>
+              <div
+                onClick={onCopy}
+                className="flex cursor-pointer items-center gap-1 text-slate-500 hover:text-slate-700"
+              >
+                <p className="text-xs font-medium">
+                  {truncatePublicKey(user?.walletAddress)}
+                </p>
+                {hasCopied ? (
+                  <CheckIcon className="size-2.5 text-green-500" />
+                ) : (
+                  <CopyIcon className="size-2.5" />
+                )}
+              </div>
+            </div>
+
             <p className="text-sm font-medium text-slate-500">
               You will get paid in this wallet everytime you win
             </p>
@@ -72,7 +92,7 @@ export function WalletDrawer({
                 USD
               </p>
             </div>
-            <p className="mt-1 text-base font-medium text-slate-500">BALANCE</p>
+            <p className="text-base font-medium text-slate-400">BALANCE</p>
             {view === 'main' && (
               <Button
                 onClick={() => setView('withdraw')}
@@ -128,15 +148,25 @@ export function WalletDrawer({
               </h2>
             </div>
           )}
-          <div className={cn('flex-1 overflow-y-auto py-4', padding)}>
-            {view !== 'main' && (
+          {view !== 'main' && (
+            <div className={cn('flex-1 overflow-y-auto py-4', padding)}>
               <WithdrawFundsFlow
                 tokens={tokens || []}
                 setView={setView}
                 view={view}
               />
-            )}
-          </div>
+            </div>
+          )}
+          <p className="mt-auto px-2 py-3 text-center text-xs text-slate-400">
+            Have questions? Reach out to us at{' '}
+            <a
+              href="mailto:support@superteamearn.com"
+              className="underline hover:text-slate-500"
+              target="_blank"
+            >
+              support@superteamearn.com
+            </a>
+          </p>
         </div>
       </SideDrawerContent>
     </SideDrawer>

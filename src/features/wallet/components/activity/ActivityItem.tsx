@@ -14,18 +14,18 @@ export function ActivityItem({ activity }: ActivityItemProps) {
   const amount = isCredit ? `+${activity.amount}` : `-${activity.amount}`;
 
   return (
-    <div className="flex items-center justify-between px-6 py-4 sm:px-8">
+    <div className="flex items-center justify-between px-6 py-2 sm:px-8 sm:py-4">
       <div className="flex items-center gap-3">
         <div className="relative">
           {activity.tokenImg ? (
             <img
               src={activity.tokenImg}
               alt={activity.tokenSymbol}
-              className="h-10 w-10 rounded-full"
+              className="h-8 w-8 rounded-full sm:h-10 sm:w-10"
             />
           ) : (
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-              <span className="text-sm text-blue-500">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 sm:h-10 sm:w-10">
+              <span className="text-xs text-blue-500 sm:text-sm">
                 {activity.tokenSymbol}
               </span>
             </div>
@@ -37,27 +37,31 @@ export function ActivityItem({ activity }: ActivityItemProps) {
             )}
           >
             {isCredit ? (
-              <ArrowDownLeft className="h-4 w-4 text-emerald-500" />
+              <ArrowDownLeft className="h-3 w-3 text-emerald-500 sm:h-4 sm:w-4" />
             ) : (
-              <ArrowDownRight className="h-4 w-4 text-slate-500" />
+              <ArrowDownRight className="h-3 w-3 text-slate-500 sm:h-4 sm:w-4" />
             )}
           </div>
         </div>
         <div>
-          <div className="font-medium">{activity.type}</div>
-          <div className="text-sm text-slate-500">{activity.tokenSymbol}</div>
+          <div className="text-sm font-medium sm:text-base">
+            {activity.type}
+          </div>
+          <div className="text-xs text-slate-500 sm:text-sm">
+            {activity.tokenSymbol}
+          </div>
         </div>
       </div>
       <div className="text-right">
         <div
           className={cn(
-            'font-semibold tracking-tight',
+            'text-sm font-semibold tracking-tight sm:text-base',
             isCredit ? 'text-emerald-500' : 'text-slate-400',
           )}
         >
           {amount} {activity.tokenSymbol}
         </div>
-        <div className="text-sm font-medium text-slate-500">
+        <div className="text-xs font-medium text-slate-500 sm:text-sm">
           ${formatNumberWithSuffix(activity.usdValue, 3, true)}
         </div>
       </div>

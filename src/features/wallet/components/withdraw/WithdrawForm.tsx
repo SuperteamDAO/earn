@@ -1,6 +1,6 @@
-import { ChevronDown } from 'lucide-react';
 import { type UseFormReturn } from 'react-hook-form';
 
+import { AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -11,16 +11,10 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 import { type TokenAsset } from '../../types/TokenAsset';
 import { type WithdrawFormData } from '../../utils/withdrawFormSchema';
+import { TokenAmountInput } from './TokenAmountInput';
 
 interface WithdrawFormProps {
   form: UseFormReturn<WithdrawFormData>;
@@ -28,65 +22,6 @@ interface WithdrawFormProps {
   onSubmit: (values: WithdrawFormData) => Promise<void>;
   tokens: TokenAsset[];
 }
-
-interface TokenAmountInputProps {
-  tokens: TokenAsset[];
-  selectedToken?: TokenAsset;
-  onTokenChange: (value: string) => void;
-  amount: string;
-  onAmountChange: (value: string) => void;
-  className?: string;
-}
-
-const TokenAmountInput = ({
-  tokens,
-  selectedToken,
-  onTokenChange,
-  amount,
-  onAmountChange,
-  className,
-}: TokenAmountInputProps) => (
-  <div className={`flex rounded-md border border-input ${className}`}>
-    <Select onValueChange={onTokenChange} value={selectedToken?.tokenAddress}>
-      <SelectTrigger className="w-[140px] rounded-r-none border-0 border-r bg-background">
-        <SelectValue>
-          {selectedToken && (
-            <div className="flex items-center gap-2">
-              <img
-                src={selectedToken.tokenImg}
-                alt={selectedToken.tokenSymbol}
-                className="h-5 w-5 rounded-full"
-              />
-              <span>{selectedToken.tokenSymbol}</span>
-              <ChevronDown className="h-4 w-4 opacity-50" />
-            </div>
-          )}
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        {tokens.map((token) => (
-          <SelectItem key={token.tokenAddress} value={token.tokenAddress}>
-            <div className="flex items-center gap-2">
-              <img
-                src={token.tokenImg}
-                alt={token.tokenSymbol}
-                className="h-5 w-5 rounded-full"
-              />
-              <span>{token.tokenSymbol}</span>
-            </div>
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-    <Input
-      type="number"
-      value={amount}
-      onChange={(e) => onAmountChange(e.target.value)}
-      className="rounded-l-none border-0 pr-4 text-right"
-      placeholder="0.00"
-    />
-  </div>
-);
 
 export const WithdrawForm = ({
   form,
@@ -97,7 +32,9 @@ export const WithdrawForm = ({
   <Form {...form}>
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-1.5">
-        <FormLabel className="text-xs text-slate-500">ASSET</FormLabel>
+        <FormLabel className="text-xs text-slate-500 sm:text-xs">
+          ASSET
+        </FormLabel>
         <div className="space-y-1">
           <TokenAmountInput
             tokens={tokens}
@@ -131,7 +68,7 @@ export const WithdrawForm = ({
         name="address"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="mb-2 text-xs text-slate-500">
+            <FormLabel className="mb-2 text-xs text-slate-500 sm:text-xs">
               RECIPIENT&apos;S SOLANA WALLET ADDRESS
             </FormLabel>
             <FormControl>
@@ -144,11 +81,26 @@ export const WithdrawForm = ({
 
       <Button
         type="submit"
-        className="w-full"
+        className="w-full font-semibold"
         disabled={!form.formState.isValid}
       >
         Withdraw Funds
       </Button>
     </form>
+    <div className="mt-3 flex gap-2 rounded-lg border border-yellow-100 bg-yellow-50 px-4 pb-4 pt-2">
+      <p className="mt-1.5 h-fit w-[3.3rem] rounded-full bg-yellow-500 text-center text-sm font-bold text-white">
+        !
+      </p>
+      <div>
+        <AlertTitle className="mt-1 text-base font-semibold text-yellow-800">
+          Heads up!
+        </AlertTitle>
+        <AlertDescription className="text-xs text-yellow-800">
+          Once you click on &quot;Withdraw Funds&quot;, your tokens will be sent
+          instantly and permanently. Please double-check all details before
+          proceeding, as transactions cannot be reversed.
+        </AlertDescription>
+      </div>
+    </div>
   </Form>
 );

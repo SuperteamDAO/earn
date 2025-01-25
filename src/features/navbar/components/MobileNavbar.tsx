@@ -180,7 +180,7 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               className="hover:bg-transparent"
               onClick={onDrawerOpen}
             >
-              <AlignLeft className="h-6 w-6 text-slate-500" />
+              <AlignLeft className="h-6 w-6 text-slate-600" />
             </Button>
             <Link
               href="/"
