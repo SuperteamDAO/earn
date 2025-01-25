@@ -81,7 +81,7 @@ export const profileSchema = z
     currentEmployer: z.string().optional(),
     skills: skillsArraySchema,
     private: z.boolean().default(false),
-    location: z.string().optional().nullable().or(z.literal('')),
+    location: z.string(),
   })
   .superRefine((data, ctx) => {
     socialSuperRefine(data, ctx);

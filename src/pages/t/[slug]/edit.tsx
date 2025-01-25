@@ -511,7 +511,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                     <FormLabel className="">Location</FormLabel>
                     <FormControl>
                       <RegionCombobox
-                        unset
                         className="w-full"
                         value={field.value}
                         onChange={(e) => {

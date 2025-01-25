@@ -177,7 +177,7 @@ function LabelOrAction({
       );
   } else {
     return (
-      <p className="mb-1 mt-auto text-sm font-medium text-slate-500">
+      <p className="mb-1 mt-auto flex items-center gap-1 text-sm font-medium text-slate-500">
         {nthLabelGenerator(Number(step[0]))}
         {needsCollapse && (
           <button
