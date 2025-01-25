@@ -1,4 +1,5 @@
 import { ArrowLeft, ArrowUpRight, CheckIcon, CopyIcon, X } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,7 @@ export function WalletDrawer({
   const [view, setView] = useState<DrawerView>('main');
 
   const { user } = useUser();
+  const router = useRouter();
 
   const handleBack = () => {
     if (view === 'withdraw') setView('main');
@@ -46,8 +48,18 @@ export function WalletDrawer({
 
   const { onCopy, hasCopied } = useClipboard(user?.walletAddress || '');
 
+  const handleClose = () => {
+    const currentPath = window.location.hash;
+
+    if (currentPath === '#wallet') {
+      router.push(window.location.pathname, undefined, { shallow: true });
+    }
+
+    onClose();
+  };
+
   return (
-    <SideDrawer isOpen={isOpen} onClose={onClose}>
+    <SideDrawer isOpen={isOpen} onClose={handleClose}>
       <SideDrawerContent className="w-screen sm:w-[30rem]">
         <X
           className="absolute right-4 top-5 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:hidden"

@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect } from 'react';
@@ -6,6 +7,8 @@ import { useEffect } from 'react';
 import { useDisclosure } from '@/hooks/use-disclosure';
 
 import { Login } from '@/features/auth/components/Login';
+import { WalletDrawer } from '@/features/wallet/components/WalletDrawer';
+import { tokenAssetsQuery } from '@/features/wallet/queries/fetch-assets';
 
 const SearchModal = dynamic(() =>
   import('@/features/search/components/SearchModal').then(
@@ -43,6 +46,12 @@ export const Header = () => {
     onClose: onSearchClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isWalletOpen,
+    onOpen: onWalletOpen,
+    onClose: onWalletClose,
+  } = useDisclosure();
+
   const posthog = usePostHog();
   function searchOpenWithEvent() {
     posthog.capture('initiate_search');
@@ -52,13 +61,39 @@ export const Header = () => {
   useEffect(() => {
     const checkHashAndOpenModal = () => {
       const hashHasEmail = window.location.hash === '#emailPreferences';
-      if (hashHasEmail && ready && !authenticated) {
+      const hashHasWallet = window.location.hash === '#wallet';
+      if ((hashHasEmail || hashHasWallet) && ready && !authenticated) {
         onLoginOpen();
       }
     };
 
     checkHashAndOpenModal();
   }, [isLoginOpen, onLoginOpen, ready, authenticated]);
+
+  useEffect(() => {
+    const checkHashAndOpenModal = () => {
+      const url = window.location.href;
+      const hashIndex = url.indexOf('#');
+      const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
+      const [hashValue, queryString] = afterHash.split('?');
+      const hashHasWallet = hashValue === 'wallet';
+      const queryParams = new URLSearchParams(queryString);
+      if (
+        (hashHasWallet && queryParams.get('loginState') === 'signedIn') ||
+        hashHasWallet
+      ) {
+        onWalletOpen();
+      }
+    };
+
+    checkHashAndOpenModal();
+  }, [isWalletOpen, onWalletOpen]);
+
+  const { data: tokens, isLoading, error } = useQuery(tokenAssetsQuery);
+
+  const walletBalance = tokens?.reduce((acc, token) => {
+    return acc + (token.usdValue || 0);
+  }, 0);
 
   return (
     <>
@@ -69,14 +104,27 @@ export const Header = () => {
         <DesktopNavbar
           onLoginOpen={onLoginOpen}
           onSearchOpen={searchOpenWithEvent}
+          onWalletOpen={onWalletOpen}
+          walletBalance={walletBalance || 0}
         />
       </div>
 
-      <MobileNavbar onLoginOpen={onLoginOpen} />
+      <MobileNavbar
+        onLoginOpen={onLoginOpen}
+        onWalletOpen={onWalletOpen}
+        walletBalance={walletBalance || 0}
+      />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
       <div className="fixed bottom-0 z-[60] w-full">
         <BottomBar onSearchOpen={searchOpenWithEvent} />
       </div>
+      <WalletDrawer
+        tokens={tokens || []}
+        isLoading={isLoading}
+        error={error}
+        isOpen={isWalletOpen}
+        onClose={onWalletClose}
+      />
     </>
   );
 };

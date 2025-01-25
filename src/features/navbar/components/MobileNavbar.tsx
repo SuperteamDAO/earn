@@ -1,5 +1,4 @@
 import { usePrivy } from '@privy-io/react-auth';
-import { useQuery } from '@tanstack/react-query';
 import { AlignLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -15,9 +14,6 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import { WalletDrawer } from '@/features/wallet/components/WalletDrawer';
-import { tokenAssetsQuery } from '@/features/wallet/queries/fetch-assets';
-
 import {
   CATEGORY_NAV_ITEMS,
   LISTING_NAV_ITEMS,
@@ -28,13 +24,19 @@ import { UserMenu } from './UserMenu';
 
 interface Props {
   onLoginOpen: () => void;
+  onWalletOpen: () => void;
+  walletBalance: number;
 }
 
 // const AnnouncementBar = dynamic(() =>
 //   import('@/features/navbar').then((mod) => mod.AnnouncementBar),
 // );
 
-export const MobileNavbar = ({ onLoginOpen }: Props) => {
+export const MobileNavbar = ({
+  onLoginOpen,
+  onWalletOpen,
+  walletBalance,
+}: Props) => {
   const {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,
@@ -48,13 +50,6 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
   const router = useRouter();
 
   const { user } = useUser();
-
-  const { onOpen, onClose, isOpen } = useDisclosure();
-  const { data: tokens, isLoading, error } = useQuery(tokenAssetsQuery);
-
-  const totalBalance = tokens?.reduce((acc, token) => {
-    return acc + (token.usdValue || 0);
-  }, 0);
 
   const [hideListingTypes, setHideListingTypes] = useState(false);
   useEffect(() => {
@@ -205,24 +200,17 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
                   <div className="relative">
                     <div
                       className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
-                      onClick={onOpen}
+                      onClick={onWalletOpen}
                     >
                       <IoWalletOutline className="h-7 w-7 text-brand-purple" />
                       <span className="absolute -right-1.5 top-px block rounded-md bg-brand-purple/95 px-1 py-px text-[10px] font-semibold tracking-tight text-white sm:hidden">
-                        ${formatNumberWithSuffix(totalBalance || 0, 1, true)}
+                        ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
                       </span>
                       <p className="hidden text-sm font-semibold sm:block">
-                        ${formatNumberWithSuffix(totalBalance || 0, 1, true)}
+                        ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
                       </p>
                     </div>
                   </div>
-                  <WalletDrawer
-                    tokens={tokens || []}
-                    isLoading={isLoading}
-                    error={error}
-                    isOpen={isOpen}
-                    onClose={onClose}
-                  />
                 </>
               )}
               <UserMenu />

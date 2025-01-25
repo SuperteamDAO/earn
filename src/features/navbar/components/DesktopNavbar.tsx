@@ -1,5 +1,4 @@
 import { usePrivy } from '@privy-io/react-auth';
-import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -8,13 +7,9 @@ import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
-
-import { WalletDrawer } from '@/features/wallet/components/WalletDrawer';
-import { tokenAssetsQuery } from '@/features/wallet/queries/fetch-assets';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
@@ -23,25 +18,24 @@ import { UserMenu } from './UserMenu';
 interface Props {
   onLoginOpen: () => void;
   onSearchOpen: () => void;
+  onWalletOpen: () => void;
+  walletBalance: number;
 }
 
 const LogoContextMenu = dynamic(() =>
   import('./LogoContextMenu').then((mod) => mod.LogoContextMenu),
 );
 
-export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
+export const DesktopNavbar = ({
+  onLoginOpen,
+  onSearchOpen,
+  onWalletOpen,
+  walletBalance,
+}: Props) => {
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const posthog = usePostHog();
   const { user } = useUser();
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const { data: tokens, isLoading, error } = useQuery(tokenAssetsQuery);
-
-  const totalBalance = tokens?.reduce((acc, token) => {
-    return acc + (token.usdValue || 0);
-  }, 0);
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const maxWidth = isDashboardRoute ? 'max-w-full' : 'max-w-7xl';
@@ -145,20 +139,13 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                 <>
                   <div
                     className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
-                    onClick={onOpen}
+                    onClick={onWalletOpen}
                   >
                     <IoWalletOutline className="h-6 w-6 text-brand-purple" />
                     <p className="text-sm font-semibold">
-                      ${formatNumberWithSuffix(totalBalance || 0, 1, true)}
+                      ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
                     </p>
                   </div>
-                  <WalletDrawer
-                    tokens={tokens || []}
-                    isLoading={isLoading}
-                    error={error}
-                    isOpen={isOpen}
-                    onClose={onClose}
-                  />
                 </>
               )}
               <UserMenu />
