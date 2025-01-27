@@ -7,7 +7,6 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { dayjs } from '@/utils/dayjs';
-import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -22,6 +21,7 @@ import {
   createListingRefinements,
 } from '@/features/listing-builder/types/schema';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
+import { fetchHistoricalTokenUSDValue } from '@/features/wallet/utils/fetchHistoricalTokenUSDValue';
 
 const allowedFields = [
   'type',
@@ -298,7 +298,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           amount = ((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2;
         }
         if (token && amount) {
-          const tokenUsdValue = await fetchTokenUSDValue(
+          const tokenUsdValue = await fetchHistoricalTokenUSDValue(
             token,
             listing.publishedAt,
           );

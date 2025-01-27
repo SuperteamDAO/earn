@@ -1,10 +1,10 @@
 import { Regions, status as Status } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
   filterRegionCountry,
   getCombinedRegion,
@@ -62,11 +62,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     statusQuery.push('b.isWinnersAnnounced = 1');
   }
 
-  const token = await getToken({ req });
-  const userId = token?.sub;
-  if (userId && !userRegion) {
+  const privyDid = await getPrivyToken(req);
+  if (privyDid && !userRegion) {
     const user = await prisma.user.findFirst({
-      where: { id: userId },
+      where: { privyDid },
       select: { location: true },
     });
     if (user?.location) {

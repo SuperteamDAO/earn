@@ -1,5 +1,5 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useAtom, useSetAtom } from 'jotai';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -52,7 +52,7 @@ export const GrantsPop = () => {
   }, 5_000);
 
   const [open, setOpen] = useState(false);
-  const { status } = useSession();
+  const { authenticated, ready } = usePrivy();
 
   const isMD = useBreakpoint('md');
   const posthog = usePostHog();
@@ -61,7 +61,8 @@ export const GrantsPop = () => {
   useEffect(() => {
     if (
       !initated.current &&
-      status === 'unauthenticated' &&
+      ready &&
+      !authenticated &&
       popupsShowed < 2 &&
       !open
     ) {
@@ -71,7 +72,7 @@ export const GrantsPop = () => {
         setPopupTimeout(timeoutHandle);
       }, 0);
     }
-  }, [status]);
+  }, [ready, authenticated]);
 
   const setPopupOpen = (e: boolean) => {
     if (e === false) {

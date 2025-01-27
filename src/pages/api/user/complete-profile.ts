@@ -1,12 +1,13 @@
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { privy } from '@/lib/privy';
 import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { userSelectOptions } from '@/features/auth/constants';
+import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -37,7 +38,6 @@ const allowedFields = [
   'currentEmployer',
   'skills',
   'private',
-  'publicKey',
 ];
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -120,6 +120,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Completing user profile with data: ${safeStringify(updatedData)}`,
     );
 
+    const createWalletResponse = await privy.createWallets({
+      userId: user.privyDid,
+      createSolanaWallet: true,
+    });
+
+    const walletAddress = createWalletResponse.wallet?.address;
+
     await prisma.user.updateMany({
       where: {
         id: userId as string,
@@ -139,6 +146,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           : undefined,
         superteamLevel: 'Lurker',
         isTalentFilled: true,
+        walletAddress,
       },
     });
 

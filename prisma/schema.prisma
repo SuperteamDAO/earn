@@ -224,7 +224,7 @@ model GrantApplication {
   projectDetails      String                 @db.Text
   projectTimeline     String
   proofOfWork         String                 @db.Text
-  walletAddress       String
+  walletAddress       String?
   twitter             String?
   milestones          String?                @db.Text
   kpi                 String?                @db.Text
@@ -365,6 +365,7 @@ model Session {
 model User {
   id                 String               @id @default(uuid())
   publicKey          String?
+  walletAddress      String?
   email              String               @unique
   username           String?              @unique
   photo              String?              @db.Text
@@ -420,6 +421,7 @@ model User {
   GrantApplication   GrantApplication[]
   SubscribeHackathon SubscribeHackathon[]
   isBlocked          Boolean              @default(false)
+  privyDid           String               @unique
 
   @@index([currentSponsorId])
   @@index([hackathonId])

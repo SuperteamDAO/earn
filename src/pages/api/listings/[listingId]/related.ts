@@ -1,6 +1,5 @@
 import { type BountyType, Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
 
 import { CombinedRegions } from '@/constants/Superteam';
 import {
@@ -12,6 +11,8 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
+
 export default async function relatedListings(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -22,13 +23,12 @@ export default async function relatedListings(
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
   try {
-    const token = await getToken({ req });
-    const userId = token?.sub;
+    const privyDid = await getPrivyToken(req);
     let userRegion;
 
-    if (userId) {
+    if (privyDid) {
       const user = await prisma.user.findFirst({
-        where: { id: userId },
+        where: { privyDid },
         select: { location: true },
       });
       const matchedRegion = CombinedRegions.find(

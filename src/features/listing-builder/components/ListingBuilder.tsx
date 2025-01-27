@@ -1,6 +1,6 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
@@ -23,7 +23,7 @@ interface ListingBuilderLayout {
 
 export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
   const { user } = useUser();
-  const { data: session, status } = useSession();
+  const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -60,20 +60,20 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
     return () => router.events.off('routeChangeComplete', handleRouteComplete);
   }, [router.events, queryClient, slug]);
 
-  if (!session && status === 'unauthenticated') {
-    return <Login hideCloseIcon isOpen={true} onClose={() => {}} />;
+  if (ready && !authenticated) {
+    return <Login isOpen={true} onClose={() => {}} />;
   }
 
-  if (!session && status === 'loading') {
+  if (!ready) {
     return <LoadingSection />;
   }
+
   const showContent =
-    user?.currentSponsor?.id ||
-    user?.hackathonId ||
-    session?.user?.role === 'GOD';
-  if (!user || !session || !showContent) {
+    user?.currentSponsor?.id || user?.hackathonId || user?.role === 'GOD';
+  if (!user || !authenticated || !showContent) {
     return <LoadingSection />;
   }
+
   if (isListingLoading || isHackathonLoading) {
     return <LoadingSection />;
   }

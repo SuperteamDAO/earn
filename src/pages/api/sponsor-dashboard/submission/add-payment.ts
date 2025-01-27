@@ -80,7 +80,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.debug(`Validating transaction for submission ID: ${id}`);
     const validationResult = await validatePayment({
       txId: paymentDetails.txId,
-      recipientPublicKey: user.publicKey!,
+      recipientPublicKey: user.walletAddress!,
       expectedAmount: winnerReward,
       tokenMint: dbToken,
     });

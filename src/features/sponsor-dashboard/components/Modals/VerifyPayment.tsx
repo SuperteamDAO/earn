@@ -80,10 +80,6 @@ export const VerifyPaymentModal = ({
     watch,
   } = form;
 
-  useEffect(() => {
-    console.log('errors', errors);
-  }, [errors]);
-
   const paymentLinks = watch('paymentLinks');
 
   useEffect(() => {

@@ -261,7 +261,7 @@ export const PayoutButton = ({ bounty }: Props) => {
           )}
           disabled={!bounty?.isWinnersAnnounced}
           onClick={async () => {
-            if (!selectedSubmission?.user.publicKey) {
+            if (!selectedSubmission?.user.walletAddress) {
               console.error('Public key is null, cannot proceed with payment');
               return;
             }
@@ -272,7 +272,7 @@ export const PayoutButton = ({ bounty }: Props) => {
               amount: bounty?.rewards![
                 selectedSubmission?.winnerPosition as keyof Rewards
               ] as number,
-              receiver: new PublicKey(selectedSubmission.user.publicKey),
+              receiver: new PublicKey(selectedSubmission.user.walletAddress),
             });
           }}
           variant="default"

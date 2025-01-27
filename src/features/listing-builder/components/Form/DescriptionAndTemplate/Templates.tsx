@@ -3,7 +3,6 @@ import { useAtomValue } from 'jotai';
 import { ChevronRight, Eye, LayoutGrid, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
@@ -40,7 +39,6 @@ import { useListingForm } from '../../../hooks';
 
 export function Templates() {
   const posthog = usePostHog();
-  const { data: session } = useSession();
   const { user } = useUser();
   const router = useRouter();
 
@@ -66,7 +64,7 @@ export function Templates() {
   const isDisabled =
     isCreateListingAllowed !== undefined &&
     isCreateListingAllowed === false &&
-    session?.user.role !== 'GOD' &&
+    user?.role !== 'GOD' &&
     !isEditing;
 
   const [open, setOpen] = useState(

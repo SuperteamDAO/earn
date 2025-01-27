@@ -1,4 +1,3 @@
-import { BackpackWalletAdapter } from '@solana/wallet-adapter-backpack';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 import {
@@ -23,11 +22,7 @@ export function SolanaWalletProvider({
   const endpoint = useMemo(() => rpc, [network]);
 
   const wallets = useMemo(
-    () => [
-      new BackpackWalletAdapter(),
-      new PhantomWalletAdapter(),
-      new SolflareWalletAdapter(),
-    ],
+    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
     [],
   );
 

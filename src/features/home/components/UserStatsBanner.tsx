@@ -1,5 +1,5 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
@@ -23,12 +23,12 @@ const Stat = ({ value, label }: StatProps) => {
 
 export const UserStatsBanner = () => {
   const { user } = useUser();
-  const { data: session, status } = useSession();
+  const { ready } = usePrivy();
   const { data: stats, isLoading } = useQuery(userStatsQuery);
 
   if (!user) return <></>;
 
-  if ((!session && status === 'loading') || isLoading) {
+  if (!ready || isLoading) {
     return (
       <Skeleton className="mx-auto mb-8 h-[170px] max-h-[300px] rounded-md p-6 md:h-[100px] md:p-10" />
     );

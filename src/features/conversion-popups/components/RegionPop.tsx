@@ -1,6 +1,6 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -52,7 +52,7 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
   }, 5_000);
 
   const [open, setOpen] = useState(false);
-  const { status } = useSession();
+  const { authenticated, ready } = usePrivy();
 
   const activateQuery = useMemo(
     () => status === 'unauthenticated' && popupsShowed < 2,
@@ -71,7 +71,8 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
   useEffect(() => {
     if (
       !initated.current &&
-      status === 'unauthenticated' &&
+      ready &&
+      !authenticated &&
       popupsShowed < 2 &&
       !open
     ) {
@@ -81,7 +82,7 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
         setPopupTimeout(timeoutHandle);
       }, 0);
     }
-  }, [status]);
+  }, [ready, authenticated]);
 
   const setPopupOpen = (e: boolean) => {
     if (e === false) {

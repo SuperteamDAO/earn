@@ -1,8 +1,11 @@
+import { useLoginWithOAuth } from '@privy-io/react-auth';
 import { useAtomValue } from 'jotai';
 import { ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { api } from '@/lib/api';
 
 import { popupTimeoutAtom } from '@/features/conversion-popups/atoms';
 
@@ -14,7 +17,7 @@ interface Props {
   isSponsor?: boolean;
   redirectTo?: string;
   hideOverlay?: boolean;
-  hideCloseIcon?: boolean;
+  onOpen?: () => void;
 }
 
 export const Login = ({
@@ -23,9 +26,24 @@ export const Login = ({
   isSponsor = false,
   redirectTo,
   hideOverlay,
-  hideCloseIcon = false,
 }: Props) => {
+  const router = useRouter();
+  const [loginStep, setLoginStep] = useState(0);
   const popupTimeout = useAtomValue(popupTimeoutAtom);
+
+  useLoginWithOAuth({
+    onComplete: async ({ isNewUser, user }) => {
+      if (isNewUser) {
+        await api.post('/api/user/create', { email: user.email });
+      }
+
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else {
+        router.replace(router.asPath);
+      }
+    },
+  });
 
   useEffect(() => {
     if (popupTimeout) {
@@ -37,17 +55,14 @@ export const Login = ({
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      if (popupTimeout) {
-        if (!open) {
-          popupTimeout.resume();
-        }
+      if (!open && popupTimeout) {
+        popupTimeout.resume();
       }
       onClose();
     },
     [popupTimeout, onClose],
   );
 
-  const [loginStep, setLoginStep] = useState(0);
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
@@ -55,7 +70,7 @@ export const Login = ({
         classNames={{
           overlay: hideOverlay ? 'hidden' : '',
         }}
-        hideCloseIcon={hideCloseIcon}
+        hideCloseIcon
       >
         <div className="py-5">
           {loginStep === 1 && (

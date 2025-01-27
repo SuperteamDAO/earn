@@ -29,7 +29,6 @@ import {
 } from '@/features/talent/schema';
 
 import { LocationField } from './fields/Location';
-import { PublicKeyField } from './fields/PublicKey';
 import { SkillsField } from './fields/Skills';
 import { SocialsField } from './fields/Socials';
 import { UsernameField } from './fields/Username';
@@ -66,7 +65,6 @@ export const TalentForm = () => {
         firstName: user?.firstName,
         lastName: user?.lastName,
         skills: newTalentSchema.shape.skills.safeParse(user?.skills).data,
-        publicKey: user?.publicKey,
         photo: user?.photo,
         location: newTalentSchema.shape.location.safeParse(user?.location).data,
         discord: user.discord || undefined,
@@ -210,7 +208,6 @@ export const TalentForm = () => {
             <LocationField />
           </div>
 
-          <PublicKeyField />
           <SkillsField skillsRefreshKey={skillsRefreshKey} />
           <SocialsField />
           <Button

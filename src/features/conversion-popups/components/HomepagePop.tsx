@@ -1,7 +1,7 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { DialogTitle } from '@radix-ui/react-dialog';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -75,11 +75,11 @@ export const HomepagePop = () => {
 
   const [variant, setVariant] = useState<number>(1);
   const [open, setOpen] = useState(false);
-  const { status } = useSession();
+  const { authenticated, ready } = usePrivy();
 
   const activateQuery = useMemo(
-    () => status === 'unauthenticated' && popupsShowed < 2,
-    [status, popupsShowed],
+    () => ready && !authenticated && popupsShowed < 2,
+    [ready, authenticated, popupsShowed],
   );
 
   const { data: stat } = useQuery({
@@ -98,7 +98,8 @@ export const HomepagePop = () => {
   useEffect(() => {
     if (
       !initated.current &&
-      status === 'unauthenticated' &&
+      ready &&
+      !authenticated &&
       popupsShowed < 2 &&
       !open
     ) {
@@ -108,7 +109,7 @@ export const HomepagePop = () => {
         setPopupTimeout(timeoutHandle);
       }, 0);
     }
-  }, [status]);
+  }, [ready, authenticated]);
 
   const setPopupOpen = (e: boolean) => {
     if (e === false) {

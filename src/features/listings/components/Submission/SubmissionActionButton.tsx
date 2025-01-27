@@ -1,8 +1,8 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
@@ -84,9 +84,9 @@ export const SubmissionActionButton = ({
 
   const { user } = useUser();
 
-  const { status: authStatus } = useSession();
+  const { authenticated } = usePrivy();
 
-  const isAuthenticated = authStatus === 'authenticated';
+  const isAuthenticated = authenticated;
 
   const isUserEligibleByRegion = userRegionEligibilty({
     region,

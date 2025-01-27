@@ -15,12 +15,15 @@ import { getStatusFilterQuery } from '@/features/listings/utils/status';
 const TAKE = 20;
 
 interface ForYouProps {
-  userId: string;
+  privyDid?: string;
   order?: 'asc' | 'desc';
   statusFilter?: StatusFilter;
+  userId?: string;
 }
 
 export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
+  if (!userId) return [];
+
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { skills: true, location: true, isTalentFilled: true },

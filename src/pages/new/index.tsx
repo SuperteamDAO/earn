@@ -42,9 +42,7 @@ export default function NewProfilePage({
   const [isSponsorLoading, setIsSponsorLoading] = useState(false);
 
   const checkTalent = async () => {
-    console.log('check talent called');
     localStorage.setItem(ONBOARDING_KEY, 'talent');
-    console.log('local storage set', localStorage.getItem(ONBOARDING_KEY));
     if (!user) return;
     try {
       // localStorage.removeItem(ONBOARDING_KEY);

@@ -1,8 +1,6 @@
 import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants/URL_REGEX';
-import { type User } from '@/interface/user';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
 import { walletFieldListings } from '../constants';
 import { type Listing } from '../types';
@@ -11,7 +9,6 @@ const submissionSchema = (
   listing: Listing,
   minRewardAsk: number,
   maxRewardAsk: number,
-  user: User | null,
 ) =>
   z
     .object({
@@ -29,31 +26,8 @@ const submissionSchema = (
       eligibilityAnswers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
-      publicKey: z.string().optional(),
     })
     .superRefine((data, ctx) => {
-      if (
-        !walletFieldListings.includes(listing.id!) &&
-        user &&
-        !user?.publicKey &&
-        !data.publicKey
-      ) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['publicKey'],
-          message: 'Solana Wallet Address is required',
-        });
-      }
-      if (data.publicKey) {
-        const validate = validateSolanaAddress(data.publicKey);
-        if (!validate.isValid) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['publicKey'],
-            message: 'Invalid Solana Wallet Address',
-          });
-        }
-      }
       if (
         listing.type !== 'project' &&
         !data.link &&

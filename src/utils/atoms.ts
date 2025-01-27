@@ -11,7 +11,6 @@ export const HydrateAtoms: React.FC<HydrateAtomsProps> = ({
   initialValues,
   children,
 }) => {
-  console.log('initialValues', initialValues);
   useHydrateAtoms(initialValues);
   return children;
 };

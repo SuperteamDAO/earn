@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { usePrivy } from '@privy-io/react-auth';
 import { Edit, Info, Loader2, Plus, Trash } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -53,7 +53,8 @@ import { useUsernameValidation } from '@/features/talent/utils/useUsernameValida
 
 export default function EditProfilePage({ slug }: { slug: string }) {
   const { user, refetchUser } = useUser();
-  const { data: session, status } = useSession();
+  const { authenticated, ready } = usePrivy();
+
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     mode: 'onBlur',
@@ -128,7 +129,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
         private: user.private || undefined,
         firstName: user.firstName || undefined,
         lastName: user.lastName || undefined,
-        publicKey: user.publicKey || undefined,
         discord: user.discord || undefined,
         github: user.github
           ? extractSocialUsername('github', user.github) || undefined
@@ -284,7 +284,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
               return acc;
             }, {} as Partial<ProfileFormData>);
 
-            console.log('final updated data', finalUpdatedData);
             await api.post('/api/pow/edit', {
               pows: pow,
             });
@@ -321,7 +320,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     }
   }, [slug, router, user]);
 
-  if (!session && status === 'unauthenticated') {
+  if (ready && !authenticated) {
     router.push('/');
   }
 
@@ -432,16 +431,6 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                   </FormItem>
                 )}
               />
-
-              <FormFieldWrapper
-                className="mb-5"
-                label="Your Solana Wallet Address"
-                name="publicKey"
-                control={control}
-                isRequired
-              >
-                <Input placeholder="Wallet Address" />
-              </FormFieldWrapper>
 
               <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
                 SOCIALS

@@ -8,7 +8,7 @@ import type { SubmissionWithUser } from './submission';
 
 interface User {
   id?: string;
-  publicKey?: string;
+  walletAddress?: string;
   firstName?: string;
   lastName?: string;
   email?: string;

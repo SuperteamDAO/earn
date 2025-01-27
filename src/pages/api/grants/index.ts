@@ -1,11 +1,11 @@
 import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
   filterRegionCountry,
   getCombinedRegion,
@@ -56,12 +56,11 @@ export default async function grants(
       }
     }
 
-    const token = await getToken({ req });
-    const userId = token?.sub;
+    const privyDid = await getPrivyToken(req);
     let userRegion: string[] | null | undefined = null;
-    if (userId) {
+    if (privyDid) {
       const user = await prisma.user.findFirst({
-        where: { id: userId },
+        where: { privyDid },
         select: { location: true },
       });
 

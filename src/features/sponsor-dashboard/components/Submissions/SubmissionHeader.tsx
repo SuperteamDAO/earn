@@ -10,7 +10,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import React from 'react';
 import { FaXTwitter } from 'react-icons/fa6';
 import { toast } from 'sonner';
@@ -27,6 +26,7 @@ import { Separator } from '@/components/ui/separator';
 import { tokenList } from '@/constants/tokenList';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { api } from '@/lib/api';
+import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
@@ -53,9 +53,8 @@ export const SubmissionHeader = ({
   totalSubmissions,
   isHackathonPage = false,
 }: Props) => {
-  const { data: session } = useSession();
   const router = useRouter();
-
+  const { user } = useUser();
   const deadline = formatDeadline(bounty?.deadline, bounty?.type);
 
   const listingPath = `listing/${bounty?.slug}`;
@@ -169,7 +168,7 @@ ${socialListingLink('twitter')}
             View Listing
           </Button>
           {!!(
-            (session?.user?.role === 'GOD' && bounty?.type !== 'grant') ||
+            (user?.role === 'GOD' && bounty?.type !== 'grant') ||
             (bounty?.isPublished && !pastDeadline && bounty.type !== 'grant')
           ) && (
             <Link

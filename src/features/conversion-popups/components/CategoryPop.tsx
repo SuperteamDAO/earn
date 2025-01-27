@@ -1,7 +1,7 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -135,11 +135,11 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
 
   const [variant, setVariant] = useState<CategoryVariantInfo>();
   const [open, setOpen] = useState(false);
-  const { status } = useSession();
+  const { authenticated, ready } = usePrivy();
 
   const activateQuery = useMemo(
-    () => status === 'unauthenticated' && popupsShowed < 2,
-    [status, popupsShowed],
+    () => ready && !authenticated && popupsShowed < 2,
+    [ready, authenticated, popupsShowed],
   );
 
   const { data: totalEarnings } = useQuery({
@@ -155,7 +155,8 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
   useEffect(() => {
     if (
       !initated.current &&
-      status === 'unauthenticated' &&
+      ready &&
+      !authenticated &&
       popupsShowed < 2 &&
       totalEarnings?.totalEarnings &&
       !open
@@ -166,7 +167,7 @@ export const CategoryPop = ({ category }: { category: CategoryKeys }) => {
         setPopupTimeout(timeoutHandle);
       }, 0);
     }
-  }, [status, totalEarnings?.totalEarnings]);
+  }, [ready, authenticated, totalEarnings?.totalEarnings]);
 
   const setPopupOpen = (e: boolean) => {
     if (e === false) {

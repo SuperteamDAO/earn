@@ -1,8 +1,6 @@
 import type { NextApiResponse } from 'next';
-import { getServerSession } from 'next-auth/next';
 
 import logger from '@/lib/logger';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -18,20 +16,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 
   try {
-    const session = await getServerSession(req, res, authOptions);
-    if (!session) {
-      logger.warn('Unauthorized access attempt');
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     const { token } = req.body;
-    if (!token) {
-      logger.warn('Token is missing in the request body');
-      return res.status(400).json({ error: 'Token is required' });
+    const userId = req.userId;
+    if (!token || !userId) {
+      logger.warn('Token or userId is missing in the request body');
+      return res.status(400).json({ error: 'Token or userId is required' });
     }
 
-    logger.info(`Processing invite acceptance for user: ${session.user.id}`);
-    const result = await handleInviteAcceptance(session.user.id, token);
+    logger.info(`Processing invite acceptance for user: ${userId}`);
+    const result = await handleInviteAcceptance(userId, token);
 
     if (result.success) {
       logger.info(`Invite acceptance successful: ${result.message}`);

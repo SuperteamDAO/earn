@@ -1,14 +1,15 @@
+import { usePrivy } from '@privy-io/react-auth';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import { IoSearchOutline } from 'react-icons/io5';
+import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { NavLink } from './NavLink';
@@ -17,14 +18,21 @@ import { UserMenu } from './UserMenu';
 interface Props {
   onLoginOpen: () => void;
   onSearchOpen: () => void;
+  onWalletOpen: () => void;
+  walletBalance: number;
 }
 
 const LogoContextMenu = dynamic(() =>
   import('./LogoContextMenu').then((mod) => mod.LogoContextMenu),
 );
 
-export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
-  const { data: session, status } = useSession();
+export const DesktopNavbar = ({
+  onLoginOpen,
+  onSearchOpen,
+  onWalletOpen,
+  walletBalance,
+}: Props) => {
+  const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const posthog = usePostHog();
   const { user } = useUser();
@@ -51,7 +59,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
               }}
             >
               <img
-                className="h-5 cursor-pointer object-contain"
+                className="h-[1.4rem] cursor-pointer object-contain"
                 alt="Superteam Earn"
                 src="/assets/logo.svg"
               />
@@ -67,13 +75,12 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
 
           {router.pathname !== '/search' &&
             !router.pathname.startsWith('/new/') && (
-              <Button
-                className="ph-no-capture gap-2 border-none font-normal text-slate-700 shadow-none hover:bg-slate-100"
-                variant="outline"
+              <div
+                className="flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                 onClick={onSearchOpen}
               >
-                <IoSearchOutline className="h-4 w-4" />
-              </Button>
+                <IoSearchOutline className="h-5 w-5" />
+              </div>
             )}
         </div>
 
@@ -102,14 +109,14 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
         )}
 
         <div className="flex flex-1 items-center justify-end gap-4 py-1.5">
-          {status === 'loading' && !session && (
+          {!ready && (
             <div className="flex items-center gap-2">
               <Skeleton className="h-10 w-10 rounded-full" />
               <Skeleton className="h-4 w-20" />
             </div>
           )}
 
-          {status === 'authenticated' && session && (
+          {ready && authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
               {user?.currentSponsorId && !isDashboardRoute && (
                 <Button
@@ -127,11 +134,25 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
                   </Link>
                 </Button>
               )}
+
+              {user?.isTalentFilled && (
+                <>
+                  <div
+                    className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
+                    onClick={onWalletOpen}
+                  >
+                    <IoWalletOutline className="h-6 w-6 text-brand-purple" />
+                    <p className="text-sm font-semibold">
+                      ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
+                    </p>
+                  </div>
+                </>
+              )}
               <UserMenu />
             </div>
           )}
 
-          {status === 'unauthenticated' && !session && (
+          {ready && !authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
               <div className="flex items-center gap-0">
                 <Button

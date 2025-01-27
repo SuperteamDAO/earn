@@ -61,7 +61,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
     if (
-      req.role !== 'GOD' &&
+      user.role !== 'GOD' &&
       result?.hackathonId &&
       result.hackathonId !== user.hackathonId
     ) {
@@ -73,7 +73,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
     if (
-      req.role !== 'GOD' &&
+      user.role !== 'GOD' &&
       result?.sponsorId &&
       result.sponsorId !== user.currentSponsorId
     ) {

@@ -1,7 +1,9 @@
 import { type NextApiHandler, type NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
+
+import { prisma } from '@/prisma';
 
 import { type NextApiRequestWithUser } from '../types';
+import { getPrivyToken } from './getPrivyToken';
 
 type Handler = (
   req: NextApiRequestWithUser,
@@ -10,18 +12,18 @@ type Handler = (
 
 export const withAuth = (handler: Handler): NextApiHandler => {
   return async (req: NextApiRequestWithUser, res: NextApiResponse) => {
-    const token = await getToken({ req });
+    const privyDid = await getPrivyToken(req);
 
-    if (!token) {
+    if (!privyDid) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const userId = token.sub;
-    if (!userId) {
-      return res.status(400).json({ error: 'Invalid token' });
-    }
+    const user = await prisma.user.findUnique({
+      where: { privyDid },
+      select: { id: true },
+    });
 
-    req.userId = userId;
+    req.userId = user?.id;
     return handler(req, res);
   };
 };
