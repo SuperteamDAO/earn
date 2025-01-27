@@ -120,6 +120,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Completing user profile with data: ${safeStringify(updatedData)}`,
     );
 
+    const createWalletResponse = await privy.createWallets({
+      userId: user.privyDid,
+      createSolanaWallet: true,
+    });
+
+    const walletAddress = createWalletResponse.wallet?.address;
+
     await prisma.user.updateMany({
       where: {
         id: userId as string,
@@ -139,6 +146,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           : undefined,
         superteamLevel: 'Lurker',
         isTalentFilled: true,
+        walletAddress,
       },
     });
 
@@ -146,13 +154,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       where: { id: userId as string },
       select: userSelectOptions,
     });
-
-    if (result) {
-      await privy.createWallets({
-        userId: result.privyDid,
-        createSolanaWallet: true,
-      });
-    }
 
     logger.info(`User onboarded successfully for user ID: ${userId}`);
     return res.status(200).json(result);
