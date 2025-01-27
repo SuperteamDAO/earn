@@ -95,6 +95,7 @@ async function updateGrantApplication(
           lastName: true,
           email: true,
           discord: true,
+          location: true,
         },
       },
       grant: {

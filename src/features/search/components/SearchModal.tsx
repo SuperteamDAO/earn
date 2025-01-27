@@ -29,7 +29,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
 
   const searchParams = useSearchParams();
 
-  const [query, setQuery] = useState(searchParams.get('q') ?? '');
+  const [query, setQuery] = useState(searchParams?.get('q') ?? '');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
 

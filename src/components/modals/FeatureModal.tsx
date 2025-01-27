@@ -44,7 +44,7 @@ export const FeatureModal = ({
           user.currentSponsor?.isVerified) ||
         forceOpen
       ) {
-        if (!searchParams.has('scout')) setIsOpen(true);
+        if (!searchParams?.has('scout')) setIsOpen(true);
         if (!forceOpen) {
           await updateUser.mutateAsync({ featureModalShown: true });
         }

@@ -25,8 +25,12 @@ export function Filters({
   const router = useRouter();
   const [, startTransition] = useTransition();
 
-  const [status, setStatus] = useState(searchParams.get('status') ?? undefined);
-  const [skills, setSkills] = useState(searchParams.get('skills') ?? undefined);
+  const [status, setStatus] = useState(
+    searchParams?.get('status') ?? undefined,
+  );
+  const [skills, setSkills] = useState(
+    searchParams?.get('skills') ?? undefined,
+  );
 
   const debouncedServerSearch = useCallback(debounce(serverSearch, 500), []);
 

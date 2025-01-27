@@ -1,7 +1,13 @@
+import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import {
+  airtableConfig,
+  airtableUrl,
+  fetchAirtableRecordId,
+} from '@/utils/airtable';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -45,6 +51,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const { name, slug, logo, url, industry, twitter, bio, entityName } =
       validationResult.data;
 
+    const preSponsor = await prisma.sponsors.findUnique({
+      where: {
+        id: userSponsorId,
+      },
+      select: { name: true },
+    });
+
     const result = await prisma.sponsors.update({
       where: {
         id: userSponsorId,
@@ -61,6 +74,45 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
 
+    if (preSponsor && preSponsor.name !== name) {
+      try {
+        const gdpAirtableConfig = airtableConfig(
+          process.env.AIRTABLE_GDP_API_TOKEN!,
+        );
+        const sponsorAirtableURL = airtableUrl(
+          process.env.AIRTABLE_GDP_BASE_ID!,
+          process.env.AIRTABLE_GDP_SPONSORS_TABLE_NAME!,
+        );
+
+        const sponsorRecordId = await fetchAirtableRecordId(
+          sponsorAirtableURL,
+          'Name',
+          preSponsor.name,
+          gdpAirtableConfig,
+        );
+
+        if (sponsorRecordId) {
+          await axios.patch(
+            sponsorAirtableURL,
+            JSON.stringify({
+              records: [
+                {
+                  id: sponsorRecordId,
+                  fields: {
+                    Name: name,
+                  },
+                },
+              ],
+            }),
+            gdpAirtableConfig,
+          );
+        }
+      } catch (err) {
+        logger.error(`Airtable update of sponsor name failed: ${err}`, {
+          err,
+        });
+      }
+    }
     logger.info(`Sponsor updated successfully for user: ${userId}`);
     return res.status(200).json(result);
   } catch (error: any) {
