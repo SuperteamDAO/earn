@@ -33,11 +33,10 @@ export const WalletActivity = () => {
       <div className="flex flex-col items-center gap-1 py-12">
         <GrTransaction className="h-10 w-10 text-slate-400" />
         <p className="mt-6 text-center text-lg font-medium text-slate-400">
-          No activity yet, but it’s only a matter of time!
+          No activity yet
         </p>
         <p className="px-8 text-center text-sm text-slate-400">
-          Every payment will be tracked here. Dive into opportunities, and this
-          space will soon tell your story of wins.
+          All earnings and withdrawals from your Earn wallet will show up here.
         </p>
       </div>
     );

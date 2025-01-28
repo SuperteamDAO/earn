@@ -32,10 +32,7 @@ export default async function newUser(
     }
 
     const user = await prisma.user.create({
-      data: {
-        privyDid: `did:privy:${privyDid}`,
-        email,
-      },
+      data: { privyDid, email },
     });
 
     logger.debug(`Created new user with ID: ${user.id}`);
@@ -49,9 +46,9 @@ export default async function newUser(
 
     if (!hasInvite) {
       logger.info('User does not have an invite, redirecting to onboarding');
-      return res
-        .status(307)
-        .redirect('/new?onboarding=true&loginState=signedIn');
+      return res.status(200).json({
+        message: 'User does not have an invite, redirecting to onboarding',
+      });
     } else {
       const result = await handleInviteAcceptance(user.id);
       logger.info('User has an invite, redirecting to dashboard');

@@ -10,10 +10,10 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
 import { checkEmailValidity, validateEmailRegex } from '../utils/email';
+import { handleUserCreation } from '../utils/handleUserCreation';
 
 interface LoginProps {
   redirectTo?: string;
@@ -32,7 +32,7 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
   const { state, sendCode, loginWithCode } = useLoginWithEmail({
     onComplete: async ({ isNewUser, user }) => {
       if (isNewUser) {
-        await api.post('/api/user/create', { email: user.email });
+        await handleUserCreation(user);
       }
       const url = new URL(redirectTo || router.asPath, window.location.origin);
       url.searchParams.set('loginState', 'signedIn');

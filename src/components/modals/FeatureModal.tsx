@@ -20,7 +20,7 @@ export const FeatureModal = () => {
   };
 
   useEffect(() => {
-    if (user?.featureModalShown === false) {
+    if (user && user.featureModalShown === false && user.isTalentFilled) {
       setIsOpen(true);
     }
   }, [user]);
@@ -65,7 +65,7 @@ export const FeatureModal = () => {
           <p className="text-lg font-semibold">Introducing the Earn Wallet</p>
           <Point
             title="Linked to your Earn account"
-            description="Receive rewards directly — no extensions, apps, or setup required. Just start earning!"
+            description="Receive rewards directly — no extensions, apps, or setup required. Just start contributing!"
             icon={<Link />}
           />
           <Point

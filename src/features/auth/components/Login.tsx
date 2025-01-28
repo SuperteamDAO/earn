@@ -2,13 +2,13 @@ import { useLoginWithOAuth } from '@privy-io/react-auth';
 import { useAtomValue } from 'jotai';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { api } from '@/lib/api';
 
 import { popupTimeoutAtom } from '@/features/conversion-popups/atoms';
 
+import { handleUserCreation } from '../utils/handleUserCreation';
 import { SignIn } from './SignIn';
 
 interface Props {
@@ -19,6 +19,12 @@ interface Props {
   hideOverlay?: boolean;
   onOpen?: () => void;
 }
+
+const OAUTH_QUERY_PARAMS = [
+  'privy_oauth_state',
+  'privy_oauth_provider',
+  'privy_oauth_code',
+];
 
 export const Login = ({
   isOpen,
@@ -34,13 +40,27 @@ export const Login = ({
   useLoginWithOAuth({
     onComplete: async ({ isNewUser, user }) => {
       if (isNewUser) {
-        await api.post('/api/user/create', { email: user.email });
+        await handleUserCreation(user);
       }
+
+      const query = { ...router.query };
+      OAUTH_QUERY_PARAMS.forEach((param) => delete query[param]);
+
+      await router.replace(
+        {
+          pathname: router.pathname,
+          query: {
+            ...query,
+            loginState: 'signedIn',
+            ...(redirectTo && { originUrl: router.asPath }),
+          },
+        },
+        undefined,
+        { shallow: true },
+      );
 
       if (redirectTo) {
         router.push(redirectTo);
-      } else {
-        router.replace(router.asPath);
       }
     },
   });

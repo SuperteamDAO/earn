@@ -92,7 +92,7 @@ export function WalletDrawer({
             </div>
 
             <p className="text-sm font-medium text-slate-500">
-              You will get paid in this wallet everytime you win
+              You will receive payments in this wallet each time you win
             </p>
           </div>
           <div className={cn('bg-slate-50 py-4', padding)}>
@@ -169,7 +169,7 @@ export function WalletDrawer({
               />
             </div>
           )}
-          <p className="mt-auto px-2 py-3 text-center text-xs text-slate-400">
+          <p className="mt-auto px-2 py-3 text-center text-xs text-slate-400 sm:text-sm">
             Have questions? Reach out to us at{' '}
             <a
               href="mailto:support@superteamearn.com"
