@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 import { GoogleIcon } from '@/svg/google';
 
+import { handleUserCreation } from '../utils/handleUserCreation';
 import { EmailSignIn } from './EmailSignIn';
 
 interface SigninProps {
@@ -26,7 +27,19 @@ export const SignIn = ({
   const posthog = usePostHog();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { initOAuth } = useLoginWithOAuth();
+  const { initOAuth } = useLoginWithOAuth({
+    onComplete: async ({ isNewUser, user }) => {
+      if (isNewUser) {
+        await handleUserCreation(user);
+      }
+
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else {
+        router.replace(router.asPath);
+      }
+    },
+  });
 
   const handleGmailSignIn = async () => {
     posthog.capture('google_auth');

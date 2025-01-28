@@ -20,12 +20,6 @@ interface Props {
   onOpen?: () => void;
 }
 
-const OAUTH_QUERY_PARAMS = [
-  'privy_oauth_state',
-  'privy_oauth_provider',
-  'privy_oauth_code',
-];
-
 export const Login = ({
   isOpen,
   onClose,
@@ -43,24 +37,10 @@ export const Login = ({
         await handleUserCreation(user);
       }
 
-      const query = { ...router.query };
-      OAUTH_QUERY_PARAMS.forEach((param) => delete query[param]);
-
-      await router.replace(
-        {
-          pathname: router.pathname,
-          query: {
-            ...query,
-            loginState: 'signedIn',
-            ...(redirectTo && { originUrl: router.asPath }),
-          },
-        },
-        undefined,
-        { shallow: true },
-      );
-
       if (redirectTo) {
         router.push(redirectTo);
+      } else {
+        router.replace(router.asPath);
       }
     },
   });
