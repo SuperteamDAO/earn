@@ -101,7 +101,7 @@ function MyApp({ Component, pageProps }: any) {
       window.history.replaceState(null, '', url.href);
       forcedProfileRedirect(); // instantly when just signed in
     }
-  }, [router.query.loginState, user, posthog]);
+  }, [router, user, posthog]);
 
   // forced profile redirection
   useEffect(() => {
