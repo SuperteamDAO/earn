@@ -30,7 +30,7 @@ export const SignIn = ({
   const { initOAuth } = useLoginWithOAuth({
     onComplete: async ({ isNewUser, user }) => {
       if (isNewUser) {
-        await handleUserCreation(user);
+        await handleUserCreation(user.google?.email || '');
       }
 
       if (redirectTo) {

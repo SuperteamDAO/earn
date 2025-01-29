@@ -34,7 +34,7 @@ export const Login = ({
   useLoginWithOAuth({
     onComplete: async ({ isNewUser, user }) => {
       if (isNewUser) {
-        await handleUserCreation(user);
+        await handleUserCreation(user.google?.email || '');
       }
 
       if (redirectTo) {
