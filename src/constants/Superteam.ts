@@ -19,6 +19,7 @@ export interface Superteam {
   hello: string;
   nationality: string;
   people?: People[];
+  airtableKey?: string;
 }
 
 const basePath = ASSET_URL + '/superteams/';
@@ -343,6 +344,7 @@ export const Superteams = [
   },
   {
     name: 'Superteam Korea',
+    airtableKey: 'Korea',
     icons: basePath + 'logos/korea.png',
     banner: basePath + 'banners/korea.png',
     region: Regions.KOREA,
