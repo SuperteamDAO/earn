@@ -229,7 +229,7 @@ export default function BountySubmissions({ slug }: Props) {
   }, [bounty, submissions, user?.currentSponsorId, router]);
 
   useEffect(() => {
-    if (searchParams.has('scout')) posthog.capture('scout tab_scout');
+    if (searchParams?.has('scout')) posthog.capture('scout tab_scout');
   }, []);
 
   const paginatedSubmissions = useMemo(() => {
@@ -424,7 +424,7 @@ export default function BountySubmissions({ slug }: Props) {
             totalSubmissions={submissions?.length || 0}
           />
           <Tabs
-            defaultValue={searchParams.has('scout') ? 'scout' : 'submissions'}
+            defaultValue={searchParams?.has('scout') ? 'scout' : 'submissions'}
           >
             {bounty?.isPublished &&
               !bounty?.isWinnersAnnounced &&
