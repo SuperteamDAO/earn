@@ -1,3 +1,4 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { GrTransaction } from 'react-icons/gr';
@@ -10,7 +11,15 @@ import { ActivityItem } from './ActivityItem';
 
 export const WalletActivity = () => {
   const [visibleCount, setVisibleCount] = useState(3);
-  const { data: activities, isLoading, error } = useQuery(tokenActivityQuery);
+  const { authenticated } = usePrivy();
+  const {
+    data: activities,
+    isLoading,
+    error,
+  } = useQuery({
+    ...tokenActivityQuery,
+    enabled: authenticated,
+  });
 
   if (isLoading) {
     return (

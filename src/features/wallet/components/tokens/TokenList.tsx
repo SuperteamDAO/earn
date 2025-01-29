@@ -1,6 +1,5 @@
 import { BiSolidCoinStack } from 'react-icons/bi';
 
-import { Button } from '@/components/ui/button';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { type TokenAsset } from '../../types/TokenAsset';
@@ -46,10 +45,7 @@ export function TokenList({ tokens, isLoading, error }: TokenListProps) {
     <div>
       {tokens.map((token) => (
         <div key={token.tokenAddress} className="overflow-hidden">
-          <Button
-            variant="ghost"
-            className="h-auto w-full px-6 py-2 hover:bg-accent sm:px-8 sm:py-4"
-          >
+          <div className="h-auto w-full px-6 py-2 sm:px-8 sm:py-4">
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-3">
                 {token.tokenImg && (
@@ -80,7 +76,7 @@ export function TokenList({ tokens, isLoading, error }: TokenListProps) {
                 </div>
               </div>
             </div>
-          </Button>
+          </div>
         </div>
       ))}
     </div>

@@ -66,6 +66,19 @@ export const TokenAmountInput = ({
       onChange={(e) => onAmountChange(e.target.value)}
       className="rounded-l-none border-0 pr-4 text-right"
       placeholder="0.00"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      min="0"
+      onKeyDown={(e) => {
+        if (
+          !/[0-9]|\.|\.|\Backspace|\Tab|\Delete|\ArrowLeft|\ArrowRight/.test(
+            e.key,
+          ) ||
+          (e.key === '.' && e.currentTarget.value.includes('.'))
+        ) {
+          e.preventDefault();
+        }
+      }}
     />
   </div>
 );

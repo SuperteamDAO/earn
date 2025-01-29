@@ -19,7 +19,7 @@ import { TokenAmountInput } from './TokenAmountInput';
 interface WithdrawFormProps {
   form: UseFormReturn<WithdrawFormData>;
   selectedToken?: TokenAsset;
-  onSubmit: (values: WithdrawFormData) => Promise<void>;
+  onSubmit: (values: WithdrawFormData) => Promise<string>;
   tokens: TokenAsset[];
 }
 
@@ -52,10 +52,11 @@ export const WithdrawForm = ({
                 ~
                 {selectedToken
                   ? (
-                      Number(form.watch('amount')) *
-                      (selectedToken.usdValue / selectedToken.amount)
-                    ).toLocaleString()
-                  : 0}{' '}
+                      Number(form.watch('amount') || 0) *
+                      ((selectedToken.usdValue || 0) /
+                        (selectedToken.amount || 1))
+                    ).toLocaleString() || '0'
+                  : '0'}{' '}
                 USD
               </span>
             </div>

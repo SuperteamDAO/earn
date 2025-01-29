@@ -89,7 +89,14 @@ export const Header = () => {
     checkHashAndOpenModal();
   }, [isWalletOpen, onWalletOpen]);
 
-  const { data: tokens, isLoading, error } = useQuery(tokenAssetsQuery);
+  const {
+    data: tokens,
+    isLoading,
+    error,
+  } = useQuery({
+    ...tokenAssetsQuery,
+    enabled: authenticated,
+  });
 
   const walletBalance = tokens?.reduce((acc, token) => {
     return acc + (token.usdValue || 0);

@@ -47,6 +47,7 @@ export async function fetchWalletActivity(
 
       if (balanceChange !== 0) {
         const amount = Math.abs(balanceChange);
+        if (amount === 1e-7) continue;
         activities.push({
           type: balanceChange > 0 ? 'Credited' : 'Withdrawn',
           amount,

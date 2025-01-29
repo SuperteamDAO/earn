@@ -1,14 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSendTransaction } from '@privy-io/react-auth/solana';
+import { useSolanaWallets } from '@privy-io/react-auth/solana';
 import {
-  ComputeBudgetProgram,
   Connection,
   PublicKey,
-  Transaction,
+  TransactionMessage,
+  VersionedTransaction,
 } from '@solana/web3.js';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { type TokenAsset } from '../../types/TokenAsset';
@@ -32,7 +33,6 @@ export function WithdrawFundsFlow({
   view,
   setView,
 }: WithdrawFlowProps) {
-  const { sendTransaction } = useSendTransaction();
   const { user } = useUser();
   const [txData, setTxData] = useState<{
     signature: string;
@@ -52,6 +52,11 @@ export function WithdrawFundsFlow({
     (token) => token.tokenAddress === form.watch('tokenAddress'),
   );
 
+  const { wallets } = useSolanaWallets();
+  const embeddedWallet = wallets.find(
+    (wallet) => wallet.walletClientType === 'privy',
+  );
+
   async function handleWithdraw(values: WithdrawFormData) {
     try {
       const connection = new Connection(
@@ -59,9 +64,6 @@ export function WithdrawFundsFlow({
       );
 
       const { blockhash } = await connection.getLatestBlockhash('finalized');
-      const transaction = new Transaction();
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = new PublicKey(user?.walletAddress as string);
 
       const instructions = await createTransferInstructions(
         connection,
@@ -70,21 +72,54 @@ export function WithdrawFundsFlow({
         selectedToken,
       );
 
-      const compute = [
-        ComputeBudgetProgram.setComputeUnitLimit({ units: 100000 }),
-        ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 1000000 }),
-      ];
+      const message = new TransactionMessage({
+        payerKey: new PublicKey(process.env.NEXT_PUBLIC_FEEPAYER as string),
+        recentBlockhash: blockhash,
+        instructions,
+      }).compileToV0Message();
 
-      transaction.add(...instructions, ...compute);
+      const transaction = new VersionedTransaction(message);
+      const serializedMessage = Buffer.from(
+        transaction.message.serialize(),
+      ).toString('base64');
 
-      const { signature } = await sendTransaction({ transaction, connection });
+      const provider = await embeddedWallet?.getProvider();
+      const { signature: serializedUserSignature } = await provider?.request({
+        method: 'signMessage',
+        params: { message: serializedMessage },
+      });
+
+      const userSignature = Buffer.from(serializedUserSignature, 'base64');
+      transaction.addSignature(
+        new PublicKey(user?.walletAddress as string),
+        userSignature,
+      );
+
+      const serializedTransaction = Buffer.from(
+        transaction.serialize(),
+      ).toString('base64');
+
+      const response = await api.post('/api/wallet/sign-transaction', {
+        serializedTransaction,
+      });
+
+      const signedTransaction = VersionedTransaction.deserialize(
+        Buffer.from(response.data.serializedTransaction, 'base64'),
+      );
+
+      const signature = await connection.sendRawTransaction(
+        signedTransaction.serialize(),
+      );
 
       if (signature) {
         setTxData({ signature, values });
         setView('success');
       }
+
+      return signature;
     } catch (error) {
       console.error('Withdrawal failed:', error);
+      throw error;
     }
   }
 
