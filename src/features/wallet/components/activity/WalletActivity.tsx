@@ -69,7 +69,7 @@ export const WalletActivity = () => {
             variant="outline"
             size="sm"
             onClick={() => setVisibleCount((prev) => prev + 10)}
-            className="mx-auto rounded-md py-2 text-sm text-slate-500 hover:bg-slate-100"
+            className="mx-auto rounded-md py-2 text-xs text-slate-500 hover:bg-slate-100 sm:text-sm"
           >
             View More
           </Button>
