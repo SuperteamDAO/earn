@@ -82,6 +82,7 @@ async function updateGrantApplication(
           email: true,
           discord: true,
           walletAddress: true,
+          location: true,
         },
       },
       grant: {

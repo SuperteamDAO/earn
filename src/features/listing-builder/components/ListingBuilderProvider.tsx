@@ -164,7 +164,7 @@ function ListingBuilderProvider({
         isGod,
         isEditing: !!isEditing,
         isST: isST,
-        type: (params.get('type') as BountyType) || 'bounty',
+        type: (params?.get('type') as BountyType) || 'bounty',
         hackathon: hackathon,
       });
 

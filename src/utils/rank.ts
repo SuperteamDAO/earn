@@ -78,8 +78,11 @@ export const cleanRewardPrizes = (rewards?: Rewards, skipBonus = false) => {
     .filter((key) => !isNaN(key));
 };
 
-export const nthLabelGenerator = (key: number) => {
-  if (key === BONUS_REWARD_POSITION) return 'bonus';
+export const nthLabelGenerator = (
+  key: number,
+  noBonusLabel: boolean = false,
+) => {
+  if (key === BONUS_REWARD_POSITION && !noBonusLabel) return 'bonus';
 
   const lastDigit = key % 10;
   const lastTwoDigits = key % 100;

@@ -24,7 +24,7 @@ export default function Talent() {
 
   useEffect(() => {
     if (authenticated && user && user?.isTalentFilled) {
-      const originUrl = params.get('originUrl');
+      const originUrl = params?.get('originUrl');
       if (!!originUrl && typeof originUrl === 'string') {
         router.push(originUrl);
       } else {

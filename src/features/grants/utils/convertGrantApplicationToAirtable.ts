@@ -32,10 +32,12 @@ interface GrantApplicationAirtableSchema {
   'Discord Handle': string | undefined;
   Deadline: string;
   'Grant Listing Title (Earn)': string;
+  'Region (Dashboard)'?: string[];
 }
 
 export function convertGrantApplicationToAirtable(
   grantApplication: GrantApplicationWithUserAndGrant,
+  applicantSuperteamRegionRecordId?: string | undefined | null,
 ): GrantApplicationAirtableSchema {
   let status;
   switch (grantApplication.applicationStatus) {
@@ -69,5 +71,10 @@ export function convertGrantApplicationToAirtable(
     'Discord Handle': grantApplication.user.discord ?? undefined,
     Deadline: grantApplication.projectTimeline,
     'Grant Listing Title (Earn)': grantApplication.grant.title,
+    ...(applicantSuperteamRegionRecordId
+      ? {
+          'Region (Dashboard)': [applicantSuperteamRegionRecordId],
+        }
+      : {}),
   };
 }

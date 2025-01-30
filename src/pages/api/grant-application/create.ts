@@ -63,6 +63,7 @@ async function createGrantApplication(
           email: true,
           discord: true,
           walletAddress: true,
+          location: true,
         },
       },
       grant: {

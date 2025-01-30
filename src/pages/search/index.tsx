@@ -58,7 +58,7 @@ const Search = ({
   const posthog = usePostHog();
 
   const [results, setResults] = useState<SearchResult[]>(resultsP ?? []);
-  const [query, setQuery] = useState(searchParams.get('q') ?? '');
+  const [query, setQuery] = useState(searchParams?.get('q') ?? '');
   const [loading, setLoading] = useState(false);
 
   const debouncedServerSearch = useCallback(debounce(serverSearch, 500), []);

@@ -47,8 +47,8 @@ export default function NewProfilePage({
     try {
       // localStorage.removeItem(ONBOARDING_KEY);
       if (!user?.isTalentFilled) {
-        const originUrl = params.get('originUrl');
-        const type = params.get('type');
+        const originUrl = params?.get('originUrl');
+        const type = params?.get('type');
         const query: Record<string, string> = {};
         if (originUrl) query['originUrl'] = originUrl;
         if (type) query['type'] = type;
@@ -73,7 +73,7 @@ export default function NewProfilePage({
       if (sponsors?.data?.length && user.currentSponsorId) {
         router.push('/dashboard/listings?open=1');
       } else {
-        const originUrl = params.get('originUrl');
+        const originUrl = params?.get('originUrl');
         router.push({
           pathname: '/new/sponsor',
           query: originUrl ? { originUrl } : undefined,
