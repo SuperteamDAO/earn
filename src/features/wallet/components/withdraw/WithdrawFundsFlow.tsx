@@ -6,6 +6,7 @@ import {
   TransactionMessage,
   VersionedTransaction,
 } from '@solana/web3.js';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -47,6 +48,8 @@ export function WithdrawFundsFlow({
       address: '',
     },
   });
+
+  const queryClient = useQueryClient();
 
   const selectedToken = tokens.find(
     (token) => token.tokenAddress === form.watch('tokenAddress'),
@@ -113,6 +116,9 @@ export function WithdrawFundsFlow({
 
       if (signature) {
         setTxData({ signature, values });
+        await queryClient.invalidateQueries({
+          queryKey: ['tokens', 'assets'],
+        });
         setView('success');
       }
 

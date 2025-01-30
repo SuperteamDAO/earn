@@ -55,7 +55,7 @@ export const WalletActivity = () => {
   const hasMore = visibleCount < activities.length;
 
   return (
-    <div className="mt-0.5 max-h-96 overflow-y-auto">
+    <div className="mt-0.5">
       {visibleActivities.map((activity, index) => (
         <ActivityItem
           key={`${activity.timestamp}-${index}`}

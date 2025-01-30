@@ -60,7 +60,7 @@ export function WalletDrawer({
 
   return (
     <SideDrawer isOpen={isOpen} onClose={handleClose}>
-      <SideDrawerContent className="w-screen sm:w-[30rem]">
+      <SideDrawerContent className="w-screen overflow-y-auto sm:w-[30rem]">
         <X
           className="absolute right-4 top-5 z-10 h-5 w-5 cursor-pointer text-slate-600 sm:hidden"
           onClick={onClose}
@@ -169,7 +169,7 @@ export function WalletDrawer({
               />
             </div>
           )}
-          <p className="mt-auto px-2 py-3 text-center text-xs text-slate-400 sm:text-sm">
+          <p className="sticky bottom-0 mt-auto bg-white px-2 py-2 text-center text-xs text-slate-400 sm:text-sm">
             Have questions? Reach out to us at{' '}
             <a
               href="mailto:support@superteamearn.com"

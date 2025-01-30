@@ -52,7 +52,7 @@ export const FeatureModal = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-[480px] overflow-hidden rounded-lg p-0">
+      <DialogContent className="max-w-[480px] rounded-lg p-0">
         <div className="p-8">
           <ExternalImage
             src="/wallet/modal-wallet.webp"
