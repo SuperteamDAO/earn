@@ -138,9 +138,8 @@ export function WithdrawFundsFlow({
         <TransactionDetails
           recipient={txData.values.address}
           amount={txData.values.amount}
-          token={selectedToken?.tokenSymbol ?? 'SOL'}
+          tokenAddress={txData.values.tokenAddress}
           txId={txData.signature}
-          tokenImg={selectedToken?.tokenImg ?? ''}
         />
       )}
     </div>

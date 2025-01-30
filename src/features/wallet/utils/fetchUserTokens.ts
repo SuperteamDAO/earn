@@ -11,25 +11,29 @@ export async function fetchUserTokens(
   publicKey: PublicKey,
 ): Promise<TokenAsset[]> {
   const solBalance = await connection.getBalance(publicKey);
-  const solAsset: TokenAsset = {
-    tokenAddress: 'So11111111111111111111111111111111111111112',
-    tokenSymbol: 'SOL',
-    tokenImg: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
-    amount: solBalance / 1e9,
-    usdValue: 0,
-    tokenName: 'Solana',
-  };
 
-  const solPrice = await fetchTokenUSDValue(
-    'So11111111111111111111111111111111111111112',
-  );
-  solAsset.usdValue = solAsset.amount * solPrice;
+  const assets: TokenAsset[] = [];
+
+  if (solBalance > 0) {
+    const solPrice = await fetchTokenUSDValue(
+      'So11111111111111111111111111111111111111112',
+    );
+
+    const solAsset: TokenAsset = {
+      tokenAddress: 'So11111111111111111111111111111111111111112',
+      tokenSymbol: 'SOL',
+      tokenImg: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
+      amount: solBalance / 1e9,
+      usdValue: (solBalance / 1e9) * solPrice,
+      tokenName: 'Solana',
+    };
+
+    assets.push(solAsset);
+  }
 
   const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
     publicKey,
-    {
-      programId: TOKEN_PROGRAM_ID,
-    },
+    { programId: TOKEN_PROGRAM_ID },
   );
 
   const splAssets: TokenAsset[] = await Promise.all(
@@ -65,5 +69,5 @@ export async function fetchUserTokens(
     }),
   );
 
-  return [solAsset, ...splAssets.filter((asset) => asset.amount > 0)];
+  return [...assets, ...splAssets.filter((asset) => asset.amount > 0)];
 }

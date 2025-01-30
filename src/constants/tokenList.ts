@@ -21,7 +21,7 @@ export const tokenList: Token[] = [
   {
     tokenName: 'Solana (SOL)',
     tokenSymbol: 'SOL',
-    mintAddress: 'So11111111111111111111111111111111111111111',
+    mintAddress: 'So11111111111111111111111111111111111111112',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
     decimals: 9,
     coingeckoSymbol: 'solana',
@@ -273,14 +273,6 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/18802.png',
     decimals: 9,
     coingeckoSymbol: 'dust-protocol',
-  },
-  {
-    tokenName: 'wrapped Solana (wSOL)',
-    tokenSymbol: 'wSOL',
-    mintAddress: 'So11111111111111111111111111111111111111112',
-    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
-    decimals: 9,
-    coingeckoSymbol: 'wrapped-solana',
   },
   {
     tokenName: 'Bonfida (FIDA)',

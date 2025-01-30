@@ -31,18 +31,17 @@ export function TokenList({ tokens, isLoading, error }: TokenListProps) {
       <div className="flex flex-col items-center gap-1 px-6 py-12">
         <BiSolidCoinStack className="h-10 w-10 text-slate-400" />
         <p className="mt-6 text-center text-lg font-medium text-slate-400">
-          Nothing here yet, but you’re just getting started!
+          No tokens received
         </p>
         <p className="px-4 text-center text-sm text-slate-400">
-          Your rewards will appear here. Keep exploring opportunities and watch
-          your earnings grow!
+          Any tokens you receive will appear here when a sponsor pays out
         </p>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="mt-0.5">
       {tokens.map((token) => (
         <div key={token.tokenAddress} className="overflow-hidden">
           <div className="h-auto w-full px-6 py-2 sm:px-8 sm:py-4">

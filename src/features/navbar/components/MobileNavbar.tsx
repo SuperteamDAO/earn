@@ -193,29 +193,27 @@ export const MobileNavbar = ({
           </div>
 
           <MobileDrawer />
-          {ready && authenticated && (
-            <div className="flex items-center gap-1">
-              {user?.isTalentFilled && (
-                <>
-                  <div className="relative">
-                    <div
-                      className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
-                      onClick={onWalletOpen}
-                    >
-                      <IoWalletOutline className="h-7 w-7 text-brand-purple" />
-                      <span className="absolute -right-1.5 top-px block rounded-md bg-brand-purple/95 px-1 py-px text-[10px] font-semibold tracking-tight text-white sm:hidden">
-                        ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
-                      </span>
-                      <p className="hidden text-sm font-semibold sm:block">
-                        ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
-                      </p>
-                    </div>
+          <div className="flex items-center gap-1">
+            {ready && authenticated && user?.isTalentFilled && (
+              <>
+                <div className="relative">
+                  <div
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
+                    onClick={onWalletOpen}
+                  >
+                    <IoWalletOutline className="h-7 w-7 text-brand-purple" />
+                    <span className="absolute -right-1.5 top-px block rounded-md bg-brand-purple/95 px-1 py-px text-[10px] font-semibold tracking-tight text-white sm:hidden">
+                      ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
+                    </span>
+                    <p className="hidden text-sm font-semibold sm:block">
+                      ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
+                    </p>
                   </div>
-                </>
-              )}
-              <UserMenu />
-            </div>
-          )}
+                </div>
+              </>
+            )}
+            {ready && authenticated && <UserMenu />}
+          </div>
           {ready && !authenticated && (
             <Button
               variant="ghost"
