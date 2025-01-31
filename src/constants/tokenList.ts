@@ -206,7 +206,7 @@ export const tokenList: Token[] = [
     tokenName: 'Solayer USD (sUSD)',
     tokenSymbol: 'sUSD',
     mintAddress: 'susdabGDNbhrnCa6ncrYo81u4s9GM8ecK2UwMyZiq4X',
-    icon: 'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f736f6c617965722d6c6162732f746f6b656e2d6d657461646174612f6d61696e2f737573642f696d6167652e706e67',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/35429.png',
     decimals: 6,
     coingeckoSymbol: 'solayer-usd',
   },
