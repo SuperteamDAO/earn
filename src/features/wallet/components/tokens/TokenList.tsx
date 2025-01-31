@@ -31,10 +31,11 @@ export function TokenList({ tokens, isLoading, error }: TokenListProps) {
       <div className="flex flex-col items-center gap-1 px-6 py-12">
         <BiSolidCoinStack className="h-10 w-10 text-slate-400" />
         <p className="mt-6 text-center text-lg font-medium text-slate-400">
-          No tokens received
+          Your wallet is empty
         </p>
         <p className="px-4 text-center text-sm text-slate-400">
-          Any tokens you receive will appear here when a sponsor pays out
+          Your rewards will show up here when you&apos;re paid by a sponsor for
+          a win
         </p>
       </div>
     );
