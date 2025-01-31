@@ -17,10 +17,11 @@ import { type Rewards } from '@/features/listings/types';
 
 export async function POST(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  props: { params: Promise<{ id: string }> },
 ) {
+  const params = await props.params;
   try {
-    const session = await getSponsorSession(headers());
+    const session = await getSponsorSession(await headers());
 
     logger.debug(`Request params: ${safeStringify(params)}`);
 

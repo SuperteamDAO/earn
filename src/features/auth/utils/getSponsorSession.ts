@@ -29,9 +29,7 @@ export async function getSponsorSession(
         cookie: cookieHeader,
       },
       cookies: Object.fromEntries(
-        cookies()
-          .getAll()
-          .map((c) => [c.name, c.value]),
+        (await cookies()).getAll().map((c) => [c.name, c.value]),
       ),
     };
 
