@@ -222,7 +222,7 @@ export const SubmissionDrawer = ({
 
   return (
     <SideDrawer isOpen={isOpen} onClose={onClose}>
-      <SideDrawerContent>
+      <SideDrawerContent className="px-2 sm:p-4">
         <X
           className="absolute right-4 top-10 z-10 h-4 w-4 text-slate-400 sm:right-8 sm:top-8"
           onClick={onClose}
