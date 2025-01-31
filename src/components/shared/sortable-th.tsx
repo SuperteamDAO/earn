@@ -6,28 +6,11 @@ import { cn } from '@/utils/cn';
 
 type SortDirection = 'asc' | 'desc' | null;
 
-interface THProps extends React.HTMLAttributes<HTMLTableCellElement> {
-  children: ReactNode;
-}
-
-export const TH = ({ children, className, ...props }: THProps) => {
-  return (
-    <TableHead
-      className={cn(
-        'text-xs font-medium tracking-wider text-slate-500',
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </TableHead>
-  );
-};
-
-interface SortableTHProps extends THProps {
+interface SortableTHProps extends React.HTMLAttributes<HTMLTableCellElement> {
   column: string;
   currentSort: { column: string; direction: SortDirection };
   setSort: (column: string, direction: SortDirection) => void;
+  children: ReactNode;
 }
 
 export const SortableTH = ({
@@ -47,13 +30,7 @@ export const SortableTH = ({
   };
 
   return (
-    <TableHead
-      className={cn(
-        'text-xs font-medium tracking-wider text-slate-500',
-        className,
-      )}
-      {...props}
-    >
+    <TableHead className={cn(className)} {...props}>
       <div
         className="flex cursor-pointer items-center gap-0.5"
         onClick={handleSort}
