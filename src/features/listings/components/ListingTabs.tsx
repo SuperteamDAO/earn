@@ -2,7 +2,7 @@ import { ArrowRight, Info } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
-import { useEffect, useState } from 'react';
+import { type JSX, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';

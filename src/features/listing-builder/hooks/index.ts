@@ -136,7 +136,7 @@ export const useListingForm = (
     }
   }, [queueRefRef, isEditing]);
 
-  const debouncedSaveRef = useRef<ReturnType<typeof debounce>>();
+  const debouncedSaveRef = useRef<ReturnType<typeof debounce>>(undefined);
 
   useEffect(() => {
     debouncedSaveRef.current = debounce(() => {
