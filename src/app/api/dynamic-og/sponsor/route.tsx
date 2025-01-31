@@ -1,25 +1,11 @@
-import { ImageResponse } from '@vercel/og';
-import type { NextRequest } from 'next/server';
+import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { fetchAsset, formatString } from '@/utils/ogHelpers';
+import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
 
-export const config = {
-  runtime: 'edge',
-};
-
-const mediumFontP = fetchAsset(
-  new URL('../../../../public/Inter-Medium.woff', import.meta.url),
-);
-const boldFontP = fetchAsset(
-  new URL('../../../../public/Inter-Bold.woff', import.meta.url),
-);
-
-export default async function handler(request: NextRequest) {
+export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-
-    const [mediumFont, boldFont] = await Promise.all([mediumFontP, boldFontP]);
 
     const getParam = (name: any, processFn = (x: any) => x) =>
       searchParams.has(name) ? processFn(searchParams.get(name)) : null;
@@ -27,6 +13,13 @@ export default async function handler(request: NextRequest) {
     const title = getParam('title', (x) => formatString(x, 24));
     const slug = getParam('slug', (x) => formatString(x, 28));
     const sponsorLogo = getParam('logo', (x) => formatString(x, 100));
+
+    const allText = `${title || ''}${slug || ''}View Opportunities@`;
+
+    const [interMedium, interBold] = await Promise.all([
+      loadGoogleFont('Inter:wght@500', allText),
+      loadGoogleFont('Inter:wght@700', allText),
+    ]);
 
     return new ImageResponse(
       (
@@ -165,8 +158,8 @@ export default async function handler(request: NextRequest) {
         width: 1200,
         height: 630,
         fonts: [
-          { name: 'Medium', data: mediumFont, style: 'normal' },
-          { name: 'Bold', data: boldFont, style: 'normal' },
+          { name: 'Medium', data: interMedium, style: 'normal' },
+          { name: 'Bold', data: interBold, style: 'normal' },
         ],
       },
     );

@@ -1,24 +1,13 @@
-import { ImageResponse } from '@vercel/og';
-import type { NextRequest } from 'next/server';
+import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { fetchAsset } from '@/utils/ogHelpers';
+import { loadGoogleFont } from '@/utils/ogHelpers';
 
 import '/node_modules/flag-icons/css/flag-icons.min.css';
 
-export const config = {
-  runtime: 'edge',
-};
-
-const boldFontP = fetchAsset(
-  new URL('../../../../public/Inter-Bold.woff', import.meta.url),
-);
-
-export default async function handler(request: NextRequest) {
+export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-
-    const [boldFont] = await Promise.all([boldFontP]);
 
     const getParam = (name: any, processFn = (x: any) => x) =>
       searchParams.has(name) ? processFn(searchParams.get(name)) : null;
@@ -26,6 +15,13 @@ export default async function handler(request: NextRequest) {
     const region = getParam('region');
     const code = getParam('code');
     const hasCode = code && code !== 'undefined';
+    const prefix = 'Find High Paying Crypto Gigs in ';
+
+    const allText = `${prefix || ''}${region || ''}${code || ''}`;
+
+    const [interBold] = await Promise.all([
+      loadGoogleFont('Inter:wght@700', allText),
+    ]);
 
     return new ImageResponse(
       (
@@ -65,7 +61,7 @@ export default async function handler(request: NextRequest) {
                     width: '700px',
                   }}
                 >
-                  {`Find High Paying Crypto Gigs in `}
+                  {prefix}
                   <p
                     style={{
                       color: '#6366F1',
@@ -154,7 +150,7 @@ export default async function handler(request: NextRequest) {
       {
         width: 1200,
         height: 630,
-        fonts: [{ name: 'Bold', data: boldFont, style: 'normal' }],
+        fonts: [{ name: 'Bold', data: interBold, style: 'normal' }],
       },
     );
   } catch (e: any) {

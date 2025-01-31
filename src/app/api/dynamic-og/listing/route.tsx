@@ -1,33 +1,12 @@
-import { ImageResponse } from '@vercel/og';
-import type { NextRequest } from 'next/server';
+import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { tokenList } from '@/constants/tokenList';
-import { fetchAsset, formatNumber, formatString } from '@/utils/ogHelpers';
+import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
 
-export const config = {
-  runtime: 'edge',
-};
-
-export default async function handler(request: NextRequest) {
+export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-
-    const mediumFontP = fetchAsset(
-      new URL('../../../../public/Inter-Medium.woff', import.meta.url),
-    );
-    const semiBoldFontP = fetchAsset(
-      new URL('../../../../public/Inter-SemiBold.woff', import.meta.url),
-    );
-    const boldFontP = fetchAsset(
-      new URL('../../../../public/Inter-Bold.woff', import.meta.url),
-    );
-
-    const [mediumFont, semiBoldFont, boldFont] = await Promise.all([
-      mediumFontP,
-      semiBoldFontP,
-      boldFontP,
-    ]);
 
     const bgColors = ['#FFFBEB', '#FAFAF9', '#ECFDF5', '#EFF6FF', '#EEF2FF'];
     const randomIndex = Math.floor(Math.random() * bgColors.length);
@@ -37,24 +16,64 @@ export default async function handler(request: NextRequest) {
       searchParams.has(name) ? processFn(searchParams.get(name)) : null;
 
     const title = getParam('title', (x) =>
-      formatString(decodeURIComponent(x), 97),
+      formatString(decodeURIComponent(x), 100),
     );
+    const type = getParam('type');
     const logo =
       getParam('logo', (x) => formatString(x, 100)) ||
       ASSET_URL + '/logo/sponsor-logo.png';
-    const minReward = getParam('minReward', formatNumber);
-    const maxReward = getParam('maxReward', formatNumber);
-    const sponsor = getParam('sponsor', (x) => formatString(x, 100));
+    const reward = getParam('reward', formatNumber);
+    const minRewardAsk = getParam('minRewardAsk', formatNumber);
+    const maxRewardAsk = getParam('maxRewardAsk', formatNumber);
+    const compensationType = getParam('compensationType', (x) => x) || 'fixed';
+    const sponsor = getParam('sponsor', (x) => formatString(x, 16));
     const token = getParam('token', (x) => formatString(x, 100));
     const isSponsorVerified = getParam('isSponsorVerified', (x) => x) || false;
 
-    const displayReward =
-      minReward === '0' ? `Up to ${maxReward}` : `${minReward} - ${maxReward}`;
+    const allText = `${title || ''}${type || ''}${sponsor || ''}${token || ''}${reward || ''}${minRewardAsk || ''}${maxRewardAsk || ''}`;
+
+    const [interMedium, interSemiBold, interBold] = await Promise.all([
+      loadGoogleFont('Inter:wght@500', allText),
+      loadGoogleFont('Inter:wght@600', allText),
+      loadGoogleFont('Inter:wght@700', allText),
+    ]);
+
+    let displayReward;
+    switch (compensationType) {
+      case 'fixed':
+        displayReward = reward;
+        break;
+      case 'range':
+        displayReward = `${minRewardAsk} to ${maxRewardAsk}`;
+        break;
+      case 'variable':
+        displayReward = 'Variable';
+        break;
+    }
 
     const getTokenIcon = (symbol: any) =>
       tokenList.find((t) => t.tokenSymbol === symbol)?.icon;
 
     const icon = getTokenIcon(token);
+
+    const capitalizedType = type
+      ? type?.charAt(0).toUpperCase() + type?.slice(1).toLowerCase()
+      : null;
+
+    const listingIcon = (() => {
+      switch (type) {
+        case 'bounty':
+          return 'bounty-icon.svg';
+        case 'project':
+          return 'project-icon.svg';
+        case 'hackathon':
+          return 'hackathon-icon.svg';
+        case 'grant':
+          return 'grant-icon.svg';
+        default:
+          return 'bounty-icon.svg';
+      }
+    })();
 
     return new ImageResponse(
       (
@@ -116,24 +135,24 @@ export default async function handler(request: NextRequest) {
                     objectFit: 'contain',
                   }}
                   alt="logo"
-                  src={ASSET_URL + `/grant.svg`}
+                  src={`https://earn.superteam.fun/assets/${listingIcon}`}
                   width="64px"
                   height="64px"
                 />
-
-                <div
-                  style={{
-                    fontSize: 28,
-                    marginLeft: '8px',
-                    fontStyle: 'normal',
-                    lineHeight: 1.4,
-                    color: '#94A3B8',
-                    fontFamily: '"Medium"',
-                    marginTop: '3px',
-                  }}
-                >
-                  Grants
-                </div>
+                {capitalizedType && (
+                  <div
+                    style={{
+                      fontSize: 28,
+                      marginLeft: '2px',
+                      fontStyle: 'normal',
+                      lineHeight: 1.4,
+                      color: '#94A3B8',
+                      fontFamily: '"Medium"',
+                    }}
+                  >
+                    {capitalizedType}
+                  </div>
+                )}
               </div>
 
               {title && (
@@ -163,6 +182,7 @@ export default async function handler(request: NextRequest) {
                 display: 'flex',
                 justifyContent: 'space-between',
                 width: '100%',
+                alignItems: 'center',
               }}
             >
               <div
@@ -255,9 +275,9 @@ export default async function handler(request: NextRequest) {
         width: 1200,
         height: 630,
         fonts: [
-          { name: 'Medium', data: mediumFont, style: 'normal' },
-          { name: 'SemiBold', data: semiBoldFont, style: 'normal' },
-          { name: 'Bold', data: boldFont, style: 'normal' },
+          { name: 'Medium', data: interMedium, style: 'normal' },
+          { name: 'SemiBold', data: interSemiBold, style: 'normal' },
+          { name: 'Bold', data: interBold, style: 'normal' },
         ],
       },
     );

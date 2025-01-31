@@ -1,5 +1,3 @@
-const fetchAsset = (url: URL) => fetch(url).then((res) => res.arrayBuffer());
-
 const formatString = (str: string, maxLength: number) =>
   str?.length > maxLength ? `${str.slice(0, maxLength)}...` : str;
 
@@ -19,4 +17,21 @@ const formatNumber = (num: string) => {
   }
 };
 
-export { fetchAsset, formatNumber, formatString };
+async function loadGoogleFont(font: string, text: string) {
+  const url = `https://fonts.googleapis.com/css2?family=${font}&text=${encodeURIComponent(text)}`;
+  const css = await (await fetch(url)).text();
+  const resource = css.match(
+    /src: url\((.+)\) format\('(opentype|truetype)'\)/,
+  );
+
+  if (resource) {
+    const response = await fetch(resource[1] as string);
+    if (response.status === 200) {
+      return await response.arrayBuffer();
+    }
+  }
+
+  throw new Error('Failed to load font data');
+}
+
+export { formatNumber, formatString, loadGoogleFont };
