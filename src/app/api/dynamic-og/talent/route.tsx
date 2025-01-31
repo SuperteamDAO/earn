@@ -1,32 +1,11 @@
-import { ImageResponse } from '@vercel/og';
-import type { NextRequest } from 'next/server';
+import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { fetchAsset, formatNumber, formatString } from '@/utils/ogHelpers';
+import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
 
-export const config = {
-  runtime: 'edge',
-};
-
-const mediumFontP = fetchAsset(
-  new URL('../../../../public/Inter-Medium.woff', import.meta.url),
-);
-const semiBoldFontP = fetchAsset(
-  new URL('../../../../public/Inter-SemiBold.woff', import.meta.url),
-);
-const boldFontP = fetchAsset(
-  new URL('../../../../public/Inter-Bold.woff', import.meta.url),
-);
-
-export default async function handler(request: NextRequest) {
+export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-
-    const [mediumFont, semiBoldFont, boldFont] = await Promise.all([
-      mediumFontP,
-      semiBoldFontP,
-      boldFontP,
-    ]);
 
     const getParam = (name: any, processFn = (x: any) => x) =>
       searchParams.has(name) ? processFn(searchParams.get(name)) : null;
@@ -40,6 +19,14 @@ export default async function handler(request: NextRequest) {
     const winnerCount = getParam('winnerCount', formatNumber);
 
     const skills = getParam('skills', (x) => JSON.parse(decodeURIComponent(x)));
+
+    const allText = `${name || ''}${username || ''}${totalEarned || ''}${submissionCount || ''}${winnerCount || ''}Skills $ Total Earned Participated Won @${skills?.map((skill: { skills: string }) => skill.skills).join('')}`;
+
+    const [interMedium, interSemiBold, interBold] = await Promise.all([
+      loadGoogleFont('Inter:wght@500', allText),
+      loadGoogleFont('Inter:wght@600', allText),
+      loadGoogleFont('Inter:wght@700', allText),
+    ]);
 
     return new ImageResponse(
       (
@@ -292,9 +279,9 @@ export default async function handler(request: NextRequest) {
         width: 1200,
         height: 630,
         fonts: [
-          { name: 'Medium', data: mediumFont, style: 'normal' },
-          { name: 'SemiBold', data: semiBoldFont, style: 'normal' },
-          { name: 'Bold', data: boldFont, style: 'normal' },
+          { name: 'Medium', data: interMedium, style: 'normal' },
+          { name: 'SemiBold', data: interSemiBold, style: 'normal' },
+          { name: 'Bold', data: interBold, style: 'normal' },
         ],
       },
     );

@@ -3,8 +3,7 @@ import * as React from 'react';
 
 import { cn } from '@/utils/cn';
 
-interface TooltipProps
-  extends React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root> {
+interface TooltipProps extends TooltipPrimitive.TooltipProps {
   content: React.ReactNode;
   children: React.ReactNode;
   contentProps?: React.ComponentPropsWithoutRef<
@@ -32,10 +31,7 @@ const TooltipContent = React.forwardRef<
 ));
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-const Tooltip = React.forwardRef<
-  React.ElementRef<typeof TooltipPrimitive.Root>,
-  TooltipProps
->(
+const Tooltip = React.forwardRef<HTMLButtonElement, TooltipProps>(
   ({
     children,
     content,

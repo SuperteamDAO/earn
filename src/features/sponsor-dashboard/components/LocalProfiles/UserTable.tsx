@@ -1,7 +1,8 @@
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import React, { type ReactNode } from 'react';
 
+import { SortableTH } from '@/components/shared/sortable-th';
 import {
   Table,
   TableBody,
@@ -13,6 +14,7 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { skillMap } from '@/constants/skillMap';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { cn } from '@/utils/cn';
 
 import {
   Telegram,
@@ -22,7 +24,6 @@ import {
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type LocalProfile } from '../../queries/local-profiles';
-import { SortableTH, TH } from './TH';
 import { UserDrawer } from './UserDrawer';
 
 interface SortState {
@@ -35,6 +36,20 @@ interface MembersTableProps {
   currentSort: SortState;
   setSort: (column: string, direction: 'asc' | 'desc' | null) => void;
 }
+
+export interface THProps extends React.HTMLAttributes<HTMLTableCellElement> {
+  children: ReactNode;
+}
+
+const thClassName = 'text-xs font-medium tracking-wider text-slate-500';
+
+const TH = ({ children, className, ...props }: THProps) => {
+  return (
+    <TableHead className={cn(thClassName, className)} {...props}>
+      {children}
+    </TableHead>
+  );
+};
 
 export const UserTable = ({
   currentUsers,
@@ -50,7 +65,7 @@ export const UserTable = ({
               column="rank"
               currentSort={currentSort}
               setSort={setSort}
-              className="justify-center pr-2"
+              className={cn(thClassName, 'justify-center pr-2')}
             >
               # Rank
             </SortableTH>
@@ -58,6 +73,7 @@ export const UserTable = ({
               column="user"
               currentSort={currentSort}
               setSort={setSort}
+              className={cn(thClassName)}
             >
               User
             </SortableTH>
@@ -65,7 +81,7 @@ export const UserTable = ({
               column="earned"
               currentSort={currentSort}
               setSort={setSort}
-              className="px-1"
+              className={cn(thClassName, 'px-1')}
             >
               $ Earned
             </SortableTH>
@@ -73,7 +89,7 @@ export const UserTable = ({
               column="submissions"
               currentSort={currentSort}
               setSort={setSort}
-              className="justify-center px-0"
+              className={cn(thClassName, 'justify-center px-0')}
             >
               Submissions
             </SortableTH>
@@ -81,7 +97,7 @@ export const UserTable = ({
               column="wins"
               currentSort={currentSort}
               setSort={setSort}
-              className="justify-center px-1"
+              className={cn(thClassName, 'justify-center px-1')}
             >
               Wins
             </SortableTH>

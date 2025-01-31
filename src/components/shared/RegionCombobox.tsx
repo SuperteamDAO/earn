@@ -1,6 +1,6 @@
 import { Regions } from '@prisma/client';
 import { Check, ChevronsUpDown, Earth } from 'lucide-react';
-import React, { useMemo } from 'react';
+import React, { type JSX, useMemo } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';

@@ -16,6 +16,7 @@ import React, { useState } from 'react';
 import { IoDuplicateOutline } from 'react-icons/io5';
 import { toast } from 'sonner';
 
+import { SortableTH } from '@/components/shared/sortable-th';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -57,9 +58,33 @@ import { VerifyPaymentModal } from './Modals/VerifyPayment';
 import { SponsorPrize } from './SponsorPrize';
 interface ListingTableProps {
   listings: ListingWithSubmissions[];
+  currentSort: {
+    column: string;
+    direction: 'asc' | 'desc' | null;
+  };
+  onSort: (column: string, direction: 'asc' | 'desc' | null) => void;
 }
 
-export const ListingTable = ({ listings }: ListingTableProps) => {
+const thClassName =
+  'text-sm font-medium capitalize tracking-tight text-slate-400';
+
+const ListingTh = ({
+  children,
+  className,
+}: {
+  children?: string;
+  className?: string;
+}) => {
+  return (
+    <TableHead className={cn(thClassName, className)}>{children}</TableHead>
+  );
+};
+
+export const ListingTable = ({
+  listings,
+  currentSort,
+  onSort,
+}: ListingTableProps) => {
   const [selectedListing, setSelectedListing] =
     useState<ListingWithSubmissions>({});
 
@@ -98,25 +123,6 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
   const handleVerifyPayment = async (listing: ListingWithSubmissions) => {
     setSelectedListing(listing);
     verifyPaymentOnOpen();
-  };
-
-  const ListingTh = ({
-    children,
-    className,
-  }: {
-    children?: string;
-    className?: string;
-  }) => {
-    return (
-      <TableHead
-        className={cn(
-          'text-sm font-medium capitalize tracking-[-0.02em] text-slate-400',
-          className,
-        )}
-      >
-        {children}
-      </TableHead>
-    );
   };
 
   const copyToClipboard = (text: string) => {
@@ -159,9 +165,30 @@ export const ListingTable = ({ listings }: ListingTableProps) => {
           <TableHeader>
             <TableRow className="bg-slate-100">
               <ListingTh />
-              <ListingTh>Listing Name</ListingTh>
-              <ListingTh className="text-center">Submissions</ListingTh>
-              <ListingTh>Deadline</ListingTh>
+              <SortableTH
+                column="title"
+                currentSort={currentSort}
+                setSort={onSort}
+                className={cn(thClassName)}
+              >
+                Listing Name
+              </SortableTH>
+              <SortableTH
+                column="submissions"
+                currentSort={currentSort}
+                setSort={onSort}
+                className={cn(thClassName, 'text-center')}
+              >
+                Submissions
+              </SortableTH>
+              <SortableTH
+                column="deadline"
+                currentSort={currentSort}
+                setSort={onSort}
+                className={cn(thClassName)}
+              >
+                Deadline
+              </SortableTH>
               <ListingTh>Prize</ListingTh>
               <ListingTh>Status</ListingTh>
               <ListingTh className="pl-6">Actions</ListingTh>
