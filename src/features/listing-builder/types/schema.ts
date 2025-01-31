@@ -28,6 +28,12 @@ import {
 import { fetchSlugCheck } from '../queries/slug-check';
 import { type ListingFormData } from '.';
 
+export const eligibilityQuestionSchema = z.object({
+  order: z.number(),
+  question: z.string().trim().min(1, 'Please add your question').max(256),
+  type: z.enum(['text', 'link']),
+});
+
 interface ListingFormSchemaOptions {
   isGod: boolean;
   isEditing: boolean;
@@ -42,12 +48,6 @@ export const createListingFormSchema = ({
   pastListing,
   hackathon,
 }: ListingFormSchemaOptions) => {
-  const eligibilityQuestionSchema = z.object({
-    order: z.number(),
-    question: z.string().trim().min(1, 'Please add your question').max(256),
-    type: z.enum(['text', 'link']),
-  });
-
   const rewardsSchema = z
     .record(
       z.coerce.number(),
