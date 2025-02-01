@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
+import { Check } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import { LuCheck } from 'react-icons/lu';
 
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -101,7 +101,7 @@ const Step = ({
       )}
     >
       {isComplete ? (
-        <LuCheck className="h-[1.3rem] w-[1.3rem]" strokeWidth={3} />
+        <Check className="h-[1.3rem] w-[1.3rem]" strokeWidth={3} />
       ) : (
         <StepIcon step={number} />
       )}

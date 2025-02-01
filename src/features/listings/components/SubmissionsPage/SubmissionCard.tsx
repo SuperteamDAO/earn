@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Heart, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
-import { LuHeart, LuMessageCircle } from 'react-icons/lu';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -116,7 +115,7 @@ export const SubmissionCard = ({
           onClick={handleLike}
           type="button"
         >
-          <LuHeart
+          <Heart
             className={cn(
               'h-5 w-5',
               !likes?.find((e) => e.id === user?.id)
@@ -127,7 +126,7 @@ export const SubmissionCard = ({
           {likes?.length}
         </Button>
         <Link href={`/feed/submission/${id}`}>
-          <LuMessageCircle
+          <MessageCircle
             size={'1.23rem'}
             fill={'#CBD5E1'}
             color={'#CBD5E1'}

@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { AlertTriangle, Loader2, Pencil } from 'lucide-react';
 import React from 'react';
-import { LuPencil } from 'react-icons/lu';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -170,7 +169,7 @@ export const GrantApplicationButton = ({
                 </>
               ) : (
                 <>
-                  {applicationState === 'ALLOW EDIT' && <LuPencil />}
+                  {applicationState === 'ALLOW EDIT' && <Pencil />}
                   {buttonText}
                 </>
               )}
