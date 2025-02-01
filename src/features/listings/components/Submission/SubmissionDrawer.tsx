@@ -286,7 +286,7 @@ export const SubmissionDrawer = ({
                           render={({ field }) => (
                             <FormItem className={cn('flex flex-col gap-2')}>
                               <div>
-                                <FormLabel isRequired>Tweet Link</FormLabel>
+                                <FormLabel>Tweet Link</FormLabel>
                                 <FormDescription>
                                   This helps sponsors discover (and maybe
                                   repost) your work on Twitter! If this
