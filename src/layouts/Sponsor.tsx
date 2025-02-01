@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Lock, Plus } from 'lucide-react';
+import { Lock, MessageSquare, Plus, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -13,7 +13,6 @@ import {
 } from 'react';
 import type { IconType } from 'react-icons';
 import { BiListUl } from 'react-icons/bi';
-import { LuMessageSquare, LuUsers } from 'react-icons/lu';
 import { MdList, MdOutlineChatBubbleOutline } from 'react-icons/md';
 import { RiUserSettingsLine } from 'react-icons/ri';
 
@@ -163,14 +162,14 @@ export function SponsorLayout({
               {
                 name: 'Local Profiles',
                 link: '/local-profiles',
-                icon: LuUsers,
+                icon: Users,
               },
             ]
           : []),
         {
           name: 'Get Help',
           link: PDTG,
-          icon: LuMessageSquare,
+          icon: MessageSquare,
           posthog: 'get help_sponsor',
         },
       ];

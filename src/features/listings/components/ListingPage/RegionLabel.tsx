@@ -1,6 +1,5 @@
-import { Info } from 'lucide-react';
+import { Globe, Info } from 'lucide-react';
 import React from 'react';
-import { LuGlobe } from 'react-icons/lu';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -24,7 +23,7 @@ export const RegionLabel = ({
     <Tooltip content={regionTooltipLabel}>
       <div className="flex items-center gap-1">
         {region === 'GLOBAL' ? (
-          <LuGlobe className="h-4 w-4" strokeWidth={1} />
+          <Globe className="h-4 w-4" strokeWidth={1} />
         ) : (
           <UserFlag location={code || ''} isCode />
         )}

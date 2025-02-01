@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
+import { Check, Plus } from 'lucide-react';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
-import { LuCheck, LuPlus } from 'react-icons/lu';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -67,11 +67,11 @@ export function InviteButton({
     >
       {invited ? (
         <>
-          <LuCheck strokeLinecap="square" strokeWidth={3} /> Invited
+          <Check strokeLinecap="square" strokeWidth={3} /> Invited
         </>
       ) : (
         <>
-          <LuPlus strokeLinecap="square" strokeWidth={3} /> Invite
+          <Plus strokeLinecap="square" strokeWidth={3} /> Invite
         </>
       )}
     </Button>

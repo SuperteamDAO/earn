@@ -1,15 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import { Check, Clock, File, MessageSquare, Pause } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
-import {
-  LuCheck,
-  LuClock,
-  LuFile,
-  LuMessageSquare,
-  LuPause,
-} from 'react-icons/lu';
 import { MdLock } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
@@ -71,21 +65,19 @@ export function ListingHeader({
   let statusIcon: React.JSX.Element = <></>;
 
   if (!isPublished && !publishedAt) {
-    statusIcon = <LuFile className={cn(statusIconStyles, 'text-slate-400')} />;
+    statusIcon = <File className={cn(statusIconStyles, 'text-slate-400')} />;
     statusText = 'Draft';
     statusTextColor = 'text-slate-500';
   } else if (!isPublished && publishedAt) {
-    statusIcon = <LuPause className={cn(statusIconStyles, 'text-[#ffecb3]')} />;
+    statusIcon = <Pause className={cn(statusIconStyles, 'text-[#ffecb3]')} />;
     statusText = isMD ? 'Submissions Paused' : 'Paused';
     statusTextColor = 'text-[#F59E0B]';
   } else if (isHackathon && !hasDeadlineEnded && !hasHackathonStarted) {
-    statusIcon = (
-      <LuClock className={cn(statusIconStyles, 'text-purple-100')} />
-    );
+    statusIcon = <Clock className={cn(statusIconStyles, 'text-purple-100')} />;
     statusText = 'Opens Soon';
     statusTextColor = 'text-[#8B5CF6]';
   } else if (status === 'OPEN' && isWinnersAnnounced) {
-    statusIcon = <LuCheck className={cn(statusIconStyles, 'text-slate-400')} />;
+    statusIcon = <Check className={cn(statusIconStyles, 'text-slate-400')} />;
     statusText = 'Completed';
     statusTextColor = 'text-slate-400';
   } else if (!isWinnersAnnounced && hasDeadlineEnded && status === 'OPEN') {
@@ -123,7 +115,7 @@ export function ListingHeader({
       !!commentCount && (
         <Link className="hidden md:block" href="#comments">
           <div className="ml-4 flex items-center gap-2">
-            <LuMessageSquare className="h-4 w-4 fill-slate-600 text-slate-500" />
+            <MessageSquare className="h-4 w-4 fill-slate-600 text-slate-500" />
             <p className="text-sm text-slate-400">{commentCount}</p>
           </div>
         </Link>
