@@ -151,10 +151,7 @@ export const Footer = () => {
       text: 'FAQ',
       href: 'https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4',
     },
-    {
-      text: 'Terms',
-      href: 'https://drive.google.com/file/d/1ybbO_UOTaIiyKb4Mbm3sNMbjTf5qj5mT/view',
-    },
+    { text: 'Terms', href: '/terms-of-use.pdf' },
     { text: 'Privacy Policy', href: '/privacy-policy.pdf' },
     {
       text: 'Changelog',

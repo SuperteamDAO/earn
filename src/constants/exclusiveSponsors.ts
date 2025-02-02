@@ -37,4 +37,9 @@ export const exclusiveSponsorData: Record<
     description:
       'Exclusive opportunities for all the Catdets! Contribute to the Jupiter ecosystem through bounties, gigs, and grants available below.',
   },
+  tars: {
+    title: 'Tars',
+    description:
+      'Explore the latest bounties for Tars on Superteam Earn. Get started now!',
+  },
 };
