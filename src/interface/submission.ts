@@ -30,6 +30,7 @@ interface SubmissionWithUser {
   ask?: number;
   label: SubmissionLabels;
   notes?: string;
+  totalEarnings?: number;
 }
 
 export type { SubmissionWithUser };

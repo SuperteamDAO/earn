@@ -25,7 +25,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    const submissions = await prisma.submission.findMany({
+    const query = await prisma.submission.findMany({
       where: {
         listing: {
           slug,
@@ -49,11 +49,47 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             walletAddress: true,
             twitter: true,
             discord: true,
+            Submission: {
+              select: {
+                isWinner: true,
+                rewardInUSD: true,
+                listing: {
+                  select: {
+                    isWinnersAnnounced: true,
+                  },
+                },
+              },
+            },
+            GrantApplication: {
+              select: {
+                approvedAmountInUSD: true,
+                applicationStatus: true,
+              },
+            },
           },
         },
         listing: true,
       },
       orderBy: { createdAt: 'asc' },
+    });
+
+    const submissions = query.map((submission) => {
+      const listingWinnings = submission.user.Submission.filter(
+        (s) => s.isWinner && s.listing.isWinnersAnnounced,
+      ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
+
+      const grantWinnings = submission.user.GrantApplication.filter(
+        (g) =>
+          g.applicationStatus === 'Approved' ||
+          g.applicationStatus === 'Completed',
+      ).reduce(
+        (sum, submission) => sum + (submission.approvedAmountInUSD || 0),
+        0,
+      );
+
+      const totalEarnings = listingWinnings + grantWinnings;
+
+      return { ...submission, totalEarnings };
     });
 
     const submissionsWithSortKey = submissions.map((submission) => {
