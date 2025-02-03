@@ -32,11 +32,11 @@ export const SortableTH = ({
   return (
     <TableHead className={cn(className)} {...props}>
       <div
-        className="flex cursor-pointer items-center gap-0.5"
+        className="inline-flex cursor-pointer items-center"
         onClick={handleSort}
       >
         <span className="whitespace-nowrap">{children}</span>
-        <div className="flex flex-col">
+        <div className="ml-1 flex flex-col">
           <ChevronUp
             className={cn(
               'mb-[-4px] h-3 w-3 transition-colors',
