@@ -22,6 +22,7 @@ interface WithdrawFormProps {
   selectedToken?: TokenAsset;
   onSubmit: (values: WithdrawFormData) => Promise<string>;
   tokens: TokenAsset[];
+  isProcessing: boolean;
 }
 
 export const WithdrawForm = ({
@@ -29,6 +30,7 @@ export const WithdrawForm = ({
   selectedToken,
   onSubmit,
   tokens,
+  isProcessing,
 }: WithdrawFormProps) => {
   const hasInsufficientBalance =
     selectedToken && Number(form.watch('amount')) > selectedToken.amount;
@@ -51,7 +53,9 @@ export const WithdrawForm = ({
             {selectedToken && !hasInsufficientBalance && (
               <div className="flex justify-between text-xs font-medium text-slate-500">
                 <span>
-                  Balance: {selectedToken.amount} {selectedToken.tokenSymbol}
+                  Balance:{' '}
+                  {new Intl.NumberFormat('en-US').format(selectedToken.amount)}{' '}
+                  {selectedToken.tokenSymbol}
                 </span>
                 <span>
                   ~
@@ -106,7 +110,8 @@ export const WithdrawForm = ({
           disabled={
             !form.formState.isValid ||
             form.formState.isSubmitting ||
-            hasInsufficientBalance
+            hasInsufficientBalance ||
+            isProcessing
           }
         >
           {form.formState.isSubmitting ? (

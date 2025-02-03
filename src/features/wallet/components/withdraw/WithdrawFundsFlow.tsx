@@ -9,6 +9,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
@@ -35,6 +36,8 @@ export function WithdrawFundsFlow({
   setView,
 }: WithdrawFlowProps) {
   const { user } = useUser();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string>('');
   const [txData, setTxData] = useState<{
     signature: string;
     values: WithdrawFormData;
@@ -61,6 +64,8 @@ export function WithdrawFundsFlow({
   );
 
   async function handleWithdraw(values: WithdrawFormData) {
+    setIsProcessing(true);
+    setError('');
     try {
       const connection = new Connection(
         `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
@@ -114,18 +119,40 @@ export function WithdrawFundsFlow({
         signedTransaction.serialize(),
       );
 
-      if (signature) {
-        setTxData({ signature, values });
-        await queryClient.invalidateQueries({
-          queryKey: ['tokens', 'assets'],
-        });
-        setView('success');
+      const confirmation = await connection.confirmTransaction(
+        signature,
+        'confirmed',
+      );
+
+      if (confirmation.value.err) {
+        throw new Error('Transaction failed');
       }
 
+      const status = await connection.getSignatureStatus(signature);
+      if (status.value?.err) {
+        throw new Error('Transaction failed after confirmation');
+      }
+
+      setTxData({ signature, values });
+      await queryClient.invalidateQueries({
+        queryKey: ['tokens', 'assets'],
+      });
+      setView('success');
+
       return signature;
-    } catch (error) {
-      console.error('Withdrawal failed:', error);
-      throw error;
+    } catch (e) {
+      console.error('Withdrawal failed:', e);
+      setError(
+        e instanceof Error
+          ? e.message
+          : 'Transaction failed. Please try again.',
+      );
+      console.log(error);
+      setView('withdraw');
+      toast.error('Transaction failed. Please try again.');
+      return Promise.reject(new Error('Transaction failed'));
+    } finally {
+      setIsProcessing(false);
     }
   }
 
@@ -137,6 +164,7 @@ export function WithdrawFundsFlow({
           selectedToken={selectedToken}
           onSubmit={handleWithdraw}
           tokens={tokens}
+          isProcessing={isProcessing}
         />
       )}
 
