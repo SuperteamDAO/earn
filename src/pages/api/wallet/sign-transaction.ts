@@ -2,7 +2,9 @@ import { Keypair, VersionedTransaction } from '@solana/web3.js';
 import bs58 from 'bs58';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+import { withAuth } from '@/features/auth/utils/withAuth';
+
+function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { serializedTransaction } = req.body;
 
@@ -28,3 +30,5 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     res.status(500).json({ error: 'Failed to sign transaction' });
   }
 }
+
+export default withAuth(handler);
