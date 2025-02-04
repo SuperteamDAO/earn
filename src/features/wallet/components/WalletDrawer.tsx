@@ -11,11 +11,12 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { type TokenAsset } from '../types/TokenAsset';
+import { type TxData } from '../types/TxData';
 import { WalletActivity } from './activity/WalletActivity';
 import { TokenList } from './tokens/TokenList';
 import { WithdrawFundsFlow } from './withdraw/WithdrawFundsFlow';
 
-export type DrawerView = 'main' | 'withdraw' | 'success';
+export type DrawerView = 'main' | 'withdraw' | 'success' | 'history';
 
 export function WalletDrawer({
   isOpen,
@@ -31,13 +32,20 @@ export function WalletDrawer({
   error: Error | null;
 }) {
   const [view, setView] = useState<DrawerView>('main');
+  const [txData, setTxData] = useState<TxData>({
+    signature: '',
+    tokenAddress: '',
+    amount: '',
+    address: '',
+    timestamp: 0,
+    type: 'Withdrawn',
+  });
 
   const { user } = useUser();
   const router = useRouter();
 
   const handleBack = () => {
-    if (view === 'withdraw') setView('main');
-    if (view === 'success') setView('main');
+    setView('main');
   };
 
   const totalBalance = tokens?.reduce((acc, token) => {
@@ -141,7 +149,7 @@ export function WalletDrawer({
               >
                 Activity
               </div>
-              <WalletActivity />
+              <WalletActivity setView={setView} setTxData={setTxData} />
             </>
           )}
           {view !== 'main' && (
@@ -166,6 +174,8 @@ export function WalletDrawer({
                 tokens={tokens || []}
                 setView={setView}
                 view={view}
+                txData={txData}
+                setTxData={setTxData}
               />
             </div>
           )}

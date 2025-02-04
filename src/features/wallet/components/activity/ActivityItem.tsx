@@ -1,20 +1,43 @@
 import { ArrowDownLeft, ArrowDownRight } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { type TokenActivity } from '../../types/TokenActivity';
+import { type TxData } from '../../types/TxData';
+import { type DrawerView } from '../WalletDrawer';
 
 interface ActivityItemProps {
   activity: TokenActivity;
+  setView: (view: DrawerView) => void;
+  setTxData: (txData: TxData) => void;
 }
 
-export function ActivityItem({ activity }: ActivityItemProps) {
+export function ActivityItem({
+  activity,
+  setView,
+  setTxData,
+}: ActivityItemProps) {
   const isCredit = activity.type === 'Credited';
   const amount = isCredit ? `+${activity.amount}` : `-${activity.amount}`;
 
   return (
-    <div className="flex items-center justify-between px-6 py-2 sm:px-8 sm:py-4">
+    <Button
+      variant="ghost"
+      className="flex h-auto w-full justify-between px-6 py-2 hover:bg-accent sm:px-8 sm:py-4"
+      onClick={() => {
+        setView('history');
+        setTxData({
+          signature: activity.signature,
+          tokenAddress: activity.tokenAddress,
+          amount: activity.amount.toString(),
+          address: activity.counterpartyAddress,
+          timestamp: activity.timestamp,
+          type: activity.type,
+        });
+      }}
+    >
       <div className="flex items-center gap-3">
         <div className="relative">
           {activity.tokenImg ? (
@@ -47,7 +70,7 @@ export function ActivityItem({ activity }: ActivityItemProps) {
           <div className="text-sm font-medium sm:text-base">
             {activity.type}
           </div>
-          <div className="text-xs text-slate-500 sm:text-sm">
+          <div className="text-left text-xs text-slate-500 sm:text-sm">
             {activity.tokenSymbol}
           </div>
         </div>
@@ -65,6 +88,6 @@ export function ActivityItem({ activity }: ActivityItemProps) {
           ${formatNumberWithSuffix(activity.usdValue, 3, true)}
         </div>
       </div>
-    </div>
+    </Button>
   );
 }

@@ -1,21 +1,13 @@
+import dayjs from 'dayjs';
 import { ArrowUpRight } from 'lucide-react';
 
 import { tokenList } from '@/constants/tokenList';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-interface TransactionDetailsProps {
-  recipient: string;
-  amount: string;
-  tokenAddress: string;
-  txId: string;
-}
+import { type TxData } from '../../types/TxData';
 
-export const TransactionDetails = ({
-  recipient,
-  amount,
-  tokenAddress,
-  txId,
-}: TransactionDetailsProps) => {
+export const TransactionDetails = ({ txData }: { txData: TxData }) => {
+  const { signature, tokenAddress, amount, address: recipient } = txData;
   const tokenImg = tokenList.find(
     (token) => token.mintAddress === tokenAddress,
   )?.icon;
@@ -57,7 +49,9 @@ export const TransactionDetails = ({
 
       <div className="w-full space-y-4 font-medium tracking-tight">
         <div className="flex justify-between text-sm">
-          <span className="text-slate-400">Sent to</span>
+          <span className="text-slate-400">
+            {txData.type === 'Credited' ? 'Received from' : 'Sent to'}
+          </span>
           <span className="text-slate-600">
             {truncatePublicKey(recipient, 6)}
           </span>
@@ -72,24 +66,26 @@ export const TransactionDetails = ({
 
         <div className="flex justify-between text-sm">
           <span className="text-slate-400">Time</span>
-          <span className="text-slate-600">{new Date().toLocaleString()}</span>
+          <span className="text-slate-600">
+            {dayjs(txData.timestamp).format('DD MMM hh:mm A')}
+          </span>
         </div>
 
         <div className="flex justify-between text-sm">
           <span className="text-slate-400">Txn ID</span>
           <a
-            href={`https://solscan.io/tx/${txId}`}
+            href={`https://solscan.io/tx/${signature}`}
             className="text-slate-600 underline"
             target="_blank"
             rel="noopener noreferrer"
           >
-            {txId.slice(0, 8)}...{txId.slice(-8)}
+            {signature.slice(0, 8)}...{signature.slice(-8)}
           </a>
         </div>
       </div>
 
       <a
-        href={`https://solscan.io/tx/${txId}`}
+        href={`https://solscan.io/tx/${signature}`}
         className="w-full rounded-md border border-slate-400 py-3 text-center text-sm text-slate-500"
         target="_blank"
         rel="noopener noreferrer"

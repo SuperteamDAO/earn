@@ -33,7 +33,10 @@ export async function fetchWalletActivity(
 
   const tokenPriceCache: Record<string, number> = {};
 
-  for (const tx of transactions) {
+  for (let i = 0; i < transactions.length; i++) {
+    const tx = transactions[i];
+    const signature = signatures[i]?.signature;
+
     if (!tx?.meta) continue;
 
     const walletIndex = tx.transaction.message.accountKeys.findIndex(
@@ -48,16 +51,33 @@ export async function fetchWalletActivity(
       if (balanceChange !== 0) {
         const amount = Math.abs(balanceChange);
         if (amount === 1e-7) continue;
+        let counterpartyAddress = '';
+        if (tx.transaction.message.instructions) {
+          const instruction = tx.transaction.message.instructions[0];
+          if (
+            instruction &&
+            'parsed' in instruction &&
+            instruction.parsed.type === 'transfer'
+          ) {
+            const { info } = instruction.parsed;
+            counterpartyAddress =
+              info.source === publicKey.toString()
+                ? info.destination
+                : info.source;
+          }
+        }
+
         activities.push({
           type: balanceChange > 0 ? 'Credited' : 'Withdrawn',
           amount,
           usdValue: amount * solPrice,
           tokenAddress: 'So11111111111111111111111111111111111111112',
-          counterpartyAddress: '',
+          counterpartyAddress,
           tokenSymbol: 'SOL',
           tokenImg:
             'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
           timestamp: tx.blockTime ? tx.blockTime * 1000 : Date.now(),
+          signature: signature ?? '',
         });
       }
     }
@@ -100,15 +120,33 @@ export async function fetchWalletActivity(
         );
         if (!metadata) return null;
 
+        let counterpartyAddress = '';
+        if (tx.transaction.message.instructions) {
+          const instruction = tx.transaction.message.instructions[0];
+          if (
+            instruction &&
+            'parsed' in instruction &&
+            instruction.parsed.type === 'transfer' &&
+            instruction.program === 'spl-token'
+          ) {
+            const { info } = instruction.parsed;
+            counterpartyAddress =
+              info.source === publicKey.toString()
+                ? info.destination
+                : info.source;
+          }
+        }
+
         return {
           type: balanceChange > 0 ? 'Credited' : 'Withdrawn',
           amount,
           usdValue: amount * tokenPrice,
           tokenAddress: post.mint,
-          counterpartyAddress: '',
+          counterpartyAddress,
           tokenSymbol: metadata.tokenSymbol,
           tokenImg: metadata.icon,
           timestamp: tx.blockTime ? tx.blockTime * 1000 : Date.now(),
+          signature,
         } as TokenActivity;
       })
       .filter(

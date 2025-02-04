@@ -15,6 +15,7 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { type TokenAsset } from '../../types/TokenAsset';
+import { type TxData } from '../../types/TxData';
 import { createTransferInstructions } from '../../utils/createTransferInstructions';
 import {
   type WithdrawFormData,
@@ -28,20 +29,20 @@ interface WithdrawFlowProps {
   tokens: TokenAsset[];
   view: DrawerView;
   setView: (view: DrawerView) => void;
+  txData: TxData;
+  setTxData: (txData: TxData) => void;
 }
 
 export function WithdrawFundsFlow({
   tokens,
   view,
   setView,
+  txData,
+  setTxData,
 }: WithdrawFlowProps) {
   const { user } = useUser();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
-  const [txData, setTxData] = useState<{
-    signature: string;
-    values: WithdrawFormData;
-  }>({ signature: '', values: {} as WithdrawFormData });
 
   const form = useForm<WithdrawFormData>({
     resolver: zodResolver(withdrawFormSchema),
@@ -133,7 +134,12 @@ export function WithdrawFundsFlow({
         throw new Error('Transaction failed after confirmation');
       }
 
-      setTxData({ signature, values });
+      setTxData({
+        signature,
+        ...values,
+        timestamp: Date.now(),
+        type: 'Withdrawn',
+      });
       await queryClient.invalidateQueries({
         queryKey: ['wallet', 'assets', 'activity'],
       });
@@ -168,14 +174,8 @@ export function WithdrawFundsFlow({
         />
       )}
 
-      {view === 'success' && (
-        <TransactionDetails
-          recipient={txData.values.address}
-          amount={txData.values.amount}
-          tokenAddress={txData.values.tokenAddress}
-          txId={txData.signature}
-        />
-      )}
+      {view === 'success' && <TransactionDetails txData={txData} />}
+      {view === 'history' && <TransactionDetails txData={txData} />}
     </div>
   );
 }

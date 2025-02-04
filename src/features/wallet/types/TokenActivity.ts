@@ -7,4 +7,5 @@ export interface TokenActivity {
   tokenSymbol: string;
   tokenImg: string;
   timestamp: number;
+  signature: string;
 }

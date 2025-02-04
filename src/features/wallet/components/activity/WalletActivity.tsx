@@ -6,10 +6,18 @@ import { GrTransaction } from 'react-icons/gr';
 import { Button } from '@/components/ui/button';
 
 import { tokenActivityQuery } from '../../queries/fetch-activity';
+import { type TxData } from '../../types/TxData';
 import { TokenSkeleton } from '../tokens/TokenSkeleton';
+import { type DrawerView } from '../WalletDrawer';
 import { ActivityItem } from './ActivityItem';
 
-export const WalletActivity = () => {
+export const WalletActivity = ({
+  setView,
+  setTxData,
+}: {
+  setView: (view: DrawerView) => void;
+  setTxData: (txData: TxData) => void;
+}) => {
   const [visibleCount, setVisibleCount] = useState(3);
   const { authenticated } = usePrivy();
   const {
@@ -60,6 +68,8 @@ export const WalletActivity = () => {
         <ActivityItem
           key={`${activity.timestamp}-${index}`}
           activity={activity}
+          setView={setView}
+          setTxData={setTxData}
         />
       ))}
 
