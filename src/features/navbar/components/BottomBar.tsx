@@ -1,6 +1,6 @@
+import { Home, Newspaper, Search, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { LuHome, LuNewspaper, LuSearch, LuUser } from 'react-icons/lu';
 
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/store/user';
@@ -45,7 +45,7 @@ export function BottomBar({ onSearchOpen }: Props) {
             'hover:bg-transparent active:bg-transparent',
           )}
         >
-          <LuHome style={iconStyle} />
+          <Home style={iconStyle} />
         </Button>
       </Link>
 
@@ -58,7 +58,7 @@ export function BottomBar({ onSearchOpen }: Props) {
           'hover:bg-transparent active:bg-transparent',
         )}
       >
-        <LuSearch style={iconStyle} />
+        <Search style={iconStyle} />
       </Button>
 
       <Link href="/feed/" style={linkStyle}>
@@ -69,7 +69,7 @@ export function BottomBar({ onSearchOpen }: Props) {
             'relative hover:bg-transparent active:bg-transparent',
           )}
         >
-          <LuNewspaper style={iconStyle} />
+          <Newspaper style={iconStyle} />
           <div className="absolute right-3 top-1 h-2.5 w-2.5 rounded-full bg-red-500" />
         </Button>
       </Link>
@@ -89,7 +89,7 @@ export function BottomBar({ onSearchOpen }: Props) {
               'hover:bg-transparent active:bg-transparent',
             )}
           >
-            <LuUser style={iconStyle} />
+            <User style={iconStyle} />
           </Button>
         </Link>
       </AuthWrapper>

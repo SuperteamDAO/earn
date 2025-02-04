@@ -1,27 +1,18 @@
-import { ImageResponse } from '@vercel/og';
-import type { NextRequest } from 'next/server';
+import { ImageResponse } from 'next/og';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { fetchAsset, formatString } from '@/utils/ogHelpers';
+import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
 import { nthLabelGenerator } from '@/utils/rank';
 
 import { type Rewards } from '@/features/listings/types';
-
-export const config = {
-  runtime: 'edge',
-};
-
-const fontDataP = fetchAsset(
-  new URL('../../../../public/Inter-SemiBold.woff', import.meta.url),
-);
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   maximumFractionDigits: 2,
 });
 
-export default async function handler(request: NextRequest) {
+export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url.replaceAll('&amp%3B', '&'));
 
@@ -46,7 +37,16 @@ export default async function handler(request: NextRequest) {
     if (!rewards) throw new Error('REWARDS IS MISSING');
     if (!submissions) throw new Error('SUBMISSIONS IS MISSING');
 
-    const [fontData] = await Promise.all([fontDataP]);
+    const allText = `${submissions
+      .map(
+        (winner) =>
+          `${winner?.user?.firstName || ''} ${winner?.user?.lastName || ''} ${nthLabelGenerator(winner?.winnerPosition || 0)}`,
+      )
+      .join(
+        '',
+      )}Winners Winner ${token || 'USD'} ${Object.values(rewards).join('')}`;
+
+    const interSemiBold = await loadGoogleFont('Inter:wght@600', allText);
 
     return new ImageResponse(
       (
@@ -132,7 +132,7 @@ export default async function handler(request: NextRequest) {
                     fontSize: '18.11px',
                     fontWeight: '600',
                     backgroundColor: 'rgba(157, 111, 255, 1)',
-                    borderRadius: '50%', // This makes the div a circle
+                    borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -228,7 +228,7 @@ export default async function handler(request: NextRequest) {
       {
         width: 1200,
         height: 645,
-        fonts: [{ name: 'var(--font-sans)', data: fontData, style: 'normal' }],
+        fonts: [{ name: 'Inter', data: interSemiBold, style: 'normal' }],
       },
     );
   } catch (err: any) {

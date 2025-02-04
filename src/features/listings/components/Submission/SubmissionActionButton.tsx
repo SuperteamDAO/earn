@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Pencil } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
-import { LuPencil } from 'react-icons/lu';
 
 import { SurveyModal } from '@/components/shared/Survey';
 import { Button } from '@/components/ui/button';
@@ -268,7 +267,7 @@ export const SubmissionActionButton = ({
                   </>
                 ) : (
                   <>
-                    {buttonState === 'edit' && <LuPencil />}
+                    {buttonState === 'edit' && <Pencil />}
                     {buttonText}
                   </>
                 )}

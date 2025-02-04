@@ -2,6 +2,7 @@ import { CaretDownIcon, LetterCaseCapitalizeIcon } from '@radix-ui/react-icons';
 import type { Level } from '@tiptap/extension-heading';
 import type { Editor } from '@tiptap/react';
 import type { VariantProps } from 'class-variance-authority';
+import type { JSX } from 'react';
 import * as React from 'react';
 
 import {

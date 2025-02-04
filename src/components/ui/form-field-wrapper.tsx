@@ -76,7 +76,7 @@ export function FormFieldWrapper<T extends FieldValues>({
                   }}
                 />
               ) : (
-                React.cloneElement(children as React.ReactElement, {
+                React.cloneElement(children as React.ReactElement<any>, {
                   ...field,
                   onChange: (e: any) => {
                     field.onChange(e);

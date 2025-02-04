@@ -49,6 +49,10 @@ export default function SponsorListings() {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedTab, setSelectedTab] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [currentSort, setCurrentSort] = useState<{
+    column: string;
+    direction: 'asc' | 'desc' | null;
+  }>({ column: '', direction: null });
   const listingsPerPage = 15;
 
   const { data: sponsorStats, isLoading: isStatsLoading } = useQuery(
@@ -100,18 +104,45 @@ export default function SponsorListings() {
       return listings;
     };
 
-    const filteredByType = filterListingsByType();
-    const filteredByTypeAndStatus = filterListingsByStatus(filteredByType);
+    let filtered = filterListingsByType();
+    filtered = filterListingsByStatus(filtered);
 
     if (searchText) {
-      return filteredByTypeAndStatus.filter((listing) =>
+      filtered = filtered.filter((listing) =>
         listing.title
           ? listing.title.toLowerCase().includes(searchText.toLowerCase())
           : false,
       );
     }
-    return filteredByTypeAndStatus;
-  }, [allListings, selectedTab, selectedStatus, searchText]);
+
+    if (currentSort.direction && currentSort.column) {
+      return [...filtered].sort((a, b) => {
+        const factor = currentSort.direction === 'asc' ? 1 : -1;
+
+        switch (currentSort.column) {
+          case 'title':
+            const titleA = a.title || '';
+            const titleB = b.title || '';
+            return titleA.localeCompare(titleB) * factor;
+
+          case 'submissions':
+            const submissionsA = a.submissionCount ?? 0;
+            const submissionsB = b.submissionCount ?? 0;
+            return (submissionsB - submissionsA) * factor;
+
+          case 'deadline':
+            const deadlineA = a.deadline ? new Date(a.deadline).getTime() : 0;
+            const deadlineB = b.deadline ? new Date(b.deadline).getTime() : 0;
+            return (deadlineB - deadlineA) * factor;
+
+          default:
+            return 0;
+        }
+      });
+    }
+
+    return filtered;
+  }, [allListings, selectedTab, selectedStatus, searchText, currentSort]);
 
   const paginatedListings = useMemo(() => {
     return filteredListings?.slice(
@@ -260,22 +291,52 @@ export default function SponsorListings() {
             </TabsList>
             <div className="h-0.5 w-full bg-slate-200" />
             <TabsContent value="all" className="px-0">
-              <MemoizedListingTable listings={paginatedListings} />
+              <MemoizedListingTable
+                listings={paginatedListings}
+                currentSort={currentSort}
+                onSort={(column, direction) =>
+                  setCurrentSort({ column, direction })
+                }
+              />
             </TabsContent>
             <TabsContent value="bounties" className="px-0">
-              <MemoizedListingTable listings={paginatedListings} />
+              <MemoizedListingTable
+                listings={paginatedListings}
+                currentSort={currentSort}
+                onSort={(column, direction) =>
+                  setCurrentSort({ column, direction })
+                }
+              />
             </TabsContent>
             <TabsContent value="projects" className="px-0">
-              <MemoizedListingTable listings={paginatedListings} />
+              <MemoizedListingTable
+                listings={paginatedListings}
+                currentSort={currentSort}
+                onSort={(column, direction) =>
+                  setCurrentSort({ column, direction })
+                }
+              />
             </TabsContent>
             {hasGrants && (
               <TabsContent value="grants" className="px-0">
-                <MemoizedListingTable listings={paginatedListings} />
+                <MemoizedListingTable
+                  listings={paginatedListings}
+                  currentSort={currentSort}
+                  onSort={(column, direction) =>
+                    setCurrentSort({ column, direction })
+                  }
+                />
               </TabsContent>
             )}
             {hasHackathons && (
               <TabsContent value="hackathons" className="px-0">
-                <MemoizedListingTable listings={paginatedListings} />
+                <MemoizedListingTable
+                  listings={paginatedListings}
+                  currentSort={currentSort}
+                  onSort={(column, direction) =>
+                    setCurrentSort({ column, direction })
+                  }
+                />
               </TabsContent>
             )}
           </Tabs>

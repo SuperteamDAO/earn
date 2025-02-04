@@ -1,21 +1,27 @@
 import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { useAtom } from 'jotai';
-import { AlertTriangle, ArrowRight, Copy, ExternalLink } from 'lucide-react';
+import { AlertTriangle, ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
-import { FaXTwitter } from 'react-icons/fa6';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
+import { useClipboard } from '@/hooks/use-clipboard';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import type { Listing, Rewards } from '@/features/listings/types';
+import {
+  Telegram,
+  Twitter,
+  Website,
+} from '@/features/social/components/SocialIcons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';
@@ -55,6 +61,32 @@ export const SubmissionPanel = ({
   const isProject = bounty?.type === 'project';
 
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
+
+  const { onCopy: onCopyEmail } = useClipboard(
+    selectedSubmission?.user?.email || '',
+  );
+
+  const { onCopy: onCopyPublicKey } = useClipboard(
+    selectedSubmission?.user?.publicKey || '',
+  );
+
+  const handleCopyEmail = () => {
+    if (selectedSubmission?.user?.email) {
+      onCopyEmail();
+      toast.success('Email copied to clipboard', {
+        duration: 1500,
+      });
+    }
+  };
+
+  const handleCopyPublicKey = () => {
+    if (selectedSubmission?.user?.publicKey) {
+      onCopyPublicKey();
+      toast.success('Wallet address copied to clipboard', {
+        duration: 1500,
+      });
+    }
+  };
 
   return (
     <div className="sticky top-[3rem] w-full">
@@ -206,66 +238,66 @@ export const SubmissionPanel = ({
 
             <div className="flex items-center gap-5 px-5 py-2">
               {selectedSubmission?.user?.email && (
-                <div className="flex items-center justify-start gap-2 text-sm">
-                  <MdOutlineMail color="#94A3B8" />
-                  <a
-                    href={`mailto:${selectedSubmission.user.email}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-slate-400 hover:text-slate-500"
+                <Tooltip
+                  content={'Click to copy'}
+                  contentProps={{ side: 'right' }}
+                  triggerClassName="flex items-center hover:underline underline-offset-1"
+                >
+                  <div
+                    className="flex cursor-pointer items-center justify-start gap-1 text-sm text-slate-400 hover:text-slate-500"
+                    onClick={handleCopyEmail}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Copy email: ${selectedSubmission.user.email}`}
                   >
-                    {truncateString(selectedSubmission?.user?.email, 36)}
-                  </a>
-                </div>
+                    <MdOutlineMail />
+                    {truncateString(selectedSubmission.user.email, 36)}
+                  </div>
+                </Tooltip>
               )}
+
               {selectedSubmission?.user?.publicKey && (
-                <div className="flex items-center justify-start gap-2 whitespace-nowrap text-sm">
-                  <MdOutlineAccountBalanceWallet color="#94A3B8" />
-                  <button
-                    className="flex items-center text-slate-400"
-                    onClick={() => {
-                      toast.promise(
-                        async () => {
-                          await navigator.clipboard.writeText(
-                            selectedSubmission?.user?.publicKey || '',
-                          );
-                        },
-                        {
-                          loading: 'Copying Wallet Address...',
-                          success: 'Wallet Address copied!',
-                          error: 'Failed to copy Wallet Address!',
-                        },
-                      );
-                    }}
+                <Tooltip
+                  content={'Click to copy'}
+                  contentProps={{ side: 'right' }}
+                  triggerClassName="flex items-center hover:underline underline-offset-1"
+                >
+                  <div
+                    className="flex cursor-pointer items-center justify-start gap-1 whitespace-nowrap text-sm text-slate-400 hover:text-slate-500"
+                    onClick={handleCopyPublicKey}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Copy public key: ${truncatePublicKey(selectedSubmission.user.publicKey, 3)}`}
                   >
-                    <Tooltip
-                      content="Copy Wallet ID"
-                      contentProps={{ side: 'right' }}
-                      triggerClassName="flex items-center hover:underline underline-offset-1 "
-                    >
-                      <p>
-                        {truncatePublicKey(
-                          selectedSubmission?.user?.publicKey,
-                          3,
-                        )}
-                      </p>
-                      <Copy className="ml-1 h-3.5 w-3.5 cursor-pointer text-slate-400 hover:text-slate-500" />
-                    </Tooltip>
-                  </button>
-                </div>
+                    <MdOutlineAccountBalanceWallet />
+                    <p>
+                      {truncatePublicKey(selectedSubmission.user.publicKey, 3)}
+                    </p>
+                  </div>
+                </Tooltip>
               )}
-              {selectedSubmission?.user?.twitter && (
-                <div className="flex items-center justify-start gap-2 text-sm">
-                  <FaXTwitter color="#94A3B8" />
-                  <a
-                    href={selectedSubmission?.user?.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-slate-400 hover:text-slate-500"
-                  >
-                    {truncateString(selectedSubmission?.user?.twitter, 36)}
-                  </a>
-                </div>
+              <div className="flex gap-2">
+                <Telegram
+                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                  link={selectedSubmission?.user?.telegram || ''}
+                />
+                <Twitter
+                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                  link={selectedSubmission?.user?.twitter || ''}
+                />
+                <Website
+                  className="h-[0.9rem] w-[0.9rem] text-slate-600"
+                  link={selectedSubmission?.user?.website || ''}
+                />
+              </div>
+              {isProject && (
+                <p className="whitespace-nowrap text-sm text-slate-400">
+                  $
+                  {formatNumberWithSuffix(
+                    selectedSubmission?.totalEarnings || 0,
+                  )}{' '}
+                  Earned
+                </p>
               )}
             </div>
           </div>
