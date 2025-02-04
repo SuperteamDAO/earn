@@ -1,7 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Copy, Plus, Search } from 'lucide-react';
-import { type Session } from 'next-auth';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -56,7 +54,6 @@ const Index = () => {
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
-  const { data: session } = useSession();
   const posthog = usePostHog();
 
   useEffect(() => {
@@ -76,7 +73,7 @@ const Index = () => {
   const members = membersData?.data || [];
 
   const isAdminLoggedIn = useMemo(() => {
-    if (session?.user?.role === 'GOD') return true;
+    if (user?.role === 'GOD') return true;
 
     const userSponsor = user?.UserSponsors?.find(
       (s) => s.sponsorId === user.currentSponsorId,
@@ -90,7 +87,7 @@ const Index = () => {
     }
 
     return userSponsor.role === 'ADMIN';
-  }, [session, user]);
+  }, [user]);
 
   const removeMemberMutation = useMutation({
     mutationFn: async (userId: string) => {
@@ -128,7 +125,7 @@ const Index = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {(session?.user?.role === 'GOD' ||
+          {(user?.role === 'GOD' ||
             !!(
               user?.UserSponsors?.length &&
               user?.UserSponsors.find(
@@ -238,7 +235,6 @@ const Index = () => {
                       <RemoveMemberModal
                         member={member}
                         isAdminLoggedIn={isAdminLoggedIn}
-                        session={session}
                         onRemoveMember={onRemoveMember}
                       />
                     </TableCell>
@@ -291,15 +287,14 @@ const Index = () => {
 const RemoveMemberModal = ({
   member,
   isAdminLoggedIn,
-  session,
   onRemoveMember,
 }: {
   member: UserSponsor;
   isAdminLoggedIn: boolean;
-  session: Session | null;
   onRemoveMember: (userId: string | undefined) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useUser();
 
   const removeMember = async (userId: string | undefined) => {
     await onRemoveMember(userId);
@@ -307,8 +302,8 @@ const RemoveMemberModal = ({
   };
 
   const isSameUser = useMemo(
-    () => member?.user?.email !== session?.user?.email,
-    [member, session],
+    () => member?.user?.email !== user?.email,
+    [member],
   );
 
   return (

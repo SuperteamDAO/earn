@@ -1,106 +1,87 @@
-import { useQuery } from '@tanstack/react-query';
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
+import { Link } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { GrTransaction } from 'react-icons/gr';
+import { MdOutlineLock } from 'react-icons/md';
 
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useUpdateUser, useUser } from '@/store/user';
 
-import { latestActiveSlugQuery } from '@/features/sponsor-dashboard/queries/latest-active-slug';
-
+import { Button } from '../ui/button';
 import { ExternalImage } from '../ui/cloudinary-image';
 
-export const FeatureModal = ({
-  isSponsorsRoute = false,
-  forceOpen = false,
-}: {
-  isSponsorsRoute?: boolean;
-  forceOpen?: boolean;
-}) => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export const FeatureModal = () => {
   const { user } = useUser();
   const updateUser = useUpdateUser();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: latestActiveSlug } = useQuery({
-    ...latestActiveSlugQuery,
-    enabled:
-      !!user?.currentSponsorId &&
-      user.featureModalShown === false &&
-      (isSponsorsRoute || !router.pathname.includes('dashboard')),
-  });
-
-  useEffect(() => {
-    const shouldShowModal = async () => {
-      if (
-        (user?.currentSponsorId &&
-          user.featureModalShown === false &&
-          (isSponsorsRoute || !router.pathname.includes('dashboard')) &&
-          latestActiveSlug &&
-          user.currentSponsor?.isVerified) ||
-        forceOpen
-      ) {
-        if (!searchParams?.has('scout')) setIsOpen(true);
-        if (!forceOpen) {
-          await updateUser.mutateAsync({ featureModalShown: true });
-        }
-      }
-    };
-
-    shouldShowModal();
-  }, [user, router.pathname, latestActiveSlug, isSponsorsRoute, forceOpen]);
-
   const handleClose = () => {
     setIsOpen(false);
+    updateUser.mutateAsync({ featureModalShown: true });
   };
 
-  const onSubmit = () => {
-    handleClose();
+  useEffect(() => {
+    if (user && user.featureModalShown === false && user.isTalentFilled) {
+      setIsOpen(true);
+    }
+  }, [user]);
+
+  const Point = ({
+    title,
+    description,
+    icon,
+  }: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+  }) => {
+    return (
+      <div className="flex gap-8">
+        <div className="mt-1 text-brand-purple">{icon}</div>
+        <div>
+          <p className="text-base font-medium tracking-tight text-slate-700">
+            {title}
+          </p>
+          <p
+            className="text-sm text-slate-500"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
+        </div>
+      </div>
+    );
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-[480px] overflow-hidden rounded-lg p-0">
-        <div className="w-full bg-purple-50 p-8">
+      <DialogContent className="max-w-[480px] rounded-lg p-0">
+        <div className="p-8">
           <ExternalImage
-            src="/ScoutAnnouncement.png"
+            src="/wallet/modal-wallet.webp"
             alt="Scouts Announcement Illustration"
-            className="h-full w-[92%]"
+            className="mx-auto w-1/2"
           />
         </div>
 
         <div className="flex flex-col items-start gap-3 p-6">
-          <p className="text-lg font-semibold">Introducing Scout</p>
-          <p className="pb-4 text-slate-500">
-            A curated list of the best talent on Superteam Earn that you can
-            invite to participate in your listings to get high quality
-            submissions! Add a new listing, or check out any of your currently
-            live listings to try Scout.
-          </p>
-
-          {latestActiveSlug ? (
-            <Link
-              href={`/dashboard/listings/${latestActiveSlug}/submissions?scout`}
-              onClick={onSubmit}
-              className="w-full"
-            >
-              <Button className="w-full gap-2 text-sm font-medium">
-                Check it out <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          ) : (
-            <Button
-              className="w-full gap-2 text-sm font-medium"
-              onClick={onSubmit}
-            >
-              Good to know!
-            </Button>
-          )}
+          <p className="text-lg font-semibold">Introducing the Earn Wallet</p>
+          <Point
+            title="Linked to your Earn account"
+            description="Receive rewards directly — no extensions, apps, or setup required. Just start contributing!"
+            icon={<Link />}
+          />
+          <Point
+            title="Transfer money out anytime"
+            description="Easily transfer your funds to any wallet of your choice, whenever you need."
+            icon={<GrTransaction className="h-[1.4rem] w-[1.4rem]" />}
+          />
+          <Point
+            title="Secured by Privy"
+            description="We partnered with <a href='https://privy.io' style='text-decoration: underline;' target='_blank' rel='noopener noreferrer'>Privy</a> for our wallet service. They are protected with industry-leading security and regular audits to keep your earnings safe."
+            icon={<MdOutlineLock className="size-6" />}
+          />
         </div>
+        <Button onClick={handleClose} className="mx-6 mb-6">
+          Understood
+        </Button>
       </DialogContent>
     </Dialog>
   );

@@ -1,8 +1,8 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useIsFetching } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronLeft, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useWatch } from 'react-hook-form';
 
@@ -24,7 +24,7 @@ import { PrePublish } from '../Form/PrePublish/Modal';
 import { StatusBadge } from './StatusBadge';
 
 export function Header() {
-  const { data: session, status } = useSession();
+  const { authenticated, ready } = usePrivy();
   const posthog = usePostHog();
   const isDraftSaving = useAtomValue(isDraftSavingAtom);
   const setShowPreview = useSetAtom(previewAtom);
@@ -49,7 +49,7 @@ export function Header() {
             <img
               src="/assets/logo.svg"
               alt="Superteam Earn"
-              className="h-5 w-auto cursor-pointer object-contain"
+              className="h-[1.4rem] w-auto cursor-pointer object-contain"
             />
             <div className="h-6 w-[1.5px] bg-slate-300" />
             <p className="text-sm tracking-[1.5px] text-slate-600">SPONSORS</p>
@@ -62,13 +62,13 @@ export function Header() {
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-4 py-2">
-          {status === 'loading' && !session && (
+          {!ready && (
             <div className="flex items-center gap-2">
               <Skeleton className="h-10 w-10 rounded-full" />
               <Skeleton className="h-4 w-20" />
             </div>
           )}
-          {status === 'authenticated' && session && (
+          {ready && authenticated && (
             <>
               {!isEditing && (
                 <p className="w-20 text-sm font-medium text-slate-400">

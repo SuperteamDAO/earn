@@ -2,10 +2,10 @@ import axios from 'axios';
 import type { NextApiResponse } from 'next';
 import { z } from 'zod';
 
+import { tokenList } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
-import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -13,6 +13,7 @@ import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAu
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
+import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const MAX_RECORDS = 10;
 
@@ -128,9 +129,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               `Approved amount ${parsedAmount} exceeds maximum reward limit of ${currentApplicant.grant.maxReward} for application ${currentApplicant.id}`,
             );
           }
-          const tokenUSDValue = await fetchTokenUSDValue(
-            currentApplicant.grant.token!,
+          const token = tokenList.find(
+            (t) => t.tokenSymbol === currentApplicant.grant.token!,
           );
+          const tokenUSDValue = await fetchTokenUSDValue(token?.mintAddress!);
           const usdValue = tokenUSDValue * parsedAmount;
           approvedData = {
             approvedAmount: parsedAmount,
@@ -157,6 +159,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
                 email: true,
                 twitter: true,
                 discord: true,
+                walletAddress: true,
               },
             },
             grant: {

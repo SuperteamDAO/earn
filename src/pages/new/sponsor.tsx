@@ -1,10 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { usePrivy } from '@privy-io/react-auth';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Info, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -48,7 +48,7 @@ import { useUsernameValidation } from '@/features/talent/utils/useUsernameValida
 
 const CreateSponsor = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { ready } = usePrivy();
   const { user, refetchUser } = useUser();
   const posthog = usePostHog();
 
@@ -175,7 +175,7 @@ const CreateSponsor = () => {
   ]);
 
   useEffect(() => {
-    if (user?.currentSponsorId && session?.user?.role !== 'GOD') {
+    if (user?.currentSponsorId && user?.role !== 'GOD') {
       router.push('/dashboard/listings?open=1');
     }
   }, [user?.currentSponsorId, router]);
@@ -284,7 +284,7 @@ const CreateSponsor = () => {
     }
   };
 
-  if (!session && status === 'loading') {
+  if (!ready) {
     return <></>;
   }
 

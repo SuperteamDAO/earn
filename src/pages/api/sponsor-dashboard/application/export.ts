@@ -67,7 +67,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           Name: `${user.firstName} ${user.lastName}`,
           'Email ID': user.email,
           'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
-          'User Wallet': user.publicKey,
+          'User Wallet': user.walletAddress,
           'User Social Link': getSocialMediaLink(user),
           'Application Date': applicationDate,
           'Project Title': application?.projectTitle,

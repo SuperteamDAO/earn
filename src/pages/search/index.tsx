@@ -3,7 +3,6 @@ import debounce from 'lodash.debounce';
 import { type GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import { getServerSession } from 'next-auth';
 import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 
@@ -13,6 +12,7 @@ import { api } from '@/lib/api';
 import { prisma } from '@/prisma';
 import { getURL } from '@/utils/validUrl';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
   filterRegionCountry,
   getCombinedRegion,
@@ -28,8 +28,6 @@ import {
 } from '@/features/search/utils/filters';
 import { serverSearch } from '@/features/search/utils/search';
 import { updateCheckboxes } from '@/features/search/utils/updateCheckboxes';
-
-import { authOptions } from '../api/auth/[...nextauth]';
 
 interface CheckboxFilter {
   label: string;
@@ -170,12 +168,13 @@ const Search = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
+  const privyDid = await getPrivyToken(context.req);
+
   let userRegion: string[] | null | undefined = null;
 
-  if (session?.user?.id) {
+  if (privyDid) {
     const user = await prisma.user.findFirst({
-      where: { id: session.user.id },
+      where: { privyDid },
       select: { location: true },
     });
 

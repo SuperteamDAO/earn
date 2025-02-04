@@ -38,19 +38,6 @@ async function createGrantApplication(
 
   const validatedData = validationResult.data;
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { publicKey: true },
-  });
-  if (!user?.publicKey && validatedData.walletAddress) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        publicKey: validatedData.walletAddress,
-      },
-    });
-  }
-
   const formattedData = {
     userId,
     grantId,
@@ -61,7 +48,6 @@ async function createGrantApplication(
     proofOfWork: validatedData.proofOfWork,
     milestones: validatedData.milestones,
     kpi: validatedData.kpi,
-    walletAddress: validatedData.walletAddress,
     ask: validatedData.ask,
     twitter: validatedData.twitter,
     answers: validatedData.answers || [],
@@ -76,6 +62,7 @@ async function createGrantApplication(
           lastName: true,
           email: true,
           discord: true,
+          walletAddress: true,
           location: true,
         },
       },

@@ -5,7 +5,9 @@ export const formatNumberWithSuffix = (
 ) => {
   if (isNaN(amount)) return null;
 
-  if (amount < 1000) return amount;
+  if (amount < 1000) {
+    return Number(amount?.toFixed(decimals)).toString();
+  }
 
   const suffixes = ['', 'k', 'M', 'B', 'T', 'Q'];
   let tier = (Math.log10(amount) / 3) | 0;

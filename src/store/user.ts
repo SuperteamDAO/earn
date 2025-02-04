@@ -1,6 +1,6 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { signOut, useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -28,7 +28,7 @@ const useUserStore = create<UserState>()(
 
 export const useUser = () => {
   const { user, setUser } = useUserStore();
-  const { status } = useSession();
+  const { authenticated, ready } = usePrivy();
   const router = useRouter();
 
   const { data, error, refetch, isLoading } = useQuery({
@@ -40,7 +40,7 @@ export const useUser = () => {
       }
       return data;
     },
-    enabled: status === 'authenticated',
+    enabled: authenticated && ready,
   });
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export const useUser = () => {
     await refetch();
   };
 
-  return { user, isLoading, error, refetchUser };
+  return { user, isLoading: !ready || isLoading, error, refetchUser };
 };
 
 export const useUpdateUser = () => {
@@ -71,13 +71,13 @@ export const useUpdateUser = () => {
 };
 
 export const useLogout = () => {
+  const { logout } = usePrivy();
   const queryClient = useQueryClient();
-  const setUser = useUserStore((state) => state.setUser);
 
-  return () => {
+  return async () => {
     queryClient.setQueryData(['user'], null);
-    setUser(null);
     localStorage.removeItem('user-storage');
-    signOut();
+    await logout();
+    window.location.reload();
   };
 };

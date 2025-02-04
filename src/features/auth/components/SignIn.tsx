@@ -1,14 +1,15 @@
+import { useLoginWithOAuth } from '@privy-io/react-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signIn } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
-import React, { type Dispatch, type SetStateAction } from 'react';
+import React, { type Dispatch, type SetStateAction, useState } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 import { GoogleIcon } from '@/svg/google';
 
+import { handleUserCreation } from '../utils/handleUserCreation';
 import { EmailSignIn } from './EmailSignIn';
 
 interface SigninProps {
@@ -24,18 +25,29 @@ export const SignIn = ({
 }: SigninProps) => {
   const router = useRouter();
   const posthog = usePostHog();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { initOAuth } = useLoginWithOAuth({
+    onComplete: async ({ isNewUser, user }) => {
+      if (isNewUser) {
+        await handleUserCreation(user.google?.email || '');
+      }
+
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else {
+        const url = new URL(window.location.origin + router.pathname);
+        url.searchParams.set('loginState', 'signedIn');
+
+        router.replace(url.pathname + url.search);
+      }
+    },
+  });
 
   const handleGmailSignIn = async () => {
     posthog.capture('google_auth');
-    const callbackUrl = new URL(
-      redirectTo || router.asPath,
-      window.location.origin,
-    );
-    callbackUrl.searchParams.set('loginState', 'signedIn');
-    if (redirectTo) callbackUrl.searchParams.set('originUrl', router.asPath);
-    signIn('google', {
-      callbackUrl: callbackUrl.toString(),
-    });
+    setIsLoading(true);
+    await initOAuth({ provider: 'google' });
   };
 
   return (
@@ -55,9 +67,10 @@ export const SignIn = ({
                   className="ph-no-capture h-12 w-full font-medium"
                   size="lg"
                   onClick={handleGmailSignIn}
+                  disabled={isLoading}
                 >
                   <GoogleIcon />
-                  Continue with Google
+                  {isLoading ? 'Connecting...' : 'Continue with Google'}
                 </Button>
 
                 <div className="my-3 flex w-full items-center gap-4">

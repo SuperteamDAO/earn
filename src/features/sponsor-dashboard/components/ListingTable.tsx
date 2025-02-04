@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import React, { useState } from 'react';
 import { IoDuplicateOutline } from 'react-icons/io5';
@@ -36,6 +35,7 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
@@ -90,7 +90,7 @@ export const ListingTable = ({
 
   const router = useRouter();
   const posthog = usePostHog();
-  const { data: session } = useSession();
+  const { user } = useUser();
 
   const {
     isOpen: unpublishIsOpen,
@@ -323,7 +323,7 @@ export const ListingTable = ({
                           ? 'Applications'
                           : 'Submissions'}
                       </Button>
-                    ) : (session?.user?.role === 'GOD' &&
+                    ) : (user?.role === 'GOD' &&
                         listing.type !== 'grant' &&
                         !listing.isPublished) ||
                       (!pastDeadline &&
@@ -374,8 +374,7 @@ export const ListingTable = ({
                         )}
 
                         {!!(
-                          (session?.user?.role === 'GOD' &&
-                            listing.type !== 'grant') ||
+                          (user?.role === 'GOD' && listing.type !== 'grant') ||
                           (!pastDeadline &&
                             listing.type !== 'grant' &&
                             listing.status === 'OPEN')

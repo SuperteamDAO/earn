@@ -1,10 +1,10 @@
 import { type NextApiHandler, type NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 import { type NextApiRequestWithSponsor } from '../types';
+import { getPrivyToken } from './getPrivyToken';
 
 type Handler = (
   req: NextApiRequestWithSponsor,
@@ -13,28 +13,22 @@ type Handler = (
 
 export const withSponsorAuth = (handler: Handler): NextApiHandler => {
   return async (req: NextApiRequestWithSponsor, res: NextApiResponse) => {
-    const token = await getToken({ req });
+    const privyDid = await getPrivyToken(req);
 
-    if (!token) {
+    if (!privyDid) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const userId = token.sub;
-    if (!userId) {
-      return res.status(400).json({ error: 'Invalid token' });
-    }
-
-    req.userId = userId;
-
     try {
-      logger.debug(`Fetching user with ID: ${userId}`);
+      logger.debug(`Fetching privyID: ${privyDid}`);
       const user = await prisma.user.findUnique({
-        where: { id: userId as string },
-        select: { currentSponsorId: true, role: true, hackathonId: true },
-      });
-      logger.info(`User with ID: ${userId} found`, {
-        userId,
-        ...user,
+        where: { privyDid },
+        select: {
+          currentSponsorId: true,
+          role: true,
+          hackathonId: true,
+          id: true,
+        },
       });
 
       if (!user || !user.currentSponsorId) {
@@ -44,6 +38,7 @@ export const withSponsorAuth = (handler: Handler): NextApiHandler => {
           .json({ error: 'User does not have a current sponsor.' });
       }
 
+      req.userId = user.id;
       req.userSponsorId = user.currentSponsorId;
       req.role = user.role;
       req.hackathonId = user.hackathonId || undefined;

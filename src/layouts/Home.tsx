@@ -1,6 +1,6 @@
+import { usePrivy } from '@privy-io/react-auth';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
 import { type Superteam } from '@/constants/Superteam';
@@ -54,7 +54,7 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
     }
   }, [router.asPath]);
 
-  const { data: session, status } = useSession();
+  const { authenticated } = usePrivy();
 
   return (
     <Default
@@ -85,11 +85,7 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
                 {type === 'listing' && (
                   <>
                     <NavTabs />
-                    {!session && status === 'unauthenticated' ? (
-                      <HomeBanner />
-                    ) : (
-                      <UserStatsBanner />
-                    )}
+                    {!authenticated ? <HomeBanner /> : <UserStatsBanner />}
                   </>
                 )}
                 {type === 'category' && <NavTabs />}
