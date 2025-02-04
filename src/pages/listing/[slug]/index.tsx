@@ -27,8 +27,28 @@ function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
   );
 }
 
+const redirectSlugs: { original: string; redirectTo: string }[] = [
+  {
+    original: 'passion-piece',
+    redirectTo:
+      'write-a-passion-piece-about-your-favorite-solana-project-or-community',
+  },
+];
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
+
+  const redirectConfig = redirectSlugs.find(
+    (redirect) => redirect.original === slug,
+  );
+  if (redirectConfig) {
+    return {
+      redirect: {
+        destination: `/listing/${redirectConfig.redirectTo}`,
+        permanent: true,
+      },
+    };
+  }
 
   let bountyData;
   try {
