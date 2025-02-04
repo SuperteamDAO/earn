@@ -135,7 +135,7 @@ export function WithdrawFundsFlow({
 
       setTxData({ signature, values });
       await queryClient.invalidateQueries({
-        queryKey: ['tokens', 'assets'],
+        queryKey: ['wallet', 'assets', 'activity'],
       });
       setView('success');
 
