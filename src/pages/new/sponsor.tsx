@@ -316,7 +316,7 @@ const CreateSponsor = () => {
             <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
               Welcome to Superteam Earn
             </h1>
-            <p className="text-lg font-normal text-gray-600" color="gray.600">
+            <p className="text-lg font-normal text-gray-600">
               Let&apos;s start with some basic information about your team
             </p>
           </div>
