@@ -47,6 +47,7 @@ async function sendInvites(
             id: true,
           },
         },
+        role: true,
         UserSponsors: true,
       },
     });
@@ -56,7 +57,7 @@ async function sendInvites(
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    if (req.role !== 'GOD' && user.UserSponsors[0]?.role !== 'ADMIN') {
+    if (user.role !== 'GOD' && user.UserSponsors[0]?.role !== 'ADMIN') {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 

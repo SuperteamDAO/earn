@@ -41,6 +41,8 @@ const nextConfig = {
       'posthog-js/react',
       'lowlight',
       'zod',
+      '@privy-io/react-auth',
+      '@privy-io/server-auth',
     ],
   },
   async headers() {

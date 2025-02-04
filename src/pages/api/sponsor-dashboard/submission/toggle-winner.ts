@@ -2,11 +2,11 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { fetchHistoricalTokenUSDValue } from '@/features/wallet/utils/fetchHistoricalTokenUSDValue';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
@@ -76,7 +76,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
       if (listing.compensationType !== 'fixed') {
         logger.debug('Fetching token USD value for variable compensation');
-        const tokenUSDValue = await fetchTokenUSDValue(
+        const tokenUSDValue = await fetchHistoricalTokenUSDValue(
           listing.token!,
           listing.publishedAt!,
         );

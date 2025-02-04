@@ -67,7 +67,7 @@ export const SubmissionPanel = ({
   );
 
   const { onCopy: onCopyPublicKey } = useClipboard(
-    selectedSubmission?.user?.publicKey || '',
+    selectedSubmission?.user?.walletAddress || '',
   );
 
   const handleCopyEmail = () => {
@@ -80,7 +80,7 @@ export const SubmissionPanel = ({
   };
 
   const handleCopyPublicKey = () => {
-    if (selectedSubmission?.user?.publicKey) {
+    if (selectedSubmission?.user?.walletAddress) {
       onCopyPublicKey();
       toast.success('Wallet address copied to clipboard', {
         duration: 1500,
@@ -256,7 +256,7 @@ export const SubmissionPanel = ({
                 </Tooltip>
               )}
 
-              {selectedSubmission?.user?.publicKey && (
+              {selectedSubmission?.user?.walletAddress && (
                 <Tooltip
                   content={'Click to copy'}
                   contentProps={{ side: 'right' }}
@@ -267,11 +267,14 @@ export const SubmissionPanel = ({
                     onClick={handleCopyPublicKey}
                     role="button"
                     tabIndex={0}
-                    aria-label={`Copy public key: ${truncatePublicKey(selectedSubmission.user.publicKey, 3)}`}
+                    aria-label={`Copy public key: ${truncatePublicKey(selectedSubmission.user.walletAddress, 3)}`}
                   >
                     <MdOutlineAccountBalanceWallet />
                     <p>
-                      {truncatePublicKey(selectedSubmission.user.publicKey, 3)}
+                      {truncatePublicKey(
+                        selectedSubmission.user.walletAddress || '',
+                        3,
+                      )}
                     </p>
                   </div>
                 </Tooltip>

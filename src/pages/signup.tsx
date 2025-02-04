@@ -1,6 +1,6 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -16,7 +16,7 @@ import {
 export default function SignupPage() {
   const [loginStep, setLoginStep] = useState(0);
   const router = useRouter();
-  const { data: session } = useSession();
+  const { authenticated } = usePrivy();
   const [isNavigating, setIsNavigating] = useState(false);
 
   const { invite } = router.query;
@@ -89,7 +89,7 @@ export default function SignupPage() {
             {inviteDetails?.sponsorName}
           </p>
 
-          {!session ? (
+          {!authenticated ? (
             <div className="mt-12 w-full">
               <p className="mb-4 text-center font-medium text-slate-500">
                 Please sign in to accept the invitation:

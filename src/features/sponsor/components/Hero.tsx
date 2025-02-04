@@ -1,5 +1,5 @@
+import { usePrivy } from '@privy-io/react-auth';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,7 @@ import { StepThree } from './steps/Three';
 import { StepTwo } from './steps/Two';
 
 export function Hero() {
-  const { data: session } = useSession();
+  const { authenticated } = usePrivy();
 
   const { user } = useUser();
 
@@ -21,8 +21,8 @@ export function Hero() {
 
   const base = '/landingsponsor/sponsors/';
 
-  function getStartedWhere(authenticated: boolean, isSponsor: boolean) {
-    if (!authenticated) return '/new/sponsor';
+  function getStartedWhere(isAuthenticated: boolean, isSponsor: boolean) {
+    if (!isAuthenticated) return '/new/sponsor';
     if (!isSponsor) return '/new/sponsor';
     return '/dashboard/listings/?open=1';
   }
@@ -41,7 +41,7 @@ export function Hero() {
         <div className="flex w-full justify-center gap-8">
           <Link
             className="ph-no-capture"
-            href={getStartedWhere(!!session, !!user?.currentSponsorId)}
+            href={getStartedWhere(authenticated, !!user?.currentSponsorId)}
             onClick={() => {
               posthog?.capture('clicked_hero_get_started');
             }}

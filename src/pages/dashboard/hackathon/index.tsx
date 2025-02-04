@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -88,8 +87,6 @@ export default function Hackathon() {
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
 
-  const { data: session } = useSession();
-
   useEffect(() => {
     return () => {
       debouncedSetSearchText.cancel();
@@ -117,7 +114,7 @@ export default function Hackathon() {
   };
 
   useEffect(() => {
-    if (user?.hackathonId || session?.user?.role === 'GOD') {
+    if (user?.hackathonId || user?.role === 'GOD') {
       getBounties();
     }
   }, [user?.hackathonId, skip, searchText]);

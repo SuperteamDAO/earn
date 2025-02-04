@@ -93,7 +93,7 @@ export const ApplicationDetails = ({
   );
 
   const { onCopy: onCopyPublicKey } = useClipboard(
-    selectedApplication?.user?.publicKey || '',
+    selectedApplication?.user?.walletAddress || '',
   );
 
   const handleCopyEmail = () => {
@@ -106,7 +106,7 @@ export const ApplicationDetails = ({
   };
 
   const handleCopyPublicKey = () => {
-    if (selectedApplication?.user?.publicKey) {
+    if (selectedApplication?.user?.walletAddress) {
       onCopyPublicKey();
       toast.success('Wallet address copied to clipboard', {
         duration: 1500,
@@ -305,7 +305,7 @@ export const ApplicationDetails = ({
                   </div>
                 </Tooltip>
               )}
-              {selectedApplication?.user?.publicKey && (
+              {selectedApplication?.user.walletAddress && (
                 <Tooltip
                   content={'Click to copy'}
                   contentProps={{ side: 'right' }}
@@ -316,11 +316,14 @@ export const ApplicationDetails = ({
                     onClick={handleCopyPublicKey}
                     role="button"
                     tabIndex={0}
-                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.user.publicKey, 3)}`}
+                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.user.walletAddress || '', 3)}`}
                   >
-                    <MdOutlineAccountBalanceWallet />
+                    <MdOutlineAccountBalanceWallet />s
                     <p>
-                      {truncatePublicKey(selectedApplication.user.publicKey, 3)}
+                      {truncatePublicKey(
+                        selectedApplication.user.walletAddress,
+                        3,
+                      )}
                     </p>
                   </div>
                 </Tooltip>

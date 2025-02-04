@@ -46,7 +46,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             lastName: true,
             username: true,
             email: true,
-            publicKey: true,
+            walletAddress: true,
             twitter: true,
             discord: true,
             Submission: {
