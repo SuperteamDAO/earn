@@ -71,8 +71,8 @@ export async function createTransferInstructions(
     );
 
     instructions.push(
-      ComputeBudgetProgram.setComputeUnitLimit({ units: 100000 }),
-      ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 1000000 }),
+      ComputeBudgetProgram.setComputeUnitLimit({ units: 40000 }),
+      ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 100000 }),
     );
   }
 
