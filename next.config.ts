@@ -1,4 +1,5 @@
-/** @type {import('next').NextConfig} */
+import { type NextConfig } from 'next';
+
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { withAxiom } = require('next-axiom');
 
@@ -9,7 +10,7 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,
 });
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   eslint: {
     dirs: ['.'],
   },
