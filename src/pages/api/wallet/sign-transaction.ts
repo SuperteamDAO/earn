@@ -26,19 +26,36 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       Buffer.from(serializedTransaction, 'base64'),
     );
 
+    const feePayerWallet = Keypair.fromSecretKey(
+      bs58.decode(process.env.FEEPAYER_PRIVATE_KEY as string),
+    );
+    const feePayerPubkey = feePayerWallet.publicKey;
+
     const instructions = transaction.message.compiledInstructions;
-    const validInstructions = instructions.every((instruction) => {
+    for (const instruction of instructions) {
       const programId =
         transaction.message.staticAccountKeys[
           instruction.programIdIndex
         ]?.toBase58();
-      return programId === TOKEN_PROGRAM_ID || programId === COMPUTE_BUDGET_ID;
-    });
 
-    if (!validInstructions) {
-      return res
-        .status(400)
-        .json({ error: 'Only token transfers and ATA creation allowed' });
+      if (programId !== TOKEN_PROGRAM_ID && programId !== COMPUTE_BUDGET_ID) {
+        return res.status(400).json({ error: 'Invalid program ID detected' });
+      }
+
+      if (programId === TOKEN_PROGRAM_ID) {
+        const accountKeys = instruction.accountKeyIndexes.map(
+          (index) => transaction.message.staticAccountKeys[index],
+        );
+
+        const feePayerUsed = accountKeys.some((key) =>
+          key?.equals(feePayerPubkey),
+        );
+        if (feePayerUsed) {
+          return res
+            .status(400)
+            .json({ error: 'Fee payer cannot be used in token operations' });
+        }
+      }
     }
 
     const userWalletPubkey = new PublicKey(user.walletAddress as string);
@@ -51,10 +68,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     if (!isUserSigner) {
       return res.status(400).json({ error: 'User wallet must be a signer' });
     }
-
-    const feePayerWallet = Keypair.fromSecretKey(
-      bs58.decode(process.env.FEEPAYER_PRIVATE_KEY as string),
-    );
 
     transaction.sign([feePayerWallet]);
 
