@@ -32,7 +32,11 @@ export const Login = ({
   const popupTimeout = useAtomValue(popupTimeoutAtom);
 
   useLoginWithOAuth({
-    onComplete: async ({ isNewUser, user }) => {
+    onComplete: async ({ isNewUser, user, wasAlreadyAuthenticated }) => {
+      if (wasAlreadyAuthenticated) {
+        return;
+      }
+
       if (isNewUser) {
         await handleUserCreation(user.google?.email || '');
       }
