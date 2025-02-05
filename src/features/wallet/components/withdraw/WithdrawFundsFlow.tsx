@@ -72,7 +72,7 @@ export function WithdrawFundsFlow({
         `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
       );
 
-      const { blockhash } = await connection.getLatestBlockhash('finalized');
+      const { blockhash } = await connection.getLatestBlockhash('confirmed');
 
       const instructions = await createTransferInstructions(
         connection,

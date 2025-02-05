@@ -4,6 +4,7 @@ import {
   getAssociatedTokenAddressSync,
 } from '@solana/spl-token';
 import {
+  ComputeBudgetProgram,
   type Connection,
   LAMPORTS_PER_SOL,
   PublicKey,
@@ -67,6 +68,11 @@ export async function createTransferInstructions(
         new PublicKey(userAddress),
         Number(values.amount) * 10 ** power,
       ),
+    );
+
+    instructions.push(
+      ComputeBudgetProgram.setComputeUnitLimit({ units: 100000 }),
+      ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 1000000 }),
     );
   }
 
