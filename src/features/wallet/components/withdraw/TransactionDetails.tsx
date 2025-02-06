@@ -18,7 +18,7 @@ export const TransactionDetails = ({ txData }: { txData: TxData }) => {
 
   return (
     <div className="flex flex-col items-center space-y-8 py-4">
-      <div className="rounded-full bg-blue-50 p-6">
+      <div className="rounded-full bg-blue-50 p-4">
         <div className="relative">
           <span className="flex items-center justify-center rounded-full bg-blue-500 text-2xl text-white">
             <img
@@ -27,10 +27,10 @@ export const TransactionDetails = ({ txData }: { txData: TxData }) => {
               className="h-12 w-12 rounded-full"
             />
           </span>
-          <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white">
+          <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white">
             <svg
-              width="14"
-              height="14"
+              width="12"
+              height="12"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"

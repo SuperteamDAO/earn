@@ -141,7 +141,10 @@ export function WithdrawFundsFlow({
         type: 'Withdrawn',
       });
       await queryClient.invalidateQueries({
-        queryKey: ['wallet', 'assets', 'activity'],
+        queryKey: ['wallet', 'assets'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['wallet', 'activity'],
       });
       setView('success');
 

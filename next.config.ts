@@ -15,7 +15,7 @@ const baseCsp = `
   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://us-assets.i.posthog.com;
   style-src 'self' 'unsafe-inline' https://unpkg.com;
   img-src 'self' data: https://res.cloudinary.com https://*.googleusercontent.com https://s2.coinmarketcap.com https://assets.coingecko.com https://avatars.githubusercontent.com;
-  connect-src 'self' https://auth.privy.io https://*.rpc.privy.systems https://api.mainnet-beta.solana.com https://api.devnet.solana.com https://api.testnet.solana.com https://us.i.posthog.com https://app.posthog.com https://*.helius-rpc.com;
+  connect-src 'self' https://auth.privy.io https://*.rpc.privy.systems https://api.mainnet-beta.solana.com https://api.devnet.solana.com https://api.testnet.solana.com https://us.i.posthog.com https://app.posthog.com https://*.helius-rpc.com wss://mainnet.helius-rpc.com;
   font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;
   child-src 'self' https://auth.privy.io;
   frame-src 'self' https://auth.privy.io;
