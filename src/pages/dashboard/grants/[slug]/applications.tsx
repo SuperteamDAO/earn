@@ -5,6 +5,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -21,6 +22,7 @@ import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
+import { selectedGrantApplicationAtom } from '@/features/sponsor-dashboard/atoms';
 import { ApplicationDetails } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationDetails';
 import { ApplicationHeader } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationHeader';
 import { ApplicationList } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationList';
@@ -39,8 +41,9 @@ interface Props {
 function GrantApplications({ slug }: Props) {
   const { user } = useUser();
   const router = useRouter();
-  const [selectedApplication, setSelectedApplication] =
-    useState<GrantApplicationWithUser>();
+  const [selectedApplication, setSelectedApplication] = useAtom(
+    selectedGrantApplicationAtom,
+  );
   const [skip, setSkip] = useState(0);
   let length = 20;
   const [searchText, setSearchText] = useState('');
@@ -501,7 +504,7 @@ function GrantApplications({ slug }: Props) {
         <LoadingSection />
       ) : (
         <>
-          <ApplicationHeader grant={grant} />
+          <ApplicationHeader grant={grant} applications={applications} />
           <Tabs defaultValue="applications">
             <TabsList className="gap-4 font-medium text-slate-400">
               <TabsTrigger value="applications">Applications</TabsTrigger>
@@ -517,8 +520,6 @@ function GrantApplications({ slug }: Props) {
                       setFilterLabel={setFilterLabel}
                       applications={applications}
                       setSearchText={setSearchText}
-                      selectedApplication={selectedApplication}
-                      setSelectedApplication={setSelectedApplication}
                       isToggled={isToggled}
                       toggleApplication={toggleApplication}
                       isAllToggled={isToggledAll}
@@ -556,8 +557,6 @@ function GrantApplications({ slug }: Props) {
                         isMultiSelectOn={selectedApplicationIds.size > 0}
                         grant={grant}
                         applications={applications}
-                        selectedApplication={selectedApplication}
-                        setSelectedApplication={setSelectedApplication}
                         params={params}
                         approveOnOpen={approveOnOpen}
                         rejectedOnOpen={rejectedOnOpen}

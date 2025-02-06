@@ -31,7 +31,9 @@ import { type Grant } from '@/features/grants/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingStatus } from '@/features/listings/utils/status';
 
+import { type GrantApplicationWithUser } from '../../types';
 import { SponsorPrize } from '../SponsorPrize';
+import AiReviewModal from './Modals/AiReview';
 
 interface GrantWithApplicationCount extends Grant {
   totalApplications: number;
@@ -39,9 +41,10 @@ interface GrantWithApplicationCount extends Grant {
 
 interface Props {
   grant: GrantWithApplicationCount | undefined;
+  applications: GrantApplicationWithUser[] | undefined;
 }
 
-export const ApplicationHeader = ({ grant }: Props) => {
+export const ApplicationHeader = ({ grant, applications }: Props) => {
   const listingPath = `grants/${grant?.slug}`;
   const { hasCopied, onCopy } = useClipboard(`${getURL()}${listingPath}`);
   const grantStatus = getListingStatus(grant, true);
@@ -194,6 +197,9 @@ export const ApplicationHeader = ({ grant }: Props) => {
               )}
             </div>
           </div>
+        </div>
+        <div>
+          <AiReviewModal applications={applications} grant={grant} />
         </div>
       </div>
     </>

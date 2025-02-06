@@ -2,12 +2,14 @@ import {
   type GrantApplicationStatus,
   type SubmissionLabels,
 } from '@prisma/client';
+import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { ChevronDown, Search } from 'lucide-react';
 import React, {
   type Dispatch,
   type SetStateAction,
   useEffect,
+  useMemo,
   useRef,
 } from 'react';
 
@@ -24,16 +26,14 @@ import { cn } from '@/utils/cn';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import { selectedGrantApplicationAtom } from '../../atoms';
+import { labelMenuOptions } from '../../constants';
 import { type GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils/statusColorMap';
 
 interface Props {
   applications: GrantApplicationWithUser[] | undefined;
   setSearchText: (value: string) => void;
-  selectedApplication: GrantApplicationWithUser | undefined;
-  setSelectedApplication: Dispatch<
-    SetStateAction<GrantApplicationWithUser | undefined>
-  >;
   toggleApplication: (id: string) => void;
   isToggled: (id: string) => boolean;
   toggleAllApplications: () => void;
@@ -55,8 +55,6 @@ const ApplicationStatusFilter: GrantApplicationStatus[] = [
 export const ApplicationList = ({
   applications,
   setSearchText,
-  selectedApplication,
-  setSelectedApplication,
   toggleApplication,
   isToggled,
   toggleAllApplications,
@@ -66,6 +64,9 @@ export const ApplicationList = ({
   isToggleDisabled,
 }: Props) => {
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+  const [selectedApplication, setSelectedApplication] = useAtom(
+    selectedGrantApplicationAtom,
+  );
 
   useEffect(() => {
     return () => {
@@ -78,6 +79,11 @@ export const ApplicationList = ({
   if (filterLabel) {
     ({ bg, color } = colorMap[filterLabel]);
   }
+
+  const applicationLabels = useMemo(
+    () => labelMenuOptions.filter((l) => l.value !== 'Unreviewed'),
+    [labelMenuOptions],
+  );
 
   return (
     <div className="h-full w-full rounded-l-xl border border-slate-200 bg-white">
@@ -145,6 +151,25 @@ export const ApplicationList = ({
                     )}
                   >
                     {status}
+                  </span>
+                </DropdownMenuItem>
+              ))}
+              {applicationLabels.map((option) => (
+                <DropdownMenuItem
+                  key={option.value}
+                  className="focus:bg-slate-100"
+                  onClick={() =>
+                    setFilterLabel(option.value as SubmissionLabels)
+                  }
+                >
+                  <span
+                    className={cn(
+                      'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                      colorMap[option.value as keyof typeof colorMap].bg,
+                      colorMap[option.value as keyof typeof colorMap].color,
+                    )}
+                  >
+                    {option.label}
                   </span>
                 </DropdownMenuItem>
               ))}

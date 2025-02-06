@@ -1,12 +1,14 @@
-import type { NextApiResponse } from 'next';
+import { waitUntil } from '@vercel/functions';
+import dayjs from 'dayjs';
+import { headers } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 
+import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
-import { withAuth } from '@/features/auth/utils/withAuth';
+import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import { handleAirtableSync } from '@/features/grants/utils/handleAirtableSync';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
@@ -108,14 +110,20 @@ async function updateGrantApplication(
   });
 }
 
-async function grantApplication(
-  req: NextApiRequestWithUser,
-  res: NextApiResponse,
-) {
-  const { userId } = req;
-  const { grantId, ...applicationData } = req.body;
+export async function POST(request: NextRequest) {
+  const session = await getUserSession(await headers());
 
-  logger.debug(`Request body: ${safeStringify(req.body)}`);
+  if (session.error || !session.data) {
+    return NextResponse.json(
+      { error: session.error },
+      { status: session.status },
+    );
+  }
+  const userId = session.data.userId;
+  const body = await request.json();
+  const { grantId, ...applicationData } = body;
+
+  logger.debug(`Request body: ${safeStringify(body)}`);
 
   try {
     const existingApplication = await prisma.grantApplication.findFirst({
@@ -127,7 +135,14 @@ async function grantApplication(
     });
 
     if (existingApplication) {
-      throw new Error('Application already exists');
+      logger.debug(`Grant Application already exists`, {
+        grantId,
+        userId,
+      });
+      return NextResponse.json(
+        { error: `Grant Application already exists` },
+        { status: 400 },
+      );
     }
 
     const { grant } = await validateGrantRequest(userId as string, grantId);
@@ -139,18 +154,41 @@ async function grantApplication(
       grant,
     );
 
-    if (grant.airtableId) {
-      try {
-        await handleAirtableSync(result);
-      } catch (err) {
-        logger.error('Error syncing with Airtable:', err);
-      }
-    }
+    waitUntil(
+      (async () => {
+        if (grant.airtableId) {
+          try {
+            await handleAirtableSync(result);
+          } catch (error) {
+            logger.error('Error syncing with Airtable:', {
+              error,
+              userId,
+              grantId,
+            });
+          }
+        }
+        try {
+          await earncognitoClient.post('/ai/grants/review-application', {
+            id: result.id,
+          });
+        } catch (error) {
+          logger.error('Failed to update AI review for grant application: ', {
+            error,
+            grantId,
+            userId,
+          });
+        }
+      })(),
+    );
 
-    return res.status(200).json('Success');
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {
     logger.error(
       `User ${userId} unable to update grant application: ${safeStringify(error)}`,
+      {
+        userId,
+        grantId,
+      },
     );
 
     let statusCode = 403;
@@ -159,11 +197,12 @@ async function grantApplication(
       statusCode = 400;
     } catch {}
 
-    return res.status(statusCode).json({
-      error: error.message,
-      message: `Unable to update grant application: ${error.message}`,
-    });
+    return NextResponse.json(
+      {
+        error: error.message,
+        message: `Unable to update grant application: ${error.message}`,
+      },
+      { status: statusCode },
+    );
   }
 }
-
-export default withAuth(grantApplication);
