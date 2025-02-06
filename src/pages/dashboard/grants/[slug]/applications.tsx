@@ -619,7 +619,10 @@ function GrantApplications({ slug }: Props) {
               </div>
             </TabsContent>
 
-            <TabsContent value="payments" className="px-0">
+            <TabsContent
+              value="payments"
+              className="px-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+            >
               <PaymentsHistoryTab grant={grant} grantId={grant?.id} />
             </TabsContent>
           </Tabs>
