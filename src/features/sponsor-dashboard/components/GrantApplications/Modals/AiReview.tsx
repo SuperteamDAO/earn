@@ -183,7 +183,13 @@ export default function AiReviewModal({ applications, grant }: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(s) => {
+        if (state === 'PROCESSING') return;
+        setOpen(s);
+      }}
+    >
       {!!grant?.isActive &&
         !grant?.isArchived &&
         !!(grant?.ai as GrantsAi).context &&

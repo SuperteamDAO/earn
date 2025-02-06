@@ -15,6 +15,8 @@ import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotifica
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { type Rewards } from '@/features/listings/types';
 
+export const maxDuration = 300;
+
 export async function POST(
   _request: NextRequest,
   props: { params: Promise<{ id: string }> },

@@ -8,6 +8,8 @@ import { safeStringify } from '@/utils/safeStringify';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { type EvaluationResult } from '@/features/grants/types';
 
+export const maxDuration = 300;
+
 export async function POST(request: NextRequest) {
   const body = await request.json();
   const { id } = body;

@@ -5,6 +5,8 @@ import { prisma } from '@/prisma';
 
 import { type GrantApplicationAi } from '@/features/grants/types';
 
+export const maxDuration = 300;
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
