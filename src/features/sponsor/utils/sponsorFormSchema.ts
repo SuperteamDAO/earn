@@ -2,7 +2,10 @@ import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants/URL_REGEX';
 
-import { twitterUsernameSchema } from '@/features/social/utils/schema';
+import {
+  telegramUsernameSchema,
+  twitterUsernameSchema,
+} from '@/features/social/utils/schema';
 
 export const sponsorBaseSchema = z.object({
   name: z.string().min(1, 'Company name is required'),
@@ -46,6 +49,7 @@ export const userSponsorDetailsSchema = z.object({
       'Only letters, numbers, underscores, and hyphens are allowed',
     ),
   photo: z.string().optional(),
+  telegram: telegramUsernameSchema,
 });
 
 export const sponsorFormSchema = z.object({
@@ -75,6 +79,7 @@ export const transformFormToApiData = (data: SponsorFormValues) => {
         lastName: data.user.lastName,
         username: data.user.username,
         photo: data.user.photo,
+        telegram: data.user.telegram,
       }
     : null;
 
@@ -92,6 +97,7 @@ export const shouldUpdateUser = (
     formData.firstName !== currentUser?.firstName ||
     formData.lastName !== currentUser?.lastName ||
     formData.username !== currentUser?.username ||
-    formData.photo !== currentUser?.photo
+    formData.photo !== currentUser?.photo ||
+    formData.telegram !== currentUser?.telegram
   );
 };

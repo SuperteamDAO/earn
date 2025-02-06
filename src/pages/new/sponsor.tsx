@@ -78,6 +78,7 @@ const CreateSponsor = () => {
         lastName: user?.lastName || '',
         username: user?.username || '',
         photo: user?.photo || '',
+        telegram: user?.telegram || '',
       },
     },
   });
@@ -91,6 +92,7 @@ const CreateSponsor = () => {
           lastName: user?.lastName || '',
           username: user?.username || '',
           photo: user?.photo || '',
+          telegram: user?.telegram || '',
         },
       });
     }
@@ -348,7 +350,7 @@ const CreateSponsor = () => {
                     <Input placeholder="Last Name" />
                   </FormFieldWrapper>
                 </div>
-                <div className="mb-4 flex">
+                <div className="mb-4 flex w-full justify-between gap-2">
                   <FormFieldWrapper
                     control={form.control}
                     name="user.username"
@@ -364,6 +366,15 @@ const CreateSponsor = () => {
                   >
                     <Input placeholder="Username" value={username} />
                   </FormFieldWrapper>
+                  <SocialInput
+                    name="user.telegram"
+                    socialName={'telegram'}
+                    formLabel="Telegram"
+                    placeholder="solanalabs"
+                    required
+                    control={form.control}
+                    height="h-9"
+                  />
                 </div>
                 <>
                   <FormLabel isRequired>Profile Picture</FormLabel>
@@ -395,7 +406,7 @@ const CreateSponsor = () => {
                       setSponsorName(e.target.value);
                     }}
                   >
-                    <Input placeholder="Stark Industries" value={sponsorName} />
+                    <Input placeholder="Solana Labs" value={sponsorName} />
                   </FormFieldWrapper>
                   <FormFieldWrapper
                     control={form.control}
@@ -410,7 +421,7 @@ const CreateSponsor = () => {
                       form.setValue('sponsor.slug', value);
                     }}
                   >
-                    <Input placeholder="starkindustries" value={slug} />
+                    <Input placeholder="solanalabs" value={slug} />
                   </FormFieldWrapper>
                 </div>
                 <div className="my-6 flex w-full justify-between gap-4">
@@ -420,7 +431,7 @@ const CreateSponsor = () => {
                     label="Company URL"
                     isRequired
                   >
-                    <Input placeholder="https://starkindustries.com" />
+                    <Input placeholder="https://solanalabs.com" />
                   </FormFieldWrapper>
 
                   <div className="hidden w-full md:flex">
@@ -428,7 +439,7 @@ const CreateSponsor = () => {
                       name="sponsor.twitter"
                       socialName={'twitter'}
                       formLabel="Company Twitter"
-                      placeholder="@StarkIndustries"
+                      placeholder="@solanalabs"
                       required
                       control={form.control}
                       height="h-9"
@@ -440,7 +451,7 @@ const CreateSponsor = () => {
                     name="sponsor.twitter"
                     socialName={'twitter'}
                     formLabel="Company Twitter"
-                    placeholder="@StarkIndustries"
+                    placeholder="@solanalabs"
                     required
                     control={form.control}
                     height="h-9"

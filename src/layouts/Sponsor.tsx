@@ -104,7 +104,10 @@ export function SponsorLayout({
     const modalsToShow = async () => {
       if (
         user?.currentSponsorId &&
-        (!user?.firstName || !user?.lastName || !user?.username)
+        (!user?.firstName ||
+          !user?.lastName ||
+          !user?.username ||
+          !user?.telegram)
       ) {
         onSponsorInfoModalOpen();
       } else if (
