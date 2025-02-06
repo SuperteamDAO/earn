@@ -99,7 +99,7 @@
     "nextjs-toploader": "^2.6.12",
     "nodemailer": "^6.9.11",
     "papaparse": "^5.5.2",
-    "posthog-js": "^1.215.1",
+    "posthog-js": "^1.215.4",
     "prosemirror-model": "^1.24.1",
     "prosemirror-state": "^1.4.3",
     "prosemirror-view": "^1.37.2",
