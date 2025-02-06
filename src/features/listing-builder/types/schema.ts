@@ -55,7 +55,7 @@ export const createListingFormSchema = ({
         .number({
           message: 'Required',
         })
-        .min(0.01, 'Reward')
+        .min(0.01, 'Required')
         .max(MAX_REWARD),
       {
         message: 'Required',
