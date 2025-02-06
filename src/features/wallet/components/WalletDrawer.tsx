@@ -98,10 +98,12 @@ export function WalletDrawer({
                 )}
               </div>
             </div>
-
             <p className="text-sm font-medium text-slate-500">
-              You will receive payments in this wallet each time you win
+              You will receive payments in this wallet each time you win.
             </p>
+            <a className="flex items-center text-xs font-normal text-slate-400 underline">
+              Learn more
+            </a>
           </div>
           <div className={cn('bg-slate-50 py-4', padding)}>
             <div className="flex items-baseline gap-1">
@@ -116,7 +118,7 @@ export function WalletDrawer({
             {view === 'main' && (
               <Button
                 onClick={() => setView('withdraw')}
-                className="mt-6 rounded-lg bg-brand-purple px-5 text-base"
+                className="mt-3 rounded-lg bg-brand-purple px-5 text-base"
                 disabled={!tokens?.length}
               >
                 Withdraw

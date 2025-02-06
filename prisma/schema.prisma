@@ -421,7 +421,6 @@ model User {
   GrantApplication   GrantApplication[]
   SubscribeHackathon SubscribeHackathon[]
   isBlocked          Boolean              @default(false)
-  // privyDid           String?
   privyDid           String               @unique
 
   @@index([currentSponsorId])
@@ -659,6 +658,7 @@ enum EmailType {
   NEW_LISTING
   ROLLING_UNPUBLISH
   UNFILLED_PROFILE
+  WALLET_ANNOUNCEMENT
 }
 
 enum Role {

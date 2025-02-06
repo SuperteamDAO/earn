@@ -1,4 +1,4 @@
-import { type Connection, type PublicKey } from '@solana/web3.js';
+import { type Connection, PublicKey } from '@solana/web3.js';
 
 import { tokenList } from '@/constants/tokenList';
 
@@ -53,13 +53,17 @@ export async function fetchWalletActivity(
         if (amount === 1e-7) continue;
         let counterpartyAddress = '';
         if (tx.transaction.message.instructions) {
-          const instruction = tx.transaction.message.instructions[0];
-          if (
-            instruction &&
-            'parsed' in instruction &&
-            instruction.parsed.type === 'transfer'
-          ) {
-            const { info } = instruction.parsed;
+          // Search through all instructions for SOL transfers
+          const transferInstruction = tx.transaction.message.instructions.find(
+            (instruction) =>
+              'parsed' in instruction &&
+              instruction.parsed.type === 'transfer' &&
+              (instruction.parsed.info.source === publicKey.toString() ||
+                instruction.parsed.info.destination === publicKey.toString()),
+          );
+
+          if (transferInstruction && 'parsed' in transferInstruction) {
+            const { info } = transferInstruction.parsed;
             counterpartyAddress =
               info.source === publicKey.toString()
                 ? info.destination
@@ -122,18 +126,33 @@ export async function fetchWalletActivity(
 
         let counterpartyAddress = '';
         if (tx.transaction.message.instructions) {
-          const instruction = tx.transaction.message.instructions[0];
-          if (
-            instruction &&
-            'parsed' in instruction &&
-            instruction.parsed.type === 'transfer' &&
-            instruction.program === 'spl-token'
-          ) {
-            const { info } = instruction.parsed;
-            counterpartyAddress =
-              info.source === publicKey.toString()
-                ? info.destination
-                : info.source;
+          const transferInstruction = tx.transaction.message.instructions.find(
+            (instruction) =>
+              'parsed' in instruction &&
+              (instruction.parsed.type === 'transfer' ||
+                instruction.parsed.type === 'transferChecked') &&
+              instruction.program === 'spl-token',
+          );
+
+          if (transferInstruction && 'parsed' in transferInstruction) {
+            try {
+              const sourceAccount = transferInstruction.parsed.info.source;
+              const destAccount = transferInstruction.parsed.info.destination;
+
+              const [sourceInfo, destInfo] = await Promise.all([
+                connection.getParsedAccountInfo(new PublicKey(sourceAccount)),
+                connection.getParsedAccountInfo(new PublicKey(destAccount)),
+              ]);
+
+              const sourceOwner = (sourceInfo.value?.data as any)?.parsed?.info
+                ?.owner;
+              const destOwner = (destInfo.value?.data as any)?.parsed?.info
+                ?.owner;
+
+              counterpartyAddress = balanceChange > 0 ? sourceOwner : destOwner;
+            } catch (error) {
+              console.error('Error fetching token account info:', error);
+            }
           }
         }
 

@@ -9,6 +9,7 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 
 const TOKEN_PROGRAM_ID = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
 const COMPUTE_BUDGET_ID = 'ComputeBudget111111111111111111111111111111';
+const SYSTEM_PROGRAM_TRANFER_ID = '11111111111111111111111111111111';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   try {
@@ -38,7 +39,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           instruction.programIdIndex
         ]?.toBase58();
 
-      if (programId !== TOKEN_PROGRAM_ID && programId !== COMPUTE_BUDGET_ID) {
+      if (
+        programId !== TOKEN_PROGRAM_ID &&
+        programId !== COMPUTE_BUDGET_ID &&
+        programId !== SYSTEM_PROGRAM_TRANFER_ID
+      ) {
         return res.status(400).json({ error: 'Invalid program ID detected' });
       }
 
