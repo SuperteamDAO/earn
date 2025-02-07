@@ -82,6 +82,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         Name: `${user.firstName} ${user.lastName}`,
         'Submission Link': submission.link || '',
         ...eligibility,
+        'Anything Else': submission.otherInfo || '',
         Ask: submission.ask || '',
         'Tweet Link': submission.tweet || '',
         'Email ID': user.email,
