@@ -193,6 +193,14 @@ export const Footer = () => {
                 className="text-slate-500"
               />
             </div>
+
+            <div>
+              <img
+                alt="Powered by Solana"
+                src="/assets/solana-powered.svg"
+                className="mt-6 w-36"
+              />
+            </div>
           </div>
           <div className="flex w-full flex-wrap justify-start gap-6 md:w-auto md:justify-end md:gap-16">
             <FooterColumn title="Opportunities" links={opportunities} />
