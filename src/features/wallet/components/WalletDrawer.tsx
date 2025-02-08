@@ -101,7 +101,12 @@ export function WalletDrawer({
             <p className="text-sm font-medium text-slate-500">
               You will receive payments in this wallet each time you win.
             </p>
-            <a className="flex items-center text-xs font-normal text-slate-400 underline">
+            <a
+              href="https://superteamdao.notion.site/Using-your-Earn-Wallet-191794d3ba338083a427f42597410106"
+              className="flex items-center text-xs font-normal text-slate-400 underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Learn more
             </a>
           </div>
