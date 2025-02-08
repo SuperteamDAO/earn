@@ -113,7 +113,7 @@ function MyApp({ Component, pageProps }: any) {
   }, [user?.id]);
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const walletListingRoute = router.pathname.startsWith('/listings');
+  const walletListingRoute = router.pathname.startsWith('/listing');
 
   return (
     <>
