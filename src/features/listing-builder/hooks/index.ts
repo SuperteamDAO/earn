@@ -120,12 +120,13 @@ export const useListingForm = (
         ...q,
       }));
     } catch (error) {
+      console.log('Error processSaveQueue', error);
     } finally {
+      setDraftSaving(false);
       setQueueRef((q) => ({
         ...q,
         isProcessing: false,
       }));
-      setDraftSaving(false);
       // Check if we need to process another save
       if (queueRefRef.current.shouldProcessNext) {
         // Use setTimeout to break the call stack and ensure queue state is updated

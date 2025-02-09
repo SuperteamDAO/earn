@@ -45,6 +45,8 @@ const FooterColumn = ({
           key={link.text}
           href={link.href}
           className="text-sm text-slate-500 hover:text-slate-600"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           {link.text}
         </Link>
@@ -189,6 +191,14 @@ export const Footer = () => {
               <Discord
                 link="https://discord.com/invite/Mq3ReaekgG"
                 className="text-slate-500"
+              />
+            </div>
+
+            <div>
+              <img
+                alt="Powered by Solana"
+                src="/assets/solana-powered.svg"
+                className="mt-6 w-36"
               />
             </div>
           </div>

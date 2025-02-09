@@ -263,8 +263,8 @@ importers:
         specifier: ^5.5.2
         version: 5.5.2
       posthog-js:
-        specifier: ^1.215.1
-        version: 1.215.1
+        specifier: ^1.215.4
+        version: 1.215.6
       prosemirror-model:
         specifier: ^1.19.0
         version: 1.24.0
@@ -6561,8 +6561,8 @@ packages:
     resolution: {integrity: sha512-OCVPnIObs4N29kxTjzLfUryOkvZEq+pf8jTF0lg8E7uETuWHA+v7j3c/xJmiqpX450191LlmZfUKkXxkTry7nA==}
     engines: {node: ^10 || ^12 || >=14}
 
-  posthog-js@1.215.1:
-    resolution: {integrity: sha512-C64FFbuBB1VyMRMbFj+SyFwcJ6CjsGvNbsPfrH/PO/rv+SeK3KDXMmJ4XrqEN/eZU4DEEfx0Gscqdq9v9jbhCw==}
+  posthog-js@1.215.6:
+    resolution: {integrity: sha512-OWfLYXaGNZDfKnNo9h2jifV1rsqhSfZzHw6/W6IOSk8Cq2nidIPUm89mutk7zbzPPmnVTV8eqPCfhFaoHZZKLw==}
 
   preact@10.25.4:
     resolution: {integrity: sha512-jLdZDb+Q+odkHJ+MpW/9U5cODzqnB+fy2EiHSZES7ldV5LK7yjlVzTp7R8Xy6W6y75kfK8iWYtFVH7lvjwrCMA==}
@@ -16197,7 +16197,7 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  posthog-js@1.215.1:
+  posthog-js@1.215.6:
     dependencies:
       core-js: 3.39.0
       fflate: 0.4.8

@@ -124,7 +124,7 @@ export const Podiums = () => {
       [BONUS_REWARD_POSITION]: NaN,
     };
     form?.setValue('rewards', updatedRewards);
-    form?.setValue('maxBonusSpots', undefined);
+    form?.setValue('maxBonusSpots', null);
     updateTotalReward(updatedRewards);
     scrollToBottom();
   }, [form, rewards, updateTotalReward]);
@@ -134,6 +134,7 @@ export const Podiums = () => {
     const { [BONUS_REWARD_POSITION]: removed, ...rest } = rewards;
     form?.setValue('rewards', rest);
     form?.setValue('maxBonusSpots', undefined);
+    form?.clearErrors(['maxBonusSpots', `rewards.${BONUS_REWARD_POSITION}`]);
     updateTotalReward(rest);
   }, [form, rewards, updateTotalReward]);
 
