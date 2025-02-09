@@ -113,7 +113,7 @@ function MyApp({ Component, pageProps }: any) {
   }, [user?.id]);
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const walletListingRoute = router.pathname.startsWith('/listings');
+  const walletListingRoute = router.pathname.startsWith('/listing');
 
   return (
     <>
@@ -132,25 +132,25 @@ function MyApp({ Component, pageProps }: any) {
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <style jsx global>{`
-        :root {
-          --font-sans: ${fontSans.style.fontFamily};
-          --font-mono: ${fontMono.style.fontFamily};
-        }
-        body {
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-      `}</style>
-      <PostHogProvider client={posthog}>
+    <PostHogProvider client={posthog}>
+      <QueryClientProvider client={queryClient}>
+        <style jsx global>{`
+          :root {
+            --font-sans: ${fontSans.style.fontFamily};
+            --font-mono: ${fontMono.style.fontFamily};
+          }
+          body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+        `}</style>
         <SessionProvider session={session}>
           <MyApp Component={Component} pageProps={pageProps} />
         </SessionProvider>
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
-      </PostHogProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </PostHogProvider>
   );
 }
 
