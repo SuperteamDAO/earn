@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSolanaWallets } from '@privy-io/react-auth/solana';
+import { useSignTransaction } from '@privy-io/react-auth/solana';
 import {
   Connection,
   PublicKey,
@@ -43,6 +43,7 @@ export function WithdrawFundsFlow({
   const { user } = useUser();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
+  const { signTransaction } = useSignTransaction();
 
   const form = useForm<WithdrawFormData>({
     resolver: zodResolver(withdrawFormSchema),
@@ -57,11 +58,6 @@ export function WithdrawFundsFlow({
 
   const selectedToken = tokens.find(
     (token) => token.tokenAddress === form.watch('tokenAddress'),
-  );
-
-  const { wallets } = useSolanaWallets();
-  const embeddedWallet = wallets.find(
-    (wallet) => wallet.walletClientType === 'privy',
   );
 
   async function handleWithdraw(values: WithdrawFormData) {
@@ -88,24 +84,24 @@ export function WithdrawFundsFlow({
       }).compileToV0Message();
 
       const transaction = new VersionedTransaction(message);
-      const serializedMessage = Buffer.from(
-        transaction.message.serialize(),
-      ).toString('base64');
 
-      const provider = await embeddedWallet?.getProvider();
-      const { signature: serializedUserSignature } = await provider?.request({
-        method: 'signMessage',
-        params: { message: serializedMessage },
+      const userSignedTransaction = await signTransaction({
+        transaction,
+        connection,
+        uiOptions: {
+          buttonText: 'Confirm',
+          description: 'Note that this is an irreversible action',
+          successHeader: 'We are processing your withdrawal..',
+          successDescription: 'You can close this window now',
+          transactionInfo: {
+            title: 'Confirm Withdrawal',
+            action: '',
+          },
+        },
       });
 
-      const userSignature = Buffer.from(serializedUserSignature, 'base64');
-      transaction.addSignature(
-        new PublicKey(user?.walletAddress as string),
-        userSignature,
-      );
-
       const serializedTransaction = Buffer.from(
-        transaction.serialize(),
+        userSignedTransaction.serialize(),
       ).toString('base64');
 
       const response = await api.post('/api/wallet/sign-transaction', {

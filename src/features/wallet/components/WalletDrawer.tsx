@@ -102,7 +102,7 @@ export function WalletDrawer({
               You will receive payments in this wallet each time you win.
             </p>
             <a
-              href="https://superteamdao.notion.site/Using-your-Earn-Wallet-191794d3ba338083a427f42597410106"
+              href="https://superteamdao.notion.site/using-your-earn-wallet"
               className="flex items-center text-xs font-normal text-slate-400 underline"
               target="_blank"
               rel="noopener noreferrer"
