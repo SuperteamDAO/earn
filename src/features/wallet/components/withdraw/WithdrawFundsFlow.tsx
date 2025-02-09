@@ -97,6 +97,7 @@ export function WithdrawFundsFlow({
             title: 'Confirm Withdrawal',
             action: '',
           },
+          showWalletUIs: false,
         },
       });
 
