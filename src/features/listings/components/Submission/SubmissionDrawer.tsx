@@ -93,6 +93,24 @@ export const SubmissionDrawer = ({
   const router = useRouter();
   const { query } = router;
 
+  const handleClose = () => {
+    form.reset({
+      link: '',
+      tweet: '',
+      otherInfo: '',
+      ask: null,
+      eligibilityAnswers: Array.isArray(listing.eligibility)
+        ? listing.eligibility.map((q) => ({
+            question: q.question,
+            answer: '',
+          }))
+        : [],
+      publicKey: user?.publicKey || '',
+    });
+    setTermsAccepted(false);
+    onClose();
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (editMode && id) {
@@ -170,7 +188,7 @@ export const SubmissionDrawer = ({
           ? 'Submission updated successfully'
           : 'Submission created successfully',
       );
-      onClose();
+      handleClose();
     } catch (e) {
       toast.error('Failed to submit. Please try again or contact support.');
     } finally {
@@ -222,11 +240,11 @@ export const SubmissionDrawer = ({
   }
 
   return (
-    <SideDrawer open={isOpen} onClose={onClose}>
+    <SideDrawer open={isOpen} onClose={handleClose}>
       <SideDrawerContent>
         <X
           className="absolute right-4 top-10 z-10 h-4 w-4 text-slate-400 sm:right-8 sm:top-8"
-          onClick={onClose}
+          onClick={handleClose}
         />
         <Form {...form}>
           <form
@@ -271,6 +289,7 @@ export const SubmissionDrawer = ({
                                       maxLength={500}
                                       placeholder="Add a link"
                                       className="rounded-l-none"
+                                      autoComplete="off"
                                     />
                                   </div>
                                 </FormControl>
@@ -307,6 +326,7 @@ export const SubmissionDrawer = ({
                                       maxLength={500}
                                       placeholder="Add a tweet's link"
                                       className="rounded-l-none"
+                                      autoComplete="off"
                                     />
                                   </div>
                                 </FormControl>
@@ -358,6 +378,7 @@ export const SubmissionDrawer = ({
                                         {...field}
                                         placeholder="Add a link..."
                                         className="rounded-l-none"
+                                        autoComplete="off"
                                       />
                                     </div>
                                   ) : (
