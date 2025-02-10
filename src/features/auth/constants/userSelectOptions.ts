@@ -33,6 +33,7 @@ export const userSelectOptions: Prisma.UserSelect = {
   stLead: true,
   isBlocked: true,
   role: true,
+  createdAt: true,
 
   currentSponsor: {
     select: {
