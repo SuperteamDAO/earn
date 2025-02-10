@@ -9,6 +9,7 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 async function createSubmission(
   userId: string,
@@ -34,13 +35,13 @@ async function createSubmission(
 
   const validatedData = validationResult.data;
 
-  if (validatedData.publicKey) {
+  if (validatedData.telegram) {
     await prisma.user.update({
       where: {
         id: userId,
       },
       data: {
-        publicKey: validatedData.publicKey,
+        telegram: validatedData.telegram,
       },
     });
   }
@@ -78,8 +79,10 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     otherInfo,
     eligibilityAnswers,
     ask,
-    publicKey,
+    telegram: telegramUsername,
   } = req.body;
+
+  const telegram = extractSocialUsername('telegram', telegramUsername);
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
   logger.debug(`User: ${safeStringify(userId)}`);
@@ -93,7 +96,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     const result = await createSubmission(
       userId as string,
       listingId,
-      { link, tweet, otherInfo, eligibilityAnswers, ask, publicKey },
+      { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
       listing,
     );
 

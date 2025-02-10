@@ -118,6 +118,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             username: true,
             twitter: true,
             telegram: true,
+            website: true,
             Submission: {
               select: {
                 isWinner: true,

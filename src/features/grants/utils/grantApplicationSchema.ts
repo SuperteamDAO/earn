@@ -2,7 +2,10 @@ import { z } from 'zod';
 
 import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
-import { twitterUsernameSchema } from '@/features/social/utils/schema';
+import {
+  telegramUsernameSchema,
+  twitterUsernameSchema,
+} from '@/features/social/utils/schema';
 
 export const grantApplicationSchema = (
   minReward: number,
@@ -37,6 +40,7 @@ export const grantApplicationSchema = (
       answers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
+      telegram: telegramUsernameSchema,
     })
     .superRefine((data, ctx) => {
       if (data.walletAddress) {

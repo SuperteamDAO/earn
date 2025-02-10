@@ -28,6 +28,8 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { SocialInput } from '@/features/social/components/SocialInput';
+
 import { walletFieldListings } from '../../constants';
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -136,7 +138,7 @@ export const SubmissionDrawer = ({
         otherInfo: data.otherInfo || '',
         ask: data.ask || null,
         eligibilityAnswers: data.eligibilityAnswers || [],
-        publicKey: data.publicKey,
+        telegram: data.telegram || '',
       });
 
       const hideEasterEggFromSponsorIds = [
@@ -310,7 +312,6 @@ export const SubmissionDrawer = ({
                                     />
                                   </div>
                                 </FormControl>
-
                                 <FormMessage className="pt-1" />
                               </div>
                             </FormItem>
@@ -387,6 +388,18 @@ export const SubmissionDrawer = ({
                         token={token}
                       />
                     )}
+                    {isProject && !user?.telegram && !editMode && (
+                      <SocialInput
+                        name="telegram"
+                        socialName={'telegram'}
+                        placeholder=""
+                        required
+                        formLabel="Your Telegram username"
+                        control={form.control}
+                        height="h-9"
+                        showIcon={false}
+                      />
+                    )}
                     <FormFieldWrapper
                       control={form.control}
                       name="otherInfo"
@@ -395,56 +408,6 @@ export const SubmissionDrawer = ({
                       isRichEditor
                       richEditorPlaceholder="Add info or link"
                     />
-                    {!walletFieldListings.includes(id!) && (
-                      <FormField
-                        control={form.control}
-                        name="publicKey"
-                        render={({ field }) => (
-                          <FormItem className="flex w-full flex-col gap-2">
-                            <div>
-                              <FormLabel isRequired={!user?.publicKey}>
-                                Your Solana Wallet Address
-                              </FormLabel>
-                              <FormDescription>
-                                {!!user?.publicKey ? (
-                                  <>
-                                    This is where you will receive your rewards
-                                    if you win. If you want to edit it,{' '}
-                                    <a
-                                      href={`/t/${user?.username}/edit`}
-                                      className="text-blue-600 underline hover:text-blue-700"
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      click here
-                                    </a>
-                                  </>
-                                ) : (
-                                  <>
-                                    This wallet address will be linked to your
-                                    profile and you will receive your rewards
-                                    here if you win.
-                                  </>
-                                )}
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Input
-                                className={cn(
-                                  !!user?.publicKey &&
-                                    'cursor-not-allowed text-slate-600 opacity-80',
-                                )}
-                                placeholder="Add your Solana wallet address"
-                                readOnly={!!user?.publicKey}
-                                {...(!!user?.publicKey ? {} : field)}
-                                value={user?.publicKey || field.value}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    )}
                   </div>
                 </div>
               </div>

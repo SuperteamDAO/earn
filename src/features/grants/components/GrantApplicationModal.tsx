@@ -130,6 +130,7 @@ export const GrantApplicationModal = ({
         kpi,
         twitter,
         answers,
+        telegram,
       } = data;
 
       await updateUser.mutateAsync({ publicKey: walletAddress });
@@ -149,6 +150,7 @@ export const GrantApplicationModal = ({
         ask: ask || null,
         twitter,
         answers: answers || [],
+        telegram,
       });
 
       form.reset();
@@ -313,6 +315,19 @@ export const GrantApplicationModal = ({
                     isTokenInput
                     token={token}
                   />
+
+                  {!user?.telegram && (
+                    <SocialInput
+                      name="telegram"
+                      socialName={'telegram'}
+                      placeholder=""
+                      required
+                      formLabel="Your Telegram username"
+                      control={form.control}
+                      height="h-9"
+                      showIcon={false}
+                    />
+                  )}
 
                   <FormField
                     control={form.control}
