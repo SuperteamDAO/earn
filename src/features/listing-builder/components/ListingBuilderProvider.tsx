@@ -40,7 +40,7 @@ import { TitleAndType } from './Form/TitleAndType';
 import { ListingBuilderFormLayout } from './layout/ListingBuilderFormLayout';
 import { ListingSuccessModal } from './Modals/ListingSuccessModal';
 import { PreviewListingModal } from './Modals/PreviewListingModal';
-import { UnderVerificationModal } from './Modals/UnderVerficationModal';
+import { SponsorVerification } from './SponsorVerification';
 
 function ListingEditor({
   defaultListing,
@@ -132,7 +132,7 @@ function ListingEditor({
             </div>
             <ListingSuccessModal />
             <PreviewListingModal />
-            <UnderVerificationModal />
+            <SponsorVerification />
           </ListingBuilderFormLayout>
         </form>
       </Form>
