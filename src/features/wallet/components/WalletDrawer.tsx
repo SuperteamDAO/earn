@@ -134,9 +134,9 @@ export function WalletDrawer({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Click here
+                  Learn more
                 </a>{' '}
-                to learn more about what you can do with your crypto rewards.
+                about what you can do with your rewards.
               </p>
             </div>
             <div className={cn('bg-slate-50 py-4', padding)}>
