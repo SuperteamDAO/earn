@@ -99,16 +99,17 @@ export function WalletDrawer({
               </div>
             </div>
             <p className="text-sm font-medium text-slate-500">
-              You will receive payments in this wallet each time you win.
+              You will receive payments in this wallet each time you win.{' '}
+              <a
+                href="https://superteamdao.notion.site/using-your-earn-wallet"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Click here
+              </a>{' '}
+              to learn more about what you can do with your crypto rewards.
             </p>
-            <a
-              href="https://superteamdao.notion.site/using-your-earn-wallet"
-              className="flex items-center text-xs font-normal text-slate-400 underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn more
-            </a>
           </div>
           <div className={cn('bg-slate-50 py-4', padding)}>
             <div className="flex items-baseline gap-1">
