@@ -1,5 +1,7 @@
-import { Check, ChevronDown } from 'lucide-react';
+import { Check, ChevronDown, CopyIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -22,6 +24,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { tokenList } from '@/constants/tokenList';
+import { useClipboard } from '@/hooks/use-clipboard';
 import { cn } from '@/utils/cn';
 
 import { useListingForm } from '../../../../hooks';
@@ -29,6 +32,7 @@ import { TokenLabel } from './TokenLabel';
 
 export function TokenSelect() {
   const form = useListingForm();
+  const clipboard = useClipboard('support@superteamearn.comi');
   return (
     <FormField
       name="token"
@@ -67,7 +71,32 @@ export function TokenSelect() {
               <Command>
                 <CommandInput placeholder="Search token..." className="h-9" />
                 <CommandList>
-                  <CommandEmpty>No Token found.</CommandEmpty>
+                  <CommandEmpty className="flex flex-col gap-2 py-8 text-center">
+                    <p>{`Don't see your token?`}</p>
+                    <p className="mx-auto w-1/2 sm:text-[11px]">
+                      {`Send us your token's`}{' '}
+                      <a
+                        target="_blank"
+                        href="https://coinmarketcap.com/"
+                        className="text-blue-700 hover:underline"
+                      >
+                        CoinMarketCap
+                      </a>{' '}
+                      link at
+                      <Badge
+                        variant="secondary"
+                        className="mx-1 my-0.5 inline-flex cursor-pointer items-center gap-1 border-border px-1 text-slate-500 sm:text-[11px]"
+                        onClick={() => {
+                          clipboard.onCopy();
+                          toast.success('Email Address copied to clipboard!');
+                        }}
+                      >
+                        support@superteamearn.com
+                        <CopyIcon className="h-3 w-3" />
+                      </Badge>
+                      icon to get it added.
+                    </p>
+                  </CommandEmpty>
                   <CommandGroup>
                     {tokenList.map((token) => (
                       <CommandItem
