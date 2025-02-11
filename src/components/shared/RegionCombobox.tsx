@@ -145,10 +145,7 @@ export function RegionCombobox({
     return regions;
   }, []);
   const [open, setOpen] = React.useState(false);
-
-  const isGroupedOption = (option: SelectOption): option is GroupedOption => {
-    return 'options' in option && Array.isArray(option.options);
-  };
+  const [q, setQ] = React.useState('');
 
   const findOptionByValue = (value: string): CountryOption | undefined => {
     for (const option of options) {
@@ -164,7 +161,7 @@ export function RegionCombobox({
     return undefined;
   };
 
-  const filteredOptions = React.useMemo(
+  const structuredOptions = React.useMemo(
     () =>
       options.filter((option) => {
         if (isGroupedOption(option)) {
@@ -173,6 +170,11 @@ export function RegionCombobox({
         return true;
       }),
     [options],
+  );
+
+  const filteredOptions = React.useMemo(
+    () => filterOptions(q, structuredOptions),
+    [structuredOptions, q],
   );
 
   return (
@@ -210,8 +212,12 @@ export function RegionCombobox({
       <PopoverContent
         className={cn('w-[200px] p-0', classNames?.popoverContent)}
       >
-        <Command>
-          <CommandInput placeholder="Search..." />
+        <Command shouldFilter={false}>
+          <CommandInput
+            value={q}
+            onValueChange={setQ}
+            placeholder="Search..."
+          />
           <CommandList className="max-h-[200px] md:max-h-[300px]">
             <CommandEmpty>No region found.</CommandEmpty>
             <CommandGroup>
@@ -295,4 +301,57 @@ export function RegionCombobox({
       </PopoverContent>
     </Popover>
   );
+}
+
+const isGroupedOption = (option: SelectOption): option is GroupedOption => {
+  return 'options' in option && Array.isArray(option.options);
+};
+
+/**
+ * Filters and ranks options based on search query
+ * @param query Search query string
+ * @param options Array of options to filter
+ * @returns Filtered and ranked options array
+ */
+function filterOptions(query: string, options: SelectOption[]): SelectOption[] {
+  if (!query) return options;
+
+  const normalizedQuery = query.toLowerCase().trim();
+
+  const getMatchScore = (str: string, searchStr: string): number => {
+    const normalizedStr = str.toLowerCase();
+
+    if (normalizedStr === searchStr) return 100;
+
+    if (normalizedStr.startsWith(searchStr)) return 75;
+
+    if (new RegExp(`\\b${searchStr}`).test(normalizedStr)) return 50;
+
+    if (normalizedStr.includes(searchStr)) return 25;
+
+    return 0;
+  };
+
+  return options
+    .map((option) => {
+      if (isGroupedOption(option)) {
+        const filteredOptions = option.options
+          .map((item) => ({
+            ...item,
+            score: getMatchScore(item.label, normalizedQuery),
+          }))
+          .filter((item) => item.score > 0)
+          .sort((a, b) => b.score - a.score)
+          .map(({ score: _score, ...item }) => item);
+
+        return filteredOptions.length > 0
+          ? { ...option, options: filteredOptions }
+          : null;
+      }
+
+      const score = getMatchScore(option.label, normalizedQuery);
+
+      return score > 0 ? option : null;
+    })
+    .filter((option): option is SelectOption => option !== null);
 }
