@@ -64,8 +64,8 @@ export const SponsorVerificationForm = () => {
   };
 
   return (
-    <SideDrawer open={true} onClose={() => null}>
-      <SideDrawerContent className="h-svh sm:max-w-lg sm:px-4">
+    <SideDrawer isOpen={true} onClose={() => null}>
+      <SideDrawerContent className="overflow-auto py-6 sm:max-w-lg sm:px-6">
         {!hasFilledVerificationInfo ? (
           <div className="flex h-full flex-col">
             <div className="w-fit rounded-full bg-blue-50 p-6">
@@ -175,11 +175,10 @@ export const SponsorVerificationForm = () => {
                     </FormItem>
                   )}
                 />
-
-                <div className="flex h-full w-full flex-col justify-end">
+                <div className="flex w-full flex-col pb-4 pt-8">
                   <Button
                     type="submit"
-                    className="mt-auto w-full"
+                    className="w-full"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit'}

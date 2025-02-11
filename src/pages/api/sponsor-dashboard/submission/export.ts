@@ -82,11 +82,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         Name: `${user.firstName} ${user.lastName}`,
         'Submission Link': submission.link || '',
         ...eligibility,
+        'Anything Else': submission.otherInfo || '',
         Ask: submission.ask || '',
         'Tweet Link': submission.tweet || '',
         'Email ID': user.email,
         'User Twitter': user.twitter || '',
-        'User Wallet': user.publicKey,
+        'User Wallet': user.walletAddress,
         Label: submission.label,
         'Winner Position': submission.isWinner
           ? submission.winnerPosition === BONUS_REWARD_POSITION

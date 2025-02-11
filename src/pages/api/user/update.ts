@@ -4,9 +4,8 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
 
-import { userSelectOptions } from '@/features/auth/constants';
+import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 
@@ -25,7 +24,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const allowedFields = ['featureModalShown', 'publicKey', 'acceptedTOS'];
+    const allowedFields = ['featureModalShown', 'acceptedTOS'];
 
     if (user.role === 'GOD') {
       allowedFields.push('currentSponsorId', 'hackathonId');
@@ -38,19 +37,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res
         .status(400)
         .json({ error: 'No valid fields provided for update' });
-    }
-
-    if ('publicKey' in updatedData) {
-      const walletValidation = validateSolanaAddress(updatedData.publicKey);
-
-      if (!walletValidation.isValid) {
-        logger.warn(`Invalid public key provided for user ID: ${userId}`);
-        return res.status(400).json({
-          error: 'Invalid Wallet Address',
-          message:
-            walletValidation.error || 'Invalid Solana wallet address provided.',
-        });
-      }
     }
 
     logger.info(`Updating user with data: ${safeStringify(updatedData)}`);

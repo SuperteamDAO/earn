@@ -317,7 +317,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
                 onClick={() => handleSuggestionClick(suggestion)}
               >
                 {suggestion.label}
-                <Plus className="text-slate.500 !h-3 !w-3" />
+                <Plus className="!h-3 !w-3 text-slate-500" />
               </Button>
             ))}
           </div>

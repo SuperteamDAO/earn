@@ -27,21 +27,21 @@ const submissionSchema = (
       eligibilityAnswers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
-      telegram: telegramUsernameSchema,
+      telegram:
+        !user?.telegram && listing?.type === 'project'
+          ? telegramUsernameSchema
+          : z.string().nullable().optional(),
     })
     .superRefine((data, ctx) => {
-      if (
-        user &&
-        !user?.telegram &&
-        !data.telegram &&
-        listing.type === 'project'
-      ) {
+      const requiresTelegram = listing.type === 'project' && !user?.telegram;
+      if (requiresTelegram && !data.telegram) {
         ctx.addIssue({
           code: 'custom',
           path: ['telegram'],
           message: 'Telegram is required',
         });
       }
+
       if (
         listing.type !== 'project' &&
         !data.link &&

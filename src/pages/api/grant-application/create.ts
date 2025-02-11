@@ -19,6 +19,10 @@ async function createGrantApplication(
   data: any,
   grant: any,
 ) {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+  });
+
   const validationResult = grantApplicationSchema(
     grant.minReward,
     grant.maxReward,
@@ -38,14 +42,10 @@ async function createGrantApplication(
 
   const validatedData = validationResult.data;
 
-  if (validatedData.telegram) {
+  if (validatedData.telegram && !user.telegram) {
     await prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        telegram: validatedData.telegram,
-      },
+      where: { id: userId },
+      data: { telegram: validatedData.telegram },
     });
   }
 
@@ -59,7 +59,6 @@ async function createGrantApplication(
     proofOfWork: validatedData.proofOfWork,
     milestones: validatedData.milestones,
     kpi: validatedData.kpi,
-    walletAddress: validatedData.walletAddress,
     ask: validatedData.ask,
     twitter: validatedData.twitter,
     answers: validatedData.answers || [],
@@ -74,6 +73,7 @@ async function createGrantApplication(
           lastName: true,
           email: true,
           discord: true,
+          walletAddress: true,
           location: true,
         },
       },

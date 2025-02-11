@@ -17,11 +17,10 @@ async function createSubmission(
   data: any,
   listing: any,
 ) {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
   });
+
   const validationResult = submissionSchema(
     listing,
     listing.minRewardAsk || 0,
@@ -35,14 +34,10 @@ async function createSubmission(
 
   const validatedData = validationResult.data;
 
-  if (validatedData.telegram) {
+  if (validatedData.telegram && !user.telegram) {
     await prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        telegram: validatedData.telegram,
-      },
+      where: { id: userId },
+      data: { telegram: validatedData.telegram },
     });
   }
 
@@ -81,8 +76,10 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     ask,
     telegram: telegramUsername,
   } = req.body;
-
   const telegram = extractSocialUsername('telegram', telegramUsername);
+  console.log('telegramUsername', telegramUsername);
+
+  console.log('telegram', telegram);
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
   logger.debug(`User: ${safeStringify(userId)}`);

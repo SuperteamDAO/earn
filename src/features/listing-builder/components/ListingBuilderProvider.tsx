@@ -1,7 +1,6 @@
 import { type BountyType, type Hackathon } from '@prisma/client';
 import { Provider, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 import { Form } from '@/components/ui/form';
@@ -154,9 +153,8 @@ function ListingBuilderProvider({
   listing,
   hackathon,
 }: Props) {
-  const { data: session } = useSession();
   const { user } = useUser();
-  const isGod = session?.user.role === 'GOD';
+  const isGod = user?.role === 'GOD';
   const isST = !!user?.currentSponsor?.st;
 
   const params = useSearchParams();

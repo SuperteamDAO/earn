@@ -1,8 +1,8 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { Lock, MessageSquare, Plus, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import {
   type ReactNode,
@@ -17,7 +17,6 @@ import { MdList, MdOutlineChatBubbleOutline } from 'react-icons/md';
 import { RiUserSettingsLine } from 'react-icons/ri';
 
 import { EntityNameModal } from '@/components/modals/EntityNameModal';
-import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -53,7 +52,7 @@ export function SponsorLayout({
   isCollapsible?: boolean;
 }) {
   const { user } = useUser();
-  const { data: session, status } = useSession();
+  const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -110,30 +109,27 @@ export function SponsorLayout({
           !user?.telegram)
       ) {
         onSponsorInfoModalOpen();
-      } else if (
-        !user?.currentSponsor?.entityName &&
-        session?.user.role !== 'GOD'
-      ) {
+      } else if (!user?.currentSponsor?.entityName && user?.role !== 'GOD') {
         setIsEntityModalOpen(true);
       } else {
         setIsEntityModalOpen(false);
       }
     };
     modalsToShow();
-  }, [user, session]);
+  }, [user]);
 
   useEffect(() => {
-    if (status === 'authenticated' && !user?.currentSponsorId) {
+    if (authenticated && !user?.currentSponsorId) {
       router.push('/');
     }
-  }, [user, status]);
+  }, [user, authenticated]);
 
-  if (!session && status === 'loading') {
+  if (!ready) {
     return <LoadingSection />;
   }
 
-  if (!session && status === 'unauthenticated') {
-    return <Login hideCloseIcon isOpen={true} onClose={() => {}} />;
+  if (ready && !authenticated) {
+    return <Login isOpen={true} onClose={() => {}} />;
   }
 
   const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
@@ -179,10 +175,10 @@ export function SponsorLayout({
 
   const showLoading = !isHackathonRoute
     ? !user?.currentSponsor?.id
-    : !user?.hackathonId && session?.user?.role !== 'GOD';
+    : !user?.hackathonId && user?.role !== 'GOD';
 
   const showContent = isHackathonRoute
-    ? user?.hackathonId || session?.user?.role === 'GOD'
+    ? user?.hackathonId || user?.role === 'GOD'
     : user?.currentSponsor?.id;
 
   return (
@@ -196,7 +192,6 @@ export function SponsorLayout({
         />
       }
     >
-      <FeatureModal isSponsorsRoute />
       <SponsorInfoModal
         onClose={onSponsorInfoModalClose}
         isOpen={isSponsorInfoModalOpen}
@@ -223,7 +218,7 @@ export function SponsorLayout({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          {session?.user?.role === 'GOD' && (
+          {user?.role === 'GOD' && (
             <div className={cn('pb-6', isExpanded ? 'pl-6 pr-4' : 'px-4')}>
               {isHackathonRoute ? (
                 <SelectHackathon isExpanded={isExpanded} />
@@ -248,7 +243,7 @@ export function SponsorLayout({
                   !(
                     isCreateListingAllowed !== undefined &&
                     isCreateListingAllowed === false &&
-                    session?.user.role !== 'GOD'
+                    user?.role !== 'GOD'
                   )
                 }
               >
@@ -260,7 +255,7 @@ export function SponsorLayout({
                   disabled={
                     isCreateListingAllowed !== undefined &&
                     isCreateListingAllowed === false &&
-                    session?.user.role !== 'GOD'
+                    user?.role !== 'GOD'
                   }
                   onClick={() => {
                     posthog.capture('create new listing_sponsor');
@@ -281,9 +276,7 @@ export function SponsorLayout({
                   </p>
                   {isCreateListingAllowed !== undefined &&
                     isCreateListingAllowed === false &&
-                    session?.user.role !== 'GOD' && (
-                      <Lock className="h-4 w-4" />
-                    )}
+                    user?.role !== 'GOD' && <Lock className="h-4 w-4" />}
                 </Button>
               </Tooltip>
             ) : (
