@@ -110,7 +110,7 @@ export const SponsorInfoModal = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => onClose()} modal>
+    <Dialog open={isOpen} onOpenChange={() => null} modal>
       <DialogContent className="px-6 py-5 sm:max-w-xl">
         <h2 className="mb-3 text-xl font-semibold tracking-tight text-gray-900">
           Complete Your Profile
@@ -156,6 +156,7 @@ export const SponsorInfoModal = ({
                 required
                 control={form.control}
                 height="h-9"
+                showIcon={false}
               />
             </div>
 

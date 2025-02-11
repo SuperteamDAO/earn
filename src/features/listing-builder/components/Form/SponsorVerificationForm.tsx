@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { MdPendingActions } from 'react-icons/md';
@@ -41,6 +42,7 @@ export const SponsorVerificationForm = () => {
   const { user } = useUser();
 
   const hasFilledVerificationInfo = !!user?.currentSponsor?.verificationInfo;
+  const commitToDeadline = form.watch('commitToDeadline');
 
   const onSubmit = async (
     values: z.infer<typeof sponsorVerificationSchema>,
@@ -71,10 +73,10 @@ export const SponsorVerificationForm = () => {
             <div className="w-fit rounded-full bg-blue-50 p-6">
               <VerifiedBadge style={{ width: '30px', height: '30px' }} />
             </div>
-            <p className="my-6 text-xl font-semibold text-slate-900">
+            <p className="my-4 text-xl font-semibold text-slate-900">
               We’ll need to verify your listing before it can be published
             </p>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-500">
               It’s important for us to verify new sponsors to keep the platform
               free of any bad actors and maintain trust. Please share the
               following information with us, and we will try to verify your
@@ -82,14 +84,13 @@ export const SponsorVerificationForm = () => {
             </p>
             <p className="mt-2 text-sm text-slate-400">
               Once verified, your listing will be published automatically. If we
-              need any additional information, we will get in touch with you via
-              email or telegram.
+              need any additional information, we will get in touch with you.
             </p>
 
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="mt-6 space-y-6"
+                className="mt-6 space-y-4"
               >
                 <FormField
                   control={form.control}
@@ -171,6 +172,12 @@ export const SponsorVerificationForm = () => {
                           </FormItem>
                         </RadioGroup>
                       </FormControl>
+                      {commitToDeadline === 'no' && (
+                        <p className="mt-2 text-sm text-red-500">
+                          You must commit to the one-week deadline to proceed
+                          with verification
+                        </p>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -179,7 +186,7 @@ export const SponsorVerificationForm = () => {
                   <Button
                     type="submit"
                     className="w-full"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || commitToDeadline !== 'yes'}
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit'}
                   </Button>
@@ -188,7 +195,7 @@ export const SponsorVerificationForm = () => {
             </Form>
           </div>
         ) : (
-          <div className="flex h-svh flex-col items-center justify-center gap-2 px-4 text-center">
+          <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center">
             <div className="mb-4 flex h-fit w-fit rounded-full bg-slate-100 p-5">
               <MdPendingActions className="text-slate-500" size={36} />
             </div>
@@ -199,6 +206,11 @@ export const SponsorVerificationForm = () => {
               We’re currently reviewing your listing! This shouldn’t take long.
               We’ll notify you about your verification status via email.
             </p>
+            <div className="w-full pt-8">
+              <Link href="/dashboard/listings" className="w-full">
+                <Button className="w-full">Understood</Button>
+              </Link>
+            </div>
           </div>
         )}
       </SideDrawerContent>
