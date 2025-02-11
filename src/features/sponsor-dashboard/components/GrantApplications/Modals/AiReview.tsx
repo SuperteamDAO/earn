@@ -44,7 +44,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
   const [progress, setProgress] = useState(0);
   const [completedStats, setCompletedStats] = useState({
     totalReviewed: 0,
-    spam: 0,
+    lowQuality: 0,
     shortlisted: 0,
     unmarked: 0,
     totalHoursSaved: 0,
@@ -63,6 +63,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
   );
 
   const nonAnalysedApplications = useMemo(() => {
+    console.log('unreviewedApplications', unreviewedApplications);
     return unreviewedApplications?.filter(
       (appl) => !(appl.ai as GrantApplicationAi)?.review,
     );
@@ -73,7 +74,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
   }, [unreviewedApplications]);
 
   const estimatedTime = useMemo(() => {
-    return estimateTime(unreviewedApplications?.length || 0);
+    return estimateTime(nonAnalysedApplications?.length || 1);
   }, [unreviewedApplications?.length]);
 
   const onReviewClick = useCallback(async () => {
@@ -119,7 +120,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
         console.log('commit data - ', data.data);
         setCompletedStats({
           totalReviewed: data.data.length,
-          spam: data.data.filter((s) => s.label === 'Spam').length,
+          lowQuality: data.data.filter((s) => s.label === 'Low_Quality').length,
           shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
             .length,
           unmarked: data.data.filter(
@@ -146,38 +147,47 @@ export default function AiReviewModal({ applications, grant }: Props) {
           <Check className="h-5 w-5 text-[#AEAEAE]" strokeWidth={3} />
           <span className="text-base font-medium">AI Review Completed</span>
         </div>
-        <p className="text-sm text-slate-500">
-          We&apos;ve marked the submissions as{' '}
-          <span
-            className={cn(
-              'ml-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
-              colorMap['Spam'].bg,
-              colorMap['Spam'].color,
-            )}
-          >
-            Spam
-          </span>
-          <span
-            className={cn(
-              'ml-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
-              colorMap['Shortlisted'].bg,
-              colorMap['Shortlisted'].color,
-            )}
-          >
-            Shortlisted
-          </span>
-          <span
-            className={cn(
-              'mx-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
-              colorMap['Reviewed'].bg,
-              colorMap['Reviewed'].color,
-            )}
-          >
-            Reviewed
-          </span>
-          please review before announcing winners, as AI can make mistakes.
-        </p>
+        <div className="text-sm text-slate-500">
+          <p>
+            {`We've added review notes and labelled the submissions as `}
+            <span
+              className={cn(
+                'ml-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
+                colorMap['Low_Quality'].bg,
+                colorMap['Low_Quality'].color,
+              )}
+            >
+              Low Quality
+            </span>
+            <span
+              className={cn(
+                'ml-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
+                colorMap['Shortlisted'].bg,
+                colorMap['Shortlisted'].color,
+              )}
+            >
+              Shortlisted
+            </span>
+            <span
+              className={cn(
+                'mx-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
+                colorMap['Reviewed'].bg,
+                colorMap['Reviewed'].color,
+              )}
+            >
+              Reviewed
+            </span>
+          </p>
+          <p>
+            Please review before announcing winners, as AI can make mistakes.
+          </p>
+        </div>
       </div>,
+      {
+        duration: Infinity,
+        closeButton: true,
+        className: 'w-[24rem] right-0',
+      },
     );
     setOpen(false);
   }
@@ -202,25 +212,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
               <div className="group relative inline-flex h-10 overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] bg-background p-[1.5px] pb-[1.8px] shadow-[0px_2px_2.3px_0px_#0000002B] focus:outline-none">
                 <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
                 <span className="inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-background px-4 py-1 text-sm font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
-                  <svg
-                    width="16"
-                    height="14"
-                    viewBox="0 0 16 14"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g clipPath="url(#clip0_2_520)">
-                      <path
-                        d="M6.51944 1.16758L5.47222 1.55313C5.38889 1.5832 5.33333 1.6625 5.33333 1.75C5.33333 1.8375 5.38889 1.9168 5.47222 1.94687L6.51944 2.33242L6.91111 3.36328C6.94167 3.44531 7.02222 3.5 7.11111 3.5C7.2 3.5 7.28056 3.44531 7.31111 3.36328L7.70278 2.33242L8.75 1.94687C8.83333 1.9168 8.88889 1.8375 8.88889 1.75C8.88889 1.6625 8.83333 1.5832 8.75 1.55313L7.70278 1.16758L7.31111 0.136719C7.28056 0.0546875 7.2 0 7.11111 0C7.02222 0 6.94167 0.0546875 6.91111 0.136719L6.51944 1.16758ZM1.28056 10.8117C0.761111 11.323 0.761111 12.1543 1.28056 12.6684L2.24167 13.6145C2.76111 14.1258 3.60556 14.1258 4.12778 13.6145L14.7194 3.18555C15.2389 2.67422 15.2389 1.84297 14.7194 1.32891L13.7583 0.385547C13.2389 -0.125781 12.3944 -0.125781 11.8722 0.385547L1.28056 10.8117ZM13.4611 2.25859L10.5444 5.12969L9.89722 4.49258L12.8139 1.62148L13.4611 2.25859ZM0.208333 3.20469C0.0833333 3.25117 0 3.36875 0 3.5C0 3.63125 0.0833333 3.74883 0.208333 3.79531L1.77778 4.375L2.36667 5.91992C2.41389 6.04297 2.53333 6.125 2.66667 6.125C2.8 6.125 2.91944 6.04297 2.96667 5.91992L3.55556 4.375L5.125 3.79531C5.25 3.74883 5.33333 3.63125 5.33333 3.5C5.33333 3.36875 5.25 3.25117 5.125 3.20469L3.55556 2.625L2.96667 1.08008C2.91944 0.957031 2.8 0.875 2.66667 0.875C2.53333 0.875 2.41389 0.957031 2.36667 1.08008L1.77778 2.625L0.208333 3.20469ZM9.98611 10.2047C9.86111 10.2512 9.77778 10.3687 9.77778 10.5C9.77778 10.6313 9.86111 10.7488 9.98611 10.7953L11.5556 11.375L12.1444 12.9199C12.1917 13.043 12.3111 13.125 12.4444 13.125C12.5778 13.125 12.6972 13.043 12.7444 12.9199L13.3333 11.375L14.9028 10.7953C15.0278 10.7488 15.1111 10.6313 15.1111 10.5C15.1111 10.3687 15.0278 10.2512 14.9028 10.2047L13.3333 9.625L12.7444 8.08008C12.6972 7.95703 12.5778 7.875 12.4444 7.875C12.3111 7.875 12.1917 7.95703 12.1444 8.08008L11.5556 9.625L9.98611 10.2047Z"
-                        fill="#90A1B9"
-                      />
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_2_520">
-                        <rect width="16" height="14" fill="white" />
-                      </clipPath>
-                    </defs>
-                  </svg>
+                  <img src="/assets/ai-wand.svg" alt="Auto Review AI" />
                   Auto Review
                 </span>
               </div>
@@ -283,19 +275,6 @@ export default function AiReviewModal({ applications, grant }: Props) {
                       <span className="rounded-full bg-green-100 px-2 py-0 text-sm text-green-700">
                         Free
                       </span>
-
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M8.00334 14.6687C4.32134 14.6687 1.33667 11.684 1.33667 8.00199C1.33667 4.31999 4.32134 1.33533 8.00334 1.33533C11.6853 1.33533 14.67 4.31999 14.67 8.00199C14.67 11.684 11.6853 14.6687 8.00334 14.6687ZM8.00334 5.17333L5.17467 8.00199L8.00334 10.83L10.8313 8.00199L8.00334 5.17333Z"
-                          fill="#CB76FF"
-                        />
-                      </svg>
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-slate-500">
@@ -317,7 +296,8 @@ export default function AiReviewModal({ applications, grant }: Props) {
                 </Button>
 
                 <p className="mt-2 text-center text-sm text-muted-foreground">
-                  AI can make mistakes. Check important info.
+                  AI can make mistakes, and cannot access external links in
+                  applications. Check important info.
                 </p>
               </CardFooter>
             </>
@@ -335,8 +315,8 @@ export default function AiReviewModal({ applications, grant }: Props) {
 
                 <div className="text-center">
                   <p className="text-sm font-medium text-slate-500">
-                    We&apos;re reviewing your submissions right now, sitback
-                    relax, grab some coffee
+                    {`We're reviewing your submissions right now. Sit back and
+                    relax, or contemplate your life choices for a moment.`}
                   </p>
                 </div>
               </CardContent>
@@ -359,7 +339,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
                     Successfully Reviewed
                   </h2>
                   <p className="mx-auto w-4/5 text-sm text-slate-500">
-                    Remember AI can make mistakes. Check before finalizing
+                    Remember, AI can make mistakes. Check before finalizing.
                   </p>
                 </div>
 
@@ -370,29 +350,27 @@ export default function AiReviewModal({ applications, grant }: Props) {
                     dotColor="bg-yellow-400"
                   />
                   <StatItem
-                    label="Spam"
-                    value={completedStats.spam}
-                    dotColor="bg-red-400"
-                  />
-                  <StatItem
                     label="Shortlisted"
                     value={completedStats.shortlisted}
                     dotColor="bg-green-400"
                   />
                   <StatItem
-                    label="Unmarked"
+                    label="Low Quality"
+                    value={completedStats.lowQuality}
+                    dotColor="bg-red-400"
+                  />
+                  <StatItem
+                    label="Reviewed"
                     value={completedStats.unmarked}
                     dotColor="bg-blue-200"
                     post={
                       <>
                         <span
                           className={cn(
-                            'mx-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
-                            colorMap['Reviewed'].bg,
-                            colorMap['Reviewed'].color,
+                            'inline-flex w-fit whitespace-nowrap text-center text-xs text-slate-500',
                           )}
                         >
-                          Reviewed
+                          (neither low quality nor shortlisted)
                         </span>
                       </>
                     }
@@ -455,7 +433,7 @@ const StatItem = ({ label, post, value, dotColor }: StatItemProps) => (
   <div className="flex w-full items-center justify-between">
     <div className="flex items-center gap-2">
       <div className={`h-2 w-2 rounded-full ${dotColor}`} />
-      <span className="text-[#62748e]">{label}</span>
+      <span className="text-slate-500">{label}</span>
       {post}
     </div>
     <span className="font-medium text-[#0f172b]">{value}</span>
@@ -472,8 +450,8 @@ function formatTime(milliseconds: number): string {
   return `${hours}h ${minutes}m`;
 }
 function estimateTime(totalApplications: number): string {
-  const lowerBoundSeconds = totalApplications * 20;
-  const upperBoundSeconds = totalApplications * 30;
+  const lowerBoundSeconds = totalApplications * 10;
+  const upperBoundSeconds = totalApplications * 20;
 
   if (upperBoundSeconds < 60) {
     return `~${lowerBoundSeconds}-${upperBoundSeconds}s`;

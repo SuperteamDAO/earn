@@ -8,9 +8,6 @@ const earncognitoClient: AxiosInstance = axios.create({
   baseURL: earncognitoUrl,
 });
 
-console.log('earncognitoUrl', earncognitoUrl);
-console.log('earncognitoSecret', earncognitoSecret);
-
 if (!earncognitoUrl || !earncognitoSecret) {
   throw new Error('EARNCOGNITO_URL or EARNCOGNITO_SECRET is not set');
 }

@@ -2,6 +2,7 @@ import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
+import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +16,7 @@ import { cn } from '@/utils/cn';
 
 import { selectedGrantApplicationAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';
-import { type GrantApplicationWithUser } from '../../types';
+import { type GrantApplicationsReturn } from '../../queries/applications';
 import { colorMap } from '../../utils/statusColorMap';
 
 interface Props {
@@ -26,6 +27,17 @@ export const SelectLabel = ({ grantSlug }: Props) => {
   const queryClient = useQueryClient();
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
+  );
+
+  const labelMenuOptionsGrants = useMemo(
+    () => [
+      ...labelMenuOptions.filter((s) => !['Spam'].includes(s.value)),
+      {
+        label: 'Low Quality',
+        value: 'Low_Quality',
+      },
+    ],
+    [],
   );
 
   const selectLabel = async (
@@ -48,14 +60,20 @@ export const SelectLabel = ({ grantSlug }: Props) => {
         label,
       }),
     onSuccess: (_, variables) => {
-      queryClient.setQueryData<GrantApplicationWithUser[]>(
+      queryClient.setQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', grantSlug],
-        (old) =>
-          old?.map((application) =>
+        (old) => {
+          if (!old) return old;
+          const data = old?.data.map((application) =>
             application.id === variables.id
               ? { ...application, label: variables.label }
               : application,
-          ),
+          );
+          return {
+            ...old,
+            data,
+          };
+        },
       );
 
       setSelectedApplication((prev) =>
@@ -90,7 +108,7 @@ export const SelectLabel = ({ grantSlug }: Props) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="border-slate-300">
-        {labelMenuOptions.map((option) => (
+        {labelMenuOptionsGrants.map((option) => (
           <DropdownMenuItem
             key={option.value}
             className="focus:bg-slate-100"

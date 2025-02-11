@@ -7,6 +7,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { api } from '@/lib/api';
 
+import { type GrantApplicationAi } from '@/features/grants/types';
+
 import { selectedGrantApplicationAtom } from '../../atoms';
 import { type GrantApplicationWithUser } from '../../types';
 
@@ -111,7 +113,12 @@ export const Notes = ({ slug }: Props) => {
   return (
     <div className="flex w-full flex-col items-start">
       <div className="mb-2 flex w-full items-center justify-between text-slate-400">
-        <span className="font-extrabold">Review Notes</span>
+        <div className="flex gap-2">
+          {(selectedApplication?.ai as GrantApplicationAi)?.commited && (
+            <img src="/assets/ai-wand.svg" alt="Auto Review AI" />
+          )}
+          <span className="font-extrabold">Review Notes</span>
+        </div>
         {isSaving ? (
           <Loader2 className="h-3 w-3 animate-spin" />
         ) : (

@@ -70,7 +70,11 @@ export async function POST(request: NextRequest) {
           },
           data: {
             label: aiReview?.predictedLabel,
-            notes: '• ' + aiReview?.shortNote,
+            notes: aiReview?.shortNote
+              .split(/(?<=[.!?])\s+/)
+              .filter((sentence) => sentence.trim().length > 0)
+              .map((sentence) => `• ${sentence.trim()}`)
+              .join('\n'),
             ai: commitedAi,
           },
         });

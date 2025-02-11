@@ -26,6 +26,7 @@ import {
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantApplicationAtom } from '../../atoms';
+import { type GrantApplicationsReturn } from '../../queries/applications';
 import { type GrantApplicationWithUser } from '../../types';
 import { InfoBox } from '../InfoBox';
 import { MarkCompleted } from './MarkCompleted';
@@ -78,14 +79,20 @@ export const ApplicationDetails = ({
   ) => {
     setSelectedApplication(updatedApplication);
 
-    queryClient.setQueryData<GrantApplicationWithUser[]>(
+    queryClient.setQueryData<GrantApplicationsReturn>(
       ['sponsor-applications', grant?.slug, params],
-      (oldData) =>
-        oldData?.map((application) =>
+      (oldData) => {
+        if (!oldData) return oldData;
+        const data = oldData?.data.map((application) =>
           application.id === updatedApplication.id
             ? updatedApplication
             : application,
-        ),
+        );
+        return {
+          ...oldData,
+          data,
+        };
+      },
     );
   };
 
@@ -129,7 +136,7 @@ export const ApplicationDetails = ({
                 />
                 <div>
                   <p className="w-full whitespace-nowrap text-base font-medium text-slate-900">
-                    {`${selectedApplication?.user?.firstName}'s Application`}
+                    {`${selectedApplication?.user?.firstName}`}
                   </p>
                   <Link
                     href={`/t/${selectedApplication?.user?.username}`}

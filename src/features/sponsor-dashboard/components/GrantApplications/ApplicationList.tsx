@@ -81,8 +81,16 @@ export const ApplicationList = ({
   }
 
   const applicationLabels = useMemo(
-    () => labelMenuOptions.filter((l) => l.value !== 'Unreviewed'),
-    [labelMenuOptions],
+    () => [
+      ...labelMenuOptions.filter(
+        (s) => !['Spam', 'Unreviewed'].includes(s.value),
+      ),
+      {
+        label: 'Low Quality',
+        value: 'Low_Quality',
+      },
+    ],
+    [],
   );
 
   return (
@@ -179,8 +187,10 @@ export const ApplicationList = ({
       </div>
       {applications?.map((application) => {
         const applicationStatus = application?.applicationStatus;
-        const { bg, color } =
+        const applicationLabel = application?.label;
+        const { bg: statusBg, color: statusColor } =
           colorMap[applicationStatus as GrantApplicationStatus];
+        const { bg: labelBg, color: labelColor } = colorMap[applicationLabel];
         return (
           <div
             key={application?.id}
@@ -218,15 +228,26 @@ export const ApplicationList = ({
               </div>
             </div>
 
-            <span
-              className={cn(
-                'inline-flex whitespace-nowrap rounded-full px-3 py-1 text-center text-[11px] capitalize',
-                bg,
-                color,
-              )}
-            >
-              {applicationStatus}
-            </span>
+            <div className="ml-auto flex w-min flex-col justify-end gap-1 align-bottom">
+              <span
+                className={cn(
+                  'ml-auto inline-flex w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-center text-[9px] capitalize',
+                  statusBg,
+                  statusColor,
+                )}
+              >
+                {applicationStatus}
+              </span>
+              <span
+                className={cn(
+                  'ml-auto inline-flex w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-center text-[9px] capitalize',
+                  labelBg,
+                  labelColor,
+                )}
+              >
+                {applicationLabel}
+              </span>
+            </div>
           </div>
         );
       })}
