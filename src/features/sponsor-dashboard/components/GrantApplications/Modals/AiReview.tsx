@@ -385,7 +385,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
                     }
                   />
                   <StatItem
-                    label="Total Hours Saved"
+                    label="Total time saved"
                     value={formatTime(completedStats.totalHoursSaved)}
                     dotColor="bg-gray-300"
                   />
