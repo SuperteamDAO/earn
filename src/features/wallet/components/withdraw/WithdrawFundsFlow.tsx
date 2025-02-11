@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMfaEnrollment, usePrivy } from '@privy-io/react-auth';
 import { useSignTransaction } from '@privy-io/react-auth/solana';
 import {
   Connection,
@@ -43,6 +44,10 @@ export function WithdrawFundsFlow({
   const { user } = useUser();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
+
+  const { user: privyUser } = usePrivy();
+
+  const { showMfaEnrollmentModal } = useMfaEnrollment();
   const { signTransaction } = useSignTransaction();
 
   const form = useForm<WithdrawFormData>({
@@ -61,6 +66,9 @@ export function WithdrawFundsFlow({
   );
 
   async function handleWithdraw(values: WithdrawFormData) {
+    if (privyUser?.mfaMethods.length === 0) {
+      await showMfaEnrollmentModal();
+    }
     setIsProcessing(true);
     setError('');
     try {
