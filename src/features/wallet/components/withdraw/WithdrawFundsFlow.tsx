@@ -66,12 +66,12 @@ export function WithdrawFundsFlow({
   );
 
   async function handleWithdraw(values: WithdrawFormData) {
-    if (privyUser?.mfaMethods.length === 0) {
-      await showMfaEnrollmentModal();
-    }
     setIsProcessing(true);
     setError('');
     try {
+      if (privyUser?.mfaMethods.length === 0) {
+        await showMfaEnrollmentModal();
+      }
       const connection = new Connection(
         `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
       );
