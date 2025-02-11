@@ -59,13 +59,7 @@ const CustomNumberInput = ({
     }
 
     const numericValue = parseFloat(newValue);
-    if (
-      !isNaN(numericValue) &&
-      numericValue >= min &&
-      (max === undefined || numericValue <= max)
-    ) {
-      onChange(numericValue);
-    }
+    onChange(numericValue);
   };
 
   return (
@@ -129,7 +123,7 @@ export const ApproveModal = ({
   const handleAmountChange = (value: number) => {
     if (value > (ask as number)) {
       setWarningMessage(
-        'Approved amount is greater than the requested amount. Are you sure you want to approve?',
+        'Approved amount is greater than the requested amount.',
       );
     } else {
       setWarningMessage(null);
@@ -223,7 +217,7 @@ export const ApproveModal = ({
 
           <Button
             className="mb-3 mt-2 w-full bg-[#079669] text-white hover:bg-[#079669]/90"
-            disabled={loading || approvedAmount === 0}
+            disabled={loading || approvedAmount === 0 || !!warningMessage}
             onClick={approveGrant}
           >
             {loading ? (
