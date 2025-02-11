@@ -75,15 +75,22 @@ export default function AiReviewModal({ applications, grant }: Props) {
 
   const estimatedTime = useMemo(() => {
     return estimateTime(nonAnalysedApplications?.length || 1);
-  }, [unreviewedApplications?.length]);
+  }, [nonAnalysedApplications?.length]);
+
+  const [estimatedTimeSingular, setEstimatedTimeSingular] = useState('~0mins');
+  useMemo(() => {
+    return estimateTime(nonAnalysedApplications?.length || 1, true);
+  }, [nonAnalysedApplications?.length]);
 
   const onReviewClick = useCallback(async () => {
     setState('PROCESSING');
 
     const batchSize = 5;
+    const initalSize = nonAnalysedApplications?.length || 0;
 
     console.log('nonAnalysedApplications - ', nonAnalysedApplications);
     if (nonAnalysedApplications && nonAnalysedApplications.length > 0) {
+      setEstimatedTimeSingular(estimateTime(initalSize || 1, true));
       const totalApplications = nonAnalysedApplications.length;
       let processedApplications = 0;
       const batchedApplications = chunkArray(
@@ -101,7 +108,9 @@ export default function AiReviewModal({ applications, grant }: Props) {
               setProgress(() =>
                 Math.round((processedApplications / totalApplications) * 100),
               );
-              console.log('completed review for application - ', appl.id);
+              setEstimatedTimeSingular(
+                estimateTime((initalSize || 1) - processedApplications, true),
+              );
             } catch (error: any) {
               console.log(
                 'Error occured while reviewing application with id ',
@@ -322,7 +331,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
               </CardContent>
               <CardFooter className="w-full bg-slate-50 py-3 text-center text-base text-slate-500">
                 <p className="w-full text-sm">
-                  Approx {estimatedTime} remaining
+                  Approx. {estimatedTimeSingular} remaining
                 </p>
               </CardFooter>
             </>
@@ -449,16 +458,34 @@ function formatTime(milliseconds: number): string {
   if (!hours) return `${minutes}m`;
   return `${hours}h ${minutes}m`;
 }
-function estimateTime(totalApplications: number): string {
+export function estimateTime(
+  totalApplications: number,
+  singular = false,
+): string {
+  console.log('total applications', totalApplications);
   const lowerBoundSeconds = totalApplications * 10;
   const upperBoundSeconds = totalApplications * 20;
+
+  if (singular) {
+    const middleBoundSeconds = (lowerBoundSeconds + upperBoundSeconds) / 2;
+
+    if (middleBoundSeconds < 60) {
+      return `~${Math.round(middleBoundSeconds)}s`;
+    }
+
+    const middleBoundMinutes = Math.round(middleBoundSeconds / 60);
+    return `~${middleBoundMinutes} min${middleBoundMinutes !== 1 ? 's' : ''}`;
+  }
 
   if (upperBoundSeconds < 60) {
     return `~${lowerBoundSeconds}-${upperBoundSeconds}s`;
   }
 
+  if (lowerBoundSeconds < 60) {
+    return `~${lowerBoundSeconds}s-${Math.ceil(upperBoundSeconds / 60)} mins`;
+  }
+
   const lowerBoundMinutes = Math.floor(lowerBoundSeconds / 60);
   const upperBoundMinutes = Math.ceil(upperBoundSeconds / 60);
-
   return `~${lowerBoundMinutes}-${upperBoundMinutes}mins`;
 }

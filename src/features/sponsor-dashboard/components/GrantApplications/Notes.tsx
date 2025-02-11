@@ -10,7 +10,7 @@ import { api } from '@/lib/api';
 import { type GrantApplicationAi } from '@/features/grants/types';
 
 import { selectedGrantApplicationAtom } from '../../atoms';
-import { type GrantApplicationWithUser } from '../../types';
+import { type GrantApplicationsReturn } from '../../queries/applications';
 
 const MAX_CHARACTERS = 500;
 
@@ -41,18 +41,24 @@ export const Notes = ({ slug }: Props) => {
         notes: content,
       }),
     onSuccess: (_, variables) => {
-      queryClient.setQueriesData<GrantApplicationWithUser[]>(
+      queryClient.setQueriesData<GrantApplicationsReturn>(
         {
           predicate: (query) =>
             query.queryKey[0] === 'sponsor-applications' &&
             query.queryKey.includes(slug),
         },
-        (old) =>
-          old?.map((application) =>
+        (old) => {
+          if (!old) return old;
+          const data = old?.data.map((application) =>
             application.id === applicationId
               ? { ...application, notes: variables }
               : application,
-          ),
+          );
+          return {
+            ...old,
+            data,
+          };
+        },
       );
       if (selectedApplication) {
         setSelectedApplication({

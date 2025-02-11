@@ -515,7 +515,7 @@ function GrantApplications({ slug }: Props) {
       return { previousApplications };
     },
     onError: (_, __, context) => {
-      queryClient.setQueryData(
+      queryClient.setQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', grant?.slug, params],
         context?.previousApplications,
       );
