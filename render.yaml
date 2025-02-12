@@ -30,11 +30,11 @@ services:
       - key: ZEROBOUNCE_API_KEY
         sync: false
       - key: EMAIL_SERVER_USER
-        sync: false
+        value: resend
       - key: EMAIL_SERVER_HOST
-        sync: false
+        value: smtp.resend.com
       - key: EMAIL_SERVER_PORT
-        sync: false
+        value: 465
       - key: AIRTABLE_GRANTS_API_TOKEN
         sync: false
       - key: AIRTABLE_GRANTS_BASE_ID
