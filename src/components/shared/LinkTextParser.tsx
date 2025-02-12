@@ -1,5 +1,3 @@
-import { Fragment } from 'react';
-
 const URL_REGEX =
   /(\bhttps?:\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
 
@@ -17,7 +15,7 @@ export function LinkTextParser({ text, className, ...props }: Props) {
           return (
             <a
               key={index}
-              className="text-brand-purple hover:underline"
+              className="text-sm font-medium text-brand-purple hover:underline"
               href={part}
               target="_blank"
               rel="noopener noreferrer"
@@ -26,7 +24,11 @@ export function LinkTextParser({ text, className, ...props }: Props) {
             </a>
           );
         }
-        return <Fragment key={index}>{part}</Fragment>;
+        return (
+          <span key={index} className="text-sm font-medium text-slate-600">
+            {part}
+          </span>
+        );
       })}
     </p>
   );

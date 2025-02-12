@@ -1,9 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { ArrowRight, Check, X } from 'lucide-react';
+import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
 import React, { type Dispatch, type SetStateAction } from 'react';
-import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
+import { MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,6 @@ import { tokenList } from '@/constants/tokenList';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
-import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
@@ -93,7 +92,7 @@ export const ApplicationDetails = ({
   );
 
   const { onCopy: onCopyPublicKey } = useClipboard(
-    selectedApplication?.user?.walletAddress || '',
+    selectedApplication?.walletAddress || '',
   );
 
   const handleCopyEmail = () => {
@@ -106,7 +105,7 @@ export const ApplicationDetails = ({
   };
 
   const handleCopyPublicKey = () => {
-    if (selectedApplication?.user?.walletAddress) {
+    if (selectedApplication?.walletAddress) {
       onCopyPublicKey();
       toast.success('Wallet address copied to clipboard', {
         duration: 1500,
@@ -305,29 +304,6 @@ export const ApplicationDetails = ({
                   </div>
                 </Tooltip>
               )}
-              {selectedApplication?.user.walletAddress && (
-                <Tooltip
-                  content={'Click to copy'}
-                  contentProps={{ side: 'right' }}
-                  triggerClassName="flex items-center hover:underline underline-offset-1"
-                >
-                  <div
-                    className="flex cursor-pointer items-center justify-start gap-1 whitespace-nowrap text-sm text-slate-400 hover:text-slate-500"
-                    onClick={handleCopyPublicKey}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.user.walletAddress || '', 3)}`}
-                  >
-                    <MdOutlineAccountBalanceWallet />s
-                    <p>
-                      {truncatePublicKey(
-                        selectedApplication.user.walletAddress,
-                        3,
-                      )}
-                    </p>
-                  </div>
-                </Tooltip>
-              )}
 
               <div className="flex gap-2">
                 <Telegram
@@ -393,6 +369,22 @@ export const ApplicationDetails = ({
                 <p className="whitespace-nowrap text-sm font-medium text-slate-600">
                   {formattedCreatedAt}
                 </p>
+              </div>
+
+              <div className="mb-4">
+                <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
+                  Wallet Address
+                </p>
+                <div
+                  className="flex cursor-pointer items-center gap-1 whitespace-nowrap text-sm font-medium text-slate-600"
+                  onClick={handleCopyPublicKey}
+                >
+                  {selectedApplication?.walletAddress}
+                  <Copy
+                    className="h-4 w-4 text-slate-400"
+                    onClick={handleCopyPublicKey}
+                  />
+                </div>
               </div>
 
               <InfoBox
