@@ -78,12 +78,12 @@ export const SurveyModal = ({
                 <Skeleton key={i} className="h-[36px] w-[40px]" />
               ))}
             </div>
-            <Skeleton className="mb-3 mt-8 h-10 rounded-md" />
+            <Skeleton className="mt-8 mb-3 h-10 rounded-md" />
           </div>
         ) : (
           <>
             <div>
-              <p className="mb-2 text-lg font-semibold leading-[125%] text-slate-700">
+              <p className="mb-2 text-lg leading-[125%] font-semibold text-slate-700">
                 {question?.question}
               </p>
               <p className="mb-5 text-sm text-slate-500">
@@ -104,7 +104,7 @@ export const SurveyModal = ({
                       </Button>
                     ))}
                   </div>
-                  <div className="mt-0.5 flex flex-grow justify-between">
+                  <div className="mt-0.5 flex grow justify-between">
                     <p className="text-xs text-slate-400">
                       {question.lowerBoundLabel}
                     </p>

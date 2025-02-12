@@ -199,9 +199,9 @@ const Mobile = ({
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerContent
         classNames={{
-          overlay: isLoginOpen ? 'z-[200]' : '',
+          overlay: isLoginOpen ? 'z-200' : '',
         }}
-        className="!border-0 !ring-0"
+        className="border-0! ring-0!"
       >
         <DrawerHeader className="text-left">
           <Image

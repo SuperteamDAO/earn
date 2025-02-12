@@ -71,8 +71,8 @@ export function DescriptionUI({ description }: Props) {
             !showMore && 'h-[50vh] overflow-hidden',
           )}
         >
-          <div className="minimal-tiptap-editor tiptap ProseMirror h-full w-full overflow-visible !px-0 pb-7">
-            <div className="tiptap ProseMirror listing-description !mt-0 !px-0">
+          <div className="minimal-tiptap-editor tiptap ProseMirror h-full w-full overflow-visible px-0! pb-7">
+            <div className="tiptap ProseMirror listing-description mt-0! px-0!">
               {parse(
                 description?.startsWith('"')
                   ? JSON.parse(description || '')

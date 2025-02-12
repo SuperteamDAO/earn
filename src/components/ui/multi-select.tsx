@@ -456,7 +456,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       >
         <div
           className={cn(
-            'min-h-10 rounded-md border border-input text-sm ring-primary focus-within:ring-1',
+            'border-input ring-primary min-h-10 rounded-md border text-sm focus-within:ring-1',
             {
               'px-3 py-2': selected.length !== 0,
               'cursor-text': !disabled && selected.length !== 0,
@@ -482,7 +482,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   {option.label}
                   <button
                     className={cn(
-                      'ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2',
+                      'ring-offset-background focus:ring-ring ml-1 rounded-full outline-hidden focus:ring-2 focus:ring-offset-2',
                       (disabled || option.fixed) && 'hidden',
                     )}
                     onKeyDown={(e) => {
@@ -496,7 +496,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                     }}
                     onClick={() => handleUnselect(option)}
                   >
-                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                    <X className="text-muted-foreground hover:text-foreground h-3 w-3" />
                   </button>
                 </Badge>
               );
@@ -528,7 +528,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   : placeholder
               }
               className={cn(
-                'flex-1 bg-transparent outline-none placeholder:text-slate-400',
+                'flex-1 bg-transparent outline-hidden placeholder:text-slate-400',
                 {
                   'w-full': hidePlaceholderWhenSelected,
                   'px-3 py-2': selected.length === 0,
@@ -544,7 +544,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 onChange?.(selected.filter((s) => s.fixed));
               }}
               className={cn(
-                'absolute right-0 top-2/4 -translate-y-2/4 p-0 text-slate-400',
+                'absolute top-2/4 right-0 -translate-y-2/4 p-0 text-slate-400',
                 (hideClearAllButton ||
                   disabled ||
                   selected.length < 1 ||
@@ -559,7 +559,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
         <div className="relative">
           {open && (
             <CommandList
-              className="absolute top-1 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
+              className="bg-popover text-popover-foreground animate-in absolute top-1 z-10 w-full rounded-md border shadow-md outline-hidden"
               onMouseLeave={() => {
                 setOnScrollbar(false);
               }}
@@ -609,7 +609,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                               className={cn(
                                 'cursor-pointer',
                                 option.disable &&
-                                  'cursor-default text-muted-foreground',
+                                  'text-muted-foreground cursor-default',
                               )}
                             >
                               {option.label}

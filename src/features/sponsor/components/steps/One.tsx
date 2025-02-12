@@ -9,7 +9,7 @@ export function StepOne() {
           className="h-12 w-12"
           src="/landingsponsor/sponsors/piedPiper.webp"
         />
-        <div className="flex w-full flex-grow flex-col items-start">
+        <div className="flex w-full grow flex-col items-start">
           <p className="text-sm font-medium text-slate-400">Company name</p>
           <p className="w-full border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-medium text-slate-700">
             Pied Piper
@@ -17,21 +17,21 @@ export function StepOne() {
         </div>
       </div>
 
-      <div className="flex w-full flex-grow flex-col items-start">
+      <div className="flex w-full grow flex-col items-start">
         <p className="text-sm font-medium text-slate-400">Website URL</p>
         <p className="w-full border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-medium text-slate-700">
           https://piedpier.com
         </p>
       </div>
 
-      <div className="flex w-full flex-grow flex-col items-start">
+      <div className="flex w-full grow flex-col items-start">
         <p className="text-sm font-medium text-slate-400">Twitter Handle</p>
         <p className="w-full border border-slate-200 bg-slate-50 px-2 py-1 text-sm font-medium text-slate-700">
           @piedpiper
         </p>
       </div>
 
-      <p className="self-end rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium text-brand-purple">
+      <p className="text-brand-purple self-end rounded-lg bg-indigo-50 px-4 py-2 text-sm font-medium">
         Create Profile
       </p>
     </div>

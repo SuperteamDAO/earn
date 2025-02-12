@@ -122,7 +122,7 @@ export const Header = () => {
         walletBalance={walletBalance || 0}
       />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
-      <div className="fixed bottom-0 z-[60] w-full">
+      <div className="fixed bottom-0 z-60 w-full">
         <BottomBar onSearchOpen={searchOpenWithEvent} />
       </div>
       <WalletDrawer

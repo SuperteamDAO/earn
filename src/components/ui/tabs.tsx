@@ -12,7 +12,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      'inline-flex h-9 items-center justify-center rounded-lg p-1 text-muted-foreground',
+      'text-muted-foreground inline-flex h-9 items-center justify-center rounded-lg p-1',
       className,
     )}
     {...props}
@@ -27,9 +27,9 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      'group relative inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-xs font-medium ring-offset-background transition-all data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple sm:text-sm',
+      'group ring-offset-background data-[state=active]:bg-brand-purple/10 data-[state=active]:text-brand-purple relative inline-flex items-center justify-center rounded-md px-3 py-1 text-xs font-medium whitespace-nowrap transition-all sm:text-sm',
       'hover:text-brand-purple',
-      'data-[state=active]:after:absolute data-[state=active]:after:bottom-[-6px] data-[state=active]:after:left-0 data-[state=active]:after:h-[2px] data-[state=active]:after:w-full data-[state=active]:after:bg-brand-purple/80',
+      'data-[state=active]:after:bg-brand-purple/80 data-[state=active]:after:absolute data-[state=active]:after:bottom-[-6px] data-[state=active]:after:left-0 data-[state=active]:after:h-[2px] data-[state=active]:after:w-full',
       className,
     )}
     {...props}
@@ -44,7 +44,7 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+      'ring-offset-background focus-visible:ring-ring mt-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
       className,
     )}
     {...props}

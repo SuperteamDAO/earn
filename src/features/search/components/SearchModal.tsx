@@ -64,8 +64,8 @@ export function SearchModal({ isOpen, onClose }: Props) {
         hideCloseIcon
         className={cn(
           'border-none p-0 backdrop-blur-md sm:max-w-xl',
-          'fixed left-1/2 top-20 -translate-x-1/2',
-          '!block !translate-y-0',
+          'fixed top-20 left-1/2 -translate-x-1/2',
+          'block! translate-y-0!',
         )}
       >
         <form
@@ -75,10 +75,10 @@ export function SearchModal({ isOpen, onClose }: Props) {
           }}
           className="relative"
         >
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
             className={cn(
-              'border-none bg-slate-100 pl-10 pr-10',
+              'border-none bg-slate-100 pr-10 pl-10',
               'text-sm md:text-base',
               'focus-visible:ring-0 focus-visible:ring-offset-0',
             )}
@@ -88,7 +88,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
           />
           <button
             type="submit"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+            className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400"
           >
             {loading ? (
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-400 border-t-transparent" />
@@ -122,7 +122,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
               <Button
                 variant="ghost"
                 className={cn(
-                  'w-full gap-2 text-sm font-normal hover:bg-brand-purple hover:text-white',
+                  'hover:bg-brand-purple w-full gap-2 text-sm font-normal hover:text-white',
                   'rounded-none border-t border-slate-100',
                 )}
               >

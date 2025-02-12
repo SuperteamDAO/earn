@@ -81,7 +81,7 @@ export function UsernameField() {
           <FormLabel isRequired>Username</FormLabel>
           <FormControl>
             <div className="relative flex">
-              <span className="flex items-center rounded-l-md border border-input bg-slate-50 px-2.5 pb-1 text-slate-400 shadow-sm">
+              <span className="border-input flex items-center rounded-l-md border bg-slate-50 px-2.5 pb-1 text-slate-400 shadow-xs">
                 @
               </span>
               <Input
@@ -102,7 +102,7 @@ export function UsernameField() {
                 field.value !== '' && (
                   <span
                     className={cn(
-                      'absolute right-2 top-2 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1 text-background',
+                      'text-background absolute top-2 right-2 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1',
                     )}
                   >
                     <CheckIcon className="h-full w-full stroke-[3px]" />

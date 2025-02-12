@@ -21,7 +21,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-60 bg-black/50 backdrop-blur-xs',
       className,
     )}
     {...props}
@@ -59,10 +59,10 @@ const DialogContent = React.forwardRef<
         ref={ref}
         className={cn(
           'max-h-screen overflow-y-auto',
-          'fixed z-[60] grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg sm:rounded-lg',
-          'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out',
+          'bg-background fixed z-60 grid w-full max-w-lg gap-4 border p-6 shadow-lg sm:rounded-lg',
+          'data-[state=open]:animate-in data-[state=closed]:animate-out duration-200',
           !unsetDefaultPosition &&
-            'left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]',
+            'top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]',
           !unsetDefaultTransition && [
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
@@ -78,7 +78,7 @@ const DialogContent = React.forwardRef<
         {!hideCloseIcon && (
           <DialogPrimitive.Close
             className={cn(
-              'absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none',
+              'ring-offset-background data-[state=open]:bg-accent data-[state=open]:text-muted-foreground focus:ring-ring absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none',
               classNames?.closeIcon,
             )}
           >
@@ -127,7 +127,7 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      'text-lg font-semibold leading-none tracking-tight',
+      'text-lg leading-none font-semibold tracking-tight',
       className,
     )}
     {...props}
@@ -141,7 +141,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn('text-sm text-muted-foreground', className)}
+    className={cn('text-muted-foreground text-sm', className)}
     {...props}
   />
 ));

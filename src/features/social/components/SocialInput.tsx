@@ -127,7 +127,7 @@ export const SocialInput = ({
                 </FormLabel>
 
                 {social?.label && (
-                  <div className="flex h-full items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-50 px-3 text-xs font-medium text-slate-600 shadow-sm md:justify-start md:text-sm">
+                  <div className="flex h-full items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-50 px-3 text-xs font-medium text-slate-600 shadow-xs md:justify-start md:text-sm">
                     {social?.label}
                   </div>
                 )}

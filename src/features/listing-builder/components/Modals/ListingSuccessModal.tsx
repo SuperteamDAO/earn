@@ -59,7 +59,7 @@ export const ListingSuccessModal = () => {
       >
         <div className="w-full bg-emerald-50 py-20">
           <div className="mx-auto w-fit rounded-full bg-emerald-500 p-3">
-            <Check className="h-6 w-6 stroke-[3] text-white" />
+            <Check className="h-6 w-6 stroke-3 text-white" />
           </div>
         </div>
 
