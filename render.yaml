@@ -5,8 +5,8 @@ services:
     region: frankfurt
     plan: standard
     previews:
-      generation: automatic
-      plan: free
+      generation: manual
+      plan: starter
     buildCommand: pnpm install && pnpm prisma generate && pnpm build
     preDeployCommand: pnpm prisma migrate deploy
     domains:
