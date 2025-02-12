@@ -25,7 +25,10 @@ export const InfoBox = ({
       {label}
     </p>
     {isHtml ? (
-      <div className="h-full w-full overflow-visible" id="reset-des">
+      <div
+        className="h-full w-full overflow-visible text-sm font-medium text-slate-600"
+        id="richtext"
+      >
         {parse(content || '', options)}
       </div>
     ) : (

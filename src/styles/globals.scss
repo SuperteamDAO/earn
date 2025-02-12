@@ -208,8 +208,153 @@ body {
 }
 
 #reset-des * {
-  color: #334155 !important;
+  color: #475569 !important;
 }
+
+#reset-des {
+  a,
+  a * {
+    color: #6366F1 !important;
+  }
+}
+
+
+#richtext blockquote {
+  all: revert !important;
+}
+
+#richtext ol {
+  all: revert !important;
+}
+
+#richtext a {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+#richtext ul {
+  all: revert !important;
+}
+
+#richtext strong {
+  all: revert !important;
+}
+
+#richtext br {
+  all: revert !important;
+}
+
+#richtext h1 {
+  all: revert !important;
+}
+
+#richtext h2 {
+  all: revert !important;
+}
+
+#richtext h3 {
+  all: revert !important;
+}
+
+#richtext h4 {
+  all: revert !important;
+}
+
+#richtext h5 {
+  all: revert !important;
+}
+
+#richtext h6 {
+  all: revert !important;
+}
+
+#richtext code {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+#richtext pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+#richtext p {
+  white-space: pre-wrap;
+}
+
+#richtext {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  li::marker {
+    color: #475569 !important;
+  }
+}
+
+#richtext {
+  * {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    word-break: break-word;
+  }
+
+  h1,
+  h1 * {
+    font-size: 1.5rem !important;
+  }
+
+  h2,
+  h2 * {
+    font-size: 1.25rem !important;
+  }
+
+  h3,
+  h3 * {
+    font-size: 1.125rem !important;
+  }
+
+  h4,
+  h4 * {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  h5,
+  h5 * {
+    font-size: 0.875rem !important;
+  }
+
+  h6,
+  h6 * {
+    font-size: 0.75rem !important;
+  }
+}
+
+#richtext {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+#richtext * {
+  color: #475569 !important;
+}
+
+#richtext {
+  a,
+  a * {
+    color: #6366F1 !important;
+  }
+}
+
 
 .listing-description {
   >*:first-child {
@@ -217,13 +362,6 @@ body {
   }
 }
 
-#reset-des {
-
-  a,
-  a * {
-    color: #6366F1 !important;
-  }
-}
 
 code {
   background-color: rgba(#616161, 0.1);
