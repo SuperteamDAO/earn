@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: earn
+    runtime: node
+    region: frankfurt
+    plan: standard
+    previews:
+      generation: automatic
+      plan: free
+    buildCommand: pnpm install && pnpm prisma generate && pnpm build
+    preDeployCommand: pnpm prisma migrate deploy
+    domains:
+      - nearn.io
+    startCommand: pnpm start
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        sync: false
+      - key: NEXTAUTH_URL
+        sync: false
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: NEXT_PUBLIC_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_EMAIL
+        sync: false
+      - key: ZEROBOUNCE_API_KEY
+        sync: false
+      - key: EMAIL_SERVER_USER
+        sync: false
+      - key: EMAIL_SERVER_HOST
+        sync: false
+      - key: EMAIL_SERVER_PORT
+        sync: false
+      - key: AIRTABLE_GRANTS_API_TOKEN
+        sync: false
+      - key: AIRTABLE_GRANTS_BASE_ID
+        sync: false
+      - key: AIRTABLE_GRANTS_TABLE_NAME
+        sync: false
+      - key: AIRTABLE_GRANTS_REGIONS_TABLE_NAME
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+    autoDeploy: true
