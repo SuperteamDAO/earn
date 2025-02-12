@@ -93,6 +93,14 @@ export const ApplicationList = ({
     [],
   );
 
+  const filterTriggerLabel = useMemo(() => {
+    const applicationLabel = applicationLabels.find(
+      (s) => s.value === filterLabel,
+    );
+    if (applicationLabel) return applicationLabel.label;
+    else return filterLabel;
+  }, [filterLabel]);
+
   return (
     <div className="h-full w-full rounded-l-xl border border-slate-200 bg-white">
       <div className="flex cursor-pointer flex-col items-center justify-between gap-4 border-b border-slate-200 px-4 py-3">
@@ -129,7 +137,7 @@ export const ApplicationList = ({
                     color,
                   )}
                 >
-                  {filterLabel || 'Select Option'}
+                  {filterTriggerLabel || 'Select Option'}
                 </span>
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
@@ -187,7 +195,11 @@ export const ApplicationList = ({
       </div>
       {applications?.map((application) => {
         const applicationStatus = application?.applicationStatus;
+
         const applicationLabel = application?.label;
+        const applicationLabelUi = applicationLabels.find(
+          (s) => s.value === application?.label,
+        )?.label;
         const { bg: statusBg, color: statusColor } =
           colorMap[applicationStatus as GrantApplicationStatus];
         const { bg: labelBg, color: labelColor } = colorMap[applicationLabel];
@@ -245,7 +257,7 @@ export const ApplicationList = ({
                   labelColor,
                 )}
               >
-                {applicationLabel}
+                {applicationLabelUi || applicationLabel}
               </span>
             </div>
           </div>

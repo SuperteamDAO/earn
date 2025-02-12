@@ -87,6 +87,14 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     },
   });
 
+  const filterTriggerLabel = useMemo(() => {
+    const applicationLabel = labelMenuOptionsGrants.find(
+      (s) => s.value === selectedApplication?.label,
+    );
+    if (applicationLabel) return applicationLabel.label;
+    else return selectedApplication?.label;
+  }, [selectedApplication?.label]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -101,7 +109,7 @@ export const SelectLabel = ({ grantSlug }: Props) => {
               color,
             )}
           >
-            {selectedApplication?.label || 'Select Option'}
+            {filterTriggerLabel || 'Select Option'}
           </span>
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
