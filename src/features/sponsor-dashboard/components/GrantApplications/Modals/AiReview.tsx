@@ -3,6 +3,7 @@ import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -374,13 +375,14 @@ export default function AiReviewModal({ applications, grant }: Props) {
                     dotColor="bg-blue-200"
                     post={
                       <>
-                        <span
+                        <Badge
+                          variant="secondary"
                           className={cn(
-                            'inline-flex w-fit whitespace-nowrap text-center text-xs text-slate-500',
+                            'inline-flex w-fit whitespace-nowrap px-1 py-0 text-center text-xs text-slate-500',
                           )}
                         >
-                          (neither low quality nor shortlisted)
-                        </span>
+                          neither low quality nor shortlisted
+                        </Badge>
                       </>
                     }
                   />

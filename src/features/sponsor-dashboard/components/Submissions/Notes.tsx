@@ -1,16 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Textarea } from '@/components/ui/textarea';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 
-import { selectedSubmissionAtom } from '../../atoms';
+import { isNotesUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 
-const MAX_CHARACTERS = 500;
+const MAX_CHARACTERS = 1000;
 
 type Props = {
   submissionId: string;
@@ -22,6 +22,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
   );
+  const setNotesUpdating = useSetAtom(isNotesUpdatingAtom);
   const [notes, setNotes] = useState(initialNotes || '');
   const queryClient = useQueryClient();
 
@@ -45,19 +46,15 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
     onError: (error) => {
       console.error('Error saving notes:', error);
     },
+    onSettled: () => {
+      setNotesUpdating(false);
+    },
   });
 
   const debouncedUpdateNotes = useCallback(
     debounce((content: string) => updateNotes(content), 1000),
     [submissionId, updateNotes],
   );
-
-  useEffect(() => {
-    debouncedUpdateNotes(notes);
-    return () => {
-      debouncedUpdateNotes.cancel();
-    };
-  }, [notes, debouncedUpdateNotes]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     let value = e.target.value;
@@ -72,6 +69,8 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
         });
       }
       setNotes(value);
+      debouncedUpdateNotes(value);
+      setNotesUpdating(true);
     }
   };
 

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -9,10 +9,10 @@ import { api } from '@/lib/api';
 
 import { type GrantApplicationAi } from '@/features/grants/types';
 
-import { selectedGrantApplicationAtom } from '../../atoms';
+import { isNotesUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
 import { type GrantApplicationsReturn } from '../../queries/applications';
 
-const MAX_CHARACTERS = 500;
+const MAX_CHARACTERS = 1000;
 
 type Props = {
   slug: string | undefined;
@@ -22,10 +22,9 @@ export const Notes = ({ slug }: Props) => {
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
+  const setNotesUpdating = useSetAtom(isNotesUpdatingAtom);
   const [notes, setNotes] = useState(selectedApplication?.notes);
-  console.log('notes', notes);
   useEffect(() => {
-    console.log('selectedApplication?.notes', selectedApplication?.notes);
     setNotes(selectedApplication?.notes);
   }, [selectedApplication]);
   const queryClient = useQueryClient();
@@ -70,19 +69,15 @@ export const Notes = ({ slug }: Props) => {
     onError: (error) => {
       console.error('Error saving notes:', error);
     },
+    onSettled: () => {
+      setNotesUpdating(false);
+    },
   });
 
   const debouncedUpdateNotes = useCallback(
     debounce((content: string) => updateNotes(content), 1000),
     [applicationId, updateNotes],
   );
-
-  useEffect(() => {
-    if (selectedApplication && notes) debouncedUpdateNotes(notes);
-    return () => {
-      debouncedUpdateNotes.cancel();
-    };
-  }, [notes, debouncedUpdateNotes]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     let value = e.target.value;
@@ -97,6 +92,8 @@ export const Notes = ({ slug }: Props) => {
         });
       }
       setNotes(value);
+      debouncedUpdateNotes(value);
+      setNotesUpdating(true);
     }
   };
 
