@@ -306,7 +306,7 @@ function GrantApplications({ slug }: Props) {
         ['sponsor-applications', slug, { ...params, skip: newSkip }],
       );
 
-      if (newApplications && newApplications.data.length > 0) {
+      if (newApplications && newApplications.count > 0) {
         if (selectIndex === -1) {
           const savedSelectionId = pageSelections[newSkip];
           const savedApplication = savedSelectionId
@@ -360,7 +360,7 @@ function GrantApplications({ slug }: Props) {
             e.preventDefault();
             if (currentIndex < applications.length - 1) {
               setSelectedApplication(applications[currentIndex + 1]);
-            } else if (skip + length < grant?.totalApplications!) {
+            } else if (skip + length < totalCount!) {
               await changePage(skip + length, 0);
             }
             break;
@@ -372,7 +372,7 @@ function GrantApplications({ slug }: Props) {
             break;
           case 'ArrowRight':
             e.preventDefault();
-            if (skip + length < grant?.totalApplications!) {
+            if (skip + length < totalCount!) {
               await changePage(skip + length, -1);
             }
             break;
