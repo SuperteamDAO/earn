@@ -44,6 +44,7 @@ interface Props {
   editMode: boolean;
   listing: Listing;
   isTemplate?: boolean;
+  isSubmitDisabled: boolean;
   showEasterEgg: () => void;
   onSurveyOpen: () => void;
 }
@@ -56,6 +57,7 @@ export const SubmissionDrawer = ({
   editMode,
   listing,
   isTemplate = false,
+  isSubmitDisabled,
   showEasterEgg,
   onSurveyOpen,
 }: Props) => {
@@ -459,8 +461,9 @@ export const SubmissionDrawer = ({
                 <Button
                   className="ph-no-capture h-12 w-full"
                   disabled={
+                    isSubmitDisabled ||
                     isTemplate ||
-                    (!listing.isPublished && !!query['preview']) ||
+                    !!query['preview'] ||
                     (isHackathon && !editMode && !termsAccepted)
                   }
                   type="submit"

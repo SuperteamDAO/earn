@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/drawer';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useTimeout } from '@/hooks/use-timeout';
+import { roundToNearestTenth } from '@/utils/number';
 
 import { type Listing } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
@@ -40,7 +41,9 @@ const VariantInfo = (
   listing: Listing | null,
   submissionCount: number,
 ): Record<number, VariantInfo> => {
-  const reward = listing?.rewardAmount || listing?.maxRewardAsk;
+  const reward = roundToNearestTenth(
+    listing?.usdValue || listing?.rewardAmount || listing?.maxRewardAsk || 0,
+  );
   const rewardLabel = reward ? '$' + reward.toLocaleString('en-us') : '';
   const type = listing?.type;
   const verb = listing?.type === 'bounty' ? 'submissions' : 'applications';
@@ -106,7 +109,7 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
       bountySnackbar?.submissionCount || 0,
     );
     if ((bountySnackbar?.submissionCount || 0) < 20 ? 1 : 0) {
-      // high changes of winning
+      // high chances of winning
       setVariant(variantInfo[1]);
     } else {
       setVariant(variantInfo[0]);

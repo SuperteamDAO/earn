@@ -42,7 +42,7 @@ export function SkillsField({ skillsRefreshKey }: Props) {
           <FormItem className="mb-3 gap-2 sm:mb-4">
             <div>
               <span className="flex items-center gap-2">
-                <FormLabel isRequired>Skills Needed</FormLabel>
+                <FormLabel isRequired>Your Skills</FormLabel>
                 <Tooltip content={tooltipContent}>
                   <Info className="h-3 w-3 text-slate-500" />
                 </Tooltip>
