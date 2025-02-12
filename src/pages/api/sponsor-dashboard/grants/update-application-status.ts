@@ -159,7 +159,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
                 email: true,
                 twitter: true,
                 discord: true,
-                walletAddress: true,
               },
             },
             grant: {

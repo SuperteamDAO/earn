@@ -1,3 +1,4 @@
+import { useMfaEnrollment, usePrivy } from '@privy-io/react-auth';
 import { ArrowLeft, ArrowUpRight, CheckIcon, CopyIcon, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -44,12 +45,13 @@ export function WalletDrawer({
 
   const { user } = useUser();
   const router = useRouter();
+  const updateUser = useUpdateUser();
+  const { user: privyUser } = usePrivy();
+  const { showMfaEnrollmentModal } = useMfaEnrollment();
 
   const handleBack = () => {
     setView('main');
   };
-
-  const updateUser = useUpdateUser();
 
   const handleIntroClose = () => {
     setView('main');
@@ -134,9 +136,9 @@ export function WalletDrawer({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Click here
+                  Learn more
                 </a>{' '}
-                to learn more about what you can do with your crypto rewards.
+                about what you can do with your rewards.
               </p>
             </div>
             <div className={cn('bg-slate-50 py-4', padding)}>
@@ -150,14 +152,24 @@ export function WalletDrawer({
               </div>
               <p className="text-base font-medium text-slate-400">BALANCE</p>
               {view === 'main' && (
-                <Button
-                  onClick={() => setView('withdraw')}
-                  className="mt-3 rounded-lg bg-brand-purple px-5 text-base"
-                  disabled={!tokens?.length}
-                >
-                  Withdraw
-                  <ArrowUpRight className="h-4 w-4" />
-                </Button>
+                <div className="w-full items-end justify-between">
+                  <Button
+                    onClick={() => setView('withdraw')}
+                    className="mt-3 rounded-lg bg-brand-purple px-5 text-base"
+                    disabled={!tokens?.length}
+                  >
+                    Withdraw
+                    <ArrowUpRight className="h-4 w-4" />
+                  </Button>
+                  <div
+                    onClick={() => showMfaEnrollmentModal()}
+                    className="mt-1.5 cursor-pointer py-0.5 text-xs font-semibold text-brand-purple hover:text-brand-purple-dark hover:underline"
+                  >
+                    {privyUser?.mfaMethods.length === 0
+                      ? '+ Add Two Factor Authentication'
+                      : 'Edit Two Factor Authentication'}
+                  </div>
+                </div>
               )}
             </div>
             {view === 'main' && (

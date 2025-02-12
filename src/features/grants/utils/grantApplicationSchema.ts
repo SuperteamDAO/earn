@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { type User } from '@/interface/user';
+import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import {
   telegramUsernameSchema,
@@ -32,6 +33,7 @@ export const grantApplicationSchema = (
         .min(minReward, `Amount must be at least ${minReward} ${token}`)
         .max(maxReward, `Amount cannot exceed ${maxReward} ${token}`),
       projectDetails: z.string().min(1, 'Project details are required'),
+      walletAddress: z.string().min(1, 'Solana Wallet Address is required'),
       projectTimeline: z.string().min(1, 'Project timeline is required'),
       proofOfWork: z.string().min(1, 'Proof of work is required'),
       milestones: z.string().min(1, 'Milestones are required'),
@@ -45,6 +47,17 @@ export const grantApplicationSchema = (
         : telegramUsernameSchema,
     })
     .superRefine((data, ctx) => {
+      if (data.walletAddress) {
+        const validate = validateSolAddress(data.walletAddress);
+        if (!validate) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['walletAddress'],
+            message: 'Invalid Solana Wallet Address',
+          });
+        }
+      }
+
       const hasQuestions = Array.isArray(questions) && questions.length > 0;
 
       if (hasQuestions) {

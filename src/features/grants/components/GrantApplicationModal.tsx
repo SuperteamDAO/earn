@@ -69,6 +69,7 @@ export const GrantApplicationModal = ({
       projectTitle: grantApplication?.projectTitle || '',
       projectOneLiner: grantApplication?.projectOneLiner || '',
       ask: grantApplication?.ask || undefined,
+      walletAddress: grantApplication?.walletAddress,
       projectDetails: grantApplication?.projectDetails || '',
       projectTimeline: grantApplication?.projectTimeline
         ? dayjs(grantApplication?.projectTimeline, 'D MMMM YYYY').format(
@@ -108,6 +109,7 @@ export const GrantApplicationModal = ({
         projectTitle,
         projectOneLiner,
         ask,
+        walletAddress,
         projectDetails,
         projectTimeline,
         proofOfWork,
@@ -129,6 +131,7 @@ export const GrantApplicationModal = ({
         proofOfWork,
         milestones,
         kpi,
+        walletAddress,
         ask: ask || null,
         twitter,
         answers: answers || [],
@@ -164,7 +167,13 @@ export const GrantApplicationModal = ({
       number,
       (keyof FormData | `answers.${number}.answer`)[]
     > = {
-      0: ['projectTitle', 'projectOneLiner', 'ask', 'telegram'],
+      0: [
+        'projectTitle',
+        'projectOneLiner',
+        'walletAddress',
+        'ask',
+        'telegram',
+      ],
       1: [
         'projectDetails',
         'projectTimeline',
@@ -194,6 +203,10 @@ export const GrantApplicationModal = ({
     if (modalRef.current) {
       modalRef.current.scrollTop = 0;
     }
+  };
+
+  const handleAutoFill = () => {
+    form.setValue('walletAddress', user?.walletAddress || '');
   };
 
   const date = dayjs().format('YYYY-MM-DD');
@@ -310,6 +323,26 @@ export const GrantApplicationModal = ({
                       showIcon={false}
                     />
                   )}
+                  <FormFieldWrapper
+                    control={form.control}
+                    name="walletAddress"
+                    label=" Your Solana Wallet Address"
+                    description={
+                      <>
+                        This is where you will receive your rewards if you win.{' '}
+                        <span
+                          className="cursor-pointer underline"
+                          onClick={handleAutoFill}
+                        >
+                          Click
+                        </span>{' '}
+                        to auto-fill your Earn wallet address.
+                      </>
+                    }
+                    isRequired
+                  >
+                    <Input placeholder="Add your Solana wallet address" />
+                  </FormFieldWrapper>
                 </div>
               )}
               {activeStep === 1 && (

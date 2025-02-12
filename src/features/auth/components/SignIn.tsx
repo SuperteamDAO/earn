@@ -36,10 +36,10 @@ export const SignIn = ({
       if (redirectTo) {
         router.push(redirectTo);
       } else {
-        const url = new URL(window.location.origin + router.pathname);
+        const currentPath = router.asPath.split('?')[0];
+        const url = new URL(window.location.origin + currentPath);
         url.searchParams.set('loginState', 'signedIn');
-
-        router.replace(url.pathname + url.search);
+        router.replace(currentPath + (url.search || ''));
       }
     },
   });
