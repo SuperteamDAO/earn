@@ -65,7 +65,7 @@ async function createGrantApplication(
     answers: validatedData.answers || [],
   };
 
-  return prisma.grantApplication.create({
+  return await prisma.grantApplication.create({
     data: formattedData,
     include: {
       user: {

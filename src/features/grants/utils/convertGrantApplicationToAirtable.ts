@@ -1,4 +1,5 @@
 import { type GrantApplication } from '@prisma/client';
+import TurndownService from 'turndown';
 
 interface GrantApplicationWithUserAndGrant extends GrantApplication {
   grant: {
@@ -39,6 +40,10 @@ export function convertGrantApplicationToAirtable(
   applicantSuperteamRegionRecordId?: string | undefined | null,
 ): GrantApplicationAirtableSchema {
   let status;
+  const turndownService = new TurndownService({
+    headingStyle: 'atx',
+    bulletListMarker: '-',
+  });
   switch (grantApplication.applicationStatus) {
     case 'Pending':
       status = 'Undecided';
@@ -58,15 +63,16 @@ export function convertGrantApplicationToAirtable(
     Status: status,
     Summary: grantApplication.projectOneLiner,
     Funding: grantApplication.approvedAmount || grantApplication.ask,
-    KPI: grantApplication.kpi ?? undefined,
-    'Proof of Work': grantApplication.proofOfWork,
+    KPI: turndownService.turndown(grantApplication.kpi || '') ?? undefined,
+    'Proof of Work': turndownService.turndown(grantApplication.proofOfWork),
     Name: `${grantApplication.user.firstName} ${grantApplication.user.lastName}`,
     'Contact Email': grantApplication.user.email,
     'Twitter URL': grantApplication.twitter ?? undefined,
     'SOL Wallet': grantApplication.walletAddress,
-    Milestones: grantApplication.milestones ?? undefined,
+    Milestones:
+      turndownService.turndown(grantApplication.milestones || '') ?? undefined,
     Grants: [grantApplication.grant.airtableId!],
-    Description: grantApplication.projectDetails,
+    Description: turndownService.turndown(grantApplication.projectDetails),
     'Discord Handle': grantApplication.user.discord ?? undefined,
     Deadline: grantApplication.projectTimeline,
     'Grant Listing Title (Earn)': grantApplication.grant.title,
