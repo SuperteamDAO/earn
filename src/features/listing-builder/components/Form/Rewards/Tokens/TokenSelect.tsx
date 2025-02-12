@@ -32,7 +32,7 @@ import { TokenLabel } from './TokenLabel';
 
 export function TokenSelect() {
   const form = useListingForm();
-  const clipboard = useClipboard('support@superteamearn.comi');
+  const clipboard = useClipboard('support@superteamearn.com');
   return (
     <FormField
       name="token"
@@ -94,7 +94,7 @@ export function TokenSelect() {
                         support@superteamearn.com
                         <CopyIcon className="h-3 w-3" />
                       </Badge>
-                      icon to get it added.
+                      to get it added.
                     </p>
                   </CommandEmpty>
                   <CommandGroup>
