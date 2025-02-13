@@ -1,3 +1,4 @@
+import { PROJECT_NAME } from '@/constants/project';
 import { cn } from '@/utils/cn';
 
 import { maxW } from '../utils/styles';
@@ -6,36 +7,36 @@ import { Stars } from './Stars';
 import { TestimonialCard, type TestimonialProps } from './TestimonialCard';
 
 const testimonials: TestimonialProps[] = [
-  {
-    stars: 5,
-    message: `I'll say it again, Earn is going to become one of the most important non-protocol products in the Solana ecosystem. Connecting developers (amongst others) to opportunity and protocols to talent.`,
-    logo: '/landingsponsor/sponsors/solana.webp',
-    pfp: '/landingsponsor/users/chasedBarker.webp',
-    name: 'Chase Barker',
-    position: 'Global Developer Growth, Solana',
-  },
-  {
-    stars: 5,
-    message: `I have a 💙 affair with 
-@SuperteamEarn. Our team uses it to scout crypto-native talent. 
-<br />
-<br />
-Perfect hiring workflow:
-<br /> bounty -> trial period -> full-time offer.`,
-    logo: '/landingsponsor/sponsors/ISC.webp',
-    pfp: '/landingsponsor/users/eno.webp',
-    name: 'Eno Sim',
-    position: 'Co-Founder, ISC',
-  },
-  {
-    stars: 4,
-    message: `Superteam Earn is one of the most underrated and valuable platforms for both Solana protocols and 
-users`,
-    logo: '/landingsponsor/sponsors/parcl.webp',
-    pfp: '/landingsponsor/users/evanSolomon.webp',
-    name: 'Evan Solomon',
-    position: 'BD Lead, Parcl',
-  },
+  //   {
+  //     stars: 5,
+  //     message: `I'll say it again, Earn is going to become one of the most important non-protocol products in the Solana ecosystem. Connecting developers (amongst others) to opportunity and protocols to talent.`,
+  //     logo: '/landingsponsor/sponsors/solana.webp',
+  //     pfp: '/landingsponsor/users/chasedBarker.webp',
+  //     name: 'Chase Barker',
+  //     position: 'Global Developer Growth, Solana',
+  //   },
+  //   {
+  //     stars: 5,
+  //     message: `I have a 💙 affair with
+  // @SuperteamEarn. Our team uses it to scout crypto-native talent.
+  // <br />
+  // <br />
+  // Perfect hiring workflow:
+  // <br /> bounty -> trial period -> full-time offer.`,
+  //     logo: '/landingsponsor/sponsors/ISC.webp',
+  //     pfp: '/landingsponsor/users/eno.webp',
+  //     name: 'Eno Sim',
+  //     position: 'Co-Founder, ISC',
+  //   },
+  //   {
+  //     stars: 4,
+  //     message: `Superteam Earn is one of the most underrated and valuable platforms for both Solana protocols and
+  // users`,
+  //     logo: '/landingsponsor/sponsors/parcl.webp',
+  //     pfp: '/landingsponsor/users/evanSolomon.webp',
+  //     name: 'Evan Solomon',
+  //     position: 'BD Lead, Parcl',
+  //   },
 ];
 
 export function Testimonials() {
@@ -65,8 +66,8 @@ export function Testimonials() {
           <Stars count={5} filled={5} />
 
           <p className="text-[1.4rem] leading-[1.1] text-slate-600 md:text-[1.87rem]">
-            Superteam are chads. <br />
-            Superteam Earn is awesome. <br />
+            {PROJECT_NAME} are chads. <br />
+            {PROJECT_NAME} Earn is awesome. <br />
             Everybody should use it 💜
           </p>
 

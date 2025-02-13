@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
+import { CHAIN_NAME } from '@/constants/project';
+import { validateNearAddress } from '@/utils/validateNearAddress';
 
 import { twitterUsernameSchema } from '@/features/social/utils/schema';
 
@@ -27,7 +28,9 @@ export const grantApplicationSchema = (
         })
         .min(minReward, `Amount must be at least ${minReward} ${token}`)
         .max(maxReward, `Amount cannot exceed ${maxReward} ${token}`),
-      walletAddress: z.string().min(1, 'Solana Wallet Address is required'),
+      walletAddress: z
+        .string()
+        .min(1, `${CHAIN_NAME} Wallet Address is required`),
       projectDetails: z.string().min(1, 'Project details are required'),
       projectTimeline: z.string().min(1, 'Project timeline is required'),
       proofOfWork: z.string().min(1, 'Proof of work is required'),
@@ -40,12 +43,12 @@ export const grantApplicationSchema = (
     })
     .superRefine((data, ctx) => {
       if (data.walletAddress) {
-        const validate = validateSolanaAddress(data.walletAddress);
-        if (!validate.isValid) {
+        const validate = validateNearAddress(data.walletAddress);
+        if (!validate) {
           ctx.addIssue({
             code: 'custom',
             path: ['walletAddress'],
-            message: 'Invalid Solana Wallet Address',
+            message: `Invalid ${CHAIN_NAME} Wallet Address`,
           });
         }
       }

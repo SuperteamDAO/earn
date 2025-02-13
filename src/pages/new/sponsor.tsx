@@ -25,7 +25,7 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
-import { PROJECT_NAME } from '@/constants/project';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { PDTG } from '@/constants/Telegram';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -294,8 +294,8 @@ const CreateSponsor = () => {
     <Default
       meta={
         <Meta
-          title="Create Sponsor | ${PROJECT_NAME}"
-          description="Every Solana opportunity in one place!"
+          title={`Create Sponsor | ${PROJECT_NAME}`}
+          description={`Every ${CHAIN_NAME} opportunity in one place!`}
           canonical={`${getURL()}/new/sponsor/`}
         />
       }

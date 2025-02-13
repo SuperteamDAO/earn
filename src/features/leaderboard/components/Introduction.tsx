@@ -1,4 +1,5 @@
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 
 export function Introduction() {
   return (
@@ -11,8 +12,8 @@ export function Introduction() {
         />
         <p className="my-2 font-semibold">Introducing Leaderboards</p>
         <p className="text-slate-600">
-          Get Inspired: Check out Earn profiles of the leading contributors of
-          the Solana ecosystem!
+          Get Inspired: Check out {PROJECT_NAME} profiles of the leading
+          contributors of the {CHAIN_NAME} ecosystem!
         </p>
       </div>
       <div className="h-px w-full bg-slate-200" />

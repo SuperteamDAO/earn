@@ -436,7 +436,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
 
               <FormFieldWrapper
                 className="mb-5"
-                label="Your Solana Wallet Address"
+                label={`Your ${CHAIN_NAME} Wallet Address`}
                 name="publicKey"
                 control={control}
                 isRequired

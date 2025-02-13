@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/popover';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import {
+  CHAIN_NAME,
   CHANGELOG_URL,
   DISCORD_URL,
   FAQ_URL,
@@ -185,7 +186,7 @@ export const Footer = () => {
             </div>
             <p className="mb-6 text-sm text-slate-500">
               Discover high paying crypto bounties, projects and grants from the
-              best Solana companies in one place and apply to them using a
+              best {CHAIN_NAME} companies in one place and apply to them using a
               single profile.
             </p>
             <div className="flex gap-4">

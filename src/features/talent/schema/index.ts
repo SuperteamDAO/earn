@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
+import { CHAIN_NAME } from '@/constants/project';
 import { skillsArraySchema } from '@/interface/skills';
 import { api } from '@/lib/api';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
+import { validateNearAddress } from '@/utils/validateNearAddress';
 import { getURL } from '@/utils/validUrl';
 
 import {
@@ -87,8 +88,8 @@ export const profileSchema = z
       .string({ message: 'Wallet address is required' })
       .min(1, 'Wallet address is required')
       .refine(
-        (val) => validateSolanaAddress(val).isValid,
-        'Invalid Solana wallet address',
+        (val) => validateNearAddress(val).isValid,
+        `Invalid ${CHAIN_NAME} wallet address`,
       ),
   })
   .superRefine((data, ctx) => {

@@ -2,6 +2,7 @@ import { type Regions } from '@prisma/client';
 import Image from 'next/image';
 
 import { UserFlag } from '@/components/shared/UserFlag';
+import { CHAIN_NAME } from '@/constants/project';
 import { type Team } from '@/constants/Team';
 
 const customBannerPosition: Partial<
@@ -58,7 +59,7 @@ export function RegionBanner({ st }: { st: Team }) {
             <p className="mt-2 max-w-[40rem] text-center text-sm font-medium text-white md:text-lg">
               Welcome to {st.name}
               {`'s`} earnings page — use these opportunities to earn in global
-              standards and gain membership in the most exclusive Solana
+              standards and gain membership in the most exclusive {CHAIN_NAME}
               community of {st.displayValue}!
             </p>
           </>

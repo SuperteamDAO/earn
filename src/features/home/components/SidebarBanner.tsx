@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { RadarLogo } from '@/svg/radar-logo';
 
 export const SidebarBanner = () => {
@@ -23,11 +24,12 @@ export const SidebarBanner = () => {
         />
       </div>
       <p className="text-lg font-semibold text-white opacity-90">
-        Build a project for the latest Solana global hackathon!
+        Build a project for the latest {CHAIN_NAME} global hackathon!
       </p>
       <p className="mt-2 text-base leading-[1.1875rem] text-orange-100">
-        Submit to any of the Radar Side Tracks on Earn, and stand to win from a
-        pool of $250k+. Deadline for submissions is October 9, 2024 (UTC).
+        Submit to any of the Radar Side Tracks on {PROJECT_NAME}, and stand to
+        win from a pool of $250k+. Deadline for submissions is October 9, 2024
+        (UTC).
       </p>
       <Link href="/hackathon/radar" className="mt-6">
         <Button

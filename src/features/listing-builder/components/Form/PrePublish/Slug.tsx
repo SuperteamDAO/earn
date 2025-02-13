@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/components/ui/multi-select';
+import { CHAIN_NAME } from '@/constants/project';
 import { getURL } from '@/utils/validUrl';
 
 import { slugCheckQuery } from '@/features/listing-builder/queries/slug-check';
@@ -120,7 +121,7 @@ export function Slug() {
               <div className="relative">
                 <Input
                   {...field}
-                  placeholder="write-a-twitter-thread-on-Solana"
+                  placeholder={`write-a-twitter-thread-on-${CHAIN_NAME}`}
                   disabled={!!publishedAt || isSlugLoading}
                   onBlur={() => null}
                   onChange={(e) => {

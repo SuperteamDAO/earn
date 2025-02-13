@@ -1,10 +1,11 @@
 import type { NextApiResponse } from 'next';
 
+import { CHAIN_NAME } from '@/constants/project';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
 import { safeStringify } from '@/utils/safeStringify';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
+import { validateNearAddress } from '@/utils/validateNearAddress';
 
 import { userSelectOptions } from '@/features/auth/constants';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -41,14 +42,15 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     if ('publicKey' in updatedData) {
-      const walletValidation = validateSolanaAddress(updatedData.publicKey);
+      const walletValidation = validateNearAddress(updatedData.publicKey);
 
       if (!walletValidation.isValid) {
         logger.warn(`Invalid public key provided for user ID: ${userId}`);
         return res.status(400).json({
           error: 'Invalid Wallet Address',
           message:
-            walletValidation.error || 'Invalid Solana wallet address provided.',
+            walletValidation.error ||
+            `Invalid ${CHAIN_NAME} wallet address provided.`,
         });
       }
     }

@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
+import { CHAIN_NAME, PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
 import { cn } from '@/utils/cn';
 
 import { maxW } from '../utils/styles';
@@ -12,7 +12,7 @@ import { maxW } from '../utils/styles';
 const faqs = [
   {
     question: 'Who qualifies to be a sponsor?',
-    answer: `Any team or project that is building in the Solana ecosystem can sponsor a listing on ${PROJECT_NAME}. Size of the team or operations don't matter — you can be a tokenised project or a small grantee; as long as you are building on the Solana blockchain, you can add a listing on ${PROJECT_NAME}.`,
+    answer: `Any team or project that is building in the ${CHAIN_NAME} ecosystem can sponsor a listing on ${PROJECT_NAME}. Size of the team or operations don't matter — you can be a tokenised project or a small grantee; as long as you are building on the ${CHAIN_NAME} blockchain, you can add a listing on ${PROJECT_NAME}.`,
   },
   {
     question: 'How much money do I need to put up?',

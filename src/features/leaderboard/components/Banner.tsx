@@ -1,4 +1,5 @@
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { CHAIN_NAME } from '@/constants/project';
 
 export function Banner() {
   return (
@@ -9,7 +10,7 @@ export function Banner() {
       <div className="flex flex-col items-start gap-1 text-sm sm:text-base">
         <p className="text-lg font-semibold text-white">Talent Leaderboard</p>
         <p className="line mt-1 leading-5 text-slate-400">
-          See where you stand amongst the {"Solana's"} top contributors
+          See where you stand amongst the {`${CHAIN_NAME}'s`} top contributors
         </p>
       </div>
       <div className="flex h-full md:hidden">

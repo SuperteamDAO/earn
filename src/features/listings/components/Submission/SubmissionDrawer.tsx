@@ -24,6 +24,7 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { WalletConnectField } from '@/components/ui/wallet-connect-field';
+import { CHAIN_NAME } from '@/constants/project';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -217,7 +218,7 @@ export const SubmissionDrawer = ({
       subheadingText = "We can't wait to see what you've created!";
       break;
     case 'hackathon':
-      headerText = 'Solana Radar Track Submission';
+      headerText = `${CHAIN_NAME} Radar Track Submission`;
       subheadingText = (
         <>
           Note:
@@ -341,7 +342,7 @@ export const SubmissionDrawer = ({
                     {eligibility?.map((e, index) => {
                       if (
                         walletFieldListings.includes(id!) &&
-                        e.question === 'Connect Your Solana Wallet'
+                        e.question === `Connect Your ${CHAIN_NAME} Wallet`
                       ) {
                         return (
                           <WalletConnectField
@@ -424,7 +425,7 @@ export const SubmissionDrawer = ({
                           <FormItem className="flex w-full flex-col gap-2">
                             <div>
                               <FormLabel isRequired={!user?.publicKey}>
-                                Your Solana Wallet Address
+                                Your {CHAIN_NAME} Wallet Address
                               </FormLabel>
                               <FormDescription>
                                 {!!user?.publicKey ? (
@@ -455,7 +456,7 @@ export const SubmissionDrawer = ({
                                   !!user?.publicKey &&
                                     'cursor-not-allowed text-slate-600 opacity-80',
                                 )}
-                                placeholder="Add your Solana wallet address"
+                                placeholder={`Add your ${CHAIN_NAME} wallet address`}
                                 readOnly={!!user?.publicKey}
                                 {...(!!user?.publicKey ? {} : field)}
                                 value={user?.publicKey || field.value}

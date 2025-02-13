@@ -322,7 +322,7 @@ export const GrantApplicationModal = ({
                       <FormItem className="flex w-full flex-col gap-2">
                         <div>
                           <FormLabel isRequired={!user?.publicKey}>
-                            Your Solana Wallet Address
+                            Your {CHAIN_NAME} Wallet Address
                           </FormLabel>
                           <FormDescription>
                             {!!user?.publicKey ? (

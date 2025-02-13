@@ -6,7 +6,7 @@ import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { PROJECT_NAME } from '@/constants/project';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
@@ -39,7 +39,7 @@ export default function Renaissance() {
         >
           <RenaissanceLogo styles={{ height: '80px', width: 'auto' }} />
           <p className="mt-4 px-6 text-center text-slate-600">
-            Participate in Solana&apos;s first ever content hackathon
+            Participate in {CHAIN_NAME}&apos;s first ever content hackathon
           </p>
           <div className="flex items-center gap-6">
             <Button

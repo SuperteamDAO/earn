@@ -76,8 +76,9 @@ export default function Radar() {
           </div>
 
           <p className="mt-1 max-w-[28rem] px-6 text-center text-lg text-[#AAA199]">
-            Submit to exclusive tracks of the latest Solana Global Hackathon on
-            Earn
+            Submit to exclusive tracks of the latest {CHAIN_NAME} Global
+            Hackathon on
+            {PROJECT_NAME}
           </p>
 
           <div className="flex items-center gap-6">

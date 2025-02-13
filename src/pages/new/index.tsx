@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { CHAIN_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
@@ -140,7 +141,7 @@ export default function NewProfilePage({
                   </div>
                   <div className="flex flex-col gap-5 px-4">
                     <BulletPoint type="TALENT">
-                      Contribute to top Solana projects
+                      Contribute to top {CHAIN_NAME} projects
                     </BulletPoint>
                     <BulletPoint type="TALENT">
                       Build your web3 resume
