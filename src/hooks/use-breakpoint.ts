@@ -11,13 +11,18 @@ const breakpointValues: Record<Breakpoint, number> = {
 };
 
 export const useBreakpoint = (breakpoint: Breakpoint): boolean => {
-  const [matches, setMatches] = useState(
-    () => window.innerWidth >= breakpointValues[breakpoint],
-  );
+  const [matches, setMatches] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= breakpointValues[breakpoint];
+    }
+    return false;
+  });
 
   useEffect(() => {
-    const check = () =>
+    if (typeof window === 'undefined') return;
+    const check = () => {
       setMatches(window.innerWidth >= breakpointValues[breakpoint]);
+    };
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
