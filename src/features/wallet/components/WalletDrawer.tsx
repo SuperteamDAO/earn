@@ -1,6 +1,7 @@
 import { useMfaEnrollment, usePrivy } from '@privy-io/react-auth';
 import { ArrowLeft, ArrowUpRight, CheckIcon, CopyIcon, X } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
 import { WalletFeature } from '@/components/modals/WalletFeature';
@@ -46,6 +47,7 @@ export function WalletDrawer({
   const { user } = useUser();
   const router = useRouter();
   const updateUser = useUpdateUser();
+  const posthog = usePostHog();
   const { user: privyUser } = usePrivy();
   const { showMfaEnrollmentModal } = useMfaEnrollment();
 
@@ -154,7 +156,10 @@ export function WalletDrawer({
               {view === 'main' && (
                 <div className="w-full items-end justify-between">
                   <Button
-                    onClick={() => setView('withdraw')}
+                    onClick={() => {
+                      setView('withdraw');
+                      posthog.capture('withdraw_start');
+                    }}
                     className="mt-3 rounded-lg bg-brand-purple px-5 text-base"
                     disabled={!tokens?.length}
                   >
@@ -163,7 +168,7 @@ export function WalletDrawer({
                   </Button>
                   <div
                     onClick={() => showMfaEnrollmentModal()}
-                    className="mt-1.5 cursor-pointer py-0.5 text-xs font-semibold text-brand-purple hover:text-brand-purple-dark hover:underline"
+                    className="mt-1.5 cursor-pointer py-0.5 text-xs font-semibold text-slate-400 hover:text-slate-500 hover:underline"
                   >
                     {privyUser?.mfaMethods.length === 0
                       ? '+ Add Two Factor Authentication'

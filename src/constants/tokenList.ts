@@ -402,4 +402,12 @@ export const tokenList: Token[] = [
     decimals: 6,
     coingeckoSymbol: 'debridge',
   },
+  {
+    tokenName: 'Adrena',
+    tokenSymbol: 'ADX',
+    mintAddress: 'AuQaustGiaqxRvj2gtCdrd22PBzTn8kM3kEPEkZCtuDw',
+    icon: 'https://assets.coingecko.com/coins/images/50363/standard/adrena_logo_adx_color_200x200.png?1727331561',
+    decimals: 6,
+    coingeckoSymbol: 'adrena',
+  },
 ];

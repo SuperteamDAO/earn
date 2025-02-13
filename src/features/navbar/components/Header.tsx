@@ -58,6 +58,11 @@ export const Header = () => {
     onSearchOpen();
   }
 
+  const openWalletWithEvent = () => {
+    posthog.capture('open_wallet_drawer');
+    onWalletOpen();
+  };
+
   useEffect(() => {
     const checkHashAndOpenModal = () => {
       const hashHasEmail = window.location.hash === '#emailPreferences';
@@ -82,7 +87,7 @@ export const Header = () => {
         (hashHasWallet && queryParams.get('loginState') === 'signedIn') ||
         hashHasWallet
       ) {
-        onWalletOpen();
+        openWalletWithEvent();
       }
     };
 
@@ -111,14 +116,14 @@ export const Header = () => {
         <DesktopNavbar
           onLoginOpen={onLoginOpen}
           onSearchOpen={searchOpenWithEvent}
-          onWalletOpen={onWalletOpen}
+          onWalletOpen={openWalletWithEvent}
           walletBalance={walletBalance || 0}
         />
       </div>
 
       <MobileNavbar
         onLoginOpen={onLoginOpen}
-        onWalletOpen={onWalletOpen}
+        onWalletOpen={openWalletWithEvent}
         walletBalance={walletBalance || 0}
       />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
