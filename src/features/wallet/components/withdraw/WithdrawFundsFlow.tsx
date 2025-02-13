@@ -8,6 +8,7 @@ import {
   VersionedTransaction,
 } from '@solana/web3.js';
 import { useQueryClient } from '@tanstack/react-query';
+import { usePostHog } from 'posthog-js/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -42,6 +43,7 @@ export function WithdrawFundsFlow({
   setTxData,
 }: WithdrawFlowProps) {
   const { user } = useUser();
+  const posthog = usePostHog();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
 
@@ -151,10 +153,12 @@ export function WithdrawFundsFlow({
       await queryClient.invalidateQueries({
         queryKey: ['wallet', 'activity'],
       });
+      posthog.capture('withdraw_complete');
       setView('success');
 
       return signature;
     } catch (e) {
+      posthog.capture('withdraw_failed');
       console.error('Withdrawal failed:', e);
       setError(
         e instanceof Error
