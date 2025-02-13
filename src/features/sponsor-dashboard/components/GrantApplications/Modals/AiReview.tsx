@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
+import { usePostHog } from 'posthog-js/react';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -38,6 +39,7 @@ interface Props {
   grant: GrantWithApplicationCount | undefined;
 }
 export default function AiReviewModal({ applications, grant }: Props) {
+  const posthog = usePostHog();
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<'INIT' | 'PROCESSING' | 'DONE' | 'ERROR'>(
     'INIT',
@@ -84,6 +86,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
   }, [nonAnalysedApplications?.length]);
 
   const onReviewClick = useCallback(async () => {
+    posthog.capture('start_ai review grants');
     setState('PROCESSING');
 
     const batchSize = 5;
@@ -138,6 +141,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
           ).length,
           totalHoursSaved: data.data.length * 6_00_000,
         });
+        posthog.capture('complete_ai review grants');
         setState('DONE');
       } catch (error: any) {
         console.log(
@@ -147,7 +151,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
         setState('ERROR');
       }
     }, 500);
-  }, [applications, unreviewedApplications, nonAnalysedApplications]);
+  }, [applications, unreviewedApplications, nonAnalysedApplications, posthog]);
   function onComplete() {
     setState('INIT');
     setProgress(0);
@@ -207,6 +211,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
       open={open}
       onOpenChange={(s) => {
         if (state === 'PROCESSING') return;
+        if (s === false) posthog.capture('close_ai review grants');
         setOpen(s);
       }}
     >
@@ -215,13 +220,18 @@ export default function AiReviewModal({ applications, grant }: Props) {
         !!(grant?.ai as GrantsAi).context &&
         !!unreviewedApplications?.length && (
           <DialogTrigger asChild>
-            <button>
+            <button
+              className="ph-no-capture"
+              onClick={() => {
+                posthog.capture('open_ai review grants');
+              }}
+            >
               <p className="mb-1 text-xs text-slate-400">
                 {unreviewedApplications?.length} Applications to review
               </p>
               <div className="group relative inline-flex h-10 overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] bg-background p-[1.5px] pb-[1.8px] shadow-[0px_2px_2.3px_0px_#0000002B] focus:outline-none">
                 <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
-                <span className="inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-background px-4 py-1 text-sm font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
+                <span className="ph-no-capture inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-background px-4 py-1 text-sm font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
                   <img src="/assets/ai-wand.svg" alt="Auto Review AI" />
                   Auto Review
                 </span>
@@ -295,7 +305,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
               </CardContent>
               <CardFooter className="flex flex-col px-6">
                 <Button
-                  className="mt-4 w-full"
+                  className="ph-no-capture mt-4 w-full"
                   size="lg"
                   onClick={() => {
                     onReviewClick?.();
