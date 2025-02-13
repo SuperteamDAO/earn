@@ -8,3 +8,4 @@ export const CHANGELOG_URL = `${GITHUB_URL}/releases`;
 export const CHAIN_NAME = 'NEAR';
 export const TWITTER_URL = null;
 export const DISCORD_URL = null;
+export const WALLET_URL = 'https://wallet.near.org/';

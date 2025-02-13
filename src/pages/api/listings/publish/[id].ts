@@ -135,7 +135,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       hackathonId,
     } = validatedData;
 
-    let isPublished = true;
+    const isPublished = true;
     let publishedAt;
     const language = description ? franc(description) : 'eng';
     logger.info('Listings Language Detected ', {
@@ -254,16 +254,17 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       );
     }
 
-    if (isVerifying) {
-      logger.info(`Setting listing to verification mode`, {
-        id,
-        previousState: { isPublished, publishedAt },
-        sponsorId: userSponsorId,
-        userId,
-      });
-      isPublished = false;
-      publishedAt = null;
-    }
+    // TODO: remove this after we identify mechanism to verify listings
+    // if (isVerifying) {
+    //   logger.info(`Setting listing to verification mode`, {
+    //     id,
+    //     previousState: { isPublished, publishedAt },
+    //     sponsorId: userSponsorId,
+    //     userId,
+    //   });
+    //   isPublished = false;
+    //   publishedAt = null;
+    // }
     let usdValue = 0;
     if (isPublished && publishedAt && !isVerifying) {
       logger.info(`Calculating USD value of listing`, {

@@ -56,7 +56,7 @@ const Sponsor = () => {
           font.className,
         )}
       >
-        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+        <div className="relative flex w-full flex-col items-center justify-center gap-y-[10rem] overflow-hidden">
           <Hero />
           <ListingTypes />
           {/* <Features showVideo={() => setVideoPopup(true)} /> */}

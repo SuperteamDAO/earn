@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Tooltip } from '@/components/ui/tooltip';
-import { CHAIN_NAME } from '@/constants/project';
+import { CHAIN_NAME, WALLET_URL } from '@/constants/project';
 import { cn } from '@/utils/cn';
 
 import { type NewTalentFormData } from '@/features/talent/schema';
@@ -37,11 +37,11 @@ export function PublicKeyField() {
       check out{' '}
       <Link
         className="underline"
-        href="https://solflare.com"
+        href={WALLET_URL}
         rel="noopener noreferrer"
         target="_blank"
       >
-        Solflare
+        this
       </Link>
     </>
   );
