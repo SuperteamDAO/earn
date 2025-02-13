@@ -7,7 +7,7 @@
     "build": "prisma generate && next build",
     "start": "cross-env NODE_ENV=production next start",
     "lint": "next lint",
-    "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
+    "format": "next lint --fix && prettier \"**/*.{json,yaml}\" \"!pnpm-lock.yaml\" --write --ignore-path .gitignore",
     "check-types": "tsc --noEmit --pretty",
     "prepare": "husky",
     "postinstall": "prisma generate",

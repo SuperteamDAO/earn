@@ -14,7 +14,7 @@ export const TotalStats = ({
     <div className="flex w-full flex-wrap items-center justify-between gap-2 rounded-md bg-slate-50 px-2 py-4">
       <div className="flex">
         <ExternalImage
-          className="mb-auto mr-2 h-[1.5625rem]"
+          className="mr-2 mb-auto h-[1.5625rem]"
           alt=""
           src={'/icons/lite-purple-dollar.svg'}
         />
@@ -34,7 +34,7 @@ export const TotalStats = ({
       <div className="hidden h-[80%] w-[0.0625rem] bg-slate-300 xl:block" />
       <div className="flex">
         <ExternalImage
-          className="mb-auto mr-2 h-[25px]"
+          className="mr-2 mb-auto h-[25px]"
           alt="suitcase"
           src={'/icons/lite-purple-suitcase.svg'}
         />

@@ -27,7 +27,7 @@ export const TransactionDetails = ({ txData }: { txData: TxData }) => {
               className="h-12 w-12 rounded-full"
             />
           </span>
-          <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white">
+          <span className="absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-white">
             <svg
               width="12"
               height="12"

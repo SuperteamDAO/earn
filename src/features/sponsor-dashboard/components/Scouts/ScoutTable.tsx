@@ -113,7 +113,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
           </TableRow>
         </TableHeader>
         {scouts.length === 0 && (
-          <div className="absolute left-1/2 top-48 flex -translate-x-1/2 flex-col items-center gap-3">
+          <div className="absolute top-48 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3">
             <div className="flex items-center justify-center rounded-full bg-slate-100 p-5">
               <svg
                 width="54"
@@ -167,7 +167,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                     <EarnAvatar id={scout.id} avatar={scout.pfp || undefined} />
                     <div className="align-start flex flex-col justify-center gap-1 md:justify-start">
                       <div className="flex gap-1">
-                        <p className="max-w-[14rem] overflow-hidden text-ellipsis text-xs text-slate-800">
+                        <p className="max-w-[14rem] overflow-hidden text-xs text-ellipsis text-slate-800">
                           {scout.name}
                         </p>
                         {scout.recommended && (

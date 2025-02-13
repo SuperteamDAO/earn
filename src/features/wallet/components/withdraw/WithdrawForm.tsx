@@ -71,7 +71,7 @@ export const WithdrawForm = ({
               </div>
             )}
             {hasInsufficientBalance && (
-              <p className="text-xs font-medium text-destructive">
+              <p className="text-destructive text-xs font-medium">
                 Insufficient Balance
               </p>
             )}
@@ -124,7 +124,7 @@ export const WithdrawForm = ({
           )}
         </Button>
       </form>
-      <div className="mt-3 flex gap-2 rounded-lg border border-yellow-100 bg-yellow-50 px-4 pb-4 pt-2">
+      <div className="mt-3 flex gap-2 rounded-lg border border-yellow-100 bg-yellow-50 px-4 pt-2 pb-4">
         <p className="mt-1.5 h-fit w-[3.3rem] rounded-full bg-yellow-500 text-center text-sm font-bold text-white">
           !
         </p>

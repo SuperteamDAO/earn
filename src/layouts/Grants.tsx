@@ -145,7 +145,7 @@ export function GrantPageLayout({
                                 {grant?.avgResponseTime}
                               </p>
                             </div>
-                            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
+                            <p className="w-max pl-2 text-sm font-medium text-slate-500 uppercase">
                               Avg. Response Time
                             </p>
                           </div>
@@ -167,7 +167,7 @@ export function GrantPageLayout({
                                   : '—'}
                               </p>
                             </div>
-                            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
+                            <p className="w-max pl-2 text-sm font-medium text-slate-500 uppercase">
                               Avg. Grant Size
                             </p>
                           </div>
@@ -185,7 +185,7 @@ export function GrantPageLayout({
                                 )}
                               </p>
                             </div>
-                            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
+                            <p className="w-max pl-2 text-sm font-medium text-slate-500 uppercase">
                               Approved So Far
                             </p>
                           </div>
@@ -196,7 +196,7 @@ export function GrantPageLayout({
                                 {grant?.totalApplications}
                               </p>
                             </div>
-                            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
+                            <p className="w-max pl-2 text-sm font-medium text-slate-500 uppercase">
                               Recipients
                             </p>
                           </div>
@@ -224,7 +224,7 @@ export function GrantPageLayout({
                     </div>
                   </div>
                 </div>
-                <div className="border-l-1 flex w-full flex-col gap-8 border-slate-100 px-2 md:px-5">
+                <div className="flex w-full flex-col gap-8 border-l-1 border-slate-100 px-2 md:px-5">
                   {children}
                   <div className="flex flex-col items-start md:hidden">
                     <p className="mb-1.5 h-full text-center text-xs font-semibold text-slate-600">

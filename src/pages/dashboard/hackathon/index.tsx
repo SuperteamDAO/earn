@@ -266,9 +266,9 @@ export default function Hackathon() {
           </p>
         </div>
         <div className="relative w-64">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <Input
-            className="placeholder:text-md border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
+            className="placeholder:text-md focus-visible:ring-brand-purple border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
             onChange={(e) => debouncedSetSearchText(e.target.value)}
             placeholder="Search listing..."
             type="text"
@@ -294,7 +294,7 @@ export default function Hackathon() {
             and start getting contributions
           </p>
           <Button
-            className="text-md mx-auto mb-48 mt-6 block w-[200px]"
+            className="text-md mx-auto mt-6 mb-48 block w-[200px]"
             onClick={() => onOpenCreateListing()}
           >
             <Plus className="mr-2 h-3 w-3" />
@@ -308,22 +308,22 @@ export default function Hackathon() {
             <Table>
               <TableHeader>
                 <TableRow className="text-slate-100">
-                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
                     Track
                   </TableCell>
-                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
                     Submissions
                   </TableCell>
-                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
                     Deadline
                   </TableCell>
-                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
                     Prize
                   </TableCell>
-                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
                     Status
                   </TableCell>
-                  <TableCell className="text-sm font-medium uppercase tracking-tight text-slate-400">
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
                     Actions
                   </TableCell>
                   <TableCell className="pl-0" />
@@ -340,14 +340,14 @@ export default function Hackathon() {
 
                   return (
                     <TableRow key={currentBounty?.id}>
-                      <TableCell className="max-w-96 whitespace-normal break-words font-medium text-slate-700">
+                      <TableCell className="max-w-96 font-medium break-words whitespace-normal text-slate-700">
                         <div className="flex items-center">
                           <img
                             className="mr-2 h-5 rounded-sm"
                             alt={`${currentBounty?.sponsor?.name}`}
                             src={currentBounty?.sponsor?.logo}
                           />
-                          <a className="overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-medium text-slate-500">
+                          <a className="overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500">
                             {currentBounty.title}
                           </a>
                         </div>
@@ -386,7 +386,7 @@ export default function Hackathon() {
                       <TableCell className="items-center py-2">
                         <p
                           className={cn(
-                            'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium',
+                            'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap',
                             getColorStyles(bountyStatus).color,
                             getColorStyles(bountyStatus).bgColor,
                           )}
@@ -408,7 +408,7 @@ export default function Hackathon() {
                               }}
                             >
                               <Button
-                                className="text-[13px] font-medium text-brand-purple hover:bg-indigo-100"
+                                className="text-brand-purple text-[13px] font-medium hover:bg-indigo-100"
                                 disabled={!hasHackathonStarted}
                                 onClick={() =>
                                   handleViewSubmissions(currentBounty.slug)

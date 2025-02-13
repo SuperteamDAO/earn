@@ -70,7 +70,7 @@ export function BottomBar({ onSearchOpen }: Props) {
           )}
         >
           <Newspaper style={iconStyle} />
-          <div className="absolute right-3 top-1 h-2.5 w-2.5 rounded-full bg-red-500" />
+          <div className="absolute top-1 right-3 h-2.5 w-2.5 rounded-full bg-red-500" />
         </Button>
       </Link>
 

@@ -38,7 +38,7 @@ const FooterColumn = ({
   links: { href: string; text: string }[];
 }) => (
   <div className="flex flex-col items-start">
-    <p className="mb-2 text-xs font-medium uppercase text-slate-400">{title}</p>
+    <p className="mb-2 text-xs font-medium text-slate-400 uppercase">{title}</p>
     <div className="flex flex-col space-y-2">
       {links.map((link) => (
         <Link
@@ -107,7 +107,7 @@ const CountrySelector: React.FC = () => {
           ) : (
             <UserFlag location={selectedCountry.code} isCode />
           )}
-          <p className="select-none capitalize">{selectedCountry?.name}</p>
+          <p className="capitalize select-none">{selectedCountry?.name}</p>
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">

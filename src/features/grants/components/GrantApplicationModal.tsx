@@ -215,7 +215,7 @@ export const GrantApplicationModal = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent hideCloseIcon className="max-w-xl" ref={modalRef}>
         <X
-          className="absolute right-4 top-7 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
+          className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
           onClick={onClose}
         />
         <DialogTitle className="text-lg tracking-normal text-slate-700 sm:text-xl">
@@ -268,7 +268,7 @@ export const GrantApplicationModal = ({
           </div>
         </DialogTitle>
         <div
-          className="flex max-h-[30rem] flex-col items-start gap-3 pb-4 pt-3 sm:px-1 md:max-h-[50rem]"
+          className="flex max-h-[30rem] flex-col items-start gap-3 pt-3 pb-4 sm:px-1 md:max-h-[50rem]"
           ref={modalRef}
         >
           <Form {...form}>

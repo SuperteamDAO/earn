@@ -96,7 +96,7 @@ export const VibeCard = () => {
   return (
     <div className="flex w-full items-center justify-between rounded-lg bg-slate-100 p-4">
       <div className="flex flex-col gap-2 md:gap-1">
-        <p className="whitespace-nowrap text-xs font-medium text-slate-500 md:text-sm">
+        <p className="text-xs font-medium whitespace-nowrap text-slate-500 md:text-sm">
           <span className="text-slate-900">{vibeCount} </span>
           people vibing rn
         </p>
@@ -119,7 +119,7 @@ export const VibeCard = () => {
       <AuthWrapper>
         <Button
           variant="outline"
-          className="max-w-40 border-slate-200 bg-white px-10 text-sm font-medium text-slate-500 hover:bg-brand-purple hover:text-white"
+          className="hover:bg-brand-purple max-w-40 border-slate-200 bg-white px-10 text-sm font-medium text-slate-500 hover:text-white"
           onClick={handleVibeClick}
         >
           click to vibeeeee

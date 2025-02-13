@@ -53,7 +53,7 @@ export function HomeBanner() {
           <img {...rest} className="h-full w-full" alt={common.alt} />
         </picture>
       </div>
-      <p className="relative z-10 text-2xl font-bold leading-[120%] text-white md:text-[28px]">
+      <p className="relative z-10 text-2xl leading-[120%] font-bold text-white md:text-[28px]">
         Find Your Next High
         <br /> Paying Crypto Gig
       </p>
@@ -64,7 +64,7 @@ export function HomeBanner() {
       <div className="relative z-10 mt-4 flex flex-col items-center gap-3 md:flex-row md:gap-4">
         <AuthWrapper className="group w-full md:w-auto">
           <button
-            className="ph-no-capture w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] hover:bg-brand-purple hover:text-white md:w-auto"
+            className="ph-no-capture hover:bg-brand-purple w-full rounded-md bg-white px-9 py-3 text-sm font-medium text-[#3223A0] hover:text-white md:w-auto"
             onClick={() => {
               posthog.capture('signup_banner');
             }}

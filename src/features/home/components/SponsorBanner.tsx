@@ -22,7 +22,7 @@ export const SponsorBanner = () => {
           Become a Sponsor
           <MdArrowForward className="ml-1 w-6 text-[#777777]" />
         </p>
-        <p className="mt-1 text-sm font-medium leading-[1.1rem] text-slate-500">
+        <p className="mt-1 text-sm leading-[1.1rem] font-medium text-slate-500">
           Reach{' '}
           {(Math.floor((data?.totalUsers || 0) / 10000) * 10000).toLocaleString(
             'en-us',

@@ -29,7 +29,7 @@ export const TokenInput = React.forwardRef<
 
   return (
     <div className="flex">
-      <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted pl-3 pr-5">
+      <div className="border-input bg-muted flex items-center gap-1 rounded-l-md border border-r-0 pr-5 pl-3">
         <LocalImage
           className="h-4 w-4 rounded-full"
           alt="token"

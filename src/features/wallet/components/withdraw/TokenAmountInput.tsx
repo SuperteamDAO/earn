@@ -43,12 +43,12 @@ export const TokenAmountInput = ({
 
   return (
     <>
-      <div className={`flex rounded-md border border-input ${className}`}>
+      <div className={`border-input flex rounded-md border ${className}`}>
         <Select
           onValueChange={onTokenChange}
           value={selectedToken?.tokenAddress}
         >
-          <SelectTrigger className="w-[140px] rounded-r-none border-0 border-r bg-background">
+          <SelectTrigger className="bg-background w-[140px] rounded-r-none border-0 border-r">
             <SelectValue>
               {selectedToken && (
                 <div className="flex items-center gap-2">

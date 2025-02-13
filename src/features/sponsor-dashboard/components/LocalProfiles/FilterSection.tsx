@@ -87,7 +87,7 @@ export const FilterSection = ({
             >
               <div className="flex items-center">
                 <Checkbox
-                  className="mr-3 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                  className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-3"
                   checked={checkedItems[skill] || false}
                   onCheckedChange={() => handleCheckboxChange(skill)}
                 />
@@ -99,7 +99,7 @@ export const FilterSection = ({
       </DropdownMenu>
 
       <div className="relative w-64">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <Input
           className="placeholder:text-md h-9 border-slate-300 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-slate-300"
           onChange={(e) => {

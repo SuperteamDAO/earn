@@ -46,7 +46,7 @@ export const GrantsCardMini = ({
               {title}
             </p>
             <div className="flex w-min items-center gap-1">
-              <p className="w-full whitespace-normal text-xs text-slate-500">
+              <p className="w-full text-xs whitespace-normal text-slate-500">
                 {sponsor?.name}
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
@@ -59,7 +59,7 @@ export const GrantsCardMini = ({
                   src={tokenIcon}
                 />
                 <div className="flex items-baseline gap-0.5">
-                  <p className="whitespace-nowrap text-xs font-semibold text-slate-600">
+                  <p className="text-xs font-semibold whitespace-nowrap text-slate-600">
                     {grantAmount({
                       maxReward: maxReward!,
                       minReward: minReward!,
@@ -71,7 +71,7 @@ export const GrantsCardMini = ({
               {!!totalApproved && (
                 <div className="flex items-center gap-3">
                   <p className="flex text-xs text-slate-300 lg:text-sm">|</p>
-                  <p className="whitespace-nowrap text-xs font-medium text-gray-500 md:text-[0.71875rem]">
+                  <p className="text-xs font-medium whitespace-nowrap text-gray-500 md:text-[0.71875rem]">
                     $
                     {formatNumberWithSuffix(
                       Number((totalApproved / totalApplications).toFixed(2)),

@@ -336,9 +336,9 @@ export default function EditProfilePage({ slug }: { slug: string }) {
       <div className="bg-white">
         <div className="mx-auto max-w-[600px] p-3 md:p-5">
           <Form {...form}>
-            <h1 className="mb-5 mt-3 text-4xl font-bold">Edit Profile</h1>
+            <h1 className="mt-3 mb-5 text-4xl font-bold">Edit Profile</h1>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
+              <p className="mt-12 mb-5 text-lg font-semibold text-slate-600">
                 PERSONAL INFO
               </p>
               <FormField
@@ -432,7 +432,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 )}
               />
 
-              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
+              <p className="mt-12 mb-5 text-lg font-semibold text-slate-600">
                 SOCIALS
               </p>
 
@@ -441,7 +441,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 required={hasDevSkills(skills) ? ['github'] : ['twitter']}
               />
 
-              <p className="mb-5 mt-12 text-lg font-semibold text-slate-600">
+              <p className="mt-12 mb-5 text-lg font-semibold text-slate-600">
                 WORK
               </p>
 
@@ -557,7 +557,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 {pow.map((data, idx) => {
                   return (
                     <div
-                      className="mb-1.5 mt-2 flex items-center rounded-md border border-slate-300 px-[1rem] py-[0.5rem] text-slate-500"
+                      className="mt-2 mb-1.5 flex items-center rounded-md border border-slate-300 px-[1rem] py-[0.5rem] text-slate-500"
                       key={data.id}
                     >
                       <p className="w-full text-sm text-gray-800">
@@ -643,7 +643,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                               field.onChange(checked);
                             }
                           }}
-                          className="mr-1 text-brand-purple data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                          className="text-brand-purple data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-1"
                         ></Checkbox>
                       </FormControl>
                       <FormLabel className="font-medium text-slate-500">

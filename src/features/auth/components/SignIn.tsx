@@ -103,7 +103,7 @@ export const SignIn = ({
           </div>
         </div>
 
-        <p className="mb-2 mt-4 text-center text-xs text-slate-500">
+        <p className="mt-4 mb-2 text-center text-xs text-slate-500">
           By using this website, you agree to our{' '}
           <Link
             href={TERMS_OF_USE}

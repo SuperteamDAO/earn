@@ -15,14 +15,14 @@ const Progress = React.forwardRef<
   <ProgressPrimitive.Root
     ref={ref}
     className={cn(
-      'relative h-2 w-full overflow-hidden rounded-full bg-primary/20',
+      'bg-primary/20 relative h-2 w-full overflow-hidden rounded-full',
       className,
     )}
     {...props}
   >
     <ProgressPrimitive.Indicator
       className={cn(
-        'h-full w-full flex-1 bg-primary transition-all',
+        'bg-primary h-full w-full flex-1 transition-all',
         indicatorClassName,
       )}
       style={{
@@ -53,7 +53,7 @@ const CircularProgress = ({
           transform: 'rotate(-108deg)',
         }}
       />
-      <div className="absolute bottom-[3px] left-[3px] right-[3px] top-[3px] rounded-full bg-white" />
+      <div className="absolute top-[3px] right-[3px] bottom-[3px] left-[3px] rounded-full bg-white" />
     </div>
   );
 };

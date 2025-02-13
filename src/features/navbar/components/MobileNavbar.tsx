@@ -98,7 +98,7 @@ export const MobileNavbar = ({
             {user && !user.currentSponsorId && !user.isTalentFilled && (
               <Button
                 variant="ghost"
-                className="text-base text-brand-purple"
+                className="text-brand-purple text-base"
                 onClick={() => {
                   router.push('/new');
                 }}
@@ -201,8 +201,8 @@ export const MobileNavbar = ({
                     className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                     onClick={onWalletOpen}
                   >
-                    <IoWalletOutline className="h-7 w-7 text-brand-purple" />
-                    <span className="absolute -right-1.5 top-px block rounded-md bg-brand-purple/95 px-1 py-px text-[10px] font-semibold tracking-tight text-white sm:hidden">
+                    <IoWalletOutline className="text-brand-purple h-7 w-7" />
+                    <span className="bg-brand-purple/95 absolute top-px -right-1.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white sm:hidden">
                       ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
                     </span>
                     <p className="hidden text-sm font-semibold sm:block">
@@ -217,7 +217,7 @@ export const MobileNavbar = ({
           {ready && !authenticated && (
             <Button
               variant="ghost"
-              className="ph-no-capture mr-2 text-base text-brand-purple"
+              className="ph-no-capture text-brand-purple mr-2 text-base"
               onClick={() => {
                 posthog.capture('login_navbar');
                 onLoginOpen();

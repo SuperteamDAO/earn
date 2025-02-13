@@ -17,7 +17,7 @@ const Point = ({
 }) => {
   return (
     <div className="flex gap-8">
-      <div className="mt-1 text-brand-purple">{icon}</div>
+      <div className="text-brand-purple mt-1">{icon}</div>
       <div>
         <p className="text-base font-medium tracking-tight text-slate-700">
           {title}

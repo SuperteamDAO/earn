@@ -83,7 +83,7 @@ export function ListingWinners({ bounty }: Props) {
   }
 
   return (
-    <div className="relative mx-auto w-full max-w-7xl rounded-lg bg-brand-purple/10 px-4 pt-4">
+    <div className="bg-brand-purple/10 relative mx-auto w-full max-w-7xl rounded-lg px-4 pt-4">
       <div className="flex justify-between gap-2">
         <p className="mx-3 font-semibold text-slate-500 md:text-xl">
           🎉 Winners

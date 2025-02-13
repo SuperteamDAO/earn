@@ -50,7 +50,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
               {title}
             </p>
             <div className="flex w-min items-center gap-1">
-              <p className="w-full whitespace-nowrap text-xs text-slate-500">
+              <p className="w-full text-xs whitespace-nowrap text-slate-500">
                 {sponsor?.name}
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
@@ -74,7 +74,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                     maxRewardAsk={maxRewardAsk}
                     minRewardAsk={minRewardAsk}
                     rewardAmount={rewardAmount}
-                    className="whitespace-nowrap text-xs font-semibold text-slate-600"
+                    className="text-xs font-semibold whitespace-nowrap text-slate-600"
                   />
                   {compensationType !== 'variable' && (
                     <p className="text-xs font-medium text-gray-400">{token}</p>
@@ -90,7 +90,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
               <p className="flex text-xs text-slate-300 md:text-sm">|</p>
 
               <div className="flex items-center gap-1">
-                <p className="whitespace-nowrap text-xs text-gray-500">
+                <p className="text-xs whitespace-nowrap text-gray-500">
                   {dayjs().isBefore(dayjs(deadline))
                     ? `Due ${dayjs(deadline).fromNow()}`
                     : `Closed ${dayjs(deadline).fromNow()}`}

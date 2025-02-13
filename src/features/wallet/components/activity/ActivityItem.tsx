@@ -25,7 +25,7 @@ export function ActivityItem({
   return (
     <Button
       variant="ghost"
-      className="flex h-auto w-full justify-between px-6 py-2 hover:bg-accent sm:px-8 sm:py-4"
+      className="hover:bg-accent flex h-auto w-full justify-between px-6 py-2 sm:px-8 sm:py-4"
       onClick={() => {
         setView('history');
         setTxData({
@@ -55,7 +55,7 @@ export function ActivityItem({
           )}
           <div
             className={cn(
-              'absolute -bottom-1 -right-1 rounded-full p-0.5',
+              'absolute -right-1 -bottom-1 rounded-full p-0.5',
               isCredit ? 'bg-emerald-50' : 'bg-slate-200',
             )}
           >
