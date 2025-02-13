@@ -44,6 +44,7 @@ export const userSelectOptions: Prisma.UserSelect = {
       entityName: true,
       slug: true,
       st: true,
+      verificationInfo: true,
     },
   },
   UserSponsors: {

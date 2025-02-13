@@ -19,6 +19,10 @@ async function createGrantApplication(
   data: any,
   grant: any,
 ) {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+  });
+
   const validationResult = grantApplicationSchema(
     grant.minReward,
     grant.maxReward,
@@ -38,6 +42,13 @@ async function createGrantApplication(
 
   const validatedData = validationResult.data;
 
+  if (validatedData.telegram && !user.telegram) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { telegram: validatedData.telegram },
+    });
+  }
+
   const formattedData = {
     userId,
     grantId,
@@ -54,7 +65,7 @@ async function createGrantApplication(
     answers: validatedData.answers || [],
   };
 
-  return prisma.grantApplication.create({
+  return await prisma.grantApplication.create({
     data: formattedData,
     include: {
       user: {
@@ -81,9 +92,10 @@ async function grantApplication(
   res: NextApiResponse,
 ) {
   const userId = req.userId;
-  const { grantId, ...applicationData } = req.body;
-
   logger.debug(`Request body: ${safeStringify(req.body)}`);
+
+  const { grantId, telegram: telegramUsername, ...applicationData } = req.body;
+  const telegram = extractSocialUsername('telegram', telegramUsername);
 
   try {
     const { grant } = await validateGrantRequest(userId as string, grantId);
@@ -105,7 +117,7 @@ async function grantApplication(
     const result = await createGrantApplication(
       userId as string,
       grantId,
-      applicationData,
+      { ...applicationData, telegram },
       grant,
     );
 

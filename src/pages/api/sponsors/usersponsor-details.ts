@@ -7,6 +7,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { userSponsorDetailsSchema } from '@/features/sponsor/utils/sponsorFormSchema';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -14,8 +15,16 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
 
+  const { telegram, ...rest } = req.body;
+  const telegramUsernameExtracted = extractSocialUsername('telegram', telegram);
+
+  const dataToValidate = {
+    ...rest,
+    telegram: telegramUsernameExtracted,
+  };
+
   try {
-    const validationResult = userSponsorDetailsSchema.safeParse(req.body);
+    const validationResult = userSponsorDetailsSchema.safeParse(dataToValidate);
 
     if (!validationResult.success) {
       logger.warn(
@@ -27,7 +36,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
 
-    const { firstName, lastName, username, photo } = validationResult.data;
+    const { firstName, lastName, username, photo, telegram } =
+      validationResult.data;
 
     logger.info(
       `Completing user sponsor profile with validated data: ${safeStringify({
@@ -35,6 +45,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         lastName,
         username,
         photo,
+        telegram,
       })}`,
     );
 
@@ -47,6 +58,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         lastName,
         username,
         photo,
+        telegram,
       },
     });
 

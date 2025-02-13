@@ -149,7 +149,7 @@ export const PaymentsHistoryTab = ({
         <Table>
           <TableHeader>
             <TableRow className="text-slate-100">
-              <GrantTh>Approved Grantee</GrantTh>
+              <GrantTh>Approved Grant Title</GrantTh>
               <GrantTh>Approved</GrantTh>
               <GrantTh>Paid Out</GrantTh>
               <GrantTh>% Paid</GrantTh>
@@ -175,10 +175,7 @@ export const PaymentsHistoryTab = ({
                         />
                         <div className="flex flex-col">
                           <p className="text-sm font-medium text-slate-700">
-                            {grantee.user.firstName} {grantee.user.lastName}
-                          </p>
-                          <p className="text-sm font-medium text-slate-500">
-                            @{grantee.user.username}
+                            {grantee?.projectTitle}
                           </p>
                         </div>
                       </div>
