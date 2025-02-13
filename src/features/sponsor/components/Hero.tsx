@@ -8,7 +8,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { maxW } from '../utils/styles';
-import { HighQualityImage } from './HighQualityImage';
+// import { HighQualityImage } from './HighQualityImage';
 import { StepOne } from './steps/One';
 import { StepThree } from './steps/Three';
 import { StepTwo } from './steps/Two';
@@ -20,7 +20,7 @@ export function Hero() {
 
   const posthog = usePostHog();
 
-  const base = '/landingsponsor/sponsors/';
+  // const base = '/landingsponsor/sponsors/';
 
   function getStartedWhere(authenticated: boolean, isSponsor: boolean) {
     if (!authenticated) return '/new/sponsor';
@@ -124,7 +124,7 @@ export function Hero() {
           maxW,
         )}
       >
-        <HighQualityImage
+        {/* <HighQualityImage
           src={base + 'squads.webp'}
           alt="Squads Logo"
           className="h-6"
@@ -168,7 +168,7 @@ export function Hero() {
           src={base + 'bonk.webp'}
           alt="Bonk Logo"
           className="h-8"
-        />
+        /> */}
       </div>
     </div>
   );

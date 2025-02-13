@@ -7,14 +7,10 @@ import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
 
 import { FAQs } from '@/features/sponsor/components/FAQs';
-import { Features } from '@/features/sponsor/components/Features';
 import { Footer } from '@/features/sponsor/components/Footer';
 import { Header } from '@/features/sponsor/components/Header';
 import { Hero } from '@/features/sponsor/components/Hero';
 import { ListingTypes } from '@/features/sponsor/components/ListingTypes';
-import { ListingWork } from '@/features/sponsor/components/ListingWork';
-import { Stats } from '@/features/sponsor/components/Stats';
-import { Testimonials } from '@/features/sponsor/components/Testimonials';
 
 const font = localFont({
   src: '../../../public/OverusedGrotesk-VF.woff2',
@@ -63,10 +59,10 @@ const Sponsor = () => {
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <Hero />
           <ListingTypes />
-          <Features showVideo={() => setVideoPopup(true)} />
-          <Stats />
-          <ListingWork />
-          <Testimonials />
+          {/* <Features showVideo={() => setVideoPopup(true)} /> */}
+          {/* <Stats /> */}
+          {/* <ListingWork /> */}
+          {/* <Testimonials /> */}
           <FAQs />
           <Footer />
         </div>
