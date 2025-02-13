@@ -410,7 +410,7 @@ export const tokenList: Token[] = [
     decimals: 6,
     coingeckoSymbol: 'debridge',
   },
-   {
+  {
     tokenName: 'Adrena',
     tokenSymbol: 'ADX',
     mintAddress: 'AuQaustGiaqxRvj2gtCdrd22PBzTn8kM3kEPEkZCtuDw',
