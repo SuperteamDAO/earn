@@ -49,4 +49,12 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
+      - key: EARNCOGNITO_URL
+        sync: false
+      - key: EARNCOGNITO_SECRET
+        sync: false
+      - key: GOOGLE_ID
+        sync: false
+      - key: GOOGLE_SECRET
+        sync: false
     autoDeploy: true

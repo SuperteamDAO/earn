@@ -15,7 +15,7 @@ export default async function handler(
     let errorCount = 0;
 
     if (process.env.NODE_ENV === 'production') {
-      errorCount = 289;
+      errorCount = 0;
     }
 
     const roundedUserCount = Math.ceil((userCount - errorCount) / 10) * 10;
