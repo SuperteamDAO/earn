@@ -19,7 +19,7 @@ export function ListingTypes() {
   return (
     <div
       className={cn(
-        'mx-auto flex w-full flex-col items-center gap-8',
+        'mx-auto mb-[2rem] flex w-full flex-col items-center gap-8',
         maxW,
         'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
       )}

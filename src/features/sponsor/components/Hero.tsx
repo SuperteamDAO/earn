@@ -7,7 +7,6 @@ import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
-import { maxW } from '../utils/styles';
 // import { HighQualityImage } from './HighQualityImage';
 import { StepOne } from './steps/One';
 import { StepThree } from './steps/Three';
@@ -28,7 +27,7 @@ export function Hero() {
     return '/dashboard/listings/?open=1';
   }
   return (
-    <div className="relative flex w-full flex-col items-center justify-start overflow-hidden pb-[4rem] md:pb-[1rem]">
+    <div className="relative flex w-full flex-col items-center justify-start overflow-hidden pb-[4rem] md:pb-[2rem]">
       <div className="relative flex w-full flex-col items-center gap-8 bg-slate-50 px-8 pt-36 text-center">
         <h1 className="max-w-[45rem] text-[2rem] font-semibold leading-[1.1] text-gray-700 md:text-[3.5rem]">
           Where {CHAIN_NAME} teams come to get sh*t done
@@ -117,14 +116,14 @@ export function Hero() {
           </div>
         </div>
       </div>
-      <div
+      {/* <div
         className={cn(
           'mx-auto mb-[3.125rem] mt-8 flex h-28 w-full flex-wrap items-center justify-around gap-5',
           'px-[1.875rem] lg:px-[7rem] xl:px-[11rem]',
           maxW,
         )}
       >
-        {/* <HighQualityImage
+        <HighQualityImage
           src={base + 'squads.webp'}
           alt="Squads Logo"
           className="h-6"
@@ -168,8 +167,9 @@ export function Hero() {
           src={base + 'bonk.webp'}
           alt="Bonk Logo"
           className="h-8"
-        /> */}
+        />
       </div>
+      */}
     </div>
   );
 }
