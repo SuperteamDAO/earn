@@ -38,7 +38,6 @@ export const authOptions: NextAuthOptions = {
           const randomIndex = Math.floor(Math.random() * digits.length);
           verificationCode += digits.charAt(randomIndex);
         }
-        console.log('verificationCode', verificationCode);
         return verificationCode;
       },
       server: {
@@ -49,7 +48,7 @@ export const authOptions: NextAuthOptions = {
           pass: process.env.RESEND_API_KEY,
         },
       },
-      from: process.env.RESEND_EMAIL,
+      from: ceoEmail,
       sendVerificationRequest: async ({ identifier, token }) => {
         const isBlocked = await prisma.blockedEmail.findUnique({
           where: { email: identifier },
