@@ -30,7 +30,8 @@ export default function Blocked() {
     >
       <div className="mx-auto mt-10 max-w-[800px] px-4">
         <p className="text-center text-3xl font-medium text-slate-600">
-          Your access to Earn has been restricted. Please get in touch with{' '}
+          Your access to {PROJECT_NAME} has been restricted. Please get in touch
+          with{' '}
           <Link className="text-brand-purple" href={`mailto:${SUPPORT_EMAIL}`}>
             {SUPPORT_EMAIL}
           </Link>{' '}

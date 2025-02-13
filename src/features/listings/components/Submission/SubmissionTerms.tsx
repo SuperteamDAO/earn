@@ -53,13 +53,14 @@ export const SubmissionTerms = ({
               <li>
                 {PROJECT_NAME} acts solely as a platform for the Partner to list
                 contests, bounties, projects or similar engagements{' '}
-                {`("Activities")`} on its platform {`("ST Earn Platform")`}.
+                {`("Activities")`} on its platform{' '}
+                {`("${PROJECT_NAME} Platform")`}.
               </li>
               <li>
                 {PROJECT_NAME} shall not be liable for any Activities listed by
-                the Partner on the ST Earn Platform. The Partner is solely
-                responsible for the content, rules, scope and execution of their
-                Activities.
+                the Partner on the {PROJECT_NAME} Platform. The Partner is
+                solely responsible for the content, rules, scope and execution
+                of their Activities.
               </li>
               <li>
                 Users participating in Activities listed by Partners do so at

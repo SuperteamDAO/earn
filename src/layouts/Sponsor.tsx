@@ -204,8 +204,8 @@ export function SponsorLayout({
       <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
       <div className="flex min-h-[80vh] px-3 md:hidden">
         <p className="pt-20 text-center text-xl font-medium text-slate-500">
-          The Sponsor Dashboard on Earn is not optimized for mobile yet. Please
-          use a desktop to check out the Sponsor Dashboard
+          The Sponsor Dashboard on {PROJECT_NAME} is not optimized for mobile
+          yet. Please use a desktop to check out the Sponsor Dashboard
         </p>
       </div>
       <div className="hidden min-h-screen justify-start md:flex">

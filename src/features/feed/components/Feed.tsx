@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { PROJECT_NAME } from '@/constants/project';
 import { FeedPageLayout } from '@/layouts/Feed';
 import { cn } from '@/utils/cn';
 
@@ -94,7 +95,7 @@ export const Feed = ({ isWinner = false, id, type }: Props) => {
           Activity Feed
         </p>
         <p className="text-base text-slate-500">
-          Discover the best work on Earn
+          Discover the best work on {PROJECT_NAME}
         </p>
         <div className="flex w-full pt-4 lg:hidden">
           <VibeCard />

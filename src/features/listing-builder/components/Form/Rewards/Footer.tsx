@@ -3,6 +3,7 @@ import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { PROJECT_NAME } from '@/constants/project';
 
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
@@ -37,7 +38,7 @@ function RewardsFooter({ closeSheet }: { closeSheet: () => void }) {
     <div className="w-full space-y-4">
       {!!rewardAmount && rewardAmount <= 100 && (
         <p className="text-[0.8rem] text-yellow-600">
-          {`Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability.`}
+          {`Note: This listing will not show up on ${PROJECT_NAME}'s Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability.`}
         </p>
       )}
       <div className="flex items-center justify-between text-sm font-medium">

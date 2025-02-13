@@ -10,7 +10,7 @@ import { getURL } from '@/utils/validUrl';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { InviteMemberTemplate } from '@/features/emails/components/inviteMemberTemplate';
-import { pratikEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
+import { ceoEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
 import { resend } from '@/features/emails/utils/resend';
 
 async function sendInvites(
@@ -86,7 +86,7 @@ async function sendInvites(
 
     logger.debug(`Sending invite email to: ${email}`);
     await resend.emails.send({
-      from: pratikEmail,
+      from: ceoEmail,
       to: [email],
       subject: `${user.firstName} has invited you to join ${user.currentSponsor.name}'s profile on ${PROJECT_NAME}`,
       react: InviteMemberTemplate({

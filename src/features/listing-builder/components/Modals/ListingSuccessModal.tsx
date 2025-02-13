@@ -71,7 +71,7 @@ export const ListingSuccessModal = () => {
             </h3>
             <p className="text-sm text-slate-500">
               {isVerified
-                ? "Share the love on your socials and invite Earn's best talent!"
+                ? `Share the love on your socials and invite ${PROJECT_NAME}'s best talent!`
                 : 'Share the love on your socials!'}
             </p>
           </div>

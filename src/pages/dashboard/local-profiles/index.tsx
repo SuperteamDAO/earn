@@ -6,6 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';
+import { PROJECT_NAME } from '@/constants/project';
 import { TeamRegions } from '@/constants/Team';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
@@ -119,7 +120,7 @@ export default function LocalProfiles() {
         <div className="flex items-center gap-2">
           {team?.code && <UserFlag location={team.code} isCode />}
           <p className="text-lg font-semibold text-slate-800">
-            Local Earn Profiles
+            Local {PROJECT_NAME} Profiles
           </p>
           <div className="mx-1 h-[60%] border-r border-slate-200" />
           <p className="text-slate-500">

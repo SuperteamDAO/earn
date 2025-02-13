@@ -7,6 +7,7 @@ import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
+import { PROJECT_NAME } from '@/constants/project';
 import { PDTG } from '@/constants/Telegram';
 import { useUser } from '@/store/user';
 
@@ -74,7 +75,7 @@ export function Banner({
   const sponsorId = isHackathon ? user?.hackathonId : user?.currentSponsorId;
 
   const tooltipTextReward = `Total compensation (in USD) of listings where the winners have been announced`;
-  const tooltipTextListings = `Total number of listings added to Earn`;
+  const tooltipTextListings = `Total number of listings added to ${PROJECT_NAME}`;
   const tooltipTextSubmissions = `Total number of submissions/applications received on all listings`;
 
   const sponsor = isHackathon ? stats : user?.currentSponsor;

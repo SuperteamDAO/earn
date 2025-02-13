@@ -34,7 +34,7 @@ const initialStats = [
   },
   {
     title: '16K',
-    label: 'Verified Earn Users',
+    label: `Verified ${PROJECT_NAME} Users`,
     showEarn: true,
   },
   {
@@ -47,7 +47,7 @@ export function Stats() {
   const { data: totals } = useQuery(userCountQuery);
 
   const stats = initialStats.map((stat) => {
-    if (stat.label === 'Verified Earn Users' && totals?.totalUsers) {
+    if (stat.label === `Verified ${PROJECT_NAME} Users` && totals?.totalUsers) {
       return {
         ...stat,
         title: new Intl.NumberFormat('en-US', {
@@ -103,7 +103,7 @@ export function Stats() {
                   <span className="top-0 w-[0.6rem] lg:w-[0.9rem]">
                     <HighQualityImage
                       src="/landingsponsor/icons/earn.svg"
-                      alt="Earn Icon"
+                      alt={`${PROJECT_NAME} Icon`}
                       className="h-full w-full"
                     />
                   </span>

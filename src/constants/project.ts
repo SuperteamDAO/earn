@@ -5,6 +5,6 @@ export const CEO_NAME = 'Ori';
 export const FAQ_URL = 'https://github.com/NEAR-DevHub/nearn/releases';
 export const GITHUB_URL = 'https://github.com/NEAR-DevHub/nearn';
 export const CHANGELOG_URL = `${GITHUB_URL}/releases`;
-export const CHAIN_NAME = 'Near';
+export const CHAIN_NAME = 'NEAR';
 export const TWITTER_URL = null;
 export const DISCORD_URL = null;

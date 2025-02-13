@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { PROJECT_NAME } from '@/constants/project';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
 import { nthLabelGenerator } from '@/utils/rank';
@@ -218,7 +219,7 @@ export async function GET(request: Request) {
                   width: '200px',
                   display: 'flex',
                 }}
-                alt="ST Earn Logo"
+                alt={`${PROJECT_NAME} Logo`}
                 src={'/logo/st-earn-white.svg'}
               />
             </div>

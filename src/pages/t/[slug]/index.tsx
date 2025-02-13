@@ -292,7 +292,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       posthog.capture('reach out_talent profile');
                       const email = encodeURIComponent(talent?.email || '');
                       const subject = encodeURIComponent(
-                        'Saw Your ST Earn Profile!',
+                        `Saw Your ${PROJECT_NAME} Profile!`,
                       );
                       const bcc = encodeURIComponent(SUPPORT_EMAIL);
                       window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
