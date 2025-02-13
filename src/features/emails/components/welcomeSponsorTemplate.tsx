@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { PROJECT_NAME } from '@/constants/project';
-import { PDTG } from '@/constants/Telegram';
+import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
 
 import { styles } from '../utils/styles';
 
@@ -17,8 +16,8 @@ export const WelcomeSponsorTemplate = () => {
       <p style={styles.textWithMargin}>
         If you need any help related to setting up your listing on{' '}
         {PROJECT_NAME}, don&apos;t hesitate to contact me on&nbsp;
-        <a href={PDTG} style={styles.link}>
-          Telegram
+        <a href={`mailto:${SUPPORT_EMAIL}`} style={styles.link}>
+          {SUPPORT_EMAIL}
         </a>
         .
       </p>

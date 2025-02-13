@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { PDTG } from '@/constants/Telegram';
+import { SUPPORT_EMAIL } from '@/constants/project';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
@@ -74,7 +74,7 @@ export const EntityNameModal = ({
 
         <div className="flex gap-2">
           <Link
-            href={PDTG}
+            href={`mailto:${SUPPORT_EMAIL}`}
             rel="noopener noreferrer"
             target="_blank"
             className="w-full"

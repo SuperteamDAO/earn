@@ -21,9 +21,8 @@ import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import { PROJECT_NAME } from '@/constants/project';
+import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
 import { TeamRegions } from '@/constants/Team';
-import { PDTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -147,7 +146,7 @@ export function SponsorLayout({
         { name: 'All Tracks', link: `/hackathon`, icon: MdList },
         {
           name: 'Get Help',
-          link: PDTG,
+          link: `mailto:${SUPPORT_EMAIL}`,
           icon: MdOutlineChatBubbleOutline,
           posthog: 'get help_sponsor',
         },
@@ -170,7 +169,7 @@ export function SponsorLayout({
           : []),
         {
           name: 'Get Help',
-          link: PDTG,
+          link: `mailto:${SUPPORT_EMAIL}`,
           icon: MessageSquare,
           posthog: 'get help_sponsor',
         },

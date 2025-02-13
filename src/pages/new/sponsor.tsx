@@ -25,8 +25,7 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
-import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
-import { PDTG } from '@/constants/Telegram';
+import { CHAIN_NAME, PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
@@ -539,9 +538,9 @@ const CreateSponsor = () => {
                   {sponsorNameValidationErrorMessage && (
                     <p className="text-center text-yellow-500">
                       If you want access to the existing account, contact us on
-                      Telegram at{' '}
-                      <Link href={PDTG} target="_blank">
-                        @pratikdholani
+                      via{' '}
+                      <Link href={`mailto:${SUPPORT_EMAIL}`} target="_blank">
+                        {SUPPORT_EMAIL}
                       </Link>
                     </p>
                   )}

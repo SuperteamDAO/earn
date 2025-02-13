@@ -5,6 +5,7 @@ import { PROJECT_NAME } from '@/constants/project';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
 import { nthLabelGenerator } from '@/utils/rank';
+import { getURL } from '@/utils/validUrl';
 
 import { type Rewards } from '@/features/listings/types';
 
@@ -220,7 +221,7 @@ export async function GET(request: Request) {
                   display: 'flex',
                 }}
                 alt={`${PROJECT_NAME} Logo`}
-                src={'/logo/st-earn-white.svg'}
+                src={`${getURL()}/assets/logo.svg`}
               />
             </div>
           </div>

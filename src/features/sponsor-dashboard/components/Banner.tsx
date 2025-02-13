@@ -5,8 +5,7 @@ import { usePostHog } from 'posthog-js/react';
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
-import { PROJECT_NAME } from '@/constants/project';
-import { PDTG } from '@/constants/Telegram';
+import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
 import { useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -144,7 +143,7 @@ export function Banner({
       <div className="mb-6 w-[60%] max-w-[400px] rounded-md border border-slate-200 bg-indigo-50 px-8 py-5 text-white">
         <a
           className="ph-no-capture no-underline"
-          href={PDTG}
+          href={`mailto:${SUPPORT_EMAIL}`}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => posthog.capture('message pratik_sponsor')}

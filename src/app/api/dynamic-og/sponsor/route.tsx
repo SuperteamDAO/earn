@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
 import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
+import { getURL } from '@/utils/validUrl';
 
 export async function GET(request: Request) {
   try {
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
               marginLeft: 'auto',
             }}
             alt="pfp"
-            src={ASSET_URL + '/logo/logo-grayed.png'}
+            src={`${getURL()}/assets/logo.svg`}
           />
           <div
             style={{
