@@ -77,7 +77,7 @@ export const SubmissionDrawer = ({
   const { user, refetchUser } = useUser();
   const form = useForm<FormData>({
     resolver: zodResolver(
-      submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0, user),
+      submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0),
     ),
     defaultValues: {
       eligibilityAnswers:
@@ -105,7 +105,6 @@ export const SubmissionDrawer = ({
             answer: '',
           }))
         : [],
-      publicKey: user?.publicKey || '',
     });
     setTermsAccepted(false);
     onClose();
@@ -154,7 +153,6 @@ export const SubmissionDrawer = ({
         otherInfo: data.otherInfo || '',
         ask: data.ask || null,
         eligibilityAnswers: data.eligibilityAnswers || [],
-        publicKey: data.publicKey,
       });
 
       const hideEasterEggFromSponsorIds = [
@@ -240,8 +238,8 @@ export const SubmissionDrawer = ({
   }
 
   return (
-    <SideDrawer open={isOpen} onClose={handleClose}>
-      <SideDrawerContent>
+    <SideDrawer isOpen={isOpen} onClose={handleClose}>
+      <SideDrawerContent className="px-2 sm:p-4">
         <X
           className="absolute right-4 top-10 z-10 h-4 w-4 text-slate-400 sm:right-8 sm:top-8"
           onClick={handleClose}
@@ -416,56 +414,6 @@ export const SubmissionDrawer = ({
                       isRichEditor
                       richEditorPlaceholder="Add info or link"
                     />
-                    {!walletFieldListings.includes(id!) && (
-                      <FormField
-                        control={form.control}
-                        name="publicKey"
-                        render={({ field }) => (
-                          <FormItem className="flex w-full flex-col gap-2">
-                            <div>
-                              <FormLabel isRequired={!user?.publicKey}>
-                                Your Solana Wallet Address
-                              </FormLabel>
-                              <FormDescription>
-                                {!!user?.publicKey ? (
-                                  <>
-                                    This is where you will receive your rewards
-                                    if you win. If you want to edit it,{' '}
-                                    <a
-                                      href={`/t/${user?.username}/edit`}
-                                      className="text-blue-600 underline hover:text-blue-700"
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      click here
-                                    </a>
-                                  </>
-                                ) : (
-                                  <>
-                                    This wallet address will be linked to your
-                                    profile and you will receive your rewards
-                                    here if you win.
-                                  </>
-                                )}
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Input
-                                className={cn(
-                                  !!user?.publicKey &&
-                                    'cursor-not-allowed text-slate-600 opacity-80',
-                                )}
-                                placeholder="Add your Solana wallet address"
-                                readOnly={!!user?.publicKey}
-                                {...(!!user?.publicKey ? {} : field)}
-                                value={user?.publicKey || field.value}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    )}
                   </div>
                 </div>
               </div>

@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { userSelectOptions } from '@/features/auth/constants';
+import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { userSponsorDetailsSchema } from '@/features/sponsor/utils/sponsorFormSchema';

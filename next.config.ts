@@ -1,4 +1,5 @@
-/** @type {import('next').NextConfig} */
+import { type NextConfig } from 'next';
+
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { withAxiom } = require('next-axiom');
 
@@ -9,7 +10,22 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,
 });
 
-const nextConfig = {
+const baseCsp = `
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://us-assets.i.posthog.com;
+  style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com;
+  img-src 'self' data: https://res.cloudinary.com https://*.googleusercontent.com https://s2.coinmarketcap.com https://assets.coingecko.com https://avatars.githubusercontent.com;
+  connect-src 'self' https://auth.privy.io https://*.rpc.privy.systems https://api.mainnet-beta.solana.com https://api.devnet.solana.com https://api.testnet.solana.com https://us.i.posthog.com https://app.posthog.com https://*.helius-rpc.com wss://mainnet.helius-rpc.com https://ipapi.co/json;
+  font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;
+  child-src 'self' https://auth.privy.io;
+  frame-src 'self' https://auth.privy.io;
+  frame-ancestors 'self';
+  ${process.env.NODE_ENV === 'production' ? 'upgrade-insecure-requests;' : ''}
+`;
+
+const csp = baseCsp.replace(/\s{2,}/g, ' ').trim();
+
+const nextConfig: NextConfig = {
   eslint: {
     dirs: ['.'],
   },
@@ -41,6 +57,8 @@ const nextConfig = {
       'posthog-js/react',
       'lowlight',
       'zod',
+      '@privy-io/react-auth',
+      '@privy-io/server-auth',
     ],
   },
   async headers() {
@@ -52,6 +70,10 @@ const nextConfig = {
         {
           key: 'X-Frame-Options',
           value: 'SAMEORIGIN',
+        },
+        {
+          key: 'Content-Security-Policy',
+          value: csp,
         },
       ],
     });

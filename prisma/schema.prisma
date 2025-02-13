@@ -303,29 +303,30 @@ model Submission {
 }
 
 model Sponsors {
-  id           String              @id @default(uuid())
-  name         String              @unique
-  slug         String              @unique
-  logo         String?
-  url          String?
-  industry     String
-  twitter      String?
-  bio          String?
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
-  isArchived   Boolean             @default(false)
-  isActive     Boolean             @default(true)
-  entityName   String?
-  isVerified   Boolean             @default(false)
-  isCaution    Boolean             @default(false)
-  st           Boolean             @default(false)
-  Hackathon    Hackathon?
-  UserSponsors UserSponsors[]
-  Bounties     Bounties[]
-  Templates    BountiesTemplates[]
-  Grants       Grants[]
-  User         User[]
-  UserInvites  UserInvites[]
+  id               String              @id @default(uuid())
+  name             String              @unique
+  slug             String              @unique
+  logo             String?
+  url              String?
+  industry         String
+  twitter          String?
+  bio              String?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  isArchived       Boolean             @default(false)
+  isActive         Boolean             @default(true)
+  entityName       String?
+  isVerified       Boolean             @default(false)
+  isCaution        Boolean             @default(false)
+  st               Boolean             @default(false)
+  verificationInfo Json?
+  Hackathon        Hackathon?
+  UserSponsors     UserSponsors[]
+  Bounties         Bounties[]
+  Templates        BountiesTemplates[]
+  Grants           Grants[]
+  User             User[]
+  UserInvites      UserInvites[]
 
   @@index([id, slug])
   @@index([isVerified, st])
@@ -365,6 +366,7 @@ model Session {
 model User {
   id                 String               @id @default(uuid())
   publicKey          String?
+  walletAddress      String?
   email              String               @unique
   username           String?              @unique
   photo              String?              @db.Text
@@ -420,6 +422,7 @@ model User {
   GrantApplication   GrantApplication[]
   SubscribeHackathon SubscribeHackathon[]
   isBlocked          Boolean              @default(false)
+  privyDid           String               @unique
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -656,6 +659,7 @@ enum EmailType {
   NEW_LISTING
   ROLLING_UNPUBLISH
   UNFILLED_PROFILE
+  WALLET_ANNOUNCEMENT
 }
 
 enum Role {

@@ -1,6 +1,6 @@
+import { usePrivy } from '@privy-io/react-auth';
 import { useAtom, useSetAtom } from 'jotai';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -75,7 +75,7 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
 
   const [variant, setVariant] = useState<VariantInfo>();
   const [open, setOpen] = useState(false);
-  const { status } = useSession();
+  const { authenticated, ready } = usePrivy();
 
   const isMD = useBreakpoint('md');
   const posthog = usePostHog();
@@ -85,7 +85,8 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
   useEffect(() => {
     if (
       !initated.current &&
-      status === 'unauthenticated' &&
+      ready &&
+      !authenticated &&
       listing?.status === 'OPEN' &&
       !isDeadlineOver(listing.deadline) &&
       popupsShowed < 2 &&
@@ -97,7 +98,7 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
         setPopupTimeout(timeoutHandle);
       }, 0);
     }
-  }, [status]);
+  }, [ready, authenticated]);
 
   useMemo(() => {
     const variantInfo = VariantInfo(

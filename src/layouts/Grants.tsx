@@ -255,10 +255,7 @@ export function GrantPageLayout({
                           Reach out
                           <ExternalLink className="mx-1 mb-1 inline text-[#64768b]" />
                         </Link>
-                        <span
-                          className="text-slate-500"
-                          color={'brand.slate.500'}
-                        >
+                        <span className="text-slate-500">
                           if you have any questions about this listing
                         </span>
                       </p>
