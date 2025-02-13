@@ -1,10 +1,8 @@
 import { Info, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
-import { MdOutlineChatBubbleOutline } from 'react-icons/md';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
 import { PROJECT_NAME } from '@/constants/project';
@@ -150,26 +148,7 @@ export function Banner({
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => posthog.capture('message pratik_sponsor')}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <ExternalImage
-                className="mr-3 h-14 w-[3.2rem]"
-                alt="message pratik"
-                src={'/sponsor/pratik.webp'}
-              />
-              <div>
-                <p className="whitespace-nowrap font-semibold text-slate-900">
-                  Stuck somewhere?
-                </p>
-                <p className="whitespace-nowrap font-semibold text-slate-500">
-                  Message Us
-                </p>
-              </div>
-            </div>
-            <MdOutlineChatBubbleOutline color="#1E293B" size={24} />
-          </div>
-        </a>
+        ></a>
       </div>
     </div>
   );
