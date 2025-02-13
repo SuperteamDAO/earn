@@ -6,6 +6,7 @@ import React, { type Dispatch, type SetStateAction } from 'react';
 import { MdOutlineEmail } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
+import { SUPPORT_EMAIL } from '@/constants/project';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
 import { GoogleIcon } from '@/svg/google';
 
@@ -116,11 +117,11 @@ export const SignIn = ({
         <p className="text-center text-xs text-slate-400">
           Need help? Reach out to us at{' '}
           <Link
-            href="mailto:support@superteamearn.com"
+            href={`mailto:${SUPPORT_EMAIL}`}
             className="underline hover:text-slate-500"
             target="_blank"
           >
-            support@superteamearn.com
+            {SUPPORT_EMAIL}
           </Link>
         </p>
       </div>

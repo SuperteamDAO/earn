@@ -6,6 +6,7 @@ import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PROJECT_NAME } from '@/constants/project';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -35,7 +36,7 @@ export const DesktopNavbar = () => {
           >
             <img
               className="h-5 cursor-pointer object-contain"
-              alt="Superteam Earn"
+              alt={PROJECT_NAME}
               src="/assets/logo.svg"
             />
             <div className="h-6 w-[1.5px] bg-slate-300" />

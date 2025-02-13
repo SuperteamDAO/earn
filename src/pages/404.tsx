@@ -1,4 +1,5 @@
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
@@ -7,7 +8,7 @@ export default function Custom404() {
     <Default
       meta={
         <Meta
-          title="Not Found | Superteam Earn"
+          title={`Not Found | ${PROJECT_NAME}`}
           description="404 - Page Not Found"
         />
       }

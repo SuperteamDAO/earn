@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { CEO_NAME, PROJECT_NAME } from '@/constants/project';
+
 import { styles } from '../utils/styles';
 
 export const WelcomeTalentTemplate = () => {
@@ -13,7 +15,7 @@ export const WelcomeTalentTemplate = () => {
         I just wanted to say hey and let you know that I&apos;m a real person.
       </p>
       <p style={styles.text}>
-        I&apos;m Pratik, the CEO of Superteam Earn. I might not know you
+        I&apos;m {CEO_NAME}, the CEO of {PROJECT_NAME}. I might not know you
         personally yet, but I&apos;m pumped that you&apos;re here.
       </p>
       <p style={styles.text}>
@@ -23,13 +25,13 @@ export const WelcomeTalentTemplate = () => {
       </p>
       <p style={styles.text}>
         <strong>One favor before I go: </strong> reply to this email and let me
-        know why you joined Superteam Earn!
+        know why you joined {PROJECT_NAME}!
       </p>
       <p style={styles.text}>Would love to learn more about you.</p>
 
       <p style={styles.salutation}>
         Talk soon, <br />
-        Pratik
+        {CEO_NAME}
       </p>
     </div>
   );

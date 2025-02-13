@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import React from 'react';
 
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
+
 export const AnnouncementBar = () => {
   const href = '/hackathon/radar';
 
@@ -13,8 +15,8 @@ export const AnnouncementBar = () => {
         <Link href={href} className="underline">
           Click here
         </Link>{' '}
-        to unlock $250k+ in prizes at Solana&apos;s global hackathon,
-        exclusively on Earn
+        to unlock $250k+ in prizes at {CHAIN_NAME}&apos;s global hackathon,
+        exclusively on {PROJECT_NAME}
       </p>
     </Link>
   );

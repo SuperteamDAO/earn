@@ -1,5 +1,6 @@
 import type { GetServerSideProps } from 'next';
 
+import { CHAIN_NAME } from '@/constants/project';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
 import { getURL } from '@/utils/validUrl';
@@ -30,8 +31,7 @@ function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
 const redirectSlugs: { original: string; redirectTo: string }[] = [
   {
     original: 'passion-piece',
-    redirectTo:
-      'write-a-passion-piece-about-your-favorite-solana-project-or-community',
+    redirectTo: `write-a-passion-piece-about-your-favorite-${CHAIN_NAME}-project-or-community`,
   },
 ];
 

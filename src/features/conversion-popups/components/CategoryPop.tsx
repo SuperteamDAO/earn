@@ -22,6 +22,7 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { PROJECT_NAME } from '@/constants/project';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useTimeout } from '@/hooks/use-timeout';
 import { type CategoryKeys } from '@/pages/api/listings/category-earnings';
@@ -55,9 +56,8 @@ const getCategoryInfo = (
           'Never miss out on high-paying design opportunities from the best companies in crypto.',
       },
       {
-        title: `Designers have earned $${formatEarnings} from Earn`,
-        description:
-          'Sign up on Earn to get access to design opportunities worth thousands of dollars.',
+        title: `Designers have earned $${formatEarnings} from ${PROJECT_NAME}`,
+        description: `Sign up on ${PROJECT_NAME} to get access to design opportunities worth thousands of dollars.`,
       },
       {
         title: 'Your road to a Web3 Design job',
@@ -72,9 +72,8 @@ const getCategoryInfo = (
           'Never miss out on high-paying content opportunities from the best companies in crypto.',
       },
       {
-        title: `Creators have earned $${formatEarnings} from Earn`,
-        description:
-          'Sign up on Earn to get access to content opportunities worth thousands of dollars.',
+        title: `Creators have earned $${formatEarnings} from ${PROJECT_NAME}`,
+        description: `Sign up on ${PROJECT_NAME} to get access to content opportunities worth thousands of dollars.`,
       },
       {
         title: 'Your road to a Web3 Creator job',
@@ -89,9 +88,8 @@ const getCategoryInfo = (
           'Never miss out on high-paying development opportunities from the best companies in crypto.',
       },
       {
-        title: `Developers have earned ${formatEarnings} from Earn`,
-        description:
-          'Sign up on Earn to get access to development opportunities worth thousands of dollars.',
+        title: `Developers have earned ${formatEarnings} from ${PROJECT_NAME}`,
+        description: `Sign up on ${PROJECT_NAME} to get access to development opportunities worth thousands of dollars.`,
       },
       {
         title: 'Your road to a Web3 Development job',

@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { PROJECT_NAME } from '@/constants/project';
 
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
@@ -51,8 +52,8 @@ export function TitleAndType() {
 
   const isEditing = useAtomValue(isEditingAtom);
   const placeholder = useMemo(() => {
-    if (type === 'project') return 'Frontend Development for Superteam';
-    else return 'Write a Deep Dive on IBRL';
+    if (type === 'project') return `Frontend Development for ${PROJECT_NAME}`;
+    else return `Write a Deep Dive on ${PROJECT_NAME}`;
   }, [type]);
 
   const debouncedTitle = useDebounce(title);

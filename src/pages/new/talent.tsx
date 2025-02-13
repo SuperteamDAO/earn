@@ -3,10 +3,12 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
+import { PROJECT_NAME } from '@/constants/project';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
+import { getURL } from '@/utils/validUrl';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import { TalentForm } from '@/features/talent/components/onboarding-form/Form';
@@ -37,9 +39,9 @@ export default function Talent() {
     <Default
       meta={
         <Meta
-          title="Create Your Profile to Access Bounties & Grants | Superteam Earn"
-          description="Become part of Superteam's talent network, where you can present your skills and collaborate on various crypto bounties, grants, and projects."
-          canonical="https://earn.superteam.fun/new/talent/"
+          title={`C reate Your Profile to Access Bounties & Grants | ${PROJECT_NAME}`}
+          description={`Become part of ${PROJECT_NAME}'s talent network, where you can present your skills and collaborate on various crypto bounties, grants, and projects.`}
+          canonical={`${getURL()}/new/talent/`}
         />
       }
     >
@@ -50,7 +52,7 @@ export default function Talent() {
               You&apos;re one step away
             </p>
             <p className="pb-4 text-center text-xl font-normal text-slate-600">
-              from joining Superteam Earn
+              from joining {PROJECT_NAME}
             </p>
             <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
           </div>

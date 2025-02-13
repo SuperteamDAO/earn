@@ -1,5 +1,5 @@
 import { countries } from '@/constants/country';
-import { CombinedRegions } from '@/constants/Superteam';
+import { CombinedRegions } from '@/constants/Team';
 
 export const getCombinedRegion = (
   region: string,
@@ -14,15 +14,13 @@ export const getCombinedRegion = (
       }
     | undefined;
   if (lookupSTCountries) {
-    regionObject = CombinedRegions.find((superteam) =>
-      superteam.country
-        .map((c) => c.toLowerCase())
-        .includes(region?.toLowerCase()),
+    regionObject = CombinedRegions.find((team) =>
+      team.country.map((c) => c.toLowerCase()).includes(region?.toLowerCase()),
     );
   }
   if (!regionObject) {
-    regionObject = CombinedRegions.find((superteam) =>
-      superteam.region.toLowerCase().includes(region?.toLowerCase()),
+    regionObject = CombinedRegions.find((team) =>
+      team.region.toLowerCase().includes(region?.toLowerCase()),
     );
   }
   if (regionObject?.displayValue) {

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { PROJECT_NAME } from '@/constants/project';
 import { useUser } from '@/store/user';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
@@ -43,7 +44,7 @@ const banners: CategoryBanner[] = [
   {
     type: 'other',
     img: bannerPrefix + 'Other.webp',
-    heading: 'Find your next gig on Earn',
+    heading: `Find your next gig on ${PROJECT_NAME}`,
     description:
       "If you have a unique skill set that doesn't fit into the other categories, you might find your next gig here.",
   },

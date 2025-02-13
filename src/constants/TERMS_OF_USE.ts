@@ -1,1 +1,3 @@
-export const TERMS_OF_USE = 'https://earn.superteam.fun/terms-of-use.pdf';
+import { getURL } from '@/utils/validUrl';
+
+export const TERMS_OF_USE = `${getURL()}/terms-of-use.pdf`;

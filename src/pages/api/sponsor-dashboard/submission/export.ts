@@ -6,6 +6,7 @@ import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
+import { getURL } from '@/utils/validUrl';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
@@ -78,7 +79,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
       return {
         'Sr no': i + 1,
-        'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
+        'Profile Link': `${getURL()}/t/${user.username}`,
         Name: `${user.firstName} ${user.lastName}`,
         'Submission Link': submission.link || '',
         ...eligibility,

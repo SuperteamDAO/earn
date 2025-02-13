@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { PROJECT_NAME } from '@/constants/project';
 import { AppConfig } from '@/utils/AppConfig';
 
 type IMetaProps = {
@@ -68,8 +69,8 @@ const Meta = (props: IMetaProps) => {
           ],
         }}
         twitter={{
-          handle: '@SuperteamEarn',
-          site: '@SuperteamEarn',
+          handle: `@${PROJECT_NAME}`,
+          site: `@${PROJECT_NAME}`,
           cardType: 'summary_large_image',
         }}
       />

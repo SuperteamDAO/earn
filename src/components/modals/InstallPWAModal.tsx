@@ -4,6 +4,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdIosShare, MdOutlineInstallMobile } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
+import { PROJECT_NAME } from '@/constants/project';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 
@@ -110,7 +111,9 @@ export const InstallPWAModal = () => {
           <DrawerHeader className="border-b border-slate-100">
             <DrawerTitle className="flex items-center gap-2">
               <MdOutlineInstallMobile className="text-slate-500" />
-              <span className="text-base text-slate-700">Install Earn</span>
+              <span className="text-base text-slate-700">
+                Install {PROJECT_NAME}
+              </span>
             </DrawerTitle>
             <DrawerClose className="absolute right-2 top-7">
               <Button variant="ghost" size="icon">
@@ -123,13 +126,14 @@ export const InstallPWAModal = () => {
               <div className="mt-4 flex flex-col items-center">
                 <LocalImage
                   src="/android-chrome-512x512.png"
-                  alt="Superteam Earn Icon"
+                  alt={`${PROJECT_NAME} Icon`}
                   className="h-16 w-16"
                 />
                 <div className="my-12 flex flex-col items-center">
                   <p className="font-bold">Never miss a listing again!</p>
                   <p className="mt-1 w-3/4 text-center text-slate-500">
-                    Add Earn to your homescreen and always stay updated.
+                    Add {PROJECT_NAME} to your homescreen and always stay
+                    updated.
                   </p>
                 </div>
                 {isAutoInstallable ? (

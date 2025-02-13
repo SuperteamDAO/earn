@@ -1,7 +1,7 @@
 import { type GrantApplication } from '@prisma/client';
 import axios from 'axios';
 
-import { Superteams } from '@/constants/Superteam';
+import { TeamRegions } from '@/constants/Team';
 import {
   airtableConfig,
   airtableUpsert,
@@ -41,7 +41,7 @@ export async function handleAirtableSync(
     process.env.AIRTABLE_GRANTS_REGIONS_TABLE_NAME!,
   );
 
-  const superteam = Superteams.find(
+  const team = TeamRegions.find(
     (s) =>
       s.country.some(
         (c) => c.toLowerCase() === application.user.location?.toLowerCase(),
@@ -51,7 +51,7 @@ export async function handleAirtableSync(
   const region = await fetchAirtableRecordId(
     grantsRegionAirtableURL,
     'Name',
-    superteam ? superteam.airtableKey || superteam.displayValue : 'Global',
+    team ? team.airtableKey || team.displayValue : 'Global',
     grantsAirtableConfig,
   );
 

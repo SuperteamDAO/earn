@@ -5,9 +5,11 @@ import { useMemo } from 'react';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { PROJECT_NAME } from '@/constants/project';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { dayjs } from '@/utils/dayjs';
+import { getURL } from '@/utils/validUrl';
 
 import { CategoryPop } from '@/features/conversion-popups/components/CategoryPop';
 import { GrantsCard } from '@/features/grants/components/GrantsCard';
@@ -37,19 +39,19 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
   );
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
-    design: 'Design Bounties and Grants | Superteam Earn',
-    content: 'Content Bounties and Grants | Superteam Earn',
-    development: 'Development Bounties and Grants | Superteam Earn',
-    other: 'Other Bounties and Grants | Superteam Earn',
+    design: `Design Bounties and Grants | ${PROJECT_NAME}`,
+    content: `Content Bounties and Grants | ${PROJECT_NAME}`,
+    development: `Development Bounties and Grants | ${PROJECT_NAME}`,
+    other: `Other Bounties and Grants | ${PROJECT_NAME}`,
   };
 
   const titleKey = slug as SlugKeys;
-  const title = titlesForSlugs[titleKey] || 'Superteam Earn';
+  const title = titlesForSlugs[titleKey] || `${PROJECT_NAME}`;
   const formattedSlug =
     slug.charAt(0).toUpperCase() + slug.slice(1).toLowerCase();
 
-  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on Superteam Earn.`;
-  const canonicalURL = `https://earn.superteam.fun/category/${slug}/`;
+  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on ${PROJECT_NAME}.`;
+  const canonicalURL = `${getURL()}/category/${slug}/`;
 
   return (
     <Home type="category">

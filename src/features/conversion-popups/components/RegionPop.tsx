@@ -29,7 +29,7 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { type Superteam } from '@/constants/Superteam';
+import { type Team } from '@/constants/Team';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useTimeout } from '@/hooks/use-timeout';
 import { cn } from '@/utils/cn';
@@ -39,7 +39,7 @@ import { userCountQuery } from '@/features/home/queries/user-count';
 import { popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
 
-export const RegionPop = ({ st }: { st: Superteam }) => {
+export const RegionPop = ({ st }: { st: Team }) => {
   const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
   const setPopupTimeout = useSetAtom(popupTimeoutAtom);
 
@@ -121,7 +121,7 @@ const Mobile = ({
 }: {
   open: boolean;
   setOpen: (e: boolean) => void;
-  st: Superteam;
+  st: Team;
   totalUsers: number | undefined;
 }) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -160,7 +160,7 @@ const Desktop = ({
 }: {
   open: boolean;
   setOpen: (e: boolean) => void;
-  st: Superteam;
+  st: Team;
   totalUsers: number | undefined;
 }) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -202,7 +202,7 @@ const People = ({
   st,
   totalUsers,
 }: {
-  st: Superteam;
+  st: Team;
   totalUsers: number | undefined;
 }) => {
   const people = useMemo(

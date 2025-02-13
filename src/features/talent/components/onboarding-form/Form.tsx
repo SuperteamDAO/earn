@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { PROJECT_NAME } from '@/constants/project';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { uploadAndReplaceImage } from '@/utils/image';
@@ -91,7 +92,7 @@ export const TalentForm = () => {
     title: isForcedRedirect ? 'Finish Your Profile' : 'Complete your Profile',
     subTitle: isForcedRedirect
       ? 'It takes less than a minute to start earning in global standards. '
-      : 'We’ll tailor your Earn experience based on your profile',
+      : `We’ll tailor your ${PROJECT_NAME} experience based on your profile`,
   };
 
   const isSubmitDisabled = useMemo(() => {

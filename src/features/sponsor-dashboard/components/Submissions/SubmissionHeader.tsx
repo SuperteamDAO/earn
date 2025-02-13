@@ -24,6 +24,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { PROJECT_NAME } from '@/constants/project';
 import { tokenList } from '@/constants/tokenList';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { api } from '@/lib/api';
@@ -69,9 +70,9 @@ export const SubmissionHeader = ({
       : `${getURL()}listing/${bounty?.slug}/`;
 
   const socialListingLink = (medium?: 'twitter' | 'telegram') =>
-    `${listingLink}${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;
+    `${listingLink}${medium ? `?utm_source=${PROJECT_NAME}&utm_medium=${medium}&utm_campaign=sharelisting/` : ``}`;
 
-  const tweetShareContent = `Check out my newly added @SuperteamEarn opportunity!
+  const tweetShareContent = `Check out my newly added @${PROJECT_NAME} opportunity!
 
 ${socialListingLink('twitter')}
 `;

@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Separator } from '@/components/ui/separator';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { User } from '@/interface/user';
@@ -221,8 +222,8 @@ function TalentProfile({ talent, stats }: TalentProps) {
 
   const title =
     talent?.firstName && talent?.lastName
-      ? `${talent?.firstName} ${talent?.lastName} | Superteam Earn Talent`
-      : 'Superteam Earn';
+      ? `${talent?.firstName} ${talent?.lastName} | ${PROJECT_NAME} Talent`
+      : `${PROJECT_NAME}`;
 
   const feedItems = feed?.pages.flatMap((page) => page) ?? [];
 
@@ -238,7 +239,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="Talent on Superteam" />
+          <meta property="og:image:alt" content={`Talent on ${PROJECT_NAME}`} />
           <meta charSet="UTF-8" key="charset" />
           <meta
             name="viewport"
@@ -291,11 +292,9 @@ function TalentProfile({ talent, stats }: TalentProps) {
                       posthog.capture('reach out_talent profile');
                       const email = encodeURIComponent(talent?.email || '');
                       const subject = encodeURIComponent(
-                        'Saw Your ST Earn Profile!',
+                        `Saw Your ${PROJECT_NAME} Profile!`,
                       );
-                      const bcc = encodeURIComponent(
-                        'support@superteamearn.com',
-                      );
+                      const bcc = encodeURIComponent(SUPPORT_EMAIL);
                       window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
                     })}
                 {renderButton(<ShareIcon />, 'Share', onOpen, true)}

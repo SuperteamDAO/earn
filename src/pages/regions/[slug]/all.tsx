@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 
-import { type Superteam, Superteams } from '@/constants/Superteam';
+import { PROJECT_NAME } from '@/constants/project';
+import { type Team, TeamRegions } from '@/constants/Team';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { getURL } from '@/utils/validUrl';
@@ -16,7 +17,7 @@ export default function AllRegionListingsPage({
 }: {
   slug: string;
   displayName: string;
-  st: Superteam;
+  st: Team;
 }) {
   const { data: listings, isLoading: isListingsLoading } = useQuery(
     regionalListingsQuery({ region: slug }),
@@ -29,9 +30,9 @@ export default function AllRegionListingsPage({
   return (
     <Home type="region" st={st}>
       <Meta
-        title={`Welcome to Superteam Earn ${displayName} | Discover Bounties and Grants`}
-        description={`Welcome to Superteam ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
-        canonical={`https://earn.superteam.fun/regions/${slug}/`}
+        title={`Welcome to ${PROJECT_NAME} ${displayName} | Discover Bounties and Grants`}
+        description={`Welcome to ${PROJECT_NAME} ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
+        canonical={`${getURL()}/regions/${slug}/`}
         og={ogImage.toString()}
       />
       <div className="w-full">
@@ -50,10 +51,10 @@ export default function AllRegionListingsPage({
 export async function getServerSideProps(context: NextPageContext) {
   const { slug } = context.query;
 
-  const st = Superteams.find((team) => team.region.toLowerCase() === slug);
+  const st = TeamRegions.find((team) => team.region.toLowerCase() === slug);
   const displayName = st?.displayValue;
 
-  const validRegion = Superteams.some(
+  const validRegion = TeamRegions.some(
     (team) => team.region.toLowerCase() === (slug as string).toLowerCase(),
   );
 

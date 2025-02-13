@@ -5,8 +5,10 @@ import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { getURL } from '@/utils/validUrl';
 
 import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
 import { GrantEntry } from '@/features/grants/components/GrantEntry';
@@ -23,9 +25,9 @@ function Grants() {
     <Default
       meta={
         <Meta
-          title="Grants | Superteam Earn"
-          description="Discover Solana Grants for Development, Art, Content, and more to fund your ideas"
-          canonical="https://earn.superteam.fun/grants/"
+          title={`Grants | ${PROJECT_NAME}`}
+          description={`Discover ${CHAIN_NAME} Grants for Development, Art, Content, and more to fund your ideas`}
+          canonical={`${getURL()}/grants/`}
           og={ASSET_URL + `/og/grants.png`}
         />
       }

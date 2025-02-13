@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
+import { CHAIN_NAME } from '@/constants/project';
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type User } from '@/interface/user';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
+import { validateNearAddress } from '@/utils/validateNearAddress';
 
 import { walletFieldListings } from '../constants';
 import { type Listing } from '../types';
@@ -41,16 +42,16 @@ const submissionSchema = (
         ctx.addIssue({
           code: 'custom',
           path: ['publicKey'],
-          message: 'Solana Wallet Address is required',
+          message: `${CHAIN_NAME} Wallet Address is required`,
         });
       }
       if (data.publicKey) {
-        const validate = validateSolanaAddress(data.publicKey);
+        const validate = validateNearAddress(data.publicKey);
         if (!validate.isValid) {
           ctx.addIssue({
             code: 'custom',
             path: ['publicKey'],
-            message: 'Invalid Solana Wallet Address',
+            message: `Invalid ${CHAIN_NAME} Wallet Address`,
           });
         }
       }

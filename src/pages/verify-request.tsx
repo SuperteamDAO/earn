@@ -9,6 +9,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
+import { PROJECT_NAME } from '@/constants/project';
 
 export default function VerifyRequest() {
   const [email, setEmail] = useState('');
@@ -44,7 +45,7 @@ export default function VerifyRequest() {
             height={24}
             width={100}
             className="mx-auto cursor-pointer object-contain"
-            alt="Superteam Earn"
+            alt={PROJECT_NAME}
             src="/assets/logo.svg"
           />
         </Link>

@@ -22,7 +22,8 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent, DialogPortal } from '@/components/ui/dialog';
 import { LocalImage } from '@/components/ui/local-image';
 import { Tooltip } from '@/components/ui/tooltip';
-import { Superteams } from '@/constants/Superteam';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
+import { TeamRegions } from '@/constants/Team';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -35,6 +36,7 @@ import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+import { getURL } from '@/utils/validUrl';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
@@ -178,9 +180,9 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
       className="bg-white"
       meta={
         <Meta
-          title="Talent Olympics | Superteam Earn"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
+          title={`Talent Olympics | ${PROJECT_NAME}`}
+          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          canonical={`${getURL()}/hackathon/${SLUG}`}
         />
       }
     >
@@ -227,7 +229,6 @@ function Hero({
   START_DATE: string;
   CLOSE_DATE: string;
 }) {
-  const PoweredByHeight = '2.5rem';
   const isSM = useMediaQuery('(min-width: 640px)');
   const isMD = useMediaQuery('(min-width: 768px)');
 
@@ -308,232 +309,211 @@ function Hero({
         </button>
         {isMD && <SubscribeHackathon />}
       </div>
-      <p className="mt-4 text-xxs text-white">POWERED BY</p>
-      <div className="my-4 flex items-center gap-8">
-        <ExternalImage
-          style={{ height: PoweredByHeight }}
-          alt="Web3 Builders Alliance"
-          src={'/company-logos/turbine.svg'}
-          className="w-[5rem] sm:w-[7rem]"
-        />
-        <ExternalImage
-          className="w-[5rem] sm:w-[7rem]"
-          alt="Superteam"
-          src={'/company-logos/superteam.svg'}
-          style={{ height: PoweredByHeight }}
-        />
-        <ExternalImage
-          className="w-[5rem] sm:w-[7rem]"
-          alt="Rise In"
-          src={'/company-logos/rise-in.svg'}
-          style={{ height: PoweredByHeight }}
-        />
-      </div>
     </div>
   );
 }
 
 function GetHiredBy() {
-  const base = '/company-logos/';
-  const baseAsset = (filename: string) => base + filename;
+  // const base = '/company-logos/';
+  // const baseAsset = (filename: string) => base + filename;
 
   const hiredBy: { name: string; src: string }[] = [
-    {
-      name: 'Mirron World',
-      src: baseAsset('mirror-world.svg'),
-    },
-    {
-      name: 'Pyth',
-      src: baseAsset('pyth2.svg'),
-    },
-    {
-      name: 'Rise In',
-      src: baseAsset('rise-in-dark.svg'),
-    },
-    {
-      name: 'Metawealth',
-      src: baseAsset('metawealth.png'),
-    },
-    {
-      name: 'Galxe',
-      src: baseAsset('galxe.svg'),
-    },
-    {
-      name: 'Sanctum',
-      src: baseAsset('sanctum.svg'),
-    },
-    {
-      name: 'Tensor',
-      src: baseAsset('tensor.svg'),
-    },
-    {
-      name: 'Metaplex',
-      src: baseAsset('metaplex.svg'),
-    },
-    {
-      name: 'Helio',
-      src: baseAsset('helio.svg'),
-    },
-    {
-      name: 'Helius',
-      src: baseAsset('helius.svg'),
-    },
-    {
-      name: 'Flash Trade',
-      src: baseAsset('flash-trade.svg'),
-    },
-    {
-      name: 'Jito Labs',
-      src: baseAsset('jito-labs.svg'),
-    },
-    {
-      name: 'Khiza',
-      src: baseAsset('khiza.svg'),
-    },
-    {
-      name: 'Open Book',
-      src: baseAsset('open-book.svg'),
-    },
-    {
-      name: 'Orca',
-      src: baseAsset('orca.svg'),
-    },
-    {
-      name: 'Drift',
-      src: baseAsset('drift.svg'),
-    },
-    {
-      name: 'Squads',
-      src: baseAsset('squads.svg'),
-    },
-    {
-      name: 'Mango Markets',
-      src: baseAsset('mango-markets.svg'),
-    },
-    {
-      name: 'Kamino',
-      src: baseAsset('kamino.svg'),
-    },
-    {
-      name: 'Solana Beach',
-      src: baseAsset('solana-beach.svg'),
-    },
-    {
-      name: 'Turbine',
-      src: baseAsset('turbine2.svg'),
-    },
-    {
-      name: 'Iron',
-      src: baseAsset('iron.svg'),
-    },
-    {
-      name: 'Bandit Network',
-      src: baseAsset('bandit-network.svg'),
-    },
-    {
-      name: 'Trustless Engineering',
-      src: baseAsset('trustless-engineering.svg'),
-    },
-    {
-      name: 'Bonk',
-      src: baseAsset('bonk.png'),
-    },
-    {
-      name: 'MH Ventures',
-      src: baseAsset('mh-ventures.svg'),
-    },
-    {
-      name: 'Meta Pool',
-      src: baseAsset('metapool.svg'),
-    },
-    {
-      name: 'Prism',
-      src: baseAsset('prism.svg'),
-    },
-    {
-      name: 'Neo Nomad',
-      src: baseAsset('neonomad.svg'),
-    },
-    {
-      name: 'Linum Labs',
-      src: baseAsset('linumlabs.svg'),
-    },
-    {
-      name: 'Truther',
-      src: baseAsset('truther.svg'),
-    },
-    {
-      name: 'Infratoken',
-      src: baseAsset('infratoken.svg'),
-    },
-    {
-      name: 'One Percent',
-      src: baseAsset('onepercent.svg'),
-    },
-    {
-      name: 'Bitfinex',
-      src: baseAsset('bitfinex.svg'),
-    },
-    {
-      name: 'Dabba',
-      src: baseAsset('dabba.svg'),
-    },
-    {
-      name: 'Proto',
-      src: baseAsset('proto.svg'),
-    },
-    {
-      name: 'someraw2',
-      src: baseAsset('someraw2.svg'),
-    },
-    {
-      name: 'Transfero',
-      src: baseAsset('transfero.svg'),
-    },
-    {
-      name: 'Jungle',
-      src: baseAsset('jungle.svg'),
-    },
-    {
-      name: 'Moby',
-      src: baseAsset('moby.svg'),
-    },
-    {
-      name: 'Backpack',
-      src: baseAsset('backpack.svg'),
-    },
-    {
-      name: 'MobiUp',
-      src: baseAsset('mobiup.svg'),
-    },
-    {
-      name: 'Ripio',
-      src: baseAsset('ripio.svg'),
-    },
-    {
-      name: 'Parcl',
-      src: baseAsset('parcl.svg'),
-    },
-    {
-      name: 'Staking Facilities',
-      src: baseAsset('staking-facilities.svg'),
-    },
-    {
-      name: 'DeCharge',
-      src: baseAsset('decharge.svg'),
-    },
-    {
-      name: 'Solana ID',
-      src: baseAsset('solana-id.svg'),
-    },
-    {
-      name: 'Light Protocol',
-      src: baseAsset('light-protocol.svg'),
-    },
-    {
-      name: 'Sonar Watch',
-      src: baseAsset('sonar-watch.svg'),
-    },
+    // {
+    //   name: 'Mirron World',
+    //   src: baseAsset('mirror-world.svg'),
+    // },
+    // {
+    //   name: 'Pyth',
+    //   src: baseAsset('pyth2.svg'),
+    // },
+    // {
+    //   name: 'Rise In',
+    //   src: baseAsset('rise-in-dark.svg'),
+    // },
+    // {
+    //   name: 'Metawealth',
+    //   src: baseAsset('metawealth.png'),
+    // },
+    // {
+    //   name: 'Galxe',
+    //   src: baseAsset('galxe.svg'),
+    // },
+    // {
+    //   name: 'Sanctum',
+    //   src: baseAsset('sanctum.svg'),
+    // },
+    // {
+    //   name: 'Tensor',
+    //   src: baseAsset('tensor.svg'),
+    // },
+    // {
+    //   name: 'Metaplex',
+    //   src: baseAsset('metaplex.svg'),
+    // },
+    // {
+    //   name: 'Helio',
+    //   src: baseAsset('helio.svg'),
+    // },
+    // {
+    //   name: 'Helius',
+    //   src: baseAsset('helius.svg'),
+    // },
+    // {
+    //   name: 'Flash Trade',
+    //   src: baseAsset('flash-trade.svg'),
+    // },
+    // {
+    //   name: 'Jito Labs',
+    //   src: baseAsset('jito-labs.svg'),
+    // },
+    // {
+    //   name: 'Khiza',
+    //   src: baseAsset('khiza.svg'),
+    // },
+    // {
+    //   name: 'Open Book',
+    //   src: baseAsset('open-book.svg'),
+    // },
+    // {
+    //   name: 'Orca',
+    //   src: baseAsset('orca.svg'),
+    // },
+    // {
+    //   name: 'Drift',
+    //   src: baseAsset('drift.svg'),
+    // },
+    // {
+    //   name: 'Squads',
+    //   src: baseAsset('squads.svg'),
+    // },
+    // {
+    //   name: 'Mango Markets',
+    //   src: baseAsset('mango-markets.svg'),
+    // },
+    // {
+    //   name: 'Kamino',
+    //   src: baseAsset('kamino.svg'),
+    // },
+    // {
+    //   name: 'Solana Beach',
+    //   src: baseAsset('solana-beach.svg'),
+    // },
+    // {
+    //   name: 'Turbine',
+    //   src: baseAsset('turbine2.svg'),
+    // },
+    // {
+    //   name: 'Iron',
+    //   src: baseAsset('iron.svg'),
+    // },
+    // {
+    //   name: 'Bandit Network',
+    //   src: baseAsset('bandit-network.svg'),
+    // },
+    // {
+    //   name: 'Trustless Engineering',
+    //   src: baseAsset('trustless-engineering.svg'),
+    // },
+    // {
+    //   name: 'Bonk',
+    //   src: baseAsset('bonk.png'),
+    // },
+    // {
+    //   name: 'MH Ventures',
+    //   src: baseAsset('mh-ventures.svg'),
+    // },
+    // {
+    //   name: 'Meta Pool',
+    //   src: baseAsset('metapool.svg'),
+    // },
+    // {
+    //   name: 'Prism',
+    //   src: baseAsset('prism.svg'),
+    // },
+    // {
+    //   name: 'Neo Nomad',
+    //   src: baseAsset('neonomad.svg'),
+    // },
+    // {
+    //   name: 'Linum Labs',
+    //   src: baseAsset('linumlabs.svg'),
+    // },
+    // {
+    //   name: 'Truther',
+    //   src: baseAsset('truther.svg'),
+    // },
+    // {
+    //   name: 'Infratoken',
+    //   src: baseAsset('infratoken.svg'),
+    // },
+    // {
+    //   name: 'One Percent',
+    //   src: baseAsset('onepercent.svg'),
+    // },
+    // {
+    //   name: 'Bitfinex',
+    //   src: baseAsset('bitfinex.svg'),
+    // },
+    // {
+    //   name: 'Dabba',
+    //   src: baseAsset('dabba.svg'),
+    // },
+    // {
+    //   name: 'Proto',
+    //   src: baseAsset('proto.svg'),
+    // },
+    // {
+    //   name: 'someraw2',
+    //   src: baseAsset('someraw2.svg'),
+    // },
+    // {
+    //   name: 'Transfero',
+    //   src: baseAsset('transfero.svg'),
+    // },
+    // {
+    //   name: 'Jungle',
+    //   src: baseAsset('jungle.svg'),
+    // },
+    // {
+    //   name: 'Moby',
+    //   src: baseAsset('moby.svg'),
+    // },
+    // {
+    //   name: 'Backpack',
+    //   src: baseAsset('backpack.svg'),
+    // },
+    // {
+    //   name: 'MobiUp',
+    //   src: baseAsset('mobiup.svg'),
+    // },
+    // {
+    //   name: 'Ripio',
+    //   src: baseAsset('ripio.svg'),
+    // },
+    // {
+    //   name: 'Parcl',
+    //   src: baseAsset('parcl.svg'),
+    // },
+    // {
+    //   name: 'Staking Facilities',
+    //   src: baseAsset('staking-facilities.svg'),
+    // },
+    // {
+    //   name: 'DeCharge',
+    //   src: baseAsset('decharge.svg'),
+    // },
+    // {
+    //   name: 'Solana ID',
+    //   src: baseAsset('solana-id.svg'),
+    // },
+    // {
+    //   name: 'Light Protocol',
+    //   src: baseAsset('light-protocol.svg'),
+    // },
+    // {
+    //   name: 'Sonar Watch',
+    //   src: baseAsset('sonar-watch.svg'),
+    // },
   ];
 
   const multipliedHiredBy = [
@@ -578,11 +558,11 @@ function About() {
           </h2>
           <p className="text-slate-500">
             The Talent Olympics is designed to help talented developers from
-            around the world get jobs at the best companies on Solana. To enter,
-            simply complete the developer challenges below. Each challenge has a
-            prize pool for the best submissions, and the participants with the
-            most points globally will split an additional $10,000 prize pool and
-            receive interviews with our hiring partners.
+            around the world get jobs at the best companies on {CHAIN_NAME}. To
+            enter, simply complete the developer challenges below. Each
+            challenge has a prize pool for the best submissions, and the
+            participants with the most points globally will split an additional
+            $10,000 prize pool and receive interviews with our hiring partners.
           </p>
           <button
             onClick={onOpen}
@@ -834,11 +814,6 @@ const faqs: { question: string; answer: string }[] = [
     question: 'How do I enter the competition?',
     answer:
       'By submitting to any of the ten challenges under the Frontend and Rust tracks.',
-  },
-  {
-    question: 'Which teams are hiring?',
-    answer:
-      'Over 50 Solana teams are hiring. In no particular order, here is the list of teams that are hiring: Transfero, Jungle, Khiza, Rippio, Moby Up, Coinlivre, Meta Pool, Prism, Bonk, MH Ventures, Bandit, Turbine, Future, Prizm, MoonThat, Jito, Flash, Mirror World, Pyth, Galaxe, Nosana, Sanctum, Tensor, Metaplex, Backpack, Parcl, Helio, Streamflow, Helius, DeCharge, Orca, Iron, Proto map, SolanaID, WifiDabba, Drift, Squads, Light Protocol, Mango, Sonar Watch, Kamino, Openbook, Staking facilities, Solana Beach, Noenomad, Linum Labs, DUX, VW Trucks & Bus, TRUTHER, Infratoken, One Percent, Bitfinix, etc.',
   },
   {
     question: 'Does winning a Talent Olympics bounty guarantee a job?',
@@ -1170,7 +1145,7 @@ LIMIT 10;
 
   const countryLeaderLength = countryLeaders.length;
   if (countryLeaderLength < 10) {
-    const restSuperteams = Superteams.filter(
+    const restTeams = TeamRegions.filter(
       (s) =>
         countryLeaderLength === 0 ||
         !countryLeaders.some((c) => s.country.includes(c.location)),
@@ -1178,7 +1153,7 @@ LIMIT 10;
 
     for (let i = 0; i < 10 - countryLeaderLength; i++) {
       countryLeaders.push({
-        location: restSuperteams[i]?.country[0] ?? 'na',
+        location: restTeams[i]?.country[0] ?? 'na',
         submission_count: 0,
       });
     }

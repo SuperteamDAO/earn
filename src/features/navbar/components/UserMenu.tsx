@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { SUPPORT_EMAIL } from '@/constants/project';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
 
@@ -165,7 +166,7 @@ export function UserMenu() {
 
           <DropdownMenuItem
             onClick={() => {
-              window.open('mailto:support@superteamearn.com', '_blank');
+              window.open(`mailto:${SUPPORT_EMAIL}`, '_blank');
               posthog.capture('get help_user menu');
             }}
             className="text-sm text-slate-500"

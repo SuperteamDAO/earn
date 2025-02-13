@@ -3,6 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { PROJECT_NAME } from '@/constants/project';
 
 import { popupTimeoutAtom } from '@/features/conversion-popups/atoms';
 
@@ -69,8 +70,8 @@ export const Login = ({
           </p>
           <p className="text-center text-sm text-slate-600">
             {isSponsor
-              ? 'from joining Superteam Earn'
-              : 'From earning in global standards'}
+              ? `from joining ${PROJECT_NAME}`
+              : 'from earning in global standards'}
           </p>
         </div>
         <SignIn

@@ -4,12 +4,13 @@ import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RadarLogo } from '@/svg/radar-logo';
+import { getURL } from '@/utils/validUrl';
 
 export default function Radar() {
   const slug = 'radar';
@@ -46,9 +47,9 @@ export default function Radar() {
 
   const sortedTrackData = useMemo(() => {
     if (!trackData) return [];
-    const superteamTracks = trackData.filter((track) => track.sponsor.st);
+    const teamTracks = trackData.filter((track) => track.sponsor.st);
     const otherTracks = trackData.filter((track) => !track.sponsor.st);
-    return [...otherTracks, ...superteamTracks];
+    return [...otherTracks, ...teamTracks];
   }, [trackData]);
 
   return (
@@ -56,9 +57,9 @@ export default function Radar() {
       className="bg-white"
       meta={
         <Meta
-          title="Radar | Superteam Earn"
-          description="Build a project for the latest Solana global hackathon!"
-          canonical="https://earn.superteam.fun"
+          title={`Radar | ${PROJECT_NAME}`}
+          description={`Build a project for the latest ${CHAIN_NAME} global hackathon!`}
+          canonical={`${getURL()}/hackathon/${slug}`}
           og={ASSET_URL + `/og/hackathon/${slug}.png`}
         />
       }
@@ -75,23 +76,12 @@ export default function Radar() {
           </div>
 
           <p className="mt-1 max-w-[28rem] px-6 text-center text-lg text-[#AAA199]">
-            Submit to exclusive tracks of the latest Solana Global Hackathon on
-            Earn
+            Submit to exclusive tracks of the latest {CHAIN_NAME} Global
+            Hackathon on
+            {PROJECT_NAME}
           </p>
 
           <div className="flex items-center gap-6">
-            <Button
-              className="my-6 rounded-full bg-[#E6B22D] px-6 py-4 text-sm text-black hover:bg-yellow-600 hover:text-white"
-              onClick={() =>
-                window.open(
-                  'https://build.superteam.fun/ideas?utm_source=superteamearn&utm_campaign=radar',
-                  '_blank',
-                )
-              }
-            >
-              Find Ideas to Build
-            </Button>
-
             <div className="flex items-center gap-1">
               <div
                 className={`h-2.5 w-2.5 rounded-full ${submissionStatus.colorClass}`}

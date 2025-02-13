@@ -6,10 +6,12 @@ import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RenaissanceLogo } from '@/svg/renaissance-logo';
+import { getURL } from '@/utils/validUrl';
 
 export default function Renaissance() {
   const slug = 'renaissance';
@@ -22,9 +24,9 @@ export default function Renaissance() {
       className="bg-white"
       meta={
         <Meta
-          title="Renaissance | Superteam Earn"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
+          title={`Renaissance | ${PROJECT_NAME}`}
+          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          canonical={`${getURL()}/hackathon/${slug}`}
         />
       }
     >
@@ -37,7 +39,7 @@ export default function Renaissance() {
         >
           <RenaissanceLogo styles={{ height: '80px', width: 'auto' }} />
           <p className="mt-4 px-6 text-center text-slate-600">
-            Participate in Solana&apos;s first ever content hackathon
+            Participate in {CHAIN_NAME}&apos;s first ever content hackathon
           </p>
           <div className="flex items-center gap-6">
             <Button

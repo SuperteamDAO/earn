@@ -12,7 +12,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { type Superteam, Superteams } from '@/constants/Superteam';
+import { PROJECT_NAME } from '@/constants/project';
+import { type Team, TeamRegions } from '@/constants/Team';
 import { api } from '@/lib/api';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { roundToNearestThousand } from '@/utils/number';
@@ -28,7 +29,7 @@ const dummyUsers = [
 ];
 
 export const TalentImageCard = () => {
-  const [st, setST] = useState<Superteam>();
+  const [st, setST] = useState<Team>();
   const people = useMemo(
     () => [...(st?.people || []), ...dummyUsers].slice(0, 3),
     [st?.people],
@@ -53,13 +54,13 @@ export const TalentImageCard = () => {
         const locationData = response.data;
 
         if (locationData && locationData.country_code) {
-          const superteam = Superteams.find(
+          const team = TeamRegions.find(
             (ct) =>
               ct.code.toLowerCase() === locationData.country_code.toLowerCase(),
           );
 
-          if (superteam) {
-            setST(superteam);
+          if (team) {
+            setST(team);
           }
         }
       } catch (error) {
@@ -147,7 +148,7 @@ export const TalentImageCard = () => {
             </div>
             <div className="col-span-2">
               <p className="text-sm text-slate-500">
-                has been earned by freelancers like you on Superteam Earn
+                has been earned by freelancers like you on {PROJECT_NAME}
               </p>
             </div>
             <div className="flex items-center gap-3 pl-3">

@@ -7,6 +7,7 @@ import {
 } from '@prisma/client';
 import { z } from 'zod';
 
+import { PROJECT_NAME } from '@/constants/project';
 import { tokenList } from '@/constants/tokenList';
 import { skillsArraySchema } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
@@ -236,8 +237,7 @@ export const createListingFormSchema = ({
             return true;
           },
           {
-            message:
-              'Foundation paying can only be enabled for Superteam listings',
+            message: `Foundation paying can only be enabled for ${PROJECT_NAME} listings`,
           },
         ),
       isPrivate: z.boolean().default(false),

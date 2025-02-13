@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { PROJECT_NAME } from '@/constants/project';
+
 import { styles } from '../utils/styles';
 
 interface TemplateProps {
@@ -18,7 +20,7 @@ export const InviteMemberTemplate = ({
       <p style={styles.greetings}>Hello,</p>
       <p style={styles.textWithMargin}>
         You have been invited by {senderName} to join{' '}
-        <strong>{sponsorName}</strong> {''} on Superteam Earn!{' '}
+        <strong>{sponsorName}</strong> {''} on {PROJECT_NAME}!{' '}
         <a href={link} style={styles.link}>
           Click here
         </a>{' '}
@@ -27,7 +29,7 @@ export const InviteMemberTemplate = ({
       <p style={styles.salutation}>
         Best,
         <br />
-        Superteam Earn
+        {PROJECT_NAME}
       </p>
     </div>
   );

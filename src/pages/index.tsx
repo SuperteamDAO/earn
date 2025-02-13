@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { getServerSession } from 'next-auth';
 import { useMemo } from 'react';
 
-import { CombinedRegions } from '@/constants/Superteam';
+import { CombinedRegions } from '@/constants/Team';
 import { Home } from '@/layouts/Home';
 import { prisma } from '@/prisma';
 

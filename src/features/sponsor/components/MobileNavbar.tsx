@@ -7,6 +7,7 @@ import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
+import { PROJECT_NAME } from '@/constants/project';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 
@@ -134,7 +135,7 @@ export const MobileNavbar = () => {
         >
           <img
             className="h-5 cursor-pointer object-contain"
-            alt="Superteam Earn"
+            alt={PROJECT_NAME}
             src="/assets/logo.svg"
           />
           <div className="h-6 w-px bg-slate-300" />

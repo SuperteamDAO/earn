@@ -2,7 +2,7 @@ import { type BountyType, Prisma } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
-import { CombinedRegions } from '@/constants/Superteam';
+import { CombinedRegions } from '@/constants/Team';
 import {
   type ParentSkills,
   type Skills,

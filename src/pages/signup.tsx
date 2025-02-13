@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
+import { PROJECT_NAME } from '@/constants/project';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import {
@@ -72,7 +73,7 @@ export default function SignupPage() {
       <div className="mt-10 w-full rounded-lg border border-gray-200 bg-white px-20 pb-40 pt-20 shadow-lg">
         <div className="flex flex-col items-center space-y-0">
           <p className="text-center text-2xl font-medium text-slate-600">
-            Welcome to Superteam Earn
+            Welcome to {PROJECT_NAME}
           </p>
           <p className="text-center text-lg text-slate-600">
             Start your journey to access top global talent!

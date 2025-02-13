@@ -5,9 +5,11 @@ import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 import { Form } from '@/components/ui/form';
+import { PROJECT_NAME } from '@/constants/project';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { HydrateAtoms, useInitAtom } from '@/utils/atoms';
+import { getURL } from '@/utils/validUrl';
 
 import { type Listing } from '@/features/listings/types';
 import { Header } from '@/features/navbar/components/Header';
@@ -95,15 +97,15 @@ function ListingEditor({
   return (
     <>
       <Meta
-        title="Superteam Earn | Work to Earn in Crypto"
-        description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-        canonical="https://earn.superteam.fun"
+        title={`${PROJECT_NAME} | Work to Earn in Crypto`}
+        description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+        canonical={getURL()}
       />
       <div className="flex min-h-[10vh] flex-col px-3 md:hidden">
         <Header />
         <p className="w-full pt-20 text-center text-xl font-medium text-slate-500">
-          The Sponsor Dashboard on Earn is not optimized for mobile yet. Please
-          use a desktop to check out the Sponsor Dashboard
+          The Sponsor Dashboard on {PROJECT_NAME} is not optimized for mobile
+          yet. Please use a desktop to check out the Sponsor Dashboard
         </p>
       </div>
       <Form {...form}>

@@ -2,8 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { PROJECT_NAME } from '@/constants/project';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
+import { getURL } from '@/utils/validUrl';
 
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
 import { listingsQuery } from '@/features/listings/queries/listings';
@@ -19,15 +21,15 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
   );
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
-    design: 'Design Bounties and Grants | Superteam Earn',
-    content: 'Content Bounties and Grants | Superteam Earn',
-    development: 'Development Bounties and Grants | Superteam Earn',
-    other: 'Other Bounties and Grants | Superteam Earn',
+    design: `Design Bounties and Grants | ${PROJECT_NAME}`,
+    content: `Content Bounties and Grants | ${PROJECT_NAME}`,
+    development: `Development Bounties and Grants | ${PROJECT_NAME}`,
+    other: `Other Bounties and Grants | ${PROJECT_NAME}`,
   };
   const titleKey = slug as SlugKeys;
-  const title = titlesForSlugs[titleKey] || 'Superteam Earn';
-  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on Superteam Earn.`;
-  const canonicalURL = `https://earn.superteam.fun/category/${slug}/all`;
+  const title = titlesForSlugs[titleKey] || `${PROJECT_NAME}`;
+  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on ${PROJECT_NAME}.`;
+  const canonicalURL = `${getURL()}/category/${slug}/all`;
 
   return (
     <Home type="category">

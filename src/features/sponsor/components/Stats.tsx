@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { PROJECT_NAME } from '@/constants/project';
 import { cn } from '@/utils/cn';
 
 import { userCountQuery } from '@/features/home/queries/user-count';
@@ -33,7 +34,7 @@ const initialStats = [
   },
   {
     title: '16K',
-    label: 'Verified Earn Users',
+    label: `Verified ${PROJECT_NAME} Users`,
     showEarn: true,
   },
   {
@@ -46,7 +47,7 @@ export function Stats() {
   const { data: totals } = useQuery(userCountQuery);
 
   const stats = initialStats.map((stat) => {
-    if (stat.label === 'Verified Earn Users' && totals?.totalUsers) {
+    if (stat.label === `Verified ${PROJECT_NAME} Users` && totals?.totalUsers) {
       return {
         ...stat,
         title: new Intl.NumberFormat('en-US', {
@@ -70,7 +71,7 @@ export function Stats() {
       <div className="w-full max-w-[20rem] xl:max-w-[30rem]">
         <HighQualityImage
           src="/landingsponsor/displays/global-earn.webp"
-          alt="Superteam Earn Global"
+          alt={`${PROJECT_NAME} Global`}
           className="w-full max-w-[30rem]"
         />
       </div>
@@ -78,11 +79,11 @@ export function Stats() {
       <div className="flex flex-col gap-8">
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
           <h2 className="text-[2rem] font-semibold leading-none md:text-[3.5rem]">
-            The distribution of the Superteam network
+            The distribution of the {PROJECT_NAME} network
           </h2>
           <p className="mt-4 text-[1.25rem] font-medium text-slate-500 lg:text-[1.4rem]">
-            Get instant access to Superteam’s network of the best crypto talent
-            in the world
+            Get instant access to {PROJECT_NAME}’s network of the best crypto
+            talent in the world
           </p>
         </div>
 
@@ -102,7 +103,7 @@ export function Stats() {
                   <span className="top-0 w-[0.6rem] lg:w-[0.9rem]">
                     <HighQualityImage
                       src="/landingsponsor/icons/earn.svg"
-                      alt="Earn Icon"
+                      alt={`${PROJECT_NAME} Icon`}
                       className="h-full w-full"
                     />
                   </span>

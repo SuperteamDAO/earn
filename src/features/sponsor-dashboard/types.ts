@@ -29,9 +29,9 @@ export interface SponsorStats {
 }
 
 const ALLOWED_URL_PREFIXES = [
-  'https://solscan.io/tx/',
-  'https://solana.fm/tx/',
-  'https://explorer.solana.com/tx/',
+  'https://pikespeak.ai/transaction-viewer/',
+  'https://nearblocks.io/txns/',
+  'https://explorer.near.com/',
 ];
 
 export const verifyPaymentsSchema = z.object({

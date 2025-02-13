@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Tooltip } from '@/components/ui/tooltip';
+import { CHAIN_NAME } from '@/constants/project';
 import { cn } from '@/utils/cn';
 
 import { type NewTalentFormData } from '@/features/talent/schema';
@@ -52,7 +53,7 @@ export function PublicKeyField() {
       render={({ field }) => (
         <FormItem className="mb-3 sm:mb-4">
           <div className="flex items-center gap-2">
-            <FormLabel isRequired>Your Solana Wallet Address</FormLabel>
+            <FormLabel isRequired>Your {CHAIN_NAME} Wallet Address</FormLabel>
             <div className="lg:hidden">
               <Tooltip
                 content={<FormDescription>{description}</FormDescription>}
@@ -72,7 +73,7 @@ export function PublicKeyField() {
               <Input
                 className="pr-8"
                 autoComplete="off"
-                placeholder="Enter your Solana wallet address"
+                placeholder={`Enter your ${CHAIN_NAME} wallet address`}
                 {...field}
                 onChange={(e) => {
                   setIsPublicKeyTyping(true);

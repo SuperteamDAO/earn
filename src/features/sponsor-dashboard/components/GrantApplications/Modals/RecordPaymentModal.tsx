@@ -48,12 +48,10 @@ const paymentSchema = (maxAmount: number, token: string) =>
       .url('Invalid URL')
       .min(1, 'Transaction link is required')
       .refine((link) => {
-        const solscanRegex =
-          /^https:\/\/solscan\.io\/tx\/[A-Za-z0-9]{44,}(\?cluster=[a-zA-Z-]+)?$/;
-        const solanaFmRegex =
-          /^https:\/\/solana\.fm\/tx\/[A-Za-z0-9]{44,}(\?cluster=[a-zA-Z-]+)?$/;
-        return solscanRegex.test(link) || solanaFmRegex.test(link);
-      }, 'Invalid transaction link. Must be a solscan.io or solana.fm link with a valid transaction ID.'),
+        const nearblocksRegex =
+          /^https:\/\/nearblocks\.io\/txns\/[A-Za-z0-9]{44,}$/;
+        return nearblocksRegex.test(link);
+      }, 'Invalid transaction link. Must be a nearblocks.io link with a valid transaction ID.'),
   });
 
 type PaymentFormInputs = z.infer<ReturnType<typeof paymentSchema>>;

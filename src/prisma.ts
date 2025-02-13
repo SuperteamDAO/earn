@@ -1,13 +1,9 @@
-import { Client } from '@planetscale/database';
-import { PrismaPlanetScale } from '@prisma/adapter-planetscale';
 import { PrismaClient } from '@prisma/client';
 
 const prismaClient = () => {
   return process.env.DATABASE_URL
     ? new PrismaClient({
-        adapter: new PrismaPlanetScale(
-          new Client({ url: process.env.DATABASE_URL }),
-        ),
+        datasourceUrl: process.env.DATABASE_URL,
       })
     : new PrismaClient({
         datasourceUrl: process.env.LOCAL_DATABASE_URL,

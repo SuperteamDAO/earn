@@ -5,9 +5,11 @@ import { useEffect } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
+import { getURL } from '@/utils/validUrl';
 
 import { Login } from '@/features/auth/components/Login';
 import { Header } from '@/features/navbar/components/Header';
@@ -15,7 +17,6 @@ import { activeHackathonQuery } from '@/features/sponsor-dashboard/queries/activ
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 
 import { ListingBuilderProvider } from './ListingBuilderProvider';
-
 interface ListingBuilderLayout {
   route: 'new' | 'edit' | 'duplicate';
   slug?: string;
@@ -83,9 +84,9 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
       <Default
         meta={
           <Meta
-            title="Superteam Earn | Work to Earn in Crypto"
-            description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-            canonical="https://earn.superteam.fun"
+            title={`${PROJECT_NAME} | Work to Earn in Crypto`}
+            description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+            canonical={getURL()}
           />
         }
       >

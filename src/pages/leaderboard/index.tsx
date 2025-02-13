@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { getServerSession } from 'next-auth';
 import { useEffect, useState, useTransition } from 'react';
 
+import { PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
@@ -109,8 +110,8 @@ function TalentLeaderboard({
     <Default
       meta={
         <Meta
-          title={`Talent Leaderboard | Superteam Earn`}
-          description={`Talent Leaderboard | Superteam Earn`}
+          title={`Talent Leaderboard | ${PROJECT_NAME}`}
+          description={`Talent Leaderboard | ${PROJECT_NAME}`}
         />
       }
     >

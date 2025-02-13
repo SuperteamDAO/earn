@@ -4,11 +4,12 @@ import type { Adapter } from 'next-auth/adapters';
 import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
 
+import { PROJECT_NAME } from '@/constants/project';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 import { OTPTemplate } from '@/features/emails/components/otpTemplate';
-import { pratikEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
+import { ceoEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
 import { resend } from '@/features/emails/utils/resend';
 
 export const authOptions: NextAuthOptions = {
@@ -37,6 +38,7 @@ export const authOptions: NextAuthOptions = {
           const randomIndex = Math.floor(Math.random() * digits.length);
           verificationCode += digits.charAt(randomIndex);
         }
+        console.log('verificationCode', verificationCode);
         return verificationCode;
       },
       server: {
@@ -58,9 +60,9 @@ export const authOptions: NextAuthOptions = {
         }
 
         await resend.emails.send({
-          from: pratikEmail,
+          from: ceoEmail,
           to: [identifier],
-          subject: 'Log in to Superteam Earn',
+          subject: `Log in to ${PROJECT_NAME}`,
           react: OTPTemplate({ token }),
           replyTo: replyToEmail,
         });

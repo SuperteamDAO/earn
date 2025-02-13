@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 
 import { Skeleton } from '@/components/ui/skeleton';
+import { PROJECT_NAME } from '@/constants/project';
 import { useUser } from '@/store/user';
 
 import { userStatsQuery } from '@/features/home/queries/user-stats';
@@ -45,7 +46,7 @@ export const UserStatsBanner = () => {
               : 'Welcome!'}
           </p>
           <p className="text-sm text-[#c4c2ef]">
-            We&apos;re so glad to have you on Earn
+            We&apos;re so glad to have you on {PROJECT_NAME}
           </p>
         </div>
       </div>

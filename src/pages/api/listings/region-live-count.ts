@@ -1,7 +1,8 @@
 import { type Regions } from '@prisma/client';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
-import { Superteams } from '@/constants/Superteam';
+import { PROJECT_NAME } from '@/constants/project';
+import { TeamRegions } from '@/constants/Team';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -15,10 +16,10 @@ export default async function regionLiveCount(
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
-  const st = Superteams.find((team) => team.region.toLowerCase() === region);
-  const superteam = st?.name;
+  const st = TeamRegions.find((team) => team.region.toLowerCase() === region);
+  const team = st?.name;
 
-  logger.debug(`Superteam listing count for region ${region}: ${superteam}`);
+  logger.debug(`${PROJECT_NAME} listing count for region ${region}: ${team}`);
 
   try {
     logger.debug('Fetching Count');
@@ -40,7 +41,7 @@ export default async function regionLiveCount(
           },
           {
             sponsor: {
-              name: superteam,
+              name: team,
             },
           },
         ],

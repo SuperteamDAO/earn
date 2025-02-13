@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 
+import { PROJECT_NAME } from '@/constants/project';
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
 
@@ -24,8 +25,8 @@ export function ListingBuilderFormLayout({
       {...props}
     >
       <Meta
-        title="Create a Listing | Superteam Earn"
-        description="Create a listing on Superteam Earn and gain access to thousands of high quality talent"
+        title={`Create a Listing | ${PROJECT_NAME}`}
+        description={`Create a listing on ${PROJECT_NAME} and gain access to thousands of high quality talent`}
       />
       <Header />
       <div className="flex flex-1 flex-col">{children}</div>

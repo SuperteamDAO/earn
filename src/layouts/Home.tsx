@@ -3,9 +3,11 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import React, { type ReactNode, useEffect, useState } from 'react';
 
-import { type Superteam } from '@/constants/Superteam';
+import { PROJECT_NAME } from '@/constants/project';
+import { type Team } from '@/constants/Team';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { getURL } from '@/utils/validUrl';
 
 import { HomeBanner } from '@/features/home/components/Banner';
 import { NavTabs } from '@/features/home/components/NavTabs';
@@ -14,7 +16,7 @@ import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 interface HomeProps {
   children: ReactNode;
   type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
-  st?: Superteam;
+  st?: Team;
   isAuth?: boolean;
 }
 
@@ -61,9 +63,9 @@ export function Home({ children, type, st, isAuth }: HomeProps) {
       className="bg-white"
       meta={
         <Meta
-          title="Superteam Earn | Work to Earn in Crypto"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
+          title={`${PROJECT_NAME} | Work to Earn in Crypto`}
+          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          canonical={getURL()}
         />
       }
     >

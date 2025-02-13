@@ -7,6 +7,7 @@ import { getServerSession } from 'next-auth';
 import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 
+import { PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
@@ -119,7 +120,7 @@ const Search = ({
     <Default
       meta={
         <Meta
-          title={`Search - ${query} | Superteam Earn`}
+          title={`Search - ${query} | ${PROJECT_NAME}`}
           description={`Search Results for ${query}`}
         />
       }

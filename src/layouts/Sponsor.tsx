@@ -21,13 +21,15 @@ import { FeatureModal } from '@/components/modals/FeatureModal';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-import { Superteams } from '@/constants/Superteam';
+import { PROJECT_NAME } from '@/constants/project';
+import { TeamRegions } from '@/constants/Team';
 import { PDTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
+import { getURL } from '@/utils/validUrl';
 
 import { Login } from '@/features/auth/components/Login';
 import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
@@ -134,7 +136,7 @@ export function SponsorLayout({
   }
 
   const isHackathonRoute = router.asPath.startsWith('/dashboard/hackathon');
-  const isLocalProfileVisible = Superteams.some(
+  const isLocalProfileVisible = TeamRegions.some(
     (team) =>
       team.name === user?.currentSponsor?.name &&
       (user?.stLead === team.region || user?.stLead === 'MAHADEV'),
@@ -187,9 +189,9 @@ export function SponsorLayout({
       className="bg-white"
       meta={
         <Meta
-          title="Superteam Earn | Work to Earn in Crypto"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
+          title={`${PROJECT_NAME} | Work to Earn in Crypto`}
+          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          canonical={getURL()}
         />
       }
     >
@@ -202,8 +204,8 @@ export function SponsorLayout({
       <EntityNameModal isOpen={isEntityModalOpen} onClose={handleEntityClose} />
       <div className="flex min-h-[80vh] px-3 md:hidden">
         <p className="pt-20 text-center text-xl font-medium text-slate-500">
-          The Sponsor Dashboard on Earn is not optimized for mobile yet. Please
-          use a desktop to check out the Sponsor Dashboard
+          The Sponsor Dashboard on {PROJECT_NAME} is not optimized for mobile
+          yet. Please use a desktop to check out the Sponsor Dashboard
         </p>
       </div>
       <div className="hidden min-h-screen justify-start md:flex">

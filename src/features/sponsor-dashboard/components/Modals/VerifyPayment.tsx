@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { PROJECT_NAME } from '@/constants/project';
 import { tokenList } from '@/constants/tokenList';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
@@ -362,10 +363,10 @@ export const VerifyPaymentModal = ({
                   Add Reward Payment Link
                 </p>
                 <p className="mt-2 text-sm font-normal text-slate-500">
-                  If you have paid the winners outside of Earn and want to
-                  update the status of this listing as &quot;Completed&quot;,
-                  please add the transaction links of the payments made to the
-                  winners.
+                  If you have paid the winners outside of {PROJECT_NAME} and
+                  want to update the status of this listing as
+                  &quot;Completed&quot;, please add the transaction links of the
+                  payments made to the winners.
                 </p>
               </div>
 

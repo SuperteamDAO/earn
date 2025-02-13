@@ -18,7 +18,8 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { countries } from '@/constants/country';
-import { Superteams } from '@/constants/Superteam';
+import { PROJECT_TEAM } from '@/constants/project';
+import { TeamRegions } from '@/constants/Team';
 import { cn } from '@/utils/cn';
 
 interface CountryOption {
@@ -61,10 +62,10 @@ interface RegionComboboxProps {
   global?: boolean;
 
   /**
-   * Whether to show superteams grouped options.
+   * Whether to show team regions grouped options.
    * @default false
    */
-  superteams?: boolean;
+  teams?: boolean;
 
   /**
    * Additional CSS class names to apply to the root element.
@@ -88,7 +89,7 @@ interface RegionComboboxProps {
 }
 
 /**
- * A combobox component for selecting regions, with optional support for global, superteam,
+ * A combobox component for selecting regions, with optional support for global, teams,
  * and unset options.
  *
  * @param {RegionComboboxProps} props - The props for the component.
@@ -99,7 +100,7 @@ export function RegionCombobox({
   onChange,
   placeholder = 'Select a region...',
   global = false,
-  superteams = false,
+  teams = false,
   unset,
   className,
   classNames,
@@ -108,17 +109,17 @@ export function RegionCombobox({
     const regions: SelectOption[] = [];
     if (global)
       regions.push({ value: Regions.GLOBAL, label: 'Global', code: 'GLOBAL' });
-    if (superteams) {
-      const superteamCountries = Superteams.flatMap((region) =>
+    if (teams) {
+      const teamCountries = TeamRegions.flatMap((region) =>
         region.code.toLowerCase(),
       );
 
-      const nonSuperteamCountries = countries.filter(
-        (country) => !superteamCountries.includes(country.code.toLowerCase()),
+      const otherRegions = countries.filter(
+        (country) => !teamCountries.includes(country.code.toLowerCase()),
       );
       regions.push({
-        label: 'Superteam Regions',
-        options: Superteams.map((region) => ({
+        label: `${PROJECT_TEAM} Regions`,
+        options: TeamRegions.map((region) => ({
           value: region.region ?? '-',
           label: region.displayValue,
           code: region.code,
@@ -126,7 +127,7 @@ export function RegionCombobox({
       });
       regions.push({
         label: 'Other Countries',
-        options: nonSuperteamCountries.map((country) => ({
+        options: otherRegions.map((country) => ({
           value: country.name,
           label: country.name,
           code: country.code,
