@@ -78,13 +78,13 @@ export const SubmissionCard = ({
               id={talent?.id}
               avatar={talent?.photo || undefined}
             />
-            <p className="max-w-[8rem] overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium text-gray-900">
+            <p className="max-w-[8rem] overflow-hidden text-base font-medium text-ellipsis whitespace-nowrap text-gray-900">
               {talent?.firstName} {talent?.lastName}
             </p>
           </div>
         </Link>
         {winner && (
-          <div className="flex-grow pr-1">
+          <div className="grow pr-1">
             <div className="ml-auto w-fit">
               <Badge position={winnerPosition} />
             </div>

@@ -15,7 +15,7 @@ import { getURL } from '@/utils/validUrl';
 
 import Providers from '@/features/privy/providers';
 
-import '../styles/globals.scss';
+import '../styles/globals.css';
 import '@/components/tiptap/styles/index.css';
 
 const SolanaWalletProvider = dynamic(

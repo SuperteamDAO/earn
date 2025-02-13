@@ -83,7 +83,7 @@ export function EligibilityQuestions() {
       render={() => (
         <FormItem className="gap-2 pt-2">
           <div className="flex items-center gap-2">
-            <FormLabel className="font-bold uppercase text-slate-400">
+            <FormLabel className="font-bold text-slate-400 uppercase">
               Custom Questions
             </FormLabel>
             <Tooltip
@@ -111,7 +111,7 @@ export function EligibilityQuestions() {
                       <FormLabel isRequired={type === 'project' && index === 0}>
                         Question {index + 1}
                       </FormLabel>
-                      <div className="flex items-center rounded-md border ring-primary has-[:focus]:ring-1">
+                      <div className="ring-primary flex items-center rounded-md border has-focus:ring-1">
                         <FormField
                           control={form.control}
                           name={`eligibility.${index}.type`}
@@ -193,7 +193,7 @@ export function EligibilityQuestions() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="hidden text-muted-foreground group-hover:flex hover:text-destructive"
+                            className="text-muted-foreground hover:text-destructive hidden group-hover:flex"
                             onClick={() => handleRemoveQuestion(index)}
                           >
                             <Trash2 className="h-4 w-4" />

@@ -58,7 +58,7 @@ export function DescriptionAndTemplate() {
                 <Templates />
               </div>
             </div>
-            <div className="flex rounded-md border ring-primary has-[:focus]:ring-1">
+            <div className="ring-primary flex rounded-md border has-focus:ring-1">
               <FormControl>
                 <MinimalTiptapEditor
                   key={editorKey}
@@ -74,7 +74,7 @@ export function DescriptionAndTemplate() {
                   output="html"
                   placeholder="Type your description here..."
                   editable={true}
-                  editorClassName="focus:outline-none"
+                  editorClassName="focus:outline-hidden"
                   imageSetting={{
                     folderName: 'listing-description',
                     type: 'description',

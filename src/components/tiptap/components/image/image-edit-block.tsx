@@ -79,7 +79,7 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({
           </Button>
         </div>
       </div>
-      <span className="block w-full text-center italic text-slate-500">OR</span>
+      <span className="block w-full text-center text-slate-500 italic">OR</span>
       <div
         {...getRootProps()}
         className={`rounded-md border-2 border-dashed bg-slate-50 p-8 text-center transition-colors ${isDragActive ? 'border-primary bg-primary/5' : 'border-slate-200 hover:border-slate-300'} `}

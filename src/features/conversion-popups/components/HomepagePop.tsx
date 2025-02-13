@@ -155,7 +155,7 @@ const Mobile = ({
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerContent
         classNames={{
-          overlay: isLoginOpen ? 'z-[200]' : '',
+          overlay: isLoginOpen ? 'z-200' : '',
         }}
         className="focus:ring-0 focus:ring-transparent focus:ring-offset-0"
       >

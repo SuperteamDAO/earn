@@ -79,10 +79,10 @@ export function PrizesList({
             <div className="h-full w-full" />
           </div>
 
-          <div className="flex flex-shrink-0 gap-2 text-lg md:text-xl">
+          <div className="flex shrink-0 gap-2 text-lg md:text-xl">
             <div
               className={cn(
-                'ml-auto flex gap-1 whitespace-nowrap font-semibold',
+                'ml-auto flex gap-1 font-semibold whitespace-nowrap',
               )}
               style={{
                 width: widthPrize,
@@ -177,7 +177,7 @@ function LabelOrAction({
       );
   } else {
     return (
-      <p className="mb-1 mt-auto flex items-center gap-1 text-sm font-medium text-slate-500">
+      <p className="mt-auto mb-1 flex items-center gap-1 text-sm font-medium text-slate-500">
         {nthLabelGenerator(Number(step[0]), true)}
         {needsCollapse && (
           <button

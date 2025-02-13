@@ -230,7 +230,7 @@ export const VerifyPaymentModal = ({
     if (isLoading) {
       return (
         <div className="flex justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-brand-purple" />
+          <div className="border-t-brand-purple h-8 w-8 animate-spin rounded-full border-4 border-slate-200" />
         </div>
       );
     }
@@ -388,7 +388,7 @@ export const VerifyPaymentModal = ({
                         >
                           <div className="flex justify-between gap-2">
                             <div className="flex w-[40%] flex-col items-start gap-1">
-                              <div className="flex gap-1 text-xs font-semibold uppercase text-slate-500">
+                              <div className="flex gap-1 text-xs font-semibold text-slate-500 uppercase">
                                 <p>
                                   {getRankLabels(
                                     submission.winnerPosition || 0,
@@ -447,7 +447,7 @@ export const VerifyPaymentModal = ({
                                   </a>
 
                                   <div className="h-6 w-6 rounded-full bg-green-500 p-1">
-                                    <Check className="h-full w-full stroke-[3] text-white" />
+                                    <Check className="h-full w-full stroke-3 text-white" />
                                   </div>
                                 </div>
                               ) : (

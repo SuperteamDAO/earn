@@ -532,7 +532,7 @@ function GrantApplications({ slug }: Props) {
                     />
                   </div>
 
-                  <div className="h-full w-full rounded-r-xl border-b border-r border-t border-slate-200 bg-white">
+                  <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
                     {!applications?.length &&
                     !searchText &&
                     !isApplicationsLoading ? (
@@ -621,7 +621,7 @@ function GrantApplications({ slug }: Props) {
 
             <TabsContent
               value="payments"
-              className="px-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+              className="px-0 focus:outline-hidden focus-visible:ring-0 focus-visible:ring-transparent"
             >
               <PaymentsHistoryTab grant={grant} grantId={grant?.id} />
             </TabsContent>
