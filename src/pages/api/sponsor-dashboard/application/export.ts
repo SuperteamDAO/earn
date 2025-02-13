@@ -6,6 +6,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
+import { getURL } from '@/utils/validUrl';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
@@ -66,7 +67,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           'Sr no': i + 1,
           Name: `${user.firstName} ${user.lastName}`,
           'Email ID': user.email,
-          'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
+          'Profile Link': `${getURL()}/t/${user.username}`,
           'User Wallet': user.publicKey,
           'User Social Link': getSocialMediaLink(user),
           'Application Date': applicationDate,

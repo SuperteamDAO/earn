@@ -1,0 +1,10 @@
+export const PROJECT_NAME = 'Nearn';
+export const PROJECT_TEAM = 'Nearn Team';
+export const SUPPORT_EMAIL = 'support@nearn.io';
+export const CEO_NAME = 'Ori';
+export const FAQ_URL = 'https://github.com/NEAR-DevHub/nearn/releases';
+export const GITHUB_URL = 'https://github.com/NEAR-DevHub/nearn';
+export const CHANGELOG_URL = `${GITHUB_URL}/releases`;
+export const CHAIN_NAME = 'Near';
+export const TWITTER_URL = null;
+export const DISCORD_URL = null;

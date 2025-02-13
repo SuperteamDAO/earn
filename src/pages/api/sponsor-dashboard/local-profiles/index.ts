@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
-import { Superteams } from '@/constants/Superteam';
+import { PROJECT_NAME } from '@/constants/project';
+import { TeamRegions } from '@/constants/Team';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -8,8 +9,8 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
-const normalizedSuperteamMap = new Map(
-  Superteams.map((team) => [
+const normalizedTeamMap = new Map(
+  TeamRegions.map((team) => [
     team.name,
     {
       fullName: team.name.trim().toLowerCase().normalize('NFKC'),
@@ -60,10 +61,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       normalized: sponsorNameNormalized,
     });
 
-    const superteam = sponsor?.name
-      ? normalizedSuperteamMap.get(sponsor?.name)?.original || undefined
+    const team = sponsor?.name
+      ? normalizedTeamMap.get(sponsor?.name)?.original || undefined
       : undefined;
-    if (!superteam) {
+    if (!team) {
       logger.warn(
         `Invalid sponsor used for local profiles by userId ${userId} and sponsorId ${sponsorId}`,
       );
@@ -71,14 +72,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     logger.debug(
-      `Superteam of sponsor ${sponsor?.name} of user ${userId} is found`,
+      `${PROJECT_NAME} of sponsor ${sponsor?.name} of user ${userId} is found`,
       {
-        superteam,
+        team,
       },
     );
 
-    const region = superteam.region;
-    const countries = superteam.country;
+    const region = team.region;
+    const countries = team.country;
 
     const isLocalProfileVisible =
       user?.stLead === region || user?.stLead === 'MAHADEV';

@@ -2,7 +2,7 @@ import { type Regions } from '@prisma/client';
 import Image from 'next/image';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { type Superteam } from '@/constants/Superteam';
+import { type Team } from '@/constants/Team';
 
 const customBannerPosition: Partial<
   Record<Regions, Partial<React.CSSProperties>>
@@ -33,7 +33,7 @@ const customBannerPosition: Partial<
   },
 };
 
-export function RegionBanner({ st }: { st: Superteam }) {
+export function RegionBanner({ st }: { st: Team }) {
   return (
     <div className="relative flex h-72 w-full flex-col items-center">
       <Image

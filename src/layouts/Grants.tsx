@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
+import { PROJECT_NAME } from '@/constants/project';
 import { tokenList } from '@/constants/tokenList';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -55,10 +56,10 @@ export function GrantPageLayout({
     <Default
       meta={
         <Head>
-          <title>{`${initialGrant?.title || 'Grant'} | Superteam Earn`}</title>
+          <title>{`${initialGrant?.title || 'Grant'} | ${PROJECT_NAME}`}</title>
           <meta
             property="og:title"
-            content={`${initialGrant?.title || 'Grant'} | Superteam Earn`}
+            content={`${initialGrant?.title || 'Grant'} | ${PROJECT_NAME}`}
           />
           <meta
             property="og:image"
@@ -66,7 +67,7 @@ export function GrantPageLayout({
           />
           <meta
             name="twitter:title"
-            content={`${initialGrant?.title || 'Grant'} | Superteam Earn`}
+            content={`${initialGrant?.title || 'Grant'} | ${PROJECT_NAME}`}
           />
           <meta
             name="twitter:image"
@@ -75,7 +76,7 @@ export function GrantPageLayout({
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="Superteam Grant" />
+          <meta property="og:image:alt" content={`${PROJECT_NAME} Grant`} />
           <meta charSet="UTF-8" key="charset" />
           <meta
             name="viewport"

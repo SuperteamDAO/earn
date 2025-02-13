@@ -6,7 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Button } from '@/components/ui/button';
-import { Superteams } from '@/constants/Superteam';
+import { TeamRegions } from '@/constants/Team';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
@@ -30,17 +30,17 @@ export default function LocalProfiles() {
 
   const { user } = useUser();
 
-  const superteam = useMemo(() => {
-    return Superteams.find((st) => st.name === user?.currentSponsor?.name);
+  const team = useMemo(() => {
+    return TeamRegions.find((st) => st.name === user?.currentSponsor?.name);
   }, [user]);
 
   const { data, isLoading } = useQuery({
     ...localProfilesQuery({
       page: currentPage,
       limit: usersPerPage,
-      region: superteam?.region!,
+      region: team?.region!,
     }),
-    enabled: !!superteam?.region,
+    enabled: !!team?.region,
   });
 
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
@@ -117,13 +117,13 @@ export default function LocalProfiles() {
     <SponsorLayout>
       <div className="mb-4 flex justify-between">
         <div className="flex items-center gap-2">
-          {superteam?.code && <UserFlag location={superteam.code} isCode />}
+          {team?.code && <UserFlag location={team.code} isCode />}
           <p className="text-lg font-semibold text-slate-800">
             Local Earn Profiles
           </p>
           <div className="mx-1 h-[60%] border-r border-slate-200" />
           <p className="text-slate-500">
-            All profiles that are based in {superteam?.displayValue}
+            All profiles that are based in {team?.displayValue}
           </p>
         </div>
         <FilterSection

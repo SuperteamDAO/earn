@@ -1,4 +1,4 @@
-import { Superteams } from '@/constants/Superteam';
+import { TeamRegions } from '@/constants/Team';
 
 export const IndustryList = [
   'DAOs',
@@ -33,46 +33,8 @@ export const workType = [
 
 export const USERNAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
 
-const superteams = Superteams.map((team) => team.name);
+const teams = TeamRegions.map((team) => team.name);
 
-export const CommunityList = [
-  ...superteams,
-  'SuperWomenDao',
-  'LamportDAO',
-  "Grape / Dean's List",
-  'DeveloperDAO',
-  'Metacamp',
-  '10K Designers',
-  'Rise In',
-  'Turbin3',
-  'Christex Foundation',
-  'Forma',
-  'DevForce99',
-  'Other',
-  'Surge Women',
-  'Jupiter DAO',
-  'Drift DAO',
-  'Solana Collective',
-  'Mad Lads',
-  'Kamino DAO',
-  'Marinade DAO',
-  'Layer3',
-  'Bonk',
-  'Pyth DAO',
-  'Orca DAO',
-  'Star Atlas DAO',
-  'Solend DAO',
-  'Jito DAO',
-  'Tensor DAO',
-  'Magic Eden DAO',
-  'StepDAO',
-  'SMB Gen2 (NFT)',
-  'Degenerate Ape Academy',
-  'Metaplex DAO',
-  'Solpunks DAO',
-  'Meta DAO',
-  'Monke DAO',
-  'Meteora DAO',
-];
+export const CommunityList = [...teams, 'BuildersDAO', 'WalletDAO', 'DevHub'];
 
 export const ONBOARDING_KEY = 'onboarding_chosen';

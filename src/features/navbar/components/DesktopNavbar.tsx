@@ -7,6 +7,7 @@ import { IoSearchOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PROJECT_NAME } from '@/constants/project';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -52,7 +53,7 @@ export const DesktopNavbar = ({ onLoginOpen, onSearchOpen }: Props) => {
             >
               <img
                 className="h-5 cursor-pointer object-contain"
-                alt="Superteam Earn"
+                alt={`${PROJECT_NAME} Logo`}
                 src="/assets/logo.svg"
               />
 

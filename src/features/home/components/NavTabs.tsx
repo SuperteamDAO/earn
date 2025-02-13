@@ -5,7 +5,7 @@ import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo } from 'react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { Superteams } from '@/constants/Superteam';
+import { TeamRegions } from '@/constants/Team';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -46,13 +46,13 @@ interface NavTabsProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function NavTabs({ className, ...props }: NavTabsProps) {
   const { user } = useUser();
 
-  const superteam = useMemo(() => {
+  const team = useMemo(() => {
     return (
-      Superteams.find((s) => s.country.includes(user?.location ?? '')) ?? null
+      TeamRegions.find((s) => s.country.includes(user?.location ?? '')) ?? null
     );
   }, [user?.location]);
 
-  const region = superteam?.region;
+  const region = team?.region;
 
   const { data: regionLiveCount, refetch } = useQuery(
     regionLiveCountQuery(region!),
@@ -82,8 +82,8 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
           href={`/regions/${region.toLowerCase()}/`}
           phEvent={`${region.toLowerCase()}_navpill`}
         >
-          {superteam.code && <UserFlag location={superteam.code} isCode />}
-          {superteam.displayValue}
+          {team.code && <UserFlag location={team.code} isCode />}
+          {team.displayValue}
         </PillTab>
       )}
       {CATEGORY_NAV_ITEMS?.map((navItem) => {

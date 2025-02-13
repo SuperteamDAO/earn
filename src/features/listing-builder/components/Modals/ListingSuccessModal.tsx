@@ -7,6 +7,7 @@ import { FaXTwitter } from 'react-icons/fa6';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { PROJECT_NAME } from '@/constants/project';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { useUser } from '@/store/user';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
@@ -36,11 +37,11 @@ export const ListingSuccessModal = () => {
 
   const listingLink = useCallback(
     (medium?: 'twitter' | 'telegram') =>
-      `${getURL()}listing/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`,
+      `${getURL()}/listing/${slug}/${medium ? `?utm_source=${PROJECT_NAME}&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`,
     [type, slug],
   );
 
-  const tweetShareContent = `Check out my newly added @SuperteamEarn opportunity!\n\n${listingLink('twitter')}`;
+  const tweetShareContent = `Check out my newly added ${PROJECT_NAME} opportunity!\n\n${listingLink('twitter')}`;
   const twitterShareLink = tweetEmbedLink(tweetShareContent);
 
   const { hasCopied, onCopy } = useClipboard(listingLink());
@@ -82,7 +83,7 @@ export const ListingSuccessModal = () => {
               onClick={onCopy}
             >
               <span className="truncate font-normal text-slate-500">
-                earn.superteam.fun/listing/{slug}
+                {getURL()}/listing/{slug}
               </span>
               {hasCopied ? (
                 <Check className="h-5 w-5 text-slate-400" />

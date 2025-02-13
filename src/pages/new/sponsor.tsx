@@ -25,6 +25,7 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
+import { PROJECT_NAME } from '@/constants/project';
 import { PDTG } from '@/constants/Telegram';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -32,6 +33,7 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { uploadAndReplaceImage } from '@/utils/image';
+import { getURL } from '@/utils/validUrl';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import { SocialInput } from '@/features/social/components/SocialInput';
@@ -292,9 +294,9 @@ const CreateSponsor = () => {
     <Default
       meta={
         <Meta
-          title="Create Sponsor | Superteam Earn"
+          title="Create Sponsor | ${PROJECT_NAME}"
           description="Every Solana opportunity in one place!"
-          canonical="https://earn.superteam.fun/new/sponsor/"
+          canonical={`${getURL()}/new/sponsor/`}
         />
       }
     >
@@ -305,7 +307,7 @@ const CreateSponsor = () => {
               You&apos;re one step away
             </p>
             <p className="pb-4 text-center text-xl font-normal text-slate-600">
-              from joining Superteam Earn
+              from joining {PROJECT_NAME}
             </p>
             <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
           </div>
@@ -314,7 +316,7 @@ const CreateSponsor = () => {
         <div className="flex w-full flex-col items-center px-4 pb-24 pt-8">
           <div className="flex flex-col gap-2 text-center">
             <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
-              Welcome to Superteam Earn
+              Welcome to {PROJECT_NAME}
             </h1>
             <p className="text-lg font-normal text-gray-600" color="gray.600">
               Let&apos;s start with some basic information about your team

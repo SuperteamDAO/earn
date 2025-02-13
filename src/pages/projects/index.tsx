@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { PROJECT_NAME } from '@/constants/project';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { dayjs } from '@/utils/dayjs';
+import { getURL } from '@/utils/validUrl';
 
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
@@ -26,9 +28,9 @@ export default function ProjectsPage() {
   return (
     <Home type="listing">
       <Meta
-        title="Apply to Projects in the Crypto Space | Superteam Earn"
-        description="Discover unique crypto projects seeking talent. Apply on Superteam Earn and take your chance to work and earn in the crypto space."
-        canonical="https://earn.superteam.fun/projects/"
+        title={`Apply to Projects in the Crypto Space | ${PROJECT_NAME}`}
+        description={`Discover unique crypto projects seeking talent. Apply on ${PROJECT_NAME} and take your chance to work and earn in the crypto space.`}
+        canonical={`${getURL()}/projects/`}
       />
       <HomepagePop />
       <div className="w-full">

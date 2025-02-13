@@ -37,7 +37,7 @@ export function GeoLock() {
             </div>
             <FormControl className="flex items-center">
               <RegionCombobox
-                superteams
+                teams
                 global
                 value={field.value}
                 onChange={(e) => {

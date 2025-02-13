@@ -11,6 +11,7 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
+import { PROJECT_NAME } from '@/constants/project';
 import { type SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { prisma } from '@/prisma';
@@ -55,23 +56,23 @@ const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
       hideFooter
       meta={
         <Head>
-          <title>{`${title} Opportunities | Superteam Earn`}</title>
+          <title>{`${title} Opportunities | ${PROJECT_NAME}`}</title>
           <meta
             name="description"
             content={`
 Check out all of ${title}’s latest earning opportunities on a single page.
 `}
           />
-          <meta property="og:title" content={`${title} on Superteam Earn`} />
+          <meta property="og:title" content={`${title} on ${PROJECT_NAME}`} />
           <meta property="og:image" content={ogImage.toString()} />
-          <meta name="twitter:title" content={`${title} on Superteam Earn`} />
+          <meta name="twitter:title" content={`${title} on ${PROJECT_NAME}`} />
           <meta name="twitter:image" content={ogImage.toString()} />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
           <meta
             property="og:image:alt"
-            content={`${title} on Superteam Earn`}
+            content={`${title} on ${PROJECT_NAME}`}
           />
           <meta charSet="UTF-8" key="charset" />
           <meta

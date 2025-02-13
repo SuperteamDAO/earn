@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { PROJECT_NAME } from '@/constants/project';
 import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
@@ -83,7 +84,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
               'focus-visible:ring-0 focus-visible:ring-offset-0',
             )}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for Superteam Earn Listings"
+            placeholder={`Search for ${PROJECT_NAME} Listings`}
             value={query}
           />
           <button

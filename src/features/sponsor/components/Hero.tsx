@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 
 import { Button } from '@/components/ui/button';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -30,12 +31,12 @@ export function Hero() {
     <div className="relative flex w-full flex-col items-center justify-start overflow-hidden pb-[4rem] md:pb-[1rem]">
       <div className="relative flex w-full flex-col items-center gap-8 bg-slate-50 px-8 pt-36 text-center">
         <h1 className="max-w-[45rem] text-[2rem] font-semibold leading-[1.1] text-gray-700 md:text-[3.5rem]">
-          Where Solana teams come to get sh*t done
+          Where {CHAIN_NAME} teams come to get sh*t done
         </h1>
 
         <p className="w-full max-w-[39rem] text-[1.25rem] font-medium text-gray-500 [text-wrap:pretty]">
-          The world’s best Solana talent is on Superteam Earn. Get work done
-          from the right people, at the right time.
+          The world’s best {CHAIN_NAME} talent is on {PROJECT_NAME}. Get work
+          done from the right people, at the right time.
         </p>
 
         <div className="flex w-full justify-center gap-8">

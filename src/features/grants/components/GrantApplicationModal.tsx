@@ -21,6 +21,7 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
+import { CHAIN_NAME } from '@/constants/project';
 import { api } from '@/lib/api';
 import { useUpdateUser, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -352,7 +353,7 @@ export const GrantApplicationModal = ({
                               !!user?.publicKey &&
                                 'cursor-not-allowed text-slate-600 opacity-80',
                             )}
-                            placeholder="Add your Solana wallet address"
+                            placeholder={`Add your ${CHAIN_NAME} wallet address`}
                             readOnly={!!user?.publicKey}
                             {...(!!user?.publicKey ? {} : field)}
                             value={user?.publicKey || field.value}

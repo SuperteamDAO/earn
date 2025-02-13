@@ -1,6 +1,7 @@
 import { Loader2, Search } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
+import { PROJECT_NAME } from '@/constants/project';
 
 interface Props {
   loading: boolean;
@@ -17,7 +18,7 @@ export function QueryInput({ loading, query, setQuery }: Props) {
           className="ph-no-capture rounded-md border-slate-300 pl-9 pr-10 text-sm font-medium text-slate-600 md:text-base"
           autoFocus
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for Superteam Earn Listings"
+          placeholder={`Search for ${PROJECT_NAME} Listings`}
           value={query}
         />
         {loading && (

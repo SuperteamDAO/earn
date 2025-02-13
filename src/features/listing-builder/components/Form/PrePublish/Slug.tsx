@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/components/ui/multi-select';
+import { getURL } from '@/utils/validUrl';
 
 import { slugCheckQuery } from '@/features/listing-builder/queries/slug-check';
 
@@ -99,7 +100,7 @@ export function Slug() {
                     toast.promise(
                       async () => {
                         await navigator.clipboard.writeText(
-                          `https://earn.superteam.fun/listing/${slug}`,
+                          `${getURL()}/listing/${slug}`,
                         );
                       },
                       {
@@ -110,7 +111,7 @@ export function Slug() {
                     );
                   }}
                 >
-                  https://earn.superteam.fun/listing/
+                  {getURL()}/listing/
                   <span className="underline underline-offset-2">{slug}</span>
                 </button>
               </FormDescription>

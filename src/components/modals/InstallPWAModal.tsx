@@ -4,6 +4,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { MdIosShare, MdOutlineInstallMobile } from 'react-icons/md';
 
 import { Button } from '@/components/ui/button';
+import { PROJECT_NAME } from '@/constants/project';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 
@@ -123,7 +124,7 @@ export const InstallPWAModal = () => {
               <div className="mt-4 flex flex-col items-center">
                 <LocalImage
                   src="/android-chrome-512x512.png"
-                  alt="Superteam Earn Icon"
+                  alt={`${PROJECT_NAME} Icon`}
                   className="h-16 w-16"
                 />
                 <div className="my-12 flex flex-col items-center">

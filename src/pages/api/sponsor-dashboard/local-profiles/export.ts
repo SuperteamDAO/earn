@@ -1,12 +1,13 @@
 import type { NextApiResponse } from 'next';
 import Papa from 'papaparse';
 
-import { Superteams } from '@/constants/Superteam';
+import { TeamRegions } from '@/constants/Team';
 import { type Skills } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
+import { getURL } from '@/utils/validUrl';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
@@ -28,13 +29,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       select: { name: true },
     });
 
-    const superteam = Superteams.find((st) => st.name === sponsor?.name);
-    if (!superteam) {
+    const team = TeamRegions.find((st) => st.name === sponsor?.name);
+    if (!team) {
       return res.status(403).json({ error: 'Invalid sponsor' });
     }
 
-    const region = superteam.region;
-    const countries = superteam.country;
+    const region = team.region;
+    const countries = team.country;
 
     const isLocalProfileVisible =
       user?.stLead === region || user?.stLead === 'MAHADEV';
@@ -126,7 +127,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         Rank: user.rank,
         Name: `${user.firstName} ${user.lastName}`,
         'Email ID': user.email,
-        'Profile Link': `https://earn.superteam.fun/t/${user.username}`,
+        'Profile Link': `${getURL()}/t/${user.username}`,
         Wins: user.wins,
         Submissions: user.totalSubmissions,
         'Total Earnings': `$${user.totalEarnings.toLocaleString('en-us', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`,

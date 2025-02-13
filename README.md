@@ -1,15 +1,14 @@
 <div align="center">
   <br/>
   <img src="https://pbs.twimg.com/profile_images/1655546485365407744/dOeIC0R-_400x400.jpg" style="border-radius:10px" width="120px" height="auto"/>
-  <h2>Superteam Earn</h2>
+  <h2>Nearn</h2>
   <p>
     <strong>An open source platform connecting crypto founders with elite talent to create bounties, and accelerate project completion</strong>
   </p>
   
   ![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)
-  ![GitHub issues](https://img.shields.io/github/issues-raw/SuperteamDAO/earn)
-  ![GitHub pull requests](https://img.shields.io/github/issues-pr/SuperteamDAO/earn)
-  [![Follow](https://img.shields.io/twitter/follow/superteamearn.svg?style=social)](https://twitter.com/superteamearn)
+  ![GitHub issues](https://img.shields.io/github/issues-raw/NEAR-DevHub/nearn)
+  ![GitHub pull requests](https://img.shields.io/github/issues-pr/NEAR-DevHub/nearn)
 </div>
 
 ## Development Setup
@@ -24,12 +23,12 @@
 
 1. Clone the repository into a public Github repository (or fork it):
     ```bash
-    git clone https://github.com/SuperteamDAO/earn.git
+    git clone https://github.com/NEAR-DevHub/nearn.git
     ```
 
 2. Navigate to the project directory:
     ```bash
-    cd earn
+    cd nearn
     ```
 
 3. Install the dependencies: 
@@ -57,7 +56,7 @@
   - You have to set up resend to run the app:
     - [Resend](https://resend.com): To obtain your `RESEND_API_KEY`, visit the Resend dashboard. This credential is essential for setting up Email Auth.
 
-  NOTE: If you are facing any issues with setup, feel free to contact [Abhishek](https://twitter.com/abhwshek)
+  NOTE: If you are facing any issues with setup, please create an issue and we will try to help you out.
 
 5. Run the development server
     ```bash
@@ -67,18 +66,7 @@
 ## Contributing
 We welcome contributions from everyone! Whether it's submitting an issue, a pull request, or suggesting new ideas, your input is highly valued. Check out our [contributing guide](CONTRIBUTING.md) for guidelines on how to proceed.
 
-Facing an issue? Please feel free to reach out to [Abhishek](https://twitter.com/abhwshek) or [Pratik](https://twitter.com/pratikdholani)
-
-### Why should you contribute to Earn?
-- Consistent, good-quality contributions will earn you [contributor](https://docs.superteam.fun/the-superteam-handbook/getting-started/community-structure) status in the Superteam of your preference! Contributors get special access to channels on Discord, preferential entry to events, and is a great stepping stone to becoming a Superteam member.
-- Get [XP](https://docs.superteam.fun/the-superteam-handbook/community/the-reputation-system) if you're already a Superteam Member or Contributor
-- Unwavering love and support from the Superteam Earn team!
-
 ### Contributors
-<a href="https://github.com/SuperteamDAO/earn/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=SuperteamDAO/earn" />
+<a href="https://github.com/NEAR-DevHub/nearn/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=NEAR-DevHub/nearn" />
 </a>
-
-## Repo Activity
-
-<img width="100%" src="https://repobeats.axiom.co/api/embed/a82375612cac34000c44afc158c634bc0802a712.svg" />

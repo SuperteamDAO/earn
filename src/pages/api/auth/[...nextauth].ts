@@ -4,6 +4,7 @@ import type { Adapter } from 'next-auth/adapters';
 import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
 
+import { PROJECT_NAME } from '@/constants/project';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
@@ -37,6 +38,7 @@ export const authOptions: NextAuthOptions = {
           const randomIndex = Math.floor(Math.random() * digits.length);
           verificationCode += digits.charAt(randomIndex);
         }
+        console.log('verificationCode', verificationCode);
         return verificationCode;
       },
       server: {
@@ -60,7 +62,7 @@ export const authOptions: NextAuthOptions = {
         await resend.emails.send({
           from: pratikEmail,
           to: [identifier],
-          subject: 'Log in to Superteam Earn',
+          subject: `Log in to ${PROJECT_NAME}`,
           react: OTPTemplate({ token }),
           replyTo: replyToEmail,
         });

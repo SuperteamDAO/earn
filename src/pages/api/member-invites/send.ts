@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import type { NextApiResponse } from 'next';
 
+import { PROJECT_NAME } from '@/constants/project';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -87,7 +88,7 @@ async function sendInvites(
     await resend.emails.send({
       from: pratikEmail,
       to: [email],
-      subject: `${user.firstName} has invited you to join ${user.currentSponsor.name}'s profile on Superteam Earn`,
+      subject: `${user.firstName} has invited you to join ${user.currentSponsor.name}'s profile on ${PROJECT_NAME}`,
       react: InviteMemberTemplate({
         sponsorName: user.currentSponsor.name,
         senderName: `${user.firstName} ${user.lastName}`,

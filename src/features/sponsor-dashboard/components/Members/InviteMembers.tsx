@@ -16,6 +16,7 @@ import { FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { PROJECT_NAME } from '@/constants/project';
 import { api } from '@/lib/api';
 
 interface Props {
@@ -82,7 +83,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               </div>
               <AlertDescription>
                 Your team member will receive an email with a link to join
-                Superteam Earn.
+                {PROJECT_NAME}.
               </AlertDescription>
             </Alert>
 

@@ -5,6 +5,7 @@ import { FaTelegram, FaWhatsapp, FaXTwitter } from 'react-icons/fa6';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { PROJECT_NAME } from '@/constants/project';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
@@ -40,8 +41,8 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
 
   const shareMessage =
     id === user?.id
-      ? 'Check out my profile on Superteam Earn!'
-      : 'Check out this profile on Superteam Earn!';
+      ? `Check out my profile on ${PROJECT_NAME}!`
+      : `Check out this profile on ${PROJECT_NAME}!`;
 
   const socialPlatforms: SocialPlatform[] = [
     {

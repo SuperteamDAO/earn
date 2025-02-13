@@ -22,7 +22,8 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent, DialogPortal } from '@/components/ui/dialog';
 import { LocalImage } from '@/components/ui/local-image';
 import { Tooltip } from '@/components/ui/tooltip';
-import { Superteams } from '@/constants/Superteam';
+import { PROJECT_NAME } from '@/constants/project';
+import { TeamRegions } from '@/constants/Team';
 import { tokenList } from '@/constants/tokenList';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -35,6 +36,7 @@ import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+import { getURL } from '@/utils/validUrl';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
@@ -178,9 +180,9 @@ export default function TalentOlympics({ countryLeaders, rankings }: Props) {
       className="bg-white"
       meta={
         <Meta
-          title="Talent Olympics | Superteam Earn"
-          description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-          canonical="https://earn.superteam.fun"
+          title={`Talent Olympics | ${PROJECT_NAME}`}
+          description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
+          canonical={`${getURL()}/hackathon/${SLUG}`}
         />
       }
     >
@@ -227,7 +229,6 @@ function Hero({
   START_DATE: string;
   CLOSE_DATE: string;
 }) {
-  const PoweredByHeight = '2.5rem';
   const isSM = useMediaQuery('(min-width: 640px)');
   const isMD = useMediaQuery('(min-width: 768px)');
 
@@ -307,27 +308,6 @@ function Hero({
           </p>
         </button>
         {isMD && <SubscribeHackathon />}
-      </div>
-      <p className="mt-4 text-xxs text-white">POWERED BY</p>
-      <div className="my-4 flex items-center gap-8">
-        <ExternalImage
-          style={{ height: PoweredByHeight }}
-          alt="Web3 Builders Alliance"
-          src={'/company-logos/turbine.svg'}
-          className="w-[5rem] sm:w-[7rem]"
-        />
-        <ExternalImage
-          className="w-[5rem] sm:w-[7rem]"
-          alt="Superteam"
-          src={'/company-logos/superteam.svg'}
-          style={{ height: PoweredByHeight }}
-        />
-        <ExternalImage
-          className="w-[5rem] sm:w-[7rem]"
-          alt="Rise In"
-          src={'/company-logos/rise-in.svg'}
-          style={{ height: PoweredByHeight }}
-        />
       </div>
     </div>
   );
@@ -1170,7 +1150,7 @@ LIMIT 10;
 
   const countryLeaderLength = countryLeaders.length;
   if (countryLeaderLength < 10) {
-    const restSuperteams = Superteams.filter(
+    const restTeams = TeamRegions.filter(
       (s) =>
         countryLeaderLength === 0 ||
         !countryLeaders.some((c) => s.country.includes(c.location)),
@@ -1178,7 +1158,7 @@ LIMIT 10;
 
     for (let i = 0; i < 10 - countryLeaderLength; i++) {
       countryLeaders.push({
-        location: restSuperteams[i]?.country[0] ?? 'na',
+        location: restTeams[i]?.country[0] ?? 'na',
         submission_count: 0,
       });
     }

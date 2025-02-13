@@ -28,6 +28,7 @@ import { Input } from '@/components/ui/input';
 import { MultiSelect, type Option } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip } from '@/components/ui/tooltip';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { PoW } from '@/interface/pow';
 import { Default } from '@/layouts/Default';
@@ -329,8 +330,8 @@ export default function EditProfilePage({ slug }: { slug: string }) {
     <Default
       meta={
         <Meta
-          title="Superteam Earn"
-          description="Every Solana opportunity in one place!"
+          title={`${PROJECT_NAME}`}
+          description={`Every ${CHAIN_NAME} opportunity in one place!`}
         />
       }
     >

@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
 
+import { PROJECT_NAME } from '@/constants/project';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -40,7 +41,7 @@ export default async function handler(
     await resend.emails.send({
       from: pratikEmail,
       to: [userEmail],
-      subject: 'Welcome to Superteam Earn!',
+      subject: `Welcome to ${PROJECT_NAME}!`,
       react: WelcomeTalentTemplate(),
       replyTo: replyToEmail,
     });

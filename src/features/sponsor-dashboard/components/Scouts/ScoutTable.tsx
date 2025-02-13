@@ -19,6 +19,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tooltip } from '@/components/ui/tooltip';
+import { PROJECT_NAME } from '@/constants/project';
 import { skillMap } from '@/constants/skillMap';
 import { cn } from '@/utils/cn';
 
@@ -172,7 +173,7 @@ export function ScoutTable({ bountyId, scouts, setInvited }: Props) {
                         </p>
                         {scout.recommended && (
                           <Tooltip
-                            content={<p>Superteam Recommended</p>}
+                            content={<p>{PROJECT_NAME} Recommended</p>}
                             contentProps={{ className: 'text-xs' }}
                           >
                             <LocalImage

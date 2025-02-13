@@ -10,7 +10,16 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { Superteams } from '@/constants/Superteam';
+import {
+  CHANGELOG_URL,
+  DISCORD_URL,
+  FAQ_URL,
+  GITHUB_URL,
+  PROJECT_NAME,
+  SUPPORT_EMAIL,
+  TWITTER_URL,
+} from '@/constants/project';
+import { TeamRegions } from '@/constants/Team';
 
 import {
   Discord,
@@ -24,10 +33,10 @@ type Country = {
   slug: string;
 };
 
-const countries: Country[] = Superteams.map((superteam) => ({
-  name: superteam.displayValue,
-  code: superteam.code ?? 'GLOBAL',
-  slug: superteam.region,
+const countries: Country[] = TeamRegions.map((team) => ({
+  name: team.displayValue,
+  code: team.code ?? 'GLOBAL',
+  slug: team.region,
 }));
 
 const FooterColumn = ({
@@ -151,15 +160,15 @@ export const Footer = () => {
   const about = [
     {
       text: 'FAQ',
-      href: 'https://superteamdao.notion.site/Superteam-Earn-FAQ-aedaa039b25741b1861167d68aa880b1?pvs=4',
+      href: FAQ_URL,
     },
     { text: 'Terms', href: '/terms-of-use.pdf' },
     { text: 'Privacy Policy', href: '/privacy-policy.pdf' },
     {
       text: 'Changelog',
-      href: 'https://superteamdao.notion.site/Superteam-Earn-Changelog-faf0c85972a742699ecc07a52b569827',
+      href: CHANGELOG_URL,
     },
-    { text: 'Contact Us', href: 'mailto:support@superteamearn.com' },
+    { text: 'Contact Us', href: `mailto:${SUPPORT_EMAIL}` },
   ];
 
   return (
@@ -170,7 +179,7 @@ export const Footer = () => {
             <div className="mb-4 flex items-center">
               <LocalImage
                 className="mr-4 h-6"
-                alt="Superteam Earn"
+                alt={`${PROJECT_NAME} Logo`}
                 src="/assets/logo.svg"
               />
             </div>
@@ -180,26 +189,15 @@ export const Footer = () => {
               single profile.
             </p>
             <div className="flex gap-4">
-              <GitHub
-                link="https://github.com/SuperteamDAO/earn"
-                className="text-slate-500"
-              />
-              <Twitter
-                link="https://twitter.com/superteamearn"
-                className="text-slate-500"
-              />
-              <Discord
-                link="https://discord.com/invite/Mq3ReaekgG"
-                className="text-slate-500"
-              />
-            </div>
-
-            <div>
-              <img
-                alt="Powered by Solana"
-                src="/assets/solana-powered.svg"
-                className="mt-6 w-36"
-              />
+              {GITHUB_URL && (
+                <GitHub link={GITHUB_URL} className="text-slate-500" />
+              )}
+              {TWITTER_URL && (
+                <Twitter link={TWITTER_URL} className="text-slate-500" />
+              )}
+              {DISCORD_URL && (
+                <Discord link={DISCORD_URL} className="text-slate-500" />
+              )}
             </div>
           </div>
           <div className="flex w-full flex-wrap justify-start gap-6 md:w-auto md:justify-end md:gap-16">
@@ -213,7 +211,7 @@ export const Footer = () => {
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex flex-col items-start justify-between md:flex-row md:items-center">
             <p className="mb-4 text-sm text-slate-500 md:mb-0">
-              © {currentYear} Superteam. All rights reserved.
+              © {currentYear} {PROJECT_NAME}. All rights reserved.
             </p>
             <div className="flex items-center">
               <p className="mr-2 text-sm font-medium text-slate-500">REGION</p>

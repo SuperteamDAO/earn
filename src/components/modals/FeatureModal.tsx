@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { PROJECT_NAME } from '@/constants/project';
 import { useUpdateUser, useUser } from '@/store/user';
 
 import { latestActiveSlugQuery } from '@/features/sponsor-dashboard/queries/latest-active-slug';
@@ -76,7 +77,7 @@ export const FeatureModal = ({
         <div className="flex flex-col items-start gap-3 p-6">
           <p className="text-lg font-semibold">Introducing Scout</p>
           <p className="pb-4 text-slate-500">
-            A curated list of the best talent on Superteam Earn that you can
+            A curated list of the best talent on {PROJECT_NAME} that you can
             invite to participate in your listings to get high quality
             submissions! Add a new listing, or check out any of your currently
             live listings to try Scout.

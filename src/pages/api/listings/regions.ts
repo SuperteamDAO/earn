@@ -1,7 +1,8 @@
 import { Regions } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { Superteams } from '@/constants/Superteam';
+import { PROJECT_NAME } from '@/constants/project';
+import { TeamRegions } from '@/constants/Team';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -13,10 +14,10 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
   logger.debug(`Request query: ${safeStringify(req.query)}`);
 
-  const st = Superteams.find((team) => team.region.toLowerCase() === region);
-  const superteam = st?.name;
+  const st = TeamRegions.find((team) => team.region.toLowerCase() === region);
+  const team = st?.name;
 
-  logger.debug(`Superteam for region ${region}: ${superteam}`);
+  logger.debug(`${PROJECT_NAME} for region ${region}: ${team}`);
 
   const result: { bounties: any[]; grants: any[] } = {
     bounties: [],
@@ -40,7 +41,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           },
           {
             sponsor: {
-              name: superteam,
+              name: team,
             },
           },
         ],

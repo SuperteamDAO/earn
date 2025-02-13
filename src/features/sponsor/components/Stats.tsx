@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { PROJECT_NAME } from '@/constants/project';
 import { cn } from '@/utils/cn';
 
 import { userCountQuery } from '@/features/home/queries/user-count';
@@ -70,7 +71,7 @@ export function Stats() {
       <div className="w-full max-w-[20rem] xl:max-w-[30rem]">
         <HighQualityImage
           src="/landingsponsor/displays/global-earn.webp"
-          alt="Superteam Earn Global"
+          alt={`${PROJECT_NAME} Global`}
           className="w-full max-w-[30rem]"
         />
       </div>
@@ -78,11 +79,11 @@ export function Stats() {
       <div className="flex flex-col gap-8">
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
           <h2 className="text-[2rem] font-semibold leading-none md:text-[3.5rem]">
-            The distribution of the Superteam network
+            The distribution of the {PROJECT_NAME} network
           </h2>
           <p className="mt-4 text-[1.25rem] font-medium text-slate-500 lg:text-[1.4rem]">
-            Get instant access to Superteam’s network of the best crypto talent
-            in the world
+            Get instant access to {PROJECT_NAME}’s network of the best crypto
+            talent in the world
           </p>
         </div>
 

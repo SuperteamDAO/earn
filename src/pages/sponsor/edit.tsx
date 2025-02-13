@@ -22,6 +22,7 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Tooltip } from '@/components/ui/tooltip';
+import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { useUser } from '@/store/user';
@@ -191,8 +192,8 @@ export default function UpdateSponsor() {
     <Default
       meta={
         <Meta
-          title="Edit Sponsor Profile | Superteam Earn"
-          description="Every Solana opportunity in one place!"
+          title={`Edit Sponsor Profile | ${PROJECT_NAME}`}
+          description={`Every ${CHAIN_NAME} opportunity in one place!`}
         />
       }
     >

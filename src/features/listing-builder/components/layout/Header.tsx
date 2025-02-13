@@ -9,6 +9,7 @@ import { useWatch } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
+import { PROJECT_NAME } from '@/constants/project';
 import { cn } from '@/utils/cn';
 
 import { UserMenu } from '@/features/navbar/components/UserMenu';
@@ -48,7 +49,7 @@ export function Header() {
           >
             <img
               src="/assets/logo.svg"
-              alt="Superteam Earn"
+              alt={`${PROJECT_NAME} Logo`}
               className="h-5 w-auto cursor-pointer object-contain"
             />
             <div className="h-6 w-[1.5px] bg-slate-300" />
