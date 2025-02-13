@@ -59,8 +59,6 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
           twitter,
           bio,
           entityName,
-          // TODO: temporary making all sponsors verified
-          isVerified: true,
         },
       });
 
