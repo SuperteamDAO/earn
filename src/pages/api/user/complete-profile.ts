@@ -139,6 +139,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
           : undefined,
         superteamLevel: 'Lurker',
         isTalentFilled: true,
+        // TODO: temporary making all users verified
+        isVerified: true,
       },
     });
 
