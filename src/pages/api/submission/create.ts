@@ -9,6 +9,7 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 async function createSubmission(
   userId: string,
@@ -16,10 +17,15 @@ async function createSubmission(
   data: any,
   listing: any,
 ) {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+  });
+
   const validationResult = submissionSchema(
     listing,
     listing.minRewardAsk || 0,
     listing.maxRewardAsk || 0,
+    user as any,
   ).safeParse(data);
 
   if (!validationResult.success) {
@@ -27,6 +33,13 @@ async function createSubmission(
   }
 
   const validatedData = validationResult.data;
+
+  if (validatedData.telegram && !user.telegram) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { telegram: validatedData.telegram },
+    });
+  }
 
   const existingSubmission = await prisma.submission.findFirst({
     where: { userId, listingId },
@@ -54,8 +67,19 @@ async function createSubmission(
 
 async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { userId } = req;
-  const { listingId, link, tweet, otherInfo, eligibilityAnswers, ask } =
-    req.body;
+  const {
+    listingId,
+    link,
+    tweet,
+    otherInfo,
+    eligibilityAnswers,
+    ask,
+    telegram: telegramUsername,
+  } = req.body;
+  const telegram = extractSocialUsername('telegram', telegramUsername);
+  console.log('telegramUsername', telegramUsername);
+
+  console.log('telegram', telegram);
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
   logger.debug(`User: ${safeStringify(userId)}`);
@@ -69,7 +93,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     const result = await createSubmission(
       userId as string,
       listingId,
-      { link, tweet, otherInfo, eligibilityAnswers, ask },
+      { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
       listing,
     );
 

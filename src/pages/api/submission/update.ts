@@ -15,10 +15,15 @@ async function updateSubmission(
   data: any,
   listing: any,
 ) {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+  });
+
   const validationResult = submissionSchema(
     listing,
     listing.minRewardAsk || 0,
     listing.maxRewardAsk || 0,
+    user as any,
   ).safeParse(data);
 
   if (!validationResult.success) {

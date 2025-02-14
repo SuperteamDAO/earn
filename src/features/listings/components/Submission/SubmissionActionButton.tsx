@@ -135,6 +135,7 @@ export const SubmissionActionButton = ({
   let buttonBG;
   let isBtnDisabled;
   let btnLoadingText;
+  let isSubmitDisabled = false;
 
   function getButtonState() {
     if (isSubmitted && !pastDeadline && submissionStatus === 'Rejected')
@@ -178,6 +179,12 @@ export const SubmissionActionButton = ({
         pastDeadline ||
           (user?.id &&
             user?.isTalentFilled &&
+            (!hasHackathonStarted || !isUserEligibleByRegion)),
+      );
+      isSubmitDisabled = Boolean(
+        pastDeadline ||
+          (user?.id &&
+            user?.isTalentFilled &&
             ((bountyDraftStatus !== 'PUBLISHED' && !query['preview']) ||
               !hasHackathonStarted ||
               !isUserEligibleByRegion)),
@@ -204,6 +211,7 @@ export const SubmissionActionButton = ({
     <>
       {isOpen && (
         <SubmissionDrawer
+          isSubmitDisabled={isSubmitDisabled}
           id={id}
           onClose={onClose}
           isOpen={isOpen}

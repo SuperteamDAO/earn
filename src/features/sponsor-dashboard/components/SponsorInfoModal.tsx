@@ -15,6 +15,7 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { uploadAndReplaceImage } from '@/utils/image';
 
+import { SocialInput } from '@/features/social/components/SocialInput';
 import {
   type UserSponsorDetails,
   userSponsorDetailsSchema,
@@ -36,6 +37,7 @@ export const SponsorInfoModal = ({
       lastName: user?.lastName || '',
       username: user?.username || '',
       photo: user?.photo || '',
+      telegram: user?.telegram || '',
     },
   });
 
@@ -108,28 +110,19 @@ export const SponsorInfoModal = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => onClose()} modal>
-      <DialogContent className="px-6 py-5 sm:max-w-lg">
-        <h2 className="mb-4 text-xl font-semibold tracking-tight text-gray-900">
+    <Dialog open={isOpen} onOpenChange={() => null} modal>
+      <DialogContent className="px-6 py-5 sm:max-w-xl">
+        <h2 className="mb-3 text-xl font-semibold tracking-tight text-gray-900">
           Complete Your Profile
         </h2>
         <Form {...form}>
           <form className="w-full" onSubmit={form.handleSubmit(onSubmit)}>
-            <FormFieldWrapper
-              control={form.control}
-              name="username"
-              label="Username"
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
-            >
-              <Input placeholder="Username" value={username} />
-            </FormFieldWrapper>
-            <div className="my-5 flex w-full justify-between gap-8">
+            <div className="mb-5 flex w-full justify-between gap-4">
               <FormFieldWrapper
                 control={form.control}
                 name="firstName"
                 label="First Name"
+                isRequired
               >
                 <Input placeholder="First Name" />
               </FormFieldWrapper>
@@ -138,9 +131,33 @@ export const SponsorInfoModal = ({
                 control={form.control}
                 name="lastName"
                 label="Last Name"
+                isRequired
               >
                 <Input placeholder="Last Name" />
               </FormFieldWrapper>
+            </div>
+            <div className="my-5 flex w-full justify-between gap-4">
+              <FormFieldWrapper
+                control={form.control}
+                name="username"
+                label="Username"
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+                isRequired
+              >
+                <Input placeholder="Username" value={username} />
+              </FormFieldWrapper>
+              <SocialInput
+                name="telegram"
+                socialName={'telegram'}
+                formLabel="Telegram"
+                placeholder="solanalabs"
+                required
+                control={form.control}
+                height="h-9"
+                showIcon={false}
+              />
             </div>
 
             <div className="my-3 mb-6 flex flex-col items-start gap-2">

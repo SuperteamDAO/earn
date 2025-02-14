@@ -1,5 +1,6 @@
 import {
   type GrantApplicationStatus,
+  type Prisma,
   type SubmissionLabels,
 } from '@prisma/client';
 import type { NextApiResponse } from 'next';
@@ -11,6 +12,14 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+
+const PENDING_LABEL_PRIORITY = {
+  Unreviewed: 1,
+  Shortlisted: 2,
+  Reviewed: 3,
+  Low_Quality: 4,
+  Spam: 5,
+} as const;
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   logger.debug(`Request body: ${safeStringify(req.body)}`);
@@ -95,16 +104,21 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(error.status).json({ error: error.message });
     }
 
-    const query = await prisma.grantApplication.findMany({
-      where: {
-        grant: {
-          slug,
-          isActive: true,
-          sponsorId: req.userSponsorId!,
-        },
-        ...textSearch,
-        ...filterSearch,
+    const grantApplicationWhere: Prisma.GrantApplicationWhereInput = {
+      grant: {
+        slug,
+        isActive: true,
+        sponsorId: req.userSponsorId!,
       },
+      ...textSearch,
+      ...filterSearch,
+    };
+    const totalCount = await prisma.grantApplication.count({
+      where: grantApplicationWhere,
+    });
+
+    const query = await prisma.grantApplication.findMany({
+      where: grantApplicationWhere,
       include: {
         user: {
           select: {
@@ -118,6 +132,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             username: true,
             twitter: true,
             telegram: true,
+            website: true,
             Submission: {
               select: {
                 isWinner: true,
@@ -144,7 +159,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       take,
     });
 
-    const applications = query.map((application) => {
+    let applications = query.map((application) => {
       const listingWinnings = application.user.Submission.filter(
         (s) => s.isWinner && s.listing.isWinnersAnnounced,
       ).reduce((sum, submission) => sum + (submission.rewardInUSD || 0), 0);
@@ -166,11 +181,21 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (!applications || applications.length === 0) {
       logger.info(`No submissions found for slug: ${slug}`);
     }
+    if (filterLabel === 'Pending') {
+      applications = applications.sort((a, b) => {
+        const priorityA = PENDING_LABEL_PRIORITY[a.label] ?? 999;
+        const priorityB = PENDING_LABEL_PRIORITY[b.label] ?? 999;
 
+        return priorityA - priorityB;
+      });
+    }
     logger.info(
       `Successfully fetched ${applications.length} applications for slug: ${slug}`,
     );
-    return res.status(200).json(applications);
+    return res.status(200).json({
+      data: applications,
+      count: totalCount,
+    });
   } catch (error: any) {
     logger.error(
       `Error fetching submissions with slug=${slug}: ${safeStringify(error)}`,

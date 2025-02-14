@@ -151,7 +151,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                           <UserFlag size="12px" location={row.location} />
                         )}
                       </div>
-                      <p className="hidden max-w-[7rem] overflow-x-hidden text-ellipsis md:block">
+                      <p className="hidden max-w-[7rem] truncate md:block">
                         @{row.username}
                       </p>
                     </div>

@@ -605,9 +605,9 @@ export default function BountySubmissions({ slug }: Props) {
               }}
               unsetDefaultPosition
               hideCloseIcon
-              className="fixed bottom-4 left-1/2 -translate-x-1/2 overflow-hidden p-1"
+              className="fixed bottom-4 left-1/2 w-fit -translate-x-1/2 overflow-hidden px-1 py-1"
             >
-              <div className="mx-auto w-fit rounded-lg px-4">
+              <div className="mx-auto w-fit rounded-lg">
                 {selectedSubmissionIds.size > 100 && (
                   <p className="pb-2 text-center text-red-500">
                     Cannot select more than 100 applications
@@ -615,7 +615,7 @@ export default function BountySubmissions({ slug }: Props) {
                 )}
 
                 <div className="flex items-center gap-4 text-lg">
-                  <div className="flex items-center gap-2 font-medium">
+                  <div className="flex items-center gap-2 px-2 pl-4 font-medium">
                     <p>{selectedSubmissionIds.size}</p>
                     <p className="text-slate-500">Selected</p>
                   </div>
@@ -623,7 +623,7 @@ export default function BountySubmissions({ slug }: Props) {
                   <div className="h-4 w-px bg-slate-300" />
 
                   <Button
-                    className="focus:none bg-transparent font-medium hover:bg-transparent"
+                    className="px-2 font-medium"
                     onClick={() => {
                       setSelectedSubmissionIds(new Set());
                     }}
@@ -633,7 +633,7 @@ export default function BountySubmissions({ slug }: Props) {
                   </Button>
 
                   <Button
-                    className="gap-2 bg-red-100 font-medium text-rose-600 hover:bg-red-50/90"
+                    className="gap-2 bg-red-100 px-2 font-medium text-rose-600 hover:bg-red-50/90"
                     disabled={
                       selectedSubmissionIds.size === 0 ||
                       selectedSubmissionIds.size > 100
@@ -652,7 +652,8 @@ export default function BountySubmissions({ slug }: Props) {
                         fill="#E11D48"
                       />
                     </svg>
-                    Reject {selectedSubmissionIds.size} Applications
+                    Reject {selectedSubmissionIds.size} Application
+                    {selectedSubmissionIds.size > 1 ? 's' : ''}
                   </Button>
                 </div>
               </div>

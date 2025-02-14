@@ -4,13 +4,13 @@ import jwt from 'jsonwebtoken';
 const earncognitoUrl = process.env.EARNCOGNITO_URL;
 const earncognitoSecret = process.env.EARNCOGNITO_SECRET;
 
-if (!earncognitoUrl || !earncognitoSecret) {
-  throw new Error('EARNCOGNITO_URL or EARNCOGNITO_SECRET is not set');
-}
-
 const earncognitoClient: AxiosInstance = axios.create({
   baseURL: earncognitoUrl,
 });
+
+if (!earncognitoUrl || !earncognitoSecret) {
+  throw new Error('EARNCOGNITO_URL or EARNCOGNITO_SECRET is not set');
+}
 
 earncognitoClient.interceptors.request.use(
   (config) => {

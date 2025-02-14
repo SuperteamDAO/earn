@@ -62,6 +62,7 @@ export const GrantApplicationModal = ({
         maxReward || 0,
         token || 'USDC',
         grant.questions,
+        user!,
       ),
     ),
     defaultValues: {
@@ -116,6 +117,7 @@ export const GrantApplicationModal = ({
         kpi,
         twitter,
         answers,
+        telegram,
       } = data;
 
       const apiAction = !!grantApplication ? 'update' : 'create';
@@ -133,6 +135,7 @@ export const GrantApplicationModal = ({
         ask: ask || null,
         twitter,
         answers: answers || [],
+        telegram: telegram || user?.telegram || '',
       });
 
       form.reset();
@@ -164,7 +167,13 @@ export const GrantApplicationModal = ({
       number,
       (keyof FormData | `answers.${number}.answer`)[]
     > = {
-      0: ['projectTitle', 'projectOneLiner', 'walletAddress', 'ask'],
+      0: [
+        'projectTitle',
+        'projectOneLiner',
+        'walletAddress',
+        'ask',
+        'telegram',
+      ],
       1: [
         'projectDetails',
         'projectTimeline',
@@ -301,6 +310,19 @@ export const GrantApplicationModal = ({
                     isTokenInput
                     token={token}
                   />
+
+                  {!grantApplication && (
+                    <SocialInput
+                      name="telegram"
+                      socialName={'telegram'}
+                      placeholder=""
+                      required
+                      formLabel="Your Telegram username"
+                      control={form.control}
+                      height="h-9"
+                      showIcon={false}
+                    />
+                  )}
                   <FormFieldWrapper
                     control={form.control}
                     name="walletAddress"

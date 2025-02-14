@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants/URL_REGEX';
+import { type User } from '@/interface/user';
+
+import { telegramUsernameSchema } from '@/features/social/utils/schema';
 
 import { walletFieldListings } from '../constants';
 import { type Listing } from '../types';
@@ -9,6 +12,7 @@ const submissionSchema = (
   listing: Listing,
   minRewardAsk: number,
   maxRewardAsk: number,
+  user: User | null,
 ) =>
   z
     .object({
@@ -16,18 +20,28 @@ const submissionSchema = (
         .union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')])
         .optional(),
       tweet: z
-        .union([
-          z.literal(''),
-          z.string().trim().regex(URL_REGEX, 'Invalid URL'),
-        ])
+        .union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')])
         .optional(),
       otherInfo: z.string().optional(),
       ask: z.union([z.number().int().min(0), z.null()]).optional(),
       eligibilityAnswers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
+      telegram:
+        !user?.telegram && listing?.type === 'project'
+          ? telegramUsernameSchema
+          : z.string().nullable().optional(),
     })
     .superRefine((data, ctx) => {
+      const requiresTelegram = listing.type === 'project' && !user?.telegram;
+      if (requiresTelegram && !data.telegram) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['telegram'],
+          message: 'Telegram is required',
+        });
+      }
+
       if (
         listing.type !== 'project' &&
         !data.link &&

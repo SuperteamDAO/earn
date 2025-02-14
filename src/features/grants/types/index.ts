@@ -43,10 +43,39 @@ interface Grant {
   avgResponseTime?: string;
   airtableId?: string;
   isNative?: boolean;
+  ai?: GrantsAi;
 }
 
 interface GrantWithApplicationCount extends Grant {
   totalApplications: number;
+}
+
+import { type SubmissionLabels } from '@prisma/client';
+
+export interface GrantsAiContxt {
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  domainSummary: string[];
+  shortlistCriterias: string[];
+  totalTimeinMs: number;
+  totalCostInUSD: number;
+}
+
+export interface GrantsAi {
+  context?: GrantsAiContxt;
+}
+
+export type EvaluationResult = {
+  predictedLabel: SubmissionLabels;
+  reasoning: string;
+  totalCostInUSD: number;
+  totalTimeinMs: number;
+  shortNote: string;
+};
+
+export interface GrantApplicationAi {
+  review?: EvaluationResult;
+  commited?: boolean;
 }
 
 export type { Grant, GrantWithApplicationCount };

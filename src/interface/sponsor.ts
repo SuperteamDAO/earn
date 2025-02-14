@@ -11,5 +11,11 @@ interface SponsorType {
   isVerified?: boolean;
   isCaution?: boolean;
   st?: boolean;
+  verificationInfo?: {
+    superteamLead: string;
+    fundingSource: string;
+    telegram: string;
+    commitToDeadline: string;
+  };
 }
 export type { SponsorType };

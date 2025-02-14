@@ -201,6 +201,7 @@ model Grants {
   isNative               Boolean            @default(false)
   isPrivate              Boolean            @default(false)
   references             Json?
+  ai                     Json?
 
   @@index([id, slug])
   @@index([pocId])
@@ -246,6 +247,8 @@ model GrantApplication {
   likeCount           Int                    @default(0)
   Comments            Comment[]
   decidedBy           String?
+  notes               String?                @db.VarChar(1000)
+  ai                  Json?
 
   @@index([userId])
   @@index([grantId])
@@ -284,7 +287,7 @@ model Submission {
   listing            Bounties         @relation(fields: [listingId], references: [id])
   user               User             @relation(fields: [userId], references: [id])
   ogImage            String?          @db.Text
-  notes              String?          @db.VarChar(500)
+  notes              String?          @db.VarChar(1000)
   Comments           Comment[]
 
   @@index([id, listingId])
@@ -762,6 +765,7 @@ enum SubmissionLabels {
   Reviewed
   Shortlisted
   Spam
+  Low_Quality
 }
 
 enum TalentRankingTimeframe {

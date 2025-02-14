@@ -1,4 +1,3 @@
-import { useAtom } from 'jotai';
 import Link from 'next/link';
 import React from 'react';
 
@@ -10,12 +9,9 @@ import {
   DialogHeader,
 } from '@/components/ui/dialog';
 
-import { confirmModalAtom } from '../../atoms';
-
 export const UnderVerificationModal = () => {
-  const [confirmModal] = useAtom(confirmModalAtom);
   return (
-    <Dialog open={confirmModal === 'VERIFICATION'} onOpenChange={() => null}>
+    <Dialog open={true} onOpenChange={() => null}>
       <DialogContent hideCloseIcon className="max-w-sm overflow-hidden">
         <DialogHeader>
           <div className="mt-4 flex justify-center">

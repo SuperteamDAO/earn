@@ -7,6 +7,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
+import { type GetServerSideProps } from 'next';
 import React, {
   useCallback,
   useEffect,
@@ -43,7 +44,7 @@ import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-
 
 const MemoizedListingTable = React.memo(ListingTable);
 
-export default function SponsorListings() {
+export default function SponsorListings({ tab: queryTab }: { tab: string }) {
   const { user } = useUser();
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
@@ -75,7 +76,6 @@ export default function SponsorListings() {
     if (user?.currentSponsorId) {
       setSearchText('');
       setCurrentPage(0);
-      setSelectedTab('all');
       setSelectedStatus(null);
     }
   }, [user?.currentSponsorId]);
@@ -193,6 +193,10 @@ export default function SponsorListings() {
     setCurrentPage(0);
   }, []);
 
+  useEffect(() => {
+    handleTabChange(queryTab);
+  }, [queryTab]);
+
   return (
     <SponsorLayout>
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
@@ -279,7 +283,7 @@ export default function SponsorListings() {
       {isListingsLoading && <LoadingSection />}
       {!isListingsLoading && (
         <>
-          <Tabs onValueChange={handleTabChange} defaultValue="all">
+          <Tabs defaultValue={queryTab} onValueChange={handleTabChange}>
             <TabsList>
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="bounties">Bounties</TabsTrigger>
@@ -430,3 +434,15 @@ export default function SponsorListings() {
     </SponsorLayout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  let tab: string = 'all';
+  if (typeof query.tab === 'string') {
+    tab = query.tab;
+  }
+  return {
+    props: {
+      tab,
+    },
+  };
+};

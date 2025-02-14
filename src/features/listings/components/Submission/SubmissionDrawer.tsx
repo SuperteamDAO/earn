@@ -28,6 +28,8 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { SocialInput } from '@/features/social/components/SocialInput';
+
 import { walletFieldListings } from '../../constants';
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -42,6 +44,7 @@ interface Props {
   editMode: boolean;
   listing: Listing;
   isTemplate?: boolean;
+  isSubmitDisabled: boolean;
   showEasterEgg: () => void;
   onSurveyOpen: () => void;
 }
@@ -54,6 +57,7 @@ export const SubmissionDrawer = ({
   editMode,
   listing,
   isTemplate = false,
+  isSubmitDisabled,
   showEasterEgg,
   onSurveyOpen,
 }: Props) => {
@@ -77,7 +81,7 @@ export const SubmissionDrawer = ({
   const { user, refetchUser } = useUser();
   const form = useForm<FormData>({
     resolver: zodResolver(
-      submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0),
+      submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0, user),
     ),
     defaultValues: {
       eligibilityAnswers:
@@ -153,6 +157,7 @@ export const SubmissionDrawer = ({
         otherInfo: data.otherInfo || '',
         ask: data.ask || null,
         eligibilityAnswers: data.eligibilityAnswers || [],
+        telegram: data.telegram || user?.telegram || '',
       });
 
       const hideEasterEggFromSponsorIds = [
@@ -328,7 +333,6 @@ export const SubmissionDrawer = ({
                                     />
                                   </div>
                                 </FormControl>
-
                                 <FormMessage className="pt-1" />
                               </div>
                             </FormItem>
@@ -406,6 +410,18 @@ export const SubmissionDrawer = ({
                         token={token}
                       />
                     )}
+                    {isProject && !user?.telegram && !editMode && (
+                      <SocialInput
+                        name="telegram"
+                        socialName={'telegram'}
+                        placeholder=""
+                        required
+                        formLabel="Your Telegram username"
+                        control={form.control}
+                        height="h-9"
+                        showIcon={false}
+                      />
+                    )}
                     <FormFieldWrapper
                       control={form.control}
                       name="otherInfo"
@@ -445,8 +461,9 @@ export const SubmissionDrawer = ({
                 <Button
                   className="ph-no-capture h-12 w-full"
                   disabled={
+                    isSubmitDisabled ||
                     isTemplate ||
-                    (!listing.isPublished && !!query['preview']) ||
+                    !!query['preview'] ||
                     (isHackathon && !editMode && !termsAccepted)
                   }
                   type="submit"

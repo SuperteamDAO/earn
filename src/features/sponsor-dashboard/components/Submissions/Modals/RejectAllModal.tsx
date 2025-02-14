@@ -48,7 +48,7 @@ export const RejectAllSubmissionModal = ({
           <DialogTitle className="text-md font-semibold text-slate-500">
             {rejectingAll
               ? 'Reject All Remaining Applications?'
-              : 'Reject Application'}
+              : `Reject Application${submissionIds.length > 1 ? 's' : ''}`}
           </DialogTitle>
         </DialogHeader>
 
@@ -58,7 +58,7 @@ export const RejectAllSubmissionModal = ({
           <p className="mt-3 text-slate-500">
             {rejectingAll
               ? `You are about to reject all ${submissionIds.length} of the remaining applications for this Project listing. This action cannot be undone. Are you sure you want to proceed?`
-              : `You are about to reject ${submissionIds.length} application.
+              : `You are about to reject ${submissionIds.length} application${submissionIds.length > 1 ? 's' : ''}.
              They will be notified via email.`}
           </p>
 
@@ -79,7 +79,7 @@ export const RejectAllSubmissionModal = ({
                 <div className="mr-2 rounded-full bg-white p-[5px]">
                   <X className="h-2.5 w-2.5 text-rose-600" />
                 </div>
-                Reject Application
+                Reject {`Application${submissionIds.length > 1 ? 's' : ''}`}
               </>
             )}
           </Button>
