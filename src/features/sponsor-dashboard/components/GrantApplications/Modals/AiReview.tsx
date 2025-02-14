@@ -198,7 +198,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
         </div>
       </div>,
       {
-        duration: Infinity,
+        duration: 5000,
         closeButton: true,
         className: 'w-[24rem] right-0',
       },
