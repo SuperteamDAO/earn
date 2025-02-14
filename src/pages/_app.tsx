@@ -2,10 +2,10 @@ import { GoogleTagManager } from '@next/third-parties/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
-import { PostHogProvider, usePostHog } from 'posthog-js/react';
+import { PostHogProvider } from 'posthog-js/react';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 
@@ -38,29 +38,39 @@ const ReactQueryDevtools = dynamic(
 
 const queryClient = new QueryClient();
 
-if (typeof window !== 'undefined') {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: `${getURL()}ingest`,
-    ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-    loaded: (posthog) => {
-      if (process.env.NODE_ENV === 'development') posthog.debug();
-    },
-  });
-}
-
 function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
+  const oldUrlRef = useRef('');
   const { user } = useUser();
-  const posthog = usePostHog();
   const forcedRedirected = useRef(false);
 
   useEffect(() => {
+    if (!posthog.__loaded) {
+      posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+        api_host: `${getURL()}ingest`,
+        ui_host:
+          process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+        loaded: (posthog) => {
+          if (process.env.NODE_ENV === 'development') posthog.debug();
+        },
+      });
+    }
+
     const handleRouteChange = () => posthog?.capture('$pageview');
-    router.events.on('routeChangeComplete', handleRouteChange);
+
+    const handleRouteChangeStart = () =>
+      posthog?.capture('$pageleave', {
+        $current_url: oldUrlRef.current,
+      });
+
+    Router.events.on('routeChangeComplete', handleRouteChange);
+    Router.events.on('routeChangeStart', handleRouteChangeStart);
+
     return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
+      Router.events.off('routeChangeComplete', handleRouteChange);
+      Router.events.off('routeChangeStart', handleRouteChangeStart);
     };
-  }, [router.events, posthog]);
+  }, []);
 
   const forcedProfileRedirect = useCallback(
     (wait?: number) => {
