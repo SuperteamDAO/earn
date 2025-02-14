@@ -15,11 +15,13 @@ interface ApplicationsParams {
   filterLabel: SubmissionLabels | GrantApplicationStatus | undefined;
 }
 
-const fetchApplications = async (
-  params: ApplicationsParams,
-  slug: string,
-): Promise<GrantApplicationWithUser[]> => {
-  const { data } = await api.get(
+export interface GrantApplicationsReturn {
+  data: GrantApplicationWithUser[];
+  count: number;
+}
+
+const fetchApplications = async (params: ApplicationsParams, slug: string) => {
+  const { data } = await api.get<GrantApplicationsReturn>(
     `/api/sponsor-dashboard/grants/${slug}/applications/`,
     { params },
   );

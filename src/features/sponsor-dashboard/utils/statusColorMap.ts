@@ -1,4 +1,5 @@
 export const colorMap = {
+  Low_Quality: { bg: 'bg-red-100', color: 'text-red-600' },
   Spam: { bg: 'bg-red-100', color: 'text-red-600' },
   Reviewed: { bg: 'bg-blue-100', color: 'text-blue-600' },
   Unreviewed: { bg: 'bg-orange-100', color: 'text-orange-800' },

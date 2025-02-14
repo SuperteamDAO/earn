@@ -1,9 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { useAtom } from 'jotai';
 import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
-import React, { type Dispatch, type SetStateAction } from 'react';
-import { MdOutlineMail } from 'react-icons/md';
+import React from 'react';
+import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import { tokenList } from '@/constants/tokenList';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
 import { type Grant } from '@/features/grants/types';
@@ -23,18 +25,18 @@ import {
 } from '@/features/social/components/SocialIcons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import { selectedGrantApplicationAtom } from '../../atoms';
+import { type GrantApplicationsReturn } from '../../queries/applications';
 import { type GrantApplicationWithUser } from '../../types';
 import { InfoBox } from '../InfoBox';
 import { MarkCompleted } from './MarkCompleted';
+import { Notes } from './Notes';
 import { RecordPaymentButton } from './RecordPaymentButton';
+import { SelectLabel } from './SelectLabel';
 
 interface Props {
   grant: Grant | undefined;
   applications: GrantApplicationWithUser[] | undefined;
-  selectedApplication: GrantApplicationWithUser | undefined;
-  setSelectedApplication: Dispatch<
-    SetStateAction<GrantApplicationWithUser | undefined>
-  >;
   isMultiSelectOn: boolean;
   params: {
     searchText: string;
@@ -47,13 +49,14 @@ interface Props {
 export const ApplicationDetails = ({
   grant,
   applications,
-  selectedApplication,
-  setSelectedApplication,
   isMultiSelectOn,
   params,
   approveOnOpen,
   rejectedOnOpen,
 }: Props) => {
+  const [selectedApplication, setSelectedApplication] = useAtom(
+    selectedGrantApplicationAtom,
+  );
   const isPending = selectedApplication?.applicationStatus === 'Pending';
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
   const isRejected = selectedApplication?.applicationStatus === 'Rejected';
@@ -76,14 +79,20 @@ export const ApplicationDetails = ({
   ) => {
     setSelectedApplication(updatedApplication);
 
-    queryClient.setQueryData<GrantApplicationWithUser[]>(
+    queryClient.setQueryData<GrantApplicationsReturn>(
       ['sponsor-applications', grant?.slug, params],
-      (oldData) =>
-        oldData?.map((application) =>
+      (oldData) => {
+        if (!oldData) return oldData;
+        const data = oldData?.data.map((application) =>
           application.id === updatedApplication.id
             ? updatedApplication
             : application,
-        ),
+        );
+        return {
+          ...oldData,
+          data,
+        };
+      },
     );
   };
 
@@ -127,7 +136,7 @@ export const ApplicationDetails = ({
                 />
                 <div>
                   <p className="w-full whitespace-nowrap text-base font-medium text-slate-900">
-                    {`${selectedApplication?.user?.firstName}'s Application`}
+                    {`${selectedApplication?.user?.firstName}`}
                   </p>
                   <Link
                     href={`/t/${selectedApplication?.user?.username}`}
@@ -141,6 +150,7 @@ export const ApplicationDetails = ({
                 </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
+                {<SelectLabel grantSlug={grant?.slug!} />}
                 {isPending && (
                   <>
                     <Button
@@ -304,6 +314,26 @@ export const ApplicationDetails = ({
                   </div>
                 </Tooltip>
               )}
+              {selectedApplication?.user.publicKey && (
+                <Tooltip
+                  content={'Click to copy'}
+                  contentProps={{ side: 'right' }}
+                  triggerClassName="flex items-center hover:underline underline-offset-1"
+                >
+                  <div
+                    className="flex cursor-pointer items-center justify-start gap-1 whitespace-nowrap text-sm text-slate-400 hover:text-slate-500"
+                    onClick={handleCopyPublicKey}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.user.publicKey || '', 3)}`}
+                  >
+                    <MdOutlineAccountBalanceWallet />s
+                    <p>
+                      {truncatePublicKey(selectedApplication.user.publicKey, 3)}
+                    </p>
+                  </div>
+                </Tooltip>
+              )}
 
               <div className="flex gap-2">
                 <Telegram
@@ -329,20 +359,8 @@ export const ApplicationDetails = ({
             </div>
           </div>
 
-          <div
-            className="h-[67.15rem] w-full overflow-y-auto"
-            style={
-              {
-                '&::-webkit-scrollbar': { width: '4px' },
-                '&::-webkit-scrollbar-track': { width: '6px' },
-                '&::-webkit-scrollbar-thumb': {
-                  backgroundColor: '#cbd5e1',
-                  borderRadius: '30px',
-                },
-              } as React.CSSProperties
-            }
-          >
-            <div className="w-full px-4 py-5">
+          <div className="flex h-[67.15rem] w-full">
+            <div className="scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
               <div className="mb-4">
                 <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
                   ASK
@@ -431,6 +449,9 @@ export const ApplicationDetails = ({
                     />
                   ),
                 )}
+            </div>
+            <div className="w-1/4 p-4">
+              <Notes slug={grant?.slug} />
             </div>
           </div>
         </>

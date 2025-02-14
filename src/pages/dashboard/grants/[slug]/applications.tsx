@@ -5,10 +5,11 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
@@ -21,6 +22,7 @@ import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
+import { selectedGrantApplicationAtom } from '@/features/sponsor-dashboard/atoms';
 import { ApplicationDetails } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationDetails';
 import { ApplicationHeader } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationHeader';
 import { ApplicationList } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationList';
@@ -28,7 +30,10 @@ import { ApproveModal } from '@/features/sponsor-dashboard/components/GrantAppli
 import { RejectAllGrantApplicationModal } from '@/features/sponsor-dashboard/components/GrantApplications/Modals/RejectAllModal';
 import { RejectGrantApplicationModal } from '@/features/sponsor-dashboard/components/GrantApplications/Modals/RejectModal';
 import { PaymentsHistoryTab } from '@/features/sponsor-dashboard/components/GrantApplications/PaymentsHistoryTab';
-import { applicationsQuery } from '@/features/sponsor-dashboard/queries/applications';
+import {
+  applicationsQuery,
+  type GrantApplicationsReturn,
+} from '@/features/sponsor-dashboard/queries/applications';
 import { sponsorGrantQuery } from '@/features/sponsor-dashboard/queries/grant';
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
@@ -39,8 +44,9 @@ interface Props {
 function GrantApplications({ slug }: Props) {
   const { user } = useUser();
   const router = useRouter();
-  const [selectedApplication, setSelectedApplication] =
-    useState<GrantApplicationWithUser>();
+  const [selectedApplication, setSelectedApplication] = useAtom(
+    selectedGrantApplicationAtom,
+  );
   const [skip, setSkip] = useState(0);
   let length = 20;
   const [searchText, setSearchText] = useState('');
@@ -80,11 +86,20 @@ function GrantApplications({ slug }: Props) {
 
   const params = { searchText, length, skip, filterLabel };
 
-  const { data: applications, isLoading: isApplicationsLoading } = useQuery({
-    ...applicationsQuery(slug, params),
-    retry: false,
-    placeholderData: keepPreviousData,
-  });
+  const { data: applicationReturn, isLoading: isApplicationsLoading } =
+    useQuery({
+      ...applicationsQuery(slug, params),
+      retry: false,
+      placeholderData: keepPreviousData,
+    });
+  const applications = useMemo(
+    () => applicationReturn?.data,
+    [applicationReturn],
+  );
+  const totalCount = useMemo(
+    () => applicationReturn?.count || 0,
+    [applicationReturn],
+  );
 
   useEffect(() => {
     selectedApplicationIds.size > 0 ? onTogglerOpen() : onTogglerClose();
@@ -183,11 +198,11 @@ function GrantApplications({ slug }: Props) {
       }
     },
     onMutate: async (applicationIds) => {
-      queryClient.setQueryData(
+      queryClient.setQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', slug, params],
-        (old: any) => {
+        (old) => {
           if (!old) return old;
-          return old.map((application: GrantApplicationWithUser) =>
+          const data = old.data.map((application: GrantApplicationWithUser) =>
             applicationIds.includes(application.id)
               ? {
                   ...application,
@@ -195,6 +210,10 @@ function GrantApplications({ slug }: Props) {
                 }
               : application,
           );
+          return {
+            ...old,
+            data,
+          };
         },
       );
     },
@@ -204,11 +223,11 @@ function GrantApplications({ slug }: Props) {
       );
     },
     onSuccess: (_, applicationIds) => {
-      queryClient.setQueryData(
+      queryClient.setQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', slug, params],
-        (old: any) => {
+        (old) => {
           if (!old) return old;
-          return old.map((application: GrantApplicationWithUser) =>
+          const data = old.data.map((application: GrantApplicationWithUser) =>
             applicationIds.includes(application.id)
               ? {
                   ...application,
@@ -216,14 +235,20 @@ function GrantApplications({ slug }: Props) {
                 }
               : application,
           );
+          return {
+            ...old,
+            data,
+          };
         },
       );
 
       const updatedApplication = queryClient
-        .getQueryData<
-          GrantApplicationWithUser[]
-        >(['sponsor-applications', slug, params])
-        ?.find((application) => applicationIds.includes(application.id));
+        .getQueryData<GrantApplicationsReturn>([
+          'sponsor-applications',
+          slug,
+          params,
+        ])
+        ?.data?.find((application) => applicationIds.includes(application.id));
 
       setSelectedApplication(updatedApplication);
       setSelectedApplicationIds(new Set());
@@ -277,25 +302,27 @@ function GrantApplications({ slug }: Props) {
         staleTime: Infinity,
       });
 
-      const newApplications = queryClient.getQueryData<
-        GrantApplicationWithUser[]
-      >(['sponsor-applications', slug, { ...params, skip: newSkip }]);
+      const newApplications = queryClient.getQueryData<GrantApplicationsReturn>(
+        ['sponsor-applications', slug, { ...params, skip: newSkip }],
+      );
 
-      if (newApplications && newApplications.length > 0) {
+      if (newApplications && newApplications.count > 0) {
         if (selectIndex === -1) {
           const savedSelectionId = pageSelections[newSkip];
           const savedApplication = savedSelectionId
-            ? newApplications.find((app) => app.id === savedSelectionId)
+            ? newApplications.data.find((app) => app.id === savedSelectionId)
             : null;
 
           if (savedApplication) {
             setSelectedApplication(savedApplication);
           } else {
-            setSelectedApplication(newApplications[0]);
+            setSelectedApplication(newApplications.data[0]);
           }
         } else {
           setSelectedApplication(
-            newApplications[Math.min(selectIndex, newApplications.length - 1)],
+            newApplications.data[
+              Math.min(selectIndex, newApplications.data.length - 1)
+            ],
           );
         }
       }
@@ -333,7 +360,7 @@ function GrantApplications({ slug }: Props) {
             e.preventDefault();
             if (currentIndex < applications.length - 1) {
               setSelectedApplication(applications[currentIndex + 1]);
-            } else if (skip + length < grant?.totalApplications!) {
+            } else if (skip + length < totalCount!) {
               await changePage(skip + length, 0);
             }
             break;
@@ -345,7 +372,7 @@ function GrantApplications({ slug }: Props) {
             break;
           case 'ArrowRight':
             e.preventDefault();
-            if (skip + length < grant?.totalApplications!) {
+            if (skip + length < totalCount!) {
               await changePage(skip + length, -1);
             }
             break;
@@ -399,15 +426,18 @@ function GrantApplications({ slug }: Props) {
       return response.data;
     },
     onMutate: async ({ applicationId, approvedAmount }) => {
-      const previousApplications = queryClient.getQueryData<
-        GrantApplicationWithUser[]
-      >(['sponsor-applications', grant?.slug, params]);
+      const previousApplications =
+        queryClient.getQueryData<GrantApplicationsReturn>([
+          'sponsor-applications',
+          grant?.slug,
+          params,
+        ]);
 
-      queryClient.setQueryData<GrantApplicationWithUser[]>(
+      queryClient.setQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', grant?.slug, params],
         (oldData) => {
           if (!oldData) return oldData;
-          const updatedApplications = oldData.map((application) =>
+          const updatedApplications = oldData.data.map((application) =>
             application.id === applicationId
               ? {
                   ...application,
@@ -421,14 +451,17 @@ function GrantApplications({ slug }: Props) {
           );
           setSelectedApplication(updatedApplication);
           moveToNextPendingApplication();
-          return updatedApplications;
+          return {
+            ...oldData,
+            data: updatedApplications,
+          };
         },
       );
 
       return { previousApplications };
     },
     onError: (_, __, context) => {
-      queryClient.setQueryData(
+      queryClient.setQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', grant?.slug, params],
         context?.previousApplications,
       );
@@ -448,15 +481,18 @@ function GrantApplications({ slug }: Props) {
       return response.data;
     },
     onMutate: async (applicationId) => {
-      const previousApplications = queryClient.getQueryData<
-        GrantApplicationWithUser[]
-      >(['sponsor-applications', grant?.slug, params]);
+      const previousApplications =
+        queryClient.getQueryData<GrantApplicationsReturn>([
+          'sponsor-applications',
+          grant?.slug,
+          params,
+        ]);
 
-      queryClient.setQueryData<GrantApplicationWithUser[]>(
+      queryClient.setQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', grant?.slug, params],
         (oldData) => {
           if (!oldData) return oldData;
-          const updatedApplications = oldData.map((application) =>
+          const updatedApplications = oldData.data.map((application) =>
             application.id === applicationId
               ? {
                   ...application,
@@ -469,14 +505,17 @@ function GrantApplications({ slug }: Props) {
           );
           setSelectedApplication(updatedApplication);
           moveToNextPendingApplication();
-          return updatedApplications;
+          return {
+            ...oldData,
+            data: updatedApplications,
+          };
         },
       );
 
       return { previousApplications };
     },
     onError: (_, __, context) => {
-      queryClient.setQueryData(
+      queryClient.setQueryData<GrantApplicationsReturn>(
         ['sponsor-applications', grant?.slug, params],
         context?.previousApplications,
       );
@@ -501,7 +540,7 @@ function GrantApplications({ slug }: Props) {
         <LoadingSection />
       ) : (
         <>
-          <ApplicationHeader grant={grant} />
+          <ApplicationHeader grant={grant} applications={applications} />
           <Tabs defaultValue="applications">
             <TabsList className="gap-4 font-medium text-slate-400">
               <TabsTrigger value="applications">Applications</TabsTrigger>
@@ -517,8 +556,6 @@ function GrantApplications({ slug }: Props) {
                       setFilterLabel={setFilterLabel}
                       applications={applications}
                       setSearchText={setSearchText}
-                      selectedApplication={selectedApplication}
-                      setSelectedApplication={setSelectedApplication}
                       isToggled={isToggled}
                       toggleApplication={toggleApplication}
                       isAllToggled={isToggledAll}
@@ -556,8 +593,6 @@ function GrantApplications({ slug }: Props) {
                         isMultiSelectOn={selectedApplicationIds.size > 0}
                         grant={grant}
                         applications={applications}
-                        selectedApplication={selectedApplication}
-                        setSelectedApplication={setSelectedApplication}
                         params={params}
                         approveOnOpen={approveOnOpen}
                         rejectedOnOpen={rejectedOnOpen}
@@ -593,18 +628,15 @@ function GrantApplications({ slug }: Props) {
                     <p className="text-sm text-slate-400">
                       <span className="font-bold">{skip + 1}</span> -{' '}
                       <span className="font-bold">
-                        {Math.min(skip + length, grant?.totalApplications!)}
+                        {Math.min(skip + length, totalCount)}
                       </span>{' '}
-                      of{' '}
-                      <span className="font-bold">
-                        {grant?.totalApplications}
-                      </span>{' '}
+                      of <span className="font-bold">{totalCount}</span>{' '}
                       Applications
                     </p>
 
                     <Button
                       disabled={
-                        grant?.totalApplications! <= skip + length ||
+                        totalCount! <= skip + length ||
                         (skip > 0 && skip % length !== 0)
                       }
                       onClick={() => changePage(skip + length, 0)}

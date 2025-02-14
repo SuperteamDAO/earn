@@ -2,12 +2,14 @@ import {
   type GrantApplicationStatus,
   type SubmissionLabels,
 } from '@prisma/client';
+import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { ChevronDown, Search } from 'lucide-react';
 import React, {
   type Dispatch,
   type SetStateAction,
   useEffect,
+  useMemo,
   useRef,
 } from 'react';
 
@@ -24,16 +26,14 @@ import { cn } from '@/utils/cn';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import { selectedGrantApplicationAtom } from '../../atoms';
+import { labelMenuOptions } from '../../constants';
 import { type GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils/statusColorMap';
 
 interface Props {
   applications: GrantApplicationWithUser[] | undefined;
   setSearchText: (value: string) => void;
-  selectedApplication: GrantApplicationWithUser | undefined;
-  setSelectedApplication: Dispatch<
-    SetStateAction<GrantApplicationWithUser | undefined>
-  >;
   toggleApplication: (id: string) => void;
   isToggled: (id: string) => boolean;
   toggleAllApplications: () => void;
@@ -55,8 +55,6 @@ const ApplicationStatusFilter: GrantApplicationStatus[] = [
 export const ApplicationList = ({
   applications,
   setSearchText,
-  selectedApplication,
-  setSelectedApplication,
   toggleApplication,
   isToggled,
   toggleAllApplications,
@@ -66,6 +64,9 @@ export const ApplicationList = ({
   isToggleDisabled,
 }: Props) => {
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
+  const [selectedApplication, setSelectedApplication] = useAtom(
+    selectedGrantApplicationAtom,
+  );
 
   useEffect(() => {
     return () => {
@@ -78,6 +79,27 @@ export const ApplicationList = ({
   if (filterLabel) {
     ({ bg, color } = colorMap[filterLabel]);
   }
+
+  const applicationLabels = useMemo(
+    () => [
+      ...labelMenuOptions.filter(
+        (s) => !['Spam', 'Unreviewed'].includes(s.value),
+      ),
+      {
+        label: 'Low Quality',
+        value: 'Low_Quality',
+      },
+    ],
+    [],
+  );
+
+  const filterTriggerLabel = useMemo(() => {
+    const applicationLabel = applicationLabels.find(
+      (s) => s.value === filterLabel,
+    );
+    if (applicationLabel) return applicationLabel.label;
+    else return filterLabel;
+  }, [filterLabel]);
 
   return (
     <div className="h-full w-full rounded-l-xl border border-slate-200 bg-white">
@@ -115,7 +137,7 @@ export const ApplicationList = ({
                     color,
                   )}
                 >
-                  {filterLabel || 'Select Option'}
+                  {filterTriggerLabel || 'Select Option'}
                 </span>
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
@@ -148,14 +170,39 @@ export const ApplicationList = ({
                   </span>
                 </DropdownMenuItem>
               ))}
+              {applicationLabels.map((option) => (
+                <DropdownMenuItem
+                  key={option.value}
+                  className="focus:bg-slate-100"
+                  onClick={() =>
+                    setFilterLabel(option.value as SubmissionLabels)
+                  }
+                >
+                  <span
+                    className={cn(
+                      'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                      colorMap[option.value as keyof typeof colorMap].bg,
+                      colorMap[option.value as keyof typeof colorMap].color,
+                    )}
+                  >
+                    {option.label}
+                  </span>
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
       {applications?.map((application) => {
         const applicationStatus = application?.applicationStatus;
-        const { bg, color } =
+
+        const applicationLabel = application?.label;
+        const applicationLabelUi = applicationLabels.find(
+          (s) => s.value === application?.label,
+        )?.label;
+        const { bg: statusBg, color: statusColor } =
           colorMap[applicationStatus as GrantApplicationStatus];
+        const { bg: labelBg, color: labelColor } = colorMap[applicationLabel];
         return (
           <div
             key={application?.id}
@@ -193,15 +240,26 @@ export const ApplicationList = ({
               </div>
             </div>
 
-            <span
-              className={cn(
-                'inline-flex whitespace-nowrap rounded-full px-3 py-1 text-center text-[11px] capitalize',
-                bg,
-                color,
-              )}
-            >
-              {applicationStatus}
-            </span>
+            <div className="ml-auto flex w-min flex-col justify-end gap-1 align-bottom">
+              <span
+                className={cn(
+                  'ml-auto inline-flex w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-center text-[9px] capitalize',
+                  statusBg,
+                  statusColor,
+                )}
+              >
+                {applicationStatus}
+              </span>
+              <span
+                className={cn(
+                  'ml-auto inline-flex w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-center text-[9px] capitalize',
+                  labelBg,
+                  labelColor,
+                )}
+              >
+                {applicationLabelUi || applicationLabel}
+              </span>
+            </div>
           </div>
         );
       })}
