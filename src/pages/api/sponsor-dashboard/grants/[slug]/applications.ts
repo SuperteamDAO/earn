@@ -127,11 +127,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             lastName: true,
             email: true,
             photo: true,
-            publicKey: true,
+            walletAddress: true,
             discord: true,
             username: true,
             twitter: true,
             telegram: true,
+            website: true,
             Submission: {
               select: {
                 isWinner: true,

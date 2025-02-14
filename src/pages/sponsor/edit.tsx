@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Info, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -40,7 +39,6 @@ import { IndustryList } from '@/features/talent/constants';
 
 export default function UpdateSponsor() {
   const router = useRouter();
-  const { data: session, status } = useSession();
   const { user, refetchUser } = useUser();
 
   const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
@@ -182,10 +180,6 @@ export default function UpdateSponsor() {
       setIsLoading(false);
     }
   };
-
-  if (!session && status === 'loading') {
-    return <></>;
-  }
 
   return (
     <Default

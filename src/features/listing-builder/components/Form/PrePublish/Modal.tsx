@@ -2,7 +2,6 @@ import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
@@ -59,7 +58,6 @@ export function PrePublish() {
   const router = useRouter();
   const posthog = usePostHog();
   const { user } = useUser();
-  const { data: session } = useSession();
 
   const {
     data: isCreateListingAllowed,
@@ -74,9 +72,9 @@ export function PrePublish() {
     () =>
       isCreateListingAllowed !== undefined &&
       isCreateListingAllowed === false &&
-      session?.user.role !== 'GOD' &&
+      user?.role !== 'GOD' &&
       !isEditing,
-    [isCreateListingAllowed, session, isEditing],
+    [isCreateListingAllowed, isEditing],
   );
 
   const [isDisabledSoft, setIsDisabledSoft] = useState(true);

@@ -21,7 +21,7 @@ export const tokenList: Token[] = [
   {
     tokenName: 'Solana (SOL)',
     tokenSymbol: 'SOL',
-    mintAddress: 'So11111111111111111111111111111111111111111',
+    mintAddress: 'So11111111111111111111111111111111111111112',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
     decimals: 9,
     coingeckoSymbol: 'solana',
@@ -275,14 +275,6 @@ export const tokenList: Token[] = [
     coingeckoSymbol: 'dust-protocol',
   },
   {
-    tokenName: 'wrapped Solana (wSOL)',
-    tokenSymbol: 'wSOL',
-    mintAddress: 'So11111111111111111111111111111111111111112',
-    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/16116.png',
-    decimals: 9,
-    coingeckoSymbol: 'wrapped-solana',
-  },
-  {
     tokenName: 'Bonfida (FIDA)',
     tokenSymbol: 'FIDA',
     mintAddress: 'EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp',
@@ -409,5 +401,13 @@ export const tokenList: Token[] = [
     icon: 'https://s2.coinmarketcap.com/static/img/coins/128x128/31528.png',
     decimals: 6,
     coingeckoSymbol: 'debridge',
+  },
+  {
+    tokenName: 'Adrena',
+    tokenSymbol: 'ADX',
+    mintAddress: 'AuQaustGiaqxRvj2gtCdrd22PBzTn8kM3kEPEkZCtuDw',
+    icon: 'https://assets.coingecko.com/coins/images/50363/standard/adrena_logo_adx_color_200x200.png?1727331561',
+    decimals: 6,
+    coingeckoSymbol: 'adrena',
   },
 ];

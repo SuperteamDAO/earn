@@ -65,6 +65,7 @@ interface SocialInputProps {
   classNames?: {
     input?: string;
   };
+  showIcon?: boolean;
 }
 export const SocialInput = ({
   control,
@@ -76,6 +77,7 @@ export const SocialInput = ({
   formDescription,
   height,
   classNames,
+  showIcon = true,
 }: SocialInputProps) => {
   const social = useMemo(
     () => socials.find((s) => s.name === socialName),
@@ -109,7 +111,7 @@ export const SocialInput = ({
               >
                 <FormLabel className="relative">
                   <span className="sr-only">{name}</span>
-                  {Icon && (
+                  {Icon && showIcon && (
                     <Icon
                       className={cn(
                         'mr-3 h-5 w-5 text-slate-600',

@@ -32,7 +32,6 @@ const allowedFields = [
   'currentEmployer',
   'skills',
   'private',
-  'publicKey',
 ];
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -111,7 +110,6 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       },
       select: {
         email: true,
-        publicKey: true,
       },
     });
 

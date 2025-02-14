@@ -1,106 +1,39 @@
-import { useQuery } from '@tanstack/react-query';
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useUpdateUser, useUser } from '@/store/user';
 
-import { latestActiveSlugQuery } from '@/features/sponsor-dashboard/queries/latest-active-slug';
+import { WalletFeature } from './WalletFeature';
 
-import { ExternalImage } from '../ui/cloudinary-image';
-
-export const FeatureModal = ({
-  isSponsorsRoute = false,
-  forceOpen = false,
-}: {
-  isSponsorsRoute?: boolean;
-  forceOpen?: boolean;
-}) => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export const FeatureModal = () => {
   const { user } = useUser();
   const updateUser = useUpdateUser();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: latestActiveSlug } = useQuery({
-    ...latestActiveSlugQuery,
-    enabled:
-      !!user?.currentSponsorId &&
-      user.featureModalShown === false &&
-      (isSponsorsRoute || !router.pathname.includes('dashboard')),
-  });
-
-  useEffect(() => {
-    const shouldShowModal = async () => {
-      if (
-        (user?.currentSponsorId &&
-          user.featureModalShown === false &&
-          (isSponsorsRoute || !router.pathname.includes('dashboard')) &&
-          latestActiveSlug &&
-          user.currentSponsor?.isVerified) ||
-        forceOpen
-      ) {
-        if (!searchParams?.has('scout')) setIsOpen(true);
-        if (!forceOpen) {
-          await updateUser.mutateAsync({ featureModalShown: true });
-        }
-      }
-    };
-
-    shouldShowModal();
-  }, [user, router.pathname, latestActiveSlug, isSponsorsRoute, forceOpen]);
-
   const handleClose = () => {
     setIsOpen(false);
+    updateUser.mutateAsync({ featureModalShown: true });
   };
 
-  const onSubmit = () => {
-    handleClose();
-  };
+  useEffect(() => {
+    const targetDate = new Date('2025-02-09T00:00:00.000Z');
+    const userCreatedDate = user?.createdAt ? new Date(user.createdAt) : null;
+
+    if (
+      user &&
+      user.featureModalShown === false &&
+      user.isTalentFilled &&
+      userCreatedDate &&
+      userCreatedDate < targetDate
+    ) {
+      setIsOpen(true);
+    }
+  }, [user]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-[480px] overflow-hidden rounded-lg p-0">
-        <div className="w-full bg-purple-50 p-8">
-          <ExternalImage
-            src="/ScoutAnnouncement.png"
-            alt="Scouts Announcement Illustration"
-            className="h-full w-[92%]"
-          />
-        </div>
-
-        <div className="flex flex-col items-start gap-3 p-6">
-          <p className="text-lg font-semibold">Introducing Scout</p>
-          <p className="pb-4 text-slate-500">
-            A curated list of the best talent on Superteam Earn that you can
-            invite to participate in your listings to get high quality
-            submissions! Add a new listing, or check out any of your currently
-            live listings to try Scout.
-          </p>
-
-          {latestActiveSlug ? (
-            <Link
-              href={`/dashboard/listings/${latestActiveSlug}/submissions?scout`}
-              onClick={onSubmit}
-              className="w-full"
-            >
-              <Button className="w-full gap-2 text-sm font-medium">
-                Check it out <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          ) : (
-            <Button
-              className="w-full gap-2 text-sm font-medium"
-              onClick={onSubmit}
-            >
-              Good to know!
-            </Button>
-          )}
-        </div>
+      <DialogContent className="max-w-[480px] rounded-lg p-0">
+        <WalletFeature onClick={handleClose} />
       </DialogContent>
     </Dialog>
   );

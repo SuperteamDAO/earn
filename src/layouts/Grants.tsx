@@ -102,13 +102,13 @@ export function GrantPageLayout({
               />
 
               <div className="mb-10 flex max-w-6xl flex-col items-center justify-center gap-0 md:flex-row md:items-start md:justify-between md:gap-4">
-                <div className="static top-14 w-full px-3 md:sticky md:w-auto">
+                <div className="static top-14 w-full md:sticky md:w-auto">
                   <div className="flex flex-col gap-2">
                     <div className="md:[22rem] flex w-full flex-col justify-center rounded-xl bg-white py-4">
                       <div className="flex w-full items-center justify-between gap-3">
                         <div className="flex items-center gap-2">
                           <img
-                            className="h-9 w-9 rounded-full"
+                            className="h-8 w-8 rounded-full"
                             alt={'green doller'}
                             src={
                               tokenList.filter(
@@ -224,7 +224,7 @@ export function GrantPageLayout({
                     </div>
                   </div>
                 </div>
-                <div className="border-l-1 flex w-full flex-col gap-8 border-slate-100 px-2 md:px-5">
+                <div className="flex w-full flex-col gap-8 border-slate-100 px-2 md:border-l md:px-5">
                   {children}
                   <div className="flex flex-col items-start md:hidden">
                     <p className="mb-1.5 h-full text-center text-xs font-semibold text-slate-600">
@@ -255,10 +255,7 @@ export function GrantPageLayout({
                           Reach out
                           <ExternalLink className="mx-1 mb-1 inline text-[#64768b]" />
                         </Link>
-                        <span
-                          className="text-slate-500"
-                          color={'brand.slate.500'}
-                        >
+                        <span className="text-slate-500">
                           if you have any questions about this listing
                         </span>
                       </p>

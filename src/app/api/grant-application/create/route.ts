@@ -21,6 +21,10 @@ async function createGrantApplication(
   data: any,
   grant: any,
 ) {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+  });
+
   const validationResult = grantApplicationSchema(
     grant.minReward,
     grant.maxReward,
@@ -40,16 +44,10 @@ async function createGrantApplication(
 
   const validatedData = validationResult.data;
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { publicKey: true },
-  });
-  if (!user?.publicKey && validatedData.walletAddress) {
+  if (validatedData.telegram && !user.telegram) {
     await prisma.user.update({
       where: { id: userId },
-      data: {
-        publicKey: validatedData.walletAddress,
-      },
+      data: { telegram: validatedData.telegram },
     });
   }
 
@@ -69,7 +67,7 @@ async function createGrantApplication(
     answers: validatedData.answers || [],
   };
 
-  return prisma.grantApplication.create({
+  return await prisma.grantApplication.create({
     data: formattedData,
     include: {
       user: {
@@ -102,9 +100,10 @@ export async function POST(request: NextRequest) {
   }
   const userId = session.data.userId;
   const body = await request.json();
-  const { grantId, ...applicationData } = body;
+  const { grantId, telegram: telegramUsername, ...applicationData } = body;
 
   logger.debug(`Request body: ${safeStringify(body)}`);
+  const telegram = extractSocialUsername('telegram', telegramUsername);
 
   try {
     const { grant } = await validateGrantRequest(userId as string, grantId);
@@ -137,7 +136,7 @@ export async function POST(request: NextRequest) {
     const result = await createGrantApplication(
       userId as string,
       grantId,
-      applicationData,
+      { ...applicationData, telegram },
       grant,
     );
 

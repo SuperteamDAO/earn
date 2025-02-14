@@ -115,7 +115,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       eligibility: eligibility as Prisma.InputJsonValue,
       rewardAmount,
       rewards: rewards as Prisma.InputJsonValue,
-      maxBonusSpots: maxBonusSpots || undefined,
+      maxBonusSpots:
+        maxBonusSpots === undefined ? undefined : maxBonusSpots || 0,
       token,
       compensationType,
       minRewardAsk,

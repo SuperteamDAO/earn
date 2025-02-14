@@ -35,7 +35,7 @@ const saveDraftMutationAtom = atomWithMutation(() => ({
   mutationKey: ['saveDraft'],
   mutationFn: async (data: Partial<ListingFormData>) => {
     const response = await api.post<ListingFormData>('/api/listings/draft', {
-      ...data,
+      ...convertUndefinedToNull(data),
     });
     return response.data;
   },

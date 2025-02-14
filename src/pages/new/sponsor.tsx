@@ -1,10 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { usePrivy } from '@privy-io/react-auth';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Info, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -48,7 +48,7 @@ import { useUsernameValidation } from '@/features/talent/utils/useUsernameValida
 
 const CreateSponsor = () => {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { ready } = usePrivy();
   const { user, refetchUser } = useUser();
   const posthog = usePostHog();
 
@@ -78,6 +78,7 @@ const CreateSponsor = () => {
         lastName: user?.lastName || '',
         username: user?.username || '',
         photo: user?.photo || '',
+        telegram: user?.telegram || '',
       },
     },
   });
@@ -91,6 +92,7 @@ const CreateSponsor = () => {
           lastName: user?.lastName || '',
           username: user?.username || '',
           photo: user?.photo || '',
+          telegram: user?.telegram || '',
         },
       });
     }
@@ -175,7 +177,7 @@ const CreateSponsor = () => {
   ]);
 
   useEffect(() => {
-    if (user?.currentSponsorId && session?.user?.role !== 'GOD') {
+    if (user?.currentSponsorId && user?.role !== 'GOD') {
       router.push('/dashboard/listings?open=1');
     }
   }, [user?.currentSponsorId, router]);
@@ -284,7 +286,7 @@ const CreateSponsor = () => {
     }
   };
 
-  if (!session && status === 'loading') {
+  if (!ready) {
     return <></>;
   }
 
@@ -316,7 +318,7 @@ const CreateSponsor = () => {
             <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
               Welcome to Superteam Earn
             </h1>
-            <p className="text-lg font-normal text-gray-600" color="gray.600">
+            <p className="text-lg font-normal text-gray-600">
               Let&apos;s start with some basic information about your team
             </p>
           </div>
@@ -348,7 +350,7 @@ const CreateSponsor = () => {
                     <Input placeholder="Last Name" />
                   </FormFieldWrapper>
                 </div>
-                <div className="mb-4 flex">
+                <div className="mb-4 flex w-full justify-between gap-2">
                   <FormFieldWrapper
                     control={form.control}
                     name="user.username"
@@ -364,6 +366,15 @@ const CreateSponsor = () => {
                   >
                     <Input placeholder="Username" value={username} />
                   </FormFieldWrapper>
+                  <SocialInput
+                    name="user.telegram"
+                    socialName={'telegram'}
+                    formLabel="Telegram"
+                    placeholder="solanalabs"
+                    required
+                    control={form.control}
+                    height="h-9"
+                  />
                 </div>
                 <>
                   <FormLabel isRequired>Profile Picture</FormLabel>
@@ -395,7 +406,7 @@ const CreateSponsor = () => {
                       setSponsorName(e.target.value);
                     }}
                   >
-                    <Input placeholder="Stark Industries" value={sponsorName} />
+                    <Input placeholder="Solana Labs" value={sponsorName} />
                   </FormFieldWrapper>
                   <FormFieldWrapper
                     control={form.control}
@@ -410,7 +421,7 @@ const CreateSponsor = () => {
                       form.setValue('sponsor.slug', value);
                     }}
                   >
-                    <Input placeholder="starkindustries" value={slug} />
+                    <Input placeholder="solanalabs" value={slug} />
                   </FormFieldWrapper>
                 </div>
                 <div className="my-6 flex w-full justify-between gap-4">
@@ -420,7 +431,7 @@ const CreateSponsor = () => {
                     label="Company URL"
                     isRequired
                   >
-                    <Input placeholder="https://starkindustries.com" />
+                    <Input placeholder="https://solanalabs.com" />
                   </FormFieldWrapper>
 
                   <div className="hidden w-full md:flex">
@@ -428,7 +439,7 @@ const CreateSponsor = () => {
                       name="sponsor.twitter"
                       socialName={'twitter'}
                       formLabel="Company Twitter"
-                      placeholder="@StarkIndustries"
+                      placeholder="@solanalabs"
                       required
                       control={form.control}
                       height="h-9"
@@ -440,7 +451,7 @@ const CreateSponsor = () => {
                     name="sponsor.twitter"
                     socialName={'twitter'}
                     formLabel="Company Twitter"
-                    placeholder="@StarkIndustries"
+                    placeholder="@solanalabs"
                     required
                     control={form.control}
                     height="h-9"

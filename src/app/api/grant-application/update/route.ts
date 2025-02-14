@@ -56,19 +56,6 @@ async function updateGrantApplication(
     throw new Error('Application not found');
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { publicKey: true },
-  });
-  if (!user?.publicKey && validatedData.walletAddress) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        publicKey: validatedData.walletAddress,
-      },
-    });
-  }
-
   const formattedData = {
     userId,
     grantId,

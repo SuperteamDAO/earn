@@ -9,6 +9,7 @@ import { withAuth } from '@/features/auth/utils/withAuth';
 import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 async function createSubmission(
   userId: string,
@@ -16,11 +17,10 @@ async function createSubmission(
   data: any,
   listing: any,
 ) {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
   });
+
   const validationResult = submissionSchema(
     listing,
     listing.minRewardAsk || 0,
@@ -34,14 +34,10 @@ async function createSubmission(
 
   const validatedData = validationResult.data;
 
-  if (validatedData.publicKey) {
+  if (validatedData.telegram && !user.telegram) {
     await prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        publicKey: validatedData.publicKey,
-      },
+      where: { id: userId },
+      data: { telegram: validatedData.telegram },
     });
   }
 
@@ -78,8 +74,12 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     otherInfo,
     eligibilityAnswers,
     ask,
-    publicKey,
+    telegram: telegramUsername,
   } = req.body;
+  const telegram = extractSocialUsername('telegram', telegramUsername);
+  console.log('telegramUsername', telegramUsername);
+
+  console.log('telegram', telegram);
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
   logger.debug(`User: ${safeStringify(userId)}`);
@@ -93,7 +93,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     const result = await createSubmission(
       userId as string,
       listingId,
-      { link, tweet, otherInfo, eligibilityAnswers, ask, publicKey },
+      { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
       listing,
     );
 

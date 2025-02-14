@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { SessionProvider } from 'next-auth/react';
 import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider, usePostHog } from 'posthog-js/react';
@@ -13,6 +12,8 @@ import { toast } from 'sonner';
 import { useUser } from '@/store/user';
 import { fontMono, fontSans } from '@/theme/fonts';
 import { getURL } from '@/utils/validUrl';
+
+import Providers from '@/features/privy/providers';
 
 import '../styles/globals.scss';
 import '@/components/tiptap/styles/index.css';
@@ -100,7 +101,7 @@ function MyApp({ Component, pageProps }: any) {
       window.history.replaceState(null, '', url.href);
       forcedProfileRedirect(); // instantly when just signed in
     }
-  }, [router.query.loginState, user, posthog]);
+  }, [router, user, posthog]);
 
   // forced profile redirection
   useEffect(() => {
@@ -113,7 +114,7 @@ function MyApp({ Component, pageProps }: any) {
   }, [user?.id]);
 
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const walletListingRoute = router.pathname.startsWith('/listings');
+  const walletListingRoute = router.pathname.startsWith('/listing');
 
   return (
     <>
@@ -130,27 +131,27 @@ function MyApp({ Component, pageProps }: any) {
   );
 }
 
-function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <style jsx global>{`
-        :root {
-          --font-sans: ${fontSans.style.fontFamily};
-          --font-mono: ${fontMono.style.fontFamily};
-        }
-        body {
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-      `}</style>
-      <PostHogProvider client={posthog}>
-        <SessionProvider session={session}>
+    <PostHogProvider client={posthog}>
+      <QueryClientProvider client={queryClient}>
+        <style jsx global>{`
+          :root {
+            --font-sans: ${fontSans.style.fontFamily};
+            --font-mono: ${fontMono.style.fontFamily};
+          }
+          body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+        `}</style>
+        <Providers>
           <MyApp Component={Component} pageProps={pageProps} />
-        </SessionProvider>
-        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
-      </PostHogProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+          <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
+        </Providers>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </PostHogProvider>
   );
 }
 

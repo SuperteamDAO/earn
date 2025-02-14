@@ -100,7 +100,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         if (!submission) throw new Error('Submission not found');
 
         const {
-          user: { publicKey },
+          user: { walletAddress },
           winnerPosition,
         } = submission;
 
@@ -119,7 +119,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
         const validationResult = await validatePayment({
           txId: paymentLink.txId,
-          recipientPublicKey: publicKey!,
+          recipientPublicKey: walletAddress!,
           expectedAmount: winnerReward,
           tokenMint: dbToken,
         });

@@ -217,7 +217,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
     >
       {!!grant?.isActive &&
         !grant?.isArchived &&
-        !!(grant?.ai as GrantsAi).context &&
+        !!(grant?.ai as GrantsAi)?.context &&
         !!unreviewedApplications?.length && (
           <DialogTrigger asChild>
             <button

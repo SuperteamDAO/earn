@@ -28,6 +28,8 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { SocialInput } from '@/features/social/components/SocialInput';
+
 import { walletFieldListings } from '../../constants';
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -42,6 +44,7 @@ interface Props {
   editMode: boolean;
   listing: Listing;
   isTemplate?: boolean;
+  isSubmitDisabled: boolean;
   showEasterEgg: () => void;
   onSurveyOpen: () => void;
 }
@@ -54,6 +57,7 @@ export const SubmissionDrawer = ({
   editMode,
   listing,
   isTemplate = false,
+  isSubmitDisabled,
   showEasterEgg,
   onSurveyOpen,
 }: Props) => {
@@ -92,6 +96,23 @@ export const SubmissionDrawer = ({
   const posthog = usePostHog();
   const router = useRouter();
   const { query } = router;
+
+  const handleClose = () => {
+    form.reset({
+      link: '',
+      tweet: '',
+      otherInfo: '',
+      ask: null,
+      eligibilityAnswers: Array.isArray(listing.eligibility)
+        ? listing.eligibility.map((q) => ({
+            question: q.question,
+            answer: '',
+          }))
+        : [],
+    });
+    setTermsAccepted(false);
+    onClose();
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,7 +157,7 @@ export const SubmissionDrawer = ({
         otherInfo: data.otherInfo || '',
         ask: data.ask || null,
         eligibilityAnswers: data.eligibilityAnswers || [],
-        publicKey: data.publicKey,
+        telegram: data.telegram || user?.telegram || '',
       });
 
       const hideEasterEggFromSponsorIds = [
@@ -170,7 +191,7 @@ export const SubmissionDrawer = ({
           ? 'Submission updated successfully'
           : 'Submission created successfully',
       );
-      onClose();
+      handleClose();
     } catch (e) {
       toast.error('Failed to submit. Please try again or contact support.');
     } finally {
@@ -222,11 +243,11 @@ export const SubmissionDrawer = ({
   }
 
   return (
-    <SideDrawer open={isOpen} onClose={onClose}>
-      <SideDrawerContent>
+    <SideDrawer isOpen={isOpen} onClose={handleClose}>
+      <SideDrawerContent className="px-2 sm:p-4">
         <X
           className="absolute right-4 top-10 z-10 h-4 w-4 text-slate-400 sm:right-8 sm:top-8"
-          onClick={onClose}
+          onClick={handleClose}
         />
         <Form {...form}>
           <form
@@ -271,6 +292,7 @@ export const SubmissionDrawer = ({
                                       maxLength={500}
                                       placeholder="Add a link"
                                       className="rounded-l-none"
+                                      autoComplete="off"
                                     />
                                   </div>
                                 </FormControl>
@@ -307,10 +329,10 @@ export const SubmissionDrawer = ({
                                       maxLength={500}
                                       placeholder="Add a tweet's link"
                                       className="rounded-l-none"
+                                      autoComplete="off"
                                     />
                                   </div>
                                 </FormControl>
-
                                 <FormMessage className="pt-1" />
                               </div>
                             </FormItem>
@@ -358,6 +380,7 @@ export const SubmissionDrawer = ({
                                         {...field}
                                         placeholder="Add a link..."
                                         className="rounded-l-none"
+                                        autoComplete="off"
                                       />
                                     </div>
                                   ) : (
@@ -387,6 +410,18 @@ export const SubmissionDrawer = ({
                         token={token}
                       />
                     )}
+                    {isProject && !user?.telegram && !editMode && (
+                      <SocialInput
+                        name="telegram"
+                        socialName={'telegram'}
+                        placeholder=""
+                        required
+                        formLabel="Your Telegram username"
+                        control={form.control}
+                        height="h-9"
+                        showIcon={false}
+                      />
+                    )}
                     <FormFieldWrapper
                       control={form.control}
                       name="otherInfo"
@@ -395,56 +430,6 @@ export const SubmissionDrawer = ({
                       isRichEditor
                       richEditorPlaceholder="Add info or link"
                     />
-                    {!walletFieldListings.includes(id!) && (
-                      <FormField
-                        control={form.control}
-                        name="publicKey"
-                        render={({ field }) => (
-                          <FormItem className="flex w-full flex-col gap-2">
-                            <div>
-                              <FormLabel isRequired={!user?.publicKey}>
-                                Your Solana Wallet Address
-                              </FormLabel>
-                              <FormDescription>
-                                {!!user?.publicKey ? (
-                                  <>
-                                    This is where you will receive your rewards
-                                    if you win. If you want to edit it,{' '}
-                                    <a
-                                      href={`/t/${user?.username}/edit`}
-                                      className="text-blue-600 underline hover:text-blue-700"
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      click here
-                                    </a>
-                                  </>
-                                ) : (
-                                  <>
-                                    This wallet address will be linked to your
-                                    profile and you will receive your rewards
-                                    here if you win.
-                                  </>
-                                )}
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Input
-                                className={cn(
-                                  !!user?.publicKey &&
-                                    'cursor-not-allowed text-slate-600 opacity-80',
-                                )}
-                                placeholder="Add your Solana wallet address"
-                                readOnly={!!user?.publicKey}
-                                {...(!!user?.publicKey ? {} : field)}
-                                value={user?.publicKey || field.value}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    )}
                   </div>
                 </div>
               </div>
@@ -476,8 +461,9 @@ export const SubmissionDrawer = ({
                 <Button
                   className="ph-no-capture h-12 w-full"
                   disabled={
+                    isSubmitDisabled ||
                     isTemplate ||
-                    (!listing.isPublished && !!query['preview']) ||
+                    !!query['preview'] ||
                     (isHackathon && !editMode && !termsAccepted)
                   }
                   type="submit"

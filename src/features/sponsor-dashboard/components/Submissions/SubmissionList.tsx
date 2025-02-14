@@ -99,8 +99,8 @@ export const SubmissionList = ({
       return colorMap[submission.label];
     } else {
       return {
-        bg: 'gray.100',
-        color: 'gray.600',
+        bg: 'bg-slate-100',
+        color: 'text-slate-600',
       };
     }
   };

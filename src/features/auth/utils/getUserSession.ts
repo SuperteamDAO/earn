@@ -1,9 +1,10 @@
 import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { cookies } from 'next/headers';
-import { getToken } from 'next-auth/jwt';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+
+import { getPrivyToken } from './getPrivyToken';
 
 type SessionResponse = {
   status: number;
@@ -30,9 +31,9 @@ export async function getUserSession(
       ),
     };
 
-    const token = await getToken({ req: req as any });
+    const privyDid = await getPrivyToken(req as any);
 
-    if (!token) {
+    if (!privyDid) {
       return {
         status: 401,
         error: 'Unauthorized',
@@ -40,22 +41,15 @@ export async function getUserSession(
       };
     }
 
-    const userId = token.sub;
-    if (!userId) {
-      return {
-        status: 400,
-        error: 'Invalid token',
-        data: null,
-      };
-    }
-
-    logger.debug(`Fetching user with ID: ${userId}`);
+    logger.debug(`Fetching user with privyDid: ${privyDid}`);
     const user = await prisma.user.findUnique({
-      where: { id: userId as string },
-      select: { id: true },
+      where: { privyDid },
+      select: {
+        id: true,
+      },
     });
-    logger.info(`User with ID: ${userId} found`, {
-      userId,
+    logger.info(`User with privyDid: ${privyDid} found`, {
+      privyDid,
       ...user,
     });
 
@@ -72,7 +66,7 @@ export async function getUserSession(
       status: 200,
       error: null,
       data: {
-        userId,
+        userId: user.id,
       },
     };
   } catch (error) {

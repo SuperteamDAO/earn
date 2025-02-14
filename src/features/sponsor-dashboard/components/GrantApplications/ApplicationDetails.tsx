@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
-import { ArrowRight, Check, X } from 'lucide-react';
+import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
@@ -101,7 +101,7 @@ export const ApplicationDetails = ({
   );
 
   const { onCopy: onCopyPublicKey } = useClipboard(
-    selectedApplication?.user?.publicKey || '',
+    selectedApplication?.walletAddress || '',
   );
 
   const handleCopyEmail = () => {
@@ -114,7 +114,7 @@ export const ApplicationDetails = ({
   };
 
   const handleCopyPublicKey = () => {
-    if (selectedApplication?.user?.publicKey) {
+    if (selectedApplication?.walletAddress) {
       onCopyPublicKey();
       toast.success('Wallet address copied to clipboard', {
         duration: 1500,
@@ -387,6 +387,22 @@ export const ApplicationDetails = ({
                 <p className="whitespace-nowrap text-sm font-medium text-slate-600">
                   {formattedCreatedAt}
                 </p>
+              </div>
+
+              <div className="mb-4">
+                <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
+                  Wallet Address
+                </p>
+                <div
+                  className="flex cursor-pointer items-center gap-1 whitespace-nowrap text-sm font-medium text-slate-600"
+                  onClick={handleCopyPublicKey}
+                >
+                  {selectedApplication?.walletAddress}
+                  <Copy
+                    className="h-4 w-4 text-slate-400"
+                    onClick={handleCopyPublicKey}
+                  />
+                </div>
               </div>
 
               <InfoBox

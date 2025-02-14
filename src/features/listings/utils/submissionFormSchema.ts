@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type User } from '@/interface/user';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
+
+import { telegramUsernameSchema } from '@/features/social/utils/schema';
 
 import { walletFieldListings } from '../constants';
 import { type Listing } from '../types';
@@ -19,41 +20,28 @@ const submissionSchema = (
         .union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')])
         .optional(),
       tweet: z
-        .union([
-          z.literal(''),
-          z.string().trim().regex(URL_REGEX, 'Invalid URL'),
-        ])
+        .union([z.literal(''), z.string().regex(URL_REGEX, 'Invalid URL')])
         .optional(),
       otherInfo: z.string().optional(),
       ask: z.union([z.number().int().min(0), z.null()]).optional(),
       eligibilityAnswers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
-      publicKey: z.string().optional(),
+      telegram:
+        !user?.telegram && listing?.type === 'project'
+          ? telegramUsernameSchema
+          : z.string().nullable().optional(),
     })
     .superRefine((data, ctx) => {
-      if (
-        !walletFieldListings.includes(listing.id!) &&
-        user &&
-        !user?.publicKey &&
-        !data.publicKey
-      ) {
+      const requiresTelegram = listing.type === 'project' && !user?.telegram;
+      if (requiresTelegram && !data.telegram) {
         ctx.addIssue({
           code: 'custom',
-          path: ['publicKey'],
-          message: 'Solana Wallet Address is required',
+          path: ['telegram'],
+          message: 'Telegram is required',
         });
       }
-      if (data.publicKey) {
-        const validate = validateSolanaAddress(data.publicKey);
-        if (!validate.isValid) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['publicKey'],
-            message: 'Invalid Solana Wallet Address',
-          });
-        }
-      }
+
       if (
         listing.type !== 'project' &&
         !data.link &&

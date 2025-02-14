@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
 import { api } from '@/lib/api';
-import { validateSolanaAddress } from '@/utils/validateSolAddress';
 import { getURL } from '@/utils/validUrl';
 
 import {
@@ -83,13 +82,6 @@ export const profileSchema = z
     skills: skillsArraySchema,
     private: z.boolean().default(false),
     location: z.string(),
-    publicKey: z
-      .string({ message: 'Wallet address is required' })
-      .min(1, 'Wallet address is required')
-      .refine(
-        (val) => validateSolanaAddress(val).isValid,
-        'Invalid Solana wallet address',
-      ),
   })
   .superRefine((data, ctx) => {
     socialSuperRefine(data, ctx);
@@ -154,7 +146,6 @@ export const newTalentSchema = profileSchema._def.schema.pick({
   lastName: true,
   location: true,
   photo: true,
-  publicKey: true,
   skills: true,
   discord: true,
   twitter: true,
@@ -164,30 +155,3 @@ export const newTalentSchema = profileSchema._def.schema.pick({
   website: true,
 });
 export type NewTalentFormData = z.infer<typeof newTalentSchema>;
-
-export const aboutYouSchema = profileSchema._def.schema.pick({
-  username: true,
-  firstName: true,
-  lastName: true,
-  location: true,
-  photo: true,
-  publicKey: true,
-  skills: true,
-});
-
-export type AboutYouFormData = z.infer<typeof aboutYouSchema>;
-
-export const yourLinksSchema = profileSchema._def.schema
-  .pick({
-    discord: true,
-    twitter: true,
-    github: true,
-    linkedin: true,
-    telegram: true,
-    website: true,
-  })
-  .superRefine((data, ctx) => {
-    socialSuperRefine(data, ctx);
-  });
-
-export type YourLinksFormData = z.infer<typeof yourLinksSchema>;

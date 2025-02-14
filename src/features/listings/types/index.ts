@@ -1,8 +1,8 @@
 import type { BountyType, status } from '@prisma/client';
-import type { User } from 'next-auth';
 
 import type { Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
+import { type User } from '@/interface/user';
 
 export interface Listing {
   id?: string;
@@ -49,6 +49,7 @@ export interface Listing {
     Comments?: number;
   };
   isFndnPaying?: boolean;
+  usdValue?: number;
 }
 
 export interface ListingHackathon {

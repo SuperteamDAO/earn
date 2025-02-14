@@ -1,4 +1,4 @@
-import { useSession } from 'next-auth/react';
+import { usePrivy } from '@privy-io/react-auth';
 import { type ReactNode, useEffect, useState } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -31,9 +31,9 @@ export function AuthWrapper({
   onLoginCloseCallback,
   onLoginOpenCallback,
 }: AuthWrapperProps) {
-  const { status } = useSession();
-  const isAuthenticated = status === 'authenticated';
-  const isLoading = status === 'loading';
+  const { authenticated, ready } = usePrivy();
+  const isAuthenticated = authenticated;
+  const isLoading = !ready;
 
   const { user } = useUser();
   const isSponsor = !!user?.currentSponsorId || false;
@@ -50,7 +50,7 @@ export function AuthWrapper({
   useEffect(() => {
     if (loginIsOpen) onLoginOpenCallback?.();
     else onLoginCloseCallback?.();
-  }, [loginIsOpen]);
+  }, [loginIsOpen, onLoginOpenCallback, onLoginCloseCallback]);
 
   const {
     isOpen: profileModalIsOpen,
@@ -79,7 +79,7 @@ export function AuthWrapper({
       setTriggerLogin(false);
       loginOnOpen();
     }
-  }, [triggerLogin, isAuthenticated]);
+  }, [triggerLogin, isAuthenticated, loginOnOpen]);
 
   const shouldAllowInteraction =
     isAuthenticated && (!showCompleteProfileModal || isTalentFilled);
@@ -92,7 +92,7 @@ export function AuthWrapper({
           isOpen={loginIsOpen}
           onClose={loginOnClose}
           redirectTo={redirectTo}
-          hideCloseIcon
+          onOpen={loginOnOpen}
         />
       )}
       {profileModalIsOpen && (
