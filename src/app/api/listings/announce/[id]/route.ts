@@ -121,7 +121,7 @@ export async function POST(
       const winnerPosition = Number(winners[currentIndex]?.winnerPosition);
       let amount: number = 0;
       if (winnerPosition && !isNaN(winnerPosition)) {
-        amount = Math.ceil(rewards[winnerPosition as keyof Rewards] ?? 0);
+        amount = rewards[winnerPosition as keyof Rewards] ?? 0;
       }
 
       const rewardInUSD = (listing.usdValue! / listing.rewardAmount!) * amount;
