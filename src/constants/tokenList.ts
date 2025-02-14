@@ -410,4 +410,12 @@ export const tokenList: Token[] = [
     decimals: 6,
     coingeckoSymbol: 'adrena',
   },
+  {
+    tokenName: 'Nosana',
+    tokenSymbol: 'NOS',
+    mintAddress: 'nosXBVoaCTtYdLvKY6Csb4AC8JCdQKKAaWYtx2ZMoo7',
+    icon: 'https://assets.coingecko.com/coins/images/22553/standard/POfb_I4u_400x400.jpg?1696521873',
+    decimals: 6,
+    coingeckoSymbol: 'nosana',
+  },
 ];
