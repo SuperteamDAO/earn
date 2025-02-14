@@ -53,8 +53,14 @@ export default function AiReviewModal({ applications, grant }: Props) {
     totalHoursSaved: 0,
   });
 
-  const { data: unreviewedApplications } = useQuery({
+  const {
+    data: unreviewedApplications,
+    refetch: refetchUnreviewedApplications,
+  } = useQuery({
     ...unreviewedGrantApplicationsQuery({ id: grant?.id }, grant?.slug),
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 
   const { mutateAsync: reviewApplication } = useReviewApplication(
@@ -143,6 +149,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
         });
         posthog.capture('complete_ai review grants');
         setState('DONE');
+        await refetchUnreviewedApplications();
       } catch (error: any) {
         console.log(
           'error occured while commiting reviewed applications',
