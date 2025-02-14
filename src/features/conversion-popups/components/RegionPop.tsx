@@ -55,8 +55,8 @@ export const RegionPop = ({ st }: { st: Superteam }) => {
   const { authenticated, ready } = usePrivy();
 
   const activateQuery = useMemo(
-    () => status === 'unauthenticated' && popupsShowed < 2,
-    [status, popupsShowed],
+    () => !authenticated && popupsShowed < 2,
+    [authenticated, popupsShowed],
   );
 
   const { data: stat } = useQuery({
