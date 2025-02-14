@@ -209,7 +209,7 @@ export const SubmissionPanel = ({
                 )}
               </div>
             </div>
-            {!!remainings && !isProject && (
+            {!!remainings && !isProject && !bounty?.isWinnersAnnounced && (
               <div className="ml-auto flex w-fit px-4 py-1 text-xs">
                 {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
                   <p className="flex items-center rounded-md bg-red-100 px-5 py-1 text-[#f55151]">
