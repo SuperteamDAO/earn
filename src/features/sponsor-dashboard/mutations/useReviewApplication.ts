@@ -64,7 +64,6 @@ export const useReviewApplication = (slug: string) => {
           return prevAppl;
         });
       }
-      console.log('Reviewd application successfully', { id: application.id });
     },
   });
 };

@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
   try {
     logger.debug(`Request body: ${safeStringify(body)}`);
 
-    console.log('id - ', id);
     if (!id || typeof id !== 'string') {
       return NextResponse.json(
         {
@@ -48,14 +47,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log('unreviewedApplications', unreviewedApplications);
     const applicationsWithAIReview = unreviewedApplications.filter(
       (u) =>
         !!u.ai &&
         (u.ai as unknown as GrantApplicationAi)?.review?.predictedLabel !==
           'Unreviewed',
     );
-    console.log('applicationsWithAIReview', applicationsWithAIReview);
 
     const data = await Promise.all(
       applicationsWithAIReview.map(async (appl) => {

@@ -59,7 +59,6 @@ export const useCommitReviews = (slug: string, grantId: string) => {
         }
         return prevAppl;
       });
-      console.log('Commited reviewed applications of grant with ID', grantId);
     },
   });
 };
