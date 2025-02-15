@@ -108,9 +108,10 @@ export async function POST(request: NextRequest) {
   }
   const userId = session.data.userId;
   const body = await request.json();
-  const { grantId, ...applicationData } = body;
+  const { grantId, telegram: telegramUsername, ...applicationData } = body;
 
   logger.debug(`Request body: ${safeStringify(body)}`);
+  const telegram = extractSocialUsername('telegram', telegramUsername);
 
   try {
     const existingApplication = await prisma.grantApplication.findFirst({
@@ -137,7 +138,7 @@ export async function POST(request: NextRequest) {
     const result = await updateGrantApplication(
       userId as string,
       grantId,
-      applicationData,
+      { ...applicationData, telegram },
       grant,
     );
 
