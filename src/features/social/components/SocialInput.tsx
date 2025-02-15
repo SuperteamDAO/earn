@@ -114,7 +114,7 @@ export const SocialInput = ({
                   {Icon && showIcon && (
                     <Icon
                       className={cn(
-                        'mr-3 h-5 w-5 text-slate-600',
+                        'mr-2 h-5 w-5 text-slate-600',
                         // socialName === 'twitter' && 'h-[1.125rem] w-[1.125rem]'
                       )}
                     />

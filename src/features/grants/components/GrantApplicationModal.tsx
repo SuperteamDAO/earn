@@ -9,7 +9,15 @@ import { type z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Form } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
@@ -209,6 +217,8 @@ export const GrantApplicationModal = ({
     form.setValue('walletAddress', user?.walletAddress || '');
   };
 
+  const isST = grant.sponsor?.name?.toLowerCase().match(/superteam|solana/);
+
   const date = dayjs().format('YYYY-MM-DD');
 
   return (
@@ -320,29 +330,45 @@ export const GrantApplicationModal = ({
                       formLabel="Your Telegram username"
                       control={form.control}
                       height="h-9"
-                      showIcon={false}
                     />
                   )}
-                  <FormFieldWrapper
+                  <FormField
                     control={form.control}
-                    name="walletAddress"
-                    label=" Your Solana Wallet Address"
-                    description={
-                      <>
-                        This is where you will receive your rewards if you win.{' '}
-                        <span
-                          className="cursor-pointer underline"
-                          onClick={handleAutoFill}
-                        >
-                          Click
-                        </span>{' '}
-                        to auto-fill your Earn wallet address.
-                      </>
-                    }
-                    isRequired
-                  >
-                    <Input placeholder="Add your Solana wallet address" />
-                  </FormFieldWrapper>
+                    name={'walletAddress'}
+                    render={({ field }) => (
+                      <FormItem className={cn('flex flex-col gap-2')}>
+                        <div>
+                          <FormLabel isRequired>
+                            Your Solana Wallet Address
+                          </FormLabel>
+                          <FormDescription>
+                            {isST
+                              ? 'This is where you will receive your rewards if you win. Make sure this address can accept both USDT & USDC.'
+                              : 'This is where you will receive your rewards if you win.'}
+                          </FormDescription>
+                        </div>
+                        <div>
+                          <FormControl>
+                            <Input
+                              placeholder="Add your Solana wallet address"
+                              {...field}
+                            />
+                          </FormControl>
+                          <p className="pt-0.5 text-xs text-slate-500">
+                            <span
+                              className="cursor-pointer underline"
+                              onClick={handleAutoFill}
+                            >
+                              Click
+                            </span>{' '}
+                            to auto-fill your Earn wallet address (can accept
+                            any Solana token).
+                          </p>
+                          <FormMessage className="pt-1" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
                 </div>
               )}
               {activeStep === 1 && (
