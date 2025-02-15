@@ -129,7 +129,6 @@ export const GrantApplicationModal = ({
       } = data;
 
       const apiAction = !!grantApplication ? 'update' : 'create';
-      console.log('telegram - ', user?.telegram);
 
       await api.post(`/api/grant-application/${apiAction}/`, {
         grantId: id,
