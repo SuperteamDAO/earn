@@ -70,7 +70,7 @@ export const grantApplicationSchema = (
         } else {
           questions?.forEach((question, index) => {
             const answer = data.answers?.[index]?.answer;
-            if (!answer || answer.trim() === '') {
+            if (!answer || answer?.trim() === '') {
               ctx.addIssue({
                 code: 'custom',
                 path: ['answers', index, 'answer'],

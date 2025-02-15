@@ -25,7 +25,7 @@ export function extractSocialUsername(
   const pattern = urlPatterns[platform];
   if (!pattern) return null;
 
-  const match = url.trim().match(pattern);
+  const match = url?.trim().match(pattern);
   if (match && match[1]) {
     if (lowercaseOnly.safeParse(platform).success) {
       return match[1].toLowerCase();
