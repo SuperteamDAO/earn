@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowUpRight, CheckIcon, CopyIcon, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { WalletFeature } from '@/components/modals/WalletFeature';
 import { Button } from '@/components/ui/button';
@@ -92,6 +93,37 @@ export function WalletDrawer({
     onClose();
   };
 
+  const handleWithdraw = async () => {
+    posthog.capture('withdraw_start');
+    if (privyUser?.mfaMethods.length === 0) {
+      toast(
+        <div className="flex flex-col gap-1">
+          <div className="text-lg font-semibold">
+            Two-Factor Authentication Required
+          </div>
+          <div className="text-sm text-slate-600">
+            Please set up two-factor authentication to continue withdrawing.
+            This helps keep your funds secure.
+          </div>
+          <Button
+            onClick={async () => {
+              await showMfaEnrollmentModal();
+              setView('withdraw');
+            }}
+            className="mt-2 w-full rounded-lg bg-brand-purple px-4 py-2 text-sm font-medium text-white hover:bg-brand-purple-dark"
+          >
+            Set up 2FA
+          </Button>
+        </div>,
+        {
+          duration: 20000,
+        },
+      );
+    } else {
+      setView('withdraw');
+    }
+  };
+
   return (
     <SideDrawer isOpen={isOpen} onClose={handleClose}>
       <SideDrawerContent className="w-screen overflow-y-auto sm:w-[30rem]">
@@ -156,10 +188,7 @@ export function WalletDrawer({
               {view === 'main' && (
                 <div className="w-full items-end justify-between">
                   <Button
-                    onClick={() => {
-                      setView('withdraw');
-                      posthog.capture('withdraw_start');
-                    }}
+                    onClick={handleWithdraw}
                     className="mt-3 rounded-lg bg-brand-purple px-5 text-base"
                     disabled={!tokens?.length}
                   >

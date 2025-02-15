@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMfaEnrollment, usePrivy } from '@privy-io/react-auth';
 import { useSignTransaction } from '@privy-io/react-auth/solana';
 import {
   Connection,
@@ -48,9 +47,6 @@ export function WithdrawFundsFlow({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
 
-  const { user: privyUser } = usePrivy();
-
-  const { showMfaEnrollmentModal } = useMfaEnrollment();
   const { signTransaction } = useSignTransaction();
 
   const form = useForm<WithdrawFormData>({
@@ -72,16 +68,6 @@ export function WithdrawFundsFlow({
     setIsProcessing(true);
     setError('');
     try {
-      try {
-        if (privyUser?.mfaMethods.length === 0) {
-          const mfa = await showMfaEnrollmentModal();
-          console.log('mfa', mfa);
-        }
-      } catch (e) {
-        throw new Error(
-          'Setting two factor authentication is required to withdraw funds.',
-        );
-      }
       const connection = new Connection(
         `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
       );
