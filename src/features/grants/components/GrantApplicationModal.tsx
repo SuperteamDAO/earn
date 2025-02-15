@@ -223,7 +223,11 @@ export const GrantApplicationModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent hideCloseIcon className="max-w-xl" ref={modalRef}>
+      <DialogContent
+        hideCloseIcon
+        className="max-w-xl md:max-h-[90svh]"
+        ref={modalRef}
+      >
         <X
           className="absolute right-4 top-7 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6"
           onClick={onClose}

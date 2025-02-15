@@ -8,6 +8,7 @@ import {
   VersionedTransaction,
 } from '@solana/web3.js';
 import { useQueryClient } from '@tanstack/react-query';
+import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -71,14 +72,27 @@ export function WithdrawFundsFlow({
     setIsProcessing(true);
     setError('');
     try {
-      if (privyUser?.mfaMethods.length === 0) {
-        await showMfaEnrollmentModal();
+      try {
+        if (privyUser?.mfaMethods.length === 0) {
+          const mfa = await showMfaEnrollmentModal();
+          console.log('mfa', mfa);
+        }
+      } catch (e) {
+        throw new Error(
+          'Setting two factor authentication is required to withdraw funds.',
+        );
       }
       const connection = new Connection(
         `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
       );
 
-      const { blockhash } = await connection.getLatestBlockhash('finalized');
+      let blockhash;
+      try {
+        const response = await connection.getLatestBlockhash('finalized');
+        blockhash = response.blockhash;
+      } catch (e) {
+        throw new Error('RPC Timed out');
+      }
 
       const instructions = await createTransferInstructions(
         connection,
@@ -136,9 +150,43 @@ export function WithdrawFundsFlow({
         throw new Error('Transaction failed');
       }
 
-      const status = await connection.getSignatureStatus(signature);
-      if (status.value?.err) {
-        throw new Error('Transaction failed after confirmation');
+      const pollForSignature = async (sig: string) => {
+        const MAX_RETRIES = 60;
+        let retries = 0;
+
+        while (retries < MAX_RETRIES) {
+          const status = await connection.getSignatureStatus(sig, {
+            searchTransactionHistory: true,
+          });
+
+          if (status?.value?.err) {
+            console.log(status.value.err);
+            throw new Error(
+              `Transaction failed: ${status.value.err.toString()}`,
+            );
+          }
+
+          if (
+            status?.value?.confirmationStatus === 'confirmed' ||
+            status.value?.confirmationStatus === 'finalized'
+          ) {
+            return true;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          retries++;
+        }
+
+        throw new Error('Transaction confirmation timeout');
+      };
+
+      try {
+        await pollForSignature(signature);
+      } catch (e) {
+        console.error('Transaction polling failed:', e);
+        throw new Error(
+          'Transaction might have gone through, check before proceeding',
+        );
       }
 
       setTxData({
@@ -160,14 +208,16 @@ export function WithdrawFundsFlow({
     } catch (e) {
       posthog.capture('withdraw_failed');
       console.error('Withdrawal failed:', e);
-      setError(
+      log.error(`Withdrawal failed: ${e}`);
+
+      const errorMessage =
         e instanceof Error
           ? e.message
-          : 'Transaction failed. Please try again.',
-      );
+          : 'Transaction failed. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
       console.log(error);
       setView('withdraw');
-      toast.error('Transaction failed. Please try again.');
       return Promise.reject(new Error('Transaction failed'));
     } finally {
       setIsProcessing(false);

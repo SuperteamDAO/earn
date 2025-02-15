@@ -46,9 +46,15 @@ export const WithdrawForm = ({
             <TokenAmountInput
               tokens={tokens}
               selectedToken={selectedToken}
-              onTokenChange={(value) => form.setValue('tokenAddress', value)}
+              onTokenChange={(value) => {
+                form.setValue('tokenAddress', value);
+                form.trigger('tokenAddress');
+              }}
               amount={form.watch('amount')}
-              onAmountChange={(value) => form.setValue('amount', value)}
+              onAmountChange={(value) => {
+                form.setValue('amount', value);
+                form.trigger('amount');
+              }}
             />
             {selectedToken && !hasInsufficientBalance && (
               <div className="flex justify-between text-xs font-medium text-slate-500">
