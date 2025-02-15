@@ -471,12 +471,12 @@ export const SubmissionDrawer = ({
                   {isLoading ? (
                     <>
                       <span className="loading loading-spinner"></span>
-                      Submitting...
+                      <span>Submitting...</span>
                     </>
                   ) : isProject ? (
-                    'Apply'
+                    <span>Apply</span>
                   ) : (
-                    'Submit'
+                    <span>Submit</span>
                   )}
                 </Button>
                 <p className="mt-2 text-center text-xs text-slate-400 sm:text-sm">

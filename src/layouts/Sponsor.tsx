@@ -272,7 +272,7 @@ export function SponsorLayout({
                         : ['absolute -ml-[9999px] opacity-0'],
                     )}
                   >
-                    Create New Listing
+                    <span>Create New Listing</span>
                   </p>
                   {isCreateListingAllowed !== undefined &&
                     isCreateListingAllowed === false &&

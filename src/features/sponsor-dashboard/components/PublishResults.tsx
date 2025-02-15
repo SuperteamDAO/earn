@@ -228,12 +228,12 @@ export function PublishResults({
                 }}
               >
                 {isPublishingResults ? (
-                  <>
+                  <span className="flex items-center justify-center gap-1">
                     <span className="loading loading-spinner" />
-                    Publishing...
-                  </>
+                    <span>Publishing...</span>
+                  </span>
                 ) : (
-                  'Publish'
+                  <span>Publish</span>
                 )}
               </Button>
             </div>

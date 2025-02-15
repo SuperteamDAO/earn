@@ -177,7 +177,7 @@ export function PrePublish() {
                 setShowPreview(true);
               }}
             >
-              Preview <ExternalLink />{' '}
+              <span>Preview</span> <ExternalLink />{' '}
             </Button>
           )}
           <Button
@@ -216,9 +216,9 @@ export function PrePublish() {
             submitListingMutation.isSuccess ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : !!isEditing ? (
-              'Update'
+              <span>Update</span>
             ) : (
-              'Publish'
+              <span>Publish</span>
             )}
           </Button>
         </DialogFooter>

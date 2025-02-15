@@ -157,7 +157,7 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
         disabled={isLoading}
         onClick={handleEmailSignIn}
       >
-        {isLoading ? 'Loading...' : 'Continue with Email'}
+        {isLoading ? <span>Loading...</span> : <span>Continue with Email</span>}
       </Button>
       {emailError && (
         <p className="mt-2 text-center text-xs leading-[0.9rem] text-red-500">

@@ -564,12 +564,12 @@ const CreateSponsor = () => {
                   type="submit"
                 >
                   {isUploading || isPending ? (
-                    <>
+                    <span className="flex items-center gap-1">
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating...
-                    </>
+                      <span>Creating...</span>
+                    </span>
                   ) : (
-                    'Create Sponsor'
+                    <span>Create Sponsor</span>
                   )}
                 </Button>
               </form>

@@ -665,12 +665,12 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 disabled={uploading || isLoading}
               >
                 {uploading || isLoading ? (
-                  <>
+                  <span className="flex items-center gap-2">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating...
-                  </>
+                    <span>Updating...</span>
+                  </span>
                 ) : (
-                  'Update Profile'
+                  <span>Update Profile</span>
                 )}
               </Button>
             </form>

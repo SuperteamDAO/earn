@@ -95,11 +95,12 @@ export const ListingSuccessModal = () => {
               <Button className="w-full gap-2">
                 {isVerified ? (
                   <>
-                    Invite Talent <Plus className="h-4 w-4" />
+                    <span>Invite Talent</span> <Plus className="h-4 w-4" />
                   </>
                 ) : (
                   <>
-                    View Listing <ChevronRight className="h-4 w-4" />
+                    <span>View Listing</span>{' '}
+                    <ChevronRight className="h-4 w-4" />
                   </>
                 )}
               </Button>

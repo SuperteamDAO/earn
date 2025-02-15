@@ -170,7 +170,11 @@ export const EmailSettingsModal = ({
             disabled={isUpdating}
             onClick={updateEmailSettings}
           >
-            {isUpdating ? 'Updating Preferences..' : 'Update Preferences'}
+            {isUpdating ? (
+              <span>Updating Preferences..</span>
+            ) : (
+              <span>Update Preferences</span>
+            )}
           </Button>
         </div>
       </DialogContent>

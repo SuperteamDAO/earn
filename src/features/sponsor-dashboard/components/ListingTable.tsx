@@ -319,9 +319,11 @@ export const ListingTable = ({
                         }}
                       >
                         <Eye className="h-4 w-4" />
-                        {listing?.type === 'grant'
-                          ? 'Applications'
-                          : 'Submissions'}
+                        {listing?.type === 'grant' ? (
+                          <span>Applications</span>
+                        ) : (
+                          <span>Submissions</span>
+                        )}
                       </Button>
                     ) : (user?.role === 'GOD' &&
                         listing.type !== 'grant' &&
@@ -385,7 +387,7 @@ export const ListingTable = ({
                           >
                             <DropdownMenuItem className="cursor-pointer text-sm font-medium text-slate-500">
                               <PencilLine className="mr-2 h-4 w-4" />
-                              Edit {listingLabel}
+                              Edit <span>{listingLabel}</span>
                             </DropdownMenuItem>
                           </Link>
                         )}
