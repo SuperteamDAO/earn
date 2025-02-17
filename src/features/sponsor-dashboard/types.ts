@@ -28,11 +28,7 @@ export interface SponsorStats {
   totalSubmissionsAndApplications?: number;
 }
 
-const ALLOWED_URL_PREFIXES = [
-  'https://pikespeak.ai/transaction-viewer/',
-  'https://nearblocks.io/txns/',
-  'https://explorer.near.com/',
-];
+const ALLOWED_URL_PREFIXES = ['https://nearblocks.io/txns/'];
 
 export const verifyPaymentsSchema = z.object({
   paymentLinks: z
@@ -61,7 +57,7 @@ export const verifyPaymentsSchema = z.object({
           ...data,
           txId: data.isVerified
             ? ''
-            : data.link?.split('/tx/')[1]?.split('?')[0] || '',
+            : data.link?.split('/txns/')[1]?.split('?')[0] || '',
         })),
     )
     .refine((links) => links.some((link) => link.link || link.isVerified), {

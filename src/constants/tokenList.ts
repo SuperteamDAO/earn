@@ -22,7 +22,7 @@ export const tokenList: Token[] = [
     tokenSymbol: 'NEAR',
     mintAddress: 'native',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6535.png',
-    decimals: 9,
+    decimals: 24,
     coingeckoSymbol: 'near',
   },
   {

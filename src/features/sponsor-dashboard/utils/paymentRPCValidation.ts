@@ -1,12 +1,9 @@
-import {
-  clusterApiUrl,
-  Connection,
-  LAMPORTS_PER_SOL,
-  type VersionedTransactionResponse,
-} from '@solana/web3.js';
+import { type FinalExecutionOutcome } from '@near-js/types';
+import * as nearApi from 'near-api-js';
 
 import { type Token } from '@/constants/tokenList';
 import logger from '@/lib/logger';
+import { getTransactionStatus } from '@/utils/near';
 
 interface ValidatePaymentParams {
   txId: string;
@@ -20,160 +17,128 @@ interface ValidationResult {
   error?: string;
 }
 
-async function wait(ms: number) {
-  return await new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export async function validatePayment({
   txId,
   recipientPublicKey,
   expectedAmount,
   tokenMint,
 }: ValidatePaymentParams): Promise<ValidationResult> {
-  const connection = new Connection(clusterApiUrl('mainnet-beta'));
-  const maxRetries = 3;
-  const delayMs = 5000;
-
   try {
     logger.debug(`Getting Transaction Information from RPC for txId: ${txId}`);
+    const tx: FinalExecutionOutcome = await getTransactionStatus(
+      recipientPublicKey,
+      txId,
+    );
 
-    let tx: VersionedTransactionResponse | null = null;
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        tx = await connection.getTransaction(txId, {
-          commitment: 'confirmed',
-          maxSupportedTransactionVersion: 10,
-        });
-        break;
-      } catch (err) {
-        if (attempt === maxRetries) {
-          throw new Error("Couldn't fetch transaction details");
-        }
-        await wait(delayMs);
-      }
-    }
-
-    if (!tx || !tx.meta) {
+    if (!tx) {
       return { isValid: false, error: 'Invalid transaction' };
     }
 
-    const { meta } = tx;
-
-    if (meta.err) {
-      return {
-        isValid: false,
-        error: 'Transaction Errored on chain',
-      };
+    if (tx.final_execution_status !== 'FINAL') {
+      return { isValid: false, error: 'Transaction not finalized' };
     }
 
-    const isNativeSol = isNativeSolTransfer(tx);
-    if (isNativeSol) {
-      if (tokenMint.tokenSymbol !== 'SOL') {
-        return {
-          isValid: false,
-          error: "Transferred token doesn't match the listing reward token",
-        };
-      }
-
-      const accountKeys = tx.transaction.message.getAccountKeys();
-      let recipientIndex = -1;
-
-      for (let i = 0; i < tx.meta.preBalances.length; i++) {
-        const balanceChange =
-          (tx.meta.postBalances[i] || 0) - (tx.meta.preBalances[i] || 0);
-        if (balanceChange > 0) {
-          const accountKey = accountKeys.get(i);
-          if (accountKey?.toString() === recipientPublicKey) {
-            recipientIndex = i;
-            break;
-          }
-        }
-      }
-
-      if (recipientIndex === -1) {
-        return {
-          isValid: false,
-          error: "Receiver's public key doesn't match our records",
-        };
-      }
-
-      const preBalance = tx.meta.preBalances[recipientIndex];
-      const postBalance = tx.meta.postBalances[recipientIndex];
-
-      const actualTransferAmount =
-        ((postBalance || 0) - (preBalance || 0)) / LAMPORTS_PER_SOL;
-
-      if (Math.abs(actualTransferAmount - expectedAmount) > 0.000001) {
-        return {
-          isValid: false,
-          error: "Transferred amount doesn't match the amount",
-        };
-      }
-
-      return { isValid: true };
+    if (!tx.receipts) {
+      return { isValid: false, error: 'No receipts found' };
     }
 
-    const preBalance = meta.preTokenBalances?.find(
-      (balance) => balance.owner === recipientPublicKey,
+    const isNativeTransfer = tokenMint.tokenSymbol === 'NEAR';
+
+    for (const receipt of tx.receipts) {
+      if (isNativeTransfer && receipt.receiver_id !== recipientPublicKey) {
+        continue;
+      }
+
+      if (!isNativeTransfer && receipt.receiver_id !== tokenMint.mintAddress) {
+        continue;
+      }
+    }
+
+    if (tx.transaction_outcome.outcome.status instanceof Object) {
+      if (tx.transaction_outcome.outcome.status.Failure !== undefined) {
+        return { isValid: false, error: 'Transaction failed' };
+      }
+    }
+
+    if (tokenMint.tokenSymbol === 'NEAR') {
+      return processNativeReceipt(
+        tx,
+        recipientPublicKey,
+        expectedAmount.toString(),
+      );
+    }
+
+    return processTokenReceipt(
+      tx,
+      tokenMint,
+      recipientPublicKey,
+      expectedAmount.toString(),
     );
-    const postBalance = meta.postTokenBalances?.find(
-      (balance) => balance.owner === recipientPublicKey,
-    );
-
-    if (!postBalance) {
-      return {
-        isValid: false,
-        error: "Receiver's public key doesn't match our records",
-      };
-    }
-
-    if (postBalance.mint !== tokenMint.mintAddress) {
-      return {
-        isValid: false,
-        error: "Transferred token doesn't match the listing reward token",
-      };
-    }
-
-    const preAmount = preBalance?.uiTokenAmount.uiAmount || 0;
-    const postAmount = postBalance.uiTokenAmount.uiAmount;
-
-    if (!postAmount) {
-      return {
-        isValid: false,
-        error: "Transferred amount doesn't match the amount",
-      };
-    }
-
-    const actualTransferAmount = postAmount - preAmount;
-    if (Math.abs(actualTransferAmount - expectedAmount) > 0.000001) {
-      return {
-        isValid: false,
-        error: "Transferred amount doesn't match the amount",
-      };
-    }
-
-    return { isValid: true };
   } catch (error: any) {
     return { isValid: false, error: error.message };
   }
 }
-function isNativeSolTransfer(tx: VersionedTransactionResponse) {
-  if (!tx.meta) return false;
-  const hasTokenTransfers =
-    (tx.meta?.preTokenBalances?.length || 0) > 0 ||
-    (tx.meta?.postTokenBalances?.length || 0) > 0;
-  if (hasTokenTransfers) return false;
 
-  const accountKeys = tx.transaction.message.getAccountKeys();
-  const SYSTEM_PROGRAM_ID = '11111111111111111111111111111111';
-  let isSystemProgram = false;
-  for (let i = 0; i < accountKeys.length; i++) {
-    const key = accountKeys.get(i);
-    if (key?.toString() === SYSTEM_PROGRAM_ID) {
-      isSystemProgram = true;
-      break;
+function processNativeReceipt(
+  outcome: FinalExecutionOutcome,
+  accountId: string,
+  expectedAmount: string,
+) {
+  if (!outcome.receipts) {
+    return { isValid: false, error: 'No receipts found' };
+  }
+
+  const expectedAmountInYocto = nearApi.utils.format.parseNearAmount(
+    expectedAmount.toString(),
+  );
+  if (!expectedAmountInYocto) {
+    return { isValid: false, error: 'Invalid expected amount' };
+  }
+  for (const receipt of outcome.receipts) {
+    if (receipt.receiver_id !== accountId) {
+      continue;
+    }
+
+    for (const action of receipt.receipt.Action.actions) {
+      if (
+        action.Transfer &&
+        action.Transfer.deposit === expectedAmountInYocto
+      ) {
+        return { isValid: true };
+      }
     }
   }
-  return isSystemProgram;
+
+  return { isValid: false, error: 'No transfer found' };
+}
+
+function processTokenReceipt(
+  receipt: FinalExecutionOutcome,
+  tokenMint: Token,
+  accountId: string,
+  expectedAmount: string,
+) {
+  for (const outcome of receipt.receipts_outcome) {
+    if (outcome.outcome.executor_id !== tokenMint.mintAddress) {
+      continue;
+    }
+
+    for (const log of outcome.outcome.logs) {
+      const logObject = JSON.parse(log);
+      if (!logObject.event || logObject.event.type !== 'ft_transfer') {
+        continue;
+      }
+
+      for (const action of logObject.event.data) {
+        if (
+          action.new_owner === accountId &&
+          action.amount === expectedAmount
+        ) {
+          return { isValid: true };
+        }
+      }
+    }
+  }
+
+  return { isValid: false, error: 'No transfer found' };
 }

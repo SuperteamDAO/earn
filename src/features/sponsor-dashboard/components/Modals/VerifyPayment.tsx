@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { PROJECT_NAME } from '@/constants/project';
+import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
 import { tokenList } from '@/constants/tokenList';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
@@ -331,7 +331,7 @@ export const VerifyPaymentModal = ({
 
             <div className="mx-auto flex flex-col items-center gap-2">
               <a
-                href="https://t.me/pratikdholani/"
+                href={`mailto:${SUPPORT_EMAIL}?subject=Payment Verification Issue`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-center"
@@ -506,7 +506,7 @@ export const VerifyPaymentModal = ({
 
                 {status === 'retry' && (
                   <a
-                    href="https://t.me/pratikdholani/"
+                    href={`mailto:${SUPPORT_EMAIL}?subject=Payment Verification Issue`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-center"
