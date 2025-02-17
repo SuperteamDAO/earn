@@ -27,6 +27,8 @@ export default function SignupPage() {
     verifyInviteQuery(cleanToken),
   );
 
+  console.log('inviteDetails', invite);
+
   const acceptInviteMutation = useMutation({
     mutationFn: acceptInvite,
     onSuccess: () => {
@@ -52,6 +54,24 @@ export default function SignupPage() {
       );
     }
   }, [error]);
+
+  useEffect(() => {
+    const handleRouteChange = (
+      url: string,
+      { shallow }: { shallow: boolean },
+    ) => {
+      console.log('Route changing to:', url);
+      console.log('Shallow routing:', shallow);
+      console.log('Current query params:', router.query);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    // Cleanup listener
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router]);
 
   if (error) {
     return (

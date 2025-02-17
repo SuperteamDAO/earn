@@ -32,7 +32,7 @@ export const Login = ({
   const popupTimeout = useAtomValue(popupTimeoutAtom);
 
   useLoginWithOAuth({
-    onComplete: async ({ isNewUser, user }) => {
+    onComplete: async ({ isNewUser, user, wasAlreadyAuthenticated }) => {
       if (isNewUser) {
         await handleUserCreation(user.google?.email || '');
       }
@@ -40,9 +40,11 @@ export const Login = ({
       if (redirectTo) {
         router.push(redirectTo);
       } else {
-        const currentPath = router.asPath.split('?')[0];
+        const currentPath = router.asPath;
         const url = new URL(window.location.origin + currentPath);
-        url.searchParams.set('loginState', 'signedIn');
+        if (!wasAlreadyAuthenticated) {
+          url.searchParams.set('loginState', 'signedIn');
+        }
         router.replace(currentPath + (url.search || ''));
       }
     },
