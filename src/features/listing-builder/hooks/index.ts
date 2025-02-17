@@ -148,7 +148,7 @@ export const useListingForm = (
   const onChange = useCallback(() => {
     setHideAutoSave(true);
     if (!isEditing) debouncedSaveRef.current?.();
-  }, []);
+  }, [isEditing]);
 
   const submitListing = useCallback(async () => {
     const formData = refineReadyListing(getValues());

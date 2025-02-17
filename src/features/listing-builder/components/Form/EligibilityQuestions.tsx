@@ -71,7 +71,11 @@ export function EligibilityQuestions() {
       if (type === 'hackathon' && hackathon?.eligibility) {
         form.setValue('eligibility', hackathon?.eligibility as any);
       } else {
-        form.setValue('eligibility', []);
+        if (fields.length > 0) {
+          form.setValue('eligibility', fields.slice(0, 2));
+        } else {
+          form.setValue('eligibility', []);
+        }
       }
     }
   }, [type, hackathon]);
