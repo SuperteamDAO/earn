@@ -119,10 +119,10 @@ export function SponsorLayout({
   }, [user]);
 
   useEffect(() => {
-    if (authenticated && !user?.currentSponsorId) {
+    if (ready && authenticated && user && !user?.currentSponsorId) {
       router.push('/');
     }
-  }, [user, authenticated]);
+  }, [user, authenticated, ready, user]);
 
   if (!ready) {
     return <LoadingSection />;
