@@ -198,7 +198,9 @@ export function WithdrawFundsFlow({
 
       const errorMessage =
         e instanceof Error
-          ? e.message
+          ? e.message === 'MFA canceled' || e.message === 'MFA cancelled'
+            ? 'Please complete two-factor authentication to withdraw'
+            : e.message
           : 'Transaction failed. Please try again.';
       setError(errorMessage);
       toast.error(errorMessage);

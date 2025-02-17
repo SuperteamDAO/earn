@@ -347,9 +347,18 @@ export const GrantApplicationModal = ({
                             Your Solana Wallet Address
                           </FormLabel>
                           <FormDescription>
-                            {isST
-                              ? 'This is where you will receive your rewards if you win. Make sure this address can accept both USDT & USDC.'
-                              : 'This is where you will receive your rewards if you win.'}
+                            {isST ? (
+                              <>
+                                This is where you will receive your rewards if
+                                you win.{' '}
+                                <span className="font-semibold">
+                                  Make sure this address can accept both USDT &
+                                  USDC.
+                                </span>
+                              </>
+                            ) : (
+                              'This is where you will receive your rewards if you win.'
+                            )}
                           </FormDescription>
                         </div>
                         <div>

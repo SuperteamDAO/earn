@@ -98,25 +98,30 @@ export function WalletDrawer({
     if (privyUser?.mfaMethods.length === 0) {
       toast(
         <div className="flex flex-col gap-1">
-          <div className="text-lg font-semibold">
-            Two-Factor Authentication Required
+          <div className="text-xl font-bold text-brand-purple">
+            Two-Factor Auth is Mandatory
           </div>
           <div className="text-sm text-slate-600">
-            Please set up two-factor authentication to continue withdrawing.
-            This helps keep your funds secure.
+            Setting up two-factor authentication is mandatory to continue
+            withdrawing. This will keep your funds secure.
           </div>
           <Button
             onClick={async () => {
               await showMfaEnrollmentModal();
               setView('withdraw');
             }}
-            className="mt-2 w-full rounded-lg bg-brand-purple px-4 py-2 text-sm font-medium text-white hover:bg-brand-purple-dark"
+            className="mt-2 w-full rounded-lg bg-brand-purple px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-purple-dark"
           >
             Set up 2FA
           </Button>
         </div>,
         {
           duration: 20000,
+          style: {
+            border: '1px solid #7471ff',
+            padding: '1rem',
+          },
+          className: 'shadow-lg',
         },
       );
     } else {
