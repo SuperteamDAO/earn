@@ -33,3 +33,9 @@ export async function getTransactionStatus(
 
   return result;
 }
+
+export function formatTokenAmount(amount: string, decimals: number): string {
+  const [wholePart, decimalPart = ''] = amount.split('.');
+  const paddedDecimal = decimalPart.padEnd(decimals, '0');
+  return `${wholePart}${paddedDecimal}`;
+}

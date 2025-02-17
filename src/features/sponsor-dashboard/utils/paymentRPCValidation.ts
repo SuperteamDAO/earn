@@ -3,7 +3,7 @@ import * as nearApi from 'near-api-js';
 
 import { type Token } from '@/constants/tokenList';
 import logger from '@/lib/logger';
-import { getTransactionStatus } from '@/utils/near';
+import { formatTokenAmount, getTransactionStatus } from '@/utils/near';
 
 interface ValidatePaymentParams {
   txId: string;
@@ -118,24 +118,34 @@ function processTokenReceipt(
   accountId: string,
   expectedAmount: string,
 ) {
+  const expectedAmountWithDecimals = formatTokenAmount(
+    expectedAmount,
+    tokenMint.decimals,
+  );
+
   for (const outcome of receipt.receipts_outcome) {
     if (outcome.outcome.executor_id !== tokenMint.mintAddress) {
       continue;
     }
 
     for (const log of outcome.outcome.logs) {
-      const logObject = JSON.parse(log);
-      if (!logObject.event || logObject.event.type !== 'ft_transfer') {
-        continue;
-      }
-
-      for (const action of logObject.event.data) {
-        if (
-          action.new_owner === accountId &&
-          action.amount === expectedAmount
-        ) {
-          return { isValid: true };
+      try {
+        const logObject = JSON.parse(log.substring(log.search('{')));
+        if (!logObject.event || logObject.event !== 'ft_transfer') {
+          continue;
         }
+
+        for (const action of logObject.data) {
+          if (
+            action.new_owner_id === accountId &&
+            action.amount === expectedAmountWithDecimals
+          ) {
+            return { isValid: true };
+          }
+        }
+      } catch (error) {
+        logger.warn(`Error parsing log: ${error}`);
+        continue;
       }
     }
   }
