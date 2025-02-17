@@ -349,7 +349,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
     logger.debug(`Publish Listing Successful`, { id });
 
-    if (isVerifying) {
+    if (isVerifying && listing.status !== 'VERIFYING') {
       logger.info('Sending Discord Verification message', {
         id,
       });
