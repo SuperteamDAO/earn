@@ -1,9 +1,10 @@
 import { ChevronDown, ChevronUp, SquarePen } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
-import React, { type JSX, useEffect, useState } from 'react';
+import React, { type JSX, useEffect, useMemo, useState } from 'react';
 import { MdEmail } from 'react-icons/md';
 import { useInView } from 'react-intersection-observer';
 
@@ -174,7 +175,7 @@ function TalentProfile({ talent, stats }: TalentProps) {
       return (
         <Button
           className={cn(
-            'ph-no-capture text-sm font-medium',
+            'ph-no-capture w-full text-sm font-medium',
             outline
               ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
               : 'border-brand-purple/5 bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20',
@@ -225,6 +226,13 @@ function TalentProfile({ talent, stats }: TalentProps) {
       : 'Superteam Earn';
 
   const feedItems = feed?.pages.flatMap((page) => page) ?? [];
+
+  const reachOutLink = useMemo(() => {
+    const email = encodeURIComponent(talent?.email || '');
+    const subject = encodeURIComponent('Saw Your ST Earn Profile!');
+    const bcc = encodeURIComponent('support@superteamearn.com');
+    return `mailto:${email}?subject=${subject}&bcc=${bcc}`;
+  }, [talent]);
 
   return (
     <Default
@@ -281,23 +289,24 @@ function TalentProfile({ talent, stats }: TalentProps) {
                 </p>
               </div>
               <div className="flex w-auto gap-3 md:w-[160px] md:flex-col">
-                {user?.id === talent?.id
-                  ? renderButton(
-                      <SquarePen />,
-                      'Edit Profile',
-                      handleEditProfileClick,
-                    )
-                  : renderButton(<MdEmail />, 'Reach Out', () => {
+                {user?.id === talent?.id ? (
+                  renderButton(
+                    <SquarePen />,
+                    'Edit Profile',
+                    handleEditProfileClick,
+                  )
+                ) : (
+                  <Link
+                    href={reachOutLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full"
+                  >
+                    {renderButton(<MdEmail />, 'Reach Out', () => {
                       posthog.capture('reach out_talent profile');
-                      const email = encodeURIComponent(talent?.email || '');
-                      const subject = encodeURIComponent(
-                        'Saw Your ST Earn Profile!',
-                      );
-                      const bcc = encodeURIComponent(
-                        'support@superteamearn.com',
-                      );
-                      window.location.href = `mailto:${email}?subject=${subject}&bcc=${bcc}`;
                     })}
+                  </Link>
+                )}
                 {renderButton(<ShareIcon />, 'Share', onOpen, true)}
               </div>
             </div>
