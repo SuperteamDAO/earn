@@ -379,7 +379,8 @@ export const ListingTable = ({
                           (user?.role === 'GOD' && listing.type !== 'grant') ||
                           (!pastDeadline &&
                             listing.type !== 'grant' &&
-                            listing.status === 'OPEN')
+                            (listing.status === 'OPEN' ||
+                              listing.status === 'VERIFYING'))
                         ) && (
                           <Link
                             className="block"
