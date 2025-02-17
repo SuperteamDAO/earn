@@ -97,10 +97,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         isPaid: true,
       },
     });
-    result.totalPaymentsMade = totalPaymentsMade;
+    const resultTransformed = {
+      ...result,
+      totalPaymentsMade,
+    };
 
     logger.info(`Successfully fetched bounty details for slug=${slug}`);
-    return res.status(200).json(result);
+    return res.status(200).json(resultTransformed);
   } catch (error: any) {
     logger.error(
       `Error fetching bounty with slug=${slug}:`,
