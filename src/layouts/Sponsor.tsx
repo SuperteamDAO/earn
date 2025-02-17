@@ -51,7 +51,7 @@ export function SponsorLayout({
   children: ReactNode;
   isCollapsible?: boolean;
 }) {
-  const { user } = useUser();
+  const { user, isLoading: isUserLoading } = useUser();
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -119,10 +119,16 @@ export function SponsorLayout({
   }, [user]);
 
   useEffect(() => {
-    if (ready && authenticated && user && !user?.currentSponsorId) {
+    if (
+      !isUserLoading &&
+      ready &&
+      authenticated &&
+      user &&
+      !user?.currentSponsorId
+    ) {
       router.push('/');
     }
-  }, [user, authenticated, ready, user]);
+  }, [user, authenticated, ready, user, isUserLoading]);
 
   if (!ready) {
     return <LoadingSection />;

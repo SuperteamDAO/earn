@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
+import { useUser } from '@/store/user';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import {
@@ -18,6 +19,7 @@ export default function SignupPage() {
   const router = useRouter();
   const { authenticated } = usePrivy();
   const [isNavigating, setIsNavigating] = useState(false);
+  const { refetchUser } = useUser();
 
   const { invite } = router.query;
   const cleanToken =
@@ -31,8 +33,9 @@ export default function SignupPage() {
 
   const acceptInviteMutation = useMutation({
     mutationFn: acceptInvite,
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("You've successfully joined the sponsor's dashboard.");
+      await refetchUser();
       setIsNavigating(true);
       router.push('/dashboard/listings');
     },
