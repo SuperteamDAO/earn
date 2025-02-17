@@ -55,7 +55,7 @@ export const Podiums = () => {
     // react hook form has a bug that saves rewards as array when single item instead of object
     if (Array.isArray(rewards)) {
       const rewardsObject = rewards.reduce((acc, value, index) => {
-        acc[index] = value;
+        acc[index + 1] = value;
         return acc;
       }, {});
       form.setValue('rewards', rewardsObject);
