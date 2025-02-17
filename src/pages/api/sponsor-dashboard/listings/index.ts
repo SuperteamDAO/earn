@@ -44,7 +44,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           b.isPublished,
           b.rewards,
           b.rewardAmount,
-          b.totalPaymentsMade,
+          (SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id AND s.isPaid = 1) as totalPaymentsMade,
           b.isWinnersAnnounced,
           b.maxRewardAsk,
           b.minRewardAsk,

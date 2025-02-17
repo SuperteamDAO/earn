@@ -91,6 +91,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         message: `Bounty with slug=${slug} not found.`,
       });
     }
+    const totalPaymentsMade = await prisma.submission.count({
+      where: {
+        listingId: result.id,
+        isPaid: true,
+      },
+    });
+    result.totalPaymentsMade = totalPaymentsMade;
 
     logger.info(`Successfully fetched bounty details for slug=${slug}`);
     return res.status(200).json(result);
