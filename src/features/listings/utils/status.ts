@@ -1,3 +1,5 @@
+import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
+
 import {
   type Listing,
   type ListingWithSubmissions,
@@ -63,6 +65,10 @@ export const getListingStatus = (
     listing?.isPublished,
   );
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
+  const totalWinnerRanks = calculateTotalPrizes(
+    listing?.rewards ?? {},
+    listing?.maxBonusSpots || 0,
+  );
 
   if (listingStatus === 'VERIFYING') return 'Under Verification';
   if (listingStatus === 'VERIFY_FAIL') return 'Verification Failed';
@@ -79,19 +85,19 @@ export const getListingStatus = (
       if (!listing?.isWinnersAnnounced) return 'In Review';
       if (
         listing?.isWinnersAnnounced &&
-        listing?.totalPaymentsMade !== listing?.totalWinnersSelected &&
+        listing?.totalPaymentsMade !== totalWinnerRanks &&
         listing?.isFndnPaying
       )
         return 'Fndn to Pay';
       if (
         listing?.isWinnersAnnounced &&
-        listing?.totalPaymentsMade !== listing?.totalWinnersSelected
+        listing?.totalPaymentsMade !== totalWinnerRanks
       )
         return 'Payment Pending';
       if (
         listing?.isWinnersAnnounced &&
         listing.totalPaymentsMade > 0 &&
-        listing?.totalPaymentsMade === listing?.totalWinnersSelected
+        listing?.totalPaymentsMade === totalWinnerRanks
       )
         return 'Completed';
       return 'In Review';

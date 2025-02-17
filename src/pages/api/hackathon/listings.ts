@@ -81,8 +81,6 @@ async function getHackathonListings(
         isPublished: true,
         rewards: true,
         rewardAmount: true,
-        totalWinnersSelected: true,
-        totalPaymentsMade: true,
         isWinnersAnnounced: true,
         sponsor: {
           select: {
