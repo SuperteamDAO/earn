@@ -223,14 +223,14 @@ export const ApproveModal = ({
             {loading ? (
               <>
                 <span className="loading loading-spinner mr-2" />
-                Approving
+                <span>Approving</span>
               </>
             ) : (
               <>
                 <div className="mr-2 rounded-full bg-white p-[5px]">
                   <Check className="h-2.5 w-2.5 text-[#079669]" />
                 </div>
-                Approve Grant
+                <span>Approve Grant</span>
               </>
             )}
           </Button>

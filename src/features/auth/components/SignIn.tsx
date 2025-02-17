@@ -70,7 +70,11 @@ export const SignIn = ({
                   disabled={isLoading}
                 >
                   <GoogleIcon />
-                  {isLoading ? 'Connecting...' : 'Continue with Google'}
+                  {isLoading ? (
+                    <span>Connecting...</span>
+                  ) : (
+                    <span>Continue with Google</span>
+                  )}
                 </Button>
 
                 <div className="my-3 flex w-full items-center gap-4">
@@ -86,7 +90,7 @@ export const SignIn = ({
                   onClick={() => setLoginStep(1)}
                 >
                   <MdOutlineEmail className="mr-2" />
-                  Continue with Email
+                  <span>Continue with Email</span>
                 </Button>
               </div>
             )}

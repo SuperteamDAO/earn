@@ -129,7 +129,7 @@ export const DesktopNavbar = ({
                   asChild
                 >
                   <Link href="/dashboard/listings">
-                    Sponsor Dashboard
+                    <span>Sponsor Dashboard</span>
                     <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                   </Link>
                 </Button>
@@ -164,7 +164,7 @@ export const DesktopNavbar = ({
                     router.push('/sponsor');
                   }}
                 >
-                  Become a Sponsor
+                  <span>Become a Sponsor</span>
                   <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                 </Button>
                 <Button

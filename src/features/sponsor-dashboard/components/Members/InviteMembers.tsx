@@ -164,7 +164,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
                 {inviteMutation.isPending ? (
                   <>
                     <span className="loading loading-spinner mr-2" />
-                    Inviting...
+                    <span>Inviting...</span>
                   </>
                 ) : (
                   <>

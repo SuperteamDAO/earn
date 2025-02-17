@@ -185,10 +185,10 @@ export const SponsorInfoModal = ({
               {uploading || updateUserMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Submitting
+                  <span>Submitting</span>
                 </>
               ) : (
-                'Submit'
+                <span>Submit</span>
               )}
             </Button>
           </form>

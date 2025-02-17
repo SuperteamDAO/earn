@@ -220,7 +220,7 @@ export function EligibilityQuestions() {
                   )}
                   onClick={() => handleAddQuestion()}
                 >
-                  <Plus /> Add Question
+                  <Plus /> <span>Add Question</span>
                 </Button>
               </div>
             ) : (

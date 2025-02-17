@@ -310,7 +310,7 @@ export const Podiums = () => {
                   className="flex items-center gap-2 px-0 text-[0.9rem]"
                 >
                   <Plus className="h-4 w-4" />
-                  Add Individual Position
+                  <span>Add Individual Position</span>
                 </Button>
               )}
 
@@ -323,7 +323,7 @@ export const Podiums = () => {
                   className="ml-auto flex items-center gap-2 px-0 text-[0.9rem] text-slate-500"
                 >
                   <Plus className="h-4 w-4" />
-                  Add Bonus Prize
+                  <span>Add Bonus Prize</span>
                 </Button>
               )}
             </div>
