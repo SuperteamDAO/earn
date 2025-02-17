@@ -334,6 +334,7 @@ export const GrantApplicationModal = ({
                       formLabel="Your Telegram username"
                       control={form.control}
                       height="h-9"
+                      showIcon={false}
                     />
                   )}
                   <FormField
