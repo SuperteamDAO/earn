@@ -38,10 +38,17 @@ export const SignIn = ({
       } else {
         const currentPath = router.asPath;
         const url = new URL(window.location.origin + currentPath);
+
+        const privyParams = [
+          'privy_oauth_state',
+          'privy_oauth_provider',
+          'privy_oauth_code',
+        ];
+        privyParams.forEach((param) => url.searchParams.delete(param));
         if (!wasAlreadyAuthenticated) {
           url.searchParams.set('loginState', 'signedIn');
         }
-        router.replace(currentPath + (url.search || ''));
+        router.replace(url.toString());
       }
     },
   });
