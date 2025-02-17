@@ -5,6 +5,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { type GrantApplicationAi } from '@/features/grants/types';
 
@@ -30,6 +31,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: session.error },
         { status: session.status },
+      );
+    }
+    const { error } = await checkGrantSponsorAuth(
+      session.data.userSponsorId,
+      id,
+    );
+    if (error) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
       );
     }
 
