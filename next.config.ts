@@ -18,8 +18,8 @@ const baseCsp = `
   connect-src 'self' blob:  https://auth.privy.io https://*.rpc.privy.systems https://api.mainnet-beta.solana.com https://api.devnet.solana.com https://api.testnet.solana.com https://us.i.posthog.com https://app.posthog.com https://*.helius-rpc.com wss://mainnet.helius-rpc.com https://ipapi.co/json;
   font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;
   child-src 'self' https://auth.privy.io;
-  frame-src 'self' https://auth.privy.io;
-  frame-ancestors 'self';
+  frame-src 'self' https://auth.privy.io https://*.sumsub.com;
+  frame-ancestors 'self' https://*.sumsub.com;
   ${process.env.NODE_ENV === 'production' ? 'upgrade-insecure-requests;' : ''}
 `;
 

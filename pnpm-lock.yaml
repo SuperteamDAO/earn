@@ -118,6 +118,12 @@ importers:
       '@solana/web3.js':
         specifier: ^1.98.0
         version: 1.98.0(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@5.0.10)
+      '@sumsub/websdk':
+        specifier: ^2.3.12
+        version: 2.3.12
+      '@sumsub/websdk-react':
+        specifier: ^2.3.12
+        version: 2.3.12(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@tanstack/react-query':
         specifier: ^5.66.0
         version: 5.66.0(react@19.0.0)
@@ -2936,6 +2942,15 @@ packages:
 
   '@stablelib/base64@1.0.1':
     resolution: {integrity: sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==}
+
+  '@sumsub/websdk-react@2.3.12':
+    resolution: {integrity: sha512-1duQa63TRFvJ9ZQKs7Ooidi8lK0QY2Zf8m9+yVE9fhzcW+OwmrjmirHwKEM8kbhMBbqgU92CcyschCNB56/3zg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
+  '@sumsub/websdk@2.3.12':
+    resolution: {integrity: sha512-EXmsKO27X05OkgrK9ZRHDbVRX0ZpqnuWibQglcPAKgIlSlCaJV7dP6LjtfnxO5CIx5I34JOsf6lEoYcBmH2klA==}
 
   '@surma/rollup-plugin-off-main-thread@2.2.3':
     resolution: {integrity: sha512-lR8q/9W7hZpMWweNiAKU7NQerBnzQQLvi8qnTDU/fxItPhtZVMbPV3lbCwjhIlNBe9Bbr5V+KHshvWmVSG9cxQ==}
@@ -11755,6 +11770,13 @@ snapshots:
       uuid: 9.0.1
 
   '@stablelib/base64@1.0.1': {}
+
+  '@sumsub/websdk-react@2.3.12(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+    dependencies:
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+
+  '@sumsub/websdk@2.3.12': {}
 
   '@surma/rollup-plugin-off-main-thread@2.2.3':
     dependencies:
