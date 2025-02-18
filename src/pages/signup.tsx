@@ -122,7 +122,9 @@ export default function SignupPage() {
           ) : (
             <Button
               className="mt-4"
-              disabled={acceptInviteMutation.isPending || isNavigating}
+              disabled={
+                !inviteDetails || acceptInviteMutation.isPending || isNavigating
+              }
               onClick={handleAcceptInvite}
               size="lg"
             >
