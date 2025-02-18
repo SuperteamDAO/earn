@@ -61,7 +61,7 @@ export function TokenSelect() {
                       }}
                     />
                   ) : (
-                    'Select Token'
+                    <span>Select Token</span>
                   )}
                   <ChevronDown className="opacity-50" />
                 </Button>

@@ -10,6 +10,7 @@ import { type EvaluationResult } from '@/features/grants/types';
 
 export const maxDuration = 300;
 
+// Not sponsor gating this API since this is called at grant application create
 export async function POST(request: NextRequest) {
   const body = await request.json();
   const { id } = body;

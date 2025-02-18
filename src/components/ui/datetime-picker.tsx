@@ -535,7 +535,7 @@ function MonthYearPicker({
                   className="rounded-full"
                   onClick={() => onYearChange(year)}
                 >
-                  {year.label}
+                  <span>{year.label}</span>
                 </Button>
               </div>
             ))}
@@ -860,7 +860,7 @@ function TimePicker({
           className="justify-between"
         >
           <Clock className="mr-2 size-4" />
-          {display}
+          <span>{display}</span>
           <ChevronDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

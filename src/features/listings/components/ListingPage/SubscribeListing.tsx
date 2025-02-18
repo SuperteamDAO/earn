@@ -105,11 +105,13 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
               <TbBell />
             )}
             <span className="hidden md:inline">
-              {isSubscribeLoading
-                ? 'Subscribing'
-                : isSubscribed
-                  ? 'Subscribed'
-                  : 'Subscribe'}
+              {isSubscribeLoading ? (
+                <span>Subscribing</span>
+              ) : isSubscribed ? (
+                <span>Subscribed</span>
+              ) : (
+                <span>Subscribe</span>
+              )}
             </span>
           </Button>
         </AuthWrapper>

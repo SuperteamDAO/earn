@@ -92,7 +92,7 @@ export function DescriptionUI({ description }: Props) {
             size="sm"
             variant="outline"
           >
-            Read {showMore ? 'Less' : 'More'}
+            <span>Read {showMore ? <span>Less</span> : <span>More</span>}</span>
             <ChevronDown
               className={`ml-2 h-5 w-5 text-slate-300 transition-transform duration-200 ${
                 showMore ? 'rotate-180' : ''

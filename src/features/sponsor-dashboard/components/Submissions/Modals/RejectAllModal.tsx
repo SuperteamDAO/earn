@@ -72,7 +72,7 @@ export const RejectAllSubmissionModal = ({
             {loading ? (
               <>
                 <span className="loading loading-spinner mr-2" />
-                Rejecting
+                <span>Rejecting</span>
               </>
             ) : (
               <>

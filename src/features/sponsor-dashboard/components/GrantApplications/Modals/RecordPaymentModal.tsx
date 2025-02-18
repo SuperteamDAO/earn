@@ -171,12 +171,12 @@ export const RecordPaymentModal = ({
                 {addPaymentMutation.isPending ? (
                   <>
                     <span className="loading loading-spinner mr-2" />
-                    Adding Payment
+                    <span>Adding Payment</span>
                   </>
                 ) : (
                   <>
                     <Plus className="mr-2 h-[18px] w-[18px]" />
-                    Add Payment
+                    <span>Add Payment</span>
                   </>
                 )}
               </Button>

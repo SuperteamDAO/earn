@@ -110,7 +110,7 @@ export function Slug() {
                     );
                   }}
                 >
-                  https://earn.superteam.fun/listing/
+                  <span>https://earn.superteam.fun/listing/</span>
                   <span className="underline underline-offset-2">{slug}</span>
                 </button>
               </FormDescription>

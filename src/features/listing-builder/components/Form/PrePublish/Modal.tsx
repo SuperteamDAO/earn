@@ -26,6 +26,7 @@ import {
   isDraftSavingAtom,
   isEditingAtom,
   isSTAtom,
+  listingStatusAtom,
   previewAtom,
   submitListingMutationAtom,
 } from '../../../atoms';
@@ -39,6 +40,7 @@ export function PrePublish() {
   const isST = useAtomValue(isSTAtom);
   const form = useListingForm();
   const [open, isOpen] = useState(false);
+  const status = useAtomValue(listingStatusAtom);
 
   const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
 
@@ -120,6 +122,11 @@ export function PrePublish() {
     [form.formState.errors.slug, isDisabledSoft],
   );
 
+  const isUpdate = useMemo(
+    () => !!isEditing || status === 'verifying',
+    [isEditing, status],
+  );
+
   return (
     <Dialog
       open={open}
@@ -154,7 +161,10 @@ export function PrePublish() {
       </Tooltip>
       <DialogContent className="overflow-y-visible py-4 sm:max-w-[500px]">
         <DialogHeader className="flex flex-row gap-4">
-          <DialogTitle className="text-base">Publish Listing</DialogTitle>
+          <DialogTitle className="text-base">
+            {isUpdate ? <span>Update</span> : <span>Publish</span>}{' '}
+            <span>Listing</span>
+          </DialogTitle>
           {isDisabledSoft && (
             <Loader2 className="h-4 w-4 animate-spin text-slate-500" />
           )}
@@ -177,7 +187,7 @@ export function PrePublish() {
                 setShowPreview(true);
               }}
             >
-              Preview <ExternalLink />{' '}
+              <span>Preview</span> <ExternalLink />{' '}
             </Button>
           )}
           <Button
@@ -194,7 +204,8 @@ export function PrePublish() {
                     });
                   } else {
                     isOpen(false);
-                    posthog.capture('publish listing_sponsor');
+                    if (isUpdate) posthog.capture('update listing_sponsor');
+                    else posthog.capture('publish listing_sponsor');
                     if (data.status === 'VERIFYING') {
                       setConfirmModal('VERIFICATION');
                     } else {
@@ -215,10 +226,10 @@ export function PrePublish() {
             {submitListingMutation.isPending ||
             submitListingMutation.isSuccess ? (
               <Loader2 className="h-4 w-4 animate-spin" />
-            ) : !!isEditing ? (
-              'Update'
+            ) : isUpdate ? (
+              <span>Update</span>
             ) : (
-              'Publish'
+              <span>Publish</span>
             )}
           </Button>
         </DialogFooter>

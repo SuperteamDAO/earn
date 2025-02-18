@@ -140,7 +140,11 @@ export const CommentForm = ({
               }
               onClick={handleSubmit}
             >
-              {newCommentLoading ? 'Adding...' : 'Comment'}
+              {newCommentLoading ? (
+                <span>Adding...</span>
+              ) : (
+                <span>Comment</span>
+              )}
             </Button>
           </AuthWrapper>
         </div>

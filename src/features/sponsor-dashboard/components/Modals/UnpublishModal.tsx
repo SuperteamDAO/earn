@@ -93,12 +93,12 @@ export const UnpublishModal = ({
             {updateMutation.isPending ? (
               <>
                 <span className="loading loading-spinner mr-2" />
-                Unpublishing...
+                <span>Unpublishing...</span>
               </>
             ) : (
               <>
                 <EyeOff className="mr-2 h-4 w-4" />
-                Unpublish
+                <span>Unpublish</span>
               </>
             )}
           </Button>

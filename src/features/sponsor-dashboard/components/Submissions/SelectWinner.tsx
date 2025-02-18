@@ -131,7 +131,6 @@ export const SelectWinner = ({
               />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="placeholder">Select Winner</SelectItem>
               {rewards.map((reward) => {
                 let isRewardUsed = usedPositions.includes(reward);
                 if (reward === BONUS_REWARD_POSITION) {
