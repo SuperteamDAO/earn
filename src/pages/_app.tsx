@@ -77,6 +77,7 @@ function MyApp({ Component, pageProps }: any) {
       if (
         router.pathname.startsWith('/new') ||
         router.pathname.startsWith('/sponsor') ||
+        router.pathname.startsWith('/signup') ||
         !user
       )
         return;
