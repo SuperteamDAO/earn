@@ -23,8 +23,6 @@ services:
         sync: false
       - key: NEXT_PUBLIC_SITE_URL
         sync: false
-      - key: NEXT_AUTH_URL
-        sync: false
       - key: NODE_VERSION
         value: 20.11.0
       - key: ZEROBOUNCE_API_KEY
