@@ -59,7 +59,7 @@ services:
         fromService:
           name: nearn-email
           type: worker
-          property: AUTH_SECRET
+          envVarKey: AUTH_SECRET
       - key: EMAIL_BACKEND
         fromService:
           name: nearn-email
