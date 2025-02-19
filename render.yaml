@@ -17,7 +17,7 @@ services:
         value: 3000
       - key: NEXTAUTH_URL
         sync: false
-      - key: NEXT_AUTH_SECRET
+      - key: NEXTAUTH_SECRET
         generateValue: true
       - key: NEXT_PUBLIC_URL
         sync: false
