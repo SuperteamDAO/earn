@@ -1,11 +1,9 @@
 services:
   - type: web
-    name: nearn
+    name: nearn-app
     runtime: node
     region: frankfurt
     plan: standard
-    repo: https://github.com/near-devhub/nearn
-    branch: prod
     previews:
       generation: manual
       plan: starter
