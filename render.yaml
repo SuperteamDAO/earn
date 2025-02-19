@@ -62,12 +62,12 @@ services:
       - key: EMAIL_SECRET
         fromService:
           name: nearn-email
-          type: worker
+          type: pserv
           envVarKey: AUTH_SECRET
       - key: EMAIL_BACKEND
         fromService:
           name: nearn-email
-          type: worker
+          type: pserv
           property: hostport
       - key: NEXT_PUBLIC_POSTHOG_HOST
         sync: false
