@@ -12,7 +12,6 @@ import { toast } from 'sonner';
 
 import { useUser } from '@/store/user';
 import { fontMono, fontSans } from '@/theme/fonts';
-import { getURL } from '@/utils/validUrl';
 
 import '../styles/globals.scss';
 import '@/components/tiptap/styles/index.css';
@@ -39,8 +38,8 @@ const queryClient = new QueryClient();
 
 if (typeof window !== 'undefined') {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: `${getURL()}ingest`,
-    ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+    api_host:
+      process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://eu.i.posthog.com',
     loaded: (posthog) => {
       if (process.env.NODE_ENV === 'development') posthog.debug();
     },
