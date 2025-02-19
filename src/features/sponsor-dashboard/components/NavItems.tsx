@@ -24,7 +24,10 @@ export const NavItem = ({
 }: NavItemProps) => {
   const router = useRouter();
   const currentPath = router.asPath.split('?')[0];
-  const isExternalLink = link?.startsWith('https://');
+  const isExternalLink =
+    link?.startsWith('https://') ||
+    link?.startsWith('http://') ||
+    link?.startsWith('mailto:');
   const resolvedLink = isExternalLink ? link : `/dashboard${link}`;
   const isActiveLink = resolvedLink
     ? currentPath?.startsWith(resolvedLink)

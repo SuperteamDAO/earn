@@ -1,11 +1,10 @@
 import { Info, Pencil } from 'lucide-react';
 import Link from 'next/link';
-import { usePostHog } from 'posthog-js/react';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
-import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
+import { PROJECT_NAME } from '@/constants/project';
 import { useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -68,7 +67,6 @@ export function Banner({
   isLoading: boolean;
 }) {
   const { user } = useUser();
-  const posthog = usePostHog();
   const sponsorId = isHackathon ? user?.hackathonId : user?.currentSponsorId;
 
   const tooltipTextReward = `Total compensation (in USD) of listings where the winners have been announced`;
@@ -138,16 +136,6 @@ export function Banner({
             isLoading={isLoading}
           />
         </div>
-      </div>
-
-      <div className="mb-6 w-[60%] max-w-[400px] rounded-md border border-slate-200 bg-indigo-50 px-8 py-5 text-white">
-        <a
-          className="ph-no-capture no-underline"
-          href={`mailto:${SUPPORT_EMAIL}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => posthog.capture('message pratik_sponsor')}
-        ></a>
       </div>
     </div>
   );
