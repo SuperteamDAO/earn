@@ -67,7 +67,7 @@ services:
           type: worker
           property: hostport
     autoDeploy: true
-  - type: worker
+  - type: pserv
     repo: https://github.com/akorchyn/nearn-emails
     branch: prod
     name: nearn-email
