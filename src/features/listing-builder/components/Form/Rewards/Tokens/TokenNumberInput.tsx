@@ -112,7 +112,7 @@ export const TokenNumberInput = React.forwardRef<
               showSymbol
               symbol={symbol}
               classNames={{
-                symbol: 'text-slate-500',
+                symbol: 'text-slate-600',
               }}
             />
           </div>
