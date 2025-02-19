@@ -1,7 +1,14 @@
 import { Logger } from 'tslog';
 
+const MIN_LOG_LEVEL =
+  process.env.LOG_LEVEL !== undefined
+    ? parseInt(process.env.LOG_LEVEL, 10)
+    : process.env.NODE_ENV === 'production'
+      ? 2
+      : 99999;
+
 const logger = new Logger({
-  minLevel: process.env.VERCEL_ENV === 'production' ? 2 : 99999,
+  minLevel: MIN_LOG_LEVEL,
   prettyLogTimeZone: 'UTC',
   prettyErrorStackTemplate:
     '  • {{fileName}}\t{{method}}\n\t{{filePathWithLine}}',
