@@ -194,7 +194,7 @@ export function WithdrawFundsFlow({
     } catch (e) {
       posthog.capture('withdraw_failed');
       console.error('Withdrawal failed:', e);
-      log.error(`Withdrawal failed: ${e}`);
+      log.error(`Withdrawal failed: ${e}, ${user?.id}`);
 
       const errorMessage =
         e instanceof Error
