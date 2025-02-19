@@ -26,6 +26,9 @@ export const listingToStatus = (listing: ListingFormData): ListingStatus => {
     }
   } else if (listing.status === 'VERIFYING') {
     return 'verifying';
+  } else if (listing.status === 'VERIFY_FAIL') {
+    return 'verification failed';
   }
-  return 'draft';
+  if (!listing.status) return 'draft';
+  return 'blocked';
 };
