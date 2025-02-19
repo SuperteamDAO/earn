@@ -271,12 +271,12 @@ export const SubmissionActionButton = ({
                 {isUserSubmissionLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {btnLoadingText}
+                    <span>{btnLoadingText}</span>
                   </>
                 ) : (
                   <>
                     {buttonState === 'edit' && <Pencil />}
-                    {buttonText}
+                    <span>{buttonText}</span>
                   </>
                 )}
               </Button>

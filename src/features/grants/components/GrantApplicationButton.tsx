@@ -165,12 +165,12 @@ export const GrantApplicationButton = ({
               {isUserApplicationLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {btnLoadingText}
+                  <span>{btnLoadingText}</span>
                 </>
               ) : (
                 <>
                   {applicationState === 'ALLOW EDIT' && <Pencil />}
-                  {buttonText}
+                  <span>{buttonText}</span>
                 </>
               )}
             </Button>

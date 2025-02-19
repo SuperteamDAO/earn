@@ -88,7 +88,7 @@ export const EntityNameModal = ({
             onClick={setDBEntityName}
             disabled={loading}
           >
-            {loading ? 'Updating...' : 'Update'}
+            {loading ? <span>Updating...</span> : <span>Update</span>}
           </Button>
         </div>
 

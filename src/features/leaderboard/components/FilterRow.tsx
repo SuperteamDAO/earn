@@ -133,10 +133,18 @@ function Timeframe({
         <SelectValue />
       </SelectTrigger>
       <SelectContent className="text-slate-500">
-        <SelectItem value="ALL_TIME">All Time</SelectItem>
-        <SelectItem value="THIS_YEAR">This Year</SelectItem>
-        <SelectItem value="LAST_30_DAYS">Last 30 Days</SelectItem>
-        <SelectItem value="LAST_7_DAYS">Last 7 Days</SelectItem>
+        <SelectItem value="ALL_TIME">
+          <span>All Time</span>
+        </SelectItem>
+        <SelectItem value="THIS_YEAR">
+          <span>This Year</span>
+        </SelectItem>
+        <SelectItem value="LAST_30_DAYS">
+          <span>Last 30 Days</span>
+        </SelectItem>
+        <SelectItem value="LAST_7_DAYS">
+          <span>Last 7 Days</span>
+        </SelectItem>
       </SelectContent>
     </Select>
   );

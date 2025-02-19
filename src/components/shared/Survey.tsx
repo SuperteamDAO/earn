@@ -100,7 +100,7 @@ export const SurveyModal = ({
                         size="sm"
                         variant={response === i + 1 ? 'default' : 'outline'}
                       >
-                        {i + 1}
+                        <span>{i + 1}</span>
                       </Button>
                     ))}
                   </div>
@@ -145,7 +145,7 @@ export const SurveyModal = ({
               disabled={!response || isSubmitting}
               onClick={handleSubmit}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
+              {isSubmitting ? <span>Submitting...</span> : <span>Submit</span>}
             </Button>
           </>
         )}

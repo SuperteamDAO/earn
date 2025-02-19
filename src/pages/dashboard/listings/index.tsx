@@ -226,7 +226,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
                       getColorStyles(selectedStatus!).bgColor,
                     )}
                   >
-                    {selectedStatus || 'Everything'}
+                    <span>{selectedStatus || 'Everything'}</span>
                   </span>
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>

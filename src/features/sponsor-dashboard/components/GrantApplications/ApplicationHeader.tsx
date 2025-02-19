@@ -105,12 +105,12 @@ export const ApplicationHeader = ({ grant, applications }: Props) => {
             {exportMutation.isPending ? (
               <>
                 <span className="loading loading-spinner" />
-                Exporting...
+                <span>Exporting...</span>
               </>
             ) : (
               <>
                 <Download className="mr-2 h-4 w-4" />
-                Export CSV
+                <span>Export CSV</span>
               </>
             )}
           </Button>

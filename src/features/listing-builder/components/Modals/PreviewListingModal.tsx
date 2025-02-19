@@ -80,7 +80,7 @@ export const PreviewListingModal = () => {
                     window.open(previewUrl, '_blank');
                   }}
                 >
-                  Secret Draft Link
+                  <span>Secret Draft Link</span>
                   <ExternalLink className="ml-2 h-4 w-4" />
                 </Button>
               </div>

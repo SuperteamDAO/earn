@@ -41,7 +41,7 @@ const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
   const oldUrlRef = useRef('');
-  const { user } = useUser();
+  const { user, isLoading: isUserLoading } = useUser();
   const forcedRedirected = useRef(false);
 
   useEffect(() => {
@@ -77,6 +77,7 @@ function MyApp({ Component, pageProps }: any) {
       if (
         router.pathname.startsWith('/new') ||
         router.pathname.startsWith('/sponsor') ||
+        router.pathname.startsWith('/signup') ||
         !user
       )
         return;
@@ -104,14 +105,14 @@ function MyApp({ Component, pageProps }: any) {
   );
 
   useEffect(() => {
-    if (router.query.loginState === 'signedIn' && user) {
+    if (router.query.loginState === 'signedIn' && user && !isUserLoading) {
       posthog.identify(user.email);
       const url = new URL(window.location.href);
       url.searchParams.delete('loginState');
       window.history.replaceState(null, '', url.href);
       forcedProfileRedirect(); // instantly when just signed in
     }
-  }, [router, user, posthog]);
+  }, [router, user, posthog, isUserLoading]);
 
   // forced profile redirection
   useEffect(() => {

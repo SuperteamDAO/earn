@@ -109,9 +109,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const bountyId = result.listingId;
     const updatedBounty: any = {};
 
-    updatedBounty.totalPaymentsMade = {
-      increment: 1,
-    };
     logger.info(`Sending payment notification email for submission ID: ${id}`);
     sendEmailNotification({
       type: 'addPayment',

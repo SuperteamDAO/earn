@@ -247,7 +247,12 @@ export const Comment = ({
                 className="relative -left-3 flex items-center text-xs font-medium text-brand-purple hover:text-brand-purple-dark md:text-sm"
               >
                 <ChevronDown className="mr-1 h-4 w-4" />
-                {replies?.length} {replies?.length === 1 ? 'Reply' : 'Replies'}
+                <span>{replies?.length}</span>
+                {replies?.length === 1 ? (
+                  <span>Reply</span>
+                ) : (
+                  <span>Replies</span>
+                )}
               </button>
             )}
             <Button
@@ -308,12 +313,12 @@ export const Comment = ({
                     onClick={handleSubmit}
                   >
                     {newReplyLoading ? (
-                      <>
+                      <span>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Adding...
-                      </>
+                        <span>Adding...</span>
+                      </span>
                     ) : (
-                      'Reply'
+                      <span>Reply</span>
                     )}
                   </Button>
                 </AuthWrapper>
@@ -422,10 +427,10 @@ export const Comment = ({
               {deleteLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
+                  <span>Deleting...</span>
                 </>
               ) : (
-                'Delete'
+                <span>Delete</span>
               )}
             </Button>
           </AlertDialogFooter>

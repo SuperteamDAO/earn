@@ -87,14 +87,14 @@ export const RejectGrantApplicationModal = ({
             {loading ? (
               <>
                 <span className="loading loading-spinner mr-2" />
-                Rejecting
+                <span>Rejecting</span>
               </>
             ) : (
               <>
                 <div className="mr-2 rounded-full bg-white p-[5px]">
                   <X className="h-2.5 w-2.5 text-rose-600" />
                 </div>
-                Reject Grant
+                <span>Reject Grant</span>
               </>
             )}
           </Button>

@@ -89,7 +89,7 @@ export function Templates() {
             size="sm"
           >
             <LayoutGrid className="fill-blue-600" />
-            Browse Templates
+            <span>Browse Templates</span>
           </Button>
         </DialogTrigger>
       )}
@@ -242,7 +242,7 @@ export function Templates() {
                         target="_blank"
                       >
                         <Eye />
-                        Preview
+                        <span>Preview</span>
                       </Link>
                     </Button>
                     <DialogClose asChild>

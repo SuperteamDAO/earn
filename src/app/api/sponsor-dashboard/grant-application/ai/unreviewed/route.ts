@@ -1,8 +1,11 @@
+import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
+import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
+import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { type GrantApplicationAi } from '@/features/grants/types';
 
 export const maxDuration = 300;
@@ -20,6 +23,24 @@ export async function GET(request: NextRequest) {
     );
   }
   try {
+    const session = await getSponsorSession(await headers());
+
+    if (session.error || !session.data) {
+      return NextResponse.json(
+        { error: session.error },
+        { status: session.status },
+      );
+    }
+    const { error } = await checkGrantSponsorAuth(
+      session.data.userSponsorId,
+      id,
+    );
+    if (error) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
+    }
     const unreviewedApplications = await prisma.grantApplication.findMany({
       where: {
         grantId: id,

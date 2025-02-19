@@ -15,6 +15,9 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
           isWinnersAnnounced: true,
           isPrivate: false,
         },
+        rewardInUSD: {
+          gte: 200,
+        },
       },
       select: {
         winnerPosition: true,
@@ -37,7 +40,7 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
           },
         },
       },
-      take: 15,
+      take: 30,
       orderBy: {
         listing: {
           winnersAnnouncedAt: 'desc',
@@ -57,6 +60,7 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         reward: rewards[Number(submission.winnerPosition) as keyof Rewards],
         rewardToken: submission.listing.token,
         photo: submission.user.photo,
+        winnersAnnouncedAt: submission.listing.winnersAnnouncedAt,
       };
     });
 

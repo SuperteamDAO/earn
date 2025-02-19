@@ -280,7 +280,7 @@ export const PayoutButton = ({ bounty }: Props) => {
           {isPaying ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Paying...
+              <span>Paying...</span>
             </>
           ) : (
             `Pay ${

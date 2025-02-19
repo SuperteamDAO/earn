@@ -23,7 +23,7 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
 
-import { hackathonAtom } from '../../atoms';
+import { hackathonAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 
 const questionTypes = [
@@ -38,6 +38,7 @@ export function EligibilityQuestions() {
     name: 'type',
   });
   const hackathon = useAtomValue(hackathonAtom);
+  const isEditing = useAtomValue(isEditingAtom);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -63,18 +64,24 @@ export function EligibilityQuestions() {
   };
 
   useEffect(() => {
-    if (type === 'project') {
-      if (fields.length === 0) {
-        handleAddQuestion(false);
-      }
-    } else {
-      if (type === 'hackathon' && hackathon?.eligibility) {
-        form.setValue('eligibility', hackathon?.eligibility as any);
+    if (!isEditing) {
+      if (type === 'project') {
+        if (fields.length === 0) {
+          handleAddQuestion(false);
+        }
       } else {
-        form.setValue('eligibility', []);
+        if (type === 'hackathon' && hackathon?.eligibility) {
+          form.setValue('eligibility', hackathon?.eligibility as any);
+        } else {
+          if (fields.length > 0) {
+            form.setValue('eligibility', fields.slice(0, 2));
+          } else {
+            form.setValue('eligibility', []);
+          }
+        }
       }
     }
-  }, [type, hackathon]);
+  }, [type, hackathon, isEditing]);
 
   return (
     <FormField
@@ -220,7 +227,7 @@ export function EligibilityQuestions() {
                   )}
                   onClick={() => handleAddQuestion()}
                 >
-                  <Plus /> Add Question
+                  <Plus /> <span>Add Question</span>
                 </Button>
               </div>
             ) : (

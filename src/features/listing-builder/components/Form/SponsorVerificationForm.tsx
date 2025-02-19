@@ -188,7 +188,11 @@ export const SponsorVerificationForm = () => {
                     className="w-full"
                     disabled={isSubmitting || commitToDeadline !== 'yes'}
                   >
-                    {isSubmitting ? 'Submitting...' : 'Submit'}
+                    {isSubmitting ? (
+                      <span>Submitting...</span>
+                    ) : (
+                      <span>Submit</span>
+                    )}
                   </Button>
                 </div>
               </form>

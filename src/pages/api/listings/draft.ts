@@ -71,9 +71,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         })
       : false;
     if (isBountyPublishedAlready) {
-      res.status(403).send({
+      logger.warn('Published Listings are not allowed to be draft');
+      return res.status(403).send({
         error: 'Not Allowed',
-        message: ' Published Listings are not allowed to be draft',
+        message: 'Published Listings are not allowed to be draft',
       });
     }
 

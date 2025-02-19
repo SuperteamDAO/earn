@@ -67,11 +67,13 @@ export function InviteButton({
     >
       {invited ? (
         <>
-          <Check strokeLinecap="square" strokeWidth={3} /> Invited
+          <Check strokeLinecap="square" strokeWidth={3} />
+          <span>Invited</span>
         </>
       ) : (
         <>
-          <Plus strokeLinecap="square" strokeWidth={3} /> Invite
+          <Plus strokeLinecap="square" strokeWidth={3} />
+          <span>Invite</span>
         </>
       )}
     </Button>
