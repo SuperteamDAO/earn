@@ -63,10 +63,7 @@ services:
           type: pserv
           envVarKey: AUTH_SECRET
       - key: EMAIL_BACKEND
-        fromService:
-          name: nearn-email
-          type: pserv
-          property: hostport
+        sync: false
       - key: NEXT_PUBLIC_POSTHOG_HOST
         sync: false
       - key: NEXT_PUBLIC_POSTHOG_KEY
@@ -115,6 +112,8 @@ services:
         sync: false
       - key: BCC_EMAILS
         sync: false
+      - key: BASE_URL
+        value: 'https://nearn.io'
       - key: RESEND_API_KEY
         fromService:
           name: nearn-app
