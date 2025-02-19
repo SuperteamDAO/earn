@@ -17,10 +17,16 @@ services:
         value: 3000
       - key: NEXTAUTH_URL
         sync: false
-      - key: NEXTAUTH_SECRET
+      - key: NEXT_AUTH_SECRET
         generateValue: true
       - key: NEXT_PUBLIC_URL
         sync: false
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      - key: NEXT_AUTH_URL
+        sync: false
+      - key: NODE_VERSION
+        value: 20.11.0
       - key: ZEROBOUNCE_API_KEY
         sync: false
       - key: EMAIL_SERVER_USER
@@ -36,6 +42,8 @@ services:
       - key: AIRTABLE_GRANTS_TABLE_NAME
         sync: false
       - key: AIRTABLE_GRANTS_REGIONS_TABLE_NAME
+        sync: false
+      - key: AIRTABLE_RECIPIENTS_TABLE
         sync: false
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
@@ -61,6 +69,14 @@ services:
           name: nearn-email
           type: worker
           property: hostport
+      - key: NEXT_PUBLIC_POSTHOG_HOST
+        sync: false
+      - key: NEXT_PUBLIC_POSTHOG_KEY
+        sync: false
+      - key: REPLY_TO_EMAIL
+        sync: false
+      - key: WEBHOOK_SECRET
+        sync: false
       - fromGroup: common
     autoDeploy: true
   - type: pserv
