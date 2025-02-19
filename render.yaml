@@ -121,22 +121,22 @@ services:
         fromService:
           name: nearn-app
           type: web
-          property: RESEND_API_KEY
+          envVarKey: RESEND_API_KEY
       - key: UNSUB_SECRET
         fromService:
           name: nearn-app
           type: web
-          property: UNSUB_SECRET
+          envVarKey: UNSUB_SECRET
       - key: DATABASE_URL
         fromService:
           name: nearn-app
           type: web
-          property: DATABASE_URL
+          envVarKey: DATABASE_URL
       - key: CEO_EMAIL
         fromService:
           name: nearn-app
           type: web
-          property: CEO_EMAIL
+          envVarKey: CEO_EMAIL
     autoDeploy: true
   - type: keyvalue
     name: nearn-redis-for-emails
