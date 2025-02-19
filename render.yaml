@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: earn
+    name: nearn
     runtime: node
     region: frankfurt
     plan: standard
@@ -57,6 +57,15 @@ services:
         sync: false
       - key: GOOGLE_SECRET
         sync: false
+      - key: CEO_EMAIL
+        sync: false
+      - key: EMAIL_SECRET
+        sync: false
+      - key: EMAIL_BACKEND
+        fromService:
+          name: nearn-email
+          type: worker
+          property: hostport
     autoDeploy: true
   - type: worker
     repo: https://github.com/akorchyn/nearn-emails
@@ -70,16 +79,21 @@ services:
     buildCommand: pnpm install && pnpm prisma generate && pnpm build
     startCommand: node dist/index.js
     envVars:
-      - key: RESEND_API_KEY
-        sync: false
-      - key: UNSUB_SECRET
-        sync: false
       - key: REDIS_URL
-        sync: false
+        fromService:
+          name: nearn-redis-for-emails
+          type: keyvalue
+          property: connectionString
       - key: AUTH_SECRET
-        sync: false
+        fromService:
+          name: nearn
+          type: web
+          envVarKey: EMAIL_SECRET
       - key: CEO_EMAIL
-        sync: false
+        fromService:
+          name: nearn
+          type: web
+          envVarKey: CEO_EMAIL
       - key: LISTINGS_EMAIL
         value: noreply@nearn.io
       - key: ALERTS_EMAIL
@@ -93,7 +107,10 @@ services:
       - key: BCC_EMAILS
         sync: false
       - key: DATABASE_URL
-        sync: false
+        fromService:
+          name: nearn
+          type: web
+          envVarKey: DATABASE_URL
     autoDeploy: true
   - type: keyvalue
     name: nearn-redis-for-emails
