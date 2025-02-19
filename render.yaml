@@ -15,15 +15,11 @@ services:
     envVars:
       - key: PORT
         value: 3000
-      - key: DATABASE_URL
-        sync: false
       - key: NEXTAUTH_URL
         sync: false
       - key: NEXTAUTH_SECRET
         generateValue: true
       - key: NEXT_PUBLIC_URL
-        sync: false
-      - key: RESEND_API_KEY
         sync: false
       - key: RESEND_EMAIL
         sync: false
@@ -60,12 +56,16 @@ services:
       - key: CEO_EMAIL
         sync: false
       - key: EMAIL_SECRET
-        sync: false
+        fromService:
+          name: nearn-email
+          type: worker
+          property: AUTH_SECRET
       - key: EMAIL_BACKEND
         fromService:
           name: nearn-email
           type: worker
           property: hostport
+      - fromGroup: common
     autoDeploy: true
   - type: pserv
     repo: https://github.com/akorchyn/nearn-emails
@@ -85,15 +85,7 @@ services:
           type: keyvalue
           property: connectionString
       - key: AUTH_SECRET
-        fromService:
-          name: nearn
-          type: web
-          envVarKey: EMAIL_SECRET
-      - key: CEO_EMAIL
-        fromService:
-          name: nearn
-          type: web
-          envVarKey: CEO_EMAIL
+        generateValue: true
       - key: LISTINGS_EMAIL
         value: noreply@nearn.io
       - key: ALERTS_EMAIL
@@ -106,11 +98,7 @@ services:
         sync: false
       - key: BCC_EMAILS
         sync: false
-      - key: DATABASE_URL
-        fromService:
-          name: nearn
-          type: web
-          envVarKey: DATABASE_URL
+      - fromGroup: common
     autoDeploy: true
   - type: keyvalue
     name: nearn-redis-for-emails
@@ -118,3 +106,14 @@ services:
     region: frankfurt
     ipAllowList: []
     plan: starter
+envVarGroups:
+  - name: common
+    envVars:
+      - key: RESEND_API_KEY
+        sync: false
+      - key: UNSUB_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: CEO_EMAIL
+        sync: false
