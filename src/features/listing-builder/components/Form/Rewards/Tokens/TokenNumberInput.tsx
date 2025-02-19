@@ -64,7 +64,8 @@ export const TokenNumberInput = React.forwardRef<
     const handleInputChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
-        setInputValue(inputValue);
+        const numericValue = inputValue.replace(/\D/g, '');
+        setInputValue(numericValue);
 
         const parsedValue = parseNumber(inputValue);
         if (parsedValue !== null) {
