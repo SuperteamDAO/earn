@@ -77,7 +77,14 @@ services:
         sync: false
       - key: WEBHOOK_SECRET
         sync: false
-      - fromGroup: common
+      - key: RESEND_API_KEY
+        sync: false
+      - key: UNSUB_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: CEO_EMAIL
+        sync: false
     autoDeploy: true
   - type: pserv
     repo: https://github.com/akorchyn/nearn-emails
@@ -110,7 +117,26 @@ services:
         sync: false
       - key: BCC_EMAILS
         sync: false
-      - fromGroup: common
+      - key: RESEND_API_KEY
+        fromService:
+          name: nearn-app
+          type: web
+          property: RESEND_API_KEY
+      - key: UNSUB_SECRET
+        fromService:
+          name: nearn-app
+          type: web
+          property: UNSUB_SECRET
+      - key: DATABASE_URL
+        fromService:
+          name: nearn-app
+          type: web
+          property: DATABASE_URL
+      - key: CEO_EMAIL
+        fromService:
+          name: nearn-app
+          type: web
+          property: CEO_EMAIL
     autoDeploy: true
   - type: keyvalue
     name: nearn-redis-for-emails
@@ -118,14 +144,3 @@ services:
     region: frankfurt
     ipAllowList: []
     plan: starter
-envVarGroups:
-  - name: common
-    envVars:
-      - key: RESEND_API_KEY
-        sync: false
-      - key: UNSUB_SECRET
-        sync: false
-      - key: DATABASE_URL
-        sync: false
-      - key: CEO_EMAIL
-        sync: false
