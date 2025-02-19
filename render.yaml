@@ -58,3 +58,46 @@ services:
       - key: GOOGLE_SECRET
         sync: false
     autoDeploy: true
+  - type: worker
+    repo: https://github.com/akorchyn/nearn-emails
+    branch: prod
+    name: nearn-email
+    runtime: node
+    region: frankfurt
+    plan: starter
+    previews:
+      generation: off
+    buildCommand: pnpm install && pnpm prisma generate && pnpm build
+    startCommand: node dist/index.js
+    envVars:
+      - key: RESEND_API_KEY
+        sync: false
+      - key: UNSUB_SECRET
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: AUTH_SECRET
+        sync: false
+      - key: CEO_EMAIL
+        sync: false
+      - key: LISTINGS_EMAIL
+        value: noreply@nearn.io
+      - key: ALERTS_EMAIL
+        value: noreply@nearn.io
+      - key: MAIN_APP_URL
+        value: 'https://nearn.io'
+      - key: AIRTABLE_FORM_URL
+        value: 'https://nearn.io'
+      - key: DEV_EMAILS
+        sync: false
+      - key: BCC_EMAILS
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+    autoDeploy: true
+  - type: keyvalue
+    name: nearn-redis-for-emails
+    maxmemoryPolicy: noeviction
+    region: frankfurt
+    ipAllowList: []
+    plan: starter
