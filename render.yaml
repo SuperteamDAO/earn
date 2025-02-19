@@ -21,8 +21,6 @@ services:
         generateValue: true
       - key: NEXT_PUBLIC_URL
         sync: false
-      - key: RESEND_EMAIL
-        sync: false
       - key: ZEROBOUNCE_API_KEY
         sync: false
       - key: EMAIL_SERVER_USER
@@ -52,8 +50,6 @@ services:
       - key: GOOGLE_ID
         sync: false
       - key: GOOGLE_SECRET
-        sync: false
-      - key: CEO_EMAIL
         sync: false
       - key: EMAIL_SECRET
         fromService:
