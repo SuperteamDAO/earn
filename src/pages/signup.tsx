@@ -92,7 +92,7 @@ export default function SignupPage() {
 
   return (
     <div className="container mx-auto flex max-w-xl justify-center">
-      <div className="mt-10 w-full rounded-lg border border-gray-200 bg-white px-20 pb-40 pt-20 shadow-lg">
+      <div className="mt-10 w-full rounded-lg border border-gray-200 bg-white px-20 pt-20 pb-40 shadow-lg">
         <div className="flex flex-col items-center">
           <p className="text-center text-2xl font-medium text-slate-600">
             Welcome to Superteam Earn
@@ -109,7 +109,7 @@ export default function SignupPage() {
             />
           </div>
 
-          <p className="text-center font-medium leading-6 text-slate-500">
+          <p className="text-center leading-6 font-medium text-slate-500">
             {inviteDetails?.senderName} has invited you to join <br />
             {inviteDetails?.sponsorName}
           </p>

@@ -174,7 +174,7 @@ export const Podiums = () => {
           <div
             ref={podiumsContainerRef}
             className={cn(
-              'flex min-h-0 flex-shrink flex-col space-y-4 overflow-y-auto rounded-md border p-4',
+              'flex min-h-0 shrink flex-col space-y-4 overflow-y-auto rounded-md border p-4',
             )}
           >
             {rewardPositions.map((position, index) => (
@@ -212,7 +212,7 @@ export const Podiums = () => {
                             variant="ghost"
                             size="icon"
                             onClick={() => removeReward(position)}
-                            className="absolute right-0 top-0 hidden text-muted-foreground group-hover:flex hover:text-destructive"
+                            className="text-muted-foreground hover:text-destructive absolute top-0 right-0 hidden group-hover:flex"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -291,7 +291,7 @@ export const Podiums = () => {
                                 variant="ghost"
                                 size="icon"
                                 onClick={removeBonusReward}
-                                className="absolute right-0 top-0 hidden text-muted-foreground group-hover:flex hover:text-destructive"
+                                className="text-muted-foreground hover:text-destructive absolute top-0 right-0 hidden group-hover:flex"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>

@@ -27,7 +27,7 @@ export const RegionLabel = ({
         ) : (
           <UserFlag location={code || ''} isCode />
         )}
-        <span className="whitespace-nowrap rounded-full text-xs font-medium text-slate-500 sm:text-sm">
+        <span className="rounded-full text-xs font-medium whitespace-nowrap text-slate-500 sm:text-sm">
           {region === 'GLOBAL' ? 'Global' : `${displayValue} Only`}
         </span>
         <Info className="h-3 w-3 text-slate-600 sm:hidden" />

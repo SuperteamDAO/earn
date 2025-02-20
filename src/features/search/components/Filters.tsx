@@ -93,7 +93,7 @@ export function Filters({
                 defaultChecked={f.checked}
                 disabled={loading}
                 onCheckedChange={() => handleStatusChange(f.value)}
-                className="border-slate-300 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple border-slate-300"
               />
               <label
                 htmlFor={`status-${f.value}`}
@@ -117,7 +117,7 @@ export function Filters({
                 defaultChecked={f.checked}
                 disabled={loading}
                 onCheckedChange={() => handleSkillsChange(f.value)}
-                className="border-slate-300 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple border-slate-300"
               />
               <label
                 htmlFor={`skill-${f.value}`}

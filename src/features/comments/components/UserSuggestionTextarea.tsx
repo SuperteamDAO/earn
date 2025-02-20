@@ -97,10 +97,10 @@ export const UserSuggestionTextarea = ({
           className={cn(
             'w-full resize-none overflow-hidden text-sm md:text-base',
             'min-h-8 placeholder:text-slate-400',
-            'focus:outline-none focus:ring-0',
+            'focus:ring-0 focus:outline-hidden',
             variant === 'flushed'
               ? [
-                  'border-x-0 border-b-2 border-t-0 border-slate-200',
+                  'border-x-0 border-t-0 border-b-2 border-slate-200',
                   'rounded-none px-0 py-0',
                   'focus:border-brand-purple',
                 ]
@@ -126,13 +126,13 @@ export const UserSuggestionTextarea = ({
         />
       </div>
       {value?.length > 0 && (
-        <p className="pr-1 pt-1 text-right text-xs text-slate-400">
+        <p className="pt-1 pr-1 text-right text-xs text-slate-400">
           {MAX_LENGTH - value.length} characters left
         </p>
       )}
       {showSuggestions && (
         <div
-          className="absolute z-[100]"
+          className="absolute z-100"
           style={{
             top: suggestionPosition.top,
             left: suggestionPosition.left,

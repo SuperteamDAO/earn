@@ -31,7 +31,7 @@ export function SideDrawer({
     <>
       <div
         className={cn(
-          'fixed inset-0 z-[60] bg-black/80 transition-all',
+          'fixed inset-0 z-60 bg-black/80 transition-all',
           'data-[state=open]:animate-in data-[state=closed]:animate-out',
           'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         )}
@@ -40,7 +40,7 @@ export function SideDrawer({
       />
       <div
         className={cn(
-          'fixed inset-y-0 right-0 z-[60] h-full bg-white shadow-xl duration-300',
+          'fixed inset-y-0 right-0 z-60 h-full bg-white shadow-xl duration-300',
           'data-[state=open]:animate-in data-[state=closed]:animate-out',
           'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right',
           className,

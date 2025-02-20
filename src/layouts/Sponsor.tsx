@@ -213,19 +213,19 @@ export function SponsorLayout({
       <div className="hidden min-h-screen justify-start md:flex">
         <div
           className={cn(
-            'sponsor-dashboard-sidebar overflow-x-hidden whitespace-nowrap border-r border-slate-200 bg-white pt-5',
+            'sponsor-dashboard-sidebar overflow-x-hidden border-r border-slate-200 bg-white pt-5 whitespace-nowrap',
             'transition-all duration-300 ease-in-out',
             isCollapsible ? 'fixed' : 'static',
             isExpanded
-              ? ['w-64 min-w-64 max-w-64', 'expanded']
-              : ['w-20 min-w-20 max-w-20'],
-            'bottom-0 left-0 top-12 z-10',
+              ? ['w-64 max-w-64 min-w-64', 'expanded']
+              : ['w-20 max-w-20 min-w-20'],
+            'top-12 bottom-0 left-0 z-10',
           )}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
           {user?.role === 'GOD' && (
-            <div className={cn('pb-6', isExpanded ? 'pl-6 pr-4' : 'px-4')}>
+            <div className={cn('pb-6', isExpanded ? 'pr-4 pl-6' : 'px-4')}>
               {isHackathonRoute ? (
                 <SelectHackathon isExpanded={isExpanded} />
               ) : (
@@ -237,7 +237,7 @@ export function SponsorLayout({
           <div
             className={cn(
               'flex items-center justify-between px-4 pb-6',
-              isExpanded ? 'pl-6 pr-4' : 'px-4',
+              isExpanded ? 'pr-4 pl-6' : 'px-4',
             )}
           >
             {!isHackathonRoute ? (
@@ -255,7 +255,7 @@ export function SponsorLayout({
               >
                 <Button
                   className={cn(
-                    'ph-no-capture py-5.5 w-full gap-2 text-base',
+                    'ph-no-capture w-full gap-2 py-5.5 text-base',
                     'disabled:cursor-not-allowed disabled:opacity-50',
                   )}
                   disabled={
@@ -288,7 +288,7 @@ export function SponsorLayout({
             ) : (
               <Button
                 asChild
-                className={cn('py-5.5 w-full gap-2 text-base')}
+                className={cn('w-full gap-2 py-5.5 text-base')}
                 variant="default"
               >
                 <Link href="/dashboard/new/?type=hackathon">
@@ -326,7 +326,7 @@ export function SponsorLayout({
         {showContent && (
           <div
             className={cn(
-              'w-full flex-1 bg-white py-5 pl-4 pr-8 transition-[margin-left] duration-300 ease-in-out',
+              'w-full flex-1 bg-white py-5 pr-8 pl-4 transition-[margin-left] duration-300 ease-in-out',
               isCollapsible ? 'ml-20' : 'ml-0',
             )}
           >

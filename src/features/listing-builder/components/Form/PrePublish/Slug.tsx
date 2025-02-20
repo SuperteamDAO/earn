@@ -130,12 +130,12 @@ export function Slug() {
                   }}
                 />
                 {slugCheckFetching || isSlugLoading ? (
-                  <Loader2 className="absolute right-2 top-1.5 animate-spin text-slate-300" />
+                  <Loader2 className="absolute top-1.5 right-2 animate-spin text-slate-300" />
                 ) : (
                   form.formState.errors.slug === undefined &&
                   !isSlugCheckError &&
                   !isEditing && (
-                    <span className="absolute right-2 top-2 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1 text-background">
+                    <span className="text-background absolute top-2 right-2 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1">
                       <CheckIcon className="h-full w-full stroke-[3px]" />
                     </span>
                   )

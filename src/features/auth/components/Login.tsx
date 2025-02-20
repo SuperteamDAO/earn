@@ -80,7 +80,7 @@ export const Login = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="z-[200] w-[23rem] p-0 pt-2"
+        className="z-200 w-[23rem] p-0 pt-2"
         classNames={{
           overlay: hideOverlay ? 'hidden' : '',
         }}

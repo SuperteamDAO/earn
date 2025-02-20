@@ -141,7 +141,7 @@ export const DesktopNavbar = ({
                     className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                     onClick={onWalletOpen}
                   >
-                    <IoWalletOutline className="h-6 w-6 text-brand-purple" />
+                    <IoWalletOutline className="text-brand-purple h-6 w-6" />
                     <p className="text-sm font-semibold">
                       ${formatNumberWithSuffix(walletBalance || 0, 1, true)}
                     </p>

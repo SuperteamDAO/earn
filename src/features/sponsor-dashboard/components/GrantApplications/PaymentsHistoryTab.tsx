@@ -125,7 +125,7 @@ export const PaymentsHistoryTab = ({
 
   const GrantTh = ({ children }: { children?: string }) => {
     return (
-      <TableHead className="text-xs font-medium uppercase tracking-tight text-slate-500">
+      <TableHead className="text-xs font-medium tracking-tight text-slate-500 uppercase">
         {children}
       </TableHead>
     );

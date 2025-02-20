@@ -122,7 +122,7 @@ const MemberRow = ({ user }: { user: LocalProfile }) => {
   const skills = user.skills.flatMap((skills: any) => skills.skills);
   return (
     <TableRow
-      className="cursor-pointer hover:bg-brand-slate-50"
+      className="hover:bg-brand-slate-50 cursor-pointer"
       onClick={(e) => {
         if (
           e.target === e.currentTarget ||
@@ -145,7 +145,7 @@ const MemberRow = ({ user }: { user: LocalProfile }) => {
             <p className="line-clamp-1 w-40 text-sm font-medium text-slate-700 group-hover:underline">
               {`${user?.firstName} ${user?.lastName}`}
             </p>
-            <p className="max-w-40 overflow-x-hidden text-ellipsis text-sm font-medium text-slate-500">
+            <p className="max-w-40 overflow-x-hidden text-sm font-medium text-ellipsis text-slate-500">
               @{user?.username}
             </p>
           </div>

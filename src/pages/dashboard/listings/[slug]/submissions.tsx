@@ -484,7 +484,7 @@ export default function BountySubmissions({ slug }: Props) {
                     />
                   </div>
 
-                  <div className="h-full w-full rounded-r-xl border-b border-r border-t border-slate-200 bg-white">
+                  <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
                     {!paginatedSubmissions?.length &&
                     !searchText &&
                     !isSubmissionsLoading ? (

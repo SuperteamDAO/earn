@@ -140,7 +140,7 @@ export function ListingHeader({
     return (
       <div className="flex flex-wrap items-center gap-1 md:gap-3">
         <div className="flex items-center gap-1">
-          <p className="whitespace-nowrap text-sm font-medium text-slate-400">
+          <p className="text-sm font-medium whitespace-nowrap text-slate-400">
             by {sponsor?.name}
           </p>
           {!!sponsor?.isVerified && <VerifiedBadge />}

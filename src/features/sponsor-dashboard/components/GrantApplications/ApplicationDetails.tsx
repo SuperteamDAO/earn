@@ -135,12 +135,12 @@ export const ApplicationDetails = ({
                   avatar={selectedApplication?.user?.photo || undefined}
                 />
                 <div>
-                  <p className="w-full whitespace-nowrap text-base font-medium text-slate-900">
+                  <p className="w-full text-base font-medium whitespace-nowrap text-slate-900">
                     {`${selectedApplication?.user?.firstName}`}
                   </p>
                   <Link
                     href={`/t/${selectedApplication?.user?.username}`}
-                    className="flex w-full items-center gap-1 whitespace-nowrap text-xs font-medium text-brand-purple"
+                    className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium whitespace-nowrap"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -256,7 +256,7 @@ export const ApplicationDetails = ({
             <div className="flex items-center gap-4 px-4 py-2">
               {isApproved && (
                 <div className="flex items-center">
-                  <p className="mr-3 whitespace-nowrap text-sm font-semibold text-slate-400">
+                  <p className="mr-3 text-sm font-semibold whitespace-nowrap text-slate-400">
                     APPROVED
                   </p>
                   <img
@@ -264,7 +264,7 @@ export const ApplicationDetails = ({
                     src={tokenIcon}
                     alt="token"
                   />
-                  <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
+                  <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                     {`${selectedApplication?.approvedAmount?.toLocaleString('en-us')}`}
                     <span className="ml-0.5 text-slate-400">
                       {grant?.token}
@@ -282,7 +282,7 @@ export const ApplicationDetails = ({
                           ).toFixed(2),
                         )}
                       />
-                      <p className="ml-1 whitespace-nowrap text-sm font-medium text-slate-600">
+                      <p className="ml-1 text-sm font-medium whitespace-nowrap text-slate-600">
                         {Number(
                           (
                             (selectedApplication.totalPaid /
@@ -321,7 +321,7 @@ export const ApplicationDetails = ({
                   triggerClassName="flex items-center hover:underline underline-offset-1"
                 >
                   <div
-                    className="flex cursor-pointer items-center justify-start gap-1 whitespace-nowrap text-sm text-slate-400 hover:text-slate-500"
+                    className="flex cursor-pointer items-center justify-start gap-1 text-sm whitespace-nowrap text-slate-400 hover:text-slate-500"
                     onClick={handleCopyPublicKey}
                     role="button"
                     tabIndex={0}
@@ -349,7 +349,7 @@ export const ApplicationDetails = ({
                   link={selectedApplication?.user?.website || ''}
                 />
               </div>
-              <p className="whitespace-nowrap text-sm text-slate-400">
+              <p className="text-sm whitespace-nowrap text-slate-400">
                 $
                 {formatNumberWithSuffix(
                   selectedApplication?.totalEarnings || 0,
@@ -360,9 +360,9 @@ export const ApplicationDetails = ({
           </div>
 
           <div className="flex h-[67.15rem] w-full">
-            <div className="scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+            <div className="scrollbar-thumb-rounded-full scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4">
               <div className="mb-4">
-                <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
+                <p className="mb-1 text-xs font-semibold text-slate-400 uppercase">
                   ASK
                 </p>
                 <div className="flex items-center gap-0.5">
@@ -371,7 +371,7 @@ export const ApplicationDetails = ({
                     src={tokenIcon}
                     alt="token"
                   />
-                  <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
+                  <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
                     {`${selectedApplication?.ask?.toLocaleString('en-us')}`}
                     <span className="ml-0.5 text-slate-400">
                       {grant?.token}
@@ -381,20 +381,20 @@ export const ApplicationDetails = ({
               </div>
 
               <div className="mb-4">
-                <div className="mb-1 text-xs font-semibold uppercase text-slate-400">
+                <div className="mb-1 text-xs font-semibold text-slate-400 uppercase">
                   APPLICATION DATE
                 </div>
-                <p className="whitespace-nowrap text-sm font-medium text-slate-600">
+                <p className="text-sm font-medium whitespace-nowrap text-slate-600">
                   {formattedCreatedAt}
                 </p>
               </div>
 
               <div className="mb-4">
-                <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
+                <p className="mt-1 text-xs font-semibold text-slate-400 uppercase">
                   Wallet Address
                 </p>
                 <div
-                  className="flex cursor-pointer items-center gap-1 whitespace-nowrap text-sm font-medium text-slate-600"
+                  className="flex cursor-pointer items-center gap-1 text-sm font-medium whitespace-nowrap text-slate-600"
                   onClick={handleCopyPublicKey}
                 >
                   {selectedApplication?.walletAddress}

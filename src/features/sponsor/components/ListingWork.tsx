@@ -58,10 +58,10 @@ const works: ListingCardProps[] = [
 
 export function ListingWork() {
   return (
-    <div className="relative mx-auto mb-16 mt-32 w-full pt-16">
+    <div className="relative mx-auto mt-32 mb-16 w-full pt-16">
       <div
         className={cn(
-          'absolute left-0 top-0 w-full bg-slate-100',
+          'absolute top-0 left-0 w-full bg-slate-100',
           'h-[27.8rem] md:h-[25.8rem]',
         )}
       />

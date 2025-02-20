@@ -87,14 +87,14 @@ export const UserDrawer = ({
                 <p className="text-base font-medium text-slate-500">
                   #{user?.rank}
                 </p>
-                <p className="whitespace-nowrap text-sm text-slate-500">
+                <p className="text-sm whitespace-nowrap text-slate-500">
                   # Rank
                 </p>
               </div>
 
               <Link
                 href={`/t/${user.username}`}
-                className="flex items-center whitespace-nowrap pl-6 text-[0.9rem] font-medium text-slate-500 hover:text-slate-600"
+                className="flex items-center pl-6 text-[0.9rem] font-medium whitespace-nowrap text-slate-500 hover:text-slate-600"
                 rel="noopener noreferrer"
                 target="_blank"
               >

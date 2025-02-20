@@ -98,7 +98,7 @@ export function WalletDrawer({
     if (privyUser?.mfaMethods.length === 0) {
       toast(
         <div className="flex flex-col gap-1">
-          <div className="text-xl font-bold text-brand-purple">
+          <div className="text-brand-purple text-xl font-bold">
             Two-Factor Auth is Mandatory
           </div>
           <div className="text-sm text-slate-600">
@@ -110,7 +110,7 @@ export function WalletDrawer({
               await showMfaEnrollmentModal();
               setView('withdraw');
             }}
-            className="mt-2 w-full rounded-lg bg-brand-purple px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-purple-dark"
+            className="bg-brand-purple hover:bg-brand-purple-dark mt-2 w-full rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-colors"
           >
             Set up 2FA
           </Button>
@@ -133,7 +133,7 @@ export function WalletDrawer({
     <SideDrawer isOpen={isOpen} onClose={handleClose}>
       <SideDrawerContent className="w-screen overflow-y-auto sm:w-[30rem]">
         <X
-          className="absolute right-4 top-5 z-10 h-5 w-5 cursor-pointer text-slate-600 sm:hidden"
+          className="absolute top-5 right-4 z-10 h-5 w-5 cursor-pointer text-slate-600 sm:hidden"
           onClick={onClose}
         />
         {view === 'intro' && (
@@ -194,7 +194,7 @@ export function WalletDrawer({
                 <div className="w-full items-end justify-between">
                   <Button
                     onClick={handleWithdraw}
-                    className="mt-3 rounded-lg bg-brand-purple px-5 text-base"
+                    className="bg-brand-purple mt-3 rounded-lg px-5 text-base"
                     disabled={!tokens?.length}
                   >
                     Withdraw
@@ -215,7 +215,7 @@ export function WalletDrawer({
               <>
                 <div
                   className={cn(
-                    'border-b pb-2 pt-6 text-sm font-medium text-slate-500',
+                    'border-b pt-6 pb-2 text-sm font-medium text-slate-500',
                     padding,
                   )}
                 >
@@ -229,7 +229,7 @@ export function WalletDrawer({
 
                 <div
                   className={cn(
-                    'border-b pb-2 pt-6 text-sm font-medium text-slate-500',
+                    'border-b pt-6 pb-2 text-sm font-medium text-slate-500',
                     padding,
                   )}
                 >
@@ -244,7 +244,7 @@ export function WalletDrawer({
                   variant="ghost"
                   size="icon"
                   onClick={handleBack}
-                  className="ml-4 mr-1"
+                  className="mr-1 ml-4"
                 >
                   <ArrowLeft className="h-4 w-4 text-slate-400" />
                 </Button>

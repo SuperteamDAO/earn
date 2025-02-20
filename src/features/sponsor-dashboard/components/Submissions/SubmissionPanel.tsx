@@ -101,11 +101,11 @@ export const SubmissionPanel = ({
                   avatar={selectedSubmission?.user?.photo || undefined}
                 />
                 <div>
-                  <p className="w-full whitespace-nowrap font-medium text-slate-900">
+                  <p className="w-full font-medium whitespace-nowrap text-slate-900">
                     {`${selectedSubmission?.user?.firstName}'s Submission`}
                   </p>
                   <Link
-                    className="flex w-full items-center whitespace-nowrap text-xs font-medium text-brand-purple"
+                    className="text-brand-purple flex w-full items-center text-xs font-medium whitespace-nowrap"
                     href={`/t/${selectedSubmission?.user?.username}`}
                   >
                     View Profile <ArrowRight className="inline-block h-3 w-3" />
@@ -263,7 +263,7 @@ export const SubmissionPanel = ({
                   triggerClassName="flex items-center hover:underline underline-offset-1"
                 >
                   <div
-                    className="flex cursor-pointer items-center justify-start gap-1 whitespace-nowrap text-sm text-slate-400 hover:text-slate-500"
+                    className="flex cursor-pointer items-center justify-start gap-1 text-sm whitespace-nowrap text-slate-400 hover:text-slate-500"
                     onClick={handleCopyPublicKey}
                     role="button"
                     tabIndex={0}
@@ -294,7 +294,7 @@ export const SubmissionPanel = ({
                 />
               </div>
               {isProject && (
-                <p className="whitespace-nowrap text-sm text-slate-400">
+                <p className="text-sm whitespace-nowrap text-slate-400">
                   $
                   {formatNumberWithSuffix(
                     selectedSubmission?.totalEarnings || 0,

@@ -154,7 +154,7 @@ export const HowItWorks = () => {
             <div className="ml-[0.8125rem]">
               <button
                 className={cn(
-                  'text-base font-medium hover:text-brand-purple',
+                  'hover:text-brand-purple text-base font-medium',
                   !isLoading && !!user?.isTalentFilled
                     ? 'text-slate-500'
                     : 'text-brand-purple',
@@ -176,7 +176,7 @@ export const HowItWorks = () => {
             <div className="ml-[0.8125rem]">
               <button
                 className={cn(
-                  'text-base font-medium hover:text-brand-purple',
+                  'hover:text-brand-purple text-base font-medium',
                   !isLoading && hasSubmissions
                     ? 'text-slate-500'
                     : 'text-brand-purple',
@@ -198,7 +198,7 @@ export const HowItWorks = () => {
             <div className="ml-[0.8125rem]">
               <button
                 className={cn(
-                  'text-base font-medium hover:text-brand-purple',
+                  'hover:text-brand-purple text-base font-medium',
                   !isLoading && hasWins
                     ? 'text-slate-500'
                     : 'text-brand-purple',

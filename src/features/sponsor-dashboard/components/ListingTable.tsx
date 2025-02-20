@@ -229,14 +229,14 @@ export const ListingTable = ({
                   <TableCell className="pr-0">
                     <Tooltip content={<p>{listingType}</p>}>
                       <img
-                        className="mt-1.5 h-5 w-5 flex-shrink-0 rounded-full"
+                        className="mt-1.5 h-5 w-5 shrink-0 rounded-full"
                         alt={`New ${listingType}`}
                         src={getListingIcon(listing.type!)}
                         title={listingType}
                       />
                     </Tooltip>
                   </TableCell>
-                  <TableCell className="max-w-80 whitespace-normal break-words font-medium text-slate-700">
+                  <TableCell className="max-w-80 font-medium break-words whitespace-normal text-slate-700">
                     <Link
                       className={cn(
                         'ph-no-capture',
@@ -248,7 +248,7 @@ export const ListingTable = ({
                       }}
                     >
                       <p
-                        className="cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-medium text-slate-500 hover:underline"
+                        className="cursor-pointer overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500 hover:underline"
                         title={listing.title}
                       >
                         {listing.title}
@@ -261,7 +261,7 @@ export const ListingTable = ({
                     </p>
                   </TableCell>
                   <TableCell className="items-center py-2">
-                    <p className="whitespace-nowrap text-sm font-medium text-slate-500">
+                    <p className="text-sm font-medium whitespace-nowrap text-slate-500">
                       {deadline}
                     </p>
                   </TableCell>
@@ -277,7 +277,7 @@ export const ListingTable = ({
                         }
                       />
                       {listing?.type === 'grant' && (
-                        <p className="whitespace-nowrap text-sm font-medium text-slate-700">
+                        <p className="text-sm font-medium whitespace-nowrap text-slate-700">
                           {grantAmount({
                             minReward: listing?.minRewardAsk!,
                             maxReward: listing?.maxRewardAsk!,
@@ -299,7 +299,7 @@ export const ListingTable = ({
                   <TableCell className="items-center py-2">
                     <p
                       className={cn(
-                        'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium',
+                        'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap',
                         textColor,
                         bgColor,
                       )}
@@ -312,7 +312,7 @@ export const ListingTable = ({
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="ph-no-capture text-[13px] font-medium text-brand-purple hover:bg-brand-purple hover:text-white"
+                        className="ph-no-capture text-brand-purple hover:bg-brand-purple text-[13px] font-medium hover:text-white"
                         onClick={() => {
                           posthog.capture('submissions_sponsor');
                           router.push(listingSubmissionLink);
@@ -424,7 +424,7 @@ export const ListingTable = ({
                         {listingStatus === 'Payment Pending' &&
                           listing?.type !== 'grant' && (
                             <DropdownMenuItem
-                              className="cursor-pointer whitespace-nowrap text-sm font-medium text-slate-500"
+                              className="cursor-pointer text-sm font-medium whitespace-nowrap text-slate-500"
                               onClick={() => handleVerifyPayment(listing)}
                             >
                               <DollarSign className="mr-2 h-4 w-4" />

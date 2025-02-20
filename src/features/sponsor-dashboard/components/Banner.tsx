@@ -35,7 +35,7 @@ const StatsTooltip = ({
   >
     <div className="cursor-pointer">
       <div className="flex items-center">
-        <p className="mr-0.5 whitespace-nowrap text-base font-normal text-slate-500">
+        <p className="mr-0.5 text-base font-normal whitespace-nowrap text-slate-500">
           {label}
         </p>
         <Info className="h-3 w-3 text-slate-400" />
@@ -84,7 +84,7 @@ export function Banner({
     <div className="flex w-full gap-4">
       <div className="mb-6 w-full rounded-md border border-slate-200 bg-white px-6 py-5 text-white">
         <div className="flex items-center gap-6">
-          <div className="flex flex-shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3">
             <EarnAvatar
               className="h-12 w-12 rounded-md"
               id={sponsor?.name}
@@ -93,7 +93,7 @@ export function Banner({
             <div>
               <div className="flex items-center">
                 <div className="flex w-min items-center gap-1">
-                  <p className="whitespace-nowrap text-lg font-semibold text-slate-900">
+                  <p className="text-lg font-semibold whitespace-nowrap text-slate-900">
                     {sponsor?.name}
                   </p>
                   <div>{!!sponsor?.isVerified && <VerifiedBadgeLarge />}</div>
@@ -109,7 +109,7 @@ export function Banner({
               {isLoading ? (
                 <Skeleton className="mt-2 h-5 w-[170px]" />
               ) : (
-                <p className="-mt-0.5 whitespace-nowrap text-[1.05rem] font-normal text-slate-500">
+                <p className="-mt-0.5 text-[1.05rem] font-normal whitespace-nowrap text-slate-500">
                   {!isHackathon
                     ? `Sponsor since ${stats?.yearOnPlatform}`
                     : 'Hackathon'}
@@ -158,10 +158,10 @@ export function Banner({
                 src={'/sponsor/pratik.webp'}
               />
               <div>
-                <p className="whitespace-nowrap font-semibold text-slate-900">
+                <p className="font-semibold whitespace-nowrap text-slate-900">
                   Stuck somewhere?
                 </p>
-                <p className="whitespace-nowrap font-semibold text-slate-500">
+                <p className="font-semibold whitespace-nowrap text-slate-500">
                   Message Us
                 </p>
               </div>

@@ -38,9 +38,9 @@ export const FeedPageLayout = ({
 }: FeedPageProps) => {
   return (
     <Home type="feed">
-      <div className="-ml-5 -mr-[10px] -mt-4 border-r border-slate-200 lg:-mr-[25px] lg:ml-0">
+      <div className="-mt-4 -mr-[10px] -ml-5 border-r border-slate-200 lg:-mr-[25px] lg:ml-0">
         <div className="flex">
-          <div className="sticky top-14 hidden h-screen w-48 flex-col gap-3 border-r pr-5 pt-5 lg:flex">
+          <div className="sticky top-14 hidden h-screen w-48 flex-col gap-3 border-r pt-5 pr-5 lg:flex">
             <NavItem name="Homepage" icon={HomeIcon} href="/" />
             <NavItem
               name="Leaderboard"

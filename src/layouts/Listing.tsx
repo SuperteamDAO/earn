@@ -159,14 +159,14 @@ export function ListingPageLayout({
                   maxW,
                 )}
               >
-                <div className="static top-14 h-full w-full flex-grow md:sticky md:w-[22rem]">
+                <div className="static top-14 h-full w-full grow md:sticky md:w-[22rem]">
                   <RightSideBar
                     isTemplate={isTemplate}
                     listing={initialBounty}
                     skills={iterableSkills}
                   />
                 </div>
-                <div className="flex h-full w-full flex-grow flex-col gap-8 border-slate-100 pb-10 md:border-l md:pl-5">
+                <div className="flex h-full w-full grow flex-col gap-8 border-slate-100 pb-10 md:border-l md:pl-5">
                   <div className="w-full">{children}</div>
                   <div className="flex w-full flex-col items-start md:hidden">
                     <p className="mb-1.5 h-full text-center text-xs font-semibold text-slate-600">

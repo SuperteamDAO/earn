@@ -149,7 +149,7 @@ const Desktop = ({
         }}
         unsetDefaultPosition
         unsetDefaultTransition
-        className="bottom-4 right-4 max-w-[22.5rem] translate-x-0 translate-y-0 overflow-hidden duration-500 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full"
+        className="data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full right-4 bottom-4 max-w-[22.5rem] translate-x-0 translate-y-0 overflow-hidden duration-500"
       >
         <DialogHeader className="">
           <Image
@@ -188,9 +188,9 @@ const Mobile = ({
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerContent
         classNames={{
-          overlay: isLoginOpen ? 'z-[200]' : '',
+          overlay: isLoginOpen ? 'z-200' : '',
         }}
-        className="!border-0 !ring-0"
+        className="border-0! ring-0!"
       >
         <DrawerHeader className="text-left">
           <Image

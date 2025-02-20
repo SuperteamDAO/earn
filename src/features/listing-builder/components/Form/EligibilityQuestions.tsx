@@ -90,7 +90,7 @@ export function EligibilityQuestions() {
       render={() => (
         <FormItem className="gap-2 pt-2">
           <div className="flex items-center gap-2">
-            <FormLabel className="font-bold uppercase text-slate-400">
+            <FormLabel className="font-bold text-slate-400 uppercase">
               Custom Questions
             </FormLabel>
             <Tooltip
@@ -118,7 +118,7 @@ export function EligibilityQuestions() {
                       <FormLabel isRequired={type === 'project' && index === 0}>
                         Question {index + 1}
                       </FormLabel>
-                      <div className="flex items-start rounded-md border ring-primary has-[:focus]:ring-1">
+                      <div className="ring-primary flex items-start rounded-md border has-focus:ring-1">
                         <FormField
                           control={form.control}
                           name={`eligibility.${index}.type`}
@@ -177,7 +177,7 @@ export function EligibilityQuestions() {
                                   placeholder="Enter your question"
                                   minRows={1}
                                   rows={1}
-                                  className="min-h-8 resize-none overflow-hidden border-none py-2 pl-2 text-sm placeholder:text-sm placeholder:text-slate-400 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                                  className="min-h-8 resize-none overflow-hidden border-none py-2 pl-2 text-sm placeholder:text-sm placeholder:text-slate-400 focus:ring-0 focus:outline-hidden focus-visible:ring-0"
                                   onChange={(e) => {
                                     field.onChange(e);
                                     form.saveDraft();
@@ -201,7 +201,7 @@ export function EligibilityQuestions() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="hidden text-muted-foreground group-hover:flex hover:text-destructive"
+                            className="text-muted-foreground hover:text-destructive hidden group-hover:flex"
                             onClick={() => handleRemoveQuestion(index)}
                           >
                             <Trash2 className="h-4 w-4" />

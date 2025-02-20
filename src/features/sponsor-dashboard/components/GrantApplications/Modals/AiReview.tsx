@@ -173,7 +173,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
             {`We've added review notes and labelled the submissions as `}
             <span
               className={cn(
-                'ml-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
+                'ml-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
                 colorMap['Low_Quality'].bg,
                 colorMap['Low_Quality'].color,
               )}
@@ -182,7 +182,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
             </span>
             <span
               className={cn(
-                'ml-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
+                'ml-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
                 colorMap['Shortlisted'].bg,
                 colorMap['Shortlisted'].color,
               )}
@@ -191,7 +191,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
             </span>
             <span
               className={cn(
-                'mx-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
+                'mx-2 inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
                 colorMap['Reviewed'].bg,
                 colorMap['Reviewed'].color,
               )}
@@ -236,9 +236,9 @@ export default function AiReviewModal({ applications, grant }: Props) {
               <p className="mb-1 text-xs text-slate-400">
                 {unreviewedApplications?.length} Applications to review
               </p>
-              <div className="group relative inline-flex h-10 overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] bg-background p-[1.5px] pb-[1.8px] shadow-[0px_2px_2.3px_0px_#0000002B] focus:outline-none">
+              <div className="group bg-background relative inline-flex h-10 overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] p-[1.5px] pb-[1.8px] shadow-[0px_2px_2.3px_0px_#0000002B] focus:outline-hidden">
                 <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
-                <span className="ph-no-capture inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-background px-4 py-1 text-sm font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
+                <span className="ph-no-capture bg-background inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-1 text-sm font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
                   <img src="/assets/ai-wand.svg" alt="Auto Review AI" />
                   Auto Review
                 </span>
@@ -322,7 +322,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
                   Auto Review
                 </Button>
 
-                <p className="mt-2 text-center text-sm text-muted-foreground">
+                <p className="text-muted-foreground mt-2 text-center text-sm">
                   AI can make mistakes, and cannot access external links in
                   applications. Check important info.
                 </p>
@@ -336,7 +336,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
                   <Progress
                     value={progress}
                     className="w-full bg-slate-100"
-                    indicatorClassName="bg-gradient-to-r from-[#FF79C1] to-[#76C5FF]"
+                    indicatorClassName="bg-linear-to-r from-[#FF79C1] to-[#76C5FF]"
                   />
                 </div>
 
@@ -395,7 +395,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
                         <Badge
                           variant="secondary"
                           className={cn(
-                            'inline-flex w-fit whitespace-nowrap px-1 py-0 text-center text-xs text-slate-500',
+                            'inline-flex w-fit px-1 py-0 text-center text-xs whitespace-nowrap text-slate-500',
                           )}
                         >
                           neither low quality nor shortlisted

@@ -100,7 +100,7 @@ export function TitleAndType() {
         return (
           <FormItem className="gap-2">
             <FormLabel isRequired>Listing Title</FormLabel>
-            <div className="flex w-full rounded-md border ring-primary has-[:focus]:ring-1">
+            <div className="ring-primary flex w-full rounded-md border has-focus:ring-1">
               <Type />
               <FormControl>
                 <Input
@@ -122,7 +122,7 @@ export function TitleAndType() {
                 ) : (
                   !isEditing &&
                   suggestions.length > 0 && (
-                    <div className="flex flex-shrink gap-1 text-[0.7rem] font-medium italic text-emerald-600">
+                    <div className="flex shrink gap-1 text-[0.7rem] font-medium text-emerald-600 italic">
                       <p className="w-max">Reference Listings:</p>
                       <div className="flex flex-wrap items-center gap-x-1.5">
                         {suggestions.map((suggestion, index) => (
@@ -152,7 +152,7 @@ export function TitleAndType() {
                   )
                 )}
               </div>
-              <div className="shrink-0 whitespace-nowrap text-right text-xs text-slate-400">
+              <div className="shrink-0 text-right text-xs whitespace-nowrap text-slate-400">
                 {100 - (title?.length || 0)} characters left
               </div>
             </div>

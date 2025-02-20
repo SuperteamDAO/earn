@@ -168,7 +168,7 @@ export function PublishResults({
             rewards &&
             totalWinners === rewards &&
             alertType !== 'error' && (
-              <p className="mb-4 mt-1">
+              <p className="mt-1 mb-4">
                 Publishing the results of this listing will make the results
                 public for everyone to see!
                 <br />

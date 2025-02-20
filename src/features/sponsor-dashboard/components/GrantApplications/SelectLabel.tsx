@@ -100,11 +100,11 @@ export const SelectLabel = ({ grantSlug }: Props) => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+          className="hover:border-brand-purple border border-slate-300 bg-transparent font-medium text-slate-500 capitalize hover:bg-transparent"
         >
           <span
             className={cn(
-              'inline-flex w-full whitespace-nowrap rounded-full px-3 py-0.5 text-center text-xs capitalize',
+              'inline-flex w-full rounded-full px-3 py-0.5 text-center text-xs whitespace-nowrap capitalize',
               bg,
               color,
             )}
@@ -129,7 +129,7 @@ export const SelectLabel = ({ grantSlug }: Props) => {
           >
             <span
               className={cn(
-                'inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
+                'inline-flex w-fit rounded-full px-2 text-center text-[10px] whitespace-nowrap capitalize',
                 colorMap[option.value as keyof typeof colorMap].bg,
                 colorMap[option.value as keyof typeof colorMap].color,
               )}

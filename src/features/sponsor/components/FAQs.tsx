@@ -42,7 +42,7 @@ Earn can be used to get any small to medium scale task done, including but not l
 export function FAQs() {
   return (
     <div
-      className="flex w-full flex-col items-center bg-indigo-50 pb-16 pt-8"
+      className="flex w-full flex-col items-center bg-indigo-50 pt-8 pb-16"
       id="faqs"
     >
       <h2
@@ -68,10 +68,10 @@ export function FAQs() {
               key={faq.question}
               value={faq.question}
             >
-              <AccordionTrigger className="rounded px-3 py-4 text-base font-normal data-[state=open]:bg-black/5 hover:bg-black/5 hover:no-underline">
+              <AccordionTrigger className="rounded px-3 py-4 text-base font-normal hover:bg-black/5 hover:no-underline data-[state=open]:bg-black/5">
                 <span className="flex-1 text-left">{faq.question}</span>
               </AccordionTrigger>
-              <AccordionContent className="px-3 pb-4 pt-2 text-base">
+              <AccordionContent className="px-3 pt-2 pb-4 text-base">
                 <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
               </AccordionContent>
             </AccordionItem>

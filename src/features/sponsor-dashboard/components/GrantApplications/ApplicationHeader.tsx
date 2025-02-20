@@ -97,7 +97,7 @@ export const ApplicationHeader = ({ grant, applications }: Props) => {
         </div>
         <div className="flex items-center gap-2">
           <Button
-            className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
+            className="hover:text-brand-purple text-slate-400 hover:bg-indigo-100"
             disabled={exportMutation.isPending}
             onClick={handleExport}
             variant="ghost"
@@ -116,7 +116,7 @@ export const ApplicationHeader = ({ grant, applications }: Props) => {
           </Button>
 
           <Button
-            className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
+            className="hover:text-brand-purple text-slate-400 hover:bg-indigo-100"
             onClick={() =>
               window.open(`${router.basePath}/${listingPath}`, '_blank')
             }
@@ -128,7 +128,7 @@ export const ApplicationHeader = ({ grant, applications }: Props) => {
         </div>
       </div>
       <Separator />
-      <div className="mb-8 mt-4 flex items-center gap-12">
+      <div className="mt-4 mb-8 flex items-center gap-12">
         <div>
           <p className="text-slate-500">Applications</p>
           <p className="mt-3 font-semibold text-slate-600">
@@ -137,7 +137,7 @@ export const ApplicationHeader = ({ grant, applications }: Props) => {
         </div>
         <div>
           <p className="text-slate-500">Deadline</p>
-          <p className="mt-3 whitespace-nowrap font-semibold text-slate-600">
+          <p className="mt-3 font-semibold whitespace-nowrap text-slate-600">
             Rolling
           </p>
         </div>
@@ -145,7 +145,7 @@ export const ApplicationHeader = ({ grant, applications }: Props) => {
           <p className="text-slate-500">Status</p>
           <p
             className={cn(
-              'mt-3 inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-sm font-medium',
+              'mt-3 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium whitespace-nowrap',
               getColorStyles(grantStatus).color,
               getColorStyles(grantStatus).bgColor,
             )}
@@ -176,17 +176,17 @@ export const ApplicationHeader = ({ grant, applications }: Props) => {
         <div>
           <p className="text-slate-500">Share</p>
           <div className="relative border-slate-100 bg-slate-50">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+            <div className="absolute top-1/2 left-3 -translate-y-1/2">
               <Link2 className="h-4 w-4 text-slate-400" />
             </div>
 
             <Input
-              className="w-80 overflow-hidden text-ellipsis whitespace-nowrap border-slate-100 pl-10 pr-10 text-slate-500 focus-visible:ring-[#CFD2D7] focus-visible:ring-offset-0"
+              className="w-80 overflow-hidden border-slate-100 pr-10 pl-10 text-ellipsis whitespace-nowrap text-slate-500 focus-visible:ring-[#CFD2D7] focus-visible:ring-offset-0"
               readOnly
               value={`${getURL()}${listingPath}`}
             />
 
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <div className="absolute top-1/2 right-3 -translate-y-1/2">
               {hasCopied ? (
                 <Check className="h-4 w-4 text-slate-400" />
               ) : (

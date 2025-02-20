@@ -45,7 +45,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
               {title}
             </p>
             <div className="flex w-min items-center gap-1">
-              <p className="w-full whitespace-nowrap text-xs text-slate-500 md:text-sm">
+              <p className="w-full text-xs whitespace-nowrap text-slate-500 md:text-sm">
                 {sponsor?.name}
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
@@ -58,7 +58,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                   src={tokenIcon!}
                 />
                 <div className="flex items-baseline">
-                  <p className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base">
+                  <p className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base">
                     {grantAmount({
                       maxReward: maxReward!,
                       minReward: minReward!,
@@ -81,7 +81,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
               {!!totalApproved && (
                 <div className="flex items-center gap-1">
                   <p className="flex text-xs text-slate-300 md:text-sm">|</p>
-                  <p className="whitespace-nowrap text-[11px] font-medium text-gray-500 sm:text-xs">
+                  <p className="text-[11px] font-medium whitespace-nowrap text-gray-500 sm:text-xs">
                     $
                     {formatNumberWithSuffix(
                       Number(
@@ -107,7 +107,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
             src={tokenIcon!}
           />
           <div className="flex items-baseline gap-1">
-            <p className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base">
+            <p className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base">
               {grantAmount({
                 maxReward: maxReward!,
                 minReward: minReward!,

@@ -133,7 +133,7 @@ export const RecordPaymentModal = ({
                     <FormControl>
                       <Input
                         type="number"
-                        className="border-slate-300 text-slate-800 focus-visible:ring-brand-purple"
+                        className="focus-visible:ring-brand-purple border-slate-300 text-slate-800"
                         placeholder="Enter amount"
                         {...field}
                       />

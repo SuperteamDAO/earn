@@ -57,7 +57,7 @@ export default function Talent() {
         </div>
       ) : (
         <div className="grid h-full w-full grid-cols-1 grid-rows-1 lg:grid-cols-2">
-          <div className="mx-auto max-w-3xl px-4 lg:mx-0 lg:ml-auto lg:w-full lg:pl-24 lg:pr-12">
+          <div className="mx-auto max-w-3xl px-4 lg:mx-0 lg:ml-auto lg:w-full lg:pr-12 lg:pl-24">
             <TalentForm />
           </div>
           {isMD && (

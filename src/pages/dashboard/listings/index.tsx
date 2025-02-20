@@ -216,12 +216,12 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  className="h-9 border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                  className="hover:border-brand-purple h-9 border border-slate-300 bg-transparent font-medium text-slate-500 capitalize hover:bg-transparent"
                   variant="outline"
                 >
                   <span
                     className={cn(
-                      'inline-flex items-center whitespace-nowrap rounded-full px-3 text-center text-[11px] capitalize',
+                      'inline-flex items-center rounded-full px-3 text-center text-[11px] whitespace-nowrap capitalize',
                       getColorStyles(selectedStatus!).color,
                       getColorStyles(selectedStatus!).bgColor,
                     )}
@@ -239,7 +239,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
                 >
                   <span
                     className={cn(
-                      'inline-flex items-center whitespace-nowrap rounded-full px-3 text-center text-[11px] capitalize',
+                      'inline-flex items-center rounded-full px-3 text-center text-[11px] whitespace-nowrap capitalize',
                       getColorStyles('Everything').color,
                       getColorStyles('Everything').bgColor,
                     )}
@@ -256,7 +256,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
                   >
                     <span
                       className={cn(
-                        'inline-flex items-center whitespace-nowrap rounded-full px-3 text-center text-[11px] font-medium capitalize',
+                        'inline-flex items-center rounded-full px-3 text-center text-[11px] font-medium whitespace-nowrap capitalize',
                         getColorStyles(status).color,
                         getColorStyles(status).bgColor,
                       )}
@@ -269,9 +269,9 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
             </DropdownMenu>
           </div>
           <div className="relative ml-4 w-64">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md border-slate-300 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
+              className="placeholder:text-md focus-visible:ring-brand-purple border-slate-300 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search listing..."
               type="text"
@@ -406,7 +406,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
             and start getting contributions
           </p>
           <Button
-            className="text-md mx-auto mb-48 mt-6 flex w-[200px]"
+            className="text-md mx-auto mt-6 mb-48 flex w-[200px]"
             onClick={onOpenCreateListing}
           >
             <Plus className="mr-2 h-3 w-3" />

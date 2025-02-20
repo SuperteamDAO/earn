@@ -50,30 +50,30 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
       <Table>
         <TableHeader className="bg-slate-50">
           <TableRow className="normal-case">
-            <TableHead className="px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
+            <TableHead className="px-1 text-center text-xs font-medium tracking-wider text-slate-500 normal-case md:px-2">
               Rank
             </TableHead>
-            <TableHead className="px-1 text-left text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
+            <TableHead className="px-1 text-left text-xs font-medium tracking-wider text-slate-500 normal-case md:px-2">
               Name
             </TableHead>
-            <TableHead className="px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
+            <TableHead className="px-1 text-center text-xs font-medium tracking-wider text-slate-500 normal-case md:px-2">
               <p className="hidden whitespace-nowrap md:block">
                 Dollars Earned
               </p>
               <p className="block whitespace-nowrap md:hidden">$ Earned</p>
             </TableHead>
-            <TableHead className="whitespace-nowrap px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
+            <TableHead className="px-1 text-center text-xs font-medium tracking-wider whitespace-nowrap text-slate-500 normal-case md:px-2">
               Win Rate
             </TableHead>
-            <TableHead className="px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2">
+            <TableHead className="px-1 text-center text-xs font-medium tracking-wider text-slate-500 normal-case md:px-2">
               Wins
             </TableHead>
-            <TableHead className="max-w-[3.5rem] overflow-x-hidden truncate px-1 text-center text-xs font-medium normal-case tracking-wider text-slate-500 md:max-w-none md:px-2">
+            <TableHead className="max-w-[3.5rem] truncate overflow-x-hidden px-1 text-center text-xs font-medium tracking-wider text-slate-500 normal-case md:max-w-none md:px-2">
               Submissions
             </TableHead>
             <TableHead
               className={cn(
-                'px-1 text-left text-xs font-medium normal-case tracking-wider text-slate-500 md:px-2',
+                'px-1 text-left text-xs font-medium tracking-wider text-slate-500 normal-case md:px-2',
                 skill !== 'ALL' ? 'hidden' : 'hidden md:table-cell',
               )}
             >
@@ -82,7 +82,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
           </TableRow>
         </TableHeader>
         {rankings.length === 0 && (
-          <div className="absolute left-1/2 top-40 flex -translate-x-1/2 flex-col items-center">
+          <div className="absolute top-40 left-1/2 flex -translate-x-1/2 flex-col items-center">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-slate-100">
               <svg
                 width="24"
@@ -184,7 +184,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                     {row.skills.slice(0, 2).map((s) => (
                       <span
                         key={s}
-                        className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]"
+                        className="text-xxs rounded-full bg-[#EFF1F5] px-2 py-0.5 font-medium whitespace-nowrap text-[#64739C]"
                       >
                         {s}
                       </span>
@@ -192,7 +192,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                     {row.skills.length > 2 && (
                       <Popover>
                         <PopoverTrigger>
-                          <span className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]">
+                          <span className="text-xxs rounded-full bg-[#EFF1F5] px-2 py-0.5 font-medium whitespace-nowrap text-[#64739C]">
                             +{row.skills.length - 2}
                           </span>
                         </PopoverTrigger>
@@ -204,7 +204,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                             {row.skills.slice(2).map((s) => (
                               <span
                                 key={s}
-                                className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]"
+                                className="text-xxs rounded-full bg-[#EFF1F5] px-2 py-0.5 font-medium whitespace-nowrap text-[#64739C]"
                               >
                                 {s}
                               </span>
@@ -219,11 +219,11 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
             ))}
             {user && !rankings.find((r) => r.username === user?.username) && (
               <TableRow className="w-full bg-[#F5F3FF80]">
-                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 text-center md:px-2">
+                <TableCell className="sticky bottom-0 z-100 border-b-0 px-1 text-center md:px-2">
                   {userRank ? '#' + userRank.rank : '-'}
                 </TableCell>
 
-                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 md:px-2">
+                <TableCell className="sticky bottom-0 z-100 border-b-0 px-1 md:px-2">
                   <Link
                     className="ph-no-capture flex items-center gap-2"
                     href={`/t/${user.username}`}
@@ -256,7 +256,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                   </Link>
                 </TableCell>
 
-                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 md:px-2">
+                <TableCell className="sticky bottom-0 z-100 border-b-0 px-1 md:px-2">
                   <div className="flex justify-end gap-1 text-right">
                     <p className="text-black">
                       ${formatNumberWithSuffix(userRank?.dollarsEarned ?? 0)}
@@ -265,15 +265,15 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                   </div>
                 </TableCell>
 
-                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 text-center md:px-2">
+                <TableCell className="sticky bottom-0 z-100 border-b-0 px-1 text-center md:px-2">
                   {userRank?.winRate ? userRank?.winRate + '%' : '-'}
                 </TableCell>
 
-                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 text-center md:px-2">
+                <TableCell className="sticky bottom-0 z-100 border-b-0 px-1 text-center md:px-2">
                   {userRank?.wins ?? '-'}
                 </TableCell>
 
-                <TableCell className="z-100 sticky bottom-0 border-b-0 px-1 text-center md:px-2">
+                <TableCell className="sticky bottom-0 z-100 border-b-0 px-1 text-center md:px-2">
                   {userRank?.submissions ?? '-'}
                 </TableCell>
 
@@ -287,7 +287,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                     {userSkills.slice(0, 2).map((s) => (
                       <span
                         key={s}
-                        className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]"
+                        className="text-xxs rounded-full bg-[#EFF1F5] px-2 py-0.5 font-medium whitespace-nowrap text-[#64739C]"
                       >
                         {s}
                       </span>
@@ -295,7 +295,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                     {userSkills.length > 2 && (
                       <Popover>
                         <PopoverTrigger>
-                          <span className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]">
+                          <span className="text-xxs rounded-full bg-[#EFF1F5] px-2 py-0.5 font-medium whitespace-nowrap text-[#64739C]">
                             +{userSkills.length - 2}
                           </span>
                         </PopoverTrigger>
@@ -307,7 +307,7 @@ export function RanksTable({ rankings, skill, userRank, loading }: Props) {
                             {userSkills.slice(2).map((s) => (
                               <span
                                 key={s}
-                                className="whitespace-nowrap rounded-full bg-[#EFF1F5] px-2 py-0.5 text-xxs font-medium text-[#64739C]"
+                                className="text-xxs rounded-full bg-[#EFF1F5] px-2 py-0.5 font-medium whitespace-nowrap text-[#64739C]"
                               >
                                 {s}
                               </span>

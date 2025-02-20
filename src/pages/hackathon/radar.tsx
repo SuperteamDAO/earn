@@ -103,7 +103,7 @@ export default function Radar() {
           </div>
 
           <div
-            className={`flex justify-center gap-4 px-6 pb-12 pt-4 text-gray-100 md:gap-12 ${isStatsLoading ? 'invisible' : 'visible'}`}
+            className={`flex justify-center gap-4 px-6 pt-4 pb-12 text-gray-100 md:gap-12 ${isStatsLoading ? 'invisible' : 'visible'}`}
           >
             <div className="flex flex-col">
               <p className="text-sm font-medium text-orange-100">

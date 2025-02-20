@@ -38,7 +38,7 @@ export const ActionWrapper = React.memo(
       <div
         ref={ref}
         className={cn(
-          'absolute right-3 top-3 flex flex-row rounded px-0.5 opacity-0 group-hover/node-image:opacity-100',
+          'absolute top-3 right-3 flex flex-row rounded px-0.5 opacity-0 group-hover/node-image:opacity-100',
           'border-[0.5px] bg-[var(--mt-bg-secondary)] [backdrop-filter:saturate(1.8)_blur(20px)]',
           className,
         )}
@@ -60,7 +60,7 @@ export const ActionButton = React.memo(
           ref={ref}
           variant="ghost"
           className={cn(
-            'relative flex h-7 w-7 flex-row rounded-none p-0 text-muted-foreground hover:text-foreground',
+            'text-muted-foreground hover:text-foreground relative flex h-7 w-7 flex-row rounded-none p-0',
             'bg-transparent hover:bg-transparent',
             className,
           )}

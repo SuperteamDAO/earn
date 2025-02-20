@@ -60,7 +60,7 @@ export function InviteButton({
       disabled={invited || maxInvitesReached}
       className={cn(
         'ph-no-capture h-full gap-2 text-xs',
-        'bg-indigo-50 text-brand-purple',
+        'text-brand-purple bg-indigo-50',
         'disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400',
       )}
       {...(inviteMutation.isPending && { 'aria-disabled': true })}

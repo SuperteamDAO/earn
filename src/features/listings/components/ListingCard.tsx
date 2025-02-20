@@ -100,7 +100,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               {title}
             </p>
             <div className="flex w-min items-center gap-1">
-              <p className="w-full whitespace-nowrap text-xs text-slate-500 md:text-sm">
+              <p className="w-full text-xs whitespace-nowrap text-slate-500 md:text-sm">
                 {sponsor?.name}
               </p>
               <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
@@ -120,7 +120,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                     maxRewardAsk={maxRewardAsk}
                     minRewardAsk={minRewardAsk}
                     rewardAmount={rewardAmount}
-                    className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base"
+                    className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
                   />
                   {compensationType !== 'variable' && (
                     <p className="text-xs font-medium text-gray-400">{token}</p>
@@ -146,7 +146,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                 |
               </p>
               <div className="flex items-center gap-1">
-                <p className="whitespace-nowrap text-[10px] text-gray-500 sm:text-xs">
+                <p className="text-[10px] whitespace-nowrap text-gray-500 sm:text-xs">
                   {deadlineText}
                 </p>
               </div>
@@ -194,7 +194,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
         >
           {compensationType !== 'variable' && (
             <img
-              className="mr-1 mt-1 h-4 w-4 rounded-full sm:mt-0.5"
+              className="mt-1 mr-1 h-4 w-4 rounded-full sm:mt-0.5"
               alt={token}
               src={tokenIcon}
             />
@@ -205,7 +205,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               maxRewardAsk={maxRewardAsk}
               minRewardAsk={minRewardAsk}
               rewardAmount={rewardAmount}
-              className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base"
+              className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
             />
             {compensationType !== 'variable' && (
               <p className="text-xs font-medium text-gray-400 sm:text-base">

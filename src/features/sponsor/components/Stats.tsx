@@ -77,7 +77,7 @@ export function Stats() {
 
       <div className="flex flex-col gap-8">
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-          <h2 className="text-[2rem] font-semibold leading-none md:text-[3.5rem]">
+          <h2 className="text-[2rem] leading-none font-semibold md:text-[3.5rem]">
             The distribution of the Superteam network
           </h2>
           <p className="mt-4 text-[1.25rem] font-medium text-slate-500 lg:text-[1.4rem]">
@@ -94,10 +94,10 @@ export function Stats() {
               key={s.title}
               className="flex flex-col items-center gap-0 overflow-visible lg:items-start"
             >
-              <p className="text-[2.3rem] font-semibold leading-[1.15] lg:text-[3.5rem]">
+              <p className="text-[2.3rem] leading-[1.15] font-semibold lg:text-[3.5rem]">
                 {s.title}
               </p>
-              <p className="relative flex items-center gap-1 whitespace-nowrap text-[0.68rem] font-medium text-slate-500 lg:text-base">
+              <p className="relative flex items-center gap-1 text-[0.68rem] font-medium whitespace-nowrap text-slate-500 lg:text-base">
                 {s.showEarn && (
                   <span className="top-0 w-[0.6rem] lg:w-[0.9rem]">
                     <HighQualityImage

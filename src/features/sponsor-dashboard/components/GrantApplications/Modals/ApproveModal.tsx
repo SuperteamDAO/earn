@@ -73,7 +73,7 @@ const CustomNumberInput = ({
         inputMode="numeric"
         pattern="[0-9]*"
       />
-      <div className="absolute right-1 top-0 flex h-full flex-col">
+      <div className="absolute top-0 right-1 flex h-full flex-col">
         <button
           type="button"
           onClick={increment}
@@ -216,7 +216,7 @@ export const ApproveModal = ({
           )}
 
           <Button
-            className="mb-3 mt-2 w-full bg-[#079669] text-white hover:bg-[#079669]/90"
+            className="mt-2 mb-3 w-full bg-[#079669] text-white hover:bg-[#079669]/90"
             disabled={loading || approvedAmount === 0 || !!warningMessage}
             onClick={approveGrant}
           >

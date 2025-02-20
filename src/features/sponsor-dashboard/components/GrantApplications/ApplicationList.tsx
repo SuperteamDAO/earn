@@ -112,9 +112,9 @@ export const ApplicationList = ({
             className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
           />
           <div className="relative w-full">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md h-10 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple"
+              className="placeholder:text-md focus-visible:ring-brand-purple h-10 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
               onChange={(e) => debouncedSetSearchText(e.target.value)}
               placeholder="Search Applications"
               type="text"
@@ -127,12 +127,12 @@ export const ApplicationList = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                className="h-9 w-32 border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                className="hover:border-brand-purple h-9 w-32 border border-slate-300 bg-transparent px-2 py-1 font-medium text-slate-500 capitalize hover:bg-transparent"
                 variant="outline"
               >
                 <span
                   className={cn(
-                    'inline-flex whitespace-nowrap rounded-full px-3 py-0.5 text-center text-[10px] capitalize',
+                    'inline-flex rounded-full px-3 py-0.5 text-center text-[10px] whitespace-nowrap capitalize',
                     bg,
                     color,
                   )}
@@ -148,7 +148,7 @@ export const ApplicationList = ({
                 className="focus:bg-slate-100"
                 onClick={() => setFilterLabel(undefined)}
               >
-                <span className="inline-flex whitespace-nowrap rounded-full bg-slate-100 px-3 text-center text-[10px] capitalize">
+                <span className="inline-flex rounded-full bg-slate-100 px-3 text-center text-[10px] whitespace-nowrap capitalize">
                   Select Option
                 </span>
               </DropdownMenuItem>
@@ -161,7 +161,7 @@ export const ApplicationList = ({
                 >
                   <span
                     className={cn(
-                      'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                      'inline-flex rounded-full px-3 text-center text-[10px] whitespace-nowrap capitalize',
                       colorMap[status].bg,
                       colorMap[status].color,
                     )}
@@ -180,7 +180,7 @@ export const ApplicationList = ({
                 >
                   <span
                     className={cn(
-                      'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                      'inline-flex rounded-full px-3 text-center text-[10px] whitespace-nowrap capitalize',
                       colorMap[option.value as keyof typeof colorMap].bg,
                       colorMap[option.value as keyof typeof colorMap].color,
                     )}
@@ -219,7 +219,7 @@ export const ApplicationList = ({
           >
             <div className="flex items-center">
               <Checkbox
-                className="mr-2 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2"
                 checked={isToggled(application.id)}
                 disabled={application?.applicationStatus !== 'Pending'}
                 onCheckedChange={() => toggleApplication(application.id)}
@@ -231,10 +231,10 @@ export const ApplicationList = ({
               />
 
               <div className="ml-2 w-40">
-                <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-slate-700">
+                <p className="overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-700">
                   {application?.projectTitle}
                 </p>
-                <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-slate-500">
+                <p className="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap text-slate-500">
                   {`${application?.user?.firstName} ${application?.user?.lastName}`}
                 </p>
               </div>
@@ -243,7 +243,7 @@ export const ApplicationList = ({
             <div className="ml-auto flex w-min flex-col justify-end gap-1 align-bottom">
               <span
                 className={cn(
-                  'ml-auto inline-flex w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-center text-[9px] capitalize',
+                  'ml-auto inline-flex w-fit rounded-full px-2 py-0.5 text-center text-[9px] whitespace-nowrap capitalize',
                   statusBg,
                   statusColor,
                 )}
@@ -252,7 +252,7 @@ export const ApplicationList = ({
               </span>
               <span
                 className={cn(
-                  'ml-auto inline-flex w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-center text-[9px] capitalize',
+                  'ml-auto inline-flex w-fit rounded-full px-2 py-0.5 text-center text-[9px] whitespace-nowrap capitalize',
                   labelBg,
                   labelColor,
                 )}
