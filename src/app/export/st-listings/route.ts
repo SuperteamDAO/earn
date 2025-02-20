@@ -22,21 +22,19 @@ export async function GET() {
       },
     });
 
-    console.log(`Found ${listings.length} listings`); // Debug log
+    console.log(`Found ${listings.length} listings`);
 
-    // Format date for Excel
     const formatDate = (date: Date | null) => {
       if (!date) return '';
-      return date.toISOString().replace('T', ' ').split('.')[0];
+      return dayjs(date).format('DD-MM-YYYY');
     };
 
-    // Transform data for CSV
     const csvData = listings.map((item) => ({
       'Listing title': item.title || '',
       Sponsor: item.sponsor?.name || '',
       'Listing type': item.type?.toLowerCase() || '',
       'Geo-lock': item.region || 'GLOBAL',
-      'Reward token amount':
+      Reward:
         item.compensationType === 'variable'
           ? `Variable ${item.token}`
           : item.compensationType === 'range'
@@ -44,9 +42,8 @@ export async function GET() {
             : item.rewardAmount
               ? `${item.rewardAmount} ${item.token}`
               : '',
-      'Reward token name': item.token || '',
       'Reward USD value': item.usdValue?.toFixed(2) || '',
-      'PublishedAt time': formatDate(item.publishedAt),
+      'Published Date': formatDate(item.publishedAt),
       Deadline: formatDate(item.deadline),
       'Winners announced?': item.isWinnersAnnounced ? 'Yes' : 'No',
       'Is Fndn Paying?': item.isFndnPaying ? 'Yes' : 'No',

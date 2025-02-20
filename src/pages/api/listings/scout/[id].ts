@@ -67,17 +67,6 @@ async function scoutTalent(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(404).send('Bounty Not Found');
     }
 
-    const scoutSponsor = await prisma.sponsors.findFirst({
-      where: {
-        id: scoutBounty.sponsorId,
-      },
-    });
-
-    if (scoutSponsor?.isVerified === false) {
-      logger.warn(`Sponsor isnt Verified, not sending scout data`);
-      return res.status(200).send([]);
-    }
-
     const userId = req.userId;
     logger.debug(`Fetching user details for user ID: ${userId}`);
     const user = await prisma.user.findUnique({
