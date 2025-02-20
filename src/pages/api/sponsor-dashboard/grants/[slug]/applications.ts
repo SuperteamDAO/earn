@@ -133,6 +133,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             twitter: true,
             telegram: true,
             website: true,
+            superteamLevel: true,
             Submission: {
               select: {
                 isWinner: true,
