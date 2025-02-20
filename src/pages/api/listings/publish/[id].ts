@@ -350,21 +350,23 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.debug(`Publish Listing Successful`, { id });
 
     if (isVerifying && listing.status !== 'VERIFYING') {
-      logger.info('Sending Discord Verification message', {
-        id,
-      });
-      try {
-        if (!process.env.EARNCOGNITO_URL) {
-          throw new Error('ENV EARNCOGNITO_URL not provided');
-        }
-        await earncognitoClient.post(`/discord/verify-listing/initiate`, {
-          listingId: result.id,
-        });
-        logger.info('Sent Discord Verification message', {
+      if (!!listing.sponsor.verificationInfo) {
+        logger.info('Sending Discord Verification message', {
           id,
         });
-      } catch (err) {
-        logger.error('Failed to send Verification Message to discord', err);
+        try {
+          if (!process.env.EARNCOGNITO_URL) {
+            throw new Error('ENV EARNCOGNITO_URL not provided');
+          }
+          await earncognitoClient.post(`/discord/verify-listing/initiate`, {
+            listingId: result.id,
+          });
+          logger.info('Sent Discord Verification message', {
+            id,
+          });
+        } catch (err) {
+          logger.error('Failed to send Verification Message to discord', err);
+        }
       }
     } else {
       try {

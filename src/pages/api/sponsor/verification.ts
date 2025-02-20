@@ -1,5 +1,6 @@
 import type { NextApiResponse } from 'next';
 
+import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -53,6 +54,23 @@ async function verification(req: NextApiRequestWithUser, res: NextApiResponse) {
         verificationInfo: validationResult.data,
       },
     });
+
+    logger.info('Sending Discord Verification message', {
+      listingId: validationResult.data.listingId,
+    });
+    try {
+      if (!process.env.EARNCOGNITO_URL) {
+        throw new Error('ENV EARNCOGNITO_URL not provided');
+      }
+      await earncognitoClient.post(`/discord/verify-listing/initiate`, {
+        listingId: validationResult.data.listingId,
+      });
+      logger.info('Sent Discord Verification message', {
+        listingId: validationResult.data.listingId,
+      });
+    } catch (err) {
+      logger.error('Failed to send Verification Message to discord', err);
+    }
 
     return res.status(200).json(sponsor);
   } catch (error: any) {

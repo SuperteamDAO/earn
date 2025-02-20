@@ -9,4 +9,5 @@ export const sponsorVerificationSchema = z.object({
   commitToDeadline: z.enum(['yes', 'no'], {
     required_error: 'Please select an option',
   }),
+  listingId: z.string(),
 });
