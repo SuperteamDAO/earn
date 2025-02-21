@@ -1,4 +1,5 @@
 import type { GetServerSideProps } from 'next';
+import { useState } from 'react';
 
 import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
@@ -13,7 +14,9 @@ interface BountyDetailsProps {
   bounty: Listing | null;
 }
 
-function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
+function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
+  const [bounty] = useState<typeof initialBounty>(initialBounty);
+
   return (
     <ListingPageLayout bounty={bounty}>
       <ListingPop listing={bounty} />
