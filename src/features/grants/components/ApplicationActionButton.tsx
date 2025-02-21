@@ -3,7 +3,6 @@ import { AlertTriangle, Loader2, Pencil } from 'lucide-react';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -14,103 +13,46 @@ import {
   userRegionEligibilty,
 } from '@/features/listings/utils/region';
 
+import { useApplicationState } from '../hooks/useApplicationState';
 import { userApplicationQuery } from '../queries/user-application';
 import { type Grant } from '../types';
-import { GrantApplicationModal } from './GrantApplicationModal';
+import { GrantModal } from './GrantModal';
+import { InfoWrapper } from './InfoWrapper';
 
 interface GrantApplicationButtonProps {
   grant: Grant;
 }
 
-const InfoWrapper = ({
-  children,
-  isUserEligibleByRegion,
-  regionTooltipLabel,
-  user,
-}: {
-  children: React.ReactNode;
-  isUserEligibleByRegion: boolean;
-  regionTooltipLabel: string;
-  user: any;
-}) => {
-  return (
-    <Tooltip
-      content={!isUserEligibleByRegion ? regionTooltipLabel : null}
-      contentProps={{ className: 'rounded-md' }}
-      disabled={!user?.id || !user?.isTalentFilled || isUserEligibleByRegion}
-    >
-      {children}
-    </Tooltip>
-  );
-};
-
-export const GrantApplicationButton = ({
+export const ApplicationActionButton = ({
   grant,
 }: GrantApplicationButtonProps) => {
   const { user } = useUser();
-  const { region, id, link, isNative } = grant;
-
-  const isUserEligibleByRegion = userRegionEligibilty({
-    region,
-    userLocation: user?.location,
-  });
+  const { region, id, link, isNative, isPublished } = grant;
 
   const { data: application, isLoading: isUserApplicationLoading } = useQuery({
     ...userApplicationQuery(id),
     enabled: !!user?.id,
   });
 
-  let applicationState: 'APPLIED' | 'ALLOW NEW' | 'ALLOW EDIT' = 'ALLOW NEW';
-  if (
-    application?.applicationStatus === 'Pending' ||
-    application?.applicationStatus === 'Approved'
-  ) {
-    applicationState = 'APPLIED';
-    if (application?.applicationStatus === 'Pending') {
-      if (grant.isNative) {
-        applicationState = 'ALLOW EDIT';
-      }
-    }
-  }
-
-  const hasApplied =
-    applicationState === 'APPLIED' || applicationState === 'ALLOW EDIT';
-
-  let buttonText;
-  let buttonBG;
-  let isBtnDisabled;
-  let btnLoadingText;
-
-  switch (applicationState) {
-    case 'APPLIED':
-      buttonText = 'Applied Successfully';
-      buttonBG = 'bg-green-600';
-      isBtnDisabled = true;
-      btnLoadingText = null;
-      break;
-
-    case 'ALLOW EDIT':
-      buttonText = 'Edit Application';
-      isBtnDisabled = Boolean(
-        user?.id && user?.isTalentFilled && !isUserEligibleByRegion,
-      );
-      btnLoadingText = 'Checking Application..';
-      break;
-
-    default:
-      buttonText = 'Apply Now';
-      buttonBG = 'bg-brand-purple';
-      isBtnDisabled = Boolean(
-        !grant.isPublished ||
-          (user?.id && user?.isTalentFilled && !isUserEligibleByRegion),
-      );
-      btnLoadingText = 'Checking Application..';
-      break;
-  }
-
+  const { buttonConfig, hasApplied, applicationState } = useApplicationState(
+    application,
+    grant,
+  );
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const isUserEligibleByRegion = userRegionEligibilty({
+    region,
+    userLocation: user?.location,
+  });
+
   const regionTooltipLabel = getRegionTooltipLabel(region);
+
+  const isBtnDisabled =
+    buttonConfig.isDisabled ||
+    Boolean(
+      !isPublished ||
+        (user?.id && user?.isTalentFilled && !isUserEligibleByRegion),
+    );
 
   const handleSubmit = () => {
     if (link && !isNative) {
@@ -123,13 +65,14 @@ export const GrantApplicationButton = ({
   return (
     <>
       {isOpen && (
-        <GrantApplicationModal
+        <GrantModal
           onClose={onClose}
           isOpen={isOpen}
           grant={grant}
-          grantApplication={
+          editableGrantApplication={
             applicationState === 'ALLOW EDIT' ? application : undefined
           }
+          applicationId={application?.id}
         />
       )}
       <InfoWrapper
@@ -151,7 +94,7 @@ export const GrantApplicationButton = ({
                 grant?.link && !grant?.isNative ? 'mt-4' : '',
                 'mb-12 lg:mb-5',
                 'disabled:opacity-70',
-                buttonBG,
+                buttonConfig.bg,
                 'size-lg',
                 applicationState === 'ALLOW EDIT' &&
                   'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
@@ -165,12 +108,12 @@ export const GrantApplicationButton = ({
               {isUserApplicationLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span>{btnLoadingText}</span>
+                  <span>{buttonConfig.loadingText}</span>
                 </>
               ) : (
                 <>
                   {applicationState === 'ALLOW EDIT' && <Pencil />}
-                  <span>{buttonText}</span>
+                  <span>{buttonConfig.text}</span>
                 </>
               )}
             </Button>

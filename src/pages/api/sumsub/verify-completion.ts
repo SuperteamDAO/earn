@@ -1,6 +1,8 @@
 import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
+import { prisma } from '@/prisma';
+
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import {
@@ -68,7 +70,7 @@ const getApplicantId = async (
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   const userId = req.userId;
-
+  const grantApplicationId = req.query.grantApplicationId as string;
   if (!userId) {
     return res.status(400).json({ message: 'Missing user ID' });
   }
@@ -87,6 +89,13 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       secretKey,
       appToken,
     );
+
+    if (result === 'verified') {
+      await prisma.grantApplication.update({
+        where: { id: grantApplicationId, userId },
+        data: { kycStatus: 'APPROVED' },
+      });
+    }
 
     return res.status(200).json(result);
   } catch (error) {

@@ -3,27 +3,32 @@ import {
   type MessageHandler,
 } from '@sumsub/websdk/types/types';
 import SumsubWebSdk from '@sumsub/websdk-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '@/lib/api';
 
+import { userApplicationQuery } from '../../queries/user-application';
+
 type MessageType = Parameters<MessageHandler>[0];
 
-type ReviewStatus =
-  | 'completed'
-  | 'init'
-  | 'onHold'
-  | 'pending'
-  | 'prechecked'
-  | 'queued';
-
-const fetchVerificationStatus = async () => {
-  const { data } = await api.get('/api/sumsub/verify-completion');
+const fetchVerificationStatus = async (grantApplicationId: string) => {
+  const { data } = await api.get('/api/sumsub/verify-completion', {
+    params: { grantApplicationId },
+  });
   return data;
 };
 
-export default function KYC() {
+export const KYCModal = ({
+  grantApplicationId,
+}: {
+  grantApplicationId: string;
+}) => {
+  useEffect(() => {
+    console.log(grantApplicationId);
+  }, [grantApplicationId]);
+
   const { data: accessToken, refetch } = useQuery({
     queryKey: ['sumsubToken'],
     queryFn: async () => {
@@ -32,14 +37,17 @@ export default function KYC() {
     },
   });
 
-  const { data: verificationStatus, refetch: checkVerification } = useQuery({
-    queryKey: ['verification-status'],
-    queryFn: fetchVerificationStatus,
+  const { refetch: checkVerification } = useQuery({
+    queryKey: ['verification-status', grantApplicationId],
+    queryFn: () => fetchVerificationStatus(grantApplicationId),
     enabled: false,
   });
 
+  const queryClient = useQueryClient();
+
   const config = {
     lang: 'en',
+    theme: 'light',
   };
 
   const errorHandler = (error: any) => {
@@ -51,10 +59,13 @@ export default function KYC() {
       type === 'idCheck.onApplicantStatusChanged' &&
       'reviewStatus' in payload
     ) {
-      const status = payload.reviewStatus as ReviewStatus;
-      console.log({ status });
-      await checkVerification();
-      console.log({ verificationStatus });
+      const result = await checkVerification();
+      if (result.data === 'verified') {
+        toast.success('KYC verified successfully!');
+        await queryClient.invalidateQueries({
+          queryKey: userApplicationQuery(grantApplicationId).queryKey,
+        });
+      }
     }
   }
 
@@ -75,4 +86,4 @@ export default function KYC() {
       )}
     </div>
   );
-}
+};

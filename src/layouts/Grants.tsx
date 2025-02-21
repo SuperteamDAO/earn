@@ -13,7 +13,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
-import { GrantApplicationButton } from '@/features/grants/components/GrantApplicationButton';
+import { ApplicationActionButton } from '@/features/grants/components/ApplicationActionButton';
 import { GrantsHeader } from '@/features/grants/components/GrantsHeader';
 import {
   DollarIcon,
@@ -202,7 +202,7 @@ export function GrantPageLayout({
                           </div>
                         </div>
                       </div>
-                      <GrantApplicationButton grant={grant} />
+                      <ApplicationActionButton grant={grant} />
                       <div>
                         <ExtraInfoSection
                           skills={iterableSkills}

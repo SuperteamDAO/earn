@@ -200,6 +200,7 @@ model Grants {
   isPrivate              Boolean            @default(false)
   references             Json?
   ai                     Json?
+  GrantTranche           GrantTranche[]
 
   @@index([id, slug])
   @@index([pocId])
@@ -247,6 +248,8 @@ model GrantApplication {
   decidedBy           String?
   notes               String?                @db.VarChar(1000)
   ai                  Json?
+  kycStatus           String                 @default("PENDING")
+  GrantTranche        GrantTranche[]
 
   @@index([userId])
   @@index([grantId])
@@ -258,6 +261,23 @@ model GrantApplication {
   @@index([decidedAt(sort: Desc)])
   @@index([createdAt(sort: Desc)])
   @@index([approvedAmountInUSD(sort: Desc)])
+}
+
+model GrantTranche {
+  id               String           @id @default(uuid())
+  applicationId    String
+  grantId          String
+  amount           Float
+  update           String?          @db.Text
+  helpWanted       String?          @db.Text
+  status           String           @default("PENDING")
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  GrantApplication GrantApplication @relation(fields: [applicationId], references: [id])
+  Grant            Grants           @relation(fields: [grantId], references: [id])
+
+  @@index([applicationId])
+  @@index([grantId])
 }
 
 model Submission {

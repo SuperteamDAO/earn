@@ -25,6 +25,9 @@ async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        GrantTranche: true,
+      },
     });
 
     if (!result) {
