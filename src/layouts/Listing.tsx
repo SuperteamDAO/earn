@@ -68,7 +68,7 @@ export function ListingPageLayout({
   }, [initialBounty, submissionNumber]);
 
   const encodedTitle = encodeURIComponent(initialBounty?.title || '');
-  const ogImage = new URL(`${getURL()}api/dynamic-og/initialBounty/`);
+  const ogImage = new URL(`${getURL()}api/dynamic-og/listing/`);
 
   ogImage.searchParams.set('title', encodedTitle);
   ogImage.searchParams.set(
