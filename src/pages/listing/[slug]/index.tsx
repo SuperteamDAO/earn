@@ -1,5 +1,4 @@
 import type { GetServerSideProps } from 'next';
-import { useState } from 'react';
 
 import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
@@ -15,17 +14,15 @@ interface BountyDetailsProps {
 }
 
 function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
-  const [bounty] = useState<typeof initialBounty>(initialBounty);
-
   return (
-    <ListingPageLayout bounty={bounty}>
-      <ListingPop listing={bounty} />
-      {bounty?.isWinnersAnnounced && (
+    <ListingPageLayout bounty={initialBounty}>
+      <ListingPop listing={initialBounty} />
+      {initialBounty?.isWinnersAnnounced && (
         <div className="mt-6 hidden w-full md:block">
-          <ListingWinners bounty={bounty} />
+          <ListingWinners bounty={initialBounty} />
         </div>
       )}
-      <DescriptionUI description={bounty?.description} />
+      <DescriptionUI description={initialBounty?.description} />
     </ListingPageLayout>
   );
 }
