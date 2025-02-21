@@ -11,6 +11,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { type Rewards } from '@/features/listings/types';
 
@@ -183,7 +184,9 @@ export async function POST(
             );
           };
 
-          const sortedWinners = winners.sort(sortSubmissions);
+          const sortedWinners = winners
+            .filter((s) => s.winnerPosition !== BONUS_REWARD_POSITION)
+            .sort(sortSubmissions);
 
           const extractedTags = sortedWinners
             .map((c, i) => {

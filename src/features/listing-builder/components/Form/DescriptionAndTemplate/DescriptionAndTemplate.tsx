@@ -38,24 +38,32 @@ export function DescriptionAndTemplate() {
           <FormItem className="gap-2">
             <div className="flex items-center justify-between">
               <FormLabel isRequired>Description</FormLabel>
-              <div className="flex items-center">
+              <div className="flex items-center gap-2">
+                <Templates />
                 <Button
-                  variant="link"
-                  className="px-0 pr-1 text-[0.7rem] text-slate-500"
+                  asChild
+                  className="ph-no-capture h-8 bg-transparent p-0 shadow-none"
                   onClick={() => {
                     posthog.capture('AI bot_sponsor');
                   }}
-                  asChild
                 >
                   <Link
                     href="https://chat.openai.com/g/g-HS6eWTMku-st-earn-listings-bot"
                     target="_blank"
                     className="ph-no-capture"
                   >
-                    {'🤖 Go live in <1 min by using our drafting bot'}
+                    <div className="group relative inline-flex h-full overflow-hidden rounded-[calc(1.5px+0.375rem-2px)] bg-background p-[1.5px] pb-[1.8px] focus:outline-none">
+                      <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#FF79C1_0%,#76C5FF_50%,#FF79C1_100%)]" />
+                      <span className="ph-no-capture inline-flex h-full w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-background px-4 py-1 text-xs font-medium text-slate-500 backdrop-blur-3xl group-hover:bg-slate-50">
+                        <img
+                          src="/assets/ai-wand.svg"
+                          alt="Auto Generate GPT"
+                        />
+                        Auto Generate
+                      </span>
+                    </div>
                   </Link>
                 </Button>
-                <Templates />
               </div>
             </div>
             <div className="flex rounded-md border ring-primary has-[:focus]:ring-1">

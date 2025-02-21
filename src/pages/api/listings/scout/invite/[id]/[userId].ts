@@ -32,17 +32,6 @@ async function scoutInvite(
       return res.status(error.status).json({ error: error.message });
     }
 
-    const scoutSponsor = await prisma.sponsors.findFirst({
-      where: {
-        id: userSponsorId,
-      },
-    });
-
-    if (scoutSponsor?.isVerified === false) {
-      logger.warn(`Sponsor isn't Verified, not sending scout data`);
-      return res.status(403).send('Unauthorized');
-    }
-
     const invitedCount = await prisma.scouts.count({
       where: {
         listingId: id,

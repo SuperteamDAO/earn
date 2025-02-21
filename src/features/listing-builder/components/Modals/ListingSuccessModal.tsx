@@ -8,7 +8,6 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useClipboard } from '@/hooks/use-clipboard';
-import { useUser } from '@/store/user';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
 
@@ -17,7 +16,6 @@ import { useListingForm } from '../../hooks';
 
 export const ListingSuccessModal = () => {
   const [confirmModal] = useAtom(confirmModalAtom);
-  const { user } = useUser();
 
   const form = useListingForm();
   const slug = useWatch({
@@ -28,11 +26,6 @@ export const ListingSuccessModal = () => {
     control: form.control,
     name: 'type',
   });
-
-  const isVerified = useMemo(
-    () => user?.currentSponsor?.isVerified || false,
-    [user],
-  );
 
   const listingLink = useCallback(
     (medium?: 'twitter' | 'telegram') =>
@@ -45,11 +38,10 @@ export const ListingSuccessModal = () => {
 
   const { hasCopied, onCopy } = useClipboard(listingLink());
 
-  const handleViewOrInvite = useMemo(() => {
-    return isVerified
-      ? `/dashboard/listings/${slug}/submissions?scout`
-      : `/listing/${slug}`;
-  }, [isVerified, slug, type]);
+  const handleInvite = useMemo(
+    () => `/dashboard/listings/${slug}/submissions?scout`,
+    [slug],
+  );
 
   return (
     <Dialog open={confirmModal === 'SUCCESS'} onOpenChange={() => null}>
@@ -69,9 +61,7 @@ export const ListingSuccessModal = () => {
               Your Listing is Live
             </h3>
             <p className="text-sm text-slate-500">
-              {isVerified
-                ? "Share the love on your socials and invite Earn's best talent!"
-                : 'Share the love on your socials!'}
+              {"Share the love on your socials and invite Earn's best talent!"}
             </p>
           </div>
 
@@ -91,18 +81,9 @@ export const ListingSuccessModal = () => {
               )}
             </Button>
 
-            <Link href={handleViewOrInvite}>
+            <Link href={handleInvite}>
               <Button className="w-full gap-2">
-                {isVerified ? (
-                  <>
-                    <span>Invite Talent</span> <Plus className="h-4 w-4" />
-                  </>
-                ) : (
-                  <>
-                    <span>View Listing</span>{' '}
-                    <ChevronRight className="h-4 w-4" />
-                  </>
-                )}
+                <span>Invite Talent</span> <Plus className="h-4 w-4" />
               </Button>
             </Link>
 
@@ -117,14 +98,10 @@ export const ListingSuccessModal = () => {
               </Link>
 
               <Link
-                href={
-                  isVerified
-                    ? `/listing/${slug?.replace(/^[-\s]+|[-\s]+$/g, '')}`
-                    : '/dashboard/listings/'
-                }
+                href={`/listing/${slug?.replace(/^[-\s]+|[-\s]+$/g, '')}`}
                 className="flex items-center gap-1 hover:text-slate-700"
               >
-                {isVerified ? 'View Listing' : 'Sponsor Dashboard'}
+                {'View Listing'}
                 <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
