@@ -34,66 +34,61 @@ export function ListingPageLayout({
   maxW = '7xl',
   isTemplate = false,
 }: ListingPageProps) {
+  const [listing] = useState<typeof initialBounty>(initialBounty);
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
   const posthog = usePostHog();
 
   const { data: submissionNumber = 0 } = useQuery(
-    submissionCountQuery(initialBounty?.id ?? ''),
+    submissionCountQuery(listing?.id ?? ''),
   );
   const [commentCount, setCommentCount] = useState(0);
-  const iterableSkills = initialBounty?.skills?.map((e) => e.skills) ?? [];
+  const iterableSkills = listing?.skills?.map((e) => e.skills) ?? [];
 
   useEffect(() => {
-    if (initialBounty?.type === 'bounty') {
+    if (listing?.type === 'bounty') {
       posthog.capture('open_bounty');
-    } else if (initialBounty?.type === 'project') {
+    } else if (listing?.type === 'project') {
       posthog.capture('open_project');
     }
   }, []);
 
   useEffect(() => {
-    if (initialBounty) {
+    if (listing) {
       setBountySnackbar({
-        isCaution: initialBounty.sponsor?.isCaution,
+        isCaution: listing.sponsor?.isCaution,
         submissionCount: submissionNumber,
-        deadline: initialBounty.deadline,
-        rewardAmount: initialBounty.rewardAmount,
-        type: initialBounty.type,
-        isPublished: initialBounty.isPublished,
-        status: initialBounty.status,
-        sponsorId: initialBounty.sponsorId,
-        slug: initialBounty.slug,
+        deadline: listing.deadline,
+        rewardAmount: listing.rewardAmount,
+        type: listing.type,
+        isPublished: listing.isPublished,
+        status: listing.status,
+        sponsorId: listing.sponsorId,
+        slug: listing.slug,
       });
     }
-  }, [initialBounty, submissionNumber]);
+  }, [listing, submissionNumber]);
 
-  const encodedTitle = encodeURIComponent(initialBounty?.title || '');
+  const encodedTitle = encodeURIComponent(listing?.title || '');
   const ogImage = new URL(`${getURL()}api/dynamic-og/listing/`);
 
   ogImage.searchParams.set('title', encodedTitle);
-  ogImage.searchParams.set(
-    'reward',
-    initialBounty?.rewardAmount?.toString() || '',
-  );
-  ogImage.searchParams.set('token', initialBounty?.token || '');
-  ogImage.searchParams.set('sponsor', initialBounty?.sponsor?.name || '');
-  ogImage.searchParams.set('logo', initialBounty?.sponsor?.logo || '');
-  ogImage.searchParams.set('type', initialBounty?.type || '');
-  ogImage.searchParams.set(
-    'compensationType',
-    initialBounty?.compensationType || '',
-  );
+  ogImage.searchParams.set('reward', listing?.rewardAmount?.toString() || '');
+  ogImage.searchParams.set('token', listing?.token || '');
+  ogImage.searchParams.set('sponsor', listing?.sponsor?.name || '');
+  ogImage.searchParams.set('logo', listing?.sponsor?.logo || '');
+  ogImage.searchParams.set('type', listing?.type || '');
+  ogImage.searchParams.set('compensationType', listing?.compensationType || '');
   ogImage.searchParams.set(
     'minRewardAsk',
-    initialBounty?.minRewardAsk?.toString() || '',
+    listing?.minRewardAsk?.toString() || '',
   );
   ogImage.searchParams.set(
     'maxRewardAsk',
-    initialBounty?.maxRewardAsk?.toString() || '',
+    listing?.maxRewardAsk?.toString() || '',
   );
   ogImage.searchParams.set(
     'isSponsorVerified',
-    initialBounty?.sponsor?.isVerified?.toString() || 'false',
+    listing?.sponsor?.isVerified?.toString() || 'false',
   );
 
   return (
@@ -101,30 +96,25 @@ export function ListingPageLayout({
       meta={
         <Head>
           <title>{`${
-            initialBounty?.title || 'Apply'
-          } by ${initialBounty?.sponsor?.name} | Superteam Earn Listing`}</title>
+            listing?.title || 'Apply'
+          } by ${listing?.sponsor?.name} | Superteam Earn Listing`}</title>
           <meta
             name="description"
-            content={`${getListingTypeLabel(initialBounty?.type ?? 'Listing')} on Superteam Earn | ${
-              initialBounty?.sponsor?.name
+            content={`${getListingTypeLabel(listing?.type ?? 'Listing')} on Superteam Earn | ${
+              listing?.sponsor?.name
             } is seeking freelancers and builders ${
-              initialBounty?.title
-                ? `to work on ${initialBounty.title}`
-                : '| Apply Here'
+              listing?.title ? `to work on ${listing.title}` : '| Apply Here'
             }`}
           />
-          <link
-            rel="canonical"
-            href={`${getURL()}listing/${initialBounty?.slug}/`}
-          />
+          <link rel="canonical" href={`${getURL()}listing/${listing?.slug}/`} />
           <meta
             property="og:title"
-            content={`${initialBounty?.title || 'Listing'} | Superteam Earn`}
+            content={`${listing?.title || 'Listing'} | Superteam Earn`}
           />
           <meta property="og:image" content={ogImage.toString()} />
           <meta
             name="twitter:title"
-            content={`${initialBounty?.title || 'Listing'} | Superteam Earn`}
+            content={`${listing?.title || 'Listing'} | Superteam Earn`}
           />
           <meta name="twitter:image" content={ogImage.toString()} />
           <meta name="twitter:card" content="summary_large_image" />
@@ -141,17 +131,17 @@ export function ListingPageLayout({
       }
     >
       <div className="bg-white">
-        {initialBounty === null && <ErrorSection />}
-        {initialBounty !== null && !initialBounty?.id && (
+        {listing === null && <ErrorSection />}
+        {listing !== null && !listing?.id && (
           <ErrorSection message="Sorry! The bounty you are looking for is not available." />
         )}
-        {initialBounty !== null && !!initialBounty?.id && (
+        {listing !== null && !!listing?.id && (
           <div className="mx-auto w-full px-2 lg:px-6">
             <div className="mx-auto w-full max-w-7xl">
               <ListingHeader
                 isTemplate={isTemplate}
                 commentCount={commentCount}
-                listing={initialBounty}
+                listing={listing}
               />
               <div
                 className={cn(
@@ -162,7 +152,7 @@ export function ListingPageLayout({
                 <div className="static top-14 h-full w-full flex-grow md:sticky md:w-[22rem]">
                   <RightSideBar
                     isTemplate={isTemplate}
-                    listing={initialBounty}
+                    listing={listing}
                     skills={iterableSkills}
                   />
                 </div>
@@ -183,7 +173,7 @@ export function ListingPageLayout({
                       ))}
                     </div>
                   </div>
-                  {initialBounty.pocSocials && (
+                  {listing.pocSocials && (
                     <div className="flex w-full flex-col items-start md:hidden">
                       <p className="h-full text-center text-xs font-semibold text-slate-600">
                         CONTACT
@@ -191,7 +181,7 @@ export function ListingPageLayout({
                       <p>
                         <Link
                           className="ph-no-capture text-xs font-medium text-[#64768b]"
-                          href={getURLSanitized(initialBounty.pocSocials)}
+                          href={getURLSanitized(listing.pocSocials)}
                           onClick={() => posthog.capture('reach out_listing')}
                         >
                           Reach out
@@ -206,19 +196,18 @@ export function ListingPageLayout({
 
                   <Comments
                     isTemplate={isTemplate}
-                    isAnnounced={initialBounty?.isWinnersAnnounced ?? false}
-                    listingSlug={initialBounty?.slug ?? ''}
-                    listingType={initialBounty?.type ?? ''}
-                    poc={initialBounty?.poc as User}
-                    sponsorId={initialBounty?.sponsorId}
-                    isVerified={initialBounty?.sponsor?.isVerified}
-                    refId={initialBounty?.id ?? ''}
+                    isAnnounced={listing?.isWinnersAnnounced ?? false}
+                    listingSlug={listing?.slug ?? ''}
+                    listingType={listing?.type ?? ''}
+                    poc={listing?.poc as User}
+                    sponsorId={listing?.sponsorId}
+                    isVerified={listing?.sponsor?.isVerified}
+                    refId={listing?.id ?? ''}
                     refType="BOUNTY"
                     count={commentCount}
                     setCount={setCommentCount}
                     isDisabled={
-                      !initialBounty.isPublished &&
-                      initialBounty.status === 'OPEN'
+                      !listing.isPublished && listing.status === 'OPEN'
                     }
                   />
                 </div>
