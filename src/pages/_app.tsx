@@ -6,7 +6,7 @@ import { Router, useRouter } from 'next/router';
 import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useUser } from '@/store/user';
@@ -124,13 +124,19 @@ function MyApp({ Component, pageProps }: any) {
     loadRedirect();
   }, [user?.id]);
 
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
   const isDashboardRoute = router.pathname.startsWith('/dashboard');
   const walletListingRoute = router.pathname.startsWith('/listing');
 
   return (
     <>
       <PagesTopLoader color="#6366F1" showSpinner={false} />
-      {isDashboardRoute || walletListingRoute ? (
+      {isLoaded && (isDashboardRoute || walletListingRoute) ? (
         <SolanaWalletProvider>
           <Component {...pageProps} key={router.asPath} />
         </SolanaWalletProvider>
