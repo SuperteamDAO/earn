@@ -380,6 +380,21 @@ export const ApplicationDetails = ({
                 </div>
               </div>
 
+              {grant?.sponsor?.st && (
+                <div className="mb-4">
+                  <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
+                    SUPERTEAM MEMBER?
+                  </p>
+                  <p className="whitespace-nowrap text-sm font-medium text-slate-600">
+                    {selectedApplication?.user.superteamLevel?.includes(
+                      'Superteam',
+                    )
+                      ? `Yes (${selectedApplication?.user.superteamLevel})`
+                      : `No`}
+                  </p>
+                </div>
+              )}
+
               <div className="mb-4">
                 <div className="mb-1 text-xs font-semibold uppercase text-slate-400">
                   APPLICATION DATE
