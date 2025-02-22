@@ -13,43 +13,22 @@ interface BountyDetailsProps {
   bounty: Listing | null;
 }
 
-function BountyDetails({ bounty: bounty }: BountyDetailsProps) {
+function BountyDetails({ bounty: initialBounty }: BountyDetailsProps) {
   return (
-    <ListingPageLayout bounty={bounty}>
-      <ListingPop listing={bounty} />
-      {bounty?.isWinnersAnnounced && (
+    <ListingPageLayout bounty={initialBounty}>
+      <ListingPop listing={initialBounty} />
+      {initialBounty?.isWinnersAnnounced && (
         <div className="mt-6 hidden w-full md:block">
-          <ListingWinners bounty={bounty} />
+          <ListingWinners bounty={initialBounty} />
         </div>
       )}
-      <DescriptionUI description={bounty?.description} />
+      <DescriptionUI description={initialBounty?.description} />
     </ListingPageLayout>
   );
 }
 
-const redirectSlugs: { original: string; redirectTo: string }[] = [
-  {
-    original: 'passion-piece',
-    redirectTo:
-      'write-a-passion-piece-about-your-favorite-solana-project-or-community',
-  },
-];
-
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-
-  const redirectConfig = redirectSlugs.find(
-    (redirect) => redirect.original === slug,
-  );
-  if (redirectConfig) {
-    return {
-      redirect: {
-        destination: `/listing/${redirectConfig.redirectTo}`,
-        permanent: true,
-      },
-    };
-  }
-
   let bountyData;
   try {
     const bountyDetails = await api.get(

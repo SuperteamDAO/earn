@@ -4,7 +4,6 @@ import {
 } from '@sumsub/websdk/types/types';
 import SumsubWebSdk from '@sumsub/websdk-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '@/lib/api';
@@ -20,15 +19,7 @@ const fetchVerificationStatus = async (grantApplicationId: string) => {
   return data;
 };
 
-export const KYCModal = ({
-  grantApplicationId,
-}: {
-  grantApplicationId: string;
-}) => {
-  useEffect(() => {
-    console.log(grantApplicationId);
-  }, [grantApplicationId]);
-
+export const KYCModal = ({ applicationId }: { applicationId: string }) => {
   const { data: accessToken, refetch } = useQuery({
     queryKey: ['sumsubToken'],
     queryFn: async () => {
@@ -38,8 +29,8 @@ export const KYCModal = ({
   });
 
   const { refetch: checkVerification } = useQuery({
-    queryKey: ['verification-status', grantApplicationId],
-    queryFn: () => fetchVerificationStatus(grantApplicationId),
+    queryKey: ['verification-status', applicationId],
+    queryFn: () => fetchVerificationStatus(applicationId),
     enabled: false,
   });
 
@@ -63,7 +54,7 @@ export const KYCModal = ({
       if (result.data === 'verified') {
         toast.success('KYC verified successfully!');
         await queryClient.invalidateQueries({
-          queryKey: userApplicationQuery(grantApplicationId).queryKey,
+          queryKey: userApplicationQuery(applicationId).queryKey,
         });
       }
     }

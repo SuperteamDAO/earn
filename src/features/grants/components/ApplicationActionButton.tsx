@@ -34,10 +34,9 @@ export const ApplicationActionButton = ({
     enabled: !!user?.id,
   });
 
-  const { buttonConfig, hasApplied, applicationState } = useApplicationState(
-    application,
-    grant,
-  );
+  const { buttonConfig, hasApplied, applicationState, tranches } =
+    useApplicationState(application, grant);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const isUserEligibleByRegion = userRegionEligibilty({
@@ -73,6 +72,7 @@ export const ApplicationActionButton = ({
             applicationState === 'ALLOW EDIT' ? application : undefined
           }
           applicationId={application?.id}
+          tranches={tranches}
         />
       )}
       <InfoWrapper

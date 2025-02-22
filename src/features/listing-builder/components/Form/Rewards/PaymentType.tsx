@@ -60,7 +60,7 @@ export function PaymentType() {
                 }}
                 value={field.value}
               >
-                <SelectTrigger className="w-32 text-slate-500">
+                <SelectTrigger className="w-32 font-medium text-slate-600">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -68,7 +68,7 @@ export function PaymentType() {
                     <SelectItem
                       key={value}
                       value={value}
-                      className="text-xs text-slate-500"
+                      className="text-xs font-medium text-slate-600"
                     >
                       {label}
                     </SelectItem>

@@ -72,11 +72,13 @@ export function PrePublish() {
 
   const isDisabledHard = useMemo(
     () =>
-      isCreateListingAllowed !== undefined &&
-      isCreateListingAllowed === false &&
-      user?.role !== 'GOD' &&
-      !isEditing,
-    [isCreateListingAllowed, isEditing],
+      (isCreateListingAllowed !== undefined &&
+        isCreateListingAllowed === false &&
+        user?.role !== 'GOD' &&
+        !isEditing) ||
+      status === 'verification failed' ||
+      status === 'blocked',
+    [isCreateListingAllowed, isEditing, status],
   );
 
   const [isDisabledSoft, setIsDisabledSoft] = useState(true);
@@ -137,11 +139,15 @@ export function PrePublish() {
     >
       <Tooltip
         content={
-          <p>
-            Creating a new listing has been temporarily locked for you since you
-            have 5 listings which are &quot;In Review&quot;. Please announce the
-            winners for such listings to create new listings.
-          </p>
+          status === 'verification failed' || status === 'blocked' ? (
+            <p>Editing this listing is blocked</p>
+          ) : (
+            <p>
+              Creating a new listing has been temporarily locked for you since
+              you have 5 listings which are &quot;In Review&quot;. Please
+              announce the winners for such listings to create new listings.
+            </p>
+          )
         }
         disabled={!isDisabledHard}
       >

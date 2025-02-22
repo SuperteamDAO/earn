@@ -161,7 +161,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     logger.error(
       `Error occurred while onboarding user ${userId}: ${safeStringify(error)}`,
     );
-    return res.status(400).json({
+    return res.status(500).json({
       message: `Error occurred while updating user ${userId}: ${error.message}`,
     });
   }

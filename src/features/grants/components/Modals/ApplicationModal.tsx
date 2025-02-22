@@ -44,14 +44,16 @@ type FormData = z.infer<ReturnType<typeof grantApplicationSchema>>;
 
 interface Props {
   grant: Grant;
-  grantApplication: GrantApplication;
+  grantApplication: GrantApplication | undefined;
   modalRef: React.RefObject<HTMLDivElement | null>;
+  onClose: () => void;
 }
 
 export const ApplicationModal = ({
   grant,
   grantApplication,
   modalRef,
+  onClose,
 }: Props) => {
   const { user, refetchUser } = useUser();
 
@@ -155,7 +157,7 @@ export const ApplicationModal = ({
           : 'Application submitted successfully!',
       );
 
-      // onClose();
+      onClose();
     } catch (e) {
       setIsLoading(false);
       toast.error('Failed to submit application', {

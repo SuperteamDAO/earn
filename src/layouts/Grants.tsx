@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { ExternalLink } from 'lucide-react';
 import Head from 'next/head';
@@ -7,21 +8,17 @@ import { useEffect, useState } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { LoadingSection } from '@/components/shared/LoadingSection';
-import { tokenList } from '@/constants/tokenList';
-import { cn } from '@/utils/cn';
-import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import { useUser } from '@/store/user';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
 import { ApplicationActionButton } from '@/features/grants/components/ApplicationActionButton';
+import { ApplicationStats } from '@/features/grants/components/ApplicationStats';
+import { ApprovalStages } from '@/features/grants/components/ApprovalStages';
 import { GrantsHeader } from '@/features/grants/components/GrantsHeader';
-import {
-  DollarIcon,
-  PayoutIcon,
-  TimeToPayIcon,
-} from '@/features/grants/components/icons';
+import { GrantStats } from '@/features/grants/components/GrantStats';
+import { userApplicationQuery } from '@/features/grants/queries/user-application';
 import { type GrantWithApplicationCount } from '@/features/grants/types';
-import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { LiveGrants } from '@/features/home/components/LiveGrants';
 import { ExtraInfoSection } from '@/features/listings/components/ListingPage/ExtraInfoSection';
 import { grantSnackbarAtom } from '@/features/navbar/components/GrantSnackbar';
@@ -40,8 +37,19 @@ export function GrantPageLayout({
   const encodedTitle = encodeURIComponent(initialGrant?.title || '');
   const posthog = usePostHog();
   const [, setGrantSnackbar] = useAtom(grantSnackbarAtom);
+  const { user } = useUser();
 
   const iterableSkills = initialGrant?.skills?.map((e) => e.skills) ?? [];
+
+  const { data: application } = useQuery({
+    ...userApplicationQuery(initialGrant?.id ?? ''),
+    enabled: !!user?.id,
+  });
+
+  let isApproved = false;
+  if (application && application.applicationStatus === 'Approved') {
+    isApproved = true;
+  }
 
   useEffect(() => {
     if (initialGrant) {
@@ -99,128 +107,49 @@ export function GrantPageLayout({
                 slug={grant?.slug}
                 references={grant.references}
                 isPublished={grant.isPublished || false}
+                isApproved={isApproved}
               />
 
               <div className="mb-10 flex max-w-6xl flex-col items-center justify-center gap-0 md:flex-row md:items-start md:justify-between md:gap-4">
                 <div className="static top-14 w-full md:sticky md:w-auto">
                   <div className="flex flex-col gap-2">
-                    <div className="md:[22rem] flex w-full flex-col justify-center rounded-xl bg-white py-4">
-                      <div className="flex w-full items-center justify-between gap-3">
-                        <div className="flex items-center gap-2">
-                          <img
-                            className="h-8 w-8 rounded-full"
-                            alt={'green doller'}
-                            src={
-                              tokenList.filter(
-                                (e) => e?.tokenSymbol === grant.token,
-                              )[0]?.icon ?? '/assets/dollar.svg'
-                            }
-                          />
-                          <p className="text-lg font-semibold text-slate-700 md:text-xl">
-                            {grantAmount({
-                              maxReward: grant.maxReward!,
-                              minReward: grant.minReward!,
-                            })}{' '}
-                            <span className="text-slate-500">
-                              {grant.token}
-                            </span>
-                          </p>
-                        </div>
-                        <p className="-mt-1 text-sm font-medium text-slate-500">
-                          Cheque Size
-                        </p>
-                      </div>
-                      <div
-                        className={cn(
-                          'flex w-full justify-between py-4',
-                          'md:mb-2',
-                          grant?.link && !grant?.isNative && 'hidden',
-                        )}
-                      >
-                        <div className="flex w-fit flex-col gap-4">
-                          <div className="flex w-fit flex-col">
-                            <div className="flex w-fit">
-                              <TimeToPayIcon />
-                              <p className="text-lg font-medium text-slate-700 md:text-xl">
-                                {grant?.avgResponseTime}
-                              </p>
-                            </div>
-                            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
-                              Avg. Response Time
-                            </p>
-                          </div>
-                          <div className="flex w-fit flex-col">
-                            <div className="flex">
-                              <PayoutIcon />
-                              <p className="text-lg font-medium text-slate-700 md:text-xl">
-                                {grant.totalApproved
-                                  ? new Intl.NumberFormat('en-US', {
-                                      maximumFractionDigits: 0,
-                                      currency: 'USD',
-                                      style: 'currency',
-                                    }).format(
-                                      Math.round(
-                                        grant?.totalApproved /
-                                          grant?.totalApplications,
-                                      ),
-                                    )
-                                  : '—'}
-                              </p>
-                            </div>
-                            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
-                              Avg. Grant Size
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex w-fit flex-col gap-4">
-                          <div className="flex flex-col">
-                            <div className="flex">
-                              <DollarIcon />
-                              <p className="text-lg font-medium text-slate-700 md:text-xl">
-                                $
-                                {formatNumberWithSuffix(
-                                  Math.round(grant?.totalApproved || 0),
-                                  1,
-                                  true,
-                                )}
-                              </p>
-                            </div>
-                            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
-                              Approved So Far
-                            </p>
-                          </div>
-                          <div className="flex flex-col">
-                            <div className="flex">
-                              <TimeToPayIcon />
-                              <p className="text-lg font-medium text-slate-700 md:text-xl">
-                                {grant?.totalApplications}
-                              </p>
-                            </div>
-                            <p className="w-max pl-2 text-sm font-medium uppercase text-slate-500">
-                              Recipients
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <ApplicationActionButton grant={grant} />
-                      <div>
-                        <ExtraInfoSection
-                          skills={iterableSkills}
-                          region={grant.region}
-                          requirements={grant.requirements}
-                          pocSocials={grant.pocSocials}
-                          isGrant
+                    <div className="flex w-full flex-col justify-center rounded-xl bg-white py-4 md:w-[22rem]">
+                      {isApproved && application ? (
+                        <ApplicationStats
+                          application={application}
+                          grant={grant}
                         />
-                      </div>
-                      <div className="hidden w-full pt-8 md:block">
-                        <LiveGrants
-                          excludeIds={grant.id ? [grant.id] : undefined}
-                        >
-                          <p className="h-full text-start text-sm font-semibold text-slate-600">
-                            LIVE GRANTS
-                          </p>
-                        </LiveGrants>
-                      </div>
+                      ) : (
+                        <GrantStats grant={grant} />
+                      )}
+                      <ApplicationActionButton grant={grant} />
+                      {isApproved && application ? (
+                        <ApprovalStages
+                          application={application}
+                          grant={grant}
+                        />
+                      ) : (
+                        <>
+                          <div>
+                            <ExtraInfoSection
+                              skills={iterableSkills}
+                              region={grant.region}
+                              requirements={grant.requirements}
+                              pocSocials={grant.pocSocials}
+                              isGrant
+                            />
+                          </div>
+                          <div className="hidden w-full pt-8 md:block">
+                            <LiveGrants
+                              excludeIds={grant.id ? [grant.id] : undefined}
+                            >
+                              <p className="h-full text-start text-sm font-semibold text-slate-600">
+                                LIVE GRANTS
+                              </p>
+                            </LiveGrants>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

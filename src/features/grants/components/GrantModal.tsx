@@ -9,6 +9,7 @@ import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import { type Grant } from '../types';
 import { ApplicationModal } from './Modals/ApplicationModal';
 import { KYCModal } from './Modals/KYCModal';
+import { TrancheFormModal } from './Modals/TrancheFormModal';
 
 interface Props {
   isOpen: boolean;
@@ -16,6 +17,7 @@ interface Props {
   grant: Grant;
   editableGrantApplication?: GrantApplication;
   applicationId?: string;
+  tranches?: number;
 }
 
 export const GrantModal = ({
@@ -24,16 +26,16 @@ export const GrantModal = ({
   grant,
   editableGrantApplication,
   applicationId,
+  tranches,
 }: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const [applicationState] = useAtom(applicationStateAtom);
 
   const detailStates = ['APPLIED', 'ALLOW NEW', 'ALLOW EDIT'];
-  // const newTrancheFormStates = [
-  //   'KYC APPROVED',
-  //   'TRANCHE1 APPROVED',
-  //   'TRANCHE2 APPROVED',
-  // ];
+  const newTrancheFormStates =
+    tranches && tranches > 2
+      ? ['KYC APPROVED', 'TRANCHE1 PAID', 'TRANCHE2 PAID']
+      : ['KYC APPROVED', 'TRANCHE1 PAID'];
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -51,10 +53,18 @@ export const GrantModal = ({
             grant={grant}
             grantApplication={editableGrantApplication}
             modalRef={modalRef}
+            onClose={onClose}
           />
         )}
         {applicationState === 'KYC PENDING' && (
-          <KYCModal grantApplicationId={applicationId} />
+          <KYCModal applicationId={applicationId!} />
+        )}
+        {newTrancheFormStates.includes(applicationState) && (
+          <TrancheFormModal
+            grant={grant}
+            applicationId={applicationId!}
+            onClose={onClose}
+          />
         )}
       </DialogContent>
     </Dialog>

@@ -40,6 +40,14 @@ export function StatusBadge({ className }: StatusBadgeProps) {
       label: 'Completed',
       className: 'bg-green-50 text-green-600 hover:bg-green-50',
     },
+    'verification failed': {
+      label: 'Verification Failed',
+      className: 'bg-red-50 text-red-600 hover:bg-red-50',
+    },
+    blocked: {
+      label: 'Blocked',
+      className: 'bg-red-50 text-red-600 hover:bg-red-50',
+    },
   };
 
   const config = statusConfig[status || 'draft'];

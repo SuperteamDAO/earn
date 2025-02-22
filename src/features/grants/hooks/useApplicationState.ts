@@ -1,4 +1,5 @@
 import { useAtom } from 'jotai';
+import { useEffect } from 'react';
 
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import { type GrantApplicationWithTranches } from '../queries/user-application';
@@ -9,41 +10,48 @@ export const useApplicationState = (
   grant: Grant,
 ) => {
   const [applicationState, setApplicationState] = useAtom(applicationStateAtom);
+  const approvedAmount = application?.approvedAmount;
+  const tranches = approvedAmount && approvedAmount > 5000 ? 3 : 2;
 
-  if (application?.applicationStatus === 'Pending') {
-    setApplicationState('APPLIED');
+  useEffect(() => {
+    if (!application) return;
 
-    if (grant.isNative) {
-      setApplicationState('ALLOW EDIT');
+    if (application.applicationStatus === 'Pending') {
+      setApplicationState('APPLIED');
+      if (grant.isNative) {
+        setApplicationState('ALLOW EDIT');
+      }
+      return;
     }
-  }
-  if (application?.applicationStatus === 'Approved') {
-    if (application?.kycStatus === 'PENDING') {
-      setApplicationState('KYC PENDING');
-    } else if (application?.kycStatus === 'APPROVED') {
-      if (application?.GrantTranche.length === 0) {
-        setApplicationState('KYC APPROVED');
-      } else if (application?.GrantTranche.length === 1) {
-        if (application?.GrantTranche[0]?.status === 'PENDING') {
-          setApplicationState('TRANCHE1 PENDING');
-        } else if (application?.GrantTranche[0]?.status === 'APPROVED') {
-          setApplicationState('TRANCHE1 APPROVED');
-        }
-      } else if (application?.GrantTranche.length === 2) {
-        if (application?.GrantTranche[1]?.status === 'PENDING') {
-          setApplicationState('TRANCHE2 PENDING');
-        } else if (application?.GrantTranche[1]?.status === 'APPROVED') {
-          setApplicationState('TRANCHE2 APPROVED');
-        }
-      } else if (application?.GrantTranche.length === 3) {
-        if (application?.GrantTranche[2]?.status === 'PENDING') {
-          setApplicationState('TRANCHE3 PENDING');
-        } else if (application?.GrantTranche[2]?.status === 'APPROVED') {
-          setApplicationState('TRANCHE3 APPROVED');
+
+    if (application.applicationStatus === 'Approved') {
+      if (application.kycStatus === 'PENDING') {
+        setApplicationState('KYC PENDING');
+      } else if (application.kycStatus === 'APPROVED') {
+        if (application.GrantTranche.length === 0) {
+          setApplicationState('KYC APPROVED');
+        } else if (application.GrantTranche.length === 1) {
+          const status = application.GrantTranche[0]?.status;
+          if (status === 'PENDING') setApplicationState('TRANCHE1 PENDING');
+          else if (status === 'APPROVED')
+            setApplicationState('TRANCHE1 APPROVED');
+          else if (status === 'PAID') setApplicationState('TRANCHE1 PAID');
+        } else if (application.GrantTranche.length === 2) {
+          const status = application.GrantTranche[1]?.status;
+          if (status === 'PENDING') setApplicationState('TRANCHE2 PENDING');
+          else if (status === 'APPROVED')
+            setApplicationState('TRANCHE2 APPROVED');
+          else if (status === 'PAID') setApplicationState('TRANCHE2 PAID');
+        } else if (application.GrantTranche.length === 3 && tranches === 3) {
+          const status = application.GrantTranche[2]?.status;
+          if (status === 'PENDING') setApplicationState('TRANCHE3 PENDING');
+          else if (status === 'APPROVED')
+            setApplicationState('TRANCHE3 APPROVED');
+          else if (status === 'PAID') setApplicationState('TRANCHE3 PAID');
         }
       }
     }
-  }
+  }, [application, grant.isNative, tranches, setApplicationState]);
 
   const getButtonConfig = () => {
     switch (applicationState) {
@@ -73,13 +81,15 @@ export const useApplicationState = (
 
       case 'KYC APPROVED':
         return {
-          text: 'Apply for 1st Tranche',
+          text: 'Apply for First Tranche',
           bg: 'bg-brand-purple',
           isDisabled: false,
           loadingText: null,
         };
 
       case 'TRANCHE1 PENDING':
+      case 'TRANCHE2 PENDING':
+      case 'TRANCHE3 PENDING':
         return {
           text: 'Tranche Requested',
           bg: 'bg-slate-600',
@@ -88,32 +98,41 @@ export const useApplicationState = (
         };
 
       case 'TRANCHE1 APPROVED':
+      case 'TRANCHE2 APPROVED':
+      case 'TRANCHE3 APPROVED':
         return {
-          text: 'Apply for 2nd Tranche',
-          bg: 'bg-brand-purple',
-          isDisabled: false,
-          loadingText: null,
-        };
-
-      case 'TRANCHE2 PENDING':
-        return {
-          text: 'Tranche Requested',
+          text: 'Payment Processing',
           bg: 'bg-slate-600',
           isDisabled: true,
           loadingText: null,
         };
 
-      case 'TRANCHE2 APPROVED':
+      case 'TRANCHE1 PAID':
         return {
-          text: 'Apply for 3rd Tranche',
+          text: 'Apply for Second Tranche',
           bg: 'bg-brand-purple',
           isDisabled: false,
           loadingText: null,
         };
 
-      case 'TRANCHE3 PENDING':
+      case 'TRANCHE2 PAID':
+        return tranches === 3
+          ? {
+              text: 'Apply for Third Tranche',
+              bg: 'bg-brand-purple',
+              isDisabled: false,
+              loadingText: null,
+            }
+          : {
+              text: 'Apply Now',
+              bg: 'bg-brand-purple',
+              isDisabled: false,
+              loadingText: 'Checking Application..',
+            };
+
+      case 'TRANCHE3 PAID':
         return {
-          text: 'Tranche Requested',
+          text: 'All Tranches Paid',
           bg: 'bg-slate-600',
           isDisabled: true,
           loadingText: null,
@@ -134,5 +153,6 @@ export const useApplicationState = (
     buttonConfig: getButtonConfig(),
     hasApplied:
       applicationState === 'APPLIED' || applicationState === 'ALLOW EDIT',
+    tranches,
   };
 };
