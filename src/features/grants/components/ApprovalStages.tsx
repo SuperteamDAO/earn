@@ -1,4 +1,4 @@
-import { GoCheckCircle } from 'react-icons/go';
+import { FaCheck } from 'react-icons/fa';
 
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
@@ -24,26 +24,79 @@ export const ApprovalStages = ({ application, grant }: Props) => {
   };
 
   const tranchesCount = (application?.approvedAmount ?? 0) > 5000 ? 3 : 2;
-  const tranches = Array.from({ length: tranchesCount }, (_, i) => ({
-    status: getTrancheStatus(i + 1),
-    amount: Math.floor(application?.approvedAmount ?? 0 / tranchesCount),
-  }));
+  const tranches = Array.from({ length: tranchesCount }, (_, i) => {
+    const approvedAmount = application?.approvedAmount ?? 0;
+    let amount;
+
+    if (approvedAmount <= 5000) {
+      amount = approvedAmount * 0.5;
+    } else {
+      if (i === 0 || i === 1) {
+        amount = approvedAmount * 0.3;
+      } else {
+        amount = approvedAmount * 0.4;
+      }
+    }
+
+    return {
+      status: getTrancheStatus(i + 1),
+      amount: Math.floor(amount),
+    };
+  });
 
   const CheckIcon = () => (
-    <GoCheckCircle className="h-8 w-8 bg-white text-green-500" />
+    <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-full border-[4px] border-green-600 bg-white text-green-600">
+      <FaCheck />
+    </div>
+  );
+
+  const PendingIcon = () => (
+    <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-full border-[4px] border-slate-200 bg-slate-200 text-slate-200" />
+  );
+
+  const Heading = ({ children }: { children: React.ReactNode }) => (
+    <h3 className="font-semibold text-slate-700">{children}</h3>
+  );
+
+  const Subheading = ({ children }: { children: React.ReactNode }) => (
+    <p className="text-sm text-slate-500">{children}</p>
+  );
+
+  const ConnectingLine = ({
+    isStartComplete,
+    isEndComplete,
+  }: {
+    isStartComplete: boolean;
+    isEndComplete: boolean;
+  }) => (
+    <div className="absolute left-4 top-[40px] h-[72px] w-[4px]">
+      {isStartComplete && isEndComplete ? (
+        <div className="h-full bg-green-600" />
+      ) : isStartComplete ? (
+        <>
+          <div className="h-1/6 bg-green-600" />
+          <div className="h-5/6 bg-slate-200" />
+        </>
+      ) : (
+        <div className="h-full bg-slate-200" />
+      )}
+    </div>
   );
 
   return (
-    <div className="relative">
-      <div className="absolute left-[15px] top-8 h-[calc(100%-32px)] w-[2px] bg-gray-200" />
+    <div className="relative mt-6">
       <div className="space-y-8">
-        <div className="flex items-start gap-4">
+        <div className="relative flex items-start gap-4">
           <div className="relative z-10">
             <CheckIcon />
           </div>
+          <ConnectingLine
+            isStartComplete={true}
+            isEndComplete={isKYCCompleted}
+          />
           <div>
-            <h3 className="font-semibold text-gray-800">Grant Approved</h3>
-            <p className="text-sm text-gray-500">
+            <Heading>Grant Approved</Heading>
+            <Subheading>
               Grant approved for{' '}
               {formatNumberWithSuffix(
                 application?.approvedAmount ?? 0,
@@ -51,48 +104,48 @@ export const ApprovalStages = ({ application, grant }: Props) => {
                 true,
               )}{' '}
               {grant.token}
-            </p>
+            </Subheading>
           </div>
         </div>
 
-        <div className="flex items-start gap-4">
+        <div className="relative flex items-start gap-4">
           <div className="relative z-10">
-            {isKYCCompleted ? (
-              <CheckIcon />
-            ) : (
-              <div className="h-8 w-8 rounded-full bg-gray-200" />
-            )}
+            {isKYCCompleted ? <CheckIcon /> : <PendingIcon />}
           </div>
+          <ConnectingLine
+            isStartComplete={isKYCCompleted}
+            isEndComplete={tranches[0]?.status === 'PAID'}
+          />
           <div>
-            <h3 className="font-semibold text-gray-800">KYC Successful</h3>
-            <p className="text-sm text-gray-500">Documents verified</p>
+            <Heading>KYC Successful</Heading>
+            <Subheading>Documents verified</Subheading>
           </div>
         </div>
 
         {tranches.map((tranche, index) => (
-          <div key={index} className="flex items-start gap-4">
+          <div key={index} className="relative flex items-start gap-4">
             <div className="relative z-10">
-              {tranche.status === 'PAID' ? (
-                <CheckIcon />
-              ) : (
-                <div className="h-8 w-8 rounded-full bg-gray-200" />
-              )}
+              {tranche.status === 'PAID' ? <CheckIcon /> : <PendingIcon />}
             </div>
+            {index < tranches.length - 1 && (
+              <ConnectingLine
+                isStartComplete={tranche.status === 'PAID'}
+                isEndComplete={tranches[index + 1]?.status === 'PAID'}
+              />
+            )}
             <div>
-              <h3 className="font-semibold text-gray-800">
+              <Heading>
                 {index === tranches.length - 1
                   ? 'Final Tranche Paid'
                   : index === 0
                     ? 'Payment Processed'
                     : `Second Tranche Paid`}
-              </h3>
-              <p className="text-sm text-gray-500">
-                {tranche.status === 'PAID'
-                  ? `${formatNumberWithSuffix(tranche.amount, 1, true)} ${grant.token} sent to you`
-                  : index === tranches.length - 1
-                    ? 'Project completed successfully'
-                    : 'Pending payment'}
-              </p>
+              </Heading>
+              <Subheading>
+                {index === tranches.length - 1
+                  ? 'Project completed successfully'
+                  : `${formatNumberWithSuffix(tranche.amount, 1, true)} ${grant.token} sent to you`}
+              </Subheading>
             </div>
           </div>
         ))}
