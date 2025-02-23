@@ -45,21 +45,21 @@ export const ApprovalStages = ({ application, grant }: Props) => {
   });
 
   const CheckIcon = () => (
-    <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-full border-[4px] border-green-600 bg-white text-green-600">
+    <div className="flex h-9 w-9 items-center justify-center rounded-full border-[4px] border-green-600 bg-white text-green-600">
       <FaCheck />
     </div>
   );
 
   const PendingIcon = () => (
-    <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-full border-[4px] border-slate-200 bg-slate-200 text-slate-200" />
+    <div className="flex h-9 w-9 items-center justify-center rounded-full border-[4px] border-slate-200 bg-slate-200 text-slate-200" />
   );
 
   const Heading = ({ children }: { children: React.ReactNode }) => (
-    <h3 className="font-semibold text-slate-700">{children}</h3>
+    <h3 className="text-sm font-semibold text-slate-700">{children}</h3>
   );
 
   const Subheading = ({ children }: { children: React.ReactNode }) => (
-    <p className="text-sm text-slate-500">{children}</p>
+    <p className="text-[0.8rem] text-slate-500">{children}</p>
   );
 
   const ConnectingLine = ({
@@ -69,7 +69,7 @@ export const ApprovalStages = ({ application, grant }: Props) => {
     isStartComplete: boolean;
     isEndComplete: boolean;
   }) => (
-    <div className="absolute left-4 top-[40px] h-[72px] w-[4px]">
+    <div className="absolute left-4 top-[36px] h-[72px] w-[4px]">
       {isStartComplete && isEndComplete ? (
         <div className="h-full bg-green-600" />
       ) : isStartComplete ? (
