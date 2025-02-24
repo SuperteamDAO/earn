@@ -1,8 +1,13 @@
 import { GrantApplicationStatus, type SubmissionLabels } from '@prisma/client';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -12,7 +17,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
-import { selectedGrantApplicationAtom } from '../atoms';
+import { applicationsAtom, selectedGrantApplicationAtom } from '../atoms';
 import {
   applicationsQuery,
   type GrantApplicationsReturn,
@@ -27,38 +32,37 @@ import { RejectGrantApplicationModal } from './GrantApplications/Modals/RejectMo
 
 interface Props {
   slug: string;
-  applications: GrantApplicationWithUser[] | undefined;
-  isApplicationsLoading: boolean;
-  totalCount: number;
-  params: {
-    searchText: string;
-    length: number;
-    skip: number;
-    filterLabel: SubmissionLabels | GrantApplicationStatus | undefined;
-  };
-  setSearchText: (searchText: string) => void;
-  searchText: string;
-  skip: number;
-  setSkip: (skip: number) => void;
-  setFilterLabel: React.Dispatch<
-    React.SetStateAction<SubmissionLabels | GrantApplicationStatus | undefined>
-  >;
-  filterLabel: SubmissionLabels | GrantApplicationStatus | undefined;
 }
 
-export const ApplicationsTab = ({
-  slug,
-  applications,
-  isApplicationsLoading,
-  totalCount,
-  params,
-  searchText,
-  setSearchText,
-  skip,
-  setSkip,
-  filterLabel,
-  setFilterLabel,
-}: Props) => {
+export const ApplicationsTab = ({ slug }: Props) => {
+  const [searchText, setSearchText] = useState('');
+  const [skip, setSkip] = useState(0);
+  const [filterLabel, setFilterLabel] = useState<
+    SubmissionLabels | GrantApplicationStatus | undefined
+  >(undefined);
+
+  const params = { searchText, length: 20, skip: 0, filterLabel };
+
+  const [applications, setApplications] = useAtom(applicationsAtom);
+
+  const { data: applicationReturn, isLoading: isApplicationsLoading } =
+    useQuery({
+      ...applicationsQuery(slug, params),
+      retry: false,
+      placeholderData: keepPreviousData,
+    });
+
+  useEffect(() => {
+    if (applicationReturn?.data) {
+      setApplications(applicationReturn.data);
+    }
+  }, [applicationReturn?.data, setApplications]);
+
+  const totalCount = useMemo(
+    () => applicationReturn?.count || 0,
+    [applicationReturn],
+  );
+
   const [isToggledAll, setIsToggledAll] = useState(false);
   let length = 20;
   const [selectedApplicationIds, setSelectedApplicationIds] = useState<

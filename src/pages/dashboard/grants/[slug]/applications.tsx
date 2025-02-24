@@ -1,22 +1,19 @@
-import {
-  type GrantApplicationStatus,
-  type SubmissionLabels,
-} from '@prisma/client';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { useAtomValue } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
+import { applicationsAtom } from '@/features/sponsor-dashboard/atoms';
 import { ApplicationsTab } from '@/features/sponsor-dashboard/components/ApplicationsTab';
 import { ApplicationHeader } from '@/features/sponsor-dashboard/components/GrantApplications/ApplicationHeader';
 import { PaymentsHistoryTab } from '@/features/sponsor-dashboard/components/GrantApplications/PaymentsHistoryTab';
 import { TranchesTab } from '@/features/sponsor-dashboard/components/TranchesTab';
-import { applicationsQuery } from '@/features/sponsor-dashboard/queries/applications';
 import { sponsorGrantQuery } from '@/features/sponsor-dashboard/queries/grant';
 
 interface Props {
@@ -31,35 +28,13 @@ function GrantApplications({ slug }: Props) {
     sponsorGrantQuery(slug, user?.currentSponsorId),
   );
 
-  const [searchText, setSearchText] = useState('');
-  const [skip, setSkip] = useState(0);
-  const [filterLabel, setFilterLabel] = useState<
-    SubmissionLabels | GrantApplicationStatus | undefined
-  >(undefined);
-
-  const params = { searchText, length: 20, skip: 0, filterLabel };
-
-  const { data: applicationReturn, isLoading: isApplicationsLoading } =
-    useQuery({
-      ...applicationsQuery(slug, params),
-      retry: false,
-      placeholderData: keepPreviousData,
-    });
-  const applications = useMemo(
-    () => applicationReturn?.data,
-    [applicationReturn],
-  );
+  const applications = useAtomValue(applicationsAtom);
 
   useEffect(() => {
     if (grant && grant.sponsorId !== user?.currentSponsorId) {
       router.push('/dashboard/listings');
     }
   }, [grant, user?.currentSponsorId, router]);
-
-  const totalCount = useMemo(
-    () => applicationReturn?.count || 0,
-    [applicationReturn],
-  );
 
   return (
     <SponsorLayout isCollapsible>
@@ -76,19 +51,7 @@ function GrantApplications({ slug }: Props) {
             </TabsList>
             <div className="h-0.5 w-full bg-slate-200" />
             <TabsContent value="applications" className="w-full px-0">
-              <ApplicationsTab
-                slug={slug}
-                applications={applications}
-                isApplicationsLoading={isApplicationsLoading}
-                searchText={searchText}
-                setSearchText={setSearchText}
-                skip={skip}
-                setSkip={setSkip}
-                filterLabel={filterLabel}
-                setFilterLabel={setFilterLabel}
-                totalCount={totalCount}
-                params={params}
-              />
+              <ApplicationsTab slug={slug} />
             </TabsContent>
 
             <TabsContent

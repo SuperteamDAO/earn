@@ -59,3 +59,5 @@ export const selectedGrantApplicationAtom = atom(
     }
   },
 );
+
+export const applicationsAtom = atom<GrantApplicationWithUser[]>([]);
