@@ -115,7 +115,7 @@ export function ListingPageLayout({
           />
           <link
             rel="canonical"
-            href={`${getURL()}initialBounty/${initialBounty?.slug}/`}
+            href={`${getURL()}listing/${initialBounty?.slug}/`}
           />
           <meta
             property="og:title"
