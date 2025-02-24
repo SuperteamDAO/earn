@@ -357,6 +357,14 @@ export const createListingRefinements = async (
     });
   }
 
+  if (data.token === 'Any' && data.compensationType !== 'variable') {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Any token is only allowed for variable compensation',
+      path: ['token'],
+    });
+  }
+
   if (data.type === 'hackathon' && data.deadline) {
     if (
       !hackathon?.deadline ||
