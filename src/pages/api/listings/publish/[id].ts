@@ -325,7 +325,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       eligibility: eligibility || undefined,
       rewardAmount,
       rewards: rewards || undefined,
-      maxBonusSpots: maxBonusSpots || undefined,
+      maxBonusSpots: maxBonusSpots ?? undefined,
       token,
       compensationType,
       minRewardAsk,

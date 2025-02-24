@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
@@ -223,7 +222,10 @@ export default function BountySubmissions({ slug }: Props) {
       const rewardsLength = cleanRewards(bounty.rewards, true).length;
       setRemainings({
         podiums: rewardsLength - (podiumWinnersSelected || 0),
-        bonus: (bounty.maxBonusSpots || 0) - (bonusWinnerSelected || 0),
+        bonus:
+          (!!bounty?.rewards?.[BONUS_REWARD_POSITION]
+            ? bounty.maxBonusSpots || 0
+            : 0) - (bonusWinnerSelected || 0),
       });
     }
   }, [bounty, submissions, user?.currentSponsorId, router]);
@@ -273,8 +275,6 @@ export default function BountySubmissions({ slug }: Props) {
   const totalPaymentsMade = submissions?.filter((sub) => sub.isPaid).length;
 
   const isExpired = dayjs(bounty?.deadline).isBefore(dayjs());
-
-  const isSponsorVerified = bounty?.sponsor?.isVerified;
 
   const [pageSelections, setPageSelections] = useState<Record<number, string>>(
     {},
@@ -432,29 +432,14 @@ export default function BountySubmissions({ slug }: Props) {
                 <>
                   <TabsList className="gap-4 font-medium text-slate-400">
                     <TabsTrigger value="submissions">Submissions</TabsTrigger>
-                    <Tooltip
-                      content="Scout is an invite-only feature right now"
-                      contentProps={{
-                        className: 'rounded-lg px-4 py-2 font-sans',
-                      }}
-                      disabled={isSponsorVerified === true}
+                    <TabsTrigger
+                      value="scout"
+                      className={cn('ph-no-capture')}
+                      onClick={() => posthog.capture('scout tab_scout')}
                     >
-                      <TabsTrigger
-                        value="scout"
-                        className={cn(
-                          'ph-no-capture',
-                          !isSponsorVerified &&
-                            'cursor-not-allowed text-slate-400',
-                        )}
-                        disabled={!isSponsorVerified}
-                        onClick={() => posthog.capture('scout tab_scout')}
-                      >
-                        Scout Talent
-                        {!!isSponsorVerified && (
-                          <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
-                        )}
-                      </TabsTrigger>
-                    </Tooltip>
+                      Scout Talent
+                      <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
+                    </TabsTrigger>
                   </TabsList>
                   <div className="h-[1.5px] w-full bg-slate-200/70" />
                 </>

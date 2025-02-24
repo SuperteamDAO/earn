@@ -60,11 +60,20 @@ export const SelectLabel = ({ grantSlug }: Props) => {
         label,
       }),
     onSuccess: (_, variables) => {
-      queryClient.setQueryData<GrantApplicationsReturn>(
-        ['sponsor-applications', grantSlug],
-        (old) => {
+      queryClient.setQueriesData(
+        {
+          predicate: (query) => {
+            const queryKey = query.queryKey as unknown[];
+            return (
+              Array.isArray(queryKey) &&
+              queryKey[0] === 'sponsor-applications' &&
+              queryKey[1] === grantSlug
+            );
+          },
+        },
+        (old: GrantApplicationsReturn | undefined) => {
           if (!old) return old;
-          const data = old?.data.map((application) =>
+          const data = old.data.map((application) =>
             application.id === variables.id
               ? { ...application, label: variables.label }
               : application,

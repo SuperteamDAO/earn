@@ -201,7 +201,7 @@ export function EligibilityQuestions() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="hidden text-muted-foreground group-hover:flex hover:text-destructive"
+                            className="invisible flex p-2 text-muted-foreground group-hover:visible hover:text-destructive"
                             onClick={() => handleRemoveQuestion(index)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -233,7 +233,7 @@ export function EligibilityQuestions() {
               </div>
             ) : (
               <FormDescription>
-                Max two custom questions allow for bounties
+                Max two custom questions allowed for bounties
               </FormDescription>
             )}
           </div>
