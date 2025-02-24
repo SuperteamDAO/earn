@@ -35,6 +35,12 @@ export const USERNAME_PATTERN = /^[a-zA-Z0-9_-]+$/;
 
 const teams = TeamRegions.map((team) => team.name);
 
-export const CommunityList = [...teams, 'BuildersDAO', 'WalletDAO', 'DevHub'];
+export const CommunityList = [
+  ...teams,
+  'BuildersDAO',
+  'WalletDAO',
+  'DevHub',
+  'Infrastructure Committee',
+];
 
 export const ONBOARDING_KEY = 'onboarding_chosen';
