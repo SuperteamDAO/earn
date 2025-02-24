@@ -11,10 +11,11 @@ import { prisma } from '@/prisma';
 
 import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
 import { homepageForYouListingsQuery } from '@/features/home/queries/for-you';
-import { homepageGrantsQuery } from '@/features/home/queries/grants';
 import { homepageListingsQuery } from '@/features/home/queries/listings';
+import { ListingCard } from '@/features/listings/components/ListingCard';
 import { ListingSection } from '@/features/listings/components/ListingSection';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { listingsQuery } from '@/features/listings/queries/listings';
 import { type Listing } from '@/features/listings/types';
 import {
   filterRegionCountry,
@@ -41,14 +42,6 @@ const InstallPWAModal = dynamic(
   { ssr: false },
 );
 
-const GrantsCard = dynamic(
-  () =>
-    import('@/features/grants/components/GrantsCard').then(
-      (mod) => mod.GrantsCard,
-    ),
-  { ssr: false },
-);
-
 const EmptySection = dynamic(
   () =>
     import('@/components/shared/EmptySection').then((mod) => mod.EmptySection),
@@ -56,12 +49,15 @@ const EmptySection = dynamic(
 );
 
 export default function HomePage({
-  listings,
   isAuth,
   userRegion,
   openForYouListings,
-  userGrantsRegion,
 }: Props) {
+  const { data: listings } = useQuery(
+    listingsQuery({
+      take: 100,
+    }),
+  );
   const { data: reviewForYouListings } = useQuery({
     ...homepageForYouListingsQuery({
       statusFilter: 'review',
@@ -96,15 +92,16 @@ export default function HomePage({
     }),
   );
 
-  const { data: grants } = useQuery(
-    homepageGrantsQuery({
-      userRegion: userGrantsRegion,
+  const { data: sponsorships } = useQuery(
+    listingsQuery({
+      type: 'sponsorship',
+      take: 100,
     }),
   );
 
   const combinedListings = useMemo(() => {
     return [
-      ...listings,
+      ...(listings ?? []),
       ...(reviewListings ?? []),
       ...(completeListings ?? []),
     ];
@@ -134,24 +131,28 @@ export default function HomePage({
           showViewAll
         />
         <ListingSection
-          type="grants"
-          title="Grants"
-          sub="Equity-free funding opportunities for builders"
+          type="bounties"
+          title="Sponsorships"
+          sub="Sponsor projects and get exposure"
           showEmoji
           showViewAll
         >
-          {!grants?.length && (
+          {!sponsorships?.length && (
             <div className="mt-8 flex items-center justify-center">
               <EmptySection
-                title="No grants available!"
-                message="Subscribe to notifications to get notified about new grants."
+                title="No sponsorships available!"
+                message="Subscribe to notifications to get notified about new sponsorships."
               />
             </div>
           )}
-          {grants &&
-            grants?.map((grant) => {
-              return <GrantsCard grant={grant} key={grant.id} />;
-            })}
+          {sponsorships &&
+            sponsorships
+              ?.filter((sponsorship) => sponsorship.status === 'OPEN')
+              .map((sponsorship) => {
+                return (
+                  <ListingCard key={sponsorship.id} bounty={sponsorship} />
+                );
+              })}
         </ListingSection>
       </div>
     </Home>

@@ -18,10 +18,10 @@ import { prisma } from '@/prisma';
 import { getTwitterUrl, getURLSanitized } from '@/utils/getURLSanitized';
 import { getURL } from '@/utils/validUrl';
 
-import { GrantsCard } from '@/features/grants/components/GrantsCard';
+import { ListingCard } from '@/features/listings/components/ListingCard';
 import { ListingSection } from '@/features/listings/components/ListingSection';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
-import { sponsorGrantsQuery } from '@/features/sponsor-dashboard/queries/sponsor-grants';
+import { listingsQuery } from '@/features/listings/queries/listings';
 import { sponsorListingsQuery } from '@/features/sponsor-dashboard/queries/sponsor-listings';
 
 interface Props {
@@ -35,8 +35,8 @@ const SponsorListingsPage = ({ slug, sponsor, title, description }: Props) => {
     sponsorListingsQuery(slug),
   );
 
-  const { data: grants, isLoading: isGrantsLoading } = useQuery(
-    sponsorGrantsQuery(slug),
+  const { data: sponsorships, isLoading: isSponsorshipsLoading } = useQuery(
+    listingsQuery({ type: 'sponsorship', take: 10 }),
   );
 
   const logo = sponsor.logo;
@@ -157,21 +157,28 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             take={20}
             showNotifSub={false}
           />
-          {!!grants && !!grants.length && (
+          {!!sponsorships && !!sponsorships.length && (
             <ListingSection
-              type="grants"
-              title={`Grants`}
-              sub="Equity-free funding opportunities for builders"
+              type="bounties"
+              title="Sponsorships"
+              sub="Sponsor projects and get exposure"
+              showEmoji
+              showViewAll
             >
-              {isGrantsLoading && (
+              {isSponsorshipsLoading && (
                 <div className="flex min-h-52 flex-col items-center justify-center">
                   <Loading />
                 </div>
               )}
-              {!isGrantsLoading &&
-                grants?.map((grant) => (
-                  <GrantsCard grant={grant} key={grant.id} />
-                ))}
+              {!isSponsorshipsLoading &&
+                sponsorships &&
+                sponsorships
+                  ?.filter((sponsorship) => sponsorship.status === 'OPEN')
+                  .map((sponsorship) => {
+                    return (
+                      <ListingCard key={sponsorship.id} bounty={sponsorship} />
+                    );
+                  })}
             </ListingSection>
           )}
         </div>

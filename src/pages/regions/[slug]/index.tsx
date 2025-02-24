@@ -11,9 +11,10 @@ import { Meta } from '@/layouts/Meta';
 import { getURL } from '@/utils/validUrl';
 
 import { RegionPop } from '@/features/conversion-popups/components/RegionPop';
-import { GrantsCard } from '@/features/grants/components/GrantsCard';
+import { ListingCard } from '@/features/listings/components/ListingCard';
 import { ListingSection } from '@/features/listings/components/ListingSection';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
+import { listingsQuery } from '@/features/listings/queries/listings';
 import { regionalListingsQuery } from '@/features/listings/queries/region-listings';
 
 const RegionsPage = ({
@@ -29,6 +30,10 @@ const RegionsPage = ({
     regionalListingsQuery({ region: slug, take: 10 }),
   );
 
+  const { data: sponsorships, isLoading } = useQuery(
+    listingsQuery({ type: 'sponsorship', take: 10 }),
+  );
+
   const ogImage = new URL(`${getURL()}api/dynamic-og/region/`);
   ogImage.searchParams.set('region', st.displayValue);
   ogImage.searchParams.set('code', st.code!);
@@ -36,8 +41,8 @@ const RegionsPage = ({
   return (
     <Home type="region" st={st}>
       <Meta
-        title={`Welcome to ${PROJECT_NAME} ${displayName} | Discover Bounties and Grants`}
-        description={`Welcome to ${PROJECT_NAME} ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
+        title={`Welcome to ${PROJECT_NAME} ${displayName} | Discover Bounties and Sponsorships  `}
+        description={`Welcome to ${PROJECT_NAME} ${displayName}'s page — Discover bounties and sponsorships and become a part of the global crypto community`}
         canonical={`${getURL()}/regions/${slug}/`}
         og={ogImage.toString()}
       />
@@ -54,28 +59,33 @@ const RegionsPage = ({
         />
 
         <ListingSection
-          type="grants"
-          title="Grants"
-          sub="Equity-free funding opportunities for builders"
+          type="bounties"
+          title="Sponsorships"
+          sub="Sponsor projects and get exposure"
           showEmoji
+          showViewAll
         >
-          {isListingsLoading && (
+          {isLoading && (
             <div className="flex min-h-52 flex-col items-center justify-center">
               <Loading />
             </div>
           )}
-          {!isListingsLoading && !listings?.grants?.length && (
+          {!sponsorships?.length && (
             <div className="mt-8 flex items-center justify-center">
               <EmptySection
-                title="No grants available!"
-                message="Subscribe to notifications to get notified about new grants."
+                title="No sponsorships available!"
+                message="Subscribe to notifications to get notified about new sponsorships."
               />
             </div>
           )}
-          {!isListingsLoading &&
-            listings?.grants?.map((grant) => {
-              return <GrantsCard grant={grant} key={grant.id} />;
-            })}
+          {sponsorships &&
+            sponsorships
+              ?.filter((sponsorship) => sponsorship.status === 'OPEN')
+              .map((sponsorship) => {
+                return (
+                  <ListingCard key={sponsorship.id} bounty={sponsorship} />
+                );
+              })}
         </ListingSection>
       </div>
     </Home>

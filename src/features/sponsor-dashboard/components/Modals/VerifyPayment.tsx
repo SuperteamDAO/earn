@@ -15,8 +15,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { PROJECT_NAME, SUPPORT_EMAIL } from '@/constants/project';
+import {
+  EXPLORER_TX_URL,
+  PROJECT_NAME,
+  SUPPORT_EMAIL,
+} from '@/constants/project';
 import { tokenList } from '@/constants/tokenList';
+import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -40,6 +45,7 @@ interface VerifyPaymentModalProps {
   listing: ListingWithSubmissions | undefined;
   setListing: (listing: ListingWithSubmissions) => void;
   listingType: string | undefined;
+  selectedSubmission?: SubmissionWithUser;
 }
 
 export const VerifyPaymentModal = ({
@@ -48,19 +54,19 @@ export const VerifyPaymentModal = ({
   setListing,
   isOpen,
   onClose,
+  selectedSubmission,
 }: VerifyPaymentModalProps) => {
   const { user } = useUser();
   const [status, setStatus] = useState<
     'idle' | 'retry' | 'loading' | 'success' | 'error'
   >('idle');
-  const [selectedToken, setSelectedToken] = useState<(typeof tokenList)[0]>();
   const queryClient = useQueryClient();
   const { data, isLoading, error } = useQuery({
     ...listingSubmissionsQuery({
       slug: listing?.slug ?? '',
       isWinner: true,
     }),
-    enabled: !!listing?.slug,
+    enabled: !!listing?.slug && !selectedSubmission,
   });
 
   useEffect(() => {
@@ -86,12 +92,16 @@ export const VerifyPaymentModal = ({
   }, [errors]);
 
   const paymentLinks = watch('paymentLinks');
+  const submissions = selectedSubmission
+    ? [selectedSubmission]
+    : data?.submission;
 
   useEffect(() => {
-    if (data?.submission && data?.bounty) {
+    if (submissions) {
+      console.log('submissions', submissions);
       reset(
         {
-          paymentLinks: data.submission
+          paymentLinks: submissions
             .filter((sub) => sub.winnerPosition !== null)
             .sort((a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0))
             .map((submission) => ({
@@ -110,18 +120,15 @@ export const VerifyPaymentModal = ({
           keepSubmitCount: true,
         },
       );
-      if (data?.bounty?.token)
-        setSelectedToken(
-          tokenList.find((s) => s.tokenSymbol === data?.bounty?.token),
-        );
     }
-  }, [data?.bounty.slug, reset]);
+  }, [data?.bounty.slug, selectedSubmission?.id, reset]);
 
   useEffect(() => {
     reset({});
   }, [listing?.slug]);
 
   const verifyPaymentMutation = async (body: VerifyPaymentsFormData) => {
+    console.log('body', body.paymentLinks);
     return await api.post<{ validationResults: ValidatePaymentResult[] }>(
       '/api/sponsor-dashboard/listings/verify-external-payment',
       {
@@ -371,117 +378,131 @@ export const VerifyPaymentModal = ({
               </div>
 
               <div className="my-6 flex flex-col gap-6">
-                {data?.submission
-                  .filter((sub) => sub.winnerPosition !== null)
+                {submissions
+                  ?.filter((sub) => sub.winnerPosition !== null)
                   .sort(
                     (a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0),
                   )
-                  .map((submission, index) => (
-                    <FormField
-                      key={submission.id}
-                      control={control}
-                      name={`paymentLinks.${index}.link`}
-                      render={({ field }) => (
-                        <FormItem
-                          className={cn(
-                            'space-y-2',
-                            errors.paymentLinks?.[index]?.root ||
-                              errors.paymentLinks?.[index]?.link
-                              ? 'text-red-500'
-                              : '',
-                          )}
-                        >
-                          <div className="flex justify-between gap-2">
-                            <div className="flex w-[40%] flex-col items-start gap-1">
-                              <div className="flex gap-1 text-xs font-semibold uppercase text-slate-500">
-                                <p>
-                                  {getRankLabels(
-                                    submission.winnerPosition || 0,
-                                  )}{' '}
-                                  PRIZE
-                                </p>
-                                {submission.winnerPosition ===
-                                  BONUS_REWARD_POSITION && (
-                                  <div className="flex">
-                                    <p>(</p>
-                                    <p className="line-clamp-1 max-w-[5rem] normal-case">
-                                      @{submission.user.username}
-                                    </p>
-                                    <p>)</p>
-                                  </div>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <img
-                                  className="h-[1.2rem] w-[1.2rem] rounded-full"
-                                  alt={selectedToken?.tokenName}
-                                  src={selectedToken?.icon}
-                                />
-                                <p className="font-semibold text-slate-800">
-                                  {formatNumberWithSuffix(
-                                    listing?.rewards?.[
-                                      submission.winnerPosition || 0
-                                    ] || 0,
-                                  )}
-                                </p>
-                                <p className="font-semibold text-slate-400">
-                                  {selectedToken?.tokenSymbol}
-                                </p>
-                              </div>
-                            </div>
+                  .map((submission, index) => {
+                    const tokenName =
+                      listing?.token === 'Any'
+                        ? submission.token
+                        : listing?.token;
+                    const token = tokenList.find(
+                      (s) => s.tokenSymbol === tokenName,
+                    );
 
-                            <div className="flex w-full flex-col items-start gap-1">
-                              {paymentLinks?.[index]?.isVerified ? (
-                                <div className="flex w-full items-center gap-2">
-                                  <a
-                                    className="w-full"
-                                    href={`https://nearblocks.io/txns/${paymentLinks?.[index]?.txId}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    <Button
-                                      type="button"
-                                      className="w-full justify-start border-green-500 text-sm font-medium text-slate-500 hover:bg-green-100"
-                                      variant="outline"
-                                    >
-                                      <p className="mr-2">
-                                        Payment Verified. View Tx
+                    const paymentLink = paymentLinks?.find(
+                      (link) => link.submissionId === submission.id,
+                    );
+                    return (
+                      <FormField
+                        key={submission.id}
+                        control={control}
+                        name={`paymentLinks.${index}.link`}
+                        render={({ field }) => (
+                          <FormItem
+                            className={cn(
+                              'space-y-2',
+                              errors.paymentLinks?.[index]?.root ||
+                                errors.paymentLinks?.[index]?.link
+                                ? 'text-red-500'
+                                : '',
+                            )}
+                          >
+                            <div className="flex justify-between gap-2">
+                              <div className="flex w-[40%] flex-col items-start gap-1">
+                                <div className="flex gap-1 text-xs font-semibold uppercase text-slate-500">
+                                  <p>
+                                    {getRankLabels(
+                                      submission.winnerPosition || 0,
+                                    )}{' '}
+                                    PAYMENT
+                                  </p>
+                                  {(submission.winnerPosition ===
+                                    BONUS_REWARD_POSITION ||
+                                    listing?.type === 'sponsorship') && (
+                                    <div className="flex">
+                                      <p>(</p>
+                                      <p className="line-clamp-1 max-w-[5rem] normal-case">
+                                        @{submission.user.username}
                                       </p>
-                                      <ExternalLink className="ml-auto h-4 w-4" />
-                                    </Button>
-                                  </a>
-
-                                  <div className="h-6 w-6 rounded-full bg-green-500 p-1">
-                                    <Check className="h-full w-full stroke-[3] text-white" />
-                                  </div>
+                                      <p>)</p>
+                                    </div>
+                                  )}
                                 </div>
-                              ) : (
-                                <FormControl>
-                                  <Input
-                                    {...field}
-                                    className="text-sm placeholder:text-slate-400"
-                                    placeholder="Paste your link here"
+                                <div className="flex items-center gap-1">
+                                  <img
+                                    className="h-[1.2rem] w-[1.2rem] rounded-full"
+                                    alt={token?.tokenName}
+                                    src={token?.icon}
                                   />
-                                </FormControl>
-                              )}
-                              <FormMessage />
-                              <FormField
-                                name={`paymentLinks.${index}.root` as any}
-                                control={control}
-                                render={() => {
-                                  return (
-                                    <FormItem>
-                                      <FormMessage />
-                                    </FormItem>
-                                  );
-                                }}
-                              />
+                                  <p className="font-semibold text-slate-800">
+                                    {formatNumberWithSuffix(
+                                      listing?.rewards?.[
+                                        submission.winnerPosition || 0
+                                      ] || 0,
+                                    )}
+                                  </p>
+                                  <p className="font-semibold text-slate-400">
+                                    {token?.tokenSymbol}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex w-full flex-col items-start gap-1">
+                                {paymentLink?.isVerified ? (
+                                  <div className="flex w-full items-center gap-2">
+                                    <a
+                                      className="w-full"
+                                      href={`${EXPLORER_TX_URL}${paymentLink?.txId}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      <Button
+                                        type="button"
+                                        className="w-full justify-start border-green-500 text-sm font-medium text-slate-500 hover:bg-green-100"
+                                        variant="outline"
+                                      >
+                                        <p className="mr-2">
+                                          Payment Verified. View Tx
+                                        </p>
+                                        <ExternalLink className="ml-auto h-4 w-4" />
+                                      </Button>
+                                    </a>
+
+                                    <div className="h-6 w-6 rounded-full bg-green-500 p-1">
+                                      <Check className="h-full w-full stroke-[3] text-white" />
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      className="text-sm placeholder:text-slate-400"
+                                      placeholder="Paste your link here"
+                                    />
+                                  </FormControl>
+                                )}
+                                <FormMessage />
+                                <FormField
+                                  name={`paymentLinks.${index}.root` as any}
+                                  control={control}
+                                  render={() => {
+                                    return (
+                                      <FormItem>
+                                        <FormMessage />
+                                      </FormItem>
+                                    );
+                                  }}
+                                />
+                              </div>
                             </div>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  ))}
+                          </FormItem>
+                        )}
+                      />
+                    );
+                  })}
               </div>
               <FormField
                 name={`paymentLinks.root` as any}
@@ -498,7 +519,7 @@ export const VerifyPaymentModal = ({
               <div className="flex flex-col gap-2">
                 <Button
                   className="w-full"
-                  disabled={data?.submission.every((sub) => sub.isPaid)}
+                  disabled={submissions?.every((sub) => sub.isPaid)}
                   type="submit"
                 >
                   Add External Payment

@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { Tooltip } from '@/components/ui/tooltip';
+import { EXPLORER_TX_URL } from '@/constants/project';
 import { useClipboard } from '@/hooks/use-clipboard';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
@@ -121,7 +122,7 @@ export const SubmissionDetails = ({
                     className="mr-4 text-slate-600"
                     onClick={() => {
                       window.open(
-                        `https://nearblocks.io/txns/${submission?.paymentDetails?.txId}`,
+                        `${EXPLORER_TX_URL}${submission?.paymentDetails?.txId}`,
                         '_blank',
                       );
                     }}

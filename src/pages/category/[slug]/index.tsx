@@ -12,8 +12,7 @@ import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
 
 import { CategoryPop } from '@/features/conversion-popups/components/CategoryPop';
-import { GrantsCard } from '@/features/grants/components/GrantsCard';
-import { grantsQuery } from '@/features/grants/queries/grants';
+import { ListingCard } from '@/features/listings/components/ListingCard';
 import { ListingSection } from '@/features/listings/components/ListingSection';
 import { ListingTabs } from '@/features/listings/components/ListingTabs';
 import { listingsQuery } from '@/features/listings/queries/listings';
@@ -34,8 +33,8 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
     }),
   );
 
-  const { data: grants, isLoading: isGrantsLoading } = useQuery(
-    grantsQuery({ order: 'asc', take: 10 }),
+  const { data: sponsorships, isLoading: isSponsorshipsLoading } = useQuery(
+    listingsQuery({ type: 'sponsorship', take: 10 }),
   );
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
@@ -72,28 +71,35 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
           showViewAll
           take={10}
         />
+
         <ListingSection
-          type="grants"
-          title={`${formattedSlug} Grants`}
-          sub="Equity-free funding opportunities for builders"
+          type="bounties"
+          title="Sponsorships"
+          sub="Sponsor projects and get exposure"
           showEmoji
           showViewAll
         >
-          {isGrantsLoading && (
+          {isSponsorshipsLoading && (
             <div className="flex min-h-52 flex-col items-center justify-center">
               <Loading />
             </div>
           )}
-          {!isGrantsLoading && !grants?.length && (
+          {!isSponsorshipsLoading && !sponsorships?.length && (
             <div className="mt-8 flex items-center justify-center">
               <EmptySection
-                title="No grants available!"
-                message="Subscribe to notifications to get notified about new grants."
+                title="No sponsorships available!"
+                message="Subscribe to notifications to get notified about new sponsorships."
               />
             </div>
           )}
-          {!isGrantsLoading &&
-            grants?.map((grant) => <GrantsCard grant={grant} key={grant.id} />)}
+          {!isSponsorshipsLoading &&
+            sponsorships
+              ?.filter((sponsorship) => sponsorship.status === 'OPEN')
+              .map((sponsorship) => {
+                return (
+                  <ListingCard key={sponsorship.id} bounty={sponsorship} />
+                );
+              })}
         </ListingSection>
       </div>
     </Home>

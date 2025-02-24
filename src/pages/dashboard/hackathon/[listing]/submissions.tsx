@@ -57,13 +57,17 @@ export default function BountySubmissions({ listing }: Props) {
   const searchParams = useSearchParams();
   const posthog = usePostHog();
 
-  const { data: submissions, isLoading: isSubmissionsLoading } = useQuery(
-    submissionsQuery(listing, true),
-  );
+  const {
+    data: submissions,
+    isLoading: isSubmissionsLoading,
+    refetch: refetchSubmissions,
+  } = useQuery(submissionsQuery(listing, true));
 
-  const { data: bounty, isLoading: isBountyLoading } = useQuery(
-    sponsorDashboardListingQuery(listing),
-  );
+  const {
+    data: bounty,
+    isLoading: isBountyLoading,
+    refetch: refetchBounty,
+  } = useQuery(sponsorDashboardListingQuery(listing));
 
   const filteredSubmissions = useMemo(() => {
     if (!submissions) return [];
@@ -256,6 +260,10 @@ export default function BountySubmissions({ listing }: Props) {
                         submissions={paginatedSubmissions}
                         usedPositions={usedPositions || []}
                         onWinnersAnnounceOpen={onOpen}
+                        invalidateQueries={() => {
+                          refetchBounty();
+                          refetchSubmissions();
+                        }}
                       />
                     )}
                   </div>

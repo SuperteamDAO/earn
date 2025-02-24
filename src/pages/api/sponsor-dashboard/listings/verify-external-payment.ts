@@ -62,15 +62,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (!listing) return res.status(400).json({ error: 'Listing not found' });
 
-    if (!listing.isWinnersAnnounced)
+    if (!listing.isWinnersAnnounced && listing.type !== 'sponsorship')
       return res.status(400).json({ error: 'Listing not announced' });
-
-    const dbToken = tokenList.find((t) => t.tokenSymbol === listing.token);
-    if (!dbToken) {
-      return res
-        .status(400)
-        .json({ error: "Token doesn't exist for this listing" });
-    }
 
     const validationResults: ValidatePaymentResult[] = [];
 
@@ -117,6 +110,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           throw new Error('Winner Position has no reward');
         }
 
+        const tokenSymbol =
+          listing.token === 'Any' ? submission.token : listing.token;
+        const dbToken = tokenList.find((t) => t.tokenSymbol === tokenSymbol);
+        if (!dbToken) {
+          return res
+            .status(400)
+            .json({ error: "Token doesn't exist for this listing" });
+        }
         const validationResult = await validatePayment({
           txId: paymentLink.txId,
           recipientPublicKey: publicKey!,

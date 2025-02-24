@@ -27,7 +27,7 @@ const submissionSchema = (
         ])
         .optional(),
       otherInfo: z.string().optional(),
-      ask: z.union([z.number().int().min(0), z.null()]).optional(),
+      ask: z.union([z.number().int().min(1), z.null()]).optional(),
       eligibilityAnswers: z
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
@@ -77,7 +77,10 @@ const submissionSchema = (
           message: 'Add a valid link to continue',
         });
       }
-      if (listing.type === 'project' && listing.compensationType !== 'fixed') {
+      if (
+        (listing.type === 'project' || listing.type === 'sponsorship') &&
+        listing.compensationType !== 'fixed'
+      ) {
         if (data.ask === undefined || data.ask === null || !data.ask) {
           ctx.addIssue({
             code: 'custom',

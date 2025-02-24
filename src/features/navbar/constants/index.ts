@@ -18,9 +18,9 @@ export const LISTING_NAV_ITEMS: Array<NavItem> = [
     posthog: 'projects_navbar',
   },
   {
-    label: 'Grants',
-    href: '/grants/',
-    posthog: 'grants_navbar',
+    label: 'Sponsorships',
+    href: '/sponsorships/',
+    posthog: 'sponsorships_navbar',
   },
 ];
 

@@ -419,7 +419,8 @@ export const ListingTable = ({
                             </DropdownMenuItem>
                           )}
 
-                        {listingStatus === 'Payment Pending' &&
+                        {(listingStatus === 'Payment Pending' ||
+                          listing.type === 'sponsorship') &&
                           listing?.type !== 'grant' && (
                             <DropdownMenuItem
                               className="cursor-pointer whitespace-nowrap text-sm font-medium text-slate-500"

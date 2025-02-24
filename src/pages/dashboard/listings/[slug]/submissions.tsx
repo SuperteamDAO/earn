@@ -85,13 +85,17 @@ export default function BountySubmissions({ slug }: Props) {
     onClose: rejectedOnClose,
   } = useDisclosure();
 
-  const { data: submissions, isLoading: isSubmissionsLoading } = useQuery(
-    submissionsQuery(slug),
-  );
+  const {
+    data: submissions,
+    isLoading: isSubmissionsLoading,
+    refetch: refetchSubmissions,
+  } = useQuery(submissionsQuery(slug));
 
-  const { data: bounty, isLoading: isBountyLoading } = useQuery(
-    sponsorDashboardListingQuery(slug),
-  );
+  const {
+    data: bounty,
+    isLoading: isBountyLoading,
+    refetch: refetchBounty,
+  } = useQuery(sponsorDashboardListingQuery(slug));
 
   useEffect(() => {
     selectedSubmissionIds.size > 0 ? onTogglerOpen() : onTogglerClose();
@@ -512,6 +516,10 @@ export default function BountySubmissions({ slug }: Props) {
                         submissions={paginatedSubmissions}
                         usedPositions={usedPositions || []}
                         onWinnersAnnounceOpen={onOpen}
+                        invalidateQueries={() => {
+                          refetchBounty();
+                          refetchSubmissions();
+                        }}
                       />
                     )}
                   </div>
