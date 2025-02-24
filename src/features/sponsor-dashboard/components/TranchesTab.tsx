@@ -232,7 +232,7 @@ export const TranchesTab = ({ slug }: Props) => {
       const response = await api.post(
         '/api/sponsor-dashboard/grants/update-tranche-status',
         {
-          data: [{ id: trancheId }],
+          id: trancheId,
           status: 'Rejected',
         },
       );
@@ -291,8 +291,9 @@ export const TranchesTab = ({ slug }: Props) => {
       const response = await api.post(
         '/api/sponsor-dashboard/grants/update-tranche-status',
         {
-          data: [{ id: trancheId, approvedAmount }],
+          id: trancheId,
           status: 'Approved',
+          approvedAmount,
         },
       );
       return response.data;

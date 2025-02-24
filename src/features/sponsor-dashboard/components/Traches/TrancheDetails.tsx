@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
-import { ArrowRight, Check, Copy, X } from 'lucide-react';
+import { ArrowRight, Check, X } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
@@ -49,8 +49,12 @@ export const TrancheDetails = ({
     (ele) => ele.tokenSymbol === grant?.token,
   )?.icon;
 
-  const formattedCreatedAt = dayjs(
-    selectedTranche?.GrantApplication?.createdAt,
+  const formattedCreatedAt = dayjs(selectedTranche?.createdAt).format(
+    'DD MMM YYYY',
+  );
+
+  const formattedDecidedAt = dayjs(
+    selectedTranche?.GrantApplication?.decidedAt,
   ).format('DD MMM YYYY');
 
   const { onCopy: onCopyEmail } = useClipboard(
@@ -78,6 +82,11 @@ export const TrancheDetails = ({
       });
     }
   };
+
+  const totalPaid = selectedTranche?.GrantApplication?.totalPaid || 0;
+  const approvedAmount = selectedTranche?.GrantApplication?.approvedAmount || 0;
+
+  const paidPercentage = (totalPaid / approvedAmount) * 100;
 
   return (
     <div className="w-full rounded-r-xl bg-white">
@@ -178,50 +187,31 @@ export const TrancheDetails = ({
             </div>
 
             <div className="flex items-center gap-4 px-4 py-2">
-              {isApproved && (
-                <div className="flex items-center">
-                  <p className="mr-3 whitespace-nowrap text-sm font-semibold text-slate-400">
-                    APPROVED
-                  </p>
-                  <img
-                    className="mr-0.5 h-4 w-4 rounded-full"
-                    src={tokenIcon}
-                    alt="token"
+              <div className="flex items-center">
+                <p className="mr-3 whitespace-nowrap text-sm font-semibold text-slate-400">
+                  TOTAL GRANT
+                </p>
+                <img
+                  className="mr-0.5 h-4 w-4 rounded-full"
+                  src={tokenIcon}
+                  alt="token"
+                />
+                <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
+                  {`${selectedTranche?.GrantApplication?.approvedAmount?.toLocaleString('en-us')}`}
+                  <span className="ml-0.5 text-slate-400">{grant?.token}</span>
+                </p>
+
+                <div className="mx-3 flex">
+                  <CircularProgress
+                    className="h-5 w-5 rounded-full bg-gray-200"
+                    value={paidPercentage}
                   />
-                  <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
-                    {`${selectedTranche?.approvedAmount?.toLocaleString('en-us')}`}
-                    <span className="ml-0.5 text-slate-400">
-                      {grant?.token}
-                    </span>
+                  <p className="ml-1 whitespace-nowrap text-sm font-medium text-slate-600">
+                    {paidPercentage}%{' '}
+                    <span className="text-slate-400">Paid</span>
                   </p>
-                  {isApproved && (
-                    <div className="mx-3 flex">
-                      <CircularProgress
-                        className="h-5 w-5 rounded-full bg-gray-200"
-                        value={Number(
-                          (
-                            (selectedTranche?.GrantApplication?.totalPaid /
-                              selectedTranche?.GrantApplication
-                                ?.approvedAmount) *
-                            100
-                          ).toFixed(2),
-                        )}
-                      />
-                      <p className="ml-1 whitespace-nowrap text-sm font-medium text-slate-600">
-                        {Number(
-                          (
-                            (selectedTranche?.GrantApplication?.totalPaid /
-                              selectedTranche?.GrantApplication
-                                ?.approvedAmount) *
-                            100
-                          ).toFixed(2),
-                        )}
-                        % <span className="text-slate-400">Paid</span>
-                      </p>
-                    </div>
-                  )}
                 </div>
-              )}
+              </div>
               {selectedTranche?.GrantApplication?.user?.email && (
                 <Tooltip
                   content={'Click to copy'}
@@ -295,7 +285,7 @@ export const TrancheDetails = ({
             <div className="scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
               <div className="mb-4">
                 <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
-                  ASK
+                  TRANCHE AMOUNT
                 </p>
                 <div className="flex items-center gap-0.5">
                   <img
@@ -312,67 +302,32 @@ export const TrancheDetails = ({
                 </div>
               </div>
 
-              <div className="mb-4">
-                <div className="mb-1 text-xs font-semibold uppercase text-slate-400">
-                  APPLICATION DATE
-                </div>
-                <p className="whitespace-nowrap text-sm font-medium text-slate-600">
-                  {formattedCreatedAt}
-                </p>
-              </div>
-
-              <div className="mb-4">
-                <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
-                  Wallet Address
-                </p>
-                <div
-                  className="flex cursor-pointer items-center gap-1 whitespace-nowrap text-sm font-medium text-slate-600"
-                  onClick={handleCopyPublicKey}
-                >
-                  {selectedTranche?.GrantApplication?.walletAddress}
-                  <Copy
-                    className="h-4 w-4 text-slate-400"
-                    onClick={handleCopyPublicKey}
-                  />
-                </div>
-              </div>
-
               <InfoBox
-                label="Project Title"
-                content={selectedTranche?.GrantApplication?.projectTitle}
+                label="Tranche Request Date"
+                content={formattedCreatedAt}
               />
               <InfoBox
-                label="One-Liner Description"
-                content={selectedTranche?.GrantApplication?.projectOneLiner}
-              />
-              <InfoBox
-                label="Project Details"
-                content={selectedTranche?.GrantApplication?.projectDetails}
+                label="KPIS AND MILESTONES"
+                content={selectedTranche?.GrantApplication?.kpi}
                 isHtml
+              />
+              <InfoBox
+                label="Project Updates"
+                content={selectedTranche?.update}
+              />
+              <InfoBox
+                label="Help Wanted"
+                content={selectedTranche?.helpWanted}
+              />
+              <InfoBox
+                label="Grant Approval Date"
+                content={formattedDecidedAt}
               />
               <InfoBox
                 label="Twitter"
                 content={selectedTranche?.GrantApplication?.twitter}
               />
-              <InfoBox
-                label="Deadline"
-                content={selectedTranche?.GrantApplication?.projectTimeline}
-              />
-              <InfoBox
-                label="Proof of Work"
-                content={selectedTranche?.GrantApplication?.proofOfWork}
-                isHtml
-              />
-              <InfoBox
-                label="Goals and Milestones"
-                content={selectedTranche?.GrantApplication?.milestones}
-                isHtml
-              />
-              <InfoBox
-                label="Primary Key Performance Indicator"
-                content={selectedTranche?.GrantApplication?.kpi}
-                isHtml
-              />
+
               {Array.isArray(selectedTranche?.GrantApplication?.answers) &&
                 selectedTranche?.GrantApplication?.answers.map(
                   (answer: any, answerIndex: number) => (

@@ -19,7 +19,13 @@ const fetchVerificationStatus = async (grantApplicationId: string) => {
   return data;
 };
 
-export const KYCModal = ({ applicationId }: { applicationId: string }) => {
+export const KYCModal = ({
+  applicationId,
+  grantId,
+}: {
+  applicationId: string;
+  grantId: string;
+}) => {
   const { data: accessToken, refetch } = useQuery({
     queryKey: ['sumsubToken'],
     queryFn: async () => {
@@ -54,7 +60,7 @@ export const KYCModal = ({ applicationId }: { applicationId: string }) => {
       if (result.data === 'verified') {
         toast.success('KYC verified successfully!');
         await queryClient.invalidateQueries({
-          queryKey: userApplicationQuery(applicationId).queryKey,
+          queryKey: userApplicationQuery(grantId).queryKey,
         });
       }
     }

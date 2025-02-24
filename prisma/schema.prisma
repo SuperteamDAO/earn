@@ -268,14 +268,15 @@ model GrantTranche {
   applicationId    String
   grantId          String
   ask              Float
-  update           String?            @db.Text
-  helpWanted       String?            @db.Text
+  update           String             @db.Text
+  helpWanted       String             @db.Text
   status           GrantTrancheStatus @default(Pending)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   GrantApplication GrantApplication   @relation(fields: [applicationId], references: [id])
   Grant            Grants             @relation(fields: [grantId], references: [id])
   approvedAmount   Float?
+  decidedAt        DateTime?
 
   @@index([applicationId])
   @@index([grantId])

@@ -58,7 +58,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
         applicationId,
       });
       await queryClient.invalidateQueries({
-        queryKey: userApplicationQuery(applicationId).queryKey,
+        queryKey: userApplicationQuery(grant.id).queryKey,
       });
       await refetchUser();
       toast.success('Tranche request submitted successfully');
