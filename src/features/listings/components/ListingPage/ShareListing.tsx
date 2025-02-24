@@ -1,4 +1,5 @@
 import { Check, Copy } from 'lucide-react';
+import { usePostHog } from 'posthog-js/react';
 import * as React from 'react';
 import { IoMdShareAlt } from 'react-icons/io';
 
@@ -40,11 +41,17 @@ export function ShareListing({
   listing: Listing | undefined;
 }) {
   const [open, setOpen] = React.useState(false);
+  const posthog = usePostHog();
+  function setShareOpen(o: boolean) {
+    if (o) posthog.capture('open_share listing');
+    else posthog.capture('close_share listing');
+    setOpen(o);
+  }
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={setShareOpen}>
         <DialogTrigger asChild>
           <Button
             variant="ghost"
@@ -70,7 +77,7 @@ export function ShareListing({
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={setShareOpen}>
       <DrawerTrigger asChild>
         <Button
           variant="ghost"
@@ -123,7 +130,12 @@ function MainContent({
     );
   };
 
+  const posthog = usePostHog();
   const { hasCopied, onCopy } = useClipboard(listingLink());
+  function onListingLinkCopy() {
+    posthog.capture('copy_share listing');
+    onCopy();
+  }
 
   const shareLinks = React.useMemo(
     () => [
@@ -131,38 +143,38 @@ function MainContent({
         name: 'X (Twitter)',
         icon: X,
         url: `https://twitter.com/intent/tweet?text=${shareMessage()}`,
+        posthog: 'x_share listing',
       },
       {
         name: 'Telegram',
         icon: Telegram,
         url: `https://t.me/share/url?url=${encodeURIComponent(listingLink())}&text=${shareMessage('telegram')}`,
+        posthog: 'telegram_share listing',
       },
       {
         name: 'Whatsapp',
         icon: Whatsapp,
         url: `https://api.whatsapp.com/send?text=${shareMessage()}`,
+        posthog: 'whatsapp_share listing',
       },
-      // {
-      //   name: 'Discord',
-      //   // Discord doesn't have a direct share URL
-      //   icon: Discord,
-      //   url: `https://discord.com/channels/@me?message=${shareMessage()}`,
-      // },
       {
         name: 'LinkedIn',
         icon: Linkedin,
         url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(listingLink())}&summary=${shareMessage('linkedin')}`,
+        posthog: 'linkedin_share listing',
       },
       {
         name: 'Facebook',
         icon: Facebook,
         url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(listingLink())}&t=${shareMessage('facebook')}`,
+        posthog: 'facebook_share listing',
       },
     ],
     [shareMessage, listingLink],
   );
 
-  const handleShare = React.useCallback((url: string) => {
+  const handleShare = React.useCallback((url: string, phEvent: string) => {
+    posthog.capture(phEvent);
     window.open(url, '_blank', 'noopener,noreferrer');
   }, []);
 
@@ -170,8 +182,8 @@ function MainContent({
     <div className={cn('space-y-4 overflow-hidden', className)}>
       <Button
         variant="secondary"
-        className="group w-full justify-between"
-        onClick={onCopy}
+        className="ph-no-capture group w-full justify-between"
+        onClick={onListingLinkCopy}
       >
         <span className="truncate font-normal text-slate-500">
           earn.superteam.fun/listing/{listing?.slug}
@@ -189,8 +201,8 @@ function MainContent({
             key={platform.name}
             variant="ghost"
             size="icon"
-            className="h-fit w-fit rounded-full !p-0"
-            onClick={() => handleShare(platform.url)}
+            className="ph-no-capture h-fit w-fit rounded-full !p-0"
+            onClick={() => handleShare(platform.url, platform.posthog)}
           >
             <platform.icon
               styles={{
