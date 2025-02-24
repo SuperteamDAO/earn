@@ -248,7 +248,7 @@ model GrantApplication {
   decidedBy           String?
   notes               String?                @db.VarChar(1000)
   ai                  Json?
-  kycStatus           String                 @default("PENDING")
+  kycStatus           KYCStatus              @default(Pending)
   GrantTranche        GrantTranche[]
 
   @@index([userId])
@@ -264,17 +264,18 @@ model GrantApplication {
 }
 
 model GrantTranche {
-  id               String           @id @default(uuid())
+  id               String             @id @default(uuid())
   applicationId    String
   grantId          String
-  amount           Float
-  update           String?          @db.Text
-  helpWanted       String?          @db.Text
-  status           String           @default("PENDING")
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  GrantApplication GrantApplication @relation(fields: [applicationId], references: [id])
-  Grant            Grants           @relation(fields: [grantId], references: [id])
+  ask              Float
+  update           String?            @db.Text
+  helpWanted       String?            @db.Text
+  status           GrantTrancheStatus @default(Pending)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  GrantApplication GrantApplication   @relation(fields: [applicationId], references: [id])
+  Grant            Grants             @relation(fields: [grantId], references: [id])
+  approvedAmount   Float?
 
   @@index([applicationId])
   @@index([grantId])
@@ -794,6 +795,19 @@ enum TalentRankingTimeframe {
 }
 
 enum SubmissionStatus {
+  Pending
+  Approved
+  Rejected
+}
+
+enum GrantTrancheStatus {
+  Pending
+  Approved
+  Rejected
+  Paid
+}
+
+enum KYCStatus {
   Pending
   Approved
   Rejected

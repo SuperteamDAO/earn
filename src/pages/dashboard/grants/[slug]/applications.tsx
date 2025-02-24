@@ -58,7 +58,7 @@ function GrantApplications({ slug }: Props) {
               value="tranches"
               className="px-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-transparent"
             >
-              <TranchesTab />
+              <TranchesTab slug={slug} />
             </TabsContent>
 
             <TabsContent

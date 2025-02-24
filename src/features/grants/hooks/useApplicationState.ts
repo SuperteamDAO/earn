@@ -25,29 +25,29 @@ export const useApplicationState = (
     }
 
     if (application.applicationStatus === 'Approved') {
-      if (application.kycStatus === 'PENDING') {
+      if (application.kycStatus === 'Pending') {
         setApplicationState('KYC PENDING');
-      } else if (application.kycStatus === 'APPROVED') {
+      } else if (application.kycStatus === 'Approved') {
         if (application.GrantTranche.length === 0) {
           setApplicationState('KYC APPROVED');
         } else if (application.GrantTranche.length === 1) {
           const status = application.GrantTranche[0]?.status;
-          if (status === 'PENDING') setApplicationState('TRANCHE1 PENDING');
-          else if (status === 'APPROVED')
+          if (status === 'Pending') setApplicationState('TRANCHE1 PENDING');
+          else if (status === 'Approved')
             setApplicationState('TRANCHE1 APPROVED');
-          else if (status === 'PAID') setApplicationState('TRANCHE1 PAID');
+          else if (status === 'Paid') setApplicationState('TRANCHE1 PAID');
         } else if (application.GrantTranche.length === 2) {
           const status = application.GrantTranche[1]?.status;
-          if (status === 'PENDING') setApplicationState('TRANCHE2 PENDING');
-          else if (status === 'APPROVED')
+          if (status === 'Pending') setApplicationState('TRANCHE2 PENDING');
+          else if (status === 'Approved')
             setApplicationState('TRANCHE2 APPROVED');
-          else if (status === 'PAID') setApplicationState('TRANCHE2 PAID');
+          else if (status === 'Paid') setApplicationState('TRANCHE2 PAID');
         } else if (application.GrantTranche.length === 3 && tranches === 3) {
           const status = application.GrantTranche[2]?.status;
-          if (status === 'PENDING') setApplicationState('TRANCHE3 PENDING');
-          else if (status === 'APPROVED')
+          if (status === 'Pending') setApplicationState('TRANCHE3 PENDING');
+          else if (status === 'Approved')
             setApplicationState('TRANCHE3 APPROVED');
-          else if (status === 'PAID') setApplicationState('TRANCHE3 PAID');
+          else if (status === 'Paid') setApplicationState('TRANCHE3 PAID');
         }
       }
     }

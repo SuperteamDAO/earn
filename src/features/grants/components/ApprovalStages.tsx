@@ -18,9 +18,9 @@ export const ApprovalStages = ({ application, grant }: Props) => {
     !applicationState.includes('KYC') || applicationState === 'KYC APPROVED';
 
   const getTrancheStatus = (trancheNum: number) => {
-    if (applicationState.includes(`TRANCHE${trancheNum} PAID`)) return 'PAID';
-    if (applicationState.includes(`TRANCHE${trancheNum}`)) return 'IN_PROGRESS';
-    return 'PENDING';
+    if (applicationState.includes(`TRANCHE${trancheNum} PAID`)) return 'Paid';
+    if (applicationState.includes(`TRANCHE${trancheNum}`)) return 'In Progress';
+    return 'Pending';
   };
 
   const tranchesCount = (application?.approvedAmount ?? 0) > 5000 ? 3 : 2;

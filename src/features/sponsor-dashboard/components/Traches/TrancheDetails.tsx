@@ -1,6 +1,5 @@
-import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
@@ -25,87 +24,45 @@ import {
 } from '@/features/social/components/SocialIcons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { selectedGrantApplicationAtom } from '../../atoms';
-import { type GrantApplicationsReturn } from '../../queries/applications';
-import { type GrantApplicationWithUser } from '../../types';
+import { selectedGrantTrancheAtom } from '../../atoms';
+import { type GrantTrancheWithApplication } from '../../queries/tranches';
 import { InfoBox } from '../InfoBox';
-import { MarkCompleted } from './MarkCompleted';
-import { Notes } from './Notes';
-import { RecordPaymentButton } from './RecordPaymentButton';
-import { SelectLabel } from './SelectLabel';
 
 interface Props {
   grant: Grant | undefined;
-  applications: GrantApplicationWithUser[] | undefined;
-  isMultiSelectOn: boolean;
-  params: {
-    searchText: string;
-    length: number;
-    skip: number;
-  };
+  tranches: GrantTrancheWithApplication[] | undefined;
   approveOnOpen: () => void;
   rejectedOnOpen: () => void;
 }
-export const ApplicationDetails = ({
+export const TrancheDetails = ({
   grant,
-  applications,
-  isMultiSelectOn,
-  params,
+  tranches,
   approveOnOpen,
   rejectedOnOpen,
 }: Props) => {
-  const [selectedApplication, setSelectedApplication] = useAtom(
-    selectedGrantApplicationAtom,
-  );
-  const isPending = selectedApplication?.applicationStatus === 'Pending';
-  const isApproved = selectedApplication?.applicationStatus === 'Approved';
-  const isRejected = selectedApplication?.applicationStatus === 'Rejected';
-  const isCompleted = selectedApplication?.applicationStatus === 'Completed';
-
-  const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
-
-  const queryClient = useQueryClient();
+  const selectedTranche = useAtomValue(selectedGrantTrancheAtom);
+  const isPending = selectedTranche?.status === 'Pending';
+  const isApproved = selectedTranche?.status === 'Approved';
+  const isRejected = selectedTranche?.status === 'Rejected';
 
   const tokenIcon = tokenList.find(
     (ele) => ele.tokenSymbol === grant?.token,
   )?.icon;
 
-  const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
-    'DD MMM YYYY',
-  );
-
-  const updateApplicationState = (
-    updatedApplication: GrantApplicationWithUser,
-  ) => {
-    setSelectedApplication(updatedApplication);
-
-    queryClient.setQueryData<GrantApplicationsReturn>(
-      ['sponsor-applications', grant?.slug, params],
-      (oldData) => {
-        if (!oldData) return oldData;
-        const data = oldData?.data.map((application) =>
-          application.id === updatedApplication.id
-            ? updatedApplication
-            : application,
-        );
-        return {
-          ...oldData,
-          data,
-        };
-      },
-    );
-  };
+  const formattedCreatedAt = dayjs(
+    selectedTranche?.GrantApplication?.createdAt,
+  ).format('DD MMM YYYY');
 
   const { onCopy: onCopyEmail } = useClipboard(
-    selectedApplication?.user?.email || '',
+    selectedTranche?.GrantApplication?.user?.email || '',
   );
 
   const { onCopy: onCopyPublicKey } = useClipboard(
-    selectedApplication?.walletAddress || '',
+    selectedTranche?.GrantApplication?.walletAddress || '',
   );
 
   const handleCopyEmail = () => {
-    if (selectedApplication?.user?.email) {
+    if (selectedTranche?.GrantApplication?.user?.email) {
       onCopyEmail();
       toast.success('Email copied to clipboard', {
         duration: 1500,
@@ -114,7 +71,7 @@ export const ApplicationDetails = ({
   };
 
   const handleCopyPublicKey = () => {
-    if (selectedApplication?.walletAddress) {
+    if (selectedTranche?.GrantApplication?.walletAddress) {
       onCopyPublicKey();
       toast.success('Wallet address copied to clipboard', {
         duration: 1500,
@@ -124,22 +81,24 @@ export const ApplicationDetails = ({
 
   return (
     <div className="w-full rounded-r-xl bg-white">
-      {applications?.length ? (
+      {tranches?.length ? (
         <>
           <div className="sticky top-[3rem] rounded-t-xl border-b border-slate-200 bg-white py-1">
             <div className="flex w-full items-center justify-between px-4 py-2">
               <div className="flex w-full items-center gap-2">
                 <EarnAvatar
                   className="h-10 w-10"
-                  id={selectedApplication?.user?.id}
-                  avatar={selectedApplication?.user?.photo || undefined}
+                  id={selectedTranche?.GrantApplication?.user?.id}
+                  avatar={
+                    selectedTranche?.GrantApplication?.user?.photo || undefined
+                  }
                 />
                 <div>
                   <p className="w-full whitespace-nowrap text-base font-medium text-slate-900">
-                    {`${selectedApplication?.user?.firstName}`}
+                    {`${selectedTranche?.GrantApplication?.user?.firstName}`}
                   </p>
                   <Link
-                    href={`/t/${selectedApplication?.user?.username}`}
+                    href={`/t/${selectedTranche?.GrantApplication?.user?.username}`}
                     className="flex w-full items-center gap-1 whitespace-nowrap text-xs font-medium text-brand-purple"
                     rel="noopener noreferrer"
                     target="_blank"
@@ -150,15 +109,12 @@ export const ApplicationDetails = ({
                 </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
-                {<SelectLabel grantSlug={grant?.slug!} />}
                 {isPending && (
                   <>
                     <Button
                       className={cn(
                         'bg-emerald-50 text-emerald-600 hover:bg-emerald-100',
-                        isMultiSelectOn && 'cursor-not-allowed opacity-50',
                       )}
-                      disabled={isMultiSelectOn}
                       onClick={approveOnOpen}
                       variant="ghost"
                     >
@@ -173,9 +129,7 @@ export const ApplicationDetails = ({
                     <Button
                       className={cn(
                         'bg-rose-50 text-rose-600 hover:bg-rose-100',
-                        isMultiSelectOn && 'cursor-not-allowed opacity-50',
                       )}
-                      disabled={isMultiSelectOn}
                       onClick={rejectedOnOpen}
                       variant="ghost"
                     >
@@ -188,38 +142,8 @@ export const ApplicationDetails = ({
                     </Button>
                   </>
                 )}
-                {isCompleted && (
-                  <Button
-                    className="pointer-events-none bg-blue-100 text-blue-600 disabled:opacity-100"
-                    disabled={true}
-                    variant="ghost"
-                  >
-                    <div className="flex items-center">
-                      <div className="rounded-full bg-blue-600 p-[5px]">
-                        <Check className="h-2.5 w-2.5 text-white" />
-                      </div>
-                    </div>
-                    Completed
-                  </Button>
-                )}
                 {isApproved && (
                   <>
-                    <MarkCompleted
-                      isCompleted={isCompleted}
-                      applicationId={selectedApplication.id}
-                      onMarkCompleted={updateApplicationState}
-                    />
-                    {isNativeAndNonST &&
-                      selectedApplication.totalPaid !==
-                        selectedApplication.approvedAmount && (
-                        <RecordPaymentButton
-                          applicationId={selectedApplication.id}
-                          approvedAmount={selectedApplication.approvedAmount}
-                          totalPaid={selectedApplication.totalPaid}
-                          token={grant.token || 'USDC'}
-                          onPaymentRecorded={updateApplicationState}
-                        />
-                      )}
                     <Button
                       className="pointer-events-none bg-emerald-50 text-emerald-600 disabled:opacity-100"
                       disabled={true}
@@ -265,7 +189,7 @@ export const ApplicationDetails = ({
                     alt="token"
                   />
                   <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
-                    {`${selectedApplication?.approvedAmount?.toLocaleString('en-us')}`}
+                    {`${selectedTranche?.approvedAmount?.toLocaleString('en-us')}`}
                     <span className="ml-0.5 text-slate-400">
                       {grant?.token}
                     </span>
@@ -276,8 +200,9 @@ export const ApplicationDetails = ({
                         className="h-5 w-5 rounded-full bg-gray-200"
                         value={Number(
                           (
-                            (selectedApplication.totalPaid /
-                              selectedApplication.approvedAmount) *
+                            (selectedTranche?.GrantApplication?.totalPaid /
+                              selectedTranche?.GrantApplication
+                                ?.approvedAmount) *
                             100
                           ).toFixed(2),
                         )}
@@ -285,8 +210,9 @@ export const ApplicationDetails = ({
                       <p className="ml-1 whitespace-nowrap text-sm font-medium text-slate-600">
                         {Number(
                           (
-                            (selectedApplication.totalPaid /
-                              selectedApplication.approvedAmount) *
+                            (selectedTranche?.GrantApplication?.totalPaid /
+                              selectedTranche?.GrantApplication
+                                ?.approvedAmount) *
                             100
                           ).toFixed(2),
                         )}
@@ -296,7 +222,7 @@ export const ApplicationDetails = ({
                   )}
                 </div>
               )}
-              {selectedApplication?.user?.email && (
+              {selectedTranche?.GrantApplication?.user?.email && (
                 <Tooltip
                   content={'Click to copy'}
                   contentProps={{ side: 'right' }}
@@ -307,14 +233,17 @@ export const ApplicationDetails = ({
                     onClick={handleCopyEmail}
                     role="button"
                     tabIndex={0}
-                    aria-label={`Copy email: ${selectedApplication.user.email}`}
+                    aria-label={`Copy email: ${selectedTranche?.GrantApplication?.user?.email}`}
                   >
                     <MdOutlineMail />
-                    {truncateString(selectedApplication.user.email, 36)}
+                    {truncateString(
+                      selectedTranche?.GrantApplication?.user?.email,
+                      36,
+                    )}
                   </div>
                 </Tooltip>
               )}
-              {selectedApplication?.walletAddress && (
+              {selectedTranche?.GrantApplication?.walletAddress && (
                 <Tooltip
                   content={'Click to copy'}
                   contentProps={{ side: 'right' }}
@@ -325,11 +254,17 @@ export const ApplicationDetails = ({
                     onClick={handleCopyPublicKey}
                     role="button"
                     tabIndex={0}
-                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.walletAddress || '', 3)}`}
+                    aria-label={`Copy public key: ${truncatePublicKey(
+                      selectedTranche?.GrantApplication?.walletAddress || '',
+                      3,
+                    )}`}
                   >
                     <MdOutlineAccountBalanceWallet />s
                     <p>
-                      {truncatePublicKey(selectedApplication.walletAddress, 3)}
+                      {truncatePublicKey(
+                        selectedTranche?.GrantApplication?.walletAddress || '',
+                        3,
+                      )}
                     </p>
                   </div>
                 </Tooltip>
@@ -338,22 +273,19 @@ export const ApplicationDetails = ({
               <div className="flex gap-2">
                 <Telegram
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
-                  link={selectedApplication?.user?.telegram || ''}
+                  link={selectedTranche?.GrantApplication?.user?.telegram || ''}
                 />
                 <Twitter
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
-                  link={selectedApplication?.user?.twitter || ''}
+                  link={selectedTranche?.GrantApplication?.user?.twitter || ''}
                 />
                 <Website
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
-                  link={selectedApplication?.user?.website || ''}
+                  link={selectedTranche?.GrantApplication?.user?.website || ''}
                 />
               </div>
               <p className="whitespace-nowrap text-sm text-slate-400">
-                $
-                {formatNumberWithSuffix(
-                  selectedApplication?.totalEarnings || 0,
-                )}{' '}
+                ${formatNumberWithSuffix(selectedTranche?.totalEarnings || 0)}{' '}
                 Earned
               </p>
             </div>
@@ -372,28 +304,13 @@ export const ApplicationDetails = ({
                     alt="token"
                   />
                   <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
-                    {`${selectedApplication?.ask?.toLocaleString('en-us')}`}
+                    {`${selectedTranche?.ask?.toLocaleString('en-us')}`}
                     <span className="ml-0.5 text-slate-400">
                       {grant?.token}
                     </span>
                   </p>
                 </div>
               </div>
-
-              {grant?.sponsor?.st && (
-                <div className="mb-4">
-                  <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
-                    SUPERTEAM MEMBER?
-                  </p>
-                  <p className="whitespace-nowrap text-sm font-medium text-slate-600">
-                    {selectedApplication?.user.superteamLevel?.includes(
-                      'Superteam',
-                    )
-                      ? `Yes (${selectedApplication?.user.superteamLevel})`
-                      : `No`}
-                  </p>
-                </div>
-              )}
 
               <div className="mb-4">
                 <div className="mb-1 text-xs font-semibold uppercase text-slate-400">
@@ -412,7 +329,7 @@ export const ApplicationDetails = ({
                   className="flex cursor-pointer items-center gap-1 whitespace-nowrap text-sm font-medium text-slate-600"
                   onClick={handleCopyPublicKey}
                 >
-                  {selectedApplication?.walletAddress}
+                  {selectedTranche?.GrantApplication?.walletAddress}
                   <Copy
                     className="h-4 w-4 text-slate-400"
                     onClick={handleCopyPublicKey}
@@ -422,39 +339,42 @@ export const ApplicationDetails = ({
 
               <InfoBox
                 label="Project Title"
-                content={selectedApplication?.projectTitle}
+                content={selectedTranche?.GrantApplication?.projectTitle}
               />
               <InfoBox
                 label="One-Liner Description"
-                content={selectedApplication?.projectOneLiner}
+                content={selectedTranche?.GrantApplication?.projectOneLiner}
               />
               <InfoBox
                 label="Project Details"
-                content={selectedApplication?.projectDetails}
+                content={selectedTranche?.GrantApplication?.projectDetails}
                 isHtml
               />
-              <InfoBox label="Twitter" content={selectedApplication?.twitter} />
+              <InfoBox
+                label="Twitter"
+                content={selectedTranche?.GrantApplication?.twitter}
+              />
               <InfoBox
                 label="Deadline"
-                content={selectedApplication?.projectTimeline}
+                content={selectedTranche?.GrantApplication?.projectTimeline}
               />
               <InfoBox
                 label="Proof of Work"
-                content={selectedApplication?.proofOfWork}
+                content={selectedTranche?.GrantApplication?.proofOfWork}
                 isHtml
               />
               <InfoBox
                 label="Goals and Milestones"
-                content={selectedApplication?.milestones}
+                content={selectedTranche?.GrantApplication?.milestones}
                 isHtml
               />
               <InfoBox
                 label="Primary Key Performance Indicator"
-                content={selectedApplication?.kpi}
+                content={selectedTranche?.GrantApplication?.kpi}
                 isHtml
               />
-              {Array.isArray(selectedApplication?.answers) &&
-                selectedApplication.answers.map(
+              {Array.isArray(selectedTranche?.GrantApplication?.answers) &&
+                selectedTranche?.GrantApplication?.answers.map(
                   (answer: any, answerIndex: number) => (
                     <InfoBox
                       key={answerIndex}
@@ -464,9 +384,6 @@ export const ApplicationDetails = ({
                     />
                   ),
                 )}
-            </div>
-            <div className="w-1/4 p-4">
-              <Notes slug={grant?.slug} />
             </div>
           </div>
         </>

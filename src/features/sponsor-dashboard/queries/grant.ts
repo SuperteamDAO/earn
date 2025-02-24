@@ -6,6 +6,7 @@ import { type Grant } from '@/features/grants/types';
 
 interface GrantWithApplicationCount extends Grant {
   totalApplications: number;
+  grantTrancheCount: number;
 }
 
 export const sponsorGrantQuery = (

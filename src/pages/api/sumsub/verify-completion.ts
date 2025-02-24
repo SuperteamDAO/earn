@@ -93,7 +93,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     if (result === 'verified') {
       await prisma.grantApplication.update({
         where: { id: grantApplicationId, userId },
-        data: { kycStatus: 'APPROVED' },
+        data: { kycStatus: 'Approved' },
       });
     }
 

@@ -17,7 +17,7 @@ async function requestTranche(
 
   try {
     const userId = req.userId;
-    const { applicationId } = req.body;
+    const { applicationId, helpWanted, projectUpdate } = req.body;
     logger.debug(`Request body: ${safeStringify(req.body)}`);
     logger.debug(`User ID: ${userId}`);
 
@@ -49,7 +49,7 @@ async function requestTranche(
 
     if (existingTranches > 0) {
       const previousTranche = application.GrantTranche[existingTranches - 1];
-      if (previousTranche && previousTranche.status !== 'PAID') {
+      if (previousTranche && previousTranche.status !== 'Paid') {
         return res.status(400).json({
           message:
             'Previous tranche must be paid before requesting a new tranche',
@@ -72,10 +72,12 @@ async function requestTranche(
 
     const newTranche = await prisma.grantTranche.create({
       data: {
-        amount: trancheAmount,
-        status: 'PENDING',
+        ask: trancheAmount,
+        status: 'Pending',
         applicationId,
         grantId: application.grantId,
+        helpWanted,
+        update: projectUpdate,
       },
     });
 

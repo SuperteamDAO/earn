@@ -1,8 +1,4 @@
-import {
-  type GrantApplicationStatus,
-  type Prisma,
-  type SubmissionLabels,
-} from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
@@ -21,10 +17,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 20;
   const searchText = params.searchText as string;
-  const filterLabel = params.filterLabel as
-    | SubmissionLabels
-    | GrantApplicationStatus
-    | undefined;
 
   const textSearch = searchText
     ? {
@@ -48,30 +40,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             ],
           },
         ],
-      }
-    : {};
-
-  const filterSearch: {
-    applicationStatus?: GrantApplicationStatus;
-    label?: SubmissionLabels;
-  } = filterLabel
-    ? {
-        ...(filterLabel === 'Approved'
-          ? { applicationStatus: 'Approved' }
-          : {}),
-        ...(filterLabel === 'Rejected'
-          ? { applicationStatus: 'Rejected' }
-          : {}),
-        ...(filterLabel === 'Pending' ? { applicationStatus: 'Pending' } : {}),
-        ...(filterLabel === 'Completed'
-          ? { applicationStatus: 'Completed' }
-          : {}),
-        ...(filterLabel !== 'Rejected' &&
-        filterLabel !== 'Approved' &&
-        filterLabel !== 'Pending' &&
-        filterLabel !== 'Completed'
-          ? { label: filterLabel }
-          : {}),
       }
     : {};
 
@@ -103,7 +71,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         sponsorId: req.userSponsorId!,
       },
       ...textSearch,
-      ...filterSearch,
     };
     const totalCount = await prisma.grantApplication.count({
       where: grantApplicationWhere,
