@@ -70,6 +70,18 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
           className="text-slate-400"
         >
           <TabsList className="flex items-center">
+            <div className="relative ml-1 mr-2">
+              <Tooltip
+                content={
+                  <p>
+                    All data here is based on wins from public bounties and
+                    project listings. Grants are not included.
+                  </p>
+                }
+              >
+                <Info className="h-3 w-3 cursor-pointer" />
+              </Tooltip>
+            </div>
             <TabsTrigger value="0" className="px-1 sm:px-3">
               Overall Rankings
             </TabsTrigger>
