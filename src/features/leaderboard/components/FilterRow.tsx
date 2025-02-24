@@ -72,6 +72,9 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
           <TabsList className="flex items-center">
             <div className="relative ml-1 mr-2">
               <Tooltip
+                contentProps={{
+                  className: 'w-3/4 md:w-auto',
+                }}
                 content={
                   <p>
                     All data here is based on wins from public bounties and
@@ -100,6 +103,9 @@ export function FilterRow({ timeframe, setTimeframe, setSkill, skill }: Props) {
             </TabsTrigger>
             <div className="relative">
               <Tooltip
+                contentProps={{
+                  className: 'w-3/4 md:w-auto ml-auto',
+                }}
                 content={
                   <p>
                     The skill filters showcase users based on the skills
