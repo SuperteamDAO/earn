@@ -67,6 +67,8 @@ export async function POST(
       );
     }
 
+    const isSponsorship = listing?.type === 'sponsorship';
+
     const totalRewards = [
       ...cleanRewards(listing?.rewards as Rewards, true),
       ...Array(listing?.maxBonusSpots ?? 0).map(() => BONUS_REWARD_POSITION),
@@ -86,18 +88,20 @@ export async function POST(
       ? listing?.deadline
       : dayjs().subtract(2, 'minute').toISOString();
 
-    logger.debug('Updating bounty details with winner announcement');
-    const result = await prisma.bounties.update({
-      where: { id },
-      data: {
-        isWinnersAnnounced: true,
-        deadline,
-        winnersAnnouncedAt: new Date().toISOString(),
-      },
-      include: {
-        sponsor: true,
-      },
-    });
+    if (!isSponsorship) {
+      logger.debug('Updating bounty details with winner announcement');
+      await prisma.bounties.update({
+        where: { id },
+        data: {
+          isWinnersAnnounced: true,
+          deadline,
+          winnersAnnouncedAt: new Date().toISOString(),
+        },
+        include: {
+          sponsor: true,
+        },
+      });
+    }
 
     const rewards: Rewards = (listing?.rewards || {}) as Rewards;
     const winners = await prisma.submission.findMany({
@@ -122,7 +126,10 @@ export async function POST(
         amount = Math.ceil(rewards[winnerPosition as keyof Rewards] ?? 0);
       }
 
-      const rewardInUSD = (listing.usdValue! / listing.rewardAmount!) * amount;
+      const rewardInUSD =
+        listing.token === 'Any'
+          ? winners[currentIndex]?.rewardInUSD
+          : (listing.usdValue! / listing.rewardAmount!) * amount;
 
       promises.push(
         prisma.submission.update({
@@ -149,7 +156,7 @@ export async function POST(
       (async () => {
         try {
           await earncognitoClient.post(`/discord/winners-announced`, {
-            listingId: result.id,
+            listingId: listing?.id,
           });
         } catch (err) {
           logger.error('Discord Listing Update Message Error', err);
@@ -193,19 +200,23 @@ export async function POST(
 
           let comment: string = 'Winners have been announced. ';
           const random = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
-          switch (random) {
-            case 1:
-              comment =
-                sortedWinners.length === 1
-                  ? `Congratulations! ${extractedTags} has been announced as the winner!`
-                  : `Congratulations! ${extractedTags} have been announced as the winners!`;
-              break;
-            case 2:
-              if (listing.type === 'bounty')
-                comment = `Applaud ${extractedTags} for winning this Bounty`;
-              if (listing.type === 'project')
-                comment = `Applaud ${extractedTags} for winning this Project`;
-              break;
+          if (listing.type === 'sponsorship') {
+            comment = `Congratulations! @${sortedWinners[sortedWinners.length - 1]?.user?.username} submission has been approved!`;
+          } else {
+            switch (random) {
+              case 1:
+                comment =
+                  sortedWinners.length === 1
+                    ? `Congratulations! ${extractedTags} has been announced as the winner!`
+                    : `Congratulations! ${extractedTags} have been announced as the winners!`;
+                break;
+              case 2:
+                if (listing.type === 'bounty')
+                  comment = `Applaud ${extractedTags} for winning this Bounty`;
+                if (listing.type === 'project')
+                  comment = `Applaud ${extractedTags} for winning this Project`;
+                break;
+            }
           }
 
           logger.debug('Creating winner announcement comment');
@@ -222,12 +233,14 @@ export async function POST(
           logger.error('Failed to create winner announcement comment', err);
         }
 
-        logger.debug('Sending winner announcement email notifications');
-        sendEmailNotification({
-          type: 'announceWinners',
-          id,
-          triggeredBy: userId,
-        });
+        if (listing.type !== 'sponsorship') {
+          logger.debug('Sending winner announcement email notifications');
+          sendEmailNotification({
+            type: 'announceWinners',
+            id,
+            triggeredBy: userId,
+          });
+        }
 
         if (
           listing?.sponsor?.st &&
@@ -249,7 +262,7 @@ export async function POST(
 
         try {
           await earncognitoClient.post(`/airtable/sync-announced-listings`, {
-            listingId: result.id,
+            listingId: listing?.id,
           });
         } catch (err) {
           logger.error('Airatable Listing Sync Message Error', err);

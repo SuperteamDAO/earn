@@ -22,6 +22,9 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         userId,
         listingId: id,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     if (!result) {

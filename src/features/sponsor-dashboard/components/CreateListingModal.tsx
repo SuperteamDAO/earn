@@ -8,6 +8,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { BountyIcon } from '@/svg/bounty-icon';
 import { ProjectIcon } from '@/svg/project-icon';
+import { SponsorshipIcon } from '@/svg/sponsorship-icon';
 
 export const CreateListingModal = ({
   isOpen = false,
@@ -27,6 +28,11 @@ export const CreateListingModal = ({
   const handleCreateProject = () => {
     posthog.capture('create new project_sponsor');
     router.push('/dashboard/new?type=project');
+  };
+
+  const handleCreateSponsorship = () => {
+    posthog.capture('create new sponsorship_sponsor');
+    router.push('/dashboard/new?type=sponsorship');
   };
 
   const isMD = useMediaQuery('(min-width: 768px)');
@@ -112,6 +118,44 @@ export const CreateListingModal = ({
                 size="lg"
               >
                 Create a Project
+              </Button>
+            </div>
+          </div>
+
+          <div className="relative flex-1 border-l border-slate-200">
+            <div className="relative mb-6 flex items-center justify-center bg-green-50 px-32 py-12">
+              <img
+                className="h-auto w-full"
+                alt="Sponsorship Illustration"
+                src={'/assets/sponsorship-back.svg'}
+              />
+              <div className="absolute right-4 top-4 flex items-center rounded-full bg-white px-3 py-1 text-green-600">
+                <SponsorshipIcon
+                  styles={{
+                    width: '1rem',
+                    height: '1rem',
+                    marginRight: '0.25rem',
+                  }}
+                  className="fill-green-600"
+                />
+                <p className="text-sm font-bold">Sponsorship</p>
+              </div>
+            </div>
+
+            <div className="p-8">
+              <h3 className="mb-4 text-lg font-semibold">
+                Support Contributors
+              </h3>
+              <p className="mb-4 text-slate-500">
+                Fund and reward contributions by sponsoring individuals. Share a
+                link to receive expenses or payment requests.
+              </p>
+              <Button
+                className="w-full py-6"
+                onClick={handleCreateSponsorship}
+                size="lg"
+              >
+                Create a Sponsorship
               </Button>
             </div>
           </div>

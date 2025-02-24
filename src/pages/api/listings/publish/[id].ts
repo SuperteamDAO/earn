@@ -2,6 +2,7 @@ import { type Prisma } from '@prisma/client';
 import { franc } from 'franc';
 import type { NextApiResponse } from 'next';
 
+import { AUTO_VERIFICATION_ENABLED } from '@/constants/project';
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -239,6 +240,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           });
         }
       }
+      if (AUTO_VERIFICATION_ENABLED) {
+        isVerifying = false;
+      }
       logger.info(
         `Final verification status for sponsor ${userSponsorId}: ${isVerifying}`,
         {
@@ -249,6 +253,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             isCautioned: sponsor?.isCaution,
             isUnverified: !sponsor?.isVerified,
             isNotGodUser: user?.role !== 'GOD',
+            autoVerificationEnabled: AUTO_VERIFICATION_ENABLED,
           },
         },
       );

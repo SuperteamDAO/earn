@@ -1,7 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { FeedPageLayout } from '@/layouts/Feed';
+
+import { SubmissionDetails } from '@/features/listings/components/SubmissionsPage/SubmissionDetails';
+import { submissionDetailsQuery } from '@/features/listings/queries/submission';
 
 import { fetchFeedPostQuery } from '../queries/feed-post';
 import { type FeedPostType } from '../types';
@@ -17,7 +21,11 @@ interface Props {
 
 export const FeedPost = ({ type, id }: Props) => {
   const { data, isLoading } = useQuery(fetchFeedPostQuery({ type, id }));
-
+  const { data: submission } = useQuery({
+    ...submissionDetailsQuery({ submissionId: id }),
+    enabled: type === 'submission',
+  });
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   if (!data && !isLoading) {
     return (
       <FeedPageLayout>
@@ -40,6 +48,14 @@ export const FeedPost = ({ type, id }: Props) => {
   }
   return (
     <FeedPageLayout>
+      {isDetailsOpen && submission && (
+        <SubmissionDetails
+          open={isDetailsOpen}
+          onClose={() => setIsDetailsOpen(false)}
+          submission={submission.submission}
+          bounty={submission.listing}
+        />
+      )}
       {isLoading || !data ? (
         <FeedCardContainerSkeleton />
       ) : (
@@ -52,6 +68,9 @@ export const FeedPost = ({ type, id }: Props) => {
                     key={index}
                     sub={item as any}
                     type="activity"
+                    openDetails={() => {
+                      setIsDetailsOpen(true);
+                    }}
                   />
                 );
               case 'pow':

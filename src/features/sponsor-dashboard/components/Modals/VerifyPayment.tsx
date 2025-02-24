@@ -435,7 +435,7 @@ export const VerifyPaymentModal = ({
                                 <div className="flex w-full items-center gap-2">
                                   <a
                                     className="w-full"
-                                    href={`https://solscan.io/tx/${paymentLinks?.[index]?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`}
+                                    href={`https://nearblocks.io/txns/${paymentLinks?.[index]?.txId}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                   >

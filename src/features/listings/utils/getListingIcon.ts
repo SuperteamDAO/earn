@@ -8,6 +8,8 @@ export const getListingIcon = (type: string) => {
       return '/assets/hackathon-icon.svg';
     case 'grant':
       return '/assets/grant-icon.svg';
+    case 'sponsorship':
+      return '/assets/sponsorship-icon.svg';
     default:
       return '/assets/bounty-icon.svg';
   }

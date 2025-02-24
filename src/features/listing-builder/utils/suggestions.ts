@@ -51,6 +51,8 @@ const projectSuggestions: Suggestions[] = [];
 
 const hackathonSuggestions: Suggestions[] = [];
 
+const sponsorshipSuggestions: Suggestions[] = [];
+
 function calculateSuggestions(suggestions: Suggestions[], input: string) {
   return suggestions
     .filter((row) =>
@@ -63,7 +65,7 @@ function calculateSuggestions(suggestions: Suggestions[], input: string) {
 
 export function getSuggestions(
   input: string | undefined,
-  type: 'bounty' | 'project' | 'hackathon',
+  type: 'bounty' | 'project' | 'hackathon' | 'sponsorship',
 ) {
   if (!input) return [];
   if (type === 'bounty') {
@@ -71,6 +73,9 @@ export function getSuggestions(
   }
   if (type === 'project') {
     return calculateSuggestions(projectSuggestions, input);
+  }
+  if (type === 'sponsorship') {
+    return calculateSuggestions(sponsorshipSuggestions, input);
   }
   if (type === 'hackathon') {
     return calculateSuggestions(hackathonSuggestions, input);

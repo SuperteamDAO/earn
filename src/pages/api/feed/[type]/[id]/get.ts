@@ -115,7 +115,11 @@ export default async function handler(
             include: submissionInclude,
           });
           feedPost = [submission, ...similarSubmissions].map((sub) => ({
-            id: sub.listing.isWinnersAnnounced ? sub.id : null,
+            id:
+              sub.listing.isWinnersAnnounced ||
+              sub.listing.type === 'sponsorship'
+                ? sub.id
+                : null,
             createdAt:
               sub.isWinner &&
               sub.listing.isWinnersAnnounced &&

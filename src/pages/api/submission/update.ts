@@ -52,12 +52,25 @@ async function updateSubmission(
     throw new Error('Submission not found');
   }
 
+  if (existingSubmission.label === 'Spam') {
+    throw new Error('User submissions has been flagged as spam');
+  }
+
+  if (
+    listing.type === 'sponsorship' &&
+    (existingSubmission.status !== 'Pending' ||
+      existingSubmission.label !== 'Unreviewed')
+  ) {
+    throw new Error('Submission status is not available to edit');
+  }
+
   const formattedData = {
     link: validatedData.link || '',
     tweet: validatedData.tweet || '',
     otherInfo: validatedData.otherInfo || '',
     eligibilityAnswers: validatedData.eligibilityAnswers || [],
     ask: validatedData.ask || 0,
+    token: validatedData.token || null,
   };
 
   return prisma.submission.update({

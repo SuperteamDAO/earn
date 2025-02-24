@@ -53,7 +53,8 @@ export function PublishResults({
   const posthog = usePostHog();
   const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
   const isProject = bounty?.type === 'project';
-  if (isProject) totalWinners = 1;
+  const isSponsorship = bounty?.type === 'sponsorship';
+  if (isProject || isSponsorship) totalWinners = 1;
   // Overrdiding totalWinners if project coz position select is done here now for project only
 
   const rewards =
@@ -62,7 +63,7 @@ export function PublishResults({
   let isWinnersAllSelected = !(
     remainings && remainings.podiums + remainings.bonus !== 0
   );
-  if (isProject) isWinnersAllSelected = true;
+  if (isProject || isSponsorship) isWinnersAllSelected = true;
   // Overrdiding isWinnersAllSelected if project coz position select is done here now for project only
 
   let alertType:
@@ -102,7 +103,7 @@ export function PublishResults({
     if (!bounty?.id) return;
     setIsPublishingResults(true);
     try {
-      if (isProject) {
+      if (isProject || isSponsorship) {
         if (selectedSubmission?.id) {
           await toggleWinner({
             winnerPosition: 1,
@@ -115,7 +116,7 @@ export function PublishResults({
       setIsWinnersAnnounced(true);
       setIsPublishingResults(false);
     } catch (e) {
-      if (isProject) {
+      if (isProject || isSponsorship) {
         if (selectedSubmission?.id) {
           await toggleWinner({
             winnerPosition: null,
@@ -192,6 +193,7 @@ export function PublishResults({
           )}
 
           {!isWinnersAnnounced &&
+            !isSponsorship &&
             rewards &&
             totalWinners === rewards &&
             !isDeadlinePassed && (

@@ -9,3 +9,4 @@ export const CHAIN_NAME = 'NEAR';
 export const TWITTER_URL = null;
 export const DISCORD_URL = null;
 export const WALLET_URL = 'https://wallet.near.org/';
+export const AUTO_VERIFICATION_ENABLED = true;

@@ -7,6 +7,15 @@ export interface Token {
   coingeckoSymbol: string;
 }
 
+export const ANY_TOKEN: Token = {
+  tokenName: 'Any',
+  tokenSymbol: 'Any',
+  mintAddress: 'any',
+  icon: '/assets/anyTokens.svg',
+  decimals: 6,
+  coingeckoSymbol: 'usd-coin',
+};
+
 export const tokenList: Token[] = [
   {
     tokenName: 'USDC',
@@ -41,4 +50,5 @@ export const tokenList: Token[] = [
     decimals: 18,
     coingeckoSymbol: 'aurora',
   },
+  ANY_TOKEN,
 ];

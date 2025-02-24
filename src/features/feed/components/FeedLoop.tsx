@@ -1,4 +1,8 @@
-import { forwardRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { forwardRef, useState } from 'react';
+
+import { SubmissionDetails } from '@/features/listings/components/SubmissionsPage/SubmissionDetails';
+import { submissionDetailsQuery } from '@/features/listings/queries/submission';
 
 import { type FeedDataProps } from '../types';
 import { FeedCardContainerSkeleton } from './FeedCardContainer';
@@ -17,8 +21,24 @@ interface Props {
 
 export const FeedLoop = forwardRef<HTMLDivElement, Omit<Props, 'ref'>>(
   ({ feed: feedItems, isLoading, isFetchingNextPage, children, type }, ref) => {
+    const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
+    const [subId, setSubId] = useState<string | null>(null);
+
+    const { data } = useQuery({
+      ...submissionDetailsQuery({ submissionId: subId ?? '' }),
+      enabled: subId !== null,
+    });
+
     return (
       <>
+        {isDetailsOpen && data && (
+          <SubmissionDetails
+            open={isDetailsOpen}
+            onClose={() => setIsDetailsOpen(false)}
+            submission={data.submission}
+            bounty={data.listing}
+          />
+        )}
         {isLoading ? (
           Array.from({ length: 5 }).map((_, index) => (
             <FeedCardContainerSkeleton key={index} />
@@ -37,6 +57,10 @@ export const FeedLoop = forwardRef<HTMLDivElement, Omit<Props, 'ref'>>(
                         key={item.id}
                         type={type}
                         sub={item as any}
+                        openDetails={(subId) => {
+                          setSubId(subId);
+                          setIsDetailsOpen(true);
+                        }}
                       />
                     </div>
                   );

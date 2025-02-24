@@ -31,6 +31,11 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       select: {
         id: true,
         status: true,
+        label: true,
+        isPaid: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
@@ -40,6 +45,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     res.status(200).json({
       isSubmitted: !!submission,
       status: submission ? submission?.status : null,
+      label: submission ? submission?.label : null,
+      isPaid: submission ? submission?.isPaid : null,
     });
   } catch (error: any) {
     logger.error(

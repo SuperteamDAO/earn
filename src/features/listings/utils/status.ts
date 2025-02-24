@@ -49,6 +49,7 @@ export const getListingTypeLabel = (type: string) => {
   if (type === 'hackathon') return 'Hackathon';
   if (type === 'bounty') return 'Bounty';
   if (type === 'grant') return 'Grant';
+  if (type === 'sponsorship') return 'Sponsorship';
   return;
 };
 

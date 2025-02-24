@@ -34,7 +34,11 @@ const descriptionByType = (type: CompensationType) => {
   }
 };
 
-export function PaymentType() {
+interface PaymentTypeProps {
+  isDisabled?: boolean;
+}
+
+export function PaymentType({ isDisabled = false }: PaymentTypeProps) {
   const form = useListingForm();
   return (
     <FormField
@@ -51,6 +55,7 @@ export function PaymentType() {
             </div>
             <FormControl className="flex items-center">
               <Select
+                disabled={isDisabled}
                 onValueChange={(e) => {
                   field.onChange(e);
                   if (e !== 'fixed') {

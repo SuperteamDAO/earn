@@ -184,6 +184,7 @@ export default function SponsorListings() {
       all: 'all',
       bounties: 'bounty',
       projects: 'project',
+      sponsorships: 'sponsorship',
       grants: 'grant',
       hackathons: 'hackathon',
     };
@@ -284,6 +285,7 @@ export default function SponsorListings() {
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="bounties">Bounties</TabsTrigger>
               <TabsTrigger value="projects">Projects</TabsTrigger>
+              <TabsTrigger value="sponsorships">Sponsorships</TabsTrigger>
               {hasGrants && <TabsTrigger value="grants">Grants</TabsTrigger>}
               {hasHackathons && (
                 <TabsTrigger value="hackathons">Hackathons</TabsTrigger>
@@ -309,6 +311,15 @@ export default function SponsorListings() {
               />
             </TabsContent>
             <TabsContent value="projects" className="px-0">
+              <MemoizedListingTable
+                listings={paginatedListings}
+                currentSort={currentSort}
+                onSort={(column, direction) =>
+                  setCurrentSort({ column, direction })
+                }
+              />
+            </TabsContent>
+            <TabsContent value="sponsorships" className="px-0">
               <MemoizedListingTable
                 listings={paginatedListings}
                 currentSort={currentSort}

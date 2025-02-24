@@ -69,6 +69,8 @@ export async function GET(request: Request) {
           return 'project-icon.svg';
         case 'hackathon':
           return 'hackathon-icon.svg';
+        case 'sponsorship':
+          return 'sponsorship-icon.svg';
         case 'grant':
           return 'grant-icon.svg';
         default:

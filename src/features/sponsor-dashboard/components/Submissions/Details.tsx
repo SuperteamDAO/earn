@@ -1,6 +1,10 @@
-import { useAtomValue } from 'jotai';
+import dayjs from 'dayjs';
+import { type Atom, useAtomValue } from 'jotai';
 import React from 'react';
 
+import { tokenList } from '@/constants/tokenList';
+import { type SubmissionWithUser } from '@/interface/submission';
+import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { type Listing } from '@/features/listings/types';
@@ -11,15 +15,57 @@ import { Notes } from './Notes';
 
 interface Props {
   bounty: Listing | undefined;
+  modalView?: boolean;
+  atom?: Atom<SubmissionWithUser | undefined>;
 }
 
-export const Details = ({ bounty }: Props) => {
-  const selectedSubmission = useAtomValue(selectedSubmissionAtom);
+export const Details = ({ bounty, modalView, atom }: Props) => {
+  const selectedSubmission = useAtomValue(atom ?? selectedSubmissionAtom);
   const isProject = bounty?.type === 'project';
 
+  const token =
+    bounty?.token == 'Any' ? selectedSubmission?.token : bounty?.token;
+  const tokenObject = tokenList.find((t) => t.tokenSymbol === token);
+
   return (
-    <div className="flex h-[32.6rem] w-full">
-      <div className="scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+    <div
+      className={cn(
+        'flex h-[32.6rem] w-full',
+        modalView ? 'mx-auto max-w-3xl' : 'border-r border-slate-200',
+      )}
+    >
+      <div
+        className={cn(
+          'scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300',
+          modalView ? 'mt-3' : 'p-4',
+        )}
+      >
+        {bounty?.compensationType !== 'fixed' && (
+          <div className="mb-4">
+            <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
+              Ask
+            </p>
+            <div className="flex w-full items-center overflow-visible">
+              <img
+                src={tokenObject?.icon}
+                alt={tokenObject?.tokenSymbol}
+                className="h-4 w-4 rounded-full"
+              />
+              <span className="ml-1 text-sm">
+                {selectedSubmission?.ask?.toLocaleString('en-us')}
+                <span className="ml-1 font-semibold text-slate-400">
+                  {token}
+                </span>
+              </span>
+            </div>
+          </div>
+        )}
+
+        <InfoBox
+          label="Application Date"
+          content={`${dayjs(selectedSubmission?.createdAt).format('DD MMM YYYY')}`}
+        />
+
         {!isProject && (
           <>
             <InfoBox
@@ -40,13 +86,6 @@ export const Details = ({ bounty }: Props) => {
             />
           </>
         )}
-        {bounty?.compensationType !== 'fixed' && (
-          <InfoBox
-            label="Ask"
-            content={`${selectedSubmission?.ask?.toLocaleString('en-us')} ${bounty?.token}`}
-          />
-        )}
-
         {selectedSubmission?.eligibilityAnswers &&
           selectedSubmission.eligibilityAnswers.map((answer: any) => (
             <InfoBox
@@ -62,16 +101,18 @@ export const Details = ({ bounty }: Props) => {
           isHtml
         />
       </div>
-      <div className="w-1/4 p-4">
-        {selectedSubmission && (
-          <Notes
-            key={selectedSubmission.id}
-            submissionId={selectedSubmission.id}
-            initialNotes={selectedSubmission.notes}
-            slug={bounty?.slug}
-          />
-        )}
-      </div>
+      {!modalView && (
+        <div className="w-1/4 p-4">
+          {selectedSubmission && (
+            <Notes
+              key={selectedSubmission.id}
+              submissionId={selectedSubmission.id}
+              initialNotes={selectedSubmission.notes}
+              slug={bounty?.slug}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { CHAIN_NAME } from '@/constants/project';
+import { tokenList } from '@/constants/tokenList';
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type User } from '@/interface/user';
 import { validateNearAddress } from '@/utils/validateNearAddress';
@@ -31,6 +32,16 @@ const submissionSchema = (
         .array(z.object({ question: z.string(), answer: z.string() }))
         .optional(),
       publicKey: z.string().optional(),
+      token: z
+        .string()
+        .refine(
+          (token) =>
+            token === 'Any' || tokenList.find((t) => t.tokenSymbol === token),
+          {
+            message: 'Invalid token provided',
+          },
+        )
+        .optional(),
     })
     .superRefine((data, ctx) => {
       if (
@@ -90,6 +101,16 @@ const submissionSchema = (
             code: 'custom',
             path: ['ask'],
             message: `Compensation cannot exceed ${maxRewardAsk}`,
+          });
+        }
+      }
+
+      if (listing.token === 'Any') {
+        if (!data.token) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['token'],
+            message: 'Token is required for listing with "Any" token',
           });
         }
       }

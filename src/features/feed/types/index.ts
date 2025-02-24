@@ -24,7 +24,7 @@ export interface FeedDataProps {
   sponsorId: number;
   listingTitle: string;
   rewards: Rewards | undefined;
-  listingType: 'bounty' | 'hackathon' | 'project';
+  listingType: 'bounty' | 'hackathon' | 'project' | 'sponsorship';
   listingSlug: string;
   isWinnersAnnounced: boolean;
   token: string;

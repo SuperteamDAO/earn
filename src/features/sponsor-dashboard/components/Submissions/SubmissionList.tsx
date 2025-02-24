@@ -78,6 +78,9 @@ export const SubmissionList = ({
     if (submission?.isWinner && submission?.winnerPosition) {
       if (type === 'project') {
         return 'Winner';
+      } else if (type === 'sponsorship') {
+        if (submission.isPaid) return 'Paid';
+        return 'Approved';
       } else {
         return getRankLabels(submission.winnerPosition);
       }

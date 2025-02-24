@@ -49,6 +49,8 @@ export function ListingPageLayout({
       posthog.capture('open_bounty');
     } else if (initialBounty?.type === 'project') {
       posthog.capture('open_project');
+    } else if (initialBounty?.type === 'sponsorship') {
+      posthog.capture('open_sponsorship');
     }
   }, []);
 

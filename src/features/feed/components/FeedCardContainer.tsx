@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { type ReactNode, useEffect, useState } from 'react';
@@ -11,7 +10,6 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
-import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { Comments } from '@/features/comments/components/Comments';
@@ -57,7 +55,7 @@ export const FeedCardContainer = ({
   like,
   commentCount: initialCommentCount,
   cardType,
-  link,
+  link: _link,
   userId,
   recentCommenters: initialRecentCommenters,
 }: FeedCardContainerProps) => {
@@ -84,8 +82,6 @@ export const FeedCardContainer = ({
     ]);
     onCloseComment();
   };
-
-  const sanitizedLink = getURLSanitized(link);
 
   useEffect(() => {
     setIsLiked(!!like?.find((e: any) => e.id === user?.id));
@@ -143,17 +139,12 @@ export const FeedCardContainer = ({
             description={content.description}
             type={type}
           />
-          <Link
-            className="mt-4 cursor-pointer rounded-md border border-slate-200 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.01)] transition-all duration-100 ease-in-out hover:-translate-y-[0.5px] hover:shadow-[0px_4px_8px_0px_rgba(0,0,0,0.1)]"
-            href={sanitizedLink}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
+          <div className="mt-4 cursor-pointer rounded-md border border-slate-200 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.01)] transition-all duration-100 ease-in-out hover:-translate-y-[0.5px] hover:shadow-[0px_4px_8px_0px_rgba(0,0,0,0.1)]">
             {children}
             <div className="flex flex-col items-start justify-between px-3 py-4 md:flex-row md:items-center md:px-6 md:py-6">
               {actionLinks}
             </div>
-          </Link>
+          </div>
           {id && (
             <div
               className={cn(

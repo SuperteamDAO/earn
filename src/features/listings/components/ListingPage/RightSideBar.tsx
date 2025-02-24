@@ -93,7 +93,7 @@ export function RightSideBar({
   }, [submissionNumber]);
 
   const isProject = type === 'project';
-
+  const isSponsorship = type === 'sponsorship';
   const router = useRouter();
 
   const consideringDigitsArray = cleanRewardPrizes(rewards).map(
@@ -152,13 +152,15 @@ export function RightSideBar({
                           }}
                         />
                         <p className="text-lg font-normal text-slate-500">
-                          {isProject ? 'Payment' : 'Total Prizes'}
+                          {isProject || isSponsorship
+                            ? 'Payment'
+                            : 'Total Prizes'}
                         </p>
                       </div>
                     </td>
                   </tr>
 
-                  {!isProject && rewards && (
+                  {!isProject && !isSponsorship && rewards && (
                     <tr>
                       <td className="p-0" colSpan={3}>
                         <PrizesList

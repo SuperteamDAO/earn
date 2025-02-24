@@ -314,7 +314,10 @@ export default async function handler(
 
     const results = [
       ...submissions.map((sub) => ({
-        id: sub.listing.isWinnersAnnounced ? sub.id : null,
+        id:
+          sub.listing.isWinnersAnnounced || sub.listing.type === 'sponsorship'
+            ? sub.id
+            : null,
         createdAt:
           sub.isWinner &&
           sub.listing.isWinnersAnnounced &&

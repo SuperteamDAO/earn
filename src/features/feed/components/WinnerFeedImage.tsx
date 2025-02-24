@@ -25,7 +25,7 @@ export const WinnerFeedImage = ({
       />
       <div className="mt-4 flex w-full items-center justify-center gap-1 md:gap-4">
         <LocalImage
-          className="h-8 w-8 md:h-16 md:w-16"
+          className="h-8 w-8 rounded-full md:h-16 md:w-16"
           alt={`${token} icon`}
           src={tokenList.find((t) => t.tokenSymbol === token)?.icon || ''}
         />

@@ -90,9 +90,11 @@ export const getListingDefaults = ({
       if (hackathon.deadline) defaults['deadline'] = hackathon.deadline;
       defaults['hackathonId'] = hackathon.id;
     }
-  }
-  if (type === 'project') {
+  } else if (type === 'project') {
     defaults['eligibility'] = [{ type: 'text', question: '', order: 1 }];
+  } else if (type === 'sponsorship') {
+    defaults['compensationType'] = 'variable';
+    defaults['token'] = 'Any';
   }
 
   defaults['isFndnPaying'] = false;
@@ -179,7 +181,13 @@ export function transformListingToFormListing(
 }
 
 export const refineReadyListing = (listing: ListingFormData) => {
-  if (listing.type !== 'project') {
+  if (listing.type === 'sponsorship') {
+    listing.compensationType = 'variable';
+    listing.maxRewardAsk = null;
+    listing.minRewardAsk = null;
+    listing.rewards = undefined;
+    listing.rewardAmount = undefined;
+  } else if (listing.type !== 'project') {
     listing.compensationType = 'fixed';
     listing.maxRewardAsk = null;
     listing.minRewardAsk = null;

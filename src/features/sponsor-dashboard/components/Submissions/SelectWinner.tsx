@@ -49,6 +49,7 @@ export const SelectWinner = ({
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
 
   const isProject = bounty?.type === 'project';
+  const isSponsorship = bounty?.type === 'sponsorship';
 
   const isPending = selectedSubmission?.status === 'Pending';
 
@@ -83,7 +84,7 @@ export const SelectWinner = ({
   return (
     <>
       <div>
-        {isProject ? (
+        {isProject || isSponsorship ? (
           <div className="ph-no-capture flex w-fit items-center justify-end gap-2">
             {isPending && (
               <>
@@ -102,7 +103,7 @@ export const SelectWinner = ({
                   disabled={isMultiSelectOn}
                   onClick={onWinnersAnnounceOpen}
                 >
-                  Announce As Winner
+                  {isSponsorship ? 'Approve Submission' : 'Announce As Winner'}
                 </Button>
               </>
             )}

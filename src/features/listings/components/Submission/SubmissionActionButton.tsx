@@ -109,6 +109,9 @@ export const SubmissionActionButton = ({
 
   const bountyDraftStatus = getListingDraftStatus(status, isPublished);
 
+  const isSponsorship = type === 'sponsorship';
+  const isProject = type === 'project';
+
   const pastDeadline = isDeadlineOver(deadline) || isWinnersAnnounced;
   const buttonState = getButtonState();
 
@@ -129,22 +132,53 @@ export const SubmissionActionButton = ({
     ? dayjs().isAfter(hackathonStartDate)
     : true;
 
-  const isProject = type === 'project';
-
   let buttonText;
   let buttonBG;
   let isBtnDisabled;
   let btnLoadingText;
 
   function getButtonState() {
-    if (isSubmitted && !pastDeadline && submissionStatus === 'Rejected')
+    if (isSubmitted && submission?.label === 'Spam') return 'spam';
+    if (isSubmitted && submission?.isPaid) return 'submit';
+    if (
+      isSubmitted &&
+      !pastDeadline &&
+      submissionStatus === 'Rejected' &&
+      !isSponsorship
+    )
       return 'rejected';
-    if (isSubmitted && !pastDeadline) return 'edit';
+    if (
+      isSubmitted &&
+      !pastDeadline &&
+      submissionStatus === 'Rejected' &&
+      isSponsorship
+    )
+      return 'submit';
+    if (isSubmitted && !pastDeadline) {
+      if (
+        isSponsorship &&
+        (submission?.label !== 'Unreviewed' || submissionStatus !== 'Pending')
+      )
+        return 'freeze';
+      return 'edit';
+    }
     if (isSubmitted && pastDeadline) return 'submitted';
     return 'submit';
   }
 
   switch (buttonState) {
+    case 'spam':
+      buttonText = 'Application Flagged as Spam';
+      buttonBG = 'bg-red-600';
+      isBtnDisabled = true;
+      btnLoadingText = null;
+      break;
+    case 'freeze':
+      buttonText = 'Application Locked';
+      buttonBG = 'bg-gray-500';
+      isBtnDisabled = true;
+      btnLoadingText = null;
+      break;
     case 'rejected':
       buttonText = 'Application Rejected';
       buttonBG = 'bg-red-600';

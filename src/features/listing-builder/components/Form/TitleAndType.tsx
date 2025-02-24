@@ -37,6 +37,7 @@ import { getSuggestions } from '../../utils/suggestions';
 const typeOptions = [
   { value: 'bounty', label: 'Bounty' },
   { value: 'project', label: 'Project' },
+  { value: 'sponsorship', label: 'Sponsorship' },
 ] as const;
 
 export function TitleAndType() {
@@ -191,7 +192,10 @@ function Type() {
                   }
                   const values = form.getValues();
                   setPrevCompType(values.compensationType);
-                  if (e !== 'project') {
+                  if (e === 'sponsorship') {
+                    form.setValue('compensationType', 'variable');
+                    form.setValue('rewardAmount', undefined);
+                  } else if (e !== 'project') {
                     form.setValue('compensationType', 'fixed');
                     form.setValue(
                       'rewardAmount',
@@ -212,7 +216,7 @@ function Type() {
                   if (!!form.getValues().id) form.saveDraft();
                 }}
               >
-                <SelectTrigger className="h-full w-32 rounded-none border-0 border-r focus:ring-0">
+                <SelectTrigger className="h-full w-36 rounded-none border-0 border-r focus:ring-0">
                   <div className="flex items-center gap-2">
                     <SelectValue />
                   </div>

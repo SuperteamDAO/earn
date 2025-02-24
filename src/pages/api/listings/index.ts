@@ -144,7 +144,7 @@ export default async function listings(
       deadline: {
         gte: deadline,
       },
-      type: type || { in: ['bounty', 'project'] },
+      type: type || { in: ['bounty', 'project', 'sponsorship'] },
       ...skillsFilter,
       NOT: { id },
       region: {

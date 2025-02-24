@@ -279,6 +279,7 @@ model Submission {
   paymentDetails     Json?
   otherInfo          String?          @db.Text
   ask                Int?
+  token              String?
   label              SubmissionLabels @default(Unreviewed)
   rewardInUSD        Float            @default(0)
   listing            Bounties         @relation(fields: [listingId], references: [id])
@@ -697,6 +698,7 @@ enum BountyType {
   bounty
   project
   hackathon
+  sponsorship
 }
 
 enum CommentRefType {

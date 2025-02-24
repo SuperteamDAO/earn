@@ -28,6 +28,8 @@ async function createSubmission(
     user as any,
   ).safeParse(data);
 
+  const isSponsorship = listing.type === 'sponsorship';
+
   if (!validationResult.success) {
     throw new Error(JSON.stringify(validationResult.error.formErrors));
   }
@@ -45,11 +47,26 @@ async function createSubmission(
     });
   }
 
-  const existingSubmission = await prisma.submission.findFirst({
+  const existingSubmissions = await prisma.submission.findMany({
     where: { userId, listingId },
   });
 
-  if (existingSubmission) throw new Error('Submission already exists');
+  if (!isSponsorship && existingSubmissions.length > 0)
+    throw new Error('Submission already exists');
+
+  if (
+    isSponsorship &&
+    existingSubmissions.some((submission) => submission.label === 'Spam')
+  )
+    throw new Error('User submissions has been flagged as spam');
+
+  if (
+    isSponsorship &&
+    !existingSubmissions.every(
+      (submission) => submission.status === 'Rejected' || submission.isPaid,
+    )
+  )
+    throw new Error('User already has an active sponsorship request');
 
   return prisma.submission.create({
     data: {
@@ -60,6 +77,7 @@ async function createSubmission(
       otherInfo: validatedData.otherInfo || '',
       eligibilityAnswers: validatedData.eligibilityAnswers || [],
       ask: validatedData.ask || null,
+      token: validatedData.token || null,
     },
     include: {
       listing: {
@@ -79,6 +97,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     eligibilityAnswers,
     ask,
     publicKey,
+    token,
   } = req.body;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
@@ -93,7 +112,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     const result = await createSubmission(
       userId as string,
       listingId,
-      { link, tweet, otherInfo, eligibilityAnswers, ask, publicKey },
+      { link, tweet, otherInfo, eligibilityAnswers, ask, publicKey, token },
       listing,
     );
 

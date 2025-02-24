@@ -31,6 +31,7 @@ interface SubmissionWithUser {
   label: SubmissionLabels;
   notes?: string;
   totalEarnings?: number;
+  token?: string;
 }
 
 export type { SubmissionWithUser };

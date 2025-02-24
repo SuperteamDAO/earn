@@ -46,6 +46,8 @@ export const PayoutButton = ({ bounty }: Props) => {
 
   const { user } = useUser();
 
+  const token =
+    bounty?.token === 'Any' ? selectedSubmission?.token : bounty?.token;
   const { connected, publicKey, sendTransaction } = useWallet();
   const posthog = usePostHog();
   const { connection } = useConnection();
@@ -250,7 +252,7 @@ export const PayoutButton = ({ bounty }: Props) => {
                   2,
                   true,
                 ) || '0'
-              } ${bounty?.token}`}
+              } ${token}`}
         </DynamicWalletMultiButton>
       </div>
       {connected && (
@@ -268,7 +270,7 @@ export const PayoutButton = ({ bounty }: Props) => {
             posthog.capture('pay winner_sponsor');
             handlePayout({
               id: selectedSubmission?.id as string,
-              token: bounty?.token as string,
+              token: token as string,
               amount: bounty?.rewards![
                 selectedSubmission?.winnerPosition as keyof Rewards
               ] as number,
@@ -291,7 +293,7 @@ export const PayoutButton = ({ bounty }: Props) => {
                 2,
                 true,
               ) || '0'
-            } ${bounty?.token}`
+            } ${token}`
           )}
         </Button>
       )}

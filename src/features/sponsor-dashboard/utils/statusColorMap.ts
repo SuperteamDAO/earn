@@ -8,5 +8,6 @@ export const colorMap = {
   Rejected: { bg: 'bg-red-100', color: 'text-red-600' },
   Pending: { bg: 'bg-orange-100', color: 'text-orange-800' },
   Winner: { bg: 'bg-green-100', color: 'text-green-800' },
+  Paid: { bg: 'bg-green-100', color: 'text-green-800' },
   Completed: { bg: 'bg-blue-100', color: 'text-blue-600' },
 };
