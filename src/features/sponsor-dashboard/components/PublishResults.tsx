@@ -17,6 +17,8 @@ import { api } from '@/lib/api';
 import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 
+import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
+
 import { type Listing } from '../../listings/types';
 import { selectedSubmissionAtom } from '../atoms';
 import { useToggleWinner } from '../mutations/useToggleWinner';
@@ -57,8 +59,8 @@ export function PublishResults({
   // Overrdiding totalWinners if project coz position select is done here now for project only
 
   const rewards =
-    cleanRewards(bounty?.rewards, true).length + (bounty?.maxBonusSpots || 0);
-
+    cleanRewards(bounty?.rewards, true).length +
+    (bounty?.rewards?.[BONUS_REWARD_POSITION] ? bounty?.maxBonusSpots || 0 : 0);
   let isWinnersAllSelected = !(
     remainings && remainings.podiums + remainings.bonus !== 0
   );
