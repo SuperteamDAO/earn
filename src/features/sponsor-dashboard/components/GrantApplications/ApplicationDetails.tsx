@@ -314,7 +314,7 @@ export const ApplicationDetails = ({
                   </div>
                 </Tooltip>
               )}
-              {selectedApplication?.user.publicKey && (
+              {selectedApplication?.walletAddress && (
                 <Tooltip
                   content={'Click to copy'}
                   contentProps={{ side: 'right' }}
@@ -325,11 +325,11 @@ export const ApplicationDetails = ({
                     onClick={handleCopyPublicKey}
                     role="button"
                     tabIndex={0}
-                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.user.publicKey || '', 3)}`}
+                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.walletAddress, 3)}`}
                   >
                     <MdOutlineAccountBalanceWallet />s
                     <p>
-                      {truncatePublicKey(selectedApplication.user.publicKey, 3)}
+                      {truncatePublicKey(selectedApplication.walletAddress, 3)}
                     </p>
                   </div>
                 </Tooltip>
