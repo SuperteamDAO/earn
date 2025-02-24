@@ -142,6 +142,7 @@ export const ListingTable = ({
     <>
       <UnpublishModal
         listingId={selectedListing.id}
+        listingSlug={selectedListing.slug}
         unpublishIsOpen={unpublishIsOpen}
         unpublishOnClose={unpublishOnClose}
         listingType={selectedListing.type}

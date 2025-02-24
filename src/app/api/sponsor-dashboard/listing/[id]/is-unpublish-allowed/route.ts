@@ -4,7 +4,6 @@ import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
 
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -14,29 +13,30 @@ const ParamsSchema = z.object({
 });
 
 export async function GET(
-  _: Request,
+  _request: Request,
   props: { params: Promise<{ id: string }> },
 ) {
-  const params = await props.params;
-  logger.debug(`Request params: ${safeStringify(params)}`);
   try {
-    const result = ParamsSchema.safeParse(params);
+    const result = ParamsSchema.safeParse(await props.params);
     if (!result.success) {
       return NextResponse.json(
         { error: 'Invalid listing ID' },
         { status: 400 },
       );
     }
+
     const { id } = result.data;
+    logger.debug('Checking pending submissions for listing:', { id });
+
     const session = await getSponsorSession(await headers());
-    if (session.error || !session.data) {
+    if (!session.data) {
       return NextResponse.json(
-        { error: session.error },
+        { error: session.error || 'Unauthorized' },
         { status: session.status },
       );
     }
 
-    const { error } = await checkListingSponsorAuth(
+    const { error, listing } = await checkListingSponsorAuth(
       session.data.userSponsorId,
       id,
     );
@@ -47,21 +47,27 @@ export async function GET(
       );
     }
 
-    const totalPaymentsMade = await prisma.submission.count({
+    if (listing.type !== 'project') {
+      return NextResponse.json({ data: { allowed: true } }, { status: 200 });
+    }
+
+    const pendingCount = await prisma.submission.count({
       where: {
         listingId: id,
-        isPaid: true,
+        status: 'Pending',
       },
     });
-    const response = {
-      listingId: id,
-      totalPaymentsMade,
-    };
 
-    return NextResponse.json(response);
-  } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to fetch total payments' },
+      {
+        data: { allowed: pendingCount === 0 },
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    logger.error('Error checking pending submissions:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
       { status: 500 },
     );
   }
