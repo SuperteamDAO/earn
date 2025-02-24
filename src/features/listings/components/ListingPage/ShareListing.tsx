@@ -115,11 +115,11 @@ function MainContent({
       source === 'linkedin'
     ) {
       return encodeURIComponent(
-        `Check this out! I just came across this ${listing?.type} by ${listing?.sponsor?.name} on Superteam Earn!`,
+        `\nCheck this out! I just came across this ${listing?.type} by ${listing?.sponsor?.name} on Superteam Earn!`,
       );
     }
     return encodeURIComponent(
-      `I just came across this ${listing?.type} by ${listing?.sponsor?.name} on Superteam Earn! Check it out: ${listingLink()}`,
+      `I just came across this ${listing?.type} by ${listing?.sponsor?.name} on Superteam Earn! Check it out: \n${listingLink()}`,
     );
   };
 
