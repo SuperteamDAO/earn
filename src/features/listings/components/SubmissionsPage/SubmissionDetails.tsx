@@ -82,7 +82,7 @@ export const SubmissionDetails = ({
   const status = sponsorshipSubmissionStatus(submission);
 
   const Content = () => (
-    <div className="flex h-full min-w-[500px] flex-col justify-between sm:w-full">
+    <div className="flex h-full md:min-w-[500px] flex-col justify-between sm:w-full">
       <div className="h-full overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)] md:px-4 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-track]:w-1.5 [&::-webkit-scrollbar]:w-1">
         <h1 className="mt-3 text-xl">Submission Details</h1>
         <div className="rounded-t-xl border-b border-slate-200 bg-white py-1">
