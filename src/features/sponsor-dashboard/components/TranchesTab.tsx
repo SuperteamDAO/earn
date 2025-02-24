@@ -230,10 +230,10 @@ export const TranchesTab = ({ slug }: Props) => {
   const rejectGrantMutation = useMutation({
     mutationFn: async (trancheId: string) => {
       const response = await api.post(
-        '/api/sponsor-dashboard/grants/update-application-status',
+        '/api/sponsor-dashboard/grants/update-tranche-status',
         {
           data: [{ id: trancheId }],
-          applicationStatus: 'Rejected',
+          status: 'Rejected',
         },
       );
       return response.data;
@@ -289,10 +289,10 @@ export const TranchesTab = ({ slug }: Props) => {
       approvedAmount: number;
     }) => {
       const response = await api.post(
-        '/api/sponsor-dashboard/grants/update-application-status',
+        '/api/sponsor-dashboard/grants/update-tranche-status',
         {
           data: [{ id: trancheId, approvedAmount }],
-          applicationStatus: 'Approved',
+          status: 'Approved',
         },
       );
       return response.data;

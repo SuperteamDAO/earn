@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { MinimalTiptapEditor } from '@/components/tiptap';
 import { Button } from '@/components/ui/button';
@@ -45,6 +46,9 @@ export function DescriptionAndTemplate() {
                   className="ph-no-capture h-8 bg-transparent p-0 shadow-none"
                   onClick={() => {
                     posthog.capture('AI bot_sponsor');
+                    toast.info(
+                      `Heads up! If you have the ChatGPT desktop app, the link might have opened there. Otherwise, it'll open in your browser.`,
+                    );
                   }}
                 >
                   <Link
