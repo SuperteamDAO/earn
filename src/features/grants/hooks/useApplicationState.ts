@@ -66,7 +66,7 @@ export const useApplicationState = (
       case 'ALLOW EDIT':
         return {
           text: 'Edit Application',
-          bg: 'bg-brand-purple',
+          bg: 'bg-white',
           isDisabled: false,
           loadingText: 'Checking Application..',
         };

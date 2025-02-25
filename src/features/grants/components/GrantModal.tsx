@@ -57,7 +57,11 @@ export const GrantModal = ({
           />
         )}
         {applicationState === 'KYC PENDING' && (
-          <KYCModal applicationId={applicationId!} grantId={grant.id} />
+          <KYCModal
+            applicationId={applicationId!}
+            grantId={grant.id}
+            onClose={onClose}
+          />
         )}
         {newTrancheFormStates.includes(applicationState) && (
           <TrancheFormModal

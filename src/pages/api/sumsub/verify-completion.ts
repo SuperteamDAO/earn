@@ -5,6 +5,7 @@ import { prisma } from '@/prisma';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
+import { createTranche } from '@/features/grants/utils/createTranche';
 import {
   createSumSubHeaders,
   handleSumSubError,
@@ -45,11 +46,11 @@ const checkVerificationStatus = async (
   }
 };
 
-const getApplicantId = async (
+const getApplicantData = async (
   userId: string,
   secretKey: string,
   appToken: string,
-): Promise<string> => {
+): Promise<{ id: string; fullName: string }> => {
   const url = `/resources/applicants/-;externalUserId=${userId}/one`;
   const method = 'GET';
   const body = '';
@@ -57,11 +58,20 @@ const getApplicantId = async (
   const headers = createSumSubHeaders(method, url, body, secretKey, appToken);
 
   try {
-    const response = await axios.get<{ id: string }>(
-      `${SUMSUB_BASE_URL}${url}`,
-      { headers },
-    );
-    return response.data.id;
+    const response = await axios.get(`${SUMSUB_BASE_URL}${url}`, { headers });
+
+    const id = response.data.id;
+
+    const info = response.data.info;
+    const firstName = info.firstNameEn || '';
+    const middleName = info.middleNameEn || '';
+    const lastName = info.lastNameEn || '';
+
+    const fullName = `${firstName} ${middleName} ${lastName}`
+      .trim()
+      .replace(/\s+/g, ' ');
+
+    return { id, fullName };
   } catch (error) {
     handleSumSubError(error);
     throw error;
@@ -83,7 +93,11 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       return res.status(500).json({ message: 'Missing environment variables' });
     }
 
-    const applicantId = await getApplicantId(userId, secretKey, appToken);
+    const { id: applicantId } = await getApplicantData(
+      userId,
+      secretKey,
+      appToken,
+    );
     const result = await checkVerificationStatus(
       applicantId,
       secretKey,
@@ -91,9 +105,15 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     );
 
     if (result === 'verified') {
+      const { fullName } = await getApplicantData(userId, secretKey, appToken);
       await prisma.grantApplication.update({
         where: { id: grantApplicationId, userId },
-        data: { kycStatus: 'Approved' },
+        data: { kycStatus: 'Approved', kycName: fullName },
+      });
+
+      await createTranche({
+        applicationId: grantApplicationId,
+        isFirstTranche: true,
       });
     }
 

@@ -22,9 +22,11 @@ const fetchVerificationStatus = async (grantApplicationId: string) => {
 export const KYCModal = ({
   applicationId,
   grantId,
+  onClose,
 }: {
   applicationId: string;
   grantId: string;
+  onClose: () => void;
 }) => {
   const { data: accessToken, refetch } = useQuery({
     queryKey: ['sumsubToken'],
@@ -62,6 +64,7 @@ export const KYCModal = ({
         await queryClient.invalidateQueries({
           queryKey: userApplicationQuery(grantId).queryKey,
         });
+        onClose();
       }
     }
   }

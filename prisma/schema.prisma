@@ -250,6 +250,7 @@ model GrantApplication {
   ai                  Json?
   kycStatus           KYCStatus              @default(Pending)
   GrantTranche        GrantTranche[]
+  kycName             String?
 
   @@index([userId])
   @@index([grantId])
@@ -268,8 +269,8 @@ model GrantTranche {
   applicationId    String
   grantId          String
   ask              Float
-  update           String             @db.Text
-  helpWanted       String             @db.Text
+  update           String?            @db.Text
+  helpWanted       String?            @db.Text
   status           GrantTrancheStatus @default(Pending)
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
