@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import React from 'react';
-import { Button } from 'react-day-picker';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
@@ -9,6 +8,7 @@ import { getURL } from '@/utils/validUrl';
 
 import { type FeedDataProps } from '../types';
 import { FeedCardContainer } from './FeedCardContainer';
+import { FeedCardButton, FeedCardLink } from './FeedCardLink';
 import { WinnerFeedImage } from './WinnerFeedImage';
 
 interface SubCardProps {
@@ -91,20 +91,30 @@ export function SubmissionCard({
           disabled={true}
           content="This submission will be accessible once winners for the listing have been announced."
         >
-          <Button className="pointer-events-none opacity-50">
+          <FeedCardButton
+            style="pointer-events-none opacity-50"
+            onClick={() => {}}
+          >
             {isProject ? 'View Listing' : 'View Submission'}
-          </Button>
+          </FeedCardButton>
         </Tooltip>
-      ) : openDetails ? (
-        <Button
+      ) : !isProject ? (
+        <FeedCardButton
           onClick={() => {
             openDetails(sub.id);
           }}
-          className="pointer-events-auto opacity-100"
+          style="pointer-events-auto opacity-100"
         >
-          {isProject ? 'View Listing' : 'View Submission'}
-        </Button>
-      ) : null}
+          {'View Submission'}
+        </FeedCardButton>
+      ) : (
+        <FeedCardLink
+          href={listingLink}
+          style="pointer-events-auto opacity-100"
+        >
+          {'View Listing'}
+        </FeedCardLink>
+      )}
     </>
   );
 
