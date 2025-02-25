@@ -116,18 +116,20 @@ function MainContent({
   );
 
   const shareMessage = (source?: 'telegram' | 'facebook' | 'linkedin') => {
+    let copy = '';
+    if (listing?.type !== 'project') {
+      copy = `Just came across this banger${!!listing?.usdValue ? ` $${listing?.usdValue}` : ''} bounty by ${listing?.sponsor?.name} on Superteam Earn`;
+    } else {
+      copy = `Just came across this gig by ${listing?.sponsor?.name} on Superteam Earn`;
+    }
     if (
       source === 'telegram' ||
       source === 'facebook' ||
       source === 'linkedin'
     ) {
-      return encodeURIComponent(
-        `\nCheck this out! I just came across this ${listing?.type} by ${listing?.sponsor?.name} on Superteam Earn!`,
-      );
+      return encodeURIComponent(`\nCheck this out! ${copy}`);
     }
-    return encodeURIComponent(
-      `I just came across this ${listing?.type} by ${listing?.sponsor?.name} on Superteam Earn! Check it out: \n${listingLink()}`,
-    );
+    return encodeURIComponent(`${copy}! Check it out: \n${listingLink()}`);
   };
 
   const posthog = usePostHog();
