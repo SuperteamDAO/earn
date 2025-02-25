@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-type ApplicationState =
+export type ApplicationState =
   | 'ALLOW NEW'
   | 'APPLIED'
   | 'ALLOW EDIT'

@@ -1,8 +1,12 @@
+import { useAtom } from 'jotai';
 import { FaCheck } from 'react-icons/fa';
 
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import { useApplicationState } from '../hooks/useApplicationState';
+import {
+  type ApplicationState,
+  applicationStateAtom,
+} from '../atoms/applicationStateAtom';
 import { type GrantApplicationWithTranches } from '../queries/user-application';
 import { type GrantWithApplicationCount } from '../types';
 
@@ -12,14 +16,39 @@ interface Props {
 }
 
 export const ApprovalStages = ({ application, grant }: Props) => {
-  const { applicationState } = useApplicationState(application, grant);
+  const [applicationState] = useAtom(applicationStateAtom);
 
-  const isKYCCompleted =
-    !applicationState.includes('KYC') || applicationState === 'KYC APPROVED';
+  const isStateCompleted = (state: ApplicationState) => {
+    const stateOrder: ApplicationState[] = [
+      'ALLOW NEW',
+      'APPLIED',
+      'ALLOW EDIT',
+      'KYC PENDING',
+      'KYC APPROVED',
+      'TRANCHE1 PENDING',
+      'TRANCHE1 APPROVED',
+      'TRANCHE1 PAID',
+      'TRANCHE2 PENDING',
+      'TRANCHE2 APPROVED',
+      'TRANCHE2 PAID',
+      'TRANCHE3 PENDING',
+      'TRANCHE3 APPROVED',
+      'TRANCHE3 PAID',
+    ];
+
+    const currentStateIndex = stateOrder.indexOf(applicationState);
+    const checkStateIndex = stateOrder.indexOf(state);
+
+    return currentStateIndex >= checkStateIndex && checkStateIndex !== -1;
+  };
 
   const getTrancheStatus = (trancheNum: number) => {
-    if (applicationState.includes(`TRANCHE${trancheNum} PAID`)) return 'Paid';
-    if (applicationState.includes(`TRANCHE${trancheNum}`)) return 'In Progress';
+    if (isStateCompleted(`TRANCHE${trancheNum} PAID` as ApplicationState))
+      return 'Paid';
+    if (isStateCompleted(`TRANCHE${trancheNum} APPROVED` as ApplicationState))
+      return 'Approved';
+    if (isStateCompleted(`TRANCHE${trancheNum} PENDING` as ApplicationState))
+      return 'Pending';
     return 'Pending';
   };
 
@@ -92,7 +121,7 @@ export const ApprovalStages = ({ application, grant }: Props) => {
           </div>
           <ConnectingLine
             isStartComplete={true}
-            isEndComplete={isKYCCompleted}
+            isEndComplete={isStateCompleted('KYC APPROVED')}
           />
           <div>
             <Heading>Grant Approved</Heading>
@@ -110,11 +139,11 @@ export const ApprovalStages = ({ application, grant }: Props) => {
 
         <div className="relative flex items-start gap-4">
           <div className="relative z-10">
-            {isKYCCompleted ? <CheckIcon /> : <PendingIcon />}
+            {isStateCompleted('KYC APPROVED') ? <CheckIcon /> : <PendingIcon />}
           </div>
           <ConnectingLine
-            isStartComplete={isKYCCompleted}
-            isEndComplete={tranches[0]?.status === 'PAID'}
+            isStartComplete={isStateCompleted('KYC APPROVED')}
+            isEndComplete={tranches[0]?.status === 'Paid'}
           />
           <div>
             <Heading>KYC Successful</Heading>
@@ -125,12 +154,12 @@ export const ApprovalStages = ({ application, grant }: Props) => {
         {tranches.map((tranche, index) => (
           <div key={index} className="relative flex items-start gap-4">
             <div className="relative z-10">
-              {tranche.status === 'PAID' ? <CheckIcon /> : <PendingIcon />}
+              {tranche.status === 'Paid' ? <CheckIcon /> : <PendingIcon />}
             </div>
             {index < tranches.length - 1 && (
               <ConnectingLine
-                isStartComplete={tranche.status === 'PAID'}
-                isEndComplete={tranches[index + 1]?.status === 'PAID'}
+                isStartComplete={tranche.status === 'Paid'}
+                isEndComplete={tranches[index + 1]?.status === 'Paid'}
               />
             )}
             <div>
