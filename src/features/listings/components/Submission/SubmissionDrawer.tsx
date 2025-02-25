@@ -111,6 +111,7 @@ export const SubmissionDrawer = ({
       token: token === 'Any' ? tokenList[0]?.tokenSymbol : undefined,
     },
   });
+
   const formToken = useWatch({
     control: form.control,
     name: 'token',
@@ -169,6 +170,7 @@ export const SubmissionDrawer = ({
   }, [id, editMode, form.reset]);
 
   const onSubmit = async (data: FormData) => {
+    console.log('onSubmit', data);
     posthog.capture('confirmed_submission');
     setIsLoading(true);
     try {

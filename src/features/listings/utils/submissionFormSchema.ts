@@ -41,7 +41,8 @@ const submissionSchema = (
             message: 'Invalid token provided',
           },
         )
-        .optional(),
+        .optional()
+        .nullable(),
     })
     .superRefine((data, ctx) => {
       if (
