@@ -58,6 +58,10 @@ export const SurveyModal = ({
   useEffect(() => {
     posthog.getActiveMatchingSurveys((surveys) => {
       const surveyById = getMatchingSurvey(surveys, surveyId);
+      if (surveys.length === 0 || !surveyById) {
+        onClose();
+        return;
+      }
       setQuestion(surveyById?.questions[0]);
     }, true);
   }, [posthog]);
