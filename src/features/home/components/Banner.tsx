@@ -45,7 +45,7 @@ export function HomeBanner() {
   const { data } = useQuery(userCountQuery);
 
   return (
-    <div className="relative mx-auto my-3 h-[260px] max-h-[500px] w-full rounded-md p-5 md:h-[280px] md:p-10">
+    <div className="relative mx-auto my-3 w-full rounded-md p-5 md:p-10">
       <div className="absolute inset-0 overflow-hidden">
         <picture>
           <source media="(min-width: 40em)" srcSet={desktop} />
