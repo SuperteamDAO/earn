@@ -418,7 +418,7 @@ export const tokenList: Token[] = [
     decimals: 6,
     coingeckoSymbol: 'nosana',
   },
-   {
+  {
     tokenName: 'Edwin',
     tokenSymbol: 'EDWIN',
     mintAddress: 'GPrg1CgbBvAJS2SCuf9gF7NmQYsWudfyfWy5SUzypump',
