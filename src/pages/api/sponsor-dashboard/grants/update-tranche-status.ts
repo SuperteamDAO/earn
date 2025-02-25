@@ -38,6 +38,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id },
       select: {
         grantId: true,
+        applicationId: true,
       },
     });
 
@@ -61,6 +62,35 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       decidedAt: new Date().toISOString(),
       approvedAmount,
     };
+
+    const application = await prisma.grantApplication.findUniqueOrThrow({
+      where: { id: currentTranche.applicationId },
+      select: {
+        totalTranches: true,
+        approvedAmount: true,
+        totalPaid: true,
+      },
+    });
+
+    let totalTranches = application.totalTranches;
+
+    if (status === 'Approved') {
+      const existingTranches = await prisma.grantTranche.count({
+        where: {
+          applicationId: currentTranche.applicationId,
+        },
+      });
+      if (
+        totalTranches - existingTranches === 0 &&
+        application.totalPaid + approvedAmount! < application.approvedAmount
+      ) {
+        totalTranches! += 1;
+      }
+      await prisma.grantApplication.update({
+        where: { id: currentTranche.applicationId },
+        data: { totalTranches },
+      });
+    }
 
     const result = await prisma.grantTranche.update({
       where: { id },

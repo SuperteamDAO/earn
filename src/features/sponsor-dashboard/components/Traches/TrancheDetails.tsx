@@ -207,7 +207,7 @@ export const TrancheDetails = ({
                     value={paidPercentage}
                   />
                   <p className="ml-1 whitespace-nowrap text-sm font-medium text-slate-600">
-                    {paidPercentage}%{' '}
+                    {paidPercentage.toFixed(0)}%{' '}
                     <span className="text-slate-400">Paid</span>
                   </p>
                 </div>
@@ -249,7 +249,7 @@ export const TrancheDetails = ({
                       3,
                     )}`}
                   >
-                    <MdOutlineAccountBalanceWallet />s
+                    <MdOutlineAccountBalanceWallet />
                     <p>
                       {truncatePublicKey(
                         selectedTranche?.GrantApplication?.walletAddress || '',

@@ -10,8 +10,7 @@ export const useApplicationState = (
   grant: Grant,
 ) => {
   const [applicationState, setApplicationState] = useAtom(applicationStateAtom);
-  const approvedAmount = application?.approvedAmount;
-  const tranches = approvedAmount && approvedAmount > 5000 ? 3 : 2;
+  const tranches = application?.totalTranches ?? 0;
 
   useEffect(() => {
     if (!application) return;
@@ -42,12 +41,18 @@ export const useApplicationState = (
           else if (status === 'Approved')
             setApplicationState('TRANCHE2 APPROVED');
           else if (status === 'Paid') setApplicationState('TRANCHE2 PAID');
-        } else if (application.GrantTranche.length === 3 && tranches === 3) {
+        } else if (application.GrantTranche.length === 3) {
           const status = application.GrantTranche[2]?.status;
           if (status === 'Pending') setApplicationState('TRANCHE3 PENDING');
           else if (status === 'Approved')
             setApplicationState('TRANCHE3 APPROVED');
           else if (status === 'Paid') setApplicationState('TRANCHE3 PAID');
+        } else if (application.GrantTranche.length === 4) {
+          const status = application.GrantTranche[3]?.status;
+          if (status === 'Pending') setApplicationState('TRANCHE4 PENDING');
+          else if (status === 'Approved')
+            setApplicationState('TRANCHE4 APPROVED');
+          else if (status === 'Paid') setApplicationState('TRANCHE4 PAID');
         }
       }
     }
@@ -90,6 +95,7 @@ export const useApplicationState = (
       case 'TRANCHE1 PENDING':
       case 'TRANCHE2 PENDING':
       case 'TRANCHE3 PENDING':
+      case 'TRANCHE4 PENDING':
         return {
           text: 'Tranche Requested',
           bg: 'bg-slate-600',
@@ -100,6 +106,7 @@ export const useApplicationState = (
       case 'TRANCHE1 APPROVED':
       case 'TRANCHE2 APPROVED':
       case 'TRANCHE3 APPROVED':
+      case 'TRANCHE4 APPROVED':
         return {
           text: 'Payment Processing',
           bg: 'bg-slate-600',
@@ -131,12 +138,19 @@ export const useApplicationState = (
             };
 
       case 'TRANCHE3 PAID':
-        return {
-          text: 'All Tranches Paid',
-          bg: 'bg-slate-600',
-          isDisabled: true,
-          loadingText: null,
-        };
+        return tranches === 4
+          ? {
+              text: 'Apply for Fourth Tranche',
+              bg: 'bg-brand-purple',
+              isDisabled: false,
+              loadingText: null,
+            }
+          : {
+              text: 'Apply Now',
+              bg: 'bg-brand-purple',
+              isDisabled: false,
+              loadingText: 'Checking Application..',
+            };
 
       default:
         return {

@@ -439,11 +439,11 @@ export const TranchesTab = ({ slug }: Props) => {
         trancheId={selectedTranche?.id}
         approveIsOpen={approveIsOpen}
         approveOnClose={approveOnClose}
-        ask={selectedTranche?.GrantApplication?.ask}
+        ask={selectedTranche?.ask}
         granteeName={selectedTranche?.GrantApplication?.user?.firstName}
         token={grant?.token || 'USDC'}
         onApproveTranche={handleApproveTranche}
-        max={grant?.maxReward}
+        max={selectedTranche?.ask}
       />
     </>
   );

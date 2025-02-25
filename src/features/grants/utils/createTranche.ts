@@ -23,7 +23,7 @@ export async function createTranche({
   });
 
   const existingTranches = application.GrantTranche.length;
-  const maxTranches = application.approvedAmount > 5000 ? 3 : 2;
+  const maxTranches = 4;
 
   if (existingTranches >= maxTranches) {
     throw new Error('All tranches have already been created');
@@ -46,16 +46,37 @@ export async function createTranche({
     }
   }
 
-  let trancheAmount;
-  if (application.approvedAmount <= 5000) {
-    trancheAmount = application.approvedAmount * 0.5;
-  } else {
-    if (isFirstTranche || existingTranches === 0) {
-      trancheAmount = application.approvedAmount * 0.3;
+  let trancheAmount = 0;
+  const totalTranches = application.totalTranches ?? 0;
+  const remainingAmount = application.approvedAmount - application.totalPaid;
+
+  if (totalTranches === 2) {
+    if (isFirstTranche) {
+      trancheAmount = Math.round(remainingAmount * 0.5);
     } else if (existingTranches === 1) {
-      trancheAmount = application.approvedAmount * 0.3;
-    } else {
-      trancheAmount = application.approvedAmount * 0.4;
+      trancheAmount = remainingAmount;
+    }
+  }
+
+  if (totalTranches === 3) {
+    if (isFirstTranche) {
+      trancheAmount = Math.round(remainingAmount * 0.3);
+    } else if (existingTranches === 1) {
+      trancheAmount = Math.round(remainingAmount * 0.45);
+    } else if (existingTranches === 2) {
+      trancheAmount = remainingAmount;
+    }
+  }
+
+  if (totalTranches === 4) {
+    if (isFirstTranche) {
+      trancheAmount = Math.round(remainingAmount * 0.3);
+    } else if (existingTranches === 1) {
+      trancheAmount = Math.round(remainingAmount * 0.45);
+    } else if (existingTranches === 2) {
+      trancheAmount = remainingAmount;
+    } else if (existingTranches === 3) {
+      trancheAmount = remainingAmount;
     }
   }
 
@@ -67,6 +88,8 @@ export async function createTranche({
       helpWanted,
       update,
       grantId: application.grantId,
+      ...(isFirstTranche && { approvedAmount: trancheAmount }),
+      ...(isFirstTranche && { decidedAt: new Date().toISOString() }),
     },
   });
 

@@ -14,7 +14,10 @@ export type ApplicationState =
   | 'TRANCHE2 PAID'
   | 'TRANCHE3 PENDING'
   | 'TRANCHE3 APPROVED'
-  | 'TRANCHE3 PAID';
+  | 'TRANCHE3 PAID'
+  | 'TRANCHE4 PENDING'
+  | 'TRANCHE4 APPROVED'
+  | 'TRANCHE4 PAID';
 
 const applicationStateAtom = atom<ApplicationState>('ALLOW NEW');
 

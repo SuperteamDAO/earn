@@ -34,6 +34,9 @@ export const ApprovalStages = ({ application, grant }: Props) => {
       'TRANCHE3 PENDING',
       'TRANCHE3 APPROVED',
       'TRANCHE3 PAID',
+      'TRANCHE4 PENDING',
+      'TRANCHE4 APPROVED',
+      'TRANCHE4 PAID',
     ];
 
     const currentStateIndex = stateOrder.indexOf(applicationState);
@@ -52,24 +55,33 @@ export const ApprovalStages = ({ application, grant }: Props) => {
     return 'Pending';
   };
 
-  const tranchesCount = (application?.approvedAmount ?? 0) > 5000 ? 3 : 2;
+  const tranchesCount = application?.totalTranches ?? 0;
+
   const tranches = Array.from({ length: tranchesCount }, (_, i) => {
     const approvedAmount = application?.approvedAmount ?? 0;
+    const currentTranche = application?.GrantTranche?.[i];
     let amount;
 
-    if (approvedAmount <= 5000) {
-      amount = approvedAmount * 0.5;
+    if (currentTranche) {
+      amount =
+        currentTranche.status === 'Pending'
+          ? currentTranche.ask
+          : currentTranche.approvedAmount;
     } else {
-      if (i === 0 || i === 1) {
-        amount = approvedAmount * 0.3;
+      if (approvedAmount <= 5000) {
+        amount = approvedAmount * 0.5;
       } else {
-        amount = approvedAmount * 0.4;
+        if (i === 0 || i === 1) {
+          amount = approvedAmount * 0.3;
+        } else {
+          amount = approvedAmount * 0.4;
+        }
       }
     }
 
     return {
       status: getTrancheStatus(i + 1),
-      amount: Math.floor(amount),
+      amount: Math.floor(amount ?? 0),
     };
   });
 
@@ -168,7 +180,9 @@ export const ApprovalStages = ({ application, grant }: Props) => {
                   ? 'Final Tranche Paid'
                   : index === 0
                     ? 'Payment Processed'
-                    : `Second Tranche Paid`}
+                    : index === 1
+                      ? 'Second Tranche Paid'
+                      : 'Third Tranche Paid'}
               </Heading>
               <Subheading>
                 {index === tranches.length - 1
