@@ -418,4 +418,12 @@ export const tokenList: Token[] = [
     decimals: 6,
     coingeckoSymbol: 'nosana',
   },
+   {
+    tokenName: 'Edwin',
+    tokenSymbol: 'EDWIN',
+    mintAddress: 'GPrg1CgbBvAJS2SCuf9gF7NmQYsWudfyfWy5SUzypump',
+    icon: 'https://assets.coingecko.com/coins/images/53937/standard/logo-background.png?1737783340',
+    decimals: 6,
+    coingeckoSymbol: 'edwin',
+  },
 ];
