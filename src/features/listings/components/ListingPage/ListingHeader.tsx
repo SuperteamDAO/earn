@@ -7,7 +7,6 @@ import React from 'react';
 import { MdLock } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { LocalImage } from '@/components/ui/local-image';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -149,10 +148,10 @@ export function ListingHeader({
         <ListingHeaderSeparator />
         {isHackathon ? (
           <div className="flex items-center">
-            <ExternalImage
+            <img
               className="h-[1rem]"
               alt={type}
-              src={Hackathon?.altLogo!}
+              src={Hackathon?.logo || Hackathon?.altLogo || ''}
             />
           </div>
         ) : (
