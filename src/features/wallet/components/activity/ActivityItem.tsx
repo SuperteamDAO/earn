@@ -20,7 +20,8 @@ export function ActivityItem({
   setTxData,
 }: ActivityItemProps) {
   const isCredit = activity.type === 'Credited';
-  const amount = isCredit ? `+${activity.amount}` : `-${activity.amount}`;
+  const amount = formatNumberWithSuffix(Number(activity.amount), 3, true);
+  const amountUI = isCredit ? `+${amount}` : `-${amount}`;
 
   return (
     <Button
@@ -82,7 +83,7 @@ export function ActivityItem({
             isCredit ? 'text-emerald-500' : 'text-slate-400',
           )}
         >
-          {amount} {activity.tokenSymbol}
+          {amountUI} {activity.tokenSymbol}
         </div>
         <div className="text-xs font-medium text-slate-500 sm:text-sm">
           ${formatNumberWithSuffix(activity.usdValue, 3, true)}

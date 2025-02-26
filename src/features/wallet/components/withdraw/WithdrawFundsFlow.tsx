@@ -198,12 +198,18 @@ export function WithdrawFundsFlow({
         `Withdrawal failed: ${e}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.address}, token: ${values.tokenAddress}`,
       );
 
-      const errorMessage =
+      let errorMessage =
         e instanceof Error
           ? e.message === 'MFA canceled' || e.message === 'MFA cancelled'
             ? 'Please complete two-factor authentication to withdraw'
             : e.message
           : 'Transaction failed. Please try again.';
+
+      if (e instanceof Error && e.message.includes('insufficient lamports')) {
+        errorMessage =
+          'Transaction failed: please try sending your funds to an existing wallet that has been used before.';
+      }
+
       setError(errorMessage);
       toast.error(errorMessage);
       console.log(error);
