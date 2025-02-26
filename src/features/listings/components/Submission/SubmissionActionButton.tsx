@@ -241,7 +241,7 @@ export const SubmissionActionButton = ({
 
       <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 items-start gap-2 bg-white px-3 py-4 pt-2 md:static md:translate-x-0 md:px-0 md:py-0">
         <div className="md:hidden">
-          <ShareListing className="h-12" listing={listing} />
+          <ShareListing source="listing" className="h-12" listing={listing} />
         </div>
         <AuthWrapper
           showCompleteProfileModal

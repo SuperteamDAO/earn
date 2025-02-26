@@ -8,17 +8,17 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
-const normalizedSuperteamMap = new Map(
-  Superteams.map((team) => [
-    team.name,
-    {
-      fullName: team.name.trim().toLowerCase().normalize('NFKC'),
-      original: team,
-    },
-  ]),
-);
-
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
+  const normalizedSuperteamMap = new Map(
+    Superteams.map((team) => [
+      team.name,
+      {
+        fullName: team.name.trim().toLowerCase().normalize('NFKC'),
+        original: team,
+      },
+    ]),
+  );
+
   const { page = '1', limit = '10', ...params } = req.query;
   const sponsorId = req.userSponsorId;
   const userId = req.userId;
@@ -60,6 +60,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       normalized: sponsorNameNormalized,
     });
 
+    logger.info('normalizedSuperteamMap', normalizedSuperteamMap);
     const superteam = sponsor?.name
       ? normalizedSuperteamMap.get(sponsor?.name)?.original || undefined
       : undefined;

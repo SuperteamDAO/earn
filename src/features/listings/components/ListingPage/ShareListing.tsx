@@ -31,15 +31,29 @@ import { X } from '@/svg/socials/x';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
+import { type Grant } from '@/features/grants/types';
+
 import { type Listing } from '../../types';
 
+type SourceType =
+  | {
+      source: 'listing';
+      listing: Listing | undefined;
+      grant?: undefined;
+    }
+  | {
+      source: 'grant';
+      grant: Grant | undefined;
+      listing?: undefined;
+    };
 export function ShareListing({
-  listing,
   className,
+  source,
+  listing,
+  grant,
 }: {
   className?: string;
-  listing: Listing | undefined;
-}) {
+} & SourceType) {
   const [open, setOpen] = React.useState(false);
   const posthog = usePostHog();
   function setShareOpen(o: boolean) {
@@ -70,7 +84,11 @@ export function ShareListing({
               {`Share this opportunity`}
             </DialogDescription>
           </DialogHeader>
-          <MainContent listing={listing} />
+          {source === 'grant' ? (
+            <MainContent source={'grant'} grant={grant} />
+          ) : (
+            <MainContent source={'listing'} listing={listing} />
+          )}
         </DialogContent>
       </Dialog>
     );
@@ -96,7 +114,11 @@ export function ShareListing({
             {`Share this opportunity`}
           </DrawerDescription>
         </DrawerHeader>
-        <MainContent listing={listing} className="px-4" />
+        {source === 'grant' ? (
+          <MainContent source={'grant'} grant={grant} className="px-4" />
+        ) : (
+          <MainContent source={'listing'} listing={listing} className="px-4" />
+        )}
         <DrawerFooter className="pt-2"></DrawerFooter>
       </DrawerContent>
     </Drawer>
@@ -106,26 +128,33 @@ export function ShareListing({
 function MainContent({
   className,
   listing,
+  grant,
+  source,
 }: {
   className?: string;
-  listing: Listing | undefined;
-}) {
-  const listingLink = React.useCallback(
-    () => `${getURL()}listing/${listing?.slug}/`,
-    [listing?.slug],
-  );
+} & SourceType) {
+  const listingLink = React.useCallback(() => {
+    if (source === 'listing') return `${getURL()}listing/${listing?.slug}/`;
+    else return `${getURL()}grants/${grant?.slug}/`;
+  }, [source, listing?.slug, grant?.slug]);
 
-  const shareMessage = (source?: 'telegram' | 'facebook' | 'linkedin') => {
+  const shareMessage = (
+    socialSource?: 'telegram' | 'facebook' | 'linkedin',
+  ) => {
     let copy = '';
-    if (listing?.type !== 'project') {
-      copy = `Just came across this banger${!!listing?.usdValue ? ` $${listing?.usdValue}` : ''} bounty by ${listing?.sponsor?.name} on Superteam Earn`;
+    if (source === 'grant') {
+      copy = `Just came across this massive grant opportunity by ${grant?.sponsor?.name} on Superteam Earn`;
     } else {
-      copy = `Just came across this gig by ${listing?.sponsor?.name} on Superteam Earn`;
+      if (listing?.type !== 'project') {
+        copy = `Just came across this banger${!!listing?.usdValue ? ` $${listing?.usdValue}` : ''} bounty by ${listing?.sponsor?.name} on Superteam Earn`;
+      } else {
+        copy = `Just came across this gig by ${listing?.sponsor?.name} on Superteam Earn`;
+      }
     }
     if (
-      source === 'telegram' ||
-      source === 'facebook' ||
-      source === 'linkedin'
+      socialSource === 'telegram' ||
+      socialSource === 'facebook' ||
+      socialSource === 'linkedin'
     ) {
       return encodeURIComponent(`\nCheck this out! ${copy}`);
     }
@@ -188,7 +217,8 @@ function MainContent({
         onClick={onListingLinkCopy}
       >
         <span className="truncate font-normal text-slate-500">
-          earn.superteam.fun/listing/{listing?.slug}
+          earn.superteam.fun/{source === 'grant' ? 'grants' : 'listing'}/
+          {source === 'grant' ? grant?.slug : listing?.slug}
         </span>
         {hasCopied ? (
           <Check className="h-5 w-5 text-slate-400" />

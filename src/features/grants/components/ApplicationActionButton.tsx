@@ -8,6 +8,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
+import { ShareListing } from '@/features/listings/components/ListingPage/ShareListing';
 import {
   getRegionTooltipLabel,
   userRegionEligibilty,
@@ -80,7 +81,10 @@ export const ApplicationActionButton = ({
         regionTooltipLabel={regionTooltipLabel}
         user={user}
       >
-        <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 bg-white px-3 py-4 md:static md:translate-x-0 md:px-0 md:py-0">
+        <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 items-start gap-2 bg-white px-3 py-4 pt-2 md:static md:translate-x-0 md:px-0 md:py-0">
+          <div className="md:hidden">
+            <ShareListing source="grant" className="h-12" grant={grant} />
+          </div>
           <AuthWrapper
             showCompleteProfileModal
             completeProfileModalBodyText={
