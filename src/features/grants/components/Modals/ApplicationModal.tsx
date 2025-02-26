@@ -70,7 +70,6 @@ export const ApplicationModal = ({
         maxReward || 0,
         token || 'USDC',
         grant.questions,
-        user!,
       ),
     ),
     defaultValues: {
@@ -90,6 +89,7 @@ export const ApplicationModal = ({
       twitter: grantApplication?.twitter
         ? extractSocialUsername('twitter', grantApplication?.twitter) || ''
         : extractSocialUsername('twitter', user?.twitter || '') || '',
+      telegram: extractSocialUsername('telegram', user?.telegram || '') || '',
       answers:
         Array.isArray(questions) && questions.length > 0
           ? questions.map((q) => ({
@@ -219,7 +219,7 @@ export const ApplicationModal = ({
 
   const date = dayjs().format('YYYY-MM-DD');
   return (
-    <div className="p-6">
+    <div className="p-6 pb-0">
       <DialogTitle className="text-lg tracking-normal text-slate-700 sm:text-xl">
         Grant Application
         <p className="mt-1 text-sm font-normal text-slate-500">
@@ -503,7 +503,7 @@ export const ApplicationModal = ({
             </div>
           </form>
         </Form>
-        <p className="-mt-1 w-full pb-6 text-center text-xs text-slate-400 sm:mt-1 sm:pb-0 sm:text-sm lg:mt-3">
+        <p className="-mt-1 w-full pb-6 text-center text-xs text-slate-400 sm:mt-1 sm:text-sm lg:mt-3">
           By applying for this grant, you agree to our{' '}
           <button
             onClick={() => setIsTOSModalOpen(true)}

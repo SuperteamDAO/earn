@@ -45,7 +45,7 @@ export const GrantsCardMini = ({
             <p className="ph-no-capture line-clamp-1 text-sm font-semibold text-slate-700 hover:underline">
               {title}
             </p>
-            <div className="flex w-min items-center gap-1">
+            <div className="flex w-fit items-center gap-1">
               <p className="w-full whitespace-normal text-xs text-slate-500">
                 {sponsor?.name}
               </p>

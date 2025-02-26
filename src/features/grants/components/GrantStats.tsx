@@ -42,7 +42,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
       >
         <div className="flex w-fit flex-col gap-4">
           <div className="flex w-fit flex-col">
-            <div className="flex w-fit">
+            <div className="flex w-fit items-center">
               <TimeToPayIcon />
               <p className="text-lg font-medium text-slate-700 md:text-xl">
                 {grant?.avgResponseTime}
@@ -53,7 +53,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
             </p>
           </div>
           <div className="flex w-fit flex-col">
-            <div className="flex">
+            <div className="flex items-center">
               <PayoutIcon />
               <p className="text-lg font-medium text-slate-700 md:text-xl">
                 {grant.totalApproved
@@ -76,7 +76,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
         </div>
         <div className="flex w-fit flex-col gap-4">
           <div className="flex flex-col">
-            <div className="flex">
+            <div className="flex items-center">
               <DollarIcon />
               <p className="text-lg font-medium text-slate-700 md:text-xl">
                 $
@@ -92,7 +92,7 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
             </p>
           </div>
           <div className="flex flex-col">
-            <div className="flex">
+            <div className="flex items-center">
               <TimeToPayIcon />
               <p className="text-lg font-medium text-slate-700 md:text-xl">
                 {grant?.totalApplications}
