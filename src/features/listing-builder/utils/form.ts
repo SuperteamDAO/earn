@@ -184,15 +184,16 @@ export const refineReadyListing = (listing: ListingFormData) => {
     listing.maxRewardAsk = null;
     listing.minRewardAsk = null;
   } else {
+    listing.maxBonusSpots = 0;
     if (listing.compensationType !== 'fixed') {
-      listing.rewards = undefined;
-      listing.rewardAmount = undefined;
+      listing.rewards = null;
+      listing.rewardAmount = null;
     } else {
       listing.rewards = { 1: listing.rewardAmount || 0 };
     }
     if (listing.compensationType !== 'range') {
-      listing.minRewardAsk = undefined;
-      listing.maxRewardAsk = undefined;
+      listing.minRewardAsk = null;
+      listing.maxRewardAsk = null;
     }
   }
   if (listing.deadline) {

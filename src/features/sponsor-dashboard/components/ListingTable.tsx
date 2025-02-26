@@ -142,6 +142,7 @@ export const ListingTable = ({
     <>
       <UnpublishModal
         listingId={selectedListing.id}
+        listingSlug={selectedListing.slug}
         unpublishIsOpen={unpublishIsOpen}
         unpublishOnClose={unpublishOnClose}
         listingType={selectedListing.type}
@@ -297,15 +298,21 @@ export const ListingTable = ({
                     </div>
                   </TableCell>
                   <TableCell className="items-center py-2">
-                    <p
+                    <button
                       className={cn(
-                        'inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium',
+                        'inline-flex cursor-default items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium',
                         textColor,
                         bgColor,
+                        listingStatus === 'Payment Pending' && 'cursor-pointer',
                       )}
+                      disabled={listingStatus !== 'Payment Pending'}
+                      onClick={() => {
+                        if (listingStatus !== 'Payment Pending') return;
+                        handleVerifyPayment(listing);
+                      }}
                     >
                       {listingStatus}
-                    </p>
+                    </button>
                   </TableCell>
                   <TableCell className="px-3 py-2">
                     {listing.status === 'OPEN' && !!listing.isPublished ? (

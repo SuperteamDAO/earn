@@ -3,7 +3,7 @@ import { ImageResponse } from 'next/og';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { loadGoogleFont } from '@/utils/ogHelpers';
 
-import '/node_modules/flag-icons/css/flag-icons.min.css';
+import 'flag-icons/css/flag-icons.min.css';
 
 export async function GET(request: Request) {
   try {

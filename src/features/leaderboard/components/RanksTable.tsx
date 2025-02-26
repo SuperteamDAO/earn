@@ -24,7 +24,7 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { type RowType, type SKILL } from '../types';
 import { getSubskills, skillCategories } from '../utils';
 
-import '/node_modules/flag-icons/css/flag-icons.min.css';
+import 'flag-icons/css/flag-icons.min.css';
 
 interface Props {
   rankings: RowType[];

@@ -50,6 +50,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: [
       '@radix-ui/react-icons',
+      'react-icons',
       'flag-icons',
       '@tiptap/core',
       'react-select',

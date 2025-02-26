@@ -29,7 +29,7 @@ export interface Listing {
   pocId?: string;
   poc?: User;
   source?: string;
-  type?: BountyType | string;
+  type?: BountyType | 'grant';
   applicationType?: 'fixed';
   totalWinnersSelected?: number;
   region?: string;

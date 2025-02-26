@@ -92,6 +92,7 @@ export function GrantPageLayout({
           <div className="mx-auto w-full px-2 lg:px-6">
             <div className="mx-auto w-full max-w-7xl">
               <GrantsHeader
+                grant={grant}
                 title={grant?.title ?? ''}
                 sponsor={grant?.sponsor}
                 status={grant?.status}
@@ -139,7 +140,7 @@ export function GrantPageLayout({
                       >
                         <div className="flex w-fit flex-col gap-4">
                           <div className="flex w-fit flex-col">
-                            <div className="flex w-fit">
+                            <div className="flex w-fit items-center">
                               <TimeToPayIcon />
                               <p className="text-lg font-medium text-slate-700 md:text-xl">
                                 {grant?.avgResponseTime}
@@ -150,7 +151,7 @@ export function GrantPageLayout({
                             </p>
                           </div>
                           <div className="flex w-fit flex-col">
-                            <div className="flex">
+                            <div className="flex items-center">
                               <PayoutIcon />
                               <p className="text-lg font-medium text-slate-700 md:text-xl">
                                 {grant.totalApproved
@@ -174,7 +175,7 @@ export function GrantPageLayout({
                         </div>
                         <div className="flex w-fit flex-col gap-4">
                           <div className="flex flex-col">
-                            <div className="flex">
+                            <div className="flex items-center">
                               <DollarIcon />
                               <p className="text-lg font-medium text-slate-700 md:text-xl">
                                 $
@@ -190,7 +191,7 @@ export function GrantPageLayout({
                             </p>
                           </div>
                           <div className="flex flex-col">
-                            <div className="flex">
+                            <div className="flex items-center">
                               <TimeToPayIcon />
                               <p className="text-lg font-medium text-slate-700 md:text-xl">
                                 {grant?.totalApplications}

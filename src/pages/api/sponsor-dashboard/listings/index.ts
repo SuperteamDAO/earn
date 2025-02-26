@@ -22,9 +22,11 @@ type BountyGrant = {
   isWinnersAnnounced: boolean | null;
   maxRewardAsk: number | null;
   minRewardAsk: number | null;
+  maxBonusSpots: number | null;
   compensationType: string | null;
   createdAt: Date;
   submissionCount: number;
+  isFndnPaying: string;
 };
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
@@ -45,6 +47,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           b.rewards,
           b.rewardAmount,
           (SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id AND s.isPaid = 1) as totalPaymentsMade,
+          b.maxBonusSpots,
           b.isWinnersAnnounced,
           b.maxRewardAsk,
           b.minRewardAsk,
@@ -80,6 +83,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           g.createdAt,
           NULL as isFndnPaying,
           g.airtableId,
+NULL as maxBonusSpots,
           CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
         FROM Grants g
         WHERE g.isActive = true
@@ -90,16 +94,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       )
       SELECT *
       FROM combined_data
-      ORDER BY 
-        CASE 
-          WHEN deadline IS NULL THEN 1 
-          ELSE 0 
-        END,
-        CASE 
-          WHEN deadline IS NOT NULL THEN ABS(DATEDIFF(deadline, CURDATE()))
-          ELSE NULL 
-        END ASC,
-        createdAt DESC
+      ORDER BY createdAt DESC
     `,
       userSponsorId,
       status.CLOSED,
@@ -110,6 +105,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const serializedData = data.map((item) => ({
       ...item,
       submissionCount: Number(item.submissionCount),
+      isFndnPaying: Boolean(Number(item.isFndnPaying)),
     }));
 
     logger.info(
