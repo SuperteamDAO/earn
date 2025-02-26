@@ -11,13 +11,14 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
     const winningSubmissions = await prisma.submission.findMany({
       where: {
         isWinner: true,
-        listing: {
-          isWinnersAnnounced: true,
-          isPrivate: false,
-        },
+        OR: [
+          { listing: { isWinnersAnnounced: true, isPrivate: false } },
+          { listing: { type: 'sponsorship', isPrivate: false } },
+        ],
       },
       select: {
         winnerPosition: true,
+        token: true,
         user: {
           select: {
             id: true,
@@ -55,7 +56,10 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         slug: submission.listing.slug,
         title: submission.listing.title,
         reward: rewards[Number(submission.winnerPosition) as keyof Rewards],
-        rewardToken: submission.listing.token,
+        rewardToken:
+          submission.listing.token === 'Any'
+            ? submission.token
+            : submission.listing.token,
         photo: submission.user.photo,
       };
     });

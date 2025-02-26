@@ -163,7 +163,7 @@ export function ListingWinners({ bounty }: Props) {
                           Number(submission?.winnerPosition) as keyof Rewards
                         ] ?? 0,
                       )}{' '}
-                    {bounty?.token}
+                    {bounty?.token === 'Any' ? submission.token : bounty?.token}
                   </p>
                 </Link>
               ))}

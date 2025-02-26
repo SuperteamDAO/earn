@@ -159,6 +159,7 @@ export const ListingTable = ({
         onClose={verifyPaymentOnClose}
         listingId={selectedListing.id}
         listingType={selectedListing.type}
+        selectedSubmission={undefined}
       />
       <div className="w-full overflow-x-auto rounded-md border border-slate-200">
         <Table>

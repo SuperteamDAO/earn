@@ -45,7 +45,7 @@ interface VerifyPaymentModalProps {
   listing: ListingWithSubmissions | undefined;
   setListing: (listing: ListingWithSubmissions) => void;
   listingType: string | undefined;
-  selectedSubmission?: SubmissionWithUser;
+  selectedSubmission: SubmissionWithUser | undefined;
 }
 
 export const VerifyPaymentModal = ({

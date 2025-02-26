@@ -142,7 +142,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     const {
-      rewards,
+      rewards: rewardsData,
       rewardAmount,
       token,
       maxRewardAsk,
@@ -152,6 +152,10 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       skills,
       type = listing.type,
     } = validatedData;
+    const isSponsorship = type === 'sponsorship';
+    const rewards =
+      (isSponsorship ? listing.rewards : rewardsData) ??
+      ({} as Record<string, number>);
 
     let { maxBonusSpots } = validatedData;
     const { status } = listing;
@@ -280,7 +284,7 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isVerifying,
     });
 
-    let usdValue = 0;
+    let usdValue = isSponsorship ? listing.usdValue : 0;
     if (isPublished && listing.publishedAt && !isVerifying) {
       logger.info(`Calculating USD value of listing`, {
         id,

@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { EXPLORER_TX_URL } from '@/constants/project';
 import { useClipboard } from '@/hooks/use-clipboard';
-import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -32,7 +31,6 @@ import {
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';
-import { VerifyPaymentModal } from '../Modals/VerifyPayment';
 import { Details } from './Details';
 import { SelectLabel } from './SelectLabel';
 import { SelectWinner } from './SelectWinner';
@@ -48,7 +46,7 @@ interface Props {
     SetStateAction<{ podiums: number; bonus: number } | null>
   >;
   isMultiSelectOn?: boolean;
-  invalidateQueries: () => void;
+  onVerifyPayment: () => void;
 }
 
 export const SubmissionPanel = ({
@@ -60,7 +58,7 @@ export const SubmissionPanel = ({
   remainings,
   setRemainings,
   isMultiSelectOn,
-  invalidateQueries,
+  onVerifyPayment,
 }: Props) => {
   const afterAnnounceDate =
     bounty?.type === 'hackathon'
@@ -78,16 +76,6 @@ export const SubmissionPanel = ({
   const { onCopy: onCopyPublicKey } = useClipboard(
     selectedSubmission?.user?.publicKey || '',
   );
-
-  const handleVerifyPayment = async () => {
-    verifyPaymentOnOpen();
-  };
-
-  const {
-    isOpen: verifyPaymentIsOpen,
-    onOpen: verifyPaymentOnOpen,
-    onClose: verifyPaymentOnClose,
-  } = useDisclosure();
 
   const handleCopyEmail = () => {
     if (selectedSubmission?.user?.email) {
@@ -109,18 +97,6 @@ export const SubmissionPanel = ({
 
   return (
     <>
-      <VerifyPaymentModal
-        listing={bounty}
-        setListing={() => {}}
-        isOpen={verifyPaymentIsOpen}
-        onClose={() => {
-          verifyPaymentOnClose();
-          invalidateQueries();
-        }}
-        listingId={bounty?.id}
-        listingType={bounty?.type}
-        selectedSubmission={selectedSubmission}
-      />
       <div className="sticky top-[3rem] w-full">
         {submissions.length ? (
           <>
@@ -157,10 +133,10 @@ export const SubmissionPanel = ({
                   (bounty?.isWinnersAnnounced || isSponsorship) ? (
                     <Button
                       className="ph-no-capture mr-4 min-w-[120px] disabled:cursor-not-allowed"
-                      onClick={() => handleVerifyPayment()}
+                      onClick={() => onVerifyPayment()}
                     >
                       <DollarSign className="mr-2 h-4 w-4" />
-                      Submit Transaction
+                      Verify Transaction
                     </Button>
                   ) : (
                     <Tooltip

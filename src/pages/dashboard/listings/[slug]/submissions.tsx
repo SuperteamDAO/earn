@@ -27,6 +27,7 @@ import {
   selectedSubmissionAtom,
   selectedSubmissionIdsAtom,
 } from '@/features/sponsor-dashboard/atoms';
+import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 import { PublishResults } from '@/features/sponsor-dashboard/components/PublishResults';
 import { ScoutTable } from '@/features/sponsor-dashboard/components/Scouts/ScoutTable';
 import { RejectAllSubmissionModal } from '@/features/sponsor-dashboard/components/Submissions/Modals/RejectAllModal';
@@ -86,6 +87,12 @@ export default function BountySubmissions({ slug }: Props) {
   } = useDisclosure();
 
   const {
+    isOpen: verifyPaymentIsOpen,
+    onOpen: verifyPaymentOnOpen,
+    onClose: verifyPaymentOnClose,
+  } = useDisclosure();
+
+  const {
     data: submissions,
     isLoading: isSubmissionsLoading,
     refetch: refetchSubmissions,
@@ -96,6 +103,13 @@ export default function BountySubmissions({ slug }: Props) {
     isLoading: isBountyLoading,
     refetch: refetchBounty,
   } = useQuery(sponsorDashboardListingQuery(slug));
+
+  const [verifyAllPayments, setVerifyAllPayments] = useState(false);
+
+  const onVerifyPayments = () => {
+    setVerifyAllPayments(true);
+    verifyPaymentOnOpen();
+  };
 
   useEffect(() => {
     selectedSubmissionIds.size > 0 ? onTogglerOpen() : onTogglerClose();
@@ -426,6 +440,13 @@ export default function BountySubmissions({ slug }: Props) {
           <SubmissionHeader
             bounty={bounty}
             totalSubmissions={submissions?.length || 0}
+            allTransactionsVerified={
+              submissions?.every(
+                (submission) =>
+                  submission.status !== 'Approved' || submission.isPaid,
+              ) ?? true
+            }
+            onVerifyPayments={onVerifyPayments}
           />
           <Tabs
             defaultValue={searchParams?.has('scout') ? 'scout' : 'submissions'}
@@ -488,6 +509,24 @@ export default function BountySubmissions({ slug }: Props) {
                     />
                   </div>
 
+                  {verifyPaymentIsOpen && (
+                    <VerifyPaymentModal
+                      listing={bounty}
+                      setListing={() => {}}
+                      isOpen={verifyPaymentIsOpen}
+                      onClose={() => {
+                        verifyPaymentOnClose();
+                        refetchBounty();
+                        refetchSubmissions();
+                      }}
+                      listingId={bounty?.id}
+                      listingType={bounty?.type}
+                      selectedSubmission={
+                        verifyAllPayments ? undefined : selectedSubmission
+                      }
+                    />
+                  )}
+
                   <div className="h-full w-full rounded-r-xl border-b border-r border-t border-slate-200 bg-white">
                     {!paginatedSubmissions?.length &&
                     !searchText &&
@@ -516,9 +555,9 @@ export default function BountySubmissions({ slug }: Props) {
                         submissions={paginatedSubmissions}
                         usedPositions={usedPositions || []}
                         onWinnersAnnounceOpen={onOpen}
-                        invalidateQueries={() => {
-                          refetchBounty();
-                          refetchSubmissions();
+                        onVerifyPayment={() => {
+                          setVerifyAllPayments(false);
+                          verifyPaymentOnOpen();
                         }}
                       />
                     )}

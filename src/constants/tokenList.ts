@@ -11,7 +11,7 @@ export const ANY_TOKEN: Token = {
   tokenName: 'Any',
   tokenSymbol: 'Any',
   mintAddress: 'any',
-  icon: '/assets/anyTokens.svg',
+  icon: 'https://nearn.io/assets/anyTokens.svg',
   decimals: 6,
   coingeckoSymbol: 'usd-coin',
 };

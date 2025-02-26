@@ -313,46 +313,45 @@ export default async function handler(
     );
 
     const results = [
-      ...submissions.map((sub) => ({
-        id:
-          sub.listing.isWinnersAnnounced || sub.listing.type === 'sponsorship'
-            ? sub.id
-            : null,
-        createdAt:
-          sub.isWinner &&
-          sub.listing.isWinnersAnnounced &&
-          sub.listing.winnersAnnouncedAt
-            ? sub.listing.winnersAnnouncedAt
-            : sub.createdAt,
-        link: sub.listing.isWinnersAnnounced ? sub.link : null,
-        tweet: sub.listing.isWinnersAnnounced ? sub.tweet : null,
-        otherInfo: sub.listing.isWinnersAnnounced ? sub.otherInfo : null,
-        isWinner: sub.listing.isWinnersAnnounced ? sub.isWinner : null,
-        winnerPosition: sub.listing.isWinnersAnnounced
-          ? sub.winnerPosition
-          : null,
-        firstName: sub.user.firstName,
-        lastName: sub.user.lastName,
-        photo: sub.user.photo,
-        username: sub.user.username,
-        listingId: sub.listing.id,
-        listingTitle: sub.listing.title,
-        rewards: sub.listing.rewards,
-        listingType: sub.listing.type,
-        listingSlug: sub.listing.slug,
-        isWinnersAnnounced: sub.listing.isWinnersAnnounced,
-        token: sub.listing.token,
-        //@ts-expect-error prisma ts error, this exists based on above include
-        sponsorName: sub.listing.sponsor.name,
-        //@ts-expect-error prisma ts error, this exists based on above include
-        sponsorLogo: sub.listing.sponsor.logo,
-        type: 'submission',
-        like: sub.like,
-        likeCount: sub.likeCount,
-        ogImage: sub.ogImage,
-        commentCount: sub._count.Comments,
-        recentCommenters: sub.Comments,
-      })),
+      ...submissions.map((sub) => {
+        const isDataPublic =
+          sub.listing.isWinnersAnnounced || sub.listing.type === 'sponsorship';
+        return {
+          id: isDataPublic ? sub.id : null,
+          createdAt:
+            sub.isWinner &&
+            sub.listing.isWinnersAnnounced &&
+            sub.listing.winnersAnnouncedAt
+              ? sub.listing.winnersAnnouncedAt
+              : sub.createdAt,
+          link: isDataPublic ? sub.link : null,
+          tweet: isDataPublic ? sub.tweet : null,
+          otherInfo: isDataPublic ? sub.otherInfo : null,
+          isWinner: isDataPublic ? sub.isWinner : null,
+          winnerPosition: isDataPublic ? sub.winnerPosition : null,
+          firstName: sub.user.firstName,
+          lastName: sub.user.lastName,
+          photo: sub.user.photo,
+          username: sub.user.username,
+          listingId: sub.listing.id,
+          listingTitle: sub.listing.title,
+          rewards: sub.listing.rewards,
+          listingType: sub.listing.type,
+          listingSlug: sub.listing.slug,
+          isWinnersAnnounced: sub.listing.isWinnersAnnounced,
+          token: sub.listing.token === 'Any' ? sub.token : sub.listing.token,
+          //@ts-expect-error prisma ts error, this exists based on above include
+          sponsorName: sub.listing.sponsor.name,
+          //@ts-expect-error prisma ts error, this exists based on above include
+          sponsorLogo: sub.listing.sponsor.logo,
+          type: 'submission',
+          like: sub.like,
+          likeCount: sub.likeCount,
+          ogImage: sub.ogImage,
+          commentCount: sub._count.Comments,
+          recentCommenters: sub.Comments,
+        };
+      }),
       ...pow.map((pow) => ({
         id: pow.id,
         createdAt: pow.createdAt,

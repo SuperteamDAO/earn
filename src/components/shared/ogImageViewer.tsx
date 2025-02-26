@@ -18,6 +18,7 @@ interface Props {
   type?: 'submission' | 'pow';
   className?: string;
   isWinnersAnnounced?: boolean;
+  isSponsorship?: boolean;
 }
 
 const fallbackImageCache = new Map<number, string>();
@@ -42,6 +43,7 @@ export const OgImageViewer = ({
   id,
   className,
   isWinnersAnnounced = true,
+  isSponsorship = false,
 }: Props) => {
   const [fallbackImage] = useState(getRandomFallbackImage());
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
@@ -57,7 +59,10 @@ export const OgImageViewer = ({
     ...ogImageQuery(externalUrl!),
     retry: 1,
     enabled:
-      !imageUrl && isWinnersAnnounced && !!externalUrl && imageUrl !== 'error',
+      !imageUrl &&
+      (isWinnersAnnounced || isSponsorship) &&
+      !!externalUrl &&
+      imageUrl !== 'error',
   });
 
   useEffect(() => {

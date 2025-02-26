@@ -46,6 +46,9 @@ async function updateSubmission(
 
   const existingSubmission = await prisma.submission.findFirst({
     where: { userId, listingId },
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
 
   if (!existingSubmission) {

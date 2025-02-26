@@ -67,7 +67,10 @@ export function SubmissionCard({
 
   const content = {
     actionText:
-      sub?.isWinner && sub?.isWinnersAnnounced ? winningText : submissionText,
+      sub?.isWinner &&
+      (sub?.isWinnersAnnounced || sub?.listingType === 'sponsorship')
+        ? winningText
+        : submissionText,
     createdAt: sub?.createdAt,
   };
 
@@ -136,7 +139,8 @@ export function SubmissionCard({
       commentCount={commentCount || sub.commentCount}
       recentCommenters={sub?.recentCommenters}
     >
-      {sub?.isWinner && sub?.isWinnersAnnounced ? (
+      {sub?.isWinner &&
+      (sub?.isWinnersAnnounced || sub?.listingType === 'sponsorship') ? (
         <WinnerFeedImage
           token={sub?.token}
           rewards={sub?.rewards}
@@ -150,6 +154,7 @@ export function SubmissionCard({
           type="submission"
           id={sub?.id}
           isWinnersAnnounced={sub?.isWinnersAnnounced}
+          isSponsorship={sub?.listingType === 'sponsorship'}
         />
       )}
     </FeedCardContainer>

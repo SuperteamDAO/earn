@@ -27,6 +27,7 @@ import { Separator } from '@/components/ui/separator';
 import { PROJECT_NAME } from '@/constants/project';
 import { tokenList } from '@/constants/tokenList';
 import { useClipboard } from '@/hooks/use-clipboard';
+import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
@@ -41,21 +42,28 @@ import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
 
+import { useCompleteSponsorship } from '../../mutations/useCompleteSponsorship';
 import { SponsorPrize } from '../SponsorPrize';
+import { CompleteSponsorshipModal } from './Modals/CompleteSponsorshipModal';
 
 interface Props {
   bounty: Listing | undefined;
+  allTransactionsVerified: boolean;
   totalSubmissions: number;
   isHackathonPage?: boolean;
+  onVerifyPayments: () => void;
 }
 
 export const SubmissionHeader = ({
   bounty,
   totalSubmissions,
   isHackathonPage = false,
+  allTransactionsVerified = false,
+  onVerifyPayments,
 }: Props) => {
   const { data: session } = useSession();
   const router = useRouter();
+  const completeSponsorship = useCompleteSponsorship(bounty?.id ?? '');
 
   const deadline = formatDeadline(bounty?.deadline, bounty?.type);
 
@@ -77,6 +85,8 @@ export const SubmissionHeader = ({
 ${socialListingLink('twitter')}
 `;
   const twitterShareLink = tweetEmbedLink(tweetShareContent);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const exportMutation = useMutation({
     mutationFn: async () => {
@@ -113,6 +123,15 @@ ${socialListingLink('twitter')}
 
   return (
     <>
+      {isOpen && (
+        <CompleteSponsorshipModal
+          isOpen={isOpen}
+          onClose={onClose}
+          allTransactionsVerified={allTransactionsVerified}
+          onCompleteListing={completeSponsorship.mutateAsync}
+          onReviewTransactions={onVerifyPayments}
+        />
+      )}
       <div className="mb-2">
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
@@ -189,6 +208,9 @@ ${socialListingLink('twitter')}
                 Edit
               </Button>
             </Link>
+          )}
+          {bounty?.type === 'sponsorship' && !bounty.isWinnersAnnounced && (
+            <Button onClick={onOpen}>Complete Sponsorship</Button>
           )}
         </div>
       </div>

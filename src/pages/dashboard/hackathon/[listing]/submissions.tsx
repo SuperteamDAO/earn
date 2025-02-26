@@ -57,17 +57,13 @@ export default function BountySubmissions({ listing }: Props) {
   const searchParams = useSearchParams();
   const posthog = usePostHog();
 
-  const {
-    data: submissions,
-    isLoading: isSubmissionsLoading,
-    refetch: refetchSubmissions,
-  } = useQuery(submissionsQuery(listing, true));
+  const { data: submissions, isLoading: isSubmissionsLoading } = useQuery(
+    submissionsQuery(listing, true),
+  );
 
-  const {
-    data: bounty,
-    isLoading: isBountyLoading,
-    refetch: refetchBounty,
-  } = useQuery(sponsorDashboardListingQuery(listing));
+  const { data: bounty, isLoading: isBountyLoading } = useQuery(
+    sponsorDashboardListingQuery(listing),
+  );
 
   const filteredSubmissions = useMemo(() => {
     if (!submissions) return [];
@@ -182,6 +178,15 @@ export default function BountySubmissions({ listing }: Props) {
           <SubmissionHeader
             bounty={bounty}
             totalSubmissions={submissions?.length || 0}
+            allTransactionsVerified={
+              submissions?.every(
+                (submission) =>
+                  submission.status !== 'Approved' || submission.isPaid,
+              ) ?? true
+            }
+            onVerifyPayments={() => {
+              alert('TODO');
+            }}
           />
           <Tabs
             defaultValue={searchParams?.has('scout') ? 'scout' : 'submissions'}
@@ -254,16 +259,15 @@ export default function BountySubmissions({ listing }: Props) {
                       </>
                     ) : (
                       <SubmissionPanel
+                        onVerifyPayment={() => {
+                          alert('TODO');
+                        }}
                         remainings={remainings}
                         setRemainings={setRemainings}
                         bounty={bounty}
                         submissions={paginatedSubmissions}
                         usedPositions={usedPositions || []}
                         onWinnersAnnounceOpen={onOpen}
-                        invalidateQueries={() => {
-                          refetchBounty();
-                          refetchSubmissions();
-                        }}
                       />
                     )}
                   </div>
