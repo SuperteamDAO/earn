@@ -16,6 +16,7 @@ export const withSponsorAuth = (handler: Handler): NextApiHandler => {
     const privyDid = await getPrivyToken(req);
 
     if (!privyDid) {
+      logger.error('Unauthorized, Privy Did not found');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 

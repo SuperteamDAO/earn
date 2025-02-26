@@ -6,10 +6,10 @@ export function safeStringify(obj: unknown) {
     if (obj instanceof Error) {
       // Errors don't serialize well, so we extract what we want
       // We stringify so that we can log the error message and stack trace in a single log event
-      return JSON.stringify(obj.stack ?? obj.message);
+      return JSON.stringify(obj.stack ?? obj.message, null, 2);
     }
     // Avoid crashing on circular references
-    return JSON.stringify(obj);
+    return JSON.stringify(obj, null, 2);
   } catch (e) {
     return obj;
   }
