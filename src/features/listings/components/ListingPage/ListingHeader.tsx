@@ -148,11 +148,13 @@ export function ListingHeader({
         <ListingHeaderSeparator />
         {isHackathon ? (
           <div className="flex items-center">
-            <img
-              className="h-[1rem]"
-              alt={type}
-              src={Hackathon?.logo || Hackathon?.altLogo || ''}
-            />
+            <Link href={`/hackathon/${Hackathon?.slug}`}>
+              <img
+                className="h-[1rem]"
+                alt={type}
+                src={Hackathon?.logo || Hackathon?.altLogo || ''}
+              />
+            </Link>
           </div>
         ) : (
           <div className="flex">
