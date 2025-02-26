@@ -24,6 +24,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       include: { sponsor: true, poc: true, GrantApplication: true },
     });
 
+    const grantTrancheCount = await prisma.grantTranche.count({
+      where: { grantId: grant?.id },
+    });
+
     if (!grant) {
       logger.info(`Grant with slug=${slug} not found for user=${userId}`);
       return res.status(404).json({
@@ -42,6 +46,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     return res.status(200).json({
       ...grant,
       totalApplications,
+      grantTrancheCount,
     });
   } catch (error: any) {
     logger.error(

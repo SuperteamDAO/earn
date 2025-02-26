@@ -10,4 +10,5 @@ export const colorMap = {
   Pending: { bg: 'bg-orange-100', color: 'text-orange-800' },
   Winner: { bg: 'bg-green-100', color: 'text-green-800' },
   Completed: { bg: 'bg-blue-100', color: 'text-blue-600' },
+  Paid: { bg: 'bg-blue-100', color: 'text-blue-600' },
 };
