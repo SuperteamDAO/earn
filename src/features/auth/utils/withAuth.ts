@@ -1,5 +1,6 @@
 import { type NextApiHandler, type NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 import { type NextApiRequestWithUser } from '../types';
@@ -15,6 +16,7 @@ export const withAuth = (handler: Handler): NextApiHandler => {
     const privyDid = await getPrivyToken(req);
 
     if (!privyDid) {
+      logger.error('Unauthorized, Privy Did not found');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
@@ -22,6 +24,9 @@ export const withAuth = (handler: Handler): NextApiHandler => {
       where: { privyDid },
       select: { id: true },
     });
+    logger.debug(
+      `Authorised, User found with for privy did ${privyDid} has user Id ${user?.id}`,
+    );
 
     req.userId = user?.id;
     return handler(req, res);

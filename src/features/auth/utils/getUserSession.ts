@@ -34,6 +34,7 @@ export async function getUserSession(
     const privyDid = await getPrivyToken(req as any);
 
     if (!privyDid) {
+      logger.error('Unauthorized, Privy Did not found');
       return {
         status: 401,
         error: 'Unauthorized',
