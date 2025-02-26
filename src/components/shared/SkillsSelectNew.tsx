@@ -304,6 +304,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
           placeholder="Select skills..."
           className={className}
           groupBy="group"
+          emptyIndicator="No skills found"
         />
         {!!formContext && <FormMessage />}
         {suggestions.length > 0 && (

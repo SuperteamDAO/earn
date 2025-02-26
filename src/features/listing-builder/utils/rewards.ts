@@ -7,7 +7,9 @@ import { BONUS_REWARD_POSITION } from '../constants';
 export const calculateTotalPrizes = (
   rewards: Rewards | undefined | null,
   maxBonusSpots: number,
-) => cleanRewards(rewards, true).length + (maxBonusSpots ?? 0);
+) =>
+  cleanRewards(rewards, true).length +
+  ((rewards?.[BONUS_REWARD_POSITION] || 0) > 0 ? (maxBonusSpots ?? 0) : 0);
 
 export const calculateTotalRewardsForPodium = (
   currentRewards: Record<string, number>,

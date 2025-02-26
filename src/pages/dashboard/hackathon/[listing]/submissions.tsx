@@ -125,7 +125,10 @@ export default function BountySubmissions({ listing }: Props) {
       const rewardsLength = cleanRewards(bounty.rewards, true).length;
       setRemainings({
         podiums: rewardsLength - (podiumWinnersSelected || 0),
-        bonus: (bounty.maxBonusSpots || 0) - (bonusWinnerSelected || 0),
+        bonus:
+          ((bounty?.rewards?.[BONUS_REWARD_POSITION] || 0) > 0
+            ? bounty.maxBonusSpots || 0
+            : 0) - (bonusWinnerSelected || 0),
       });
     }
   }, [bounty, submissions, user?.currentSponsorId, router]);
