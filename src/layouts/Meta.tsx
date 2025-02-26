@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { NextSeo } from 'next-seo';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { OG_IMAGES_URL } from '@/constants/ASSET_URL';
 import { PROJECT_NAME } from '@/constants/project';
 import { AppConfig } from '@/utils/AppConfig';
 
@@ -63,7 +63,7 @@ const Meta = (props: IMetaProps) => {
           site_name: AppConfig.site_name,
           images: [
             {
-              url: props.og ?? `${ASSET_URL}/og/og.png`,
+              url: props.og ?? `${OG_IMAGES_URL}/og/og.png`,
               alt: props.title,
             },
           ],

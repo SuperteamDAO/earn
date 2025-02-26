@@ -4,7 +4,7 @@ import React from 'react';
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Loading } from '@/components/shared/Loading';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { OG_IMAGES_URL } from '@/constants/ASSET_URL';
 import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -28,7 +28,7 @@ function Grants() {
           title={`Grants | ${PROJECT_NAME}`}
           description={`Discover ${CHAIN_NAME} Grants for Development, Art, Content, and more to fund your ideas`}
           canonical={`${getURL()}/grants/`}
-          og={ASSET_URL + `/og/grants.png`}
+          og={OG_IMAGES_URL + `/og/grants.png`}
         />
       }
     >

@@ -4,7 +4,7 @@ import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { ASSET_URL, OG_IMAGES_URL } from '@/constants/ASSET_URL';
 import { CHAIN_NAME, PROJECT_NAME } from '@/constants/project';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -60,7 +60,7 @@ export default function Radar() {
           title={`Radar | ${PROJECT_NAME}`}
           description={`Build a project for the latest ${CHAIN_NAME} global hackathon!`}
           canonical={`${getURL()}/hackathon/${slug}`}
-          og={ASSET_URL + `/og/hackathon/${slug}.png`}
+          og={OG_IMAGES_URL + `/og/hackathon/${slug}.png`}
         />
       }
     >

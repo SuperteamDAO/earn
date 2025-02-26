@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import type { NextPageContext } from 'next';
 
-import { ASSET_URL } from '@/constants/ASSET_URL';
+import { OG_IMAGES_URL } from '@/constants/ASSET_URL';
 import { PROJECT_NAME } from '@/constants/project';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
@@ -37,7 +37,7 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
         title={title}
         description={metaDescription}
         canonical={canonicalURL}
-        og={ASSET_URL + `/og/categories/${slug}.png`}
+        og={OG_IMAGES_URL + `/og/categories/${slug}.png`}
       />
       <div className="w-full">
         <ListingTabs
