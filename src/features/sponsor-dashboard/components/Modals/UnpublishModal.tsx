@@ -112,7 +112,7 @@ export const UnpublishModal = ({
               dialogContent.header
             )}
           </DialogTitle>
-          <DialogDescription className="text-slate-500">
+          <DialogDescription className="pt-2 text-slate-500">
             {isFetching ? (
               <div className="flex flex-col gap-1">
                 <Skeleton className="h-2 w-full" />

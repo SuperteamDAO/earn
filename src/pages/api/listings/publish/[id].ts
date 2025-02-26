@@ -151,7 +151,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     let isVerifying = false;
 
-    if (isPublished) {
+    if (isPublished && !listing.publishedAt) {
       publishedAt = new Date();
       logger.debug(
         `Checking verification status for sponsor ${userSponsorId} and user ${userId}`,

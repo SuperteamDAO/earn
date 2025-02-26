@@ -7,7 +7,6 @@ import React from 'react';
 import { MdLock } from 'react-icons/md';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { LocalImage } from '@/components/ui/local-image';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -22,6 +21,7 @@ import { getListingIcon } from '../../utils/getListingIcon';
 import { ListingTabLink } from './ListingTabLink';
 import { RegionLabel } from './RegionLabel';
 import { ListingHeaderSeparator } from './Separator';
+import { ShareListing } from './ShareListing';
 import { StatusBadge } from './StatusBadge';
 import { SubscribeListing } from './SubscribeListing';
 
@@ -148,11 +148,13 @@ export function ListingHeader({
         <ListingHeaderSeparator />
         {isHackathon ? (
           <div className="flex items-center">
-            <ExternalImage
-              className="h-[1rem]"
-              alt={type}
-              src={Hackathon?.altLogo!}
-            />
+            <Link href={`/hackathon/${Hackathon?.slug}`}>
+              <img
+                className="h-[1rem]"
+                alt={type}
+                src={Hackathon?.logo || Hackathon?.altLogo || ''}
+              />
+            </Link>
           </div>
         ) : (
           <div className="flex">
@@ -221,7 +223,12 @@ export function ListingHeader({
           </div>
         </div>
         {listing.id && (
-          <SubscribeListing isTemplate={isTemplate} id={listing.id} />
+          <div className="flex items-center gap-2">
+            <SubscribeListing isTemplate={isTemplate} id={listing.id} />
+            <div className="hidden md:block">
+              <ShareListing listing={listing} />
+            </div>
+          </div>
         )}
       </div>
       <div className="mb-5 flex w-full flex-col gap-1 md:hidden">
