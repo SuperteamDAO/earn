@@ -1,12 +1,15 @@
 import { type ListingFormData, type ListingStatus } from '../types';
+import { calculateTotalPrizes } from './rewards';
 
 export const listingToStatus = (listing: ListingFormData): ListingStatus => {
   if (listing.status === 'OPEN') {
     if (listing.isPublished) {
       if (listing.isWinnersAnnounced) {
         if (
-          listing.totalWinnersSelected &&
-          listing.totalWinnersSelected !== listing.totalPaymentsMade
+          calculateTotalPrizes(
+            listing?.rewards ?? {},
+            listing?.maxBonusSpots || 0,
+          ) !== listing.totalPaymentsMade
         ) {
           return 'payment pending';
         } else {
@@ -23,6 +26,9 @@ export const listingToStatus = (listing: ListingFormData): ListingStatus => {
     }
   } else if (listing.status === 'VERIFYING') {
     return 'verifying';
+  } else if (listing.status === 'VERIFY_FAIL') {
+    return 'verification failed';
   }
-  return 'draft';
+  if (!listing.status) return 'draft';
+  return 'blocked';
 };

@@ -39,7 +39,7 @@ export function Pagination({ page, setPage, count }: Props) {
             onClick={() => debouncedHandleClick(i)}
             variant="outline"
           >
-            {i}
+            <span>{i}</span>
           </Button>,
         );
       } else if (i === page - 2 || i === page + 2) {

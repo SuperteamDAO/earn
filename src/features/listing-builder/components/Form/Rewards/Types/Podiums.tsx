@@ -51,26 +51,6 @@ export const Podiums = () => {
     }
   }, []);
 
-  useEffect(() => {
-    // react hook form has a bug that saves rewards as array when single item instead of object
-    if (Array.isArray(rewards)) {
-      const rewardsObject = rewards.reduce((acc, value, index) => {
-        acc[index] = value;
-        return acc;
-      }, {});
-      form.setValue('rewards', rewardsObject);
-    }
-  }, [rewards, form]);
-
-  const rewardPositions = useMemo(
-    () =>
-      Object.keys(rewards)
-        .map(Number)
-        .filter((pos) => pos !== BONUS_REWARD_POSITION)
-        .sort((a, b) => a - b),
-    [rewards],
-  );
-
   const updateTotalReward = useCallback(
     (currentRewards: Record<string, number>, newMaxBonusSpots?: number) => {
       const totalRewards = calculateTotalRewardsForPodium(
@@ -82,6 +62,52 @@ export const Podiums = () => {
       form.saveDraft();
     },
     [form, maxBonusSpots],
+  );
+
+  useEffect(() => {
+    // react hook form has a bug that saves rewards as array when single item instead of object
+    if (Array.isArray(rewards)) {
+      const rewardsObject = rewards.reduce((acc, value, index) => {
+        acc[index] = value;
+        return acc;
+      }, {});
+      form.setValue('rewards', rewardsObject);
+    }
+  }, [rewards, form]);
+
+  useEffect(() => {
+    if (Object.keys(rewards).length > 0) {
+      const positions = Object.keys(rewards)
+        .map(Number)
+        .filter((pos) => pos !== BONUS_REWARD_POSITION)
+        .sort((a, b) => a - b);
+
+      const needsReindex = positions.some((pos, index) => pos !== index + 1);
+
+      if (needsReindex) {
+        const reindexedRewards = Object.entries(rewards).reduce(
+          (acc, [key, value]) => {
+            const pos = Number(key);
+            if (pos === BONUS_REWARD_POSITION) return { ...acc, [key]: value };
+            const newPos = positions.indexOf(pos) + 1;
+            return { ...acc, [newPos]: value };
+          },
+          {},
+        );
+
+        form.setValue('rewards', reindexedRewards);
+        updateTotalReward(reindexedRewards);
+      }
+    }
+  }, [rewards, form, updateTotalReward]);
+
+  const rewardPositions = useMemo(
+    () =>
+      Object.keys(rewards)
+        .map(Number)
+        .filter((pos) => pos !== BONUS_REWARD_POSITION)
+        .sort((a, b) => a - b),
+    [rewards],
   );
 
   const addReward = useCallback(() => {
@@ -310,7 +336,7 @@ export const Podiums = () => {
                   className="flex items-center gap-2 px-0 text-[0.9rem]"
                 >
                   <Plus className="h-4 w-4" />
-                  Add Individual Position
+                  <span>Add Individual Position</span>
                 </Button>
               )}
 
@@ -323,7 +349,7 @@ export const Podiums = () => {
                   className="ml-auto flex items-center gap-2 px-0 text-[0.9rem] text-slate-500"
                 >
                   <Plus className="h-4 w-4" />
-                  Add Bonus Prize
+                  <span>Add Bonus Prize</span>
                 </Button>
               )}
             </div>

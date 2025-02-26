@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
+import { useUser } from '@/store/user';
 
 import { SignIn } from '@/features/auth/components/SignIn';
 import {
@@ -18,6 +19,7 @@ export default function SignupPage() {
   const router = useRouter();
   const { authenticated } = usePrivy();
   const [isNavigating, setIsNavigating] = useState(false);
+  const { refetchUser } = useUser();
 
   const { invite } = router.query;
   const cleanToken =
@@ -27,10 +29,13 @@ export default function SignupPage() {
     verifyInviteQuery(cleanToken),
   );
 
+  console.log('inviteDetails', invite);
+
   const acceptInviteMutation = useMutation({
     mutationFn: acceptInvite,
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("You've successfully joined the sponsor's dashboard.");
+      await refetchUser();
       setIsNavigating(true);
       router.push('/dashboard/listings');
     },
@@ -53,6 +58,24 @@ export default function SignupPage() {
     }
   }, [error]);
 
+  useEffect(() => {
+    const handleRouteChange = (
+      url: string,
+      { shallow }: { shallow: boolean },
+    ) => {
+      console.log('Route changing to:', url);
+      console.log('Shallow routing:', shallow);
+      console.log('Current query params:', router.query);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    // Cleanup listener
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router]);
+
   if (error) {
     return (
       <div className="container flex justify-center">
@@ -70,7 +93,7 @@ export default function SignupPage() {
   return (
     <div className="container mx-auto flex max-w-xl justify-center">
       <div className="mt-10 w-full rounded-lg border border-gray-200 bg-white px-20 pb-40 pt-20 shadow-lg">
-        <div className="flex flex-col items-center space-y-0">
+        <div className="flex flex-col items-center">
           <p className="text-center text-2xl font-medium text-slate-600">
             Welcome to Superteam Earn
           </p>
@@ -78,34 +101,42 @@ export default function SignupPage() {
             Start your journey to access top global talent!
           </p>
 
-          <LocalImage
-            className="mt-12 h-20 w-20 rounded sm:mr-5"
-            alt={inviteDetails?.sponsorName!}
-            src={inviteDetails?.sponsorLogo!}
-          />
+          <div>
+            <LocalImage
+              className="my-5 block h-20 w-20 rounded"
+              alt={inviteDetails?.sponsorName!}
+              src={inviteDetails?.sponsorLogo!}
+            />
+          </div>
 
-          <p className="my-5 text-center font-medium leading-6 text-slate-500">
+          <p className="text-center font-medium leading-6 text-slate-500">
             {inviteDetails?.senderName} has invited you to join <br />
             {inviteDetails?.sponsorName}
           </p>
 
-          {!authenticated ? (
-            <div className="mt-12 w-full">
-              <p className="mb-4 text-center font-medium text-slate-500">
-                Please sign in to accept the invitation:
-              </p>
-              <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
-            </div>
-          ) : (
-            <Button
-              className="mt-4"
-              disabled={acceptInviteMutation.isPending || isNavigating}
-              onClick={handleAcceptInvite}
-              size="lg"
-            >
-              Accept Invite
-            </Button>
-          )}
+          <div>
+            {!authenticated ? (
+              <div className="mt-6 w-full">
+                <p className="mb-4 text-center font-medium text-slate-500">
+                  Please sign in to accept the invitation:
+                </p>
+                <SignIn loginStep={loginStep} setLoginStep={setLoginStep} />
+              </div>
+            ) : (
+              <Button
+                className="mt-4"
+                disabled={
+                  !inviteDetails ||
+                  acceptInviteMutation.isPending ||
+                  isNavigating
+                }
+                onClick={handleAcceptInvite}
+                size="lg"
+              >
+                Accept Invite
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

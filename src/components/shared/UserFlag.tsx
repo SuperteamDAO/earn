@@ -4,7 +4,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { countries } from '@/constants/country';
 import { cn } from '@/utils/cn';
 
-import '/node_modules/flag-icons/css/flag-icons.min.css';
+import 'flag-icons/css/flag-icons.min.css';
 
 type FlagSize =
   | '12px'

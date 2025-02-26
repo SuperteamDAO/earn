@@ -30,12 +30,14 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
   const posthog = usePostHog();
 
   const { state, sendCode, loginWithCode } = useLoginWithEmail({
-    onComplete: async ({ isNewUser, user }) => {
+    onComplete: async ({ isNewUser, user, wasAlreadyAuthenticated }) => {
       if (isNewUser) {
         await handleUserCreation(user.email?.address || '');
       }
       const url = new URL(redirectTo || router.asPath, window.location.origin);
-      url.searchParams.set('loginState', 'signedIn');
+      if (!wasAlreadyAuthenticated) {
+        url.searchParams.set('loginState', 'signedIn');
+      }
       if (redirectTo) url.searchParams.set('originUrl', router.asPath);
       router.push(url.toString());
     },
@@ -157,7 +159,7 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
         disabled={isLoading}
         onClick={handleEmailSignIn}
       >
-        {isLoading ? 'Loading...' : 'Continue with Email'}
+        {isLoading ? <span>Loading...</span> : <span>Continue with Email</span>}
       </Button>
       {emailError && (
         <p className="mt-2 text-center text-xs leading-[0.9rem] text-red-500">

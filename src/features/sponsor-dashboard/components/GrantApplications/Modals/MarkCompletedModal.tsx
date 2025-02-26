@@ -102,10 +102,10 @@ export function MarkCompleteModal({
             {markCompletePending ? (
               <>
                 <span className="loading loading-spinner" />
-                Marking...
+                <span>Marking...</span>
               </>
             ) : (
-              'Mark as Completed'
+              <span>Mark as Completed</span>
             )}
           </Button>
         </AlertDialogFooter>

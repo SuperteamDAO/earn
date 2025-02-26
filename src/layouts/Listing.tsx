@@ -198,7 +198,7 @@ export function ListingPageLayout({
                           <ExternalLink className="mx-1 mb-1 inline h-3 w-3 text-[#64768b]" />
                         </Link>
                         <span className="text-xs text-slate-500">
-                          if you have any questions about this listing
+                          if you have any questions about this initialBounty
                         </span>
                       </p>
                     </div>

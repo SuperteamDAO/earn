@@ -10,60 +10,58 @@ datasource db {
 }
 
 model Bounties {
-  id                   String             @id @default(uuid())
-  title                String
-  slug                 String             @unique
-  description          String?            @db.LongText
-  deadline             DateTime?
-  eligibility          Json?
-  status               status             @default(OPEN)
-  token                String?
-  rewardAmount         Float?
-  rewards              Json?
-  maxBonusSpots        Int                @default(0)
-  usdValue             Float?
-  sponsorId            String
-  pocId                String
-  source               Source             @default(NATIVE)
-  isPublished          Boolean            @default(false)
-  isFeatured           Boolean            @default(false)
-  isActive             Boolean            @default(true)
-  isArchived           Boolean            @default(false)
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-  applicationLink      String?
-  skills               Json?
-  type                 BountyType         @default(bounty)
-  requirements         String?            @db.Text
-  totalPaymentsMade    Int?               @default(0)
-  totalWinnersSelected Int?               @default(0)
-  isWinnersAnnounced   Boolean            @default(false)
-  templateId           String?
-  region               String             @default("GLOBAL")
-  pocSocials           String?
-  hackathonprize       Boolean            @default(false)
-  applicationType      ApplicationType    @default(fixed)
-  timeToComplete       String?
-  references           Json?
-  referredBy           String?
-  publishedAt          DateTime?
-  isPrivate            Boolean            @default(false)
-  hackathonId          String?
-  compensationType     CompensationType   @default(fixed)
-  maxRewardAsk         Int?
-  minRewardAsk         Int?
-  template             BountiesTemplates? @relation(fields: [templateId], references: [id])
-  sponsor              Sponsors           @relation(fields: [sponsorId], references: [id])
-  poc                  User               @relation("poc", fields: [pocId], references: [id])
-  language             String?
-  shouldSendEmail      Boolean            @default(true)
-  isFndnPaying         Boolean            @default(false)
-  Submission           Submission[]
-  SubscribeBounty      SubscribeBounty[]
-  Hackathon            Hackathon?         @relation(fields: [hackathonId], references: [id])
-  winnersAnnouncedAt   DateTime?
-  Scouts               Scouts[]
-  Comments             Comment[]
+  id                 String             @id @default(uuid())
+  title              String
+  slug               String             @unique
+  description        String?            @db.LongText
+  deadline           DateTime?
+  eligibility        Json?
+  status             status             @default(OPEN)
+  token              String?
+  rewardAmount       Float?
+  rewards            Json?
+  maxBonusSpots      Int                @default(0)
+  usdValue           Float?
+  sponsorId          String
+  pocId              String
+  source             Source             @default(NATIVE)
+  isPublished        Boolean            @default(false)
+  isFeatured         Boolean            @default(false)
+  isActive           Boolean            @default(true)
+  isArchived         Boolean            @default(false)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  applicationLink    String?
+  skills             Json?
+  type               BountyType         @default(bounty)
+  requirements       String?            @db.Text
+  isWinnersAnnounced Boolean            @default(false)
+  templateId         String?
+  region             String             @default("GLOBAL")
+  pocSocials         String?
+  hackathonprize     Boolean            @default(false)
+  applicationType    ApplicationType    @default(fixed)
+  timeToComplete     String?
+  references         Json?
+  referredBy         String?
+  publishedAt        DateTime?
+  isPrivate          Boolean            @default(false)
+  hackathonId        String?
+  compensationType   CompensationType   @default(fixed)
+  maxRewardAsk       Int?
+  minRewardAsk       Int?
+  template           BountiesTemplates? @relation(fields: [templateId], references: [id])
+  sponsor            Sponsors           @relation(fields: [sponsorId], references: [id])
+  poc                User               @relation("poc", fields: [pocId], references: [id])
+  language           String?
+  shouldSendEmail    Boolean            @default(true)
+  isFndnPaying       Boolean            @default(false)
+  Submission         Submission[]
+  SubscribeBounty    SubscribeBounty[]
+  Hackathon          Hackathon?         @relation(fields: [hackathonId], references: [id])
+  winnersAnnouncedAt DateTime?
+  Scouts             Scouts[]
+  Comments           Comment[]
 
   @@index([id, slug])
   @@index([sponsorId])

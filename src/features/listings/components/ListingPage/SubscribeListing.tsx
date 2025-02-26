@@ -85,7 +85,7 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
           <Button
             className={cn(
               'ph-no-capture gap-2 border-slate-300 font-medium text-slate-500 hover:bg-brand-purple hover:text-white',
-              'w-8 p-0 md:w-auto md:px-4',
+              'w-auto p-0 px-3',
             )}
             variant="outline"
             disabled={isTemplate}
@@ -104,12 +104,14 @@ export const SubscribeListing = ({ id, isTemplate = false }: Props) => {
             ) : (
               <TbBell />
             )}
-            <span className="hidden md:inline">
-              {isSubscribeLoading
-                ? 'Subscribing'
-                : isSubscribed
-                  ? 'Subscribed'
-                  : 'Subscribe'}
+            <span className="hidden">
+              {isSubscribeLoading ? (
+                <span>Subscribing</span>
+              ) : isSubscribed ? (
+                <span>Subscribed</span>
+              ) : (
+                <span>Subscribe</span>
+              )}
             </span>
           </Button>
         </AuthWrapper>

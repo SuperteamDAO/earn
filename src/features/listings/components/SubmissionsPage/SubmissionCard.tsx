@@ -123,7 +123,7 @@ export const SubmissionCard = ({
                 : 'fill-rose-600 text-rose-600',
             )}
           />
-          {likes?.length}
+          <span>{likes?.length}</span>
         </Button>
         <Link href={`/feed/submission/${id}`}>
           <MessageCircle

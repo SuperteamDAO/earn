@@ -70,8 +70,10 @@ export const FilterSection = ({
             size="sm"
             variant="outline"
           >
-            Filter By Skills
-            {selectedSkillsCount > 0 ? ` (${selectedSkillsCount})` : ''}
+            <span>Filter By Skills</span>
+            <span>
+              {selectedSkillsCount > 0 ? ` (${selectedSkillsCount})` : ''}
+            </span>
             <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
@@ -91,7 +93,7 @@ export const FilterSection = ({
                   checked={checkedItems[skill] || false}
                   onCheckedChange={() => handleCheckboxChange(skill)}
                 />
-                {skill}
+                <span>{skill}</span>
               </div>
             </DropdownMenuItem>
           ))}
@@ -121,12 +123,12 @@ export const FilterSection = ({
         {exportMutation.isPending ? (
           <>
             <span className="loading loading-spinner mr-2" />
-            Exporting...
+            <span>Exporting...</span>
           </>
         ) : (
           <>
             <Download className="mr-2 h-4 w-4" />
-            Export CSV
+            <span>Export CSV</span>
           </>
         )}
       </Button>

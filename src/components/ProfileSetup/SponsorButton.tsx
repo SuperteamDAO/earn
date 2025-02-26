@@ -26,11 +26,11 @@ export function SponsorButton({
         disabled={isLoading}
       >
         {isLoading ? (
-          'Redirecting...'
+          <span>Redirecting...</span>
         ) : (
-          <>
+          <span>
             Continue as a Sponsor <span className="ml-1">-&gt;</span>
-          </>
+          </span>
         )}
       </Button>
     </>

@@ -23,6 +23,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getRankLabels } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
+import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { listingSubmissionsQuery } from '@/features/listings/queries/submissions';
 import { type ListingWithSubmissions } from '@/features/listings/types';
 
@@ -61,6 +62,10 @@ export const VerifyPaymentModal = ({
     }),
     enabled: !!listing?.slug,
   });
+  const totalWinnerRanks = calculateTotalPrizes(
+    listing?.rewards ?? {},
+    listing?.maxBonusSpots || 0,
+  );
 
   useEffect(() => {
     setStatus('idle');
@@ -291,7 +296,7 @@ export const VerifyPaymentModal = ({
               </p>
             </div>
 
-            {listing?.totalPaymentsMade !== listing?.totalWinnersSelected && (
+            {listing?.totalPaymentsMade !== totalWinnerRanks && (
               <Button
                 className="bg-none text-sm font-normal underline"
                 onClick={tryAgain}

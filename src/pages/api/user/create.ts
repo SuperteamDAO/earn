@@ -5,7 +5,6 @@ import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
-import { handleInviteAcceptance } from '@/features/auth/utils/handleInvite';
 
 export default async function newUser(
   req: NextApiRequest,
@@ -36,24 +35,27 @@ export default async function newUser(
     });
 
     logger.debug(`Created new user with ID: ${user.id}`);
-
-    const invite = await prisma.userInvites.findFirst({
-      where: { email: user.email },
-      orderBy: { createdAt: 'desc' },
+    return res.status(200).json({
+      message: `Created new user with ID: ${user.id}`,
     });
 
-    const hasInvite = user && invite;
-
-    if (!hasInvite) {
-      logger.info('User does not have an invite, redirecting to onboarding');
-      return res.status(200).json({
-        message: 'User does not have an invite, redirecting to onboarding',
-      });
-    } else {
-      const result = await handleInviteAcceptance(user.id);
-      logger.info('User has an invite, redirecting to dashboard');
-      return res.status(307).redirect(result.redirectUrl!);
-    }
+    // const invite = await prisma.userInvites.findFirst({
+    //   where: { email: user.email },
+    //   orderBy: { createdAt: 'desc' },
+    // });
+    //
+    // const hasInvite = user && invite;
+    //
+    // if (!hasInvite) {
+    //   logger.info('User does not have an invite, redirecting to onboarding');
+    //   return res.status(200).json({
+    //     message: 'User does not have an invite, redirecting to onboarding',
+    //   });
+    // } else {
+    //   const result = await handleInviteAcceptance(user.id);
+    //   logger.info('User has an invite, redirecting to dashboard');
+    //   return res.status(307).redirect(result.redirectUrl!);
+    // }
   } catch (error: any) {
     logger.error(
       `Error occurred while creating new user: ${safeStringify(error)}`,

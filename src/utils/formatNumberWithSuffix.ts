@@ -3,7 +3,7 @@ export const formatNumberWithSuffix = (
   decimals: number = 2,
   skipThousands: boolean = false,
 ) => {
-  if (isNaN(amount)) return null;
+  if (!amount || isNaN(amount)) return '';
 
   if (amount < 1000) {
     return Number(amount?.toFixed(decimals)).toString();

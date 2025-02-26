@@ -2,6 +2,7 @@ import { useAtomValue } from 'jotai';
 import { Baseline, Info, Link2, Plus, Trash2 } from 'lucide-react';
 import { useEffect } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
+import TextareaAutosize from 'react-textarea-autosize';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,7 +13,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -23,7 +23,7 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
 
-import { hackathonAtom } from '../../atoms';
+import { hackathonAtom, isEditingAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
 
 const questionTypes = [
@@ -38,6 +38,7 @@ export function EligibilityQuestions() {
     name: 'type',
   });
   const hackathon = useAtomValue(hackathonAtom);
+  const isEditing = useAtomValue(isEditingAtom);
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -63,18 +64,24 @@ export function EligibilityQuestions() {
   };
 
   useEffect(() => {
-    if (type === 'project') {
-      if (fields.length === 0) {
-        handleAddQuestion(false);
-      }
-    } else {
-      if (type === 'hackathon' && hackathon?.eligibility) {
-        form.setValue('eligibility', hackathon?.eligibility as any);
+    if (!isEditing) {
+      if (type === 'project') {
+        if (fields.length === 0) {
+          handleAddQuestion(false);
+        }
       } else {
-        form.setValue('eligibility', []);
+        if (type === 'hackathon' && hackathon?.eligibility) {
+          form.setValue('eligibility', hackathon?.eligibility as any);
+        } else {
+          if (fields.length > 0) {
+            form.setValue('eligibility', fields.slice(0, 2));
+          } else {
+            form.setValue('eligibility', []);
+          }
+        }
       }
     }
-  }, [type, hackathon]);
+  }, [type, hackathon, isEditing]);
 
   return (
     <FormField
@@ -111,7 +118,7 @@ export function EligibilityQuestions() {
                       <FormLabel isRequired={type === 'project' && index === 0}>
                         Question {index + 1}
                       </FormLabel>
-                      <div className="flex items-center rounded-md border ring-primary has-[:focus]:ring-1">
+                      <div className="flex items-start rounded-md border ring-primary has-[:focus]:ring-1">
                         <FormField
                           control={form.control}
                           name={`eligibility.${index}.type`}
@@ -126,7 +133,7 @@ export function EligibilityQuestions() {
                                 }}
                               >
                                 <FormControl>
-                                  <SelectTrigger className="w-fit gap-1 rounded-none border-0 border-r focus:ring-0">
+                                  <SelectTrigger className="w-fit gap-1 rounded-none border-0 focus:ring-0">
                                     <SelectValue className="w-fit">
                                       {(() => {
                                         const selectedType = questionTypes.find(
@@ -163,17 +170,18 @@ export function EligibilityQuestions() {
                           control={form.control}
                           name={`eligibility.${index}.question`}
                           render={({ field }) => (
-                            <FormItem className="flex-1">
+                            <FormItem className="relative w-full border-l">
                               <FormControl>
-                                <Input
-                                  {...field}
+                                <TextareaAutosize
+                                  value={field.value}
                                   placeholder="Enter your question"
-                                  className="border-none focus-visible:ring-0"
+                                  minRows={1}
+                                  rows={1}
+                                  className="min-h-8 resize-none overflow-hidden border-none py-2 pl-2 text-sm placeholder:text-sm placeholder:text-slate-400 focus:outline-none focus:ring-0 focus-visible:ring-0"
                                   onChange={(e) => {
                                     field.onChange(e);
                                     form.saveDraft();
                                   }}
-                                  onBlur={() => null}
                                 />
                               </FormControl>
                             </FormItem>
@@ -193,7 +201,7 @@ export function EligibilityQuestions() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="hidden text-muted-foreground group-hover:flex hover:text-destructive"
+                            className="invisible flex p-2 text-muted-foreground group-hover:visible hover:text-destructive"
                             onClick={() => handleRemoveQuestion(index)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -220,12 +228,12 @@ export function EligibilityQuestions() {
                   )}
                   onClick={() => handleAddQuestion()}
                 >
-                  <Plus /> Add Question
+                  <Plus /> <span>Add Question</span>
                 </Button>
               </div>
             ) : (
               <FormDescription>
-                Max two custom questions allow for bounties
+                Max two custom questions allowed for bounties
               </FormDescription>
             )}
           </div>

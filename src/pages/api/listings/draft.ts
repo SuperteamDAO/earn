@@ -62,18 +62,24 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(error.status).json({ error: error.message });
     }
 
-    const isBountyPublishedAlready = id
-      ? await prisma.bounties.findUnique({
-          where: {
-            id,
-            isPublished: true,
-          },
-        })
-      : false;
-    if (isBountyPublishedAlready) {
-      res.status(403).send({
+    if (listing?.isPublished === true) {
+      logger.warn('Published Listings are not allowed to be draft');
+      return res.status(403).send({
         error: 'Not Allowed',
-        message: ' Published Listings are not allowed to be draft',
+        message: 'Published Listings are not allowed to be draft',
+      });
+    }
+    if (
+      listing &&
+      listing?.status !== 'OPEN' &&
+      listing?.status !== 'VERIFYING'
+    ) {
+      logger.warn(
+        `Listing has status ${listing.status}, hence not allowed to edit`,
+      );
+      return res.status(403).send({
+        error: 'Not Allowed',
+        message: `Listing has status ${listing.status}, hence not allowed to edit`,
       });
     }
 

@@ -47,6 +47,7 @@ export default async function handler(
         },
         Hackathon: {
           select: {
+            logo: true,
             altLogo: true,
             startDate: true,
             name: true,

@@ -334,6 +334,7 @@ export const GrantApplicationModal = ({
                       formLabel="Your Telegram username"
                       control={form.control}
                       height="h-9"
+                      showIcon={false}
                     />
                   )}
                   <FormField
@@ -346,9 +347,18 @@ export const GrantApplicationModal = ({
                             Your Solana Wallet Address
                           </FormLabel>
                           <FormDescription>
-                            {isST
-                              ? 'This is where you will receive your rewards if you win. Make sure this address can accept both USDT & USDC.'
-                              : 'This is where you will receive your rewards if you win.'}
+                            {isST ? (
+                              <>
+                                This is where you will receive your rewards if
+                                you win.{' '}
+                                <span className="font-semibold">
+                                  Make sure this address can accept both USDT &
+                                  USDC.
+                                </span>
+                              </>
+                            ) : (
+                              'This is where you will receive your rewards if you win.'
+                            )}
                           </FormDescription>
                         </div>
                         <div>
@@ -485,10 +495,10 @@ export const GrantApplicationModal = ({
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Applying...
+                        <span>Applying...</span>
                       </>
                     ) : grantApplication ? (
-                      'Update'
+                      <span>Update</span>
                     ) : (
                       'Apply'
                     )}

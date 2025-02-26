@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
+import { useMemo } from 'react';
 import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
@@ -37,9 +38,20 @@ export const DesktopNavbar = ({
   const posthog = usePostHog();
   const { user } = useUser();
 
-  const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const maxWidth = isDashboardRoute ? 'max-w-full' : 'max-w-7xl';
-  const padding = isDashboardRoute ? 'pr-8 pl-6' : 'px-2 lg:px-6';
+  const isDashboardRoute = useMemo(
+    () => router.pathname.startsWith('/dashboard'),
+    [router.pathname],
+  );
+
+  const maxWidth = useMemo(
+    () => (isDashboardRoute ? 'max-w-full' : 'max-w-7xl'),
+    [isDashboardRoute],
+  );
+
+  const padding = useMemo(
+    () => (isDashboardRoute ? 'pr-8 pl-6' : 'px-2 lg:px-6'),
+    [isDashboardRoute],
+  );
 
   return (
     <div
@@ -129,7 +141,7 @@ export const DesktopNavbar = ({
                   asChild
                 >
                   <Link href="/dashboard/listings">
-                    Sponsor Dashboard
+                    <span>Sponsor Dashboard</span>
                     <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                   </Link>
                 </Button>
@@ -164,7 +176,7 @@ export const DesktopNavbar = ({
                     router.push('/sponsor');
                   }}
                 >
-                  Become a Sponsor
+                  <span>Become a Sponsor</span>
                   <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                 </Button>
                 <Button

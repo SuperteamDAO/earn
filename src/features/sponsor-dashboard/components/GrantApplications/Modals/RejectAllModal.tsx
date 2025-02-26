@@ -64,7 +64,7 @@ export const RejectAllGrantApplicationModal = ({
             {loading ? (
               <>
                 <span className="loading loading-spinner mr-2" />
-                Rejecting
+                <span>Rejecting</span>
               </>
             ) : (
               <>

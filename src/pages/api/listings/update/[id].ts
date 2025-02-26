@@ -20,6 +20,7 @@ import {
   createListingFormSchema,
   createListingRefinements,
 } from '@/features/listing-builder/types/schema';
+import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { fetchHistoricalTokenUSDValue } from '@/features/wallet/utils/fetchHistoricalTokenUSDValue';
 
@@ -195,13 +196,18 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       cleanedSkills: skillsToUpdate,
     });
     // Handle winners count update
-    const newRewardsCount = Object.keys(rewards || {}).length;
-    const currentTotalWinners = listing.totalWinnersSelected
-      ? listing.totalWinnersSelected - (maxBonusSpots ?? 0)
-      : 0;
-
-    let totalWinnersSelected = currentTotalWinners;
-    // handle selected winners update
+    const newRewardsCount = calculateTotalPrizes(rewards, 0);
+    const currentTotalWinners = await prisma.submission.count({
+      where: {
+        listingId: listing.id,
+        isWinner: true,
+        winnerPosition: {
+          gt: 0,
+          not: BONUS_REWARD_POSITION,
+        },
+      },
+    });
+    // handle selected non bonus winners update
     if (newRewardsCount < currentTotalWinners) {
       logger.info(
         'Atempting to reset selected winners since new total winners are less than previous',
@@ -211,7 +217,6 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           currentTotalWinners,
         },
       );
-      totalWinnersSelected = newRewardsCount;
 
       for (
         let position = newRewardsCount + 1;
@@ -336,7 +341,6 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       usdValue,
       language,
       isFndnPaying,
-      totalWinnersSelected,
       templateId: validatedData.templateId || null,
       id: validatedData.id || undefined,
       eligibility: validatedData.eligibility || [],

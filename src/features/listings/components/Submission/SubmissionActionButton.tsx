@@ -23,6 +23,7 @@ import {
   userRegionEligibilty,
 } from '../../utils/region';
 import { getListingDraftStatus } from '../../utils/status';
+import { ShareListing } from '../ListingPage/ShareListing';
 import { EasterEgg } from './EasterEgg';
 import { SubmissionDrawer } from './SubmissionDrawer';
 
@@ -238,7 +239,10 @@ export const SubmissionActionButton = ({
         />
       )}
 
-      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 bg-white px-3 py-4 md:static md:translate-x-0 md:px-0 md:py-0">
+      <div className="ph-no-capture fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 items-start gap-2 bg-white px-3 py-4 pt-2 md:static md:translate-x-0 md:px-0 md:py-0">
+        <div className="md:hidden">
+          <ShareListing className="h-12" listing={listing} />
+        </div>
         <AuthWrapper
           showCompleteProfileModal
           completeProfileModalBodyText={
@@ -271,12 +275,12 @@ export const SubmissionActionButton = ({
                 {isUserSubmissionLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {btnLoadingText}
+                    <span>{btnLoadingText}</span>
                   </>
                 ) : (
                   <>
                     {buttonState === 'edit' && <Pencil />}
-                    {buttonText}
+                    <span>{buttonText}</span>
                   </>
                 )}
               </Button>

@@ -194,11 +194,15 @@ export function WithdrawFundsFlow({
     } catch (e) {
       posthog.capture('withdraw_failed');
       console.error('Withdrawal failed:', e);
-      log.error(`Withdrawal failed: ${e}`);
+      log.error(
+        `Withdrawal failed: ${e}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.address}, token: ${values.tokenAddress}`,
+      );
 
       const errorMessage =
         e instanceof Error
-          ? e.message
+          ? e.message === 'MFA canceled' || e.message === 'MFA cancelled'
+            ? 'Please complete two-factor authentication to withdraw'
+            : e.message
           : 'Transaction failed. Please try again.';
       setError(errorMessage);
       toast.error(errorMessage);

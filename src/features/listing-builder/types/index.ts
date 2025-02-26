@@ -11,4 +11,6 @@ export type ListingStatus =
   | 'unpublished'
   | 'verifying'
   | 'payment pending'
-  | 'completed';
+  | 'completed'
+  | 'verification failed'
+  | 'blocked';

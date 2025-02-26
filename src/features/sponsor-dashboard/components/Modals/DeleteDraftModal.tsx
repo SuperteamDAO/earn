@@ -88,12 +88,12 @@ export const DeleteDraftModal = ({
             {deleteMutation.isPending ? (
               <>
                 <span className="loading loading-spinner mr-2" />
-                Deleting...
+                <span>Deleting...</span>
               </>
             ) : (
               <>
                 <Trash2 className="mr-2 h-4 w-4" />
-                Confirm
+                <span>Confirm</span>
               </>
             )}
           </Button>

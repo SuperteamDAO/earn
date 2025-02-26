@@ -28,7 +28,7 @@ export const SignIn = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const { initOAuth } = useLoginWithOAuth({
-    onComplete: async ({ isNewUser, user }) => {
+    onComplete: async ({ isNewUser, user, wasAlreadyAuthenticated }) => {
       if (isNewUser) {
         await handleUserCreation(user.google?.email || '');
       }
@@ -36,10 +36,19 @@ export const SignIn = ({
       if (redirectTo) {
         router.push(redirectTo);
       } else {
-        const currentPath = router.asPath.split('?')[0];
+        const currentPath = router.asPath;
         const url = new URL(window.location.origin + currentPath);
-        url.searchParams.set('loginState', 'signedIn');
-        router.replace(currentPath + (url.search || ''));
+
+        const privyParams = [
+          'privy_oauth_state',
+          'privy_oauth_provider',
+          'privy_oauth_code',
+        ];
+        privyParams.forEach((param) => url.searchParams.delete(param));
+        if (!wasAlreadyAuthenticated) {
+          url.searchParams.set('loginState', 'signedIn');
+        }
+        router.replace(url.toString());
       }
     },
   });
@@ -70,7 +79,11 @@ export const SignIn = ({
                   disabled={isLoading}
                 >
                   <GoogleIcon />
-                  {isLoading ? 'Connecting...' : 'Continue with Google'}
+                  {isLoading ? (
+                    <span>Connecting...</span>
+                  ) : (
+                    <span>Continue with Google</span>
+                  )}
                 </Button>
 
                 <div className="my-3 flex w-full items-center gap-4">
@@ -86,7 +99,7 @@ export const SignIn = ({
                   onClick={() => setLoginStep(1)}
                 >
                   <MdOutlineEmail className="mr-2" />
-                  Continue with Email
+                  <span>Continue with Email</span>
                 </Button>
               </div>
             )}

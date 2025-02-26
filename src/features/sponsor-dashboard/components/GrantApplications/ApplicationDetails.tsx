@@ -314,7 +314,7 @@ export const ApplicationDetails = ({
                   </div>
                 </Tooltip>
               )}
-              {selectedApplication?.user.publicKey && (
+              {selectedApplication?.walletAddress && (
                 <Tooltip
                   content={'Click to copy'}
                   contentProps={{ side: 'right' }}
@@ -325,11 +325,11 @@ export const ApplicationDetails = ({
                     onClick={handleCopyPublicKey}
                     role="button"
                     tabIndex={0}
-                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.user.publicKey || '', 3)}`}
+                    aria-label={`Copy public key: ${truncatePublicKey(selectedApplication.walletAddress, 3)}`}
                   >
                     <MdOutlineAccountBalanceWallet />s
                     <p>
-                      {truncatePublicKey(selectedApplication.user.publicKey, 3)}
+                      {truncatePublicKey(selectedApplication.walletAddress, 3)}
                     </p>
                   </div>
                 </Tooltip>
@@ -379,6 +379,21 @@ export const ApplicationDetails = ({
                   </p>
                 </div>
               </div>
+
+              {grant?.sponsor?.st && (
+                <div className="mb-4">
+                  <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
+                    SUPERTEAM MEMBER?
+                  </p>
+                  <p className="whitespace-nowrap text-sm font-medium text-slate-600">
+                    {selectedApplication?.user.superteamLevel?.includes(
+                      'Superteam',
+                    )
+                      ? `Yes (${selectedApplication?.user.superteamLevel})`
+                      : `No`}
+                  </p>
+                </div>
+              )}
 
               <div className="mb-4">
                 <div className="mb-1 text-xs font-semibold uppercase text-slate-400">

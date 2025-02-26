@@ -70,7 +70,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id },
       data: {
         isPublished: false,
-        totalWinnersSelected: 0,
       },
     });
     await prisma.submission.updateMany({

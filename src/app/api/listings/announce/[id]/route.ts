@@ -6,13 +6,13 @@ import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
-import { cleanRewards } from '@/utils/rank';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
+import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 import { type Rewards } from '@/features/listings/types';
 
 export const maxDuration = 300;
@@ -69,12 +69,24 @@ export async function POST(
       );
     }
 
-    const totalRewards = [
-      ...cleanRewards(listing?.rewards as Rewards, true),
-      ...Array(listing?.maxBonusSpots ?? 0).map(() => BONUS_REWARD_POSITION),
-    ].length;
+    const winners = await prisma.submission.findMany({
+      where: {
+        listingId: id,
+        isWinner: true,
+        isActive: true,
+        isArchived: false,
+      },
+      include: {
+        user: true,
+      },
+    });
 
-    if (!!totalRewards && listing?.totalWinnersSelected !== totalRewards) {
+    const totalRewards = calculateTotalPrizes(
+      listing.rewards as Rewards,
+      listing.maxBonusSpots,
+    );
+
+    if (!!totalRewards && winners.length !== totalRewards) {
       logger.warn(
         'All winners have not been selected before publishing the results',
       );
@@ -102,17 +114,6 @@ export async function POST(
     });
 
     const rewards: Rewards = (listing?.rewards || {}) as Rewards;
-    const winners = await prisma.submission.findMany({
-      where: {
-        listingId: id,
-        isWinner: true,
-        isActive: true,
-        isArchived: false,
-      },
-      include: {
-        user: true,
-      },
-    });
 
     const promises = [];
     let currentIndex = 0;
@@ -183,7 +184,9 @@ export async function POST(
             );
           };
 
-          const sortedWinners = winners.sort(sortSubmissions);
+          const sortedWinners = winners
+            .filter((s) => s.winnerPosition !== BONUS_REWARD_POSITION)
+            .sort(sortSubmissions);
 
           const extractedTags = sortedWinners
             .map((c, i) => {

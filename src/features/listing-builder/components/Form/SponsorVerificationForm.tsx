@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { MdPendingActions } from 'react-icons/md';
 import { toast } from 'sonner';
 import type * as z from 'zod';
@@ -25,9 +25,17 @@ import { useUser } from '@/store/user';
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { sponsorVerificationSchema } from '@/features/sponsor/utils/sponsorVerificationSchema';
 
+import { useListingForm } from '../../hooks';
+
 export const SponsorVerificationForm = () => {
   const { refetchUser } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const listingForm = useListingForm();
+  const id = useWatch({
+    control: listingForm.control,
+    name: 'id',
+  });
 
   const form = useForm<z.infer<typeof sponsorVerificationSchema>>({
     resolver: zodResolver(sponsorVerificationSchema),
@@ -36,6 +44,7 @@ export const SponsorVerificationForm = () => {
       fundingSource: '',
       telegram: '',
       commitToDeadline: undefined,
+      listingId: id || undefined,
     },
   });
 
@@ -188,7 +197,11 @@ export const SponsorVerificationForm = () => {
                     className="w-full"
                     disabled={isSubmitting || commitToDeadline !== 'yes'}
                   >
-                    {isSubmitting ? 'Submitting...' : 'Submit'}
+                    {isSubmitting ? (
+                      <span>Submitting...</span>
+                    ) : (
+                      <span>Submit</span>
+                    )}
                   </Button>
                 </div>
               </form>

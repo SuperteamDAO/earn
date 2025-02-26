@@ -51,7 +51,7 @@ export function SponsorLayout({
   children: ReactNode;
   isCollapsible?: boolean;
 }) {
-  const { user } = useUser();
+  const { user, isLoading: isUserLoading } = useUser();
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -119,10 +119,16 @@ export function SponsorLayout({
   }, [user]);
 
   useEffect(() => {
-    if (authenticated && !user?.currentSponsorId) {
+    if (
+      !isUserLoading &&
+      ready &&
+      authenticated &&
+      user &&
+      !user?.currentSponsorId
+    ) {
       router.push('/');
     }
-  }, [user, authenticated]);
+  }, [user, authenticated, ready, user, isUserLoading]);
 
   if (!ready) {
     return <LoadingSection />;
@@ -272,7 +278,7 @@ export function SponsorLayout({
                         : ['absolute -ml-[9999px] opacity-0'],
                     )}
                   >
-                    Create New Listing
+                    <span>Create New Listing</span>
                   </p>
                   {isCreateListingAllowed !== undefined &&
                     isCreateListingAllowed === false &&

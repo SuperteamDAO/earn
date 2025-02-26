@@ -18,7 +18,6 @@ type BountyGrant = {
   isPublished: boolean;
   rewards: any;
   rewardAmount: number | null;
-  totalWinnersSelected: number | null;
   totalPaymentsMade: number;
   isWinnersAnnounced: boolean | null;
   maxRewardAsk: number | null;
@@ -45,8 +44,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           b.isPublished,
           b.rewards,
           b.rewardAmount,
-          b.totalWinnersSelected,
-          b.totalPaymentsMade,
+          (SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id AND s.isPaid = 1) as totalPaymentsMade,
           b.isWinnersAnnounced,
           b.maxRewardAsk,
           b.minRewardAsk,
@@ -74,7 +72,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           g.isPublished,
           NULL as rewards,
           NULL as rewardAmount,
-          NULL as totalWinnersSelected,
           g.totalPaid as totalPaymentsMade,
           NULL as isWinnersAnnounced,
           g.maxReward as maxRewardAsk,
@@ -93,16 +90,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       )
       SELECT *
       FROM combined_data
-      ORDER BY 
-        CASE 
-          WHEN deadline IS NULL THEN 1 
-          ELSE 0 
-        END,
-        CASE 
-          WHEN deadline IS NOT NULL THEN ABS(DATEDIFF(deadline, CURDATE()))
-          ELSE NULL 
-        END ASC,
-        createdAt DESC
+      ORDER BY createdAt DESC
     `,
       userSponsorId,
       status.CLOSED,

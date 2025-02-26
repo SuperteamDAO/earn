@@ -15,5 +15,5 @@ export interface RowType {
   wins: number;
   winRate: number;
   skills: string[];
-  location?: string;
+  location?: string | null;
 }

@@ -121,7 +121,7 @@ export function Deadline() {
                       form.saveDraft();
                     }}
                   >
-                    {option.label}
+                    <span>{option.label}</span>
                   </Button>
                 ))}
               </div>

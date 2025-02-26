@@ -45,19 +45,27 @@ export function HomeBanner() {
   const { data } = useQuery(userCountQuery);
 
   return (
-    <div className="relative mx-auto my-3 h-[260px] max-h-[500px] w-full rounded-md p-5 md:h-[280px] md:p-10">
+    <div className="relative mx-auto my-3 w-full rounded-md p-5 md:p-10">
       <div className="absolute inset-0 overflow-hidden">
         <picture>
           <source media="(min-width: 40em)" srcSet={desktop} />
           <source media="(max-width: 40em)" srcSet={mobile} />
-          <img {...rest} className="h-full w-full" alt={common.alt} />
+          <img {...rest} className="h-full w-full" alt={rest.alt} />
         </picture>
       </div>
+      <div
+        className="absolute inset-0 bg-black/20 md:hidden"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute inset-0 hidden bg-black/10 md:block"
+        aria-hidden="true"
+      />
       <p className="relative z-10 text-2xl font-bold leading-[120%] text-white md:text-[28px]">
         Find Your Next High
         <br /> Paying Crypto Gig
       </p>
-      <p className="relative z-10 mt-2.5 max-w-full text-sm leading-[130%] text-white md:mt-4 md:max-w-[30rem] md:text-lg">
+      <p className="relative z-10 mt-2.5 max-w-full text-sm leading-[130%] text-white [text-shadow:_0_1px_2px_rgb(0_0_0_/1)] md:mt-4 md:max-w-[30rem] md:text-lg">
         Participate in bounties or apply to freelance gigs of world-class crypto
         companies, all with a single profile.
       </p>

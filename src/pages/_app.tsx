@@ -6,7 +6,13 @@ import { Router, useRouter } from 'next/router';
 import { PagesTopLoader } from 'nextjs-toploader';
 import posthog from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { toast } from 'sonner';
 
 import { useUser } from '@/store/user';
@@ -41,7 +47,7 @@ const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }: any) {
   const router = useRouter();
   const oldUrlRef = useRef('');
-  const { user } = useUser();
+  const { user, isLoading: isUserLoading } = useUser();
   const forcedRedirected = useRef(false);
 
   useEffect(() => {
@@ -77,6 +83,7 @@ function MyApp({ Component, pageProps }: any) {
       if (
         router.pathname.startsWith('/new') ||
         router.pathname.startsWith('/sponsor') ||
+        router.pathname.startsWith('/signup') ||
         !user
       )
         return;
@@ -104,14 +111,14 @@ function MyApp({ Component, pageProps }: any) {
   );
 
   useEffect(() => {
-    if (router.query.loginState === 'signedIn' && user) {
+    if (router.query.loginState === 'signedIn' && user && !isUserLoading) {
       posthog.identify(user.email);
       const url = new URL(window.location.href);
       url.searchParams.delete('loginState');
       window.history.replaceState(null, '', url.href);
       forcedProfileRedirect(); // instantly when just signed in
     }
-  }, [router, user, posthog]);
+  }, [router, user, posthog, isUserLoading]);
 
   // forced profile redirection
   useEffect(() => {
@@ -123,13 +130,27 @@ function MyApp({ Component, pageProps }: any) {
     loadRedirect();
   }, [user?.id]);
 
-  const isDashboardRoute = router.pathname.startsWith('/dashboard');
-  const walletListingRoute = router.pathname.startsWith('/listing');
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    // SSR doesnt work with Solana Wallet Provider - hence need to wrap only when fully loaded
+    // if SSR doesnt work, OG images also wont work
+    setIsLoaded(true);
+  }, []);
+
+  const isDashboardRoute = useMemo(
+    () => router.pathname.startsWith('/dashboard'),
+    [router.pathname],
+  );
+  const walletListingRoute = useMemo(
+    () => router.pathname.startsWith('/listing'),
+    [router.pathname],
+  );
 
   return (
     <>
       <PagesTopLoader color="#6366F1" showSpinner={false} />
-      {isDashboardRoute || walletListingRoute ? (
+      {isLoaded && (isDashboardRoute || walletListingRoute) ? (
         <SolanaWalletProvider>
           <Component {...pageProps} key={router.asPath} />
         </SolanaWalletProvider>
