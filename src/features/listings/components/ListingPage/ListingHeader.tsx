@@ -226,7 +226,7 @@ export function ListingHeader({
           <div className="flex items-center gap-2">
             <SubscribeListing isTemplate={isTemplate} id={listing.id} />
             <div className="hidden md:block">
-              <ShareListing listing={listing} />
+              <ShareListing source="listing" listing={listing} />
             </div>
           </div>
         )}

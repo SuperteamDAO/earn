@@ -92,6 +92,7 @@ export function GrantPageLayout({
           <div className="mx-auto w-full px-2 lg:px-6">
             <div className="mx-auto w-full max-w-7xl">
               <GrantsHeader
+                grant={grant}
                 title={grant?.title ?? ''}
                 sponsor={grant?.sponsor}
                 status={grant?.status}

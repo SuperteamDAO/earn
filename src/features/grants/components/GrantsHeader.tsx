@@ -9,9 +9,13 @@ import { PulseIcon } from '@/svg/pulse-icon';
 import { ListingTabLink } from '@/features/listings/components/ListingPage/ListingTabLink';
 import { RegionLabel } from '@/features/listings/components/ListingPage/RegionLabel';
 import { ListingHeaderSeparator } from '@/features/listings/components/ListingPage/Separator';
+import { ShareListing } from '@/features/listings/components/ListingPage/ShareListing';
 import { StatusBadge } from '@/features/listings/components/ListingPage/StatusBadge';
 
+import { type GrantWithApplicationCount } from '../types';
+
 interface Props {
+  grant: GrantWithApplicationCount;
   sponsor?: {
     name: string;
     logo: string;
@@ -25,6 +29,7 @@ interface Props {
   isPublished: boolean;
 }
 export const GrantsHeader = ({
+  grant,
   sponsor,
   title,
   status,
@@ -97,6 +102,9 @@ export const GrantsHeader = ({
               <RegionLabel region={region} isGrant />
             </div>
           </div>
+        </div>
+        <div className="hidden md:block">
+          <ShareListing source="grant" grant={grant} />
         </div>
       </div>
       <div className="flex h-10 w-full items-center">
