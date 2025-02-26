@@ -70,7 +70,6 @@ export const GrantApplicationModal = ({
         maxReward || 0,
         token || 'USDC',
         grant.questions,
-        user!,
       ),
     ),
     defaultValues: {
@@ -90,6 +89,7 @@ export const GrantApplicationModal = ({
       twitter: grantApplication?.twitter
         ? extractSocialUsername('twitter', grantApplication?.twitter) || ''
         : extractSocialUsername('twitter', user?.twitter || '') || '',
+      telegram: extractSocialUsername('telegram', user?.telegram || '') || '',
       answers:
         Array.isArray(questions) && questions.length > 0
           ? questions.map((q) => ({
@@ -225,7 +225,7 @@ export const GrantApplicationModal = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         hideCloseIcon
-        className="max-w-xl md:max-h-[90svh]"
+        className="max-w-xl pb-0 md:max-h-[90svh]"
         ref={modalRef}
       >
         <X
@@ -515,7 +515,7 @@ export const GrantApplicationModal = ({
               </div>
             </form>
           </Form>
-          <p className="-mt-1 w-full pb-6 text-center text-xs text-slate-400 sm:mt-1 sm:pb-0 sm:text-sm lg:mt-3">
+          <p className="-mt-1 w-full pb-6 text-center text-xs text-slate-400 sm:mt-1 sm:text-sm lg:mt-3">
             By applying for this grant, you agree to our{' '}
             <button
               onClick={() => setIsTOSModalOpen(true)}
