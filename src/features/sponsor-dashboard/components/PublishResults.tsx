@@ -139,7 +139,14 @@ export function PublishResults({
   }, [isWinnersAnnounced]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={() => {
+        if (isPublishingResults) return;
+        if (isWinnersAnnounced) return;
+        onClose();
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Publish Results</DialogTitle>
