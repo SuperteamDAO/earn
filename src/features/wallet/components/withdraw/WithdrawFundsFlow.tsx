@@ -207,7 +207,7 @@ export function WithdrawFundsFlow({
 
       if (e instanceof Error && e.message.includes('insufficient lamports')) {
         errorMessage =
-          'Transaction failed: please try sending your funds to an existing wallet that has been used before.';
+          'Transaction Failed: Sending to this wallet requires you to deposit a small amount of SOL (0.003 SOL) into your Earn wallet. Or, try sending your rewards to an existing wallet which has interacted with stablecoins before.';
       }
 
       setError(errorMessage);
