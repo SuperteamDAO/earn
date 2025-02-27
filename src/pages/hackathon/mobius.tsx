@@ -142,7 +142,7 @@ export default function Mobius({ hackathon }: { hackathon: Hackathon }) {
       }
     >
       <Hero START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
-      <div className="mx-auto mt-5 w-full max-w-5xl px-4 md:mt-24">
+      <div className="mx-auto mt-5 w-full max-w-5xl px-4 md:mt-24 xl:mt-28">
         <GrandPrize />
         <Tracks isHackathonOn={hackathonIsOn} />
         <FAQs />
