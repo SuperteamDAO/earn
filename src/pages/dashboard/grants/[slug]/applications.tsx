@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
+import { AiReviewFeatureModal } from '@/components/modals/AiReviewFeature';
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
@@ -540,6 +541,7 @@ function GrantApplications({ slug }: Props) {
         <LoadingSection />
       ) : (
         <>
+          <AiReviewFeatureModal grant={grant} />
           <ApplicationHeader grant={grant} applications={applications} />
           <Tabs defaultValue="applications">
             <TabsList className="gap-4 font-medium text-slate-400">
