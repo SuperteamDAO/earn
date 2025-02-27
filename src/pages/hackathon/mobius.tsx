@@ -169,16 +169,16 @@ function Hero({
     >
       <ExternalImage alt="Sonic" src={baseAsset('sonic')} className="w-28" />
       <p
-        className={`${orbitron.className} px-6 text-[2.5rem] font-medium leading-none md:mt-2 md:font-normal`}
+        className={`${orbitron.className} px-6 text-[2.5rem] font-medium leading-[2.84rem] md:mt-2 md:font-normal`}
       >
         Sonic Mobius Hackathon
       </p>
       <p
-        className={`${orbitron.className} mt-3 px-6 md:mt-2 md:text-lg md:font-medium`}
+        className={`${orbitron.className} mt-3 max-w-[18.5rem] px-6 md:mt-1 md:max-w-none md:text-lg md:font-medium`}
       >
         The first SVM hackathon on Solana
       </p>
-      <div className="mb-1 mt-12 flex flex-col items-center gap-4 md:mt-8">
+      <div className="mb-1 mt-8 flex w-full max-w-[18.5rem] flex-col items-center gap-4 md:mt-8 md:w-auto md:max-w-none">
         <div className={`${orbitron.className}`}>
           <p className="font-medium">
             {dayjs(START_DATE).format('MMM.DD, YYYY')} -{' '}
@@ -186,7 +186,7 @@ function Hero({
           </p>
         </div>
         <div
-          className={`${orbitron.className} flex w-full flex-col gap-2 sm:flex-row`}
+          className={`${orbitron.className} flex w-full flex-col gap-1 sm:flex-row`}
         >
           <Button
             variant="secondary"
