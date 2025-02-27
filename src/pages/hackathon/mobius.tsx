@@ -395,15 +395,15 @@ const TrackBox = ({
         </div>
       </div>
       <div className="mt-6 flex items-center justify-between gap-2 md:mt-10">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 md:gap-6">
           <p className="text-sm font-medium">Sponsored by</p>
-          <span className="flex flex-wrap items-center gap-4">
+          <span className="flex flex-wrap items-center gap-2 md:gap-4">
             {sponsors.map((s) => (
               <>
                 <ExternalImage
                   src={s.src || '/placeholder.svg'}
                   alt={s.name}
-                  className="h-5 w-5 object-contain"
+                  className="h-4 w-4 object-contain md:h-5 md:w-5"
                 />
               </>
             ))}
