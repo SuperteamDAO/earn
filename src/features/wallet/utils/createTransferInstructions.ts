@@ -25,23 +25,24 @@ export async function createTransferInstructions(
 ): Promise<TransactionInstruction[]> {
   const instructions: TransactionInstruction[] = [];
 
+  const sender = new PublicKey(userAddress);
+  const recipient = new PublicKey(values.address);
+  const tokenMint = new PublicKey(values.tokenAddress);
+
   if (values.tokenAddress === 'So11111111111111111111111111111111111111112') {
     instructions.push(
       SystemProgram.transfer({
-        fromPubkey: new PublicKey(userAddress),
-        toPubkey: new PublicKey(values.address),
+        fromPubkey: sender,
+        toPubkey: recipient,
         lamports: LAMPORTS_PER_SOL * Number(values.amount),
       }),
     );
   } else {
-    const senderATA = await getAssociatedTokenAddressSync(
-      new PublicKey(values.tokenAddress),
-      new PublicKey(userAddress),
-    );
+    const senderATA = await getAssociatedTokenAddressSync(tokenMint, sender);
 
     const receiverATA = await getAssociatedTokenAddressSync(
-      new PublicKey(values.tokenAddress),
-      new PublicKey(values.address),
+      tokenMint,
+      recipient,
     );
 
     const receiverATAExists = await connection.getAccountInfo(receiverATA);
@@ -53,10 +54,10 @@ export async function createTransferInstructions(
     if (!receiverATAExists) {
       instructions.push(
         createAssociatedTokenAccountInstruction(
-          new PublicKey(userAddress),
+          sender,
           receiverATA,
-          new PublicKey(values.address),
-          new PublicKey(values.tokenAddress),
+          recipient,
+          tokenMint,
         ),
       );
     }
@@ -65,7 +66,7 @@ export async function createTransferInstructions(
       createTransferInstruction(
         senderATA,
         receiverATA,
-        new PublicKey(userAddress),
+        sender,
         Number(values.amount) * 10 ** power,
       ),
     );
