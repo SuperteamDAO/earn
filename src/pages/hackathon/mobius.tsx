@@ -3,6 +3,7 @@ import {
   BarChartIcon as ChartNoAxesCombined,
   Brain,
   Gamepad2,
+  Info,
   type LucideIcon,
   Megaphone,
   Trophy,
@@ -22,6 +23,7 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
@@ -256,7 +258,12 @@ function HeroMini({
       <div
         className={`${orbitron.className} relative flex w-full items-center justify-center gap-8 rounded-md px-6 py-6 md:flex-row md:gap-12 md:rounded-xl md:px-16`}
       >
-        <MiniStat title={'Total Prizes'}>$1,000,000</MiniStat>
+        <MiniStat
+          title={'Total Prizes'}
+          infotipContent="Prizes will be distributed as follows: 50% in stablecoins and 10% in $SONIC, both sent to winners immediately. The remaining 40% will be awarded as locked $SONIC tokens with a 12-month vesting period."
+        >
+          $1,000,000
+        </MiniStat>
 
         <MiniStat className="hidden md:flex" title={'Tracks'}>
           4
@@ -292,10 +299,12 @@ function MiniStat({
   title,
   children,
   className,
+  infotipContent,
 }: {
   title: string;
   children: React.ReactNode;
   className?: string;
+  infotipContent?: string;
 }) {
   return (
     <div
@@ -304,9 +313,21 @@ function MiniStat({
         className,
       )}
     >
-      <p className="text-left text-sm font-medium text-gray-400 md:w-max md:text-base md:font-normal">
-        {title}
-      </p>
+      <span className="flex items-center gap-2">
+        <p className="text-left text-sm font-medium text-gray-400 md:w-max md:text-base md:font-normal">
+          {title}
+        </p>
+        {infotipContent && (
+          <Tooltip
+            content={infotipContent}
+            contentProps={{
+              className: 'w-3/4 md:w-auto',
+            }}
+          >
+            <Info className="h-3 w-3 text-slate-500" />
+          </Tooltip>
+        )}
+      </span>
       <p className="text-xl font-medium md:text-3xl">{children}</p>
     </div>
   );
