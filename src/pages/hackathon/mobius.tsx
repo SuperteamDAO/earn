@@ -323,7 +323,7 @@ function GrandPrize() {
           <span className="text-sm font-semibold text-slate-900 md:text-base">
             Grand Prize
           </span>
-          <span className="text-sm font-medium leading-[1.1] text-slate-500">
+          <span className="text-xs font-medium leading-[1.1] text-slate-500 md:text-sm">
             The best overall projects across all tracks, receiving recognition
             from both judges and the community.
           </span>
@@ -389,7 +389,7 @@ const TrackBox = ({
           <span className="text-sm font-semibold text-slate-900 md:text-base">
             {title}
           </span>
-          <span className="text-sm font-medium leading-[1.1] text-slate-500">
+          <span className="text-xs font-medium leading-[1.1] text-slate-500 md:text-sm">
             {subtext}
           </span>
         </div>
