@@ -189,14 +189,23 @@ function Hero({
           <Button
             variant="secondary"
             className="w-full rounded-xl text-base text-[#1E5871]"
+            asChild
           >
-            Register Now
+            <Link
+              href="https://sonicsvm.typeform.com/mobiushackathon"
+              target="_blank"
+            >
+              Register Now
+            </Link>
           </Button>
           <Button
             variant="ghost"
-            className="w-full rounded-xl text-base text-gray-300 underline"
+            className="w-full rounded-xl text-base text-gray-300 underline hover:bg-secondary"
+            asChild
           >
-            Find a Team
+            <Link href="https://t.me/+S_eelN_07xswYTdl" target="_blank">
+              Find a Team
+            </Link>
           </Button>
         </div>
       </div>
