@@ -227,8 +227,8 @@ function HeroMini({
   const [countdownDate, setCountdownDate] = useState<Date>(
     dayjs.utc(START_DATE).toDate(),
   );
-  const [status, setStatus] = useState<'Open In' | 'Close In' | 'Closed'>(
-    'Open In',
+  const [status, setStatus] = useState<'Start In' | 'Close In' | 'Closed'>(
+    'Start In',
   );
 
   useEffect(() => {
@@ -262,7 +262,11 @@ function HeroMini({
           4
         </MiniStat>
 
-        <MiniStat title={`Submissions ${status}`}>
+        <MiniStat
+          title={
+            isMd ? `Submissions ${status}` : mobileTitleForCountdown(status)
+          }
+        >
           {status !== 'Closed' ? (
             <Countdown
               date={countdownDate}
@@ -276,6 +280,12 @@ function HeroMini({
       </div>
     </>
   );
+}
+
+function mobileTitleForCountdown(status: 'Start In' | 'Close In' | 'Closed') {
+  if (status === 'Start In') return 'Starts In';
+  if (status === 'Close In') return 'Closes In';
+  return status;
 }
 
 function MiniStat({
