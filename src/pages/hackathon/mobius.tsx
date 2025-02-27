@@ -178,7 +178,7 @@ function Hero({
       >
         The first SVM hackathon on Solana
       </p>
-      <div className="mb-1 mt-12 flex flex-col items-center gap-6 md:mt-6">
+      <div className="mb-1 mt-12 flex flex-col items-center gap-4 md:mt-8">
         <div className={`${orbitron.className}`}>
           <p className="font-medium">
             {dayjs(START_DATE).format('MMM.DD, YYYY')} -{' '}
@@ -211,7 +211,7 @@ function Hero({
           </Button>
         </div>
       </div>
-      <div className="relative mt-2 flex w-full max-w-[90%] flex-col overflow-hidden rounded-2xl border-[1.14px] border-white/50 md:absolute md:bottom-[-20%] md:mt-0 md:w-fit md:flex-row">
+      <div className="relative mt-2 flex w-full max-w-[90%] flex-col overflow-hidden rounded-2xl border-[1.14px] border-white/50 md:absolute md:bottom-[-15%] md:mt-0 md:w-fit md:flex-row">
         <HeroMini START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
       </div>
     </div>
