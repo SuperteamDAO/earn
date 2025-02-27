@@ -22,8 +22,12 @@ export async function createTransferInstructions(
   values: WithdrawFormData,
   userAddress: string,
   selectedToken?: TokenAsset,
-): Promise<TransactionInstruction[]> {
+): Promise<{
+  instructions: TransactionInstruction[];
+  requiresATACreation: boolean;
+}> {
   const instructions: TransactionInstruction[] = [];
+  let requiresATACreation = false;
 
   const sender = new PublicKey(userAddress);
   const recipient = new PublicKey(values.address);
@@ -52,6 +56,7 @@ export async function createTransferInstructions(
     const power = tokenDetails?.decimals as number;
 
     if (!receiverATAExists) {
+      requiresATACreation = true;
       instructions.push(
         createAssociatedTokenAccountInstruction(
           sender,
@@ -77,5 +82,5 @@ export async function createTransferInstructions(
     );
   }
 
-  return instructions;
+  return { instructions, requiresATACreation };
 }
