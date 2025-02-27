@@ -13,6 +13,7 @@ import { totalsQuery } from '../queries/totals';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
+import { SidebarBanner } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
 
@@ -77,12 +78,14 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             TVE={totals?.totalInUSD}
           />
           <HowItWorks />
+          <SidebarBanner />
           <RecentEarners earners={recentEarners} />
           <RecentActivity />
         </>
       ) : (
         <>
           <HowItWorks />
+          <SidebarBanner />
           <RecentEarners earners={recentEarners} />
         </>
       )}

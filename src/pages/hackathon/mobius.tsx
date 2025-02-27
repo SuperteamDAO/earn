@@ -164,7 +164,7 @@ function Hero({
     <div
       className="relative flex w-full flex-col items-center border-b border-slate-200 bg-cover bg-center bg-no-repeat pb-6 pt-8 text-center text-white md:pb-20"
       style={{
-        backgroundImage: `url('${ASSET_URL + baseAsset(isMd ? 'banner' : 'banner-mobile')}')`,
+        backgroundImage: `url('${ASSET_URL + baseAsset(isMd ? 'banner' : 'banner-mobile-v2')}')`,
       }}
     >
       <ExternalImage alt="Sonic" src={baseAsset('sonic')} className="w-28" />
