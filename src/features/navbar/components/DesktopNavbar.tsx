@@ -118,10 +118,7 @@ export const DesktopNavbar = ({
                 })}
                 <Link
                   href={'/hackathon/mobius'}
-                  className={cn(
-                    'flex items-center py-2 font-medium',
-                    'h-8 lg:h-9',
-                  )}
+                  className={cn('flex items-center py-2 font-medium', 'h-8')}
                 >
                   <ExternalImage
                     alt="Mobius Logo"

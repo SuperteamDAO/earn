@@ -46,7 +46,7 @@ const tracks: TrackProps[] = [
     Icon: Megaphone,
     title: 'Attention Capital Market Track',
     subtext:
-      'User acquisition & content tokenization for social media platforms such as TikTok, X, IG, etc.',
+      'User acquisition & content tokenization across social media platforms such as TikTok, X, Instagram, etc.',
     slug: 'Attention-Capital-Market-Track',
     rewardAmount: 150_000,
     sponsors: [
@@ -58,7 +58,7 @@ const tracks: TrackProps[] = [
   },
   {
     Icon: ChartNoAxesCombined,
-    title: 'Defi Track',
+    title: 'DeFi Track',
     subtext:
       'Asset launchpad, trading bot, yield generating, lending, MEV, etc.',
     slug: 'defi-track',
@@ -324,7 +324,7 @@ function MiniStat({
               className: 'w-3/4 md:w-auto',
             }}
           >
-            <Info className="h-3 w-3 text-slate-500" />
+            <Info className="h-3 w-3 text-gray-400" />
           </Tooltip>
         )}
       </span>
@@ -345,8 +345,8 @@ function GrandPrize() {
             Grand Prize
           </span>
           <span className="pr-0 text-xs font-medium leading-[0.85rem] text-slate-500 md:text-sm md:leading-[1.0625rem]">
-            The best overall projects across all tracks, receiving recognition
-            from both judges and the community.
+            For the best overall project across all tracks, chosen by Mobius’
+            panel of top guests from the Solana ecosystem.
           </span>
         </div>
       </div>

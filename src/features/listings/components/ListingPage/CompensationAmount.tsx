@@ -12,6 +12,7 @@ interface CompensationAmountType {
   token?: string;
   className?: string;
   style?: React.CSSProperties;
+  showUsdSymbol?: boolean;
 }
 
 export const CompensationAmount = ({
@@ -22,6 +23,7 @@ export const CompensationAmount = ({
   token,
   className,
   style,
+  showUsdSymbol,
 }: CompensationAmountType) => {
   const Token = () => {
     return <span className="ml-1 text-slate-400">{token}</span>;
@@ -33,6 +35,7 @@ export const CompensationAmount = ({
         return (
           <>
             <span className="ml-auto">
+              {showUsdSymbol ? '$' : ''}
               {formatNumberWithSuffix(rewardAmount!, 2, true)}
             </span>
             <Token />
@@ -41,13 +44,19 @@ export const CompensationAmount = ({
       case 'range':
         return (
           <>
+            {showUsdSymbol ? '$' : ''}
             {`${formatNumberWithSuffix(minRewardAsk!)}-${formatNumberWithSuffix(maxRewardAsk!)}`}
             <Token />
           </>
         );
       case 'variable':
         if (token) {
-          return <>{token}</>;
+          return (
+            <>
+              {showUsdSymbol ? '$' : ''}
+              {token}
+            </>
+          );
         }
         return null;
       default:
