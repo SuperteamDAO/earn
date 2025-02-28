@@ -472,7 +472,7 @@ const faqs: { question: string; answer: string }[] = [
 
 function FAQs() {
   return (
-    <div className="mt-4 flex flex-col items-center px-4 py-8 md:mt-8">
+    <div className="mt-4 flex flex-col items-center px-1 py-8 md:mt-8">
       <h2 className="pb-2 text-4xl font-bold md:text-5xl">FAQ</h2>
       <div className="w-full max-w-[35rem]">
         <Accordion type="single" collapsible>
