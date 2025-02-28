@@ -46,7 +46,7 @@ const tracks: TrackProps[] = [
     Icon: Megaphone,
     title: 'Attention Capital Market Track',
     subtext:
-      'User acquisition & content tokenization across social media platforms such as TikTok, X, Instagram, etc.',
+      'User acquisition & content tokenization for social media platforms such as TikTok, X, IG, etc.',
     slug: 'Attention-Capital-Market-Track',
     rewardAmount: 150_000,
     sponsors: [
@@ -336,15 +336,15 @@ function MiniStat({
 function GrandPrize() {
   return (
     <div className="flex w-full flex-col gap-4 rounded-lg border border-slate-300 bg-indigo-50 p-3 md:flex-row md:p-4">
-      <div className="flex w-full items-center gap-4">
-        <span className="flex min-h-14 min-w-14 items-center justify-center rounded-md bg-[#0F172B]">
+      <div className="flex w-full items-center gap-5">
+        <span className="flex min-h-[3.23rem] min-w-[3.23rem] items-center justify-center rounded-md bg-[#0F172B] md:min-h-[3.75rem] md:min-w-[3.75rem]">
           <Trophy className="min-h-8 min-w-8 text-white" />
         </span>
-        <div className="flex h-full max-w-lg flex-col justify-between gap-1">
+        <div className="flex h-full max-w-lg flex-col justify-between gap-0.5">
           <span className="text-sm font-semibold text-slate-900 md:text-base">
             Grand Prize
           </span>
-          <span className="text-xs font-medium leading-[1.1] text-slate-500 md:text-sm">
+          <span className="pr-0 text-xs font-medium leading-[0.85rem] text-slate-500 md:text-sm md:leading-[1.0625rem]">
             The best overall projects across all tracks, receiving recognition
             from both judges and the community.
           </span>
@@ -402,15 +402,15 @@ const TrackBox = ({
         !isHackathonOn && 'pointer-events-none',
       )}
     >
-      <div className="flex items-center gap-3">
-        <span className="flex min-h-14 min-w-14 items-center justify-center rounded-md bg-[#0F172B]">
+      <div className="flex items-center gap-5">
+        <span className="flex min-h-[3.23rem] min-w-[3.23rem] items-center justify-center rounded-md bg-[#0F172B] md:min-h-[3.75rem] md:min-w-[3.75rem]">
           <Icon className="min-h-8 min-w-8 text-white" />
         </span>
-        <div className="flex h-full max-w-lg flex-col justify-between gap-1">
+        <div className="flex h-full max-w-lg flex-col justify-between gap-0.5">
           <span className="text-sm font-semibold text-slate-900 md:text-base">
             {title}
           </span>
-          <span className="text-xs font-medium leading-[1.1] text-slate-500 md:text-sm">
+          <span className="pr-0 text-xs font-medium leading-[0.95rem] text-slate-500 md:text-sm md:leading-[1.0625rem]">
             {subtext}
           </span>
         </div>
