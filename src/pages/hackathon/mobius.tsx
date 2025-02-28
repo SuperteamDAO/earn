@@ -289,29 +289,28 @@ function MiniStat({
   infotipContent?: string;
 }) {
   return (
-    <div
-      className={cn(
-        'flex flex-col items-start gap-0 md:items-start',
-        className,
-      )}
+    <Tooltip
+      content={infotipContent}
+      contentProps={{
+        className: 'w-3/4 md:w-auto',
+      }}
+      disabled={!infotipContent}
     >
-      <span className="flex items-center gap-2">
-        <p className="text-left text-sm font-medium text-gray-400 md:w-max md:text-base md:font-normal">
-          {title}
-        </p>
-        {infotipContent && (
-          <Tooltip
-            content={infotipContent}
-            contentProps={{
-              className: 'w-3/4 md:w-auto',
-            }}
-          >
-            <Info className="h-3 w-3 text-gray-400" />
-          </Tooltip>
+      <div
+        className={cn(
+          'flex flex-col items-start gap-0 md:items-start',
+          className,
         )}
-      </span>
-      <p className="text-xl font-medium md:text-3xl">{children}</p>
-    </div>
+      >
+        <span className="flex items-center gap-2">
+          <p className="text-left text-sm font-medium text-gray-400 md:w-max md:text-base md:font-normal">
+            {title}
+          </p>
+          {infotipContent && <Info className="h-3 w-3 text-gray-400" />}
+        </span>
+        <p className="text-xl font-medium md:text-3xl">{children}</p>
+      </div>
+    </Tooltip>
   );
 }
 
@@ -328,7 +327,7 @@ function GrandPrize() {
           </span>
           <span className="pr-0 text-xs font-medium leading-[0.85rem] text-slate-500 md:text-sm md:leading-[1.0625rem]">
             For the best overall project across all tracks, chosen by Mobius’
-            panel of top guests from the Solana ecosystem.
+            panel of top judges from the Solana ecosystem.
           </span>
         </div>
       </div>
@@ -444,6 +443,11 @@ const faqs: { question: string; answer: string }[] = [
     question: 'I have a team but no idea. What should I do?',
     answer:
       "Check out the <a href='https://www.notion.so/mirrorworldfun/Sonic-Mobius-Hackathon-Ideaboard-19a2d67d7b5f8091af6ad2957c575360' target='_blank'>Idea board</a> or join the <a href='https://t.me/+S_eelN_07xswYTdl' target='_blank'>Hackathon channel</a> to discuss and brainstorm ideas.",
+  },
+  {
+    question: 'How will the rewards be paid out?',
+    answer:
+      'Prizes will be paid out in 50% stablecoin, 10% $SONIC, and the rest 40% in locked $SONIC tokens with a 12-month vesting period.',
   },
 ];
 
