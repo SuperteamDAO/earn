@@ -1,41 +1,20 @@
-import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import React from 'react';
 
-import { SponsorLayout } from '@/layouts/Sponsor';
-import { useUser } from '@/store/user';
-
-import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
+import { ListingBuilder } from '@/features/listing-builder/components/ListingBuilder';
 
 interface Props {
-  listing: string;
+  slug: string;
 }
 
-function EditBounty({ listing }: Props) {
-  const { user } = useUser();
-  const router = useRouter();
-
-  const { data: bounty } = useQuery(sponsorDashboardListingQuery(listing));
-
-  useEffect(() => {
-    if (bounty && bounty.hackathonId !== user?.hackathonId) {
-      router.push(`/dashboard/hackathon/`);
-    }
-  }, [bounty, user?.hackathonId, router]);
-
-  return (
-    <SponsorLayout>
-      {/* <CreateListing listing={bounty} editable type={'hackathon'} /> */}
-      <></>
-    </SponsorLayout>
-  );
+function EditBounty({ slug }: Props) {
+  return <ListingBuilder route="edit" slug={slug} />;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { listing } = context.query;
+  const { slug } = context.query;
   return {
-    props: { listing },
+    props: { slug },
   };
 };
 

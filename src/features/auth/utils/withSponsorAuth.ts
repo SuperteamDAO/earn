@@ -42,7 +42,7 @@ export const withSponsorAuth = (handler: Handler): NextApiHandler => {
       req.userId = user.id;
       req.userSponsorId = user.currentSponsorId;
       req.role = user.role;
-      req.hackathonId = user.hackathonId || undefined;
+      req.userHackathonId = user.hackathonId || undefined;
 
       return handler(req, res);
     } catch (error) {

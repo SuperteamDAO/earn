@@ -13,7 +13,7 @@ type SessionResponse = {
     userId: string;
     userSponsorId: string;
     role: string;
-    hackathonId?: string;
+    userHackathonId?: string;
   } | null;
 };
 
@@ -76,7 +76,7 @@ export async function getSponsorSession(
         userId: user.id,
         userSponsorId: user.currentSponsorId,
         role: user.role,
-        hackathonId: user.hackathonId || undefined,
+        userHackathonId: user.hackathonId || undefined,
       },
     };
   } catch (error) {

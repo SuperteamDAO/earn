@@ -403,6 +403,7 @@ export default function Hackathon() {
                                   ? `Submissions Open ${formattedDate}`
                                   : null
                               }
+                              disabled={hasHackathonStarted}
                               contentProps={{
                                 className: 'rounded-md',
                               }}

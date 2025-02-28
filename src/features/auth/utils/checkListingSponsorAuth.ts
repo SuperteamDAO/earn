@@ -3,6 +3,7 @@ import { prisma } from '@/prisma';
 
 export const checkListingSponsorAuth = async (
   userSponsorId: string | undefined,
+  userHackathonId: string | undefined,
   listingId: string,
 ) => {
   if (!userSponsorId) {
@@ -25,9 +26,18 @@ export const checkListingSponsorAuth = async (
     };
   }
 
-  if (listing.sponsorId !== userSponsorId) {
+  if (
+    listing.sponsorId !== userSponsorId &&
+    listing.hackathonId !== userHackathonId
+  ) {
     logger.warn(
-      `User's sponsor ID does not match listings's sponsor ID for listing ID: ${listingId}`,
+      `User's sponsor ID does not match listings's sponsor ID or hackathon ID for listing ID: ${listingId}`,
+      {
+        userSponsorId,
+        userHackathonId,
+        listingId,
+        hackathonId: listing.hackathonId,
+      },
     );
     return {
       error: {

@@ -38,6 +38,7 @@ export async function GET(
 
     const { error } = await checkListingSponsorAuth(
       session.data.userSponsorId,
+      session.data.userHackathonId,
       id,
     );
     if (error) {

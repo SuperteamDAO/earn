@@ -34,10 +34,14 @@ export async function POST(
       );
     }
 
-    const { userId, userSponsorId } = session.data;
+    const { userId, userSponsorId, userHackathonId } = session.data;
     const id = params.id;
 
-    const { error, listing } = await checkListingSponsorAuth(userSponsorId, id);
+    const { error, listing } = await checkListingSponsorAuth(
+      userSponsorId,
+      userHackathonId,
+      id,
+    );
     if (error) {
       return NextResponse.json(
         { error: error.message },

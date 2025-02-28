@@ -19,9 +19,14 @@ import { ListingBuilderProvider } from './ListingBuilderProvider';
 interface ListingBuilderLayout {
   route: 'new' | 'edit' | 'duplicate';
   slug?: string;
+  isHackathonAdminDashboard?: boolean;
 }
 
-export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
+export function ListingBuilder({
+  route,
+  slug,
+  isHackathonAdminDashboard = false,
+}: ListingBuilderLayout) {
   const { user } = useUser();
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
@@ -41,7 +46,12 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
 
   useEffect(() => {
     if (listing) {
-      if (listing.sponsorId !== user?.currentSponsorId) {
+      if (isHackathonAdminDashboard) {
+        if (listing.hackathonId !== user?.hackathonId) {
+          router.push('/dashboard/listings');
+          return;
+        }
+      } else if (listing.sponsorId !== user?.currentSponsorId) {
         router.push('/dashboard/listings');
         return;
       }
