@@ -114,24 +114,6 @@ export default function Mobius({ hackathon }: { hackathon: Hackathon }) {
   const START_DATE = hackathon.startDate;
   const CLOSE_DATE = hackathon.deadline;
 
-  const [hackathonIsOn, setHackathonIsOn] = useState(false);
-  useEffect(() => {
-    const hackathonStartTime = dayjs(START_DATE);
-
-    const checkHackathonStatus = () => {
-      const now = dayjs.utc();
-      if (now.isAfter(hackathonStartTime)) {
-        setHackathonIsOn(true);
-      }
-    };
-
-    checkHackathonStatus();
-
-    const intervalId = setInterval(checkHackathonStatus, 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
   return (
     <Default
       className="bg-white"
@@ -146,7 +128,7 @@ export default function Mobius({ hackathon }: { hackathon: Hackathon }) {
       <Hero START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
       <div className="mx-auto mt-5 w-full max-w-5xl px-4 md:mt-24 xl:mt-28">
         <GrandPrize />
-        <Tracks isHackathonOn={hackathonIsOn} />
+        <Tracks />
         <FAQs />
       </div>
     </Default>
@@ -360,13 +342,13 @@ function GrandPrize() {
   );
 }
 
-function Tracks({ isHackathonOn }: { isHackathonOn: boolean }) {
+function Tracks() {
   return (
     <div className="mt-6 md:mt-8">
       <p className="mb-4 text-xl font-semibold">Submission Tracks</p>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {tracks.map((t) => (
-          <TrackBox {...t} key={t.slug} isHackathonOn={isHackathonOn} />
+          <TrackBox {...t} key={t.slug} />
         ))}
       </div>
     </div>
@@ -383,7 +365,6 @@ interface TrackProps {
   }[];
   rewardAmount: number;
   slug: string;
-  isHackathonOn?: boolean;
 }
 const TrackBox = ({
   Icon,
@@ -392,15 +373,11 @@ const TrackBox = ({
   sponsors,
   rewardAmount,
   slug,
-  isHackathonOn,
 }: TrackProps) => {
   return (
     <Link
-      href={isHackathonOn ? `/listing/${slug}` : '#'}
-      className={cn(
-        'block rounded-lg border border-slate-200 p-3 md:p-4',
-        !isHackathonOn && 'pointer-events-none',
-      )}
+      href={`/listing/${slug}`}
+      className={cn('block rounded-lg border border-slate-200 p-3 md:p-4')}
     >
       <div className="flex items-center gap-5">
         <span className="flex min-h-[3.23rem] min-w-[3.23rem] items-center justify-center rounded-md bg-[#0F172B] md:min-h-[3.75rem] md:min-w-[3.75rem]">
