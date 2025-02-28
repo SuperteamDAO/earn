@@ -47,7 +47,7 @@ const tracks: TrackProps[] = [
     title: 'Attention Capital Market Track',
     subtext:
       'User acquisition & content tokenization across social media platforms such as TikTok, X, Instagram, etc.',
-    slug: 'Attention-Capital-Market-Track',
+    slug: 'mobius-acm',
     rewardAmount: 150_000,
     sponsors: [
       {
@@ -61,7 +61,7 @@ const tracks: TrackProps[] = [
     title: 'DeFi Track',
     subtext:
       'Asset launchpad, trading bot, yield generating, lending, MEV, etc.',
-    slug: 'defi-track',
+    slug: 'mobius-defi',
     rewardAmount: 150_000,
     sponsors: [
       {
@@ -75,7 +75,7 @@ const tracks: TrackProps[] = [
     title: 'AI Track',
     subtext:
       'Agent aggregators, tooling, initial agent offerings, and other infras.',
-    slug: 'ai-track',
+    slug: 'mobius-ai',
     rewardAmount: 150_000,
     sponsors: [
       {
@@ -92,7 +92,7 @@ const tracks: TrackProps[] = [
     Icon: Gamepad2,
     title: 'Gaming Track',
     subtext: 'Mini games, social games, FOCG, high-ARPU games, etc.',
-    slug: 'gaming-track',
+    slug: 'mobius-gaming',
     rewardAmount: 150_000,
     sponsors: [
       {
