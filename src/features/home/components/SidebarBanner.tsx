@@ -27,16 +27,14 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
   return (
     <Link href="/hackathon/mobius">
       <div
-        className={`relative flex h-[22.125rem] w-full flex-col items-center overflow-hidden rounded-xl border border-white/20 ${className}`}
+        className={`relative flex h-[21.125rem] w-full flex-col items-center overflow-hidden rounded-xl border border-white/20 ${className}`}
       >
-        {/* Background Image */}
         <ExternalImage
           src={baseAsset('banner-mobile-v2')}
           alt="Sonic Mobius Hackathon"
           className="absolute left-0 top-0 h-full w-full object-cover"
         />
 
-        {/* Content Container */}
         <div className="relative z-10 flex h-full w-full flex-col px-4 py-6 text-white">
           {/* Logo */}
           <ExternalImage
@@ -45,7 +43,6 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
             className="-mb-2 ml-4 w-24"
           />
 
-          {/* Hackathon Title */}
           <h2
             className={`${orbitron.className} text-center text-[4rem] font-bold !leading-none`}
             style={{ textShadow: '0px 4px 4px rgba(0, 0, 0, 0.8)' }}
@@ -61,7 +58,6 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
             </span>
           </div>
 
-          {/* Dates */}
           <p
             className={`${orbitron.className} mb-2 mt-auto text-center text-lg font-medium text-[#FF510C]`}
           >
@@ -69,13 +65,11 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
             {dayjs(CLOSE_DATE).format('MMM.DD')}
           </p>
 
-          {/* Prize Pool */}
           <div className="mb-2 flex flex-col items-center">
             <p className={`${orbitron.className} text-gray-300`}>PRIZE POOL</p>
             <p className={`${orbitron.className} text-4xl`}>$1,000,000</p>
           </div>
 
-          {/* Register Button */}
           <Button
             variant="secondary"
             className={`${orbitron.className} mt-2 w-full rounded-md text-base font-medium text-[#1E5871]`}
