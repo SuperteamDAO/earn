@@ -62,9 +62,7 @@ async function createSubmission(
 
   if (
     isSponsorship &&
-    !existingSubmissions.every(
-      (submission) => submission.status === 'Rejected' || submission.isPaid,
-    )
+    !existingSubmissions.every((submission) => submission.status !== 'Pending')
   )
     throw new Error('User already has an active sponsorship request');
 

@@ -168,7 +168,9 @@ export const SubmissionPanel = ({
                       </Button>
                     </Tooltip>
                   )}
-                  {<SelectLabel listingSlug={bounty?.slug!} />}
+                  {selectedSubmission?.status === 'Pending' && (
+                    <SelectLabel listingSlug={bounty?.slug!} />
+                  )}
                   {selectedSubmission?.isWinner &&
                     selectedSubmission?.winnerPosition &&
                     selectedSubmission?.isPaid && (

@@ -222,28 +222,6 @@ export default function NewProfilePage({
                 </div>
               </div>
             </AuthWrapper>
-            <div className="-mt-3 flex items-center justify-between gap-3 px-3">
-              <ExternalImage
-                className="h-5 object-contain"
-                alt="Jupiter Icon"
-                src={'/landingsponsor/sponsors/jupiter.webp'}
-              />
-              <ExternalImage
-                className="h-8 object-contain"
-                alt="Solflare Icon"
-                src={'/landingsponsor/sponsors/solflare.webp'}
-              />
-              <ExternalImage
-                className="hidden h-4 object-contain md:block"
-                alt="Squads Icon"
-                src={'/company-logos/squads.webp'}
-              />
-              <ExternalImage
-                className="h-7 w-7 object-contain"
-                alt="Tensor Icon"
-                src={'/company-logos/tensor.svg'}
-              />
-            </div>
           </div>
         </div>
       </div>

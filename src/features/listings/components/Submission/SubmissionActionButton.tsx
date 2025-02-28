@@ -139,7 +139,7 @@ export const SubmissionActionButton = ({
 
   function getButtonState() {
     if (isSubmitted && submission?.label === 'Spam') return 'spam';
-    if (isSubmitted && submission?.isPaid) return 'submit';
+    if (isSubmitted && pastDeadline) return 'submitted';
     if (
       isSubmitted &&
       !pastDeadline &&
@@ -157,12 +157,16 @@ export const SubmissionActionButton = ({
     if (isSubmitted && !pastDeadline) {
       if (
         isSponsorship &&
+        (submission?.isPaid || submission?.status === 'Approved')
+      )
+        return 'submit';
+      if (
+        isSponsorship &&
         (submission?.label !== 'Unreviewed' || submissionStatus !== 'Pending')
       )
         return 'freeze';
       return 'edit';
     }
-    if (isSubmitted && pastDeadline) return 'submitted';
     return 'submit';
   }
 
