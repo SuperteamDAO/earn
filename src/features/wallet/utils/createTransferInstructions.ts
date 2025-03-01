@@ -15,6 +15,7 @@ import {
 import { tokenList } from '@/constants/tokenList';
 
 import { type TokenAsset } from '../types/TokenAsset';
+import { fetchTokenUSDValue } from './fetchTokenUSDValue';
 import { type WithdrawFormData } from './withdrawFormSchema';
 
 export async function createTransferInstructions(
@@ -28,6 +29,9 @@ export async function createTransferInstructions(
   const sender = new PublicKey(userAddress);
   const recipient = new PublicKey(values.address);
   const tokenMint = new PublicKey(values.tokenAddress);
+  const feePayer = new PublicKey(process.env.NEXT_PUBLIC_FEEPAYER as string);
+
+  let ataCreationCost = 0;
 
   if (values.tokenAddress === 'So11111111111111111111111111111111111111112') {
     instructions.push(
@@ -54,20 +58,67 @@ export async function createTransferInstructions(
     if (!receiverATAExists) {
       instructions.push(
         createAssociatedTokenAccountInstruction(
-          sender,
+          feePayer,
           receiverATA,
           recipient,
           tokenMint,
         ),
       );
+
+      try {
+        const tokenUSDValue = await fetchTokenUSDValue(
+          selectedToken?.tokenAddress || '',
+        );
+        const solUSDValue = await fetchTokenUSDValue(
+          'So11111111111111111111111111111111111111112',
+        );
+
+        const ataCreationCostInUSD = solUSDValue * 0.0021;
+        const tokenAmountToCharge = ataCreationCostInUSD / tokenUSDValue;
+
+        ataCreationCost = Math.ceil(tokenAmountToCharge * 10 ** power);
+
+        const feePayerATA = await getAssociatedTokenAddressSync(
+          tokenMint,
+          feePayer,
+        );
+        const feePayerATAExists = await connection.getAccountInfo(feePayerATA);
+
+        if (!feePayerATAExists) {
+          instructions.push(
+            createAssociatedTokenAccountInstruction(
+              feePayer,
+              feePayerATA,
+              feePayer,
+              tokenMint,
+            ),
+          );
+        }
+
+        instructions.push(
+          createTransferInstruction(
+            senderATA,
+            feePayerATA,
+            sender,
+            ataCreationCost,
+          ),
+        );
+      } catch (error) {
+        console.error('Error calculating ATA creation fee:', error);
+        throw new Error(
+          'Failed to calculate token values for ATA creation fee. Transaction aborted.',
+        );
+      }
     }
+
+    const withdrawAmount = Number(values.amount) * 10 ** power;
 
     instructions.push(
       createTransferInstruction(
         senderATA,
         receiverATA,
         sender,
-        Number(values.amount) * 10 ** power,
+        withdrawAmount - ataCreationCost,
       ),
     );
 
