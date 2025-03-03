@@ -180,7 +180,8 @@ export const SubmissionActionButton = ({
         pastDeadline ||
           (user?.id &&
             user?.isTalentFilled &&
-            (!hasHackathonStarted || !isUserEligibleByRegion)),
+            (!hasHackathonStarted || !isUserEligibleByRegion)) ||
+          !hasHackathonStarted,
       );
       isSubmitDisabled = Boolean(
         pastDeadline ||
@@ -243,19 +244,19 @@ export const SubmissionActionButton = ({
         <div className="md:hidden">
           <ShareListing source="listing" className="h-12" listing={listing} />
         </div>
-        <AuthWrapper
-          showCompleteProfileModal
-          completeProfileModalBodyText={
-            'Please complete your profile before submitting to a listing.'
-          }
-          className="w-full"
+        <InfoWrapper
+          isUserEligibleByRegion={isUserEligibleByRegion}
+          hasHackathonStarted={hasHackathonStarted}
+          regionTooltipLabel={regionTooltipLabel}
+          hackathonStartDate={hackathonStartDate}
+          pastDeadline={pastDeadline!}
         >
-          <InfoWrapper
-            isUserEligibleByRegion={isUserEligibleByRegion}
-            hasHackathonStarted={hasHackathonStarted}
-            regionTooltipLabel={regionTooltipLabel}
-            hackathonStartDate={hackathonStartDate}
-            pastDeadline={pastDeadline!}
+          <AuthWrapper
+            showCompleteProfileModal
+            completeProfileModalBodyText={
+              'Please complete your profile before submitting to a listing.'
+            }
+            className="w-full"
           >
             <div className="w-full">
               <Button
@@ -285,8 +286,8 @@ export const SubmissionActionButton = ({
                 )}
               </Button>
             </div>
-          </InfoWrapper>
-        </AuthWrapper>
+          </AuthWrapper>
+        </InfoWrapper>
       </div>
     </>
   );
