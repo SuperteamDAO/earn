@@ -118,12 +118,18 @@ export default function Mobius({ hackathon }: { hackathon: Hackathon }) {
     <Default
       className="bg-white"
       meta={
-        <Meta
-          title="Sonic Mobius | Superteam Earn"
-          description={`Join the first-ever SVM hackathon on Solana – Sonic Mobius Hackathon – with a $1,000,000 prize pool! Build, launch on Sonic SVM Mainnet, and onboard the next billion users.`}
-          canonical="https://earn.superteam.fun/hackathon/mobius"
-          og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1740832046/assets/hackathon/mobius/sonic-mobius-og.png"
-        />
+        <>
+          <meta
+            name="twitter:image"
+            content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1740832046/assets/hackathon/mobius/sonic-mobius-og.png`}
+          />
+          <Meta
+            title="Sonic Mobius | Superteam Earn"
+            description={`Join the first-ever SVM hackathon on Solana – Sonic Mobius Hackathon – with a $1,000,000 prize pool! Build, launch on Sonic SVM Mainnet, and onboard the next billion users.`}
+            canonical="https://earn.superteam.fun/hackathon/mobius"
+            og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1740832046/assets/hackathon/mobius/sonic-mobius-og.png"
+          />
+        </>
       }
     >
       <Hero START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
