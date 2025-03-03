@@ -8,6 +8,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
 
 const UpdateGrantTrancheSchema = z.object({
   id: z.string(),
@@ -32,6 +33,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   }
 
   const { id, status, approvedAmount } = validationResult.data;
+  const userId = req.userId;
 
   try {
     const currentTranche = await prisma.grantTranche.findUnique({
@@ -89,6 +91,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       await prisma.grantApplication.update({
         where: { id: currentTranche.applicationId },
         data: { totalTranches },
+      });
+      sendEmailNotification({
+        type: 'trancheApproved',
+        id,
+        triggeredBy: userId,
+      });
+    }
+
+    if (status === 'Rejected') {
+      sendEmailNotification({
+        type: 'trancheRejected',
+        id: currentTranche.applicationId,
+        triggeredBy: userId,
       });
     }
 

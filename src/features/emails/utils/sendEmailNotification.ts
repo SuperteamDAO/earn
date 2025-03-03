@@ -20,6 +20,8 @@ type EmailType =
   | 'grantApproved'
   | 'grantCompleted'
   | 'grantRejected'
+  | 'trancheApproved'
+  | 'trancheRejected'
   | 'grantPaymentReceived'
   | 'STWinners'
   | 'nonSTWinners'
