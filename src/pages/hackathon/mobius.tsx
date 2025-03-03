@@ -328,13 +328,14 @@ function GrandPrize() {
         <span className="flex min-h-[3.23rem] min-w-[3.23rem] items-center justify-center rounded-md bg-[#0F172B] md:min-h-[3.75rem] md:min-w-[3.75rem]">
           <Trophy className="min-h-8 min-w-8 text-white" />
         </span>
-        <div className="flex h-full max-w-lg flex-col justify-between gap-0.5">
+        <div className="flex h-full max-w-xl flex-col justify-between gap-0.5">
           <span className="text-sm font-semibold text-slate-900 md:text-base">
             Grand Prize
           </span>
           <span className="pr-0 text-xs font-medium leading-[0.85rem] text-slate-500 md:text-sm md:leading-[1.0625rem]">
-            For the best overall project across all tracks, chosen by Mobius’
-            panel of top judges from the Solana ecosystem.
+            Up to four of the best overall projects across all tracks will be
+            chosen by Mobius’ panel of top judges from the Solana ecosystem as
+            the Grand Prize winners.
           </span>
         </div>
       </div>
