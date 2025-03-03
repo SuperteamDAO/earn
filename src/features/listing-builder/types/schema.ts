@@ -168,6 +168,7 @@ export const createListingFormSchema = ({
           return true;
         }, 'Hackathon is not allowed for now'),
       region: z.string().trim().min(1).max(256).default(Regions.GLOBAL),
+      referredBy: z.string().trim().min(1).max(256).optional().nullable(),
       deadline: z
         .string()
         .trim()
