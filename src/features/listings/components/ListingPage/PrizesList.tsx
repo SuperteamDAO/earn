@@ -29,12 +29,14 @@ export function PrizesList({
   maxBonusSpots,
   totalReward,
   widthPrize,
+  showUsdSymbol,
 }: {
   rewards: Rewards;
   token: string;
   maxBonusSpots: number;
   totalReward: number;
   widthPrize: string;
+  showUsdSymbol?: boolean;
 }) {
   const iterableRewards: [string, number][] = Object.entries(rewards);
   const [visibleRewards, setVisibleRewards] =
@@ -90,6 +92,7 @@ export function PrizesList({
             >
               <p className="ml-auto">
                 {!seeAll && visibleRewards.length - 1 === index && '+'}
+                {showUsdSymbol && '$'}
                 {formatNumberWithSuffix(step[1], 1, true)}
               </p>
               <p className="font-semibold text-slate-400">{token}</p>
