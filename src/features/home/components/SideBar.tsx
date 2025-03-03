@@ -13,7 +13,6 @@ import { totalsQuery } from '../queries/totals';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
-import { SidebarBanner } from './SidebarBanner';
 import { SponsorBanner } from './SponsorBanner';
 import { TotalStats } from './TotalStats';
 
@@ -50,7 +49,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
       {type === 'feed' && (
         <>
           <VibeCard />
-          <SidebarBanner />
+          {/* <SidebarBanner /> */}
           <LiveListings>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-400">
@@ -79,7 +78,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             TVE={totals?.totalInUSD}
           />
           <HowItWorks />
-          <SidebarBanner />
+          {/* <SidebarBanner /> */}
           <RecentEarners earners={recentEarners} />
           <RecentActivity />
         </>

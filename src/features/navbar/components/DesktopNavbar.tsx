@@ -7,7 +7,6 @@ import { useMemo } from 'react';
 import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -116,16 +115,16 @@ export const DesktopNavbar = ({
                     />
                   );
                 })}
-                <Link
-                  href={'/hackathon/mobius'}
-                  className={cn('flex items-center py-2 font-medium', 'h-8')}
-                >
-                  <ExternalImage
-                    alt="Mobius Logo"
-                    src="/hackathon/mobius/mobius-logo"
-                    className="h-full object-contain"
-                  />
-                </Link>
+                {/* <Link */}
+                {/*   href={'/hackathon/mobius'} */}
+                {/*   className={cn('flex items-center py-2 font-medium', 'h-8')} */}
+                {/* > */}
+                {/*   <ExternalImage */}
+                {/*     alt="Mobius Logo" */}
+                {/*     src="/hackathon/mobius/mobius-logo" */}
+                {/*     className="h-full object-contain" */}
+                {/*   /> */}
+                {/* </Link> */}
               </div>
             </div>
           </div>
