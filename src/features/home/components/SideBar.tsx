@@ -49,6 +49,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
       {type === 'feed' && (
         <>
           <VibeCard />
+          {/* <SidebarBanner /> */}
           <LiveListings>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-400">
@@ -77,6 +78,7 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
             TVE={totals?.totalInUSD}
           />
           <HowItWorks />
+          {/* <SidebarBanner /> */}
           <RecentEarners earners={recentEarners} />
           <RecentActivity />
         </>

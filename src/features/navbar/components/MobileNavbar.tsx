@@ -156,6 +156,16 @@ export const MobileNavbar = ({
               isActive={false}
               onClick={onDrawerClose}
             />
+            {/* <Link */}
+            {/*   href={'/hackathon/mobius'} */}
+            {/*   className={cn('flex items-center py-2 font-medium', 'h-10')} */}
+            {/* > */}
+            {/*   <ExternalImage */}
+            {/*     alt="Mobius Logo" */}
+            {/*     src="/hackathon/mobius/mobius-logo" */}
+            {/*     className="h-full object-contain" */}
+            {/*   /> */}
+            {/* </Link> */}
           </div>
         </SheetContent>
       </Sheet>

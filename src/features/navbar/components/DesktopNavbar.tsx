@@ -99,7 +99,7 @@ export const DesktopNavbar = ({
         {!router.pathname.startsWith('/new/') && (
           <div className="absolute left-1/2 -translate-x-1/2">
             <div className="ml-10 flex h-full items-center justify-center">
-              <div className="ph-no-capture flex h-full flex-row gap-7">
+              <div className="ph-no-capture flex h-full flex-row items-center gap-7">
                 {LISTING_NAV_ITEMS?.map((navItem) => {
                   const isCurrent = `${navItem.href}` === router.asPath;
                   return (
@@ -115,6 +115,16 @@ export const DesktopNavbar = ({
                     />
                   );
                 })}
+                {/* <Link */}
+                {/*   href={'/hackathon/mobius'} */}
+                {/*   className={cn('flex items-center py-2 font-medium', 'h-8')} */}
+                {/* > */}
+                {/*   <ExternalImage */}
+                {/*     alt="Mobius Logo" */}
+                {/*     src="/hackathon/mobius/mobius-logo" */}
+                {/*     className="h-full object-contain" */}
+                {/*   /> */}
+                {/* </Link> */}
               </div>
             </div>
           </div>
