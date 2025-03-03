@@ -4,9 +4,6 @@ services:
     runtime: node
     region: frankfurt
     plan: standard
-    previews:
-      generation: manual
-      plan: starter
     buildCommand: pnpm install && pnpm prisma generate && pnpm build
     preDeployCommand: pnpm prisma migrate deploy
     domains:
@@ -137,6 +134,148 @@ services:
     autoDeploy: true
   - type: keyvalue
     name: nearn-redis-for-emails
+    maxmemoryPolicy: noeviction
+    region: frankfurt
+    ipAllowList: []
+    plan: starter
+  - type: web
+    name: nearn-app-staging
+    repo: https://github.com/NEAR-DevHub/nearn
+    branch: staging
+    runtime: node
+    region: frankfurt
+    plan: starter
+    previews:
+      generation: manual
+      plan: starter
+    buildCommand: pnpm install && pnpm prisma generate && pnpm build
+    preDeployCommand: pnpm prisma migrate deploy
+    startCommand: pnpm start
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: NEXTAUTH_URL
+        sync: false
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: NEXT_PUBLIC_URL
+        sync: false
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      - key: NODE_VERSION
+        value: 20.11.0
+      - key: ZEROBOUNCE_API_KEY
+        sync: false
+      - key: EMAIL_SERVER_USER
+        value: resend
+      - key: EMAIL_SERVER_HOST
+        value: smtp.resend.com
+      - key: EMAIL_SERVER_PORT
+        value: 465
+      - key: AIRTABLE_GRANTS_API_TOKEN
+        sync: false
+      - key: AIRTABLE_GRANTS_BASE_ID
+        sync: false
+      - key: AIRTABLE_GRANTS_TABLE_NAME
+        sync: false
+      - key: AIRTABLE_GRANTS_REGIONS_TABLE_NAME
+        sync: false
+      - key: AIRTABLE_RECIPIENTS_TABLE
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: EARNCOGNITO_URL
+        sync: false
+      - key: EARNCOGNITO_SECRET
+        sync: false
+      - key: GOOGLE_ID
+        sync: false
+      - key: GOOGLE_SECRET
+        sync: false
+      - key: EMAIL_SECRET
+        fromService:
+          name: nearn-email-staging
+          type: pserv
+          envVarKey: AUTH_SECRET
+      - key: EMAIL_BACKEND
+        sync: false
+      - key: NEXT_PUBLIC_POSTHOG_HOST
+        sync: false
+      - key: NEXT_PUBLIC_POSTHOG_KEY
+        sync: false
+      - key: REPLY_TO_EMAIL
+        sync: false
+      - key: WEBHOOK_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: UNSUB_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: CEO_EMAIL
+        sync: false
+    autoDeploy: true
+  - type: pserv
+    repo: https://github.com/akorchyn/nearn-emails
+    branch: staging
+    name: nearn-email-staging
+    runtime: node
+    region: frankfurt
+    plan: starter
+    previews:
+      generation: off
+    buildCommand: pnpm install && pnpm prisma generate && pnpm build
+    startCommand: node dist/index.js
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          name: nearn-redis-for-emails-staging
+          type: keyvalue
+          property: connectionString
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: LISTINGS_EMAIL
+        value: noreply@nearn.io
+      - key: ALERTS_EMAIL
+        value: noreply@nearn.io
+      - key: MAIN_APP_URL
+        value: 'https://nearn.io'
+      - key: AIRTABLE_FORM_URL
+        value: 'https://nearn.io'
+      - key: DEV_EMAILS
+        sync: false
+      - key: BCC_EMAILS
+        sync: false
+      - key: BASE_URL
+        value: 'https://nearn.io'
+      - key: RESEND_API_KEY
+        fromService:
+          name: nearn-app-staging
+          type: web
+          envVarKey: RESEND_API_KEY
+      - key: UNSUB_SECRET
+        fromService:
+          name: nearn-app-staging
+          type: web
+          envVarKey: UNSUB_SECRET
+      - key: DATABASE_URL
+        fromService:
+          name: nearn-app-staging
+          type: web
+          envVarKey: DATABASE_URL
+      - key: CEO_EMAIL
+        fromService:
+          name: nearn-app-staging
+          type: web
+          envVarKey: CEO_EMAIL
+    autoDeploy: true
+  - type: keyvalue
+    name: nearn-redis-for-emails-staging
     maxmemoryPolicy: noeviction
     region: frankfurt
     ipAllowList: []
