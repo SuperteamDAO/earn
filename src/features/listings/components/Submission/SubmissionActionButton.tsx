@@ -84,7 +84,7 @@ export const SubmissionActionButton = ({
 
   const { user } = useUser();
 
-  const { authenticated } = usePrivy();
+  const { authenticated, ready } = usePrivy();
 
   const isAuthenticated = authenticated;
 
@@ -95,7 +95,7 @@ export const SubmissionActionButton = ({
 
   const { data: submission, isLoading: isUserSubmissionLoading } = useQuery({
     ...userSubmissionQuery(id!, user?.id),
-    enabled: isAuthenticated,
+    enabled: ready && isAuthenticated && !!user?.id,
   });
 
   const isSubmitted = submission?.isSubmitted ?? false;
