@@ -14,9 +14,34 @@ export async function getPrivyToken(
       }),
 ): Promise<string | null> {
   try {
-    const accessToken =
-      req.cookies['privy-token'] ||
-      req.headers?.authorization?.replace('Bearer ', '');
+    logger.debug('Request Cookies', safeStringify(req.cookies));
+    logger.debug('Request Headers', safeStringify(req.headers));
+    let accessToken = req.cookies['privy-token'];
+    if (accessToken) {
+      logger.info('Access token found in cookies', accessToken);
+    }
+
+    if (!accessToken) {
+      accessToken = req.headers?.authorization?.replace('Bearer ', '');
+      if (accessToken) {
+        logger.info(
+          'Access token found in `authorization` header',
+          accessToken,
+        );
+      }
+    }
+
+    if (!accessToken) {
+      if (typeof req.headers?.Authorization === 'string') {
+        accessToken = req.headers.Authorization.replace('Bearer ', '');
+      }
+      if (accessToken) {
+        logger.info(
+          'Access token found in `Authorization` header',
+          accessToken,
+        );
+      }
+    }
 
     if (!accessToken) {
       logger.error(
@@ -24,7 +49,6 @@ export async function getPrivyToken(
       );
       return null;
     }
-    logger.info('Access token found in cookies ', accessToken);
 
     const claims = await privy.verifyAuthToken(
       accessToken,
