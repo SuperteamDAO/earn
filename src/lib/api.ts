@@ -23,6 +23,7 @@ api.interceptors.request.use(
 
     if (authToken) {
       config.headers.Authorization = `Bearer ${authToken}`;
+      config.headers['privy-app-id'] = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
     }
 
     return config;

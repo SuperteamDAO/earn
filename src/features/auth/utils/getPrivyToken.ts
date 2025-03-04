@@ -14,10 +14,14 @@ export async function getPrivyToken(
       }),
 ): Promise<string | null> {
   try {
-    const accessToken = req.cookies['privy-token'];
+    const accessToken =
+      req.cookies['privy-token'] ||
+      req.headers?.authorization?.replace('Bearer ', '');
 
     if (!accessToken) {
-      logger.error('Unauthorized, Privy access token not found in cookies');
+      logger.error(
+        'Unauthorized, Privy access token not found in cookies or authorization header',
+      );
       return null;
     }
     logger.info('Access token found in cookies ', accessToken);
