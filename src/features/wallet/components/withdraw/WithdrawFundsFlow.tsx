@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSignTransaction } from '@privy-io/react-auth/solana';
+import { getAssociatedTokenAddressSync } from '@solana/spl-token';
 import {
   Connection,
   PublicKey,
@@ -13,17 +14,20 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { tokenList } from '@/constants/tokenList';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { type TokenAsset } from '../../types/TokenAsset';
 import { type TxData } from '../../types/TxData';
 import { createTransferInstructions } from '../../utils/createTransferInstructions';
+import { fetchTokenUSDValue } from '../../utils/fetchTokenUSDValue';
 import {
   type WithdrawFormData,
   withdrawFormSchema,
 } from '../../utils/withdrawFormSchema';
 import { type DrawerView } from '../WalletDrawer';
+import { ATAConfirmation } from './ATAConfirmation';
 import { TransactionDetails } from './TransactionDetails';
 import { WithdrawForm } from './WithdrawForm';
 
@@ -46,6 +50,9 @@ export function WithdrawFundsFlow({
   const posthog = usePostHog();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
+  const [ataCreationCost, setAtaCreationCost] = useState<number>(0);
+  const [pendingFormData, setPendingFormData] =
+    useState<WithdrawFormData | null>(null);
 
   const { signTransaction } = useSignTransaction();
 
@@ -64,6 +71,53 @@ export function WithdrawFundsFlow({
     (token) => token.tokenAddress === form.watch('tokenAddress'),
   );
 
+  async function checkATARequirement(
+    values: WithdrawFormData,
+  ): Promise<string> {
+    const connection = new Connection(
+      `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
+    );
+
+    const recipient = new PublicKey(values.address);
+    const tokenMint = new PublicKey(values.tokenAddress);
+
+    if (values.tokenAddress === 'So11111111111111111111111111111111111111112') {
+      return handleWithdraw(values);
+    }
+
+    const receiverATA = await getAssociatedTokenAddressSync(
+      tokenMint,
+      recipient,
+    );
+
+    const receiverATAExists = !!(await connection.getAccountInfo(receiverATA));
+
+    if (!receiverATAExists) {
+      const tokenUSDValue = await fetchTokenUSDValue(
+        selectedToken?.tokenAddress || '',
+      );
+      const solUSDValue = await fetchTokenUSDValue(
+        'So11111111111111111111111111111111111111112',
+      );
+
+      const ataCreationCostInUSD = solUSDValue * 0.0021;
+      const tokenAmountToCharge = ataCreationCostInUSD / tokenUSDValue;
+
+      const tokenDetails = tokenList.find(
+        (token) => token.tokenSymbol === selectedToken?.tokenSymbol,
+      );
+      const power = tokenDetails?.decimals as number;
+      const cost = Math.ceil(tokenAmountToCharge * 10 ** power);
+
+      setAtaCreationCost(cost);
+      setPendingFormData(values);
+      setView('ata-confirm');
+      return '';
+    }
+
+    return handleWithdraw(values);
+  }
+
   async function handleWithdraw(values: WithdrawFormData) {
     setIsProcessing(true);
     setError('');
@@ -80,7 +134,7 @@ export function WithdrawFundsFlow({
         throw new Error('RPC Timed out');
       }
 
-      const instructions = await createTransferInstructions(
+      const { instructions } = await createTransferInstructions(
         connection,
         values,
         user?.walletAddress as string,
@@ -226,8 +280,22 @@ export function WithdrawFundsFlow({
         <WithdrawForm
           form={form}
           selectedToken={selectedToken}
-          onSubmit={handleWithdraw}
+          onSubmit={checkATARequirement}
           tokens={tokens}
+          isProcessing={isProcessing}
+        />
+      )}
+
+      {view === 'ata-confirm' && pendingFormData && (
+        <ATAConfirmation
+          selectedToken={selectedToken}
+          formData={pendingFormData}
+          onConfirm={() => handleWithdraw(pendingFormData)}
+          onCancel={() => {
+            setPendingFormData(null);
+            setView('withdraw');
+          }}
+          ataCreationCost={ataCreationCost}
           isProcessing={isProcessing}
         />
       )}
