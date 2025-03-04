@@ -287,6 +287,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             token,
             publishedAt,
           );
+          if (typeof tokenUsdValue !== 'number')
+            throw new Error('Token value not found');
           usdValue = tokenUsdValue * amount;
           logger.info('Token USD value fetched', {
             token,

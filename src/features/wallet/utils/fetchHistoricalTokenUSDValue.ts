@@ -5,7 +5,7 @@ import { api } from '@/lib/api';
 import logger from '@/lib/logger';
 
 import { COINGECKO_API_URL } from '@/features/wallet/constants/coingecko';
-const STABLE_COINS = ['USDT', 'USDC', 'USDP'];
+const STABLE_COINS = ['USDT', 'USDC', 'USDP', 'sUSD'];
 
 export async function fetchHistoricalTokenUSDValue(token: string, date: Date) {
   try {
