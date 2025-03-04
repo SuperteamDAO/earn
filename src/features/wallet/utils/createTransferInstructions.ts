@@ -23,7 +23,10 @@ export async function createTransferInstructions(
   values: WithdrawFormData,
   userAddress: string,
   selectedToken?: TokenAsset,
-): Promise<TransactionInstruction[]> {
+): Promise<{
+  instructions: TransactionInstruction[];
+  receiverATAExists: boolean;
+}> {
   const instructions: TransactionInstruction[] = [];
 
   const sender = new PublicKey(userAddress);
@@ -32,6 +35,7 @@ export async function createTransferInstructions(
   const feePayer = new PublicKey(process.env.NEXT_PUBLIC_FEEPAYER as string);
 
   let ataCreationCost = 0;
+  let receiverATAExists = false;
 
   if (values.tokenAddress === 'So11111111111111111111111111111111111111112') {
     instructions.push(
@@ -43,13 +47,12 @@ export async function createTransferInstructions(
     );
   } else {
     const senderATA = await getAssociatedTokenAddressSync(tokenMint, sender);
-
     const receiverATA = await getAssociatedTokenAddressSync(
       tokenMint,
       recipient,
     );
+    receiverATAExists = !!(await connection.getAccountInfo(receiverATA));
 
-    const receiverATAExists = await connection.getAccountInfo(receiverATA);
     const tokenDetails = tokenList.find(
       (e) => e.tokenSymbol === selectedToken?.tokenSymbol,
     );
@@ -128,5 +131,5 @@ export async function createTransferInstructions(
     );
   }
 
-  return instructions;
+  return { instructions, receiverATAExists };
 }
