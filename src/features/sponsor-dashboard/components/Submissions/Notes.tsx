@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 
-import { isNotesUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
+import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 
 const MAX_CHARACTERS = 1000;
 
@@ -22,7 +22,7 @@ export const Notes = ({ submissionId, initialNotes = '', slug }: Props) => {
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
   );
-  const setNotesUpdating = useSetAtom(isNotesUpdatingAtom);
+  const setNotesUpdating = useSetAtom(isStateUpdatingAtom);
   const [notes, setNotes] = useState(initialNotes || '');
   const queryClient = useQueryClient();
 

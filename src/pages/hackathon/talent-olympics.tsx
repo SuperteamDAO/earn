@@ -761,7 +761,7 @@ function Leaderboard({ leaders }: { leaders: CountryLeader[] }) {
           <div key={l.location} className="flex w-full items-center">
             <div className="flex items-center font-medium">
               <span className="text-slate-400">{i + 1}.</span>
-              <UserFlag location={l.location} />
+              <UserFlag location={l.location || 'India'} />
               <p className="max-w-[12rem] truncate text-slate-500">
                 {l.location}
               </p>
@@ -1081,7 +1081,7 @@ const TextStyler: React.FC<TextStylerProps> = ({ text }) => {
   return (
     <p className="text-lg">
       {words.map((word, index) => {
-        if (word.toLowerCase() === '<redacted>') {
+        if (word?.toLowerCase() === '<redacted>') {
           return (
             <span
               key={index}
