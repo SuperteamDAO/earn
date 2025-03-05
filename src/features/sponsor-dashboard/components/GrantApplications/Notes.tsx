@@ -9,7 +9,7 @@ import { api } from '@/lib/api';
 
 import { type GrantApplicationAi } from '@/features/grants/types';
 
-import { isNotesUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
+import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
 import { type GrantApplicationsReturn } from '../../queries/applications';
 
 const MAX_CHARACTERS = 1000;
@@ -22,7 +22,7 @@ export const Notes = ({ slug }: Props) => {
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
-  const setNotesUpdating = useSetAtom(isNotesUpdatingAtom);
+  const setNotesUpdating = useSetAtom(isStateUpdatingAtom);
   const [notes, setNotes] = useState(selectedApplication?.notes);
   useEffect(() => {
     setNotes(selectedApplication?.notes);

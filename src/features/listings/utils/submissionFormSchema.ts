@@ -25,7 +25,13 @@ const submissionSchema = (
       otherInfo: z.string().optional(),
       ask: z.union([z.number().int().min(0), z.null()]).optional(),
       eligibilityAnswers: z
-        .array(z.object({ question: z.string(), answer: z.string() }))
+        .array(
+          z.object({
+            question: z.string(),
+            answer: z.string(),
+            optional: z.boolean().optional(),
+          }),
+        )
         .optional(),
       telegram:
         !user?.telegram && listing?.type === 'project'
@@ -94,11 +100,12 @@ const submissionSchema = (
         } else {
           listing?.eligibility?.forEach((question, index) => {
             const answer = data.eligibilityAnswers?.[index]?.answer;
-            if (!answer || answer.trim() === '') {
+            const optional = data.eligibilityAnswers?.[index]?.optional;
+            if (!optional && (!answer || answer.trim() === '')) {
               ctx.addIssue({
                 code: 'custom',
                 path: ['eligibilityAnswers', index, 'answer'],
-                message: `Answer for "${question.question}" is required`,
+                message: `Required`,
               });
             }
             if (answer && (question.isLink || question.type === 'link')) {

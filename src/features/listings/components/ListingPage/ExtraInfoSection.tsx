@@ -50,7 +50,7 @@ export function ExtraInfoSection({
             target="_blank"
             rel="noopener noreferrer"
           >
-            View All Challenges
+            View All Tracks
             <ExternalLink className="mx-1 mb-1 h-4 w-4 text-[#64768b]" />
           </a>
         </div>

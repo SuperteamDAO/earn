@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
 import { X } from 'lucide-react';
-import React, { type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction, useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -11,12 +11,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { type SubmissionWithUser } from '@/interface/submission';
+import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { cleanRewards, getRankLabels, sortRank } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
-import { type Listing } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 
 import { selectedSubmissionAtom } from '../../atoms';
 import { useRejectSubmissions } from '../../mutations/useRejectSubmissions';
@@ -80,6 +80,14 @@ export const SelectWinner = ({
       winnerPosition: position || null,
     });
   };
+
+  const isValueSelected = useMemo(
+    () =>
+      selectedSubmission?.isWinner &&
+      selectedSubmission.winnerPosition !== null,
+    [selectedSubmission],
+  );
+
   return (
     <>
       <div>
@@ -108,56 +116,71 @@ export const SelectWinner = ({
             )}
           </div>
         ) : (
-          <Select
-            disabled={!!bounty?.isWinnersAnnounced || isHackathonPage}
-            onValueChange={(value) =>
-              selectWinner(Number(value), selectedSubmission?.id)
-            }
-            value={
-              selectedSubmission?.isWinner
-                ? selectedSubmission.winnerPosition?.toString() || ''
-                : ''
-            }
-          >
-            <SelectTrigger
-              className={cn(
-                'h-10 w-40 border-slate-300 font-medium capitalize text-slate-700',
-                'focus:border-brand-purple focus:ring-brand-purple',
-              )}
+          <div className="relative">
+            <Select
+              disabled={!!bounty?.isWinnersAnnounced || isHackathonPage}
+              onValueChange={(value) =>
+                selectWinner(Number(value), selectedSubmission?.id)
+              }
+              value={
+                selectedSubmission?.isWinner
+                  ? selectedSubmission.winnerPosition?.toString() || ''
+                  : ''
+              }
             >
-              <SelectValue
-                className="placeholder:text-slate-800"
-                placeholder="Select Winner"
-              />
-            </SelectTrigger>
-            <SelectContent>
-              {rewards.map((reward) => {
-                let isRewardUsed = usedPositions.includes(reward);
-                if (reward === BONUS_REWARD_POSITION) {
-                  if (
-                    usedPositions.filter((u) => u === BONUS_REWARD_POSITION)
-                      .length < (bounty?.maxBonusSpots ?? 0)
-                  ) {
-                    isRewardUsed = false;
+              <SelectTrigger
+                className={cn(
+                  'h-10 w-40 border-slate-300 font-medium capitalize text-slate-700',
+                  'focus:border-brand-purple focus:ring-brand-purple',
+                )}
+              >
+                <SelectValue
+                  className="placeholder:text-slate-800"
+                  placeholder="Select Winner"
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {rewards.map((reward) => {
+                  let isRewardUsed = usedPositions.includes(reward);
+                  if (reward === BONUS_REWARD_POSITION) {
+                    if (
+                      usedPositions.filter((u) => u === BONUS_REWARD_POSITION)
+                        .length < (bounty?.maxBonusSpots ?? 0)
+                    ) {
+                      isRewardUsed = false;
+                    }
                   }
-                }
-                const isCurrentSubmissionReward =
-                  Number(selectedSubmission?.winnerPosition) === reward;
+                  const isCurrentSubmissionReward =
+                    Number(selectedSubmission?.winnerPosition) === reward;
 
-                return (
-                  (!isRewardUsed || isCurrentSubmissionReward) && (
-                    <SelectItem
-                      className="capitalize"
-                      key={reward}
-                      value={reward.toString()}
-                    >
-                      {isProject ? 'Winner' : getRankLabels(reward)}
-                    </SelectItem>
-                  )
-                );
-              })}
-            </SelectContent>
-          </Select>
+                  return (
+                    (!isRewardUsed || isCurrentSubmissionReward) && (
+                      <SelectItem
+                        className="capitalize"
+                        key={reward}
+                        value={reward.toString()}
+                      >
+                        {isProject ? 'Winner' : getRankLabels(reward)}
+                      </SelectItem>
+                    )
+                  );
+                })}
+              </SelectContent>
+            </Select>
+            {isValueSelected && (
+              <div
+                className="absolute right-8 top-1/2 z-10 -translate-y-1/2 cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  selectWinner(0, selectedSubmission?.id);
+                }}
+              >
+                <div className="flex h-4 w-4 items-center justify-center rounded-full bg-red-100 text-red-400 hover:bg-red-200">
+                  <X className="h-2.5 w-2.5" />
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
       <RejectSubmissionModal

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { TriangleAlert } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
@@ -96,22 +96,32 @@ export function RightSideBar({
 
   const router = useRouter();
 
-  const consideringDigitsArray = cleanRewardPrizes(rewards).map(
-    (c) => formatNumberWithSuffix(c, 2, true) + (token || '') + '',
-  );
+  const largestDigits = useMemo(() => {
+    const consideringDigitsArray = cleanRewardPrizes(rewards).map(
+      (c) => formatNumberWithSuffix(c, 2, true) + (token || '') + '',
+    );
+    consideringDigitsArray.push(
+      formatNumberWithSuffix(rewardAmount || 0, 2, true) + (token || '') + '',
+    );
+    return digitsInLargestString(consideringDigitsArray);
+  }, [rewards, token, rewardAmount]);
 
-  consideringDigitsArray.push(
-    formatNumberWithSuffix(rewardAmount || 0, 2, true) + (token || '') + '',
-  );
-  const largestDigits = digitsInLargestString(consideringDigitsArray);
+  const showUsdSymbolOnly = useMemo(() => {
+    if (listing?.Hackathon?.slug === 'mobius') return true;
+    else return false;
+  }, [listing]);
 
-  let widthOfPrize = largestDigits - 0.75 + 'rem';
-  if (cleanRewardPrizes(rewards).length > 6) {
-    widthOfPrize = largestDigits + 0.5 + 'rem';
-  }
-  if (compensationType === 'range') {
-    widthOfPrize = '90%';
-  }
+  const widthOfPrize = useMemo(() => {
+    let calculateWidthOfPrize: string | number = largestDigits - 0.75;
+    if (cleanRewardPrizes(rewards).length > 6) {
+      calculateWidthOfPrize = largestDigits + 0.5;
+    }
+    calculateWidthOfPrize = calculateWidthOfPrize + 'rem';
+    if (compensationType === 'range') {
+      calculateWidthOfPrize = '90%';
+    }
+    return calculateWidthOfPrize;
+  }, [largestDigits, rewards]);
 
   return (
     <div className="h-full w-full md:w-auto">
@@ -129,27 +139,35 @@ export function RightSideBar({
                 <tbody>
                   <tr className="w-full">
                     <td className="w-full p-0" colSpan={3}>
-                      <div className="flex items-center gap-2">
-                        <img
-                          className="h-8 w-8 rounded-full"
-                          alt="token icon"
-                          src={
-                            tokenList.find((e) => e?.tokenSymbol === token)
-                              ?.icon ?? '/assets/dollar.svg'
-                          }
-                        />
+                      <div
+                        className={cn(
+                          'flex items-center gap-2',
+                          showUsdSymbolOnly && 'ml-6',
+                        )}
+                      >
+                        {!showUsdSymbolOnly && (
+                          <img
+                            className="h-8 w-8 rounded-full"
+                            alt="token icon"
+                            src={
+                              tokenList.find((e) => e?.tokenSymbol === token)
+                                ?.icon ?? '/assets/dollar.svg'
+                            }
+                          />
+                        )}
                         <CompensationAmount
                           compensationType={compensationType}
                           rewardAmount={rewardAmount}
                           maxRewardAsk={maxRewardAsk}
                           minRewardAsk={minRewardAsk}
-                          token={token}
+                          token={!showUsdSymbolOnly ? token : 'USD'}
                           className={cn(
                             'text-lg font-semibold text-slate-700 md:text-xl',
                           )}
                           style={{
                             width: widthOfPrize,
                           }}
+                          showUsdSymbol={showUsdSymbolOnly}
                         />
                         <p className="text-lg font-normal text-slate-500">
                           {isProject ? 'Payment' : 'Total Prizes'}
@@ -165,8 +183,9 @@ export function RightSideBar({
                           widthPrize={widthOfPrize}
                           totalReward={rewardAmount ?? 0}
                           maxBonusSpots={maxBonusSpots ?? 0}
-                          token={token ?? ''}
+                          token={!showUsdSymbolOnly ? token || '' : 'USD'}
                           rewards={rewards}
+                          showUsdSymbol={showUsdSymbolOnly}
                         />
                       </td>
                     </tr>

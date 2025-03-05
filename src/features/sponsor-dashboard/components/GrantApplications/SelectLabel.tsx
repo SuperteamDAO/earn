@@ -1,6 +1,6 @@
 import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -14,7 +14,7 @@ import {
 import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
-import { selectedGrantApplicationAtom } from '../../atoms';
+import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';
 import { type GrantApplicationsReturn } from '../../queries/applications';
 import { colorMap } from '../../utils/statusColorMap';
@@ -28,6 +28,7 @@ export const SelectLabel = ({ grantSlug }: Props) => {
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
+  const setLabelsUpdating = useSetAtom(isStateUpdatingAtom);
 
   const labelMenuOptionsGrants = useMemo(
     () => [
@@ -93,6 +94,12 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     },
     onError: (e) => {
       console.log(e);
+    },
+    onMutate: () => {
+      setLabelsUpdating(true);
+    },
+    onSettled: () => {
+      setLabelsUpdating(false);
     },
   });
 

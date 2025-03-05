@@ -54,6 +54,16 @@ export default async function handler(
             description: true,
             slug: true,
             announceDate: true,
+            sponsorId: true,
+            Sponsor: {
+              select: {
+                name: true,
+                logo: true,
+                entityName: true,
+                isVerified: true,
+                isCaution: true,
+              },
+            },
           },
         },
       },

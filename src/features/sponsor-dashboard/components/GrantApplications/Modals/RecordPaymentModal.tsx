@@ -136,6 +136,7 @@ export const RecordPaymentModal = ({
                         className="border-slate-300 text-slate-800 focus-visible:ring-brand-purple"
                         placeholder="Enter amount"
                         {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
                       />
                     </FormControl>
                     <FormMessage />

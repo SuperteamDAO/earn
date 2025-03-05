@@ -1,6 +1,6 @@
 import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
-import { selectedSubmissionAtom } from '../../atoms';
+import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
 
@@ -27,6 +27,7 @@ export const SelectLabel = ({ listingSlug }: Props) => {
   const [selectedSubmission, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
   );
+  const setLabelsUpdating = useSetAtom(isStateUpdatingAtom);
 
   const selectLabel = async (
     label: SubmissionLabels,
@@ -66,6 +67,12 @@ export const SelectLabel = ({ listingSlug }: Props) => {
     },
     onError: (e) => {
       console.log(e);
+    },
+    onMutate: () => {
+      setLabelsUpdating(true);
+    },
+    onSettled: () => {
+      setLabelsUpdating(false);
     },
   });
 

@@ -29,10 +29,10 @@ export const InfoBox = ({
         className="h-full w-full overflow-visible text-sm font-medium text-slate-600"
         id="richtext"
       >
-        {parse(content || '', options)}
+        {parse(content || '-', options)}
       </div>
     ) : (
-      <LinkTextParser text={content || ''} />
+      <LinkTextParser text={content || '-'} />
     )}
   </div>
 );
