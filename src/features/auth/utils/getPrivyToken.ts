@@ -16,16 +16,16 @@ export async function getPrivyToken(
   try {
     logger.debug('Request Cookies', safeStringify(req.cookies));
     logger.debug('Request Headers', safeStringify(req.headers));
-    const accessToken = req.headers?.authorization?.replace('Bearer ', '');
+    let accessToken = req.headers?.authorization?.replace('Bearer ', '');
     if (accessToken) {
       logger.info('Access token found in `authorization` header', accessToken);
     }
 
-    // ONLY FOR DEVS, COOKIE IS NOT USED FOR AUTHENTICATION NOW.
-    // BUT WE MIGHT MISS AND USE `axios` accidentally instead of `@/lib/api` ON FRONTEND
-    // CHECKING FOR COOKIE HERE ONLY FOR LOGGING PURPOSES
+    // COOKIE IS NEEDED FOR SSR AUTH (getServerSideProps)
+    // BUT WE MIGHT MISS AND USE `axios` accidentally instead of `@/lib/api` ON FRONTEND, hence log
     if (!accessToken) {
-      if (!!req.cookies['privy-token']) {
+      accessToken = req.cookies['privy-token'];
+      if (accessToken) {
         console.warn('PLEASE USE `@/lib/api` FROM FRONTEND INSTEAD OF `axios`');
       }
     }
