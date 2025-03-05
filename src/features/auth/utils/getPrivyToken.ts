@@ -16,30 +16,17 @@ export async function getPrivyToken(
   try {
     logger.debug('Request Cookies', safeStringify(req.cookies));
     logger.debug('Request Headers', safeStringify(req.headers));
-    let accessToken = req.cookies['privy-token'];
+    let accessToken = req.headers?.authorization?.replace('Bearer ', '');
     if (accessToken) {
-      logger.info('Access token found in cookies', accessToken);
+      logger.info('Access token found in `authorization` header', accessToken);
     }
 
+    // COOKIE IS NEEDED FOR SSR AUTH (getServerSideProps)
+    // BUT WE MIGHT MISS AND USE `axios` accidentally instead of `@/lib/api` ON FRONTEND, hence log
     if (!accessToken) {
-      accessToken = req.headers?.authorization?.replace('Bearer ', '');
+      accessToken = req.cookies['privy-token'];
       if (accessToken) {
-        logger.info(
-          'Access token found in `authorization` header',
-          accessToken,
-        );
-      }
-    }
-
-    if (!accessToken) {
-      if (typeof req.headers?.Authorization === 'string') {
-        accessToken = req.headers.Authorization.replace('Bearer ', '');
-      }
-      if (accessToken) {
-        logger.info(
-          'Access token found in `Authorization` header',
-          accessToken,
-        );
+        console.warn('PLEASE USE `@/lib/api` FROM FRONTEND INSTEAD OF `axios`');
       }
     }
 

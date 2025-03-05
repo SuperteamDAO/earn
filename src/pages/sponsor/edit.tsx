@@ -23,6 +23,7 @@ import { MultiSelect } from '@/components/ui/multi-select';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { uploadAndReplaceImage } from '@/utils/image';
 
@@ -162,7 +163,7 @@ export default function UpdateSponsor() {
         setIsUploading(false);
       }
 
-      await axios.post('/api/sponsors/edit', data);
+      await api.post('/api/sponsors/edit', data);
       await refetchUser();
       toast.success('Sponsor profile updated successfully!');
       router.push('/dashboard/listings');
