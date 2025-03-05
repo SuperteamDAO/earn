@@ -16,30 +16,17 @@ export async function getPrivyToken(
   try {
     logger.debug('Request Cookies', safeStringify(req.cookies));
     logger.debug('Request Headers', safeStringify(req.headers));
-    let accessToken = req.cookies['privy-token'];
+    const accessToken = req.headers?.authorization?.replace('Bearer ', '');
     if (accessToken) {
-      logger.info('Access token found in cookies', accessToken);
+      logger.info('Access token found in `authorization` header', accessToken);
     }
 
+    // ONLY FOR DEVS, COOKIE IS NOT USED FOR AUTHENTICATION NOW.
+    // BUT WE MIGHT MISS AND USE `axios` accidentally instead of `@/lib/api` ON FRONTEND
+    // CHECKING FOR COOKIE HERE ONLY FOR LOGGING PURPOSES
     if (!accessToken) {
-      accessToken = req.headers?.authorization?.replace('Bearer ', '');
-      if (accessToken) {
-        logger.info(
-          'Access token found in `authorization` header',
-          accessToken,
-        );
-      }
-    }
-
-    if (!accessToken) {
-      if (typeof req.headers?.Authorization === 'string') {
-        accessToken = req.headers.Authorization.replace('Bearer ', '');
-      }
-      if (accessToken) {
-        logger.info(
-          'Access token found in `Authorization` header',
-          accessToken,
-        );
+      if (!!req.cookies['privy-token']) {
+        console.warn('PLEASE USE `@/lib/api` FROM FRONTEND INSTEAD OF `axios`');
       }
     }
 

@@ -1,5 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { create } from 'zustand';
@@ -28,10 +29,10 @@ const useUserStore = create<UserState>()(
 
 export const useUser = () => {
   const { user, setUser } = useUserStore();
-  const { authenticated, ready } = usePrivy();
+  const { authenticated, ready, logout } = usePrivy();
   const router = useRouter();
 
-  const { data, error, refetch, isLoading } = useQuery({
+  const { data, error, refetch, isLoading, isError } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
       const { data } = await api.get<User>('/api/user/');
@@ -48,6 +49,23 @@ export const useUser = () => {
       setUser(data);
     }
   }, [data, setUser]);
+
+  useEffect(() => {
+    async function authCheck() {
+      if (ready && authenticated) {
+        if (isError) {
+          if (axios.isAxiosError(error)) {
+            if (error.status === 401) {
+              localStorage.removeItem('user-storage');
+              await logout();
+              window.location.reload();
+            }
+          }
+        }
+      }
+    }
+    authCheck();
+  }, [error, isError, ready, authenticated]);
 
   const refetchUser = async () => {
     await refetch();

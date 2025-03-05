@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
@@ -20,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
@@ -59,7 +59,7 @@ export const SponsorVerificationForm = () => {
     try {
       setIsSubmitting(true);
 
-      await axios.post('/api/sponsor/verification', values);
+      await api.post('/api/sponsor/verification', values);
       await refetchUser();
 
       toast.success('Verification information updated successfully');
