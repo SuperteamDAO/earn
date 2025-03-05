@@ -46,7 +46,7 @@ export function WalletDrawer({
     signature: '',
     tokenAddress: '',
     amount: '',
-    address: '',
+    recipientAddress: '',
     timestamp: 0,
     type: 'Withdrawn',
   });

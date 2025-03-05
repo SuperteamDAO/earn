@@ -33,7 +33,7 @@ export function ActivityItem({
           signature: activity.signature,
           tokenAddress: activity.tokenAddress,
           amount: activity.amount.toString(),
-          address: activity.counterpartyAddress,
+          recipientAddress: activity.counterpartyAddress,
           timestamp: activity.timestamp,
           type: activity.type,
         });
