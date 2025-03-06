@@ -373,12 +373,12 @@ export default function AiReviewModal({ applications, grant }: Props) {
                   <StatItem
                     label="Total Reviewed"
                     value={completedStats.totalReviewed}
-                    dotColor="bg-yellow-400"
+                    dotColor="bg-blue-400"
                   />
                   <StatItem
                     label="High Quality"
                     value={completedStats.highQuality}
-                    dotColor="bg-green-400"
+                    dotColor="bg-violet-400"
                   />
                   <StatItem
                     label="Low Quality"
@@ -388,12 +388,12 @@ export default function AiReviewModal({ applications, grant }: Props) {
                   <StatItem
                     label="Mid Quality"
                     value={completedStats.midQuality}
-                    dotColor="bg-blue-200"
+                    dotColor="bg-cyan-400"
                   />
                   <StatItem
                     label="Total time saved"
                     value={formatTime(completedStats.totalHoursSaved)}
-                    dotColor="bg-gray-300"
+                    dotColor="bg-green-400"
                   />
                 </div>
 
