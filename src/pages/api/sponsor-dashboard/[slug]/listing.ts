@@ -62,22 +62,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
     if (
       user.role !== 'GOD' &&
-      result?.hackathonId &&
-      result.hackathonId !== user.hackathonId
+      result?.sponsorId !== user.currentSponsorId &&
+      result?.hackathonId !== user.hackathonId
     ) {
       logger.warn(
         `Listing with slug=${slug} does not belong to user ${userId}`,
       );
-      return res.status(403).json({
-        message: `Listing with slug=${slug} does not belong to user ${userId}`,
-      });
-    }
-    if (
-      user.role !== 'GOD' &&
-      result?.sponsorId &&
-      result.sponsorId !== user.currentSponsorId
-    ) {
-      logger.warn(
+      console.warn(
         `Listing with slug=${slug} does not belong to user ${userId}`,
       );
       return res.status(403).json({

@@ -145,7 +145,9 @@ export const SubmissionPanel = ({
                       </Button>
                     </Tooltip>
                   ))}
-                {<SelectLabel listingSlug={bounty?.slug!} />}
+                {!isHackathonPage && (
+                  <SelectLabel listingSlug={bounty?.slug!} />
+                )}
                 {selectedSubmission?.isWinner &&
                   selectedSubmission?.winnerPosition &&
                   selectedSubmission?.isPaid && (
@@ -164,7 +166,7 @@ export const SubmissionPanel = ({
                       <ExternalLink className="ml-2 h-4 w-4" />
                     </Button>
                   )}
-                {!bounty?.isWinnersAnnounced && (
+                {!bounty?.isWinnersAnnounced && !isHackathonPage && (
                   <>
                     <SelectWinner
                       onWinnersAnnounceOpen={onWinnersAnnounceOpen}
@@ -209,32 +211,35 @@ export const SubmissionPanel = ({
                 )}
               </div>
             </div>
-            {!!remainings && !isProject && !bounty?.isWinnersAnnounced && (
-              <div className="ml-auto flex w-fit px-4 py-1 text-xs">
-                {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
-                  <p className="flex items-center rounded-md bg-red-100 px-5 py-1 text-[#f55151]">
-                    <AlertTriangle className="mr-1 inline-block h-3 w-3" />
-                    {remainings.podiums > 0 && (
-                      <>
-                        {remainings.podiums}{' '}
-                        {remainings.podiums === 1 ? 'Winner' : 'Winners'}{' '}
-                      </>
-                    )}
-                    {remainings.bonus > 0 && (
-                      <>
-                        {remainings.bonus}{' '}
-                        {remainings.bonus === 1 ? 'Bonus' : 'Bonus'}{' '}
-                      </>
-                    )}
-                    Remaining
-                  </p>
-                ) : (
-                  <p className="rounded-md bg-green-100 px-3 py-1 text-[#48CB6D]">
-                    All winners selected
-                  </p>
-                )}
-              </div>
-            )}
+            {!!remainings &&
+              !isProject &&
+              !bounty?.isWinnersAnnounced &&
+              !isHackathonPage && (
+                <div className="ml-auto flex w-fit px-4 py-1 text-xs">
+                  {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
+                    <p className="flex items-center rounded-md bg-red-100 px-5 py-1 text-[#f55151]">
+                      <AlertTriangle className="mr-1 inline-block h-3 w-3" />
+                      {remainings.podiums > 0 && (
+                        <>
+                          {remainings.podiums}{' '}
+                          {remainings.podiums === 1 ? 'Winner' : 'Winners'}{' '}
+                        </>
+                      )}
+                      {remainings.bonus > 0 && (
+                        <>
+                          {remainings.bonus}{' '}
+                          {remainings.bonus === 1 ? 'Bonus' : 'Bonus'}{' '}
+                        </>
+                      )}
+                      Remaining
+                    </p>
+                  ) : (
+                    <p className="rounded-md bg-green-100 px-3 py-1 text-[#48CB6D]">
+                      All winners selected
+                    </p>
+                  )}
+                </div>
+              )}
 
             <div className="flex items-center gap-5 px-5 py-2">
               {selectedSubmission?.user?.email && (
@@ -304,7 +309,7 @@ export const SubmissionPanel = ({
               )}
             </div>
           </div>
-          <Details bounty={bounty} />
+          <Details bounty={bounty} isHackathonPage={isHackathonPage} />
         </>
       ) : (
         <div className="p-3">
