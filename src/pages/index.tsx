@@ -136,6 +136,7 @@ export default function HomePage({
           sub="Sponsor projects and get exposure"
           showEmoji
           showViewAll
+          viewAllLink="/sponsorships/"
         >
           {!sponsorships?.length && (
             <div className="mt-8 flex items-center justify-center">

@@ -34,14 +34,19 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
   );
 
   const { data: sponsorships, isLoading: isSponsorshipsLoading } = useQuery(
-    listingsQuery({ type: 'sponsorship', take: 10 }),
+    listingsQuery({
+      type: 'sponsorship',
+      take: 10,
+      filter: slug,
+      deadline,
+    }),
   );
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
-    design: `Design Bounties and Grants | ${PROJECT_NAME}`,
-    content: `Content Bounties and Grants | ${PROJECT_NAME}`,
-    development: `Development Bounties and Grants | ${PROJECT_NAME}`,
-    other: `Other Bounties and Grants | ${PROJECT_NAME}`,
+    design: `Design Bounties and Sponsorships | ${PROJECT_NAME}`,
+    content: `Content Bounties and Sponsorships | ${PROJECT_NAME}`,
+    development: `Development Bounties and Sponsorships | ${PROJECT_NAME}`,
+    other: `Other Bounties and Sponsorships | ${PROJECT_NAME}`,
   };
 
   const titleKey = slug as SlugKeys;
@@ -49,7 +54,7 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
   const formattedSlug =
     slug.charAt(0).toUpperCase() + slug.slice(1).toLowerCase();
 
-  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on ${PROJECT_NAME}.`;
+  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and sponsorships for freelancers and builders in the crypto space on ${PROJECT_NAME}.`;
   const canonicalURL = `${getURL()}/category/${slug}/`;
 
   return (
@@ -78,6 +83,7 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
           sub="Sponsor projects and get exposure"
           showEmoji
           showViewAll
+          viewAllLink={`/sponsorships/`}
         >
           {isSponsorshipsLoading && (
             <div className="flex min-h-52 flex-col items-center justify-center">

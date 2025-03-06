@@ -164,6 +164,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
               sub="Sponsor projects and get exposure"
               showEmoji
               showViewAll
+              viewAllLink={`/sponsorships/`}
             >
               {isSponsorshipsLoading && (
                 <div className="flex min-h-52 flex-col items-center justify-center">

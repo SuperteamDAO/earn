@@ -21,14 +21,14 @@ function AllCategoryListingsPage({ slug }: { slug: string }) {
   );
 
   const titlesForSlugs: { [key in SlugKeys]: string } = {
-    design: `Design Bounties and Grants | ${PROJECT_NAME}`,
-    content: `Content Bounties and Grants | ${PROJECT_NAME}`,
-    development: `Development Bounties and Grants | ${PROJECT_NAME}`,
-    other: `Other Bounties and Grants | ${PROJECT_NAME}`,
+    design: `Design Bounties and Sponsorships | ${PROJECT_NAME}`,
+    content: `Content Bounties and Sponsorships | ${PROJECT_NAME}`,
+    development: `Development Bounties and Sponsorships | ${PROJECT_NAME}`,
+    other: `Other Bounties and Sponsorships | ${PROJECT_NAME}`,
   };
   const titleKey = slug as SlugKeys;
   const title = titlesForSlugs[titleKey] || `${PROJECT_NAME}`;
-  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and grants for freelancers and builders in the crypto space on ${PROJECT_NAME}.`;
+  const metaDescription = `Find the latest ${slug.toLowerCase()} bounties and sponsorships for freelancers and builders in the crypto space on ${PROJECT_NAME}.`;
   const canonicalURL = `${getURL()}/category/${slug}/all`;
 
   return (

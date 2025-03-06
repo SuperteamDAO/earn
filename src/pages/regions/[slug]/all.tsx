@@ -30,8 +30,8 @@ export default function AllRegionListingsPage({
   return (
     <Home type="region" st={st}>
       <Meta
-        title={`Welcome to ${PROJECT_NAME} ${displayName} | Discover Bounties and Grants`}
-        description={`Welcome to ${PROJECT_NAME} ${displayName}'s page — Discover bounties and grants and become a part of the global crypto community`}
+        title={`Welcome to ${PROJECT_NAME} ${displayName} | Discover Bounties and Sponsorships`}
+        description={`Welcome to ${PROJECT_NAME} ${displayName}'s page — Discover bounties and sponsorships and become a part of the global crypto community`}
         canonical={`${getURL()}/regions/${slug}/`}
         og={ogImage.toString()}
       />

@@ -4,8 +4,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { MdArrowForward } from 'react-icons/md';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { HIDE_LEADERBOARD } from '@/constants/project';
 import { tokenList } from '@/constants/tokenList';
 import { type User } from '@/interface/user';
+import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';
 
@@ -102,7 +104,10 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
         </span>
         <Link
           href="/leaderboard"
-          className="ph-no-capture flex items-center text-xs font-semibold text-brand-purple"
+          className={cn(
+            'ph-no-capture flex items-center text-xs font-semibold text-brand-purple',
+            HIDE_LEADERBOARD && 'hidden',
+          )}
           onClick={() => {
             posthog.capture('view leaderboard_homepage');
           }}

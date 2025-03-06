@@ -42,7 +42,7 @@ const Sponsor = () => {
     <>
       <Meta
         title={`Find Top Talent for Your Crypto Projects on ${PROJECT_NAME}`}
-        description={`Seeking top talent for your crypto project? ${PROJECT_NAME} connects you with experts for Bounties, Projects, and Grants in the crypto space.`}
+        description={`Seeking top talent for your crypto project? ${PROJECT_NAME} connects you with experts for Bounties, Projects, and Sponsorships in the crypto space.`}
         og={OG_IMAGES_URL + `/og/sponsor.png`}
       />
 

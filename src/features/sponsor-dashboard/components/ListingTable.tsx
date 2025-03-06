@@ -393,7 +393,8 @@ export const ListingTable = ({
                         )}
 
                         {(listing.type === 'bounty' ||
-                          listing.type === 'project') && (
+                          listing.type === 'project' ||
+                          listing.type === 'sponsorship') && (
                           <DropdownMenuItem
                             className="ph-no-capture cursor-pointer text-sm font-medium text-slate-500"
                             onClick={() => {

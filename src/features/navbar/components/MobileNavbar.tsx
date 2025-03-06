@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
-import { PROJECT_NAME } from '@/constants/project';
+import { HIDE_LEADERBOARD, PROJECT_NAME } from '@/constants/project';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -143,12 +143,14 @@ export const MobileNavbar = ({ onLoginOpen }: Props) => {
               isActive={false}
               onClick={onDrawerClose}
             />
-            <NavLink
-              href={'/leaderboard'}
-              label={'Leaderboard'}
-              isActive={false}
-              onClick={onDrawerClose}
-            />
+            {!HIDE_LEADERBOARD && (
+              <NavLink
+                href={'/leaderboard'}
+                label={'Leaderboard'}
+                isActive={false}
+                onClick={onDrawerClose}
+              />
+            )}
           </div>
         </SheetContent>
       </Sheet>

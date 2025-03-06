@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, ExternalLink, X } from 'lucide-react';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -372,8 +373,16 @@ export const VerifyPaymentModal = ({
                 <p className="mt-2 text-sm font-normal text-slate-500">
                   If you have paid the winners outside of {PROJECT_NAME} and
                   want to update the status of this listing as
-                  &quot;Completed&quot;, please add the transaction links of the
-                  payments made to the winners.
+                  &quot;Completed&quot;, please provide the{' '}
+                  <Link
+                    href="https://nearblocks.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-brand-purple"
+                  >
+                    nearblocks.io
+                  </Link>{' '}
+                  links of the transaction made to the winners.
                 </p>
               </div>
 
