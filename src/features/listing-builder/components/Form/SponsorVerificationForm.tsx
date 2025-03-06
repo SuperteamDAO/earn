@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
@@ -20,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
+import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
@@ -59,7 +59,7 @@ export const SponsorVerificationForm = () => {
     try {
       setIsSubmitting(true);
 
-      await axios.post('/api/sponsor/verification', values);
+      await api.post('/api/sponsor/verification', values);
       await refetchUser();
 
       toast.success('Verification information updated successfully');
@@ -91,7 +91,7 @@ export const SponsorVerificationForm = () => {
               following information with us, and we will try to verify your
               listing within 24H.
             </p>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-slate-500">
               Once verified, your listing will be published automatically. If we
               need any additional information, we will get in touch with you.
             </p>

@@ -247,7 +247,7 @@ export const Comment = ({
                 className="relative -left-3 flex items-center text-xs font-medium text-brand-purple hover:text-brand-purple-dark md:text-sm"
               >
                 <ChevronDown className="mr-1 h-4 w-4" />
-                <span>{replies?.length}</span>
+                <span className="mr-1">{replies?.length}</span>
                 {replies?.length === 1 ? (
                   <span>Reply</span>
                 ) : (

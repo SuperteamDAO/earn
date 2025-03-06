@@ -480,7 +480,7 @@ model PoW {
   title       String
   description String    @db.Text
   skills      Json?
-  link        String
+  link        String    @db.Text
   createdAt   DateTime  @default(now())
   subSkills   Json?
   updatedAt   DateTime  @updatedAt

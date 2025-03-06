@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { toast } from 'sonner';
 
 import { type SubmissionWithUser } from '@/interface/submission';
@@ -8,7 +8,7 @@ import { api } from '@/lib/api';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { type Listing, type Rewards } from '@/features/listings/types';
 
-import { selectedSubmissionAtom } from '../atoms';
+import { isStateUpdatingAtom, selectedSubmissionAtom } from '../atoms';
 
 export const useToggleWinner = (
   bounty: Listing | undefined,
@@ -20,6 +20,8 @@ export const useToggleWinner = (
 ) => {
   const queryClient = useQueryClient();
   const [, setSelectedSubmission] = useAtom(selectedSubmissionAtom);
+
+  const setPositionUpdating = useSetAtom(isStateUpdatingAtom);
 
   return useMutation({
     mutationFn: async ({
@@ -122,6 +124,12 @@ export const useToggleWinner = (
     onError: (error) => {
       console.error('Failed to toggle winner:', error);
       toast.error('Failed to toggle winner, please try again later');
+    },
+    onMutate: () => {
+      setPositionUpdating(true);
+    },
+    onSettled: () => {
+      setPositionUpdating(false);
     },
   });
 };

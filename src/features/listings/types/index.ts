@@ -62,6 +62,7 @@ export interface ListingHackathon {
   altLogo: string;
   slug: string;
   announceDate: string;
+  Sponsor: SponsorType;
 }
 
 export interface ListingWithSubmissions extends Listing {

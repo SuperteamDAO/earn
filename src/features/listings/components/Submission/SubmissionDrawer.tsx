@@ -69,6 +69,7 @@ export const SubmissionDrawer = ({
     token,
     minRewardAsk,
     maxRewardAsk,
+    Hackathon,
   } = listing;
 
   const queryClient = useQueryClient();
@@ -89,6 +90,7 @@ export const SubmissionDrawer = ({
           ? listing.eligibility.map((q) => ({
               question: q.question,
               answer: '',
+              optional: q.optional,
             }))
           : [],
     },
@@ -220,7 +222,7 @@ export const SubmissionDrawer = ({
       subheadingText = "We can't wait to see what you've created!";
       break;
     case 'hackathon':
-      headerText = 'Solana Radar Track Submission';
+      headerText = `${Hackathon?.Sponsor?.name || ''} ${Hackathon?.name || ''} Track Submission`;
       subheadingText = (
         <>
           Note:
@@ -230,12 +232,12 @@ export const SubmissionDrawer = ({
             website, etc)
           </p>
           <p>
-            2. To be eligible for different challenges, you need to submit to
-            each challenge separately
+            2. To be eligible for different tracks, you need to submit to each
+            challenge separately
           </p>
           <p>
-            3. {`There's no`} restriction on the number of challenges you can
-            submit to
+            3. {`There's no`} restriction on the number of tracks you can submit
+            to
           </p>
         </>
       );
@@ -365,7 +367,9 @@ export const SubmissionDrawer = ({
                           render={({ field }) => (
                             <FormItem className={cn('flex flex-col gap-2')}>
                               <div>
-                                <FormLabel isRequired>{e.question}</FormLabel>
+                                <FormLabel isRequired={!e.optional}>
+                                  {e.question}
+                                </FormLabel>
                               </div>
                               <div>
                                 <FormControl>

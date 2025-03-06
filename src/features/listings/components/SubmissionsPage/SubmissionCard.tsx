@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { ArrowUpRight, Heart, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import React, { type Dispatch, type SetStateAction, useState } from 'react';
@@ -8,6 +7,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { type User } from '@/interface/user';
+import { api } from '@/lib/api';
 import { ogImageQuery } from '@/queries/og';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -48,7 +48,7 @@ export const SubmissionCard = ({
     e.stopPropagation();
     setIsLoading(true);
 
-    const likePromise = axios
+    const likePromise = api
       .post('/api/submission/like/', { id })
       .then()
       .finally(() => {

@@ -308,6 +308,8 @@ async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             token,
             listing.publishedAt,
           );
+          if (typeof tokenUsdValue !== 'number')
+            throw new Error('Token value not found');
           usdValue = tokenUsdValue * amount;
           logger.info('Token USD value fetched', {
             token,

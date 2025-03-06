@@ -14,13 +14,28 @@ export async function getPrivyToken(
       }),
 ): Promise<string | null> {
   try {
-    const accessToken = req.cookies['privy-token'];
+    logger.debug('Request Cookies', safeStringify(req.cookies));
+    logger.debug('Request Headers', safeStringify(req.headers));
+    let accessToken = req.headers?.authorization?.replace('Bearer ', '');
+    if (accessToken) {
+      logger.info('Access token found in `authorization` header', accessToken);
+    }
+
+    // COOKIE IS NEEDED FOR SSR AUTH (getServerSideProps)
+    // BUT WE MIGHT MISS AND USE `axios` accidentally instead of `@/lib/api` ON FRONTEND, hence log
+    if (!accessToken) {
+      accessToken = req.cookies['privy-token'];
+      if (accessToken) {
+        console.warn('PLEASE USE `@/lib/api` FROM FRONTEND INSTEAD OF `axios`');
+      }
+    }
 
     if (!accessToken) {
-      logger.error('Unauthorized, Privy access token not found in cookies');
+      logger.error(
+        'Unauthorized, Privy access token not found in cookies or authorization header',
+      );
       return null;
     }
-    logger.info('Access token found in cookies ', accessToken);
 
     const claims = await privy.verifyAuthToken(
       accessToken,

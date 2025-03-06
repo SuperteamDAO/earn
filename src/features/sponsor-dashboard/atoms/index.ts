@@ -14,7 +14,7 @@ const baseSelectedGrantApplicationAtom = atom<
   GrantApplicationWithUser | undefined
 >(undefined);
 
-export const isNotesUpdatingAtom = atom<boolean>(false);
+export const isStateUpdatingAtom = atom<boolean>(false);
 
 export const selectedSubmissionAtom = atom(
   (get) => get(baseSelectedSubmissionAtom),
@@ -26,7 +26,7 @@ export const selectedSubmissionAtom = atom(
       | undefined
       | Updater<SubmissionWithUser | undefined>,
   ) => {
-    const isUpdating = get(isNotesUpdatingAtom);
+    const isUpdating = get(isStateUpdatingAtom);
     if (!isUpdating) {
       const prevValue = get(baseSelectedSubmissionAtom);
       const newValue =
@@ -48,7 +48,7 @@ export const selectedGrantApplicationAtom = atom(
       | undefined
       | Updater<GrantApplicationWithUser | undefined>,
   ) => {
-    const isUpdating = get(isNotesUpdatingAtom);
+    const isUpdating = get(isStateUpdatingAtom);
     if (!isUpdating) {
       const prevValue = get(baseSelectedGrantApplicationAtom);
       const newValue =

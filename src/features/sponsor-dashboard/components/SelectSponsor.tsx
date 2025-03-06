@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { atom, useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { components } from 'react-select';
@@ -6,6 +5,7 @@ import AsyncSelect from 'react-select/async';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import type { SponsorType } from '@/interface/sponsor';
+import { api } from '@/lib/api';
 import { useUpdateUser, useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -51,7 +51,7 @@ export function SelectSponsor({
     inputValue: string,
     callback: (options: SponsorOption[]) => void,
   ) => {
-    axios
+    api
       .get(`/api/sponsors/list/`, {
         params: {
           searchString: inputValue,
