@@ -21,7 +21,7 @@ export function Introduction() {
         <div className="flex gap-2">
           <ExternalImage
             className="w-5"
-            src={'/leaderboard/progress'}
+            src={'/leaderboard/progress.svg'}
             alt="progress icon"
           />
           <p className="text-slate-600">Track your progress as you earn</p>
@@ -29,7 +29,7 @@ export function Introduction() {
         <div className="flex gap-2">
           <ExternalImage
             className="w-5"
-            src={'/leaderboard/rank'}
+            src={'/leaderboard/rank.svg'}
             alt="progress icon"
             style={{ paddingRight: '0.4rem' }}
           />
@@ -40,7 +40,7 @@ export function Introduction() {
         <div className="flex gap-2">
           <ExternalImage
             className="w-5"
-            src={'/leaderboard/semistart'}
+            src={'/leaderboard/semistart.svg'}
             alt="progress icon"
             style={{ paddingRight: '0.6rem' }}
           />

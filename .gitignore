@@ -40,7 +40,7 @@ yarn-error.log*
 
 # dotenv local files
 .env*.local
-.env
+**.env
 
 # local folder
 local
@@ -67,3 +67,6 @@ local
 **/public/fallback-*.js
 # Sentry Config File
 .env.sentry-build-plugin
+
+download_assets.sh
+download_assets.js

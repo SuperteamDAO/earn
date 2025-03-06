@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Loading } from '@/components/shared/Loading';
-import { OG_IMAGES_URL } from '@/constants/ASSET_URL';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { PROJECT_NAME } from '@/constants/project';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
@@ -63,7 +63,7 @@ function ListingCategoryPage({ slug }: { slug: SlugKeys }) {
         title={title}
         description={metaDescription}
         canonical={canonicalURL}
-        og={OG_IMAGES_URL + `/og/categories/${slug}.png`}
+        og={ASSET_URL + `/og/categories/${slug}.png`}
       />
       <div className="w-full">
         {slug !== 'other' && <CategoryPop category={slug} />}
