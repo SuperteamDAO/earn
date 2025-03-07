@@ -4,7 +4,6 @@ import { usePostHog } from 'posthog-js/react';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -48,8 +47,8 @@ export default function AiReviewModal({ applications, grant }: Props) {
   const [completedStats, setCompletedStats] = useState({
     totalReviewed: 0,
     lowQuality: 0,
-    shortlisted: 0,
-    unmarked: 0,
+    highQuality: 0,
+    midQuality: 0,
     totalHoursSaved: 0,
   });
 
@@ -140,10 +139,10 @@ export default function AiReviewModal({ applications, grant }: Props) {
         setCompletedStats({
           totalReviewed: data.data.length,
           lowQuality: data.data.filter((s) => s.label === 'Low_Quality').length,
-          shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
+          highQuality: data.data.filter((s) => s.label === 'High_Quality')
             .length,
-          unmarked: data.data.filter(
-            (s) => s.label === 'Reviewed' || s.label === 'Unreviewed',
+          midQuality: data.data.filter(
+            (s) => s.label === 'Mid_Quality' || s.label === 'Unreviewed',
           ).length,
           totalHoursSaved: data.data.length * 6_00_000,
         });
@@ -183,20 +182,20 @@ export default function AiReviewModal({ applications, grant }: Props) {
             <span
               className={cn(
                 'ml-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
-                colorMap['Shortlisted'].bg,
-                colorMap['Shortlisted'].color,
+                colorMap['High_Quality'].bg,
+                colorMap['High_Quality'].color,
               )}
             >
-              Shortlisted
+              High Quality
             </span>
             <span
               className={cn(
                 'mx-2 inline-flex w-fit whitespace-nowrap rounded-full px-2 text-center text-[10px] capitalize',
-                colorMap['Reviewed'].bg,
-                colorMap['Reviewed'].color,
+                colorMap['Mid_Quality'].bg,
+                colorMap['Mid_Quality'].color,
               )}
             >
-              Reviewed
+              Mid Quality
             </span>
           </p>
           <p>
@@ -374,39 +373,27 @@ export default function AiReviewModal({ applications, grant }: Props) {
                   <StatItem
                     label="Total Reviewed"
                     value={completedStats.totalReviewed}
-                    dotColor="bg-yellow-400"
+                    dotColor="bg-blue-400"
                   />
                   <StatItem
-                    label="Shortlisted"
-                    value={completedStats.shortlisted}
-                    dotColor="bg-green-400"
+                    label="High Quality"
+                    value={completedStats.highQuality}
+                    dotColor="bg-violet-400"
                   />
                   <StatItem
                     label="Low Quality"
                     value={completedStats.lowQuality}
-                    dotColor="bg-red-400"
+                    dotColor="bg-stone-400"
                   />
                   <StatItem
-                    label="Reviewed"
-                    value={completedStats.unmarked}
-                    dotColor="bg-blue-200"
-                    post={
-                      <>
-                        <Badge
-                          variant="secondary"
-                          className={cn(
-                            'inline-flex w-fit whitespace-nowrap px-1 py-0 text-center text-xs text-slate-500',
-                          )}
-                        >
-                          neither low quality nor shortlisted
-                        </Badge>
-                      </>
-                    }
+                    label="Mid Quality"
+                    value={completedStats.midQuality}
+                    dotColor="bg-cyan-400"
                   />
                   <StatItem
                     label="Total time saved"
                     value={formatTime(completedStats.totalHoursSaved)}
-                    dotColor="bg-gray-300"
+                    dotColor="bg-green-400"
                   />
                 </div>
 
