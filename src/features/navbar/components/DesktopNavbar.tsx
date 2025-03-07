@@ -126,6 +126,16 @@ export const DesktopNavbar = ({
                     className="h-full object-contain"
                   />
                 </Link>
+                <Link
+                  href={'/hackathon/redacted'}
+                  className={cn('flex items-center py-2 font-medium', 'h-8')}
+                >
+                  <ExternalImage
+                    alt="Mobius Logo"
+                    src="/hackathon/redacted/logo-black"
+                    className="h-full object-contain"
+                  />
+                </Link>
               </div>
             </div>
           </div>
