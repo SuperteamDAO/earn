@@ -241,7 +241,13 @@ export function ListingHeader({
             <ListingTabLink
               className="pointer-events-none hidden md:flex md:w-[22rem]"
               href={`/listing/${slug}/`}
-              text={type === 'project' ? 'Inviting Proposals' : 'Prizes'}
+              text={
+                type === 'project'
+                  ? isWinnersAnnounced
+                    ? 'Proposals Selected'
+                    : 'Inviting Proposals'
+                  : 'Prizes'
+              }
               isActive={false}
             />
             <ListingTabLink
