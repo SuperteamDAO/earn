@@ -13,9 +13,12 @@ import { userApplicationQuery } from '../../queries/user-application';
 type MessageType = Parameters<MessageHandler>[0];
 
 const fetchVerificationStatus = async (grantApplicationId: string) => {
-  const { data } = await api.get('/api/sumsub/verify-completion', {
-    params: { grantApplicationId },
-  });
+  const { data } = await api.get(
+    '/api/grant-application/kyc/verify-completion',
+    {
+      params: { grantApplicationId },
+    },
+  );
   return data;
 };
 

@@ -5,6 +5,7 @@ import { prisma } from '@/prisma';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
+import { addOnboardingInfoToAirtable } from '@/features/grants/utils/addOnboardingInfoToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
 import {
   createSumSubHeaders,
@@ -115,6 +116,16 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         applicationId: grantApplicationId,
         isFirstTranche: true,
       });
+
+      const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
+        where: { id: grantApplicationId },
+        include: {
+          grant: true,
+          user: true,
+        },
+      });
+
+      await addOnboardingInfoToAirtable(grantApplication);
     }
 
     return res.status(200).json(result);
