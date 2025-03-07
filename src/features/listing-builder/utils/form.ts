@@ -175,6 +175,7 @@ export function transformListingToFormListing(
     totalPaymentsMade: listing.totalPaymentsMade,
     isWinnersAnnounced: listing.isWinnersAnnounced,
     totalWinnersSelected: listing.totalWinnersSelected,
+    referredBy: listing.referredBy,
   };
 }
 

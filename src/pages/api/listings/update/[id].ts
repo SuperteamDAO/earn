@@ -48,6 +48,7 @@ const allowedFields = [
   'isPublished',
   'isFndnPaying',
   'hackathonId',
+  'referredBy',
 ];
 
 async function listing(req: NextApiRequestWithSponsor, res: NextApiResponse) {

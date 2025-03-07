@@ -33,6 +33,7 @@ import {
 import { useListingForm } from '../../../hooks';
 import { Foundation } from './Foundation';
 import { GeoLock } from './GeoLock';
+import { ReferredBy } from './ReferredBy';
 import { Slug } from './Slug';
 import { Visibility } from './Visibility';
 
@@ -179,6 +180,7 @@ export function PrePublish() {
         <div className="space-y-4">
           <Visibility />
           <GeoLock />
+          <ReferredBy />
           <Slug />
           {isST && type !== 'project' && <Foundation />}
         </div>

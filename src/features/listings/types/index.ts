@@ -50,6 +50,7 @@ export interface Listing {
   };
   isFndnPaying?: boolean;
   usdValue?: number;
+  referredBy?: string;
 }
 
 export interface ListingHackathon {
