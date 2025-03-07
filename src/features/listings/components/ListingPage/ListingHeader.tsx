@@ -251,7 +251,7 @@ export function ListingHeader({
                   : `/templates/listings/${slug}/`
               }
               text="Details"
-              isActive={!router.asPath.split('/')[4]?.includes('submission')}
+              isActive={!router.asPath.split('/')[3]?.includes('submission')}
             />
 
             {!isProject && isWinnersAnnounced && (
@@ -259,7 +259,7 @@ export function ListingHeader({
                 onClick={() => posthog.capture('submissions tab_listing')}
                 href={`/listing/${slug}/submission`}
                 text="Submissions"
-                isActive={!!router.asPath.split('/')[4]?.includes('submission')}
+                isActive={!!router.asPath.split('/')[3]?.includes('submission')}
                 subText={
                   isSubmissionNumberLoading ? '...' : submissionNumber + ''
                 }

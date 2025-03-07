@@ -2,7 +2,7 @@ import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +15,7 @@ import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
 import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
-import { labelMenuOptions } from '../../constants';
+import { labelMenuOptionsGrants } from '../../constants';
 import { type GrantApplicationsReturn } from '../../queries/applications';
 import { colorMap } from '../../utils/statusColorMap';
 
@@ -29,17 +29,6 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     selectedGrantApplicationAtom,
   );
   const setLabelsUpdating = useSetAtom(isStateUpdatingAtom);
-
-  const labelMenuOptionsGrants = useMemo(
-    () => [
-      ...labelMenuOptions.filter((s) => !['Spam'].includes(s.value)),
-      {
-        label: 'Low Quality',
-        value: 'Low_Quality',
-      },
-    ],
-    [],
-  );
 
   const selectLabel = async (
     label: SubmissionLabels,
@@ -98,8 +87,15 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     onMutate: () => {
       setLabelsUpdating(true);
     },
-    onSettled: () => {
+    onSettled: (_, error, variables) => {
       setLabelsUpdating(false);
+      if (error === null) {
+        setSelectedApplication((prev) =>
+          prev && prev.id === variables.id
+            ? { ...prev, label: variables.label }
+            : prev,
+        );
+      }
     },
   });
 
@@ -111,12 +107,16 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     else return selectedApplication?.label;
   }, [selectedApplication?.label]);
 
+  useEffect(() => {
+    console.log('filterTriggerLabel', filterTriggerLabel);
+  }, [filterTriggerLabel]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+          className="border border-slate-300 bg-transparent font-normal capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
         >
           <span
             className={cn(

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useAtom } from 'jotai';
+
+import { api } from '@/lib/api';
 
 import { type GrantApplicationAi } from '@/features/grants/types';
 
@@ -15,7 +16,7 @@ export const useCommitReviews = (slug: string, grantId: string) => {
 
   return useMutation({
     mutationFn: async () => {
-      return await axios.post<GrantApplicationWithUser[]>(
+      return await api.post<GrantApplicationWithUser[]>(
         '/api/sponsor-dashboard/grant-application/ai/commit-reviewed',
         {
           id: grantId,
