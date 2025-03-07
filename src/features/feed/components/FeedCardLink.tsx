@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { type ReactNode } from 'react';
 
 import { cn } from '@/utils/cn';
+import { getURLSanitized } from '@/utils/getURLSanitized';
 
 export const FeedCardLink = ({
   href,
@@ -21,7 +22,7 @@ export const FeedCardLink = ({
       )}
     >
       <Link
-        href={href ?? '#'}
+        href={getURLSanitized(href ?? '#')}
         rel="noopener noreferrer"
         target="_blank"
         className="flex items-center gap-3 group-hover:underline group-hover:decoration-brand-purple group-hover:underline-offset-2"

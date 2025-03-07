@@ -78,6 +78,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       totalSubmissions,
     });
   } catch (error) {
+    console.trace(error);
     return res.status(500).json({ error: error });
   }
 }

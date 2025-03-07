@@ -181,6 +181,7 @@ export default function BountySubmissions({ listing }: Props) {
           <SubmissionHeader
             bounty={bounty}
             totalSubmissions={submissions?.length || 0}
+            isHackathonPage
           />
           <Tabs
             defaultValue={searchParams?.has('scout') ? 'scout' : 'submissions'}
@@ -259,6 +260,7 @@ export default function BountySubmissions({ listing }: Props) {
                         submissions={paginatedSubmissions}
                         usedPositions={usedPositions || []}
                         onWinnersAnnounceOpen={onOpen}
+                        isHackathonPage
                       />
                     )}
                   </div>

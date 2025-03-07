@@ -13,6 +13,7 @@ interface CompensationAmountType {
   className?: string;
   style?: React.CSSProperties;
   showUsdSymbol?: boolean;
+  isWinnersAnnounced?: boolean;
 }
 
 export const CompensationAmount = ({
@@ -24,6 +25,7 @@ export const CompensationAmount = ({
   className,
   style,
   showUsdSymbol,
+  isWinnersAnnounced,
 }: CompensationAmountType) => {
   const Token = () => {
     return <span className="ml-1 text-slate-400">{token}</span>;
@@ -42,19 +44,40 @@ export const CompensationAmount = ({
           </>
         );
       case 'range':
-        return (
-          <>
-            {showUsdSymbol ? '$' : ''}
-            {`${formatNumberWithSuffix(minRewardAsk!)}-${formatNumberWithSuffix(maxRewardAsk!)}`}
-            <Token />
-          </>
-        );
+        if (!isWinnersAnnounced) {
+          return (
+            <>
+              {showUsdSymbol ? '$' : ''}
+              {`${formatNumberWithSuffix(minRewardAsk!)}-${formatNumberWithSuffix(maxRewardAsk!)}`}
+              <Token />
+            </>
+          );
+        } else {
+          return (
+            <>
+              {showUsdSymbol ? '$' : ''}
+              {formatNumberWithSuffix(rewardAmount!, 2, true)}
+              <Token />
+            </>
+          );
+        }
       case 'variable':
-        if (token) {
+        if (token && !isWinnersAnnounced) {
           return (
             <>
               {showUsdSymbol ? '$' : ''}
               {token}
+            </>
+          );
+        }
+        if (isWinnersAnnounced) {
+          return (
+            <>
+              <span className="ml-auto">
+                {showUsdSymbol ? '$' : ''}
+                {formatNumberWithSuffix(rewardAmount!, 2, true)}
+              </span>
+              <Token />
             </>
           );
         }
@@ -69,7 +92,7 @@ export const CompensationAmount = ({
       <div className={cn('flex', className)} style={style}>
         {renderCompensation()}
       </div>
-      {compensationType === 'variable' && !token && (
+      {compensationType === 'variable' && !token && !isWinnersAnnounced && (
         <div className="flex items-center gap-0.5 sm:gap-1">
           <span className={className}>Send Quote</span>
           <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />

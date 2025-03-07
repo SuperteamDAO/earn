@@ -57,7 +57,7 @@ export function DescriptionUI({ description }: Props) {
   return (
     <div
       className={cn(
-        'w-full overflow-visible border-b border-slate-100 md:border-0',
+        'w-full overflow-visible border-b-2 border-slate-200 md:border-0',
         showMore && 'pb-4',
       )}
     >
@@ -81,11 +81,20 @@ export function DescriptionUI({ description }: Props) {
               )}
             </div>
           </div>
+          {!showMore && (
+            <div
+              className="pointer-events-none absolute bottom-0 left-0 right-0 h-[40%]"
+              style={{
+                background:
+                  'linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9))',
+              }}
+            />
+          )}
         </div>
         {showCollapser && (
           <Button
             className={cn(
-              'absolute -bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-md border-slate-300 bg-white font-medium text-slate-500',
+              'absolute -bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-md border-slate-300 bg-white text-sm font-medium text-slate-500',
               showMore && '-bottom-8',
             )}
             onClick={() => setShowMore(!showMore)}
@@ -94,7 +103,7 @@ export function DescriptionUI({ description }: Props) {
           >
             <span>Read {showMore ? <span>Less</span> : <span>More</span>}</span>
             <ChevronDown
-              className={`ml-2 h-5 w-5 text-slate-300 transition-transform duration-200 ${
+              className={`ml-0 h-5 w-5 text-slate-500 transition-transform duration-200 ${
                 showMore ? 'rotate-180' : ''
               }`}
             />

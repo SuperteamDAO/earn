@@ -7,7 +7,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { type TxData } from '../../types/TxData';
 
 export const TransactionDetails = ({ txData }: { txData: TxData }) => {
-  const { signature, tokenAddress, amount, address: recipient } = txData;
+  const { signature, tokenAddress, amount, recipientAddress } = txData;
   const tokenImg = tokenList.find(
     (token) => token.mintAddress === tokenAddress,
   )?.icon;
@@ -53,7 +53,7 @@ export const TransactionDetails = ({ txData }: { txData: TxData }) => {
             {txData.type === 'Credited' ? 'Received from' : 'Sent to'}
           </span>
           <span className="text-slate-600">
-            {truncatePublicKey(recipient, 6)}
+            {truncatePublicKey(recipientAddress, 6)}
           </span>
         </div>
 

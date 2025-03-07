@@ -86,7 +86,7 @@ export const WithdrawForm = ({
 
         <FormField
           control={form.control}
-          name="address"
+          name="recipientAddress"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="mb-2 text-xs text-slate-500 sm:text-xs">
@@ -97,11 +97,11 @@ export const WithdrawForm = ({
                   {...field}
                   placeholder="Enter recipient address"
                   onBlur={() => {
-                    form.trigger('address');
+                    form.trigger('recipientAddress');
                   }}
                   onChange={(e) => {
                     field.onChange(e);
-                    form.trigger('address');
+                    form.trigger('recipientAddress');
                   }}
                 />
               </FormControl>

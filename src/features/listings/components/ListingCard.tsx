@@ -81,6 +81,9 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
 
   const tokenIcon = tokenList.find((ele) => ele.tokenSymbol === token)?.icon;
 
+  const isVariable = compensationType === 'variable';
+  const showToken = !isVariable || (isVariable && isWinnersAnnounced);
+
   return (
     <Link
       href={`/listing/${slug}`}
@@ -107,7 +110,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             </div>
             <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
               <div className="flex items-center justify-start sm:hidden">
-                {compensationType !== 'variable' && (
+                {showToken && (
                   <img
                     className="mr-0.5 h-3.5 w-3.5 rounded-full"
                     alt={token}
@@ -120,9 +123,10 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                     maxRewardAsk={maxRewardAsk}
                     minRewardAsk={minRewardAsk}
                     rewardAmount={rewardAmount}
+                    isWinnersAnnounced={isWinnersAnnounced}
                     className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base"
                   />
-                  {compensationType !== 'variable' && (
+                  {showToken && (
                     <p className="text-xs font-medium text-gray-400">{token}</p>
                   )}
                 </div>
@@ -189,10 +193,10 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
         <div
           className={cn(
             'hidden items-center justify-start sm:flex',
-            compensationType !== 'variable' ? 'mr-3' : 'mr-0',
+            showToken ? 'mr-3' : 'mr-0',
           )}
         >
-          {compensationType !== 'variable' && (
+          {showToken && (
             <img
               className="mr-1 mt-1 h-4 w-4 rounded-full sm:mt-0.5"
               alt={token}
@@ -205,9 +209,10 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               maxRewardAsk={maxRewardAsk}
               minRewardAsk={minRewardAsk}
               rewardAmount={rewardAmount}
+              isWinnersAnnounced={isWinnersAnnounced}
               className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base"
             />
-            {compensationType !== 'variable' && (
+            {showToken && (
               <p className="text-xs font-medium text-gray-400 sm:text-base">
                 {token}
               </p>

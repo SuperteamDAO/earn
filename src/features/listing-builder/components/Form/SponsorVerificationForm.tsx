@@ -91,7 +91,7 @@ export const SponsorVerificationForm = () => {
               following information with us, and we will try to verify your
               listing within 24H.
             </p>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-slate-500">
               Once verified, your listing will be published automatically. If we
               need any additional information, we will get in touch with you.
             </p>

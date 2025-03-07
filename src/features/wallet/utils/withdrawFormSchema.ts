@@ -10,7 +10,7 @@ export const withdrawFormSchema = z.object({
     .string()
     .refine((val) => !isNaN(Number(val)), 'Amount must be a number')
     .refine((val) => Number(val) > 0, 'Amount must be greater than 0'),
-  address: z
+  recipientAddress: z
     .string()
     .min(32, solErrorMessage)
     .refine((val) => validateSolAddress(val), solErrorMessage),

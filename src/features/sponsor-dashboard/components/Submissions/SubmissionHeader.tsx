@@ -138,24 +138,26 @@ ${socialListingLink('twitter')}
           <p className="text-xl font-bold text-slate-800">{bounty?.title}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
-            disabled={exportMutation.isPending}
-            onClick={() => exportSubmissionsCsv()}
-            variant="ghost"
-          >
-            {exportMutation.isPending ? (
-              <>
-                <span className="loading loading-spinner mr-2" />
-                Exporting...
-              </>
-            ) : (
-              <>
-                <Download className="h-4 w-4" />
-                Export CSV
-              </>
-            )}
-          </Button>
+          {!isHackathonPage && (
+            <Button
+              className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
+              disabled={exportMutation.isPending}
+              onClick={() => exportSubmissionsCsv()}
+              variant="ghost"
+            >
+              {exportMutation.isPending ? (
+                <>
+                  <span className="loading loading-spinner mr-2" />
+                  Exporting...
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4" />
+                  Export CSV
+                </>
+              )}
+            </Button>
+          )}
 
           <Button
             className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
@@ -170,24 +172,25 @@ ${socialListingLink('twitter')}
           {!!(
             (user?.role === 'GOD' && bounty?.type !== 'grant') ||
             (bounty?.isPublished && !pastDeadline && bounty.type !== 'grant')
-          ) && (
-            <Link
-              className="hover:no-underline"
-              href={
-                bounty
-                  ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
-                  : ''
-              }
-            >
-              <Button
-                variant="ghost"
-                className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
+          ) &&
+            !isHackathonPage && (
+              <Link
+                className="hover:no-underline"
+                href={
+                  bounty
+                    ? `/dashboard/${isHackathonPage ? 'hackathon' : 'listings'}/${bounty.slug}/edit/`
+                    : ''
+                }
               >
-                <Pencil className="h-4 w-4" />
-                Edit
-              </Button>
-            </Link>
-          )}
+                <Button
+                  variant="ghost"
+                  className="text-slate-400 hover:bg-indigo-100 hover:text-brand-purple"
+                >
+                  <Pencil className="h-4 w-4" />
+                  Edit
+                </Button>
+              </Link>
+            )}
         </div>
       </div>
       <Separator />

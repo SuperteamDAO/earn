@@ -1,31 +1,18 @@
 import {
   ChevronLeft,
   ChevronRight,
-  Edit,
   ExternalLink,
   Eye,
-  EyeOff,
   MoreVertical,
-  Pencil,
   Plus,
   Search,
-  Trash,
-  Trash2,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,21 +48,9 @@ const debounce = require('lodash.debounce');
 
 export default function Hackathon() {
   const router = useRouter();
-  const {
-    isOpen: unpublishIsOpen,
-    onOpen: unpublishOnOpen,
-    onClose: unpublishOnClose,
-  } = useDisclosure();
-  const {
-    isOpen: deleteDraftIsOpen,
-    onOpen: deleteDraftOnOpen,
-    onClose: deleteDraftOnClose,
-  } = useDisclosure();
   const { user } = useUser();
   const [totalBounties, setTotalBounties] = useState(0);
   const [bounties, setBounties] = useState<ListingWithSubmissions[]>([]);
-  const [bounty, setBounty] = useState<ListingWithSubmissions>({});
-  const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [isBountiesLoading, setIsBountiesLoading] = useState(true);
   const [startDate, setStartDate] = useState();
   const [searchText, setSearchText] = useState('');
@@ -122,62 +97,22 @@ export default function Hackathon() {
   useEffect(() => {
     const getSponsorStats = async () => {
       const sponsorData = await api.get('/api/hackathon/stats');
-      setSponsorStats(sponsorData.data);
+      setSponsorStats({
+        ...sponsorData.data,
+        totalHackathonRewards: sponsorData.data.totalRewardAmount,
+        totalHackathonTracks: sponsorData.data.totalListings,
+        totalHackathonSubmissions: sponsorData.data.totalSubmissions,
+      });
       setIsStatsLoading(false);
     };
     getSponsorStats();
   }, [user?.hackathonId]);
 
-  const handleUnpublish = async (unpublishedBounty: ListingWithSubmissions) => {
-    setBounty(unpublishedBounty);
-    unpublishOnOpen();
-  };
-
   const hasHackathonStarted = startDate ? dayjs().isAfter(startDate) : true;
   const formattedDate = dayjs(startDate).format('MMM DD');
 
-  const changeBountyStatus = async (status: boolean) => {
-    setIsChangingStatus(true);
-    try {
-      const result = await api.post(`/api/listings/unpublish/${bounty.id}/`, {
-        isPublished: status,
-      });
-
-      const changedBountyIndex = bounties.findIndex(
-        (b) => b.id === result.data.id,
-      );
-      const newBounties = bounties.map((b, index) =>
-        changedBountyIndex === index
-          ? { ...b, isPublished: result.data.isPublished }
-          : b,
-      );
-      setBounties(newBounties);
-      unpublishOnClose();
-      setIsChangingStatus(false);
-    } catch (e) {
-      setIsChangingStatus(false);
-    }
-  };
-
   const handleViewSubmissions = (listing: string | undefined) => {
     router.push(`/dashboard/hackathon/${listing}/submissions/`);
-  };
-
-  const deleteSelectedDraft = async () => {
-    try {
-      await api.post(`/api/listings/delete/${bounty.id}`);
-      const update = bounties.filter((x) => x.id !== bounty.id);
-      setBounties(update);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      deleteDraftOnClose();
-    }
-  };
-
-  const handleDeleteDraft = async (deleteBounty: ListingWithSubmissions) => {
-    setBounty(deleteBounty);
-    deleteDraftOnOpen();
   };
 
   const {
@@ -188,74 +123,6 @@ export default function Hackathon() {
 
   return (
     <SponsorLayout>
-      <Dialog open={unpublishIsOpen} onOpenChange={unpublishOnClose}>
-        <DialogContent>
-          <DialogTitle>Unpublish Listing?</DialogTitle>
-
-          <p className="text-slate-500">
-            This listing will be hidden from the homepage once unpublished. Are
-            you sure you want to unpublish this listing?
-          </p>
-
-          <DialogFooter className="gap-4">
-            <Button onClick={unpublishOnClose} variant="ghost">
-              Close
-            </Button>
-            <Button
-              disabled={isChangingStatus}
-              onClick={() => changeBountyStatus(false)}
-            >
-              {isChangingStatus ? (
-                <>
-                  <span className="loading loading-spinner" />
-                  Unpublishing...
-                </>
-              ) : (
-                <>
-                  <EyeOff className="mr-2 h-4 w-4" />
-                  Unpublish
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={deleteDraftIsOpen} onOpenChange={deleteDraftOnClose}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Draft?</DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <p className="text-slate-500">
-              Are you sure you want to delete this draft listing?
-            </p>
-            <p className="text-slate-500">
-              Note: If this was previously a published listing, all submissions
-              or applications received for this listing will also be deleted.
-            </p>
-          </div>
-
-          <DialogFooter className="gap-4">
-            <Button onClick={deleteDraftOnClose} variant="ghost">
-              Close
-            </Button>
-            <Button disabled={isChangingStatus} onClick={deleteSelectedDraft}>
-              {isChangingStatus ? (
-                <>
-                  <span className="loading loading-spinner" />
-                  Deleting...
-                </>
-              ) : (
-                <>
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Confirm
-                </>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
       <Banner stats={sponsorStats} isHackathon isLoading={isStatsLoading} />
       <div className="mb-4 flex w-full justify-between">
         <div className="flex items-center gap-3">
@@ -294,10 +161,10 @@ export default function Hackathon() {
             and start getting contributions
           </p>
           <Button
-            className="text-md mx-auto mb-48 mt-6 block w-[200px]"
+            className="text-md mx-auto mb-48 mt-6 flex w-[200px]"
             onClick={() => onOpenCreateListing()}
           >
-            <Plus className="mr-2 h-3 w-3" />
+            <Plus className="mr-1 h-3 w-3" />
             Create New Listing
           </Button>
         </>
@@ -403,6 +270,7 @@ export default function Hackathon() {
                                   ? `Submissions Open ${formattedDate}`
                                   : null
                               }
+                              disabled={hasHackathonStarted}
                               contentProps={{
                                 className: 'rounded-md',
                               }}
@@ -420,21 +288,6 @@ export default function Hackathon() {
                                 Submissions
                               </Button>
                             </Tooltip>
-                          )}
-                        {currentBounty.status === 'OPEN' &&
-                          !currentBounty.isPublished && (
-                            <Link
-                              href={`/dashboard/hackathon/${currentBounty.slug}/edit/`}
-                            >
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-[13px] font-medium text-slate-500 hover:bg-slate-200"
-                              >
-                                <Edit className="mr-2 h-4 w-4" />
-                                Edit
-                              </Button>
-                            </Link>
                           )}
                       </TableCell>
                       <TableCell className="px-0 py-2">
@@ -462,41 +315,6 @@ export default function Hackathon() {
                               <ExternalLink className="h-4 w-4" />
                               View Listing
                             </DropdownMenuItem>
-
-                            {currentBounty.isPublished && (
-                              <Link
-                                className="no-underline"
-                                href={`/dashboard/hackathon/${currentBounty.slug}/edit`}
-                              >
-                                <DropdownMenuItem className="flex items-center gap-2 py-2 text-sm font-medium text-slate-500">
-                                  <Pencil className="h-4 w-4" />
-                                  Edit Listing
-                                </DropdownMenuItem>
-                              </Link>
-                            )}
-
-                            {bountyStatus === 'Draft' && (
-                              <DropdownMenuItem
-                                className="flex items-center gap-2 py-2 text-sm font-medium text-slate-500"
-                                onClick={() => handleDeleteDraft(currentBounty)}
-                              >
-                                <Trash className="h-4 w-4 text-gray-500" />
-                                Delete Draft
-                              </DropdownMenuItem>
-                            )}
-
-                            {!(
-                              currentBounty.status === 'OPEN' &&
-                              !currentBounty.isPublished
-                            ) && (
-                              <DropdownMenuItem
-                                className="flex items-center gap-2 py-2 text-sm font-medium text-slate-500"
-                                onClick={() => handleUnpublish(currentBounty)}
-                              >
-                                <EyeOff className="h-4 w-4" />
-                                Unpublish
-                              </DropdownMenuItem>
-                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

@@ -12,6 +12,8 @@ import { useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import { type SponsorStats } from '../types';
+
 interface StatsTooltipProps {
   label: string;
   tooltipText: string;
@@ -66,14 +68,16 @@ export function Banner({
   isLoading,
 }: {
   isHackathon?: boolean;
-  stats: any;
+  stats: SponsorStats | undefined;
   isLoading: boolean;
 }) {
   const { user } = useUser();
   const posthog = usePostHog();
   const sponsorId = isHackathon ? user?.hackathonId : user?.currentSponsorId;
 
-  const tooltipTextReward = `Total compensation (in USD) of listings where the winners have been announced`;
+  const tooltipTextReward = !isHackathon
+    ? `Total compensation (in USD) of listings where the winners have been announced`
+    : `Total Rewards (in USD) of all hackathon tracks combined`;
   const tooltipTextListings = `Total number of listings added to Earn`;
   const tooltipTextSubmissions = `Total number of submissions/applications received on all listings`;
 
@@ -96,15 +100,21 @@ export function Banner({
                   <p className="whitespace-nowrap text-lg font-semibold text-slate-900">
                     {sponsor?.name}
                   </p>
-                  <div>{!!sponsor?.isVerified && <VerifiedBadgeLarge />}</div>
+                  <div>
+                    {!!user?.currentSponsor?.isVerified && (
+                      <VerifiedBadgeLarge />
+                    )}
+                  </div>
                 </div>
 
-                <Link
-                  className="ml-2 text-slate-500 hover:text-slate-800"
-                  href={`/sponsor/edit`}
-                >
-                  <Pencil className="h-4 w-4 text-slate-400" />
-                </Link>
+                {!isHackathon && (
+                  <Link
+                    className="ml-2 text-slate-500 hover:text-slate-800"
+                    href={`/sponsor/edit`}
+                  >
+                    <Pencil className="h-4 w-4 text-slate-400" />
+                  </Link>
+                )}
               </div>
               {isLoading ? (
                 <Skeleton className="mt-2 h-5 w-[170px]" />
@@ -121,7 +131,11 @@ export function Banner({
           <StatsTooltip
             label={!isHackathon ? 'Rewarded' : 'Total Prizes'}
             tooltipText={tooltipTextReward}
-            value={stats?.totalRewardAmount}
+            value={
+              !isHackathon
+                ? stats?.totalRewardAmount
+                : stats?.totalHackathonRewards
+            }
             isLoading={isLoading}
             isMonetary
           />
@@ -129,14 +143,22 @@ export function Banner({
           <StatsTooltip
             label={!isHackathon ? 'Listings' : 'Tracks'}
             tooltipText={tooltipTextListings}
-            value={stats?.totalListingsAndGrants}
+            value={
+              !isHackathon
+                ? stats?.totalListingsAndGrants
+                : stats?.totalHackathonTracks
+            }
             isLoading={isLoading}
           />
 
           <StatsTooltip
             label="Submissions"
             tooltipText={tooltipTextSubmissions}
-            value={stats?.totalSubmissionsAndApplications}
+            value={
+              !isHackathon
+                ? stats?.totalSubmissionsAndApplications
+                : stats?.totalHackathonSubmissions
+            }
             isLoading={isLoading}
           />
         </div>

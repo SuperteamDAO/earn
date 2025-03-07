@@ -16,6 +16,8 @@ import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 const PENDING_LABEL_PRIORITY = {
   Unreviewed: 1,
   Shortlisted: 2,
+  High_Quality: 2,
+  Mid_Quality: 3,
   Reviewed: 3,
   Low_Quality: 4,
   Spam: 5,
