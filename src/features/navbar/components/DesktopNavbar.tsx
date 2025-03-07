@@ -98,7 +98,7 @@ export const DesktopNavbar = ({
         </div>
 
         {!router.pathname.startsWith('/new/') && (
-          <div className="w-fit">
+          <div className="w-fit xl:absolute xl:left-2/4 xl:-translate-x-2/4">
             <div className="mx-6 flex h-full items-center justify-center">
               <div className="ph-no-capture flex h-full flex-row items-center gap-7">
                 {LISTING_NAV_ITEMS?.map((navItem) => {
