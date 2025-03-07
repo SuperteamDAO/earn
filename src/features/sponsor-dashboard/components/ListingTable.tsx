@@ -280,8 +280,8 @@ export const ListingTable = ({
                       {listing?.type === 'grant' && (
                         <p className="whitespace-nowrap text-sm font-medium text-slate-700">
                           {grantAmount({
-                            minReward: listing?.minRewardAsk!,
                             maxReward: listing?.maxRewardAsk!,
+                            minReward: listing?.minRewardAsk!,
                           })}
                         </p>
                       )}
