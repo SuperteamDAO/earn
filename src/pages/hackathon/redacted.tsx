@@ -120,7 +120,9 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
         </div>
         <div className="mx-6">
           <div className="mx-auto max-w-7xl py-6">
-            <p className="mb-4 text-xl font-semibold text-slate-900">Tracks</p>
+            <p className="mb-4 text-lg font-semibold text-slate-900 md:text-xl">
+              Submission Tracks
+            </p>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {trackData?.map((track, index) => (
                 <TrackBox
