@@ -30,6 +30,8 @@ function GrantApplications({ slug }: Props) {
 
   const applications = useAtomValue(applicationsAtom);
 
+  const isST = grant?.isNative && grant?.airtableId;
+
   useEffect(() => {
     if (grant && grant.sponsorId !== user?.currentSponsorId) {
       router.push('/dashboard/listings');
@@ -46,7 +48,9 @@ function GrantApplications({ slug }: Props) {
           <Tabs defaultValue="applications">
             <TabsList className="gap-2 font-medium text-slate-400">
               <TabsTrigger value="applications">Applications</TabsTrigger>
-              <TabsTrigger value="tranches">Tranche Requests</TabsTrigger>
+              {isST && (
+                <TabsTrigger value="tranches">Tranche Requests</TabsTrigger>
+              )}
               <TabsTrigger value="payments">Payments History</TabsTrigger>
             </TabsList>
             <div className="h-0.5 w-full bg-slate-200" />

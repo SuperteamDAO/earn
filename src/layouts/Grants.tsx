@@ -51,6 +51,8 @@ export function GrantPageLayout({
     isApproved = true;
   }
 
+  const isST = initialGrant?.isNative && initialGrant?.airtableId;
+
   useEffect(() => {
     if (initialGrant) {
       setGrantSnackbar({
@@ -115,7 +117,7 @@ export function GrantPageLayout({
                 <div className="static top-14 w-full md:sticky md:w-auto">
                   <div className="flex flex-col gap-2">
                     <div className="flex w-full flex-col justify-center rounded-xl bg-white py-4 md:w-[22rem]">
-                      {isApproved && application ? (
+                      {isApproved && application && !isST ? (
                         <ApplicationStats
                           application={application}
                           grant={grant}
@@ -124,7 +126,7 @@ export function GrantPageLayout({
                         <GrantStats grant={grant} />
                       )}
                       <ApplicationActionButton grant={grant} />
-                      {isApproved && application ? (
+                      {isApproved && application && !isST ? (
                         <ApprovalStages
                           application={application}
                           grant={grant}
