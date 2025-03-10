@@ -1,5 +1,6 @@
 interface NavItem {
   label: string;
+  mobileLabel?: string;
   posthog: string;
   children?: Array<NavItem>;
   href: string;
@@ -41,6 +42,7 @@ export const CATEGORY_NAV_ITEMS: Array<NavItem & { pillPH: string }> = [
   },
   {
     label: 'Development',
+    mobileLabel: 'Dev',
     href: '/category/development/',
     posthog: 'development_navbar',
     pillPH: 'development_navpill',
