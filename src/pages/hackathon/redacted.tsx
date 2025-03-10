@@ -1,5 +1,6 @@
 import { type Prisma } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
+import DOMPurify from 'isomorphic-dompurify';
 import { type GetServerSideProps } from 'next';
 import React, { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
@@ -54,7 +55,7 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
     const intervalId = setInterval(updateStatus, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [START_DATE, CLOSE_DATE]);
 
   return (
     <Default
@@ -94,13 +95,13 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
           <div className="flex flex-col">
             <p className="text-sm font-medium">Total Prizes</p>
             <p className="text-xl font-semibold text-slate-800 md:text-2xl">
-              ${stats?.totalRewardAmount.toLocaleString('en-us')}
+              ${stats?.totalRewardAmount.toLocaleString('en-us') ?? '-'}
             </p>
           </div>
           <div className="flex flex-col">
             <p className="text-sm font-medium">Tracks</p>
             <p className="text-xl font-semibold text-slate-800 md:text-2xl">
-              {stats?.totalListings}
+              {stats?.totalListings ?? '-'}
             </p>
           </div>
           <div className="flex flex-col">
@@ -227,7 +228,14 @@ function FAQs() {
                 </span>
               </AccordionTrigger>
               <AccordionContent className="px-4 pt-3 text-sm text-slate-700 sm:text-base [&_a]:text-blue-700">
-                <div dangerouslySetInnerHTML={{ __html: f.answer }} />
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(f.answer, {
+                      ALLOWED_TAGS: ['a', 'p', 'br', 'strong', 'em'],
+                      ALLOWED_ATTR: ['href', 'target', 'rel'],
+                    }),
+                  }}
+                />
               </AccordionContent>
             </AccordionItem>
           ))}
