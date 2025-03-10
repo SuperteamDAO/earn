@@ -44,19 +44,20 @@ async function getHackathonListings(
       return res.status(404).json({ error: 'Hackathon not found.' });
     }
 
-    const countQuery = {
+    const whereQuery = {
       where: {
         isActive: true,
         isArchived: false,
         hackathonId: hackathon.id,
-        ...whereSearch,
         status: status.OPEN,
+        isPublished: true,
+        ...whereSearch,
       },
     };
-    const total = await prisma.bounties.count(countQuery);
+    const total = await prisma.bounties.count(whereQuery);
     const startDate = hackathon.startDate;
     const result = await prisma.bounties.findMany({
-      ...countQuery,
+      ...whereQuery,
       skip: skip ?? 0,
       take: take ?? 15,
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],

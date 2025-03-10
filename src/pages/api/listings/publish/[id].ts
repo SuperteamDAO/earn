@@ -152,7 +152,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     let isVerifying = false;
 
-    if (isPublished && !listing.publishedAt) {
+    const isVerifiedHackathonListing =
+      !!user?.hackathonId && type === 'hackathon';
+    if (isVerifiedHackathonListing) {
+      logger.debug(
+        'User has hackathon ID: Skipping Sponsor Verification Process',
+        {
+          userHackathonId: user?.hackathonId,
+          userId: user?.id,
+          userSponsorId: user?.currentSponsorId,
+        },
+      );
+    }
+    if (isPublished && !listing.publishedAt && !isVerifiedHackathonListing) {
       publishedAt = new Date();
       logger.debug(
         `Checking verification status for sponsor ${userSponsorId} and user ${userId}`,
@@ -197,6 +209,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               isArchived: false,
               isPublished: true,
               isActive: true,
+              type: {
+                not: 'hackathon',
+              },
             },
           });
           isVerifying = listingCount === 0;
