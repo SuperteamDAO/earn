@@ -11,7 +11,7 @@ import {
 import type { GetServerSideProps } from 'next';
 import { Orbitron } from 'next/font/google';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
@@ -29,6 +29,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
+import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
@@ -179,15 +180,28 @@ function Hero({
         >
           <Button
             variant="secondary"
-            className="w-full rounded-xl text-base text-[#1E5871]"
-            asChild
+            className="w-full gap-3 rounded-xl px-5 text-base font-semibold text-[#1E293B]"
+            onClick={(e) => {
+              e.preventDefault();
+              const grandPrizeElement = document.getElementById('grand-prize');
+              if (grandPrizeElement) {
+                const navbarHeight = 3.5 * 16;
+                const extraSpacing = 20;
+                const offsetTop =
+                  grandPrizeElement.getBoundingClientRect().top +
+                  window.scrollY -
+                  navbarHeight -
+                  extraSpacing;
+
+                window.scrollTo({
+                  top: offsetTop,
+                  behavior: 'smooth',
+                });
+              }
+            }}
           >
-            <Link
-              href="https://sonicsvm.typeform.com/mobiushackathon"
-              target="_blank"
-            >
-              Register Now
-            </Link>
+            <PulseIcon isPulsing w={4} h={4} bg={'#35bf34'} text="#29E226" />
+            <span>Submit Now</span>
           </Button>
           <Button
             variant="ghost"
@@ -235,7 +249,7 @@ function HeroMini({
     const intervalId = setInterval(updateStatus, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [START_DATE, CLOSE_DATE]);
 
   return (
     <>
@@ -323,7 +337,10 @@ function MiniStat({
 
 function GrandPrize() {
   return (
-    <div className="flex w-full flex-col gap-4 rounded-lg border border-slate-300 bg-indigo-50 p-3 md:flex-row md:p-4">
+    <div
+      id="grand-prize"
+      className="flex w-full flex-col gap-4 rounded-lg border border-slate-300 bg-indigo-50 p-3 md:flex-row md:p-4"
+    >
       <div className="flex w-full items-center gap-5">
         <span className="flex min-h-[3.23rem] min-w-[3.23rem] items-center justify-center rounded-md bg-[#0F172B] md:min-h-[3.75rem] md:min-w-[3.75rem]">
           <Trophy className="min-h-8 min-w-8 text-white" />
