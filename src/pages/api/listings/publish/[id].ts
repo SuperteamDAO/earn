@@ -133,6 +133,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isPrivate,
       isFndnPaying: rawIsFndnPaying,
       hackathonId,
+      referredBy,
     } = validatedData;
 
     let isPublished = true;
@@ -339,6 +340,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       publishedAt,
       isPublished,
       hackathonId,
+      referredBy,
     };
 
     logger.debug(`Publishing listing with data: ${safeStringify(data)}`, {
