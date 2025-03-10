@@ -95,6 +95,7 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
       <Link
         href={'/hackathon/mobius'}
         className={cn('flex items-center py-2 font-medium lg:hidden', 'h-8')}
+        aria-label="Go to Mobius Hackathon page"
       >
         <ExternalImage
           alt="Mobius Logo"

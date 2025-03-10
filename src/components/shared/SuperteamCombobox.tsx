@@ -38,7 +38,7 @@ interface SuperteamComboboxProps {
   /**
    * Callback function triggered when the selection changes.
    */
-  onChange?: (value: string) => void;
+  onChange?: (value: string | null) => void;
 
   /**
    * Placeholder text displayed in the combobox.
@@ -140,7 +140,7 @@ export function SuperteamCombobox({
                 <CommandItem
                   value={undefined}
                   onSelect={() => {
-                    onChange?.(null!);
+                    onChange?.(null);
                     setOpen(false);
                   }}
                 >

@@ -2,7 +2,7 @@ import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -106,10 +106,6 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     if (applicationLabel) return applicationLabel.label;
     else return selectedApplication?.label;
   }, [selectedApplication?.label]);
-
-  useEffect(() => {
-    console.log('filterTriggerLabel', filterTriggerLabel);
-  }, [filterTriggerLabel]);
 
   return (
     <DropdownMenu>
