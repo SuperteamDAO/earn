@@ -40,7 +40,6 @@ interface NavTabsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function NavTabs({ className, ...props }: NavTabsProps) {
   // const { user } = useUser();
-
   // const superteam = useMemo(() => {
   //   return (
   //     Superteams.find((s) => s.country.includes(user?.location ?? '')) ?? null
@@ -62,7 +61,6 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
   // const showRegionTab = region && (regionLiveCount?.count ?? 0) > 0;
 
   const isMd = useBreakpoint('md');
-
   return (
     <div
       className={cn(

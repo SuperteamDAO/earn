@@ -1,13 +1,4 @@
-interface PriceResponse {
-  data: {
-    [key: string]: {
-      id: string;
-      type: string;
-      price: string;
-    };
-  };
-  timeTaken: number;
-}
+import { api } from '@/lib/api';
 
 export async function fetchTokenUSDValue(mintAddress: string): Promise<number> {
   try {
@@ -15,22 +6,11 @@ export async function fetchTokenUSDValue(mintAddress: string): Promise<number> {
       throw new Error('Mint address is required');
     }
 
-    const baseUrl = 'https://api.jup.ag/price/v2';
-    const response = await fetch(`${baseUrl}?ids=${mintAddress}`);
+    const { data } = await api.get(
+      `https://dev.earn.superteam.fun/api/wallet/price?mintAddress=${mintAddress}`,
+    );
 
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = (await response.json()) as PriceResponse;
-
-    if (!data.data || !data.data[mintAddress]) {
-      throw new Error(`No price data found for token: ${mintAddress}`);
-    }
-
-    const price = parseFloat(data.data[mintAddress].price);
-
-    return price;
+    return data.price;
   } catch (error) {
     console.error('Error fetching token price:', error);
     throw error;

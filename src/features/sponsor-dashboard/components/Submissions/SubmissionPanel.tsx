@@ -215,7 +215,7 @@ export const SubmissionPanel = ({
               !isProject &&
               !bounty?.isWinnersAnnounced &&
               !isHackathonPage && (
-                <div className="ml-auto flex w-fit px-4 py-1 text-xs">
+                <div className="absolute right-0 ml-auto flex w-fit px-4 py-1 text-xs">
                   {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
                     <p className="flex items-center rounded-md bg-red-100 px-5 py-1 text-[#f55151]">
                       <AlertTriangle className="mr-1 inline-block h-3 w-3" />
