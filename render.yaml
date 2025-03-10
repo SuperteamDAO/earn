@@ -144,7 +144,7 @@ services:
     branch: staging
     runtime: node
     region: frankfurt
-    plan: starter
+    plan: standard
     previews:
       generation: manual
       plan: starter
