@@ -167,16 +167,16 @@ export const MobileNavbar = ({
                 className="h-full object-contain"
               />
             </Link>
-            <Link
-              href={'/hackathon/redacted'}
-              className={cn('flex items-center py-2 font-medium', 'h-10')}
-            >
-              <ExternalImage
-                alt="Redacted Logo"
-                src="/hackathon/redacted/logo-black"
-                className="h-full object-contain"
-              />
-            </Link>
+            {/* <Link */}
+            {/*   href={'/hackathon/redacted'} */}
+            {/*   className={cn('flex items-center py-2 font-medium', 'h-10')} */}
+            {/* > */}
+            {/*   <ExternalImage */}
+            {/*     alt="Redacted Logo" */}
+            {/*     src="/hackathon/redacted/logo-black" */}
+            {/*     className="h-full object-contain" */}
+            {/*   /> */}
+            {/* </Link> */}
           </div>
         </SheetContent>
       </Sheet>

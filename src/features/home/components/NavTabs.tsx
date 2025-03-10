@@ -104,16 +104,16 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
           className="h-full object-contain"
         />
       </Link>
-      <Link
-        href={'/hackathon/redacted'}
-        className={cn('flex items-center py-2 font-medium lg:hidden', 'h-8')}
-      >
-        <ExternalImage
-          alt="Redacted Logo"
-          src="/hackathon/redacted/logo-black"
-          className="h-full object-contain"
-        />
-      </Link>
+      {/* <Link */}
+      {/*   href={'/hackathon/redacted'} */}
+      {/*   className={cn('flex items-center py-2 font-medium lg:hidden', 'h-8')} */}
+      {/* > */}
+      {/*   <ExternalImage */}
+      {/*     alt="Redacted Logo" */}
+      {/*     src="/hackathon/redacted/logo-black" */}
+      {/*     className="h-full object-contain" */}
+      {/*   /> */}
+      {/* </Link> */}
     </div>
   );
 }
