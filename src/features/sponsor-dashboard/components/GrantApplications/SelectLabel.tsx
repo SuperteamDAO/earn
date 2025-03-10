@@ -2,7 +2,7 @@ import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -107,9 +107,12 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     else return selectedApplication?.label;
   }, [selectedApplication?.label]);
 
-  useEffect(() => {
-    console.log('filterTriggerLabel', filterTriggerLabel);
-  }, [filterTriggerLabel]);
+  const labelMenuOptionsGrantsPerAppl = useMemo(() => {
+    if (selectedApplication?.applicationStatus !== 'Pending') {
+      return labelMenuOptionsGrants.filter((s) => s.value !== 'Pending');
+    }
+    return labelMenuOptionsGrants;
+  }, [selectedApplication]);
 
   return (
     <DropdownMenu>
@@ -132,7 +135,7 @@ export const SelectLabel = ({ grantSlug }: Props) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="border-slate-300">
-        {labelMenuOptionsGrants.map((option) => (
+        {labelMenuOptionsGrantsPerAppl.map((option) => (
           <DropdownMenuItem
             key={option.value}
             className="focus:bg-slate-100"

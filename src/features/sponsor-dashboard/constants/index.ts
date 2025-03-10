@@ -6,7 +6,7 @@ export const labelMenuOptions = [
 ];
 
 export const labelMenuOptionsGrants = [
-  { label: 'Unreviewed', value: 'Unreviewed' },
+  { label: 'Pending', value: 'Pending' },
   {
     label: 'Low Quality',
     value: 'Low_Quality',

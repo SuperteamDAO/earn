@@ -68,9 +68,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       logger.warn(
         `Listing with slug=${slug} does not belong to user ${userId}`,
       );
-      console.warn(
-        `Listing with slug=${slug} does not belong to user ${userId}`,
-      );
       return res.status(403).json({
         message: `Listing with slug=${slug} does not belong to user ${userId}`,
       });

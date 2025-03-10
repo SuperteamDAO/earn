@@ -18,6 +18,7 @@ import {
 } from '@/features/grants/types';
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
+import { AspectRatio } from '../ui/aspect-ratio';
 import { Button } from '../ui/button';
 import { ExternalImage } from '../ui/cloudinary-image';
 
@@ -69,12 +70,14 @@ export const AiReviewFeatureModal = ({
         className="max-w-[25rem] overflow-hidden border-0 p-0 focus:ring-0 sm:rounded-2xl"
         hideCloseIcon
       >
-        <DialogHeader className="relative">
-          <ExternalImage
-            className="scale-[1.1] overflow-hidden"
-            alt="Ai Review Feature"
-            src="ai-review-feature-new"
-          />
+        <DialogHeader className="relative h-[16.875rem] w-[25rem]">
+          <AspectRatio ratio={1.48} className="bg-blue-900">
+            <ExternalImage
+              className="scale-[1.1] overflow-hidden"
+              alt="Ai Review Feature"
+              src="ai-review-feature-new"
+            />
+          </AspectRatio>
           <button
             tabIndex={-1}
             className="ph-no-capture pointer-events-none absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 scale-125 cursor-default focus:outline-none focus:ring-0"

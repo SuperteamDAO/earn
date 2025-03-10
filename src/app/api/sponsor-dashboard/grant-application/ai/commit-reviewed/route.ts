@@ -46,7 +46,9 @@ export async function POST(request: NextRequest) {
 
     const unreviewedApplications = await prisma.grantApplication.findMany({
       where: {
-        label: 'Unreviewed',
+        label: {
+          in: ['Unreviewed', 'Pending'],
+        },
         applicationStatus: 'Pending',
         grantId: id,
       },
@@ -62,7 +64,9 @@ export async function POST(request: NextRequest) {
       (u) =>
         !!u.ai &&
         (u.ai as unknown as GrantApplicationAi)?.review?.predictedLabel !==
-          'Unreviewed',
+          'Unreviewed' &&
+        (u.ai as unknown as GrantApplicationAi)?.review?.predictedLabel !==
+          'Pending',
     );
 
     const data = await Promise.all(

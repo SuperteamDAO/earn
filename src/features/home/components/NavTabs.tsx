@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cn } from '@/utils/cn';
 
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
@@ -39,15 +40,14 @@ interface NavTabsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function NavTabs({ className, ...props }: NavTabsProps) {
   // const { user } = useUser();
-  //
   // const superteam = useMemo(() => {
   //   return (
   //     Superteams.find((s) => s.country.includes(user?.location ?? '')) ?? null
   //   );
   // }, [user?.location]);
-  //
+
   // const region = superteam?.region;
-  //
+
   // const { data: regionLiveCount, refetch } = useQuery(
   //   regionLiveCountQuery(region!),
   // );
@@ -57,9 +57,10 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
   //     refetch();
   //   }
   // }, [region, refetch]);
-  //
+
   // const showRegionTab = region && (regionLiveCount?.count ?? 0) > 0;
 
+  const isMd = useBreakpoint('md');
   return (
     <div
       className={cn(
@@ -88,13 +89,14 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
             href={navItem.href}
             phEvent={navItem.pillPH}
           >
-            {navItem.label}
+            {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
           </PillTab>
         );
       })}
       <Link
         href={'/hackathon/mobius'}
         className={cn('flex items-center py-2 font-medium lg:hidden', 'h-8')}
+        aria-label="Go to Mobius Hackathon page"
       >
         <ExternalImage
           alt="Mobius Logo"
@@ -102,6 +104,16 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
           className="h-full object-contain"
         />
       </Link>
+      {/* <Link */}
+      {/*   href={'/hackathon/redacted'} */}
+      {/*   className={cn('flex items-center py-2 font-medium lg:hidden', 'h-8')} */}
+      {/* > */}
+      {/*   <ExternalImage */}
+      {/*     alt="Redacted Logo" */}
+      {/*     src="/hackathon/redacted/logo-black" */}
+      {/*     className="h-full object-contain" */}
+      {/*   /> */}
+      {/* </Link> */}
     </div>
   );
 }

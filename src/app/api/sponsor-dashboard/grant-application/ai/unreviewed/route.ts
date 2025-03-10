@@ -45,7 +45,9 @@ export async function GET(request: NextRequest) {
       where: {
         grantId: id,
         applicationStatus: 'Pending',
-        label: 'Unreviewed',
+        label: {
+          in: ['Unreviewed', 'Pending'],
+        },
       },
       select: {
         id: true,
