@@ -39,6 +39,7 @@ export default async function handler(
         isActive: true,
         isArchived: false,
         status: 'OPEN',
+        isPublished: true,
       },
     });
 
