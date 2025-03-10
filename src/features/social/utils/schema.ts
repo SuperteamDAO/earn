@@ -71,12 +71,12 @@ export const discordUsernameSchema = z
 // No transform for Discord
 
 // TWITTER
-// - Length: 4-15
+// - Length: 1-15
 // - Allowed: a-z, A-Z, 0-9, '_'
 // - Transform: https://x.com/<username>
 export const twitterUsernameSchema = z
   .string()
-  .min(4, { message: usernameShortMessage(4) })
+  .min(1, { message: usernameShortMessage(1) })
   .max(15, { message: usernameLongMessage(15) })
   .superRefine((val, ctx) => {
     if (val.startsWith('https://') || val.startsWith('http://')) {
