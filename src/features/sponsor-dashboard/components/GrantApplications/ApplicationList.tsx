@@ -90,6 +90,10 @@ export const ApplicationList = ({
     else return filterLabel;
   }, [filterLabel]);
 
+  const labelMenuOptionsGrantsFilter = useMemo(() => {
+    return labelMenuOptionsGrants.filter((s) => s.value !== 'Pending');
+  }, [selectedApplication]);
+
   return (
     <div className="h-full w-full rounded-l-xl border border-slate-200 bg-white">
       <div className="flex cursor-pointer flex-col items-center justify-between gap-4 border-b border-slate-200 px-4 py-3">
@@ -169,7 +173,7 @@ export const ApplicationList = ({
                 <DropdownMenuLabel className="pb-1 text-[0.60rem] font-medium text-slate-400">
                   Label
                 </DropdownMenuLabel>
-                {labelMenuOptionsGrants.map((option) => (
+                {labelMenuOptionsGrantsFilter.map((option) => (
                   <DropdownMenuItem
                     key={option.value}
                     className="focus:bg-slate-100"

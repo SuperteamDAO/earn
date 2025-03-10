@@ -142,7 +142,10 @@ export default function AiReviewModal({ applications, grant }: Props) {
           highQuality: data.data.filter((s) => s.label === 'High_Quality')
             .length,
           midQuality: data.data.filter(
-            (s) => s.label === 'Mid_Quality' || s.label === 'Unreviewed',
+            (s) =>
+              s.label === 'Mid_Quality' ||
+              s.label === 'Unreviewed' ||
+              s.label === 'Pending',
           ).length,
           totalHoursSaved: data.data.length * 6_00_000,
         });

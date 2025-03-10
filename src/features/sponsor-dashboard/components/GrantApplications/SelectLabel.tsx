@@ -107,6 +107,13 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     else return selectedApplication?.label;
   }, [selectedApplication?.label]);
 
+  const labelMenuOptionsGrantsPerAppl = useMemo(() => {
+    if (selectedApplication?.applicationStatus !== 'Pending') {
+      return labelMenuOptionsGrants.filter((s) => s.value !== 'Pending');
+    }
+    return labelMenuOptionsGrants;
+  }, [selectedApplication]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -128,7 +135,7 @@ export const SelectLabel = ({ grantSlug }: Props) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="border-slate-300">
-        {labelMenuOptionsGrants.map((option) => (
+        {labelMenuOptionsGrantsPerAppl.map((option) => (
           <DropdownMenuItem
             key={option.value}
             className="focus:bg-slate-100"
