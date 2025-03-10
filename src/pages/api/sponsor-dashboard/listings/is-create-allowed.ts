@@ -1,5 +1,6 @@
 import { type NextApiResponse } from 'next';
 
+import { LIMIT_FOR_SPONSOR_LISTING } from '@/constants/project';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
@@ -20,7 +21,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         isWinnersAnnounced: false,
       },
     });
-    if (listingsCount >= 5) {
+    if (
+      LIMIT_FOR_SPONSOR_LISTING &&
+      listingsCount >= LIMIT_FOR_SPONSOR_LISTING
+    ) {
       logger.info('Not Allowed To Create More Listings');
       return res.status(200).json({ allowed: false });
     }
