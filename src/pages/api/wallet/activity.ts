@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { privy } from '@/lib/privy';
@@ -6,6 +6,7 @@ import { privy } from '@/lib/privy';
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { type TokenActivity } from '@/features/wallet/types/TokenActivity';
 import { fetchWalletActivity } from '@/features/wallet/utils/fetchWalletActivity';
+import { getConnection } from '@/features/wallet/utils/getConnection';
 
 interface ErrorResponse {
   error: string;
@@ -34,10 +35,7 @@ export default async function handler(
   }
 
   try {
-    const connection = new Connection(
-      `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
-      'confirmed',
-    );
+    const connection = getConnection('confirmed');
     const activities = await fetchWalletActivity(
       connection,
       new PublicKey(walletAddress),

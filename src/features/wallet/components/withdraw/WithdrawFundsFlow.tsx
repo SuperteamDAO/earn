@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSignTransaction } from '@privy-io/react-auth/solana';
 import { getAssociatedTokenAddressSync } from '@solana/spl-token';
-import { Connection, PublicKey, VersionedTransaction } from '@solana/web3.js';
+import { PublicKey, VersionedTransaction } from '@solana/web3.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
@@ -16,6 +16,7 @@ import { useUser } from '@/store/user';
 import { type TokenAsset } from '../../types/TokenAsset';
 import { type TxData } from '../../types/TxData';
 import { fetchTokenUSDValue } from '../../utils/fetchTokenUSDValue';
+import { getConnection } from '../../utils/getConnection';
 import {
   type WithdrawFormData,
   withdrawFormSchema,
@@ -68,9 +69,7 @@ export function WithdrawFundsFlow({
   async function checkATARequirement(
     values: WithdrawFormData,
   ): Promise<string> {
-    const connection = new Connection(
-      `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
-    );
+    const connection = getConnection('confirmed');
 
     const recipient = new PublicKey(values.recipientAddress);
     const tokenMint = new PublicKey(values.tokenAddress);
@@ -116,9 +115,7 @@ export function WithdrawFundsFlow({
     setIsProcessing(true);
     setError('');
     try {
-      const connection = new Connection(
-        `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
-      );
+      const connection = getConnection('confirmed');
 
       const response = await api.post('/api/wallet/create-signed-transaction', {
         recipientAddress: values.recipientAddress,

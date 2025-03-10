@@ -5,7 +5,6 @@ import {
 } from '@solana/spl-token';
 import {
   ComputeBudgetProgram,
-  Connection,
   Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
@@ -24,6 +23,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
+import { getConnection } from '@/features/wallet/utils/getConnection';
 import { withdrawFormSchema } from '@/features/wallet/utils/withdrawFormSchema';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
@@ -42,9 +42,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       throw new Error('User wallet address not found');
     }
 
-    const connection = new Connection(
-      `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
-    );
+    const connection = getConnection('confirmed');
 
     const { blockhash } = await connection.getLatestBlockhash('finalized');
     const instructions = [];

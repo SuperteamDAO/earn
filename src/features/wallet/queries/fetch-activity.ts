@@ -12,6 +12,8 @@ const fetchTokenActivityFn = async (): Promise<TokenActivity[]> => {
 export const tokenActivityQuery = queryOptions({
   queryKey: ['wallet', 'activity'],
   queryFn: fetchTokenActivityFn,
-  staleTime: 30000,
-  refetchInterval: 60000,
+  staleTime: Infinity,
+  gcTime: 1000 * 60 * 60 * 24,
+  refetchOnWindowFocus: false,
+  refetchOnMount: false,
 });
