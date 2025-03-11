@@ -62,10 +62,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     : {};
 
-  const filterSearch: {
-    applicationStatus?: GrantApplicationStatus;
-    label?: SubmissionLabels;
-  } = filterLabel
+  const filterSearch: Prisma.GrantApplicationWhereInput = filterLabel
     ? {
         ...(filterLabel === 'Approved'
           ? { applicationStatus: 'Approved' }
@@ -73,7 +70,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         ...(filterLabel === 'Rejected'
           ? { applicationStatus: 'Rejected' }
           : {}),
-        ...(filterLabel === 'Pending' ? { applicationStatus: 'Pending' } : {}),
+        ...(filterLabel === 'Pending'
+          ? {
+              applicationStatus: 'Pending',
+              label: {
+                in: ['Pending', 'Unreviewed'],
+              },
+            }
+          : {}),
         ...(filterLabel === 'Completed'
           ? { applicationStatus: 'Completed' }
           : {}),
@@ -81,7 +85,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         filterLabel !== 'Approved' &&
         filterLabel !== 'Pending' &&
         filterLabel !== 'Completed'
-          ? { label: filterLabel }
+          ? { label: filterLabel, applicationStatus: 'Pending' }
           : {}),
       }
     : {};

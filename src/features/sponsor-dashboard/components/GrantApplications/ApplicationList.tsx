@@ -148,7 +148,7 @@ export const ApplicationList = ({
 
               <DropdownMenuGroup className="mt-1 border-t">
                 <DropdownMenuLabel className="pb-1 text-[0.60rem] font-medium text-slate-400">
-                  Status
+                  Decision
                 </DropdownMenuLabel>
                 {ApplicationStatusFilter.map((status) => (
                   <DropdownMenuItem

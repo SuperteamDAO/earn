@@ -150,7 +150,7 @@ export const ApplicationDetails = ({
                 </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
-                {<SelectLabel grantSlug={grant?.slug!} />}
+                {isPending && <SelectLabel grantSlug={grant?.slug!} />}
                 {isPending && (
                   <>
                     <Button
