@@ -28,10 +28,8 @@ export const SignIn = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const { initOAuth } = useLoginWithOAuth({
-    onComplete: async ({ isNewUser, user, wasAlreadyAuthenticated }) => {
-      if (isNewUser) {
-        await handleUserCreation(user.google?.email || '');
-      }
+    onComplete: async ({ user, wasAlreadyAuthenticated }) => {
+      await handleUserCreation(user.google?.email || '');
 
       if (redirectTo) {
         router.push(redirectTo);
