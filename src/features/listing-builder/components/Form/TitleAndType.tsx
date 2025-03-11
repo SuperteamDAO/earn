@@ -233,9 +233,9 @@ function Type() {
                     <SelectItem key={'hackathon'} value={'hackathon'}>
                       <div className="flex items-center gap-2 text-xs">
                         <LocalImage
-                          src={hackathon.altLogo || ''}
-                          alt={hackathon.name}
-                          className="h-4 w-4 object-contain"
+                          src={getListingIcon('hackathon')}
+                          alt={'hackahton'}
+                          className="h-4 w-4"
                         />
                         <span className="max-w-20 truncate">
                           {hackathon.name}

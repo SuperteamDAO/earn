@@ -1,10 +1,10 @@
-import axios from 'axios';
 import { useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { components } from 'react-select';
 import AsyncSelect from 'react-select/async';
 
 import type { SponsorType } from '@/interface/sponsor';
+import { api } from '@/lib/api';
 import { useUpdateUser, useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
@@ -49,7 +49,7 @@ export function SelectHackathon({
     inputValue: string,
     callback: (options: HackathonOption[]) => void,
   ) => {
-    axios
+    api
       .get(`/api/hackathon/list/`, {
         params: {
           searchString: inputValue,

@@ -53,6 +53,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isPrivate,
       skills,
       isFndnPaying,
+      hackathonId,
+      referredBy,
     } = req.body as Partial<ListingFormData>;
 
     const { error, listing } = id
@@ -133,6 +135,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       sponsorId: userSponsorId,
       pocId: userId,
       isFndnPaying,
+      hackathonId,
+      referredBy,
     };
 
     const result = id

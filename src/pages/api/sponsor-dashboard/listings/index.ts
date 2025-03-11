@@ -22,9 +22,11 @@ type BountyGrant = {
   isWinnersAnnounced: boolean | null;
   maxRewardAsk: number | null;
   minRewardAsk: number | null;
+  maxBonusSpots: number | null;
   compensationType: string | null;
   createdAt: Date;
   submissionCount: number;
+  isFndnPaying: string;
 };
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
@@ -45,6 +47,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           b.rewards,
           b.rewardAmount,
           (SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id AND s.isPaid = 1) as totalPaymentsMade,
+          b.maxBonusSpots,
           b.isWinnersAnnounced,
           b.maxRewardAsk,
           b.minRewardAsk,
@@ -74,12 +77,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           NULL as rewardAmount,
           g.totalPaid as totalPaymentsMade,
           NULL as isWinnersAnnounced,
-          g.maxReward as maxRewardAsk,
           g.minReward as minRewardAsk,
+          g.maxReward as maxRewardAsk,
           NULL as compensationType,
           g.createdAt,
           NULL as isFndnPaying,
           g.airtableId,
+NULL as maxBonusSpots,
           CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
         FROM Grants g
         WHERE g.isActive = true
@@ -101,6 +105,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const serializedData = data.map((item) => ({
       ...item,
       submissionCount: Number(item.submissionCount),
+      isFndnPaying: Boolean(Number(item.isFndnPaying)),
     }));
 
     logger.info(

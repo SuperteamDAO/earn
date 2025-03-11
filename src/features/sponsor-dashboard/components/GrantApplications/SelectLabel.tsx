@@ -1,6 +1,6 @@
 import { type SubmissionLabels } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -14,8 +14,8 @@ import {
 import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 
-import { selectedGrantApplicationAtom } from '../../atoms';
-import { labelMenuOptions } from '../../constants';
+import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
+import { labelMenuOptionsGrants } from '../../constants';
 import { type GrantApplicationsReturn } from '../../queries/applications';
 import { colorMap } from '../../utils/statusColorMap';
 
@@ -28,17 +28,7 @@ export const SelectLabel = ({ grantSlug }: Props) => {
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
-
-  const labelMenuOptionsGrants = useMemo(
-    () => [
-      ...labelMenuOptions.filter((s) => !['Spam'].includes(s.value)),
-      {
-        label: 'Low Quality',
-        value: 'Low_Quality',
-      },
-    ],
-    [],
-  );
+  const setLabelsUpdating = useSetAtom(isStateUpdatingAtom);
 
   const selectLabel = async (
     label: SubmissionLabels,
@@ -94,6 +84,19 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     onError: (e) => {
       console.log(e);
     },
+    onMutate: () => {
+      setLabelsUpdating(true);
+    },
+    onSettled: (_, error, variables) => {
+      setLabelsUpdating(false);
+      if (error === null) {
+        setSelectedApplication((prev) =>
+          prev && prev.id === variables.id
+            ? { ...prev, label: variables.label }
+            : prev,
+        );
+      }
+    },
   });
 
   const filterTriggerLabel = useMemo(() => {
@@ -104,12 +107,19 @@ export const SelectLabel = ({ grantSlug }: Props) => {
     else return selectedApplication?.label;
   }, [selectedApplication?.label]);
 
+  const labelMenuOptionsGrantsPerAppl = useMemo(() => {
+    if (selectedApplication?.applicationStatus !== 'Pending') {
+      return labelMenuOptionsGrants.filter((s) => s.value !== 'Pending');
+    }
+    return labelMenuOptionsGrants;
+  }, [selectedApplication]);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="border border-slate-300 bg-transparent font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+          className="border border-slate-300 bg-transparent font-normal capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
         >
           <span
             className={cn(
@@ -125,7 +135,7 @@ export const SelectLabel = ({ grantSlug }: Props) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="border-slate-300">
-        {labelMenuOptionsGrants.map((option) => (
+        {labelMenuOptionsGrantsPerAppl.map((option) => (
           <DropdownMenuItem
             key={option.value}
             className="focus:bg-slate-100"

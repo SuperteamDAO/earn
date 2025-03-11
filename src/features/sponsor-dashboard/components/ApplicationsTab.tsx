@@ -331,9 +331,20 @@ export const ApplicationsTab = ({ slug }: Props) => {
               ? {
                   ...application,
                   applicationStatus: GrantApplicationStatus.Rejected,
+                  label:
+                    application.label === 'Unreviewed' ||
+                    application.label === 'Pending'
+                      ? 'Reviewed'
+                      : application.label,
                 }
               : application,
           );
+          if (selectedApplication?.id) {
+            const updatedApplication = data.find(
+              (application) => application.id === selectedApplication?.id,
+            );
+            setSelectedApplication(updatedApplication);
+          }
           return {
             ...old,
             data,
@@ -356,9 +367,20 @@ export const ApplicationsTab = ({ slug }: Props) => {
               ? {
                   ...application,
                   applicationStatus: GrantApplicationStatus.Rejected,
+                  label:
+                    application.label === 'Unreviewed' ||
+                    application.label === 'Pending'
+                      ? 'Reviewed'
+                      : application.label,
                 }
               : application,
           );
+          if (selectedApplication?.id) {
+            const updatedApplication = data.find(
+              (application) => application.id === selectedApplication?.id,
+            );
+            setSelectedApplication(updatedApplication);
+          }
           return {
             ...old,
             data,
@@ -429,6 +451,11 @@ export const ApplicationsTab = ({ slug }: Props) => {
               ? {
                   ...application,
                   applicationStatus: GrantApplicationStatus.Rejected,
+                  label:
+                    application.label === 'Unreviewed' ||
+                    application.label === 'Pending'
+                      ? 'Reviewed'
+                      : application.label,
                 }
               : application,
           );
@@ -490,6 +517,11 @@ export const ApplicationsTab = ({ slug }: Props) => {
                   ...application,
                   applicationStatus: GrantApplicationStatus.Approved,
                   approvedAmount: approvedAmount,
+                  label:
+                    application.label === 'Unreviewed' ||
+                    application.label === 'Pending'
+                      ? 'Reviewed'
+                      : application.label,
                 }
               : application,
           );

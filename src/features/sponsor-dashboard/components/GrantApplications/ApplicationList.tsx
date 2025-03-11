@@ -18,7 +18,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
@@ -27,7 +29,7 @@ import { cn } from '@/utils/cn';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantApplicationAtom } from '../../atoms';
-import { labelMenuOptions } from '../../constants';
+import { labelMenuOptionsGrants } from '../../constants';
 import { type GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils/statusColorMap';
 
@@ -80,26 +82,17 @@ export const ApplicationList = ({
     ({ bg, color } = colorMap[filterLabel]);
   }
 
-  const applicationLabels = useMemo(
-    () => [
-      ...labelMenuOptions.filter(
-        (s) => !['Spam', 'Unreviewed'].includes(s.value),
-      ),
-      {
-        label: 'Low Quality',
-        value: 'Low_Quality',
-      },
-    ],
-    [],
-  );
-
   const filterTriggerLabel = useMemo(() => {
-    const applicationLabel = applicationLabels.find(
+    const applicationLabel = labelMenuOptionsGrants.find(
       (s) => s.value === filterLabel,
     );
     if (applicationLabel) return applicationLabel.label;
     else return filterLabel;
   }, [filterLabel]);
+
+  const labelMenuOptionsGrantsFilter = useMemo(() => {
+    return labelMenuOptionsGrants.filter((s) => s.value !== 'Pending');
+  }, [selectedApplication]);
 
   return (
     <div className="h-full w-full rounded-l-xl border border-slate-200 bg-white">
@@ -148,47 +141,58 @@ export const ApplicationList = ({
                 className="focus:bg-slate-100"
                 onClick={() => setFilterLabel(undefined)}
               >
-                <span className="inline-flex whitespace-nowrap rounded-full bg-slate-100 px-3 text-center text-[10px] capitalize">
+                <span className="inline-flex whitespace-nowrap rounded-full bg-slate-50 px-3 text-center text-[10px] capitalize text-slate-500">
                   Select Option
                 </span>
               </DropdownMenuItem>
 
-              {ApplicationStatusFilter.map((status) => (
-                <DropdownMenuItem
-                  key={status}
-                  className="focus:bg-slate-100"
-                  onClick={() => setFilterLabel(status)}
-                >
-                  <span
-                    className={cn(
-                      'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
-                      colorMap[status].bg,
-                      colorMap[status].color,
-                    )}
+              <DropdownMenuGroup className="mt-1 border-t">
+                <DropdownMenuLabel className="pb-1 text-[0.60rem] font-medium text-slate-400">
+                  Decision
+                </DropdownMenuLabel>
+                {ApplicationStatusFilter.map((status) => (
+                  <DropdownMenuItem
+                    key={status}
+                    className="focus:bg-slate-100"
+                    onClick={() => setFilterLabel(status)}
                   >
-                    {status}
-                  </span>
-                </DropdownMenuItem>
-              ))}
-              {applicationLabels.map((option) => (
-                <DropdownMenuItem
-                  key={option.value}
-                  className="focus:bg-slate-100"
-                  onClick={() =>
-                    setFilterLabel(option.value as SubmissionLabels)
-                  }
-                >
-                  <span
-                    className={cn(
-                      'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
-                      colorMap[option.value as keyof typeof colorMap].bg,
-                      colorMap[option.value as keyof typeof colorMap].color,
-                    )}
+                    <span
+                      className={cn(
+                        'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                        colorMap[status].bg,
+                        colorMap[status].color,
+                      )}
+                    >
+                      {status}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+
+              <DropdownMenuGroup className="mt-1 border-t">
+                <DropdownMenuLabel className="pb-1 text-[0.60rem] font-medium text-slate-400">
+                  Label
+                </DropdownMenuLabel>
+                {labelMenuOptionsGrantsFilter.map((option) => (
+                  <DropdownMenuItem
+                    key={option.value}
+                    className="focus:bg-slate-100"
+                    onClick={() =>
+                      setFilterLabel(option.value as SubmissionLabels)
+                    }
                   >
-                    {option.label}
-                  </span>
-                </DropdownMenuItem>
-              ))}
+                    <span
+                      className={cn(
+                        'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                        colorMap[option.value as keyof typeof colorMap].bg,
+                        colorMap[option.value as keyof typeof colorMap].color,
+                      )}
+                    >
+                      {option.label}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -197,7 +201,7 @@ export const ApplicationList = ({
         const applicationStatus = application?.applicationStatus;
 
         const applicationLabel = application?.label;
-        const applicationLabelUi = applicationLabels.find(
+        const applicationLabelUi = labelMenuOptionsGrants.find(
           (s) => s.value === application?.label,
         )?.label;
         const { bg: statusBg, color: statusColor } =
@@ -241,24 +245,28 @@ export const ApplicationList = ({
             </div>
 
             <div className="ml-auto flex w-min flex-col justify-end gap-1 align-bottom">
-              <span
-                className={cn(
-                  'ml-auto inline-flex w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-center text-[9px] capitalize',
-                  statusBg,
-                  statusColor,
-                )}
-              >
-                {applicationStatus}
-              </span>
-              <span
-                className={cn(
-                  'ml-auto inline-flex w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-center text-[9px] capitalize',
-                  labelBg,
-                  labelColor,
-                )}
-              >
-                {applicationLabelUi || applicationLabel}
-              </span>
+              {applicationStatus !== 'Pending' ||
+              applicationLabel === 'Unreviewed' ? (
+                <span
+                  className={cn(
+                    'ml-auto inline-flex w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-center text-[0.625rem] capitalize',
+                    statusBg,
+                    statusColor,
+                  )}
+                >
+                  {applicationStatus}
+                </span>
+              ) : (
+                <span
+                  className={cn(
+                    'ml-auto inline-flex w-fit whitespace-nowrap rounded-full px-2 py-0.5 text-center text-[0.625rem] capitalize',
+                    labelBg,
+                    labelColor,
+                  )}
+                >
+                  {applicationLabelUi || applicationLabel}
+                </span>
+              )}
             </div>
           </div>
         );

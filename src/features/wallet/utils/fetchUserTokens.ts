@@ -10,7 +10,14 @@ export async function fetchUserTokens(
   connection: Connection,
   publicKey: PublicKey,
 ): Promise<TokenAsset[]> {
-  const solBalance = await connection.getBalance(publicKey);
+  const [solBalance, tokenAccountsResponse] = await Promise.all([
+    connection.getBalance(publicKey),
+    connection.getParsedTokenAccountsByOwner(
+      publicKey,
+      { programId: TOKEN_PROGRAM_ID },
+      'confirmed',
+    ),
+  ]);
 
   const assets: TokenAsset[] = [];
 
@@ -31,13 +38,8 @@ export async function fetchUserTokens(
     assets.push(solAsset);
   }
 
-  const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
-    publicKey,
-    { programId: TOKEN_PROGRAM_ID },
-  );
-
   const splAssets: TokenAsset[] = await Promise.all(
-    tokenAccounts.value.map(async (tokenAccount) => {
+    tokenAccountsResponse.value.map(async (tokenAccount) => {
       const accountData = tokenAccount.account.data.parsed.info;
       const mintAddress = accountData.mint;
       const amount = Number(accountData.tokenAmount.uiAmount);

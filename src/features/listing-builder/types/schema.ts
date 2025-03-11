@@ -46,6 +46,7 @@ export const createListingFormSchema = ({
     order: z.number(),
     question: z.string().trim().min(1, 'Please add your question').max(256),
     type: z.enum(['text', 'link']),
+    optional: z.boolean().optional(),
   });
 
   const rewardsSchema = z
@@ -167,6 +168,7 @@ export const createListingFormSchema = ({
           return true;
         }, 'Hackathon is not allowed for now'),
       region: z.string().trim().min(1).max(256).default(Regions.GLOBAL),
+      referredBy: z.string().trim().min(1).max(256).optional().nullable(),
       deadline: z
         .string()
         .trim()

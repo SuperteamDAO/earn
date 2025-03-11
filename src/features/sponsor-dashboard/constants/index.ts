@@ -4,3 +4,19 @@ export const labelMenuOptions = [
   { label: 'Shortlisted', value: 'Shortlisted' },
   { label: 'Spam', value: 'Spam' },
 ];
+
+export const labelMenuOptionsGrants = [
+  { label: 'Pending', value: 'Pending' },
+  {
+    label: 'Low Quality',
+    value: 'Low_Quality',
+  },
+  {
+    label: 'Mid Quality',
+    value: 'Mid_Quality',
+  },
+  {
+    label: 'High Quality',
+    value: 'High_Quality',
+  },
+];

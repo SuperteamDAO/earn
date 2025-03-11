@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import { IoSearchOutline, IoWalletOutline } from 'react-icons/io5';
 
 import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -61,11 +62,11 @@ export const DesktopNavbar = ({
       )}
     >
       <div className={cn('mx-auto flex w-full justify-between', maxWidth)}>
-        <div className="flex items-center gap-3 lg:gap-6">
+        <div className="flex w-fit items-center gap-3 lg:gap-6">
           <LogoContextMenu>
             <Link
               href="/"
-              className="mr-5 flex items-center gap-3 hover:no-underline"
+              className="flex items-center gap-3 hover:no-underline"
               onClick={() => {
                 posthog.capture('homepage logo click_universal');
               }}
@@ -97,9 +98,9 @@ export const DesktopNavbar = ({
         </div>
 
         {!router.pathname.startsWith('/new/') && (
-          <div className="absolute left-1/2 -translate-x-1/2">
-            <div className="ml-10 flex h-full items-center justify-center">
-              <div className="ph-no-capture flex h-full flex-row gap-7">
+          <div className="w-fit xl:absolute xl:left-2/4 xl:-translate-x-2/4">
+            <div className="mx-6 flex h-full items-center justify-center">
+              <div className="ph-no-capture flex h-full flex-row items-center gap-7">
                 {LISTING_NAV_ITEMS?.map((navItem) => {
                   const isCurrent = `${navItem.href}` === router.asPath;
                   return (
@@ -115,12 +116,32 @@ export const DesktopNavbar = ({
                     />
                   );
                 })}
+                <Link
+                  href={'/hackathon/mobius'}
+                  className={cn('flex items-center py-2 font-medium', 'h-8')}
+                >
+                  <ExternalImage
+                    alt="Mobius Logo"
+                    src="/hackathon/mobius/mobius-logo"
+                    className="h-full object-contain"
+                  />
+                </Link>
+                {/* <Link */}
+                {/*   href={'/hackathon/redacted'} */}
+                {/*   className={cn('flex items-center py-2 font-medium', 'h-8')} */}
+                {/* > */}
+                {/*   <ExternalImage */}
+                {/*     alt="Redacted Logo" */}
+                {/*     src="/hackathon/redacted/logo-black" */}
+                {/*     className="h-full object-contain" */}
+                {/*   /> */}
+                {/* </Link> */}
               </div>
             </div>
           </div>
         )}
 
-        <div className="flex flex-1 items-center justify-end gap-4 py-1.5">
+        <div className="flex items-center gap-4 py-1.5">
           {!ready && (
             <div className="flex items-center gap-2">
               <Skeleton className="h-10 w-10 rounded-full" />

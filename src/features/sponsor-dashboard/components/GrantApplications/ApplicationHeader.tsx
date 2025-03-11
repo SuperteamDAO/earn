@@ -167,7 +167,7 @@ export const ApplicationHeader = ({ grant, applications }: Props) => {
             <SponsorPrize
               compensationType={'range'}
               maxRewardAsk={grant?.maxReward}
-              minRewardAsk={grant?.minReward ?? 0}
+              minRewardAsk={grant?.minReward || 0}
               className="font-semibold text-slate-700"
             />
             <p className="font-semibold text-slate-400">{grant?.token}</p>

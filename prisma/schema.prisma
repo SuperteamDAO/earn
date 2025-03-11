@@ -233,7 +233,7 @@ model GrantApplication {
   updatedAt           DateTime               @updatedAt
   user                User                   @relation(fields: [userId], references: [id])
   grant               Grants                 @relation(fields: [grantId], references: [id])
-  label               SubmissionLabels       @default(Unreviewed)
+  label               SubmissionLabels       @default(Pending)
   ask                 Float                  @default(0)
   approvedAmount      Float                  @default(0)
   approvedAmountInUSD Float                  @default(0)
@@ -503,7 +503,7 @@ model PoW {
   title       String
   description String    @db.Text
   skills      Json?
-  link        String
+  link        String    @db.Text
   createdAt   DateTime  @default(now())
   subSkills   Json?
   updatedAt   DateTime  @updatedAt
@@ -787,6 +787,9 @@ enum SubmissionLabels {
   Shortlisted
   Spam
   Low_Quality
+  Mid_Quality
+  High_Quality
+  Pending
 }
 
 enum TalentRankingTimeframe {

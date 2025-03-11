@@ -20,7 +20,13 @@ import { WalletActivity } from './activity/WalletActivity';
 import { TokenList } from './tokens/TokenList';
 import { WithdrawFundsFlow } from './withdraw/WithdrawFundsFlow';
 
-export type DrawerView = 'main' | 'withdraw' | 'success' | 'history' | 'intro';
+export type DrawerView =
+  | 'main'
+  | 'withdraw'
+  | 'success'
+  | 'history'
+  | 'intro'
+  | 'ata-confirm';
 
 export function WalletDrawer({
   isOpen,
@@ -40,7 +46,7 @@ export function WalletDrawer({
     signature: '',
     tokenAddress: '',
     amount: '',
-    address: '',
+    recipientAddress: '',
     timestamp: 0,
     type: 'Withdrawn',
   });

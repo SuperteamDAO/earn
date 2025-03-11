@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
@@ -133,7 +132,7 @@ export const OgImageViewer = ({
   const handleImageError = useCallback(() => {
     if (type && id && !isUpdating) {
       setIsUpdating(true);
-      axios
+      api
         .post('/api/og/update', {
           type,
           url: 'error',
