@@ -58,7 +58,9 @@ export const TransactionDetails = ({ txData }: { txData: TxData }) => {
         </div>
 
         <div className="flex justify-between text-sm">
-          <span className="text-slate-400">Total Amount Sent</span>
+          <span className="text-slate-400">
+            {txData.type === 'Credited' ? 'Amount Received' : 'Amount Sent'}
+          </span>
           <span className="text-slate-600">
             {amount} {tokenSymbol}
           </span>
