@@ -7,7 +7,7 @@ export async function handleUserCreation(email: string): Promise<boolean> {
     let userExists = false;
 
     try {
-      await api.get(`/api/user/exists?email=${email}`);
+      await api.get(`/api/user/exists?email=${encodeURIComponent(email)}`);
       userExists = true;
     } catch (error: any) {
       if (error.response?.status !== 404) {

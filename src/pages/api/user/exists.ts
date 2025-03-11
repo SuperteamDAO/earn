@@ -1,15 +1,14 @@
-// user profile
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-export default async function getAllUsers(
+export default async function checkUserExists(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
-  logger.info(`Request body: ${safeStringify(req.query)}`);
+  logger.info(`Request query: ${safeStringify(req.query)}`);
 
   const { email } = req.query;
   if (typeof email !== 'string') {
@@ -33,9 +32,9 @@ export default async function getAllUsers(
     logger.info(`User found: ${userId}`);
     return res.status(200).json({ ...user });
   } catch (error: any) {
-    logger.error(`Error fetching user details: ${safeStringify(error)}`);
+    logger.error(`Error checking if user exists: ${safeStringify(error)}`);
     return res
       .status(500)
-      .json({ error: `Unable to fetch user details: ${error.message}` });
+      .json({ error: `Unable to check if user exists: ${error.message}` });
   }
 }
