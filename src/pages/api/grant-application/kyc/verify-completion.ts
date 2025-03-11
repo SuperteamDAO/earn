@@ -125,7 +125,13 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         },
       });
 
-      await addOnboardingInfoToAirtable(grantApplication);
+      try {
+        await addOnboardingInfoToAirtable(grantApplication);
+      } catch (airtableError: any) {
+        console.error(
+          `Error adding onboarding info to Airtable: ${airtableError.message}`,
+        );
+      }
     }
 
     return res.status(200).json(result);

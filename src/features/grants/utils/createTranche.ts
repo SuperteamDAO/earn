@@ -1,5 +1,7 @@
 import { prisma } from '@/prisma';
 
+import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
+
 type CreateTrancheProps = {
   applicationId: string;
   helpWanted?: string;
@@ -19,6 +21,8 @@ export async function createTranche({
       GrantTranche: {
         orderBy: { createdAt: 'asc' },
       },
+      grant: true,
+      user: true,
     },
   });
 
@@ -92,6 +96,10 @@ export async function createTranche({
       ...(isFirstTranche && { decidedAt: new Date().toISOString() }),
     },
   });
+
+  if (isFirstTranche) {
+    await addPaymentInfoToAirtable(application);
+  }
 
   return tranche;
 }

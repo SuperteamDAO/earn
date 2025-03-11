@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import {
   airtableConfig,
-  airtableUpsert,
+  airtableInsert,
   airtableUrl,
   fetchAirtableRecordId,
 } from '@/utils/airtable';
@@ -18,20 +18,12 @@ interface GrantApplicationWithUserAndGrant extends GrantApplication {
 }
 
 interface RecipientAirtableSchema {
-  earnApplicationId: string;
   Name: string;
   Applicants: string[];
   Grant: string[];
-  // Type: string;
   'Email ID': string;
   Amount: number;
   Deadline: string;
-  // 'Date of Birth': string;
-  // Address: string;
-  // Country: string;
-  // 'ID Type': string;
-  // 'ID Number': string;
-  // 'ID Photos': string[];
 }
 
 export function grantApplicationToAirtable(
@@ -39,7 +31,6 @@ export function grantApplicationToAirtable(
   applicantRecordId: string,
 ): RecipientAirtableSchema {
   return {
-    earnApplicationId: grantApplication.id,
     Name: `${grantApplication.kycName}`,
     Applicants: [applicantRecordId],
     Grant: [grantApplication.grant.airtableId!],
@@ -52,41 +43,46 @@ export function grantApplicationToAirtable(
 export async function addOnboardingInfoToAirtable(
   application: GrantApplicationWithUserAndGrant,
 ) {
-  const grantsAirtableConfig = airtableConfig(
-    process.env.AIRTABLE_GRANTS_API_TOKEN!,
-  );
-  const recipientsAirtableURL = airtableUrl(
-    process.env.AIRTABLE_GRANTS_BASE_ID!,
-    process.env.AIRTABLE_ONBOARDING_TABLE_NAME!,
-  );
+  try {
+    const grantsAirtableConfig = airtableConfig(
+      process.env.AIRTABLE_GRANTS_API_TOKEN!,
+    );
 
-  const applicantsAirtableURL = airtableUrl(
-    process.env.AIRTABLE_GRANTS_BASE_ID!,
-    process.env.AIRTABLE_GRANTS_TABLE_NAME!,
-  );
+    const recipientsAirtableURL = airtableUrl(
+      process.env.AIRTABLE_GRANTS_BASE_ID!,
+      process.env.AIRTABLE_RECIPIENTS_TABLE!,
+    );
 
-  const applicantRecordId = await fetchAirtableRecordId(
-    applicantsAirtableURL,
-    'earnApplicationId',
-    application.id,
-    grantsAirtableConfig,
-  );
+    const applicantsAirtableURL = airtableUrl(
+      process.env.AIRTABLE_GRANTS_BASE_ID!,
+      process.env.AIRTABLE_GRANTS_TABLE_NAME!,
+    );
 
-  if (!applicantRecordId) {
-    throw new Error('Applicant record not found');
+    const applicantRecordId = await fetchAirtableRecordId(
+      applicantsAirtableURL,
+      'earnApplicationId',
+      application.id,
+      grantsAirtableConfig,
+    );
+
+    if (!applicantRecordId) {
+      throw new Error('Applicant record not found');
+    }
+
+    const airtableData = grantApplicationToAirtable(
+      application,
+      applicantRecordId,
+    );
+
+    const airtablePayload = airtableInsert([{ fields: airtableData }]);
+    const response = await axios.post(
+      recipientsAirtableURL,
+      JSON.stringify(airtablePayload),
+      grantsAirtableConfig,
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(`Error in addOnboardingInfoToAirtable: ${error.message}`);
+    throw error;
   }
-
-  const airtableData = grantApplicationToAirtable(
-    application,
-    applicantRecordId,
-  );
-  const airtablePayload = airtableUpsert('earnApplicationId', [
-    { fields: airtableData },
-  ]);
-
-  await axios.patch(
-    recipientsAirtableURL,
-    JSON.stringify(airtablePayload),
-    grantsAirtableConfig,
-  );
 }

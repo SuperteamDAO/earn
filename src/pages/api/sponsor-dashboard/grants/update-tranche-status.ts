@@ -9,6 +9,7 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { sendEmailNotification } from '@/features/emails/utils/sendEmailNotification';
+import { addPaymentInfoToAirtable } from '@/features/grants/utils/addPaymentInfoToAirtable';
 
 const UpdateGrantTrancheSchema = z.object({
   id: z.string(),
@@ -88,10 +89,30 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ) {
         totalTranches! += 1;
       }
-      await prisma.grantApplication.update({
+      const updatedApplication = await prisma.grantApplication.update({
         where: { id: currentTranche.applicationId },
+        include: {
+          grant: true,
+          user: true,
+        },
         data: { totalTranches },
       });
+      try {
+        console.debug(
+          `Attempting to add payment info to Airtable for application ID: ${updatedApplication.id}`,
+        );
+        await addPaymentInfoToAirtable(updatedApplication);
+        console.debug(
+          `Successfully added payment info to Airtable for application ID: ${updatedApplication.id}`,
+        );
+      } catch (airtableError: any) {
+        console.error(
+          `Error adding payment info to Airtable: ${airtableError.message}`,
+        );
+        console.error(
+          `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
+        );
+      }
       sendEmailNotification({
         type: 'trancheApproved',
         id,

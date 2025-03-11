@@ -117,7 +117,7 @@ export function GrantPageLayout({
                 <div className="static top-14 w-full md:sticky md:w-auto">
                   <div className="flex flex-col gap-2">
                     <div className="flex w-full flex-col justify-center rounded-xl bg-white py-4 md:w-[22rem]">
-                      {isApproved && application && !isST ? (
+                      {isApproved && application && isST ? (
                         <ApplicationStats
                           application={application}
                           grant={grant}
@@ -126,7 +126,7 @@ export function GrantPageLayout({
                         <GrantStats grant={grant} />
                       )}
                       <ApplicationActionButton grant={grant} />
-                      {isApproved && application && !isST ? (
+                      {isApproved && application && isST ? (
                         <ApprovalStages
                           application={application}
                           grant={grant}
