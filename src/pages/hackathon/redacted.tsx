@@ -2,6 +2,7 @@ import { type Prisma } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import DOMPurify from 'isomorphic-dompurify';
 import { type GetServerSideProps } from 'next';
+import { Outfit } from 'next/font/google';
 import React, { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
@@ -20,6 +21,12 @@ import { prisma } from '@/prisma';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RedactedLogo } from '@/svg/redacted';
 import { dayjs } from '@/utils/dayjs';
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  display: 'swap',
+});
 
 type Hackathon = Prisma.HackathonGetPayload<{
   include: {
@@ -67,7 +74,7 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
             content={`https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og.png`}
           />
           <Meta
-            title="Helius Redacted | Superteam Earn"
+            title="Helius [Redacted] Hackathon | Superteam Earn"
             description="Join the Helius Hackathon—a data-driven challenge empowering analysts, data scientists, and on-chain sleuths to expose fraud, build insightful dashboards, and advance Solana’s social layer."
             canonical="https://earn.superteam.fun/hackathon/redacted"
             og="https://res.cloudinary.com/dgvnuwspr/image/upload/v1741616337/assets/hackathon/redacted/redacted-og.png"
@@ -86,8 +93,10 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
             className="h-[4.5rem] w-auto md:h-[7.125rem]"
             variant="#DBDBDB"
           />
-          <div className="max-w-xl px-6 text-center text-white drop-shadow-xl md:text-lg">
-            <p className="font-medium">
+          <div
+            className={`max-w-xl px-6 text-center font-medium text-white drop-shadow-xl md:text-lg ${outfit.className}`}
+          >
+            <p className="">
               {dayjs(START_DATE).format('MMM.DD, YYYY')} -{' '}
               {dayjs(CLOSE_DATE).format('MMM.DD, YYYY')}
             </p>
@@ -184,7 +193,7 @@ export const getServerSideProps: GetServerSideProps = async ({}) => {
 const faqs: { question: string; answer: string }[] = [
   {
     question: 'What is the [REDACTED] Hackathon?',
-    answer: `[REDACTED] Hackathon by <a target='_blank' href='https://www.helius.dev/'>Helius</a> is a virtual Solana hackathon focused on themes of onchain forensics, security, data transparency, and monitoring.`,
+    answer: `The [REDACTED] Hackathon by <a target='_blank' href='https://www.helius.dev/'>Helius</a> is a virtual Solana event centered on on-chain forensics, security, data transparency, and real-time monitoring.`,
   },
   {
     question: 'Who can participate?',
@@ -198,12 +207,12 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'Can I submit entries to multiple bounties?',
     answer:
-      'Yes, participants may submit entries to multiple bounties. All bounties must be submitted before the 4-week submission deadline ends.',
+      'Yes, participants may submit entries to multiple bounties. All bounties must be submitted before the 1-month submission deadline ends.',
   },
   {
     question: 'How are winners chosen?',
     answer:
-      'Bounty sponsors are responsible for choosing winners for each bounty based on the bounty’s description, judgement criteria, and submission guidelines. After the 4-week submission period ends, bounty sponsors have two weeks to review all of the submissions and select winners. The decision of the sponsors when it comes to picking the winners of their bounties will be final.<br /><br /> <strong>Note:</strong> Pay attention to the judgement criteria and submission guidelines to avoid a situation where your submission is disqualified for failing to meet the bounty’s rules.',
+      'Bounty sponsors are responsible for choosing winners for each bounty based on the bounty’s description, judgement criteria, and submission guidelines. After the 1-month submission period ends, bounty sponsors have two weeks to review all of the submissions and select winners. The decision of the sponsors when it comes to picking the winners of their bounties will be final.<br /><br /> <strong>Note:</strong> Pay attention to the judgement criteria and submission guidelines to avoid a situation where your submission is disqualified for failing to meet the bounty’s rules.',
   },
   {
     question: 'How are winners paid?',
