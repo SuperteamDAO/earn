@@ -22,9 +22,12 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
     compensationType,
     minRewardAsk,
     maxRewardAsk,
+    isWinnersAnnounced,
   } = bounty;
 
   const isBounty = type === 'bounty';
+  const isVariable = compensationType === 'variable';
+  const showToken = !isVariable || (isVariable && isWinnersAnnounced);
 
   return (
     <Link
@@ -57,7 +60,7 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
             </div>
             <div className="mt-px flex flex-wrap items-center gap-1">
               <div className="flex items-center justify-start">
-                {compensationType !== 'variable' && (
+                {showToken && (
                   <img
                     className="mr-0.5 h-4 w-4 rounded-full"
                     alt={token}
@@ -74,9 +77,10 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                     maxRewardAsk={maxRewardAsk}
                     minRewardAsk={minRewardAsk}
                     rewardAmount={rewardAmount}
+                    isWinnersAnnounced={isWinnersAnnounced}
                     className="whitespace-nowrap text-xs font-semibold text-slate-600"
                   />
-                  {compensationType !== 'variable' && (
+                  {showToken && (
                     <p className="text-xs font-medium text-gray-400">{token}</p>
                   )}
                 </div>

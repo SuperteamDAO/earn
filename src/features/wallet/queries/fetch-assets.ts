@@ -12,6 +12,8 @@ const fetchTokenAssetsFn = async (): Promise<TokenAsset[]> => {
 export const tokenAssetsQuery = queryOptions({
   queryKey: ['wallet', 'assets'],
   queryFn: fetchTokenAssetsFn,
-  staleTime: 30000,
-  refetchInterval: 60000,
+  staleTime: Infinity,
+  gcTime: 1000 * 60 * 60 * 24,
+  refetchOnWindowFocus: false,
+  refetchOnMount: false,
 });

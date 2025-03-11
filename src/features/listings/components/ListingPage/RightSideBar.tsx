@@ -61,6 +61,7 @@ export function RightSideBar({
     minRewardAsk,
     Hackathon,
     maxBonusSpots,
+    isWinnersAnnounced,
   } = listing;
 
   const { data: submissionNumber, isLoading: isSubmissionNumberLoading } =
@@ -161,6 +162,7 @@ export function RightSideBar({
                           maxRewardAsk={maxRewardAsk}
                           minRewardAsk={minRewardAsk}
                           token={!showUsdSymbolOnly ? token : 'USD'}
+                          isWinnersAnnounced={isWinnersAnnounced}
                           className={cn(
                             'text-lg font-semibold text-slate-700 md:text-xl',
                           )}

@@ -1,12 +1,12 @@
 import {
-  clusterApiUrl,
-  Connection,
   LAMPORTS_PER_SOL,
   type VersionedTransactionResponse,
 } from '@solana/web3.js';
 
 import { type Token } from '@/constants/tokenList';
 import logger from '@/lib/logger';
+
+import { getConnection } from '@/features/wallet/utils/getConnection';
 
 interface ValidatePaymentParams {
   txId: string;
@@ -30,7 +30,7 @@ export async function validatePayment({
   expectedAmount,
   tokenMint,
 }: ValidatePaymentParams): Promise<ValidationResult> {
-  const connection = new Connection(clusterApiUrl('mainnet-beta'));
+  const connection = getConnection('confirmed');
   const maxRetries = 3;
   const delayMs = 5000;
 

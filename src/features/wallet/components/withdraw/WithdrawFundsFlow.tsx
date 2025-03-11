@@ -1,11 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSignTransaction } from '@privy-io/react-auth/solana';
-import {
-  Connection,
-  PublicKey,
-  TransactionMessage,
-  VersionedTransaction,
-} from '@solana/web3.js';
+import { getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { PublicKey, VersionedTransaction } from '@solana/web3.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
@@ -13,17 +9,20 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { tokenList } from '@/constants/tokenList';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
 import { type TokenAsset } from '../../types/TokenAsset';
 import { type TxData } from '../../types/TxData';
-import { createTransferInstructions } from '../../utils/createTransferInstructions';
+import { fetchTokenUSDValue } from '../../utils/fetchTokenUSDValue';
+import { getConnection } from '../../utils/getConnection';
 import {
   type WithdrawFormData,
   withdrawFormSchema,
 } from '../../utils/withdrawFormSchema';
 import { type DrawerView } from '../WalletDrawer';
+import { ATAConfirmation } from './ATAConfirmation';
 import { TransactionDetails } from './TransactionDetails';
 import { WithdrawForm } from './WithdrawForm';
 
@@ -46,6 +45,9 @@ export function WithdrawFundsFlow({
   const posthog = usePostHog();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>('');
+  const [ataCreationCost, setAtaCreationCost] = useState<number>(0);
+  const [pendingFormData, setPendingFormData] =
+    useState<WithdrawFormData | null>(null);
 
   const { signTransaction } = useSignTransaction();
 
@@ -54,7 +56,7 @@ export function WithdrawFundsFlow({
     defaultValues: {
       tokenAddress: tokens[0]?.tokenAddress ?? '',
       amount: '',
-      address: '',
+      recipientAddress: '',
     },
   });
 
@@ -64,77 +66,77 @@ export function WithdrawFundsFlow({
     (token) => token.tokenAddress === form.watch('tokenAddress'),
   );
 
+  async function checkATARequirement(
+    values: WithdrawFormData,
+  ): Promise<string> {
+    const connection = getConnection('confirmed');
+
+    const recipient = new PublicKey(values.recipientAddress);
+    const tokenMint = new PublicKey(values.tokenAddress);
+
+    if (values.tokenAddress === 'So11111111111111111111111111111111111111112') {
+      return handleWithdraw(values);
+    }
+
+    const receiverATA = await getAssociatedTokenAddressSync(
+      tokenMint,
+      recipient,
+    );
+
+    const receiverATAExists = !!(await connection.getAccountInfo(receiverATA));
+
+    if (!receiverATAExists) {
+      const tokenUSDValue = await fetchTokenUSDValue(
+        selectedToken?.tokenAddress || '',
+      );
+      const solUSDValue = await fetchTokenUSDValue(
+        'So11111111111111111111111111111111111111112',
+      );
+
+      const ataCreationCostInUSD = solUSDValue * 0.0021;
+      const tokenAmountToCharge = ataCreationCostInUSD / tokenUSDValue;
+
+      const tokenDetails = tokenList.find(
+        (token) => token.tokenSymbol === selectedToken?.tokenSymbol,
+      );
+      const power = tokenDetails?.decimals as number;
+      const cost = Math.ceil(tokenAmountToCharge * 10 ** power);
+
+      setAtaCreationCost(cost);
+      setPendingFormData(values);
+      setView('ata-confirm');
+      return '';
+    }
+
+    return handleWithdraw(values);
+  }
+
   async function handleWithdraw(values: WithdrawFormData) {
     setIsProcessing(true);
     setError('');
     try {
-      const connection = new Connection(
-        `https://${process.env.NEXT_PUBLIC_RPC_URL}`,
+      const connection = getConnection('confirmed');
+
+      const response = await api.post('/api/wallet/create-signed-transaction', {
+        recipientAddress: values.recipientAddress,
+        amount: values.amount,
+        tokenAddress: values.tokenAddress,
+      });
+
+      const transaction = VersionedTransaction.deserialize(
+        Buffer.from(response.data.serializedTransaction, 'base64'),
       );
-
-      let blockhash;
-      try {
-        const response = await connection.getLatestBlockhash('finalized');
-        blockhash = response.blockhash;
-      } catch (e) {
-        throw new Error('RPC Timed out');
-      }
-
-      const instructions = await createTransferInstructions(
-        connection,
-        values,
-        user?.walletAddress as string,
-        selectedToken,
-      );
-
-      const message = new TransactionMessage({
-        payerKey: new PublicKey(process.env.NEXT_PUBLIC_FEEPAYER as string),
-        recentBlockhash: blockhash,
-        instructions,
-      }).compileToV0Message();
-
-      const transaction = new VersionedTransaction(message);
 
       const userSignedTransaction = await signTransaction({
         transaction,
         connection,
         uiOptions: {
-          buttonText: 'Confirm',
-          description: 'Note that this is an irreversible action',
-          successHeader: 'We are processing your withdrawal..',
-          successDescription: 'You can close this window now',
-          transactionInfo: {
-            title: 'Confirm Withdrawal',
-            action: '',
-          },
           showWalletUIs: false,
         },
       });
-
-      const serializedTransaction = Buffer.from(
-        userSignedTransaction.serialize(),
-      ).toString('base64');
-
-      const response = await api.post('/api/wallet/sign-transaction', {
-        serializedTransaction,
-      });
-
-      const signedTransaction = VersionedTransaction.deserialize(
-        Buffer.from(response.data.serializedTransaction, 'base64'),
-      );
-
       const signature = await connection.sendRawTransaction(
-        signedTransaction.serialize(),
+        userSignedTransaction.serialize(),
       );
-
-      const confirmation = await connection.confirmTransaction(
-        signature,
-        'confirmed',
-      );
-
-      if (confirmation.value.err) {
-        throw new Error('Transaction failed');
-      }
 
       const pollForSignature = async (sig: string) => {
         const MAX_RETRIES = 60;
@@ -195,7 +197,7 @@ export function WithdrawFundsFlow({
       posthog.capture('withdraw_failed');
       console.error('Withdrawal failed:', e);
       log.error(
-        `Withdrawal failed: ${e}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.address}, token: ${values.tokenAddress}`,
+        `Withdrawal failed: ${e}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
       );
 
       let errorMessage =
@@ -226,8 +228,22 @@ export function WithdrawFundsFlow({
         <WithdrawForm
           form={form}
           selectedToken={selectedToken}
-          onSubmit={handleWithdraw}
+          onSubmit={checkATARequirement}
           tokens={tokens}
+          isProcessing={isProcessing}
+        />
+      )}
+
+      {view === 'ata-confirm' && pendingFormData && (
+        <ATAConfirmation
+          selectedToken={selectedToken}
+          formData={pendingFormData}
+          onConfirm={() => handleWithdraw(pendingFormData)}
+          onCancel={() => {
+            setPendingFormData(null);
+            setView('withdraw');
+          }}
+          ataCreationCost={ataCreationCost}
           isProcessing={isProcessing}
         />
       )}

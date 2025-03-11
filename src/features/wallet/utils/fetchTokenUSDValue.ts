@@ -7,7 +7,7 @@ export async function fetchTokenUSDValue(mintAddress: string): Promise<number> {
     }
 
     const { data } = await api.get(
-      `https://earn.superteam.fun/api/wallet/price?mintAddress=${mintAddress}`,
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/wallet/price?mintAddress=${mintAddress}`,
     );
 
     return data.price;

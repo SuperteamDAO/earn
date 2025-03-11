@@ -15,7 +15,10 @@ import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 const PENDING_LABEL_PRIORITY = {
   Unreviewed: 1,
+  Pending: 1,
   Shortlisted: 2,
+  High_Quality: 2,
+  Mid_Quality: 3,
   Reviewed: 3,
   Low_Quality: 4,
   Spam: 5,
@@ -59,10 +62,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     : {};
 
-  const filterSearch: {
-    applicationStatus?: GrantApplicationStatus;
-    label?: SubmissionLabels;
-  } = filterLabel
+  const filterSearch: Prisma.GrantApplicationWhereInput = filterLabel
     ? {
         ...(filterLabel === 'Approved'
           ? { applicationStatus: 'Approved' }
@@ -70,7 +70,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         ...(filterLabel === 'Rejected'
           ? { applicationStatus: 'Rejected' }
           : {}),
-        ...(filterLabel === 'Pending' ? { applicationStatus: 'Pending' } : {}),
+        ...(filterLabel === 'Pending'
+          ? {
+              applicationStatus: 'Pending',
+              label: {
+                in: ['Pending', 'Unreviewed'],
+              },
+            }
+          : {}),
         ...(filterLabel === 'Completed'
           ? { applicationStatus: 'Completed' }
           : {}),
@@ -78,7 +85,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         filterLabel !== 'Approved' &&
         filterLabel !== 'Pending' &&
         filterLabel !== 'Completed'
-          ? { label: filterLabel }
+          ? { label: filterLabel, applicationStatus: 'Pending' }
           : {}),
       }
     : {};

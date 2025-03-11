@@ -35,11 +35,8 @@ async function sponsors(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             name: {
               contains: searchString,
             },
-            Hackathon: null,
           }
-        : {
-            Hackathon: null,
-          };
+        : {};
 
       const sponsorsList = await prisma.sponsors.findMany({
         where: {
@@ -73,10 +70,9 @@ async function sponsors(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               name: {
                 contains: searchString,
               },
-              Hackathon: null,
             },
           }
-        : { sponsor: { Hackathon: null } };
+        : {};
 
       const sponsorsList = await prisma.userSponsors.findMany({
         where: {

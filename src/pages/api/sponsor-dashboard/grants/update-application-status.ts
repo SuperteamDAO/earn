@@ -1,3 +1,4 @@
+import { type SubmissionLabels } from '@prisma/client';
 import axios from 'axios';
 import type { NextApiResponse } from 'next';
 import { z } from 'zod';
@@ -106,6 +107,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       decidedBy: string | undefined;
       approvedAmount?: number;
       approvedAmountInUSD?: number;
+      label?: SubmissionLabels;
     }[] = [];
 
     await Promise.all(
@@ -139,9 +141,15 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             approvedAmountInUSD: usdValue,
           };
         }
+        const label =
+          currentApplicant.label === 'Unreviewed' ||
+          currentApplicant.label === 'Pending'
+            ? 'Reviewed'
+            : currentApplicant.label;
         updatedData.push({
           ...commonUpdateField,
           ...approvedData,
+          label,
         });
       }),
     );

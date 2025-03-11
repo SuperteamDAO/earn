@@ -26,6 +26,9 @@ export interface SponsorStats {
   totalRewardAmount?: number;
   totalListingsAndGrants?: number;
   totalSubmissionsAndApplications?: number;
+  totalHackathonTracks?: number;
+  totalHackathonSubmissions?: number;
+  totalHackathonRewards?: number;
 }
 
 const ALLOWED_URL_PREFIXES = [
