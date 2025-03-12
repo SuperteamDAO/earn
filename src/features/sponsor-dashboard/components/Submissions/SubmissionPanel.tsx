@@ -12,6 +12,7 @@ import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { KycComponent } from '@/components/ui/KycComponent';
 import { Tooltip } from '@/components/ui/tooltip';
 import { EXPLORER_TX_URL } from '@/constants/project';
 import { useClipboard } from '@/hooks/use-clipboard';
@@ -282,27 +283,33 @@ export const SubmissionPanel = ({
                 )}
 
                 {selectedSubmission?.user?.publicKey && (
-                  <Tooltip
-                    content={'Click to copy'}
-                    contentProps={{ side: 'right' }}
-                    triggerClassName="flex items-center hover:underline underline-offset-1"
-                  >
-                    <div
-                      className="flex cursor-pointer items-center justify-start gap-1 whitespace-nowrap text-sm text-slate-400 hover:text-slate-500"
-                      onClick={handleCopyPublicKey}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`Copy public key: ${truncatePublicKey(selectedSubmission.user.publicKey, 3)}`}
+                  <>
+                    <Tooltip
+                      content={'Click to copy'}
+                      contentProps={{ side: 'right' }}
+                      triggerClassName="flex items-center hover:underline underline-offset-1"
                     >
-                      <MdOutlineAccountBalanceWallet />
-                      <p>
-                        {truncatePublicKey(
-                          selectedSubmission.user.publicKey,
-                          3,
-                        )}
-                      </p>
-                    </div>
-                  </Tooltip>
+                      <div
+                        className="flex cursor-pointer items-center justify-start gap-1 whitespace-nowrap text-sm text-slate-400 hover:text-slate-500"
+                        onClick={handleCopyPublicKey}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Copy public key: ${truncatePublicKey(selectedSubmission.user.publicKey, 3)}`}
+                      >
+                        <MdOutlineAccountBalanceWallet />
+                        <p>
+                          {truncatePublicKey(
+                            selectedSubmission.user.publicKey,
+                            3,
+                          )}
+                        </p>
+                      </div>
+                    </Tooltip>
+                    <KycComponent
+                      address={selectedSubmission?.user?.publicKey}
+                      xs
+                    />
+                  </>
                 )}
                 <div className="flex gap-2">
                   <Telegram

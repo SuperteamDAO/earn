@@ -36,6 +36,7 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { KycComponent } from '@/components/ui/KycComponent';
 import {
   Popover,
   PopoverContent,
@@ -492,16 +493,21 @@ export const SubmissionDrawer = ({
                               </FormDescription>
                             </div>
                             <FormControl>
-                              <Input
-                                className={cn(
-                                  !!user?.publicKey &&
-                                    'cursor-not-allowed text-slate-600 opacity-80',
-                                )}
-                                placeholder={`Add your ${CHAIN_NAME} wallet address`}
-                                readOnly={!!user?.publicKey}
-                                {...(!!user?.publicKey ? {} : field)}
-                                value={user?.publicKey || field.value}
-                              />
+                              <div className="flex flex-col gap-2">
+                                <Input
+                                  className={cn(
+                                    !!user?.publicKey &&
+                                      'cursor-not-allowed text-slate-600 opacity-80',
+                                  )}
+                                  placeholder={`Add your ${CHAIN_NAME} wallet address`}
+                                  readOnly={!!user?.publicKey}
+                                  {...(!!user?.publicKey ? {} : field)}
+                                  value={user?.publicKey || field.value}
+                                />
+                                <KycComponent
+                                  address={user?.publicKey || field.value}
+                                />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>

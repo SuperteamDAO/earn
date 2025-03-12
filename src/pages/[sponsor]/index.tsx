@@ -103,14 +103,7 @@ Check out all of ${title}’s latest earning opportunities on a single page.
             ) : (
               <div className="flex items-center gap-2">
                 <p className="text-xl font-semibold">{title}</p>
-                {!!isVerified && (
-                  <VerifiedBadge
-                    style={{
-                      width: '1rem',
-                      height: '1rem',
-                    }}
-                  />
-                )}
+                {!!isVerified && <VerifiedBadge className="h-4 w-4" />}
               </div>
             )}
             {isListingsLoading ? (
