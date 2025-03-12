@@ -194,11 +194,21 @@ export function WithdrawFundsFlow({
 
       return signature;
     } catch (e) {
-      posthog.capture('withdraw_failed');
-      console.error('Withdrawal failed:', e);
-      log.error(
-        `Withdrawal failed: ${e}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
-      );
+      const isMfaCancelled =
+        e instanceof Error &&
+        (e.message === 'MFA canceled' || e.message === 'MFA cancelled');
+
+      if (isMfaCancelled) {
+        posthog.capture('mfa cancelled_withdraw');
+        console.error('MFA authentication cancelled by user');
+      } else {
+        posthog.capture('withdraw_failed');
+        console.error('Withdrawal failed:', e);
+
+        log.error(
+          `Withdrawal failed: ${e}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
+        );
+      }
 
       let errorMessage =
         e instanceof Error
