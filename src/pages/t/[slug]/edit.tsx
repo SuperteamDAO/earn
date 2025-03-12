@@ -557,7 +557,7 @@ export default function EditProfilePage({ slug }: { slug: string }) {
                 {pow.map((data, idx) => {
                   return (
                     <div
-                      className="mb-1.5 mt-2 flex items-center rounded-md border border-slate-300 px-[1rem] py-[0.5rem] text-slate-500"
+                      className="mb-1.5 mt-2 flex items-center gap-3 break-all rounded-md border border-slate-300 px-[1rem] py-[0.5rem] text-slate-500"
                       key={data.id}
                     >
                       <p className="w-full text-sm text-gray-800">

@@ -10,6 +10,7 @@ type EmailType =
   | 'commentSponsor'
   | 'commentActivity'
   | 'createListing'
+  | 'createHackathon'
   | 'deadlineExtended'
   | 'submissionRejected'
   | 'submissionLike'
