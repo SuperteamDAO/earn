@@ -10,6 +10,7 @@ type EmailType =
   | 'commentSponsor'
   | 'commentActivity'
   | 'createListing'
+  | 'createHackathon'
   | 'deadlineExtended'
   | 'submissionRejected'
   | 'submissionLike'
@@ -29,7 +30,7 @@ type EmailType =
 
 interface EmailNotificationParams {
   type: EmailType;
-  id: string;
+  id?: string;
   userId?: string;
   otherInfo?: any;
   triggeredBy: any;

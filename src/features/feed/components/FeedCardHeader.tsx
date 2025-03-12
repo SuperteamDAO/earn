@@ -35,7 +35,9 @@ export const FeedCardHeader = ({
             {timeAgoShort(createdAt)}
           </p>
         </div>
-        <p className="text-sm text-slate-500 md:text-base">{description}</p>
+        <p className="break-all text-sm text-slate-500 md:text-base">
+          {description}
+        </p>
       </div>
     );
   }
