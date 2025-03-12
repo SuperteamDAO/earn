@@ -73,14 +73,8 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
           <Button
             variant="secondary"
             className={`${orbitron.className} mt-2 w-full rounded-md text-base font-medium text-[#1E5871]`}
-            asChild
           >
-            <Link
-              href="https://sonicsvm.typeform.com/mobiushackathon"
-              target="_blank"
-            >
-              REGISTER NOW
-            </Link>
+            SUBMIT NOW
           </Button>
         </div>
       </div>
