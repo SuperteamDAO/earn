@@ -211,7 +211,7 @@ export function WithdrawFundsFlow({
       }
 
       let errorMessage =
-        'Error occurred. Please try again, and if the error persists, get in touch with support@superteamearn.com.';
+        'Something went wrong. Please try again. If the issue persists, contact support at support@superteamearn.com.';
 
       if (isMfaCancelled) {
         errorMessage = 'Please complete two-factor authentication to withdraw';
