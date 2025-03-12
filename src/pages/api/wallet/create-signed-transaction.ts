@@ -69,60 +69,6 @@ async function calculateAtaCreationCost(
   return Math.ceil(tokenAmountToCharge * 10 ** decimals);
 }
 
-async function sendTransaction(
-  instructions: any[],
-  connection: any,
-  feePayer: PublicKey,
-  feePayerWallet: Keypair,
-  blockhash: string,
-): Promise<void> {
-  const message = new TransactionMessage({
-    payerKey: feePayer,
-    recentBlockhash: blockhash,
-    instructions,
-  }).compileToV0Message();
-
-  const transaction = new VersionedTransaction(message);
-  transaction.sign([feePayerWallet]);
-  const txSignature = await connection.sendTransaction(transaction);
-  logger.info(`Transaction sent: ${txSignature}`);
-  await connection.confirmTransaction(txSignature, 'confirmed');
-}
-
-async function ensureATA(
-  connection: any,
-  feePayer: PublicKey,
-  feePayerWallet: Keypair,
-  tokenMint: PublicKey,
-  owner: PublicKey,
-  programId: PublicKey,
-  blockhash: string,
-): Promise<void> {
-  const ata = getAssociatedTokenAddressSync(tokenMint, owner, false, programId);
-  const accountInfo = await connection.getAccountInfo(ata);
-  if (!accountInfo) {
-    const instructions = [
-      ComputeBudgetProgram.setComputeUnitLimit({ units: 40000 }),
-      ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 100000 }),
-      createAssociatedTokenAccountInstruction(
-        feePayer,
-        ata,
-        owner,
-        tokenMint,
-        programId,
-      ),
-    ];
-    await sendTransaction(
-      instructions,
-      connection,
-      feePayer,
-      feePayerWallet,
-      blockhash,
-    );
-    logger.info(`Created ATA for ${owner.toString()}`);
-  }
-}
-
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   const { userId, body } = req;
   try {
@@ -197,73 +143,86 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const receiverATAExists = !!(await connection.getAccountInfo(receiverATA));
     const receiverATAWasMissing = !receiverATAExists;
 
+    const allInstructions = [
+      ComputeBudgetProgram.setComputeUnitLimit({ units: 40000 }),
+      ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 100000 }),
+    ];
+
     let ataCreationCost = 0;
+    const withdrawAmount = Number(amount) * 10 ** decimals;
+
     if (receiverATAWasMissing) {
       ataCreationCost = await calculateAtaCreationCost(tokenAddress, decimals);
       logger.info(
         `ATA creation cost: ${ataCreationCost} tokens (${token.tokenSymbol})`,
       );
-      await ensureATA(
-        connection,
-        feePayer,
-        feePayerWallet,
-        tokenMint,
-        recipient,
-        programId,
-        blockhash,
-      );
-    }
 
-    const feePayerATA = getAssociatedTokenAddressSync(
-      tokenMint,
-      feePayer,
-      false,
-      programId,
-    );
-    const feePayerATAExists = !!(await connection.getAccountInfo(feePayerATA));
-    if (!feePayerATAExists && receiverATAWasMissing) {
-      await ensureATA(
-        connection,
-        feePayer,
-        feePayerWallet,
-        tokenMint,
-        feePayer,
-        programId,
-        blockhash,
-      );
-    }
-
-    const transferInstructions = [
-      ComputeBudgetProgram.setComputeUnitLimit({ units: 40000 }),
-      ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 100000 }),
-    ];
-    const withdrawAmount = Number(amount) * 10 ** decimals;
-    if (receiverATAWasMissing && ataCreationCost > 0) {
-      logger.info(
-        `Adding fee transfer instruction for ${ataCreationCost} tokens to fee payer`,
-      );
-      transferInstructions.push(
-        createTransferInstruction(
-          senderATA,
-          feePayerATA,
-          sender,
-          ataCreationCost,
-          [],
-          programId,
-        ),
-      );
-      transferInstructions.push(
-        createTransferInstruction(
-          senderATA,
+      allInstructions.push(
+        createAssociatedTokenAccountInstruction(
+          feePayer,
           receiverATA,
-          sender,
-          withdrawAmount - ataCreationCost,
-          [],
+          recipient,
+          tokenMint,
           programId,
         ),
       );
+
+      const feePayerATA = getAssociatedTokenAddressSync(
+        tokenMint,
+        feePayer,
+        false,
+        programId,
+      );
+      const feePayerATAExists =
+        !!(await connection.getAccountInfo(feePayerATA));
+
+      if (!feePayerATAExists && ataCreationCost > 0) {
+        allInstructions.push(
+          createAssociatedTokenAccountInstruction(
+            feePayer,
+            feePayerATA,
+            feePayer,
+            tokenMint,
+            programId,
+          ),
+        );
+      }
+
+      if (ataCreationCost > 0) {
+        allInstructions.push(
+          createTransferInstruction(
+            senderATA,
+            feePayerATA,
+            sender,
+            ataCreationCost,
+            [],
+            programId,
+          ),
+        );
+        allInstructions.push(
+          createTransferInstruction(
+            senderATA,
+            receiverATA,
+            sender,
+            withdrawAmount - ataCreationCost,
+            [],
+            programId,
+          ),
+        );
+      } else {
+        allInstructions.push(
+          createTransferInstruction(
+            senderATA,
+            receiverATA,
+            sender,
+            withdrawAmount,
+            [],
+            programId,
+          ),
+        );
+      }
     } else {
-      transferInstructions.push(
+      allInstructions.push(
         createTransferInstruction(
           senderATA,
           receiverATA,
@@ -278,7 +237,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     const message = new TransactionMessage({
       payerKey: feePayer,
       recentBlockhash: blockhash,
-      instructions: transferInstructions,
+      instructions: allInstructions,
     }).compileToV0Message();
 
     const transaction = new VersionedTransaction(message);
@@ -288,7 +247,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       serializedTransaction: Buffer.from(transaction.serialize()).toString(
         'base64',
       ),
-      receiverATAExists: true,
+      receiverATAExists: !receiverATAWasMissing,
       ataCreationCost: receiverATAWasMissing ? ataCreationCost : 0,
     });
   } catch (error: any) {
