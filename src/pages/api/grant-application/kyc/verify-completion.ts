@@ -106,6 +106,14 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
     );
 
     if (result === 'verified') {
+      const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
+        where: { id: grantApplicationId },
+      });
+
+      if (grantApplication.kycStatus === 'Approved') {
+        return res.status(200).json({ message: 'KYC already verified' });
+      }
+
       const { fullName } = await getApplicantData(userId, secretKey, appToken);
       await prisma.grantApplication.update({
         where: { id: grantApplicationId, userId },
@@ -117,16 +125,17 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
         isFirstTranche: true,
       });
 
-      const grantApplication = await prisma.grantApplication.findUniqueOrThrow({
-        where: { id: grantApplicationId },
-        include: {
-          grant: true,
-          user: true,
-        },
-      });
+      const updatedGrantApplication =
+        await prisma.grantApplication.findUniqueOrThrow({
+          where: { id: grantApplicationId },
+          include: {
+            grant: true,
+            user: true,
+          },
+        });
 
       try {
-        await addOnboardingInfoToAirtable(grantApplication);
+        await addOnboardingInfoToAirtable(updatedGrantApplication);
       } catch (airtableError: any) {
         console.error(
           `Error adding onboarding info to Airtable: ${airtableError.message}`,
