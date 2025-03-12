@@ -211,15 +211,10 @@ export function WithdrawFundsFlow({
       }
 
       let errorMessage =
-        e instanceof Error
-          ? e.message === 'MFA canceled' || e.message === 'MFA cancelled'
-            ? 'Please complete two-factor authentication to withdraw'
-            : e.message
-          : 'Transaction failed. Please try again.';
+        'Error occurred. Please try again, and if the error persists, get in touch with support@superteamearn.com.';
 
-      if (e instanceof Error && e.message.includes('insufficient lamports')) {
-        errorMessage =
-          'Transaction Failed: Sending to this wallet requires you to deposit a small amount of SOL (0.003 SOL) into your Earn wallet. Or, try sending your rewards to an existing wallet which has interacted with stablecoins before.';
+      if (isMfaCancelled) {
+        errorMessage = 'Please complete two-factor authentication to withdraw';
       }
 
       setError(errorMessage);
