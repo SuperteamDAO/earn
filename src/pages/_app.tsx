@@ -133,8 +133,8 @@ function MyApp({ Component, pageProps }: any) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // SSR doesnt work with Solana Wallet Provider - hence need to wrap only when fully loaded
-    // if SSR doesnt work, OG images also wont work
+    // SSR doesn't work with Solana Wallet Provider - hence need to wrap only when fully loaded
+    // if SSR doesn't work, OG images also wont work
     setIsLoaded(true);
   }, []);
 
