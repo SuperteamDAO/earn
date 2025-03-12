@@ -215,7 +215,9 @@ export function PrePublish() {
                     if (isUpdate) posthog.capture('update listing_sponsor');
                     else posthog.capture('publish listing_sponsor');
                     if (data.status === 'VERIFYING') {
-                      setConfirmModal('VERIFICATION');
+                      if (data.reason?.includes('New sponsor'))
+                        setConfirmModal('VERIFICATION_SHOW_FORM');
+                      else setConfirmModal('VERIFICATION_SHOW_MODAL');
                     } else {
                       setConfirmModal('SUCCESS');
                     }
