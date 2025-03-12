@@ -29,7 +29,7 @@ import { getListingDefaults, refineReadyListing } from '../utils/form';
 
 interface UseListingFormReturn extends UseFormReturn<ListingFormData> {
   saveDraft: () => void;
-  submitListing: () => Promise<ListingFormData>;
+  submitListing: () => Promise<ListingFormData & { reason?: string }>;
   resetForm: () => void;
   validateRewards: () => Promise<boolean>;
   validateBasics: () => Promise<boolean>;

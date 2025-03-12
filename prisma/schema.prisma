@@ -62,6 +62,7 @@ model Bounties {
   winnersAnnouncedAt DateTime?
   Scouts             Scouts[]
   Comments           Comment[]
+  discordMessageIds  Json?
 
   @@index([id, slug])
   @@index([sponsorId])
