@@ -10,7 +10,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
-import { handleAirtableSync } from '@/features/grants/utils/handleAirtableSync';
+import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
       (async () => {
         if (grant.airtableId) {
           try {
-            await handleAirtableSync(result);
+            await syncGrantApplicationWithAirtable(result);
           } catch (error) {
             logger.error('Error syncing with Airtable:', {
               error,
