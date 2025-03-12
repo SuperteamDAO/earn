@@ -30,7 +30,7 @@ type EmailType =
 
 interface EmailNotificationParams {
   type: EmailType;
-  id?: string;
+  id: string;
   userId?: string;
   otherInfo?: any;
   triggeredBy: any;

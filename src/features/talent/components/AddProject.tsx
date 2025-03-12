@@ -73,10 +73,12 @@ export const AddProject = ({
   );
   const subSkillsOptions = useMemo<Option[]>(
     () =>
-      allSubSkills.map((i) => ({
-        value: i,
-        label: i,
-      })),
+      allSubSkills
+        .map((i) => ({
+          value: i,
+          label: i,
+        }))
+        .filter((i) => i.value !== 'Other'),
     [allSubSkills],
   );
 
