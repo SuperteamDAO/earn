@@ -17,21 +17,6 @@ interface KycComponentProps {
   xs?: boolean;
 }
 
-const ImageWrapper = ({ image }: { image: string | React.JSX.Element }) => {
-  if (typeof image === 'string') {
-    return (
-      <Image
-        alt="fractal-badge status"
-        src={image}
-        width={0}
-        height={0}
-        className={'h-3 w-3'}
-      />
-    );
-  }
-  return image;
-};
-
 function styleKycStatus(kycData?: KycResponse) {
   if (!kycData)
     return {
@@ -49,32 +34,72 @@ function styleKycStatus(kycData?: KycResponse) {
     case 'PENDING':
       return {
         className: 'text-yellow-500',
-        text: 'KYC / KYB Pending',
-        image: '/assets/kyc-failed.png',
+        text: 'KYC / KYB Verification in Progress',
+        image: (
+          <Image
+            src="/assets/kyc-failed.svg"
+            alt="KYC / KYB status"
+            width={0}
+            height={0}
+            className={'h-3 w-3 fill-yellow-500'}
+          />
+        ),
       };
     case 'NOT_SUBMITTED':
       return {
         className: 'text-red-500',
-        text: 'KYC / KYB Not Submitted',
-        image: '/assets/kyc-failed.png',
+        text: 'KYC / KYB Verification Not Started',
+        image: (
+          <Image
+            src="/assets/kyc-failed.svg"
+            alt="KYC / KYB status"
+            width={0}
+            height={0}
+            className={'h-3 w-3 fill-red-500'}
+          />
+        ),
       };
     case 'REJECTED':
       return {
         className: 'text-red-500',
-        text: 'KYC / KYB Rejected',
-        image: '/assets/kyc-failed.png',
+        text: 'KYC / KYB Verification Rejected',
+        image: (
+          <Image
+            src="/assets/kyc-failed.svg"
+            alt="KYC / KYB status"
+            width={0}
+            height={0}
+            className={'h-3 w-3 fill-red-500'}
+          />
+        ),
       };
     case 'EXPIRED':
       return {
         className: 'text-gray-500',
-        text: 'KYC / KYB Expired',
-        image: '/assets/kyc-failed.png',
+        text: 'KYC / KYB Verification Expired',
+        image: (
+          <Image
+            src="/assets/kyc-failed.svg"
+            alt="KYC / KYB status"
+            width={0}
+            height={0}
+            className={'h-3 w-3 fill-gray-500'}
+          />
+        ),
       };
     default:
       return {
         className: 'text-gray-500',
-        text: 'KYC / KYB Not Submitted',
-        image: '/assets/kyc-failed.png',
+        text: 'Unknown KYC / KYB status',
+        image: (
+          <Image
+            src="/assets/kyc-failed.svg"
+            alt="KYC / KYB status"
+            width={0}
+            height={0}
+            className={'h-3 w-3 fill-gray-500'}
+          />
+        ),
       };
   }
 }
@@ -92,7 +117,7 @@ export function KycComponent({
   const { className, text, image } = styleKycStatus(kycData);
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <ImageWrapper image={image} />
+      {image}
       {!imageOnly && (
         <p className={cn('text-sm font-medium', xs && 'text-xs')}>{text}</p>
       )}
