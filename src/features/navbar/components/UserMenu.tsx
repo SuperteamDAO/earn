@@ -45,9 +45,14 @@ export function UserMenu() {
     checkHashAndOpenModal();
   }, [isOpen, onOpen]);
 
-  const handleClose = () => {
+  const handleClose = async () => {
+    console.log('close -', router);
+    await router.replace(
+      router.asPath.replace('#emailPreferences', ''),
+      undefined,
+      { shallow: true },
+    );
     onClose();
-    router.push(router.asPath, undefined, { shallow: true });
   };
 
   return (
