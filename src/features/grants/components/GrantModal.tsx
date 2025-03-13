@@ -29,7 +29,7 @@ export const GrantModal = ({
   tranches,
 }: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const [applicationState] = useAtom(applicationStateAtom);
+  const [applicationState] = useAtom(applicationStateAtom(grant.id));
 
   const detailStates = ['APPLIED', 'ALLOW NEW', 'ALLOW EDIT'];
   const newTrancheFormStates =

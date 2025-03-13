@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
 
 export type ApplicationState =
   | 'ALLOW NEW'
@@ -19,6 +20,7 @@ export type ApplicationState =
   | 'TRANCHE4 APPROVED'
   | 'TRANCHE4 PAID';
 
-const applicationStateAtom = atom<ApplicationState>('ALLOW NEW');
-
-export { applicationStateAtom };
+export const applicationStateAtom = atomFamily(
+  (_grantId: string) => atom<ApplicationState>('ALLOW NEW'),
+  (a, b) => a === b,
+);

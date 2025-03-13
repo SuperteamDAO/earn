@@ -9,7 +9,9 @@ export const useApplicationState = (
   application: GrantApplicationWithTranches | undefined,
   grant: Grant,
 ) => {
-  const [applicationState, setApplicationState] = useAtom(applicationStateAtom);
+  const [applicationState, setApplicationState] = useAtom(
+    applicationStateAtom(grant.id),
+  );
   const tranches = application?.totalTranches ?? 0;
 
   const isST = grant.isNative && grant.airtableId;
@@ -70,7 +72,7 @@ export const useApplicationState = (
         setApplicationState('APPLIED');
       }
     }
-  }, [application, grant.isNative, tranches, setApplicationState]);
+  }, [application, grant.id, grant.isNative, isST, setApplicationState]);
 
   const getButtonConfig = () => {
     switch (applicationState) {

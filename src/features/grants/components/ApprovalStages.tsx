@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const ApprovalStages = ({ application, grant }: Props) => {
-  const [applicationState] = useAtom(applicationStateAtom);
+  const [applicationState] = useAtom(applicationStateAtom(grant.id));
 
   const isStateCompleted = (state: ApplicationState) => {
     const stateOrder: ApplicationState[] = [
