@@ -74,6 +74,11 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
             username: true,
           },
         },
+        listing: {
+          select: {
+            eligibility: true,
+          },
+        },
       },
     });
 

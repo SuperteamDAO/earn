@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { Baseline, Info, Link2, Plus, Trash2 } from 'lucide-react';
+import { Baseline, Info, LetterText, Link2, Plus, Trash2 } from 'lucide-react';
 import { useEffect } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 
@@ -28,6 +28,7 @@ import { useListingForm } from '../../hooks';
 
 const questionTypes = [
   { value: 'text', label: 'Text', icon: Baseline },
+  { value: 'paragraph', label: 'Paragraph', icon: LetterText },
   { value: 'link', label: 'Link', icon: Link2 },
 ];
 
@@ -90,7 +91,7 @@ export function EligibilityQuestions() {
               delayDuration={100}
               content={
                 <p className="max-w-sm">
-                  {type === 'project'
+                  {type === 'project' || type === 'sponsorship'
                     ? `Applicant's names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`
                     : `The main bounty submission link, the submitter's names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`}
                 </p>

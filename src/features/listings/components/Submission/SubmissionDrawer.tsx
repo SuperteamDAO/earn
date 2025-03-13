@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { type z } from 'zod';
 
 import { RichEditor } from '@/components/shared/RichEditor';
+import { MinimalTiptapEditor } from '@/components/tiptap';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -95,6 +96,7 @@ export const SubmissionDrawer = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [editFetched, setEditFetched] = useState(false);
 
   const { user, refetchUser } = useUser();
   const form: UseFormReturn<FormData> = useForm<FormData>({
@@ -157,9 +159,13 @@ export const SubmissionDrawer = ({
             tweet,
             otherInfo,
             ask,
-            eligibilityAnswers,
+            eligibilityAnswers: eligibilityAnswers.map((answer: any) => ({
+              question: answer.question,
+              answer: answer.answer ?? '',
+            })),
             token,
           });
+          setEditFetched(true);
         } catch (error) {
           console.error('Failed to fetch submission data', error);
           toast.error('Failed to load submission data');
@@ -277,12 +283,8 @@ export const SubmissionDrawer = ({
   }
 
   return (
-    <SideDrawer open={isOpen} onClose={handleClose}>
+    <SideDrawer open={isOpen} onClose={handleClose} className="scrollbar-none">
       <SideDrawerContent>
-        <X
-          className="absolute right-4 top-10 z-10 h-4 w-4 text-slate-400 sm:right-8 sm:top-8"
-          onClick={handleClose}
-        />
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -291,9 +293,15 @@ export const SubmissionDrawer = ({
             <div className="flex h-full flex-col justify-between gap-6">
               <div className="h-full overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)] md:px-4 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-track]:w-1.5 [&::-webkit-scrollbar]:w-1">
                 <div className="mb-4 border-b border-slate-100 bg-white py-3">
-                  <p className="text-lg font-medium text-slate-700">
-                    {headerText}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-lg font-medium text-slate-700">
+                      {headerText}
+                    </p>
+                    <X
+                      className="h-4 w-4 text-slate-400"
+                      onClick={handleClose}
+                    />
+                  </div>
                   <p className="text-sm text-slate-500">{subheadingText}</p>
                 </div>
                 <div>
@@ -391,7 +399,6 @@ export const SubmissionDrawer = ({
                           />
                         );
                       }
-
                       return (
                         <FormField
                           key={e.order}
@@ -416,6 +423,27 @@ export const SubmissionDrawer = ({
                                         placeholder="Add a link..."
                                         className="rounded-l-none"
                                         autoComplete="off"
+                                      />
+                                    </div>
+                                  ) : e.type === 'paragraph' ? (
+                                    <div className="flex rounded-md border shadow-sm ring-primary has-[:focus]:ring-1">
+                                      <MinimalTiptapEditor
+                                        key={`${field.name}-${editFetched ? id : ''}`}
+                                        {...field}
+                                        value={field.value || ''}
+                                        immediatelyRender={false}
+                                        className="min-h-[30vh] w-full border-none text-sm"
+                                        editorContentClassName="p-4 px-2 h-full"
+                                        output="html"
+                                        placeholder="Type your description here..."
+                                        editable={true}
+                                        editorClassName="focus:outline-none"
+                                        imageSetting={{
+                                          folderName:
+                                            'listing-eligibility-answer',
+                                          type: 'custom-question',
+                                        }}
+                                        toolbarClassName="sticky top-0 bg-white w-full"
                                       />
                                     </div>
                                   ) : (

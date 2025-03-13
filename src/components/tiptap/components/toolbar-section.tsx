@@ -97,7 +97,7 @@ export const ToolbarSection: React.FC<ToolbarSectionProps> = ({
     <>
       {mainActions.map(renderToolbarButton)}
       {dropdownActions.length > 0 && (
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <ToolbarButton
               isActive={isDropdownActive}
@@ -110,7 +110,7 @@ export const ToolbarSection: React.FC<ToolbarSectionProps> = ({
               {dropdownIcon || <CaretDownIcon className="size-5" />}
             </ToolbarButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-full">
+          <DropdownMenuContent align="start" className="z-[75] w-full">
             {dropdownActions.map(renderDropdownMenuItem)}
           </DropdownMenuContent>
         </DropdownMenu>

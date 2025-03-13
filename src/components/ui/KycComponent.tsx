@@ -20,8 +20,8 @@ interface KycComponentProps {
 function styleKycStatus(kycData?: KycResponse) {
   if (!kycData)
     return {
-      style: 'bg-gray-500',
-      text: 'KYC / KYB status loading...',
+      className: 'text-gray-500',
+      text: 'KYC / KYB Status loading...',
       image: <Loader className="h-3 w-3 animate-spin" />,
     };
   switch (kycData.kyc_status) {
@@ -37,7 +37,7 @@ function styleKycStatus(kycData?: KycResponse) {
         text: 'KYC / KYB Verification in Progress',
         image: (
           <Image
-            src="/assets/kyc-failed.svg"
+            src="/assets/kyc-verify-in-progress.svg"
             alt="KYC / KYB status"
             width={0}
             height={0}
@@ -48,7 +48,7 @@ function styleKycStatus(kycData?: KycResponse) {
     case 'NOT_SUBMITTED':
       return {
         className: 'text-red-500',
-        text: 'KYC / KYB Verification Not Started',
+        text: 'KYC / KYB Not Verified',
         image: (
           <Image
             src="/assets/kyc-failed.svg"

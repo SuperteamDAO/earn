@@ -4,10 +4,10 @@ import type { VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import type { toggleVariants } from '@/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -157,9 +157,10 @@ export const SectionThree: React.FC<SectionThreeProps> = ({
     setSelectedColor(color);
   }, [color]);
 
+  // Create a custom color picker dropdown
   return (
-    <Popover>
-      <PopoverTrigger asChild>
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
         <ToolbarButton
           tooltip="Text color"
           aria-label="Text color"
@@ -186,8 +187,8 @@ export const SectionThree: React.FC<SectionThreeProps> = ({
           </svg>
           <CaretDownIcon className="size-5" />
         </ToolbarButton>
-      </PopoverTrigger>
-      <PopoverContent align="start" className="w-full">
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="z-[75] w-full">
         <div className="space-y-1.5">
           {COLORS.map((palette, index) => (
             <MemoizedColorPicker
@@ -199,7 +200,7 @@ export const SectionThree: React.FC<SectionThreeProps> = ({
             />
           ))}
         </div>
-      </PopoverContent>
-    </Popover>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
