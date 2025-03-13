@@ -23,7 +23,7 @@ interface Props {
 export const Details = ({ bounty, modalView, atom }: Props) => {
   const selectedSubmission = useAtomValue(atom ?? selectedSubmissionAtom);
   const isProject = bounty?.type === 'project';
-
+  const isSponsorship = bounty?.type === 'sponsorship';
   const token =
     bounty?.token == 'Any' ? selectedSubmission?.token : bounty?.token;
   const tokenObject = tokenList.find((t) => t.tokenSymbol === token);
@@ -67,7 +67,7 @@ export const Details = ({ bounty, modalView, atom }: Props) => {
           content={`${dayjs(selectedSubmission?.createdAt).format('DD MMM YYYY')}`}
         />
 
-        {!isProject && (
+        {!isProject && !isSponsorship && (
           <>
             <InfoBox
               label="Main Submission"

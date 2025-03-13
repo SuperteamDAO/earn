@@ -64,7 +64,7 @@ export function EligibilityQuestions() {
   };
 
   useEffect(() => {
-    if (type === 'project') {
+    if (type === 'project' || type === 'sponsorship') {
       if (fields.length === 0) {
         handleAddQuestion(false);
       }
@@ -92,8 +92,8 @@ export function EligibilityQuestions() {
               content={
                 <p className="max-w-sm">
                   {type === 'project' || type === 'sponsorship'
-                    ? `Applicant's names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`
-                    : `The main bounty submission link, the submitter's names, email IDs, Discord / Twitter IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`}
+                    ? `Applicant's names, email IDs, Discord / Twitter IDs, and NEAR wallet are collected by default. Please use this space to ask about anything else!`
+                    : `The main bounty submission link, the submitter's names, email IDs, Discord / Twitter IDs, and NEAR wallet are collected by default. Please use this space to ask about anything else!`}
                 </p>
               }
             >
@@ -109,7 +109,12 @@ export function EligibilityQuestions() {
                 render={() => (
                   <div key={field.id} className="group">
                     <FormItem className="gap-2">
-                      <FormLabel isRequired={type === 'project' && index === 0}>
+                      <FormLabel
+                        isRequired={
+                          (type === 'project' || type === 'sponsorship') &&
+                          index === 0
+                        }
+                      >
                         Question {index + 1}
                       </FormLabel>
                       <div className="flex items-center rounded-md border ring-primary has-[:focus]:ring-1">
@@ -189,7 +194,8 @@ export function EligibilityQuestions() {
                           )}
                         />
 
-                        {(fields.length !== 1 || type !== 'project') && (
+                        {(fields.length !== 1 ||
+                          (type !== 'project' && type !== 'sponsorship')) && (
                           <Button
                             type="button"
                             variant="ghost"
