@@ -53,7 +53,10 @@ export async function fetchUserTokens(
     allTokenAccounts.map(async (tokenAccount) => {
       const accountData = tokenAccount.account.data.parsed.info;
       const mintAddress = accountData.mint;
-      const amount = Number(accountData.tokenAmount.uiAmount);
+
+      const rawAmount = BigInt(accountData.tokenAmount.amount);
+      const decimals = accountData.tokenAmount.decimals;
+      const amount = Number(rawAmount) / Math.pow(10, decimals);
 
       const tokenMetadata = tokenList.find(
         (token) => token.mintAddress === mintAddress,
