@@ -56,14 +56,24 @@ export const SurveyModal = ({
   };
 
   useEffect(() => {
-    posthog.getActiveMatchingSurveys((surveys) => {
-      const surveyById = getMatchingSurvey(surveys, surveyId);
-      if (surveys.length === 0 || !surveyById) {
+    try {
+      if (!posthog?.__loaded) {
+        console.log('PostHog not loaded, skipping survey');
         onClose();
-        return;
       }
-      setQuestion(surveyById?.questions[0]);
-    }, true);
+      posthog.getActiveMatchingSurveys((surveys) => {
+        console.log('surveys', surveys);
+        const surveyById = getMatchingSurvey(surveys, surveyId);
+        if (surveys.length === 0 || !surveyById) {
+          onClose();
+          return;
+        }
+        setQuestion(surveyById?.questions[0]);
+      }, true);
+    } catch (error) {
+      console.error('Error fetching survey', error);
+      onClose();
+    }
   }, [posthog]);
 
   return (

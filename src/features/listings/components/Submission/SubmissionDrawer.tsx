@@ -178,7 +178,6 @@ export const SubmissionDrawer = ({
   }, [id, editMode, form.reset]);
 
   const onSubmit = async (data: FormData) => {
-    console.log('onSubmit', data);
     posthog.capture('confirmed_submission');
     setIsLoading(true);
     try {
