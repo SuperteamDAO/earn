@@ -101,6 +101,10 @@ export const SubmissionCard = ({
               ? ASSET_URL + '/bg/og.svg'
               : ogData?.images?.[0]?.url || ASSET_URL + '/bg/og.svg'
           }
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = ASSET_URL + '/bg/og.svg';
+          }}
         />
       </Link>
 
