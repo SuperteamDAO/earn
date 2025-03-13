@@ -29,3 +29,15 @@ export const str2ab = (str: string, fileName: string) => {
   const file64 = parser.format(fileName, buffer);
   return file64;
 };
+
+export const getCloudinaryFetchUrl = (
+  url: string | null | undefined,
+): string | null => {
+  if (!url) return null;
+
+  if (url.includes('res.cloudinary.com')) return url;
+
+  const encodedUrl = encodeURIComponent(url);
+
+  return `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/fetch/${encodedUrl}`;
+};
