@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type FeedPostType, FeedPostTypeSchema } from '@/features/feed/types';
@@ -147,7 +148,7 @@ export default async function handler(
             type: 'submission',
             like: sub.like,
             likeCount: sub.likeCount,
-            ogImage: sub.ogImage,
+            ogImage: getCloudinaryFetchUrl(sub.ogImage),
             commentCount: sub._count.Comments,
             recentCommenters: sub.Comments,
           }));
@@ -195,7 +196,7 @@ export default async function handler(
             link: pow.link,
             like: pow.like,
             likeCount: pow.likeCount,
-            ogImage: pow.ogImage,
+            ogImage: getCloudinaryFetchUrl(pow.ogImage),
             commentCount: pow._count.Comments,
             recentCommenters: pow.Comments,
           }));

@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { unfurl } from 'unfurl.js';
 
 import logger from '@/lib/logger';
+import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
 type UnfurlResult = Awaited<ReturnType<typeof unfurl>>;
@@ -37,6 +38,12 @@ export default async function handler(
     if (!metadata.open_graph?.images?.[0]?.url) {
       logger.warn(`No OG image found for URL: ${url}`);
       return res.status(200).json({ result: 'error' });
+    }
+
+    if (metadata.open_graph?.images?.[0]?.url) {
+      metadata.open_graph.images[0].url =
+        getCloudinaryFetchUrl(metadata.open_graph.images[0].url) ||
+        metadata.open_graph.images[0].url;
     }
 
     logger.info(`Successfully unfurled URL: ${url}`);
