@@ -23,7 +23,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
-import type { Listing, Rewards } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 import {
   Telegram,
   Twitter,
@@ -129,46 +129,17 @@ export const SubmissionPanel = ({
                   )}
                 >
                   {selectedSubmission?.isWinner &&
-                  selectedSubmission?.winnerPosition &&
-                  !selectedSubmission?.isPaid &&
-                  (bounty?.isWinnersAnnounced || isSponsorship) ? (
-                    <Button
-                      className="ph-no-capture mr-4 min-w-[120px] disabled:cursor-not-allowed"
-                      onClick={() => onVerifyPayment()}
-                    >
-                      <DollarSign className="mr-2 h-4 w-4" />
-                      Verify Transaction
-                    </Button>
-                  ) : (
-                    <Tooltip
-                      content={
-                        !bounty?.isWinnersAnnounced && !isSponsorship ? (
-                          <>
-                            Please announce the winners before you paying out
-                            the winners
-                            <TooltipArrow />
-                          </>
-                        ) : null
-                      }
-                      contentProps={{ sideOffset: 5 }}
-                    >
+                    selectedSubmission?.winnerPosition &&
+                    !selectedSubmission?.isPaid &&
+                    (bounty?.isWinnersAnnounced || isSponsorship) && (
                       <Button
-                        className="mr-4"
-                        disabled={!bounty?.isWinnersAnnounced || isSponsorship}
-                        size="sm"
-                        variant="default"
+                        className="ph-no-capture mr-4 min-w-[120px] disabled:cursor-not-allowed"
+                        onClick={() => onVerifyPayment()}
                       >
-                        Pay{' '}
-                        {bounty?.token === 'Any'
-                          ? selectedSubmission?.token
-                          : bounty?.token}{' '}
-                        {!!bounty?.rewards &&
-                          bounty?.rewards[
-                            selectedSubmission?.winnerPosition as keyof Rewards
-                          ]}
+                        <DollarSign className="mr-2 h-4 w-4" />
+                        Verify Transaction
                       </Button>
-                    </Tooltip>
-                  )}
+                    )}
                   {selectedSubmission?.status === 'Pending' && (
                     <SelectLabel listingSlug={bounty?.slug!} />
                   )}
