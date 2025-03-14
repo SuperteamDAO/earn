@@ -3,7 +3,7 @@
 export const countries = [
   {
     capital: 'Kabul',
-    code: 'af',
+    code: 'af'
     continent: 'Asia',
     flag_1x1: 'flags/1x1/af.svg',
     flag_4x3: 'flags/4x3/af.svg',
@@ -414,13 +414,7 @@ export const countries = [
     iso: true,
     name: 'Central African Republic',
   },
-  {
-    code: 'cefta',
-    flag_1x1: 'flags/1x1/cefta.svg',
-    flag_4x3: 'flags/4x3/cefta.svg',
-    iso: false,
-    name: 'Central European Free Trade Agreement',
-  },
+  
   {
     capital: "N'Djamena",
     code: 'td',
@@ -615,13 +609,7 @@ export const countries = [
     iso: true,
     name: 'Dominican Republic',
   },
-  {
-    code: 'eac',
-    flag_1x1: 'flags/1x1/eac.svg',
-    flag_4x3: 'flags/4x3/eac.svg',
-    iso: false,
-    name: 'East African Community',
-  },
+  
   {
     capital: 'Quito',
     code: 'ec',
@@ -703,13 +691,7 @@ export const countries = [
     iso: true,
     name: 'Ethiopia',
   },
-  {
-    code: 'eu',
-    flag_1x1: 'flags/1x1/eu.svg',
-    flag_4x3: 'flags/4x3/eu.svg',
-    iso: false,
-    name: 'Europe',
-  },
+
   {
     capital: 'Stanley',
     code: 'fk',
@@ -1183,13 +1165,7 @@ export const countries = [
     iso: true,
     name: 'Latvia',
   },
-  {
-    code: 'arab',
-    flag_1x1: 'flags/1x1/arab.svg',
-    flag_4x3: 'flags/4x3/arab.svg',
-    iso: false,
-    name: 'League of Arab States',
-  },
+  
   {
     capital: 'Beirut',
     code: 'lb',
@@ -1595,13 +1571,7 @@ export const countries = [
     iso: true,
     name: 'Oman',
   },
-  {
-    code: 'pc',
-    flag_1x1: 'flags/1x1/pc.svg',
-    flag_4x3: 'flags/4x3/pc.svg',
-    iso: false,
-    name: 'Pacific Community',
-  },
+  
   {
     capital: 'Islamabad',
     code: 'pk',
@@ -2250,13 +2220,7 @@ export const countries = [
     iso: true,
     name: 'United Kingdom',
   },
-  {
-    code: 'un',
-    flag_1x1: 'flags/1x1/un.svg',
-    flag_4x3: 'flags/4x3/un.svg',
-    iso: false,
-    name: 'United Nations',
-  },
+  
   {
     capital: 'Washington, D.C.',
     code: 'um',
@@ -2275,13 +2239,7 @@ export const countries = [
     iso: true,
     name: 'United States',
   },
-  {
-    code: 'xx',
-    flag_1x1: 'flags/1x1/xx.svg',
-    flag_4x3: 'flags/4x3/xx.svg',
-    iso: false,
-    name: 'Unknown',
-  },
+ 
   {
     capital: 'Montevideo',
     code: 'uy',
