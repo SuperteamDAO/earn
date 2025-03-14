@@ -448,31 +448,32 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'What is Sonic Mobius Hackathon?',
     answer:
-      ' Sonic Mobius Hackathon is the first SVM hackathon, designed for the multi-SVM universe. Builders can participate and launch on Sonic SVM Mainnet, the first SVM to launch on Solana for games and applications.',
+      'Sonic Mobius Hackathon is hosted by SonicSVM and is the first SVM hackathon on Solana to empower builders to launch games and applications on Sonic.',
   },
   {
     question: 'Can I submit my final project without registering first?',
     answer:
-      'You can submit even if you did not register for this hackathon. However, the Sonic team highly recommends all participants to register before submitting their projects, as the team will verify the submissions against the registered Twitter/X account.',
+      'We highly recommend all hackathon builders register before submitting their projects, as we’ll verify submissions against the registered Twitter/X account. However, if you’re unable to register, we’ll consider the submission details as final.',
   },
   {
     question: 'Can I submit multiple projects?',
     answer:
-      'No, each builder can only submit one project and be part of one team.',
+      'Yes, your team can submit projects to multiple tracks. However, each team is limited to one submission per track.',
+  },
+  {
+    question: 'Can I submit my project to multiple tracks?',
+    answer:
+      'No, one project can only be submitted to one track. Please select the most relevant track at the submission page.',
   },
   {
     question: 'I want to participate but don’t have a team. What should I do?',
-    answer: `You can join our <a href='https://t.me/+S_eelN_07xswYTdl' target='_blank'>Hackathon channel</a> and post a request to find teammates.`,
+    answer:
+      "You can join our <a href='https://t.me/+S_eelN_07xswYTdl' target='_blank'>Hackathon channel</a> and post a request to find teammates.",
   },
   {
     question: 'I have a team but no idea. What should I do?',
     answer:
-      "Check out the <a href='https://www.notion.so/mirrorworldfun/Sonic-Mobius-Hackathon-Ideaboard-19a2d67d7b5f8091af6ad2957c575360' target='_blank'>Idea board</a> or join the <a href='https://t.me/+S_eelN_07xswYTdl' target='_blank'>Hackathon channel</a> to discuss and brainstorm ideas.",
-  },
-  {
-    question: 'How will the rewards be paid out?',
-    answer:
-      'Prizes will be paid out in 50% stablecoin, 10% $SONIC, and the rest 40% in locked $SONIC tokens with a 12-month vesting period.',
+      "Check out the <a href='https://www.notion.so/19a2d67d7b5f8091af6ad2957c575360?pvs=21' target='_blank'>idea board</a> or join the <a href='https://t.me/+S_eelN_07xswYTdl' target='_blank'>Hackathon channel</a> to discuss and brainstorm ideas.",
   },
 ];
 
