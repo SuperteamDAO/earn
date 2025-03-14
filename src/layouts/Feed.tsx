@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 
+import { HIDE_LEADERBOARD } from '@/constants/project';
 import { Home } from '@/layouts/Home';
 
 import {
@@ -42,11 +43,13 @@ export const FeedPageLayout = ({
         <div className="flex">
           <div className="sticky top-14 hidden h-screen w-48 flex-col gap-3 border-r pr-5 pt-5 lg:flex">
             <NavItem name="Homepage" icon={HomeIcon} href="/" />
-            <NavItem
-              name="Leaderboard"
-              icon={LeaderboardIcon}
-              href="/leaderboard"
-            />
+            {!HIDE_LEADERBOARD && (
+              <NavItem
+                name="Leaderboard"
+                icon={LeaderboardIcon}
+                href="/leaderboard"
+              />
+            )}
             <NavItem name="Winners" icon={WinnersIcon} href="/feed/winners" />
             {!isHomePage && (
               <NavItem name="All Posts" icon={AllPostsIcon} href="/feed" />

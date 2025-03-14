@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { type z } from 'zod';
 
 import { RichEditor } from '@/components/shared/RichEditor';
+import { MinimalTiptapEditor } from '@/components/tiptap';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -36,6 +37,7 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
+import { KycComponent } from '@/components/ui/KycComponent';
 import {
   Popover,
   PopoverContent,
@@ -91,9 +93,11 @@ export const SubmissionDrawer = ({
   const queryClient = useQueryClient();
   const isProject = type === 'project';
   const isHackathon = type === 'hackathon';
+  const isSponsorship = type === 'sponsorship';
   const [isLoading, setIsLoading] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [editFetched, setEditFetched] = useState(false);
 
   const { user, refetchUser } = useUser();
   const form: UseFormReturn<FormData> = useForm<FormData>({
@@ -156,9 +160,13 @@ export const SubmissionDrawer = ({
             tweet,
             otherInfo,
             ask,
-            eligibilityAnswers,
+            eligibilityAnswers: eligibilityAnswers.map((answer: any) => ({
+              question: answer.question,
+              answer: answer.answer ?? '',
+            })),
             token,
           });
+          setEditFetched(true);
         } catch (error) {
           console.error('Failed to fetch submission data', error);
           toast.error('Failed to load submission data');
@@ -170,7 +178,6 @@ export const SubmissionDrawer = ({
   }, [id, editMode, form.reset]);
 
   const onSubmit = async (data: FormData) => {
-    console.log('onSubmit', data);
     posthog.capture('confirmed_submission');
     setIsLoading(true);
     try {
@@ -276,12 +283,8 @@ export const SubmissionDrawer = ({
   }
 
   return (
-    <SideDrawer open={isOpen} onClose={handleClose}>
+    <SideDrawer open={isOpen} onClose={handleClose} className="scrollbar-none">
       <SideDrawerContent>
-        <X
-          className="absolute right-4 top-10 z-10 h-4 w-4 text-slate-400 sm:right-8 sm:top-8"
-          onClick={handleClose}
-        />
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -290,90 +293,99 @@ export const SubmissionDrawer = ({
             <div className="flex h-full flex-col justify-between gap-6">
               <div className="h-full overflow-y-auto rounded-lg border border-slate-200 px-2 shadow-[0px_1px_3px_rgba(0,0,0,0.08),_0px_1px_2px_rgba(0,0,0,0.06)] md:px-4 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-track]:w-1.5 [&::-webkit-scrollbar]:w-1">
                 <div className="mb-4 border-b border-slate-100 bg-white py-3">
-                  <p className="text-lg font-medium text-slate-700">
-                    {headerText}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-lg font-medium text-slate-700">
+                      {headerText}
+                    </p>
+                    <X
+                      className="h-4 w-4 text-slate-400"
+                      onClick={handleClose}
+                    />
+                  </div>
                   <p className="text-sm text-slate-500">{subheadingText}</p>
                 </div>
                 <div>
                   <div className="mb-5 flex flex-col gap-4">
-                    {!isProject && !walletFieldListings.includes(id!) && (
-                      <>
-                        <FormField
-                          control={form.control}
-                          name={'link'}
-                          render={({ field }) => (
-                            <FormItem className={cn('flex flex-col gap-2')}>
-                              <div>
-                                <FormLabel isRequired>
-                                  Link to Your Submission
-                                </FormLabel>
-                                <FormDescription>
-                                  Make sure this link is accessible by everyone!
-                                </FormDescription>
-                              </div>
-                              <div>
-                                <FormControl>
-                                  <div className="flex">
-                                    <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
-                                      <p className="text-sm font-medium text-slate-500">
-                                        https://
-                                      </p>
+                    {!isProject &&
+                      !isSponsorship &&
+                      !walletFieldListings.includes(id!) && (
+                        <>
+                          <FormField
+                            control={form.control}
+                            name={'link'}
+                            render={({ field }) => (
+                              <FormItem className={cn('flex flex-col gap-2')}>
+                                <div>
+                                  <FormLabel isRequired>
+                                    Link to Your Submission
+                                  </FormLabel>
+                                  <FormDescription>
+                                    Make sure this link is accessible by
+                                    everyone!
+                                  </FormDescription>
+                                </div>
+                                <div>
+                                  <FormControl>
+                                    <div className="flex">
+                                      <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
+                                        <p className="text-sm font-medium text-slate-500">
+                                          https://
+                                        </p>
+                                      </div>
+                                      <Input
+                                        {...field}
+                                        maxLength={500}
+                                        placeholder="Add a link"
+                                        className="rounded-l-none"
+                                        autoComplete="off"
+                                      />
                                     </div>
-                                    <Input
-                                      {...field}
-                                      maxLength={500}
-                                      placeholder="Add a link"
-                                      className="rounded-l-none"
-                                      autoComplete="off"
-                                    />
-                                  </div>
-                                </FormControl>
+                                  </FormControl>
 
-                                <FormMessage className="pt-1" />
-                              </div>
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name={'tweet'}
-                          render={({ field }) => (
-                            <FormItem className={cn('flex flex-col gap-2')}>
-                              <div>
-                                <FormLabel>Tweet Link</FormLabel>
-                                <FormDescription>
-                                  This helps sponsors discover (and maybe
-                                  repost) your work on Twitter! If this
-                                  submission is for a Twitter thread bounty, you
-                                  can ignore this field.
-                                </FormDescription>
-                              </div>
-                              <div>
-                                <FormControl>
-                                  <div className="flex">
-                                    <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
-                                      <p className="text-sm font-medium text-slate-500">
-                                        https://
-                                      </p>
+                                  <FormMessage className="pt-1" />
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name={'tweet'}
+                            render={({ field }) => (
+                              <FormItem className={cn('flex flex-col gap-2')}>
+                                <div>
+                                  <FormLabel>Tweet Link</FormLabel>
+                                  <FormDescription>
+                                    This helps sponsors discover (and maybe
+                                    repost) your work on Twitter! If this
+                                    submission is for a Twitter thread bounty,
+                                    you can ignore this field.
+                                  </FormDescription>
+                                </div>
+                                <div>
+                                  <FormControl>
+                                    <div className="flex">
+                                      <div className="flex items-center gap-1 rounded-l-md border border-r-0 border-input bg-muted px-2 shadow-sm">
+                                        <p className="text-sm font-medium text-slate-500">
+                                          https://
+                                        </p>
+                                      </div>
+                                      <Input
+                                        {...field}
+                                        maxLength={500}
+                                        placeholder="Add a tweet's link"
+                                        className="rounded-l-none"
+                                        autoComplete="off"
+                                      />
                                     </div>
-                                    <Input
-                                      {...field}
-                                      maxLength={500}
-                                      placeholder="Add a tweet's link"
-                                      className="rounded-l-none"
-                                      autoComplete="off"
-                                    />
-                                  </div>
-                                </FormControl>
+                                  </FormControl>
 
-                                <FormMessage className="pt-1" />
-                              </div>
-                            </FormItem>
-                          )}
-                        />
-                      </>
-                    )}
+                                  <FormMessage className="pt-1" />
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+                        </>
+                      )}
                     {eligibility?.map((e, index) => {
                       if (
                         walletFieldListings.includes(id!) &&
@@ -390,7 +402,6 @@ export const SubmissionDrawer = ({
                           />
                         );
                       }
-
                       return (
                         <FormField
                           key={e.order}
@@ -415,6 +426,27 @@ export const SubmissionDrawer = ({
                                         placeholder="Add a link..."
                                         className="rounded-l-none"
                                         autoComplete="off"
+                                      />
+                                    </div>
+                                  ) : e.type === 'paragraph' ? (
+                                    <div className="flex rounded-md border shadow-sm ring-primary has-[:focus]:ring-1">
+                                      <MinimalTiptapEditor
+                                        key={`${field.name}-${editFetched ? id : ''}`}
+                                        {...field}
+                                        value={field.value || ''}
+                                        immediatelyRender={false}
+                                        className="min-h-[30vh] w-full border-0 text-sm"
+                                        editorContentClassName="p-4 px-2 h-full"
+                                        output="html"
+                                        placeholder="Type your description here..."
+                                        editable={true}
+                                        editorClassName="focus:outline-none"
+                                        imageSetting={{
+                                          folderName:
+                                            'listing-eligibility-answer',
+                                          type: 'custom-question',
+                                        }}
+                                        toolbarClassName="sticky top-0 rounded-t-md bg-white z-[75] w-full overflow-x-hidden"
                                       />
                                     </div>
                                   ) : (
@@ -492,16 +524,21 @@ export const SubmissionDrawer = ({
                               </FormDescription>
                             </div>
                             <FormControl>
-                              <Input
-                                className={cn(
-                                  !!user?.publicKey &&
-                                    'cursor-not-allowed text-slate-600 opacity-80',
-                                )}
-                                placeholder={`Add your ${CHAIN_NAME} wallet address`}
-                                readOnly={!!user?.publicKey}
-                                {...(!!user?.publicKey ? {} : field)}
-                                value={user?.publicKey || field.value}
-                              />
+                              <div className="flex flex-col gap-2">
+                                <Input
+                                  className={cn(
+                                    !!user?.publicKey &&
+                                      'cursor-not-allowed text-slate-600 opacity-80',
+                                  )}
+                                  placeholder={`Add your ${CHAIN_NAME} wallet address`}
+                                  readOnly={!!user?.publicKey}
+                                  {...(!!user?.publicKey ? {} : field)}
+                                  value={user?.publicKey || field.value}
+                                />
+                                <KycComponent
+                                  address={user?.publicKey || field.value}
+                                />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>

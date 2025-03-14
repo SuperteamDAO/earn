@@ -20,7 +20,8 @@ function fileToBase64(file: File): Promise<string> {
 export type EARN_IMAGE_FOLDER =
   | 'earn-pfp'
   | 'earn-sponsor'
-  | 'listing-description';
+  | 'listing-description'
+  | 'listing-eligibility-answer';
 
 export async function uploadToCld(
   file: File,

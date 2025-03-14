@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { KycComponent } from '@/components/ui/KycComponent';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
@@ -254,9 +255,16 @@ export const SubmissionList = ({
                 avatar={submission?.user?.photo || undefined}
               />
               <div className="ml-2 w-40">
-                <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-slate-700">
-                  {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-slate-700">
+                    {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
+                  </p>
+                  <KycComponent
+                    address={submission?.user?.publicKey}
+                    imageOnly
+                    xs
+                  />
+                </div>
                 <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-slate-500">
                   {submission?.user?.email}
                 </p>

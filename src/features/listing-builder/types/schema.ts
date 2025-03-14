@@ -46,7 +46,7 @@ export const createListingFormSchema = ({
   const eligibilityQuestionSchema = z.object({
     order: z.number(),
     question: z.string().trim().min(1, 'Please add your question').max(256),
-    type: z.enum(['text', 'link']),
+    type: z.enum(['text', 'link', 'paragraph']),
   });
 
   const rewardsSchema = z

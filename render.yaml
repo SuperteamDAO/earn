@@ -144,7 +144,7 @@ services:
     branch: staging
     runtime: node
     region: frankfurt
-    plan: starter
+    plan: standard
     previews:
       generation: manual
       plan: starter
@@ -240,19 +240,19 @@ services:
       - key: AUTH_SECRET
         generateValue: true
       - key: LISTINGS_EMAIL
-        value: noreply@nearn.io
+        value: staging@nearn.io
       - key: ALERTS_EMAIL
-        value: noreply@nearn.io
+        value: staging@nearn.io
       - key: MAIN_APP_URL
-        value: 'https://nearn.io'
+        value: 'https://nearn-app-staging.onrender.com'
       - key: AIRTABLE_FORM_URL
-        value: 'https://nearn.io'
+        value: 'https://nearn-app-staging.onrender.com'
       - key: DEV_EMAILS
         sync: false
       - key: BCC_EMAILS
         sync: false
       - key: BASE_URL
-        value: 'https://nearn.io'
+        value: 'https://nearn-app-staging.onrender.com'
       - key: RESEND_API_KEY
         fromService:
           name: nearn-app-staging

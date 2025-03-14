@@ -148,7 +148,7 @@ export const Footer = () => {
   const opportunities = [
     { text: 'Bounties', href: '/bounties' },
     { text: 'Projects', href: '/projects' },
-    { text: 'Grants', href: '/grants' },
+    { text: 'Sponsorships', href: '/sponsorships' },
   ];
 
   const categories = [

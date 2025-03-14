@@ -11,3 +11,5 @@ export const DISCORD_URL = null;
 export const WALLET_URL = 'https://wallet.near.org/';
 export const AUTO_VERIFICATION_ENABLED = true;
 export const EXPLORER_TX_URL = 'https://nearblocks.io/txns/';
+export const HIDE_LEADERBOARD = true;
+export const LIMIT_FOR_SPONSOR_LISTING = undefined;

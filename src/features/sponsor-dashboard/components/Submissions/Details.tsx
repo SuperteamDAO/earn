@@ -7,6 +7,7 @@ import { type SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
+import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
 import { type Listing } from '@/features/listings/types';
 
 import { selectedSubmissionAtom } from '../../atoms';
@@ -22,7 +23,7 @@ interface Props {
 export const Details = ({ bounty, modalView, atom }: Props) => {
   const selectedSubmission = useAtomValue(atom ?? selectedSubmissionAtom);
   const isProject = bounty?.type === 'project';
-
+  const isSponsorship = bounty?.type === 'sponsorship';
   const token =
     bounty?.token == 'Any' ? selectedSubmission?.token : bounty?.token;
   const tokenObject = tokenList.find((t) => t.tokenSymbol === token);
@@ -31,13 +32,13 @@ export const Details = ({ bounty, modalView, atom }: Props) => {
     <div
       className={cn(
         'flex h-[32.6rem] w-full',
-        modalView ? 'mx-auto max-w-3xl' : 'border-r border-slate-200',
+        modalView ? 'mx-auto h-full max-w-3xl' : 'border-r border-slate-200',
       )}
     >
       <div
         className={cn(
-          'scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300',
-          modalView ? 'mt-3' : 'p-4',
+          'scrollbar-thumb-rounded-full flex w-full flex-1 flex-col scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300',
+          modalView ? 'mt-3' : 'overflow-y-auto p-4',
         )}
       >
         {bounty?.compensationType !== 'fixed' && (
@@ -66,7 +67,7 @@ export const Details = ({ bounty, modalView, atom }: Props) => {
           content={`${dayjs(selectedSubmission?.createdAt).format('DD MMM YYYY')}`}
         />
 
-        {!isProject && (
+        {!isProject && !isSponsorship && (
           <>
             <InfoBox
               label="Main Submission"
@@ -87,14 +88,31 @@ export const Details = ({ bounty, modalView, atom }: Props) => {
           </>
         )}
         {selectedSubmission?.eligibilityAnswers &&
-          selectedSubmission.eligibilityAnswers.map((answer: any) => (
-            <InfoBox
-              key={answer.question}
-              label={answer.question}
-              content={answer.answer}
-              isHtml
-            />
-          ))}
+          selectedSubmission.eligibilityAnswers.map(
+            (answer: any, i: number) => {
+              if (
+                selectedSubmission.listing?.eligibility?.[i]?.type ===
+                'paragraph'
+              ) {
+                return (
+                  <div className="mb-4" key={answer.question}>
+                    <p className="mt-1 text-xs font-semibold uppercase text-slate-400">
+                      {answer.question}
+                    </p>
+                    <DescriptionUI description={answer.answer} />
+                  </div>
+                );
+              }
+              return (
+                <InfoBox
+                  key={answer.question}
+                  label={answer.question}
+                  content={answer.answer}
+                  isHtml
+                />
+              );
+            },
+          )}
         <InfoBox
           label="Anything Else"
           content={selectedSubmission?.otherInfo}

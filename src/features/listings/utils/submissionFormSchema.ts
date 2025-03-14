@@ -69,6 +69,7 @@ const submissionSchema = (
       }
       if (
         listing.type !== 'project' &&
+        listing.type !== 'sponsorship' &&
         !data.link &&
         !walletFieldListings.includes(listing.id!)
       ) {

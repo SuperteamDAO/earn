@@ -1,7 +1,7 @@
 import localFont from 'next/font/local';
 import { useState } from 'react';
 
-import { OG_IMAGES_URL } from '@/constants/ASSET_URL';
+import { ASSET_URL } from '@/constants/ASSET_URL';
 import { PROJECT_NAME } from '@/constants/project';
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
@@ -42,8 +42,8 @@ const Sponsor = () => {
     <>
       <Meta
         title={`Find Top Talent for Your Crypto Projects on ${PROJECT_NAME}`}
-        description={`Seeking top talent for your crypto project? ${PROJECT_NAME} connects you with experts for Bounties, Projects, and Grants in the crypto space.`}
-        og={OG_IMAGES_URL + `/og/sponsor.png`}
+        description={`Seeking top talent for your crypto project? ${PROJECT_NAME} connects you with experts for Bounties, Projects, and Sponsorships in the crypto space.`}
+        og={ASSET_URL + `/og/sponsor.png`}
       />
 
       {videoPopup && <VideoPlayback />}

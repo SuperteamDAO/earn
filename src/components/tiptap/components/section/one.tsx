@@ -104,7 +104,7 @@ export const SectionOne: React.FC<SectionOneProps> = React.memo(
     );
 
     return (
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <ToolbarButton
             isActive={editor.isActive('heading')}
@@ -120,7 +120,7 @@ export const SectionOne: React.FC<SectionOneProps> = React.memo(
             <CaretDownIcon className="size-5" />
           </ToolbarButton>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-full">
+        <DropdownMenuContent align="start" className="z-[75] w-full">
           {filteredActions.map(renderMenuItem)}
         </DropdownMenuContent>
       </DropdownMenu>

@@ -27,7 +27,7 @@ export default function BountiesPage() {
   return (
     <Home type="listing">
       <Meta
-        title={`${PROJECT_NAME} | Discover Bounties and Grants in Crypto for Design, Development, and Content`}
+        title={`${PROJECT_NAME} | Discover Bounties and Sponsorships in Crypto for Design, Development, and Content`}
         description={`Explore the latest bounties on ${PROJECT_NAME}, offering opportunities in the crypto space across Design, Development, and Content.`}
         canonical={`${getURL()}/bounties/`}
       />
