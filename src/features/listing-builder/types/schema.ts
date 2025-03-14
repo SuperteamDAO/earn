@@ -377,17 +377,6 @@ export const createListingRefinements = async (
       });
     }
   }
-
-  if (
-    (data.type === 'sponsorship' || data.type === 'project') &&
-    !data.eligibility
-  ) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Project and Sponsorship listings require eligibility questions',
-      path: ['eligibility'],
-    });
-  }
 };
 
 // used in backend APIs only, not on frontend,
