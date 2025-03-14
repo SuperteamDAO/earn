@@ -3,7 +3,7 @@
 export const countries = [
   {
     capital: 'Kabul',
-    code: 'af'
+    code: 'af',
     continent: 'Asia',
     flag_1x1: 'flags/1x1/af.svg',
     flag_4x3: 'flags/4x3/af.svg',
