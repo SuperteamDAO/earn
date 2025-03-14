@@ -6,6 +6,7 @@ import React from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
 import { toast } from 'sonner';
 
+import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -103,9 +104,17 @@ export const TrancheDetails = ({
                   }
                 />
                 <div>
-                  <p className="w-full whitespace-nowrap text-base font-medium text-slate-900">
-                    {`${selectedTranche?.GrantApplication?.user?.firstName}`}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="w-full whitespace-nowrap text-base font-medium text-slate-900">
+                      {`${selectedTranche?.GrantApplication?.user?.firstName}`}
+                      ’s Application
+                    </p>
+                    <p className="flex items-center gap-1 whitespace-nowrap text-xs font-semibold text-green-600">
+                      <VerifiedBadge className="text-green-600" />
+                      KYC
+                    </p>
+                  </div>
+
                   <Link
                     href={`/t/${selectedTranche?.GrantApplication?.user?.username}`}
                     className="flex w-full items-center gap-1 whitespace-nowrap text-xs font-medium text-brand-purple"
