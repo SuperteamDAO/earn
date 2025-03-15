@@ -18,6 +18,7 @@ interface AuthWrapperProps {
   hideLoginOverlay?: boolean;
   onLoginOpenCallback?: () => void;
   onLoginCloseCallback?: () => void;
+  allowSponsor?: boolean;
 }
 
 export function AuthWrapper({
@@ -30,6 +31,7 @@ export function AuthWrapper({
   hideLoginOverlay,
   onLoginCloseCallback,
   onLoginOpenCallback,
+  allowSponsor = false,
 }: AuthWrapperProps) {
   const { authenticated, ready } = usePrivy();
   const isAuthenticated = authenticated;
@@ -67,7 +69,11 @@ export function AuthWrapper({
       e.stopPropagation();
       onClick && onClick();
       loginOnOpen();
-    } else if (showCompleteProfileModal && !isTalentFilled) {
+    } else if (
+      showCompleteProfileModal &&
+      !isTalentFilled &&
+      !(allowSponsor && isSponsor)
+    ) {
       e.preventDefault();
       e.stopPropagation();
       profileModalOnOpen();
@@ -82,7 +88,10 @@ export function AuthWrapper({
   }, [triggerLogin, isAuthenticated, loginOnOpen]);
 
   const shouldAllowInteraction =
-    isAuthenticated && (!showCompleteProfileModal || isTalentFilled);
+    isAuthenticated &&
+    (!showCompleteProfileModal ||
+      isTalentFilled ||
+      (allowSponsor && isSponsor));
 
   return (
     <>

@@ -1,10 +1,10 @@
-import { type CommentRefType } from '@prisma/client';
+import type { CommentRefType } from '@prisma/client';
 import { usePostHog } from 'posthog-js/react';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import type { Comment } from '@/interface/comments';
-import { type User } from '@/interface/user';
+import type { User } from '@/interface/user';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -65,14 +65,27 @@ export const CommentForm = ({
     addNewComment();
   };
 
+  const canComment = useCallback(() => {
+    if (!user) {
+      return false;
+    }
+
+    const isSponsor = !!user.currentSponsorId;
+    const isTalentFilled = !!user.isTalentFilled;
+    return isTalentFilled || isSponsor;
+  }, [user]);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (newComment && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        handleSubmit();
+
+        if (canComment() && !isTemplate && !isDisabled) {
+          handleSubmit();
+        }
       }
     },
-    [newComment],
+    [newComment, canComment, isTemplate, isDisabled, user],
   );
 
   useEffect(() => {
@@ -131,6 +144,7 @@ export const CommentForm = ({
             completeProfileModalBodyText={
               'Please complete your profile before commenting on the listing.'
             }
+            allowSponsor
           >
             <Button
               variant="default"
