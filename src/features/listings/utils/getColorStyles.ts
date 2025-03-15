@@ -18,6 +18,8 @@ export const getColorStyles = (status: string) => {
       return { bgColor: 'bg-purple-100', color: 'text-violet-500' };
     case 'Ongoing':
       return { bgColor: 'bg-purple-100', color: 'text-violet-500' };
+    case 'Unpublished':
+      return { bgColor: 'bg-orange-50', color: 'text-orange-600' };
     default:
       return { bgColor: 'bg-gray-500', color: 'text-white' };
   }
