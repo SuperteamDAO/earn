@@ -109,7 +109,10 @@ const submissionSchema = (
               });
             }
             if (answer && (question.isLink || question.type === 'link')) {
-              const urlResult = z.string().url().safeParse(answer);
+              const urlResult = z
+                .string()
+                .regex(URL_REGEX, 'Invalid URL')
+                .safeParse(answer);
               if (!urlResult.success) {
                 ctx.addIssue({
                   code: z.ZodIssueCode.custom,
