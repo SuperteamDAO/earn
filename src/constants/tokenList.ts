@@ -8,7 +8,7 @@ export interface Token {
 }
 
 export const ANY_TOKEN: Token = {
-  tokenName: 'USD',
+  tokenName: 'Any',
   tokenSymbol: 'Any',
   mintAddress: 'any',
   icon: 'https://nearn.io/assets/anyTokens.svg',

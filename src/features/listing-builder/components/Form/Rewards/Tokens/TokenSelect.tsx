@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/command';
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -94,6 +95,13 @@ export function TokenSelect() {
               </Command>
             </PopoverContent>
           </Popover>
+          {field.value === 'Any' && (
+            <FormDescription>
+              Contributors will request an amount in USD, along with their
+              preferred token. You are responsible for paying the equivalent
+              value in the chosen token.
+            </FormDescription>
+          )}
           <FormMessage />
         </FormItem>
       )}
