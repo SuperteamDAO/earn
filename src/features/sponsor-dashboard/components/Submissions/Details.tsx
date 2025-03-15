@@ -24,8 +24,8 @@ export const Details = ({ bounty, modalView, atom }: Props) => {
   const selectedSubmission = useAtomValue(atom ?? selectedSubmissionAtom);
   const isProject = bounty?.type === 'project';
   const isSponsorship = bounty?.type === 'sponsorship';
-  const token =
-    bounty?.token == 'Any' ? selectedSubmission?.token : bounty?.token;
+  const isUsdBased = bounty?.token === 'Any';
+  const token = isUsdBased ? selectedSubmission?.token : bounty?.token;
   const tokenObject = tokenList.find((t) => t.tokenSymbol === token);
 
   return (
@@ -53,8 +53,17 @@ export const Details = ({ bounty, modalView, atom }: Props) => {
                 className="h-4 w-4 rounded-full"
               />
               <span className="ml-1 text-sm">
+                {isUsdBased && '$'}
                 {selectedSubmission?.ask?.toLocaleString('en-us')}
-                <span className="ml-1 font-semibold text-slate-400">
+                <span className="text-slate-400">
+                  {isUsdBased && ' to be paid in'}
+                </span>
+                <span
+                  className={cn(
+                    'ml-1',
+                    !isUsdBased && 'font-semibold text-slate-400',
+                  )}
+                >
                   {token}
                 </span>
               </span>

@@ -10,6 +10,7 @@ interface ValidatePaymentParams {
   recipientPublicKey: string;
   expectedAmount: number;
   tokenMint: Token;
+  isUSDbased: boolean;
 }
 
 interface ValidationResult {
@@ -17,11 +18,16 @@ interface ValidationResult {
   error?: string;
 }
 
+/// isUSDbased is true if the user specified the token as Any and provided requested amount in US Dollars.
+/// Unfortunately, for us, for now, we can't properly validate the payment in USD because we can't know the price of the token at the time of payment.
+/// So we just validate that the user received at least some amount of the token.
+/// This
 export async function validatePayment({
   txId,
   recipientPublicKey,
   expectedAmount,
   tokenMint,
+  isUSDbased,
 }: ValidatePaymentParams): Promise<ValidationResult> {
   try {
     logger.debug(`Getting Transaction Information from RPC for txId: ${txId}`);
@@ -42,30 +48,24 @@ export async function validatePayment({
       return { isValid: false, error: 'No receipts found' };
     }
 
-    const isNativeTransfer = tokenMint.tokenSymbol === 'NEAR';
-
-    for (const receipt of tx.receipts) {
-      if (isNativeTransfer && receipt.receiver_id !== recipientPublicKey) {
-        continue;
-      }
-
-      if (!isNativeTransfer && receipt.receiver_id !== tokenMint.mintAddress) {
-        continue;
-      }
-    }
-
     if (tx.transaction_outcome.outcome.status instanceof Object) {
       if (tx.transaction_outcome.outcome.status.Failure !== undefined) {
         return { isValid: false, error: 'Transaction failed' };
       }
     }
 
-    if (tokenMint.tokenSymbol === 'NEAR') {
-      return processNativeReceipt(
+    const isNativeTransfer = tokenMint.tokenSymbol === 'NEAR';
+
+    if (isNativeTransfer || isUSDbased) {
+      const result = processNativeReceipt(
         tx,
         recipientPublicKey,
         expectedAmount.toString(),
+        isUSDbased,
       );
+      if (result.isValid || !isUSDbased) {
+        return result;
+      }
     }
 
     return processTokenReceipt(
@@ -73,6 +73,7 @@ export async function validatePayment({
       tokenMint,
       recipientPublicKey,
       expectedAmount.toString(),
+      isUSDbased,
     );
   } catch (error: any) {
     return { isValid: false, error: error.message };
@@ -83,6 +84,7 @@ function processNativeReceipt(
   outcome: FinalExecutionOutcome,
   accountId: string,
   expectedAmount: string,
+  isUSDbased: boolean,
 ) {
   if (!outcome.receipts) {
     return { isValid: false, error: 'No receipts found' };
@@ -100,11 +102,15 @@ function processNativeReceipt(
     }
 
     for (const action of receipt.receipt.Action.actions) {
-      if (
-        action.Transfer &&
-        action.Transfer.deposit === expectedAmountInYocto
-      ) {
-        return { isValid: true };
+      if (action.Transfer) {
+        // For USD-based payments, just check if any amount was transferred
+        if (isUSDbased) {
+          return { isValid: true };
+        }
+        // For non-USD payments, check exact amount
+        if (action.Transfer.deposit === expectedAmountInYocto) {
+          return { isValid: true };
+        }
       }
     }
   }
@@ -117,6 +123,7 @@ function processTokenReceipt(
   tokenMint: Token,
   accountId: string,
   expectedAmount: string,
+  isUSDbased: boolean,
 ) {
   const expectedAmountWithDecimals = formatTokenAmount(
     expectedAmount,
@@ -124,7 +131,8 @@ function processTokenReceipt(
   );
 
   for (const outcome of receipt.receipts_outcome) {
-    if (outcome.outcome.executor_id !== tokenMint.mintAddress) {
+    /// For USD payment, we check all receipts
+    if (outcome.outcome.executor_id !== tokenMint.mintAddress && !isUSDbased) {
       continue;
     }
 
@@ -136,6 +144,15 @@ function processTokenReceipt(
         }
 
         for (const action of logObject.data) {
+          // For USD-based payments, just check if any amount was transferred to the correct recipient
+          if (
+            isUSDbased &&
+            action.new_owner_id === accountId &&
+            !!action.amount
+          ) {
+            return { isValid: true };
+          }
+          // For non-USD payments, check exact amount and recipient
           if (
             action.new_owner_id === accountId &&
             action.amount === expectedAmountWithDecimals

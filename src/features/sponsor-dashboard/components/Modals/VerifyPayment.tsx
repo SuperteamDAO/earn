@@ -393,10 +393,10 @@ export const VerifyPaymentModal = ({
                     (a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0),
                   )
                   .map((submission, index) => {
-                    const tokenName =
-                      listing?.token === 'Any'
-                        ? submission.token
-                        : listing?.token;
+                    const isUsdBased = listing?.token === 'Any';
+                    const tokenName = isUsdBased
+                      ? submission.token
+                      : listing?.token;
                     const token = tokenList.find(
                       (s) => s.tokenSymbol === tokenName,
                     );
@@ -447,6 +447,7 @@ export const VerifyPaymentModal = ({
                                     src={token?.icon}
                                   />
                                   <p className="font-semibold text-slate-800">
+                                    {isUsdBased ? '$' : ''}
                                     {formatNumberWithSuffix(
                                       listing?.rewards?.[
                                         submission.winnerPosition || 0
@@ -454,7 +455,7 @@ export const VerifyPaymentModal = ({
                                     )}
                                   </p>
                                   <p className="font-semibold text-slate-400">
-                                    {token?.tokenSymbol}
+                                    {isUsdBased && 'in '} {token?.tokenSymbol}
                                   </p>
                                 </div>
                               </div>

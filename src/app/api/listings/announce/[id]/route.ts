@@ -6,7 +6,6 @@ import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
-import { fetchTokenUSDValue } from '@/utils/fetchTokenUSDValue';
 import { cleanRewards } from '@/utils/rank';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -129,10 +128,7 @@ export async function POST(
 
       const rewardInUSD =
         listing.token === 'Any'
-          ? (await fetchTokenUSDValue(
-              winners[currentIndex]?.token!,
-              listing.publishedAt!,
-            )) * amount
+          ? amount
           : (listing.usdValue! / listing.rewardAmount!) * amount;
 
       promises.push(

@@ -39,6 +39,7 @@ const getOrRemoveBonuses = (
 
 export function ListingWinners({ bounty }: Props) {
   const isProject = bounty?.type === 'project';
+  const isUSDbased = bounty?.token === 'Any';
 
   const posthog = usePostHog();
   const isMD = useBreakpoint('md');
@@ -157,13 +158,14 @@ export function ListingWinners({ bounty }: Props) {
                   <p className="w-16 truncate pt-4 text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.firstName}`}</p>
                   <p className="w-16 truncate text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.lastName}`}</p>
                   <p className="text-center text-xs font-normal text-slate-500 opacity-60">
+                    {isUSDbased ? '$' : ''}
                     {bounty?.rewards &&
                       formatTotalPrize(
                         bounty?.rewards[
                           Number(submission?.winnerPosition) as keyof Rewards
                         ] ?? 0,
                       )}{' '}
-                    {bounty?.token === 'Any' ? submission.token : bounty?.token}
+                    {isUSDbased ? `in ${submission.token}` : bounty?.token}
                   </p>
                 </Link>
               ))}

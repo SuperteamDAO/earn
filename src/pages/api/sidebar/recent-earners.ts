@@ -56,10 +56,7 @@ export default async function user(_req: NextApiRequest, res: NextApiResponse) {
         slug: submission.listing.slug,
         title: submission.listing.title,
         reward: rewards[Number(submission.winnerPosition) as keyof Rewards],
-        rewardToken:
-          submission.listing.token === 'Any'
-            ? submission.token
-            : submission.listing.token,
+        rewardToken: submission.listing.token,
         photo: submission.user.photo,
       };
     });

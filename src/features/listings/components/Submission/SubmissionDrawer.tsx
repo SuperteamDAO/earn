@@ -116,11 +116,6 @@ export const SubmissionDrawer = ({
     },
   });
 
-  const formToken = useWatch({
-    control: form.control,
-    name: 'token',
-  });
-
   const posthog = usePostHog();
   const router = useRouter();
   const { query } = router;
@@ -466,22 +461,25 @@ export const SubmissionDrawer = ({
                         />
                       );
                     })}
-                    {token === 'Any' && <TokenSelect control={form.control} />}
 
                     {compensationType !== 'fixed' && (
                       <FormFieldWrapper
                         control={form.control}
                         name="ask"
-                        label="What's the compensation you require to complete this fully?"
+                        label="Total Amount"
+                        description={
+                          token !== 'Any'
+                            ? "What's the compensation you require to complete this fully?"
+                            : 'Enter the exact amount you are seeking in US dollars.'
+                        }
                         isRequired
                         isTokenInput
-                        token={
-                          token === 'Any'
-                            ? (formToken ?? tokenList[0]?.tokenSymbol)
-                            : token
-                        }
+                        token={token}
                       />
                     )}
+
+                    {token === 'Any' && <TokenSelect control={form.control} />}
+
                     <FormFieldWrapper
                       control={form.control}
                       name="otherInfo"
@@ -632,7 +630,11 @@ export function TokenSelect({ control }: TokenSelectProps) {
       control={control}
       render={({ field }) => (
         <FormItem className="gap-2">
-          <FormLabel>Payment</FormLabel>
+          <FormLabel>Currency</FormLabel>
+          <FormDescription>
+            Select your preferred currency for receiving funds. The exchange
+            rate will be the closing rate at the day of the invoice.
+          </FormDescription>
           <Popover>
             <PopoverTrigger asChild>
               <FormControl>

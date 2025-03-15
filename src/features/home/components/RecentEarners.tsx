@@ -36,6 +36,7 @@ const Earner = ({
   const tokenIcon = tokenObj
     ? tokenObj.icon
     : ASSET_URL + '/landingsponsor/icons/usdc.svg';
+  const isUSDbased = token === 'Any';
 
   return (
     <Link href={`${getURL()}t/${username}`} className="block">
@@ -60,7 +61,9 @@ const Earner = ({
           <span className="text-sm font-medium text-gray-600">
             {formatNumberWithSuffix(amount)}
           </span>
-          <span className="text-sm font-medium text-gray-400">{token}</span>
+          <span className="text-sm font-medium text-gray-400">
+            {isUSDbased ? 'USD' : token}
+          </span>
         </div>
       </div>
     </Link>

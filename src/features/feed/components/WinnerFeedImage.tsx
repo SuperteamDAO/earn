@@ -37,7 +37,7 @@ export const WinnerFeedImage = ({
               {winnerPosition ? `${rewards?.[Number(winnerPosition)]}` : 'N/A'}
             </>
           )}{' '}
-          {token}
+          {token === 'Any' ? 'USD' : token}
         </p>
       </div>
       <p className="mx-auto my-4 w-fit rounded-full bg-[#5536ab8a] px-4 py-2 text-xs font-medium text-white md:text-lg">

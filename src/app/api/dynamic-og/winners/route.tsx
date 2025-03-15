@@ -185,9 +185,7 @@ export async function GET(request: Request) {
                     textAlign: 'center',
                   }}
                 >
-                  {token === 'Any'
-                    ? (winner?.token ?? 'USD')
-                    : (token ?? 'USD')}{' '}
+                  {token === 'Any' ? 'USD' : (token ?? 'USD')}{' '}
                   {rewards &&
                     formatter.format(
                       +(rewards[winner?.winnerPosition as keyof Rewards] ?? 0),

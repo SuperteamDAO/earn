@@ -110,8 +110,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           throw new Error('Winner Position has no reward');
         }
 
-        const tokenSymbol =
-          listing.token === 'Any' ? submission.token : listing.token;
+        const isUSDbased = listing.token === 'Any';
+        const tokenSymbol = isUSDbased ? submission.token : listing.token;
         const dbToken = tokenList.find((t) => t.tokenSymbol === tokenSymbol);
         if (!dbToken) {
           return res
@@ -123,6 +123,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           recipientPublicKey: publicKey!,
           expectedAmount: winnerReward,
           tokenMint: dbToken,
+          isUSDbased,
         });
 
         if (!validationResult.isValid) {

@@ -34,13 +34,9 @@ const submissionSchema = (
       publicKey: z.string().optional(),
       token: z
         .string()
-        .refine(
-          (token) =>
-            token === 'Any' || tokenList.find((t) => t.tokenSymbol === token),
-          {
-            message: 'Invalid token provided',
-          },
-        )
+        .refine((token) => tokenList.find((t) => t.tokenSymbol === token), {
+          message: 'Invalid token provided',
+        })
         .optional()
         .nullable(),
     })

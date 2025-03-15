@@ -85,10 +85,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       const listing = result.listing;
       if (listing.compensationType !== 'fixed') {
         logger.debug('Fetching token USD value for variable compensation');
-        const tokenUSDValue = await fetchTokenUSDValue(
-          listing.token! === 'Any' ? currentSubmission.token! : listing.token!,
-          listing.publishedAt!,
-        );
+        const tokenUSDValue =
+          listing.token === 'Any'
+            ? 1
+            : await fetchTokenUSDValue(listing.token!, listing.publishedAt!);
         const usdValue = tokenUSDValue * ask;
         const oldRewards = isSponsorship
           ? (listing.rewards as Rewards) || {}
