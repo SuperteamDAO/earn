@@ -30,10 +30,8 @@ export const EmailSignIn = ({ redirectTo }: LoginProps) => {
   const posthog = usePostHog();
 
   const { state, sendCode, loginWithCode } = useLoginWithEmail({
-    onComplete: async ({ isNewUser, user, wasAlreadyAuthenticated }) => {
-      if (isNewUser) {
-        await handleUserCreation(user.email?.address || '');
-      }
+    onComplete: async ({ user, wasAlreadyAuthenticated }) => {
+      await handleUserCreation(user.email?.address || '');
       const url = new URL(redirectTo || router.asPath, window.location.origin);
       if (!wasAlreadyAuthenticated) {
         url.searchParams.set('loginState', 'signedIn');

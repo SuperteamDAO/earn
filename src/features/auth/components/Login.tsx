@@ -32,11 +32,8 @@ export const Login = ({
   const popupTimeout = useAtomValue(popupTimeoutAtom);
 
   useLoginWithOAuth({
-    onComplete: async ({ isNewUser, user, wasAlreadyAuthenticated }) => {
-      if (isNewUser) {
-        await handleUserCreation(user.google?.email || '');
-      }
-
+    onComplete: async ({ user, wasAlreadyAuthenticated }) => {
+      await handleUserCreation(user.google?.email || '');
       if (redirectTo) {
         router.push(redirectTo);
       } else {

@@ -64,6 +64,7 @@ async function verification(req: NextApiRequestWithUser, res: NextApiResponse) {
       }
       await earncognitoClient.post(`/discord/verify-listing/initiate`, {
         listingId: validationResult.data.listingId,
+        reason: 'New sponsor',
       });
       logger.info('Sent Discord Verification message', {
         listingId: validationResult.data.listingId,
