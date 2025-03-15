@@ -107,6 +107,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
               publishedAt: undefined,
               id: undefined,
               deadline: undefined,
+              status: 'OPEN',
             }
           : listing
       }
