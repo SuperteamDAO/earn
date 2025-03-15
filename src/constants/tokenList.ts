@@ -426,4 +426,12 @@ export const tokenList: Token[] = [
     decimals: 6,
     coingeckoSymbol: 'edwin',
   },
+  {
+    tokenName: 'Blockasset',
+    tokenSymbol: 'BLOCK',
+    mintAddress: 'NFTUkR4u7wKxy9QLaX2TGvd9oZSWoMo4jqSJqdMb7Nk',
+    icon: 'https://assets.coingecko.com/coins/images/21332/standard/Blockasset_Square.png?1712955829',
+    decimals: 6,
+    coingeckoSymbol: 'blockasset',
+  },
 ];
