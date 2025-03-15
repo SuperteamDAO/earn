@@ -126,20 +126,24 @@ export function RegionCombobox({
       });
       regions.push({
         label: 'Other Countries',
-        options: nonSuperteamCountries.map((country) => ({
-          value: country.name,
-          label: country.name,
-          code: country.code,
-        })),
+        options: nonSuperteamCountries
+          .filter((s) => s.iso)
+          .map((country) => ({
+            value: country.name,
+            label: country.name,
+            code: country.code,
+          })),
       });
     } else {
       regions.push({
         label: 'Countries',
-        options: countries.map((country) => ({
-          value: country.name,
-          label: country.name,
-          code: country.code,
-        })),
+        options: countries
+          .filter((s) => s.iso)
+          .map((country) => ({
+            value: country.name,
+            label: country.name,
+            code: country.code,
+          })),
       });
     }
     return regions;
