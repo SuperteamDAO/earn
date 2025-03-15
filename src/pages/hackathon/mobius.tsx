@@ -458,7 +458,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'Can I submit multiple projects?',
     answer:
-      'Yes, your team can submit projects to multiple tracks. However, each team is limited to one submission per track.',
+      'Yes, your team can submit projects to multiple tracks. However, each project is limited to one submission per track.',
   },
   {
     question: 'Can I submit my project to multiple tracks?',
