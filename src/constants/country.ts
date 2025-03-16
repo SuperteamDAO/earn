@@ -2397,8 +2397,9 @@ export const countries = [
     flag_1x1: 'flags/1x1/eu.svg',
     flag_4x3: 'flags/4x3/eu.svg',
     iso: false,
-    name: 'EU',
+    name: 'European Union',
     region: true,
+    displayValue: 'EU',
     regions: [
       'Austria',
       'Belgium',
@@ -2434,8 +2435,9 @@ export const countries = [
     flag_1x1: 'flags/1x1/gc.svg',
     flag_4x3: 'flags/4x3/gc.svg',
     iso: false,
-    name: 'GCC',
+    name: 'Gulf Cooperation Council',
     region: true,
+    displayValue: 'GCC',
     regions: [
       'Saudi Arabia',
       'United Arab Emirates',

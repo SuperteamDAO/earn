@@ -14,7 +14,7 @@ export const RegionLabel = ({
   isGrant?: boolean;
 }) => {
   const regionObject = region ? getCombinedRegion(region) : null;
-  const displayValue = regionObject?.name;
+  const displayValue = regionObject?.displayValue || regionObject?.name;
   const code = regionObject?.code;
 
   const regionTooltipLabel = getRegionTooltipLabel(region, isGrant);

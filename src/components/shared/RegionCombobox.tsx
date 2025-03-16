@@ -160,7 +160,7 @@ export function RegionCombobox({
           .filter((s) => s.region)
           .map((country) => ({
             value: country.name,
-            label: country.name,
+            label: country.displayValue || country.name,
             code: country.code,
           })),
       });
