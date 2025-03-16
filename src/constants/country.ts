@@ -2397,7 +2397,7 @@ export const countries = [
     flag_1x1: 'flags/1x1/eu.svg',
     flag_4x3: 'flags/4x3/eu.svg',
     iso: false,
-    name: 'European Union',
+    name: 'EU',
     region: true,
     regions: [
       'Austria',
