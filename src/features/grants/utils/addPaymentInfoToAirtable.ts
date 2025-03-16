@@ -28,11 +28,14 @@ interface PaymentAirtableSchema {
   'Purpose of Payment': string;
   Status: string;
   Region?: string[];
+  earnApplicationId: string;
+  earnTrancheId: string;
 }
 
 export function grantApplicationToAirtable(
   grantApplication: GrantApplicationWithUserAndGrant,
   grantRegionId: string,
+  trancheId: string,
 ): PaymentAirtableSchema {
   return {
     Name: `${grantApplication.kycName || ''}`,
@@ -46,44 +49,29 @@ export function grantApplicationToAirtable(
           Region: [grantRegionId],
         }
       : {}),
+    earnApplicationId: grantApplication.id,
+    earnTrancheId: trancheId,
   };
 }
 
 export async function addPaymentInfoToAirtable(
   application: GrantApplicationWithUserAndGrant,
+  trancheId: string,
 ) {
-  console.debug(
-    `Starting addPaymentInfoToAirtable for application ID: ${application.id}`,
-  );
-  console.debug(
-    `Application data: ${safeStringify({
-      id: application.id,
-      projectTitle: application.projectTitle,
-      approvedAmount: application.approvedAmount,
-      walletAddress: application.walletAddress,
-      kycName: application.kycName,
-      userLocation: application.user?.location,
-      grantAirtableId: application.grant?.airtableId,
-    })}`,
-  );
-
   try {
     const grantsAirtableConfig = airtableConfig(
       process.env.AIRTABLE_GRANTS_API_TOKEN!,
     );
-    console.debug('Airtable config created');
 
     const paymentsAirtableURL = airtableUrl(
       process.env.AIRTABLE_PAYMENTS_BASE_ID!,
       process.env.AIRTABLE_PAYMENTS_TABLE_NAME!,
     );
-    console.debug(`Payments Airtable URL: ${paymentsAirtableURL}`);
 
     const paymentsRegionAirtableURL = airtableUrl(
       process.env.AIRTABLE_PAYMENTS_BASE_ID!,
       process.env.AIRTABLE_PAYMENTS_REGIONS_TABLE_NAME!,
     );
-    console.debug(`Grants Region Airtable URL: ${paymentsRegionAirtableURL}`);
 
     const superteam = Superteams.find(
       (s) =>
@@ -91,22 +79,10 @@ export async function addPaymentInfoToAirtable(
           (c) => c.toLowerCase() === application.user.location?.toLowerCase(),
         ) || s.region === application.user.location,
     );
-    console.debug(
-      `Found superteam: ${safeStringify(
-        superteam
-          ? {
-              displayValue: superteam.displayValue,
-              region: superteam.region,
-              airtableKey: superteam.airtableKey,
-            }
-          : 'none',
-      )}`,
-    );
 
     const regionName = superteam
       ? superteam.airtableKey || superteam.displayValue
       : 'Global';
-    console.debug(`Looking up region in Airtable: ${regionName}`);
 
     const region = await fetchAirtableRecordId(
       paymentsRegionAirtableURL,
@@ -114,24 +90,20 @@ export async function addPaymentInfoToAirtable(
       regionName,
       grantsAirtableConfig,
     );
-    console.debug(`Fetched region ID from Airtable: ${region || 'not found'}`);
 
-    const airtableData = grantApplicationToAirtable(application, region || '');
-    console.debug(`Prepared Airtable data: ${safeStringify(airtableData)}`);
-
-    const airtablePayload = airtableInsert([{ fields: airtableData }]);
-    console.debug(
-      `Prepared Airtable payload: ${safeStringify(airtablePayload)}`,
+    const airtableData = grantApplicationToAirtable(
+      application,
+      region || '',
+      trancheId,
     );
 
-    console.debug(`Sending request to Airtable: ${paymentsAirtableURL}`);
+    const airtablePayload = airtableInsert([{ fields: airtableData }]);
+
     const response = await axios.post(
       paymentsAirtableURL,
       JSON.stringify(airtablePayload),
       grantsAirtableConfig,
     );
-    console.debug(`Airtable response status: ${response.status}`);
-    console.debug(`Airtable response data: ${safeStringify(response.data)}`);
 
     return response.data;
   } catch (error: any) {

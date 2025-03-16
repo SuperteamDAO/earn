@@ -98,7 +98,7 @@ export async function createTranche({
   });
 
   if (isFirstTranche) {
-    await addPaymentInfoToAirtable(application);
+    await addPaymentInfoToAirtable(application, tranche.id);
   }
 
   return tranche;

@@ -37,20 +37,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
 
   try {
-    const currentTranche = await prisma.grantTranche.findUnique({
+    const currentTranche = await prisma.grantTranche.findUniqueOrThrow({
       where: { id },
       select: {
+        id: true,
         grantId: true,
         applicationId: true,
       },
     });
-
-    if (!currentTranche) {
-      logger.warn(`tranche with ID ${id} not found`);
-      return res.status(404).json({
-        error: `tranche with ID ${id} not found`,
-      });
-    }
 
     const { error } = await checkGrantSponsorAuth(
       req.userSponsorId,
@@ -101,7 +95,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         console.debug(
           `Attempting to add payment info to Airtable for application ID: ${updatedApplication.id}`,
         );
-        await addPaymentInfoToAirtable(updatedApplication);
+        await addPaymentInfoToAirtable(updatedApplication, currentTranche.id);
         console.debug(
           `Successfully added payment info to Airtable for application ID: ${updatedApplication.id}`,
         );
