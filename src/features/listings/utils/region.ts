@@ -11,6 +11,7 @@ export const getCombinedRegion = (
         code: string;
         country?: string[];
         displayValue?: string;
+        regions?: string[];
       }
     | undefined;
   if (lookupSTCountries) {
@@ -35,6 +36,16 @@ export const getCombinedRegion = (
   }
 
   return regionObject;
+};
+
+export const getParentRegions = (
+  region: ReturnType<typeof getCombinedRegion>,
+) => {
+  return countries
+    .filter((s) =>
+      s.regions?.find((s) => s.toLowerCase() === region?.name?.toLowerCase()),
+    )
+    .map((s) => s.name);
 };
 
 export const filterRegionCountry = (
@@ -113,7 +124,8 @@ export function userRegionEligibilty({
     !!(
       userLocation &&
       (regionObject?.name === userLocation ||
-        regionObject?.country?.includes(userLocation))
+        regionObject?.country?.includes(userLocation) ||
+        regionObject?.regions?.includes(userLocation))
     ) || false;
 
   return isEligible;

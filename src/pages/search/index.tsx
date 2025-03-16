@@ -16,6 +16,7 @@ import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
   filterRegionCountry,
   getCombinedRegion,
+  getParentRegions,
 } from '@/features/listings/utils/region';
 import { Filters } from '@/features/search/components/Filters';
 import { Info } from '@/features/search/components/Info';
@@ -188,6 +189,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           Regions.GLOBAL,
           ...(filterRegionCountry(matchedRegion, user.location || '').country ||
             []),
+          ...(getParentRegions(matchedRegion) || []),
         ];
       } else {
         userRegion = [Regions.GLOBAL];
