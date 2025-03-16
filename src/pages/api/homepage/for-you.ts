@@ -9,6 +9,7 @@ import { type StatusFilter } from '@/features/listings/types';
 import {
   filterRegionCountry,
   getCombinedRegion,
+  getParentRegions,
 } from '@/features/listings/utils/region';
 import { getStatusFilterQuery } from '@/features/listings/utils/status';
 
@@ -82,6 +83,7 @@ export async function getForYouListings({ statusFilter, userId }: ForYouProps) {
               userRegion.name,
               ...(filterRegionCountry(userRegion, user.location || '')
                 .country || []),
+              ...(getParentRegions(userRegion) || []),
             ]
           : [Regions.GLOBAL],
       },

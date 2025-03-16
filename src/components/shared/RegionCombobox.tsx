@@ -77,6 +77,12 @@ interface RegionComboboxProps {
   unset?: boolean;
 
   /**
+   * Whether to show identified regions in the list or not.
+   * @default false
+   */
+  regions?: boolean;
+
+  /**
    * Object containing class names for specific subcomponents.
    */
   classNames?: {
@@ -101,6 +107,7 @@ export function RegionCombobox({
   global = false,
   superteams = false,
   unset,
+  regions: allowRegions = false,
   className,
   classNames,
 }: RegionComboboxProps): JSX.Element {
@@ -126,20 +133,36 @@ export function RegionCombobox({
       });
       regions.push({
         label: 'Other Countries',
-        options: nonSuperteamCountries.map((country) => ({
-          value: country.name,
-          label: country.name,
-          code: country.code,
-        })),
+        options: nonSuperteamCountries
+          .filter((s) => s.iso)
+          .map((country) => ({
+            value: country.name,
+            label: country.name,
+            code: country.code,
+          })),
       });
     } else {
       regions.push({
         label: 'Countries',
-        options: countries.map((country) => ({
-          value: country.name,
-          label: country.name,
-          code: country.code,
-        })),
+        options: countries
+          .filter((s) => s.iso)
+          .map((country) => ({
+            value: country.name,
+            label: country.name,
+            code: country.code,
+          })),
+      });
+    }
+    if (allowRegions) {
+      regions.push({
+        label: 'Regions',
+        options: countries
+          .filter((s) => s.region)
+          .map((country) => ({
+            value: country.name,
+            label: country.name,
+            code: country.code,
+          })),
       });
     }
     return regions;

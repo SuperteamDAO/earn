@@ -8,6 +8,7 @@ import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
   filterRegionCountry,
   getCombinedRegion,
+  getParentRegions,
 } from '@/features/listings/utils/region';
 import { type GrantsSearch, type ListingSearch } from '@/features/search/types';
 
@@ -78,6 +79,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
           Regions.GLOBAL,
           ...(filterRegionCountry(matchedRegion, user.location || '').country ||
             []),
+          ...(getParentRegions(matchedRegion) || []),
         ];
       } else {
         userRegion = [Regions.GLOBAL];

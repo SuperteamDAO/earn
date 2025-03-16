@@ -20,6 +20,13 @@ type FlagSize =
   | '52px'
   | '64px';
 
+export const CUSTOM_FLAGS: Record<string, string> = {
+  balkan: `${ASSET_URL}/superteams/logos/balkan.png`,
+  latam: `${ASSET_URL}/regions/latam`,
+  'north-america': `${ASSET_URL}/regions/north-america`,
+  'gulf-copperation-council': `${ASSET_URL}/regions/gulf-copperation-council`,
+};
+
 interface Props {
   location: string;
   size?: FlagSize;
@@ -28,16 +35,21 @@ interface Props {
 
 export function UserFlag({ location, size = '16px', isCode = false }: Props) {
   const [code, setCode] = useState<string | null>(null);
+  const [isCustomFlag, setIsCustomFlag] = useState<boolean>(false);
 
   useEffect(() => {
     if (isCode) {
-      setCode(location.toLowerCase());
+      const lowerCaseCode = location.toLowerCase();
+      setCode(lowerCaseCode);
+      setIsCustomFlag(!!CUSTOM_FLAGS[lowerCaseCode]);
     } else {
       const country = countries.find(
         (c) => c.name.toLowerCase() === location.toLowerCase(),
       );
       if (country) {
-        setCode(country.code);
+        const lowerCaseCode = country.code.toLowerCase();
+        setCode(lowerCaseCode);
+        setIsCustomFlag(!!CUSTOM_FLAGS[lowerCaseCode]);
       }
     }
   }, [location, isCode]);
@@ -47,12 +59,16 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
     height: size,
   };
 
-  return code === 'balkan' ? (
+  if (!code) {
+    return null;
+  }
+
+  return isCustomFlag ? (
     <div
-      className="flex items-center justify-center rounded-full border border-slate-50 bg-contain"
+      className="flex items-center justify-center rounded-full border border-slate-50 bg-contain bg-center bg-no-repeat"
       style={{
         ...flagStyles,
-        backgroundImage: `url('${ASSET_URL}/superteams/logos/balkan.png')`,
+        backgroundImage: `url('${CUSTOM_FLAGS[code]}')`,
       }}
     />
   ) : (
