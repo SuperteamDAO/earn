@@ -168,9 +168,6 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
       'Payment Pending',
       'Completed',
     ];
-    if (hasGrants) {
-      filters.unshift('Ongoing');
-    }
     return filters;
   }, [hasGrants]);
 

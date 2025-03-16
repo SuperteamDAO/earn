@@ -76,7 +76,7 @@ export const getListingStatus = (
     if (!listing?.publishedAt) return 'Draft';
     else return 'Unpublished';
   }
-  if (listing?.type === 'grant' || isGrant) return 'Ongoing';
+  if (listing?.type === 'grant' || isGrant) return 'In Progress';
 
   switch (listingStatus) {
     case 'CLOSED':
