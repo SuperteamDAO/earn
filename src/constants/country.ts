@@ -2430,11 +2430,11 @@ export const countries = [
     ],
   },
   {
-    code: 'gulf-copperation-council',
+    code: 'gcc',
     flag_1x1: 'flags/1x1/gc.svg',
     flag_4x3: 'flags/4x3/gc.svg',
     iso: false,
-    name: 'Gulf Cooperation Council',
+    name: 'GCC',
     region: true,
     regions: [
       'Saudi Arabia',
