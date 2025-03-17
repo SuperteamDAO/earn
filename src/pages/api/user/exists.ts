@@ -25,12 +25,12 @@ export default async function checkUserExists(
 
     if (!user) {
       logger.warn(`User does not exist for email ${email}`);
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'User not found', exists: false });
     }
 
     const userId = user.id;
     logger.info(`User found: ${userId}`);
-    return res.status(200).json({ ...user });
+    return res.status(200).json({ exists: true });
   } catch (error: any) {
     logger.error(`Error checking if user exists: ${safeStringify(error)}`);
     return res

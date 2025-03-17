@@ -34,7 +34,7 @@ export default async function handler(
   }
 
   try {
-    const connection = getConnection('processed');
+    const connection = getConnection('confirmed');
     const assets = await fetchUserTokens(
       connection,
       new PublicKey(walletAddress),

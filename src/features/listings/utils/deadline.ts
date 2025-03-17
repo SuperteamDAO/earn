@@ -5,7 +5,7 @@ export const formatDeadline = (
   type: string | undefined,
 ) => {
   if (type === 'grant') {
-    return 'Ongoing';
+    return 'In Progress';
   }
   return deadline ? dayjs(deadline).format("DD MMM'YY h:mm A") : '-';
 };

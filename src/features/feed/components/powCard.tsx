@@ -43,7 +43,7 @@ export function PowCard({ pow, type, commentCount }: PowCardProps) {
   const actionLinks = (
     <>
       <div className="flex">
-        <p className="text-sm font-semibold text-gray-500 md:text-base">
+        <p className="break-all text-sm font-semibold text-gray-500 md:text-base">
           {pow?.title}
         </p>
       </div>

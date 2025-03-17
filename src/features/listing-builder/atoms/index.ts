@@ -26,9 +26,9 @@ const draftQueueAtom = atom<SaveQueueState>({
   shouldProcessNext: false,
 });
 
-const confirmModalAtom = atom<'SUCCESS' | 'VERIFICATION' | undefined>(
-  undefined,
-);
+const confirmModalAtom = atom<
+  'SUCCESS' | 'VERIFICATION_SHOW_FORM' | 'VERIFICATION_SHOW_MODAL' | undefined
+>(undefined);
 const previewAtom = atom(false);
 
 const saveDraftMutationAtom = atomWithMutation(() => ({
@@ -49,9 +49,12 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
     const endpoint = isEditing
       ? '/api/listings/update'
       : '/api/listings/publish';
-    const response = await api.post<ListingFormData>(`${endpoint}/${data.id}`, {
-      ...convertUndefinedToNull(data),
-    });
+    const response = await api.post<ListingFormData & { reason?: string }>(
+      `${endpoint}/${data.id}`,
+      {
+        ...convertUndefinedToNull(data),
+      },
+    );
     return response.data;
   },
 }));

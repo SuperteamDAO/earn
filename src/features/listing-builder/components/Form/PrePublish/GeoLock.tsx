@@ -44,6 +44,7 @@ export function GeoLock() {
                   field.onChange(e);
                   form.saveDraft();
                 }}
+                regions
               />
             </FormControl>
           </FormItem>

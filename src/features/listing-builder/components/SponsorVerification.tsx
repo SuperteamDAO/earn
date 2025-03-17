@@ -1,20 +1,29 @@
-import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
+import { useEffect } from 'react';
+
+import { useUser } from '@/store/user';
 
 import { confirmModalAtom } from '../atoms';
 import { SponsorVerificationForm } from './Form/SponsorVerificationForm';
 import { UnderVerificationModal } from './Modals/UnderVerficationModal';
 
 export const SponsorVerification = () => {
-  const date = '02-08-2025';
-  const isAfterNewVerificationDate = dayjs().isAfter(dayjs(date));
   const [confirmModal] = useAtom(confirmModalAtom);
 
-  if (confirmModal !== 'VERIFICATION') {
+  const { user } = useUser();
+  useEffect(() => {
+    console.log(
+      'user sponsor verification info - ',
+      user?.currentSponsor?.verificationInfo,
+    );
+  }, [user]);
+
+  if (!confirmModal || confirmModal === 'SUCCESS') {
     return null;
   }
 
-  return isAfterNewVerificationDate ? (
+  return confirmModal === 'VERIFICATION_SHOW_FORM' &&
+    !user?.currentSponsor?.verificationInfo ? (
     <SponsorVerificationForm />
   ) : (
     <UnderVerificationModal />

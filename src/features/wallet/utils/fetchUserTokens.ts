@@ -1,5 +1,5 @@
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { type Connection, type PublicKey } from '@solana/web3.js';
+import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { type Connection, PublicKey } from '@solana/web3.js';
 
 import { tokenList } from '@/constants/tokenList';
 
@@ -10,14 +10,25 @@ export async function fetchUserTokens(
   connection: Connection,
   publicKey: PublicKey,
 ): Promise<TokenAsset[]> {
-  const [solBalance, tokenAccountsResponse] = await Promise.all([
-    connection.getBalance(publicKey),
-    connection.getParsedTokenAccountsByOwner(
-      publicKey,
-      { programId: TOKEN_PROGRAM_ID },
-      'confirmed',
-    ),
-  ]);
+  const [solBalance, tokenAccountsResponse, token2022AccountsResponse] =
+    await Promise.all([
+      connection.getBalance(publicKey),
+      connection.getParsedTokenAccountsByOwner(
+        publicKey,
+        { programId: TOKEN_PROGRAM_ID },
+        'confirmed',
+      ),
+      connection.getParsedTokenAccountsByOwner(
+        publicKey,
+        { programId: new PublicKey(TOKEN_2022_PROGRAM_ID) },
+        'confirmed',
+      ),
+    ]);
+
+  const allTokenAccounts = [
+    ...tokenAccountsResponse.value,
+    ...token2022AccountsResponse.value,
+  ];
 
   const assets: TokenAsset[] = [];
 
@@ -39,10 +50,13 @@ export async function fetchUserTokens(
   }
 
   const splAssets: TokenAsset[] = await Promise.all(
-    tokenAccountsResponse.value.map(async (tokenAccount) => {
+    allTokenAccounts.map(async (tokenAccount) => {
       const accountData = tokenAccount.account.data.parsed.info;
       const mintAddress = accountData.mint;
-      const amount = Number(accountData.tokenAmount.uiAmount);
+
+      const rawAmount = BigInt(accountData.tokenAmount.amount);
+      const decimals = accountData.tokenAmount.decimals;
+      const amount = Number(rawAmount) / Math.pow(10, decimals);
 
       const tokenMetadata = tokenList.find(
         (token) => token.mintAddress === mintAddress,
@@ -71,5 +85,7 @@ export async function fetchUserTokens(
     }),
   );
 
-  return [...assets, ...splAssets.filter((asset) => asset.amount > 0)];
+  const filteredAssets = splAssets.filter((asset) => asset.amount > 0);
+
+  return [...assets, ...filteredAssets];
 }

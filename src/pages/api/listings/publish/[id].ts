@@ -164,6 +164,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       );
     }
+    let reason = '';
     if (isPublished && !listing.publishedAt && !isVerifiedHackathonListing) {
       publishedAt = new Date();
       logger.debug(
@@ -188,6 +189,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           id,
         });
         isVerifying = sponsor.isCaution;
+        if (isVerifying) reason = 'Sponsor marked as caution';
         logger.debug(`Sponsor isCaution check result: ${isVerifying}`, {
           sponsorId: userSponsorId,
           isCaution: sponsor.isCaution,
@@ -209,18 +211,36 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
               isArchived: false,
               isPublished: true,
               isActive: true,
-              type: {
-                not: 'hackathon',
-              },
             },
           });
           isVerifying = listingCount === 0;
-          logger.debug(`Sponsor live listing check result: ${isVerifying}`, {
-            sponsorId: userSponsorId,
-            listingCount,
-            hadNoLiveListing: listingCount === 0,
-            id,
-          });
+          let prevUnpublished = 0;
+          if (isVerifying) {
+            reason = 'New sponsor';
+
+            prevUnpublished = await prisma.bounties.count({
+              where: {
+                sponsorId: userSponsorId,
+                isArchived: false,
+                isPublished: false,
+                isActive: true,
+                publishedAt: { not: null },
+              },
+            });
+            if (prevUnpublished > 0) {
+              reason = 'Has unannounced winners';
+            }
+          }
+          logger.debug(
+            `Sponsor live listing & prev unpublished check result: ${isVerifying}`,
+            {
+              sponsorId: userSponsorId,
+              listingCount,
+              hadNoLiveListing: listingCount === 0,
+              prevUnpublished: prevUnpublished > 0,
+              id,
+            },
+          );
         }
 
         // sponsor is unverified and latest listing is in review for more than 2 weeks
@@ -247,6 +267,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           });
 
           isVerifying = !!overdueListing;
+          if (isVerifying) reason = 'Has unannounced winners';
           logger.debug(`Overdue listing check result: ${isVerifying}`, {
             sponsorId: userSponsorId,
             hasOverdueListing: !!overdueListing,
@@ -266,6 +287,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             isUnverified: !sponsor?.isVerified,
             isNotGodUser: user?.role !== 'GOD',
           },
+          finalReason: reason,
         },
       );
     }
@@ -369,23 +391,22 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.debug(`Publish Listing Successful`, { id });
 
     if (isVerifying && listing.status !== 'VERIFYING') {
-      if (!!listing.sponsor.verificationInfo) {
-        logger.info('Sending Discord Verification message', {
+      logger.info('Sending Discord Verification message', {
+        id,
+      });
+      try {
+        if (!process.env.EARNCOGNITO_URL) {
+          throw new Error('ENV EARNCOGNITO_URL not provided');
+        }
+        await earncognitoClient.post(`/discord/verify-listing/initiate`, {
+          listingId: result.id,
+          reason,
+        });
+        logger.info('Sent Discord Verification message', {
           id,
         });
-        try {
-          if (!process.env.EARNCOGNITO_URL) {
-            throw new Error('ENV EARNCOGNITO_URL not provided');
-          }
-          await earncognitoClient.post(`/discord/verify-listing/initiate`, {
-            listingId: result.id,
-          });
-          logger.info('Sent Discord Verification message', {
-            id,
-          });
-        } catch (err) {
-          logger.error('Failed to send Verification Message to discord', err);
-        }
+      } catch (err) {
+        logger.error('Failed to send Verification Message to discord', err);
       }
     } else {
       try {
@@ -414,7 +435,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     logger.info(`Listing Publish API Fully Successful with ID: ${id}`);
-    return res.status(200).json(result);
+    return res.status(200).json({
+      ...result,
+      reason,
+    });
   } catch (error: any) {
     console.log('error', error);
     logger.error(

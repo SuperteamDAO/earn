@@ -1,11 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSignTransaction } from '@privy-io/react-auth/solana';
-import { getAssociatedTokenAddressSync } from '@solana/spl-token';
+import {
+  getAssociatedTokenAddressSync,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+} from '@solana/spl-token';
 import { PublicKey, VersionedTransaction } from '@solana/web3.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { log } from 'next-axiom';
 import { usePostHog } from 'posthog-js/react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -25,6 +29,8 @@ import { type DrawerView } from '../WalletDrawer';
 import { ATAConfirmation } from './ATAConfirmation';
 import { TransactionDetails } from './TransactionDetails';
 import { WithdrawForm } from './WithdrawForm';
+
+const tokenProgramCache: Record<string, string> = {};
 
 interface WithdrawFlowProps {
   tokens: TokenAsset[];
@@ -66,6 +72,38 @@ export function WithdrawFundsFlow({
     (token) => token.tokenAddress === form.watch('tokenAddress'),
   );
 
+  const isToken2022Token = useCallback(
+    async (connection: any, mintAddress: string): Promise<boolean> => {
+      if (mintAddress === 'So11111111111111111111111111111111111111112') {
+        return false;
+      }
+      if (tokenProgramCache[mintAddress]) {
+        return (
+          tokenProgramCache[mintAddress] === TOKEN_2022_PROGRAM_ID.toString()
+        );
+      }
+
+      try {
+        const mintInfo = await connection.getAccountInfo(
+          new PublicKey(mintAddress),
+        );
+
+        if (!mintInfo) {
+          console.error(`Mint account not found: ${mintAddress}`);
+          return false;
+        }
+
+        tokenProgramCache[mintAddress] = mintInfo.owner.toString();
+
+        return mintInfo.owner.toString() === TOKEN_2022_PROGRAM_ID.toString();
+      } catch (error) {
+        console.error(`Error checking token program:`, error);
+        return false;
+      }
+    },
+    [],
+  );
+
   async function checkATARequirement(
     values: WithdrawFormData,
   ): Promise<string> {
@@ -78,9 +116,14 @@ export function WithdrawFundsFlow({
       return handleWithdraw(values);
     }
 
-    const receiverATA = await getAssociatedTokenAddressSync(
+    const isToken2022 = await isToken2022Token(connection, values.tokenAddress);
+    const programId = isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID;
+
+    const receiverATA = getAssociatedTokenAddressSync(
       tokenMint,
       recipient,
+      false,
+      programId,
     );
 
     const receiverATAExists = !!(await connection.getAccountInfo(receiverATA));
@@ -194,22 +237,27 @@ export function WithdrawFundsFlow({
 
       return signature;
     } catch (e) {
-      posthog.capture('withdraw_failed');
-      console.error('Withdrawal failed:', e);
-      log.error(
-        `Withdrawal failed: ${e}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
-      );
+      const isMfaCancelled =
+        e instanceof Error &&
+        (e.message === 'MFA canceled' || e.message === 'MFA cancelled');
+
+      if (isMfaCancelled) {
+        posthog.capture('mfa cancelled_withdraw');
+        console.error('MFA authentication cancelled by user');
+      } else {
+        posthog.capture('withdraw_failed');
+        console.error('Withdrawal failed:', e);
+
+        log.error(
+          `Withdrawal failed: ${e}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
+        );
+      }
 
       let errorMessage =
-        e instanceof Error
-          ? e.message === 'MFA canceled' || e.message === 'MFA cancelled'
-            ? 'Please complete two-factor authentication to withdraw'
-            : e.message
-          : 'Transaction failed. Please try again.';
+        'Something went wrong. Please try again. If the issue persists, contact support at support@superteamearn.com.';
 
-      if (e instanceof Error && e.message.includes('insufficient lamports')) {
-        errorMessage =
-          'Transaction Failed: Sending to this wallet requires you to deposit a small amount of SOL (0.003 SOL) into your Earn wallet. Or, try sending your rewards to an existing wallet which has interacted with stablecoins before.';
+      if (isMfaCancelled) {
+        errorMessage = 'Please complete two-factor authentication to withdraw';
       }
 
       setError(errorMessage);

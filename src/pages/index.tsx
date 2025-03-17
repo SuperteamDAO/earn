@@ -20,6 +20,7 @@ import { type Listing } from '@/features/listings/types';
 import {
   filterRegionCountry,
   getCombinedRegion,
+  getParentRegions,
 } from '@/features/listings/utils/region';
 
 import { getForYouListings } from './api/homepage/for-you';
@@ -189,6 +190,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           Regions.GLOBAL,
           ...(filterRegionCountry(matchedRegion, user.location || '').country ||
             []),
+          ...(getParentRegions(matchedRegion) || []),
         ];
       } else {
         userRegion = [Regions.GLOBAL];
@@ -201,6 +203,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           matchedGrantsRegion.region,
           Regions.GLOBAL,
           ...(matchedGrantsRegion.country || []),
+          ...(getParentRegions(matchedGrantsRegion) || []),
         ];
       } else {
         userGrantsRegion = [Regions.GLOBAL];

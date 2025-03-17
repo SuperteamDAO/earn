@@ -45,6 +45,7 @@ export const useToggleWinner = (
       return response.data;
     },
     onSuccess: (_, variables) => {
+      setPositionUpdating(false);
       queryClient.setQueryData<SubmissionWithUser[]>(
         ['sponsor-submissions', bounty?.slug],
         (old) =>

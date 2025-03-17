@@ -9,6 +9,7 @@ import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
   filterRegionCountry,
   getCombinedRegion,
+  getParentRegions,
 } from '@/features/listings/utils/region';
 
 export default async function grants(
@@ -74,6 +75,7 @@ export default async function grants(
           Regions.GLOBAL,
           ...(filterRegionCountry(matchedRegion, user?.location || '')
             .country || []),
+          ...(getParentRegions(matchedRegion) || []),
         ];
       } else {
         userRegion = [Regions.GLOBAL];
