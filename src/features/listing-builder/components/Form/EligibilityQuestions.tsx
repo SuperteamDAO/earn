@@ -1,8 +1,17 @@
 import { useAtomValue } from 'jotai';
-import { Baseline, Info, LetterText, Link2, Plus, Trash2 } from 'lucide-react';
+import {
+  Baseline,
+  CheckSquare,
+  Info,
+  LetterText,
+  Link2,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import { useEffect } from 'react';
 import { useFieldArray, useWatch } from 'react-hook-form';
 
+import { RichEditor } from '@/components/shared/RichEditor';
 import { Button } from '@/components/ui/button';
 import {
   FormControl,
@@ -30,6 +39,7 @@ const questionTypes = [
   { value: 'text', label: 'Text', icon: Baseline },
   { value: 'paragraph', label: 'Paragraph', icon: LetterText },
   { value: 'link', label: 'Link', icon: Link2 },
+  { value: 'checkbox', label: 'Checkbox', icon: CheckSquare },
 ];
 
 export function EligibilityQuestions() {
@@ -117,7 +127,7 @@ export function EligibilityQuestions() {
                       >
                         Question {index + 1}
                       </FormLabel>
-                      <div className="flex items-center rounded-md border ring-primary has-[:focus]:ring-1">
+                      <div className="relative flex items-center rounded-md border ring-primary has-[:focus]:ring-1">
                         <FormField
                           control={form.control}
                           name={`eligibility.${index}.type`}
@@ -132,7 +142,7 @@ export function EligibilityQuestions() {
                                 }}
                               >
                                 <FormControl>
-                                  <SelectTrigger className="w-fit gap-1 rounded-none border-0 border-r focus:ring-0">
+                                  <SelectTrigger className="w-fit gap-1 rounded-none border-0 focus:ring-0">
                                     <SelectValue className="w-fit">
                                       {(() => {
                                         const selectedType = questionTypes.find(
@@ -169,18 +179,30 @@ export function EligibilityQuestions() {
                           control={form.control}
                           name={`eligibility.${index}.question`}
                           render={({ field }) => (
-                            <FormItem className="flex-1">
+                            <FormItem className="flex-1 border-l">
                               <FormControl>
-                                <Input
-                                  {...field}
-                                  placeholder="Enter your question"
-                                  className="border-none focus-visible:ring-0"
-                                  onChange={(e) => {
-                                    field.onChange(e);
-                                    form.saveDraft();
-                                  }}
-                                  onBlur={() => null}
-                                />
+                                {form.getValues()?.eligibility?.[index]
+                                  ?.type === 'checkbox' ? (
+                                  <RichEditor
+                                    {...field}
+                                    id={`eligibilityAnswers.${index}.answer`}
+                                    value={field.value || ''}
+                                    error={false}
+                                    placeholder={'Enter text for checkbox...'}
+                                    className="border-none"
+                                  />
+                                ) : (
+                                  <Input
+                                    {...field}
+                                    placeholder="Enter your question"
+                                    className="border-none focus-visible:ring-0"
+                                    onChange={(e) => {
+                                      field.onChange(e);
+                                      form.saveDraft();
+                                    }}
+                                    onBlur={() => null}
+                                  />
+                                )}
                               </FormControl>
                             </FormItem>
                           )}
@@ -200,7 +222,7 @@ export function EligibilityQuestions() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            className="hidden text-muted-foreground group-hover:flex hover:text-destructive"
+                            className="absolute right-0 hidden h-full text-muted-foreground group-hover:flex hover:text-destructive"
                             onClick={() => handleRemoveQuestion(index)}
                           >
                             <Trash2 className="h-4 w-4" />

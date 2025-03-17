@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { type Atom, useAtomValue } from 'jotai';
 import React from 'react';
 
+import { Checkbox } from '@/components/ui/checkbox';
 import { tokenList } from '@/constants/tokenList';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
@@ -112,6 +113,28 @@ export const Details = ({ bounty, modalView, atom }: Props) => {
                   </div>
                 );
               }
+              if (
+                selectedSubmission.listing?.eligibility?.[i]?.type ===
+                'checkbox'
+              ) {
+                return (
+                  <div className="mb-4" key={answer.question}>
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={answer.answer === 'true'}
+                        className="cursor-not-allowed opacity-50"
+                        disabled
+                      />
+                      <InfoBox
+                        content={answer.question}
+                        className="mb-0"
+                        isHtml={true}
+                      />
+                    </div>
+                  </div>
+                );
+              }
+
               return (
                 <InfoBox
                   key={answer.question}

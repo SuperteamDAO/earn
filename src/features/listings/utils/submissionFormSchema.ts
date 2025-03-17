@@ -129,6 +129,15 @@ const submissionSchema = (
         } else {
           listing?.eligibility?.forEach((question, index) => {
             const answer = data.eligibilityAnswers?.[index]?.answer;
+            if (question.type === 'checkbox') {
+              if (answer !== 'true') {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.custom,
+                  message: 'You must accept this requirement',
+                  path: ['eligibilityAnswers', index, 'answer'],
+                });
+              }
+            }
             if (!answer || answer.trim() === '') {
               ctx.addIssue({
                 code: 'custom',

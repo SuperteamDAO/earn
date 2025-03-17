@@ -51,6 +51,8 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
+import { InfoBox } from '@/features/sponsor-dashboard/components/InfoBox';
+
 import { walletFieldListings } from '../../constants';
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -397,6 +399,38 @@ export const SubmissionDrawer = ({
                           />
                         );
                       }
+                      if (e.type === 'checkbox') {
+                        return (
+                          <FormField
+                            key={e.order}
+                            control={form.control}
+                            name={`eligibilityAnswers.${index}.answer`}
+                            render={({ field }) => (
+                              <FormItem className={cn('flex flex-col gap-1')}>
+                                <div className="flex items-center gap-2">
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value === 'true'}
+                                      onCheckedChange={(checked) => {
+                                        field.onChange(
+                                          checked ? 'true' : 'false',
+                                        );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <InfoBox
+                                    content={e.question}
+                                    className="mb-0"
+                                    isHtml={true}
+                                  />
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        );
+                      }
+
                       return (
                         <FormField
                           key={e.order}
@@ -630,11 +664,13 @@ export function TokenSelect({ control }: TokenSelectProps) {
       control={control}
       render={({ field }) => (
         <FormItem className="gap-2">
-          <FormLabel>Currency</FormLabel>
-          <FormDescription>
-            Select your preferred currency for receiving funds. The exchange
-            rate will be the closing rate at the day of the invoice.
-          </FormDescription>
+          <div>
+            <FormLabel>Currency</FormLabel>
+            <FormDescription>
+              Select your preferred currency for receiving funds. The exchange
+              rate will be the closing rate at the day of the invoice.
+            </FormDescription>
+          </div>
           <Popover>
             <PopoverTrigger asChild>
               <FormControl>
