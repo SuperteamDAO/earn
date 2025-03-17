@@ -1,4 +1,4 @@
-import { GrantApplicationStatus } from '@prisma/client';
+import { GrantTrancheStatus } from '@prisma/client';
 import {
   keepPreviousData,
   useMutation,
@@ -32,7 +32,7 @@ export const TranchesTab = ({ slug }: Props) => {
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
 
-  const params = { searchText, length: 20, skip: 0 };
+  const params = { searchText, length: 10, skip: 0 };
 
   const { data: trancheReturn, isLoading: isTrancheLoading } = useQuery({
     ...tranchesQuery(slug, params),
@@ -44,7 +44,7 @@ export const TranchesTab = ({ slug }: Props) => {
 
   const totalCount = useMemo(() => trancheReturn?.count || 0, [trancheReturn]);
 
-  let length = 20;
+  let length = 10;
   const [pageSelections, setPageSelections] = useState<Record<number, string>>(
     {},
   );
@@ -68,7 +68,7 @@ export const TranchesTab = ({ slug }: Props) => {
         setSkip(0);
       }
     } else {
-      length = 20;
+      length = 10;
     }
   }, [searchText]);
 
@@ -220,7 +220,7 @@ export const TranchesTab = ({ slug }: Props) => {
 
     const nextPendingTranche = tranches
       ?.slice(currentIndex + 1)
-      .find((tranche) => tranche.status === GrantApplicationStatus.Pending);
+      .find((tranche) => tranche.status === GrantTrancheStatus.Pending);
 
     if (nextPendingTranche) {
       setSelectedTranche(nextPendingTranche);
@@ -253,7 +253,7 @@ export const TranchesTab = ({ slug }: Props) => {
             tranche.id === trancheId
               ? {
                   ...tranche,
-                  applicationStatus: GrantApplicationStatus.Rejected,
+                  status: GrantTrancheStatus.Rejected,
                 }
               : tranche,
           );
@@ -313,8 +313,8 @@ export const TranchesTab = ({ slug }: Props) => {
             tranche.id === trancheId
               ? {
                   ...tranche,
-                  applicationStatus: GrantApplicationStatus.Approved,
-                  approvedAmount: approvedAmount,
+                  status: GrantTrancheStatus.Approved,
+                  approvedAmount,
                 }
               : tranche,
           );

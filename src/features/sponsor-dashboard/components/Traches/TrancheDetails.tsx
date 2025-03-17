@@ -290,7 +290,7 @@ export const TrancheDetails = ({
             </div>
           </div>
 
-          <div className="flex h-[67.15rem] w-full">
+          <div className="flex h-[32.6rem] w-full">
             <div className="scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
               <div className="mb-4">
                 <p className="mb-1 text-xs font-semibold uppercase text-slate-400">

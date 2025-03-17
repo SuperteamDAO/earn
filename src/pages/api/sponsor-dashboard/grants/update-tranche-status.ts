@@ -39,11 +39,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   try {
     const currentTranche = await prisma.grantTranche.findUniqueOrThrow({
       where: { id },
-      select: {
-        id: true,
-        grantId: true,
-        applicationId: true,
-      },
     });
 
     const { error } = await checkGrantSponsorAuth(
@@ -95,7 +90,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         console.debug(
           `Attempting to add payment info to Airtable for application ID: ${updatedApplication.id}`,
         );
-        await addPaymentInfoToAirtable(updatedApplication, currentTranche.id);
+        await addPaymentInfoToAirtable(updatedApplication, currentTranche);
         console.debug(
           `Successfully added payment info to Airtable for application ID: ${updatedApplication.id}`,
         );

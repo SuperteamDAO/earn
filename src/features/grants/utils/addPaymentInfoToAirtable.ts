@@ -1,4 +1,4 @@
-import { type GrantApplication } from '@prisma/client';
+import { type GrantApplication, type GrantTranche } from '@prisma/client';
 import axios from 'axios';
 
 import { Superteams } from '@/constants/Superteam';
@@ -35,11 +35,11 @@ interface PaymentAirtableSchema {
 export function grantApplicationToAirtable(
   grantApplication: GrantApplicationWithUserAndGrant,
   grantRegionId: string,
-  trancheId: string,
+  grantTranche: GrantTranche,
 ): PaymentAirtableSchema {
   return {
-    Name: `${grantApplication.kycName || ''}`,
-    Amount: grantApplication.approvedAmount,
+    Name: grantApplication.kycName || '',
+    Amount: grantTranche.approvedAmount || 0,
     'Wallet Address': grantApplication.walletAddress || '',
     Category: ['recd0Kn3N4Ffhtwhd'], // Solana Grant
     'Purpose of Payment': grantApplication.projectTitle || '',
@@ -50,13 +50,13 @@ export function grantApplicationToAirtable(
         }
       : {}),
     earnApplicationId: grantApplication.id,
-    earnTrancheId: trancheId,
+    earnTrancheId: grantTranche.id,
   };
 }
 
 export async function addPaymentInfoToAirtable(
   application: GrantApplicationWithUserAndGrant,
-  trancheId: string,
+  grantTranche: GrantTranche,
 ) {
   try {
     const grantsAirtableConfig = airtableConfig(
@@ -94,7 +94,7 @@ export async function addPaymentInfoToAirtable(
     const airtableData = grantApplicationToAirtable(
       application,
       region || '',
-      trancheId,
+      grantTranche,
     );
 
     const airtablePayload = airtableInsert([{ fields: airtableData }]);

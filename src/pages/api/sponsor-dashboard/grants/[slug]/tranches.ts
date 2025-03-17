@@ -72,8 +72,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
       ...textSearch,
     };
-    const totalCount = await prisma.grantApplication.count({
-      where: grantApplicationWhere,
+    const totalCount = await prisma.grantTranche.count({
+      where: {
+        GrantApplication: grantApplicationWhere,
+      },
     });
 
     const query = await prisma.grantTranche.findMany({

@@ -73,7 +73,7 @@ export const KYCModal = ({
   }
 
   return (
-    <div>
+    <div className="pb-12">
       {accessToken && (
         <SumsubWebSdk
           accessToken={accessToken}
