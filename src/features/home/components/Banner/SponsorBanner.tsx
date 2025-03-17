@@ -3,7 +3,7 @@ import { getImageProps } from 'next/image';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
-import DesktopBanner from '@/public/assets/banner-sponsor-logos.webp';
+import SponsorLogosBanner from '@/public/assets/banner-sponsor-logos.webp';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
@@ -28,7 +28,7 @@ export function HomeSponsorBanner() {
 
   const {
     props: { srcSet: desktop, ...rest },
-  } = getImageProps({ ...common, src: DesktopBanner, sizes: '20vw' });
+  } = getImageProps({ ...common, src: SponsorLogosBanner, sizes: '20vw' });
 
   const { data } = useQuery(sponsorCountQuery);
   const { data: userCount } = useQuery(userCountQuery);
