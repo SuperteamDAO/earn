@@ -12,7 +12,7 @@ import { HomeTalentBanner } from './TalentBanner';
 
 export function BannerCarousel() {
   const plugin = React.useRef(
-    Autoplay({ delay: 5000, stopOnInteraction: true }),
+    Autoplay({ delay: 5000, stopOnInteraction: false }),
   );
 
   return (
