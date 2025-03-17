@@ -110,7 +110,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             </div>
             <div className="mt-[1px] flex items-center gap-1 sm:gap-3">
               <div className="flex items-center justify-start sm:hidden">
-                {showToken && (
+                {!!showToken && (
                   <img
                     className="mr-0.5 h-3.5 w-3.5 rounded-full"
                     alt={token}
@@ -126,7 +126,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                     isWinnersAnnounced={isWinnersAnnounced}
                     className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base"
                   />
-                  {showToken && (
+                  {!!showToken && (
                     <p className="text-xs font-medium text-gray-400">{token}</p>
                   )}
                 </div>
@@ -196,7 +196,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             showToken ? 'mr-3' : 'mr-0',
           )}
         >
-          {showToken && (
+          {!!showToken && (
             <img
               className="mr-1 mt-1 h-4 w-4 rounded-full sm:mt-0.5"
               alt={token}
@@ -212,7 +212,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               isWinnersAnnounced={isWinnersAnnounced}
               className="whitespace-nowrap text-xs font-semibold text-slate-600 sm:text-base"
             />
-            {showToken && (
+            {!!showToken && (
               <p className="text-xs font-medium text-gray-400 sm:text-base">
                 {token}
               </p>
