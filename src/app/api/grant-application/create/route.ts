@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
 
     waitUntil(
       (async () => {
-        if (grant.isNative === true && !grant.airtableId) {
+        if (grant.isNative === true) {
           try {
             sendEmailNotification({
               type: 'application',
