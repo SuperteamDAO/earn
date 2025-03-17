@@ -21,10 +21,11 @@ interface Props {
 }
 
 export const FeedPost = ({ type, id }: Props) => {
+  const [idToLoad, setIdToLoad] = useState<string>(id);
   const { data, isLoading } = useQuery(fetchFeedPostQuery({ type, id }));
   const searchParams = useSearchParams();
   const { data: submission } = useQuery({
-    ...submissionDetailsQuery({ submissionId: id }),
+    ...submissionDetailsQuery({ submissionId: idToLoad }),
     enabled: type === 'submission',
   });
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -78,6 +79,7 @@ export const FeedPost = ({ type, id }: Props) => {
                     sub={item as any}
                     type="activity"
                     openDetails={() => {
+                      setIdToLoad(item.id);
                       setIsDetailsOpen(true);
                     }}
                   />

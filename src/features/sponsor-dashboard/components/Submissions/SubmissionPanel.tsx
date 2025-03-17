@@ -141,14 +141,16 @@ export const SubmissionPanel = ({
                     selectedSubmission?.isPaid && 'hidden',
                   )}
                 >
-                  <Button
-                    variant="ghost"
-                    className="ph-no-capture text-slate-500 disabled:cursor-not-allowed"
-                    onClick={handleCopySubmissionLink}
-                  >
-                    <Copy className="mr-1 h-4 w-4" />
-                    Copy Link
-                  </Button>
+                  {isSponsorship && (
+                    <Button
+                      variant="ghost"
+                      className="ph-no-capture text-slate-500 disabled:cursor-not-allowed"
+                      onClick={handleCopySubmissionLink}
+                    >
+                      <Copy className="mr-1 h-4 w-4" />
+                      Copy Link
+                    </Button>
+                  )}
                   {selectedSubmission?.isWinner &&
                     selectedSubmission?.winnerPosition &&
                     !selectedSubmission?.isPaid &&
