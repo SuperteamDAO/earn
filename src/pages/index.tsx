@@ -203,7 +203,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           matchedGrantsRegion.region,
           Regions.GLOBAL,
           ...(matchedGrantsRegion.country || []),
-          ...(getParentRegions(matchedRegion) || []),
+          ...(getParentRegions(matchedGrantsRegion) || []),
         ];
       } else {
         userGrantsRegion = [Regions.GLOBAL];
