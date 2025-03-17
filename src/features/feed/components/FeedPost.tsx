@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { FeedPageLayout } from '@/layouts/Feed';
@@ -21,11 +22,19 @@ interface Props {
 
 export const FeedPost = ({ type, id }: Props) => {
   const { data, isLoading } = useQuery(fetchFeedPostQuery({ type, id }));
+  const searchParams = useSearchParams();
   const { data: submission } = useQuery({
     ...submissionDetailsQuery({ submissionId: id }),
     enabled: type === 'submission',
   });
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams?.get('modalOpen') && type === 'submission') {
+      setIsDetailsOpen(true);
+    }
+  }, [searchParams, type]);
+
   if (!data && !isLoading) {
     return (
       <FeedPageLayout>

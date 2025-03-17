@@ -3,6 +3,7 @@ import { useAtom } from 'jotai';
 import {
   AlertTriangle,
   ArrowRight,
+  Copy,
   DollarSign,
   ExternalLink,
 } from 'lucide-react';
@@ -78,10 +79,22 @@ export const SubmissionPanel = ({
     selectedSubmission?.user?.publicKey || '',
   );
 
+  const { onCopy: onCopySubmissionLink } = useClipboard(
+    `${window.location.origin}/feed/submission/${selectedSubmission?.id}?modalOpen=true`,
+  );
+
+  const handleCopySubmissionLink = () => {
+    if (selectedSubmission?.id) {
+      onCopySubmissionLink();
+      toast.success('Submission link copied', {
+        duration: 1500,
+      });
+    }
+  };
   const handleCopyEmail = () => {
     if (selectedSubmission?.user?.email) {
       onCopyEmail();
-      toast.success('Email copied to clipboard', {
+      toast.success('Email copied', {
         duration: 1500,
       });
     }
@@ -90,7 +103,7 @@ export const SubmissionPanel = ({
   const handleCopyPublicKey = () => {
     if (selectedSubmission?.user?.publicKey) {
       onCopyPublicKey();
-      toast.success('Wallet address copied to clipboard', {
+      toast.success('Wallet address copied', {
         duration: 1500,
       });
     }
@@ -128,6 +141,14 @@ export const SubmissionPanel = ({
                     selectedSubmission?.isPaid && 'hidden',
                   )}
                 >
+                  <Button
+                    variant="ghost"
+                    className="ph-no-capture text-slate-500 disabled:cursor-not-allowed"
+                    onClick={handleCopySubmissionLink}
+                  >
+                    <Copy className="mr-1 h-4 w-4" />
+                    Copy Link
+                  </Button>
                   {selectedSubmission?.isWinner &&
                     selectedSubmission?.winnerPosition &&
                     !selectedSubmission?.isPaid &&

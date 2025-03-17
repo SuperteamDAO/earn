@@ -17,11 +17,13 @@ export const InfoBox = ({
   content,
   isHtml = false,
   className,
+  contentClassName,
 }: {
   label?: string | null;
   content?: string | null;
   isHtml?: boolean;
   className?: string;
+  contentClassName?: string;
 }) => (
   <div className={cn('mb-4', className)}>
     {label && (
@@ -30,7 +32,10 @@ export const InfoBox = ({
       </p>
     )}
     {isHtml ? (
-      <div className="h-full w-full overflow-visible" id="reset-des">
+      <div
+        id="reset-des"
+        className={cn('h-full w-full overflow-visible', contentClassName)}
+      >
         {parse(content || '', options)}
       </div>
     ) : (

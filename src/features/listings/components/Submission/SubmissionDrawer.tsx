@@ -421,6 +421,7 @@ export const SubmissionDrawer = ({
                                   <InfoBox
                                     content={e.question}
                                     className="mb-0"
+                                    contentClassName=" [&_p]:!text-[0.9rem] [&_a]:!text-[0.9rem]"
                                     isHtml={true}
                                   />
                                 </div>

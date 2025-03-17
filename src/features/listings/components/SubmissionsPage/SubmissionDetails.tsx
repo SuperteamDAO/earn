@@ -1,5 +1,5 @@
 import { atom, useAtom } from 'jotai';
-import { ArrowRight, ExternalLink, X } from 'lucide-react';
+import { ArrowRight, Copy, ExternalLink, X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { MdOutlineAccountBalanceWallet, MdOutlineMail } from 'react-icons/md';
@@ -55,16 +55,26 @@ export const SubmissionDetails = ({
     submission?.user?.publicKey || '',
   );
 
+  const { onCopy: onCopySubmissionLink } = useClipboard(
+    `${window.location.origin}/feed/submission/${submission?.id}?modalOpen=true`,
+  );
   const [, setSelectedSubmission] = useAtom(selectedSubmissionAtom);
 
   useEffect(() => {
     setSelectedSubmission(submission);
   }, [submission]);
 
+  const handleCopySubmissionLink = () => {
+    onCopySubmissionLink();
+    toast.success('Submission link copied', {
+      duration: 1500,
+    });
+  };
+
   const handleCopyEmail = () => {
     if (submission?.user?.email) {
       onCopyEmail();
-      toast.success('Email copied to clipboard', {
+      toast.success('Email copied', {
         duration: 1500,
       });
     }
@@ -73,7 +83,7 @@ export const SubmissionDetails = ({
   const handleCopyPublicKey = () => {
     if (submission?.user?.publicKey) {
       onCopyPublicKey();
-      toast.success('Wallet address copied to clipboard', {
+      toast.success('Wallet address copied', {
         duration: 1500,
       });
     }
@@ -211,10 +221,12 @@ export const SubmissionDetails = ({
       </div>
       <Button
         className="ph-no-capture my-4 h-12 w-full"
+        variant="outline"
         type="button"
-        onClick={onClose}
+        onClick={handleCopySubmissionLink}
       >
-        Close
+        <Copy className="h-4 w-4" />
+        Copy Submission Link
       </Button>
     </div>
   );
