@@ -16,6 +16,7 @@ type BountyGrant = {
   status: string;
   deadline: Date | null;
   isPublished: boolean;
+  publishedAt: Date | null;
   rewards: any;
   rewardAmount: number | null;
   totalPaymentsMade: number;
@@ -44,6 +45,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           b.status,
           b.deadline,
           b.isPublished,
+          b.publishedAt,
           b.rewards,
           b.rewardAmount,
           (SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id AND s.isPaid = 1) as totalPaymentsMade,
@@ -73,6 +75,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           g.status,
           NULL as deadline,
           g.isPublished,
+          NULL as publishedAt,
           NULL as rewards,
           NULL as rewardAmount,
           g.totalPaid as totalPaymentsMade,

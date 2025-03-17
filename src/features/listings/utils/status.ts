@@ -72,8 +72,11 @@ export const getListingStatus = (
 
   if (listingStatus === 'VERIFYING') return 'Under Verification';
   if (listingStatus === 'VERIFY_FAIL') return 'Verification Failed';
-  if (listingStatus === 'DRAFT') return 'Draft';
-  if (listing?.type === 'grant' || isGrant) return 'Ongoing';
+  if (listingStatus === 'DRAFT') {
+    if (!listing?.publishedAt) return 'Draft';
+    else return 'Unpublished';
+  }
+  if (listing?.type === 'grant' || isGrant) return 'In Progress';
 
   switch (listingStatus) {
     case 'CLOSED':

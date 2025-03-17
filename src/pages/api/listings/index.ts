@@ -9,6 +9,7 @@ import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import {
   filterRegionCountry,
   getCombinedRegion,
+  getParentRegions,
 } from '@/features/listings/utils/region';
 
 interface Listing {
@@ -153,6 +154,7 @@ export default async function listings(
               userRegion.name,
               ...(filterRegionCountry(userRegion, userLocation || '').country ||
                 []),
+              ...(getParentRegions(userRegion) || []),
             ]
           : [Regions.GLOBAL],
       },
