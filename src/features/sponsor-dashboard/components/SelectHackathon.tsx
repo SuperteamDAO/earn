@@ -91,7 +91,7 @@ export function SelectHackathon({
         <div className="flex items-center py-1">
           <EarnAvatar
             id={data?.hackathon?.name}
-            avatar={data?.hackathon?.logo}
+            avatar={data?.hackathon?.altLogo}
             className="h-6 w-6 rounded-sm"
           />
           <div className="ml-2 hidden md:block">
@@ -111,7 +111,7 @@ export function SelectHackathon({
           <EarnAvatar
             className="rounded-sm"
             id={data?.hackathon?.name}
-            avatar={data?.hackathon?.logo}
+            avatar={data?.hackathon?.altLogo}
           />
           <div className="ml-2 hidden md:block">
             <p className="text-sm text-slate-800">{data?.hackathon?.name}</p>

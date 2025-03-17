@@ -118,7 +118,7 @@ ${socialListingLink('twitter')}
               <BreadcrumbLink asChild>
                 <Link
                   href={
-                    bounty?.type === 'hackathon'
+                    isHackathonPage
                       ? `/dashboard/hackathon/`
                       : '/dashboard/listings'
                   }

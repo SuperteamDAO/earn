@@ -41,6 +41,7 @@ async function hackathons(req: NextApiRequestWithUser, res: NextApiResponse) {
           name: true,
           slug: true,
           logo: true,
+          altLogo: true,
         },
         orderBy: {
           slug: 'asc',

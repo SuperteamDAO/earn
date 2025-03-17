@@ -72,7 +72,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     return res.status(200).json({
       name: hackathon.name,
-      logo: hackathon.logo,
+      logo: hackathon.altLogo,
       totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
       totalListings,
       totalSubmissions,
