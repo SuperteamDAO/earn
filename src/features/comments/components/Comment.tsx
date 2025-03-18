@@ -214,7 +214,7 @@ export const Comment = ({
           <div className="flex min-h-[24px] items-end gap-2">
             <Link
               href={`${getURL()}t/${comment?.author?.username}`}
-              className="min-w-[100px] max-w-[200px] hover:underline"
+              className="min-w-[75px] max-w-[200px] hover:underline"
               tabIndex={-1}
               target="_blank"
             >
