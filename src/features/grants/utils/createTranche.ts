@@ -26,7 +26,9 @@ export async function createTranche({
     },
   });
 
-  const existingTranches = application.GrantTranche.length;
+  const existingTranches = application.GrantTranche.filter(
+    (tranche) => tranche.status !== 'Rejected',
+  ).length;
   const maxTranches = 4;
 
   if (existingTranches >= maxTranches) {

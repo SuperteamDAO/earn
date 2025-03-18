@@ -131,7 +131,7 @@ export const TrancheDetails = ({
                   <>
                     <Button
                       className={cn(
-                        'bg-emerald-50 text-emerald-600 hover:bg-emerald-100',
+                        'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600',
                       )}
                       onClick={approveOnOpen}
                       variant="ghost"
@@ -146,7 +146,7 @@ export const TrancheDetails = ({
 
                     <Button
                       className={cn(
-                        'bg-rose-50 text-rose-600 hover:bg-rose-100',
+                        'bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-600',
                       )}
                       onClick={rejectedOnOpen}
                       variant="ghost"
@@ -292,9 +292,30 @@ export const TrancheDetails = ({
 
           <div className="flex h-[32.6rem] w-full">
             <div className="scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+              {selectedTranche?.status === 'Approved' && (
+                <div className="mb-4">
+                  <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
+                    APPROVED TRANCHE AMOUNT
+                  </p>
+                  <div className="flex items-center gap-0.5">
+                    <img
+                      className="mr-0.5 h-4 w-4 rounded-full"
+                      src={tokenIcon}
+                      alt="token"
+                    />
+                    <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
+                      {`${selectedTranche?.approvedAmount?.toLocaleString('en-us')}`}
+                      <span className="ml-0.5 text-slate-400">
+                        {grant?.token}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div className="mb-4">
                 <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
-                  TRANCHE AMOUNT
+                  TRANCHE ASK
                 </p>
                 <div className="flex items-center gap-0.5">
                   <img

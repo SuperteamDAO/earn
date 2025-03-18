@@ -155,7 +155,7 @@ export const ApplicationDetails = ({
                   <>
                     <Button
                       className={cn(
-                        'bg-emerald-50 text-emerald-600 hover:bg-emerald-100',
+                        'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600',
                         isMultiSelectOn && 'cursor-not-allowed opacity-50',
                       )}
                       disabled={isMultiSelectOn}
@@ -172,7 +172,7 @@ export const ApplicationDetails = ({
 
                     <Button
                       className={cn(
-                        'bg-rose-50 text-rose-600 hover:bg-rose-100',
+                        'bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-600',
                         isMultiSelectOn && 'cursor-not-allowed opacity-50',
                       )}
                       disabled={isMultiSelectOn}

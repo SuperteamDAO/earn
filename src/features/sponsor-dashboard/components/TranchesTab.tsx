@@ -429,7 +429,7 @@ export const TranchesTab = ({ slug }: Props) => {
         trancheId={selectedTranche?.id}
         rejectIsOpen={rejectedIsOpen}
         rejectOnClose={rejectedOnClose}
-        ask={selectedTranche?.GrantApplication?.approvedAmount}
+        ask={selectedTranche?.ask}
         granteeName={selectedTranche?.GrantApplication?.user?.firstName}
         token={grant?.token || 'USDC'}
         onRejectTranche={handleRejectTranche}

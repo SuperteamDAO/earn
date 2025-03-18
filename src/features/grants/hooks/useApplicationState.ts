@@ -28,38 +28,43 @@ export const useApplicationState = (
     }
 
     if (application.applicationStatus === 'Approved') {
+      const validTranches = application.GrantTranche.filter(
+        (tranche) => tranche.status !== 'Rejected',
+      );
+      const trancheNumber = validTranches.length;
+
       if (isST) {
         if (application.kycStatus === 'Pending') {
           setApplicationState('KYC PENDING');
         } else if (application.kycStatus === 'Approved') {
-          if (application.GrantTranche.length === 0) {
+          if (trancheNumber === 0) {
             setApplicationState('KYC APPROVED');
-          } else if (application.GrantTranche.length === 1) {
-            const trancheStatus = application.GrantTranche[0]?.status;
+          } else if (trancheNumber === 1) {
+            const trancheStatus = validTranches[0]?.status;
             if (trancheStatus === 'Pending')
               setApplicationState('TRANCHE1 PENDING');
             else if (trancheStatus === 'Approved')
               setApplicationState('TRANCHE1 APPROVED');
             else if (trancheStatus === 'Paid')
               setApplicationState('TRANCHE1 PAID');
-          } else if (application.GrantTranche.length === 2) {
-            const trancheStatus = application.GrantTranche[1]?.status;
+          } else if (trancheNumber === 2) {
+            const trancheStatus = validTranches[1]?.status;
             if (trancheStatus === 'Pending')
               setApplicationState('TRANCHE2 PENDING');
             else if (trancheStatus === 'Approved')
               setApplicationState('TRANCHE2 APPROVED');
             else if (trancheStatus === 'Paid')
               setApplicationState('TRANCHE2 PAID');
-          } else if (application.GrantTranche.length === 3) {
-            const trancheStatus = application.GrantTranche[2]?.status;
+          } else if (trancheNumber === 3) {
+            const trancheStatus = validTranches[2]?.status;
             if (trancheStatus === 'Pending')
               setApplicationState('TRANCHE3 PENDING');
             else if (trancheStatus === 'Approved')
               setApplicationState('TRANCHE3 APPROVED');
             else if (trancheStatus === 'Paid')
               setApplicationState('TRANCHE3 PAID');
-          } else if (application.GrantTranche.length === 4) {
-            const trancheStatus = application.GrantTranche[3]?.status;
+          } else if (trancheNumber === 4) {
+            const trancheStatus = validTranches[3]?.status;
             if (trancheStatus === 'Pending')
               setApplicationState('TRANCHE4 PENDING');
             else if (trancheStatus === 'Approved')
