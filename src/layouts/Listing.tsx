@@ -3,6 +3,7 @@ import { useAtom } from 'jotai';
 import { ExternalLink } from 'lucide-react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { usePostHog } from 'posthog-js/react';
 import { useEffect, useState } from 'react';
 
@@ -37,6 +38,7 @@ export function ListingPageLayout({
 }: ListingPageProps) {
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
   const posthog = usePostHog();
+  const router = useRouter();
 
   const { data: submissionNumber = 0 } = useQuery(
     submissionCountQuery(initialBounty?.id ?? ''),
@@ -98,6 +100,7 @@ export function ListingPageLayout({
     'isSponsorVerified',
     initialBounty?.sponsor?.isVerified?.toString() || 'false',
   );
+  const isSubmissionsPage = router.asPath.split('/')[3]?.includes('submission');
 
   return (
     <Default
@@ -210,23 +213,25 @@ export function ListingPageLayout({
                     </div>
                   )}
 
-                  <Comments
-                    isTemplate={isTemplate}
-                    isAnnounced={initialBounty?.isWinnersAnnounced ?? false}
-                    listingSlug={initialBounty?.slug ?? ''}
-                    listingType={initialBounty?.type ?? ''}
-                    poc={initialBounty?.poc as User}
-                    sponsorId={initialBounty?.sponsorId}
-                    isVerified={initialBounty?.sponsor?.isVerified}
-                    refId={initialBounty?.id ?? ''}
-                    refType="BOUNTY"
-                    count={commentCount}
-                    setCount={setCommentCount}
-                    isDisabled={
-                      !initialBounty.isPublished &&
-                      initialBounty.status === 'OPEN'
-                    }
-                  />
+                  {!isSubmissionsPage && (
+                    <Comments
+                      isTemplate={isTemplate}
+                      isAnnounced={initialBounty?.isWinnersAnnounced ?? false}
+                      listingSlug={initialBounty?.slug ?? ''}
+                      listingType={initialBounty?.type ?? ''}
+                      poc={initialBounty?.poc as User}
+                      sponsorId={initialBounty?.sponsorId}
+                      isVerified={initialBounty?.sponsor?.isVerified}
+                      refId={initialBounty?.id ?? ''}
+                      refType="BOUNTY"
+                      count={commentCount}
+                      setCount={setCommentCount}
+                      isDisabled={
+                        !initialBounty.isPublished &&
+                        initialBounty.status === 'OPEN'
+                      }
+                    />
+                  )}
                 </div>
               </div>
             </div>

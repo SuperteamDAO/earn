@@ -1,11 +1,12 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@radix-ui/react-tabs';
 import dayjs from 'dayjs';
 import { type Atom, useAtomValue } from 'jotai';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { tokenList } from '@/constants/tokenList';
 import { type SubmissionWithUser } from '@/interface/submission';
+import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
@@ -34,6 +35,30 @@ export const Details = ({ bounty, modalView, atom }: Props) => {
   const tokenObject = tokenList.find((t) => t.tokenSymbol === token);
   const [commentCount, setCommentCount] = useState(0);
   const [activeTab, setActiveTab] = useState<ActionTab>('notes');
+
+  useEffect(() => {
+    if (modalView) return;
+    const fetchCommentCount = async () => {
+      if (selectedSubmission?.id) {
+        try {
+          const response = await api.get(
+            `/api/comment/${selectedSubmission.id}`,
+            {
+              params: {
+                skip: 0,
+                take: 1,
+              },
+            },
+          );
+          setCommentCount(response.data.count);
+        } catch (error) {
+          console.error('Error fetching comment count:', error);
+        }
+      }
+    };
+
+    fetchCommentCount();
+  }, [selectedSubmission?.id]);
 
   return (
     <div

@@ -71,6 +71,7 @@ export const Comments = ({
         newComments.splice(commentIndex, 1);
         return newComments;
       });
+      setCount((count) => count - 1);
     } else {
       throw new Error('Comment not found');
     }
