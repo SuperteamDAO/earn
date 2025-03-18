@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { getImageProps } from 'next/image';
+import Link from 'next/link';
 import { usePostHog } from 'posthog-js/react';
 import React from 'react';
 
 import SponsorLogosBanner from '@/public/assets/banner-sponsor-logos.webp';
-
-import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
 import { sponsorCountQuery } from '../../queries/sponsor-count';
 import { userCountQuery } from '../../queries/user-count';
@@ -84,7 +83,7 @@ export function HomeSponsorBanner() {
         results across content, development, and design.
       </p>
       <div className="relative z-10 mt-auto flex flex-col items-center gap-3 pt-4 md:flex-row md:gap-4">
-        <AuthWrapper className="group w-full md:w-auto">
+        <Link href="/sponsor">
           <button
             className="ph-no-capture w-full rounded-md bg-black px-9 py-3 text-sm font-semibold text-white hover:bg-brand-purple hover:text-white md:w-auto"
             onClick={() => {
@@ -93,7 +92,7 @@ export function HomeSponsorBanner() {
           >
             Get Started
           </button>
-        </AuthWrapper>
+        </Link>
         <div className="flex items-center">
           <div className="flex -space-x-2 md:hidden">
             {avatars.map((avatar, index) => (
