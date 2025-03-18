@@ -45,7 +45,7 @@ export function HomeTalentBanner() {
   const { data } = useQuery(userCountQuery);
 
   return (
-    <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-md p-5 md:p-10">
+    <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] p-5 md:p-10">
       <div className="absolute inset-0 h-full overflow-hidden">
         <picture>
           <source media="(min-width: 40em)" srcSet={desktop} />

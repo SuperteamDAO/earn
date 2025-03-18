@@ -47,7 +47,7 @@ export function HomeSponsorBanner() {
   const { data } = useQuery(sponsorCountQuery);
   const { data: userCount } = useQuery(userCountQuery);
   return (
-    <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-md p-5 md:p-10">
+    <div className="relative mx-auto flex h-full w-full flex-col overflow-hidden rounded-[0.5rem] p-5 md:p-10">
       <div className="absolute inset-0 overflow-hidden bg-gradient-to-r from-[#00CCFE] to-[#A6EDFF]">
         <picture className="relative ml-auto hidden h-full w-fit translate-y-6 scale-125 md:block lg:hidden xl:block">
           <source media="(min-width: 40em)" srcSet={desktop} />
@@ -82,10 +82,10 @@ export function HomeSponsorBanner() {
         talent in under 5 clicks. Post your task in minutes and get high-quality
         results across content, development, and design.
       </p>
-      <div className="relative z-10 mt-auto flex flex-col items-center gap-3 pt-4 md:flex-row md:gap-4">
-        <Link href="/sponsor">
+      <div className="relative z-10 mt-auto flex flex-col items-start gap-3 pt-4 md:flex-row md:gap-4">
+        <Link href="/sponsor" className="w-full">
           <button
-            className="ph-no-capture w-full rounded-md bg-black px-9 py-3 text-sm font-semibold text-white hover:bg-brand-purple hover:text-white md:w-auto"
+            className="ph-no-capture w-full rounded-md bg-black px-9 py-3 text-sm font-semibold text-white hover:bg-black/80 hover:text-white md:w-auto"
             onClick={() => {
               posthog.capture('signup_banner');
             }}

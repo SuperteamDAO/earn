@@ -4,6 +4,7 @@ import * as React from 'react';
 import {
   Carousel,
   CarouselContent,
+  CarouselDots,
   CarouselItem,
 } from '@/components/ui/carousel';
 
@@ -21,6 +22,7 @@ export function BannerCarousel() {
       className="w-full p-1"
       onMouseEnter={plugin.current.stop}
       onMouseLeave={plugin.current.reset}
+      opts={{ loop: true }}
     >
       <CarouselContent>
         <CarouselItem>
@@ -34,6 +36,11 @@ export function BannerCarousel() {
           </div>
         </CarouselItem>
       </CarouselContent>
+      <CarouselDots
+        className="absolute bottom-3 left-2/4 -translate-x-2/4 md:bottom-6"
+        activeDotClassName="bg-white"
+        dotClassName="bg-slate-400"
+      />
     </Carousel>
   );
 }
