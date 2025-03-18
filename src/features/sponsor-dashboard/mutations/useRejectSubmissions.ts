@@ -22,52 +22,56 @@ export const useRejectSubmissions = (slug: string) => {
           data: batch.map((a) => ({ id: a })),
         });
       }
+      return submissionIds;
     },
     onMutate: async (submissionIds) => {
-      queryClient.setQueryData(['sponsor-submissions', slug], (old: any) => {
-        if (!old) return old;
-        return old.map((submission: SubmissionWithUser) =>
-          submissionIds.includes(submission.id)
-            ? {
-                ...submission,
-                status: SubmissionStatus.Rejected,
-              }
-            : submission,
-        );
+      await queryClient.cancelQueries({
+        queryKey: ['sponsor-submissions', slug],
       });
 
-      const updatedSubmission = queryClient
-        .getQueryData<SubmissionWithUser[]>(['sponsor-submissions', slug])
-        ?.find((submission) => submissionIds.includes(submission.id));
+      const previousSubmissions = queryClient.getQueryData<
+        SubmissionWithUser[]
+      >(['sponsor-submissions', slug]);
 
-      setSelectedSubmission(updatedSubmission);
+      queryClient.setQueryData(
+        ['sponsor-submissions', slug],
+        (old: SubmissionWithUser[] | undefined) => {
+          if (!old) return old;
+          return old.map((submission) =>
+            submissionIds.includes(submission.id)
+              ? {
+                  ...submission,
+                  status: SubmissionStatus.Rejected,
+                }
+              : submission,
+          );
+        },
+      );
+
       setSelectedSubmissionIds(new Set());
+
+      return { previousSubmissions };
     },
     onError: () => {
       toast.error(
         'An error occurred while rejecting submissions. Please try again.',
       );
     },
-    onSuccess: (_, submissionIds) => {
-      queryClient.setQueryData(['sponsor-submissions', slug], (old: any) => {
-        if (!old) return old;
-        return old.map((submission: SubmissionWithUser) =>
-          submissionIds.includes(submission.id)
-            ? {
-                ...submission,
-                status: SubmissionStatus.Rejected,
-              }
-            : submission,
-        );
-      });
-
-      const updatedSubmission = queryClient
-        .getQueryData<SubmissionWithUser[]>(['sponsor-submissions', slug])
-        ?.find((submission) => submissionIds.includes(submission.id));
-
-      setSelectedSubmission(updatedSubmission);
-      setSelectedSubmissionIds(new Set());
+    onSuccess: (submissionIds) => {
       toast.success('Submissions rejected successfully');
+
+      const submissions = queryClient.getQueryData<SubmissionWithUser[]>([
+        'sponsor-submissions',
+        slug,
+      ]);
+      if (submissions) {
+        const nextAvailableSubmission = submissions.find(
+          (sub) =>
+            !submissionIds.includes(sub.id) &&
+            sub.status !== SubmissionStatus.Rejected,
+        );
+        setSelectedSubmission(nextAvailableSubmission || undefined);
+      }
     },
   });
 };
