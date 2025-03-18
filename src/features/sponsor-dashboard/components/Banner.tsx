@@ -90,7 +90,7 @@ export function Banner({
         <div className="flex items-center gap-6">
           <div className="flex flex-shrink-0 items-center gap-3">
             <EarnAvatar
-              className="h-12 w-12 rounded-md"
+              className="h-12 w-12 rounded-md object-contain"
               id={sponsor?.name}
               avatar={sponsor?.logo}
             />

@@ -95,7 +95,11 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
       })}
       <Link
         href={'/hackathon/mobius'}
-        className={cn('flex items-center py-2 font-medium lg:hidden', 'h-8')}
+        className={cn(
+          'flex items-center py-1 font-medium lg:hidden',
+          'h-6',
+          'rounded-full border border-slate-200 px-2 text-sm',
+        )}
         aria-label="Go to Mobius Hackathon page"
       >
         <ExternalImage
@@ -106,7 +110,12 @@ export function NavTabs({ className, ...props }: NavTabsProps) {
       </Link>
       {/* <Link */}
       {/*   href={'/hackathon/redacted'} */}
-      {/*   className={cn('flex items-center py-2 font-medium lg:hidden', 'h-8')} */}
+      {/*   className={cn( */}
+      {/*     'flex items-center py-1 font-medium lg:hidden', */}
+      {/*     'h-6', */}
+      {/*     'rounded-full border border-slate-200 px-2 text-sm', */}
+      {/*   )} */}
+      {/*   aria-label="Go to Redacted Hackathon page" */}
       {/* > */}
       {/*   <ExternalImage */}
       {/*     alt="Redacted Logo" */}
