@@ -211,14 +211,14 @@ export const Comment = ({
         </Link>
 
         <div className="flex w-full flex-col items-start">
-          <div className="flex min-h-[24px] items-end gap-2">
+          <div className="flex min-h-[24px] w-full flex-wrap items-end gap-x-2">
             <Link
               href={`${getURL()}t/${comment?.author?.username}`}
-              className="min-w-[75px] max-w-[200px] hover:underline"
+              className="flex-shrink-0 hover:underline"
               tabIndex={-1}
               target="_blank"
             >
-              <p className="truncate text-sm font-medium text-slate-800 md:text-base">
+              <p className="text-sm font-medium text-slate-800 md:text-base">
                 {`${comment?.author?.firstName} ${comment?.author?.lastName}`}
               </p>
             </Link>
