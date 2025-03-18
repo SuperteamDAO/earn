@@ -8,21 +8,15 @@ import * as z from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { DialogTitle } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form } from '@/components/ui/form';
+import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { useUser } from '@/store/user';
 
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 
 import { userApplicationQuery } from '../../queries/user-application';
 import { type Grant } from '../../types';
+
 const trancheFormSchema = z.object({
   projectUpdate: z.string().min(1, 'Project update is required'),
   helpWanted: z.string().min(1, 'Help wanted details are required'),
@@ -96,49 +90,24 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
       <div className="px-8 py-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
+            <FormFieldWrapper
               control={form.control}
               name="projectUpdate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base font-semibold" isRequired>
-                    Share an update about your project
-                  </FormLabel>
-                  <p className="text-sm text-slate-500">
-                    Tell us about the progress you have made on the project so
-                    far.
-                  </p>
-                  <FormControl>
-                    <Input className="mt-2" placeholder="Update" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Share an update about your project"
+              description="Tell us about the progress you have made on the project so far."
+              isRequired
+              isRichEditor
+              richEditorPlaceholder="Write your project update..."
             />
 
-            <FormField
+            <FormFieldWrapper
               control={form.control}
               name="helpWanted"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-base font-semibold" isRequired>
-                    Any help wanted?
-                  </FormLabel>
-                  <p className="text-sm text-slate-500">
-                    Beyond funding, please detail specific challenges and how
-                    our expertise/resources can assist your project&apos;s
-                    success.
-                  </p>
-                  <FormControl>
-                    <Input
-                      className="mt-2"
-                      placeholder="Enter details"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Any help wanted?"
+              description="Beyond funding, please detail specific challenges and how our expertise/resources can assist your project's success."
+              isRequired
+              isRichEditor
+              richEditorPlaceholder="Enter details..."
             />
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>

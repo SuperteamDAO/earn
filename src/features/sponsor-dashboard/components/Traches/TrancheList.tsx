@@ -1,11 +1,29 @@
-import { type GrantApplicationStatus } from '@prisma/client';
+import {
+  type GrantApplicationStatus,
+  type GrantTrancheStatus,
+} from '@prisma/client';
+import color from '@tiptap/extension-color';
+import { bg } from 'date-fns/locale';
 import { useAtom } from 'jotai';
 import debounce from 'lodash.debounce';
-import { Search } from 'lucide-react';
-import React, { useEffect, useRef } from 'react';
+import { ChevronDown, Search } from 'lucide-react';
+import React, {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useRef,
+} from 'react';
 
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/utils/cn';
+import { nthLabelGenerator } from '@/utils/rank';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
@@ -16,9 +34,23 @@ import { colorMap } from '../../utils/statusColorMap';
 interface Props {
   tranches: GrantTrancheWithApplication[] | undefined;
   setSearchText: (value: string) => void;
+  setFilterLabel: Dispatch<SetStateAction<GrantTrancheStatus | undefined>>;
+  filterTriggerLabel: GrantTrancheStatus | undefined;
 }
 
-export const TrancheList = ({ tranches, setSearchText }: Props) => {
+const TrancheStatusFilter: GrantTrancheStatus[] = [
+  'Pending',
+  'Approved',
+  'Rejected',
+  'Paid',
+];
+
+export const TrancheList = ({
+  tranches,
+  setSearchText,
+  setFilterLabel,
+  filterTriggerLabel,
+}: Props) => {
   const debouncedSetSearchText = useRef(debounce(setSearchText, 300)).current;
   const [selectedTranche, setSelectedTranche] = useAtom(
     selectedGrantTrancheAtom,
@@ -43,6 +75,58 @@ export const TrancheList = ({ tranches, setSearchText }: Props) => {
               type="text"
             />
           </div>
+        </div>
+        <div className="flex w-full cursor-default items-center justify-between">
+          <span className="text-xs text-slate-500">Filter By</span>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                className="h-9 w-32 border border-slate-300 bg-transparent px-2 py-1 font-medium capitalize text-slate-500 hover:border-brand-purple hover:bg-transparent"
+                variant="outline"
+              >
+                <span
+                  className={cn(
+                    'inline-flex whitespace-nowrap rounded-full px-3 py-0.5 text-center text-[10px] capitalize',
+                    bg,
+                    color,
+                  )}
+                >
+                  {filterTriggerLabel || 'Select Option'}
+                </span>
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent className="min-w-32 border-slate-300">
+              <DropdownMenuItem
+                className="focus:bg-slate-100"
+                onClick={() => setFilterLabel(undefined)}
+              >
+                <span className="inline-flex whitespace-nowrap rounded-full bg-slate-50 px-3 text-center text-[10px] capitalize text-slate-500">
+                  Select Option
+                </span>
+              </DropdownMenuItem>
+
+              {TrancheStatusFilter.map((status) => (
+                <DropdownMenuItem
+                  key={status}
+                  className="focus:bg-slate-100"
+                  onClick={() => setFilterLabel(status)}
+                >
+                  <span
+                    className={cn(
+                      'inline-flex whitespace-nowrap rounded-full px-3 text-center text-[10px] capitalize',
+                      colorMap[status].bg,
+                      colorMap[status].color,
+                    )}
+                  >
+                    {status}
+                  </span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       {tranches?.map((tranche) => {
@@ -76,7 +160,7 @@ export const TrancheList = ({ tranches, setSearchText }: Props) => {
                   {tranche?.GrantApplication?.projectTitle}
                 </p>
                 <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium text-slate-500">
-                  {`${tranche?.GrantApplication?.user?.firstName} ${tranche?.GrantApplication?.user?.lastName}`}
+                  {nthLabelGenerator(tranche?.trancheNumber)} Tranche Request
                 </p>
               </div>
             </div>

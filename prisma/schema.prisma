@@ -279,6 +279,7 @@ model GrantTranche {
   Grant            Grants             @relation(fields: [grantId], references: [id])
   approvedAmount   Float?
   decidedAt        DateTime?
+  trancheNumber    Int
 
   @@index([applicationId])
   @@index([grantId])

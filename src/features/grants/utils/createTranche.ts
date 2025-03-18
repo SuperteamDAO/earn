@@ -94,6 +94,7 @@ export async function createTranche({
       helpWanted,
       update,
       grantId: application.grantId,
+      trancheNumber: existingTranches + 1,
       ...(isFirstTranche && { approvedAmount: trancheAmount }),
       ...(isFirstTranche && { decidedAt: new Date().toISOString() }),
     },

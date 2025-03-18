@@ -42,9 +42,14 @@ interface GrantWithApplicationCount extends Grant {
 interface Props {
   grant: GrantWithApplicationCount | undefined;
   applications: GrantApplicationWithUser[] | undefined;
+  showAiReview?: boolean;
 }
 
-export const ApplicationHeader = ({ grant, applications }: Props) => {
+export const ApplicationHeader = ({
+  grant,
+  applications,
+  showAiReview = true,
+}: Props) => {
   const listingPath = `grants/${grant?.slug}`;
   const { hasCopied, onCopy } = useClipboard(`${getURL()}${listingPath}`);
   const grantStatus = getListingStatus(grant, true);
@@ -198,9 +203,11 @@ export const ApplicationHeader = ({ grant, applications }: Props) => {
             </div>
           </div>
         </div>
-        <div>
-          <AiReviewModal applications={applications} grant={grant} />
-        </div>
+        {showAiReview && (
+          <div>
+            <AiReviewModal applications={applications} grant={grant} />
+          </div>
+        )}
       </div>
     </>
   );

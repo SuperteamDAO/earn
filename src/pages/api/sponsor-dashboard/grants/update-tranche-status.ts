@@ -67,6 +67,29 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     let totalTranches = application.totalTranches;
 
     if (status === 'Approved') {
+      const approvedTranches = await prisma.grantTranche.findMany({
+        where: {
+          applicationId: currentTranche.applicationId,
+          status: 'Approved',
+          id: { not: id },
+        },
+        select: {
+          approvedAmount: true,
+        },
+      });
+
+      const totalApprovedSoFar = approvedTranches.reduce(
+        (sum, tranche) => sum + (tranche.approvedAmount || 0),
+        0,
+      );
+
+      if (totalApprovedSoFar + approvedAmount! > application.approvedAmount) {
+        return res.status(400).json({
+          error: 'Invalid approved amount',
+          message: `Total approved tranches (${totalApprovedSoFar + approvedAmount!}) would exceed grant's approved amount (${application.approvedAmount})`,
+        });
+      }
+
       const existingTranches = await prisma.grantTranche.count({
         where: {
           applicationId: currentTranche.applicationId,

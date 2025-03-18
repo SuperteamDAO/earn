@@ -31,8 +31,11 @@ interface Props {
 export const TranchesTab = ({ slug }: Props) => {
   const [searchText, setSearchText] = useState('');
   const [skip, setSkip] = useState(0);
+  const [filterLabel, setFilterLabel] = useState<
+    GrantTrancheStatus | undefined
+  >(undefined);
 
-  const params = { searchText, length: 10, skip: 0 };
+  const params = { searchText, length: 10, skip: 0, filterLabel };
 
   const { data: trancheReturn, isLoading: isTrancheLoading } = useQuery({
     ...tranchesQuery(slug, params),
@@ -353,7 +356,12 @@ export const TranchesTab = ({ slug }: Props) => {
       <div className="flex w-full items-start bg-white">
         <div className="grid min-h-[600px] w-full grid-cols-[23rem_1fr] bg-white">
           <div className="h-full w-full">
-            <TrancheList tranches={tranches} setSearchText={setSearchText} />
+            <TrancheList
+              tranches={tranches}
+              setSearchText={setSearchText}
+              setFilterLabel={setFilterLabel}
+              filterTriggerLabel={filterLabel}
+            />
           </div>
 
           <div className="h-full w-full rounded-r-xl border-b border-r border-t border-slate-200 bg-white">
@@ -443,7 +451,10 @@ export const TranchesTab = ({ slug }: Props) => {
         granteeName={selectedTranche?.GrantApplication?.user?.firstName}
         token={grant?.token || 'USDC'}
         onApproveTranche={handleApproveTranche}
-        max={selectedTranche?.ask}
+        grantApprovedAmount={
+          selectedTranche?.GrantApplication?.approvedAmount || 0
+        }
+        grantTotalPaid={selectedTranche?.GrantApplication?.totalPaid || 0}
       />
     </>
   );

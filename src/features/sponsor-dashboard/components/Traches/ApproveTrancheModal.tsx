@@ -103,7 +103,8 @@ interface ApproveModalProps {
   granteeName: string | null | undefined;
   token: string;
   onApproveTranche: (trancheId: string, approvedAmount: number) => void;
-  max: number | undefined;
+  grantApprovedAmount: number;
+  grantTotalPaid: number;
 }
 
 export const ApproveTrancheModal = ({
@@ -114,17 +115,22 @@ export const ApproveTrancheModal = ({
   granteeName,
   token,
   onApproveTranche,
-  max,
+  grantApprovedAmount,
+  grantTotalPaid,
 }: ApproveModalProps) => {
   const [approvedAmount, setApprovedAmount] = useState<number | undefined>(ask);
   const [loading, setLoading] = useState<boolean>(false);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
+  const remainingAmount = grantApprovedAmount - grantTotalPaid;
+
   const handleAmountChange = (value: number) => {
-    if (value > (ask as number)) {
+    if (value > remainingAmount) {
       setWarningMessage(
-        'Approved amount is greater than the requested amount.',
+        `Amount exceeds remaining grant budget (${remainingAmount} ${token})`,
       );
+    } else if (value > (ask as number)) {
+      setWarningMessage('Approved amount is greater than the requested amount');
     } else {
       setWarningMessage(null);
     }
@@ -194,7 +200,7 @@ export const ApproveTrancheModal = ({
                 value={approvedAmount || 0}
                 onChange={handleAmountChange}
                 min={1}
-                max={max}
+                max={remainingAmount}
               />
               <div className="flex items-center rounded-r-md border border-l-0 bg-white px-3 text-[0.95rem] text-slate-400">
                 <img
@@ -217,7 +223,11 @@ export const ApproveTrancheModal = ({
 
           <Button
             className="mb-3 mt-2 w-full bg-[#079669] text-white hover:bg-[#079669]/90"
-            disabled={loading || approvedAmount === 0 || !!warningMessage}
+            disabled={
+              loading ||
+              approvedAmount === 0 ||
+              (warningMessage?.includes('exceeds') ?? false)
+            }
             onClick={approveTranche}
           >
             {loading ? (

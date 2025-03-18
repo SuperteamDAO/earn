@@ -2,6 +2,7 @@ import {
   type GrantApplication,
   type GrantApplicationStatus,
   type GrantTranche,
+  type GrantTrancheStatus,
 } from '@prisma/client';
 import { queryOptions } from '@tanstack/react-query';
 
@@ -46,6 +47,7 @@ interface TrancheParams {
   searchText: string;
   length: number;
   skip: number;
+  filterLabel: GrantTrancheStatus | undefined;
 }
 
 export interface TranchesReturn {

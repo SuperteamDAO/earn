@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { LoadingSection } from '@/components/shared/LoadingSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -23,6 +23,7 @@ interface Props {
 function GrantApplications({ slug }: Props) {
   const { user } = useUser();
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<string>('applications');
 
   const { data: grant, isLoading: isGrantLoading } = useQuery(
     sponsorGrantQuery(slug, user?.currentSponsorId),
@@ -44,8 +45,15 @@ function GrantApplications({ slug }: Props) {
         <LoadingSection />
       ) : (
         <>
-          <ApplicationHeader grant={grant} applications={applications} />
-          <Tabs defaultValue="applications">
+          <ApplicationHeader
+            grant={grant}
+            applications={applications}
+            showAiReview={activeTab === 'applications'}
+          />
+          <Tabs
+            defaultValue="applications"
+            onValueChange={(value) => setActiveTab(value)}
+          >
             <TabsList className="gap-2 font-medium text-slate-400">
               <TabsTrigger value="applications">Applications</TabsTrigger>
               {isST && (

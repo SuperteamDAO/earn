@@ -1,4 +1,4 @@
-import { type Prisma } from '@prisma/client';
+import { type GrantTrancheStatus, type Prisma } from '@prisma/client';
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
@@ -17,6 +17,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const skip = params.skip ? parseInt(params.skip as string, 10) : 0;
   const take = params.take ? parseInt(params.take as string, 10) : 20;
   const searchText = params.searchText as string;
+  const filterLabel = params.filterLabel as GrantTrancheStatus | undefined;
 
   const textSearch = searchText
     ? {
@@ -75,12 +76,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const totalCount = await prisma.grantTranche.count({
       where: {
         GrantApplication: grantApplicationWhere,
+        ...(filterLabel ? { status: filterLabel } : {}),
       },
     });
 
     const query = await prisma.grantTranche.findMany({
       where: {
         GrantApplication: grantApplicationWhere,
+        ...(filterLabel ? { status: filterLabel } : {}),
       },
       include: {
         GrantApplication: {

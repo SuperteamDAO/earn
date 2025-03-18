@@ -21,6 +21,9 @@ async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
       where: {
         userId,
         grantId: id,
+        applicationStatus: {
+          not: 'Completed',
+        },
       },
       orderBy: {
         createdAt: 'desc',

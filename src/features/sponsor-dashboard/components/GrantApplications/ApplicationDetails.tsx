@@ -202,7 +202,7 @@ export const ApplicationDetails = ({
                     Completed
                   </Button>
                 )}
-                {isApproved && (
+                {isApproved && !grant?.airtableId && (
                   <>
                     <MarkCompleted
                       isCompleted={isCompleted}

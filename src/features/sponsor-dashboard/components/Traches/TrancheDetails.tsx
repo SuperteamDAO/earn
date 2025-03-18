@@ -292,7 +292,18 @@ export const TrancheDetails = ({
 
           <div className="flex h-[32.6rem] w-full">
             <div className="scrollbar-thumb-rounded-full flex w-full flex-1 flex-col overflow-y-auto border-r border-slate-200 p-4 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
-              {selectedTranche?.status === 'Approved' && (
+              {selectedTranche?.trancheNumber === 1 && (
+                <div className="mb-4">
+                  <p className="mb-1 text-xs text-slate-500">
+                    Note: Since this is the first tranche, it was added here
+                    automatically upon user&apos;s successful KYC. First
+                    tranches do not require explicit approval from the leads.
+                  </p>
+                </div>
+              )}
+
+              {(selectedTranche?.status === 'Approved' ||
+                selectedTranche?.status === 'Paid') && (
                 <div className="mb-4">
                   <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
                     APPROVED TRANCHE AMOUNT
@@ -312,25 +323,26 @@ export const TrancheDetails = ({
                   </div>
                 </div>
               )}
-
-              <div className="mb-4">
-                <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
-                  TRANCHE ASK
-                </p>
-                <div className="flex items-center gap-0.5">
-                  <img
-                    className="mr-0.5 h-4 w-4 rounded-full"
-                    src={tokenIcon}
-                    alt="token"
-                  />
-                  <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
-                    {`${selectedTranche?.ask?.toLocaleString('en-us')}`}
-                    <span className="ml-0.5 text-slate-400">
-                      {grant?.token}
-                    </span>
+              {selectedTranche?.trancheNumber !== 1 && (
+                <div className="mb-4">
+                  <p className="mb-1 text-xs font-semibold uppercase text-slate-400">
+                    TRANCHE ASK
                   </p>
+                  <div className="flex items-center gap-0.5">
+                    <img
+                      className="mr-0.5 h-4 w-4 rounded-full"
+                      src={tokenIcon}
+                      alt="token"
+                    />
+                    <p className="whitespace-nowrap text-sm font-semibold text-slate-600">
+                      {`${selectedTranche?.ask?.toLocaleString('en-us')}`}
+                      <span className="ml-0.5 text-slate-400">
+                        {grant?.token}
+                      </span>
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <InfoBox
                 label="Tranche Request Date"
@@ -344,10 +356,12 @@ export const TrancheDetails = ({
               <InfoBox
                 label="Project Updates"
                 content={selectedTranche?.update}
+                isHtml
               />
               <InfoBox
                 label="Help Wanted"
                 content={selectedTranche?.helpWanted}
+                isHtml
               />
               <InfoBox
                 label="Grant Approval Date"
