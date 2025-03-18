@@ -223,7 +223,7 @@ export const ApplicationList = ({
           >
             <div className="flex items-center">
               <Checkbox
-                className="mr-2 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                className="mr-2 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple disabled:invisible"
                 checked={isToggled(application.id)}
                 disabled={application?.applicationStatus !== 'Pending'}
                 onCheckedChange={() => toggleApplication(application.id)}
