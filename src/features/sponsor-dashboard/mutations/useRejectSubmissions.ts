@@ -70,7 +70,8 @@ export const useRejectSubmissions = (slug: string) => {
             !submissionIds.includes(sub.id) &&
             sub.status !== SubmissionStatus.Rejected,
         );
-        setSelectedSubmission(nextAvailableSubmission || undefined);
+        if (nextAvailableSubmission)
+          setSelectedSubmission(nextAvailableSubmission || undefined);
       }
     },
   });
