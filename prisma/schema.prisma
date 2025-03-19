@@ -449,6 +449,7 @@ model User {
   SubscribeHackathon SubscribeHackathon[]
   isBlocked          Boolean              @default(false)
   privyDid           String               @unique
+  isKYCVerified      Boolean              @default(false)
 
   @@index([currentSponsorId])
   @@index([hackathonId])

@@ -51,7 +51,10 @@ export function GrantPageLayout({
     isApproved = true;
   }
 
-  const isST = initialGrant?.isNative && initialGrant?.airtableId;
+  const isST =
+    initialGrant?.isNative &&
+    initialGrant?.airtableId &&
+    !initialGrant?.title?.toLowerCase().includes('coindcx');
 
   useEffect(() => {
     if (initialGrant) {
