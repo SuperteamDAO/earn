@@ -103,10 +103,18 @@ export async function createTranche({
       ...(isFirstTranche && { approvedAmount: trancheAmount }),
       ...(isFirstTranche && { decidedAt: new Date().toISOString() }),
     },
+    include: {
+      GrantApplication: {
+        include: {
+          user: true,
+          grant: true,
+        },
+      },
+    },
   });
 
   if (isFirstTranche) {
-    await addPaymentInfoToAirtable(application, tranche);
+    await addPaymentInfoToAirtable(tranche.GrantApplication, tranche);
   }
 
   return tranche;

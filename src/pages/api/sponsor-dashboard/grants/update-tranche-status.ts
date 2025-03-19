@@ -101,7 +101,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ) {
         totalTranches! += 1;
       }
-      const updatedApplication = await prisma.grantApplication.update({
+      await prisma.grantApplication.update({
         where: { id: currentTranche.applicationId },
         include: {
           grant: true,
@@ -109,17 +109,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
         data: { totalTranches },
       });
-
-      try {
-        await addPaymentInfoToAirtable(updatedApplication, currentTranche);
-      } catch (airtableError: any) {
-        console.error(
-          `Error adding payment info to Airtable: ${airtableError.message}`,
-        );
-        console.error(
-          `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
-        );
-      }
 
       sendEmailNotification({
         type: 'trancheApproved',
@@ -149,6 +138,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
                 email: true,
                 twitter: true,
                 discord: true,
+                kycName: true,
+                location: true,
               },
             },
             grant: {
@@ -162,6 +153,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       },
     });
+
+    if (result.status === 'Approved') {
+      try {
+        await addPaymentInfoToAirtable(result.GrantApplication, result);
+      } catch (airtableError: any) {
+        console.error(
+          `Error adding payment info to Airtable: ${airtableError.message}`,
+        );
+        console.error(
+          `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
+        );
+      }
+    }
 
     return res.status(200).json(result);
   } catch (error: any) {
