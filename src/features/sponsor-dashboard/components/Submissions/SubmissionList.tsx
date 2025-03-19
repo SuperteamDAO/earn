@@ -235,7 +235,7 @@ export const SubmissionList = ({
             <div className="flex items-center">
               {listing?.type === 'project' && (
                 <Checkbox
-                  className="mr-2 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple"
+                  className="mr-2 data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple disabled:invisible"
                   checked={isToggled && isToggled(submission.id)}
                   disabled={
                     listing?.isWinnersAnnounced ||
