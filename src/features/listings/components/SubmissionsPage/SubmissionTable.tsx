@@ -176,9 +176,23 @@ export const SubmissionTable = ({
             return createdAtA.localeCompare(createdAtB) * factor;
 
           case 'ask':
-            const askA = a.ask ?? 0;
-            const askB = b.ask ?? 0;
-            return (askB - askA) * factor;
+            let rewardA = a.ask ?? 0;
+            let rewardB = b.ask ?? 0;
+            if (
+              bounty.compensationType === 'fixed' &&
+              a.winnerPosition &&
+              a.isWinner
+            ) {
+              rewardA = bounty.rewards?.[a.winnerPosition] ?? 0;
+            }
+            if (
+              bounty.compensationType === 'fixed' &&
+              b.winnerPosition &&
+              b.isWinner
+            ) {
+              rewardB = bounty.rewards?.[b.winnerPosition] ?? 0;
+            }
+            return (rewardB - rewardA) * factor;
 
           case 'status':
             const statusA = sponsorshipSubmissionStatus(a);
