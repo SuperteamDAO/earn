@@ -68,7 +68,7 @@ interface ListingTableProps {
 const thClassName =
   'text-sm font-medium capitalize tracking-tight text-slate-400';
 
-const ListingTh = ({
+export const ListingTh = ({
   children,
   className,
 }: {

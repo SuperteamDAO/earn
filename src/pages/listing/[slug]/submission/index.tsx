@@ -6,7 +6,7 @@ import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
 import { getURL } from '@/utils/validUrl';
 
-import { SubmissionList } from '@/features/listings/components/SubmissionsPage/SubmissionList';
+import { SubmissionTable } from '@/features/listings/components/SubmissionsPage/SubmissionTable';
 import { type Listing } from '@/features/listings/types';
 
 const SubmissionPage = ({
@@ -34,7 +34,7 @@ const SubmissionPage = ({
   return (
     <ListingPageLayout bounty={bounty}>
       {bounty && submission && (
-        <SubmissionList
+        <SubmissionTable
           bounty={bounty}
           setUpdate={resetSubmissions}
           submissions={submission}
